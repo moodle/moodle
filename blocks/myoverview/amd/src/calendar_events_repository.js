@@ -38,7 +38,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 1',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 1, 2016',
+            courseEndDate: 'Oct 6, 2016',
             itemcount: 1,
             orderTime: todayTime,
             icon: {
@@ -53,7 +57,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 2',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 1, 2016',
+            courseEndDate: 'Oct 6, 2016',
             itemcount: 1,
             orderTime: todayTime,
             icon: {
@@ -68,7 +76,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 3',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 1, 2016',
+            courseEndDate: 'Oct 6, 2016',
             itemcount: 1,
             orderTime: todayTime,
             icon: {
@@ -83,7 +95,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 4',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: todayTime,
             icon: {
@@ -98,7 +114,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 5',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: todayTime,
             icon: {
@@ -113,7 +133,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 6',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: todayTime,
             icon: {
@@ -128,7 +152,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 7',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 3,
+            coursename: 'Course 3',
+            coursesummary: 'This is a brief summary of course 3',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: tomorrowTime,
             icon: {
@@ -143,7 +171,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 8',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 3,
+            coursename: 'Course 3',
+            coursesummary: 'This is a brief summary of course 3',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: tomorrowTime,
             icon: {
@@ -158,7 +190,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 9',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: tomorrowTime,
             icon: {
@@ -173,7 +209,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 10',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: tomorrowTime,
             icon: {
@@ -188,7 +228,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 11',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: tomorrowTime,
             icon: {
@@ -203,7 +247,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 12',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: tomorrowTime,
             icon: {
@@ -218,7 +266,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 13',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: tomorrowTime,
             icon: {
@@ -233,7 +285,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 14',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 3,
+            coursename: 'Course 3',
+            coursesummary: 'This is a brief summary of course 3',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: tomorrowTime,
             icon: {
@@ -248,7 +304,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 15',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: tomorrowTime,
             icon: {
@@ -263,7 +323,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 16',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: tomorrowTime,
             icon: {
@@ -278,7 +342,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 17',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -293,7 +361,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 18',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -308,7 +380,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 19',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -323,7 +399,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 20',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -338,7 +418,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 21',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -353,7 +437,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 22',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 3,
+            coursename: 'Course 3',
+            coursesummary: 'This is a brief summary of course 3',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -368,7 +456,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 23',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 3,
+            coursename: 'Course 3',
+            coursesummary: 'This is a brief summary of course 3',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -383,7 +475,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 24',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 3,
+            coursename: 'Course 3',
+            coursesummary: 'This is a brief summary of course 3',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -398,7 +494,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 25',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 3,
+            coursename: 'Course 3',
+            coursesummary: 'This is a brief summary of course 3',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -413,7 +513,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 26',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 3,
+            coursename: 'Course 3',
+            coursesummary: 'This is a brief summary of course 3',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -428,7 +532,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 27',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -443,7 +551,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 28',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -458,7 +570,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 29',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -473,7 +589,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 30',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -488,7 +608,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 31',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 3,
+            coursename: 'Course 3',
+            coursesummary: 'This is a brief summary of course 3',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -503,7 +627,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 32',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 3,
+            coursename: 'Course 3',
+            coursesummary: 'This is a brief summary of course 3',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoWeeksTime,
             icon: {
@@ -518,7 +646,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 33',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoMonthsTime,
             icon: {
@@ -533,8 +665,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 34',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
-            itemcount: 1,
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',            itemcount: 1,
             orderTime: twoMonthsTime,
             icon: {
                 key: 'icon',
@@ -548,7 +683,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 35',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoMonthsTime,
             icon: {
@@ -563,7 +702,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 36',
             contexturl: 'https://www.google.com',
+            courseid: 1,
             coursename: 'Course 1',
+            coursesummary: 'This is a brief summary of course 1',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoYearsTime,
             icon: {
@@ -578,7 +721,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 37',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 2,
+            coursename: 'Course 2',
+            coursesummary: 'This is a brief summary of course 2',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoYearsTime,
             icon: {
@@ -593,7 +740,11 @@ define(['jquery'], function($) {
             enddate: 'Nov 4th, 10am',
             contextname: 'Assignment due 38',
             contexturl: 'https://www.google.com',
-            coursename: 'Course 1',
+            courseid: 3,
+            coursename: 'Course 3',
+            coursesummary: 'This is a brief summary of course 3',
+            courseStartDate: 'Oct 7, 2016',
+            courseEndDate: 'Oct 14, 2016',
             itemcount: 1,
             orderTime: twoYearsTime,
             icon: {
@@ -603,6 +754,36 @@ define(['jquery'], function($) {
             },
         },
     ];
+
+    var queryFromTimeByCourse = function(courseId, startTime, limit, offset) {
+        var deferred = $.Deferred();
+
+        setTimeout(function() {
+            deferred.resolve(groupEventsByCourseAndTime(courseId, startTime, limit, offset));
+        }, 1000);
+
+        return deferred.promise();
+    };
+
+    var groupEventsByCourseAndTime = function(courseId, startTime, limit, offset) {
+        var eventsByCourse = {};
+
+        $.each(dataCache, function(index, value) {
+            if (!eventsByCourse[value.courseid]) {
+                eventsByCourse[value.courseid] = {
+                    courseid: value.courseid,
+                    coursename: value.coursename,
+                    coursesummary: value.coursesummary,
+                    courseStartDate: value.courseStartDate,
+                    courseEndDate: value.courseEndDate,
+                    calendarEvents: []
+                };
+            }
+            eventsByCourse[value.courseid].calendarEvents.push(value);
+        });
+
+        return eventsByCourse[courseId].calendarEvents.slice(offset, offset + limit);
+    };
 
     /**
      * Retrieve a list of calendar events for the logged in user after the given
@@ -626,5 +807,6 @@ define(['jquery'], function($) {
 
     return {
         queryFromTime: queryFromTime,
+        queryFromTimeByCourse: queryFromTimeByCourse
     };
 });
