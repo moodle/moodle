@@ -43,6 +43,7 @@ class course_summary_exporter extends \core\external\exporter {
     protected function get_other_values(renderer_base $output) {
         return array(
             'viewurl' => (new moodle_url('/course/view.php', array('id' => $this->data->id)))->out(false)
+
         );
     }
 
@@ -67,7 +68,16 @@ class course_summary_exporter extends \core\external\exporter {
         return array(
             'viewurl' => array(
                 'type' => PARAM_URL,
-            )
+            ),
+            'summary' => array(
+                'type' => PARAM_RAW,
+            ),
+            'startdate' => array(
+                'type' => PARAM_RAW,
+            ),
+            'enddate' => array(
+                'type' => PARAM_RAW,
+            ),
         );
     }
 }
