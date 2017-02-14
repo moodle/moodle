@@ -525,7 +525,7 @@ class pdf extends \FPDI {
     /**
      * Test that the configured path to ghostscript is correct and working.
      * @param bool $generateimage - If true - a test image will be generated to verify the install.
-     * @return bool
+     * @return stdClass
      */
     public static function test_gs_path($generateimage = true) {
         global $CFG;
