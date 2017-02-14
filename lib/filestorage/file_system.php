@@ -70,7 +70,11 @@ abstract class file_system {
      * @return void
      */
     public function readfile(stored_file $file) {
-        $path = $this->get_remote_path_from_storedfile($file);
+        if ($this->is_file_readable_locally_by_storedfile($file, false)) {
+            $path = $this->get_local_path_from_storedfile($file, false);
+        } else {
+            $path = $this->get_remote_path_from_storedfile($file);
+        }
         readfile_allow_large($path, $file->get_filesize());
     }
 

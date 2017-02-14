@@ -152,7 +152,7 @@ class core_files_file_system_testcase extends advanced_testcase {
     /**
      * Test that the readfile function outputs content to disk.
      */
-    public function test_readfile() {
+    public function test_readfile_remote() {
         global $CFG;
 
         // Mock the filesystem.
@@ -164,8 +164,45 @@ class core_files_file_system_testcase extends advanced_testcase {
 
         // Mock the file_system class.
         // We need to override the get_remote_path_from_storedfile function.
-        $fs = $this->get_testable_mock(['get_remote_path_from_storedfile']);
+        $fs = $this->get_testable_mock([
+            'get_remote_path_from_storedfile',
+            'is_file_readable_locally_by_storedfile',
+            'get_local_path_from_storedfile',
+        ]);
         $fs->method('get_remote_path_from_storedfile')->willReturn($filepath);
+        $fs->method('is_file_readable_locally_by_storedfile')->willReturn(false);
+        $fs->expects($this->never())->method('get_local_path_from_storedfile');
+
+        // Note: It is currently not possible to mock readfile_allow_large
+        // because file_system is in the global namespace.
+        // We must therefore check for expected output. This is not ideal.
+        $this->expectOutputString($filecontent);
+        $fs->readfile($file);
+    }
+
+    /**
+     * Test that the readfile function outputs content to disk.
+     */
+    public function test_readfile_local() {
+        global $CFG;
+
+        // Mock the filesystem.
+        $filecontent = 'example content';
+        $vfileroot = $this->setup_vfile_root(['sourcefile' => $filecontent]);
+        $filepath = \org\bovigo\vfs\vfsStream::url('root/sourcefile');
+
+        $file = $this->get_stored_file($filecontent);
+
+        // Mock the file_system class.
+        // We need to override the get_remote_path_from_storedfile function.
+        $fs = $this->get_testable_mock([
+            'get_remote_path_from_storedfile',
+            'is_file_readable_locally_by_storedfile',
+            'get_local_path_from_storedfile',
+        ]);
+        $fs->method('is_file_readable_locally_by_storedfile')->willReturn(true);
+        $fs->expects($this->never())->method('get_remote_path_from_storedfile');
+        $fs->expects($this->once())->method('get_local_path_from_storedfile')->willReturn($filepath);
 
         // Note: It is currently not possible to mock readfile_allow_large
         // because file_system is in the global namespace.
