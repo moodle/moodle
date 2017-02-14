@@ -230,6 +230,7 @@ define(['jquery', 'core/notification', 'core/templates',
         root = $(root);
         var limit = +root.attr('data-limit'),
             offset = +root.attr('data-offset'),
+            courseId = +root.attr('data-course-id'),
             date = new Date(),
             todayTime = Math.floor(date.setHours(0, 0, 0, 0) / 1000);
 
@@ -240,8 +241,15 @@ define(['jquery', 'core/notification', 'core/templates',
 
         startLoading(root);
 
+        var promise = null;
+        if (courseId) {
+            promise = CalendarEventsRepository.queryFromTimeByCourse(courseId, todayTime, limit, offset);
+        } else {
+            promise = CalendarEventsRepository.queryFromTime(todayTime, limit, offset);
+        }
+
         // Request data from the server.
-        return CalendarEventsRepository.queryFromTime(todayTime, limit, offset).then(function(calendarEvents) {
+        return promise.then(function(calendarEvents) {
             if (!calendarEvents.length || (calendarEvents.length < limit)) {
                 // We have no more events so mark the list as done.
                 setLoadedAll(root);
@@ -280,7 +288,7 @@ define(['jquery', 'core/notification', 'core/templates',
      */
     var registerEventListeners = function(root) {
         CustomEvents.define(root, [CustomEvents.events.activate]);
-        root.on(CustomEvents.events.activate, SELECTORS.VIEW_MORE_BUTTON, function() {
+        root.one(CustomEvents.events.activate, SELECTORS.VIEW_MORE_BUTTON, function() {
             load(root);
         });
     };
@@ -290,6 +298,8 @@ define(['jquery', 'core/notification', 'core/templates',
             root = $(root);
             load(root);
             registerEventListeners(root);
-        }
+        },
+        registerEventListeners: registerEventListeners,
+        load: load
     };
 });
