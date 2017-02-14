@@ -45,7 +45,8 @@ class assignfeedback_editpdf_testcase extends mod_assign_base_testcase {
 
     protected function setUp() {
         // Skip this test if ghostscript is not supported.
-        if (!pdf::test_gs_path(false)) {
+        $result = pdf::test_gs_path(false);
+        if ($result->status !== assignfeedback_editpdf\pdf::GSPATH_OK) {
             $this->markTestSkipped('Ghostscript not setup');
             return;
         }
