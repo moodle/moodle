@@ -159,17 +159,14 @@ class gradeimport_csv_load_data {
         $record->userid     = $studentid;
         $record->importer   = $USER->id;
         // By default the maximum grade is 100.
-        $gradepointmaximum = 100;
         // If the grade limit has been increased then use the gradepointmax setting.
-        if ($CFG->unlimitedgrades) {
-            $gradepointmaximum = $CFG->gradepointmax;
-        }
+        // Unlimitedgrades allows for scores over 100%.
         // If the record final grade is set then check that the grade value isn't too high.
         // Final grade will not be set if we are inserting feedback.
-        if (!isset($record->finalgrade) || $record->finalgrade <= $gradepointmaximum) {
+        if (!isset($record->finalgrade) || $record->finalgrade <= $CFG->gradepointmax || $CFG->unlimitedgrades) {
             return $DB->insert_record('grade_import_values', $record);
         } else {
-            $this->cleanup_import(get_string('gradevaluetoobig', 'grades', $gradepointmaximum));
+            $this->cleanup_import(get_string('gradevaluetoobig', 'grades', $CFG->gradepointmax));
             return null;
         }
     }
