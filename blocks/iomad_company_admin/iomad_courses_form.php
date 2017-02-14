@@ -239,7 +239,7 @@ $companyids['none'] = get_string('nocompany', 'block_iomad_company_admin');
 $companyids['all'] = get_string('allcourses', 'block_iomad_company_admin');
 ksort($companyids);
 $companyselect = new single_select($linkurl, 'company', $companyids, $company);
-$companyselect->label = get_string('company', 'block_iomad_company_admin');
+$companyselect->label = get_string('filtercompany', 'block_iomad_company_admin');
 $companyselect->formid = 'choosecompany';
 echo html_writer::tag('div', $OUTPUT->render($companyselect), array('id' => 'iomad_company_selector')).'</br>';
 
@@ -279,6 +279,8 @@ if (!empty($company)) {
         $courses = $DB->get_records_sql($sql);
     }
 }
+
+
 
 // Display the table.
 $table = new html_table();
@@ -388,8 +390,14 @@ foreach ($courses as $course) {
                             $sharedselectoutput, $formhtml, $expirehtml, $warnhtml, $notifyhtml);
 }
 
-if (!empty($table)) {
+if (!empty($courses)) {
     echo html_writer::table($table);
+} else {
+    echo '<div class="alert alert-warning">' . get_string('nocourses', 'block_iomad_company_admin') . '</div>';
 }
+
+// exit button
+$link = new moodle_url('/local/iomad_dashboard/index.php');
+echo '<a class="btn btn-primary" href="' . $link . '">' . get_string('todashboard', 'block_iomad_company_admin') . '</a>';
 
 echo $OUTPUT->footer();

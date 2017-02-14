@@ -164,6 +164,7 @@ $string['enrolcourse'] = 'Self Enrolled Course';
 $string['enrolcourse_help'] = 'This defines how a user will gain access to the course.';
 $string['enrolcoursetype'] = 'How do users enrol on the course';
 $string['enrolled'] = 'Users are enrolled onto course by a manager';
+$string['filtercompany'] = 'Filter company/courses';
 $string['firstcompany'] = 'You must create at least one company before you can use Iomad';
 $string['invalidlicense'] = 'The selected license is invalid.';
 $string['iomadcapabilities_boiler'] = 'Please be aware that the capabilities for the Iomad system are fairly complex and disabling one of these may not completely take away the capability from the role you are editing.  You are advised to <b>test</b> any role changes you make to ensure that they work as you expect.';
@@ -374,7 +375,8 @@ $string['suspendcompanycheckfull'] = 'Do you really want to suspend this company
 $string['suspenduser'] = 'Suspend user';
 $string['template'] = 'Competency template';
 $string['templatesettings'] = 'Manage Iomad template settings';
-$string['theoptionsbelow'] = '<p><b>NOTE: The options below will only work with the "Iomad" theme</b></p>';
+$string['theoptionsbelow'] = '<p><b>NOTE: The options below may only work with the Iomad themes</b></p>';
+$string['todashboard'] = 'Return to Dashboard';
 $string['triedtoallocatetoomanylicenses'] = 'You have tried to allocate licenses for more courses than there are available allocations';
 $string['unenrollincapable'] = '<span id="unenrollwarning">NOTE: If "(existing enrolments)" is shown, you do not have the necessary rights to add/remove this courses. Remove existing user enrolments first.</span>';
 $string['unenrollwarning'] = '<span id="unenrollwarning">WARNING: If "(existing enrolments)" is shown you must tick the box beneath to allow add or remove. If you do this, all users will be unenrolled and ALL THEIR DATA (for that course) IS LOST. This cannot be undone</span>';
