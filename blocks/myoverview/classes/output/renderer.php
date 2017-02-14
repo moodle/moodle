@@ -21,23 +21,27 @@
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace block_myoverview\output;
 defined('MOODLE_INTERNAL') || die;
 
+use plugin_renderer_base;
+use renderable;
+
 /**
- * myoverview block rendrer
+ * myoverview block renderer
  *
  * @package    block_myoverview
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_myoverview_renderer extends plugin_renderer_base {
+class renderer extends plugin_renderer_base {
 
     /**
      * Return the main content for the block overview.
      *
-     * @return {string} HTML string
+     * @return string HTML string
      */
-    public function get_content() {
-        return $this->render_from_template('block_myoverview/main', []);
+    public function render_course_summary(course_summary $coursesummary) {
+        return $this->render_from_template('block_myoverview/main', ['courses' => $coursesummary->export_for_template($this)]);
     }
 }
