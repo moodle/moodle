@@ -20,27 +20,16 @@ class editsection_form extends moodleform {
 
         $mform  = $this->_form;
         $course = $this->_customdata['course'];
+        $sectioninfo = $this->_customdata['cs'];
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('text', 'name', '', array('size' => '30', 'maxlength' => '255'));
-
-        // Get default section name.
-        $defaultsectionname = $this->_customdata['defaultsectionname'];
-        if ($defaultsectionname) {
-            $defaultsectionname = ' [' . $defaultsectionname . ']';
-        }
-
-        $elementgroup[] = $mform->createElement('checkbox', 'usedefaultname', '',
-                                                get_string('sectionusedefaultname') . $defaultsectionname);
-
-        $mform->addGroup($elementgroup, 'name_group', get_string('sectionname'), ' ', false);
-        $mform->addGroupRule('name_group', array('name' => array(array(get_string('maximumchars', '', 255), 'maxlength', 255))));
-
-        $mform->setDefault('usedefaultname', true);
-        $mform->setType('name', PARAM_TEXT);
-        $mform->disabledIf('name','usedefaultname','checked');
+        $mform->addElement('defaultcustom', 'name', get_string('sectionname'), [
+            'defaultvalue' => $this->_customdata['defaultsectionname'],
+            'customvalue' => $sectioninfo->name,
+        ], ['size' => 30, 'maxlength' => 255]);
+        $mform->setDefault('name', false);
+        $mform->addGroupRule('name', array('name' => array(array(get_string('maximumchars', '', 255), 'maxlength', 255))));
 
         /// Prepare course and the editor
 
@@ -98,7 +87,9 @@ class editsection_form extends moodleform {
         $editoroptions = $this->_customdata['editoroptions'];
         $default_values = file_prepare_standard_editor($default_values, 'summary', $editoroptions,
                 $editoroptions['context'], 'course', 'section', $default_values->id);
-        $default_values->usedefaultname = (strval($default_values->name) === '');
+        if (strval($default_values->name) === '') {
+            $default_values->name = false;
+        }
         parent::set_data($default_values);
     }
 
@@ -113,7 +104,7 @@ class editsection_form extends moodleform {
         if ($data !== null) {
             $editoroptions = $this->_customdata['editoroptions'];
             // Set name as an empty string if use default section name is checked.
-            if (!empty($data->usedefaultname)) {
+            if ($data->name === false) {
                 $data->name = '';
             }
             $data = file_postupdate_standard_editor($data, 'summary', $editoroptions,

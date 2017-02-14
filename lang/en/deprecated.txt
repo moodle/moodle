@@ -62,3 +62,4 @@ userssearchresults,core_message
 loginpasswordautocomplete,core_admin
 loginpasswordautocomplete_help,core_admin
 deletecomment,core
+sectionusedefaultname,core
