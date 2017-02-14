@@ -287,6 +287,7 @@ $string['nocompanyselected'] = 'No company is selected. Please make a selection 
 $string['nocompanytemplates'] = 'Unallocated competency templates';
 $string['nocourses'] = 'There are no courses.';
 $string['nodepartments'] = 'There are no departments defined';
+$string['nolocations'] = 'No teaching locations have been created yet';
 $string['licensecount'] = 'Licenses allocated:';
 $string['licenseerrors'] = 'Licenses not allocated:';
 $string['licenseleft1'] = 'You have ';

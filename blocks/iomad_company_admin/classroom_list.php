@@ -97,7 +97,7 @@ if ($delete and confirm_sesskey()) {
 echo $OUTPUT->header();
 
 $company = new company($companyid);
-echo get_string('classrooms_for', $block, $company->get_name() );
+echo '<h4>' . get_string('classrooms_for', $block, $company->get_name() ) . '</h4>';
 
 // Check we can actually do anything on this page.
 iomad::require_capability('block/iomad_company_admin:classrooms', $context);
@@ -108,7 +108,7 @@ echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
 
 flush();
 
-if ($classrooms = $DB->get_recordset('classroom', array('companyid' => $companyid),
+if ($classrooms = $DB->get_records('classroom', array('companyid' => $companyid),
                                      'name', '*', $page, $perpage)) {
     $stredit   = get_string('edit');
     $strdelete = get_string('delete');
@@ -144,12 +144,16 @@ if ($classrooms = $DB->get_recordset('classroom', array('companyid' => $companyi
         echo html_writer::table($table);
         echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
     }
-
-    $classrooms->close();
+} else {
+    echo '<div class="alert alert-warning">' . get_string('nolocations', 'block_iomad_company_admin') . '</div>';
 }
 
 if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $context)) {
-    echo "<a href=\"classroom_edit_form.php\">" . get_string('classrooms_add', $block) . "</a>";
+    echo "<a class=\"btn btn-success\" href=\"classroom_edit_form.php\">" . get_string('classrooms_add', $block) . "</a>&nbsp";
 }
+
+// exit button
+$link = new moodle_url('/local/iomad_dashboard/index.php');
+echo '<a class="btn btn-primary" href="' . $link . '">' . get_string('todashboard', 'block_iomad_company_admin') . '</a>';
 
 echo $OUTPUT->footer();
