@@ -562,6 +562,22 @@ abstract class persistent {
     }
 
     /**
+     * Saves the record to the database.
+     *
+     * If this record has an ID, then {@link self::update()} is called, otherwise {@link self::create()} is called.
+     * Before and after hooks for create() or update() will be called appropriately.
+     *
+     * @return void
+     */
+    final public function save() {
+        if ($this->raw_get('id') <= 0) {
+            $this->create();
+        } else {
+            $this->update();
+        }
+    }
+
+    /**
      * Hook to execute before a delete.
      *
      * This is only intended to be used by child classes, do not put any logic here!
