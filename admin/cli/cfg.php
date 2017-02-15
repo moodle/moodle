@@ -61,8 +61,9 @@ In the read mode, the script exits with success status 0 if the requested value
 is found. If the requested variable is not set, the script exits with status 3.
 When listing all variables of the component, the exit status is always 0 even
 if no variables for the given component are found. When setting/unsetting a
-value, the exit status is 0. In case of unexpected error, the script exits with
-error status 1.
+value, the exit status is 0. When attempting to set/unset a value that has
+already been hard-set in config.php, the script exits with error status 4. In
+case of unexpected error, the script exits with error status 1.
 
 Examples:
 
@@ -117,6 +118,12 @@ if ($options['unset'] || $options['set'] !== null) {
     if (empty($options['name'])) {
         cli_error('Missing configuration variable name', 2);
     }
+
+    // Check that the variable is not hard-set in the main config.php already.
+    if (array_key_exists($options['name'], $CFG->config_php_settings)) {
+        cli_error('The configuration variable is hard-set in the config.php, unable to change.', 4);
+    }
+
     set_config($options['name'], $options['set'], $options['component']);
     exit(0);
 }
