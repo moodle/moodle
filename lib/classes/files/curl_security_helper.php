@@ -235,6 +235,9 @@ class curl_security_helper extends curl_security_helper_base {
      */
     protected function get_whitelisted_ports() {
         global $CFG;
+        if (!isset($CFG->curlsecurityallowedport)) {
+            return [];
+        }
         return array_filter(explode("\n", $CFG->curlsecurityallowedport), function($entry) {
             return !empty($entry);
         });
@@ -247,6 +250,9 @@ class curl_security_helper extends curl_security_helper_base {
      */
     protected function get_blacklisted_hosts() {
         global $CFG;
+        if (!isset($CFG->curlsecurityblockedhosts)) {
+            return [];
+        }
         return array_filter(array_map('trim', explode("\n", $CFG->curlsecurityblockedhosts)), function($entry) {
             return !empty($entry);
         });
