@@ -29,7 +29,6 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/notification'], functi
          * modal error if any choices are missing.
          *
          * @param {String} formid HTML id of form
-         * @param {Array} questions
          */
         ensureRadiosChosen: function(formid) {
             // Prepare modal for display in case of problems.
