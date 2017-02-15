@@ -31,7 +31,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/notification'], functi
          * @param {String} formid HTML id of form
          * @param {Array} questions
          */
-        ensureRadiosChosen: function(formid, questions) {
+        ensureRadiosChosen: function(formid) {
             // Prepare modal for display in case of problems.
             var modalPromise = Str.get_strings([
                 {key: 'error', component: 'moodle'},
@@ -46,15 +46,8 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/notification'], functi
 
             var form = $('#' + formid);
             form.submit(function(e) {
-                var error = false;
-                questions.forEach(function(question) {
-                    var checkedResponse = form.find('input:radio[name="' + question.name + '"]:checked');
-                    if (checkedResponse.val() == question.default) {
-                        error = true;
-                    }
-                });
-
-                if (error) {
+                // Look for unanswered questions..
+                if (form.find('input:radio[data-survey-default="true"]:checked').length !== 0) {
                     e.preventDefault();
                     // Display the modal error.
                     modalPromise.then(function(modal) {
