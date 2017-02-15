@@ -289,11 +289,11 @@ if (empty($parallelrun)) {
     print_each_process_info($processes, $verbose, $status);
 }
 
+// Save final exit code containing which run failed.
+behat_config_manager::set_behat_run_config_value('lastcombinedfailedstatus', $status);
+
 // Show exit code from each process, if any process failed and how to rerun failed process.
 if ($verbose || $status) {
-    // Save final exit code containing which run failed.
-    behat_config_manager::set_behat_run_config_value('lastcombinedfailedstatus', $status);
-
     // Check if status of last run is failure and rerun is suggested.
     if (!empty($options['auto-rerun']) && $status) {
         // Rerun for the number of tries passed.
