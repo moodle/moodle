@@ -38,17 +38,25 @@ use core_calendar\local\interfaces\event_interface;
  */
 class event_factory extends event_abstract_factory {
     protected function apply_component_action(event_interface $event) {
-        if (!$event->get_course_module()) {
-            return $event;
-        }
-
-        $callbackapplier = $this->callbackapplier;
+        $callbackapplier = $this->actioncallbackapplier;
         $callbackresult = $callbackapplier($event);
 
         if (!$callbackresult instanceof event_interface) {
-            throw new invalid_callback_exception('Event factory callback applier must return an instance of action_interface');
+            throw new invalid_callback_exception(
+                'Event factory action callback applier must return an instance of event_interface');
         }
 
         return $callbackresult;
+    }
+
+    protected function expose_event(event_interface $event) {
+        $callbackapplier = $this->visibilitycallbackapplier;
+        $callbackresult = $callbackapplier($event);
+
+        if (!is_bool($callbackresult)) {
+            throw new invalid_callback_exception('Event factory visibility callback applier must return true or false');
+        }
+
+        return $callbackresult === true ? $event : null;
     }
 }

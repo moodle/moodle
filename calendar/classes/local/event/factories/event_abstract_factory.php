@@ -43,9 +43,14 @@ use core_calendar\local\interfaces\event_interface;
  */
 abstract class event_abstract_factory implements event_factory_interface {
     /**
-     * @var callable $callbackapplier Function to apply component callbacks.
+     * @var callable $actioncallbackapplier Function to apply component action callbacks.
      */
-    protected $callbackapplier;
+    protected $actioncallbackapplier;
+
+    /**
+     * @var callable $visibilitycallbackapplier Function to apply component visibility callbacks.
+     */
+    protected $visibilitycallbackapplier;
 
     /**
      * Applies component actions to the event.
@@ -56,12 +61,22 @@ abstract class event_abstract_factory implements event_factory_interface {
     protected abstract function apply_component_action(event_interface $event);
 
     /**
+     * Exposes the event (or not)
+     *
+     * @param event_interface $event The event to potentially expose.
+     * @return event_interface|null The exposed event or null.
+     */
+    protected abstract function expose_event(event_interface $event);
+
+    /**
      * Constructor.
      *
-     * @param callable $callbackapplier Function to apply component callbacks.
+     * @param callable $actioncallbackapplier     Function to apply component action callbacks.
+     * @param callable $visibilitycallbackapplier Function to apply component visibility callbacks.
      */
-    public function __construct(callable $callbackapplier) {
-        $this->callbackapplier = $callbackapplier;
+    public function __construct(callable $actioncallbackapplier, callable $visibilitycallbackapplier) {
+        $this->actioncallbackapplier = $actioncallbackapplier;
+        $this->visibilitycallbackapplier = $visibilitycallbackapplier;
     }
 
     public function create_instance(\stdClass $dbrow) {
@@ -108,25 +123,27 @@ abstract class event_abstract_factory implements event_factory_interface {
             });
         }
 
-        return $this->apply_component_action(
-            new event(
-                $dbrow->id,
-                $dbrow->name,
-                new event_description($dbrow->description, $dbrow->format),
-                $course,
-                $group,
-                $user,
-                new repeat_event_collection($dbrow->id, $this),
-                $module,
-                $dbrow->eventtype,
-                new event_times(
-                    (new \DateTimeImmutable())->setTimestamp($dbrow->timestart),
-                    (new \DateTimeImmutable())->setTimestamp($dbrow->timestart + $dbrow->timeduration),
-                    (new \DateTimeImmutable())->setTimestamp($dbrow->timesort ? $dbrow->timesort : $dbrow->timestart),
-                    (new \DateTimeImmutable())->setTimestamp($dbrow->timemodified)
-                ),
-                !empty($dbrow->visible),
-                $subscription
+        return $this->expose_event(
+            $this->apply_component_action(
+                new event(
+                    $dbrow->id,
+                    $dbrow->name,
+                    new event_description($dbrow->description, $dbrow->format),
+                    $course,
+                    $group,
+                    $user,
+                    new repeat_event_collection($dbrow->id, $this),
+                    $module,
+                    $dbrow->eventtype,
+                    new event_times(
+                        (new \DateTimeImmutable())->setTimestamp($dbrow->timestart),
+                        (new \DateTimeImmutable())->setTimestamp($dbrow->timestart + $dbrow->timeduration),
+                        (new \DateTimeImmutable())->setTimestamp($dbrow->timesort ? $dbrow->timesort : $dbrow->timestart),
+                        (new \DateTimeImmutable())->setTimestamp($dbrow->timemodified)
+                    ),
+                    !empty($dbrow->visible),
+                    $subscription
+                )
             )
         );
     }

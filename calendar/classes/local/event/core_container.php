@@ -74,14 +74,13 @@ class core_container {
      */
     private static function init() {
         if (empty(self::$eventfactory)) {
+            $identity = function(event_interface $event) {
+                return $event;
+            };
             self::$actionfactory = new action_factory();
             self::$actioneventfactory = new action_event_factory();
             self::$eventmapper = new event_mapper(
-                new event_factory(
-                    function(event_interface $event) {
-                        return $event;
-                    }
-                )
+                new event_factory($identity, $identity)
             );
             self::$eventfactory = new event_factory(
                 function(event_interface $event) {
@@ -96,6 +95,23 @@ class core_container {
                     );
 
                     return $action ? self::$actioneventfactory->create_instance($event, $action) : $event;
+                },
+                function(event_interface $event) {
+                    $mapper = self::$eventmapper;
+                    $eventvisible = component_callback(
+                        'mod_' . $event->get_course_module()->get('modname'),
+                        'core_calendar_is_event_visible',
+                        [
+                            $mapper->from_event_to_legacy_event($event)
+                        ]
+                    );
+
+                    // Module does not implement the callback, event should be visible.
+                    if (is_null($eventvisible)) {
+                        return true;
+                    }
+
+                    return $eventvisible ? true : false;
                 }
             );
         }

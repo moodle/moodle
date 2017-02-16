@@ -62,6 +62,10 @@ class core_calendar_container_testcase extends advanced_testcase {
         $dbrow->id = $legacyevent->id;
         $event = $factory->create_instance($dbrow);
 
+        if (is_null($event)) {
+            return;
+        }
+
         $this->assertInstanceOf(event_interface::class, $event);
         $this->assertTrue($event instanceof event || $event instanceof action_event);
 
