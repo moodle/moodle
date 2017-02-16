@@ -18,6 +18,31 @@ information provided here is intended especially for developers.
 * The mcore YUI rollup which included various YUI modules such as moodle-core-notification is no longer included on every
   page. Missing YUI depdencies may be exposed by this change (e.g. missing a requirement on moodle-core-notification when
   using M.core.dialogue).
+* Following behat steps have been removed from core:
+    - I click on "<element_string>" "<selector_string>" in the "<row_text_string>" table row
+    - I go to notifications page
+    - I add "<filename_string>" file from recent files to "<filepicker_field_string>" filepicker
+    - I upload "<filepath_string>" file to "<filepicker_field_string>" filepicker
+    - I create "<foldername_string>" folder in "<filepicker_field_string>" filepicker
+    - I open "<foldername_string>" folder from "<filepicker_field_string>" filepicker
+    - I unzip "<filename_string>" file from "<filepicker_field_string>" filepicker
+    - I zip "<filename_string>" folder from "<filepicker_field_string>" filepicker
+    - I delete "<file_or_folder_name_string>" from "<filepicker_field_string>" filepicker
+    - I send "<message_contents_string>" message to "<username_string>"
+    - I add "<user_username_string>" user to "<cohort_idnumber_string>" cohort
+    - I add "<username_string>" user to "<group_name_string>" group
+    - I fill in "<field_string>" with "<value_string>"
+    - I select "<option_string>" from "<select_string>"
+    - I select "<radio_button_string>" radio button
+    - I check "<option_string>"
+    - I uncheck "<option_string>"
+    - the "<field_string>" field should match "<value_string>" value
+    - the "<checkbox_string>" checkbox should be checked
+    - the "<checkbox_string>" checkbox should not be checked
+    - I fill the moodle form with:
+    - "<element_string>" "<selector_string>" should exists
+    - "<element_string>" "<selector_string>" should not exists
+    - the following "<element_string>" exists:
 
 === 3.2 ===
 
