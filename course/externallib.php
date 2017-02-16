@@ -2241,6 +2241,7 @@ class core_course_external extends external_api {
         $coursereturns['overviewfiles']     = $files;
         $coursereturns['contacts']          = $coursecontacts;
         $coursereturns['enrollmentmethods'] = $enroltypes;
+        $coursereturns['sortorder']         = $course->sortorder;
         return $coursereturns;
     }
 
@@ -2983,7 +2984,7 @@ class core_course_external extends external_api {
             // Return information for any user that can access the course.
             $coursefields = array('format', 'showgrades', 'newsitems', 'startdate', 'maxbytes', 'showreports', 'visible',
                 'groupmode', 'groupmodeforce', 'defaultgroupingid', 'enablecompletion', 'completionnotify', 'lang', 'theme',
-                'sortorder', 'marker');
+                'marker');
 
             // Information for managers only.
             if ($canupdatecourse) {
