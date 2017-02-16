@@ -2452,8 +2452,14 @@ require(["core/event", "jquery"], function(Event, $) {
             $elNames = array();
             foreach ($elsInGroup as $elInGroup){
                 if (is_a($elInGroup, 'HTML_QuickForm_group')) {
-                    // not sure if this would work - groups nested in groups
+                    // Groups nested in groups: append the group name to the element and then change it back.
+                    // We will be appending group name again in MoodleQuickForm_group::export_for_template().
+                    $oldname = $elInGroup->getName();
+                    if ($element->_appendName) {
+                        $elInGroup->setName($element->getName() . '[' . $oldname . ']');
+                    }
                     $elNames = array_merge($elNames, $this->_getElNamesRecursive($elInGroup));
+                    $elInGroup->setName($oldname);
                 } else {
                     $elNames[] = $element->getElementName($elInGroup->getName());
                 }
@@ -3105,6 +3111,7 @@ MoodleQuickForm::registerElementType('header', "$CFG->libdir/form/header.php", '
 MoodleQuickForm::registerElementType('hidden', "$CFG->libdir/form/hidden.php", 'MoodleQuickForm_hidden');
 MoodleQuickForm::registerElementType('htmleditor', "$CFG->libdir/form/htmleditor.php", 'MoodleQuickForm_htmleditor');
 MoodleQuickForm::registerElementType('listing', "$CFG->libdir/form/listing.php", 'MoodleQuickForm_listing');
+MoodleQuickForm::registerElementType('defaultcustom', "$CFG->libdir/form/defaultcustom.php", 'MoodleQuickForm_defaultcustom');
 MoodleQuickForm::registerElementType('modgrade', "$CFG->libdir/form/modgrade.php", 'MoodleQuickForm_modgrade');
 MoodleQuickForm::registerElementType('modvisible', "$CFG->libdir/form/modvisible.php", 'MoodleQuickForm_modvisible');
 MoodleQuickForm::registerElementType('password', "$CFG->libdir/form/password.php", 'MoodleQuickForm_password');

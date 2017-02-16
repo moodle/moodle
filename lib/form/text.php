@@ -123,13 +123,13 @@ class MoodleQuickForm_text extends HTML_QuickForm_text implements templatable {
             }
         }
 
+        $this->_generateId();
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
         }
         $html = $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' />';
 
         if ($this->_hiddenLabel){
-            $this->_generateId();
             return '<label class="accesshide" for="'.$this->getAttribute('id').'" >'.
                         $this->getLabel() . '</label>' . $html;
         } else {
