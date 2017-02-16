@@ -7,7 +7,7 @@ information provided here is intended especially for developers.
   to be performed after the form's definition was set. This is useful for intermediate subclasses.
 * $OUTPUT->pix_url() has been deprecated because it is was used mostly to manually generate image tags for icons. Use pix_icon instead.
   For other valid use cases use $OUTPUT->image_url().
-* Activity icons have been split from standard icons. Use $OUTPUT->activity_icon instead of $OUTPUT->pix_icon for these
+* Activity icons have been split from standard icons. Use $OUTPUT->image_icon instead of $OUTPUT->pix_icon for these
   type of icons (the coloured main icon for each activity).
 * YUI module moodle-core-formautosubmit has been removed, use jquery .change() instead (see lib/templates/url_select.mustache for
   an example)

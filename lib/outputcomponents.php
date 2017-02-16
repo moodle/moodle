@@ -727,7 +727,7 @@ class pix_icon implements renderable, templatable {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package core
  */
-class activity_icon extends pix_icon {
+class image_icon extends pix_icon {
 }
 
 /**

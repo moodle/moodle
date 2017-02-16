@@ -765,11 +765,11 @@ class edit_renderer extends \plugin_renderer_base {
 
         if ($insertpagebreak) {
             $title = get_string('addpagebreak', 'quiz');
-            $image = $this->activity_icon('e/insert_page_break', $title);
+            $image = $this->image_icon('e/insert_page_break', $title);
             $action = 'addpagebreak';
         } else {
             $title = get_string('removepagebreak', 'quiz');
-            $image = $this->activity_icon('e/remove_page_break', $title);
+            $image = $this->image_icon('e/remove_page_break', $title);
             $action = 'removepagebreak';
         }
 

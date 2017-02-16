@@ -397,7 +397,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
                 if ($component == 'moodle') {
                     $popupcontent .= $OUTPUT->pix_icon($popupicon, $popupalt, $component);
                 } else {
-                    $popupcontent .= $OUTPUT->activity_icon($popupicon, $popupalt, $component);
+                    $popupcontent .= $OUTPUT->image_icon($popupicon, $popupalt, $component);
                 }
                 // Show ical source if needed.
                 if (!empty($event->subscription) && $CFG->calendar_showicalsource) {
@@ -693,7 +693,7 @@ function calendar_add_event_metadata($event) {
         } else {
             $eventtype = '';
         }
-        $event->icon = $OUTPUT->activity_icon('icon', $event->modulename, $eventtype);
+        $event->icon = $OUTPUT->image_icon('icon', $event->modulename, $eventtype);
 
         $event->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
         $event->courselink = calendar_get_courselink($module->course);

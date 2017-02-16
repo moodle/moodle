@@ -2029,10 +2029,10 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Return HTML for an activity_icon.
+     * Return HTML for an image_icon.
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
-     * {@link core_renderer::render_activity_icon()} instead.
+     * {@link core_renderer::render_image_icon()} instead.
      *
      * @param string $pix short pix name
      * @param string $alt mandatory alt attribute
@@ -2040,8 +2040,8 @@ class core_renderer extends renderer_base {
      * @param array $attributes htm lattributes
      * @return string HTML fragment
      */
-    public function activity_icon($pix, $alt, $component='moodle', array $attributes = null) {
-        $icon = new activity_icon($pix, $alt, $component, $attributes);
+    public function image_icon($pix, $alt, $component='moodle', array $attributes = null) {
+        $icon = new image_icon($pix, $alt, $component, $attributes);
         return $this->render($icon);
     }
 
@@ -2051,7 +2051,7 @@ class core_renderer extends renderer_base {
      * @param pix_icon $icon
      * @return string HTML fragment
      */
-    protected function render_activity_icon(activity_icon $icon) {
+    protected function render_image_icon(image_icon $icon) {
         global $PAGE;
 
         $system = \core\output\icon_system::instance(\core\output\icon_system::STANDARD);

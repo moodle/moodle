@@ -326,7 +326,7 @@ foreach($activities as $activity) {
             '/view.php?id='.$activity->id.'" title="' . s($displayname) . '">'.
             '<div class="rotated-text-container"><span class="rotated-text">'.$shortenedname.'</span></div>'.
             '<div class="modicon">'.
-            $OUTPUT->activity_icon('icon', get_string('modulename', $activity->modname), $activity->modname) .
+            $OUTPUT->image_icon('icon', get_string('modulename', $activity->modname), $activity->modname) .
             '</div>'.
             '</a>';
         if ($activity->completionexpected) {
