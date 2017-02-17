@@ -25,6 +25,7 @@
 $string['pluginname'] = 'Bootstrap Base';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
+$string['mymarcellin'] = 'MyMarcellin';
 
 $string['choosereadme'] = '
 <div class="clearfix"><div class="theme_screenshot"><h2>Bootstrap Base</h2>
