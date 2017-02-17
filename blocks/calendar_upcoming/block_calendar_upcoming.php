@@ -56,8 +56,9 @@ class block_calendar_upcoming extends block_base {
             $context = context_course::instance($courseshown);
             if (has_any_capability(array('moodle/calendar:manageentries', 'moodle/calendar:manageownentries'), $context)) {
                 $this->content->footer = '<div class="newevent"><a href="'.$CFG->wwwroot.
- +                                          '/calendar/event.php?action=new&amp;course='.$courseshown.'"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i> Add a new reminder or event</a></div>';
+                    '/calendar/event.php?action=new&amp;course='.$courseshown.'"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i> Add a new reminder or event</a>...</div>';
             }
+
             if ($courseshown == SITEID) {
                 // Being displayed at site level. This will cause the filter to fall back to auto-detecting
                 // the list of courses it will be grabbing events from.
