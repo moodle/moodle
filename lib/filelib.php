@@ -2766,9 +2766,9 @@ class curl {
 
         // All settings of this class should be init here.
         $this->resetopt();
-        if (!empty($settings['debug'])) {
+        //if (!empty($settings['debug'])) {
             $this->debug = true;
-        }
+        //}
         if (!empty($settings['cookie'])) {
             if($settings['cookie'] === true) {
                 $this->cookie = $CFG->dataroot.'/curl_cookie.txt';
@@ -2949,6 +2949,7 @@ class curl {
      * Set HTTP Request Header
      *
      * @param array $header
+     * @param bool $replace If true, will remove any existing headers before appending the new one.
      */
     public function setHeader($header) {
         if (is_array($header)) {

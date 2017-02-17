@@ -393,6 +393,8 @@ abstract class oauth2_client extends curl {
     private $scope = '';
     /** var stdClass access token object */
     private $accesstoken = null;
+    /** var stdClass refresh token string */
+    private $refreshtoken = '';
 
     /**
      * Returns the auth url for OAuth 2.0 request
@@ -463,6 +465,10 @@ abstract class oauth2_client extends curl {
         return new moodle_url('/admin/oauth2callback.php');
     }
 
+    public function get_additional_login_parameters() {
+        return [];
+    }
+
     /**
      * Returns the login link for this oauth request
      *
@@ -471,15 +477,32 @@ abstract class oauth2_client extends curl {
     public function get_login_url() {
 
         $callbackurl = self::callback_url();
-        $url = new moodle_url($this->auth_url(),
-                        array('client_id' => $this->clientid,
-                              'response_type' => 'code',
-                              'redirect_uri' => $callbackurl->out(false),
-                              'state' => $this->returnurl->out_as_local_url(false),
-                              'scope' => $this->scope,
-                          ));
+        $params = array_merge(
+            [
+                'client_id' => $this->clientid,
+                'response_type' => 'code',
+                'redirect_uri' => $callbackurl->out(false),
+                'state' => $this->returnurl->out_as_local_url(false),
+                'scope' => $this->scope,
+            ],
+            $this->get_additional_login_parameters()
+        );
 
-        return $url;
+        return new moodle_url($this->auth_url(), $params);
+    }
+
+    /**
+     * Given an array of name value pairs - build a valid HTTP POST application/x-www-form-urlencoded string.
+     *
+     * @param array $params Name / value pairs.
+     * @return string POST data.
+     */
+    public function build_post_data($params) {
+        $result = [];
+        foreach ($params as $name => $value) {
+            $result[] = str_replace('&', '%26', $name) . '=' . str_replace('&', '%26', $value);
+        }
+        return implode('&', $result);
     }
 
     /**
@@ -490,10 +513,10 @@ abstract class oauth2_client extends curl {
      */
     public function upgrade_token($code) {
         $callbackurl = self::callback_url();
-        $params = array('client_id' => $this->clientid,
+        $params = array('code' => $code,
+            'client_id' => $this->clientid,
             'client_secret' => $this->clientsecret,
             'grant_type' => 'authorization_code',
-            'code' => $code,
             'redirect_uri' => $callbackurl->out(false),
         );
 
@@ -501,7 +524,7 @@ abstract class oauth2_client extends curl {
         if ($this->use_http_get()) {
             $response = $this->get($this->token_url(), $params);
         } else {
-            $response = $this->post($this->token_url(), $params);
+            $response = $this->post($this->token_url(), $this->build_post_data($params));
         }
 
         if (!$this->info['http_code'] === 200) {
@@ -512,6 +535,10 @@ abstract class oauth2_client extends curl {
 
         if (!isset($r->access_token)) {
             return false;
+        }
+
+        if (isset($r->refresh_token)) {
+            $this->refreshtoken = $r->refresh_token;
         }
 
         // Store the token an expiry time.
@@ -552,7 +579,11 @@ abstract class oauth2_client extends curl {
             }
         }
 
-        return parent::request($murl->out(false), $options);
+        $response = parent::request($murl->out(false), $options);
+
+        $this->resetHeader();
+
+        return $response;
     }
 
     /**
@@ -601,6 +632,15 @@ abstract class oauth2_client extends curl {
         } else {
             unset($SESSION->{$name});
         }
+    }
+
+    /**
+     * Get a refresh token!!!
+     *
+     * @return string
+     */
+    public function get_refresh_token() {
+        return $this->refreshtoken;
     }
 
     /**

@@ -321,4 +321,6 @@ function xmldb_main_install() {
     require_once($CFG->libdir . '/db/upgradelib.php');
     make_default_scale();
     make_competence_scale();
+
+    \core\oauth2\api::install_default_providers();
 }

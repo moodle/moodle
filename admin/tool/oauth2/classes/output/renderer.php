@@ -1,0 +1,167 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Output rendering for the plugin.
+ *
+ * @package     tool_oauth2
+ * @copyright   2017 Damyon Wiese
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+namespace tool_oauth2\output;
+
+use plugin_renderer_base;
+use html_table;
+use html_table_cell;
+use html_table_row;
+use html_writer;
+use core\oauth2\issuer;
+use core\oauth2\api;
+use moodle_url;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Implements the plugin renderer
+ *
+ * @copyright 2017 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class renderer extends plugin_renderer_base {
+    /**
+     * This function will render one beautiful table with all the issuers.
+     *
+     * @param \core\oauth2\issuer[] $issuers - list of all issuers.
+     * @return string HTML to output.
+     */
+    public function issuers_table($issuers) {
+        global $CFG, $OUTPUT;
+
+        $table = new html_table();
+        $table->head  = [
+            get_string('name'),
+            get_string('configuredstatus', 'tool_oauth2'),
+            get_string('loginissuer', 'tool_oauth2'),
+            get_string('discoverystatus', 'tool_oauth2'),
+            get_string('systemauthstatus', 'tool_oauth2'),
+            get_string('edit'),
+        ];
+        $table->attributes['class'] = 'admintable generaltable';
+        $data = [];
+
+        $index = 0;
+
+        foreach ($issuers as $issuer) {
+            // We need to handle the first and last ones specially.
+            $first = false;
+            if ($index == 0) {
+                $first = true;
+            }
+            $last = false;
+            if ($index == count($issuers) - 1) {
+                $last = true;
+            }
+
+            // Name.
+            $name = $issuer->get('name');
+            $image = $issuer->get('image');
+            if ($image) {
+                $name = '<img width=24 height=24 alt="" src="' . $image . '"> ' . $name;
+            }
+            $namecell = new html_table_cell($name);
+            $namecell->header = true;
+
+            // Configured.
+            if (!empty($issuer->get('clientid')) && !empty($issuer->get('clientsecret'))) {
+                $configured = $OUTPUT->pix_icon('yes', get_string('configured', 'tool_oauth2'), 'tool_oauth2');
+            } else {
+                $configured = $OUTPUT->pix_icon('no', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');
+            }
+            $configuredstatuscell = new html_table_cell($configured);
+
+            // Login issuer.
+            if (!empty($issuer->get('showonloginpage'))) {
+                $loginissuer = $OUTPUT->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
+            } else {
+                $loginissuer = $OUTPUT->pix_icon('no', get_string('notloginissuer', 'tool_oauth2'), 'tool_oauth2');
+            }
+            $loginissuerstatuscell = new html_table_cell($loginissuer);
+
+            // Discovered.
+            if (!empty($issuer->get('scopessupported'))) {
+                $discovered = $OUTPUT->pix_icon('yes', get_string('discovered', 'tool_oauth2'), 'tool_oauth2');
+            } else {
+                $discovered = $OUTPUT->pix_icon('no', get_string('notdiscovered', 'tool_oauth2'), 'tool_oauth2');
+            }
+            $discoverystatuscell = new html_table_cell($discovered);
+
+            // Connected.
+            if ($issuer->is_system_account_connected()) {
+                $systemauth = $OUTPUT->pix_icon('yes', get_string('systemaccountconnected', 'tool_oauth2'), 'tool_oauth2');
+            } else {
+                $systemauth = $OUTPUT->pix_icon('no', get_string('systemaccountnotconnected', 'tool_oauth2'), 'tool_oauth2');
+            }
+
+            if ($issuer->is_system_account_setup_supported()) {
+                $params = ['id' => $issuer->get('id'), 'action' => 'auth'];
+                $authurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+                $icon = $OUTPUT->pix_icon('auth', get_string('connectsystemaccount', 'tool_oauth2'), 'tool_oauth2');
+                $authlink = html_writer::link($authurl, $icon);
+                $systemauth .= ' ' . $authlink;
+            }
+
+            $systemauthstatuscell = new html_table_cell($systemauth);
+
+            // Action links.
+            $links = '';
+            $editurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['id' => $issuer->get('id'), 'action' => 'edit']);
+            $editlink = html_writer::link($editurl, $OUTPUT->pix_icon('t/edit', get_string('edit')));
+
+            $links .= ' ' . $editlink;
+            $deleteurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['id' => $issuer->get('id'), 'action' => 'delete']);
+            $deletelink = html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete')));
+            $links .= ' ' . $deletelink;
+            if (!$last) {
+                $params = ['id' => $issuer->get('id'), 'action' => 'movedown', 'sesskey' => sesskey()];
+                $movedownurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+                $movedownlink = html_writer::link($movedownurl, $OUTPUT->pix_icon('t/down', get_string('movedown')));
+                $links .= ' ' . $movedownlink;
+            }
+            if (!$first) {
+                $params = ['id' => $issuer->get('id'), 'action' => 'moveup', 'sesskey' => sesskey()];
+                $moveupurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+                $moveuplink = html_writer::link($moveupurl, $OUTPUT->pix_icon('t/up', get_string('moveup')));
+                $links .= ' ' . $moveuplink;
+            }
+
+            $editcell = new html_table_cell($links);
+
+            $row = new html_table_row([
+                $namecell,
+                $configuredstatuscell,
+                $loginissuerstatuscell,
+                $discoverystatuscell,
+                $systemauthstatuscell,
+                $editcell,
+            ]);
+
+            $data[] = $row;
+            $index++;
+        }
+        $table->data = $data;
+        return html_writer::table($table);
+    }
+}
