@@ -113,6 +113,7 @@ abstract class base_plan implements checksumable, executable {
      * that are, by definition, unique by name.
      *
      * @param string $name name of the setting
+     * @return base_setting
      * @throws base_plan_exception if setting name is not found.
      */
     public function get_setting($name) {

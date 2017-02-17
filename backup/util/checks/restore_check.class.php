@@ -176,6 +176,8 @@ abstract class restore_check {
             if (!$hasrolldatescap) {
                 $startdatesetting = $restore_controller->get_plan()->get_setting('course_startdate');
                 if ($startdatesetting) {
+                    $startdatesetting->set_status(base_setting::NOT_LOCKED); // Permission lock overrides config lock.
+                    $startdatesetting->set_value(false);
                     $startdatesetting->set_status(base_setting::LOCKED_BY_PERMISSION);
                 }
             }
@@ -185,6 +187,8 @@ abstract class restore_check {
             $haschangefullnamecap = has_capability('moodle/course:changefullname', $coursectx, $userid);
             if (!$haschangefullnamecap) {
                 $fullnamesetting = $restore_controller->get_plan()->get_setting('course_fullname');
+                $fullnamesetting->set_status(base_setting::NOT_LOCKED); // Permission lock overrides config lock.
+                $fullnamesetting->set_value(false);
                 $fullnamesetting->set_status(base_setting::LOCKED_BY_PERMISSION);
             }
 
@@ -193,6 +197,8 @@ abstract class restore_check {
             $haschangeshortnamecap = has_capability('moodle/course:changeshortname', $coursectx, $userid);
             if (!$haschangeshortnamecap) {
                 $shortnamesetting = $restore_controller->get_plan()->get_setting('course_shortname');
+                $shortnamesetting->set_status(base_setting::NOT_LOCKED); // Permission lock overrides config lock.
+                $shortnamesetting->set_value(false);
                 $shortnamesetting->set_status(base_setting::LOCKED_BY_PERMISSION);
             }
 
@@ -201,6 +207,8 @@ abstract class restore_check {
             $hasupdatecap = has_capability('moodle/course:update', $coursectx, $userid);
             if (!$hasupdatecap) {
                 $overwritesetting = $restore_controller->get_plan()->get_setting('overwrite_conf');
+                $overwritesetting->set_status(base_setting::NOT_LOCKED); // Permission lock overrides config lock.
+                $overwritesetting->set_value(false);
                 $overwritesetting->set_status(base_setting::LOCKED_BY_PERMISSION);
             }
 
