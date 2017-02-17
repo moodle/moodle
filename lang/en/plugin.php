@@ -54,6 +54,7 @@ $string['err_response_http_code'] = 'Unable to fetch available updates data - un
 $string['filterall'] = 'Show all';
 $string['filtercontribonly'] = 'Show additional plugins only';
 $string['filterupdatesonly'] = 'Show updateable only';
+$string['isenabled'] = 'Enabled?';
 $string['misdepinfoplugin'] = 'Plugin info';
 $string['misdepinfoversion'] = 'Version info';
 $string['misdepsavail'] = 'Available missing dependencies';

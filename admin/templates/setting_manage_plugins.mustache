@@ -1,0 +1,60 @@
+<table class="admintable generaltable">
+    <thead>
+        <tr>
+            <th class="header">{{#str}}name, moodle{{/str}}</th>
+            {{#infocolumnname}}
+            <th class="header">{{infocolumnname}}</th>
+            {{/infocolumnname}}
+            <th class="header">{{#str}}order, moodle{{/str}}</th>
+            <th class="header">{{#str}}isenabled, plugin{{/str}}</th>
+            <th class="header">{{#str}}settings, moodle{{/str}}</th>
+            <th class="header">{{#str}}uninstall, plugin{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#plugins}}
+        <tr>
+            <td>{{plugin}}</td>
+            {{#infocolumnname}}
+            <td>
+                {{info}}
+            </td>
+            {{/infocolumnname}}
+            <td>
+                {{#moveuplink}}
+                    <a href="{{{moveuplink}}}">
+                        {{#moveupicon}}{{>core/pix_icon}}{{/moveupicon}}
+                    </a>
+                {{/moveuplink}}
+                {{^moveuplink}}
+                    {{#spacericon}}{{>core/pix_icon}}{{/spacericon}}
+                {{/moveuplink}}
+
+                {{#movedownlink}}
+                    <a href="{{{movedownlink}}}">
+                        {{#movedownicon}}{{>core/pix_icon}}{{/movedownicon}}
+                    </a>
+                {{/movedownlink}}
+                {{^movedownlink}}
+                    {{#spacericon}}{{>core/pix_icon}}{{/spacericon}}
+                {{/movedownlink}}
+            </td>
+            <td>
+                <a href="{{{togglelink}}}">
+                    {{#toggleicon}}{{>core/pix_icon}}{{/toggleicon}}
+                </a>
+            </td>
+            <td>
+                {{#settingslink}}
+                    <a href="{{{settingslink}}}">{{#str}}settings,plugin{{/str}}</a>
+                {{/settingslink}}
+            </td>
+            <td>
+                {{#uninstalllink}}
+                    <a href="{{{uninstalllink}}}">{{#str}}uninstall,plugin{{/str}}</a>
+                {{/uninstalllink}}
+            </td>
+        </tr>
+        {{/plugins}}
+    </tbody>
+</table>
