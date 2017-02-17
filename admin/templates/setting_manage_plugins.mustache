@@ -20,28 +20,33 @@
                 {{info}}
             </td>
             {{/infocolumnname}}
-            <td>
+            <td class="text-nowrap">
                 {{#moveuplink}}
                     <a href="{{{moveuplink}}}">
-                        {{#moveupicon}}{{>core/pix_icon}}{{/moveupicon}}
+                        {{#pix}}t/up, moodle, {{#str}} up, moodle {{/str}}{{/pix}}
                     </a>
                 {{/moveuplink}}
                 {{^moveuplink}}
-                    {{#spacericon}}{{>core/pix_icon}}{{/spacericon}}
+                    {{#pix}}spacer, moodle{{/pix}}
                 {{/moveuplink}}
 
                 {{#movedownlink}}
                     <a href="{{{movedownlink}}}">
-                        {{#movedownicon}}{{>core/pix_icon}}{{/movedownicon}}
+                        {{#pix}}t/down, moodle, {{#str}} down, moodle {{/str}}{{/pix}}
                     </a>
                 {{/movedownlink}}
                 {{^movedownlink}}
-                    {{#spacericon}}{{>core/pix_icon}}{{/spacericon}}
+                    {{#pix}}spacer, moodle{{/pix}}
                 {{/movedownlink}}
             </td>
             <td>
                 <a href="{{{togglelink}}}">
-                    {{#toggleicon}}{{>core/pix_icon}}{{/toggleicon}}
+                    {{#toggletarget}}
+                    {{#pix}}i/show, moodle, {{#str}} enable, moodle {{/str}}{{/pix}}
+                    {{/toggletarget}}
+                    {{^toggletarget}}
+                    {{#pix}}i/hide, moodle, {{#str}} disable, moodle {{/str}}{{/pix}}
+                    {{/toggletarget}}
                 </a>
             </td>
             <td>

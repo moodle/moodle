@@ -7399,6 +7399,7 @@ abstract class admin_setting_manage_plugins extends admin_setting {
 
     /**
      * Get the admin settings section name (just a unique string)
+     *
      * @return string
      */
     public function get_section_name() {
@@ -7407,18 +7408,21 @@ abstract class admin_setting_manage_plugins extends admin_setting {
 
     /**
      * Get the admin settings section title (use get_string).
+     *
      * @return string
      */
     abstract public function get_section_title();
 
     /**
      * Get the type of plugin to manage.
+     *
      * @return string
      */
     abstract public function get_plugin_type();
 
     /**
      * Get the name of the second column.
+     *
      * @return string
      */
     public function get_info_column_name() {
@@ -7514,19 +7518,12 @@ abstract class admin_setting_manage_plugins extends admin_setting {
     public function output_html($data, $query = '') {
         global $CFG, $OUTPUT, $DB, $PAGE;
 
-        $spacer = new pix_icon('spacer', '', 'moodle');
-        $moveup = new pix_icon('t/up', get_string('up'), 'moodle');
-        $movedown = new pix_icon('t/down', get_string('down'), 'moodle');
-
         $context = (object) [
             'manageurl' => new moodle_url($this->get_manage_url(), [
                     'type' => $this->get_plugin_type(),
                     'sesskey' => sesskey(),
                 ]),
             'infocolumnname' => $this->get_info_column_name(),
-            'spacericon' => $spacer->export_for_template($OUTPUT),
-            'moveupicon' => $moveup->export_for_template($OUTPUT),
-            'movedownicon' => $movedown->export_for_template($OUTPUT),
             'plugins' => [],
         ];
 
@@ -7541,7 +7538,6 @@ abstract class admin_setting_manage_plugins extends admin_setting {
                 'plugin' => $plugin->displayname,
                 'enabled' => $plugin->is_enabled(),
                 'togglelink' => '',
-                'toggleicon' => '',
                 'moveuplink' => '',
                 'movedownlink' => '',
                 'settingslink' => $plugin->get_settings_url(),
@@ -7552,7 +7548,7 @@ abstract class admin_setting_manage_plugins extends admin_setting {
             // Enable/Disable link.
             $togglelink = new moodle_url($pluginlink);
             if ($plugin->is_enabled()) {
-                $toggleicon = new pix_icon('i/hide', get_string('disable', 'moodle'), 'moodle');
+                $toggletarget = false;
                 $togglelink->param('action', 'disable');
 
                 if (count($context->plugins)) {
@@ -7567,11 +7563,11 @@ abstract class admin_setting_manage_plugins extends admin_setting {
 
                 $pluginkey->info = $this->get_info_column($plugin);
             } else {
-                $toggleicon = new pix_icon('i/show', get_string('enable', 'moodle'), 'moodle');
+                $toggletarget = true;
                 $togglelink->param('action', 'enable');
             }
 
-            $pluginkey->toggleicon = $toggleicon->export_for_template($OUTPUT);
+            $pluginkey->toggletarget = $toggletarget;
             $pluginkey->togglelink = $togglelink;
 
             $frankenstyle = $plugin->type . '_' . $plugin->name;
@@ -7590,6 +7586,31 @@ abstract class admin_setting_manage_plugins extends admin_setting {
 
         $str = $OUTPUT->render_from_template('core_admin/setting_manage_plugins', $context);
         return highlight($query, $str);
+    }
+}
+
+/**
+ * Generic class for managing plugins in a table that allows re-ordering and enable/disable of each plugin.
+ * Requires a get_rank method on the plugininfo class for sorting.
+ *
+ * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
+* @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_manage_fileconverter_plugins extends admin_setting_manage_plugins {
+    public function get_section_title() {
+        return get_string('type_fileconverter_plural', 'plugin');
+    }
+
+    public function get_plugin_type() {
+        return 'fileconverter';
+    }
+
+    public function get_info_column_name() {
+        return get_string('supportedconversions', 'plugin');
+    }
+
+    public function get_info_column($plugininfo) {
+        return $plugininfo->get_supported_conversions();
     }
 }
 

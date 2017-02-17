@@ -338,4 +338,13 @@ $tasks = array(
         'dayofweek' => '*',
         'month' => '*'
     ),
+    array(
+        'classname' => 'core_files\task\conversion_cleanup_task',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '2',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
 );
