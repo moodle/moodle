@@ -33,7 +33,7 @@ $string['displayselectexplain'] = 'Select display type.';
 $string['legacyfiles'] = 'Migration of old course file';
 $string['legacyfilesactive'] = 'Active';
 $string['legacyfilesdone'] = 'Finished';
-$string['modulename'] = 'Page';
+$string['modulename'] = 'Single-Page Site';
 $string['modulename_help'] = 'The page module enables a teacher to create a web page resource using the text editor. A page can display text, images, sound, video, web links and embedded code, such as Google maps.
 
 Advantages of using the page module rather than the file module include the resource being more accessible (for example to users of mobile devices) and easier to update.

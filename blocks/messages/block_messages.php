@@ -54,7 +54,7 @@ class block_messages extends block_base {
 
         $link = '/message/index.php';
         $action = null; //this was using popup_action() but popping up a fullsize window seems wrong
-        $this->content->footer = $OUTPUT->action_link($link, get_string('messages', 'message'), $action);
++        $this->content->footer = '<br><div class="message"><a href="/message/"><i class="fa fa-commenting" aria-hidden="true"></i> New message</a></div><div class="message"><a href="/message/"><i class="fa fa-comments-o" aria-hidden="true"></i> View all my messages</a></div>';
 
         $ufields = user_picture::fields('u', array('lastaccess'));
         $users = $DB->get_records_sql("SELECT $ufields, COUNT(m.useridfrom) AS count
@@ -84,7 +84,7 @@ class block_messages extends block_base {
             $this->content->text .= '</ul>';
         } else {
             $this->content->text .= '<div class="info">';
-            $this->content->text .= get_string('nomessages', 'message');
++           $this->content->text .= '<br><div class="post" style="text-align:center">Hmm. You have zero new messages.</div>';
             $this->content->text .= '</div>';
         }
 

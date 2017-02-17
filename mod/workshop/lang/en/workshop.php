@@ -184,7 +184,7 @@ $string['latesubmissions_desc'] = 'Allow submissions after the deadline';
 $string['latesubmissions_help'] = 'If enabled, an author may submit their work after the submissions deadline or during the assessment phase. Late submissions cannot be edited though.';
 $string['latesubmissionsallowed'] = 'Late submissions are allowed';
 $string['maxbytes'] = 'Maximum submission attachment size';
-$string['modulename'] = 'Workshop';
+$string['modulename'] = 'Peer Correction Workshop';
 $string['modulename_help'] = 'The workshop activity module enables the collection, review and peer assessment of students\' work.
 
 Students can submit any digital content (files), such as word-processed documents or spreadsheets and can also type text directly into a field using the text editor.
@@ -227,7 +227,7 @@ $string['phasesoverlap'] = 'The submission phase and the assessment phase can no
 $string['phasesetup'] = 'Setup phase';
 $string['phasesubmission'] = 'Submission phase';
 $string['pluginadministration'] = 'Workshop administration';
-$string['pluginname'] = 'Workshop';
+$string['pluginname'] = 'Peer Correction Workshop';
 $string['prepareexamples'] = 'Prepare example submissions';
 $string['previewassessmentform'] = 'Preview';
 $string['publishedsubmissions'] = 'Published submissions';
