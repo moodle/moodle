@@ -183,7 +183,6 @@ $events = calendar_get_events($timestart, $timeend, $users, $groups, array_keys(
 
 $ical = new iCalendar;
 $ical->add_property('method', 'PUBLISH');
-$PAGE->set_context(context_user::instance($userid));
 foreach($events as $event) {
    if (!empty($event->modulename)) {
         $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
@@ -196,12 +195,17 @@ foreach($events as $event) {
 
     $me = new calendar_event($event); // To use moodle calendar event services.
     $ev = new iCalendar_event; // To export in ical format.
-
     $ev->add_property('uid', $event->id.'@'.$hostaddress);
 
-    $ev->add_property('summary', format_string($event->name, true, array('context' => $me->context)));
-    $descr = format_string($event->description, true, array('context' => $me->context));
-    $ev->add_property('description', clean_param($descr, PARAM_NOTAGS));
+    // Set iCal event summary from event name.
+    $ev->add_property('summary', format_string($event->name, true, ['context' => $me->context]));
+
+    // Format the description text.
+    $description = format_text($me->description, $me->format, ['context' => $me->context]);
+    // Then convert it to plain text, since it's the only format allowed for the event description property.
+    // We use html_to_text in order to convert <br> and <p> tags to new line characters for descriptions in HTML format.
+    $description = html_to_text($description, 0);
+    $ev->add_property('description', $description);
 
     $ev->add_property('class', 'PUBLIC'); // PUBLIC / PRIVATE / CONFIDENTIAL
     $ev->add_property('last-modified', Bennu::timestamp_to_datetime($event->timemodified));
