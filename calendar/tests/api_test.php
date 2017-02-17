@@ -24,6 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/helpers.php');
+
+use \core_calendar\api;
+
 /**
  * Class contaning unit tests for the calendar API.
  *
@@ -385,5 +389,208 @@ class core_calendar_api_testcase extends advanced_testcase {
         \core_calendar\api::import_icalendar_events($ical, $sub->courseid, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
+    }
+
+    /**
+     * Requesting calendar events from a given time should return all events with a sort
+     * time at or after the requested time. All events prior to that time should not
+     * be return.
+     *
+     * If there are no events on or after the given time then an empty result set should
+     * be returned.
+     */
+    function test_get_calendar_action_events_by_timesort_after_time() {
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        $this->resetAfterTest(true);
+        $this->setUser($user);
+
+        $params = [
+            'type' => CALENDAR_EVENT_TYPE_ACTION,
+            'modulename' => 'assign',
+            'instance' => $moduleinstance->id,
+            'userid' => $user->id,
+            'eventtype' => 'user',
+            'repeats' => 0,
+            'timestart' => 1,
+        ];
+
+        $event1 = create_event(array_merge($params, ['name' => 'Event 1', 'timesort' => 1]));
+        $event2 = create_event(array_merge($params, ['name' => 'Event 2', 'timesort' => 2]));
+        $event3 = create_event(array_merge($params, ['name' => 'Event 3', 'timesort' => 3]));
+        $event4 = create_event(array_merge($params, ['name' => 'Event 4', 'timesort' => 4]));
+        $event5 = create_event(array_merge($params, ['name' => 'Event 5', 'timesort' => 5]));
+        $event6 = create_event(array_merge($params, ['name' => 'Event 6', 'timesort' => 6]));
+        $event7 = create_event(array_merge($params, ['name' => 'Event 7', 'timesort' => 7]));
+        $event8 = create_event(array_merge($params, ['name' => 'Event 8', 'timesort' => 8]));
+
+        $result = api::get_action_events_by_timesort(5);
+
+        $this->assertCount(4, $result);
+        $this->assertEquals('Event 5', $result[0]->name);
+        $this->assertEquals('Event 6', $result[1]->name);
+        $this->assertEquals('Event 7', $result[2]->name);
+        $this->assertEquals('Event 8', $result[3]->name);
+
+        $result = api::get_action_events_by_timesort(9);
+
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * Requesting calendar events before a given time should return all events with a sort
+     * time at or before the requested time (inclusive). All events after that time
+     * should not be returned.
+     *
+     * If there are no events before the given time then an empty result set should be
+     * returned.
+     */
+    function test_get_calendar_action_events_by_timesort_before_time() {
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        $this->resetAfterTest(true);
+        $this->setUser($user);
+
+        $params = [
+            'type' => CALENDAR_EVENT_TYPE_ACTION,
+            'modulename' => 'assign',
+            'instance' => $moduleinstance->id,
+            'userid' => $user->id,
+            'eventtype' => 'user',
+            'repeats' => 0,
+            'timestart' => 1,
+        ];
+
+        $event1 = create_event(array_merge($params, ['name' => 'Event 1', 'timesort' => 2]));
+        $event2 = create_event(array_merge($params, ['name' => 'Event 2', 'timesort' => 3]));
+        $event3 = create_event(array_merge($params, ['name' => 'Event 3', 'timesort' => 4]));
+        $event4 = create_event(array_merge($params, ['name' => 'Event 4', 'timesort' => 5]));
+        $event5 = create_event(array_merge($params, ['name' => 'Event 5', 'timesort' => 6]));
+        $event6 = create_event(array_merge($params, ['name' => 'Event 6', 'timesort' => 7]));
+        $event7 = create_event(array_merge($params, ['name' => 'Event 7', 'timesort' => 8]));
+        $event8 = create_event(array_merge($params, ['name' => 'Event 8', 'timesort' => 9]));
+
+        $result = api::get_action_events_by_timesort(null, 5);
+
+        $this->assertCount(4, $result);
+        $this->assertEquals('Event 1', $result[0]->name);
+        $this->assertEquals('Event 2', $result[1]->name);
+        $this->assertEquals('Event 3', $result[2]->name);
+        $this->assertEquals('Event 4', $result[3]->name);
+
+        $result = api::get_action_events_by_timesort(null, 1);
+
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * Requesting calendar events within a given time range should return all events with
+     * a sort time between the lower and upper time bound (inclusive).
+     *
+     * If there are no events in the given time range then an empty result set should be
+     * returned.
+     */
+    function test_get_calendar_action_events_by_timesort_time_range() {
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        $this->resetAfterTest(true);
+        $this->setUser($user);
+
+        $params = [
+            'type' => CALENDAR_EVENT_TYPE_ACTION,
+            'modulename' => 'assign',
+            'instance' => $moduleinstance->id,
+            'userid' => $user->id,
+            'eventtype' => 'user',
+            'repeats' => 0,
+            'timestart' => 1,
+        ];
+
+        $event1 = create_event(array_merge($params, ['name' => 'Event 1', 'timesort' => 1]));
+        $event2 = create_event(array_merge($params, ['name' => 'Event 2', 'timesort' => 2]));
+        $event3 = create_event(array_merge($params, ['name' => 'Event 3', 'timesort' => 3]));
+        $event4 = create_event(array_merge($params, ['name' => 'Event 4', 'timesort' => 4]));
+        $event5 = create_event(array_merge($params, ['name' => 'Event 5', 'timesort' => 5]));
+        $event6 = create_event(array_merge($params, ['name' => 'Event 6', 'timesort' => 6]));
+        $event7 = create_event(array_merge($params, ['name' => 'Event 7', 'timesort' => 7]));
+        $event8 = create_event(array_merge($params, ['name' => 'Event 8', 'timesort' => 8]));
+
+        $result = api::get_action_events_by_timesort(3, 6);
+
+        $this->assertCount(4, $result);
+        $this->assertEquals('Event 3', $result[0]->name);
+        $this->assertEquals('Event 4', $result[1]->name);
+        $this->assertEquals('Event 5', $result[2]->name);
+        $this->assertEquals('Event 6', $result[3]->name);
+
+        $result = api::get_action_events_by_timesort(10, 15);
+
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * Requesting calendar events within a given time range and a limit and offset should return
+     * the number of events up to the given limit value that have a sort time between the lower
+     * and uppper time bound (inclusive) where the result set is shifted by the offset value.
+     *
+     * If there are no events in the given time range then an empty result set should be
+     * returned.
+     */
+    function test_get_calendar_action_events_by_timesort_time_limit_offset() {
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        $this->resetAfterTest(true);
+        $this->setUser($user);
+
+        $params = [
+            'type' => CALENDAR_EVENT_TYPE_ACTION,
+            'modulename' => 'assign',
+            'instance' => $moduleinstance->id,
+            'userid' => $user->id,
+            'eventtype' => 'user',
+            'repeats' => 0,
+            'timestart' => 1,
+        ];
+
+        $event1 = create_event(array_merge($params, ['name' => 'Event 1', 'timesort' => 1]));
+        $event2 = create_event(array_merge($params, ['name' => 'Event 2', 'timesort' => 2]));
+        $event3 = create_event(array_merge($params, ['name' => 'Event 3', 'timesort' => 3]));
+        $event4 = create_event(array_merge($params, ['name' => 'Event 4', 'timesort' => 4]));
+        $event5 = create_event(array_merge($params, ['name' => 'Event 5', 'timesort' => 5]));
+        $event6 = create_event(array_merge($params, ['name' => 'Event 6', 'timesort' => 6]));
+        $event7 = create_event(array_merge($params, ['name' => 'Event 7', 'timesort' => 7]));
+        $event8 = create_event(array_merge($params, ['name' => 'Event 8', 'timesort' => 8]));
+
+        $result = api::get_action_events_by_timesort(2, 7, $event3->id, 2);
+
+        $this->assertCount(2, $result);
+        $this->assertEquals('Event 4', $result[0]->name);
+        $this->assertEquals('Event 5', $result[1]->name);
+
+        $result = api::get_action_events_by_timesort(2, 7, $event5->id, 2);
+
+        $this->assertCount(2, $result);
+        $this->assertEquals('Event 6', $result[0]->name);
+        $this->assertEquals('Event 7', $result[1]->name);
+
+        $result = api::get_action_events_by_timesort(2, 7, $event7->id, 2);
+
+        $this->assertEmpty($result);
     }
 }
