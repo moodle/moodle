@@ -25,6 +25,11 @@ information provided here is intended especially for developers.
   - file_storage::try_content_recovery  - See MDL-46375 for more information
   - file_storage::content_exists        - See MDL-46375 for more information
   - file_storage::deleted_file_cleanup  - See MDL-46375 for more information
+  - file_storage::get_converted_document
+  - file_storage::is_format_supported_by_unoconv
+  - file_storage::can_convert_documents
+  - file_storage::send_test_pdf
+  - file_storage::test_unoconv_path
 * Following behat steps have been removed from core:
     - I click on "<element_string>" "<selector_string>" in the "<row_text_string>" table row
     - I go to notifications page

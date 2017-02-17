@@ -824,8 +824,6 @@ $string['pathtopgdumpinvalid'] = 'Invalid path to pg_dump - either wrong path or
 $string['pathtopsql'] = 'Path to psql';
 $string['pathtopsqldesc'] = 'This is only necessary to enter if you have more than one psql on your system (for example if you have more than one version of postgresql installed)';
 $string['pathtopsqlinvalid'] = 'Invalid path to psql - either wrong path or not executable';
-$string['pathtounoconv'] = 'Path to unoconv document converter';
-$string['pathtounoconv_help'] = 'Path to unoconv document converter. This is an executable that is capable of converting between document formats supported by LibreOffice. This is optional, but if specified, Moodle will use it to automatically convert between document formats. This is used to support a wider range of input files for the assignment annotate PDF feature.';
 $string['pcreunicodewarning'] = 'It is strongly recommended to use PCRE PHP extension that is compatible with Unicode characters.';
 $string['perfdebug'] = 'Performance info';
 $string['performance'] = 'Performance';
@@ -1132,7 +1130,6 @@ $string['unbookmarkthispage'] = 'Unbookmark this page';
 $string['unicoderequired'] = 'It is required that you store all your data in Unicode format (UTF-8). New installations must be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
 $string['uninstallplugin'] = 'Uninstall';
 $string['unlockaccount'] = 'Unlock account';
-$string['unoconvwarning'] = 'The version of unoconv you have installed is not supported. Moodle\'s assignment grading feature requires version 0.7 or higher.';
 $string['unsettheme'] = 'Unset theme';
 $string['unsupported'] = 'Unsupported';
 $string['unsupporteddbfileformat'] = 'Your database has tables using Antelope as the file format. Full UTF-8 support in MySQL and MariaDB requires the Barracuda file format. Please convert the tables to the Barracuda file format. See the documentation <a href="https://docs.moodle.org/en/cli">Administration via command line</a> for details of a tool for converting InnoDB tables to Barracuda.';

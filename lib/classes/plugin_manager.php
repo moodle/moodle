@@ -1769,6 +1769,7 @@ class core_plugin_manager {
             ),
 
             'fileconverter' => array(
+                'unoconv'
             ),
 
             'editor' => array(
