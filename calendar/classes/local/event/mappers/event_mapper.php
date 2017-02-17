@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use core_calendar\event;
 use core_calendar\local\interfaces\event_factory_interface;
 use core_calendar\local\interfaces\event_interface;
+use core_calendar\local\interfaces\action_event_interface;
 use core_calendar\local\interfaces\event_mapper_interface;
 
 /**
@@ -75,12 +76,13 @@ class event_mapper implements event_mapper_interface {
                 $coalesce('timemodified'),
                 $coalesce('timesort'),
                 $coalesce('visible'),
-                $coalesce('subscriptioni')
+                $coalesce('subscription')
             ]
         );
     }
 
     public function from_event_to_legacy_event(event_interface $event) {
+        $action = ($event instanceof action_event_interface) ? $event->get_action() : null;
         $timeduration = $event->get_times()->get_end_time()->getTimestamp() - $event->get_times()->get_start_time()->getTimestamp();
 
         return new event((object) [
@@ -100,7 +102,10 @@ class event_mapper implements event_mapper_interface {
             'timesort'       => $event->get_times()->get_sort_time()->getTimestamp(),
             'visible'        => $event->is_visible() ? 1 : 0,
             'timemodified'   => $event->get_times()->get_modified_time()->getTimestamp(),
-            'subscriptionid' => $event->get_subscription() ? $event->get_subscription()->get_id() : null
+            'subscriptionid' => $event->get_subscription() ? $event->get_subscription()->get_id() : null,
+            'actionname'     => $action ? $action->get_name() : null,
+            'actionurl'      => $action ? $action->get_url() : null,
+            'actionnum'      => $action ? $action->get_item_count() : null
         ]);
     }
 }

@@ -26,8 +26,10 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_calendar\event;
 use core_calendar\local\event\mappers\event_mapper;
+use core_calendar\local\event\value_objects\action;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
+use core_calendar\local\interfaces\action_event_interface;
 use core_calendar\local\interfaces\event_collection_interface;
 use core_calendar\local\interfaces\event_factory_interface;
 use core_calendar\local\interfaces\event_interface;
@@ -69,6 +71,23 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
         $this->assertInstanceOf(event::class, $legacyevent);
     }
 
+    public function test_from_action_event_to_legacy_event() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $legacyevent = $this->create_event(['modname' => 'assign', 'instance' => 1]);
+        $event = new event_mapper_test_action_event(
+            new event_mapper_test_event($legacyevent)
+        );
+        $mapper = new event_mapper(
+            new event_mapper_test_event_factory()
+        );
+        $legacyevent = $mapper->from_event_to_legacy_event($event);
+        $this->assertInstanceOf(event::class, $legacyevent);
+        $this->assertEquals($legacyevent->actionname, 'test action');
+        $this->assertInstanceOf(\moodle_url::class, $legacyevent->actionurl);
+        $this->assertEquals($legacyevent->actionnum, 1729);
+    }
+
     /**
      * Helper function to create calendar events using the old code.
      *
@@ -103,6 +122,79 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
 class event_mapper_test_event_factory implements event_factory_interface {
     public function create_instance(\stdClass $dbrow) {
         return new event_mapper_test_event();
+    }
+}
+
+/**
+ * A test action event
+ *
+ * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class event_mapper_test_action_event implements action_event_interface {
+    /**
+     * @var event_interface $event The event to delegate to.
+     */
+    protected $event;
+
+    public function __construct(event_interface $event) {
+        $this->event = $event;
+    }
+
+    public function get_id() {
+        return $this->event->get_id();
+    }
+
+    public function get_name() {
+        return $this->event->get_name();
+    }
+
+    public function get_description() {
+        return $this->event->get_description();
+    }
+
+    public function get_course() {
+        return $this->event->get_course();
+    }
+
+    public function get_course_module() {
+        return $this->event->get_course_module();
+    }
+
+    public function get_group() {
+        return $this->event->get_group();
+    }
+
+    public function get_user() {
+        return $this->event->get_user();
+    }
+
+    public function get_type() {
+        return $this->event->get_type();
+    }
+
+    public function get_times() {
+        return $this->event->get_times();
+    }
+
+    public function get_repeats() {
+        return $this->event->get_repeats();
+    }
+
+    public function get_subscription() {
+        return $this->event->get_subscription();
+    }
+
+    public function is_visible() {
+        return $this->event->is_visible();
+    }
+
+    public function get_action() {
+        return new action(
+            'test action',
+            new \moodle_url('http://example.com'),
+            1729
+        );
     }
 }
 
