@@ -30,6 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/calendar/lib.php');
 
+use core_calendar\local\api as local_api;
+
 /**
  * Class containing the calendar API.
  *
@@ -2331,7 +2333,7 @@ class api {
      * @param int|null $timesortto The end timesort value (inclusive)
      * @param int|null $aftereventid Only return events after this one
      * @param int $limitnum Limit results to this amount (between 1 and 50)
-     * @return array A list of action_event objects
+     * @return array A list of event type objects
      */
     public static function get_action_events_by_timesort(
         $timesortfrom = null,
@@ -2339,27 +2341,11 @@ class api {
         $aftereventid = null,
         $limitnum = 20
     ) {
-        global $USER;
-
-        if (is_null($timesortfrom) && is_null($timesortto)) {
-            throw new \moodle_exception("Must provide a timesort to and/or from value");
-        }
-
-        if ($limitnum < 1 || $limitnum > 50) {
-            throw new \moodle_exception("Limit must be between 1 and 50 (inclusive)");
-        }
-
-        $vault = \core_calendar\local\event\core_container::get_event_vault();
         $mapper = \core_calendar\local\event\core_container::get_event_mapper();
+        $events = local_api::get_action_events_by_timesort($timesortfrom, $timesortto, $aftereventid, $limitnum);
 
-        $afterevent = null;
-        if ($aftereventid && $event = $vault->get_event_by_id($aftereventid)) {
-            $afterevent = $event;
-        }
-
-        // Don't expose the new classes outside this module.
         return array_map(function($event) use ($mapper) {
-           return $mapper->from_event_to_legacy_event($event);
-        }, $vault->get_action_events_by_timesort($USER, $timesortfrom, $timesortto, $afterevent, $limitnum));
+            return $mapper->from_event_to_legacy_event($event);
+        }, $events);
     }
 }
