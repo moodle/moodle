@@ -51,20 +51,28 @@ class action implements action_interface {
     protected $itemcount;
 
     /**
+     * @var bool $actionable Whether or not the event is currently actionable.
+     */
+    protected $actionable;
+
+    /**
      * Constructor.
      *
-     * @param string      $name      The action's name.
-     * @param \moodle_url $url       The action's URL.
-     * @param int         $itemcount How many items there are to action.
+     * @param string      $name       The action's name.
+     * @param \moodle_url $url        The action's URL.
+     * @param int         $itemcount  How many items there are to action.
+     * @param bool        $actionable Whether or not the event is currently actionable.
      */
     public function __construct(
         $name,
         \moodle_url $url,
-        $itemcount = null
+        $itemcount,
+        $actionable
     ) {
         $this->name = $name;
         $this->url = $url;
         $this->itemcount = $itemcount;
+        $this->actionable = $actionable;
     }
 
     public function get_name() {
@@ -77,5 +85,9 @@ class action implements action_interface {
 
     public function get_item_count() {
         return $this->itemcount;
+    }
+
+    public function is_actionable() {
+        return $this->actionable;
     }
 }

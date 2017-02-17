@@ -86,6 +86,7 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
         $this->assertEquals($legacyevent->actionname, 'test action');
         $this->assertInstanceOf(\moodle_url::class, $legacyevent->actionurl);
         $this->assertEquals($legacyevent->actionnum, 1729);
+        $this->assertEquals($legacyevent->actionactionable, $event->get_action()->is_actionable());
     }
 
     /**
@@ -193,7 +194,8 @@ class event_mapper_test_action_event implements action_event_interface {
         return new action(
             'test action',
             new \moodle_url('http://example.com'),
-            1729
+            1729,
+            true
         );
     }
 }

@@ -43,11 +43,16 @@ class core_calendar_action_testcase extends advanced_testcase {
         $action = new action(
             $constructorparams['name'],
             $constructorparams['url'],
-            $constructorparams['item_count']
+            $constructorparams['item_count'],
+            $constructorparams['actionable']
         );
 
         foreach ($constructorparams as $name => $value) {
-            $this->assertEquals($action->{'get_' . $name}(), $value);
+            if ($name == 'actionable') {
+                $this->assertEquals($action->is_actionable(), $value);
+            } else {
+                $this->assertEquals($action->{'get_' . $name}(), $value);
+            }
         }
     }
 
@@ -60,14 +65,16 @@ class core_calendar_action_testcase extends advanced_testcase {
                 'constructorparams' => [
                     'name' => 'Hello',
                     'url' => new moodle_url('http://example.com'),
-                    'item_count' => 1
+                    'item_count' => 1,
+                    'actionable' => true
                 ]
             ],
             'Dataset 2' => [
                 'constructorparams' => [
                     'name' => 'Goodbye',
                     'url' => new moodle_url('http://example.com'),
-                    'item_count' => 2
+                    'item_count' => 2,
+                    'actionable' => false
                 ]
             ]
         ];

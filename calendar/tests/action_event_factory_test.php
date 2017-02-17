@@ -46,7 +46,8 @@ class core_calendar_action_event_factory_testcase extends advanced_testcase {
             new action(
                 'Test',
                 new \moodle_url('http://example.com'),
-                1729
+                1729,
+                true
             )
         );
 

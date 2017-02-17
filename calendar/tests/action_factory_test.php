@@ -42,7 +42,8 @@ class core_calendar_action_factory_test extends advanced_testcase {
         $instance = $factory->create_instance(
             'test',
             new \moodle_url('http://example.com'),
-            1729
+            1729,
+            true
         );
 
         $this->assertInstanceOf(action_interface::class, $instance);

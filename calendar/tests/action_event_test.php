@@ -68,7 +68,8 @@ class core_calendar_action_event_testcase extends advanced_testcase {
                     'action' => new action(
                         'action 1',
                         new moodle_url('http://example.com'),
-                        2
+                        2,
+                        true
                     )
                 ]
             ],
@@ -78,7 +79,8 @@ class core_calendar_action_event_testcase extends advanced_testcase {
                     'action' => new action(
                         'action 2',
                         new moodle_url('http://example.com'),
-                        5
+                        5,
+                        false
                     )
                 ]
             ],

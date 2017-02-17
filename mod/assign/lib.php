@@ -1715,6 +1715,7 @@ function mod_assign_core_calendar_provide_event_action(
     return $factory->create_instance(
         'chef',
         new \moodle_url('http://example.com'),
-        3
+        3,
+        true
     );
 }

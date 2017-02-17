@@ -53,4 +53,11 @@ interface action_interface {
      * @return int
      */
     public function get_item_count();
+
+    /**
+     * Get the actions actionability.
+     *
+     * @return bool
+     */
+    public function is_actionable();
 }

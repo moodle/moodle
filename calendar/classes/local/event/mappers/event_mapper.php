@@ -86,26 +86,27 @@ class event_mapper implements event_mapper_interface {
         $timeduration = $event->get_times()->get_end_time()->getTimestamp() - $event->get_times()->get_start_time()->getTimestamp();
 
         return new event((object) [
-            'id'             => $event->get_id(),
-            'name'           => $event->get_name(),
-            'description'    => $event->get_description()->get_value(),
-            'format'         => $event->get_description()->get_format(),
-            'courseid'       => $event->get_course() ? $event->get_course()->get_id() : null,
-            'groupid'        => $event->get_group() ? $event->get_group()->get_id() : null,
-            'userid'         => $event->get_user() ? $event->get_user()->get_id() : null,
-            'repeatid'       => $event->get_repeats()->get_id(),
-            'modulename'     => $event->get_course_module()->get('modname'),
-            'instance'       => $event->get_course_module()->get('instance'),
-            'eventtype'      => $event->get_type(),
-            'timestart'      => $event->get_times()->get_start_time()->getTimestamp(),
-            'timeduration'   => $timeduration,
-            'timesort'       => $event->get_times()->get_sort_time()->getTimestamp(),
-            'visible'        => $event->is_visible() ? 1 : 0,
-            'timemodified'   => $event->get_times()->get_modified_time()->getTimestamp(),
-            'subscriptionid' => $event->get_subscription() ? $event->get_subscription()->get_id() : null,
-            'actionname'     => $action ? $action->get_name() : null,
-            'actionurl'      => $action ? $action->get_url() : null,
-            'actionnum'      => $action ? $action->get_item_count() : null
+            'id'               => $event->get_id(),
+            'name'             => $event->get_name(),
+            'description'      => $event->get_description()->get_value(),
+            'format'           => $event->get_description()->get_format(),
+            'courseid'         => $event->get_course() ? $event->get_course()->get_id() : null,
+            'groupid'          => $event->get_group() ? $event->get_group()->get_id() : null,
+            'userid'           => $event->get_user() ? $event->get_user()->get_id() : null,
+            'repeatid'         => $event->get_repeats()->get_id(),
+            'modulename'       => $event->get_course_module()->get('modname'),
+            'instance'         => $event->get_course_module()->get('instance'),
+            'eventtype'        => $event->get_type(),
+            'timestart'        => $event->get_times()->get_start_time()->getTimestamp(),
+            'timeduration'     => $timeduration,
+            'timesort'         => $event->get_times()->get_sort_time()->getTimestamp(),
+            'visible'          => $event->is_visible() ? 1 : 0,
+            'timemodified'     => $event->get_times()->get_modified_time()->getTimestamp(),
+            'subscriptionid'   => $event->get_subscription() ? $event->get_subscription()->get_id() : null,
+            'actionname'       => $action ? $action->get_name() : null,
+            'actionurl'        => $action ? $action->get_url() : null,
+            'actionnum'        => $action ? $action->get_item_count() : null,
+            'actionactionable' => $action ? $action->is_actionable() : null
         ]);
     }
 }
