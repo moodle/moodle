@@ -66,8 +66,13 @@ class course_module_completion_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' updated the completion state for the course module with id '$this->contextinstanceid' " .
-            "for the user with id '$this->relateduserid'.";
+        if (isset($this->other['overrideby']) && $this->other['overrideby']) {
+            return "The user with id '{$this->userid}' overrode the completion state to '{$this->other['completionstate']}' ".
+                "for the course module with id '{$this->contextinstanceid}' for the user with id '{$this->relateduserid}'.";
+        } else {
+            return "The user with id '{$this->userid}' updated the completion state for the course module with id " .
+                "'{$this->contextinstanceid}' for the user with id '{$this->relateduserid}'.";
+        }
     }
 
     /**
