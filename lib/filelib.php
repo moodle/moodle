@@ -2238,8 +2238,13 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
             $options = new stdClass();
             $options->noclean = true;
             $options->nocache = true; // temporary workaround for MDL-5136
-            $text = is_object($path) ? $path->get_content() :
-                $pathisstring ? $path : implode('', file($path));
+            if (is_object($path)) {
+                $text = $path->get_content();
+            } else if ($pathisstring) {
+                $text = $path;
+            } else {
+                $text = implode('', file($path));
+            }
             $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
 
             readstring_accel($output, $mimetype, false);
@@ -2249,8 +2254,13 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
             $options = new stdClass();
             $options->newlines = false;
             $options->noclean = true;
-            $text = is_object($path) ? $path->get_content() :
-                htmlentities($pathisstring ? $path : implode('', file($path)), ENT_QUOTES, 'UTF-8');
+            if (is_object($path)) {
+                $text = $path->get_content();
+            } else if ($pathisstring) {
+                $text = htmlentities($path, ENT_QUOTES, 'UTF-8');
+            } else {
+                $text = htmlentities(implode('', file($path)), ENT_QUOTES, 'UTF-8');
+            }
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
 
             readstring_accel($output, $mimetype, false);
