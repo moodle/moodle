@@ -325,6 +325,37 @@ class core_persistent_testcase extends advanced_testcase {
         $this->assertTrue($p->is_valid()); // Should always be valid after an update.
     }
 
+    public function test_save() {
+        global $DB;
+        $p = new core_testable_persistent(0, (object) array('sortorder' => 123, 'idnumber' => 'abc'));
+        $this->assertFalse(isset($p->beforecreate));
+        $this->assertFalse(isset($p->aftercreate));
+        $this->assertFalse(isset($p->beforeupdate));
+        $this->assertFalse(isset($p->beforeupdate));
+        $p->save();
+        $record = $DB->get_record(core_testable_persistent::TABLE, array('id' => $p->get('id')), '*', MUST_EXIST);
+        $expected = $p->to_record();
+        $this->assertTrue(isset($p->beforecreate));
+        $this->assertTrue(isset($p->aftercreate));
+        $this->assertFalse(isset($p->beforeupdate));
+        $this->assertFalse(isset($p->beforeupdate));
+        $this->assertEquals($expected->sortorder, $record->sortorder);
+        $this->assertEquals($expected->idnumber, $record->idnumber);
+        $this->assertEquals($expected->id, $record->id);
+        $this->assertTrue($p->is_valid()); // Should always be valid after a save/create.
+
+        $p->set('idnumber', 'abcd');
+        $p->save();
+        $record = $DB->get_record(core_testable_persistent::TABLE, array('id' => $p->get('id')), '*', MUST_EXIST);
+        $expected = $p->to_record();
+        $this->assertTrue(isset($p->beforeupdate));
+        $this->assertTrue(isset($p->beforeupdate));
+        $this->assertEquals($expected->sortorder, $record->sortorder);
+        $this->assertEquals($expected->idnumber, $record->idnumber);
+        $this->assertEquals($expected->id, $record->id);
+        $this->assertTrue($p->is_valid()); // Should always be valid after a save/update.
+    }
+
     public function test_read() {
         $p = new core_testable_persistent(0, (object) array('sortorder' => 123, 'idnumber' => 'abc'));
         $p->create();
