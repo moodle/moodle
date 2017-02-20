@@ -34,10 +34,10 @@ interface event_vault_interface {
     /**
      * Retrieve an event for the given id.
      *
-     * @param in $id The event id
+     * @param int $id The event id
      * @return event_interface|false
      */
-    public function get_event_by_id(int $id);
+    public function get_event_by_id($id);
 
     /**
      * Retrieve an array of events for the given user and time constraints.
@@ -51,9 +51,9 @@ interface event_vault_interface {
      */
     public function get_action_events_by_timesort(
         \stdClass $user,
-        int $timesortfrom,
-        int $timesortto,
+        $timesortfrom,
+        $timesortto,
         event_interface $afterevent,
-        int $limitnum
+        $limitnum
     );
 }

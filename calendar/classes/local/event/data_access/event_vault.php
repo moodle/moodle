@@ -59,10 +59,10 @@ class event_vault implements event_vault_interface {
     /**
      * Retrieve an event for the given id.
      *
-     * @param in $id The event id
+     * @param int $id The event id
      * @return event_interface
      */
-    public function get_event_by_id(int $id) {
+    public function get_event_by_id($id) {
         global $DB;
 
         if ($record = $DB->get_record('event', ['id' => $id])) {
@@ -80,14 +80,16 @@ class event_vault implements event_vault_interface {
      * @param int|null             $timesortto   Events with timesort until this value (inclusive)
      * @param event_interface|null $afterevent   Only return events after this one
      * @param int                  $limitnum     Return at most this number of events
+     * @throws timesort_invalid_parameter_exception
+     * @throws limit_invalid_parameter_exception
      * @return action_event_interface
      */
     public function get_action_events_by_timesort(
         \stdClass $user,
-        int $timesortfrom = null,
-        int $timesortto = null,
+        $timesortfrom = null,
+        $timesortto = null,
         event_interface $afterevent = null,
-        int $limitnum = 20
+        $limitnum = 20
     ) {
         global $DB;
 
@@ -153,22 +155,5 @@ class event_vault implements event_vault_interface {
      */
     private function transform_from_database_record(\stdClass $record) {
         return $this->factory->create_instance($record);
-    }
-
-    /**
-     * Create an array of events from an array of database records.
-     *
-     * @param array $records The database records
-     * @return array
-     */
-    private function transform_from_database_records(array $records) {
-        $events = [];
-        foreach ($records as $record) {
-            if ($event = $this->transform_from_database_record($record)) {
-                $events[] = $event;
-            }
-        }
-
-        return $events;
     }
 }
