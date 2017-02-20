@@ -73,7 +73,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($sender2, $recipient);
 
         \core_message\api::mark_all_read_for_user($recipient->id, $sender1->id);
-        $this->assertEquals(message_count_unread_messages($recipient), 6);
+        $this->assertEquals(message_count_unread_messages($recipient), 3);
     }
 
     public function test_mark_all_read_for_user_touser_with_type() {
