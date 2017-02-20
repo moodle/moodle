@@ -291,4 +291,10 @@
     <version>3.0.2</version>
     <licenseversion>2.0</licenseversion>
   </library>
+  <library>
+    <location>amd/src/truncate.js</location>
+    <name>Truncate.js</name>
+    <license>MIT</license>
+    <version>0.0.1</version>
+  </library>
 </libraries>

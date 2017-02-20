@@ -56,6 +56,7 @@ lib/amd/src/chartjs-lazy.js
 lib/maxmind/GeoIp2/
 lib/maxmind/MaxMind/
 lib/ltiprovider/
+lib/amd/src/truncate.js
 media/player/videojs/amd/src/video-lazy.js
 media/player/videojs/amd/src/Youtube-lazy.js
 media/player/videojs/videojs/
