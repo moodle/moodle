@@ -307,9 +307,6 @@ class assign_grading_table extends table_sql implements renderable {
                         $params['markerid'] = $markerfilter;
                     }
                 }
-            } else { // Only show users allocated to this marker.
-                $where .= ' AND uf.allocatedmarker = :markerid';
-                $params['markerid'] = $USER->id;
             }
         }
 
@@ -1037,6 +1034,9 @@ class assign_grading_table extends table_sql implements renderable {
         $due = $instance->duedate;
         if ($row->extensionduedate) {
             $due = $row->extensionduedate;
+        } else if (!empty($row->duedate)) {
+            // The override due date.
+            $due = $row->duedate;
         }
 
         $group = false;

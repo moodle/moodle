@@ -43,16 +43,13 @@ require_once("$CFG->libdir/filestorage/stored_file.php");
  * @since     Moodle 2.0
  */
 class file_storage {
-    /** @var string Directory with file contents */
-    private $filedir;
-    /** @var string Contents of deleted files not needed any more */
-    private $trashdir;
+
     /** @var string tempdir */
     private $tempdir;
-    /** @var int Permissions for new directories */
-    private $dirpermissions;
-    /** @var int Permissions for new files */
-    private $filepermissions;
+
+    /** @var file_system filesystem */
+    private $filesystem;
+
     /** @var array List of formats supported by unoconv */
     private $unoconvformats;
 
@@ -74,43 +71,46 @@ class file_storage {
     /** Any other error */
     const UNOCONVPATH_ERROR = 'error';
 
-
     /**
      * Constructor - do not use directly use {@link get_file_storage()} call instead.
-     *
-     * @param string $filedir full path to pool directory
-     * @param string $trashdir temporary storage of deleted area
-     * @param string $tempdir temporary storage of various files
-     * @param int $dirpermissions new directory permissions
-     * @param int $filepermissions new file permissions
      */
-    public function __construct($filedir, $trashdir, $tempdir, $dirpermissions, $filepermissions) {
+    public function __construct() {
+        // The tempdir must always remain on disk, but shared between all ndoes in a cluster. Its content is not subject
+        // to the file_system abstraction.
+        $this->tempdir = make_temp_directory('filestorage');
+
+        $this->setup_file_system();
+    }
+
+    /**
+     * Complete setup procedure for the file_system component.
+     *
+     * @return file_system
+     */
+    public function setup_file_system() {
         global $CFG;
-
-        $this->filedir         = $filedir;
-        $this->trashdir        = $trashdir;
-        $this->tempdir         = $tempdir;
-        $this->dirpermissions  = $dirpermissions;
-        $this->filepermissions = $filepermissions;
-
-        // make sure the file pool directory exists
-        if (!is_dir($this->filedir)) {
-            if (!mkdir($this->filedir, $this->dirpermissions, true)) {
-                throw new file_exception('storedfilecannotcreatefiledirs'); // permission trouble
+        if ($this->filesystem === null) {
+            require_once($CFG->libdir . '/filestorage/file_system.php');
+            if (!empty($CFG->alternative_file_system_class)) {
+                $class = $CFG->alternative_file_system_class;
+            } else {
+                // The default file_system is the filedir.
+                require_once($CFG->libdir . '/filestorage/file_system_filedir.php');
+                $class = file_system_filedir::class;
             }
-            // place warning file in file pool root
-            if (!file_exists($this->filedir.'/warning.txt')) {
-                file_put_contents($this->filedir.'/warning.txt',
-                                  'This directory contains the content of uploaded files and is controlled by Moodle code. Do not manually move, change or rename any of the files and subdirectories here.');
-                chmod($this->filedir.'/warning.txt', $CFG->filepermissions);
-            }
+            $this->filesystem = new $class();
         }
-        // make sure the file pool directory exists
-        if (!is_dir($this->trashdir)) {
-            if (!mkdir($this->trashdir, $this->dirpermissions, true)) {
-                throw new file_exception('storedfilecannotcreatefiledirs'); // permission trouble
-            }
-        }
+
+        return $this->filesystem;
+    }
+
+    /**
+     * Return the file system instance.
+     *
+     * @return file_system
+     */
+    public function get_file_system() {
+        return $this->filesystem;
     }
 
     /**
@@ -173,7 +173,7 @@ class file_storage {
      * @return stored_file instance of file abstraction class
      */
     public function get_file_instance(stdClass $filerecord) {
-        $storedfile = new stored_file($this, $filerecord, $this->filedir);
+        $storedfile = new stored_file($this, $filerecord);
         return $storedfile;
     }
 
@@ -1502,7 +1502,7 @@ class file_storage {
             $newrecord->id = $DB->insert_record('files', $newrecord);
         } catch (dml_exception $e) {
             if ($newfile) {
-                $this->deleted_file_cleanup($newrecord->contenthash);
+                $this->move_to_trash($newrecord->contenthash);
             }
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
                                                     $newrecord->filepath, $newrecord->filename, $e->debuginfo);
@@ -1609,9 +1609,11 @@ class file_storage {
         $newrecord->sortorder    = $filerecord->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
-        $filepathname = $this->path_from_hash($newrecord->contenthash) . '/' . $newrecord->contenthash;
-        // get mimetype by magic bytes
-        $newrecord->mimetype = empty($filerecord->mimetype) ? $this->mimetype($filepathname, $filerecord->filename) : $filerecord->mimetype;
+        if (empty($filerecord->mimetype)) {
+            $newrecord->mimetype = $this->filesystem->mimetype_from_hash($newrecord->contenthash, $newrecord->filename);
+        } else {
+            $newrecord->mimetype = $filerecord->mimetype;
+        }
 
         $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
@@ -1619,7 +1621,7 @@ class file_storage {
             $newrecord->id = $DB->insert_record('files', $newrecord);
         } catch (dml_exception $e) {
             if ($newfile) {
-                $this->deleted_file_cleanup($newrecord->contenthash);
+                $this->move_to_trash($newrecord->contenthash);
             }
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
                                                     $newrecord->filepath, $newrecord->filename, $e->debuginfo);
@@ -1723,16 +1725,19 @@ class file_storage {
             throw new file_reference_exception($repositoryid, $reference, null, null, $e->getMessage());
         }
 
-        if (isset($filerecord->contenthash) && $this->content_exists($filerecord->contenthash)) {
-            // there was specified the contenthash for a file already stored in moodle filepool
+        $existingfile = null;
+        if (isset($filerecord->contenthash)) {
+            $existingfile = $DB->get_record('files', array('contenthash' => $filerecord->contenthash));
+        }
+        if (!empty($existingfile)) {
+            // There is an existing file already available.
             if (empty($filerecord->filesize)) {
-                $filepathname = $this->path_from_hash($filerecord->contenthash) . '/' . $filerecord->contenthash;
-                $filerecord->filesize = filesize($filepathname);
+                $filerecord->filesize = $existingfile->filesize;
             } else {
                 $filerecord->filesize = clean_param($filerecord->filesize, PARAM_INT);
             }
         } else {
-            // atempt to get the result of last synchronisation for this reference
+            // Attempt to get the result of last synchronisation for this reference.
             $lastcontent = $DB->get_record('files', array('referencefileid' => $filerecord->referencefileid),
                     'id, contenthash, filesize', IGNORE_MULTIPLE);
             if ($lastcontent) {
@@ -1751,7 +1756,7 @@ class file_storage {
             $filerecord->id = $DB->insert_record('files', $filerecord);
         } catch (dml_exception $e) {
             if (!empty($newfile)) {
-                $this->deleted_file_cleanup($filerecord->contenthash);
+                $this->move_to_trash($filerecord->contenthash);
             }
             throw new stored_file_creation_exception($filerecord->contextid, $filerecord->component, $filerecord->filearea, $filerecord->itemid,
                                                     $filerecord->filepath, $filerecord->filename, $e->debuginfo);
@@ -1934,98 +1939,7 @@ class file_storage {
      * @return array (contenthash, filesize, newfile)
      */
     public function add_file_to_pool($pathname, $contenthash = NULL) {
-        global $CFG;
-
-        if (!is_readable($pathname)) {
-            throw new file_exception('storedfilecannotread', '', $pathname);
-        }
-
-        $filesize = filesize($pathname);
-        if ($filesize === false) {
-            throw new file_exception('storedfilecannotread', '', $pathname);
-        }
-
-        if (is_null($contenthash)) {
-            $contenthash = sha1_file($pathname);
-        } else if ($CFG->debugdeveloper) {
-            $filehash = sha1_file($pathname);
-            if ($filehash === false) {
-                throw new file_exception('storedfilecannotread', '', $pathname);
-            }
-            if ($filehash !== $contenthash) {
-                // Hopefully this never happens, if yes we need to fix calling code.
-                debugging("Invalid contenthash submitted for file $pathname", DEBUG_DEVELOPER);
-                $contenthash = $filehash;
-            }
-        }
-        if ($contenthash === false) {
-            throw new file_exception('storedfilecannotread', '', $pathname);
-        }
-
-        if ($filesize > 0 and $contenthash === sha1('')) {
-            // Did the file change or is sha1_file() borked for this file?
-            clearstatcache();
-            $contenthash = sha1_file($pathname);
-            $filesize = filesize($pathname);
-
-            if ($contenthash === false or $filesize === false) {
-                throw new file_exception('storedfilecannotread', '', $pathname);
-            }
-            if ($filesize > 0 and $contenthash === sha1('')) {
-                // This is very weird...
-                throw new file_exception('storedfilecannotread', '', $pathname);
-            }
-        }
-
-        $hashpath = $this->path_from_hash($contenthash);
-        $hashfile = "$hashpath/$contenthash";
-
-        $newfile = true;
-
-        if (file_exists($hashfile)) {
-            if (filesize($hashfile) === $filesize) {
-                return array($contenthash, $filesize, false);
-            }
-            if (sha1_file($hashfile) === $contenthash) {
-                // Jackpot! We have a sha1 collision.
-                mkdir("$this->filedir/jackpot/", $this->dirpermissions, true);
-                copy($pathname, "$this->filedir/jackpot/{$contenthash}_1");
-                copy($hashfile, "$this->filedir/jackpot/{$contenthash}_2");
-                throw new file_pool_content_exception($contenthash);
-            }
-            debugging("Replacing invalid content file $contenthash");
-            unlink($hashfile);
-            $newfile = false;
-        }
-
-        if (!is_dir($hashpath)) {
-            if (!mkdir($hashpath, $this->dirpermissions, true)) {
-                // Permission trouble.
-                throw new file_exception('storedfilecannotcreatefiledirs');
-            }
-        }
-
-        // Let's try to prevent some race conditions.
-
-        $prev = ignore_user_abort(true);
-        @unlink($hashfile.'.tmp');
-        if (!copy($pathname, $hashfile.'.tmp')) {
-            // Borked permissions or out of disk space.
-            ignore_user_abort($prev);
-            throw new file_exception('storedfilecannotcreatefile');
-        }
-        if (filesize($hashfile.'.tmp') !== $filesize) {
-            // This should not happen.
-            unlink($hashfile.'.tmp');
-            ignore_user_abort($prev);
-            throw new file_exception('storedfilecannotcreatefile');
-        }
-        rename($hashfile.'.tmp', $hashfile);
-        chmod($hashfile, $this->filepermissions); // Fix permissions if needed.
-        @unlink($hashfile.'.tmp'); // Just in case anything fails in a weird way.
-        ignore_user_abort($prev);
-
-        return array($contenthash, $filesize, $newfile);
+        return $this->filesystem->add_file_from_path($pathname, $contenthash);
     }
 
     /**
@@ -2035,66 +1949,7 @@ class file_storage {
      * @return array (contenthash, filesize, newfile)
      */
     public function add_string_to_pool($content) {
-        global $CFG;
-
-        $contenthash = sha1($content);
-        $filesize = strlen($content); // binary length
-
-        $hashpath = $this->path_from_hash($contenthash);
-        $hashfile = "$hashpath/$contenthash";
-
-        $newfile = true;
-
-        if (file_exists($hashfile)) {
-            if (filesize($hashfile) === $filesize) {
-                return array($contenthash, $filesize, false);
-            }
-            if (sha1_file($hashfile) === $contenthash) {
-                // Jackpot! We have a sha1 collision.
-                mkdir("$this->filedir/jackpot/", $this->dirpermissions, true);
-                copy($hashfile, "$this->filedir/jackpot/{$contenthash}_1");
-                file_put_contents("$this->filedir/jackpot/{$contenthash}_2", $content);
-                throw new file_pool_content_exception($contenthash);
-            }
-            debugging("Replacing invalid content file $contenthash");
-            unlink($hashfile);
-            $newfile = false;
-        }
-
-        if (!is_dir($hashpath)) {
-            if (!mkdir($hashpath, $this->dirpermissions, true)) {
-                // Permission trouble.
-                throw new file_exception('storedfilecannotcreatefiledirs');
-            }
-        }
-
-        // Hopefully this works around most potential race conditions.
-
-        $prev = ignore_user_abort(true);
-
-        if (!empty($CFG->preventfilelocking)) {
-            $newsize = file_put_contents($hashfile.'.tmp', $content);
-        } else {
-            $newsize = file_put_contents($hashfile.'.tmp', $content, LOCK_EX);
-        }
-
-        if ($newsize === false) {
-            // Borked permissions most likely.
-            ignore_user_abort($prev);
-            throw new file_exception('storedfilecannotcreatefile');
-        }
-        if (filesize($hashfile.'.tmp') !== $filesize) {
-            // Out of disk space?
-            unlink($hashfile.'.tmp');
-            ignore_user_abort($prev);
-            throw new file_exception('storedfilecannotcreatefile');
-        }
-        rename($hashfile.'.tmp', $hashfile);
-        chmod($hashfile, $this->filepermissions); // Fix permissions if needed.
-        @unlink($hashfile.'.tmp'); // Just in case anything fails in a weird way.
-        ignore_user_abort($prev);
-
-        return array($contenthash, $filesize, $newfile);
+        return $this->filesystem->add_file_from_string($content);
     }
 
     /**
@@ -2106,11 +1961,7 @@ class file_storage {
      * @return bool success
      */
     public function xsendfile($contenthash) {
-        global $CFG;
-        require_once("$CFG->libdir/xsendfilelib.php");
-
-        $hashpath = $this->path_from_hash($contenthash);
-        return xsendfile("$hashpath/$contenthash");
+        return $this->filesystem->xsendfile($contenthash);
     }
 
     /**
@@ -2118,39 +1969,12 @@ class file_storage {
      *
      * @param string $contenthash
      * @return bool
+     * @deprecated since 3.3
      */
     public function content_exists($contenthash) {
-        $dir = $this->path_from_hash($contenthash);
-        $filepath = $dir . '/' . $contenthash;
-        return file_exists($filepath);
-    }
+        debugging('The content_exists function has been deprecated and should no longer be used.', DEBUG_DEVELOPER);
 
-    /**
-     * Return path to file with given hash.
-     *
-     * NOTE: must not be public, files in pool must not be modified
-     *
-     * @param string $contenthash content hash
-     * @return string expected file location
-     */
-    protected function path_from_hash($contenthash) {
-        $l1 = $contenthash[0].$contenthash[1];
-        $l2 = $contenthash[2].$contenthash[3];
-        return "$this->filedir/$l1/$l2";
-    }
-
-    /**
-     * Return path to file with given hash.
-     *
-     * NOTE: must not be public, files in pool must not be modified
-     *
-     * @param string $contenthash content hash
-     * @return string expected file location
-     */
-    protected function trash_path_from_hash($contenthash) {
-        $l1 = $contenthash[0].$contenthash[1];
-        $l2 = $contenthash[2].$contenthash[3];
-        return "$this->trashdir/$l1/$l2";
+        return false;
     }
 
     /**
@@ -2158,79 +1982,12 @@ class file_storage {
      *
      * @param stored_file $file stored_file instance
      * @return bool success
+     * @deprecated since 3.3
      */
     public function try_content_recovery($file) {
-        $contenthash = $file->get_contenthash();
-        $trashfile = $this->trash_path_from_hash($contenthash).'/'.$contenthash;
-        if (!is_readable($trashfile)) {
-            if (!is_readable($this->trashdir.'/'.$contenthash)) {
-                return false;
-            }
-            // nice, at least alternative trash file in trash root exists
-            $trashfile = $this->trashdir.'/'.$contenthash;
-        }
-        if (filesize($trashfile) != $file->get_filesize() or sha1_file($trashfile) != $contenthash) {
-            //weird, better fail early
-            return false;
-        }
-        $contentdir  = $this->path_from_hash($contenthash);
-        $contentfile = $contentdir.'/'.$contenthash;
-        if (file_exists($contentfile)) {
-            //strange, no need to recover anything
-            return true;
-        }
-        if (!is_dir($contentdir)) {
-            if (!mkdir($contentdir, $this->dirpermissions, true)) {
-                return false;
-            }
-        }
-        return rename($trashfile, $contentfile);
-    }
+        debugging('The try_content_recovery function has been deprecated and should no longer be used.', DEBUG_DEVELOPER);
 
-    /**
-     * Marks pool file as candidate for deleting.
-     *
-     * DO NOT call directly - reserved for core!!
-     *
-     * @param string $contenthash
-     */
-    public function deleted_file_cleanup($contenthash) {
-        global $DB;
-
-        if ($contenthash === sha1('')) {
-            // No need to delete empty content file with sha1('') content hash.
-            return;
-        }
-
-        //Note: this section is critical - in theory file could be reused at the same
-        //      time, if this happens we can still recover the file from trash
-        if ($DB->record_exists('files', array('contenthash'=>$contenthash))) {
-            // file content is still used
-            return;
-        }
-        //move content file to trash
-        $contentfile = $this->path_from_hash($contenthash).'/'.$contenthash;
-        if (!file_exists($contentfile)) {
-            //weird, but no problem
-            return;
-        }
-        $trashpath = $this->trash_path_from_hash($contenthash);
-        $trashfile = $trashpath.'/'.$contenthash;
-        if (file_exists($trashfile)) {
-            // we already have this content in trash, no need to move it there
-            unlink($contentfile);
-            return;
-        }
-        if (!is_dir($trashpath)) {
-            mkdir($trashpath, $this->dirpermissions, true);
-        }
-        rename($contentfile, $trashfile);
-
-        // Fix permissions, only if needed.
-        $currentperms = octdec(substr(decoct(fileperms($trashfile)), -4));
-        if ((int)$this->filepermissions !== $currentperms) {
-            chmod($trashfile, $this->filepermissions);
-        }
+        return false;
     }
 
     /**
@@ -2509,25 +2266,44 @@ class file_storage {
     }
 
     /**
-     * Return mimetype by given file pathname
+     * Return mimetype by given file pathname.
      *
      * If file has a known extension, we return the mimetype based on extension.
      * Otherwise (when possible) we try to get the mimetype from file contents.
      *
-     * @param string $pathname full path to the file
-     * @param string $filename correct file name with extension, if omitted will be taken from $path
+     * @param string $fullpath Full path to the file on disk
+     * @param string $filename Correct file name with extension, if omitted will be taken from $path
      * @return string
      */
-    public static function mimetype($pathname, $filename = null) {
+    public static function mimetype($fullpath, $filename = null) {
         if (empty($filename)) {
-            $filename = $pathname;
+            $filename = $fullpath;
         }
+
+        // The mimeinfo function determines the mimetype purely based on the file extension.
         $type = mimeinfo('type', $filename);
-        if ($type === 'document/unknown' && class_exists('finfo') && file_exists($pathname)) {
-            $finfo = new finfo(FILEINFO_MIME_TYPE);
-            $type = mimeinfo_from_type('type', $finfo->file($pathname));
+
+        if ($type === 'document/unknown') {
+            // The type is unknown. Inspect the file now.
+            $type = self::mimetype_from_file($fullpath);
         }
         return $type;
+    }
+
+    /**
+     * Inspect a file on disk for it's mimetype.
+     *
+     * @param string $fullpath Path to file on disk
+     * @return string The mimetype
+     */
+    public static function mimetype_from_file($fullpath) {
+        if (file_exists($fullpath)) {
+            // The type is unknown. Attempt to look up the file type now.
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            return mimeinfo_from_type('type', $finfo->file($fullpath));
+        }
+
+        return 'document/unknown';
     }
 
     /**
@@ -2614,10 +2390,9 @@ class file_storage {
             $rs->close();
             mtrace('done.');
 
-            mtrace('Deleting trash files... ', '');
+            mtrace('Call filesystem cron tasks.', '');
             cron_trace_time_and_memory();
-            fulldelete($this->trashdir);
-            set_config('fileslastcleanup', time());
+            $this->filesystem->cron();
             mtrace('done.');
         }
     }

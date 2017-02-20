@@ -1783,7 +1783,7 @@ class assign {
      * @return array List of user records
      */
     public function list_participants($currentgroup, $idsonly) {
-        global $DB;
+        global $DB, $USER;
 
         if (empty($currentgroup)) {
             $currentgroup = 0;
@@ -1797,6 +1797,7 @@ class assign {
             $fields = 'u.*';
             $orderby = 'u.lastname, u.firstname, u.id';
             $additionaljoins = '';
+            $additionalfilters = '';
             $instance = $this->get_instance();
             if (!empty($instance->blindmarking)) {
                 $additionaljoins .= " LEFT JOIN {assign_user_mapping} um
@@ -1818,11 +1819,26 @@ class assign {
                 $orderby = "COALESCE(s.timecreated, " . time() . ") ASC, COALESCE(s.id, " . PHP_INT_MAX . ") ASC, um.id ASC";
             }
 
+            if ($instance->markingworkflow &&
+                    $instance->markingallocation &&
+                    !has_capability('mod/assign:manageallocations', $this->get_context())) {
+
+                $additionaljoins .= ' LEFT JOIN {assign_user_flags} uf
+                                     ON u.id = uf.userid
+                                     AND uf.assignment = :assignmentid3';
+
+                $params['assignmentid3'] = (int) $instance->id;
+
+                $additionalfilters .= ' AND uf.allocatedmarker = :markerid';
+                $params['markerid'] = $USER->id;
+            }
+
             $sql = "SELECT $fields
                       FROM {user} u
                       JOIN ($esql) je ON je.id = u.id
                            $additionaljoins
                      WHERE u.deleted = 0
+                           $additionalfilters
                   ORDER BY $orderby";
 
             $users = $DB->get_records_sql($sql, $params);

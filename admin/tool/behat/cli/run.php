@@ -55,6 +55,7 @@ list($options, $unrecognised) = cli_get_params(
         'torun'    => 0,
         'single-run' => false,
         'rerun' => 0,
+        'auto-rerun' => 0,
     ),
     array(
         'h' => 'help',
@@ -79,6 +80,7 @@ Options:
 --fromrun          Execute run starting from (Used for parallel runs on different vms)
 --torun            Execute run till (Used for parallel runs on different vms)
 --rerun            Re-run scenarios that failed during last execution.
+--auto-rerun       Automatically re-run scenarios that failed during last execution.
 
 -h, --help         Print out this help
 
@@ -214,8 +216,11 @@ if (empty($parallelrun)) {
     $runtestscommand = behat_command::get_behat_command(false, false, true);
     $runtestscommand .= ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
     $runtestscommand .= ' ' . $extraoptstr;
+    $cmds['singlerun'] = $runtestscommand;
+
     echo "Running single behat site:" . PHP_EOL;
     passthru("php $runtestscommand", $status);
+    $exitcodes['singlerun'] = $status;
     chdir($cwd);
 } else {
 
@@ -284,28 +289,66 @@ if (empty($parallelrun)) {
     print_each_process_info($processes, $verbose, $status);
 }
 
+// Save final exit code containing which run failed.
+behat_config_manager::set_behat_run_config_value('lastcombinedfailedstatus', $status);
+
 // Show exit code from each process, if any process failed and how to rerun failed process.
 if ($verbose || $status) {
-    // Save final exit code containing which run failed.
-    behat_config_manager::set_behat_run_config_value('lastcombinedfailedstatus', $status);
+    // Check if status of last run is failure and rerun is suggested.
+    if (!empty($options['auto-rerun']) && $status) {
+        // Rerun for the number of tries passed.
+        for ($i = 0; $i < $options['auto-rerun']; $i++) {
 
-    // Show failed re-run commands.
+            // Run individual commands, to avoid parallel failures.
+            foreach ($exitcodes as $behatrunname => $exitcode) {
+                // If not failed in last run, then skip.
+                if ($exitcode == 0) {
+                    continue;
+                }
+
+                // This was a failure.
+                echo "*** Re-running behat run: $behatrunname ***" . PHP_EOL;
+                if ($verbose) {
+                    echo "Executing: " . $cmds[$behatrunname] . " --rerun" . PHP_EOL;
+                }
+
+                passthru("php $cmds[$behatrunname] --rerun", $rerunstatus);
+
+                // Update exit code.
+                $exitcodes[$behatrunname] = $rerunstatus;
+            }
+        }
+
+        // Update status after auto-rerun finished.
+        foreach ($exitcodes as $name => $exitcode) {
+            if ($exitcode) {
+                if (!empty($parallelrun)) {
+                    $runno = str_replace(BEHAT_PARALLEL_SITE_NAME, '', $name);
+                } else {
+                    $runno = 1;
+                }
+                $status |= (1 << ($runno - 1));
+            }
+        }
+    }
+
+    // Show final o/p with re-run commands.
     if ($status) {
-        if (!empty($cmds)) {
+        if (!empty($parallelrun)) {
             // Echo exit codes.
             echo "Exit codes for each behat run: " . PHP_EOL;
             foreach ($exitcodes as $run => $exitcode) {
                 echo $run . ": " . $exitcode . PHP_EOL;
             }
+            unset($extraopts['fromrun']);
+            unset($extraopts['torun']);
+            if (!empty($options['replace'])) {
+                $extraopts['replace'] = '--replace="' . $options['replace'] . '"';
+            }
         }
 
         echo "To re-run failed processes, you can use following command:" . PHP_EOL;
-        unset($extraopts['fromrun']);
-        unset($extraopts['torun']);
         $extraopts['rerun'] = '--rerun';
-        if (!empty($options['replace'])) {
-            $extraopts['replace'] =  '--replace="' . $options['replace'] . '"';
-        }
         $extraoptstr = implode(' ', $extraopts);
         echo behat_command::get_behat_command(true, true, true) . " " . $extraoptstr . PHP_EOL;
     }

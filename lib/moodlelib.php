@@ -2893,7 +2893,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         } else {
             $url = new moodle_url('/');
         }
-        redirect($url, get_string('activityiscurrentlyhidden'));
+        redirect($url, get_string('activityiscurrentlyhidden'), null,
+                \core\output\notification::NOTIFY_ERROR);
     }
 
     // Set the global $COURSE.
@@ -6369,10 +6370,15 @@ function email_is_not_allowed($email) {
  *
  * @return file_storage
  */
-function get_file_storage() {
+function get_file_storage($reset = false) {
     global $CFG;
 
     static $fs = null;
+
+    if ($reset) {
+        $fs = null;
+        return;
+    }
 
     if ($fs) {
         return $fs;
@@ -6380,19 +6386,7 @@ function get_file_storage() {
 
     require_once("$CFG->libdir/filelib.php");
 
-    if (isset($CFG->filedir)) {
-        $filedir = $CFG->filedir;
-    } else {
-        $filedir = $CFG->dataroot.'/filedir';
-    }
-
-    if (isset($CFG->trashdir)) {
-        $trashdirdir = $CFG->trashdir;
-    } else {
-        $trashdirdir = $CFG->dataroot.'/trashdir';
-    }
-
-    $fs = new file_storage($filedir, $trashdirdir, "$CFG->tempdir/filestorage", $CFG->directorypermissions, $CFG->filepermissions);
+    $fs = new file_storage();
 
     return $fs;
 }

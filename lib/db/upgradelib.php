@@ -527,3 +527,18 @@ function upgrade_standardise_score($rawgrade, $sourcemin, $sourcemax, $targetmin
     $standardisedvalue = $factor * $diff + $targetmin;
     return $standardisedvalue;
 }
+
+/**
+ * Delete orphaned records in block_positions
+ */
+function upgrade_block_positions() {
+    global $DB;
+    $id = 'id';
+    if ($DB->get_dbfamily() !== 'mysql') {
+        // Field block_positions.subpage has type 'char', it can not be compared to int in db engines except for mysql.
+        $id = $DB->sql_concat('?', 'id');
+    }
+    $sql = "DELETE FROM {block_positions}
+    WHERE pagetype IN ('my-index', 'user-profile') AND subpage NOT IN (SELECT $id FROM {my_pages})";
+    $DB->execute($sql, ['']);
+}

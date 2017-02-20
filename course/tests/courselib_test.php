@@ -201,6 +201,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->course = $course->id;
         $moduleinfo->groupingid = $grouping->id;
         $moduleinfo->visible = true;
+        $moduleinfo->visibleoncoursepage = true;
 
         // Sometimes optional generic values for some modules.
         $moduleinfo->name = 'My test module';
@@ -436,6 +437,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->course = $course->id;
         $moduleinfo->groupingid = $grouping->id;
         $moduleinfo->visible = true;
+        $moduleinfo->visibleoncoursepage = true;
 
         // Sometimes optional generic values for some modules.
         $moduleinfo->name = 'My test module';

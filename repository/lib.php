@@ -1717,12 +1717,13 @@ abstract class repository implements cacheable_object {
                                                                         'size' => $maxbytesdisplay));
             }
             $fs = get_file_storage();
-            $contentexists = $fs->content_exists($file->get_contenthash());
-            if ($contentexists && $file->get_filesize() && $file->get_contenthash() === sha1('')) {
-                // even when 'file_storage::content_exists()' returns true this may be an empty
-                // content for the file that was not actually downloaded
-                $contentexists = false;
-            }
+
+            // If a file has been downloaded, the file record should report both a positive file
+            // size, and a contenthash which does not related to empty content.
+            // If thereis no file size, or the contenthash is for an empty file, then the file has
+            // yet to be successfully downloaded.
+            $contentexists = $file->get_filesize() && $file->get_contenthash() !== sha1('');
+
             if (!$file->get_status() && $contentexists) {
                 // we already have the content in moodle filepool and it was synchronised recently.
                 // Repositories may overwrite it if they want to force synchronisation anyway!

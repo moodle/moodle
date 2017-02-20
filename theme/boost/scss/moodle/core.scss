@@ -77,10 +77,6 @@ a.dimmed_text:visited,
     @extend .text-muted;
 }
 
-.activity.label .dimmed_text {
-    opacity: 0.5;
-}
-
 .unlist,
 .unlist li,
 .inline-list,
