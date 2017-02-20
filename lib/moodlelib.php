@@ -9021,30 +9021,31 @@ function get_performance_info() {
         // Attempt to avoid devs debugging peformance issues, when its caused by css building and so on.
         $info['html'] .= '<p><strong>Warning: Theme designer mode is enabled.</strong></p>';
     }
-    $info['html'] .= '<ul class="list-unstyled m-l-1">';         // Holds userfriendly HTML representation.
+    $info['html'] .= '<ul class="list-unstyled m-l-1 row">';         // Holds userfriendly HTML representation.
 
     $info['realtime'] = microtime_diff($PERF->starttime, microtime());
 
-    $info['html'] .= '<li class="timeused">'.$info['realtime'].' secs</li> ';
+    $info['html'] .= '<li class="timeused col-sm-4">'.$info['realtime'].' secs</li> ';
     $info['txt'] .= 'time: '.$info['realtime'].'s ';
 
     if (function_exists('memory_get_usage')) {
         $info['memory_total'] = memory_get_usage();
         $info['memory_growth'] = memory_get_usage() - $PERF->startmemory;
-        $info['html'] .= '<li class="memoryused">RAM: '.display_size($info['memory_total']).'</li> ';
+        $info['html'] .= '<li class="memoryused col-sm-4">RAM: '.display_size($info['memory_total']).'</li> ';
         $info['txt']  .= 'memory_total: '.$info['memory_total'].'B (' . display_size($info['memory_total']).') memory_growth: '.
             $info['memory_growth'].'B ('.display_size($info['memory_growth']).') ';
     }
 
     if (function_exists('memory_get_peak_usage')) {
         $info['memory_peak'] = memory_get_peak_usage();
-        $info['html'] .= '<li class="memoryused">RAM peak: '.display_size($info['memory_peak']).'</li> ';
+        $info['html'] .= '<li class="memoryused col-sm-4">RAM peak: '.display_size($info['memory_peak']).'</li> ';
         $info['txt']  .= 'memory_peak: '.$info['memory_peak'].'B (' . display_size($info['memory_peak']).') ';
     }
 
+    $info['html'] .= '</ul><ul class="list-unstyled m-l-1 row">';
     $inc = get_included_files();
     $info['includecount'] = count($inc);
-    $info['html'] .= '<li class="included">Included '.$info['includecount'].' files</li> ';
+    $info['html'] .= '<li class="included col-sm-4">Included '.$info['includecount'].' files</li> ';
     $info['txt']  .= 'includecount: '.$info['includecount'].' ';
 
     if (!empty($CFG->early_install_lang) or empty($PAGE)) {
@@ -9057,7 +9058,7 @@ function get_performance_info() {
         list($filterinfo, $nicenames) = $filtermanager->get_performance_summary();
         $info = array_merge($filterinfo, $info);
         foreach ($filterinfo as $key => $value) {
-            $info['html'] .= "<li class='$key'>$nicenames[$key]: $value </li> ";
+            $info['html'] .= "<li class='$key col-sm-4'>$nicenames[$key]: $value </li> ";
             $info['txt'] .= "$key: $value ";
         }
     }
@@ -9067,23 +9068,23 @@ function get_performance_info() {
         list($filterinfo, $nicenames) = $stringmanager->get_performance_summary();
         $info = array_merge($filterinfo, $info);
         foreach ($filterinfo as $key => $value) {
-            $info['html'] .= "<li class='$key'>$nicenames[$key]: $value </li> ";
+            $info['html'] .= "<li class='$key col-sm-4'>$nicenames[$key]: $value </li> ";
             $info['txt'] .= "$key: $value ";
         }
     }
 
     if (!empty($PERF->logwrites)) {
         $info['logwrites'] = $PERF->logwrites;
-        $info['html'] .= '<li class="logwrites">Log DB writes '.$info['logwrites'].'</li> ';
+        $info['html'] .= '<li class="logwrites col-sm-4">Log DB writes '.$info['logwrites'].'</li> ';
         $info['txt'] .= 'logwrites: '.$info['logwrites'].' ';
     }
 
     $info['dbqueries'] = $DB->perf_get_reads().'/'.($DB->perf_get_writes() - $PERF->logwrites);
-    $info['html'] .= '<li class="dbqueries">DB reads/writes: '.$info['dbqueries'].'</li> ';
+    $info['html'] .= '<li class="dbqueries col-sm-4">DB reads/writes: '.$info['dbqueries'].'</li> ';
     $info['txt'] .= 'db reads/writes: '.$info['dbqueries'].' ';
 
     $info['dbtime'] = round($DB->perf_get_queries_time(), 5);
-    $info['html'] .= '<li class="dbtime">DB queries time: '.$info['dbtime'].' secs</li> ';
+    $info['html'] .= '<li class="dbtime col-sm-4">DB queries time: '.$info['dbtime'].' secs</li> ';
     $info['txt'] .= 'db queries time: ' . $info['dbtime'] . 's ';
 
     if (function_exists('posix_times')) {
@@ -9092,7 +9093,8 @@ function get_performance_info() {
             foreach ($ptimes as $key => $val) {
                 $info[$key] = $ptimes[$key] -  $PERF->startposixtimes[$key];
             }
-            $info['html'] .= "<li class=\"posixtimes\">ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</li> ";
+            $info['html'] .= "<li class=\"posixtimes col-sm-4\">ticks: $info[ticks] user: $info[utime]";
+            $info['html'] .= "sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</li> ";
             $info['txt'] .= "ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime] ";
         }
     }
@@ -9112,20 +9114,22 @@ function get_performance_info() {
     }
     if (!empty($serverload)) {
         $info['serverload'] = $serverload;
-        $info['html'] .= '<li class="serverload">Load average: '.$info['serverload'].'</li> ';
+        $info['html'] .= '<li class="serverload col-sm-4">Load average: '.$info['serverload'].'</li> ';
         $info['txt'] .= "serverload: {$info['serverload']} ";
     }
 
     // Display size of session if session started.
     if ($si = \core\session\manager::get_performance_info()) {
         $info['sessionsize'] = $si['size'];
-        $info['html'] .= $si['html'];
+        $info['html'] .= "<li class=\"serverload col-sm-4\">" . $si['html'] . "</li>";
         $info['txt'] .= $si['txt'];
     }
 
+    $info['html'] .= '</ul>';
     if ($stats = cache_helper::get_stats()) {
-        $html = '<ul class="cachesused list-unstyled m-l-1">';
-        $html .= '<li class="cache-stats-heading">Caches used (hits/misses/sets)</li>';
+        $html = '<ul class="cachesused list-unstyled m-l-1 row">';
+        $html .= '<li class="cache-stats-heading font-weight-bold">Caches used (hits/misses/sets)</li>';
+        $html .= '</ul><ul class="cachesused list-unstyled m-l-1">';
         $text = 'Caches used (hits/misses/sets): ';
         $hits = 0;
         $misses = 0;
@@ -9145,8 +9149,9 @@ function get_performance_info() {
                     $mode = ' <span title="request cache">[r]</span>';
                     break;
             }
-            $html .= '<ul class="cache-definition-stats list-unstyled m-l-1 cache-mode-'.$modeclass.'">';
-            $html .= '<li class="cache-definition-stats-heading p-t-1">'.$definition.$mode.'</li>';
+            $html .= '<ul class="cache-definition-stats list-unstyled m-l-1 cache-mode-'.$modeclass.' card d-inline-block">';
+            $html .= '<li class="cache-definition-stats-heading p-t-1 card-header bg-inverse font-weight-bold">' .
+                $definition . $mode.'</li>';
             $text .= "$definition {";
             foreach ($details['stores'] as $store => $data) {
                 $hits += $data['hits'];
@@ -9160,7 +9165,12 @@ function get_performance_info() {
                     $cachestoreclass = 'hihits text-success';
                 }
                 $text .= "$store($data[hits]/$data[misses]/$data[sets]) ";
-                $html .= "<li class=\"cache-store-stats $cachestoreclass\">$store: $data[hits] / $data[misses] / $data[sets]</li>";
+                $html .= "<li class=\"cache-store-stats $cachestoreclass p-x-1\">" .
+                    "$store: $data[hits] / $data[misses] / $data[sets]</li>";
+                // This makes boxes of same sizes.
+                if (count($details['stores']) == 1) {
+                    $html .= "<li class=\"cache-store-stats $cachestoreclass p-x-1\">&nbsp;</li>";
+                }
             }
             $html .= '</ul>';
             $text .= '} ';
@@ -9176,7 +9186,7 @@ function get_performance_info() {
         $info['txt'] .= 'Caches used (hits/misses/sets): 0/0/0 ';
     }
 
-    $info['html'] = '<div class="performanceinfo siteinfo">'.$info['html'].'</div>';
+    $info['html'] = '<div class="performanceinfo siteinfo container-fluid">'.$info['html'].'</div>';
     return $info;
 }
 
