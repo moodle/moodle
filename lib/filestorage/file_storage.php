@@ -1987,12 +1987,13 @@ class file_storage {
         @unlink($hashfile.'.tmp');
         if (!copy($pathname, $hashfile.'.tmp')) {
             // Borked permissions or out of disk space.
+            @unlink($hashfile.'.tmp');
             ignore_user_abort($prev);
             throw new file_exception('storedfilecannotcreatefile');
         }
-        if (filesize($hashfile.'.tmp') !== $filesize) {
-            // This should not happen.
-            unlink($hashfile.'.tmp');
+        if (sha1_file($hashfile.'.tmp') !== $contenthash) {
+            // Highly unlikely edge case, but this can happen on an NFS volume with no space remaining.
+            @unlink($hashfile.'.tmp');
             ignore_user_abort($prev);
             throw new file_exception('storedfilecannotcreatefile');
         }
