@@ -24,6 +24,8 @@ namespace core;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 
 class notification {
@@ -82,6 +84,10 @@ class notification {
         // Add the notification directly to the session.
         // This will either be fetched in the header, or by JS in the footer.
         if (!isset($SESSION->notifications) || !array($SESSION->notifications)) {
+            // Initialise $SESSION if necessary.
+            if (!is_object($SESSION)) {
+                $SESSION = new stdClass();
+            }
             $SESSION->notifications = [];
         }
         $SESSION->notifications[] = (object) array(
