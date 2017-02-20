@@ -2264,7 +2264,7 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
             $options->newlines = false;
             $options->noclean = true;
             if (is_object($path)) {
-                $text = $path->get_content();
+                $text = htmlentities($path->get_content(), ENT_QUOTES, 'UTF-8');
             } else if ($pathisstring) {
                 $text = htmlentities($path, ENT_QUOTES, 'UTF-8');
             } else {
