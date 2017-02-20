@@ -658,7 +658,7 @@ class grade_category extends grade_object {
 
                 // If successful trigger a user_graded event.
                 if ($success) {
-                    \core\event\user_graded::create_from_grade($grade)->trigger();
+                    \core\event\user_graded::create_from_grade($grade, \core\event\base::USER_OTHER)->trigger();
                 }
             }
             $dropped = $grade_values;
@@ -743,7 +743,7 @@ class grade_category extends grade_object {
 
                 // If successful trigger a user_graded event.
                 if ($success) {
-                    \core\event\user_graded::create_from_grade($grade)->trigger();
+                    \core\event\user_graded::create_from_grade($grade, \core\event\base::USER_OTHER)->trigger();
                 }
             }
             $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit);
@@ -786,7 +786,7 @@ class grade_category extends grade_object {
 
             // If successful trigger a user_graded event.
             if ($success) {
-                \core\event\user_graded::create_from_grade($grade)->trigger();
+                \core\event\user_graded::create_from_grade($grade, \core\event\base::USER_OTHER)->trigger();
             }
         }
 

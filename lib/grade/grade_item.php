@@ -767,7 +767,7 @@ class grade_item extends grade_object {
                     // If successful trigger a user_graded event.
                     if ($success) {
                         $grade->load_grade_item();
-                        \core\event\user_graded::create_from_grade($grade)->trigger();
+                        \core\event\user_graded::create_from_grade($grade, \core\event\base::USER_OTHER)->trigger();
                     } else {
                         $result = "Internal error updating final grade";
                     }
