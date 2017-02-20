@@ -220,10 +220,12 @@ function message_count_unread_messages($user1=null, $user2=null) {
     }
 
     if (!empty($user2)) {
-        return $DB->count_records_select('message', "useridto = ? AND useridfrom = ?",
+        return $DB->count_records_select('message', "useridto = ? AND useridfrom = ? AND notification = 0
+            AND timeusertodeleted = 0",
             array($user1->id, $user2->id), "COUNT('id')");
     } else {
-        return $DB->count_records_select('message', "useridto = ?",
+        return $DB->count_records_select('message', "useridto = ? AND notification = 0
+            AND timeusertodeleted = 0",
             array($user1->id), "COUNT('id')");
     }
 }
