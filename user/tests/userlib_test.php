@@ -501,6 +501,8 @@ class core_userliblib_testcase extends advanced_testcase {
         $user5 = $this->getDataGenerator()->create_user();
         $user6 = $this->getDataGenerator()->create_user(array('deleted' => 1));
         $user7 = $this->getDataGenerator()->create_user();
+        $user8 = $this->getDataGenerator()->create_user();
+        $user8->id = 0; // Visitor.
 
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         // Add the course creator role to the course contact and assign a user to that role.
@@ -574,6 +576,24 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->assertTrue(user_can_view_profile($user4));
 
         $CFG->coursecontact = null;
+
+        // Visitor (Not a guest user, userid=0).
+        $CFG->forceloginforprofiles = 1;
+        $this->setUser($user8);
+
+        // By default guest has 'moodle/user:viewdetails' cap.
+        $this->assertTrue(user_can_view_profile($user1));
+        $CFG->forceloginforprofiles = 0;
+        $this->assertTrue(user_can_view_profile($user1));
+
+        // Let us remove this cap.
+        $allroles = $DB->get_records_menu('role', array(), 'id', 'archetype, id');
+        assign_capability('moodle/user:viewdetails', CAP_PROHIBIT, $allroles['guest'], context_system::instance()->id, true);
+        reload_all_capabilities();
+        $CFG->forceloginforprofiles = 1;
+        $this->assertFalse(user_can_view_profile($user1));
+        $CFG->forceloginforprofiles = 0;
+        $this->assertTrue(user_can_view_profile($user1));
     }
 
     /**
