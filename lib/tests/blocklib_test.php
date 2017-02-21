@@ -598,7 +598,7 @@ class core_blocklib_testcase extends advanced_testcase {
         // Assert that protecting a block does not make it auto-created.
         $this->assertCount(2, $blocks);
 
-        $requiredbytheme = block_manager::get_required_by_theme_block_types();
+        $requiredbytheme = $blockmanager->get_required_by_theme_block_types();
         foreach ($requiredbytheme as $blockname) {
             $instance = $DB->get_record('block_instances', array('blockname' => $blockname));
             $this->assertEquals(1, $instance->requiredbytheme);
