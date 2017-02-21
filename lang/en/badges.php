@@ -79,10 +79,14 @@ You should fix this issue on any production site where you are planning to issue
 
 The only URL required for verification is [your-site-url]/badges/assertion.php so if you are able to modify your firewall to allow external access to that file, badge verification will still work.';
 $string['backpackbadges'] = 'You have {$a->totalbadges} badge(s) displayed from {$a->totalcollections} collection(s). <a href="mybackpack.php">Change backpack settings</a>.';
+$string['backpackcannotsendverification'] = 'Cannot send verification email';
 $string['backpackconnection'] = 'Backpack connection';
 $string['backpackconnection_help'] = 'This page allows you to set up connection to an external backpack provider. Connecting to a backpack lets you display external badges within this site and push badges earned here to your backpack.
 
 Currently, only <a href="http://backpack.openbadges.org">Mozilla OpenBadges Backpack</a> is supported. You need to sign up for a backpack service before trying to set up backpack connection on this page.';
+$string['backpackconnectioncancelattempt'] = 'Connect using a different email address';
+$string['backpackconnectionconnect'] = 'Connect to Backpack';
+$string['backpackconnectionresendemail'] = 'Resend verification email';
 $string['backpackdetails'] = 'Backpack settings';
 $string['backpackemail'] = 'Email address';
 $string['backpackemail_help'] = 'The email address associated with your backpack. While you are connected, any badges earned on this site will be associated with this email address.';
@@ -90,6 +94,23 @@ $string['personaconnection'] = 'Sign in with your email';
 $string['personaconnection_help'] = 'Persona is a system for identifying yourself across the web, using an email address that you own. The Open Badges backpack uses Persona as a login system, so to be able to connect to a backpack you will need a Persona account.
 
 For more information about Persona visit <a href="https://login.persona.org/about">https://login.persona.org/about</a>.';
+$string['backpackemailverificationpending'] = 'Verification pending';
+$string['backpackemailverifyemailbody'] = 'Hi,
+
+A new connection to your OpenBadges backpack has been requested from \'{$a->sitename}\' using your email address.
+
+To confirm and activate the connection to your backpack, please click the link below.
+
+{$a->link}
+
+In most mail programs, this should appear as a blue link which you can just click on. If that doesn\'t work, then cut and paste the address into the address line at the top of your web browser.
+
+If you need help, please contact the site administrator,
+{$a->admin}';
+$string['backpackemailverifyemailsubject'] = '{$a}: OpenBadges Backpack email verification';
+$string['backpackemailverifypending'] = 'A verification email has been sent to <strong>{$a}</strong>. Click on the verification link in the email to activate your Backpack connection.';
+$string['backpackemailverifysuccess'] = 'Thanks for verifying your email address. You are now connected to your Backpack.';
+$string['backpackemailverifytokenmismatch'] = 'The token in the link you clicked does not match the stored token. Make sure you clicked the link in most recent email you received.';
 $string['backpackimport'] = 'Badge import settings';
 $string['backpackimport_help'] = 'After the backpack connection is successfully established, badges from your backpack can be displayed on your badges page and your profile page.
 
