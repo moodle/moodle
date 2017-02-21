@@ -154,8 +154,6 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     $PAGE->set_title($strcompletion);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
-    $PAGE->requires->js('/report/progress/textrotate.js');
-    $PAGE->requires->js_function_call('textrotate_init', null, true);
 
     // Handle groups (if enabled)
     groups_print_course_menu($course,$CFG->wwwroot.'/report/progress/?course='.$course->id);
@@ -323,13 +321,14 @@ foreach($activities as $activity) {
         print $sep.csv_quote($displayname).$sep.csv_quote($datetext);
     } else {
         $shortenedname = shorten_text($displayname);
-        print '<th scope="col" class="'.$datepassedclass.'">'.
+        print '<th scope="col" class="completion-header '.$datepassedclass.'">'.
             '<a href="'.$CFG->wwwroot.'/mod/'.$activity->modname.
             '/view.php?id='.$activity->id.'" title="' . s($displayname) . '">'.
-            '<img src="'.$OUTPUT->pix_url('icon', $activity->modname).'" alt="'.
+            '<div class="rotated-text-container"><span class="rotated-text">'.$shortenedname.'</span></div>'.
+            '<div class="modicon"><img src="'.$OUTPUT->pix_url('icon', $activity->modname).'" alt="'.
             s(get_string('modulename', $activity->modname)).
-                '" /> <span class="completion-activityname">'.
-            $shortenedname.'</span></a>';
+            '" /></div></a>';
+
         if ($activity->completionexpected) {
             print '<div class="completion-expected"><span>'.$datetext.'</span></div>';
         }
