@@ -37,7 +37,7 @@ $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 
 $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST), $cm);
 
 require_login($course, false, $cm);
 
@@ -59,8 +59,8 @@ if ($pageid !== null) {
 $PAGE->set_url($url);
 $PAGE->force_settings_menu();
 
-$context = context_module::instance($cm->id);
-$canmanage = has_capability('mod/lesson:manage', $context);
+$context = $lesson->context;
+$canmanage = $lesson->can_manage();
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
@@ -70,103 +70,29 @@ if ($userhasgrade && !$lesson->retake) {
     $reviewmode = true;
 }
 
-/// Check these for students only TODO: Find a better method for doing this!
-///     Check lesson availability
-///     Check for password
-///     Check dependencies
-if (!$canmanage) {
-    if (!$lesson->is_accessible()) {  // Deadline restrictions
-        echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('notavailable'));
-        if ($lesson->deadline != 0 && time() > $lesson->deadline) {
-            echo $lessonoutput->lesson_inaccessible(get_string('lessonclosed', 'lesson', userdate($lesson->deadline)));
-        } else {
-            echo $lessonoutput->lesson_inaccessible(get_string('lessonopen', 'lesson', userdate($lesson->available)));
-        }
-        echo $lessonoutput->footer();
-        exit();
-    } else if ($lesson->usepassword && empty($USER->lessonloggedin[$lesson->id])) { // Password protected lesson code
-        $correctpass = false;
-        if (!empty($userpassword) && (($lesson->password == md5(trim($userpassword))) || ($lesson->password == trim($userpassword)))) {
-            require_sesskey();
-            // with or without md5 for backward compatibility (MDL-11090)
-            $correctpass = true;
-            $USER->lessonloggedin[$lesson->id] = true;
-
-        } else if (isset($lesson->extrapasswords)) {
-
-            // Group overrides may have additional passwords.
-            foreach ($lesson->extrapasswords as $password) {
-                if (strcmp($password, md5(trim($userpassword))) === 0 || strcmp($password, trim($userpassword)) === 0) {
-                    require_sesskey();
-                    $correctpass = true;
-                    $USER->lessonloggedin[$lesson->id] = true;
-                }
-            }
-        }
-        if (!$correctpass) {
-            echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)));
-            echo $lessonoutput->login_prompt($lesson, $userpassword !== '');
-            echo $lessonoutput->footer();
-            exit();
-        }
-    } else if ($lesson->dependency) { // check for dependencies
-        if ($dependentlesson = $DB->get_record('lesson', array('id' => $lesson->dependency))) {
-            // lesson exists, so we can proceed
-            $conditions = unserialize($lesson->conditions);
-            // assume false for all
-            $errors = array();
-
-            // check for the timespent condition
-            if ($conditions->timespent) {
-                $timespent = false;
-                if ($attempttimes = $DB->get_records('lesson_timer', array("userid"=>$USER->id, "lessonid"=>$dependentlesson->id))) {
-                    // go through all the times and test to see if any of them satisfy the condition
-                    foreach($attempttimes as $attempttime) {
-                        $duration = $attempttime->lessontime - $attempttime->starttime;
-                        if ($conditions->timespent < $duration/60) {
-                            $timespent = true;
-                        }
-                    }
-                }
-                if (!$timespent) {
-                    $errors[] = get_string('timespenterror', 'lesson', $conditions->timespent);
-                }
-            }
-
-            // check for the gradebetterthan condition
-            if($conditions->gradebetterthan) {
-                $gradebetterthan = false;
-                if ($studentgrades = $DB->get_records('lesson_grades', array("userid"=>$USER->id, "lessonid"=>$dependentlesson->id))) {
-                    // go through all the grades and test to see if any of them satisfy the condition
-                    foreach($studentgrades as $studentgrade) {
-                        if ($studentgrade->grade >= $conditions->gradebetterthan) {
-                            $gradebetterthan = true;
-                        }
-                    }
-                }
-                if (!$gradebetterthan) {
-                    $errors[] = get_string('gradebetterthanerror', 'lesson', $conditions->gradebetterthan);
-                }
-            }
-
-            // check for the completed condition
-            if ($conditions->completed) {
-                if (!$DB->count_records('lesson_grades', array('userid'=>$USER->id, 'lessonid'=>$dependentlesson->id))) {
-                    $errors[] = get_string('completederror', 'lesson');
-                }
-            }
-
-            if (!empty($errors)) {  // print out the errors if any
-                echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('completethefollowingconditions', 'lesson', format_string($lesson->name)));
-                echo $lessonoutput->dependancy_errors($dependentlesson, $errors);
-                echo $lessonoutput->footer();
-                exit();
-            }
-        }
-    }
+if ($lesson->usepassword && !empty($userpassword)) {
+    require_sesskey();
 }
 
-    // this is called if a student leaves during a lesson
+// Check these for students only TODO: Find a better method for doing this!
+if ($timerestriction = $lesson->get_time_restriction_status()) {  // Deadline restrictions.
+    echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('notavailable'));
+    echo $lessonoutput->lesson_inaccessible(get_string($timerestriction->reason, 'lesson', userdate($timerestriction->time)));
+    echo $lessonoutput->footer();
+    exit();
+} else if ($passwordrestriction = $lesson->get_password_restriction_status($userpassword)) { // Password protected lesson code.
+    echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)));
+    echo $lessonoutput->login_prompt($lesson, $userpassword !== '');
+    echo $lessonoutput->footer();
+    exit();
+} else if ($dependenciesrestriction = $lesson->get_dependencies_restriction_status()) { // Check for dependencies.
+    echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('completethefollowingconditions', 'lesson', format_string($lesson->name)));
+    echo $lessonoutput->dependancy_errors($dependenciesrestriction->dependentlesson, $dependenciesrestriction->errors);
+    echo $lessonoutput->footer();
+    exit();
+}
+
+// This is called if a student leaves during a lesson.
 if ($pageid == LESSON_UNSEENBRANCHPAGE) {
     $pageid = lesson_unseen_question_jump($lesson, $USER->id, $pageid);
 }
