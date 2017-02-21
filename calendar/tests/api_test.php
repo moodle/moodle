@@ -400,20 +400,14 @@ class core_calendar_api_testcase extends advanced_testcase {
      * be returned.
      */
     function test_get_calendar_action_events_by_timesort_after_time() {
-        $user = $this->getDataGenerator()->create_user();
-        $course = $this->getDataGenerator()->create_course();
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
-        $moduleinstance = $generator->create_instance(['course' => $course->id]);
-
-        $this->getDataGenerator()->enrol_user($user->id, $course->id);
-        $this->resetAfterTest(true);
-        $this->setUser($user);
+        $this->setAdminUser();
 
         $params = [
             'type' => CALENDAR_EVENT_TYPE_ACTION,
-            'modulename' => 'assign',
-            'instance' => $moduleinstance->id,
-            'userid' => $user->id,
+            'courseid' => 1,
+            'modulename' => 'xyz',
+            'instance' => 1,
+            'userid' => 1,
             'eventtype' => 'user',
             'repeats' => 0,
             'timestart' => 1,
@@ -450,20 +444,14 @@ class core_calendar_api_testcase extends advanced_testcase {
      * returned.
      */
     function test_get_calendar_action_events_by_timesort_before_time() {
-        $user = $this->getDataGenerator()->create_user();
-        $course = $this->getDataGenerator()->create_course();
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
-        $moduleinstance = $generator->create_instance(['course' => $course->id]);
-
-        $this->getDataGenerator()->enrol_user($user->id, $course->id);
-        $this->resetAfterTest(true);
-        $this->setUser($user);
+        $this->setAdminUser();
 
         $params = [
             'type' => CALENDAR_EVENT_TYPE_ACTION,
-            'modulename' => 'assign',
-            'instance' => $moduleinstance->id,
-            'userid' => $user->id,
+            'courseid' => 1,
+            'modulename' => 'xyz',
+            'instance' => 1,
+            'userid' => 1,
             'eventtype' => 'user',
             'repeats' => 0,
             'timestart' => 1,
@@ -499,20 +487,14 @@ class core_calendar_api_testcase extends advanced_testcase {
      * returned.
      */
     function test_get_calendar_action_events_by_timesort_time_range() {
-        $user = $this->getDataGenerator()->create_user();
-        $course = $this->getDataGenerator()->create_course();
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
-        $moduleinstance = $generator->create_instance(['course' => $course->id]);
-
-        $this->getDataGenerator()->enrol_user($user->id, $course->id);
-        $this->resetAfterTest(true);
-        $this->setUser($user);
+        $this->setAdminUser();
 
         $params = [
             'type' => CALENDAR_EVENT_TYPE_ACTION,
-            'modulename' => 'assign',
-            'instance' => $moduleinstance->id,
-            'userid' => $user->id,
+            'courseid' => 1,
+            'modulename' => 'xyz',
+            'instance' => 1,
+            'userid' => 1,
             'eventtype' => 'user',
             'repeats' => 0,
             'timestart' => 1,
@@ -549,20 +531,14 @@ class core_calendar_api_testcase extends advanced_testcase {
      * returned.
      */
     function test_get_calendar_action_events_by_timesort_time_limit_offset() {
-        $user = $this->getDataGenerator()->create_user();
-        $course = $this->getDataGenerator()->create_course();
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
-        $moduleinstance = $generator->create_instance(['course' => $course->id]);
-
-        $this->getDataGenerator()->enrol_user($user->id, $course->id);
-        $this->resetAfterTest(true);
-        $this->setUser($user);
+        $this->setAdminUser();
 
         $params = [
             'type' => CALENDAR_EVENT_TYPE_ACTION,
-            'modulename' => 'assign',
-            'instance' => $moduleinstance->id,
-            'userid' => $user->id,
+            'courseid' => 1,
+            'modulename' => 'xyz',
+            'instance' => 1,
+            'userid' => 1,
             'eventtype' => 'user',
             'repeats' => 0,
             'timestart' => 1,

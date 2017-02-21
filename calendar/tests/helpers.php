@@ -24,7 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/../lib.php');
+global $CFG;
+
+require_once($CFG->dirroot . '/calendar/lib.php');
 
 use core_calendar\local\data_access\event_vault;
 use core_calendar\local\event\entities\action_event;
@@ -137,7 +139,8 @@ class action_event_test_factory implements event_factory_interface {
         $action = new action(
             'Test action',
             new \moodle_url('/'),
-            1
+            1,
+            true
         );
 
         $actionevent = new action_event($event, $action);
