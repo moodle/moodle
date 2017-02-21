@@ -50,6 +50,7 @@ class restore_controller extends base_controller {
     protected $precheck;    // Results of the execution of restore prechecks
 
     protected $info;   // Information retrieved from backup contents
+    /** @var restore_plan */
     protected $plan;   // Restore execution plan
 
     protected $execution;     // inmediate/delayed
