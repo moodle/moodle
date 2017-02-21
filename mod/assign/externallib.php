@@ -2617,6 +2617,7 @@ class mod_assign_external extends external_api {
                 $userdetails['fullname'] = $fullname;
                 $userdetails['submitted'] = $record->submitted;
                 $userdetails['requiregrading'] = $record->requiregrading;
+                $userdetails['grantedextension'] = $record->grantedextension;
                 if (!empty($record->groupid)) {
                     $userdetails['groupid'] = $record->groupid;
                 }
@@ -2687,6 +2688,7 @@ class mod_assign_external extends external_api {
             ),
             'submitted' => new external_value(PARAM_BOOL, 'have they submitted their assignment'),
             'requiregrading' => new external_value(PARAM_BOOL, 'is their submission waiting for grading'),
+            'grantedextension' => new external_value(PARAM_BOOL, 'have they been granted an extension'),
             'groupid' => new external_value(PARAM_INT, 'for group assignments this is the group id', VALUE_OPTIONAL),
             'groupname' => new external_value(PARAM_NOTAGS, 'for group assignments this is the group name', VALUE_OPTIONAL),
         ];
@@ -2752,6 +2754,7 @@ class mod_assign_external extends external_api {
             'fullname' => $participant->fullname,
             'submitted' => $participant->submitted,
             'requiregrading' => $participant->requiregrading,
+            'grantedextension' => $participant->grantedextension,
             'blindmarking' => $assign->is_blind_marking(),
             'allowsubmissionsfromdate' => $assign->get_instance()->allowsubmissionsfromdate,
             'duedate' => $assign->get_instance()->duedate,
@@ -2791,6 +2794,7 @@ class mod_assign_external extends external_api {
             'fullname' => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
             'submitted' => new external_value(PARAM_BOOL, 'have they submitted their assignment'),
             'requiregrading' => new external_value(PARAM_BOOL, 'is their submission waiting for grading'),
+            'grantedextension' => new external_value(PARAM_BOOL, 'have they been granted an extension'),
             'blindmarking' => new external_value(PARAM_BOOL, 'is blind marking enabled for this assignment'),
             'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allowsubmissionsfromdate for the user'),
             'duedate' => new external_value(PARAM_INT, 'duedate for the user'),

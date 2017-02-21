@@ -79,6 +79,9 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
                     if (filterstrings.filter_requiregrading && !user.requiregrading) {
                         show = false;
                     }
+                    if (filterstrings.filter_grantedextension && !user.grantedextension) {
+                        show = false;
+                    }
                     if (show) {
                         $.each(identityfields, function(i, k) {
                             if (typeof user[k] !== 'undefined' && user[k] !== '') {
