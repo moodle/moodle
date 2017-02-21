@@ -202,6 +202,89 @@ class core_external extends external_api {
             ));
     }
 
+    /**
+     * Returns description of get_user_dates parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function get_user_dates_parameters() {
+        return new external_function_parameters(
+            [
+                'contextid' => new external_value(
+                    PARAM_INT,
+                    'Context ID. Either use this value, or level and instanceid.',
+                    VALUE_DEFAULT,
+                    0
+                ),
+                'contextlevel' => new external_value(
+                    PARAM_ALPHA,
+                    'Context level. To be used with instanceid.',
+                    VALUE_DEFAULT,
+                    ''
+                ),
+                'instanceid' => new external_value(
+                    PARAM_INT,
+                    'Context instance ID. To be used with level',
+                    VALUE_DEFAULT,
+                    0
+                ),
+                'timestamps' => new external_multiple_structure (
+                    new external_single_structure (
+                        [
+                            'timestamp' => new external_value(PARAM_INT, 'unix timestamp'),
+                            'format' => new external_value(PARAM_TEXT, 'format string'),
+                        ]
+                    )
+                )
+            ]
+        );
+    }
+
+    /**
+     * Format an array of timestamps.
+     *
+     * @param int|null $contextid The contenxt id
+     * @param string|null $contextlevel The context level
+     * @param int|null $instanceid The instnace id for the context level
+     * @param array $timestamps Timestamps to format
+     * @return array
+     */
+    public static function get_user_dates($contextid, $contextlevel, $instanceid, $timestamps) {
+        $params = self::validate_parameters(
+            self::get_user_dates_parameters(),
+            [
+                'contextid' => $contextid,
+                'contextlevel' => $contextlevel,
+                'instanceid' => $instanceid,
+                'timestamps' => $timestamps,
+            ]
+        );
+
+        $context = self::get_context_from_params($params);
+        self::validate_context($context);
+
+        $formatteddates = array_map(function($timestamp) {
+            return userdate($timestamp['timestamp'], $timestamp['format']);
+        }, $params['timestamps']);
+
+        return ['dates' => $formatteddates];
+    }
+
+    /**
+     * Returns description of get_user_dates() result value
+     *
+     * @return array
+     */
+    public static function get_user_dates_returns() {
+        return new external_single_structure(
+            [
+                'dates' => new external_multiple_structure (
+                    new external_value(PARAM_TEXT, 'formatted dates strings')
+                )
+            ]
+        );
+    }
+
      /**
      * Returns description of get_component_strings parameters
      *
