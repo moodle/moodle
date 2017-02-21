@@ -236,6 +236,7 @@ class gradingform_guide_renderer extends plugin_renderer_base {
             $input = html_writer::tag('textarea', s($currentremark), $remarkparams);
 
             // Show the frequently-used comments chooser only if there are defined entries.
+            $commentchooser = '';
             if (!empty($comments)) {
                 // Frequently used comments chooser.
                 $chooserbuttonid = 'criteria-' . $criterion['id'] . '-commentchooser';
