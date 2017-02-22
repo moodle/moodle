@@ -1,6 +1,11 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 3.2.2 ===
+
+* message_count_unread_messages does not return notifications anymore, just messages and only messages
+  that have not been deleted by the first user (current user by default).
+
 === 3.2 ===
 
 * Removed all message_print_* functions as well as the files search.html, search_advanced.html and
