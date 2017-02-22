@@ -314,6 +314,7 @@ class api {
 
         // This user has no conversations so we can return early here.
         if (empty($conversationrecords)) {
+            $transaction->allow_commit();
             return [];
         }
 

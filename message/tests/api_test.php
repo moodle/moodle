@@ -333,6 +333,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // The person doing the search.
         $this->setUser($user1);
 
+        // No conversations yet.
+        $this->assertEquals([], \core_message\api::get_conversations($user1->id));
+
         // Send some messages back and forth, have some different conversations with different users.
         $time = 1;
         $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
