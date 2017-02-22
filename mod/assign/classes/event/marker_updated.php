@@ -140,4 +140,15 @@ class marker_updated extends base {
             throw new \coding_exception('The \'markerid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'assign', 'restore' => 'assign');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['markerid'] = array('db' => 'user', 'restore' => 'user');
+
+        return $othermapped;
+    }
 }

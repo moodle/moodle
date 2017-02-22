@@ -536,7 +536,9 @@ function lesson_menu_block_contents($cmid, $lesson) {
         return null;
     }
 
-    $content = '<a href="#maincontent" class="skip">'.get_string('skip', 'lesson')."</a>\n<div class=\"menuwrapper\">\n<ul>\n";
+    $content = '<a href="#maincontent" class="accesshide">' .
+        get_string('skip', 'lesson') .
+        "</a>\n<div class=\"menuwrapper\">\n<ul>\n";
 
     while ($pageid != 0) {
         $page = $pages[$pageid];
@@ -616,19 +618,19 @@ function lesson_get_media_html($lesson, $context) {
 
     $extension = resourcelib_get_extension($url->out(false));
 
-    $mediarenderer = $PAGE->get_renderer('core', 'media');
+    $mediamanager = core_media_manager::instance($PAGE);
     $embedoptions = array(
-        core_media::OPTION_TRUSTED => true,
-        core_media::OPTION_BLOCK => true
+        core_media_manager::OPTION_TRUSTED => true,
+        core_media_manager::OPTION_BLOCK => true
     );
 
     // find the correct type and print it out
     if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
         $code = resourcelib_embed_image($url, $title);
 
-    } else if ($mediarenderer->can_embed_url($url, $embedoptions)) {
+    } else if ($mediamanager->can_embed_url($url, $embedoptions)) {
         // Media (audio/video) file.
-        $code = $mediarenderer->embed_url($url, $title, 0, 0, $embedoptions);
+        $code = $mediamanager->embed_url($url, $title, 0, 0, $embedoptions);
 
     } else {
         // anything else - just try object tag enlarged as much as possible
@@ -967,8 +969,6 @@ abstract class lesson_add_page_form_base extends moodleform {
  * @property int $displayleft Display a left menu
  * @property int $displayleftif Sets the condition on which the left menu is displayed
  * @property int $progressbar Flag to toggle display of a lesson progress bar
- * @property int $highscores Flag to toggle collection of high scores
- * @property int $maxhighscores Number of high scores to limit to
  * @property int $available Timestamp of when this lesson becomes available
  * @property int $deadline Timestamp of when this lesson is no longer available
  * @property int $timemodified Timestamp when lesson was last modified
@@ -1056,7 +1056,6 @@ class lesson extends lesson_base {
         $DB->delete_records("lesson_grades", array("lessonid"=>$this->properties->id));
         $DB->delete_records("lesson_timer", array("lessonid"=>$this->properties->id));
         $DB->delete_records("lesson_branch", array("lessonid"=>$this->properties->id));
-        $DB->delete_records("lesson_high_scores", array("lessonid"=>$this->properties->id));
         if ($events = $DB->get_records('event', array("modulename"=>'lesson', "instance"=>$this->properties->id))) {
             foreach($events as $event) {
                 $event = calendar_event::load($event);
@@ -1663,6 +1662,93 @@ class lesson extends lesson_base {
             $this->loadedallpages = true;
         }
         return $this->pages;
+    }
+
+    /**
+     * Duplicate the lesson page.
+     *
+     * @param  int $pageid Page ID of the page to duplicate.
+     * @return void.
+     */
+    public function duplicate_page($pageid) {
+        global $PAGE;
+        $cm = get_coursemodule_from_instance('lesson', $this->properties->id, $this->properties->course);
+        $context = context_module::instance($cm->id);
+        // Load the page.
+        $page = $this->load_page($pageid);
+        $properties = $page->properties();
+        // The create method checks to see if these properties are set and if not sets them to zero, hence the unsetting here.
+        if (!$properties->qoption) {
+            unset($properties->qoption);
+        }
+        if (!$properties->layout) {
+            unset($properties->layout);
+        }
+        if (!$properties->display) {
+            unset($properties->display);
+        }
+
+        $properties->pageid = $pageid;
+        // Add text and format into the format required to create a new page.
+        $properties->contents_editor = array(
+            'text' => $properties->contents,
+            'format' => $properties->contentsformat
+        );
+        $answers = $page->get_answers();
+        // Answers need to be added to $properties.
+        $i = 0;
+        $answerids = array();
+        foreach ($answers as $answer) {
+            // Needs to be rearranged to work with the create function.
+            $properties->answer_editor[$i] = array(
+                'text' => $answer->answer,
+                'format' => $answer->answerformat
+            );
+
+            $properties->response_editor[$i] = array(
+              'text' => $answer->response,
+              'format' => $answer->responseformat
+            );
+            $answerids[] = $answer->id;
+
+            $properties->jumpto[$i] = $answer->jumpto;
+            $properties->score[$i] = $answer->score;
+
+            $i++;
+        }
+        // Create the duplicate page.
+        $newlessonpage = lesson_page::create($properties, $this, $context, $PAGE->course->maxbytes);
+        $newanswers = $newlessonpage->get_answers();
+        // Copy over the file areas as well.
+        $this->copy_page_files('page_contents', $pageid, $newlessonpage->id, $context->id);
+        $j = 0;
+        foreach ($newanswers as $answer) {
+            if (isset($answer->answer) && strpos($answer->answer, '@@PLUGINFILE@@') !== false) {
+                $this->copy_page_files('page_answers', $answerids[$j], $answer->id, $context->id);
+            }
+            if (isset($answer->response) && !is_array($answer->response) && strpos($answer->response, '@@PLUGINFILE@@') !== false) {
+                $this->copy_page_files('page_responses', $answerids[$j], $answer->id, $context->id);
+            }
+            $j++;
+        }
+    }
+
+    /**
+     * Copy the files from one page to another.
+     *
+     * @param  string $filearea Area that the files are stored.
+     * @param  int $itemid Item ID.
+     * @param  int $newitemid The item ID for the new page.
+     * @param  int $contextid Context ID for this page.
+     * @return void.
+     */
+    protected function copy_page_files($filearea, $itemid, $newitemid, $contextid) {
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($contextid, 'mod_lesson', $filearea, $itemid);
+        foreach ($files as $file) {
+            $fieldupdates = array('itemid' => $newitemid);
+            $fs->create_file_from_storedfile($fieldupdates, $file);
+        }
     }
 
     /**
@@ -2429,6 +2515,19 @@ abstract class lesson_page extends lesson_base {
         } else {
             if (!has_capability('mod/lesson:manage', $context)) {
                 $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$this->lesson->id, "userid"=>$USER->id));
+
+                // Get the number of attempts that have been made on this question for this student and retake,
+                $nattempts = $DB->count_records('lesson_attempts', array('lessonid' => $this->lesson->id,
+                    'userid' => $USER->id, 'pageid' => $this->properties->id, 'retry' => $nretakes));
+
+                // Check if they have reached (or exceeded) the maximum number of attempts allowed.
+                if ($nattempts >= $this->lesson->maxattempts) {
+                    $result->maxattemptsreached = true;
+                    $result->feedback = get_string('maximumnumberofattemptsreached', 'lesson');
+                    $result->newpageid = $this->lesson->get_next_page($this->properties->nextpageid);
+                    return $result;
+                }
+
                 // record student's attempt
                 $attempt = new stdClass;
                 $attempt->lessonid = $this->lesson->id;
@@ -2465,14 +2564,13 @@ abstract class lesson_page extends lesson_base {
                         $event->add_record_snapshot('lesson_attempts', $attempt);
                         $event->trigger();
 
+                        // Increase the number of attempts made.
+                        $nattempts++;
                     }
                 }
                 // "number of attempts remaining" message if $this->lesson->maxattempts > 1
                 // displaying of message(s) is at the end of page for more ergonomic display
                 if (!$result->correctanswer && ($result->newpageid == 0)) {
-                    // wrong answer and student is stuck on this page - check how many attempts
-                    // the student has had at this page/question
-                    $nattempts = $DB->count_records("lesson_attempts", array("pageid"=>$this->properties->id, "userid"=>$USER->id, "retry" => $attempt->retry));
                     // retreive the number of attempts left counter for displaying at bottom of feedback page
                     if ($nattempts >= $this->lesson->maxattempts) {
                         if ($this->lesson->maxattempts > 1) { // don't bother with message if only one attempt
@@ -2743,7 +2841,7 @@ abstract class lesson_page extends lesson_base {
                     $this->answers[$i]->timecreated = $this->timecreated;
                 }
 
-                if (!empty($properties->answer_editor[$i])) {
+                if (isset($properties->answer_editor[$i])) {
                     if (is_array($properties->answer_editor[$i])) {
                         // Multichoice and true/false pages have an HTML editor.
                         $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
@@ -2857,7 +2955,7 @@ abstract class lesson_page extends lesson_base {
         for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
             $answer = clone($newanswer);
 
-            if (!empty($properties->answer_editor[$i])) {
+            if (isset($properties->answer_editor[$i])) {
                 if (is_array($properties->answer_editor[$i])) {
                     // Multichoice and true/false pages have an HTML editor.
                     $answer->answer = $properties->answer_editor[$i]['text'];

@@ -1,0 +1,381 @@
+/* calendar.less */
+
+// Calendar colour variables defined.
+$calendarEventCourseColor: #ffd3bd !default; // Pale red.
+$calendarEventGlobalColor: #d6f8cd !default; // Pale green.
+$calendarEventGroupColor: #fee7ae !default; // Pale yellow.
+$calendarEventUserColor: #dce7ec !default; // Pale blue.
+
+// Calendar event background colours defined.
+.calendar_event_course {
+    background-color: $calendarEventCourseColor;
+}
+
+.calendar_event_global {
+    background-color: $calendarEventGlobalColor;
+}
+
+.calendar_event_group {
+    background-color: $calendarEventGroupColor;
+}
+
+.calendar_event_user {
+    background-color: $calendarEventUserColor;
+}
+
+// Calendar restyling.
+.path-calendar {
+    .calendartable {
+        width: 100%;
+
+        th,
+        td {
+            width: 14%;
+            vertical-align: top;
+            text-align: center;
+            border: 0;
+        }
+    }
+
+    .calendar-controls {
+        .previous,
+        .next,
+        .current {
+            display: block;
+            float: left;
+            width: 12%;
+        }
+
+        .previous {
+            text-align: left;
+        }
+
+        .current {
+            text-align: center;
+            width: 76%;
+        }
+
+        .next {
+            text-align: right;
+        }
+    }
+
+    .filters {
+        table {
+            border-collapse: separate;
+            border-spacing: 2px;
+            width: 100%;
+        }
+    }
+
+    .maincalendar {
+        vertical-align: top;
+        padding: 0;
+
+        .bottom {
+            text-align: center;
+            padding: 5px 0 0 0;
+        }
+
+        .heightcontainer {
+            height: 100%;
+            position: relative;
+        }
+
+        .calendarmonth {
+            width: 98%;
+            margin: 10px auto;
+        }
+
+        .calendarmonth {
+            ul {
+                margin: 0;
+
+                li {
+                    list-style-type: none;
+                    margin-top: 4px;
+                }
+            }
+
+            td {
+                height: 5em;
+            }
+        }
+
+        .calendar-controls {
+            .previous,
+            .next {
+                width: 30%;
+            }
+
+            .current {
+                width: 39.95%;
+            }
+        }
+
+        .controls {
+            width: 98%;
+            margin: 10px auto;
+        }
+
+        .calendar_event_course,
+        .calendar_event_global,
+        .calendar_event_group,
+        .calendar_event_user {
+            border-width: 1px 1px 1px 12px;
+            border-style: solid;
+        }
+
+        .calendar_event_course {
+            border-color: $calendarEventCourseColor;
+        }
+
+        .calendar_event_global {
+            border-color: $calendarEventGlobalColor;
+        }
+
+        .calendar_event_group {
+            border-color: $calendarEventGroupColor;
+        }
+
+        .calendar_event_user {
+            border-color: $calendarEventUserColor;
+        }
+        //.calendar-event-panel {
+        //    background-color: $grayLighter;
+        //    border: 2px solid $grayLighter;
+        //    .yui3-overlay-content {
+        //        padding: 19px;
+        //        background-color: lighten($wellBackground, 3%);
+        //        border: 1px solid darken($wellBackground, 7%);
+        //        @include border-radius($baseBorderRadius);
+        //        @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, .05));
+        //    }
+        //}
+        .calendar-event-panel {
+            @extend .card;
+        }
+
+        .calendar-controls {
+            .current {
+                @extend .h2;
+            }
+        }
+
+        .calendartable {
+            td,
+            li {
+                padding: 5px;
+            }
+
+            li {
+                padding-left: 10px;
+                text-align: left;
+            }
+        }
+
+        .header {
+            overflow: hidden;
+
+            .buttons {
+                float: right;
+            }
+        }
+
+        .event .card-header img {
+            vertical-align: baseline;
+        }
+
+    }
+}
+
+// Calendar export.
+#page-calendar-export {
+    .indent {
+        padding-left: 20px;
+    }
+}
+
+// Block minicalendar.
+.block {
+    .minicalendar {
+        max-width: 280px;
+        margin: 0 auto;
+        width: 100%;
+
+        th,
+        td {
+            padding: 2px;
+            font-size: 0.8em;
+            text-align: center;
+        }
+
+        td {
+            &.weekend {
+                @extend .text-muted;
+            }
+
+            a {
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+
+            &.duration_global {
+                border-top: 1px solid $calendarEventGlobalColor;
+                border-bottom: 1px solid $calendarEventGlobalColor;
+
+                &.duration_finish {
+                    background-color: $calendarEventGlobalColor;
+                }
+            }
+
+            &.duration_course {
+                border-top: 1px solid $calendarEventCourseColor;
+                border-bottom: 1px solid $calendarEventCourseColor;
+
+                &.duration_finish {
+                    background-color: $calendarEventCourseColor;
+                }
+            }
+
+            &.duration_group {
+                border-top: 1px solid $calendarEventGroupColor;
+                border-bottom: 1px solid $calendarEventGroupColor;
+
+                &.duration_finish {
+                    background-color: $calendarEventGroupColor;
+                }
+            }
+
+            &.duration_user {
+                border-top: 1px solid $calendarEventUserColor;
+                border-bottom: 1px solid $calendarEventUserColor;
+
+                &.duration_finish {
+                    background-color: $calendarEventUserColor;
+                }
+            }
+        }
+
+        caption {
+            font-size: inherit;
+            font-weight: inherit;
+            line-height: inherit;
+            text-align: center;
+        }
+    }
+
+    .calendar-event-panel {
+        //background-color: $grayLighter;
+        //border: 1px solid $grayLighter;
+        .yui3-overlay-content {
+            @extend .card;
+            //    padding: 19px;
+            //    background-color: lighten($wellBackground, 3%);
+            //    border: 1px solid darken($wellBackground, 7%);
+            //    @include border-radius($baseBorderRadius);
+            //    @include box-shadow(inset 0 1px 1px rgba(0 ,0 ,0 , .05));
+            h2 {
+                &.eventtitle {
+                    line-height: 1.2;
+                    font-size: 18px;
+                }
+            }
+
+            .eventcontent {
+                img {
+                    padding-right: 5px;
+                }
+            }
+        }
+    }
+
+    .calendar-controls {
+        .previous,
+        .current,
+        .next {
+            display: block;
+            float: left;
+        }
+
+        .previous {
+            text-align: left;
+            width: 12%;
+        }
+
+        .current {
+            text-align: center;
+            width: 76%;
+        }
+
+        .next {
+            text-align: right;
+            width: 12%;
+        }
+    }
+
+    .calendar_filters {
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 0.2em;
+
+            span {
+                img {
+                    padding: 0 0.2em;
+                    margin: 0;
+                }
+            }
+        }
+
+        .eventname {
+            padding-left: 0.2em;
+        }
+    }
+
+    .content {
+        h3 {
+            &.eventskey {
+                margin-top: 0.5em;
+            }
+        }
+    }
+}
+
+/* Display month name above the calendar */
+table.calendartable caption {
+    caption-side: top;
+}
+
+.ical-link {
+    font-size: 10px;
+    font-weight: bold;
+    background-color: #f60;
+    padding: 0 5px;
+    color: #fff;
+    border-top: 1px solid #f93;
+    border-left: 1px solid #f93;
+    border-bottom: 1px solid #013;
+    border-right: 1px solid #013;
+}
+
+.ical-link:hover,
+.ical-link:active,
+.ical-link:focus,
+.ical-link:visited {
+    color: #fff;
+    text-decoration: none;
+}
+
+@media (min-width: 768px) {
+    #page-calender-view {
+        .container-fluid {
+            min-width: 1024px;
+        }
+    }
+}

@@ -49,7 +49,11 @@ class core_availability_component_testcase extends advanced_testcase {
         // fail, but it's obvious when running test at least.
         $pluginmanager = core_plugin_manager::instance();
         $list = $pluginmanager->get_enabled_plugins('availability');
-        $this->assertEquals(array('completion', 'date', 'grade', 'group', 'grouping', 'profile'),
-                array_keys($list));
+        $this->assertArrayHasKey('completion', $list);
+        $this->assertArrayHasKey('date', $list);
+        $this->assertArrayHasKey('grade', $list);
+        $this->assertArrayHasKey('group', $list);
+        $this->assertArrayHasKey('grouping', $list);
+        $this->assertArrayHasKey('profile', $list);
     }
 }

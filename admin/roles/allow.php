@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $mode = required_param('mode', PARAM_ALPHANUMEXT);
@@ -80,7 +80,8 @@ echo $OUTPUT->box($controller->get_intro_text());
 echo '<form action="' . $baseurl . '" method="post">';
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 echo html_writer::table($table);
-echo '<div class="buttons"><input type="submit" name="submit" value="'.get_string('savechanges').'"/>';
+echo '<div class="buttons">';
+echo '<input type="submit" class="btn btn-primary" name="submit" value="' . get_string('savechanges') . '"/>';
 echo '</div></form>';
 
 echo $OUTPUT->footer();

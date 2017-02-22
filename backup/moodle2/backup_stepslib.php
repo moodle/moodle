@@ -91,63 +91,9 @@ class create_taskbasepath_directory extends backup_execution_step {
 
 /**
  * Abstract structure step, parent of all the activity structure steps. Used to wrap the
- * activity structure definition within the main <activity ...> tag. Also provides
- * subplugin support for activities (that must be properly declared)
+ * activity structure definition within the main <activity ...> tag.
  */
 abstract class backup_activity_structure_step extends backup_structure_step {
-
-    /**
-     * Add subplugin structure to any element in the activity backup tree
-     *
-     * @param string $subplugintype type of subplugin as defined in activity db/subplugins.php
-     * @param backup_nested_element $element element in the activity backup tree that
-     *                                       we are going to add subplugin information to
-     * @param bool $multiple to define if multiple subplugins can produce information
-     *                       for each instance of $element (true) or no (false)
-     * @return void
-     */
-    protected function add_subplugin_structure($subplugintype, $element, $multiple) {
-
-        global $CFG;
-
-        // Check the requested subplugintype is a valid one
-        $subpluginsfile = $CFG->dirroot . '/mod/' . $this->task->get_modulename() . '/db/subplugins.php';
-        if (!file_exists($subpluginsfile)) {
-             throw new backup_step_exception('activity_missing_subplugins_php_file', $this->task->get_modulename());
-        }
-        include($subpluginsfile);
-        if (!array_key_exists($subplugintype, $subplugins)) {
-             throw new backup_step_exception('incorrect_subplugin_type', $subplugintype);
-        }
-
-        // Arrived here, subplugin is correct, let's create the optigroup
-        $optigroupname = $subplugintype . '_' . $element->get_name() . '_subplugin';
-        $optigroup = new backup_optigroup($optigroupname, null, $multiple);
-        $element->add_child($optigroup); // Add optigroup to stay connected since beginning
-
-        // Get all the optigroup_elements, looking across all the subplugin dirs
-        $subpluginsdirs = core_component::get_plugin_list($subplugintype);
-        foreach ($subpluginsdirs as $name => $subpluginsdir) {
-            $classname = 'backup_' . $subplugintype . '_' . $name . '_subplugin';
-            $backupfile = $subpluginsdir . '/backup/moodle2/' . $classname . '.class.php';
-            if (file_exists($backupfile)) {
-                require_once($backupfile);
-                $backupsubplugin = new $classname($subplugintype, $name, $optigroup, $this);
-                // Add subplugin returned structure to optigroup
-                $backupsubplugin->define_subplugin_structure($element->get_name());
-            }
-        }
-    }
-
-    /**
-     * As far as activity backup steps are implementing backup_subplugin stuff, they need to
-     * have the parent task available for wrapping purposes (get course/context....)
-     *
-     * @return backup_activity_task
-     */
-    public function get_task() {
-        return $this->task;
-    }
 
     /**
      * Wraps any activity backup structure within the common 'activity' element
@@ -318,10 +264,13 @@ class backup_module_structure_step extends backup_structure_step {
 
         $module = new backup_nested_element('module', array('id', 'version'), array(
             'modulename', 'sectionid', 'sectionnumber', 'idnumber',
-            'added', 'score', 'indent', 'visible',
+            'added', 'score', 'indent', 'visible', 'visibleoncoursepage',
             'visibleold', 'groupmode', 'groupingid',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
             'availability', 'showdescription'));
+
+        $tags = new backup_nested_element('tags');
+        $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
 
         // attach format plugin structure to $module element, only one allowed
         $this->add_plugin_structure('format', $module, false);
@@ -333,6 +282,12 @@ class backup_module_structure_step extends backup_structure_step {
         // attach local plugin structure to $module, multiple allowed
         $this->add_plugin_structure('local', $module, true);
 
+        // Attach admin tools plugin structure to $module.
+        $this->add_plugin_structure('tool', $module, true);
+
+        $module->add_child($tags);
+        $tags->add_child($tag);
+
         // Set the sources
         $concat = $DB->sql_concat("'mod_'", 'm.name');
         $module->set_source_sql("
@@ -342,6 +297,13 @@ class backup_module_structure_step extends backup_structure_step {
               JOIN {config_plugins} cp ON cp.plugin = $concat AND cp.name = 'version'
               JOIN {course_sections} s ON s.id = cm.section
              WHERE cm.id = ?", array(backup::VAR_MODID));
+
+        $tag->set_source_sql("SELECT t.id, t.name, t.rawname
+                                FROM {tag} t
+                                JOIN {tag_instance} ti ON ti.tagid = t.id
+                               WHERE ti.itemtype = 'course_modules'
+                                 AND ti.component = 'core'
+                                 AND ti.itemid = ?", array(backup::VAR_MODID));
 
         // Define annotations
         $module->annotate_ids('grouping', 'groupingid');
@@ -413,7 +375,7 @@ class backup_course_structure_step extends backup_structure_step {
         $course = new backup_nested_element('course', array('id', 'contextid'), array(
             'shortname', 'fullname', 'idnumber',
             'summary', 'summaryformat', 'format', 'showgrades',
-            'newsitems', 'startdate',
+            'newsitems', 'startdate', 'enddate',
             'marker', 'maxbytes', 'legacyfiles', 'showreports',
             'visible', 'groupmode', 'groupmodeforce',
             'defaultgroupingid', 'lang', 'theme',
@@ -451,6 +413,10 @@ class backup_course_structure_step extends backup_structure_step {
         // attach local plugin structure to $course element; multiple local plugins
         // can save course data if required
         $this->add_plugin_structure('local', $course, true);
+
+        // Attach admin tools plugin structure to $course element; multiple plugins
+        // can save course data if required.
+        $this->add_plugin_structure('tool', $course, true);
 
         // Build the tree
 
@@ -939,6 +905,7 @@ class backup_gradebook_structure_step extends backup_structure_step {
     }
 
     protected function define_structure() {
+        global $CFG, $DB;
 
         // are we including user info?
         $userinfo = $this->get_setting_value('users');
@@ -983,8 +950,11 @@ class backup_gradebook_structure_step extends backup_structure_step {
         $grade_setting = new backup_nested_element('grade_setting', 'id', array(
             'name', 'value'));
 
+        $gradebook_attributes = new backup_nested_element('attributes', null, array('calculations_freeze'));
 
         // Build the tree
+        $gradebook->add_child($gradebook_attributes);
+
         $gradebook->add_child($grade_categories);
         $grade_categories->add_child($grade_category);
 
@@ -1000,6 +970,14 @@ class backup_gradebook_structure_step extends backup_structure_step {
         $grade_settings->add_child($grade_setting);
 
         // Define sources
+
+        // Add attribute with gradebook calculation freeze date if needed.
+        $attributes = new stdClass();
+        $gradebookcalculationfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->get_courseid());
+        if ($gradebookcalculationfreeze) {
+            $attributes->calculations_freeze = $gradebookcalculationfreeze;
+        }
+        $gradebook_attributes->set_source_array([$attributes]);
 
         //Include manual, category and the course grade item
         $grade_items_sql ="SELECT * FROM {grade_items}
@@ -1023,7 +1001,18 @@ class backup_gradebook_structure_step extends backup_structure_step {
 
         $letter->set_source_table('grade_letters', array('contextid' => backup::VAR_CONTEXTID));
 
-        $grade_setting->set_source_table('grade_settings', array('courseid' => backup::VAR_COURSEID));
+        // Set the grade settings source, forcing the inclusion of minmaxtouse if not present.
+        $settings = array();
+        $rs = $DB->get_recordset('grade_settings', array('courseid' => $this->get_courseid()));
+        foreach ($rs as $record) {
+            $settings[$record->name] = $record;
+        }
+        $rs->close();
+        if (!isset($settings['minmaxtouse'])) {
+            $settings['minmaxtouse'] = (object) array('name' => 'minmaxtouse', 'value' => $CFG->grade_minmaxtouse);
+        }
+        $grade_setting->set_source_array($settings);
+
 
         // Annotations (both as final as far as they are going to be exported in next steps)
         $grade_item->annotate_ids('scalefinal', 'scaleid'); // Straight as scalefinal because it's > 0
@@ -1521,6 +1510,145 @@ class backup_activity_logs_structure_step extends backup_structure_step {
 }
 
 /**
+ * Structure step in charge of constructing the logstores.xml file for the course logs.
+ *
+ * This backup step will backup the logs for all the enabled logstore subplugins supporting
+ * it, for logs belonging to the course level.
+ */
+class backup_course_logstores_structure_step extends backup_structure_step {
+
+    protected function define_structure() {
+
+        // Define the structure of logstores container.
+        $logstores = new backup_nested_element('logstores');
+        $logstore = new backup_nested_element('logstore');
+        $logstores->add_child($logstore);
+
+        // Add the tool_log logstore subplugins information to the logstore element.
+        $this->add_subplugin_structure('logstore', $logstore, true, 'tool', 'log');
+
+        return $logstores;
+    }
+}
+
+/**
+ * Structure step in charge of constructing the logstores.xml file for the activity logs.
+ *
+ * Note: Activity structure is completely equivalent to the course one, so just extend it.
+ */
+class backup_activity_logstores_structure_step extends backup_course_logstores_structure_step {
+}
+
+/**
+ * Course competencies backup structure step.
+ */
+class backup_course_competencies_structure_step extends backup_structure_step {
+
+    protected function define_structure() {
+        $userinfo = $this->get_setting_value('users');
+
+        $wrapper = new backup_nested_element('course_competencies');
+
+        $settings = new backup_nested_element('settings', array('id'), array('pushratingstouserplans'));
+        $wrapper->add_child($settings);
+
+        $sql = 'SELECT s.pushratingstouserplans
+                  FROM {' . \core_competency\course_competency_settings::TABLE . '} s
+                 WHERE s.courseid = :courseid';
+        $settings->set_source_sql($sql, array('courseid' => backup::VAR_COURSEID));
+
+        $competencies = new backup_nested_element('competencies');
+        $wrapper->add_child($competencies);
+
+        $competency = new backup_nested_element('competency', null, array('id', 'idnumber', 'ruleoutcome',
+            'sortorder', 'frameworkid', 'frameworkidnumber'));
+        $competencies->add_child($competency);
+
+        $sql = 'SELECT c.id, c.idnumber, cc.ruleoutcome, cc.sortorder, f.id AS frameworkid, f.idnumber AS frameworkidnumber
+                  FROM {' . \core_competency\course_competency::TABLE . '} cc
+                  JOIN {' . \core_competency\competency::TABLE . '} c ON c.id = cc.competencyid
+                  JOIN {' . \core_competency\competency_framework::TABLE . '} f ON f.id = c.competencyframeworkid
+                 WHERE cc.courseid = :courseid
+              ORDER BY cc.sortorder';
+        $competency->set_source_sql($sql, array('courseid' => backup::VAR_COURSEID));
+
+        $usercomps = new backup_nested_element('user_competencies');
+        $wrapper->add_child($usercomps);
+        if ($userinfo) {
+            $usercomp = new backup_nested_element('user_competency', null, array('userid', 'competencyid',
+                'proficiency', 'grade'));
+            $usercomps->add_child($usercomp);
+
+            $sql = 'SELECT ucc.userid, ucc.competencyid, ucc.proficiency, ucc.grade
+                      FROM {' . \core_competency\user_competency_course::TABLE . '} ucc
+                     WHERE ucc.courseid = :courseid
+                       AND ucc.grade IS NOT NULL';
+            $usercomp->set_source_sql($sql, array('courseid' => backup::VAR_COURSEID));
+            $usercomp->annotate_ids('user', 'userid');
+        }
+
+        return $wrapper;
+    }
+
+    /**
+     * Execute conditions.
+     *
+     * @return bool
+     */
+    protected function execute_condition() {
+
+        // Do not execute if competencies are not included.
+        if (!$this->get_setting_value('competencies')) {
+            return false;
+        }
+
+        return true;
+    }
+}
+
+/**
+ * Activity competencies backup structure step.
+ */
+class backup_activity_competencies_structure_step extends backup_structure_step {
+
+    protected function define_structure() {
+        $wrapper = new backup_nested_element('course_module_competencies');
+
+        $competencies = new backup_nested_element('competencies');
+        $wrapper->add_child($competencies);
+
+        $competency = new backup_nested_element('competency', null, array('idnumber', 'ruleoutcome',
+            'sortorder', 'frameworkidnumber'));
+        $competencies->add_child($competency);
+
+        $sql = 'SELECT c.idnumber, cmc.ruleoutcome, cmc.sortorder, f.idnumber AS frameworkidnumber
+                  FROM {' . \core_competency\course_module_competency::TABLE . '} cmc
+                  JOIN {' . \core_competency\competency::TABLE . '} c ON c.id = cmc.competencyid
+                  JOIN {' . \core_competency\competency_framework::TABLE . '} f ON f.id = c.competencyframeworkid
+                 WHERE cmc.cmid = :coursemoduleid
+              ORDER BY cmc.sortorder';
+        $competency->set_source_sql($sql, array('coursemoduleid' => backup::VAR_MODID));
+
+        return $wrapper;
+    }
+
+    /**
+     * Execute conditions.
+     *
+     * @return bool
+     */
+    protected function execute_condition() {
+
+        // Do not execute if competencies are not included.
+        if (!$this->get_setting_value('competencies')) {
+            return false;
+        }
+
+        return true;
+    }
+}
+
+/**
  * structure in charge of constructing the inforef.xml file for all the items we want
  * to have referenced there (users, roles, files...)
  */
@@ -1652,6 +1780,7 @@ class backup_main_structure_step extends backup_structure_step {
         $info['original_course_fullname']  = $originalcourseinfo->fullname;
         $info['original_course_shortname'] = $originalcourseinfo->shortname;
         $info['original_course_startdate'] = $originalcourseinfo->startdate;
+        $info['original_course_enddate']   = $originalcourseinfo->enddate;
         $info['original_course_contextid'] = context_course::instance($this->get_courseid())->id;
         $info['original_system_contextid'] = context_system::instance()->id;
 
@@ -1667,7 +1796,7 @@ class backup_main_structure_step extends backup_structure_step {
             'name', 'moodle_version', 'moodle_release', 'backup_version',
             'backup_release', 'backup_date', 'mnet_remoteusers', 'include_files', 'include_file_references_to_external_content', 'original_wwwroot',
             'original_site_identifier_hash', 'original_course_id', 'original_course_format',
-            'original_course_fullname', 'original_course_shortname', 'original_course_startdate',
+            'original_course_fullname', 'original_course_shortname', 'original_course_startdate', 'original_course_enddate',
             'original_course_contextid', 'original_system_contextid'));
 
         $details = new backup_nested_element('details');

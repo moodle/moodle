@@ -28,9 +28,6 @@
 require_once(__DIR__ . '/../../../../../../lib/behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode,
-    Behat\Behat\Context\Step\Given as Given,
-    Behat\Behat\Context\Step\When as When,
-    Behat\Behat\Context\Step\Then as Then,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
     Behat\Mink\Exception\ExpectationException as ExpectationException;
 
@@ -81,7 +78,7 @@ class behat_gradingform_rubric extends behat_base {
         $addcriterionbutton = $this->find_button(get_string('addcriterion', 'gradingform_rubric'));
 
         // Cleaning the current ones.
-        $deletebuttons = $this->find_all('css', "input[title='" . get_string('criteriondelete', 'gradingform_rubric') . "']");
+        $deletebuttons = $this->find_all('css', "input[value='" . get_string('criteriondelete', 'gradingform_rubric') . "']");
         if ($deletebuttons) {
 
             // We should reverse the deletebuttons because otherwise once we delete
@@ -100,6 +97,21 @@ class behat_gradingform_rubric extends behat_base {
 
         if ($criteria) {
             foreach ($criteria as $criterionit => $criterion) {
+                // Unset empty levels in criterion.
+                foreach ($criterion as $i => $value) {
+                    if (empty($value)) {
+                        unset($criterion[$i]);
+                    }
+                }
+
+                // Remove empty criterion, as TableNode might contain them to make table rows equal size.
+                $newcriterion = array();
+                foreach ($criterion as $k => $c) {
+                    if (!empty($c)) {
+                        $newcriterion[$k] = $c;
+                    }
+                }
+                $criterion = $newcriterion;
 
                 // Checking the number of cells.
                 if (count($criterion) % 2 === 0) {
@@ -212,12 +224,11 @@ class behat_gradingform_rubric extends behat_base {
      * @param string $currentvalue
      * @param string $value
      * @param string $criterionname
-     * @return Given[]
      */
     public function i_replace_rubric_level_with($currentvalue, $value, $criterionname) {
 
-        $currentvalueliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($currentvalue);
-        $criterionliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($criterionname);
+        $currentvalueliteral = behat_context_helper::escape($currentvalue);
+        $criterionliteral = behat_context_helper::escape($criterionname);
 
         $criterionxpath = "//div[@id='rubric-rubric']" .
             "/descendant::td[contains(concat(' ', normalize-space(@class), ' '), ' description ')]";
@@ -262,7 +273,6 @@ class behat_gradingform_rubric extends behat_base {
      *
      * @throws ExpectationException
      * @param TableNode $rubric
-     * @return void
      */
     public function i_grade_by_filling_the_rubric_with(TableNode $rubric) {
 
@@ -271,8 +281,10 @@ class behat_gradingform_rubric extends behat_base {
         $stepusage = '"I grade by filling the rubric with:" step needs you to provide a table where each row is a criterion' .
             ' and each criterion has 3 different values: | Criterion name | Number of points | Remark text |';
 
-        // To fill with the steps to execute.
-        $steps = array();
+        // If running Javascript, ensure we zoom in before filling the grades.
+        if ($this->running_javascript()) {
+            $this->execute('behat_general::click_link', get_string('togglezoom', 'mod_assign'));
+        }
 
         // First element -> name, second -> points, third -> Remark.
         foreach ($criteria as $name => $criterion) {
@@ -297,9 +309,11 @@ class behat_gradingform_rubric extends behat_base {
                 $levelnode = $this->find('xpath', $selectedlevelxpath);
 
                 // Using in_array() as there are only a few elements.
-                if (!in_array('checked', explode(' ', $levelnode->getAttribute('class')))) {
-                    $steps[] = new Given('I click on "' . $selectedlevelxpath . '" "xpath_element" in the "' .
-                        $this->escape($name) . '" "table_row"');
+                if (!$levelnode->hasClass('checked')) {
+                    $levelnodexpath = $selectedlevelxpath . "//div[contains(concat(' ', normalize-space(@class), ' '), ' score ')]";
+                    $this->execute('behat_general::i_click_on_in_the',
+                        array($levelnodexpath, "xpath_element", $this->escape($name), "table_row")
+                    );
                 }
 
             } else {
@@ -308,7 +322,6 @@ class behat_gradingform_rubric extends behat_base {
                 $radioxpath = $this->get_criterion_xpath($name) .
                     $selectedlevelxpath . "/descendant::input[@type='radio']";
                 $radionode = $this->find('xpath', $radioxpath);
-                // TODO MDL-43738: Change setValue() to use the generic set_value()
                 // which will delegate the process to the field type.
                 $radionode->setValue($radionode->getAttribute('value'));
             }
@@ -317,10 +330,13 @@ class behat_gradingform_rubric extends behat_base {
 
             // First we need to get the textarea name, then we can set the value.
             $textarea = $this->get_node_in_container('css_element', 'textarea', 'table_row', $name);
-            $steps[] = new Given('I set the field "' . $textarea->getAttribute('name') . '" to "' . $criterion[1] . '"');
+            $this->execute('behat_forms::i_set_the_field_to', array($textarea->getAttribute('name'), $criterion[1]));
         }
 
-        return $steps;
+        // If running Javascript, then ensure to close zoomed rubric.
+        if ($this->running_javascript()) {
+            $this->execute('behat_general::click_link', get_string('togglezoom', 'mod_assign'));
+        }
     }
 
     /**
@@ -483,7 +499,7 @@ class behat_gradingform_rubric extends behat_base {
      * @return string
      */
     protected function get_criterion_xpath($criterionname) {
-        $literal = $this->getSession()->getSelectorsHandler()->xpathLiteral($criterionname);
+        $literal = behat_context_helper::escape($criterionname);
         return "//tr[contains(concat(' ', normalize-space(@class), ' '), ' criterion ')]" .
             "[./descendant::td[@class='description'][text()=$literal]]";
     }

@@ -189,7 +189,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
                 } else {
                     $answertext = "No answer";
                 }
-                $table->data[] = array("<b>$questiontext</b>", $answertext);
+                $table->data[] = array("<b>$questiontext</b>", s($answertext));
             }
             echo html_writer::table($table);
 
@@ -497,7 +497,7 @@ function survey_shorten_name ($name, $numwords) {
  * @param object $question
  */
 function survey_print_multi($question) {
-    global $USER, $DB, $qnum, $checklist, $DB, $OUTPUT; //TODO: this is sloppy globals abuse
+    global $USER, $DB, $qnum, $DB, $OUTPUT; //TODO: this is sloppy globals abuse
 
     $stripreferthat = get_string("ipreferthat", "survey");
     $strifoundthat = get_string("ifoundthat", "survey");
@@ -535,7 +535,7 @@ function survey_print_multi($question) {
 
     echo "<tr><th scope=\"col\" colspan=\"7\">$question->intro</th></tr>\n";
 
-    $subquestions = $DB->get_records_list("survey_questions", "id", explode(',', $question->multi));
+    $subquestions = survey_get_subquestions($question);
 
     foreach ($subquestions as $q) {
         $qnum++;
@@ -555,15 +555,13 @@ function survey_print_multi($question) {
             echo $q->text ."</th>\n";
 
             $default = get_accesshide($strdefault);
-            echo "<td class=\"whitecell\"><label for=\"q$P$q->id\"><input type=\"radio\" name=\"q$P$q->id\" id=\"q$P" . $q->id . "_D\" value=\"0\" checked=\"checked\" />$default</label></td>";
+            echo "<td class=\"whitecell\"><label for=\"q$P$q->id\"><input type=\"radio\" name=\"q$P$q->id\" id=\"q$P" . $q->id . "_D\" value=\"0\" checked=\"checked\" data-survey-default=\"true\" />$default</label></td>";
 
             for ($i=1;$i<=$numoptions;$i++) {
                 $hiddentext = get_accesshide($options[$i-1]);
                 $id = "q$P" . $q->id . "_$i";
                 echo "<td><label for=\"$id\"><input type=\"radio\" name=\"q$P$q->id\" id=\"$id\" value=\"$i\" />$hiddentext</label></td>";
             }
-            $checklist["q$P$q->id"] = 0;
-
         } else {
             echo "<th scope=\"row\" class=\"optioncell\">";
             echo "<b class=\"qnumtopcell\">$qnum</b> &nbsp; ";
@@ -572,7 +570,7 @@ function survey_print_multi($question) {
             echo "<span class=\"option\">$q->text</span></th>\n";
 
             $default = get_accesshide($strdefault);
-            echo '<td class="whitecell"><label for="qP'.$q->id.'"><input type="radio" name="qP'.$q->id.'" id="qP'.$q->id.'" value="0" checked="checked" />'.$default.'</label></td>';
+            echo '<td class="whitecell"><label for="qP'.$q->id.'"><input type="radio" name="qP'.$q->id.'" id="qP'.$q->id.'" value="0" checked="checked" data-survey-default="true" />'.$default.'</label></td>';
 
 
             for ($i=1;$i<=$numoptions;$i++) {
@@ -589,16 +587,13 @@ function survey_print_multi($question) {
             echo "<span class=\"option\">$q->text</span></th>\n";
 
             $default = get_accesshide($strdefault);
-            echo '<td class="whitecell"><label for="q'. $q->id .'"><input type="radio" name="q'.$q->id. '" id="q'. $q->id .'" value="0" checked="checked" />'.$default.'</label></td>';
+            echo '<td class="whitecell"><label for="q'. $q->id .'"><input type="radio" name="q'.$q->id. '" id="q'. $q->id .'" value="0" checked="checked" data-survey-default="true" />'.$default.'</label></td>';
 
             for ($i=1;$i<=$numoptions;$i++) {
                 $hiddentext = get_accesshide($options[$i-1]);
                 $id = "q" . $q->id . "_$i";
                 echo "<td><label for=\"$id\"><input type=\"radio\" name=\"q$q->id\" id=\"$id\" value=\"$i\" />$hiddentext</label></td>";
             }
-
-            $checklist["qP$q->id"] = 0;
-            $checklist["q$q->id"] = 0;
         }
         echo "</tr>\n";
     }
@@ -627,11 +622,11 @@ function survey_print_single($question) {
 
 
     if ($question->type == 0) {           // Plain text field
-        echo "<textarea rows=\"3\" cols=\"30\" name=\"q$question->id\" id=\"q$question->id\">$question->options</textarea>";
+        echo "<textarea rows=\"3\" cols=\"30\" class=\"form-control\" name=\"q$question->id\" id=\"q$question->id\">$question->options</textarea>";
 
     } else if ($question->type > 0) {     // Choose one of a number
         $strchoose = get_string("choose");
-        echo "<select name=\"q$question->id\" id=\"q$question->id\">";
+        echo "<select name=\"q$question->id\" id=\"q$question->id\" class=\"custom-select\">";
         echo "<option value=\"0\" selected=\"selected\">$strchoose...</option>";
         $options = explode( ",", $question->options);
         foreach ($options as $key => $val) {
@@ -785,6 +780,7 @@ function survey_supports($feature) {
         case FEATURE_GROUPINGS:               return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_COMPLETION_HAS_RULES:    return true;
         case FEATURE_GRADE_HAS_GRADE:         return false;
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
@@ -837,4 +833,244 @@ function survey_extend_settings_navigation($settings, $surveynode) {
 function survey_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-survey-*'=>get_string('page-mod-survey-x', 'survey'));
     return $module_pagetype;
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $survey     survey object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @param  string $viewed       which page viewed
+ * @since Moodle 3.0
+ */
+function survey_view($survey, $course, $cm, $context, $viewed) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $survey->id,
+        'courseid' => $course->id,
+        'other' => array('viewed' => $viewed)
+    );
+
+    $event = \mod_survey\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('survey', $survey);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
+
+/**
+ * Helper function for ordering a set of questions by the given ids.
+ *
+ * @param  array $questions     array of questions objects
+ * @param  array $questionorder array of questions ids indicating the correct order
+ * @return array                list of questions ordered
+ * @since Moodle 3.0
+ */
+function survey_order_questions($questions, $questionorder) {
+
+    $finalquestions = array();
+    foreach ($questionorder as $qid) {
+        $finalquestions[] = $questions[$qid];
+    }
+    return $finalquestions;
+}
+
+/**
+ * Translate the question texts and options.
+ *
+ * @param  stdClass $question question object
+ * @return stdClass question object with all the text fields translated
+ * @since Moodle 3.0
+ */
+function survey_translate_question($question) {
+
+    if ($question->text) {
+        $question->text = get_string($question->text, "survey");
+    }
+
+    if ($question->shorttext) {
+        $question->shorttext = get_string($question->shorttext, "survey");
+    }
+
+    if ($question->intro) {
+        $question->intro = get_string($question->intro, "survey");
+    }
+
+    if ($question->options) {
+        $question->options = get_string($question->options, "survey");
+    }
+    return $question;
+}
+
+/**
+ * Returns the questions for a survey (ordered).
+ *
+ * @param  stdClass $survey survey object
+ * @return array list of questions ordered
+ * @since Moodle 3.0
+ * @throws  moodle_exception
+ */
+function survey_get_questions($survey) {
+    global $DB;
+
+    $questionids = explode(',', $survey->questions);
+    if (! $questions = $DB->get_records_list("survey_questions", "id", $questionids)) {
+        throw new moodle_exception('cannotfindquestion', 'survey');
+    }
+
+    return survey_order_questions($questions, $questionids);
+}
+
+/**
+ * Returns subquestions for a given question (ordered).
+ *
+ * @param  stdClass $question questin object
+ * @return array list of subquestions ordered
+ * @since Moodle 3.0
+ */
+function survey_get_subquestions($question) {
+    global $DB;
+
+    $questionids = explode(',', $question->multi);
+    $questions = $DB->get_records_list("survey_questions", "id", $questionids);
+
+    return survey_order_questions($questions, $questionids);
+}
+
+/**
+ * Save the answer for the given survey
+ *
+ * @param  stdClass $survey   a survey object
+ * @param  array $answersrawdata the answers to be saved
+ * @param  stdClass $course   a course object (required for trigger the submitted event)
+ * @param  stdClass $context  a context object (required for trigger the submitted event)
+ * @since Moodle 3.0
+ */
+function survey_save_answers($survey, $answersrawdata, $course, $context) {
+    global $DB, $USER;
+
+    $answers = array();
+
+    // Sort through the data and arrange it.
+    // This is necessary because some of the questions may have two answers, eg Question 1 -> 1 and P1.
+    foreach ($answersrawdata as $key => $val) {
+        if ($key != "userid" && $key != "id") {
+            if (substr($key, 0, 1) == "q") {
+                $key = clean_param(substr($key, 1), PARAM_ALPHANUM);   // Keep everything but the 'q', number or P number.
+            }
+            if (substr($key, 0, 1) == "P") {
+                $realkey = (int) substr($key, 1);
+                $answers[$realkey][1] = $val;
+            } else {
+                $answers[$key][0] = $val;
+            }
+        }
+    }
+
+    // Now store the data.
+    $timenow = time();
+    $answerstoinsert = array();
+    foreach ($answers as $key => $val) {
+        if ($key != 'sesskey') {
+            $newdata = new stdClass();
+            $newdata->time = $timenow;
+            $newdata->userid = $USER->id;
+            $newdata->survey = $survey->id;
+            $newdata->question = $key;
+            if (!empty($val[0])) {
+                $newdata->answer1 = $val[0];
+            } else {
+                $newdata->answer1 = "";
+            }
+            if (!empty($val[1])) {
+                $newdata->answer2 = $val[1];
+            } else {
+                $newdata->answer2 = "";
+            }
+
+            $answerstoinsert[] = $newdata;
+        }
+    }
+
+    if (!empty($answerstoinsert)) {
+        $DB->insert_records("survey_answers", $answerstoinsert);
+    }
+
+    // Update completion state.
+    $cm = get_coursemodule_from_instance('survey', $survey->id, $course->id);
+    $completion = new completion_info($course);
+    if (isloggedin() && !isguestuser() && $completion->is_enabled($cm) && $survey->completionsubmit) {
+        $completion->update_state($cm, COMPLETION_COMPLETE);
+    }
+
+    $params = array(
+        'context' => $context,
+        'courseid' => $course->id,
+        'other' => array('surveyid' => $survey->id)
+    );
+    $event = \mod_survey\event\response_submitted::create($params);
+    $event->trigger();
+}
+
+/**
+ * Obtains the automatic completion state for this survey based on the condition
+ * in feedback settings.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ */
+function survey_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
+
+    // Get survey details.
+    $survey = $DB->get_record('survey', array('id' => $cm->instance), '*', MUST_EXIST);
+
+    // If completion option is enabled, evaluate it and return true/false.
+    if ($survey->completionsubmit) {
+        $params = array('userid' => $userid, 'survey' => $survey->id);
+        return $DB->record_exists('survey_answers', $params);
+    } else {
+        // Completion option is not enabled so just return $type.
+        return $type;
+    }
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function survey_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB, $USER;
+
+    $updates = new stdClass();
+    if (!has_capability('mod/survey:participate', $cm->context)) {
+        return $updates;
+    }
+    $updates = course_check_module_updates_since($cm, $from, array(), $filter);
+
+    $updates->answers = (object) array('updated' => false);
+    $select = 'survey = ? AND userid = ? AND time > ?';
+    $params = array($cm->instance, $USER->id, $from);
+    $answers = $DB->get_records_select('survey_answers', $select, $params, '', 'id');
+    if (!empty($answers)) {
+        $updates->answers->updated = true;
+        $updates->answers->itemids = array_keys($answers);
+    }
+    return $updates;
 }

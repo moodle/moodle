@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/questionbase.php');
 
 /**
  * Base class for multiple choice questions. The parts that are common to
@@ -64,6 +65,24 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
 
     public function apply_attempt_state(question_attempt_step $step) {
         $this->order = explode(',', $step->get_qt_var('_order'));
+
+        // Add any missing answers. Sometimes people edit questions after they
+        // have been attempted which breaks things.
+        foreach ($this->order as $ansid) {
+            if (isset($this->answers[$ansid])) {
+                continue;
+            }
+            $a = new stdClass();
+            $a->id = 0;
+            $a->answer = html_writer::span(get_string('deletedchoice', 'qtype_multichoice'),
+                    'notifyproblem');
+            $a->answerformat = FORMAT_HTML;
+            $a->fraction = 0;
+            $a->feedback = '';
+            $a->feedbackformat = FORMAT_HTML;
+            $this->answers[$ansid] = $this->qtype->make_answer($a);
+            $this->answers[$ansid]->answerformat = FORMAT_HTML;
+        }
     }
 
     public function get_question_summary() {
@@ -94,7 +113,7 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
         if ($component == 'question' && in_array($filearea,
                 array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'))) {
-            return $this->check_combined_feedback_file_access($qa, $options, $filearea);
+            return $this->check_combined_feedback_file_access($qa, $options, $filearea, $args);
 
         } else if ($component == 'question' && $filearea == 'answer') {
             $answerid = reset($args); // Itemid is answer id.

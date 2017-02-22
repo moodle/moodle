@@ -23,12 +23,13 @@
  */
 
 $string['encoding'] = 'File encoding';
-$string['expiredaction'] = 'Enrolment expiration action';
+$string['expiredaction'] = 'Enrolment expiry action';
 $string['expiredaction_help'] = 'Select action to carry out when user enrolment expires. Please note that some user data and settings are purged from course during course unenrolment.';
 $string['filelockedmail'] = 'The text file you are using for file-based enrolments ({$a}) can not be deleted by the cron process.  This usually means the permissions are wrong on it.  Please fix the permissions so that Moodle can delete the file, otherwise it might be processed repeatedly.';
 $string['filelockedmailsubject'] = 'Important error: Enrolment file';
 $string['flatfile:manage'] = 'Manage user enrolments manually';
 $string['flatfile:unenrol'] = 'Unenrol users from the course manually';
+$string['flatfilesync'] = 'Flat file enrolment sync';
 $string['location'] = 'File location';
 $string['location_desc'] = 'Specify full path to the enrolment file. The file is automatically deleted after processing.';
 $string['notifyadmin'] = 'Notify administrator';

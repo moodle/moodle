@@ -1,0 +1,46 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/settings_link_page_single
+
+    Displays the admin tree as a list of grouped links.
+
+    Example context (json):
+    {
+        "text": "Root of menu",
+        "key": "test0",
+        "display": true,
+        "children": []
+    }
+}}
+{{#display}}
+    {{#action}}
+        <li><a href="{{{action}}}">{{text}}</a></li>
+    {{/action}}
+    {{^action}}
+        <li><strong>{{text}}</strong></li>
+    {{/action}}
+    {{#children.count}}
+        <li>
+            <ul class="unstyled indented-list">
+                {{#children}}
+                    {{> core/settings_link_page_single }}
+                {{/children}}
+            </ul>
+        </li>
+    {{/children.count}}
+{{/display}}

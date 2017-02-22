@@ -5,7 +5,9 @@
 
 #page-report-completion-index .export-actions {
     text-align: center;
+    list-style: none;
 }
-#page-report-completion-index.dir-rtl #completion-progress th svg {
+/*rtl:ignore*/
+#page-report-completion-index #completion-progress th svg {
     direction: ltr;
 }

@@ -34,6 +34,11 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 $action       = optional_param('action', null, PARAM_ALPHANUMEXT);
 $id           = optional_param('id', null, PARAM_INT);
 $tab          = optional_param('tab', '', PARAM_ALPHAEXT);
+$returnto     = optional_param('returnto', '', PARAM_ALPHA);
+
+if ($returnto == 'toolconfigure') {
+    $returnurl = new moodle_url($CFG->wwwroot . '/mod/lti/toolconfigure.php');
+}
 
 // No guest autologin.
 require_login(0, false);
@@ -43,12 +48,18 @@ $pageurl = new moodle_url('/mod/lti/registersettings.php');
 if ($isupdate) {
     $pageurl->param('id', $id);
 }
+if (!empty($returnto)) {
+    $pageurl->param('returnto', $returnto);
+}
 $PAGE->set_url($pageurl);
 
 admin_externalpage_setup('ltitoolproxies');
 
 $redirect = new moodle_url('/mod/lti/toolproxies.php', array('tab' => $tab));
 $redirect = $redirect->out();
+if (!empty($returnurl)) {
+    $redirect = $returnurl;
+}
 
 require_sesskey();
 

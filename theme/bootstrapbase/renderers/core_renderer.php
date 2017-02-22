@@ -27,6 +27,34 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
     /** @var custom_menu_item language The language menu if created */
     protected $language = null;
 
+    /**
+     * The standard tags that should be included in the <head> tag
+     * including a meta description for the front page
+     *
+     * @return string HTML fragment.
+     */
+    public function standard_head_html() {
+        global $SITE, $PAGE;
+
+        $output = parent::standard_head_html();
+
+        // Setup help icon overlays.
+        $this->page->requires->yui_module('moodle-core-popuphelp', 'M.core.init_popuphelp');
+        $this->page->requires->strings_for_js(array(
+            'morehelp',
+            'loadinghelp',
+        ), 'moodle');
+
+        if ($PAGE->pagelayout == 'frontpage') {
+            $summary = s(strip_tags(format_text($SITE->summary, FORMAT_HTML)));
+            if (!empty($summary)) {
+                $output .= "<meta name=\"description\" content=\"$summary\" />\n";
+            }
+        }
+
+        return $output;
+    }
+
     /*
      * This renders the navbar.
      * Uses bootstrap compatible html.
@@ -44,8 +72,9 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         }
         $divider = '<span class="divider">'.get_separator().'</span>';
         $list_items = '<li>'.join(" $divider</li><li>", $breadcrumbs).'</li>';
-        $title = '<span class="accesshide">'.get_string('pagepath').'</span>';
-        return $title . "<ul class=\"breadcrumb\">$list_items</ul>";
+        $title = '<span class="accesshide" id="navbar-label">'.get_string('pagepath').'</span>';
+        return $title . '<nav aria-labelledby="navbar-label"><ul class="breadcrumb">' .
+                $list_items . '</ul></nav>';
     }
 
     /*
@@ -71,21 +100,14 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
     protected function render_custom_menu(custom_menu $menu) {
         global $CFG;
 
-        // TODO: eliminate this duplicated logic, it belongs in core, not
-        // here. See MDL-39565.
-        $addlangmenu = true;
         $langs = get_string_manager()->get_list_of_translations();
-        if (count($langs) < 2
-            or empty($CFG->langmenu)
-            or ($this->page->course != SITEID and !empty($this->page->course->lang))) {
-            $addlangmenu = false;
-        }
+        $haslangmenu = $this->lang_menu() != '';
 
-        if (!$menu->has_children() && $addlangmenu === false) {
+        if (!$menu->has_children() && !$haslangmenu) {
             return '';
         }
 
-        if ($addlangmenu) {
+        if ($haslangmenu) {
             $strlang =  get_string('language');
             $currentlang = current_language();
             if (isset($langs[$currentlang])) {
@@ -93,7 +115,7 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
             } else {
                 $currentlang = $strlang;
             }
-            $this->language = $menu->add($currentlang, new moodle_url('#'), $strlang, 10000);
+            $this->language = $menu->add($currentlang, new moodle_url(''), $strlang, 10000);
             foreach ($langs as $langtype => $langname) {
                 $this->language->add($langname, new moodle_url($this->page->url, array('lang' => $langtype)), $langname);
             }
@@ -163,6 +185,30 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
             }
         }
         return $content;
+    }
+
+    /**
+     * This code renders the navbar button to control the display of the custom menu
+     * on smaller screens.
+     *
+     * Do not display the button if the menu is empty.
+     *
+     * @return string HTML fragment
+     */
+    protected function navbar_button() {
+        global $CFG;
+
+        if (empty($CFG->custommenuitems) && $this->lang_menu() == '') {
+            return '';
+        }
+
+        $iconbar = html_writer::tag('span', '', array('class' => 'icon-bar'));
+        $button = html_writer::tag('a', $iconbar . "\n" . $iconbar. "\n" . $iconbar, array(
+            'class'       => 'btn btn-navbar',
+            'data-toggle' => 'collapse',
+            'data-target' => '.nav-collapse'
+        ));
+        return $button;
     }
 
     /**

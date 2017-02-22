@@ -384,6 +384,16 @@ abstract class assign_plugin {
     }
 
     /**
+     * Get a list of file areas associated with the plugin configuration.
+     * This is used for backup/restore.
+     *
+     * @return array names of the fileareas, can be an empty array
+     */
+    public function get_config_file_areas() {
+        return array();
+    }
+
+    /**
      * Should not output anything - return the result as a string so it can be consumed by webservices.
      *
      * @param stdClass $submissionorgrade assign_submission or assign_grade
@@ -666,5 +676,16 @@ abstract class assign_plugin {
      */
     public function is_configurable() {
         return true;
+    }
+
+    /**
+     * Return the plugin configs for external functions,
+     * in some cases the configs will need formatting or be returned only if the current user has some capabilities enabled.
+     *
+     * @return array the list of settings
+     * @since Moodle 3.2
+     */
+    public function get_config_for_external() {
+        return array();
     }
 }

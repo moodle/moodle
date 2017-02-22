@@ -146,7 +146,7 @@ define('K_SMALL_RATIO', 2/3);
 /** Throw exceptions from errors so they can be caught and recovered from. */
 define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
 
-require_once(dirname(__FILE__).'/tcpdf/tcpdf.php');
+require_once(__DIR__.'/tcpdf/tcpdf.php');
 
 /**
  * Wrapper class that extends TCPDF (lib/tcpdf/tcpdf.php).

@@ -25,3 +25,4 @@
  */
 
 $string['pluginname'] = 'Radio button';
+$string['fieldtypelabel'] = 'Radio button field';

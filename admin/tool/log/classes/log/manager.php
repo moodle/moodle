@@ -107,6 +107,7 @@ class manager implements \core\log\manager {
                 $return[$plugin] = $reader;
             }
         }
+
         return $return;
     }
 

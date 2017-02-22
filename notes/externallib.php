@@ -239,12 +239,7 @@ class core_notes_external extends external_api {
                 $context = context_course::instance($note->courseid);
                 self::validate_context($context);
                 require_capability('moodle/notes:manage', $context);
-                if (!note_delete($note)) {
-                    $warnings[] = array(array('item' => 'note',
-                                              'itemid' => $noteid,
-                                              'warningcode' => 'savedfailed',
-                                              'message' => 'Note could not be modified'));
-                }
+                note_delete($note);
             } else {
                 $warnings[] = array('item'=>'note', 'itemid'=>$noteid, 'warningcode'=>'badid', 'message'=>'Note does not exist');
             }
@@ -471,7 +466,7 @@ class core_notes_external extends external_api {
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, 'course id, 0 for SITE'),
-                'userid'   => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
+                'userid'   => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -531,7 +526,8 @@ class core_notes_external extends external_api {
         }
         $user = null;
         if (!empty($params['userid'])) {
-            $user = core_user::get_user($params['userid'], 'id', MUST_EXIST);
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
         }
 
         $course = get_course($params['courseid']);
@@ -550,7 +546,7 @@ class core_notes_external extends external_api {
         if ($course->id != SITEID) {
 
             require_capability('moodle/notes:view', $context);
-            $sitenotes = self::create_note_list($course->id, $context, $params['userid'], NOTES_STATE_SITE);
+            $sitenotes = self::create_note_list(0, context_system::instance(), $params['userid'], NOTES_STATE_SITE);
             $coursenotes = self::create_note_list($course->id, $context, $params['userid'], NOTES_STATE_PUBLIC);
             $personalnotes = self::create_note_list($course->id, $context, $params['userid'], NOTES_STATE_DRAFT,
                                                         $USER->id);
@@ -685,17 +681,10 @@ class core_notes_external extends external_api {
         require_capability('moodle/notes:view', $context);
 
         if (!empty($params['userid'])) {
-            $user = core_user::get_user($params['userid'], 'id, deleted', MUST_EXIST);
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
 
-            if ($user->deleted) {
-                throw new moodle_exception('userdeleted');
-            }
-
-            if (isguestuser($user)) {
-                throw new moodle_exception('invaliduserid');
-            }
-
-            if ($course->id != SITEID and !is_enrolled($context, $user, '', true)) {
+            if ($course->id != SITEID and !can_access_course($course, $user, '', true)) {
                 throw new moodle_exception('notenrolledprofile');
             }
         }
@@ -722,68 +711,6 @@ class core_notes_external extends external_api {
                 'warnings' => new external_warnings()
             )
         );
-    }
-
-}
-
-/**
- * Deprecated notes external functions
- *
- * @package    core_notes
- * @copyright  2011 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.1
- * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
- * @see core_notes_external
- */
-class moodle_notes_external extends external_api {
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_notes_external::create_notes_parameters()
-     */
-    public static function create_notes_parameters() {
-        return core_notes_external::create_notes_parameters();
-    }
-
-    /**
-     * Create notes about some users
-     * Note: code should be matching the /notes/edit.php checks
-     * and the /user/addnote.php checks. (they are similar cheks)
-     *
-     * @param array $notes  An array of notes to create.
-     * @return array (success infos and fail infos)
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_notes_external::create_notes()
-     */
-    public static function create_notes($notes = array()) {
-        return core_notes_external::create_notes($notes);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_notes_external::create_notes_returns()
-     */
-    public static function create_notes_returns() {
-        return core_notes_external::create_notes_returns();
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function create_notes_is_deprecated() {
-        return true;
     }
 
 }

@@ -55,7 +55,7 @@ class user_filtering {
      * @param string $baseurl base url used for submission/return, null if the same of current page
      * @param array $extraparams extra page parameters
      */
-    public function user_filtering($fieldnames = null, $baseurl = null, $extraparams = null) {
+    public function __construct($fieldnames = null, $baseurl = null, $extraparams = null) {
         global $SESSION;
 
         if (!isset($SESSION->user_filtering)) {
@@ -275,10 +275,20 @@ class user_filter_type {
      * @param string $label the label of the filter instance
      * @param boolean $advanced advanced form element flag
      */
-    public function user_filter_type($name, $label, $advanced) {
+    public function __construct($name, $label, $advanced) {
         $this->_name     = $name;
         $this->_label    = $label;
         $this->_advanced = $advanced;
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function user_filter_type($name, $label, $advanced) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($name, $label, $advanced);
     }
 
     /**

@@ -97,7 +97,8 @@ if ($action == 'sendmessage' AND has_capability('moodle/course:bulkmessaging', $
     if (is_array($messageuser)) {
         foreach ($messageuser as $userid) {
             $senduser = $DB->get_record('user', array('id'=>$userid));
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
+            $eventdata->courseid         = $course->id;
             $eventdata->name             = 'message';
             $eventdata->component        = 'mod_feedback';
             $eventdata->userfrom         = $USER;
@@ -107,6 +108,9 @@ if ($action == 'sendmessage' AND has_capability('moodle/course:bulkmessaging', $
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml  = $htmlmessage;
             $eventdata->smallmessage     = '';
+            $eventdata->courseid         = $course->id;
+            $eventdata->contexturl       = $link3;
+            $eventdata->contexturlname   = $feedback->name;
             $good = $good && message_send($eventdata);
         }
         if (!empty($good)) {
@@ -124,10 +128,10 @@ if ($action == 'sendmessage' AND has_capability('moodle/course:bulkmessaging', $
 ////////////////////////////////////////////////////////
 
 /// Print the page header
-$PAGE->navbar->add(get_string('show_nonrespondents', 'feedback'));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($feedback->name));
 
 require('tabs.php');
 
@@ -215,16 +219,13 @@ if ($showall) {
 $students = feedback_get_incomplete_users($cm, $usedgroupid, $sort, $startpage, $pagecount);
 //####### viewreports-start
 //print the list of students
-echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+echo $OUTPUT->heading(get_string('non_respondents_students', 'feedback', $matchcount), 4);
 echo isset($groupselect) ? $groupselect : '';
 echo '<div class="clearer"></div>';
-echo $OUTPUT->box_start('mdl-align');
 
 if (!$students) {
     echo $OUTPUT->notification(get_string('noexistingparticipants', 'enrol'));
 } else {
-    echo print_string('non_respondents_students', 'feedback');
-    echo ' ('.$matchcount.')<hr />';
 
     if (has_capability('moodle/course:bulkmessaging', $coursecontext)) {
         echo '<form class="mform" action="show_nonrespondents.php" method="post" id="feedback_sendmessageform">';
@@ -236,7 +237,7 @@ if (!$students) {
         $profilelink = '<strong><a href="'.$profile_url.'">'.fullname($user).'</a></strong>';
         $data = array ($OUTPUT->user_picture($user, array('courseid'=>$course->id)), $profilelink);
 
-        if ($DB->record_exists('feedback_completedtmp', array('userid'=>$user->id))) {
+        if ($DB->record_exists('feedback_completedtmp', array('userid' => $user->id, 'feedback' => $feedback->id))) {
             $data[] = get_string('started', 'feedback');
         } else {
             $data[] = get_string('not_started', 'feedback');
@@ -288,8 +289,6 @@ if (!$students) {
         $PAGE->requires->js_init_call('M.mod_feedback.init_sendmessage', null, false, $module);
     }
 }
-echo $OUTPUT->box_end();
-echo $OUTPUT->box_end();
 
 /// Finish the page
 ///////////////////////////////////////////////////////////////////////////

@@ -28,8 +28,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../../../engine/lib.php');
-require_once(dirname(__FILE__) . '/../../../engine/tests/helpers.php');
+require_once(__DIR__ . '/../../../engine/lib.php');
+require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 
 
 /**
@@ -87,7 +87,7 @@ class qbehaviour_interactivecountback_walkthrough_test extends qbehaviour_walkth
                 $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[1], false),
                 $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[1], false),
                 $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[1], false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 new question_pattern_expectation('/Tries remaining: 2/'),
@@ -139,7 +139,7 @@ class qbehaviour_interactivecountback_walkthrough_test extends qbehaviour_walkth
                 $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[2], false),
                 $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[2], false),
                 $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[1], false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_does_not_contain_try_again_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_contains_standard_correct_combined_feedback_expectation(),

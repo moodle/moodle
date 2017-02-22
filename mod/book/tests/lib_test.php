@@ -83,4 +83,57 @@ class mod_book_lib_testcase extends advanced_testcase {
         $this->assertEquals(json_encode(array()), $contents[0]['content']);
 
     }
+
+    /**
+     * Test book_view
+     * @return void
+     */
+    public function test_book_view() {
+        global $CFG, $DB;
+
+        $CFG->enablecompletion = 1;
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id),
+                                                            array('completion' => 2, 'completionview' => 1));
+        $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
+        $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
+
+        $context = context_module::instance($book->cmid);
+        $cm = get_coursemodule_from_instance('book', $book->id);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        // Check just opening the book.
+        book_view($book, 0, false, $course, $cm, $context);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_book\event\course_module_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $moodleurl = new \moodle_url('/mod/book/view.php', array('id' => $cm->id));
+        $this->assertEquals($moodleurl, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        // Check viewing one book chapter (the only one so it will be the first and last).
+        book_view($book, $chapter, true, $course, $cm, $context);
+
+        $events = $sink->get_events();
+        // We expect a total of 4 events. One for module viewed, one for chapter viewed and two belonging to completion.
+        $this->assertCount(4, $events);
+
+        // Check completion status.
+        $completion = new completion_info($course);
+        $completiondata = $completion->get_data($cm);
+        $this->assertEquals(1, $completiondata->completionstate);
+
+    }
 }

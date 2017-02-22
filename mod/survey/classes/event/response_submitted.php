@@ -99,4 +99,11 @@ class response_submitted extends \core\event\base {
             throw new \coding_exception('The \'surveyid\' value must be set in other.');
         }
     }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['surveyid'] = array('db' => 'survey', 'restore' => 'survey');
+
+        return $othermapped;
+    }
 }

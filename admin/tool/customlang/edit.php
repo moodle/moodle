@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
+require(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/customlang/locallib.php');
 require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/customlang/filter_form.php');
 require_once($CFG->libdir.'/adminlib.php');
@@ -63,7 +63,7 @@ if ($translatorsubmitted) {
     $checkin = optional_param('savecheckin', false, PARAM_RAW);
 
     if ($checkin === false) {
-        $nexturl = $PAGE->url;
+        $nexturl = new moodle_url($PAGE->url, array('p' => $currentpage));
     } else {
         $nexturl = new moodle_url('/admin/tool/customlang/index.php', array('action'=>'checkin', 'lng' => $lng, 'sesskey'=>sesskey()));
     }

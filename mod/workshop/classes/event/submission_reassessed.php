@@ -109,4 +109,16 @@ class submission_reassessed extends \core\event\base {
             throw new \coding_exception('The \'submissionid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'workshop_assessments', 'restore' => 'workshop_assessment');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['submissionid'] = array('db' => 'workshop_submissions', 'restore' => 'workshop_submission');
+        $othermapped['workshopid'] = array('db' => 'workshop', 'restore' => 'workshop');
+
+        return $othermapped;
+    }
 }

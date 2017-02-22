@@ -308,6 +308,7 @@ class graded_users_iterator {
                     $grades[$grade_item->id] =
                         new grade_grade(array('userid'=>$user->id, 'itemid'=>$grade_item->id), false);
                 }
+                $grades[$grade_item->id]->grade_item = $grade_item;
             }
         }
 
@@ -468,12 +469,60 @@ function hide_natural_aggregation_upgrade_notice($courseid) {
 }
 
 /**
+ * Hide warning about changed grades during upgrade from 2.8.0-2.8.6 and 2.9.0.
+ *
+ * @param int $courseid The current course id.
+ */
+function grade_hide_min_max_grade_upgrade_notice($courseid) {
+    unset_config('show_min_max_grades_changed_' . $courseid);
+}
+
+/**
+ * Use the grade min and max from the grade_grade.
+ *
+ * This is reserved for core use after an upgrade.
+ *
+ * @param int $courseid The current course id.
+ */
+function grade_upgrade_use_min_max_from_grade_grade($courseid) {
+    grade_set_setting($courseid, 'minmaxtouse', GRADE_MIN_MAX_FROM_GRADE_GRADE);
+
+    grade_force_full_regrading($courseid);
+    // Do this now, because it probably happened to late in the page load to be happen automatically.
+    grade_regrade_final_grades($courseid);
+}
+
+/**
+ * Use the grade min and max from the grade_item.
+ *
+ * This is reserved for core use after an upgrade.
+ *
+ * @param int $courseid The current course id.
+ */
+function grade_upgrade_use_min_max_from_grade_item($courseid) {
+    grade_set_setting($courseid, 'minmaxtouse', GRADE_MIN_MAX_FROM_GRADE_ITEM);
+
+    grade_force_full_regrading($courseid);
+    // Do this now, because it probably happened to late in the page load to be happen automatically.
+    grade_regrade_final_grades($courseid);
+}
+
+/**
  * Hide warning about changed grades during upgrade to 2.8.
  *
  * @param int $courseid The current course id.
  */
 function hide_aggregatesubcats_upgrade_notice($courseid) {
     unset_config('show_aggregatesubcats_upgrade_' . $courseid);
+}
+
+/**
+ * Hide warning about changed grades due to bug fixes
+ *
+ * @param int $courseid The current course id.
+ */
+function hide_gradebook_calculations_freeze_notice($courseid) {
+    unset_config('gradebook_calculations_freeze_' . $courseid);
 }
 
 /**
@@ -487,20 +536,29 @@ function hide_aggregatesubcats_upgrade_notice($courseid) {
  * @return nothing or string if $return true
  */
 function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage, $return=false) {
-    global $OUTPUT;
+    global $CFG, $OUTPUT;
     $html = '';
+
+    // Do not do anything if they cannot manage the grades of this course.
+    if (!has_capability('moodle/grade:manage', $context)) {
+        return $html;
+    }
 
     $hidesubcatswarning = optional_param('seenaggregatesubcatsupgradedgrades', false, PARAM_BOOL) && confirm_sesskey();
     $showsubcatswarning = get_config('core', 'show_aggregatesubcats_upgrade_' . $courseid);
     $hidenaturalwarning = optional_param('seensumofgradesupgradedgrades', false, PARAM_BOOL) && confirm_sesskey();
     $shownaturalwarning = get_config('core', 'show_sumofgrades_upgrade_' . $courseid);
 
-    // Do not do anything if they are not a teacher.
-    if ($hidesubcatswarning || $showsubcatswarning || $hidenaturalwarning || $shownaturalwarning) {
-        if (!has_capability('moodle/grade:manage', $context)) {
-            return '';
-        }
-    }
+    $hideminmaxwarning = optional_param('seenminmaxupgradedgrades', false, PARAM_BOOL) && confirm_sesskey();
+    $showminmaxwarning = get_config('core', 'show_min_max_grades_changed_' . $courseid);
+
+    $useminmaxfromgradeitem = optional_param('useminmaxfromgradeitem', false, PARAM_BOOL) && confirm_sesskey();
+    $useminmaxfromgradegrade = optional_param('useminmaxfromgradegrade', false, PARAM_BOOL) && confirm_sesskey();
+
+    $minmaxtouse = grade_get_setting($courseid, 'minmaxtouse', $CFG->grade_minmaxtouse);
+
+    $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $courseid);
+    $acceptgradebookchanges = optional_param('acceptgradebookchanges', false, PARAM_BOOL) && confirm_sesskey();
 
     // Hide the warning if the user told it to go away.
     if ($hidenaturalwarning) {
@@ -510,6 +568,26 @@ function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage
     if ($hidesubcatswarning) {
         hide_aggregatesubcats_upgrade_notice($courseid);
     }
+
+    // Hide the min/max warning if the user told it to go away.
+    if ($hideminmaxwarning) {
+        grade_hide_min_max_grade_upgrade_notice($courseid);
+        $showminmaxwarning = false;
+    }
+
+    if ($useminmaxfromgradegrade) {
+        // Revert to the new behaviour, we now use the grade_grade for min/max.
+        grade_upgrade_use_min_max_from_grade_grade($courseid);
+        grade_hide_min_max_grade_upgrade_notice($courseid);
+        $showminmaxwarning = false;
+
+    } else if ($useminmaxfromgradeitem) {
+        // Apply the new logic, we now use the grade_item for min/max.
+        grade_upgrade_use_min_max_from_grade_item($courseid);
+        grade_hide_min_max_grade_upgrade_notice($courseid);
+        $showminmaxwarning = false;
+    }
+
 
     if (!$hidenaturalwarning && $shownaturalwarning) {
         $message = get_string('sumofgradesupgradedgrades', 'grades');
@@ -533,6 +611,84 @@ function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage
         $goawaybutton = $OUTPUT->single_button($goawayurl, $hidemessage, 'get');
         $html .= $OUTPUT->notification($message, 'notifysuccess');
         $html .= $goawaybutton;
+    }
+
+    if ($showminmaxwarning) {
+        $hidemessage = get_string('upgradedgradeshidemessage', 'grades');
+        $urlparams = array( 'id' => $courseid,
+                            'seenminmaxupgradedgrades' => true,
+                            'sesskey' => sesskey());
+
+        $goawayurl = new moodle_url($thispage, $urlparams);
+        $hideminmaxbutton = $OUTPUT->single_button($goawayurl, $hidemessage, 'get');
+        $moreinfo = html_writer::link(get_docs_url(get_string('minmaxtouse_link', 'grades')), get_string('moreinfo'),
+            array('target' => '_blank'));
+
+        if ($minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_ITEM) {
+            // Show the message that there were min/max issues that have been resolved.
+            $message = get_string('minmaxupgradedgrades', 'grades') . ' ' . $moreinfo;
+
+            $revertmessage = get_string('upgradedminmaxrevertmessage', 'grades');
+            $urlparams = array('id' => $courseid,
+                               'useminmaxfromgradegrade' => true,
+                               'sesskey' => sesskey());
+            $reverturl = new moodle_url($thispage, $urlparams);
+            $revertbutton = $OUTPUT->single_button($reverturl, $revertmessage, 'get');
+
+            $html .= $OUTPUT->notification($message);
+            $html .= $revertbutton . $hideminmaxbutton;
+
+        } else if ($minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_GRADE) {
+            // Show the warning that there are min/max issues that have not be resolved.
+            $message = get_string('minmaxupgradewarning', 'grades') . ' ' . $moreinfo;
+
+            $fixmessage = get_string('minmaxupgradefixbutton', 'grades');
+            $urlparams = array('id' => $courseid,
+                               'useminmaxfromgradeitem' => true,
+                               'sesskey' => sesskey());
+            $fixurl = new moodle_url($thispage, $urlparams);
+            $fixbutton = $OUTPUT->single_button($fixurl, $fixmessage, 'get');
+
+            $html .= $OUTPUT->notification($message);
+            $html .= $fixbutton . $hideminmaxbutton;
+        }
+    }
+
+    if ($gradebookcalculationsfreeze) {
+        if ($acceptgradebookchanges) {
+            // Accept potential changes in grades caused by extra credit bug MDL-49257.
+            hide_gradebook_calculations_freeze_notice($courseid);
+            $courseitem = grade_item::fetch_course_item($courseid);
+            $courseitem->force_regrading();
+            grade_regrade_final_grades($courseid);
+
+            $html .= $OUTPUT->notification(get_string('gradebookcalculationsuptodate', 'grades'), 'notifysuccess');
+        } else {
+            // Show the warning that there may be extra credit weights problems.
+            $a = new stdClass();
+            $a->gradebookversion = $gradebookcalculationsfreeze;
+            if (preg_match('/(\d{8,})/', $CFG->release, $matches)) {
+                $a->currentversion = $matches[1];
+            } else {
+                $a->currentversion = $CFG->release;
+            }
+            $a->url = get_docs_url('Gradebook_calculation_changes');
+            $message = get_string('gradebookcalculationswarning', 'grades', $a);
+
+            $fixmessage = get_string('gradebookcalculationsfixbutton', 'grades');
+            $urlparams = array('id' => $courseid,
+                'acceptgradebookchanges' => true,
+                'sesskey' => sesskey());
+            $fixurl = new moodle_url($thispage, $urlparams);
+            $fixbutton = $OUTPUT->single_button($fixurl, $fixmessage, 'get');
+
+            $html .= $OUTPUT->notification($message);
+            $html .= $fixbutton;
+        }
+    }
+
+    if (!empty($html)) {
+        $html = html_writer::tag('div', $html, array('class' => 'core_grades_notices'));
     }
 
     if ($return) {
@@ -657,13 +813,23 @@ function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=fa
         }
     }
 
-    $tabs[] = $top_row;
-    $tabs[] = $bottom_row;
+    // Do not display rows that contain only one item, they are not helpful.
+    if (count($top_row) > 1) {
+        $tabs[] = $top_row;
+    }
+    if (count($bottom_row) > 1) {
+        $tabs[] = $bottom_row;
+    }
+    if (empty($tabs)) {
+        return;
+    }
+
+    $rv = html_writer::div(print_tabs($tabs, $active_plugin, $inactive, $activated, true), 'grade-navigation');
 
     if ($return) {
-        return print_tabs($tabs, $active_plugin, $inactive, $activated, true);
+        return $rv;
     } else {
-        print_tabs($tabs, $active_plugin, $inactive, $activated);
+        echo $rv;
     }
 }
 
@@ -715,20 +881,6 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
 
     if ($exports = grade_helper::get_plugins_export($courseid)) {
         $plugin_info['export'] = $exports;
-    }
-
-    foreach ($plugin_info as $plugin_type => $plugins) {
-        if (!empty($plugins->id) && $active_plugin == $plugins->id) {
-            $plugin_info['strings']['active_plugin_str'] = $plugins->string;
-            break;
-        }
-        foreach ($plugins as $plugin) {
-            if (is_a($plugin, 'grade_plugin_info')) {
-                if ($active_plugin == $plugin->id) {
-                    $plugin_info['strings']['active_plugin_str'] = $plugin->string;
-                }
-            }
-        }
     }
 
     foreach ($plugin_info as $plugin_type => $plugins) {
@@ -828,6 +980,13 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
                                $user = null) {
     global $CFG, $OUTPUT, $PAGE;
 
+    // Put a warning on all gradebook pages if the course has modules currently scheduled for background deletion.
+    require_once($CFG->dirroot . '/course/lib.php');
+    if (course_modules_pending_deletion($courseid)) {
+        \core\notification::add(get_string('gradesmoduledeletionpendingwarning', 'grades'),
+            \core\output\notification::NOTIFY_WARNING);
+    }
+
     if ($active_type === 'preferences') {
         // In Moodle 2.8 report preferences were moved under 'settings'. Allow backward compatibility for 3rd party grade reports.
         $active_type = 'settings';
@@ -858,6 +1017,11 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
     $PAGE->set_button($buttons);
     if ($courseid != SITEID) {
         grade_extend_settings($plugin_info, $courseid);
+    }
+
+    // Set the current report as active in the breadcrumbs.
+    if ($active_plugin !== null && $reportnav = $PAGE->settingsnav->find($active_plugin, navigation_node::TYPE_SETTING)) {
+        $reportnav->make_active();
     }
 
     $returnval = $OUTPUT->header();
@@ -892,7 +1056,8 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
             if (isset($user)) {
                 $output = $OUTPUT->context_header(
                         array(
-                            'heading' => fullname($user),
+                            'heading' => html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id,
+                                'course' => $courseid)), fullname($user)),
                             'user' => $user,
                             'usercontext' => context_user::instance($user->id)
                         ), 2
@@ -943,7 +1108,7 @@ class grade_plugin_return {
      *
      * @param array $params - associative array with return parameters, if null parameter are taken from _GET or _POST
      */
-    public function grade_plugin_return($params = null) {
+    public function __construct($params = null) {
         if (empty($params)) {
             $this->type     = optional_param('gpr_type', null, PARAM_SAFEDIR);
             $this->plugin   = optional_param('gpr_plugin', null, PARAM_PLUGIN);
@@ -958,6 +1123,16 @@ class grade_plugin_return {
                 }
             }
         }
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function grade_plugin_return($params = null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($params);
     }
 
     /**
@@ -1321,8 +1496,15 @@ class grade_structure {
                         $icon->pix = 'i/outcomes';
                         $icon->title = s(get_string('outcome', 'grades'));
                     } else {
-                        $icon->pix = 'icon';
-                        $icon->component = $element['object']->itemmodule;
+                        $modinfo = get_fast_modinfo($element['object']->courseid);
+                        $module = $element['object']->itemmodule;
+                        $instanceid = $element['object']->iteminstance;
+                        if (isset($modinfo->instances[$module][$instanceid])) {
+                            $icon->url = $modinfo->instances[$module][$instanceid]->get_icon_url();
+                        } else {
+                            $icon->pix = 'icon';
+                            $icon->component = $element['object']->itemmodule;
+                        }
                         $icon->title = s(get_string('modulename', $element['object']->itemmodule));
                     }
                 } else if ($element['object']->itemtype == 'manual') {
@@ -1347,6 +1529,8 @@ class grade_structure {
             if ($spacerifnone) {
                 $outputstr = $OUTPUT->spacer() . ' ';
             }
+        } else if (isset($icon->url)) {
+            $outputstr = html_writer::img($icon->url, $icon->title, $icon->attributes);
         } else {
             $outputstr = $OUTPUT->pix_icon($icon->pix, $icon->title, $icon->component, $icon->attributes);
         }
@@ -1375,7 +1559,8 @@ class grade_structure {
             $header .= $this->get_element_icon($element, $spacerifnone);
         }
 
-        $header .= $element['object']->get_name($fulltotal);
+        $title = $element['object']->get_name($fulltotal);
+        $header .= $title;
 
         if ($element['type'] != 'item' and $element['type'] != 'categoryitem' and
             $element['type'] != 'courseitem') {
@@ -1385,11 +1570,12 @@ class grade_structure {
         if ($withlink && $url = $this->get_activity_link($element)) {
             $a = new stdClass();
             $a->name = get_string('modulename', $element['object']->itemmodule);
+            $a->title = $title;
             $title = get_string('linktoactivity', 'grades', $a);
 
-            $header = html_writer::link($url, $header, array('title' => $title));
+            $header = html_writer::link($url, $header, array('title' => $title, 'class' => 'gradeitemheader'));
         } else {
-            $header = html_writer::span($header);
+            $header = html_writer::span($header, 'gradeitemheader', array('title' => $title, 'tabindex' => '0'));
         }
 
         if ($withdescription) {
@@ -1891,7 +2077,7 @@ class grade_seq extends grade_structure {
      * @param bool $category_grade_last category grade item is the last child
      * @param bool $nooutcomes Whether or not outcomes should be included
      */
-    public function grade_seq($courseid, $category_grade_last=false, $nooutcomes=false) {
+    public function __construct($courseid, $category_grade_last=false, $nooutcomes=false) {
         global $USER, $CFG;
 
         $this->courseid   = $courseid;
@@ -1905,6 +2091,16 @@ class grade_seq extends grade_structure {
         foreach ($this->elements as $key=>$unused) {
             $this->items[$this->elements[$key]['object']->id] =& $this->elements[$key]['object'];
         }
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function grade_seq($courseid, $category_grade_last=false, $nooutcomes=false) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($courseid, $category_grade_last, $nooutcomes);
     }
 
     /**
@@ -2043,7 +2239,7 @@ class grade_tree extends grade_structure {
      * @param array $collapsed array of collapsed categories
      * @param bool  $nooutcomes Whether or not outcomes should be included
      */
-    public function grade_tree($courseid, $fillers=true, $category_grade_last=false,
+    public function __construct($courseid, $fillers=true, $category_grade_last=false,
                                $collapsed=null, $nooutcomes=false) {
         global $USER, $CFG, $COURSE, $DB;
 
@@ -2085,6 +2281,17 @@ class grade_tree extends grade_structure {
 
         grade_tree::fill_levels($this->levels, $this->top_element, 0);
 
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function grade_tree($courseid, $fillers=true, $category_grade_last=false,
+                               $collapsed=null, $nooutcomes=false) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($courseid, $fillers, $category_grade_last, $collapsed, $nooutcomes);
     }
 
     /**
@@ -2206,6 +2413,44 @@ class grade_tree extends grade_structure {
     }
 
     /**
+     * Determines whether the grade tree item can be displayed.
+     * This is particularly targeted for grade categories that have no total (None) when rendering the grade tree.
+     * It checks if the grade tree item is of type 'category', and makes sure that the category, or at least one of children,
+     * can be output.
+     *
+     * @param array $element The grade category element.
+     * @return bool True if the grade tree item can be displayed. False, otherwise.
+     */
+    public static function can_output_item($element) {
+        $canoutput = true;
+
+        if ($element['type'] === 'category') {
+            $object = $element['object'];
+            $category = grade_category::fetch(array('id' => $object->id));
+            // Category has total, we can output this.
+            if ($category->get_grade_item()->gradetype != GRADE_TYPE_NONE) {
+                return true;
+            }
+
+            // Category has no total and has no children, no need to output this.
+            if (empty($element['children'])) {
+                return false;
+            }
+
+            $canoutput = false;
+            // Loop over children and make sure at least one child can be output.
+            foreach ($element['children'] as $child) {
+                $canoutput = self::can_output_item($child);
+                if ($canoutput) {
+                    break;
+                }
+            }
+        }
+
+        return $canoutput;
+    }
+
+    /**
      * Static recursive helper - makes full tree (all leafes are at the same level)
      *
      * @param array &$element The seed of the recursion
@@ -2232,6 +2477,9 @@ class grade_tree extends grade_structure {
         $maxdepth = reset($chdepths);
         foreach ($chdepths as $chid=>$chd) {
             if ($chd == $maxdepth) {
+                continue;
+            }
+            if (!self::can_output_item($element['children'][$chid])) {
                 continue;
             }
             for ($i=0; $i < $maxdepth-$chd; $i++) {
@@ -2265,6 +2513,9 @@ class grade_tree extends grade_structure {
         }
         $count = 0;
         foreach ($element['children'] as $key=>$child) {
+            if (!self::can_output_item($child)) {
+                continue;
+            }
             $count += grade_tree::inject_colspans($element['children'][$key]);
         }
         $element['colspan'] = $count;
@@ -2691,9 +2942,9 @@ abstract class grade_helper {
         $context = context_course::instance($courseid);
         self::$managesetting = array();
         if ($courseid != SITEID && has_capability('moodle/grade:manage', $context)) {
-            self::$managesetting['categoriesanditems'] = new grade_plugin_info('setup',
+            self::$managesetting['gradebooksetup'] = new grade_plugin_info('setup',
                 new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid)),
-                get_string('categoriesanditems', 'grades'));
+                get_string('gradebooksetup', 'grades'));
             self::$managesetting['coursesettings'] = new grade_plugin_info('coursesettings',
                 new moodle_url('/grade/edit/settings/index.php', array('id'=>$courseid)),
                 get_string('coursegradesettings', 'grades'));
@@ -2729,6 +2980,12 @@ abstract class grade_helper {
 
             // Remove ones we can't see
             if (!has_capability('gradereport/'.$plugin.':view', $context)) {
+                continue;
+            }
+
+            // Singleview doesn't doesn't accomodate for all cap combos yet, so this is hardcoded..
+            if ($plugin === 'singleview' && !has_all_capabilities(array('moodle/grade:viewall',
+                    'moodle/grade:edit'), $context)) {
                 continue;
             }
 
@@ -2994,9 +3251,6 @@ abstract class grade_helper {
                                                     JOIN {user_info_category} c ON f.categoryid=c.id
                                                     WHERE f.shortname $wherefields
                                                     ORDER BY c.sortorder ASC, f.sortorder ASC", $whereparams);
-            if (!is_array($customfields)) {
-                continue;
-            }
 
             foreach ($customfields as $field) {
                 // Make sure we can display this custom field

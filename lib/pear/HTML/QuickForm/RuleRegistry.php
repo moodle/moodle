@@ -218,7 +218,7 @@ class HTML_QuickForm_RuleRegistry
             $value = "  _qfGroups['{$elementName}'] = {";
             $elements =& $element->getElements();
             for ($i = 0, $count = count($elements); $i < $count; $i++) {
-                $append = ($elements[$i]->getType() == 'select' && $elements[$i]->getMultiple())? '[]': '';
+                $append = (($elements[$i]->getType() == 'select' || $element->getType() == 'autocomplete') && $elements[$i]->getMultiple())? '[]': '';
                 $value .= "'" . $element->getElementName($i) . $append . "': true" .
                           ($i < $count - 1? ', ': '');
             }
@@ -281,7 +281,7 @@ class HTML_QuickForm_RuleRegistry
                     "    }\n";
             }
 
-        } elseif ($element->getType() == 'select') {
+        } elseif ($element->getType() == 'select' || $element->getType() == 'autocomplete') {
             if ($element->getMultiple()) {
                 $elementName .= '[]';
                 $value =

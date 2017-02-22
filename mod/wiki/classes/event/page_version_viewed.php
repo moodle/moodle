@@ -103,4 +103,15 @@ class page_version_viewed extends \core\event\base {
             throw new \coding_exception('The versionid need to be set in $other');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'wiki_pages', 'restore' => 'wiki_page');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['versionid'] = array('db' => 'wiki_versions', 'restore' => 'wiki_version');
+
+        return $othermapped;
+    }
 }

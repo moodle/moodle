@@ -120,6 +120,19 @@ class report_viewed extends \core\event\base {
         if (!isset($this->other['action'])) {
             throw new \coding_exception('The \'action\' value must be set in other.');
         }
+
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        // This is a badly named variable - it represents "cm->id" not "cm->instance".
+        $othermapped['instanceid'] = array('db' => 'course_modules', 'restore' => 'course_module');
+
+        $othermapped['roleid'] = array('db' => 'role', 'restore' => 'role');
+        $othermapped['groupid'] = array('db' => 'groups', 'restore' => 'group');
+
+        return $othermapped;
+
     }
 }
 

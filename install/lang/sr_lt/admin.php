@@ -42,3 +42,4 @@ Molimo iskoristite opciju za pomoć.';
 $string['cliyesnoprompt'] = 'otkucaj y (znači da) ili n (znači ne)';
 $string['environmentrequireinstall'] = 'mora biti instaliran i omogućen';
 $string['environmentrequireversion'] = 'neophodna verzija je {$a->needed} a Vi trenutno koristite verziju {$a->current}';
+$string['upgradekeyset'] = 'Ključ za nadogradnju (ostavite prazno ako ne želite da postavite ključ)';

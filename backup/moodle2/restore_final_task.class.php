@@ -82,9 +82,12 @@ class restore_final_task extends restore_task {
         $this->add_step(new restore_decode_interlinks('decode_interlinks'));
 
         // Restore course logs (conditionally). They are restored here because we need all
-        // the activities to be already restored
+        // the activities to be already restored.
         if ($this->get_setting_value('logs')) {
+            // Legacy logs.
             $this->add_step(new restore_course_logs_structure_step('course_logs', 'course/logs.xml'));
+            // New log stores.
+            $this->add_step(new restore_course_logstores_structure_step('course_logstores', 'course/logstores.xml'));
         }
 
         // Review all the executed tasks having one after_restore method

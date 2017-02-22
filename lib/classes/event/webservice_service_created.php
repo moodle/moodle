@@ -91,4 +91,13 @@ class webservice_service_created extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'external_services';
     }
+
+    public static function get_objectid_mapping() {
+        // Webservices are not included in the backups.
+        return array('db' => 'external_services', 'restore' => NOT_MAPPED);
+    }
+
+    public static function get_other_mapping() {
+        return false;
+    }
 }

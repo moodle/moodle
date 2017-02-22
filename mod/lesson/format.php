@@ -168,35 +168,49 @@ function lesson_save_question_options($question, $lesson, $contextid) {
 
         case LESSON_PAGE_TRUEFALSE:
 
-            // the truth
+            // In lesson the correct answer always come first, as it was the case
+            // in question bank exports years ago.
             $answer = clone($defaultanswer);
-            $answer->answer = get_string("true", "lesson");
-            $answer->grade = $question->correctanswer * 100;
-            if ($answer->grade > 50 ) {
-                $answer->jumpto = LESSON_NEXTPAGE;
-                $answer->score = 1;
+            $answer->grade = 100;
+            $answer->jumpto = LESSON_NEXTPAGE;
+            $answer->score = 1;
+            if ($question->correctanswer) {
+                $answer->answer = get_string("true", "lesson");
+                if (isset($question->feedbacktrue)) {
+                    $answer->response = $question->feedbacktrue['text'];
+                    $answer->responseformat = $question->feedbacktrue['format'];
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('response', $question->feedbacktrue, $answer, $contextid);
+                }
+            } else {
+                $answer->answer = get_string("false", "lesson");
+                if (isset($question->feedbackfalse)) {
+                    $answer->response = $question->feedbackfalse['text'];
+                    $answer->responseformat = $question->feedbackfalse['format'];
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('response', $question->feedbackfalse, $answer, $contextid);
+                }
             }
-            if (isset($question->feedbacktrue)) {
-                $answer->response = $question->feedbacktrue['text'];
-                $answer->responseformat = $question->feedbacktrue['format'];
-            }
-            $answer->id = $DB->insert_record("lesson_answers", $answer);
-            lesson_import_question_files('response', $question->feedbacktrue, $answer, $contextid);
 
-            // the lie
+            // Now the wrong answer.
             $answer = clone($defaultanswer);
-            $answer->answer = get_string("false", "lesson");
-            $answer->grade = (1 - (int)$question->correctanswer) * 100;
-            if ($answer->grade > 50 ) {
-                $answer->jumpto = LESSON_NEXTPAGE;
-                $answer->score = 1;
+            if ($question->correctanswer) {
+                $answer->answer = get_string("false", "lesson");
+                if (isset($question->feedbackfalse)) {
+                    $answer->response = $question->feedbackfalse['text'];
+                    $answer->responseformat = $question->feedbackfalse['format'];
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('response', $question->feedbackfalse, $answer, $contextid);
+                }
+            } else {
+                $answer->answer = get_string("true", "lesson");
+                if (isset($question->feedbacktrue)) {
+                    $answer->response = $question->feedbacktrue['text'];
+                    $answer->responseformat = $question->feedbacktrue['format'];
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('response', $question->feedbacktrue, $answer, $contextid);
+                }
             }
-            if (isset($question->feedbackfalse)) {
-                $answer->response = $question->feedbackfalse['text'];
-                $answer->responseformat = $question->feedbackfalse['format'];
-            }
-            $answer->id = $DB->insert_record("lesson_answers", $answer);
-            lesson_import_question_files('response', $question->feedbackfalse, $answer, $contextid);
 
           break;
 
@@ -301,6 +315,21 @@ function lesson_save_question_options($question, $lesson, $contextid) {
                 return $result;
             }
             break;
+
+        case LESSON_PAGE_ESSAY:
+            $answer = new stdClass();
+            $answer->lessonid = $question->lessonid;
+            $answer->pageid = $question->id;
+            $answer->timecreated = $timenow;
+            $answer->answer = null;
+            $answer->answerformat = FORMAT_MOODLE;
+            $answer->grade = 0;
+            $answer->score = 1;
+            $answer->jumpto = LESSON_NEXTPAGE;
+            $answer->response = null;
+            $answer->responseformat = FORMAT_MOODLE;
+            $answer->id = $DB->insert_record("lesson_answers", $answer);
+        break;
         default:
             $result->error = "Unsupported question type ($question->qtype)!";
             return $result;
@@ -319,7 +348,8 @@ class qformat_default {
                                'multichoice' => LESSON_PAGE_MULTICHOICE,
                                'truefalse'   => LESSON_PAGE_TRUEFALSE,
                                'shortanswer' => LESSON_PAGE_SHORTANSWER,
-                               'match'       => LESSON_PAGE_MATCHING
+                               'match'       => LESSON_PAGE_MATCHING,
+                               'essay'       => LESSON_PAGE_ESSAY
                               );
 
     // Importing functions
@@ -412,6 +442,7 @@ class qformat_default {
                 case 'truefalse' :
                 case 'multichoice' :
                 case 'match' :
+                case 'essay' :
                     $count++;
 
                     //Show nice formated question in one line.

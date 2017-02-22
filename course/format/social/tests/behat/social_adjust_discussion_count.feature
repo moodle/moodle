@@ -4,7 +4,7 @@ Feature: Change number of discussions displayed
   As a teacher
   I need to edit the course and change the number of sections displayed.
 
-Background:
+  Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
@@ -23,6 +23,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 9 |
@@ -30,6 +31,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 8 |
@@ -37,6 +39,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 7 |
@@ -44,6 +47,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 6 |
@@ -51,6 +55,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 5 |
@@ -58,6 +63,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 4 |
@@ -65,6 +71,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 3 |
@@ -72,6 +79,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 2 |
@@ -79,6 +87,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 1 |
@@ -87,28 +96,28 @@ Background:
     And I wait to be redirected
     And I follow "Course 1"
 
-Scenario: When number of discussions is decreased fewer discussions appear
-    Given I click on "Edit settings" "link" in the "Administration" "block"
+  Scenario: When number of discussions is decreased fewer discussions appear
+    Given I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-    | numdiscussions | 5 |
+      | numdiscussions | 5 |
     When I press "Save and display"
     Then I should see "This is forum post one"
     And I should see "This is forum post five"
     And I should not see "This is forum post six"
 
-Scenario: When number of discussions is decreased to less than 1 only 1 discussion should appear
-    Given I click on "Edit settings" "link" in the "Administration" "block"
+  Scenario: When number of discussions is decreased to less than 1 only 1 discussion should appear
+    Given I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-    | numdiscussions | -1 |
+      | numdiscussions | -1 |
     When I press "Save and display"
     Then I should see "This is forum post one"
     And I should not see "This is forum post two"
     And I should not see "This is forum post ten"
 
-Scenario: When number of discussions is increased more discussions appear
-    Given I click on "Edit settings" "link" in the "Administration" "block"
+  Scenario: When number of discussions is increased more discussions appear
+    Given I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-    | numdiscussions | 9 |
+      | numdiscussions | 9 |
     When I press "Save and display"
     Then I should see "This is forum post one"
     And I should see "This is forum post five"

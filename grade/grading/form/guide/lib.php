@@ -213,6 +213,16 @@ class gradingform_guide_controller extends gradingform_controller {
                 $data = array('definitionid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE);
                 foreach ($commentfields as $key) {
                     if (array_key_exists($key, $comment)) {
+                        // Check if key is the comment's description.
+                        if ($key === 'description') {
+                            // Get a trimmed value for the comment description.
+                            $description = trim($comment[$key]);
+                            // Check if the comment description is empty.
+                            if (empty($description)) {
+                                // Continue to the next comment object if the description is empty.
+                                continue 2;
+                            }
+                        }
                         $data[$key] = $comment[$key];
                     }
                 }
@@ -795,7 +805,7 @@ class gradingform_guide_instance extends gradingform_instance {
                     || $criterion['maxscore'] < $elementvalue['criteria'][$id]['score']
                     || !is_numeric($elementvalue['criteria'][$id]['score'])
                     || $elementvalue['criteria'][$id]['score'] < 0) {
-                $this->validationerrors[$id]['score'] =  $elementvalue['criteria'][$id]['score'];
+                $this->validationerrors[$id]['score'] = $elementvalue['criteria'][$id]['score'];
             }
         }
         if (!empty($this->validationerrors)) {
@@ -943,15 +953,20 @@ class gradingform_guide_instance extends gradingform_instance {
                     $a = new stdClass();
                     $a->criterianame = s($criteria[$id]['shortname']);
                     $a->maxscore = $criteria[$id]['maxscore'];
-                    $html .= html_writer::tag('div', get_string('err_scoreinvalid', 'gradingform_guide', $a),
+                    if ($this->validationerrors[$id]['score'] < 0) {
+                        $html .= html_writer::tag('div', get_string('err_scoreisnegative', 'gradingform_guide', $a),
                         array('class' => 'gradingform_guide-error'));
+                    } else {
+                        $html .= html_writer::tag('div', get_string('err_scoreinvalid', 'gradingform_guide', $a),
+                        array('class' => 'gradingform_guide-error'));
+                    }
                 }
             }
         }
         $currentinstance = $this->get_current_instance();
         if ($currentinstance && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
             $html .= html_writer::tag('div', get_string('needregrademessage', 'gradingform_guide'),
-                array('class' => 'gradingform_guide-regrade'));
+                array('class' => 'gradingform_guide-regrade', 'role' => 'alert'));
         }
         $haschanges = false;
         if ($currentinstance) {

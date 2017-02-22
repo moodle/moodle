@@ -34,6 +34,9 @@ class Google_Service_Replicapool extends Google_Service
   /** View and manage your data across Google Cloud Platform services. */
   const CLOUD_PLATFORM =
       "https://www.googleapis.com/auth/cloud-platform";
+  /** View your data across Google Cloud Platform services. */
+  const CLOUD_PLATFORM_READ_ONLY =
+      "https://www.googleapis.com/auth/cloud-platform.read-only";
   /** View and manage your Google Compute Engine resources. */
   const COMPUTE =
       "https://www.googleapis.com/auth/compute";
@@ -53,6 +56,7 @@ class Google_Service_Replicapool extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'replicapool/v1beta2/projects/';
     $this->version = 'v1beta2';
     $this->serviceName = 'replicapool';
@@ -393,8 +397,8 @@ class Google_Service_Replicapool_InstanceGroupManagers_Resource extends Google_S
   }
 
   /**
-   * Deletes the specified instances. The instances are removed from the instance
-   * group and any target pools of which they are a member, then deleted. The
+   * Deletes the specified instances. The instances are deleted, then removed from
+   * the instance group and any target pools of which they were a member. The
    * targetSize of the instance group manager is reduced by the number of
    * instances deleted. (instanceGroupManagers.deleteInstances)
    *
@@ -617,6 +621,8 @@ class Google_Service_Replicapool_InstanceGroupManager extends Google_Collection
   protected $collection_key = 'targetPools';
   protected $internal_gapi_mappings = array(
   );
+  protected $autoHealingPoliciesType = 'Google_Service_Replicapool_ReplicaPoolAutoHealingPolicy';
+  protected $autoHealingPoliciesDataType = 'array';
   public $baseInstanceName;
   public $creationTimestamp;
   public $currentSize;
@@ -632,6 +638,14 @@ class Google_Service_Replicapool_InstanceGroupManager extends Google_Collection
   public $targetSize;
 
 
+  public function setAutoHealingPolicies($autoHealingPolicies)
+  {
+    $this->autoHealingPolicies = $autoHealingPolicies;
+  }
+  public function getAutoHealingPolicies()
+  {
+    return $this->autoHealingPolicies;
+  }
   public function setBaseInstanceName($baseInstanceName)
   {
     $this->baseInstanceName = $baseInstanceName;
@@ -1269,5 +1283,31 @@ class Google_Service_Replicapool_OperationWarningsData extends Google_Model
   public function getValue()
   {
     return $this->value;
+  }
+}
+
+class Google_Service_Replicapool_ReplicaPoolAutoHealingPolicy extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $actionType;
+  public $healthCheck;
+
+
+  public function setActionType($actionType)
+  {
+    $this->actionType = $actionType;
+  }
+  public function getActionType()
+  {
+    return $this->actionType;
+  }
+  public function setHealthCheck($healthCheck)
+  {
+    $this->healthCheck = $healthCheck;
+  }
+  public function getHealthCheck()
+  {
+    return $this->healthCheck;
   }
 }

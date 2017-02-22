@@ -101,19 +101,19 @@ class phpunit_util extends testing_util {
      * @return void
      */
     public static function reset_all_data($detectchanges = false) {
-        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
+        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $FULLME;
 
         // Stop any message redirection.
-        phpunit_util::stop_message_redirection();
+        self::stop_message_redirection();
 
         // Stop any message redirection.
-        phpunit_util::stop_event_redirection();
+        self::stop_event_redirection();
 
         // Start a new email redirection.
         // This will clear any existing phpmailer redirection.
         // We redirect all phpmailer output to this message sink which is
         // called instead of phpmailer actually sending the message.
-        phpunit_util::start_phpmailer_redirection();
+        self::start_phpmailer_redirection();
 
         // We used to call gc_collect_cycles here to ensure desctructors were called between tests.
         // This accounted for 25% of the total time running phpunit - so we removed it.
@@ -131,6 +131,7 @@ class phpunit_util extends testing_util {
         }
 
         $resetdb = self::reset_database();
+        $localename = self::get_locale_name();
         $warnings = array();
 
         if ($detectchanges === true) {
@@ -163,14 +164,12 @@ class phpunit_util extends testing_util {
                 $warnings[] = 'Warning: unexpected change of $COURSE';
             }
 
-            if ($CFG->ostype === 'WINDOWS') {
-                if (setlocale(LC_TIME, 0) !== 'English_Australia.1252') {
-                    $warnings[] = 'Warning: unexpected change of locale';
-                }
-            } else {
-                if (setlocale(LC_TIME, 0) !== 'en_AU.UTF-8') {
-                    $warnings[] = 'Warning: unexpected change of locale';
-                }
+            if ($FULLME !== self::get_global_backup('FULLME')) {
+                $warnings[] = 'Warning: unexpected change of $FULLME';
+            }
+
+            if (setlocale(LC_TIME, 0) !== $localename) {
+                $warnings[] = 'Warning: unexpected change of locale';
             }
         }
 
@@ -189,6 +188,7 @@ class phpunit_util extends testing_util {
         $_SERVER = self::get_global_backup('_SERVER');
         $CFG = self::get_global_backup('CFG');
         $SITE = self::get_global_backup('SITE');
+        $FULLME = self::get_global_backup('FULLME');
         $_GET = array();
         $_POST = array();
         $_FILES = array();
@@ -212,9 +212,19 @@ class phpunit_util extends testing_util {
         reset_text_filters_cache(true);
         events_get_handlers('reset');
         core_text::reset_caches();
-        get_message_processors(false, true);
+        get_message_processors(false, true, true);
         filter_manager::reset_caches();
         core_filetypes::reset_caches();
+        \core_search\manager::clear_static();
+        core_user::reset_caches();
+        if (class_exists('core_media_manager', false)) {
+            core_media_manager::reset_caches();
+        }
+
+        // Reset static unit test options.
+        if (class_exists('\availability_date\condition', false)) {
+            \availability_date\condition::set_current_time_for_test(0);
+        }
 
         // Reset internal users.
         core_user::reset_internal_users();
@@ -235,8 +245,10 @@ class phpunit_util extends testing_util {
         if (class_exists('\core\update\checker')) {
             \core\update\checker::reset_caches(true);
         }
-        if (class_exists('\core\update\deployer')) {
-            \core\update\deployer::reset_caches(true);
+
+        // Clear static cache within restore.
+        if (class_exists('restore_section_structure_step')) {
+            restore_section_structure_step::reset_caches();
         }
 
         // purge dataroot directory
@@ -255,11 +267,10 @@ class phpunit_util extends testing_util {
         core_date::phpunit_reset();
 
         // Make sure the time locale is consistent - that is Australian English.
-        if ($CFG->ostype === 'WINDOWS') {
-            setlocale(LC_TIME, 'English_Australia.1252');
-        } else {
-            setlocale(LC_TIME, 'en_AU.UTF-8');
-        }
+        setlocale(LC_TIME, $localename);
+
+        // Reset the log manager cache.
+        get_log_manager(true);
 
         // verify db writes just in case something goes wrong in reset
         if (self::$lastdbwrites != $DB->perf_get_writes()) {
@@ -301,16 +312,17 @@ class phpunit_util extends testing_util {
      * @return void
      */
     public static function bootstrap_init() {
-        global $CFG, $SITE, $DB;
+        global $CFG, $SITE, $DB, $FULLME;
 
         // backup the globals
         self::$globals['_SERVER'] = $_SERVER;
         self::$globals['CFG'] = clone($CFG);
         self::$globals['SITE'] = clone($SITE);
         self::$globals['DB'] = $DB;
+        self::$globals['FULLME'] = $FULLME;
 
         // refresh data in all tables, clear caches, etc.
-        phpunit_util::reset_all_data();
+        self::reset_all_data();
     }
 
     /**
@@ -355,6 +367,11 @@ class phpunit_util extends testing_util {
     public static function testing_ready_problem() {
         global $DB;
 
+        $localename = self::get_locale_name();
+        if (setlocale(LC_TIME, $localename) === false) {
+            return array(PHPUNIT_EXITCODE_CONFIGERROR, "Required locale '$localename' is not installed.");
+        }
+
         if (!self::is_test_site()) {
             // dataroot was verified in bootstrap, so it must be DB
             return array(PHPUNIT_EXITCODE_CONFIGERROR, 'Can not use database for testing, try different prefix');
@@ -395,10 +412,12 @@ class phpunit_util extends testing_util {
 
         self::reset_dataroot();
         testing_initdataroot($CFG->dataroot, 'phpunit');
-        self::drop_dataroot();
 
-        // drop all tables
+        // Drop all tables.
         self::drop_database($displayprogress);
+
+        // Drop dataroot.
+        self::drop_dataroot();
     }
 
     /**
@@ -417,7 +436,7 @@ class phpunit_util extends testing_util {
         }
 
         if ($DB->get_tables()) {
-            list($errorcode, $message) = phpunit_util::testing_ready_problem();
+            list($errorcode, $message) = self::testing_ready_problem();
             if ($errorcode) {
                 phpunit_bootstrap_error(PHPUNIT_EXITCODE_REINSTALL, 'Database tables already present, Moodle PHPUnit test environment can not be initialised');
             } else {
@@ -524,7 +543,7 @@ class phpunit_util extends testing_util {
 
         $template = '
         <testsuites>
-            <testsuite name="@component@">
+            <testsuite name="@component@_testsuite">
                 <directory suffix="_test.php">.</directory>
             </testsuite>
         </testsuites>';
@@ -584,28 +603,19 @@ class phpunit_util extends testing_util {
         $backtrace = debug_backtrace();
 
         foreach ($backtrace as $bt) {
-            $intest = false;
-            if (isset($bt['object']) and is_object($bt['object'])) {
-                if ($bt['object'] instanceof PHPUnit_Framework_TestCase) {
-                    if (strpos($bt['function'], 'test') === 0) {
-                        $intest = true;
-                        break;
-                    }
-                }
+            if (isset($bt['object']) and is_object($bt['object'])
+                    && $bt['object'] instanceof PHPUnit_Framework_TestCase) {
+                $debug = new stdClass();
+                $debug->message = $message;
+                $debug->level   = $level;
+                $debug->from    = $from;
+
+                self::$debuggings[] = $debug;
+
+                return true;
             }
         }
-        if (!$intest) {
-            return false;
-        }
-
-        $debug = new stdClass();
-        $debug->message = $message;
-        $debug->level   = $level;
-        $debug->from    = $from;
-
-        self::$debuggings[] = $debug;
-
-        return true;
+        return false;
     }
 
     /**
@@ -626,16 +636,24 @@ class phpunit_util extends testing_util {
 
     /**
      * Prints out any debug messages accumulated during test execution.
-     * @return bool false if no debug messages, true if debug triggered
+     *
+     * @param bool $return true to return the messages or false to print them directly. Default false.
+     * @return bool|string false if no debug messages, true if debug triggered or string of messages
      */
-    public static function display_debugging_messages() {
+    public static function display_debugging_messages($return = false) {
         if (empty(self::$debuggings)) {
             return false;
         }
+
+        $debugstring = '';
         foreach(self::$debuggings as $debug) {
-            echo 'Debugging: ' . $debug->message . "\n" . trim($debug->from) . "\n";
+            $debugstring .= 'Debugging: ' . $debug->message . "\n" . trim($debug->from) . "\n";
         }
 
+        if ($return) {
+            return $debugstring;
+        }
+        echo $debugstring;
         return true;
     }
 
@@ -790,5 +808,60 @@ class phpunit_util extends testing_util {
         if (self::$eventsink) {
             self::$eventsink->add_event($event);
         }
+    }
+
+    /**
+     * Gets the name of the locale for testing environment (Australian English)
+     * depending on platform environment.
+     *
+     * @return string the locale name.
+     */
+    protected static function get_locale_name() {
+        global $CFG;
+        if ($CFG->ostype === 'WINDOWS') {
+            return 'English_Australia.1252';
+        } else {
+            return 'en_AU.UTF-8';
+        }
+    }
+
+    /**
+     * Executes all adhoc tasks in the queue. Useful for testing asynchronous behaviour.
+     *
+     * @return void
+     */
+    public static function run_all_adhoc_tasks() {
+        $now = time();
+        while (($task = \core\task\manager::get_next_adhoc_task($now)) !== null) {
+            try {
+                $task->execute();
+                \core\task\manager::adhoc_task_complete($task);
+            } catch (Exception $e) {
+                \core\task\manager::adhoc_task_failed($task);
+            }
+        }
+    }
+
+    /**
+     * Helper function to call a protected/private method of an object using reflection.
+     *
+     * Example 1. Calling a protected object method:
+     *   $result = call_internal_method($myobject, 'method_name', [$param1, $param2], '\my\namespace\myobjectclassname');
+     *
+     * Example 2. Calling a protected static method:
+     *   $result = call_internal_method(null, 'method_name', [$param1, $param2], '\my\namespace\myclassname');
+     *
+     * @param object|null $object the object on which to call the method, or null if calling a static method.
+     * @param string $methodname the name of the protected/private method.
+     * @param array $params the array of function params to pass to the method.
+     * @param string $classname the fully namespaced name of the class the object was created from (base in the case of mocks),
+     *        or the name of the static class when calling a static method.
+     * @return mixed the respective return value of the method.
+     */
+    public static function call_internal_method($object, $methodname, array $params = array(), $classname) {
+        $reflection = new \ReflectionClass($classname);
+        $method = $reflection->getMethod($methodname);
+        $method->setAccessible(true);
+        return $method->invokeArgs($object, $params);
     }
 }

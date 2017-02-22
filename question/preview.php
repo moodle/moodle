@@ -30,9 +30,9 @@
  */
 
 
-require_once(dirname(__FILE__) . '/../config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/questionlib.php');
-require_once(dirname(__FILE__) . '/previewlib.php');
+require_once(__DIR__ . '/previewlib.php');
 
 /**
  * The maximum number of variants previewable. If there are more variants than this for a question
@@ -255,13 +255,13 @@ echo $quba->render_question($slot, $options, $displaynumber);
 // Finish the question form.
 echo html_writer::start_tag('div', array('id' => 'previewcontrols', 'class' => 'controls'));
 echo html_writer::empty_tag('input', $restartdisabled + array('type' => 'submit',
-        'name' => 'restart', 'value' => get_string('restart', 'question')));
+        'name' => 'restart', 'value' => get_string('restart', 'question'), 'class' => 'btn btn-secondary'));
 echo html_writer::empty_tag('input', $finishdisabled  + array('type' => 'submit',
-        'name' => 'save',    'value' => get_string('save', 'question')));
+        'name' => 'save',    'value' => get_string('save', 'question'), 'class' => 'btn btn-secondary'));
 echo html_writer::empty_tag('input', $filldisabled    + array('type' => 'submit',
-        'name' => 'fill',    'value' => get_string('fillincorrect', 'question')));
+        'name' => 'fill',    'value' => get_string('fillincorrect', 'question'), 'class' => 'btn btn-secondary'));
 echo html_writer::empty_tag('input', $finishdisabled  + array('type' => 'submit',
-        'name' => 'finish',  'value' => get_string('submitandfinish', 'question')));
+        'name' => 'finish',  'value' => get_string('submitandfinish', 'question'), 'class' => 'btn btn-secondary'));
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('form');
 

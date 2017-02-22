@@ -20,24 +20,21 @@ M.core_group.init_hover_events = function(Y, events) {
         return overlay;
     })();
 
-    // Iterate over the events and attach an event to display the description on
-    // hover
-    for (var id in events) {
-        var node = Y.one('#'+id);
-        if (node) {
-            node = node.ancestor();
-            node.on('mouseenter', function(e, content){
-                M.core_group.hoveroverlay.set('xy', [this.getX()+(this.get('offsetWidth')/2),this.getY()+this.get('offsetHeight')-5]);
-                M.core_group.hoveroverlay.set("bodyContent", content);
-                M.core_group.hoveroverlay.show();
-                M.core_group.hoveroverlay.get('boundingBox').setStyle('visibility', 'visible');
-            }, node, events[id]);
-            node.on('mouseleave', function(e){
-                M.core_group.hoveroverlay.hide();
-                M.core_group.hoveroverlay.get('boundingBox').setStyle('visibility', 'hidden');
-            }, node);
-        }
-    }
+    Y.all('.group_hoverdescription').each(function() {
+        var node = this.ancestor();
+        var id = this.getAttribute('data-groupid');
+
+        node.on('mouseenter', function(){
+            M.core_group.hoveroverlay.set('xy', [this.getX()+(this.get('offsetWidth')/2),this.getY()+this.get('offsetHeight')-5]);
+            M.core_group.hoveroverlay.set("bodyContent", events[id]);
+            M.core_group.hoveroverlay.show();
+            M.core_group.hoveroverlay.get('boundingBox').setStyle('visibility', 'visible');
+        });
+        node.on('mouseleave', function(){
+            M.core_group.hoveroverlay.hide();
+            M.core_group.hoveroverlay.get('boundingBox').setStyle('visibility', 'hidden');
+        });
+    });
 };
 
 M.core_group.init_index = function(Y, wwwroot, courseid) {

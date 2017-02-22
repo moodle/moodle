@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-require_once realpath(dirname(__FILE__) . '/../../../autoload.php');
+if (!class_exists('Google_Client')) {
+  require_once dirname(__FILE__) . '/../autoload.php';
+}
 
 /**
  * Authentication class that deals with the OAuth 2 web-server authentication flow
- *
- * @author Chris Chabot <chabotc@google.com>
- * @author Chirag Shah <chirags@google.com>
  *
  */
 class Google_Auth_OAuth2 extends Google_Auth_Abstract
@@ -33,6 +32,7 @@ class Google_Auth_OAuth2 extends Google_Auth_Abstract
   const AUTH_TOKEN_LIFETIME_SECS = 300; // five minutes in seconds
   const MAX_TOKEN_LIFETIME_SECS = 86400; // one day in seconds
   const OAUTH2_ISSUER = 'accounts.google.com';
+  const OAUTH2_ISSUER_HTTPS = 'https://accounts.google.com';
 
   /** @var Google_Auth_AssertionCredentials $assertionCredentials */
   private $assertionCredentials;
@@ -79,13 +79,25 @@ class Google_Auth_OAuth2 extends Google_Auth_Abstract
 
   /**
    * @param string $code
+   * @param boolean $crossClient
    * @throws Google_Auth_Exception
    * @return string
    */
-  public function authenticate($code)
+  public function authenticate($code, $crossClient = false)
   {
     if (strlen($code) == 0) {
       throw new Google_Auth_Exception("Invalid code");
+    }
+
+    $arguments = array(
+          'code' => $code,
+          'grant_type' => 'authorization_code',
+          'client_id' => $this->client->getClassConfig($this, 'client_id'),
+          'client_secret' => $this->client->getClassConfig($this, 'client_secret')
+    );
+
+    if ($crossClient !== true) {
+        $arguments['redirect_uri'] = $this->client->getClassConfig($this, 'redirect_uri');
     }
 
     // We got here from the redirect from a successful authorization grant,
@@ -94,13 +106,7 @@ class Google_Auth_OAuth2 extends Google_Auth_Abstract
         self::OAUTH2_TOKEN_URI,
         'POST',
         array(),
-        array(
-          'code' => $code,
-          'grant_type' => 'authorization_code',
-          'redirect_uri' => $this->client->getClassConfig($this, 'redirect_uri'),
-          'client_id' => $this->client->getClassConfig($this, 'client_id'),
-          'client_secret' => $this->client->getClassConfig($this, 'client_secret')
-        )
+        $arguments
     );
     $request->disableGzip();
     $response = $this->client->getIo()->makeRequest($request);
@@ -483,7 +489,12 @@ class Google_Auth_OAuth2 extends Google_Auth_Abstract
       $audience = $this->client->getClassConfig($this, 'client_id');
     }
 
-    return $this->verifySignedJwtWithCerts($id_token, $certs, $audience, self::OAUTH2_ISSUER);
+    return $this->verifySignedJwtWithCerts(
+        $id_token,
+        $certs,
+        $audience,
+        array(self::OAUTH2_ISSUER, self::OAUTH2_ISSUER_HTTPS)
+    );
   }
 
   /**
@@ -590,13 +601,15 @@ class Google_Auth_OAuth2 extends Google_Auth_Abstract
       );
     }
 
+    // support HTTP and HTTPS issuers
+    // @see https://developers.google.com/identity/sign-in/web/backend-auth
     $iss = $payload['iss'];
-    if ($issuer && $iss != $issuer) {
+    if ($issuer && !in_array($iss, (array) $issuer)) {
       throw new Google_Auth_Exception(
           sprintf(
-              "Invalid issuer, %s != %s: %s",
+              "Invalid issuer, %s not in %s: %s",
               $iss,
-              $issuer,
+              "[".implode(",", (array) $issuer)."]",
               $json_body
           )
       );

@@ -116,7 +116,7 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
         $cmforum = get_coursemodule_from_id('forum', $forum->cmid);
 
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
         $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
 
@@ -220,7 +220,7 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
         $cmforum = get_coursemodule_from_id('forum', $forum->cmid);
 
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
         $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
 
@@ -314,6 +314,73 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
             core_completion_external::get_course_completion_status_returns(), $result);
 
         $this->assertEquals($studentresult, $teacherresult);
+
+    }
+
+    /**
+     * Test mark_course_self_completed
+     */
+    public function test_mark_course_self_completed() {
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_self.php');
+
+        $this->resetAfterTest(true);
+
+        $CFG->enablecompletion = true;
+        $student = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+
+        // Set completion rules.
+        $completion = new completion_info($course);
+
+        $criteriadata = new stdClass();
+        $criteriadata->id = $course->id;
+        $criteriadata->criteria_activity = array();
+
+        // Self completion.
+        $criteriadata->criteria_self = COMPLETION_CRITERIA_TYPE_SELF;
+        $class = 'completion_criteria_self';
+        $criterion = new $class();
+        $criterion->update_config($criteriadata);
+
+        // Handle overall aggregation.
+        $aggdata = array(
+            'course'        => $course->id,
+            'criteriatype'  => null
+        );
+        $aggregation = new completion_aggregation($aggdata);
+        $aggregation->setMethod(COMPLETION_AGGREGATION_ALL);
+        $aggregation->save();
+
+        $this->setUser($student);
+
+        $result = core_completion_external::mark_course_self_completed($course->id);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(
+            core_completion_external::mark_course_self_completed_returns(), $result);
+
+        // We expect a valid result.
+        $this->assertEquals(true, $result['status']);
+
+        $result = core_completion_external::get_course_completion_status($course->id, $student->id);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(
+            core_completion_external::get_course_completion_status_returns(), $result);
+
+        // Course must be completed.
+        $this->assertEquals(COMPLETION_COMPLETE, $result['completionstatus']['completions'][0]['complete']);
+
+        try {
+            $result = core_completion_external::mark_course_self_completed($course->id);
+            $this->fail('Exception expected due course already self completed.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('useralreadymarkedcomplete', $e->errorcode);
+        }
 
     }
 

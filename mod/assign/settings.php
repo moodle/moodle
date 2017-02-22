@@ -65,10 +65,27 @@ if ($ADMIN->fulltree) {
     $name = new lang_string('submissionstatement', 'mod_assign');
     $description = new lang_string('submissionstatement_help', 'mod_assign');
     $default = get_string('submissionstatementdefault', 'mod_assign');
-    $settings->add(new admin_setting_configtextarea('assign/submissionstatement',
+    $setting = new admin_setting_configtextarea('assign/submissionstatement',
                                                     $name,
                                                     $description,
-                                                    $default));
+                                                    $default);
+    $setting->set_force_ltr(false);
+    $settings->add($setting);
+
+    $name = new lang_string('maxperpage', 'mod_assign');
+    $options = array(
+        -1 => get_string('unlimitedpages', 'mod_assign'),
+        10 => 10,
+        20 => 20,
+        50 => 50,
+        100 => 100,
+    );
+    $description = new lang_string('maxperpage_help', 'mod_assign');
+    $settings->add(new admin_setting_configselect('assign/maxperpage',
+                                                    $name,
+                                                    $description,
+                                                    -1,
+                                                    $options));
 
     $name = new lang_string('defaultsettings', 'mod_assign');
     $description = new lang_string('defaultsettings_help', 'mod_assign');
@@ -175,6 +192,16 @@ if ($ADMIN->fulltree) {
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
+    $name = new lang_string('preventsubmissionnotingroup', 'mod_assign');
+    $description = new lang_string('preventsubmissionnotingroup_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/preventsubmissionnotingroup',
+        $name,
+        $description,
+        0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
     $name = new lang_string('requireallteammemberssubmit', 'mod_assign');
     $description = new lang_string('requireallteammemberssubmit_help', 'mod_assign');
     $setting = new admin_setting_configcheckbox('assign/requireallteammemberssubmit',
@@ -246,16 +273,6 @@ if ($ADMIN->fulltree) {
     $name = new lang_string('markingallocation', 'mod_assign');
     $description = new lang_string('markingallocation_help', 'mod_assign');
     $setting = new admin_setting_configcheckbox('assign/markingallocation',
-                                                    $name,
-                                                    $description,
-                                                    0);
-    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
-    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
-    $settings->add($setting);
-
-    $name = new lang_string('preventsubmissionnotingroup', 'mod_assign');
-    $description = new lang_string('preventsubmissionnotingroup_help', 'mod_assign');
-    $setting = new admin_setting_configcheckbox('assign/preventsubmissionnotingroup',
                                                     $name,
                                                     $description,
                                                     0);

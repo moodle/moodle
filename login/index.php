@@ -37,6 +37,7 @@ redirect_if_major_upgrade_required();
 
 $testsession = optional_param('testsession', 0, PARAM_INT); // test session works properly
 $cancel      = optional_param('cancel', 0, PARAM_BOOL);      // redirect to frontpage, needed for loginhttps
+$anchor      = optional_param('anchor', '', PARAM_RAW);      // Used to restore hash anchor to wantsurl.
 
 if ($cancel) {
     redirect(new moodle_url('/'));
@@ -120,6 +121,15 @@ if ($user !== false or $frm !== false or $errormsg !== '') {
     $frm = data_submitted();
 }
 
+// Restore the #anchor to the original wantsurl. Note that this
+// will only work for internal auth plugins, SSO plugins such as
+// SAML / CAS / OIDC will have to handle this correctly directly.
+if ($anchor && isset($SESSION->wantsurl) && strpos($SESSION->wantsurl, '#') === false) {
+    $wantsurl = new moodle_url($SESSION->wantsurl);
+    $wantsurl->set_anchor(substr($anchor, 1));
+    $SESSION->wantsurl = $wantsurl->out();
+}
+
 /// Check if the user has actually submitted login data to us
 
 if ($frm and isset($frm->username)) {                             // Login WITH cookies
@@ -127,7 +137,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
     $frm->username = trim(core_text::strtolower($frm->username));
 
     if (is_enabled_auth('none') ) {
-        if ($frm->username !== clean_param($frm->username, PARAM_USERNAME)) {
+        if ($frm->username !== core_user::clean_field($frm->username, 'username')) {
             $errormsg = get_string('username').': '.get_string("invalidusername");
             $errorcode = 2;
             $user = null;
@@ -205,7 +215,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
     /// check if user password has expired
     /// Currently supported only for ldap-authentication module
         $userauth = get_auth_plugin($USER->auth);
-        if (!empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
+        if (!isguestuser() and !empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
             if ($userauth->can_change_password()) {
                 $passwordchangeurl = $userauth->change_password_url();
                 if (!$passwordchangeurl) {
@@ -223,6 +233,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
                 echo $OUTPUT->footer();
                 exit;
             } elseif (intval($days2expire) < 0 ) {
+                set_user_preference('auth_forcepasswordchange', 1, $USER);
                 echo $OUTPUT->header();
                 echo $OUTPUT->confirm(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                 echo $OUTPUT->footer();
@@ -258,36 +269,35 @@ if ($session_has_timed_out and !data_submitted()) {
 /// First, let's remember where the user was trying to get to before they got here
 
 if (empty($SESSION->wantsurl)) {
-    $SESSION->wantsurl = (array_key_exists('HTTP_REFERER',$_SERVER) &&
-                          $_SERVER["HTTP_REFERER"] != $CFG->wwwroot &&
-                          $_SERVER["HTTP_REFERER"] != $CFG->wwwroot.'/' &&
-                          $_SERVER["HTTP_REFERER"] != $CFG->httpswwwroot.'/login/' &&
-                          strpos($_SERVER["HTTP_REFERER"], $CFG->httpswwwroot.'/login/?') !== 0 &&
-                          strpos($_SERVER["HTTP_REFERER"], $CFG->httpswwwroot.'/login/index.php') !== 0 &&
-                          clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL) != '')
-                          // There might be some extra params such as ?lang=.
-        ? $_SERVER["HTTP_REFERER"] : NULL;
+    $SESSION->wantsurl = null;
+    $referer = get_local_referer(false);
+    if ($referer &&
+            $referer != $CFG->wwwroot &&
+            $referer != $CFG->wwwroot . '/' &&
+            $referer != $CFG->httpswwwroot . '/login/' &&
+            strpos($referer, $CFG->httpswwwroot . '/login/?') !== 0 &&
+            strpos($referer, $CFG->httpswwwroot . '/login/index.php') !== 0) { // There might be some extra params such as ?lang=.
+        $SESSION->wantsurl = $referer;
+    }
 }
 
 /// Redirect to alternative login URL if needed
 if (!empty($CFG->alternateloginurl)) {
-    $loginurl = $CFG->alternateloginurl;
+    $loginurl = new moodle_url($CFG->alternateloginurl);
 
-    if (strpos($SESSION->wantsurl, $loginurl) === 0) {
-        //we do not want to return to alternate url
-        $SESSION->wantsurl = NULL;
+    $loginurlstr = $loginurl->out(false);
+
+    if (strpos($SESSION->wantsurl, $loginurlstr) === 0) {
+        // We do not want to return to alternate url.
+        $SESSION->wantsurl = null;
     }
 
+    // If error code then add that to url.
     if ($errorcode) {
-        if (strpos($loginurl, '?') === false) {
-            $loginurl .= '?';
-        } else {
-            $loginurl .= '&';
-        }
-        $loginurl .= 'errorcode='.$errorcode;
+        $loginurl->param('errorcode', $errorcode);
     }
 
-    redirect($loginurl);
+    redirect($loginurl->out(false));
 }
 
 // make sure we really are on the https page when https login required
@@ -301,30 +311,13 @@ if (!isset($frm) or !is_object($frm)) {
 
 if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 5184
     if (!empty($_GET["username"])) {
+        // we do not want data from _POST here
         $frm->username = clean_param($_GET["username"], PARAM_RAW); // we do not want data from _POST here
     } else {
         $frm->username = get_moodle_cookie();
     }
 
     $frm->password = "";
-}
-
-if (!empty($frm->username)) {
-    $focus = "password";
-} else {
-    $focus = "username";
-}
-
-if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_instructions)) {
-    $show_instructions = true;
-} else {
-    $show_instructions = false;
-}
-
-$potentialidps = array();
-foreach($authsequence as $authname) {
-    $authplugin = get_auth_plugin($authname);
-    $potentialidps = array_merge($potentialidps, $authplugin->loginpage_idp_list($SESSION->wantsurl));
 }
 
 if (!empty($SESSION->loginerrormsg)) {
@@ -341,7 +334,7 @@ if (!empty($SESSION->loginerrormsg)) {
     if ($errormsg) {
         $SESSION->loginerrormsg = $errormsg;
     }
-    redirect(new moodle_url('/login/index.php'));
+    redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
 }
 
 $PAGE->set_title("$site->fullname: $loginsite");
@@ -357,13 +350,9 @@ if (isloggedin() and !isguestuser()) {
     echo $OUTPUT->confirm(get_string('alreadyloggedin', 'error', fullname($USER)), $logout, $continue);
     echo $OUTPUT->box_end();
 } else {
-    include("index_form.html");
-    if ($errormsg) {
-        $PAGE->requires->js_init_call('M.util.focus_login_error', null, true);
-    } else if (!empty($CFG->loginpageautofocus)) {
-        //focus username or password
-        $PAGE->requires->js_init_call('M.util.focus_login_form', null, true);
-    }
+    $loginform = new \core_auth\output\login($authsequence, $frm->username);
+    $loginform->set_error($errormsg);
+    echo $OUTPUT->render($loginform);
 }
 
 echo $OUTPUT->footer();

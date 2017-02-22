@@ -26,7 +26,7 @@ Course setup
 3) Create a forum 'f2'
 4) Create a quiz 'q1' with one question (e.g. true/false question)
 5) Create a quiz 'q2' with one question (can use same question)
-6) In gradebook/reports/categories and items, edit q2's grade (show advanced)
+6) In gradebook/reports/gradebook setup, edit q2's grade (show advanced)
    to assign a 'grade to pass' of 5.0.
    [Note: Due to a bug in gradebook at time of writing, you may have to go into
    admin screens and make sure that 'Student' is included on the list of graded

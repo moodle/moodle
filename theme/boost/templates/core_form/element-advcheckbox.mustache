@@ -1,0 +1,55 @@
+<div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
+    <div class="col-md-3">
+        {{#text}}
+            <label for="{{element.id}}">
+                {{{label}}}
+            </label>
+        {{/text}}
+    </div>
+    <div class="col-md-9 checkbox">
+        <label>
+        {{^element.hardfrozen}}
+            {{^element.frozen}}
+                <input type="hidden" name="{{element.name}}" value="{{element.deselectedvalue}}">
+            {{/element.frozen}}
+            {{#element.frozen}}
+                <input type="hidden" name="{{element.name}}" value="{{element.frozenvalue}}">
+            {{/element.frozen}}
+        {{/element.hardfrozen}}
+        <input type="checkbox"
+            name="{{element.name}}"
+            class="{{element.extraclasses}}"
+            {{#element.selectedvalue}}
+                value="{{element.selectedvalue}}"
+            {{/element.selectedvalue}}
+            id="{{element.id}}" {{#element.checked}}checked{{/element.checked}}
+            {{#error}}
+                autofocus aria-describedby="id_error_{{element.name}}"
+            {{/error}}
+            {{#element.frozen}}
+                disabled
+            {{/element.frozen}}
+            {{{element.attributes}}} >
+            {{#text}}
+                {{{.}}}
+            {{/text}}
+            {{^text}}
+                {{{label}}}
+            {{/text}}
+        </label>
+        <span class="text-nowrap">
+            {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
+            {{{helpbutton}}}
+        </span>
+        <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
+            {{{error}}}
+        </div>
+    </div>
+</div>
+{{^element.frozen}}
+{{#js}}
+require(['theme_boost/form-display-errors'], function(module) {
+    module.enhance({{#quote}}{{element.id}}{{/quote}});
+});
+{{/js}}
+{{/element.frozen}}

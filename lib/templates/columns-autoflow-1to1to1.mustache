@@ -1,0 +1,40 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/columns-autoflow-1to1to1
+
+    Moodle columns-autoflow-1to1to1 template.
+
+    The purpose of this template is to render a template with 3 columns where the content automatically
+    flows from one column to the next in order to balance all 3 columns. Based on CSS3.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * message Content that will be displayed in three columns.
+
+    Example context (json):
+    {
+        "message": "<div class='alert alert-info'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean tincidunt interdum tellus, id ullamcorper magna fringilla nec. Mauris lacinia ipsum vel mollis vehicula. Vivamus hendrerit lacinia efficitur. Sed feugiat nunc condimentum dui faucibus, nec facilisis ipsum egestas. Proin venenatis turpis nec felis molestie porttitor. Nulla et orci lectus.</div>"
+    }
+
+}}
+<div class="columns-autoflow-1to1to1">{{$ content }}{{{ message }}}{{/ content }}</div>

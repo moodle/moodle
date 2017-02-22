@@ -86,22 +86,24 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
 
     /**
      * Test exception is thrown for invalid property.
+     *
+     * @expectedException moodle_exception
      */
     public function test_parse_rrule_validation() {
 
         $rrule = "RANDOM=PROPERTY;";
-        $this->setExpectedException('moodle_exception');
         $mang = new core_tests_calendar_rrule_manager($rrule);
         $mang->parse_rrule();
     }
 
     /**
      * Test exception is thrown for invalid frequency.
+     *
+     * @expectedException moodle_exception
      */
     public function test_freq_validation() {
 
         $rrule = "FREQ=RANDOMLY;";
-        $this->setExpectedException('moodle_exception');
         $mang = new core_tests_calendar_rrule_manager($rrule);
         $mang->parse_rrule();
     }

@@ -119,12 +119,9 @@ class mysql_sql_generator extends sql_generator {
      *       errors and changes of column data types.
      *
      * @deprecated since Moodle 2.9 MDL-49723 - please do not use this function any more.
-     * @param xmldb_field[]|database_column_info[] $columns
-     * @return int approximate row size in bytes
      */
     public function guess_antolope_row_size(array $columns) {
-        debugging('guess_antolope_row_size() is deprecated, please use guess_antelope_row_size() instead.', DEBUG_DEVELOPER);
-        return $this->guess_antelope_row_size($columns);
+        throw new coding_exception('guess_antolope_row_size() can not be used any more, please use guess_antelope_row_size() instead.');
     }
 
     /**

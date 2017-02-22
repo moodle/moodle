@@ -32,8 +32,7 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\DriverException as DriverException,
     WebDriver\Exception\NoSuchElement as NoSuchElement,
     WebDriver\Exception\StaleElementReference as StaleElementReference,
-    Behat\Gherkin\Node\TableNode as TableNode,
-    Behat\Behat\Context\Step\Given as Given;
+    Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
  * Cross component steps definitions.
@@ -85,6 +84,15 @@ class behat_general extends behat_base {
      */
     public function i_am_on_site_homepage() {
         $this->getSession()->visit($this->locate_path('/?redirect=0'));
+    }
+
+    /**
+     * Opens course index page.
+     *
+     * @Given /^I am on course index$/
+     */
+    public function i_am_on_course_index() {
+        $this->getSession()->visit($this->locate_path('/course/index.php'));
     }
 
     /**
@@ -192,7 +200,7 @@ class behat_general extends behat_base {
         // unnamed window (presumably the main window) to some other named
         // window, then we first set the main window name to a conventional
         // value that we can later use this name to switch back.
-        $this->getSession()->evaluateScript(
+        $this->getSession()->executeScript(
                 'if (window.name == "") window.name = "' . self::MAIN_WINDOW_NAME . '"');
 
         $this->getSession()->switchToWindow($windowname);
@@ -244,12 +252,11 @@ class behat_general extends behat_base {
      * @param int $seconds
      */
     public function i_wait_seconds($seconds) {
-
-        if (!$this->running_javascript()) {
-            throw new DriverException('Waits are disabled in scenarios without Javascript support');
+        if ($this->running_javascript()) {
+            $this->getSession()->wait($seconds * 1000, false);
+        } else {
+            sleep($seconds);
         }
-
-        $this->getSession()->wait($seconds * 1000, false);
     }
 
     /**
@@ -259,8 +266,9 @@ class behat_general extends behat_base {
      */
     public function wait_until_the_page_is_ready() {
 
+        // No need to wait if not running JS.
         if (!$this->running_javascript()) {
-            throw new DriverException('Waits are disabled in scenarios without Javascript support');
+            return;
         }
 
         $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
@@ -412,6 +420,15 @@ class behat_general extends behat_base {
         list($containerselector, $containerlocator) = $this->transform_selector($containerselectortype, $containerelement);
         $destinationxpath = $this->getSession()->getSelectorsHandler()->selectorToXpath($containerselector, $containerlocator);
 
+        $node = $this->get_selected_node("xpath_element", $sourcexpath);
+        if (!$node->isVisible()) {
+            throw new ExpectationException('"' . $sourcexpath . '" "xpath_element" is not visible', $this->getSession());
+        }
+        $node = $this->get_selected_node("xpath_element", $destinationxpath);
+        if (!$node->isVisible()) {
+            throw new ExpectationException('"' . $destinationxpath . '" "xpath_element" is not visible', $this->getSession());
+        }
+
         $this->getSession()->getDriver()->dragTo($sourcexpath, $destinationxpath);
     }
 
@@ -532,7 +549,7 @@ class behat_general extends behat_base {
 
         // Looking for all the matching nodes without any other descendant matching the
         // same xpath (we are using contains(., ....).
-        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpathliteral = behat_context_helper::escape($text);
         $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
             "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
@@ -582,7 +599,7 @@ class behat_general extends behat_base {
 
         // Looking for all the matching nodes without any other descendant matching the
         // same xpath (we are using contains(., ....).
-        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpathliteral = behat_context_helper::escape($text);
         $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
             "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
@@ -640,7 +657,7 @@ class behat_general extends behat_base {
 
         // Looking for all the matching nodes without any other descendant matching the
         // same xpath (we are using contains(., ....).
-        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpathliteral = behat_context_helper::escape($text);
         $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
             "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
@@ -694,7 +711,7 @@ class behat_general extends behat_base {
 
         // Looking for all the matching nodes without any other descendant matching the
         // same xpath (we are using contains(., ....).
-        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpathliteral = behat_context_helper::escape($text);
         $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
             "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
@@ -928,6 +945,100 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Runs a scheduled task immediately, given full class name.
+     *
+     * This is faster and more reliable than running cron (running cron won't
+     * work more than once in the same test, for instance). However it is
+     * a little less 'realistic'.
+     *
+     * While the task is running, we suppress mtrace output because it makes
+     * the Behat result look ugly.
+     *
+     * Note: Most of the code relating to running a task is based on
+     * admin/tool/task/cli/schedule_task.php.
+     *
+     * @Given /^I run the scheduled task "(?P<task_name>[^"]+)"$/
+     * @param string $taskname Name of task e.g. 'mod_whatever\task\do_something'
+     */
+    public function i_run_the_scheduled_task($taskname) {
+        $task = \core\task\manager::get_scheduled_task($taskname);
+        if (!$task) {
+            throw new DriverException('The "' . $taskname . '" scheduled task does not exist');
+        }
+
+        // Do setup for cron task.
+        raise_memory_limit(MEMORY_EXTRA);
+        cron_setup_user();
+
+        // Get lock.
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+            throw new DriverException('Unable to obtain core_cron lock for scheduled task');
+        }
+        if (!$lock = $cronlockfactory->get_lock('\\' . get_class($task), 10)) {
+            $cronlock->release();
+            throw new DriverException('Unable to obtain task lock for scheduled task');
+        }
+        $task->set_lock($lock);
+        if (!$task->is_blocking()) {
+            $cronlock->release();
+        } else {
+            $task->set_cron_lock($cronlock);
+        }
+
+        try {
+            // Discard task output as not appropriate for Behat output!
+            ob_start();
+            $task->execute();
+            ob_end_clean();
+
+            // Mark task complete.
+            \core\task\manager::scheduled_task_complete($task);
+        } catch (Exception $e) {
+            // Mark task failed and throw exception.
+            \core\task\manager::scheduled_task_failed($task);
+            throw new DriverException('The "' . $taskname . '" scheduled task failed', 0, $e);
+        }
+    }
+
+    /**
+     * Runs all ad-hoc tasks in the queue.
+     *
+     * This is faster and more reliable than running cron (running cron won't
+     * work more than once in the same test, for instance). However it is
+     * a little less 'realistic'.
+     *
+     * While the task is running, we suppress mtrace output because it makes
+     * the Behat result look ugly.
+     *
+     * @Given /^I run all adhoc tasks$/
+     * @throws DriverException
+     */
+    public function i_run_all_adhoc_tasks() {
+        // Do setup for cron task.
+        cron_setup_user();
+
+        // Run tasks. Locking is handled by get_next_adhoc_task.
+        $now = time();
+        ob_start(); // Discard task output as not appropriate for Behat output!
+        while (($task = \core\task\manager::get_next_adhoc_task($now)) !== null) {
+
+            try {
+                $task->execute();
+
+                // Mark task complete.
+                \core\task\manager::adhoc_task_complete($task);
+            } catch (Exception $e) {
+                // Mark task failed and throw exception.
+                \core\task\manager::adhoc_task_failed($task);
+                ob_end_clean();
+                throw new DriverException('An adhoc task failed', 0, $e);
+            }
+        }
+        ob_end_clean();
+    }
+
+    /**
      * Checks that an element and selector type exists in another element and selector type on the current page.
      *
      * This step is for advanced users, use it if you don't find anything else suitable for what you need.
@@ -992,13 +1103,15 @@ class behat_general extends behat_base {
      * Change browser window size small: 640x480, medium: 1024x768, large: 2560x1600, custom: widthxheight
      *
      * Example: I change window size to "small" or I change window size to "1024x768"
+     * or I change viewport size to "800x600". The viewport option is useful to guarantee that the
+     * browser window has same viewport size even when you run Behat on multiple operating systems.
      *
      * @throws ExpectationException
-     * @Then /^I change window size to "(small|medium|large|\d+x\d+)"$/
+     * @Then /^I change (window|viewport) size to "(small|medium|large|\d+x\d+)"$/
      * @param string $windowsize size of the window (small|medium|large|wxh).
      */
-    public function i_change_window_size_to($windowsize) {
-        $this->resize_window($windowsize);
+    public function i_change_window_size_to($windowviewport, $windowsize) {
+        $this->resize_window($windowsize, $windowviewport === 'viewport');
     }
 
     /**
@@ -1063,9 +1176,9 @@ class behat_general extends behat_base {
         $tablenode = $this->get_selected_node('table', $table);
         $tablexpath = $tablenode->getXpath();
 
-        $rowliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($row);
-        $valueliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($value);
-        $columnliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($column);
+        $rowliteral = behat_context_helper::escape($row);
+        $valueliteral = behat_context_helper::escape($value);
+        $columnliteral = behat_context_helper::escape($column);
 
         if (preg_match('/^-?(\d+)-?$/', $column, $columnasnumber)) {
             // Column indicated as a number, just use it as position of the column.
@@ -1093,7 +1206,9 @@ class behat_general extends behat_base {
 
         // Check if value exists in specific row/column.
         // Get row xpath.
-        $rowxpath = $tablexpath."/tbody/tr[th[normalize-space(.)=" . $rowliteral . "] or td[normalize-space(.)=" . $rowliteral . "]]";
+        // GoutteDriver uses DomCrawler\Crawler and it is making XPath relative to the current context, so use descendant.
+        $rowxpath = $tablexpath."/tbody/tr[descendant::th[normalize-space(.)=" . $rowliteral .
+                    "] | descendant::td[normalize-space(.)=" . $rowliteral . "]]";
 
         $columnvaluexpath = $rowxpath . $columnpositionxpath . "[contains(normalize-space(.)," . $valueliteral . ")]";
 
@@ -1199,7 +1314,7 @@ class behat_general extends behat_base {
      * @param string $link the text of the link.
      * @return string the content of the downloaded file.
      */
-    protected function download_file_from_link($link) {
+    public function download_file_from_link($link) {
         // Find the link.
         $linknode = $this->find_link($link);
         $this->ensure_node_is_visible($linknode);
@@ -1318,7 +1433,7 @@ class behat_general extends behat_base {
 
         $this->pageloaddetectionrunning = true;
 
-        $session->evaluateScript(
+        $session->executeScript(
                 'var span = document.createElement("span");
                 span.setAttribute("data-rel", "' . self::PAGE_LOAD_DETECTION_STRING . '");
                 span.setAttribute("style", "display: none;");
@@ -1413,5 +1528,104 @@ class behat_general extends behat_base {
             fread(STDIN, 1024);
             fwrite(STDOUT, "\033[2A\033[u\033[2B");
         }
+    }
+
+    /**
+     * Presses a given button in the browser.
+     * NOTE: Phantomjs and goutte driver reloads page while navigating back and forward.
+     *
+     * @Then /^I press the "(back|forward|reload)" button in the browser$/
+     * @param string $button the button to press.
+     * @throws ExpectationException
+     */
+    public function i_press_in_the_browser($button) {
+        $session = $this->getSession();
+
+        if ($button == 'back') {
+            $session->back();
+        } else if ($button == 'forward') {
+            $session->forward();
+        } else if ($button == 'reload') {
+            $session->reload();
+        } else {
+            throw new ExpectationException('Unknown browser button.', $session);
+        }
+    }
+
+    /**
+     * Trigger a keydown event for a key on a specific element.
+     *
+     * @When /^I press key "(?P<key_string>(?:[^"]|\\")*)" in "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)"$/
+     * @param string $key either char-code or character itself,
+     *               may optionally be prefixed with ctrl-, alt-, shift- or meta-
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     * @throws DriverException
+     * @throws ExpectationException
+     */
+    public function i_press_key_in_element($key, $element, $selectortype) {
+        if (!$this->running_javascript()) {
+            throw new DriverException('Key down step is not available with Javascript disabled');
+        }
+        // Gets the node based on the requested selector type and locator.
+        $node = $this->get_selected_node($selectortype, $element);
+        $modifier = null;
+        $validmodifiers = array('ctrl', 'alt', 'shift', 'meta');
+        $char = $key;
+        if (strpos($key, '-')) {
+            list($modifier, $char) = preg_split('/-/', $key, 2);
+            $modifier = strtolower($modifier);
+            if (!in_array($modifier, $validmodifiers)) {
+                throw new ExpectationException(sprintf('Unknown key modifier: %s.', $modifier));
+            }
+        }
+        if (is_numeric($char)) {
+            $char = (int)$char;
+        }
+
+        $node->keyDown($char, $modifier);
+        $node->keyPress($char, $modifier);
+        $node->keyUp($char, $modifier);
+    }
+
+    /**
+     * Press tab key on a specific element.
+     *
+     * @When /^I press tab key in "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)"$/
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     * @throws DriverException
+     * @throws ExpectationException
+     */
+    public function i_post_tab_key_in_element($element, $selectortype) {
+        if (!$this->running_javascript()) {
+            throw new DriverException('Tab press step is not available with Javascript disabled');
+        }
+        // Gets the node based on the requested selector type and locator.
+        $node = $this->get_selected_node($selectortype, $element);
+        $this->getSession()->getDriver()->post_key("\xEE\x80\x84", $node->getXpath());
+    }
+
+    /**
+     * Checks if database family used is using one of the specified, else skip. (mysql, postgres, mssql, oracle, etc.)
+     *
+     * @Given /^database family used is one of the following:$/
+     * @param TableNode $databasefamilies list of database.
+     * @return void.
+     * @throws \Moodle\BehatExtension\Exception\SkippedException
+     */
+    public function database_family_used_is_one_of_the_following(TableNode $databasefamilies) {
+        global $DB;
+
+        $dbfamily = $DB->get_dbfamily();
+
+        // Check if used db family is one of the specified ones. If yes then return.
+        foreach ($databasefamilies->getRows() as $dbfamilytocheck) {
+            if ($dbfamilytocheck[0] == $dbfamily) {
+                return;
+            }
+        }
+
+        throw new \Moodle\BehatExtension\Exception\SkippedException();
     }
 }

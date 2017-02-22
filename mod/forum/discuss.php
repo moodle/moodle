@@ -32,6 +32,7 @@ $mode   = optional_param('mode', 0, PARAM_INT);          // If set, changes the 
 $move   = optional_param('move', 0, PARAM_INT);          // If set, moves this discussion to another forum
 $mark   = optional_param('mark', '', PARAM_ALPHA);       // Used for tracking read posts if user initiated.
 $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
+$pin    = optional_param('pin', -1, PARAM_INT);          // If set, pin or unpin this discussion.
 
 $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$d));
 if ($parent !== 0) {
@@ -169,7 +170,29 @@ if ($move > 0 and confirm_sesskey()) {
     forum_rss_delete_file($forum);
     forum_rss_delete_file($forumto);
 
-    redirect($return.'&moved=-1&sesskey='.sesskey());
+    redirect($return.'&move=-1&sesskey='.sesskey());
+}
+// Pin or unpin discussion if requested.
+if ($pin !== -1 && confirm_sesskey()) {
+    require_capability('mod/forum:pindiscussions', $modcontext);
+
+    $params = array('context' => $modcontext, 'objectid' => $discussion->id, 'other' => array('forumid' => $forum->id));
+
+    switch ($pin) {
+        case FORUM_DISCUSSION_PINNED:
+            // Pin the discussion and trigger discussion pinned event.
+            forum_discussion_pin($modcontext, $forum, $discussion);
+            break;
+        case FORUM_DISCUSSION_UNPINNED:
+            // Unpin the discussion and trigger discussion unpinned event.
+            forum_discussion_unpin($modcontext, $forum, $discussion);
+            break;
+        default:
+            echo $OUTPUT->notification("Invalid value when attempting to pin/unpin discussion");
+            break;
+    }
+
+    redirect(new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id)));
 }
 
 // Trigger discussion viewed event.
@@ -266,12 +289,12 @@ if (!$canreply and $forum->type !== 'news') {
 }
 
 // Output the links to neighbour discussions.
-$neighbours = forum_get_discussion_neighbours($cm, $discussion);
+$neighbours = forum_get_discussion_neighbours($cm, $discussion, $forum);
 $neighbourlinks = $renderer->neighbouring_discussion_navigation($neighbours['prev'], $neighbours['next']);
 echo $neighbourlinks;
 
 /// Print the controls across the top
-echo '<div class="discussioncontrols clearfix">';
+echo '<div class="discussioncontrols clearfix"><div class="controlscontainer m-b-1">';
 
 if (!empty($CFG->enableportfolios) && has_capability('mod/forum:exportdiscussion', $modcontext)) {
     require_once($CFG->libdir.'/portfoliolib.php');
@@ -325,7 +348,7 @@ if ($forum->type != 'single'
         if (!empty($forummenu)) {
             echo '<div class="movediscussionoption">';
             $select = new url_select($forummenu, '',
-                    array(''=>get_string("movethisdiscussionto", "forum")),
+                    array('/mod/forum/discuss.php?d=' . $discussion->id => get_string("movethisdiscussionto", "forum")),
                     'forummenu', get_string('move'));
             echo $OUTPUT->render($select);
             echo "</div>";
@@ -333,8 +356,25 @@ if ($forum->type != 'single'
     }
     echo "</div>";
 }
-echo '<div class="clearfloat">&nbsp;</div>';
-echo "</div>";
+
+if (has_capability('mod/forum:pindiscussions', $modcontext)) {
+    if ($discussion->pinned == FORUM_DISCUSSION_PINNED) {
+        $pinlink = FORUM_DISCUSSION_UNPINNED;
+        $pintext = get_string('discussionunpin', 'forum');
+    } else {
+        $pinlink = FORUM_DISCUSSION_PINNED;
+        $pintext = get_string('discussionpin', 'forum');
+    }
+    $button = new single_button(new moodle_url('discuss.php', array('pin' => $pinlink, 'd' => $discussion->id)), $pintext, 'post');
+    echo html_writer::tag('div', $OUTPUT->render($button), array('class' => 'discussioncontrol pindiscussion'));
+}
+
+
+echo "</div></div>";
+
+if (forum_discussion_is_locked($forum, $discussion)) {
+    echo html_writer::div(get_string('discussionlocked', 'forum'), 'discussionlocked');
+}
 
 if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
     $a = new stdClass();
@@ -345,11 +385,11 @@ if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
 
 if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $modcontext) &&
             !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
-    echo $OUTPUT->notification(get_string('qandanotify','forum'));
+    echo $OUTPUT->notification(get_string('qandanotify', 'forum'));
 }
 
 if ($move == -1 and confirm_sesskey()) {
-    echo $OUTPUT->notification(get_string('discussionmoved', 'forum', format_string($forum->name,true)));
+    echo $OUTPUT->notification(get_string('discussionmoved', 'forum', format_string($forum->name,true)), 'notifysuccess');
 }
 
 $canrate = has_capability('mod/forum:rate', $modcontext);

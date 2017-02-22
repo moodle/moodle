@@ -1,5 +1,34 @@
 This files describes API changes in the quiz code.
 
+=== 3.2 ===
+
+* External functions mod_quiz_external::get_attempt_data, mod_quiz_external::get_attempt_summary
+  and mod_quiz_external::get_attempt_review now return additional optional fields:
+   - blockedbyprevious: Whether a question is blocked by the previous question.
+
+=== 3.1 ===
+
+* quiz_attempt::question_print_comment_fields() has been removed. It was broken
+  since at least Moodle 2.0.
+
+* quiz::confirm_start_attempt_message and mod_quiz_view_object::$startattemptwarning
+  have been deprecated. This functionality is now entirely handled within the
+  quiz access rule plugins.
+
+* The third argument to mod_quiz_renderer::start_attempt_button has been changed
+  from a warning string to a mod_quiz_preflight_check_form.
+
+* mod_quiz_renderer::review_next_navigation has a new optional argument. If you
+  have overridden that method, consider updating your code to match.
+
+* mod_quiz\output\edit_renderer::start_section_list now takes $structure as an
+  argument. If you have overridden this method (it's hard to believe anyone ever
+  would) you will need to update your renderer.
+
+* Several methods relating to preview links/buttons/urls have a new optional
+  argument to make the preview be of a particular variant.
+
+
 === 2.9 ===
 
 * There have been changes in classes/output/edit_renderer.php for MDL-40990.
@@ -96,6 +125,7 @@ This files describes API changes in the quiz code.
   trigger the event outside this function. Note that the appropriate start event is
   fired automatically by the quiz_attempt_save_started function.
 
+
 === 2.7 ===
 
 * The old quiz.questions database column (comma-separated list of question ids)
@@ -125,6 +155,7 @@ This files describes API changes in the quiz code.
 * The following internal functions have had their API changed.
       quiz_delete_empty_page: has had its arguments changed to $quiz and $pagenumber.
       quiz_has_question_use: now takes $quiz and $slot, not $questionid.
+
 
 === 2.6 ===
 

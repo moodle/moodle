@@ -161,11 +161,6 @@ class enrol_flatfile_plugin extends enrol_plugin {
         }
     }
 
-    public function cron() {
-        $trace = new text_progress_trace();
-        $this->sync($trace);
-    }
-
     /**
      * Execute synchronisation.
      * @param progress_trace
@@ -191,7 +186,8 @@ class enrol_flatfile_plugin extends enrol_plugin {
 
         if ($processed and $mailadmins) {
             if ($log = $buffer->get_buffer()) {
-                $eventdata = new stdClass();
+                $eventdata = new \core\message\message();
+                $eventdata->courseid          = SITEID;
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_flatfile';
                 $eventdata->name              = 'flatfile_enrolment';
@@ -345,7 +341,8 @@ class enrol_flatfile_plugin extends enrol_plugin {
         }
 
         if (!unlink($filelocation)) {
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
+            $eventdata->courseid          = SITEID;
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_flatfile';
             $eventdata->name              = 'flatfile_enrolment';
@@ -446,7 +443,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
             $notify = false;
             if ($ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$user->id))) {
                 // Update only.
-                $this->update_user_enrol($instance, $user->id, ENROL_USER_ACTIVE, $roleid, $timestart, $timeend);
+                $this->update_user_enrol($instance, $user->id, ENROL_USER_ACTIVE, $timestart, $timeend);
                 if (!$DB->record_exists('role_assignments', array('contextid'=>$context->id, 'roleid'=>$roleid, 'userid'=>$user->id, 'component'=>'enrol_flatfile', 'itemid'=>$instance->id))) {
                     role_assign($roleid, $user->id, $context->id, 'enrol_flatfile', $instance->id);
                 }
@@ -468,7 +465,8 @@ class enrol_flatfile_plugin extends enrol_plugin {
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
                 $subject = get_string('enrolmentnew', 'enrol', format_string($course->shortname, true, array('context' => $context)));
 
-                $eventdata = new stdClass();
+                $eventdata = new \core\message\message();
+                $eventdata->courseid          = $course->id;
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_flatfile';
                 $eventdata->name              = 'flatfile_enrolment';
@@ -499,7 +497,8 @@ class enrol_flatfile_plugin extends enrol_plugin {
                 $a->user = fullname($user);
                 $subject = get_string('enrolmentnew', 'enrol', format_string($course->shortname, true, array('context' => $context)));
 
-                $eventdata = new stdClass();
+                $eventdata = new \core\message\message();
+                $eventdata->courseid          = $course->id;
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_flatfile';
                 $eventdata->name              = 'flatfile_enrolment';

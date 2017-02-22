@@ -50,7 +50,7 @@ if ($deletesection) {
     if (course_can_delete_section($course, $sectioninfo)) {
         $confirm = optional_param('confirm', false, PARAM_BOOL) && confirm_sesskey();
         if ($confirm) {
-            course_delete_section($course, $sectioninfo, true);
+            course_delete_section($course, $sectioninfo, true, true);
             $courseurl = course_get_url($course, 0, array('sr' => $sectionreturn));
             redirect($courseurl);
         } else {
@@ -66,7 +66,7 @@ if ($deletesection) {
             echo $OUTPUT->box_start('noticebox');
             $optionsyes = array('id' => $id, 'confirm' => 1, 'delete' => 1, 'sesskey' => sesskey());
             $deleteurl = new moodle_url('/course/editsection.php', $optionsyes);
-            $formcontinue = new single_button($deleteurl, get_string('continue'));
+            $formcontinue = new single_button($deleteurl, get_string('delete'));
             $formcancel = new single_button($cancelurl, get_string('cancel'), 'get');
             echo $OUTPUT->confirm(get_string('confirmdeletesection', '',
                 get_section_name($course, $sectioninfo)), $formcontinue, $formcancel);
@@ -80,8 +80,17 @@ if ($deletesection) {
 }
 
 $editoroptions = array('context'=>$context ,'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
-$mform = course_get_format($course->id)->editsection_form($PAGE->url,
-        array('cs' => $sectioninfo, 'editoroptions' => $editoroptions));
+
+$courseformat = course_get_format($course);
+$defaultsectionname = $courseformat->get_default_section_name($section);
+
+$customdata = array(
+    'cs' => $sectioninfo,
+    'editoroptions' => $editoroptions,
+    'defaultsectionname' => $defaultsectionname
+);
+$mform = $courseformat->editsection_form($PAGE->url, $customdata);
+
 // set current value, make an editable copy of section_info object
 // this will retrieve all format-specific options as well
 $initialdata = convert_to_array($sectioninfo);
@@ -105,28 +114,7 @@ if ($mform->is_cancelled()){
             $data->availability = null;
         }
     }
-    $DB->update_record('course_sections', $data);
-    rebuild_course_cache($course->id, true);
-    if (isset($data->section)) {
-        // Usually edit form does not change relative section number but just in case.
-        $sectionnum = $data->section;
-    }
-    course_get_format($course->id)->update_section_format_options($data);
-
-    // Set section info, as this might not be present in form_data.
-    if (!isset($data->section))  {
-        $data->section = $sectionnum;
-    }
-    // Trigger an event for course section update.
-    $event = \core\event\course_section_updated::create(
-            array(
-                'objectid' => $data->id,
-                'courseid' => $course->id,
-                'context' => $context,
-                'other' => array('sectionnum' => $data->section)
-            )
-        );
-    $event->trigger();
+    course_update_section($course, $section, $data);
 
     $PAGE->navigation->clear_cache();
     redirect(course_get_url($course, $section, array('sr' => $sectionreturn)));

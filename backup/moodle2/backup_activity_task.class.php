@@ -166,7 +166,10 @@ abstract class backup_activity_task extends backup_task {
 
         // Generate the logs file (conditionally)
         if ($this->get_setting_value('logs')) {
+            // Legacy logs.
             $this->add_step(new backup_activity_logs_structure_step('activity_logs', 'logs.xml'));
+            // New log stores.
+            $this->add_step(new backup_activity_logstores_structure_step('activity_logstores', 'logstores.xml'));
         }
 
         // Generate the calendar events file (conditionally)
@@ -185,6 +188,9 @@ abstract class backup_activity_task extends backup_task {
 
         // Generate the grade history file. The setting 'grade_histories' is handled in the step.
         $this->add_step(new backup_activity_grade_history_structure_step('activity_grade_history', 'grade_history.xml'));
+
+        // Generate the competency file.
+        $this->add_step(new backup_activity_competencies_structure_step('activity_competencies', 'competencies.xml'));
 
         // Annotate the scales used in already annotated outcomes
         $this->add_step(new backup_annotate_scales_from_outcomes('annotate_scales'));

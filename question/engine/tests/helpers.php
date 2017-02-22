@@ -1103,9 +1103,25 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         return new question_contains_tag_with_attributes('input', $expectedattributes, $forbiddenattributes);
     }
 
+    /**
+     * Returns an epectation that a string contains the HTML of a button with
+     * name {question-attempt prefix}-submit, and eiter enabled or not.
+     * @param bool $enabled if not null, check the enabled/disabled state of the button. True = enabled.
+     * @return question_contains_tag_with_attributes an expectation for use with check_current_output.
+     */
     protected function get_contains_submit_button_expectation($enabled = null) {
         return $this->get_contains_button_expectation(
             $this->quba->get_field_prefix($this->slot) . '-submit', null, $enabled);
+    }
+
+    /**
+     * Returns an epectation that a string does not contain the HTML of a button with
+     * name {question-attempt prefix}-submit.
+     * @return question_contains_tag_with_attributes an expectation for use with check_current_output.
+     */
+    protected function get_does_not_contain_submit_button_expectation() {
+        return new question_no_pattern_expectation('/name="' .
+                $this->quba->get_field_prefix($this->slot) . '-submit"/');
     }
 
     protected function get_tries_remaining_expectation($n) {

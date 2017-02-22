@@ -140,6 +140,10 @@ class eventobservers {
             $subscriptions = subscription_manager::get_subscriptions_by_event($eventobj);
             $idstosend = array();
             foreach ($subscriptions as $subscription) {
+                // Only proceed to fire events and notifications if the subscription is active.
+                if (!subscription_manager::subscription_is_active($subscription)) {
+                    continue;
+                }
                 $starttime = $now - $subscription->timewindow;
                 $starttime = ($starttime > $subscription->lastnotificationsent) ? $starttime : $subscription->lastnotificationsent;
                 if ($subscription->courseid == 0) {

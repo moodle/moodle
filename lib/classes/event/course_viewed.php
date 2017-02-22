@@ -141,4 +141,9 @@ class course_viewed extends base {
             throw new \coding_exception('Context level must be CONTEXT_COURSE.');
         }
     }
+
+    public static function get_other_mapping() {
+        // No mapping required.
+        return false;
+    }
 }

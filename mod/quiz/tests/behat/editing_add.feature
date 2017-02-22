@@ -20,14 +20,14 @@ Feature: Edit quiz page - adding things
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I navigate to "Edit quiz" node in "Quiz administration"
+    And I navigate to "Edit quiz" in current page administration
     Then I should see "Editing quiz: Quiz 1"
 
   @javascript
   Scenario: Add some new question to the quiz using '+ a new question' options of the 'Add' menu.
     And I open the "last" add to quiz menu
     And I follow "a new question"
-    And I set the field "qtype_qtype_essay" to "1"
+    And I set the field "item_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay 01 new"
@@ -38,7 +38,7 @@ Feature: Edit quiz page - adding things
 
     And I open the "Page 1" add to quiz menu
     And I follow "a new question"
-    And I set the field "qtype_qtype_essay" to "1"
+    And I set the field "item_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay 02 new"
@@ -50,7 +50,7 @@ Feature: Edit quiz page - adding things
 
     And I open the "Page 1" add to quiz menu
     And I follow "a new question"
-    And I set the field "qtype_qtype_essay" to "1"
+    And I set the field "item_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay 03 new"
@@ -63,7 +63,7 @@ Feature: Edit quiz page - adding things
 
     And I open the "Page 1" add to quiz menu
     And I follow "a new question"
-    And I set the field "qtype_qtype_essay" to "1"
+    And I set the field "item_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay 04 new"
@@ -88,8 +88,8 @@ Feature: Edit quiz page - adding things
 
     # Add a question to page 2.
     When I open the "Page 2" add to quiz menu
-    And I follow "a new question" in the open menu
-    And I set the field "qtype_qtype_essay" to "1"
+    And I choose "a new question" in the open action menu
+    And I set the field "item_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
     When I set the field "Question name" to "Essay for page 2"
@@ -129,7 +129,7 @@ Feature: Edit quiz page - adding things
 
     # Create the Essay 01 question.
     When I press "Create a new question ..."
-    And I set the field "qtype_qtype_essay" to "1"
+    And I set the field "item_qtype_essay" to "1"
     And I press "Add"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay 01"
@@ -142,7 +142,7 @@ Feature: Edit quiz page - adding things
     And I should see "Select a category"
     And I set the field "Select a category:" to "Subcat 1"
     When I press "Create a new question ..."
-    And I set the field "qtype_qtype_essay" to "1"
+    And I set the field "item_qtype_essay" to "1"
     And I press "Add"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay 02"
@@ -153,8 +153,9 @@ Feature: Edit quiz page - adding things
 
     # Create the Essay 03 question.
     And I set the field "Select a category" to "Default for C1"
+    And I wait until the page is ready
     When I press "Create a new question ..."
-    And I set the field "qtype_qtype_essay" to "1"
+    And I set the field "item_qtype_essay" to "1"
     And I press "Add"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay 03"
@@ -165,7 +166,7 @@ Feature: Edit quiz page - adding things
 
     # Create the TF 01 question.
     When I press "Create a new question ..."
-    And I set the field "qtype_qtype_truefalse" to "1"
+    And I set the field "item_qtype_truefalse" to "1"
     And I press "Add"
     Then I should see "Adding a True/False question"
     And I set the field "Question name" to "TF 01"
@@ -177,7 +178,7 @@ Feature: Edit quiz page - adding things
 
     # Create the TF 02 question.
     When I press "Create a new question ..."
-    And I set the field "qtype_qtype_truefalse" to "1"
+    And I set the field "item_qtype_truefalse" to "1"
     And I press "Add"
     Then I should see "Adding a True/False question"
     And I set the field "Question name" to "TF 02"
@@ -191,7 +192,7 @@ Feature: Edit quiz page - adding things
     # Add Essay 03 from question bank.
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I follow "Edit quiz"
+    And I navigate to "Edit quiz" in current page administration
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     And I click on "Add to quiz" "link" in the "Essay 03" "table_row"
@@ -240,8 +241,8 @@ Feature: Edit quiz page - adding things
 
     # Add a random question to page 4.
     And I open the "Page 4" add to quiz menu
-    And I follow "a new question" in the open menu
-    And I set the field "qtype_qtype_essay" to "1"
+    And I choose "a new question" in the open action menu
+    And I set the field "item_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay for page 4"

@@ -1,7 +1,7 @@
 {
   "moodle-mod_quiz-util": {
     "requires": [
-        "node"
+        "node", "moodle-core-actionmenu"
     ],
     "use": [
         "moodle-mod_quiz-util-base"

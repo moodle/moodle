@@ -33,12 +33,6 @@ Feature: Show users who have not responded to the feedback survey
     And the following "grouping groups" exist:
       | grouping | group  |
       | GXI1     | GI1    |
-    And the following config values are set as admin:
-      | enableavailability | 1 |
-    And I log in as "admin"
-    And I navigate to "Manage activities" node in "Site administration > Plugins > Activity modules"
-    And I click on "Show" "link" in the "Feedback" "table_row"
-    And I log out
 
   @javascript
   Scenario: See users who have not responded
@@ -52,8 +46,8 @@ Feature: Show users who have not responded to the feedback survey
       | Record user names   | User's name will be logged and shown with answers |
       | Access restrictions | Grouping: GX1                                     |
     And I follow "Frogs"
-    And I follow "Edit questions"
-    And I set the field "id_typ" to "Short text answer"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I set the field "Add question" to "Short text answer"
     And I set the following fields to these values:
       | Question | Y/N? |
     And I press "Save question"
@@ -72,7 +66,7 @@ Feature: Show users who have not responded to the feedback survey
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Frogs"
-    And I follow "Show non-respondents"
+    And I navigate to "Show non-respondents" in current page administration
 
     # Should only show student 2; not student 1 (they did it) or 3 (not in grouping).
     Then I should see "Student 2"

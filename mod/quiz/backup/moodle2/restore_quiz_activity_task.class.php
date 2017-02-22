@@ -113,55 +113,58 @@ class restore_quiz_activity_task extends restore_activity_task {
         $rules[] = new restore_log_rule('quiz', 'addcategory',
                 'view.php?id={course_module}', '{question_category}');
         $rules[] = new restore_log_rule('quiz', 'view summary',
-                'summary.php?attempt={quiz_attempt_id}', '{quiz}');
+                'summary.php?attempt={quiz_attempt}', '{quiz}');
         $rules[] = new restore_log_rule('quiz', 'manualgrade',
-                'comment.php?attempt={quiz_attempt_id}&question={question}', '{quiz}');
+                'comment.php?attempt={quiz_attempt}&question={question}', '{quiz}');
         $rules[] = new restore_log_rule('quiz', 'manualgrading',
                 'report.php?mode=grading&q={quiz}', '{quiz}');
         // All the ones calling to review.php have two rules to handle both old and new urls
         // in any case they are always converted to new urls on restore.
         // TODO: In Moodle 2.x (x >= 5) kill the old rules.
-        // Note we are using the 'quiz_attempt_id' mapping because that is the
+        // Note we are using the 'quiz_attempt' mapping because that is the
         // one containing the quiz_attempt->ids old an new for quiz-attempt.
         $rules[] = new restore_log_rule('quiz', 'attempt',
                 'review.php?id={course_module}&attempt={quiz_attempt}', '{quiz}',
                 null, null, 'review.php?attempt={quiz_attempt}');
+        $rules[] = new restore_log_rule('quiz', 'attempt',
+                'review.php?attempt={quiz_attempt}', '{quiz}',
+                null, null, 'review.php?attempt={quiz_attempt}');
         // Old an new for quiz-submit.
         $rules[] = new restore_log_rule('quiz', 'submit',
-                'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
-                null, null, 'review.php?attempt={quiz_attempt_id}');
+                'review.php?id={course_module}&attempt={quiz_attempt}', '{quiz}',
+                null, null, 'review.php?attempt={quiz_attempt}');
         $rules[] = new restore_log_rule('quiz', 'submit',
-                'review.php?attempt={quiz_attempt_id}', '{quiz}');
+                'review.php?attempt={quiz_attempt}', '{quiz}');
         // Old an new for quiz-review.
         $rules[] = new restore_log_rule('quiz', 'review',
-                'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
-                null, null, 'review.php?attempt={quiz_attempt_id}');
+                'review.php?id={course_module}&attempt={quiz_attempt}', '{quiz}',
+                null, null, 'review.php?attempt={quiz_attempt}');
         $rules[] = new restore_log_rule('quiz', 'review',
-                'review.php?attempt={quiz_attempt_id}', '{quiz}');
+                'review.php?attempt={quiz_attempt}', '{quiz}');
         // Old an new for quiz-start attemp.
         $rules[] = new restore_log_rule('quiz', 'start attempt',
-                'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
-                null, null, 'review.php?attempt={quiz_attempt_id}');
+                'review.php?id={course_module}&attempt={quiz_attempt}', '{quiz}',
+                null, null, 'review.php?attempt={quiz_attempt}');
         $rules[] = new restore_log_rule('quiz', 'start attempt',
-                'review.php?attempt={quiz_attempt_id}', '{quiz}');
+                'review.php?attempt={quiz_attempt}', '{quiz}');
         // Old an new for quiz-close attemp.
         $rules[] = new restore_log_rule('quiz', 'close attempt',
-                'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
-                null, null, 'review.php?attempt={quiz_attempt_id}');
+                'review.php?id={course_module}&attempt={quiz_attempt}', '{quiz}',
+                null, null, 'review.php?attempt={quiz_attempt}');
         $rules[] = new restore_log_rule('quiz', 'close attempt',
-                'review.php?attempt={quiz_attempt_id}', '{quiz}');
+                'review.php?attempt={quiz_attempt}', '{quiz}');
         // Old an new for quiz-continue attempt.
         $rules[] = new restore_log_rule('quiz', 'continue attempt',
-                'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
-                null, null, 'review.php?attempt={quiz_attempt_id}');
+                'review.php?id={course_module}&attempt={quiz_attempt}', '{quiz}',
+                null, null, 'review.php?attempt={quiz_attempt}');
         $rules[] = new restore_log_rule('quiz', 'continue attempt',
-                'review.php?attempt={quiz_attempt_id}', '{quiz}');
+                'review.php?attempt={quiz_attempt}', '{quiz}');
         // Old an new for quiz-continue attemp.
         $rules[] = new restore_log_rule('quiz', 'continue attemp',
-                'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
-                null, 'continue attempt', 'review.php?attempt={quiz_attempt_id}');
+                'review.php?id={course_module}&attempt={quiz_attempt}', '{quiz}',
+                null, 'continue attempt', 'review.php?attempt={quiz_attempt}');
         $rules[] = new restore_log_rule('quiz', 'continue attemp',
-                'review.php?attempt={quiz_attempt_id}', '{quiz}',
+                'review.php?attempt={quiz_attempt}', '{quiz}',
                 null, 'continue attempt');
 
         return $rules;

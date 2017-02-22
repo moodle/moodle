@@ -1,0 +1,217 @@
+.path-backup .mform {
+    .grouped_settings {
+        clear: both;
+        overflow: hidden;
+
+        /* Use card styles but avoid extend because that brings in too much. */
+        &.section_level {
+            background-color: $card-bg;
+            @include border-radius($card-border-radius);
+            border: $card-border-width solid $card-border-color;
+            @include clearfix;
+            padding: $card-spacer-x;
+            margin-bottom: $card-spacer-x;
+        }
+    }
+
+    /* These are long labels with checkboxes on the right. */
+    .include_setting {
+        width: 50%;
+        display: inline-block;
+        float: left;
+        padding: $table-sm-cell-padding;
+    }
+    .normal_setting {
+        width: 50%;
+        display: inline-block;
+        float: left;
+        padding: $table-sm-cell-padding;
+    }
+}
+
+.path-backup {
+    /* Bold section labels */
+    .section_level {
+        font-weight: bold;
+    }
+    .section_level .activity_level {
+        font-weight: normal;
+    }
+
+    .proceedbutton {
+        float: right;
+    }
+}
+
+/* Override the columns width to leave more room for the labels. */
+.path-backup .mform {
+    .root_setting,
+    .grouped_settings {
+        /* Striped rows like a table */
+        &:nth-of-type(odd) {
+            background-color: $table-bg-accent;
+        }
+        &:nth-of-type(even) {
+            background-color: $card-bg;
+        }
+        .form-group {
+            /* These checkboxes with no label on the left. */
+            .col-md-3.checkbox {
+                width: 0%;
+            }
+            .col-md-9.checkbox {
+                width: 100%;
+                left: 0;
+            }
+            /* These are labels with a value on the right */
+            .col-md-3 {
+                width: 50%;
+            }
+            .col-md-9 {
+                width: 50%;
+                left: 0;
+            }
+            .icon:first-of-type {
+                margin-left: 1rem;
+            }
+        }
+    }
+}
+
+/* Detail pair is (usually) some short label with a longer value */
+.path-backup .detail-pair {
+    .detail-pair-label {
+        width: 25%;
+        float: left;
+        clear: left;
+    }
+    .detail-pair-value {
+        width: 75%;
+        float: left;
+    }
+}
+
+.path-backup .backup-restore .singlebutton {
+    float: right;
+}
+/* Make these bits full width and work with the detail-pair */
+.path-backup .backup-section {
+    .sub-header,
+    .backup-sub-section,
+    .singlebutton,
+    .header {
+        width: 100%;
+        float: left;
+        clear: both;
+    }
+    /* Fix for nested table headers */
+    th.header {
+        width: auto;
+        float: none;
+    }
+
+    /* Add card styles to backup sections */
+    ::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    background-color: $card-bg;
+    @include border-radius($card-border-radius);
+    border: $card-border-width solid $card-border-color;
+    @include clearfix;
+    padding: $card-spacer-x;
+    margin-bottom: $card-spacer-x;
+}
+
+.path-backup .notification.dependencies_enforced {
+    color: $state-danger-text;
+    font-weight: bold;
+}
+
+.path-backup .backup_progress {
+    margin-top: $spacer-y;
+    margin-bottom: $spacer-y;
+
+    .backup_stage {
+        @extend .text-muted;
+
+        &.backup_stage_current {
+            font-weight: bold;
+            color: inherit;
+        }
+    }
+}
+
+.path-backup .backup_progress span.backup_stage.backup_stage_complete {
+    color: inherit;
+}
+
+#page-backup-restore .filealiasesfailures {
+    background-color: $state-danger-bg;
+
+    .aliaseslist {
+        background-color: $body-bg;
+    }
+}
+
+
+.path-backup .wibbler {
+    width: 500px;
+    margin: 0 auto 10px;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    position: relative;
+    min-height: 4px;
+
+    .wibble {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 4px;
+    }
+
+    .state0 {
+        background: #eee;
+    }
+    .state1 {
+        background: #ddd;
+    }
+    .state2 {
+        background: #ccc;
+    }
+    .state3 {
+        background: #bbb;
+    }
+    .state4 {
+        background: #aaa;
+    }
+    .state5 {
+        background: #999;
+    }
+    .state6 {
+        background: #888;
+    }
+    .state7 {
+        background: #777;
+    }
+    .state8 {
+        background: #666;
+    }
+    .state9 {
+        background: #555;
+    }
+    .state10 {
+        background: #444;
+    }
+    .state11 {
+        background: #333;
+    }
+    .state12 {
+        background: #222;
+    }
+}
+

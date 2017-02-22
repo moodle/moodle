@@ -74,12 +74,14 @@ Options:
 --adminpass=PASSWORD  Password for the moodle admin account,
                       required in non-interactive mode.
 --adminemail=STRING   Email address for the moodle admin account.
+--upgradekey=STRING   The upgrade key to be set in the config.php, leave empty to not set it.
 --non-interactive     No interactive questions, installation fails if any
                       problem encountered.
 --agree-license       Indicates agreement with software license,
                       required in non-interactive mode.
 --allow-unstable      Install even if the version is not marked as stable yet,
                       required in non-interactive mode.
+--skip-database       Stop the installation before installing the database.
 -h, --help            Print out this help
 
 Example:
@@ -88,7 +90,7 @@ Example:
 
 
 // distro specific customisation
-$distrolibfile = dirname(dirname(dirname(__FILE__))).'/install/distrolib.php';
+$distrolibfile = __DIR__.'/../../install/distrolib.php';
 $distro = null;
 if (file_exists($distrolibfile)) {
     require_once($distrolibfile);
@@ -98,7 +100,7 @@ if (file_exists($distrolibfile)) {
 }
 
 // Nothing to do if config.php exists
-$configfile = dirname(dirname(dirname(__FILE__))).'/config.php';
+$configfile = __DIR__.'/../../config.php';
 if (file_exists($configfile)) {
     require($configfile);
     require_once($CFG->libdir.'/clilib.php');
@@ -145,10 +147,10 @@ define('PHPUNIT_TEST', false);
 define('IGNORE_COMPONENT_CACHE', true);
 
 // Check that PHP is of a sufficient version
-if (version_compare(phpversion(), "5.4.4") < 0) {
+if (version_compare(phpversion(), "5.6.5") < 0) {
     $phpversion = phpversion();
     // do NOT localise - lang strings would not work here and we CAN NOT move it after installib
-    fwrite(STDERR, "Moodle 2.7 or later requires at least PHP 5.4.4 (currently using version $phpversion).\n");
+    fwrite(STDERR, "Moodle 3.2 or later requires at least PHP 5.6.5 (currently using version $phpversion).\n");
     fwrite(STDERR, "Please upgrade your server software or install older Moodle version.\n");
     exit(1);
 }
@@ -157,7 +159,7 @@ if (version_compare(phpversion(), "5.4.4") < 0) {
 global $CFG;
 $CFG = new stdClass();
 $CFG->lang                 = 'en';
-$CFG->dirroot              = dirname(dirname(dirname(__FILE__)));
+$CFG->dirroot              = dirname(dirname(__DIR__));
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = "http://localhost";
 $CFG->httpswwwroot         = $CFG->wwwroot;
@@ -170,7 +172,7 @@ $CFG->debug                = (E_ALL | E_STRICT);
 $CFG->debugdisplay         = true;
 $CFG->debugdeveloper       = true;
 
-$parts = explode('/', str_replace('\\', '/', dirname(dirname(__FILE__))));
+$parts = explode('/', str_replace('\\', '/', dirname(__DIR__)));
 $CFG->admin                = array_pop($parts);
 
 //point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
@@ -242,7 +244,7 @@ list($options, $unrecognized) = cli_get_params(
         'chmod'             => isset($distro->directorypermissions) ? sprintf('%04o',$distro->directorypermissions) : '2777', // let distros set dir permissions
         'lang'              => $CFG->lang,
         'wwwroot'           => '',
-        'dataroot'          => empty($distro->dataroot) ? str_replace('\\', '/', dirname(dirname(dirname(dirname(__FILE__)))).'/moodledata'): $distro->dataroot, // initialised later after including libs or by distro
+        'dataroot'          => empty($distro->dataroot) ? str_replace('\\', '/', dirname(dirname(dirname(__DIR__))).'/moodledata'): $distro->dataroot, // initialised later after including libs or by distro
         'dbtype'            => empty($distro->dbtype) ? $defaultdb : $distro->dbtype, // let distro skip dbtype selection
         'dbhost'            => empty($distro->dbhost) ? 'localhost' : $distro->dbhost, // let distros set dbhost
         'dbname'            => 'moodle',
@@ -257,9 +259,11 @@ list($options, $unrecognized) = cli_get_params(
         'adminuser'         => 'admin',
         'adminpass'         => '',
         'adminemail'        => '',
+        'upgradekey'        => '',
         'non-interactive'   => false,
         'agree-license'     => false,
         'allow-unstable'    => false,
+        'skip-database'     => false,
         'help'              => false
     ),
     array(
@@ -271,7 +275,8 @@ $interactive = empty($options['non-interactive']);
 
 // set up language
 $lang = clean_param($options['lang'], PARAM_SAFEDIR);
-if (file_exists($CFG->dirroot.'/install/lang/'.$lang)) {
+$languages = get_string_manager()->get_list_of_translations();
+if (array_key_exists($lang, $languages)) {
     $CFG->lang = $lang;
 }
 
@@ -286,28 +291,41 @@ if ($options['help']) {
 }
 
 //Print header
+cli_logo();
+echo PHP_EOL;
 echo get_string('cliinstallheader', 'install', $CFG->target_release)."\n";
 
 //Fist select language
 if ($interactive) {
     cli_separator();
-    $languages = get_string_manager()->get_list_of_translations();
     // Do not put the langs into columns because it is not compatible with RTL.
-    $langlist = implode("\n", $languages);
     $default = $CFG->lang;
-    cli_heading(get_string('availablelangs', 'install'));
-    echo $langlist."\n";
+    cli_heading(get_string('chooselanguagehead', 'install'));
+    if (array_key_exists($default, $languages)) {
+        echo $default.' - '.$languages[$default]."\n";
+    }
+    if ($default !== 'en') {
+        echo 'en - English (en)'."\n";
+    }
+    echo '? - '.get_string('availablelangs', 'install')."\n";
     $prompt = get_string('clitypevaluedefault', 'admin', $CFG->lang);
     $error = '';
     do {
         echo $error;
         $input = cli_input($prompt, $default);
-        $input = clean_param($input, PARAM_SAFEDIR);
 
-        if (!file_exists($CFG->dirroot.'/install/lang/'.$input)) {
-            $error = get_string('cliincorrectvalueretry', 'admin')."\n";
+        if ($input === '?') {
+            echo implode("\n", $languages)."\n";
+            $error = "\n";
+
         } else {
-            $error = '';
+            $input = clean_param($input, PARAM_SAFEDIR);
+
+            if (!array_key_exists($input, $languages)) {
+                $error = get_string('cliincorrectvalueretry', 'admin')."\n";
+            } else {
+                $error = '';
+            }
         }
     } while ($error !== '');
     $CFG->lang = $input;
@@ -706,6 +724,24 @@ if (!empty($options['adminemail']) && !validate_email($options['adminemail'])) {
     cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
 }
 
+// Ask for the upgrade key.
+if ($interactive) {
+    cli_separator();
+    cli_heading(get_string('upgradekeyset', 'admin'));
+    if ($options['upgradekey'] !== '') {
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['upgradekey']);
+        $options['upgradekey'] = cli_input($prompt, $options['upgradekey']);
+    } else {
+        $prompt = get_string('clitypevalue', 'admin');
+        $options['upgradekey'] = cli_input($prompt);
+    }
+}
+
+// Set the upgrade key if it was provided.
+if ($options['upgradekey'] !== '') {
+    $CFG->upgradekey = $options['upgradekey'];
+}
+
 if ($interactive) {
     if (!$options['agree-license']) {
         cli_separator();
@@ -770,7 +806,11 @@ if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed)) {
     cli_error(get_string('pluginschecktodo', 'admin'));
 }
 
-install_cli_database($options, $interactive);
+if (!$options['skip-database']) {
+    install_cli_database($options, $interactive);
+} else {
+    echo get_string('cliskipdatabase', 'install')."\n";
+}
 
 echo get_string('cliinstallfinished', 'install')."\n";
 exit(0); // 0 means success

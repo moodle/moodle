@@ -128,4 +128,16 @@ class attempt_becameoverdue extends \core\event\base {
             throw new \coding_exception('The \'submitterid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'quiz_attempts', 'restore' => 'quiz_attempt');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['submitterid'] = array('db' => 'user', 'restore' => 'user');
+        $othermapped['quizid'] = array('db' => 'quiz', 'restore' => 'quiz');
+
+        return $othermapped;
+    }
 }

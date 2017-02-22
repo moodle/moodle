@@ -1,0 +1,10 @@
+{
+  "moodle-qtype_ddmarker-form": {
+    "requires": [
+        "moodle-qtype_ddmarker-dd",
+        "form_filepicker",
+        "graphics",
+        "escape"
+    ]
+  }
+}

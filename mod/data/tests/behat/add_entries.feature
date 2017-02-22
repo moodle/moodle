@@ -30,6 +30,7 @@ Feature: Users can add entries to database activities
       | Field description | Test field 2 description |
     # To generate the default templates.
     And I follow "Templates"
+    And I wait until the page is ready
     And I log out
     When I log in as "student1"
     And I follow "Course 1"
@@ -52,6 +53,7 @@ Feature: Users can add entries to database activities
     And I add an entry to "Test database name" database with:
       | Test field name | Student second entry |
     And I press "Save and add another"
+    And the field "Test field name" does not match value "Student second entry"
     And I add an entry to "Test database name" database with:
       | Test field name | Student third entry |
     And I press "Save and view"

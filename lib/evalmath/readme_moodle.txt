@@ -11,6 +11,8 @@ Our changes:
 * made a function to test a string to see if it is a valid func or var name.
 * localized strings
 * added round, ceil and floor functions.
+* EvalMath::EvalMath() changed to EvalMath::__construct() and there is a new EvalMath::EvalMath
+  function to maintain backwards compatibility
 
 To see all changes diff against version 1.1, available from:
 http://www.phpclasses.org/browse/package/2695.html

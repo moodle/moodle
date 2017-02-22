@@ -217,7 +217,7 @@ function core_login_process_password_set($token) {
     }
 
     // Token is correct, and unexpired.
-    $mform = new login_set_password_form(null, $user, 'post', '', 'autocomplete="yes"');
+    $mform = new login_set_password_form(null, $user);
     $data = $mform->get_data();
     if (empty($data)) {
         // User hasn't submitted form, they got here directly from email link.
@@ -285,7 +285,7 @@ function core_login_generate_password_reset ($user) {
 function core_login_get_return_url() {
     global $CFG, $SESSION, $USER;
     // Prepare redirection.
-    if (user_not_fully_set_up($USER)) {
+    if (user_not_fully_set_up($USER, true)) {
         $urltogo = $CFG->wwwroot.'/user/edit.php';
         // We don't delete $SESSION->wantsurl yet, so we get there later.
 

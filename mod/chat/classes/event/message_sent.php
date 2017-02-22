@@ -97,4 +97,8 @@ class message_sent extends \core\event\base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'chat_messages', 'restore' => 'chat_message');
+    }
 }

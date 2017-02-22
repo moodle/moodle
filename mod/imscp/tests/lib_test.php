@@ -64,4 +64,47 @@ class mod_imscp_lib_testcase extends advanced_testcase {
         $this->assertEquals(json_encode(unserialize($imscp->structure)), $contents[0]['content']);
 
     }
+
+    /**
+     * Test imscp_view
+     * @return void
+     */
+    public function test_imscp_view() {
+        global $CFG;
+
+        $CFG->enablecompletion = 1;
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $imscp = $this->getDataGenerator()->create_module('imscp', array('course' => $course->id),
+                                                            array('completion' => 2, 'completionview' => 1));
+        $context = context_module::instance($imscp->cmid);
+        $cm = get_coursemodule_from_instance('imscp', $imscp->id);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        imscp_view($imscp, $course, $cm, $context);
+
+        $events = $sink->get_events();
+        // 2 additional events thanks to completion.
+        $this->assertCount(3, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_imscp\event\course_module_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $moodleurl = new \moodle_url('/mod/imscp/view.php', array('id' => $cm->id));
+        $this->assertEquals($moodleurl, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        // Check completion status.
+        $completion = new completion_info($course);
+        $completiondata = $completion->get_data($cm);
+        $this->assertEquals(1, $completiondata->completionstate);
+
+    }
 }

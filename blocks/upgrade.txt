@@ -1,6 +1,12 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+
+* The collapsed class was removed from the navigation block to make it compatible with aria.
+* New aria attributes were added on the navigation block [aria-expanded="false"].
+* The tree JS handling were moved from YUI to AMD module (Jquery).
+
 === 2.9 ===
 
 * The obsolete method preferred_width() was removed (it was not doing anything)

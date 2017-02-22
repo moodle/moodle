@@ -105,7 +105,8 @@ class role_assigned extends base {
      */
     protected function get_legacy_logdata() {
         $roles = get_all_roles();
-        $rolenames = role_fix_names($roles, $this->get_context(), ROLENAME_ORIGINAL, true);
+        $neededrole = array($this->objectid => $roles[$this->objectid]);
+        $rolenames = role_fix_names($neededrole, $this->get_context(), ROLENAME_ORIGINAL, true);
         return array($this->courseid, 'role', 'assign', 'admin/roles/assign.php?contextid='.$this->contextid.'&roleid='.$this->objectid,
                 $rolenames[$this->objectid], '', $this->userid);
     }
@@ -130,5 +131,17 @@ class role_assigned extends base {
         if (!isset($this->other['component'])) {
             throw new \coding_exception('The \'component\' value must be set in other.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'role', 'restore' => 'role');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['id'] = array('db' => 'role_assignments', 'restore' => base::NOT_MAPPED);
+        $othermapped['itemid'] = base::NOT_MAPPED;
+
+        return $othermapped;
     }
 }

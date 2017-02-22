@@ -22,6 +22,11 @@ if (!defined('ROOTDSE')) {
     define ('ROOTDSE', '');
 }
 
+// Paged results control OID value.
+if (!defined('LDAP_PAGED_RESULTS_CONTROL')) {
+    define ('LDAP_PAGED_RESULTS_CONTROL', '1.2.840.113556.1.4.319');
+}
+
 // Default page size when using LDAP paged results
 if (!defined('LDAP_DEFAULT_PAGESIZE')) {
     define('LDAP_DEFAULT_PAGESIZE', 250);
@@ -74,6 +79,14 @@ function ldap_getdefaults() {
                         'samba' => 'uid',
                         'ad' => 'cn',
                         'default' => 'cn'
+                        );
+    $default['suspended_attribute'] = array(
+                        'edir' => '',
+                        'rfc2307' => '',
+                        'rfc2307bis' => '',
+                        'samba' => '',
+                        'ad' => '',
+                        'default' => ''
                         );
     $default['memberattribute'] = array(
                         'edir' => 'member',
@@ -271,6 +284,42 @@ function ldap_find_userdn($ldapconnection, $username, $contexts, $objectclass, $
 }
 
 /**
+ * Normalise the supplied objectclass filter.
+ *
+ * This normalisation is a rudimentary attempt to format the objectclass filter correctly.
+ *
+ * @param string $objectclass The objectclass to normalise
+ * @param string $default The default objectclass value to use if no objectclass was supplied
+ * @return string The normalised objectclass.
+ */
+function ldap_normalise_objectclass($objectclass, $default = '*') {
+    if (empty($objectclass)) {
+        // Can't send empty filter.
+        $return = sprintf('(objectClass=%s)', $default);
+    } else if (stripos($objectclass, 'objectClass=') === 0) {
+        // Value is 'objectClass=some-string-here', so just add () around the value (filter _must_ have them).
+        $return = sprintf('(%s)', $objectclass);
+    } else if (stripos($objectclass, '(') !== 0) {
+        // Value is 'some-string-not-starting-with-left-parentheses', which is assumed to be the objectClass matching value.
+        // Build a valid filter using the value it.
+        $return = sprintf('(objectClass=%s)', $objectclass);
+    } else {
+        // There is an additional possible value '(some-string-here)', that can be used to specify any valid filter
+        // string, to select subsets of users based on any criteria.
+        //
+        // For example, we could select the users whose objectClass is 'user' and have the 'enabledMoodleUser'
+        // attribute, with something like:
+        //
+        // (&(objectClass=user)(enabledMoodleUser=1))
+        //
+        // In this particular case we don't need to do anything, so leave $this->config->objectclass as is.
+        $return = $objectclass;
+    }
+
+    return $return;
+}
+
+/**
  * Returns values like ldap_get_entries but is binary compatible and
  * returns all attributes as array.
  *
@@ -408,14 +457,39 @@ function ldap_stripslashes($text) {
 
 
 /**
- * Check if we use LDAP version 3, otherwise the server cannot use them.
+ * Check if we can use paged results (see RFC 2696). We need to use
+ * LDAP version 3 (or later), otherwise the server cannot use them. If
+ * we also pass in a valid LDAP connection handle, we also check
+ * whether the server actually supports them.
  *
  * @param ldapversion integer The LDAP protocol version we use.
+ * @param ldapconnection resource An existing LDAP connection (optional).
  *
  * @return boolean true is paged results can be used, false otherwise.
  */
-function ldap_paged_results_supported($ldapversion) {
-    if ((int)$ldapversion === 3) {
+function ldap_paged_results_supported($ldapversion, $ldapconnection = null) {
+    if ((int)$ldapversion < 3) {
+        // Minimun required version: LDAP v3.
+        return false;
+    }
+
+    if ($ldapconnection === null) {
+        // Can't verify it, so assume it isn't supported.
+        return false;
+    }
+
+    // Connect to the rootDSE and get the supported controls.
+    $sr = ldap_read($ldapconnection, ROOTDSE, '(objectClass=*)', array('supportedControl'));
+    if (!$sr) {
+        return false;
+    }
+
+    $entries = ldap_get_entries_moodle($ldapconnection, $sr);
+    if (empty($entries)) {
+        return false;
+    }
+    $info = array_change_key_case($entries[0], CASE_LOWER);
+    if (isset($info['supportedcontrol']) && in_array(LDAP_PAGED_RESULTS_CONTROL, $info['supportedcontrol'])) {
         return true;
     }
 

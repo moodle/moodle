@@ -33,8 +33,9 @@ M.availability_group.form.initInner = function(groups) {
 
 M.availability_group.form.getNode = function(json) {
     // Create HTML structure.
-    var html = '<label>' + M.util.get_string('title', 'availability_group') + ' <span class="availability-group">' +
-            '<select name="id">' +
+    var html = '<label><span class="p-r-1">' + M.util.get_string('title', 'availability_group') + '</span> ' +
+            '<span class="availability-group">' +
+            '<select name="id" class="custom-select">' +
             '<option value="choose">' + M.util.get_string('choosedots', 'moodle') + '</option>' +
             '<option value="any">' + M.util.get_string('anygroup', 'availability_group') + '</option>';
     for (var i = 0; i < this.groups.length; i++) {
@@ -43,7 +44,7 @@ M.availability_group.form.getNode = function(json) {
         html += '<option value="' + group.id + '">' + group.name + '</option>';
     }
     html += '</select></span></label>';
-    var node = Y.Node.create('<span>' + html + '</span>');
+    var node = Y.Node.create('<span class="form-inline">' + html + '</span>');
 
     // Set initial values (leave default 'choose' if creating afresh).
     if (json.creating === undefined) {
@@ -58,7 +59,7 @@ M.availability_group.form.getNode = function(json) {
     // Add event handlers (first time only).
     if (!M.availability_group.form.addedEvents) {
         M.availability_group.form.addedEvents = true;
-        var root = Y.one('#fitem_id_availabilityconditionsjson');
+        var root = Y.one('.availability-field');
         root.delegate('change', function() {
             // Just update the form fields.
             M.core_availability.form.update();

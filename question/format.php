@@ -289,8 +289,9 @@ class qformat_default {
     public function importprocess($category) {
         global $USER, $CFG, $DB, $OUTPUT;
 
-        // reset the timer in case file upload was slow
+        // Raise time and memory, as importing can be quite intensive.
         core_php_time_limit::raise();
+        raise_memory_limit(MEMORY_EXTRA);
 
         // STAGE 1: Parse the file
         echo $OUTPUT->notification(get_string('parsingquestions', 'question'), 'notifysuccess');
@@ -424,9 +425,8 @@ class qformat_default {
 
             $result = question_bank::get_qtype($question->qtype)->save_question_options($question);
 
-            if (!empty($CFG->usetags) && isset($question->tags)) {
-                require_once($CFG->dirroot . '/tag/lib.php');
-                tag_set('question', $question->id, $question->tags, 'core_question', $question->context->id);
+            if (isset($question->tags)) {
+                core_tag_tag::set_item_tags('core_question', 'question', $question->id, $question->context, $question->tags);
             }
 
             if (!empty($result->error)) {
@@ -621,9 +621,6 @@ class qformat_default {
         $question->questiontextformat = FORMAT_MOODLE;
         $question->generalfeedback = '';
         $question->generalfeedbackformat = FORMAT_MOODLE;
-        $question->correctfeedback = '';
-        $question->partiallycorrectfeedback = '';
-        $question->incorrectfeedback = '';
         $question->answernumbering = 'abc';
         $question->penalty = 0.3333333;
         $question->length = 1;
@@ -632,6 +629,8 @@ class qformat_default {
         // to know where the data came from
         $question->export_process = true;
         $question->import_process = true;
+
+        $this->add_blank_combined_feedback($question);
 
         return $question;
     }
@@ -673,15 +672,21 @@ class qformat_default {
      * @return object question
      */
     protected function add_blank_combined_feedback($question) {
-        $question->correctfeedback['text'] = '';
-        $question->correctfeedback['format'] = $question->questiontextformat;
-        $question->correctfeedback['files'] = array();
-        $question->partiallycorrectfeedback['text'] = '';
-        $question->partiallycorrectfeedback['format'] = $question->questiontextformat;
-        $question->partiallycorrectfeedback['files'] = array();
-        $question->incorrectfeedback['text'] = '';
-        $question->incorrectfeedback['format'] = $question->questiontextformat;
-        $question->incorrectfeedback['files'] = array();
+        $question->correctfeedback = [
+            'text' => '',
+            'format' => $question->questiontextformat,
+            'files' => []
+        ];
+        $question->partiallycorrectfeedback = [
+            'text' => '',
+            'format' => $question->questiontextformat,
+            'files' => []
+        ];
+        $question->incorrectfeedback = [
+            'text' => '',
+            'format' => $question->questiontextformat,
+            'files' => []
+        ];
         return $question;
     }
 

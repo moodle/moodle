@@ -259,6 +259,30 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
     }
 
     /**
+     * Get a config value for the store.
+     *
+     * @param string $name Config name
+     * @param mixed $default default value
+     * @return mixed config value if set, else the default value.
+     */
+    public function get_config_value($name, $default = null) {
+        return $this->get_config($name, $default);
+    }
+
+    /**
+     * Get the external database object.
+     *
+     * @return \moodle_database $extdb
+     */
+    public function get_extdb() {
+        if (!$this->init()) {
+            return false;
+        }
+
+        return $this->extdb;
+    }
+
+    /**
      * Are the new events appearing in the reader?
      *
      * @return bool true means new log events are being added, false means no new data will be added

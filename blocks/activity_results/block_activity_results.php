@@ -56,6 +56,15 @@ class block_activity_results extends block_base {
     }
 
     /**
+     * Allow the block to have a configuration page
+     *
+     * @return boolean
+     */
+    public function has_config() {
+        return true;
+    }
+
+    /**
      * Core function, specifies where the block can be used.
      * @return array
      */
@@ -92,7 +101,7 @@ class block_activity_results extends block_base {
             return $result;
         }
         // See if it is a gradable activity.
-        if (($rec->gradetype != GRADE_TYPE_VALUE) || ($rec->gradetype != GRADE_TYPE_SCALE)) {
+        if (($rec->gradetype != GRADE_TYPE_VALUE) && ($rec->gradetype != GRADE_TYPE_SCALE)) {
             return $result;
         }
         return $rec;

@@ -57,6 +57,12 @@ M.core_comment = {
                         this.view(0);
                         return false;
                     }, this);
+                    // Also handle space/enter key.
+                    handle.on('key', function(e) {
+                        e.preventDefault();
+                        this.view(0);
+                        return false;
+                    }, '13,32', this);
                 }
                 scope.toggle_textarea(false);
             },
@@ -335,6 +341,7 @@ M.core_comment = {
                 );
             },
             view: function(page) {
+                var commenttoggler = Y.one('#comment-link-' + this.client_id);
                 var container = Y.one('#comment-ctrl-'+this.client_id);
                 var ta = Y.one('#dlg-content-'+this.client_id);
                 var img = Y.one('#comment-img-'+this.client_id);
@@ -351,6 +358,9 @@ M.core_comment = {
                     if (img) {
                         img.set('src', M.util.image_url('t/expanded', 'core'));
                     }
+                    if (commenttoggler) {
+                        commenttoggler.setAttribute('aria-expanded', 'true');
+                    }
                 } else {
                     // hide
                     container.setStyle('display', 'none');
@@ -363,6 +373,9 @@ M.core_comment = {
                     img.set('src', M.util.image_url(collapsedimage, 'core'));
                     if (ta) {
                         ta.set('value','');
+                    }
+                    if (commenttoggler) {
+                        commenttoggler.setAttribute('aria-expanded', 'false');
                     }
                 }
                 if (ta) {
@@ -410,19 +423,21 @@ M.core_comment = {
     },
     init_admin: function(Y) {
         var select_all = Y.one('#comment_select_all');
-        select_all.on('click', function(e) {
-            var comments = document.getElementsByName('comments');
-            var checked = false;
-            for (var i in comments) {
-                if (comments[i].checked) {
-                    checked=true;
+        if (select_all) {
+            select_all.on('click', function(e) {
+                var comments = document.getElementsByName('comments');
+                var checked = false;
+                for (var i in comments) {
+                    if (comments[i].checked) {
+                        checked=true;
+                    }
                 }
-            }
-            for (i in comments) {
-                comments[i].checked = !checked;
-            }
-            this.set('checked', !checked);
-        });
+                for (i in comments) {
+                    comments[i].checked = !checked;
+                }
+                this.set('checked', !checked);
+            });
+        }
 
         var comments_delete = Y.one('#comments_delete');
         if (comments_delete) {

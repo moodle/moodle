@@ -24,6 +24,7 @@
  */
 
 require('../../config.php');
+require_once($CFG->dirroot.'/mod/resource/lib.php');
 require_once($CFG->dirroot.'/mod/resource/locallib.php');
 require_once($CFG->libdir.'/completionlib.php');
 
@@ -52,19 +53,8 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/resource:view', $context);
 
-$params = array(
-    'context' => $context,
-    'objectid' => $resource->id
-);
-$event = \mod_resource\event\course_module_viewed::create($params);
-$event->add_record_snapshot('course_modules', $cm);
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('resource', $resource);
-$event->trigger();
-
-// Update 'viewed' state if required by completion system
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+// Completion and trigger events.
+resource_view($resource, $course, $cm, $context);
 
 $PAGE->set_url('/mod/resource/view.php', array('id' => $cm->id));
 
@@ -89,7 +79,7 @@ if ($displaytype == RESOURCELIB_DISPLAY_OPEN || $displaytype == RESOURCELIB_DISP
     // For 'open' and 'download' links, we always redirect to the content - except
     // if the user just chose 'save and display' from the form then that would be
     // confusing
-    if (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], 'modedit.php') === false) {
+    if (strpos(get_local_referer(false), 'modedit.php') === false) {
         $redirect = true;
     }
 }

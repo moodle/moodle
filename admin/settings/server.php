@@ -12,24 +12,28 @@ $temp->add(new admin_setting_configexecutable('pathtodu', new lang_string('patht
 $temp->add(new admin_setting_configexecutable('aspellpath', new lang_string('aspellpath', 'admin'), new lang_string('edhelpaspellpath'), ''));
 $temp->add(new admin_setting_configexecutable('pathtodot', new lang_string('pathtodot', 'admin'), new lang_string('pathtodot_help', 'admin'), ''));
 $temp->add(new admin_setting_configexecutable('pathtogs', new lang_string('pathtogs', 'admin'), new lang_string('pathtogs_help', 'admin'), '/usr/bin/gs'));
+$temp->add(new admin_setting_configexecutable('pathtounoconv', new lang_string('pathtounoconv', 'admin'), new lang_string('pathtounoconv_help', 'admin'), '/usr/bin/unoconv'));
 $ADMIN->add('server', $temp);
 
 
 
 // "supportcontact" settingpage
 $temp = new admin_settingpage('supportcontact', new lang_string('supportcontact','admin'));
-if (isloggedin()) {
-    global $USER;
-    $primaryadminemail = $USER->email;
-    $primaryadminname  = fullname($USER, true);
-
+$primaryadmin = get_admin();
+if ($primaryadmin) {
+    $primaryadminemail = $primaryadmin->email;
+    $primaryadminname  = fullname($primaryadmin, true);
 } else {
     // no defaults during installation - admin user must be created first
     $primaryadminemail = NULL;
     $primaryadminname  = NULL;
 }
-$temp->add(new admin_setting_configtext('supportname', new lang_string('supportname', 'admin'), new lang_string('configsupportname', 'admin'), $primaryadminname, PARAM_NOTAGS));
-$temp->add(new admin_setting_configtext('supportemail', new lang_string('supportemail', 'admin'), new lang_string('configsupportemail', 'admin'), $primaryadminemail, PARAM_NOTAGS));
+$temp->add(new admin_setting_configtext('supportname', new lang_string('supportname', 'admin'),
+    new lang_string('configsupportname', 'admin'), $primaryadminname, PARAM_NOTAGS));
+$setting = new admin_setting_configtext('supportemail', new lang_string('supportemail', 'admin'),
+    new lang_string('configsupportemail', 'admin'), $primaryadminemail, PARAM_EMAIL);
+$setting->set_force_ltr(true);
+$temp->add($setting);
 $temp->add(new admin_setting_configtext('supportpage', new lang_string('supportpage', 'admin'), new lang_string('configsupportpage', 'admin'), '', PARAM_URL));
 $ADMIN->add('server', $temp);
 
@@ -79,7 +83,6 @@ $temp->add(new admin_setting_configselect('statsmaxruntime', new lang_string('st
                                                                                                                                                             60*60*7 => '7 '.new lang_string('hours'),
                                                                                                                                                             60*60*8 => '8 '.new lang_string('hours') )));
 $temp->add(new admin_setting_configtext('statsruntimedays', new lang_string('statsruntimedays', 'admin'), new lang_string('configstatsruntimedays', 'admin'), 31, PARAM_INT));
-$temp->add(new admin_setting_configtime('statsruntimestarthour', 'statsruntimestartminute', new lang_string('statsruntimestart', 'admin'), new lang_string('configstatsruntimestart', 'admin'), array('h' => 0, 'm' => 0)));
 $temp->add(new admin_setting_configtext('statsuserthreshold', new lang_string('statsuserthreshold', 'admin'), new lang_string('configstatsuserthreshold', 'admin'), 0, PARAM_INT));
 $ADMIN->add('server', $temp);
 
@@ -210,15 +213,65 @@ $ADMIN->add('server', $temp);
 $ADMIN->add('server', new admin_externalpage('adminregistration', new lang_string('hubs', 'admin'),
     "$CFG->wwwroot/$CFG->admin/registration/index.php"));
 
+// E-mail settings.
+$ADMIN->add('server', new admin_category('email', new lang_string('categoryemail', 'admin')));
+
+$temp = new admin_settingpage('outgoingmailconfig', new lang_string('outgoingmailconfig', 'admin'));
+
+$temp->add(new admin_setting_heading('smtpheading', new lang_string('smtp', 'admin'),
+            new lang_string('smtpdetail', 'admin')));
+$temp->add(new admin_setting_configtext('smtphosts', new lang_string('smtphosts', 'admin'),
+            new lang_string('configsmtphosts', 'admin'), '', PARAM_RAW));
+$options = array('' => new lang_string('none', 'admin'), 'ssl' => 'SSL', 'tls' => 'TLS');
+$temp->add(new admin_setting_configselect('smtpsecure', new lang_string('smtpsecure', 'admin'),
+            new lang_string('configsmtpsecure', 'admin'), '', $options));
+$authtypeoptions = array('LOGIN' => 'LOGIN', 'PLAIN' => 'PLAIN', 'NTLM' => 'NTLM', 'CRAM-MD5' => 'CRAM-MD5');
+$temp->add(new admin_setting_configselect('smtpauthtype', new lang_string('smtpauthtype', 'admin'),
+            new lang_string('configsmtpauthtype', 'admin'), 'LOGIN', $authtypeoptions));
+$temp->add(new admin_setting_configtext('smtpuser', new lang_string('smtpuser', 'admin'),
+            new lang_string('configsmtpuser', 'admin'), '', PARAM_NOTAGS));
+$temp->add(new admin_setting_configpasswordunmask('smtppass', new lang_string('smtppass', 'admin'),
+            new lang_string('configsmtpuser', 'admin'), ''));
+$temp->add(new admin_setting_configtext('smtpmaxbulk', new lang_string('smtpmaxbulk', 'admin'),
+           new lang_string('configsmtpmaxbulk', 'admin'), 1, PARAM_INT));
+$temp->add(new admin_setting_heading('noreplydomainheading', new lang_string('noreplydomain', 'admin'),
+        new lang_string('noreplydomaindetail', 'admin')));
+$temp->add(new admin_setting_configtext('noreplyaddress', new lang_string('noreplyaddress', 'admin'),
+          new lang_string('confignoreplyaddress', 'admin'), 'noreply@' . get_host_from_url($CFG->wwwroot), PARAM_EMAIL));
+$temp->add(new admin_setting_configtextarea('allowedemaildomains',
+        new lang_string('allowedemaildomains', 'admin'),
+        new lang_string('configallowedemaildomains', 'admin'),
+        ''));
+$temp->add(new admin_setting_heading('emaildoesnotfit', new lang_string('doesnotfit', 'admin'),
+        new lang_string('doesnotfitdetail', 'admin')));
+$charsets = get_list_of_charsets();
+unset($charsets['UTF-8']); // Not needed here.
+$options = array();
+$options['0'] = 'UTF-8';
+$options = array_merge($options, $charsets);
+$temp->add(new admin_setting_configselect('sitemailcharset', new lang_string('sitemailcharset', 'admin'),
+          new lang_string('configsitemailcharset','admin'), '0', $options));
+$temp->add(new admin_setting_configcheckbox('allowusermailcharset', new lang_string('allowusermailcharset', 'admin'),
+          new lang_string('configallowusermailcharset', 'admin'), 0));
+$temp->add(new admin_setting_configcheckbox('allowattachments', new lang_string('allowattachments', 'admin'),
+          new lang_string('configallowattachments', 'admin'), 1));
+$options = array('LF' => 'LF', 'CRLF' => 'CRLF');
+$temp->add(new admin_setting_configselect('mailnewline', new lang_string('mailnewline', 'admin'),
+          new lang_string('configmailnewline', 'admin'), 'LF', $options));
+
+$choices = array(new lang_string('never', 'admin'),
+                 new lang_string('always', 'admin'),
+                 new lang_string('onlynoreply', 'admin'));
+$temp->add(new admin_setting_configselect('emailfromvia', new lang_string('emailfromvia', 'admin'),
+          new lang_string('configemailfromvia', 'admin'), 1, $choices));
+
+$ADMIN->add('email', $temp);
+
 // "update notifications" settingpage
 if (empty($CFG->disableupdatenotifications)) {
     $temp = new admin_settingpage('updatenotifications', new lang_string('updatenotifications', 'core_admin'));
     $temp->add(new admin_setting_configcheckbox('updateautocheck', new lang_string('updateautocheck', 'core_admin'),
                                                 new lang_string('updateautocheck_desc', 'core_admin'), 1));
-    if (empty($CFG->disableupdateautodeploy)) {
-        $temp->add(new admin_setting_configcheckbox('updateautodeploy', new lang_string('updateautodeploy', 'core_admin'),
-                                                    new lang_string('updateautodeploy_desc', 'core_admin'), 0));
-    }
     $temp->add(new admin_setting_configselect('updateminmaturity', new lang_string('updateminmaturity', 'core_admin'),
                                               new lang_string('updateminmaturity_desc', 'core_admin'), MATURITY_STABLE,
                                               array(

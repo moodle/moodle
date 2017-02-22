@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require(__DIR__.'/../../config.php');
 require_once('lib.php');
 require_once('locallib.php');
 require_once("$CFG->dirroot/mod/wiki/filesedit_form.php");
@@ -60,11 +60,11 @@ if (!wiki_user_can_view($subwiki, $wiki)) {
 require_capability('mod/wiki:managefiles', $context);
 
 if (empty($returnurl)) {
-    $refere = clean_param($_SERVER["HTTP_REFERER"], PARAM_LOCALURL);
+    $referer = get_local_referer(false);
     if (!empty($referer)) {
         $returnurl = $referer;
     } else {
-        $returnurl = new moodle_url('/mod/wiki/files.php', array('subwiki'=>$subwiki->id));
+        $returnurl = new moodle_url('/mod/wiki/files.php', array('subwiki' => $subwiki->id, 'pageid' => $pageid));
     }
 }
 

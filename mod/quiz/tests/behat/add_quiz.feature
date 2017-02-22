@@ -37,7 +37,7 @@ Feature: Add a quiz
     Then I should see "Question 1"
     And I should see "Answer the first question"
     And I set the field "True" to "1"
-    And I press "Next"
+    And I press "Finish attempt ..."
     And I should see "Answer saved"
     And I press "Submit all and finish"
 

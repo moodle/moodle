@@ -38,7 +38,12 @@ require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
  */
 class mod_quiz_events_testcase extends advanced_testcase {
 
-    protected function prepare_quiz_data() {
+    /**
+     * Setup some convenience test data with a single attempt.
+     *
+     * @param bool $ispreview Make the attempt a preview attempt when true.
+     */
+    protected function prepare_quiz_data($ispreview = false) {
 
         $this->resetAfterTest(true);
 
@@ -75,7 +80,7 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
         $timenow = time();
-        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow);
+        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, $ispreview);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
@@ -281,6 +286,21 @@ class mod_quiz_events_testcase extends advanced_testcase {
             $attempt->id, $quizobj->get_cmid());
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test that preview attempt deletions are not logged.
+     */
+    public function test_preview_attempt_deleted() {
+        // Create quiz with preview attempt.
+        list($quizobj, $quba, $previewattempt) = $this->prepare_quiz_data(true);
+
+        // Delete a preview attempt, capturing events.
+        $sink = $this->redirectEvents();
+        quiz_delete_attempt($previewattempt, $quizobj->get_quiz());
+
+        // Verify that no events were generated.
+        $this->assertEmpty($sink->get_events());
     }
 
     /**

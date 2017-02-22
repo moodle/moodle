@@ -87,6 +87,21 @@ class tool_installaddon_installfromzip_form extends moodleform {
     }
 
     /**
+     * Warn that the selected plugin type does not match the detected one.
+     *
+     * @param string $detected detected plugin type
+     */
+    public function selected_plugintype_mismatch($detected) {
+
+        $mform = $this->_form;
+        $mform->addRule('plugintype', get_string('required'), 'required', null, 'client');
+        $mform->setAdvanced('plugintype', false);
+        $mform->setAdvanced('permcheck', false);
+        $mform->insertElementBefore($mform->createElement('static', 'selectedplugintypemismatch', '',
+            html_writer::span(get_string('typedetectionmismatch', 'tool_installaddon', $detected), 'error')), 'permcheck');
+    }
+
+    /**
      * Validate the form fields
      *
      * @param array $data
@@ -95,12 +110,12 @@ class tool_installaddon_installfromzip_form extends moodleform {
      */
     public function validation($data, $files) {
 
-        $installer = $this->_customdata['installer'];
+        $pluginman = core_plugin_manager::instance();
         $errors = parent::validation($data, $files);
 
         if (!empty($data['plugintype'])) {
-            if (!$installer->is_plugintype_writable($data['plugintype'])) {
-                $path = $installer->get_plugintype_root($data['plugintype']);
+            if (!$pluginman->is_plugintype_writable($data['plugintype'])) {
+                $path = $pluginman->get_plugintype_root($data['plugintype']);
                 $errors['plugintype'] = get_string('permcheckresultno', 'tool_installaddon', array('path' => $path));
             }
         }

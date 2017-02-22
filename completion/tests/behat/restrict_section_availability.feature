@@ -16,9 +16,6 @@ Feature: Restrict sections availability through completion or grade conditions
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And the following config values are set as admin:
-      | enablecompletion   | 1 |
-      | enableavailability | 1 |
 
   @javascript
   Scenario: Show section greyed-out to student when completion condition is not satisfied
@@ -26,7 +23,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
@@ -74,10 +71,10 @@ Feature: Restrict sections availability through completion or grade conditions
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Grade" "button" in the "Add restriction..." "dialogue"
-    And I click on "min" "checkbox"
     And I set the following fields to these values:
-      | id | Grade assignment |
-      | minval | 20 |
+      | id     | Grade assignment |
+      | min    | 1                |
+      | minval | 20               |
     And I press "Save changes"
     And I log out
     When I log in as "student1"
@@ -96,11 +93,13 @@ Feature: Restrict sections availability through completion or grade conditions
     And I am on site homepage
     And I follow "Course 1"
     And I follow "Grade assignment"
-    And I follow "View/grade all submissions"
-    And I click on "Grade Student First" "link" in the "Student First" "table_row"
+    And I navigate to "View all submissions" in current page administration
+    And I click on "Grade" "link" in the "Student First" "table_row"
     And I set the following fields to these values:
       | Grade | 21 |
     And I press "Save changes"
+    And I press "Ok"
+    And I follow "Edit settings"
     And I log out
     And I log in as "student1"
     And I am on site homepage

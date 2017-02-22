@@ -129,7 +129,7 @@ class core_role_view_role_definition_table extends core_role_define_role_table_a
         } else {
             $default = "&#xa0;";
         }
-        echo '<td class="' . $permname . '">' . $this->strperms[$permname] . '<span class="note">' .
+        return '<td class="' . $permname . '">' . $this->strperms[$permname] . '<span class="note">' .
             $default . '</span></td>';
 
     }

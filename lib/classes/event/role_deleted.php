@@ -102,4 +102,13 @@ class role_deleted extends base {
             throw new \coding_exception('The \'shortname\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'role', 'restore' => 'role');
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

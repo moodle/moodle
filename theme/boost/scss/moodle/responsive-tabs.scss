@@ -1,0 +1,11 @@
+.nav.nav-tabs {
+    @include media-breakpoint-down(sm) {
+        .nav-item {
+            float: none;
+        }
+        .nav-link.active {
+            @include border-radius($border-radius);
+            border-color: $nav-tabs-border-color;
+        }
+    }
+}

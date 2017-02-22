@@ -27,20 +27,20 @@
 
 /* Strip encryption envelope (if present) and decrypt data
  *
- * @param string $HTTP_RAW_POST_DATA The XML that the client sent
+ * @param string $rawpostdata The XML that the client sent
  *
  * @throws mnet_server_exception
  *
  * @return string XML with any encryption envolope removed
  */
-function mnet_server_strip_encryption($HTTP_RAW_POST_DATA) {
+function mnet_server_strip_encryption($rawpostdata) {
     $remoteclient = get_mnet_remote_client();
     $crypt_parser = new mnet_encxml_parser();
-    $crypt_parser->parse($HTTP_RAW_POST_DATA);
+    $crypt_parser->parse($rawpostdata);
     $mnet = get_mnet_environment();
 
     if (!$crypt_parser->payload_encrypted) {
-        return $HTTP_RAW_POST_DATA;
+        return $rawpostdata;
     }
 
     // Make sure we know who we're talking to

@@ -36,10 +36,10 @@ $string['cliincorrectvalueerror'] = 'שגיאה: ערך לא תקין
 "{$a->value}" עבור "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'ערך שגוי, נסה שנית';
 $string['clitypevalue'] = 'סוג הערך';
-$string['clitypevaluedefault'] = 'סוג הערך, הקש Enter לשימוש בערך ברירת מחדל ({$a})';
+$string['clitypevaluedefault'] = 'יש להזין ערך, או להקיש על כפתור Enter לשימוש בערך בררת־המחדל ({$a})';
 $string['cliunknowoption'] = 'אפשרויות לא מוכרות :
 {$a}
 אנא השתמש באפשרות העזרה.';
 $string['cliyesnoprompt'] = 'רשום y (שפרושו כן) או n (שפרושו לא)';
-$string['environmentrequireinstall'] = 'נדרש להתקין/לאפשר זאת';
-$string['environmentrequireversion'] = 'גירסת {$a->needed} נדרשת ואתה מריץ {$a->current}';
+$string['environmentrequireinstall'] = 'נדרש להתקין ולאפשר הרחבה זו';
+$string['environmentrequireversion'] = 'גירסה {$a->needed} נדרשת אך הגירסה הנוכחית היא {$a->current}';

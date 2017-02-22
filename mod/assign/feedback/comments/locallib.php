@@ -100,6 +100,29 @@ class assign_feedback_comments extends assign_feedback_plugin {
         return ($newvalue !== false) && ($newvalue != $commenttext);
     }
 
+    /**
+     * Has the comment feedback been modified?
+     *
+     * @param stdClass $grade The grade object.
+     * @param stdClass $data Data from the form submission.
+     * @return boolean True if the comment feedback has been modified, else false.
+     */
+    public function is_feedback_modified(stdClass $grade, stdClass $data) {
+        $commenttext = '';
+        if ($grade) {
+            $feedbackcomments = $this->get_feedback_comments($grade->id);
+            if ($feedbackcomments) {
+                $commenttext = $feedbackcomments->commenttext;
+            }
+        }
+
+        if ($commenttext == $data->assignfeedbackcomments_editor['text']) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
     /**
      * Override to indicate a plugin supports quickgrading.
@@ -212,6 +235,10 @@ class assign_feedback_comments extends assign_feedback_plugin {
      */
     public function get_settings(MoodleQuickForm $mform) {
         $default = $this->get_config('commentinline');
+        if ($default === false) {
+            // Apply the admin default if we don't have a value yet.
+            $default = get_config('assignfeedback_comments', 'inline');
+        }
         $mform->addElement('selectyesno',
                            'assignfeedback_comments_commentinline',
                            get_string('commentinline', 'assignfeedback_comments'));
@@ -486,8 +513,17 @@ class assign_feedback_comments extends assign_feedback_plugin {
     public function get_external_parameters() {
         $editorparams = array('text' => new external_value(PARAM_RAW, 'The text for this feedback.'),
                               'format' => new external_value(PARAM_INT, 'The format for this feedback'));
-        $editorstructure = new external_single_structure($editorparams);
+        $editorstructure = new external_single_structure($editorparams, 'Editor structure', VALUE_OPTIONAL);
         return array('assignfeedbackcomments_editor' => $editorstructure);
     }
 
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of settings
+     * @since Moodle 3.2
+     */
+    public function get_config_for_external() {
+        return (array) $this->get_config();
+    }
 }

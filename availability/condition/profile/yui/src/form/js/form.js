@@ -33,8 +33,9 @@ M.availability_profile.form.initInner = function(standardFields, customFields) {
 
 M.availability_profile.form.getNode = function(json) {
     // Create HTML structure.
-    var html = '<span class="availability-group"><label>' + M.util.get_string('conditiontitle', 'availability_profile') + ' ' +
-            '<select name="field">' +
+    var html = '<span class="availability-group"><label><span class="p-r-1">' +
+            M.util.get_string('conditiontitle', 'availability_profile') + '</span> ' +
+            '<select name="field" class="custom-select">' +
             '<option value="choose">' + M.util.get_string('choosedots', 'moodle') + '</option>';
     var fieldInfo;
     for (var i = 0; i < this.standardFields.length; i++) {
@@ -48,7 +49,8 @@ M.availability_profile.form.getNode = function(json) {
         html += '<option value="cf_' + fieldInfo.field + '">' + fieldInfo.display + '</option>';
     }
     html += '</select></label> <label><span class="accesshide">' + M.util.get_string('label_operator', 'availability_profile') +
-            ' </span><select name="op" title="' + M.util.get_string('label_operator', 'availability_profile') + '">';
+            ' </span><select name="op" title="' + M.util.get_string('label_operator', 'availability_profile') + '"' +
+                     ' class="custom-select">';
     var operators = ['isequalto', 'contains', 'doesnotcontain', 'startswith', 'endswith',
             'isempty', 'isnotempty'];
     for (i = 0; i < operators.length; i++) {
@@ -56,9 +58,9 @@ M.availability_profile.form.getNode = function(json) {
                 M.util.get_string('op_' + operators[i], 'availability_profile') + '</option>';
     }
     html += '</select></label> <label><span class="accesshide">' + M.util.get_string('label_value', 'availability_profile') +
-            '</span><input name="value" type="text" style="width: 10em" title="' +
+            '</span><input name="value" type="text" class="form-control" style="width: 10em" title="' +
             M.util.get_string('label_value', 'availability_profile') + '"/></label></span>';
-    var node = Y.Node.create('<span>' + html + '</span>');
+    var node = Y.Node.create('<span class="form-inline">' + html + '</span>');
 
     // Set initial values if specified.
     if (json.sf !== undefined &&
@@ -89,7 +91,7 @@ M.availability_profile.form.getNode = function(json) {
             ancestorNode.one('input[name=value]').set('disabled', novalue);
             M.core_availability.form.update();
         };
-        var root = Y.one('#fitem_id_availabilityconditionsjson');
+        var root = Y.one('.availability-field');
         root.delegate('change', function() {
              updateForm(this);
         }, '.availability_profile select');

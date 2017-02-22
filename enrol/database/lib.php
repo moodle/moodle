@@ -264,9 +264,9 @@ class enrol_database_plugin extends enrol_plugin {
                   FROM {enrol} e
                   JOIN {course} c ON c.id = e.courseid
                   JOIN {role_assignments} ra ON ra.itemid = e.id
-             LEFT JOIN {user_enrolments} ue ON ue.enrolid = e.id
+             LEFT JOIN {user_enrolments} ue ON ue.enrolid = e.id AND ue.userid = ra.userid
                  WHERE ra.userid = :userid AND e.enrol = 'database'";
-        $rs = $DB->get_recordset_sql($sql, array('userid'=>$user->id));
+        $rs = $DB->get_recordset_sql($sql, array('userid' => $user->id));
         foreach ($rs as $instance) {
             if (!$instance->cvisible and $ignorehidden) {
                 continue;

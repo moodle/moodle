@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(__FILE__) . '/../../../../../config.php');
+require(__DIR__ . '/../../../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 
 // Decode the url - it can not be passed around unencoded because security filters might block it.
@@ -40,7 +40,7 @@ $PAGE->add_body_class('core_media_preview');
 
 echo $OUTPUT->header();
 
-$mediarenderer = $PAGE->get_renderer('core', 'media');
+$mediarenderer = core_media_manager::instance($PAGE);
 
 if (isloggedin() and !isguestuser() and $mediarenderer->can_embed_url($url)) {
     require_sesskey();

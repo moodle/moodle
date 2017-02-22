@@ -40,3 +40,4 @@ $string['cliunknowoption'] = '錯誤選項：{$a}請使用 --help 選項。';
 $string['cliyesnoprompt'] = '輸入y（表示是）或n（表示否）';
 $string['environmentrequireinstall'] = '必須安裝並啟用';
 $string['environmentrequireversion'] = '需求版本為{$a->needed}，而您目前版本為 {$a->current}';
+$string['upgradekeyset'] = '升級密鑰(若不要設定請保持空白)';

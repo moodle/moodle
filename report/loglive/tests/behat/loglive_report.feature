@@ -76,4 +76,3 @@ Feature: In a report, admin can see loglive data
     And I wait "8" seconds
     And I should see "Test name2"
     And I log out
-

@@ -207,11 +207,14 @@ class award_criteria_manual extends award_criteria {
             return array($join, $where, $params);
         } else {
             foreach ($this->params as $param) {
-                $join .= " LEFT JOIN {badge_manual_award} bma{$param['role']} ON
-                          bma{$param['role']}.recipientid = u.id AND
-                          bma{$param['role']}.issuerrole = :issuerrole{$param['role']} ";
-                $where .= " AND bma{$param['role']}.issuerrole IS NOT NULL ";
+                $roledata[] = " bma.issuerrole = :issuerrole{$param['role']} ";
                 $params["issuerrole{$param['role']}"] = $param['role'];
+            }
+            if (!empty($roledata)) {
+                $extraon = implode(' AND ', $roledata);
+                $join = " JOIN {badge_manual_award} bma ON bma.recipientid = u.id
+                          AND bma.badgeid = :badgeid{$this->badgeid} AND ({$extraon})";
+                $params["badgeid{$this->badgeid}"] = $this->badgeid;
             }
             return array($join, $where, $params);
         }

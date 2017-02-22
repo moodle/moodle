@@ -185,12 +185,15 @@ if ($hassiteconfig
                 new lang_string('showuseridentity_desc', 'admin'), array('email' => 1), array(
                     'idnumber'    => new lang_string('idnumber'),
                     'email'       => new lang_string('email'),
-                    'phone1'      => new lang_string('phone'),
+                    'phone1'      => new lang_string('phone1'),
                     'phone2'      => new lang_string('phone2'),
                     'department'  => new lang_string('department'),
                     'institution' => new lang_string('institution'),
                 )));
-        $temp->add(new admin_setting_configtext('fullnamedisplay', new lang_string('fullnamedisplay', 'admin'), new lang_string('configfullnamedisplay', 'admin'), 'language', PARAM_TEXT, 50));
+        $setting = new admin_setting_configtext('fullnamedisplay', new lang_string('fullnamedisplay', 'admin'),
+            new lang_string('configfullnamedisplay', 'admin'), 'language', PARAM_TEXT, 50);
+        $setting->set_force_ltr(true);
+        $temp->add($setting);
         $temp->add(new admin_setting_configtext('alternativefullnameformat', new lang_string('alternativefullnameformat', 'admin'),
                 new lang_string('alternativefullnameformat_desc', 'admin'),
                 'language', PARAM_RAW, 50));

@@ -1,0 +1,26 @@
+/**
+ * This file contains the styles required to make the footer sticky.
+ */
+$footer-min-height: 130px !default;
+
+html,
+body {
+    height: 100%;
+}
+
+#page-wrapper {
+    min-height: 100%;
+    padding-bottom: $spacer;
+    margin-bottom: -$footer-min-height;
+}
+
+#page-wrapper::after {
+    content: "";
+    display: block;
+    min-height: $footer-min-height;
+}
+
+#page-footer {
+    min-height: $footer-min-height;
+    text-align: left;
+}

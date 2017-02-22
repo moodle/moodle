@@ -128,4 +128,8 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
     public function set_legacy_logdata($legacylogdata) {
         $this->legacylogdata = $legacylogdata;
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'workshop_submissions', 'restore' => 'workshop_submission');
+    }
 }

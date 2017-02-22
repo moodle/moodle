@@ -86,7 +86,6 @@ Feature: Test we can resort course in the management interface.
     And I should see "Sort by Course time created descending" in the ".course-listing-actions" "css_element"
     And I click on <sortby> "link" in the ".course-listing-actions" "css_element"
     And a new page should have loaded since I started watching
-    And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
     And I should see course listing <course1> before <course2>
     And I should see course listing <course2> before <course3>

@@ -56,7 +56,9 @@ class core_enrol_renderer extends plugin_renderer_base {
         if (!empty($buttonhtml)) {
             $content .= $buttonhtml;
         }
+        $content .= html_writer::start_tag('div', array('class' => 'form-inline'));
         $content .= $mform->render();
+        $content .= html_writer::end_tag('div');
 
         $content .= $this->output->render($table->get_paging_bar());
 
@@ -104,7 +106,8 @@ class core_enrol_renderer extends plugin_renderer_base {
         $attributes = array('type'     => 'submit',
                             'value'    => $button->label,
                             'disabled' => $button->disabled ? 'disabled' : null,
-                            'title'    => $button->tooltip);
+                            'title'    => $button->tooltip,
+                            'class'    => 'btn btn-secondary m-y-1');
 
         if ($button->actions) {
             $id = html_writer::random_id('single_button');
@@ -421,7 +424,7 @@ class course_enrolment_table extends html_table implements renderable {
      * @var array
      */
     protected static $sortablefields = array('firstname', 'lastname', 'firstnamephonetic', 'lastnamephonetic', 'middlename',
-            'alternatename', 'idnumber', 'email', 'phone1', 'phone2', 'institution', 'department' );
+            'alternatename', 'idnumber', 'email', 'phone1', 'phone2', 'institution', 'department', 'lastaccess', 'lastcourseaccess' );
 
     /**
      * Constructs the table
@@ -513,9 +516,10 @@ class course_enrolment_table extends html_table implements renderable {
                     if (!in_array($n, self::$sortablefields)) {
                         $bits[] = $l;
                     } else {
-                        $link = html_writer::link(new moodle_url($url, array(self::SORTVAR=>$n)), $fields[$name][$n]);
+                        $sorturl = new moodle_url($url, array(self::SORTVAR => $n, self::SORTDIRECTIONVAR => $this->get_field_sort_direction($n)));
+                        $link = html_writer::link($sorturl, $fields[$name][$n]);
                         if ($this->sort == $n) {
-                            $link .= html_writer::link(new moodle_url($url, array(self::SORTVAR=>$n, self::SORTDIRECTIONVAR=>$this->get_field_sort_direction($n))), $this->get_direction_icon($output, $n));
+                            $link .= $this->get_direction_icon($output, $n);
                         }
                         $bits[] = html_writer::tag('span', $link, array('class'=>'subheading_'.$n));
 
@@ -526,9 +530,10 @@ class course_enrolment_table extends html_table implements renderable {
                 if (!in_array($name, self::$sortablefields)) {
                     $newlabel = $label;
                 } else {
-                    $newlabel  = html_writer::link(new moodle_url($url, array(self::SORTVAR=>$name)), $fields[$name]);
+                    $sorturl = new moodle_url($url, array(self::SORTVAR => $name, self::SORTDIRECTIONVAR => $this->get_field_sort_direction($name)));
+                    $newlabel  = html_writer::link($sorturl, $fields[$name]);
                     if ($this->sort == $name) {
-                        $newlabel .= html_writer::link(new moodle_url($url, array(self::SORTVAR=>$name, self::SORTDIRECTIONVAR=>$this->get_field_sort_direction($name))), $this->get_direction_icon($output, $name));
+                        $newlabel .= $this->get_direction_icon($output, $name);
                     }
                 }
             }
@@ -704,13 +709,6 @@ class course_enrolment_table extends html_table implements renderable {
  */
 class course_enrolment_users_table extends course_enrolment_table {
 
-    /**
-     * An array of sortable fields
-     * @static
-     * @var array
-     */
-    protected static $sortablefields = array('firstname', 'lastname', 'firstnamephonetic', 'lastnamephonetic', 'middlename',
-            'alternatename', 'email', 'lastaccess');
 }
 
 /**

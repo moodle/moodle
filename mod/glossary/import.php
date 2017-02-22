@@ -144,6 +144,7 @@ if ($xml = glossary_read_imported_file($result)) {
             // New glossary is to be inserted in section 0, it is always visible.
             $glossary->section = 0;
             $glossary->visible = 1;
+            $glossary->visibleoncoursepage = 1;
 
             // Include new glossary and return the new ID
             if ( !($glossary = add_moduleinfo($glossary, $course)) ) {
@@ -170,7 +171,11 @@ if ($xml = glossary_read_imported_file($result)) {
         $xmlentry = $xmlentries[$i];
         $newentry = new stdClass();
         $newentry->concept = trim($xmlentry['#']['CONCEPT'][0]['#']);
-        $newentry->definition = trusttext_strip($xmlentry['#']['DEFINITION'][0]['#']);
+        $definition = $xmlentry['#']['DEFINITION'][0]['#'];
+        if (!is_string($definition)) {
+            print_error('errorparsingxml', 'glossary');
+        }
+        $newentry->definition = trusttext_strip($definition);
         if ( isset($xmlentry['#']['CASESENSITIVE'][0]['#']) ) {
             $newentry->casesensitive = $xmlentry['#']['CASESENSITIVE'][0]['#'];
         } else {

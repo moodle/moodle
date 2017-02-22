@@ -81,9 +81,6 @@ class renderer_base {
         global $CFG;
 
         if ($this->mustache === null) {
-            require_once($CFG->dirroot . '/lib/mustache/src/Mustache/Autoloader.php');
-            Mustache_Autoloader::register();
-
             $themename = $this->page->theme->name;
             $themerev = theme_get_revision();
 
@@ -91,6 +88,7 @@ class renderer_base {
 
             $loader = new \core\output\mustache_filesystem_loader();
             $stringhelper = new \core\output\mustache_string_helper();
+            $quotehelper = new \core\output\mustache_quote_helper();
             $jshelper = new \core\output\mustache_javascript_helper($this->page->requires);
             $pixhelper = new \core\output\mustache_pix_helper($this);
 
@@ -99,6 +97,7 @@ class renderer_base {
 
             $helpers = array('config' => $safeconfig,
                              'str' => array($stringhelper, 'str'),
+                             'quote' => array($quotehelper, 'quote'),
                              'js' => array($jshelper, 'help'),
                              'pix' => array($pixhelper, 'pix'));
 
@@ -106,7 +105,8 @@ class renderer_base {
                 'cache' => $cachedir,
                 'escape' => 's',
                 'loader' => $loader,
-                'helpers' => $helpers));
+                'helpers' => $helpers,
+                'pragmas' => [Mustache_Engine::PRAGMA_BLOCKS]));
 
         }
 
@@ -145,6 +145,14 @@ class renderer_base {
         static $templatecache = array();
         $mustache = $this->get_mustache();
 
+        try {
+            // Grab a copy of the existing helper to be restored later.
+            $uniqidhelper = $mustache->getHelper('uniqid');
+        } catch (Mustache_Exception_UnknownHelperException $e) {
+            // Helper doesn't exist.
+            $uniqidhelper = null;
+        }
+
         // Provide 1 random value that will not change within a template
         // but will be different from template to template. This is useful for
         // e.g. aria attributes that only work with id attributes and must be
@@ -160,7 +168,16 @@ class renderer_base {
                 throw new moodle_exception('Unknown template: ' . $templatename);
             }
         }
-        return trim($template->render($context));
+
+        $renderedtemplate = trim($template->render($context));
+
+        // If we had an existing uniqid helper then we need to restore it to allow
+        // handle nested calls of render_from_template.
+        if ($uniqidhelper) {
+            $mustache->addHelper('uniqid', $uniqidhelper);
+        }
+
+        return $renderedtemplate;
     }
 
 
@@ -258,6 +275,54 @@ class renderer_base {
     public function pix_url($imagename, $component = 'moodle') {
         return $this->page->theme->pix_url($imagename, $component);
     }
+
+    /**
+     * Return the site's logo URL, if any.
+     *
+     * @param int $maxwidth The maximum width, or null when the maximum width does not matter.
+     * @param int $maxheight The maximum height, or null when the maximum height does not matter.
+     * @return moodle_url|false
+     */
+    public function get_logo_url($maxwidth = null, $maxheight = 200) {
+        global $CFG;
+        $logo = get_config('core_admin', 'logo');
+        if (empty($logo)) {
+            return false;
+        }
+
+        // 200px high is the default image size which should be displayed at 100px in the page to account for retina displays.
+        // It's not worth the overhead of detecting and serving 2 different images based on the device.
+
+        // Hide the requested size in the file path.
+        $filepath = ((int) $maxwidth . 'x' . (int) $maxheight) . '/';
+
+        // Use $CFG->themerev to prevent browser caching when the file changes.
+        return moodle_url::make_pluginfile_url(context_system::instance()->id, 'core_admin', 'logo', $filepath,
+            theme_get_revision(), $logo);
+    }
+
+    /**
+     * Return the site's compact logo URL, if any.
+     *
+     * @param int $maxwidth The maximum width, or null when the maximum width does not matter.
+     * @param int $maxheight The maximum height, or null when the maximum height does not matter.
+     * @return moodle_url|false
+     */
+    public function get_compact_logo_url($maxwidth = 100, $maxheight = 100) {
+        global $CFG;
+        $logo = get_config('core_admin', 'logocompact');
+        if (empty($logo)) {
+            return false;
+        }
+
+        // Hide the requested size in the file path.
+        $filepath = ((int) $maxwidth . 'x' . (int) $maxheight) . '/';
+
+        // Use $CFG->themerev to prevent browser caching when the file changes.
+        return moodle_url::make_pluginfile_url(context_system::instance()->id, 'core_admin', 'logocompact', $filepath,
+            theme_get_revision(), $logo);
+    }
+
 }
 
 
@@ -474,6 +539,13 @@ class core_renderer extends renderer_base {
         }
 
         $output = '';
+
+        // Allow a url_rewrite plugin to setup any dynamic head content.
+        if (isset($CFG->urlrewriteclass) && !isset($CFG->upgraderunning)) {
+            $class = $CFG->urlrewriteclass;
+            $output .= $class::html_head_setup();
+        }
+
         $output .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . "\n";
         $output .= '<meta name="keywords" content="moodle, ' . $this->page->title . '" />' . "\n";
         // This is only set by the {@link redirect()} method
@@ -485,20 +557,17 @@ class core_renderer extends renderer_base {
             $output .= '<meta http-equiv="refresh" content="'.$this->page->periodicrefreshdelay.';url='.$this->page->url->out().'" />';
         }
 
-        // flow player embedding support
-        $this->page->requires->js_function_call('M.util.load_flowplayer');
+        // Smart App Banners meta tag is only displayed if mobile services are enabled and configured.
+        if (!empty($CFG->enablemobilewebservice)) {
+            $mobilesettings = get_config('tool_mobile');
+            if (!empty($mobilesettings->enablesmartappbanners) and !empty($mobilesettings->iosappid)) {
+                $output .= '<meta name="apple-itunes-app" content="app-id=' . s($mobilesettings->iosappid) . ', ';
+                $output .= 'app-argument=' . $this->page->url->out() . '"/>';
+            }
+        }
 
         // Set up help link popups for all links with the helptooltip class
         $this->page->requires->js_init_call('M.util.help_popups.setup');
-
-        // Setup help icon overlays.
-        $this->page->requires->yui_module('moodle-core-popuphelp', 'M.core.init_popuphelp');
-        $this->page->requires->strings_for_js(array(
-            'morehelp',
-            'loadinghelp',
-        ), 'moodle');
-
-        $this->page->requires->js_function_call('setTimeout', array('fix_column_widths()', 20));
 
         $focus = $this->page->focuscontrol;
         if (!empty($focus)) {
@@ -555,8 +624,8 @@ class core_renderer extends renderer_base {
      */
     public function standard_top_of_body_html() {
         global $CFG;
-        $output = $this->page->requires->get_top_of_body_code();
-        if (!empty($CFG->additionalhtmltopofbody)) {
+        $output = $this->page->requires->get_top_of_body_code($this);
+        if ($this->page->pagelayout !== 'embedded' && !empty($CFG->additionalhtmltopofbody)) {
             $output .= "\n".$CFG->additionalhtmltopofbody;
         }
         $output .= $this->maintenance_warning();
@@ -578,17 +647,23 @@ class core_renderer extends renderer_base {
         if (isset($CFG->maintenance_later) and $CFG->maintenance_later > time()) {
             $timeleft = $CFG->maintenance_later - time();
             // If timeleft less than 30 sec, set the class on block to error to highlight.
-            $errorclass = ($timeleft < 30) ? 'error' : 'warning';
-            $output .= $this->box_start($errorclass . ' moodle-has-zindex maintenancewarning');
+            $errorclass = ($timeleft < 30) ? 'alert-error alert-danger' : 'alert-warning';
+            $output .= $this->box_start($errorclass . ' moodle-has-zindex maintenancewarning m-a-1 alert');
             $a = new stdClass();
-            $a->min = (int)($timeleft/60);
+            $a->hour = (int)($timeleft / 3600);
+            $a->min = (int)(($timeleft / 60) % 60);
             $a->sec = (int)($timeleft % 60);
-            $output .= get_string('maintenancemodeisscheduled', 'admin', $a) ;
+            if ($a->hour > 0) {
+                $output .= get_string('maintenancemodeisscheduledlong', 'admin', $a);
+            } else {
+                $output .= get_string('maintenancemodeisscheduled', 'admin', $a);
+            }
+
             $output .= $this->box_end();
             $this->page->requires->yui_module('moodle-core-maintenancemodetimer', 'M.core.maintenancemodetimer',
                     array(array('timeleftinsec' => $timeleft)));
             $this->page->requires->strings_for_js(
-                    array('maintenancemodeisscheduled', 'sitemaintenance'),
+                    array('maintenancemodeisscheduled', 'maintenancemodeisscheduledlong', 'sitemaintenance'),
                     'admin');
         }
         return $output;
@@ -679,7 +754,7 @@ class core_renderer extends renderer_base {
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in {@link core_renderer::footer()}.
         $output = '';
-        if (!empty($CFG->additionalhtmlfooter)) {
+        if ($this->page->pagelayout !== 'embedded' && !empty($CFG->additionalhtmlfooter)) {
             $output .= "\n".$CFG->additionalhtmlfooter;
         }
         $output .= $this->unique_end_html_token;
@@ -829,13 +904,13 @@ class core_renderer extends renderer_base {
             // Special case for site home page - please do not remove
             return '<div class="sitelink">' .
                    '<a title="Moodle" href="http://moodle.org/">' .
-                   '<img src="' . $this->pix_url('moodlelogo') . '" alt="moodlelogo" /></a></div>';
+                   '<img src="' . $this->pix_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
 
         } else if (!empty($CFG->target_release) && $CFG->target_release != $CFG->release) {
             // Special case for during install/upgrade.
             return '<div class="sitelink">'.
                    '<a title="Moodle" href="http://docs.moodle.org/en/Administrator_documentation" onclick="this.target=\'_blank\'">' .
-                   '<img src="' . $this->pix_url('moodlelogo') . '" alt="moodlelogo" /></a></div>';
+                   '<img src="' . $this->pix_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
 
         } else if ($this->page->course->id == $SITE->id || strpos($this->page->pagetype, 'course-view') === 0) {
             return '<div class="homelink"><a href="' . $CFG->wwwroot . '/">' .
@@ -863,10 +938,13 @@ class core_renderer extends renderer_base {
      * @param boolean $debugdisableredirect this redirect has been disabled for
      *         debugging purposes. Display a message that explains, and don't
      *         trigger the redirect.
+     * @param string $messagetype The type of notification to show the message in.
+     *         See constants on \core\output\notification.
      * @return string The HTML to display to the user before dying, may contain
      *         meta refresh, javascript refresh, and may have set header redirects
      */
-    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect) {
+    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect,
+                                     $messagetype = \core\output\notification::NOTIFY_INFO) {
         global $CFG;
         $url = str_replace('&amp;', '&', $encodedurl);
 
@@ -897,7 +975,7 @@ class core_renderer extends renderer_base {
                 throw new coding_exception('You cannot redirect after the entire page has been generated');
                 break;
         }
-        $output .= $this->notification($message, 'redirectmessage');
+        $output .= $this->notification($message, $messagetype);
         $output .= '<div class="continuebutton">(<a href="'. $encodedurl .'">'. get_string('continue') .'</a>)</div>';
         if ($debugdisableredirect) {
             $output .= '<p><strong>'.get_string('erroroutput', 'error').'</strong></p>';
@@ -921,10 +999,18 @@ class core_renderer extends renderer_base {
      * @return string HTML that you must output this, preferably immediately.
      */
     public function header() {
-        global $USER, $CFG;
+        global $USER, $CFG, $SESSION;
 
         if (\core\session\manager::is_loggedinas()) {
             $this->page->add_body_class('userloggedinas');
+        }
+
+        if (isset($SESSION->justloggedin) && !empty($CFG->displayloginfailures)) {
+            require_once($CFG->dirroot . '/user/lib.php');
+            // Set second parameter to false as we do not want reset the counter, the same message appears on footer.
+            if ($count = user_count_login_failures($USER, false)) {
+                $this->page->add_body_class('loginfailures');
+            }
         }
 
         // If the user is logged in, and we're not in initial install,
@@ -1024,7 +1110,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     public function footer() {
-        global $CFG, $DB;
+        global $CFG, $DB, $PAGE;
 
         $output = $this->container_end_all(true);
 
@@ -1049,6 +1135,13 @@ class core_renderer extends renderer_base {
         }
         $footer = str_replace($this->unique_performance_info_token, $performanceinfo, $footer);
 
+        // Only show notifications when we have a $PAGE context id.
+        if (!empty($PAGE->context->id)) {
+            $this->page->requires->js_call_amd('core/notification', 'init', array(
+                $PAGE->context->id,
+                \core\notification::fetch_as_array($this)
+            ));
+        }
         $footer = str_replace($this->unique_end_html_token, $this->page->requires->get_end_code(), $footer);
 
         $this->page->set_state(moodle_page::STATE_DONE);
@@ -1078,22 +1171,37 @@ class core_renderer extends renderer_base {
      */
     public function course_content_header($onlyifnotcalledbefore = false) {
         global $CFG;
-        if ($this->page->course->id == SITEID) {
-            // return immediately and do not include /course/lib.php if not necessary
-            return '';
-        }
         static $functioncalled = false;
         if ($functioncalled && $onlyifnotcalledbefore) {
             // we have already output the content header
             return '';
         }
+
+        // Output any session notification.
+        $notifications = \core\notification::fetch();
+
+        $bodynotifications = '';
+        foreach ($notifications as $notification) {
+            $bodynotifications .= $this->render_from_template(
+                    $notification->get_template_name(),
+                    $notification->export_for_template($this)
+                );
+        }
+
+        $output = html_writer::span($bodynotifications, 'notifications', array('id' => 'user-notifications'));
+
+        if ($this->page->course->id == SITEID) {
+            // return immediately and do not include /course/lib.php if not necessary
+            return $output;
+        }
+
         require_once($CFG->dirroot.'/course/lib.php');
         $functioncalled = true;
         $courseformat = course_get_format($this->page->course);
         if (($obj = $courseformat->course_content_header()) !== null) {
-            return html_writer::div($courseformat->get_renderer($this->page)->render($obj), 'course-content-header');
+            $output .= html_writer::div($courseformat->get_renderer($this->page)->render($obj), 'course-content-header');
         }
-        return '';
+        return $output;
     }
 
     /**
@@ -1213,9 +1321,6 @@ class core_renderer extends renderer_base {
         }
         $menu->set_constraint('.block-region');
         $menu->attributes['class'] .= ' block-control-actions commands';
-        if (isset($CFG->blockeditingmenu) && !$CFG->blockeditingmenu) {
-            $menu->do_not_enhance();
-        }
         return $this->render($menu);
     }
 
@@ -1230,31 +1335,8 @@ class core_renderer extends renderer_base {
      * @return string HTML
      */
     public function render_action_menu(action_menu $menu) {
-        $menu->initialise_js($this->page);
-
-        $output = html_writer::start_tag('div', $menu->attributes);
-        $output .= html_writer::start_tag('ul', $menu->attributesprimary);
-        foreach ($menu->get_primary_actions($this) as $action) {
-            if ($action instanceof renderable) {
-                $content = $this->render($action);
-            } else {
-                $content = $action;
-            }
-            $output .= html_writer::tag('li', $content, array('role' => 'presentation'));
-        }
-        $output .= html_writer::end_tag('ul');
-        $output .= html_writer::start_tag('ul', $menu->attributessecondary);
-        foreach ($menu->get_secondary_actions() as $action) {
-            if ($action instanceof renderable) {
-                $content = $this->render($action);
-            } else {
-                $content = $action;
-            }
-            $output .= html_writer::tag('li', $content, array('role' => 'presentation'));
-        }
-        $output .= html_writer::end_tag('ul');
-        $output .= html_writer::end_tag('div');
-        return $output;
+        $context = $menu->export_for_template($this);
+        return $this->render_from_template('core/action_menu', $context);
     }
 
     /**
@@ -1264,53 +1346,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_action_menu_link(action_menu_link $action) {
-        static $actioncount = 0;
-        $actioncount++;
-
-        $comparetoalt = '';
-        $text = '';
-        if (!$action->icon || $action->primary === false) {
-            $text .= html_writer::start_tag('span', array('class'=>'menu-action-text', 'id' => 'actionmenuaction-'.$actioncount));
-            if ($action->text instanceof renderable) {
-                $text .= $this->render($action->text);
-            } else {
-                $text .= $action->text;
-                $comparetoalt = (string)$action->text;
-            }
-            $text .= html_writer::end_tag('span');
-        }
-
-        $icon = '';
-        if ($action->icon) {
-            $icon = $action->icon;
-            if ($action->primary || !$action->actionmenu->will_be_enhanced()) {
-                $action->attributes['title'] = $action->text;
-            }
-            if (!$action->primary && $action->actionmenu->will_be_enhanced()) {
-                if ((string)$icon->attributes['alt'] === $comparetoalt) {
-                    $icon->attributes['alt'] = '';
-                }
-                if (isset($icon->attributes['title']) && (string)$icon->attributes['title'] === $comparetoalt) {
-                    unset($icon->attributes['title']);
-                }
-            }
-            $icon = $this->render($icon);
-        }
-
-        // A disabled link is rendered as formatted text.
-        if (!empty($action->attributes['disabled'])) {
-            // Do not use div here due to nesting restriction in xhtml strict.
-            return html_writer::tag('span', $icon.$text, array('class'=>'currentlink', 'role' => 'menuitem'));
-        }
-
-        $attributes = $action->attributes;
-        unset($action->attributes['disabled']);
-        $attributes['href'] = $action->url;
-        if ($text !== '') {
-            $attributes['aria-labelledby'] = 'actionmenuaction-'.$actioncount;
-        }
-
-        return html_writer::tag('a', $icon.$text, $attributes);
+        return $this->render_from_template('core/action_menu_link', $action->export_for_template($this));
     }
 
     /**
@@ -1393,8 +1429,10 @@ class core_renderer extends renderer_base {
             $output = '';
             $skipdest = '';
         } else {
-            $output = html_writer::tag('a', get_string('skipa', 'access', $skiptitle), array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'));
-            $skipdest = html_writer::tag('span', '', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'));
+            $output = html_writer::link('#sb-'.$bc->skipid, get_string('skipa', 'access', $skiptitle),
+                      array('class' => 'skip skip-block', 'id' => 'fsb-' . $bc->skipid));
+            $skipdest = html_writer::span('', 'skip-block-to',
+                      array('id' => 'sb-' . $bc->skipid));
         }
 
         $output .= html_writer::start_tag('div', $bc->attributes);
@@ -1615,44 +1653,8 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_action_link(action_link $link) {
-        global $CFG;
-
-        $text = '';
-        if ($link->icon) {
-            $text .= $this->render($link->icon);
-        }
-
-        if ($link->text instanceof renderable) {
-            $text .= $this->render($link->text);
-        } else {
-            $text .= $link->text;
-        }
-
-        // A disabled link is rendered as formatted text
-        if (!empty($link->attributes['disabled'])) {
-            // do not use div here due to nesting restriction in xhtml strict
-            return html_writer::tag('span', $text, array('class'=>'currentlink'));
-        }
-
-        $attributes = $link->attributes;
-        unset($link->attributes['disabled']);
-        $attributes['href'] = $link->url;
-
-        if ($link->actions) {
-            if (empty($attributes['id'])) {
-                $id = html_writer::random_id('action_link');
-                $attributes['id'] = $id;
-            } else {
-                $id = $attributes['id'];
-            }
-            foreach ($link->actions as $action) {
-                $this->add_action_handler($action, $id);
-            }
-        }
-
-        return html_writer::tag('a', $text, $attributes);
+        return $this->render_from_template('core/action_link', $link->export_for_template($this));
     }
-
 
     /**
      * Renders an action_icon.
@@ -1707,10 +1709,11 @@ class core_renderer extends renderer_base {
     public function confirm($message, $continue, $cancel) {
         if ($continue instanceof single_button) {
             // ok
+            $continue->primary = true;
         } else if (is_string($continue)) {
-            $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post');
+            $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post', true);
         } else if ($continue instanceof moodle_url) {
-            $continue = new single_button($continue, get_string('continue'), 'post');
+            $continue = new single_button($continue, get_string('continue'), 'post', true);
         } else {
             throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a single_button instance.');
         }
@@ -1725,9 +1728,18 @@ class core_renderer extends renderer_base {
             throw new coding_exception('The cancel param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a single_button instance.');
         }
 
-        $output = $this->box_start('generalbox', 'notice');
+        $output = $this->box_start('generalbox modal modal-dialog modal-in-page show', 'notice');
+        $output .= $this->box_start('modal-content', 'modal-content');
+        $output .= $this->box_start('modal-header', 'modal-header');
+        $output .= html_writer::tag('h4', get_string('confirm'));
+        $output .= $this->box_end();
+        $output .= $this->box_start('modal-body', 'modal-body');
         $output .= html_writer::tag('p', $message);
+        $output .= $this->box_end();
+        $output .= $this->box_start('modal-footer', 'modal-footer');
         $output .= html_writer::tag('div', $this->render($continue) . $this->render($cancel), array('class' => 'buttons'));
+        $output .= $this->box_end();
+        $output .= $this->box_end();
         $output .= $this->box_end();
         return $output;
     }
@@ -1846,77 +1858,55 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Returns a dataformat selection and download form
+     *
+     * @param string $label A text label
+     * @param moodle_url|string $base The download page url
+     * @param string $name The query param which will hold the type of the download
+     * @param array $params Extra params sent to the download page
+     * @return string HTML fragment
+     */
+    public function download_dataformat_selector($label, $base, $name = 'dataformat', $params = array()) {
+
+        $formats = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
+        $options = array();
+        foreach ($formats as $format) {
+            if ($format->is_enabled()) {
+                $options[] = array(
+                    'value' => $format->name,
+                    'label' => get_string('dataformat', $format->component),
+                );
+            }
+        }
+        $hiddenparams = array();
+        foreach ($params as $key => $value) {
+            $hiddenparams[] = array(
+                'name' => $key,
+                'value' => $value,
+            );
+        }
+        $data = array(
+            'label' => $label,
+            'base' => $base,
+            'name' => $name,
+            'params' => $hiddenparams,
+            'options' => $options,
+            'sesskey' => sesskey(),
+            'submit' => get_string('download'),
+        );
+
+        return $this->render_from_template('core/dataformat_selector', $data);
+    }
+
+
+    /**
      * Internal implementation of single_select rendering
      *
      * @param single_select $select
      * @return string HTML fragment
      */
     protected function render_single_select(single_select $select) {
-        $select = clone($select);
-        if (empty($select->formid)) {
-            $select->formid = html_writer::random_id('single_select_f');
-        }
-
-        $output = '';
-        $params = $select->url->params();
-        if ($select->method === 'post') {
-            $params['sesskey'] = sesskey();
-        }
-        foreach ($params as $name=>$value) {
-            $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$name, 'value'=>$value));
-        }
-
-        if (empty($select->attributes['id'])) {
-            $select->attributes['id'] = html_writer::random_id('single_select');
-        }
-
-        if ($select->disabled) {
-            $select->attributes['disabled'] = 'disabled';
-        }
-
-        if ($select->tooltip) {
-            $select->attributes['title'] = $select->tooltip;
-        }
-
-        $select->attributes['class'] = 'autosubmit';
-        if ($select->class) {
-            $select->attributes['class'] .= ' ' . $select->class;
-        }
-
-        if ($select->label) {
-            $output .= html_writer::label($select->label, $select->attributes['id'], false, $select->labelattributes);
-        }
-
-        if ($select->helpicon instanceof help_icon) {
-            $output .= $this->render($select->helpicon);
-        }
-        $output .= html_writer::select($select->options, $select->name, $select->selected, $select->nothing, $select->attributes);
-
-        $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
-        $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('class' => 'inline'));
-
-        $nothing = empty($select->nothing) ? false : key($select->nothing);
-        $this->page->requires->yui_module('moodle-core-formautosubmit',
-            'M.core.init_formautosubmit',
-            array(array('selectid' => $select->attributes['id'], 'nothing' => $nothing))
-        );
-
-        // then div wrapper for xhtml strictness
-        $output = html_writer::tag('div', $output);
-
-        // now the form itself around it
-        if ($select->method === 'get') {
-            $url = $select->url->out_omit_querystring(true); // url without params, the anchor part allowed
-        } else {
-            $url = $select->url->out_omit_querystring();     // url without params, the anchor part not allowed
-        }
-        $formattributes = array('method' => $select->method,
-                                'action' => $url,
-                                'id'     => $select->formid);
-        $output = html_writer::tag('form', $output, $formattributes);
-
-        // and finally one more wrapper with class
-        return html_writer::tag('div', $output, array('class' => $select->class));
+        return $this->render_from_template('core/single_select', $select->export_for_template($this));
     }
 
     /**
@@ -1943,116 +1933,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_url_select(url_select $select) {
-        global $CFG;
-
-        $select = clone($select);
-        if (empty($select->formid)) {
-            $select->formid = html_writer::random_id('url_select_f');
-        }
-
-        if (empty($select->attributes['id'])) {
-            $select->attributes['id'] = html_writer::random_id('url_select');
-        }
-
-        if ($select->disabled) {
-            $select->attributes['disabled'] = 'disabled';
-        }
-
-        if ($select->tooltip) {
-            $select->attributes['title'] = $select->tooltip;
-        }
-
-        $output = '';
-
-        if ($select->label) {
-            $output .= html_writer::label($select->label, $select->attributes['id'], false, $select->labelattributes);
-        }
-
-        $classes = array();
-        if (!$select->showbutton) {
-            $classes[] = 'autosubmit';
-        }
-        if ($select->class) {
-            $classes[] = $select->class;
-        }
-        if (count($classes)) {
-            $select->attributes['class'] = implode(' ', $classes);
-        }
-
-        if ($select->helpicon instanceof help_icon) {
-            $output .= $this->render($select->helpicon);
-        }
-
-        // For security reasons, the script course/jumpto.php requires URL starting with '/'. To keep
-        // backward compatibility, we are removing heading $CFG->wwwroot from URLs here.
-        $urls = array();
-        foreach ($select->urls as $k=>$v) {
-            if (is_array($v)) {
-                // optgroup structure
-                foreach ($v as $optgrouptitle => $optgroupoptions) {
-                    foreach ($optgroupoptions as $optionurl => $optiontitle) {
-                        if (empty($optionurl)) {
-                            $safeoptionurl = '';
-                        } else if (strpos($optionurl, $CFG->wwwroot.'/') === 0) {
-                            // debugging('URLs passed to url_select should be in local relative form - please fix the code.', DEBUG_DEVELOPER);
-                            $safeoptionurl = str_replace($CFG->wwwroot, '', $optionurl);
-                        } else if (strpos($optionurl, '/') !== 0) {
-                            debugging("Invalid url_select urls parameter inside optgroup: url '$optionurl' is not local relative url!");
-                            continue;
-                        } else {
-                            $safeoptionurl = $optionurl;
-                        }
-                        $urls[$k][$optgrouptitle][$safeoptionurl] = $optiontitle;
-                    }
-                }
-            } else {
-                // plain list structure
-                if (empty($k)) {
-                    // nothing selected option
-                } else if (strpos($k, $CFG->wwwroot.'/') === 0) {
-                    $k = str_replace($CFG->wwwroot, '', $k);
-                } else if (strpos($k, '/') !== 0) {
-                    debugging("Invalid url_select urls parameter: url '$k' is not local relative url!");
-                    continue;
-                }
-                $urls[$k] = $v;
-            }
-        }
-        $selected = $select->selected;
-        if (!empty($selected)) {
-            if (strpos($select->selected, $CFG->wwwroot.'/') === 0) {
-                $selected = str_replace($CFG->wwwroot, '', $selected);
-            } else if (strpos($selected, '/') !== 0) {
-                debugging("Invalid value of parameter 'selected': url '$selected' is not local relative url!");
-            }
-        }
-
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
-        $output .= html_writer::select($urls, 'jump', $selected, $select->nothing, $select->attributes);
-
-        if (!$select->showbutton) {
-            $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
-            $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('class' => 'inline'));
-            $nothing = empty($select->nothing) ? false : key($select->nothing);
-            $this->page->requires->yui_module('moodle-core-formautosubmit',
-                'M.core.init_formautosubmit',
-                array(array('selectid' => $select->attributes['id'], 'nothing' => $nothing))
-            );
-        } else {
-            $output .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>$select->showbutton));
-        }
-
-        // then div wrapper for xhtml strictness
-        $output = html_writer::tag('div', $output);
-
-        // now the form itself around it
-        $formattributes = array('method' => 'post',
-                                'action' => new moodle_url('/course/jumpto.php'),
-                                'id'     => $select->formid);
-        $output = html_writer::tag('form', $output, $formattributes);
-
-        // and finally one more wrapper with class
-        return html_writer::tag('div', $output, array('class' => $select->class));
+        return $this->render_from_template('core/url_select', $select->export_for_template($this));
     }
 
     /**
@@ -2288,39 +2169,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_help_icon(help_icon $helpicon) {
-        global $CFG;
-
-        // first get the help image icon
-        $src = $this->pix_url('help');
-
-        $title = get_string($helpicon->identifier, $helpicon->component);
-
-        if (empty($helpicon->linktext)) {
-            $alt = get_string('helpprefix2', '', trim($title, ". \t"));
-        } else {
-            $alt = get_string('helpwiththis');
-        }
-
-        $attributes = array('src'=>$src, 'alt'=>$alt, 'class'=>'iconhelp');
-        $output = html_writer::empty_tag('img', $attributes);
-
-        // add the link text if given
-        if (!empty($helpicon->linktext)) {
-            // the spacing has to be done through CSS
-            $output .= $helpicon->linktext;
-        }
-
-        // now create the link around it - we need https on loginhttps pages
-        $url = new moodle_url($CFG->httpswwwroot.'/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->identifier, 'lang'=>current_language()));
-
-        // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
-        $title = get_string('helpprefix2', '', trim($title, ". \t"));
-
-        $attributes = array('href' => $url, 'title' => $title, 'aria-haspopup' => 'true', 'target'=>'_blank');
-        $output = html_writer::tag('a', $output, $attributes);
-
-        // and finally span
-        return html_writer::tag('span', $output, array('class' => 'helptooltip'));
+        return $this->render_from_template('core/help_icon', $helpicon->export_for_template($this));
     }
 
     /**
@@ -2584,7 +2433,7 @@ $icon_progress
 </div>
 <div id="filepicker-wrapper-{$client_id}" class="mdl-left" style="display:none">
     <div>
-        <input type="button" class="fp-btn-choose" id="filepicker-button-{$client_id}" value="{$straddfile}"{$buttonname}/>
+        <input type="button" class="btn btn-secondary fp-btn-choose" id="filepicker-button-{$client_id}" value="{$straddfile}"{$buttonname}/>
         <span> $maxsize </span>
     </div>
 EOD;
@@ -2606,12 +2455,19 @@ EOD;
     /**
      * Returns HTML to display the 'Update this Modulename' button that appears on module pages.
      *
+     * @deprecated since Moodle 3.2
+     *
      * @param string $cmid the course_module id.
      * @param string $modulename the module name, eg. "forum", "quiz" or "workshop"
      * @return string the HTML for the button, if this user has permission to edit it, else an empty string.
      */
     public function update_module_button($cmid, $modulename) {
         global $CFG;
+
+        debugging('core_renderer::update_module_button() has been deprecated and should not be used anymore. Activity modules ' .
+            'should not add the edit module button, the link is already available in the Administration block. Themes can choose ' .
+            'to display the link in the buttons row consistently for all module types.', DEBUG_DEVELOPER);
+
         if (has_capability('moodle/course:manageactivities', context_module::instance($cmid))) {
             $modulename = get_string('modulename', $modulename);
             $string = get_string('updatethis', '', $modulename);
@@ -2687,7 +2543,7 @@ EOD;
      * @param string $debuginfo Debugging information
      * @return string the HTML to output.
      */
-    public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
+    public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null, $errorcode = "") {
         global $CFG;
 
         $output = '';
@@ -2716,6 +2572,9 @@ EOD;
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             if (empty($_SERVER['HTTP_RANGE'])) {
                 @header($protocol . ' 404 Not Found');
+            } else if (core_useragent::check_safari_ios_version(602) && !empty($_SERVER['HTTP_X_PLAYBACK_SESSION_ID'])) {
+                // Coax iOS 10 into sending the session cookie.
+                @header($protocol . ' 403 Forbidden');
             } else {
                 // Must stop byteserving attempts somehow,
                 // this is weird but Chrome PDF viewer can be stopped only with 407!
@@ -2768,38 +2627,65 @@ EOD;
     }
 
     /**
-     * Output a notification (that is, a status message about something that has
-     * just happened).
+     * Output a notification (that is, a status message about something that has just happened).
      *
-     * @param string $message the message to print out
-     * @param string $classes normally 'notifyproblem' or 'notifysuccess'.
+     * Note: \core\notification::add() may be more suitable for your usage.
+     *
+     * @param string $message The message to print out.
+     * @param string $type    The type of notification. See constants on \core\output\notification.
      * @return string the HTML to output.
      */
-    public function notification($message, $classes = 'notifyproblem') {
+    public function notification($message, $type = null) {
+        $typemappings = [
+            // Valid types.
+            'success'           => \core\output\notification::NOTIFY_SUCCESS,
+            'info'              => \core\output\notification::NOTIFY_INFO,
+            'warning'           => \core\output\notification::NOTIFY_WARNING,
+            'error'             => \core\output\notification::NOTIFY_ERROR,
 
-        $classmappings = array(
-            'notifyproblem' => \core\output\notification::NOTIFY_PROBLEM,
-            'notifytiny' => \core\output\notification::NOTIFY_PROBLEM,
-            'notifysuccess' => \core\output\notification::NOTIFY_SUCCESS,
-            'notifymessage' => \core\output\notification::NOTIFY_MESSAGE,
-            'redirectmessage' => \core\output\notification::NOTIFY_REDIRECT
-        );
+            // Legacy types mapped to current types.
+            'notifyproblem'     => \core\output\notification::NOTIFY_ERROR,
+            'notifytiny'        => \core\output\notification::NOTIFY_ERROR,
+            'notifyerror'       => \core\output\notification::NOTIFY_ERROR,
+            'notifysuccess'     => \core\output\notification::NOTIFY_SUCCESS,
+            'notifymessage'     => \core\output\notification::NOTIFY_INFO,
+            'notifyredirect'    => \core\output\notification::NOTIFY_INFO,
+            'redirectmessage'   => \core\output\notification::NOTIFY_INFO,
+        ];
 
-        // Identify what type of notification this is.
-        $type = \core\output\notification::NOTIFY_PROBLEM;
-        $classarray = explode(' ', self::prepare_classes($classes));
-        if (count($classarray) > 0) {
-            foreach ($classarray as $class) {
-                if (isset($classmappings[$class])) {
-                    $type = $classmappings[$class];
-                    break;
+        $extraclasses = [];
+
+        if ($type) {
+            if (strpos($type, ' ') === false) {
+                // No spaces in the list of classes, therefore no need to loop over and determine the class.
+                if (isset($typemappings[$type])) {
+                    $type = $typemappings[$type];
+                } else {
+                    // The value provided did not match a known type. It must be an extra class.
+                    $extraclasses = [$type];
+                }
+            } else {
+                // Identify what type of notification this is.
+                $classarray = explode(' ', self::prepare_classes($type));
+
+                // Separate out the type of notification from the extra classes.
+                foreach ($classarray as $class) {
+                    if (isset($typemappings[$class])) {
+                        $type = $typemappings[$class];
+                    } else {
+                        $extraclasses[] = $class;
+                    }
                 }
             }
         }
 
-        $n = new \core\output\notification($message, $type);
-        return $this->render($n);
+        $notification = new \core\output\notification($message, $type);
+        if (count($extraclasses)) {
+            $notification->set_extra_classes($extraclasses);
+        }
 
+        // Return the rendered template.
+        return $this->render_from_template($notification->get_template_name(), $notification->export_for_template($this));
     }
 
     /**
@@ -2807,9 +2693,15 @@ EOD;
      *
      * @param string $message the message to print out
      * @return string HTML fragment.
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     * @todo MDL-53113 This will be removed in Moodle 3.5.
+     * @see \core\output\notification
      */
     public function notify_problem($message) {
-        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_PROBLEM);
+        debugging(__FUNCTION__ . ' is deprecated.' .
+            'Please use \core\notification::add, or \core\output\notification as required',
+            DEBUG_DEVELOPER);
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_ERROR);
         return $this->render($n);
     }
 
@@ -2818,8 +2710,14 @@ EOD;
      *
      * @param string $message the message to print out
      * @return string HTML fragment.
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     * @todo MDL-53113 This will be removed in Moodle 3.5.
+     * @see \core\output\notification
      */
     public function notify_success($message) {
+        debugging(__FUNCTION__ . ' is deprecated.' .
+            'Please use \core\notification::add, or \core\output\notification as required',
+            DEBUG_DEVELOPER);
         $n = new \core\output\notification($message, \core\output\notification::NOTIFY_SUCCESS);
         return $this->render($n);
     }
@@ -2829,9 +2727,15 @@ EOD;
      *
      * @param string $message the message to print out
      * @return string HTML fragment.
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     * @todo MDL-53113 This will be removed in Moodle 3.5.
+     * @see \core\output\notification
      */
     public function notify_message($message) {
-        $n = new notification($message, notification::NOTIFY_MESSAGE);
+        debugging(__FUNCTION__ . ' is deprecated.' .
+            'Please use \core\notification::add, or \core\output\notification as required',
+            DEBUG_DEVELOPER);
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_INFO);
         return $this->render($n);
     }
 
@@ -2840,9 +2744,15 @@ EOD;
      *
      * @param string $message the message to print out
      * @return string HTML fragment.
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     * @todo MDL-53113 This will be removed in Moodle 3.5.
+     * @see \core\output\notification
      */
     public function notify_redirect($message) {
-        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_REDIRECT);
+        debugging(__FUNCTION__ . ' is deprecated.' .
+            'Please use \core\notification::add, or \core\output\notification as required',
+            DEBUG_DEVELOPER);
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_INFO);
         return $this->render($n);
     }
 
@@ -2854,30 +2764,7 @@ EOD;
      * @return string the HTML to output.
      */
     protected function render_notification(\core\output\notification $notification) {
-
-        $data = $notification->export_for_template($this);
-
-        $templatename = '';
-        switch($data->type) {
-            case \core\output\notification::NOTIFY_MESSAGE:
-                $templatename = 'core/notification_message';
-                break;
-            case \core\output\notification::NOTIFY_SUCCESS:
-                $templatename = 'core/notification_success';
-                break;
-            case \core\output\notification::NOTIFY_PROBLEM:
-                $templatename = 'core/notification_problem';
-                break;
-            case \core\output\notification::NOTIFY_REDIRECT:
-                $templatename = 'core/notification_redirect';
-                break;
-            default:
-                $templatename = 'core/notification_message';
-                break;
-        }
-
-        return self::render_from_template($templatename, $data);
-
+        return $this->render_from_template($notification->get_template_name(), $notification->export_for_template($this));
     }
 
     /**
@@ -2890,7 +2777,7 @@ EOD;
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
-        $button = new single_button($url, get_string('continue'), 'get');
+        $button = new single_button($url, get_string('continue'), 'get', true);
         $button->class = 'continuebutton';
 
         return $this->render($button);
@@ -2941,7 +2828,7 @@ EOD;
             }
 
             if (!empty($pagingbar->lastlink)) {
-                $output .= ' ...' . $pagingbar->lastlink . ' ';
+                $output .= ' ... ' . $pagingbar->lastlink . ' ';
             }
 
             if (!empty($pagingbar->nextlink)) {
@@ -2959,7 +2846,7 @@ EOD;
      * @return string the HTML to output.
      */
     public function skip_link_target($id = null) {
-        return html_writer::tag('span', '', array('id' => $id));
+        return html_writer::span('', '', array('id' => $id));
     }
 
     /**
@@ -3112,6 +2999,66 @@ EOD;
     }
 
     /**
+     * Returns a search box.
+     *
+     * @param  string $id     The search box wrapper div id, defaults to an autogenerated one.
+     * @return string         HTML with the search form hidden by default.
+     */
+    public function search_box($id = false) {
+        global $CFG;
+
+        // Accessing $CFG directly as using \core_search::is_global_search_enabled would
+        // result in an extra included file for each site, even the ones where global search
+        // is disabled.
+        if (empty($CFG->enableglobalsearch) || !has_capability('moodle/search:query', context_system::instance())) {
+            return '';
+        }
+
+        if ($id == false) {
+            $id = uniqid();
+        } else {
+            // Needs to be cleaned, we use it for the input id.
+            $id = clean_param($id, PARAM_ALPHANUMEXT);
+        }
+
+        // JS to animate the form.
+        $this->page->requires->js_call_amd('core/search-input', 'init', array($id));
+
+        $searchicon = html_writer::tag('div', $this->pix_icon('a/search', get_string('search', 'search'), 'moodle'),
+            array('role' => 'button', 'tabindex' => 0));
+        $formattrs = array('class' => 'search-input-form', 'action' => $CFG->wwwroot . '/search/index.php');
+        $inputattrs = array('type' => 'text', 'name' => 'q', 'placeholder' => get_string('search', 'search'),
+            'size' => 13, 'tabindex' => -1, 'id' => 'id_q_' . $id);
+
+        $contents = html_writer::tag('label', get_string('enteryoursearchquery', 'search'),
+            array('for' => 'id_q_' . $id, 'class' => 'accesshide')) . html_writer::tag('input', '', $inputattrs);
+        $searchinput = html_writer::tag('form', $contents, $formattrs);
+
+        return html_writer::tag('div', $searchicon . $searchinput, array('class' => 'search-input-wrapper nav-link', 'id' => $id));
+    }
+
+    /**
+     * Allow plugins to provide some content to be rendered in the navbar.
+     * The plugin must define a PLUGIN_render_navbar_output function that returns
+     * the HTML they wish to add to the navbar.
+     *
+     * @return string HTML for the navbar
+     */
+    public function navbar_plugin_output() {
+        $output = '';
+
+        if ($pluginsfunction = get_plugins_with_function('render_navbar_output')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    $output .= $pluginfunction($this);
+                }
+            }
+        }
+
+        return $output;
+    }
+
+    /**
      * Construct a user menu, returning HTML that can be echoed out by a
      * layout file.
      *
@@ -3182,7 +3129,7 @@ EOD;
         }
 
         // Get some navigation opts.
-        $opts = user_get_user_navigation_info($user, $this->page, $this->page->course);
+        $opts = user_get_user_navigation_info($user, $this->page);
 
         $avatarclasses = "avatars";
         $avatarcontents = html_writer::span($opts->metadata['useravatar'], 'avatar current');
@@ -3246,7 +3193,6 @@ EOD;
         $divider->primary = false;
 
         $am = new action_menu();
-        $am->initialise_js($this->page);
         $am->set_menu_trigger(
             $returnstr
         );
@@ -3279,12 +3225,16 @@ EOD;
                                 array('class' => 'iconsmall')
                             ) . $value->title;
                         }
+
                         $al = new action_menu_link_secondary(
                             $value->url,
                             $pix,
                             $value->title,
                             array('class' => 'icon')
                         );
+                        if (!empty($value->titleidentifier)) {
+                            $al->attributes['data-title'] = $value->titleidentifier;
+                        }
                         $am->add($al);
                         break;
                 }
@@ -3331,10 +3281,46 @@ EOD;
         }
 
         //accessibility: heading for navbar list  (MDL-20446)
-        $navbarcontent = html_writer::tag('span', get_string('pagepath'), array('class'=>'accesshide'));
-        $navbarcontent .= html_writer::tag('nav', html_writer::tag('ul', join('', $htmlblocks)));
+        $navbarcontent = html_writer::tag('span', get_string('pagepath'),
+                array('class' => 'accesshide', 'id' => 'navbar-label'));
+        $navbarcontent .= html_writer::tag('nav',
+                html_writer::tag('ul', join('', $htmlblocks)),
+                array('aria-labelledby' => 'navbar-label'));
         // XHTML
         return $navbarcontent;
+    }
+
+    /**
+     * Renders a breadcrumb navigation node object.
+     *
+     * @param breadcrumb_navigation_node $item The navigation node to render.
+     * @return string HTML fragment
+     */
+    protected function render_breadcrumb_navigation_node(breadcrumb_navigation_node $item) {
+
+        if ($item->action instanceof moodle_url) {
+            $content = $item->get_content();
+            $title = $item->get_title();
+            $attributes = array();
+            $attributes['itemprop'] = 'url';
+            if ($title !== '') {
+                $attributes['title'] = $title;
+            }
+            if ($item->hidden) {
+                $attributes['class'] = 'dimmed_text';
+            }
+            $content = html_writer::tag('span', $content, array('itemprop' => 'title'));
+            $content = html_writer::link($item->action, $content, $attributes);
+
+            $attributes = array();
+            $attributes['itemscope'] = '';
+            $attributes['itemtype'] = 'http://data-vocabulary.org/Breadcrumb';
+            $content = html_writer::tag('span', $content, $attributes);
+
+        } else {
+            $content = $this->render_navigation_node($item);
+        }
+        return $content;
     }
 
     /**
@@ -3428,6 +3414,17 @@ EOD;
      */
     public function uarrow() {
         return $this->page->theme->uarrow;
+    }
+
+    /**
+     * Accessibility: Down arrow-like character.
+     * If the theme does not set characters, appropriate defaults
+     * are set automatically.
+     *
+     * @return string
+     */
+    public function darrow() {
+        return $this->page->theme->darrow;
     }
 
     /**
@@ -3668,32 +3665,34 @@ EOD;
             return $str;
         }
 
-        // Print subtree
-        $str .= html_writer::start_tag('ul', array('class' => 'tabrow'. $tabobject->level));
-        $cnt = 0;
-        foreach ($tabobject->subtree as $tab) {
-            $liclass = '';
-            if (!$cnt) {
-                $liclass .= ' first';
-            }
-            if ($cnt == count($tabobject->subtree) - 1) {
-                $liclass .= ' last';
-            }
-            if ((empty($tab->subtree)) && (!empty($tab->selected))) {
-                $liclass .= ' onerow';
-            }
+        // Print subtree.
+        if ($tabobject->level == 0 || $tabobject->selected || $tabobject->activated) {
+            $str .= html_writer::start_tag('ul', array('class' => 'tabrow'. $tabobject->level));
+            $cnt = 0;
+            foreach ($tabobject->subtree as $tab) {
+                $liclass = '';
+                if (!$cnt) {
+                    $liclass .= ' first';
+                }
+                if ($cnt == count($tabobject->subtree) - 1) {
+                    $liclass .= ' last';
+                }
+                if ((empty($tab->subtree)) && (!empty($tab->selected))) {
+                    $liclass .= ' onerow';
+                }
 
-            if ($tab->selected) {
-                $liclass .= ' here selected';
-            } else if ($tab->activated) {
-                $liclass .= ' here active';
-            }
+                if ($tab->selected) {
+                    $liclass .= ' here selected';
+                } else if ($tab->activated) {
+                    $liclass .= ' here active';
+                }
 
-            // This will recursively call function render_tabobject() for each item in subtree
-            $str .= html_writer::tag('li', $this->render($tab), array('class' => trim($liclass)));
-            $cnt++;
+                // This will recursively call function render_tabobject() for each item in subtree.
+                $str .= html_writer::tag('li', $this->render($tab), array('class' => trim($liclass)));
+                $cnt++;
+            }
+            $str .= html_writer::end_tag('ul');
         }
-        $str .= html_writer::end_tag('ul');
 
         return $str;
     }
@@ -3768,7 +3767,10 @@ EOD;
                 $additionalclasses[] = 'docked-region-'.$region;
             }
         }
-        if (count($usedregions) === 1) {
+        if (!$usedregions) {
+            // No regions means there is only content, add 'content-only' class.
+            $additionalclasses[] = 'content-only';
+        } else if (count($usedregions) === 1) {
             // Add the -only class for the only used region.
             $region = array_shift($usedregions);
             $additionalclasses[] = $region . '-only';
@@ -3929,20 +3931,8 @@ EOD;
         return $html;
     }
 
-    /**
-     * Returns the header bar.
-     *
-     * @since Moodle 2.9
-     * @param array $headerinfo An array of header information, dependant on what type of header is being displayed. The following
-     *                          array example is user specific.
-     *                          heading => Override the page heading.
-     *                          user => User object.
-     *                          usercontext => user context.
-     * @param int $headinglevel What level the 'h' tag will be.
-     * @return string HTML for the header bar.
-     */
     public function context_header($headerinfo = null, $headinglevel = 1) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
         $context = $this->page->context;
         // Make sure to use the heading if it has been set.
         if (isset($headerinfo['heading'])) {
@@ -3972,22 +3962,57 @@ EOD;
 
             $imagedata = $this->user_picture($user, array('size' => 100));
             // Check to see if we should be displaying a message button.
-            if ($USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
+            if (!empty($CFG->messaging) && $USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
+                $iscontact = !empty(message_get_contact($user->id));
+                $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
+                $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
+                $contactimage = $iscontact ? 'removecontact' : 'addcontact';
                 $userbuttons = array(
                     'messages' => array(
                         'buttontype' => 'message',
                         'title' => get_string('message', 'message'),
                         'url' => new moodle_url('/message/index.php', array('id' => $user->id)),
                         'image' => 'message',
-                        'linkattributes' => message_messenger_sendmessage_link_params($user),
+                        'linkattributes' => array('role' => 'button'),
                         'page' => $this->page
-                    )
+                    ),
+                    'togglecontact' => array(
+                        'buttontype' => 'togglecontact',
+                        'title' => get_string($contacttitle, 'message'),
+                        'url' => new moodle_url('/message/index.php', array(
+                                'user1' => $USER->id,
+                                'user2' => $user->id,
+                                $contacturlaction => $user->id,
+                                'sesskey' => sesskey())
+                        ),
+                        'image' => $contactimage,
+                        'linkattributes' => \core_message\helper::togglecontact_link_params($user, $iscontact),
+                        'page' => $this->page
+                    ),
                 );
+
+                $this->page->requires->string_for_js('changesmadereallygoaway', 'moodle');
             }
         }
 
         $contextheader = new context_header($heading, $headinglevel, $imagedata, $userbuttons);
         return $this->render_context_header($contextheader);
+    }
+
+    /**
+     * Renders the skip links for the page.
+     *
+     * @param array $links List of skip links.
+     * @return string HTML for the skip links.
+     */
+    public function render_skip_links($links) {
+        $context = [ 'links' => []];
+
+        foreach ($links as $url => $text) {
+            $context['links'][] = [ 'url' => $url, 'text' => $text];
+        }
+
+        return $this->render_from_template('core/skip_links', $context);
     }
 
      /**
@@ -4022,8 +4047,8 @@ EOD;
             foreach ($contextheader->additionalbuttons as $button) {
                 if (!isset($button->page)) {
                     // Include js for messaging.
-                    if ($button['buttontype'] === 'message') {
-                        message_messenger_requirejs();
+                    if ($button['buttontype'] === 'togglecontact') {
+                        \core_message\helper::togglecontact_requirejs();
                     }
                     $image = $this->pix_icon($button['formattedimage'], $button['title'], 'moodle', array(
                         'class' => 'iconsmall',
@@ -4054,12 +4079,182 @@ EOD;
         $html = html_writer::start_tag('header', array('id' => 'page-header', 'class' => 'clearfix'));
         $html .= $this->context_header();
         $html .= html_writer::start_div('clearfix', array('id' => 'page-navbar'));
-        $html .= html_writer::tag('nav', $this->navbar(), array('class' => 'breadcrumb-nav'));
+        $html .= html_writer::tag('div', $this->navbar(), array('class' => 'breadcrumb-nav'));
         $html .= html_writer::div($this->page_heading_button(), 'breadcrumb-button');
         $html .= html_writer::end_div();
         $html .= html_writer::tag('div', $this->course_header(), array('id' => 'course-header'));
         $html .= html_writer::end_tag('header');
         return $html;
+    }
+
+    /**
+     * Displays the list of tags associated with an entry
+     *
+     * @param array $tags list of instances of core_tag or stdClass
+     * @param string $label label to display in front, by default 'Tags' (get_string('tags')), set to null
+     *               to use default, set to '' (empty string) to omit the label completely
+     * @param string $classes additional classes for the enclosing div element
+     * @param int $limit limit the number of tags to display, if size of $tags is more than this limit the "more" link
+     *               will be appended to the end, JS will toggle the rest of the tags
+     * @param context $pagecontext specify if needed to overwrite the current page context for the view tag link
+     * @return string
+     */
+    public function tag_list($tags, $label = null, $classes = '', $limit = 10, $pagecontext = null) {
+        $list = new \core_tag\output\taglist($tags, $label, $classes, $limit, $pagecontext);
+        return $this->render_from_template('core_tag/taglist', $list->export_for_template($this));
+    }
+
+    /**
+     * Renders element for inline editing of any value
+     *
+     * @param \core\output\inplace_editable $element
+     * @return string
+     */
+    public function render_inplace_editable(\core\output\inplace_editable $element) {
+        return $this->render_from_template('core/inplace_editable', $element->export_for_template($this));
+    }
+
+    /**
+     * Renders a bar chart.
+     *
+     * @param \core\chart_bar $chart The chart.
+     * @return string.
+     */
+    public function render_chart_bar(\core\chart_bar $chart) {
+        return $this->render_chart($chart);
+    }
+
+    /**
+     * Renders a line chart.
+     *
+     * @param \core\chart_line $chart The chart.
+     * @return string.
+     */
+    public function render_chart_line(\core\chart_line $chart) {
+        return $this->render_chart($chart);
+    }
+
+    /**
+     * Renders a pie chart.
+     *
+     * @param \core\chart_pie $chart The chart.
+     * @return string.
+     */
+    public function render_chart_pie(\core\chart_pie $chart) {
+        return $this->render_chart($chart);
+    }
+
+    /**
+     * Renders a chart.
+     *
+     * @param \core\chart_base $chart The chart.
+     * @param bool $withtable Whether to include a data table with the chart.
+     * @return string.
+     */
+    public function render_chart(\core\chart_base $chart, $withtable = true) {
+        $chartdata = json_encode($chart);
+        return $this->render_from_template('core/chart', (object) [
+            'chartdata' => $chartdata,
+            'withtable' => $withtable
+        ]);
+    }
+
+    /**
+     * Renders the login form.
+     *
+     * @param \core_auth\output\login $form The renderable.
+     * @return string
+     */
+    public function render_login(\core_auth\output\login $form) {
+        $context = $form->export_for_template($this);
+
+        // Override because rendering is not supported in template yet.
+        $context->cookieshelpiconformatted = $this->help_icon('cookiesenabled');
+        $context->errorformatted = $this->error_text($context->error);
+
+        return $this->render_from_template('core/login', $context);
+    }
+
+    /**
+     * Renders an mform element from a template.
+     *
+     * @param HTML_QuickForm_element $element element
+     * @param bool $required if input is required field
+     * @param bool $advanced if input is an advanced field
+     * @param string $error error message to display
+     * @param bool $ingroup True if this element is rendered as part of a group
+     * @return mixed string|bool
+     */
+    public function mform_element($element, $required, $advanced, $error, $ingroup) {
+        $templatename = 'core_form/element-' . $element->getType();
+        if ($ingroup) {
+            $templatename .= "-inline";
+        }
+        try {
+            // We call this to generate a file not found exception if there is no template.
+            // We don't want to call export_for_template if there is no template.
+            core\output\mustache_template_finder::get_template_filepath($templatename);
+
+            if ($element instanceof templatable) {
+                $elementcontext = $element->export_for_template($this);
+
+                $helpbutton = '';
+                if (method_exists($element, 'getHelpButton')) {
+                    $helpbutton = $element->getHelpButton();
+                }
+                $label = $element->getLabel();
+                $text = '';
+                if (method_exists($element, 'getText')) {
+                    // There currently exists code that adds a form element with an empty label.
+                    // If this is the case then set the label to the description.
+                    if (empty($label)) {
+                        $label = $element->getText();
+                    } else {
+                        $text = $element->getText();
+                    }
+                }
+
+                $context = array(
+                    'element' => $elementcontext,
+                    'label' => $label,
+                    'text' => $text,
+                    'required' => $required,
+                    'advanced' => $advanced,
+                    'helpbutton' => $helpbutton,
+                    'error' => $error
+                );
+                return $this->render_from_template($templatename, $context);
+            }
+        } catch (Exception $e) {
+            // No template for this element.
+            return false;
+        }
+    }
+
+    /**
+     * Render the login signup form into a nice template for the theme.
+     *
+     * @param mform $form
+     * @return string
+     */
+    public function render_login_signup_form($form) {
+        $context = $form->export_for_template($this);
+
+        return $this->render_from_template('core/signup_form_layout', $context);
+    }
+
+    /**
+     * Renders a progress bar.
+     *
+     * Do not use $OUTPUT->render($bar), instead use progress_bar::create().
+     *
+     * @param  progress_bar $bar The bar.
+     * @return string HTML fragment
+     */
+    public function render_progress_bar(progress_bar $bar) {
+        global $PAGE;
+        $data = $bar->export_for_template($this);
+        return $this->render_from_template('core/progress_bar', $data);
     }
 }
 
@@ -4116,7 +4311,7 @@ class core_renderer_cli extends core_renderer {
      * @param string $debuginfo Debugging information
      * @return string A template fragment for a fatal error
      */
-    public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
+    public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null, $errorcode = "") {
         global $CFG;
 
         $output = "!!! $message !!!\n";
@@ -4136,13 +4331,13 @@ class core_renderer_cli extends core_renderer {
     /**
      * Returns a template fragment representing a notification.
      *
-     * @param string $message The message to include
-     * @param string $classes A space-separated list of CSS classes
+     * @param string $message The message to print out.
+     * @param string $type    The type of notification. See constants on \core\output\notification.
      * @return string A template fragment for a notification
      */
-    public function notification($message, $classes = 'notifyproblem') {
+    public function notification($message, $type = null) {
         $message = clean_text($message);
-        if ($classes === 'notifysuccess') {
+        if ($type === 'notifysuccess' || $type === 'success') {
             return "++ $message ++\n";
         }
         return "!! $message !!\n";
@@ -4153,6 +4348,17 @@ class core_renderer_cli extends core_renderer {
      * footer method to prevent the default footer.
      */
     public function footer() {}
+
+    /**
+     * Render a notification (that is, a status message about something that has
+     * just happened).
+     *
+     * @param \core\output\notification $notification the notification to print out
+     * @return string plain text output
+     */
+    public function render_notification(\core\output\notification $notification) {
+        return $this->notification($notification->get_message(), $notification->get_message_type());
+    }
 }
 
 
@@ -4180,13 +4386,14 @@ class core_renderer_ajax extends core_renderer {
      * @param string $debuginfo Debugging information
      * @return string A template fragment for a fatal error
      */
-    public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
+    public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null, $errorcode = "") {
         global $CFG;
 
         $this->page->set_context(null); // ugly hack - make sure page context is set to something, we do not want bogus warnings here
 
         $e = new stdClass();
         $e->error      = $message;
+        $e->errorcode  = $errorcode;
         $e->stacktrace = NULL;
         $e->debuginfo  = NULL;
         $e->reproductionlink = NULL;
@@ -4210,10 +4417,10 @@ class core_renderer_ajax extends core_renderer {
      * Used to display a notification.
      * For the AJAX notifications are discarded.
      *
-     * @param string $message
-     * @param string $classes
+     * @param string $message The message to print out.
+     * @param string $type    The type of notification. See constants on \core\output\notification.
      */
-    public function notification($message, $classes = 'notifyproblem') {}
+    public function notification($message, $type = null) {}
 
     /**
      * Used to display a redirection message.
@@ -4224,8 +4431,11 @@ class core_renderer_ajax extends core_renderer {
      * @param string $message
      * @param int $delay
      * @param bool $debugdisableredirect
+     * @param string $messagetype The type of notification to show the message in.
+     *         See constants on \core\output\notification.
      */
-    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect) {}
+    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect,
+                                     $messagetype = \core\output\notification::NOTIFY_INFO) {}
 
     /**
      * Prepares the start of an AJAX output.
@@ -4276,6 +4486,7 @@ class core_renderer_ajax extends core_renderer {
  * Used in file resources, media filter, and any other places that need to
  * output embedded media.
  *
+ * @deprecated since Moodle 3.2
  * @copyright 2011 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4286,75 +4497,14 @@ class core_media_renderer extends plugin_renderer_base {
     private $embeddablemarkers;
 
     /**
-     * Constructor requires medialib.php.
+     * Constructor
      *
      * This is needed in the constructor (not later) so that you can use the
      * constants and static functions that are defined in core_media class
      * before you call renderer functions.
      */
     public function __construct() {
-        global $CFG;
-        require_once($CFG->libdir . '/medialib.php');
-    }
-
-    /**
-     * Obtains the list of core_media_player objects currently in use to render
-     * items.
-     *
-     * The list is in rank order (highest first) and does not include players
-     * which are disabled.
-     *
-     * @return array Array of core_media_player objects in rank order
-     */
-    protected function get_players() {
-        global $CFG;
-
-        // Save time by only building the list once.
-        if (!$this->players) {
-            // Get raw list of players.
-            $players = $this->get_players_raw();
-
-            // Chuck all the ones that are disabled.
-            foreach ($players as $key => $player) {
-                if (!$player->is_enabled()) {
-                    unset($players[$key]);
-                }
-            }
-
-            // Sort in rank order (highest first).
-            usort($players, array('core_media_player', 'compare_by_rank'));
-            $this->players = $players;
-        }
-        return $this->players;
-    }
-
-    /**
-     * Obtains a raw list of player objects that includes objects regardless
-     * of whether they are disabled or not, and without sorting.
-     *
-     * You can override this in a subclass if you need to add additional
-     * players.
-     *
-     * The return array is be indexed by player name to make it easier to
-     * remove players in a subclass.
-     *
-     * @return array $players Array of core_media_player objects in any order
-     */
-    protected function get_players_raw() {
-        return array(
-            'vimeo' => new core_media_player_vimeo(),
-            'youtube' => new core_media_player_youtube(),
-            'youtube_playlist' => new core_media_player_youtube_playlist(),
-            'html5video' => new core_media_player_html5video(),
-            'html5audio' => new core_media_player_html5audio(),
-            'mp3' => new core_media_player_mp3(),
-            'flv' => new core_media_player_flv(),
-            'wmp' => new core_media_player_wmp(),
-            'qt' => new core_media_player_qt(),
-            'rm' => new core_media_player_rm(),
-            'swf' => new core_media_player_swf(),
-            'link' => new core_media_player_link(),
-        );
+        debugging('Class core_media_renderer is deprecated, please use core_media_manager::instance()', DEBUG_DEVELOPER);
     }
 
     /**
@@ -4376,18 +4526,7 @@ class core_media_renderer extends plugin_renderer_base {
      */
     public function embed_url(moodle_url $url, $name = '', $width = 0, $height = 0,
             $options = array()) {
-
-        // Get width and height from URL if specified (overrides parameters in
-        // function call).
-        $rawurl = $url->out(false);
-        if (preg_match('/[?#]d=([\d]{1,4}%?)x([\d]{1,4}%?)/', $rawurl, $matches)) {
-            $width = $matches[1];
-            $height = $matches[2];
-            $url = new moodle_url(str_replace($matches[0], '', $rawurl));
-        }
-
-        // Defer to array version of function.
-        return $this->embed_alternatives(array($url), $name, $width, $height, $options);
+        return core_media_manager::instance()->embed_url($url, $name, $width, $height, $options);
     }
 
     /**
@@ -4422,38 +4561,7 @@ class core_media_renderer extends plugin_renderer_base {
      */
     public function embed_alternatives($alternatives, $name = '', $width = 0, $height = 0,
             $options = array()) {
-
-        // Get list of player plugins (will also require the library).
-        $players = $this->get_players();
-
-        // Set up initial text which will be replaced by first player that
-        // supports any of the formats.
-        $out = core_media_player::PLACEHOLDER;
-
-        // Loop through all players that support any of these URLs.
-        foreach ($players as $player) {
-            // Option: When no other player matched, don't do the default link player.
-            if (!empty($options[core_media::OPTION_FALLBACK_TO_BLANK]) &&
-                    $player->get_rank() === 0 && $out === core_media_player::PLACEHOLDER) {
-                continue;
-            }
-
-            $supported = $player->list_supported_urls($alternatives, $options);
-            if ($supported) {
-                // Embed.
-                $text = $player->embed($supported, $name, $width, $height, $options);
-
-                // Put this in place of the 'fallback' slot in the previous text.
-                $out = str_replace(core_media_player::PLACEHOLDER, $text, $out);
-            }
-        }
-
-        // Remove 'fallback' slot from final version and return it.
-        $out = str_replace(core_media_player::PLACEHOLDER, '', $out);
-        if (!empty($options[core_media::OPTION_BLOCK]) && $out !== '') {
-            $out = html_writer::tag('div', $out, array('class' => 'resourcecontent'));
-        }
-        return $out;
+        return core_media_manager::instance()->embed_alternatives($alternatives, $name, $width, $height, $options);
     }
 
     /**
@@ -4468,7 +4576,7 @@ class core_media_renderer extends plugin_renderer_base {
      * @return bool True if file can be embedded
      */
     public function can_embed_url(moodle_url $url, $options = array()) {
-        return $this->can_embed_urls(array($url), $options);
+        return core_media_manager::instance()->can_embed_url($url, $options);
     }
 
     /**
@@ -4481,18 +4589,7 @@ class core_media_renderer extends plugin_renderer_base {
      * @return bool True if file can be embedded
      */
     public function can_embed_urls(array $urls, $options = array()) {
-        // Check all players to see if any of them support it.
-        foreach ($this->get_players() as $player) {
-            // Link player (always last on list) doesn't count!
-            if ($player->get_rank() <= 0) {
-                break;
-            }
-            // First player that supports it, return true.
-            if ($player->list_supported_urls($urls, $options)) {
-                return true;
-            }
-        }
-        return false;
+        return core_media_manager::instance()->can_embed_urls($urls, $options);
     }
 
     /**
@@ -4507,19 +4604,7 @@ class core_media_renderer extends plugin_renderer_base {
      * @return string String suitable for use in regex such as '(\.mp4|\.flv)'
      */
     public function get_embeddable_markers() {
-        if (empty($this->embeddablemarkers)) {
-            $markers = '';
-            foreach ($this->get_players() as $player) {
-                foreach ($player->get_embeddable_markers() as $marker) {
-                    if ($markers !== '') {
-                        $markers .= '|';
-                    }
-                    $markers .= preg_quote($marker);
-                }
-            }
-            $this->embeddablemarkers = $markers;
-        }
-        return $this->embeddablemarkers;
+        return core_media_manager::instance()->get_embeddable_markers();
     }
 }
 
@@ -4672,6 +4757,47 @@ class core_renderer_maintenance extends core_renderer {
         // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
         return '';
 
+    }
+
+    /**
+     * Overridden confirm message for upgrades.
+     *
+     * @param string $message The question to ask the user
+     * @param single_button|moodle_url|string $continue The single_button component representing the Continue answer.
+     * @param single_button|moodle_url|string $cancel The single_button component representing the Cancel answer.
+     * @return string HTML fragment
+     */
+    public function confirm($message, $continue, $cancel) {
+        // We need plain styling of confirm boxes on upgrade because we don't know which stylesheet we have (it could be
+        // from any previous version of Moodle).
+        if ($continue instanceof single_button) {
+            $continue->primary = true;
+        } else if (is_string($continue)) {
+            $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post', true);
+        } else if ($continue instanceof moodle_url) {
+            $continue = new single_button($continue, get_string('continue'), 'post', true);
+        } else {
+            throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL' .
+                                       ' (string/moodle_url) or a single_button instance.');
+        }
+
+        if ($cancel instanceof single_button) {
+            $output = '';
+        } else if (is_string($cancel)) {
+            $cancel = new single_button(new moodle_url($cancel), get_string('cancel'), 'get');
+        } else if ($cancel instanceof moodle_url) {
+            $cancel = new single_button($cancel, get_string('cancel'), 'get');
+        } else {
+            throw new coding_exception('The cancel param to $OUTPUT->confirm() must be either a URL' .
+                                       ' (string/moodle_url) or a single_button instance.');
+        }
+
+        $output = $this->box_start('generalbox', 'notice');
+        $output .= html_writer::tag('h4', get_string('confirm'));
+        $output .= html_writer::tag('p', $message);
+        $output .= html_writer::tag('div', $this->render($continue) . $this->render($cancel), array('class' => 'buttons'));
+        $output .= $this->box_end();
+        return $output;
     }
 
     /**

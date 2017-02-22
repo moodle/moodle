@@ -354,7 +354,7 @@ class cache_helper {
     protected static function ensure_ready_for_stats($store, $definition, $mode = cache_store::MODE_APPLICATION) {
         // This function is performance-sensitive, so exit as quickly as possible
         // if we do not need to do anything.
-        if (isset(self::$stats[$definition][$store])) {
+        if (isset(self::$stats[$definition]['stores'][$store])) {
             return;
         }
         if (!array_key_exists($definition, self::$stats)) {
@@ -368,7 +368,7 @@ class cache_helper {
                     )
                 )
             );
-        } else if (!array_key_exists($store, self::$stats[$definition])) {
+        } else if (!array_key_exists($store, self::$stats[$definition]['stores'])) {
             self::$stats[$definition]['stores'][$store] = array(
                 'hits' => 0,
                 'misses' => 0,
@@ -502,15 +502,18 @@ class cache_helper {
         $store = $stores[$storename];
         $class = $store['class'];
 
+
+        // We check are_requirements_met although we expect is_ready is going to check as well.
+        if (!$class::are_requirements_met()) {
+            return false;
+        }
         // Found the store: is it ready?
         /* @var cache_store $instance */
         $instance = new $class($store['name'], $store['configuration']);
-        // We check are_requirements_met although we expect is_ready is going to check as well.
-        if (!$instance::are_requirements_met() || !$instance->is_ready()) {
+        if (!$instance->is_ready()) {
             unset($instance);
             return false;
         }
-
         foreach ($config->get_definitions_by_store($storename) as $id => $definition) {
             $definition = cache_definition::load($id, $definition);
             $definitioninstance = clone($instance);

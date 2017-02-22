@@ -110,14 +110,22 @@ class mod_wiki_generator extends testing_module_generator {
             }
         }
 
-        if ($wikipage = wiki_get_page_by_title($record['subwikiid'], $record['title'])) {
-            $rv = wiki_save_page($wikipage, $record['content'], $USER->id);
-            return $rv['page'];
+        $wikipage = wiki_get_page_by_title($record['subwikiid'], $record['title']);
+        if (!$wikipage) {
+            $pageid = wiki_create_page($record['subwikiid'], $record['title'], $record['format'], $USER->id);
+            $wikipage = wiki_get_page($pageid);
         }
-
-        $pageid = wiki_create_page($record['subwikiid'], $record['title'], $record['format'], $USER->id);
-        $wikipage = wiki_get_page($pageid);
         $rv = wiki_save_page($wikipage, $record['content'], $USER->id);
+
+        if (array_key_exists('tags', $record)) {
+            $tags = is_array($record['tags']) ? $record['tags'] : preg_split('/,/', $record['tags']);
+            if (empty($wiki->cmid)) {
+                $cm = get_coursemodule_from_instance('wiki', $wiki->id, isset($wiki->course) ? $wiki->course : 0);
+                $wiki->cmid = $cm->id;
+            }
+            core_tag_tag::set_item_tags('mod_wiki', 'wiki_pages', $wikipage->id,
+                    context_module::instance($wiki->cmid), $tags);
+        }
         return $rv['page'];
     }
 }

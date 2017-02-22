@@ -24,7 +24,10 @@
     </td>
 </tr>
 
-<tr><td align="center" colspan="2"><input type="submit" name="preview" value="<?php print_string('preview'); ?>" /></td></tr>
+<tr><td align="center" colspan="2">
+        <input type="submit" name="send" value="<?php print_string('sendmessage', 'message'); ?>" />
+        <input type="submit" name="preview" value="<?php print_string('preview'); ?>" />
+</td></tr>
 </table>
 <?php echo $OUTPUT->box_end(); ?>
 <table align="center"><tr><th colspan="4" scope="row"><?php print_string('currentlyselectedusers'); ?></th></tr>

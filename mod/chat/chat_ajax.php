@@ -16,8 +16,8 @@
 
 define('AJAX_SCRIPT', true);
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
-require_once(dirname(__FILE__) . '/lib.php');
+require(__DIR__.'/../../config.php');
+require_once(__DIR__ . '/lib.php');
 
 $action       = optional_param('action', '', PARAM_ALPHANUM);
 $beepid       = optional_param('beep', '', PARAM_RAW);
@@ -109,13 +109,7 @@ switch ($action) {
             $chatlasttime = time() - $CFG->chat_old_ping;
         }
 
-        $params = array('groupid' => $chatuser->groupid, 'chatid' => $chatuser->chatid, 'lasttime' => $chatlasttime);
-
-        $groupselect = $chatuser->groupid ? " AND (groupid=".$chatuser->groupid." OR groupid=0) " : "";
-
-        $messages = $DB->get_records_select('chat_messages_current',
-            'chatid = :chatid AND timestamp > :lasttime '.$groupselect, $params,
-            'timestamp ASC');
+        $messages = chat_get_latest_messages($chatuser, $chatlasttime);
 
         if (!empty($messages)) {
             $num = count($messages);

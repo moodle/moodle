@@ -45,7 +45,7 @@ class Hint_ResultPrinter extends PHPUnit_TextUI_ResultPrinter {
             }
         }
         // Fallback if something goes wrong.
-        parent::__construct(null, false, false, false);
+        parent::__construct(null, false, self::COLOR_DEFAULT, false);
     }
 
     protected function printDefectTrace(PHPUnit_Framework_TestFailure $defect) {
@@ -86,30 +86,32 @@ class Hint_ResultPrinter extends PHPUnit_TextUI_ResultPrinter {
         $cwd = getcwd();
         if (strpos($file, $cwd) === 0) {
             $file = substr($file, strlen($cwd)+1);
+            $file = testing_cli_fix_directory_separator($file);
         }
 
-        $executable = null;
+        $pathprefix = testing_cli_argument_path('/');
+        if ($pathprefix) {
+            $pathprefix .= DIRECTORY_SEPARATOR;
+        }
 
+        // There is only vendor/bin/phpunit executable. There is no .cmd or .bat files.
+        $executable = $pathprefix . 'vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'phpunit';
+        $executable = testing_cli_fix_directory_separator($executable);
+
+        // Add server arguments to the rerun if passed.
         if (isset($_SERVER['argv'][0])) {
             if (preg_match('/phpunit(\.bat|\.cmd)?$/', $_SERVER['argv'][0])) {
-                $executable = $_SERVER['argv'][0];
                 for($i=1;$i<count($_SERVER['argv']);$i++) {
                     if (!isset($_SERVER['argv'][$i])) {
                         break;
                     }
-                    if (in_array($_SERVER['argv'][$i], array('--colors', '--verbose', '-v', '--debug', '--strict'))) {
+                    if (in_array($_SERVER['argv'][$i], array('--colors', '--verbose', '-v', '--debug'))) {
+                        $executable .= ' '.$_SERVER['argv'][$i];
+                    } else if (in_array($_SERVER['argv'][$i], array('-c', '--config'))) {
+                        $executable .= ' '.$_SERVER['argv'][$i] . ' ' . $_SERVER['argv'][++$i];
+                    } else if (strpos($_SERVER['argv'][$i], '--config') === 0) {
                         $executable .= ' '.$_SERVER['argv'][$i];
                     }
-                }
-            }
-        }
-
-        if (!$executable) {
-            $executable = 'phpunit';
-            if (testing_is_cygwin()) {
-                $file = str_replace('\\', '/', $file);
-                if (!testing_is_mingw()) {
-                    $executable = 'phpunit.bat';
                 }
             }
         }
@@ -135,7 +137,7 @@ class Hacky_TextUI_Command_reader extends PHPUnit_TextUI_Command {
         $verbose = isset($config['verbose']) ? $config['verbose'] : false;
         $verbose = isset($arguments['verbose']) ? $arguments['verbose'] : $verbose;
 
-        $colors = isset($config['colors']) ? $config['colors'] : false;
+        $colors = isset($config['colors']) ? $config['colors'] : Hint_ResultPrinter::COLOR_DEFAULT;
         $colors = isset($arguments['colors']) ? $arguments['colors'] : $colors;
 
         $debug = isset($config['debug']) ? $config['debug'] : false;

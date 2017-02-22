@@ -96,6 +96,28 @@ class behat_form_field {
     }
 
     /**
+     * Presses specific keyboard key.
+     *
+     * @param mixed  $char     could be either char ('b') or char-code (98)
+     * @param string $modifier keyboard modifier (could be 'ctrl', 'alt', 'shift' or 'meta')
+     */
+    public function key_press($char, $modifier = null) {
+        // We delegate to the best guess, if we arrived here
+        // using the generic behat_form_field is because we are
+        // dealing with a fgroup element.
+        $instance = $this->guess_type();
+        $instance->field->keyDown($char, $modifier);
+        try {
+            $instance->field->keyPress($char, $modifier);
+            $instance->field->keyUp($char, $modifier);
+        } catch (WebDriver\Exception $e) {
+            // If the JS handler attached to keydown or keypress destroys the element
+            // the later events may trigger errors because form element no longer exist
+            // or is not visible. Ignore such exceptions here.
+        }
+    }
+
+    /**
      * Generic match implementation
      *
      * Will work well with text-based fields, extension required

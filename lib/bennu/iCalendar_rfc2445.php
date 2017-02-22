@@ -79,7 +79,7 @@ function rfc2445_fold($string) {
         /* Add the portion to the return value, terminating with CRLF.HTAB
            As per RFC 2445, CRLF.HTAB will be replaced by the processor of the 
            data */
-        $retval .= $section.RFC2445_CRLF.RFC2445_WSP;
+        $retval .= $section . RFC2445_CRLF . substr(RFC2445_WSP, 0, 1);
         
         $i++;
     }

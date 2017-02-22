@@ -29,6 +29,8 @@ Feature: edit_availability
       | student1 | C1     | student        |
 
   Scenario: Confirm the 'enable availability' option is working
+    Given the following config values are set as admin:
+      | enableavailability | 0 |
     When I log in as "teacher1"
     And I am on site homepage
     And I follow "Course 1"
@@ -55,9 +57,7 @@ Feature: edit_availability
   @javascript
   Scenario: Edit availability using settings in activity form
     # Set up.
-    Given the following config values are set as admin:
-      | enableavailability | 1 |
-    And I log in as "teacher1"
+    Given I log in as "teacher1"
     And I follow "Course 1"
 
     # Add a Page and check it has None in so far.
@@ -148,9 +148,7 @@ Feature: edit_availability
   @javascript
   Scenario: Edit availability using settings in section form
     # Set up.
-    Given the following config values are set as admin:
-      | enableavailability | 1 |
-    And I log in as "teacher1"
+    Given I log in as "teacher1"
     And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
@@ -170,7 +168,9 @@ Feature: edit_availability
   @javascript
   Scenario: 'Add group/grouping access restriction' button unavailable
     # Button does not exist when conditional access restrictions are turned off.
-    Given I log in as "admin"
+    Given the following config values are set as admin:
+      | enableavailability | 0 |
+    And I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
@@ -181,9 +181,7 @@ Feature: edit_availability
   @javascript
   Scenario: Use the 'Add group/grouping access restriction' button
     # Button should initially be disabled.
-    Given the following config values are set as admin:
-      | enableavailability | 1 |
-    And the following "groupings" exist:
+    Given the following "groupings" exist:
       | name | course | idnumber |
       | GX1  | C1     | GXI1     |
     And I log in as "admin"
@@ -218,7 +216,7 @@ Feature: edit_availability
 
     # Check the button still works after saving and editing.
     And I press "Save and display"
-    And I navigate to "Edit settings" node in "Forum administration"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And the "Add group/grouping access restriction" "button" should be disabled
     And I should see "Grouping" in the "Restrict access" "fieldset"

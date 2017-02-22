@@ -38,9 +38,19 @@ class auth_plugin_shibboleth extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_shibboleth() {
+    public function __construct() {
         $this->authtype = 'shibboleth';
         $this->config = get_config('auth/shibboleth');
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function auth_plugin_shibboleth() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     /**
@@ -168,13 +178,32 @@ class auth_plugin_shibboleth extends auth_plugin_base {
     }
 
     /**
-     * Returns true if this authentication plugin can change the user's
-     * password.
+     * Whether shibboleth users can change their password or not.
      *
-     * @return bool
+     * Shibboleth auth requires password to be changed on shibboleth server directly.
+     * So it is required to have  password change url set.
+     *
+     * @return bool true if there's a password url or false otherwise.
      */
     function can_change_password() {
-        return false;
+        if (!empty($this->config->changepasswordurl)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get password change url.
+     *
+     * @return moodle_url|null Returns URL to change password or null otherwise.
+     */
+    function change_password_url() {
+        if (!empty($this->config->changepasswordurl)) {
+            return new moodle_url($this->config->changepasswordurl);
+        } else {
+            return null;
+        }
     }
 
      /**
@@ -210,7 +239,8 @@ class auth_plugin_shibboleth extends auth_plugin_base {
             }
 
             // Overwrite redirect in order to send user to Shibboleth logout page and let him return back
-            $redirect = $this->config->logout_handler.'?return='.urlencode($temp_redirect);
+            $redirecturl = new moodle_url($this->config->logout_handler, array('return' => $temp_redirect));
+            $redirect = $redirecturl->out();
         }
     }
 

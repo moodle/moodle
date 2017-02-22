@@ -97,4 +97,8 @@ class essay_attempt_viewed extends \core\event\base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'lesson_attempts', 'restore' => 'lesson_attempt');
+    }
 }

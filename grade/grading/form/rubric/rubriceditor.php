@@ -60,8 +60,18 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
      * @param string $elementLabel
      * @param array $attributes
      */
-    function MoodleQuickForm_rubriceditor($elementName=null, $elementLabel=null, $attributes=null) {
-        parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null) {
+        parent::__construct($elementName, $elementLabel, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_rubriceditor($elementName=null, $elementLabel=null, $attributes=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $attributes);
     }
 
     /**
@@ -109,7 +119,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                 'requires' => array('base', 'dom', 'event', 'event-touch', 'escape'),
                 'strings' => array(array('confirmdeletecriterion', 'gradingform_rubric'), array('confirmdeletelevel', 'gradingform_rubric'),
                     array('criterionempty', 'gradingform_rubric'), array('levelempty', 'gradingform_rubric')
-                    ));
+                ));
             $PAGE->requires->js_init_call('M.gradingform_rubriceditor.init', array(
                 array('name' => $this->getName(),
                     'criteriontemplate' => $renderer->criterion_template($mode, $data['options'], $this->getName()),
@@ -131,7 +141,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
             $html .= $renderer->display_regrade_confirmation($this->getName(), $this->regradeconfirmation, $data['regrade']);
         }
         if ($this->validationerrors) {
-            $html .= $renderer->notification($this->validationerrors, 'error');
+            $html .= html_writer::div($renderer->notification($this->validationerrors));
         }
         $html .= $renderer->display_rubric($data['criteria'], $data['options'], $mode, $this->getName());
         return $html;
@@ -187,6 +197,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
         // iterate through criteria
         $lastaction = null;
         $lastid = null;
+        $overallminscore = $overallmaxscore = 0;
         foreach ($value['criteria'] as $id => $criterion) {
             if ($id == 'addcriterion') {
                 $id = $this->get_next_id(array_keys($value['criteria']));
@@ -211,7 +222,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                 $this->nonjsbuttonpressed = true;
             }
             $levels = array();
-            $maxscore = null;
+            $minscore = $maxscore = null;
             if (array_key_exists('levels', $criterion)) {
                 foreach ($criterion['levels'] as $levelid => $level) {
                     if ($levelid == 'addlevel') {
@@ -221,26 +232,30 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                             'score' => 0,
                         );
                         foreach ($criterion['levels'] as $lastlevel) {
-                            if (isset($lastlevel['score']) && $level['score'] < $lastlevel['score'] + 1) {
-                                $level['score'] = $lastlevel['score'] + 1;
+                            if (isset($lastlevel['score'])) {
+                                $level['score'] = max($level['score'], ceil(unformat_float($lastlevel['score'])) + 1);
                             }
                         }
                         $this->nonjsbuttonpressed = true;
                     }
                     if (!array_key_exists('delete', $level)) {
+                        $score = unformat_float($level['score'], true);
                         if ($withvalidation) {
                             if (!strlen(trim($level['definition']))) {
                                 $errors['err_nodefinition'] = 1;
                                 $level['error_definition'] = true;
                             }
-                            if (!preg_match('#^[\+]?\d*$#', trim($level['score'])) && !preg_match('#^[\+]?\d*[\.,]\d+$#', trim($level['score']))) {
+                            if ($score === null || $score === false) {
                                 $errors['err_scoreformat'] = 1;
                                 $level['error_score'] = true;
                             }
                         }
                         $levels[$levelid] = $level;
-                        if ($maxscore === null || (float)$level['score'] > $maxscore) {
-                            $maxscore = (float)$level['score'];
+                        if ($minscore === null || $score < $minscore) {
+                            $minscore = $score;
+                        }
+                        if ($maxscore === null || $score > $maxscore) {
+                            $maxscore = $score;
                         }
                     } else {
                         $this->nonjsbuttonpressed = true;
@@ -258,6 +273,8 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                     $errors['err_nodescription'] = 1;
                     $criterion['error_description'] = true;
                 }
+                $overallmaxscore += $maxscore;
+                $overallminscore += $minscore;
             }
             if (array_key_exists('moveup', $criterion) || $lastaction == 'movedown') {
                 unset($criterion['moveup']);
@@ -297,6 +314,11 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
 
         // create validation error string (if needed)
         if ($withvalidation) {
+            if (!$return['options']['lockzeropoints']) {
+                if ($overallminscore == $overallmaxscore) {
+                    $errors['err_novariations'] = 1;
+                }
+            }
             if (count($errors)) {
                 $rv = array();
                 foreach ($errors as $error => $v) {

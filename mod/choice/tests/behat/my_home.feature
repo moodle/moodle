@@ -1,4 +1,4 @@
-@mod @mod_choice @javascript
+@mod @mod_choice
 Feature: Test the display of the choice module on my home
   In order to know my status in a choice activity
   As a user
@@ -21,10 +21,11 @@ Feature: Test the display of the choice module on my home
     And I turn editing mode on
     And I add a "Choice" to section "1"
     And I expand all fieldsets
-    And I click on "id_timerestrict" "checkbox"
     And I set the following fields to these values:
       | Choice name | Test choice name |
       | Description | Test choice description |
+      | timeopen[enabled] | 1 |
+      | timeclose[enabled] | 1 |
       | timeclose[day] | 1 |
       | timeclose[month] | January |
       | timeclose[year] | 2030 |
@@ -36,12 +37,9 @@ Feature: Test the display of the choice module on my home
     And I press "Save and return to course"
     And I log out
 
-  @javascript
   Scenario: View my home as a student before answering the choice
     Given I log in as "student1"
-    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have Choices that need attention"
-    And I click on ".collapsibleregioncaption" "css_element"
     And I should see "Not answered yet"
     And I log out
 
@@ -52,11 +50,10 @@ Feature: Test the display of the choice module on my home
     And I should see "Your selection: Option 1"
     And I should see "Your choice has been saved"
     And "Save my choice" "button" should not exist
-    When I click on "Dashboard" "link" in the "Navigation" "block"
+    When I follow "Dashboard"
     Then I should not see "You have Choices that need attention"
     And I log out
 
-  @javascript
   Scenario: View my home as a teacher
     Given I log in as "student1"
     And I follow "Course 1"
@@ -66,8 +63,6 @@ Feature: Test the display of the choice module on my home
     And "Save my choice" "button" should not exist
     And I log out
     When I log in as "teacher1"
-    And I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have Choices that need attention"
-    And I click on ".collapsibleregioncaption" "css_element"
     And I should see "View 1 responses"
     And I log out

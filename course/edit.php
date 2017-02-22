@@ -55,6 +55,9 @@ if ($returnto === 'url' && confirm_sesskey() && $returnurl) {
             case 'topcat':
                 $returnurl = new moodle_url($CFG->wwwroot . '/course/');
                 break;
+            case 'pending':
+                $returnurl = new moodle_url($CFG->wwwroot . '/course/pending.php');
+                break;
         }
     }
 }
@@ -121,6 +124,9 @@ if (!empty($course)) {
     foreach($aliases as $alias) {
         $course->{'role_'.$alias->roleid} = $alias->name;
     }
+
+    // Populate course tags.
+    $course->tags = core_tag_tag::get_item_tags_array('core', 'course', $course->id);
 
 } else {
     // Editor should respect category context if course context is not set.

@@ -29,16 +29,8 @@ global $CFG;
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/tests/fixtures/course_capability_assignment.php');
 require_once($CFG->dirroot . '/enrol/imsenterprise/tests/imsenterprise_test.php');
-require_once($CFG->dirroot . '/tag/lib.php');
 
 class core_course_courselib_testcase extends advanced_testcase {
-
-    /**
-     * Tidy up open files that may be left open.
-     */
-    protected function tearDown() {
-        gc_collect_cycles();
-    }
 
     /**
      * Set forum specific test values for calling create_module().
@@ -209,6 +201,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->course = $course->id;
         $moduleinfo->groupingid = $grouping->id;
         $moduleinfo->visible = true;
+        $moduleinfo->visibleoncoursepage = true;
 
         // Sometimes optional generic values for some modules.
         $moduleinfo->name = 'My test module';
@@ -444,6 +437,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->course = $course->id;
         $moduleinfo->groupingid = $grouping->id;
         $moduleinfo->visible = true;
+        $moduleinfo->visibleoncoursepage = true;
 
         // Sometimes optional generic values for some modules.
         $moduleinfo->name = 'My test module';
@@ -539,7 +533,23 @@ class core_course_courselib_testcase extends advanced_testcase {
         return $moduleinfo;
    }
 
+    /**
+     * Data provider for course_delete module
+     *
+     * @return array An array of arrays contain test data
+     */
+    public function provider_course_delete_module() {
+        $data = array();
 
+        $data['assign'] = array('assign', array('duedate' => time()));
+        $data['quiz'] = array('quiz', array('duedate' => time()));
+
+        return $data;
+    }
+
+    /**
+     * Test the create_course function
+     */
     public function test_create_course() {
         global $DB;
         $this->resetAfterTest(true);
@@ -566,10 +576,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Ensure default section is created.
         $sectioncreated = $DB->record_exists('course_sections', array('course' => $created->id, 'section' => 0));
         $this->assertTrue($sectioncreated);
-
-        // Ensure blocks have been associated to the course.
-        $blockcount = $DB->count_records('block_instances', array('parentcontextid' => $context->id));
-        $this->assertGreaterThan(0, $blockcount);
 
         // Ensure that the shortname isn't duplicated.
         try {
@@ -1476,51 +1482,99 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($pagecm->visible, 0);
     }
 
-    public function test_course_delete_module() {
+    /**
+     * Tests the function that deletes a course module
+     *
+     * @param string $type The type of module for the test
+     * @param array $options The options for the module creation
+     * @dataProvider provider_course_delete_module
+     */
+    public function test_course_delete_module($type, $options) {
         global $DB;
+
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
         // Create course and modules.
         $course = $this->getDataGenerator()->create_course(array('numsections' => 5));
+        $options['course'] = $course->id;
 
         // Generate an assignment with due date (will generate a course event).
-        $assign = $this->getDataGenerator()->create_module('assign', array('duedate' => time(), 'course' => $course->id));
+        $module = $this->getDataGenerator()->create_module($type, $options);
 
         // Get the module context.
-        $modcontext = context_module::instance($assign->cmid);
+        $modcontext = context_module::instance($module->cmid);
 
         // Verify context exists.
         $this->assertInstanceOf('context_module', $modcontext);
 
-        // Add some tags to this assignment.
-        tag_set('assign', $assign->id, array('Tag 1', 'Tag 2', 'Tag 3'), 'mod_assign', $modcontext->id);
+        // Make module specific messes.
+        switch ($type) {
+            case 'assign':
+                // Add some tags to this assignment.
+                core_tag_tag::set_item_tags('mod_assign', 'assign', $module->id, $modcontext, array('Tag 1', 'Tag 2', 'Tag 3'));
+                core_tag_tag::set_item_tags('core', 'course_modules', $module->cmid, $modcontext, array('Tag 3', 'Tag 4', 'Tag 5'));
 
-        // Confirm the tag instances were added.
-        $this->assertEquals(3, $DB->count_records('tag_instance', array('component' => 'mod_assign', 'contextid' =>
-            $modcontext->id)));
+                // Confirm the tag instances were added.
+                $criteria = array('component' => 'mod_assign', 'itemtype' => 'assign', 'contextid' => $modcontext->id);
+                $this->assertEquals(3, $DB->count_records('tag_instance', $criteria));
+                $criteria = array('component' => 'core', 'itemtype' => 'course_modules', 'contextid' => $modcontext->id);
+                $this->assertEquals(3, $DB->count_records('tag_instance', $criteria));
 
-        // Verify event assignment event has been generated.
-        $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
-        $this->assertEquals(1, $eventcount);
+                // Verify event assignment event has been generated.
+                $eventcount = $DB->count_records('event', array('instance' => $module->id, 'modulename' => $type));
+                $this->assertEquals(1, $eventcount);
+
+                break;
+            case 'quiz':
+                $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
+                $qcat = $qgen->create_question_category(array('contextid' => $modcontext->id));
+                $questions = array(
+                    $qgen->create_question('shortanswer', null, array('category' => $qcat->id)),
+                    $qgen->create_question('shortanswer', null, array('category' => $qcat->id)),
+                );
+                $this->expectOutputRegex('/'.get_string('unusedcategorydeleted', 'question').'/');
+                break;
+            default:
+                break;
+        }
 
         // Run delete..
-        course_delete_module($assign->cmid);
+        course_delete_module($module->cmid);
 
         // Verify the context has been removed.
-        $this->assertFalse(context_module::instance($assign->cmid, IGNORE_MISSING));
+        $this->assertFalse(context_module::instance($module->cmid, IGNORE_MISSING));
 
         // Verify the course_module record has been deleted.
-        $cmcount = $DB->count_records('course_modules', array('id' => $assign->cmid));
+        $cmcount = $DB->count_records('course_modules', array('id' => $module->cmid));
         $this->assertEmpty($cmcount);
 
-        // Verify event assignment events have been removed.
-        $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
-        $this->assertEmpty($eventcount);
+        // Test clean up of module specific messes.
+        switch ($type) {
+            case 'assign':
+                // Verify event assignment events have been removed.
+                $eventcount = $DB->count_records('event', array('instance' => $module->id, 'modulename' => $type));
+                $this->assertEmpty($eventcount);
 
-        // Verify the tag instances were deleted.
-        $this->assertEquals(0, $DB->count_records('tag_instance', array('component' => 'mod_assign', 'contextid' =>
-            $modcontext->id)));
+                // Verify the tag instances were deleted.
+                $criteria = array('component' => 'mod_assign', 'contextid' => $modcontext->id);
+                $this->assertEquals(0, $DB->count_records('tag_instance', $criteria));
+
+                $criteria = array('component' => 'core', 'itemtype' => 'course_modules', 'contextid' => $modcontext->id);
+                $this->assertEquals(0, $DB->count_records('tag_instance', $criteria));
+                break;
+            case 'quiz':
+                // Verify category deleted.
+                $criteria = array('contextid' => $modcontext->id);
+                $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
+
+                // Verify questions deleted.
+                $criteria = array('category' => $qcat->id);
+                $this->assertEquals(0, $DB->count_records('question', $criteria));
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -1566,6 +1620,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         ob_end_clean();
 
         // Create the XML file we want to use.
+        $course->category = (array)$course->category;
         $imstestcase = new enrol_imsenterprise_testcase();
         $imstestcase->imsplugin = enrol_get_plugin('imsenterprise');
         $imstestcase->set_test_config();
@@ -1576,7 +1631,13 @@ class core_course_courselib_testcase extends advanced_testcase {
         $imstestcase->imsplugin->cron();
         $events = $sink->get_events();
         $sink->close();
-        $event = $events[0];
+        $event = null;
+        foreach ($events as $eventinfo) {
+            if ($eventinfo instanceof \core\event\course_created ) {
+                $event = $eventinfo;
+                break;
+            }
+        }
 
         // Validate the event triggered is \core\event\course_created. There is no need to validate the other values
         // as they have already been validated in the previous steps. Here we only want to make sure that when the
@@ -1693,7 +1754,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sink->close();
 
         // Validate the event.
-        $event = $events[1];
+        $event = array_pop($events);
         $this->assertInstanceOf('\core\event\course_deleted', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($course->id, $event->objectid);
@@ -1745,7 +1806,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sink->close();
 
         // Validate the event.
-        $event = $events[0];
+        $event = array_pop($events);
         $this->assertInstanceOf('\core\event\course_content_deleted', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($course->id, $event->objectid);
@@ -1854,7 +1915,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
         $file->extract_to_pathname($fp, $filepath);
         $bc->destroy();
-        unset($bc);
 
         // Now we want to catch the restore course event.
         $sink = $this->redirectEvents();
@@ -1870,7 +1930,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sink->close();
 
         // Validate the event.
-        $event = $events[0];
+        $event = array_pop($events);
         $this->assertInstanceOf('\core\event\course_restored', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($rc->get_courseid(), $event->objectid);
@@ -1892,7 +1952,6 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Destroy the resource controller since we are done using it.
         $rc->destroy();
-        unset($rc);
     }
 
     /**
@@ -1948,6 +2007,44 @@ class core_course_courselib_testcase extends advanced_testcase {
         $id = $section->id;
         $sectionnum = $section->section;
         $expectedlegacydata = array($course->id, "course", "editsection", 'editsection.php?id=' . $id, $sectionnum);
+        $this->assertEventLegacyLogData($expectedlegacydata, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test that triggering a course_section_deleted event works as expected.
+     */
+    public function test_course_section_deleted_event() {
+        global $USER, $DB;
+        $this->resetAfterTest();
+        $sink = $this->redirectEvents();
+
+        // Create the course with sections.
+        $course = $this->getDataGenerator()->create_course(array('numsections' => 10), array('createsections' => true));
+        $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section');
+        $coursecontext = context_course::instance($course->id);
+        $section = array_pop($sections);
+        course_delete_section($course, $section);
+        $events = $sink->get_events();
+        $event = array_pop($events); // Delete section event.
+        $sink->close();
+
+        // Validate event data.
+        $this->assertInstanceOf('\core\event\course_section_deleted', $event);
+        $this->assertEquals('course_sections', $event->objecttable);
+        $this->assertEquals($section->id, $event->objectid);
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertEquals($coursecontext->id, $event->contextid);
+        $this->assertEquals($section->section, $event->other['sectionnum']);
+        $expecteddesc = "The user with id '{$event->userid}' deleted section number '{$event->other['sectionnum']}' " .
+                "(section name '{$event->other['sectionname']}') for the course with id '{$event->courseid}'";
+        $this->assertEquals($expecteddesc, $event->get_description());
+        $this->assertEquals($section, $event->get_record_snapshot('course_sections', $event->objectid));
+        $this->assertNull($event->get_url());
+
+        // Test legacy data.
+        $sectionnum = $section->section;
+        $expectedlegacydata = array($course->id, "course", "delete section", 'view.php?id=' . $course->id, $sectionnum);
         $this->assertEventLegacyLogData($expectedlegacydata, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -2677,5 +2774,921 @@ class core_course_courselib_testcase extends advanced_testcase {
         update_module($formdata);
         $this->assertNull($DB->get_field('course_modules', 'availability',
                 array('id' => $label->cmid)));
+    }
+
+    /**
+     * Test update_inplace_editable()
+     */
+    public function test_update_module_name_inplace() {
+        global $CFG, $DB, $PAGE;
+        require_once($CFG->dirroot . '/lib/external/externallib.php');
+
+        $this->setUser($this->getDataGenerator()->create_user());
+
+        $this->resetAfterTest(true);
+        $course = $this->getDataGenerator()->create_course();
+        $forum = self::getDataGenerator()->create_module('forum', array('course' => $course->id, 'name' => 'forum name'));
+
+        // Call service for core_course component without necessary permissions.
+        try {
+            core_external::update_inplace_editable('core_course', 'activityname', $forum->cmid, 'New forum name');
+            $this->fail('Exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('Course or activity not accessible. (Not enrolled)',
+                $e->getMessage());
+        }
+
+        // Change to admin user and make sure that cm name can be updated using web service update_inplace_editable().
+        $this->setAdminUser();
+        $res = core_external::update_inplace_editable('core_course', 'activityname', $forum->cmid, 'New forum name');
+        $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
+        $this->assertEquals('New forum name', $res['value']);
+        $this->assertEquals('New forum name', $DB->get_field('forum', 'name', array('id' => $forum->id)));
+    }
+
+    /**
+     * Testing function course_get_tagged_course_modules - search tagged course modules
+     */
+    public function test_course_get_tagged_course_modules() {
+        global $DB;
+        $this->resetAfterTest();
+        $course3 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course1 = $this->getDataGenerator()->create_course();
+        $cm11 = $this->getDataGenerator()->create_module('assign', array('course' => $course1->id,
+            'tags' => 'Cat, Dog'));
+        $cm12 = $this->getDataGenerator()->create_module('page', array('course' => $course1->id,
+            'tags' => 'Cat, Mouse', 'visible' => 0));
+        $cm13 = $this->getDataGenerator()->create_module('page', array('course' => $course1->id,
+            'tags' => 'Cat, Mouse, Dog'));
+        $cm21 = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id,
+            'tags' => 'Cat, Mouse'));
+        $cm31 = $this->getDataGenerator()->create_module('forum', array('course' => $course3->id,
+            'tags' => 'Cat, Mouse'));
+
+        // Admin is able to view everything.
+        $this->setAdminUser();
+        $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
+                /*$exclusivemode = */false, /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$page = */0);
+        $this->assertRegExp('/'.$cm11->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm12->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm13->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm21->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm31->name.'/', $res->content);
+        // Results from course1 are returned before results from course2.
+        $this->assertTrue(strpos($res->content, $cm11->name) < strpos($res->content, $cm21->name));
+
+        // Ordinary user is not able to see anything.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
+                /*$exclusivemode = */false, /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$page = */0);
+        $this->assertNull($res);
+
+        // Enrol user as student in course1 and course2.
+        $roleids = $DB->get_records_menu('role', null, '', 'shortname, id');
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id, $roleids['student']);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id, $roleids['student']);
+        core_tag_index_builder::reset_caches();
+
+        // Searching in the course context returns visible modules in this course.
+        $context = context_course::instance($course1->id);
+        $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
+                /*$exclusivemode = */false, /*$fromctx = */0, /*$ctx = */$context->id, /*$rec = */1, /*$page = */0);
+        $this->assertRegExp('/'.$cm11->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm12->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm13->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm21->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm31->name.'/', $res->content);
+
+        // Searching FROM the course context returns visible modules in all courses.
+        $context = context_course::instance($course2->id);
+        $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
+                /*$exclusivemode = */false, /*$fromctx = */$context->id, /*$ctx = */0, /*$rec = */1, /*$page = */0);
+        $this->assertRegExp('/'.$cm11->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm12->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm13->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm21->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm31->name.'/', $res->content); // No access to course3.
+        // Results from course2 are returned before results from course1.
+        $this->assertTrue(strpos($res->content, $cm21->name) < strpos($res->content, $cm11->name));
+
+        // Enrol user in course1 as a teacher - now he should be able to see hidden module.
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id, $roleids['editingteacher']);
+        get_fast_modinfo(0,0,true);
+
+        $context = context_course::instance($course1->id);
+        $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
+                /*$exclusivemode = */false, /*$fromctx = */$context->id, /*$ctx = */0, /*$rec = */1, /*$page = */0);
+        $this->assertRegExp('/'.$cm12->name.'/', $res->content);
+
+        // Create more modules and try pagination.
+        $cm14 = $this->getDataGenerator()->create_module('assign', array('course' => $course1->id,
+            'tags' => 'Cat, Dog'));
+        $cm15 = $this->getDataGenerator()->create_module('page', array('course' => $course1->id,
+            'tags' => 'Cat, Mouse', 'visible' => 0));
+        $cm16 = $this->getDataGenerator()->create_module('page', array('course' => $course1->id,
+            'tags' => 'Cat, Mouse, Dog'));
+
+        $context = context_course::instance($course1->id);
+        $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
+                /*$exclusivemode = */false, /*$fromctx = */0, /*$ctx = */$context->id, /*$rec = */1, /*$page = */0);
+        $this->assertRegExp('/'.$cm11->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm12->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm13->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm21->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm14->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm15->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm16->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm31->name.'/', $res->content); // No access to course3.
+        $this->assertEmpty($res->prevpageurl);
+        $this->assertNotEmpty($res->nextpageurl);
+
+        $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
+                /*$exclusivemode = */false, /*$fromctx = */0, /*$ctx = */$context->id, /*$rec = */1, /*$page = */1);
+        $this->assertNotRegExp('/'.$cm11->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm12->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm13->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm21->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm14->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm15->name.'/', $res->content);
+        $this->assertRegExp('/'.$cm16->name.'/', $res->content);
+        $this->assertNotRegExp('/'.$cm31->name.'/', $res->content); // No access to course3.
+        $this->assertNotEmpty($res->prevpageurl);
+        $this->assertEmpty($res->nextpageurl);
+    }
+
+    /**
+     * Test course_get_user_navigation_options for frontpage.
+     */
+    public function test_course_get_user_navigation_options_for_frontpage() {
+        global $CFG, $SITE, $DB;
+        $this->resetAfterTest();
+        $context = context_system::instance();
+        $course = clone $SITE;
+        $this->setAdminUser();
+
+        $navoptions = course_get_user_navigation_options($context, $course);
+        $this->assertTrue($navoptions->blogs);
+        $this->assertTrue($navoptions->notes);
+        $this->assertTrue($navoptions->participants);
+        $this->assertTrue($navoptions->badges);
+        $this->assertTrue($navoptions->tags);
+        $this->assertFalse($navoptions->search);
+        $this->assertTrue($navoptions->calendar);
+        $this->assertTrue($navoptions->competencies);
+
+        // Enable global search now.
+        $CFG->enableglobalsearch = 1;
+        $navoptions = course_get_user_navigation_options($context, $course);
+        $this->assertTrue($navoptions->search);
+
+        // Disable competencies.
+        $oldcompetencies = get_config('core_competency', 'enabled');
+        set_config('enabled', false, 'core_competency');
+        $navoptions = course_get_user_navigation_options($context, $course);
+        $this->assertFalse($navoptions->competencies);
+        set_config('enabled', $oldcompetencies, 'core_competency');
+
+        // Now try with a standard user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $navoptions = course_get_user_navigation_options($context, $course);
+        $this->assertTrue($navoptions->blogs);
+        $this->assertFalse($navoptions->notes);
+        $this->assertFalse($navoptions->participants);
+        $this->assertTrue($navoptions->badges);
+        $this->assertTrue($navoptions->tags);
+        $this->assertTrue($navoptions->search);
+        $this->assertTrue($navoptions->calendar);
+
+        // Standar using viewing frontpage settings from a course where is enrolled.
+        $course = self::getDataGenerator()->create_course();
+        // Create a viewer user.
+        $viewer = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($viewer->id, $course->id, $studentrole->id);
+        $this->setUser($viewer);
+
+        $navoptions = course_get_user_navigation_options($context, $course);
+        $this->assertTrue($navoptions->blogs);
+        $this->assertFalse($navoptions->notes);
+        $this->assertTrue($navoptions->participants);
+        $this->assertTrue($navoptions->badges);
+        $this->assertTrue($navoptions->tags);
+        $this->assertTrue($navoptions->search);
+        $this->assertTrue($navoptions->calendar);
+    }
+
+    /**
+     * Test course_get_user_navigation_options for managers in a normal course.
+     */
+    public function test_course_get_user_navigation_options_for_managers() {
+        global $CFG;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $this->setAdminUser();
+
+        $navoptions = course_get_user_navigation_options($context);
+        $this->assertTrue($navoptions->blogs);
+        $this->assertTrue($navoptions->notes);
+        $this->assertTrue($navoptions->participants);
+        $this->assertTrue($navoptions->badges);
+    }
+
+    /**
+     * Test course_get_user_navigation_options for students in a normal course.
+     */
+    public function test_course_get_user_navigation_options_for_students() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        $this->setUser($user);
+
+        $navoptions = course_get_user_navigation_options($context);
+        $this->assertTrue($navoptions->blogs);
+        $this->assertFalse($navoptions->notes);
+        $this->assertTrue($navoptions->participants);
+        $this->assertTrue($navoptions->badges);
+
+        // Disable some options.
+        $CFG->badges_allowcoursebadges = 0;
+        $CFG->enableblogs = 0;
+        // Disable view participants capability.
+        assign_capability('moodle/course:viewparticipants', CAP_PROHIBIT, $roleid, $context);
+        $context->mark_dirty();
+
+        $navoptions = course_get_user_navigation_options($context);
+        $this->assertFalse($navoptions->blogs);
+        $this->assertFalse($navoptions->notes);
+        $this->assertFalse($navoptions->participants);
+        $this->assertFalse($navoptions->badges);
+    }
+
+    /**
+     * Test course_get_user_administration_options for frontpage.
+     */
+    public function test_course_get_user_administration_options_for_frontpage() {
+        global $CFG, $SITE;
+        $this->resetAfterTest();
+        $course = clone $SITE;
+        $context = context_course::instance($course->id);
+        $this->setAdminUser();
+
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertTrue($adminoptions->update);
+        $this->assertTrue($adminoptions->filters);
+        $this->assertTrue($adminoptions->reports);
+        $this->assertTrue($adminoptions->backup);
+        $this->assertTrue($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertFalse($adminoptions->tags);
+
+        // Now try with a standard user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertFalse($adminoptions->update);
+        $this->assertFalse($adminoptions->filters);
+        $this->assertFalse($adminoptions->reports);
+        $this->assertFalse($adminoptions->backup);
+        $this->assertFalse($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertFalse($adminoptions->tags);
+
+    }
+
+    /**
+     * Test course_get_user_administration_options for managers in a normal course.
+     */
+    public function test_course_get_user_administration_options_for_managers() {
+        global $CFG;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $this->setAdminUser();
+
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertTrue($adminoptions->update);
+        $this->assertTrue($adminoptions->filters);
+        $this->assertTrue($adminoptions->reports);
+        $this->assertTrue($adminoptions->backup);
+        $this->assertTrue($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertTrue($adminoptions->tags);
+        $this->assertTrue($adminoptions->gradebook);
+        $this->assertFalse($adminoptions->outcomes);
+        $this->assertTrue($adminoptions->badges);
+        $this->assertTrue($adminoptions->import);
+        $this->assertTrue($adminoptions->publish);
+        $this->assertTrue($adminoptions->reset);
+        $this->assertTrue($adminoptions->roles);
+    }
+
+    /**
+     * Test course_get_user_administration_options for students in a normal course.
+     */
+    public function test_course_get_user_administration_options_for_students() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        $this->setUser($user);
+        $adminoptions = course_get_user_administration_options($course, $context);
+
+        $this->assertFalse($adminoptions->update);
+        $this->assertFalse($adminoptions->filters);
+        $this->assertFalse($adminoptions->reports);
+        $this->assertFalse($adminoptions->backup);
+        $this->assertFalse($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertFalse($adminoptions->tags);
+        $this->assertFalse($adminoptions->gradebook);
+        $this->assertFalse($adminoptions->outcomes);
+        $this->assertTrue($adminoptions->badges);
+        $this->assertFalse($adminoptions->import);
+        $this->assertFalse($adminoptions->publish);
+        $this->assertFalse($adminoptions->reset);
+        $this->assertFalse($adminoptions->roles);
+
+        $CFG->enablebadges = false;
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertFalse($adminoptions->badges);
+    }
+
+    /**
+     * Test test_update_course_frontpage_category.
+     */
+    public function test_update_course_frontpage_category() {
+        // Fetch front page course.
+        $course = get_course(SITEID);
+        // Test update information on front page course.
+        $course->category = 99;
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('invalidcourse', 'error'));
+        update_course($course);
+    }
+
+    /**
+     * test_course_enddate
+     *
+     * @dataProvider course_enddate_provider
+     * @param int $startdate
+     * @param int $enddate
+     * @param string $errorcode
+     */
+    public function test_course_enddate($startdate, $enddate, $errorcode) {
+
+        $this->resetAfterTest(true);
+
+        $record = array('startdate' => $startdate, 'enddate' => $enddate);
+        try {
+            $course1 = $this->getDataGenerator()->create_course($record);
+            if ($errorcode !== false) {
+                $this->fail('Expected exception with "' . $errorcode . '" error code in create_create');
+            }
+        } catch (moodle_exception $e) {
+            if ($errorcode === false) {
+                $this->fail('Got "' . $errorcode . '" exception error code and no exception was expected');
+            }
+            if ($e->errorcode != $errorcode) {
+                $this->fail('Got "' . $e->errorcode. '" exception error code and "' . $errorcode . '" was expected');
+            }
+            return;
+        }
+
+        $this->assertEquals($startdate, $course1->startdate);
+        $this->assertEquals($enddate, $course1->enddate);
+    }
+
+    /**
+     * Provider for test_course_enddate.
+     *
+     * @return array
+     */
+    public function course_enddate_provider() {
+        // Each provided example contains startdate, enddate and the expected exception error code if there is any.
+        return [
+            [
+                111,
+                222,
+                false
+            ], [
+                222,
+                111,
+                'enddatebeforestartdate'
+            ], [
+                111,
+                0,
+                false
+            ], [
+                0,
+                222,
+                'nostartdatenoenddate'
+            ]
+        ];
+    }
+
+
+    /**
+     * test_course_dates_reset
+     *
+     * @dataProvider course_dates_reset_provider
+     * @param int $startdate
+     * @param int $enddate
+     * @param int $resetstartdate
+     * @param int $resetenddate
+     * @param int $resultingstartdate
+     * @param int $resultingenddate
+     */
+    public function test_course_dates_reset($startdate, $enddate, $resetstartdate, $resetenddate, $resultingstartdate, $resultingenddate) {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_date.php');
+
+        $this->resetAfterTest(true);
+
+        $CFG->enablecompletion = true;
+
+        $this->setTimezone('UTC');
+
+        $record = array('startdate' => $startdate, 'enddate' => $enddate, 'enablecompletion' => 1);
+        $originalcourse = $this->getDataGenerator()->create_course($record);
+        $coursecriteria = new completion_criteria_date(array('course' => $originalcourse->id, 'timeend' => $startdate + DAYSECS));
+        $coursecriteria->insert();
+
+        $activitycompletiondate = $startdate + DAYSECS;
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $originalcourse->id),
+                        array('completion' => 1, 'completionexpected' => $activitycompletiondate));
+
+        $resetdata = new stdClass();
+        $resetdata->id = $originalcourse->id;
+        $resetdata->reset_start_date_old = $originalcourse->startdate;
+        $resetdata->reset_start_date = $resetstartdate;
+        $resetdata->reset_end_date = $resetenddate;
+        $resetdata->reset_end_date_old = $record['enddate'];
+        reset_course_userdata($resetdata);
+
+        $course = $DB->get_record('course', array('id' => $originalcourse->id));
+
+        $this->assertEquals($resultingstartdate, $course->startdate);
+        $this->assertEquals($resultingenddate, $course->enddate);
+
+        $coursecompletioncriteria = completion_criteria_date::fetch(array('course' => $originalcourse->id));
+        $this->assertEquals($resultingstartdate + DAYSECS, $coursecompletioncriteria->timeend);
+
+        $this->assertEquals($resultingstartdate + DAYSECS, $DB->get_field('course_modules', 'completionexpected',
+            array('id' => $data->cmid)));
+    }
+
+    /**
+     * Provider for test_course_dates_reset.
+     *
+     * @return array
+     */
+    public function course_dates_reset_provider() {
+
+        // Each example contains the following:
+        // - course startdate
+        // - course enddate
+        // - startdate to reset to (false if not reset)
+        // - enddate to reset to (false if not reset)
+        // - resulting startdate
+        // - resulting enddate
+        $time = 1445644800;
+        return [
+            // No date changes.
+            [
+                $time,
+                $time + DAYSECS,
+                false,
+                false,
+                $time,
+                $time + DAYSECS
+            ],
+            // End date changes to a valid value.
+            [
+                $time,
+                $time + DAYSECS,
+                false,
+                $time + DAYSECS + 111,
+                $time,
+                $time + DAYSECS + 111
+            ],
+            // Start date changes to a valid value. End date does not get updated because it does not have value.
+            [
+                $time,
+                0,
+                $time + DAYSECS,
+                false,
+                $time + DAYSECS,
+                0
+            ],
+            // Start date changes to a valid value. End date gets updated accordingly.
+            [
+                $time,
+                $time + DAYSECS,
+                $time + WEEKSECS,
+                false,
+                $time + WEEKSECS,
+                $time + WEEKSECS + DAYSECS
+            ],
+            // Start date and end date change to a valid value.
+            [
+                $time,
+                $time + DAYSECS,
+                $time + WEEKSECS,
+                $time + YEARSECS,
+                $time + WEEKSECS,
+                $time + YEARSECS
+            ]
+        ];
+    }
+
+    public function test_course_check_module_updates_since() {
+        global $CFG, $DB, $USER;
+        require_once($CFG->dirroot . '/mod/glossary/lib.php');
+        require_once($CFG->dirroot . '/rating/lib.php');
+        require_once($CFG->dirroot . '/comment/lib.php');
+
+        $this->resetAfterTest(true);
+
+        $CFG->enablecompletion = true;
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $glossary = $this->getDataGenerator()->create_module('glossary', array(
+            'course' => $course->id,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC,
+            'completionview' => 1,
+            'allowcomments' => 1,
+            'assessed' => RATING_AGGREGATE_AVERAGE,
+            'scale' => 100
+        ));
+        $glossarygenerator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $context = context_module::instance($glossary->cmid);
+        $modinfo = get_fast_modinfo($course);
+        $cm = $modinfo->get_cm($glossary->cmid);
+        $user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
+        $from = time();
+
+        $teacher = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        assign_capability('mod/glossary:viewanyrating', CAP_ALLOW, $studentrole->id, $context->id, true);
+
+        // Check nothing changed right now.
+        $updates = course_check_module_updates_since($cm, $from);
+        $this->assertFalse($updates->configuration->updated);
+        $this->assertFalse($updates->completion->updated);
+        $this->assertFalse($updates->gradeitems->updated);
+        $this->assertFalse($updates->comments->updated);
+        $this->assertFalse($updates->ratings->updated);
+        $this->assertFalse($updates->introfiles->updated);
+        $this->assertFalse($updates->outcomes->updated);
+
+        $this->waitForSecond();
+
+        // Do some changes.
+        $this->setUser($user);
+        $entry = $glossarygenerator->create_content($glossary);
+
+        $this->setUser($teacher);
+        // Name.
+        set_coursemodule_name($glossary->cmid, 'New name');
+
+        // Add some ratings.
+        $rm = new rating_manager();
+        $result = $rm->add_rating($cm, $context, 'mod_glossary', 'entry', $entry->id, 100, 50, $user->id, RATING_AGGREGATE_AVERAGE);
+
+        // Change grades.
+        $glossary->cmidnumber = $glossary->cmid;
+        glossary_update_grades($glossary, $user->id);
+
+        $this->setUser($user);
+        // Completion status.
+        glossary_view($glossary, $course, $cm, $context, 'letter');
+
+        // Add one comment.
+        $args = new stdClass;
+        $args->context   = $context;
+        $args->course    = $course;
+        $args->cm        = $cm;
+        $args->area      = 'glossary_entry';
+        $args->itemid    = $entry->id;
+        $args->client_id = 1;
+        $args->component = 'mod_glossary';
+        $manager = new comment($args);
+        $manager->add('blah blah blah');
+
+        // Check upgrade status.
+        $updates = course_check_module_updates_since($cm, $from);
+        $this->assertTrue($updates->configuration->updated);
+        $this->assertTrue($updates->completion->updated);
+        $this->assertTrue($updates->gradeitems->updated);
+        $this->assertTrue($updates->comments->updated);
+        $this->assertTrue($updates->ratings->updated);
+        $this->assertFalse($updates->introfiles->updated);
+        $this->assertFalse($updates->outcomes->updated);
+    }
+
+    public function test_async_module_deletion_hook_implemented() {
+        // Async module deletion depends on the 'true' being returned by at least one plugin implementing the hook,
+        // 'course_module_adhoc_deletion_recommended'. In core, is implemented by the course recyclebin, which will only return
+        // true if the recyclebin plugin is enabled. To make sure async deletion occurs, this test force-enables the recyclebin.
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Ensure recyclebin is enabled.
+        set_config('coursebinenable', true, 'tool_recyclebin');
+
+        // Create course, module and context.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 5]);
+        $module = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+        $modcontext = context_module::instance($module->cmid);
+
+        // Verify context exists.
+        $this->assertInstanceOf('context_module', $modcontext);
+
+        // Check events generated on the course_delete_module call.
+        $sink = $this->redirectEvents();
+
+        // Try to delete the module using the async flag.
+        course_delete_module($module->cmid, true); // Try to delete the module asynchronously.
+
+        // Verify that no event has been generated yet.
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+        $this->assertEmpty($event);
+
+        // Grab the record, in it's final state before hard deletion, for comparison with the event snapshot.
+        // We need to do this because the 'deletioninprogress' flag has changed from '0' to '1'.
+        $cm = $DB->get_record('course_modules', ['id' => $module->cmid], '*', MUST_EXIST);
+
+        // Verify the course_module is marked as 'deletioninprogress'.
+        $this->assertNotEquals($cm, false);
+        $this->assertEquals($cm->deletioninprogress, '1');
+
+        // Verify the context has not yet been removed.
+        $this->assertEquals($modcontext, context_module::instance($module->cmid, IGNORE_MISSING));
+
+        // Set up a sink to catch the 'course_module_deleted' event.
+        $sink = $this->redirectEvents();
+
+        // Now, run the adhoc task which performs the hard deletion.
+        phpunit_util::run_all_adhoc_tasks();
+
+        // Fetch and validate the event data.
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+        $this->assertInstanceOf('\core\event\course_module_deleted', $event);
+        $this->assertEquals($module->cmid, $event->objectid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals('course_modules', $event->objecttable);
+        $this->assertEquals(null, $event->get_url());
+        $this->assertEquals($cm, $event->get_record_snapshot('course_modules', $module->cmid));
+
+        // Verify the context has been removed.
+        $this->assertFalse(context_module::instance($module->cmid, IGNORE_MISSING));
+
+        // Verify the course_module record has been deleted.
+        $cmcount = $DB->count_records('course_modules', ['id' => $module->cmid]);
+        $this->assertEmpty($cmcount);
+    }
+
+    public function test_async_module_deletion_hook_not_implemented() {
+        // Only proceed if we are sure that no plugin is going to advocate async removal of a module. I.e. no plugin returns
+        // 'true' from the 'course_module_adhoc_deletion_recommended' hook.
+        // In the case of core, only recyclebin implements this hook, and it will only return true if enabled, so disable it.
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        set_config('coursebinenable', false, 'tool_recyclebin');
+
+        // Non-core plugins might implement the 'course_module_adhoc_deletion_recommended' hook and spoil this test.
+        // If at least one plugin still returns true, then skip this test.
+        if ($pluginsfunction = get_plugins_with_function('course_module_background_deletion_recommended')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    if ($pluginfunction()) {
+                        $this->markTestSkipped();
+                    }
+                }
+            }
+        }
+
+        // Create course, module and context.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 5]);
+        $module = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+        $modcontext = context_module::instance($module->cmid);
+        $cm = $DB->get_record('course_modules', ['id' => $module->cmid], '*', MUST_EXIST);
+
+        // Verify context exists.
+        $this->assertInstanceOf('context_module', $modcontext);
+
+        // Check events generated on the course_delete_module call.
+        $sink = $this->redirectEvents();
+
+        // Try to delete the module using the async flag.
+        course_delete_module($module->cmid, true); // Try to delete the module asynchronously.
+
+        // Fetch and validate the event data.
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+        $this->assertInstanceOf('\core\event\course_module_deleted', $event);
+        $this->assertEquals($module->cmid, $event->objectid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals('course_modules', $event->objecttable);
+        $this->assertEquals(null, $event->get_url());
+        $this->assertEquals($cm, $event->get_record_snapshot('course_modules', $module->cmid));
+
+        // Verify the context has been removed.
+        $this->assertFalse(context_module::instance($module->cmid, IGNORE_MISSING));
+
+        // Verify the course_module record has been deleted.
+        $cmcount = $DB->count_records('course_modules', ['id' => $module->cmid]);
+        $this->assertEmpty($cmcount);
+    }
+
+    public function test_async_section_deletion_hook_implemented() {
+        // Async section deletion (provided section contains modules), depends on the 'true' being returned by at least one plugin
+        // implementing the 'course_module_adhoc_deletion_recommended' hook. In core, is implemented by the course recyclebin,
+        // which will only return true if the plugin is enabled. To make sure async deletion occurs, this test enables recyclebin.
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Ensure recyclebin is enabled.
+        set_config('coursebinenable', true, 'tool_recyclebin');
+
+        // Create course, module and context.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['numsections' => 4, 'format' => 'topics'], ['createsections' => true]);
+        $assign0 = $generator->create_module('assign', ['course' => $course, 'section' => 2]);
+        $assign1 = $generator->create_module('assign', ['course' => $course, 'section' => 2]);
+        $assign2 = $generator->create_module('assign', ['course' => $course, 'section' => 2]);
+        $assign3 = $generator->create_module('assign', ['course' => $course, 'section' => 0]);
+
+        // Delete empty section. No difference from normal, synchronous behaviour.
+        $this->assertTrue(course_delete_section($course, 4, false, true));
+        $this->assertEquals(3, course_get_format($course)->get_course()->numsections);
+
+        // Delete a module in section 2 (using async). Need to verify this doesn't generate two tasks when we delete
+        // the section in the next step.
+        course_delete_module($assign2->cmid, true);
+
+        // Confirm that the module is pending deletion in its current section.
+        $section = $DB->get_record('course_sections', ['course' => $course->id, 'section' => '2']); // For event comparison.
+        $this->assertEquals(true, $DB->record_exists('course_modules', ['id' => $assign2->cmid, 'deletioninprogress' => 1,
+                                                     'section' => $section->id]));
+
+        // Now, delete section 2.
+        $this->assertFalse(course_delete_section($course, 2, false, true)); // Non-empty section, no forcedelete, so no change.
+
+        $sink = $this->redirectEvents(); // To capture the event.
+        $this->assertTrue(course_delete_section($course, 2, true, true));
+
+        // Now, confirm that:
+        // a) the section's modules have been flagged for deletion and moved to section 0 and;
+        // b) the section has been deleted and;
+        // c) course_section_deleted event has been fired. The course_module_deleted events will only fire once they have been
+        // removed from section 0 via the adhoc task.
+
+        // Modules should have been flagged for deletion and moved to section 0.
+        $sectionid = $DB->get_field('course_sections', 'id', ['course' => $course->id, 'section' => 0]);
+        $this->assertEquals(3, $DB->count_records('course_modules', ['section' => $sectionid, 'deletioninprogress' => 1]));
+
+        // Confirm the section has been deleted.
+        $this->assertEquals(2, course_get_format($course)->get_course()->numsections);
+
+        // Check event fired.
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+        $this->assertInstanceOf('\core\event\course_section_deleted', $event);
+        $this->assertEquals($section->id, $event->objectid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals('course_sections', $event->objecttable);
+        $this->assertEquals(null, $event->get_url());
+        $this->assertEquals($section, $event->get_record_snapshot('course_sections', $section->id));
+
+        // Now, run the adhoc task to delete the modules from section 0.
+        $sink = $this->redirectEvents(); // To capture the events.
+        phpunit_util::run_all_adhoc_tasks();
+
+        // Confirm the modules have been deleted.
+        list($insql, $assignids) = $DB->get_in_or_equal([$assign0->cmid, $assign1->cmid, $assign2->cmid]);
+        $cmcount = $DB->count_records_select('course_modules', 'id ' . $insql,  $assignids);
+        $this->assertEmpty($cmcount);
+
+        // Confirm other modules in section 0 still remain.
+        $this->assertEquals(1, $DB->count_records('course_modules', ['id' => $assign3->cmid]));
+
+        // Confirm that events were generated for all 3 of the modules.
+        $events = $sink->get_events();
+        $sink->close();
+        $count = 0;
+        while (!empty($events)) {
+            $event = array_pop($events);
+            if ($event instanceof \core\event\course_module_deleted &&
+                in_array($event->objectid, [$assign0->cmid, $assign1->cmid, $assign2->cmid])) {
+                $count++;
+            }
+        }
+        $this->assertEquals(3, $count);
+    }
+
+    public function test_async_section_deletion_hook_not_implemented() {
+        // If no plugins advocate async removal, then normal synchronous removal will take place.
+        // Only proceed if we are sure that no plugin is going to advocate async removal of a module. I.e. no plugin returns
+        // 'true' from the 'course_module_adhoc_deletion_recommended' hook.
+        // In the case of core, only recyclebin implements this hook, and it will only return true if enabled, so disable it.
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        set_config('coursebinenable', false, 'tool_recyclebin');
+
+        // Non-core plugins might implement the 'course_module_adhoc_deletion_recommended' hook and spoil this test.
+        // If at least one plugin still returns true, then skip this test.
+        if ($pluginsfunction = get_plugins_with_function('course_module_background_deletion_recommended')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    if ($pluginfunction()) {
+                        $this->markTestSkipped();
+                    }
+                }
+            }
+        }
+
+        // Create course, module and context.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['numsections' => 4, 'format' => 'topics'], ['createsections' => true]);
+        $assign0 = $generator->create_module('assign', ['course' => $course, 'section' => 2]);
+        $assign1 = $generator->create_module('assign', ['course' => $course, 'section' => 2]);
+
+        // Delete empty section. No difference from normal, synchronous behaviour.
+        $this->assertTrue(course_delete_section($course, 4, false, true));
+        $this->assertEquals(3, course_get_format($course)->get_course()->numsections);
+
+        // Delete section in the middle (2).
+        $section = $DB->get_record('course_sections', ['course' => $course->id, 'section' => '2']); // For event comparison.
+        $this->assertFalse(course_delete_section($course, 2, false, true)); // Non-empty section, no forcedelete, so no change.
+
+        $sink = $this->redirectEvents(); // To capture the event.
+        $this->assertTrue(course_delete_section($course, 2, true, true));
+
+        // Now, confirm that:
+        // a) The section's modules have deleted and;
+        // b) the section has been deleted and;
+        // c) course_section_deleted event has been fired and;
+        // d) course_module_deleted events have both been fired.
+
+        // Confirm modules have been deleted.
+        list($insql, $assignids) = $DB->get_in_or_equal([$assign0->cmid, $assign1->cmid]);
+        $cmcount = $DB->count_records_select('course_modules', 'id ' . $insql, $assignids);
+        $this->assertEmpty($cmcount);
+
+        // Confirm the section has been deleted.
+        $this->assertEquals(2, course_get_format($course)->get_course()->numsections);
+
+        // Confirm the course_section_deleted event has been generated.
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+        $this->assertInstanceOf('\core\event\course_section_deleted', $event);
+        $this->assertEquals($section->id, $event->objectid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals('course_sections', $event->objecttable);
+        $this->assertEquals(null, $event->get_url());
+        $this->assertEquals($section, $event->get_record_snapshot('course_sections', $section->id));
+
+        // Confirm that the course_module_deleted events have both been generated.
+        $count = 0;
+        while (!empty($events)) {
+            $event = array_pop($events);
+            if ($event instanceof \core\event\course_module_deleted &&
+                in_array($event->objectid, [$assign0->cmid, $assign1->cmid])) {
+                $count++;
+            }
+        }
+        $this->assertEquals(2, $count);
     }
 }

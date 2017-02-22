@@ -108,6 +108,13 @@ class tinymce_texteditor extends texteditor {
             $config->disabledsubplugins = '';
         }
 
+        // Remove the manage files button if requested.
+        if (isset($options['enable_filemanagement']) && !$options['enable_filemanagement']) {
+            if (!strpos($config->disabledsubplugins, 'managefiles')) {
+                $config->disabledsubplugins .= ',managefiles';
+            }
+        }
+
         $fontselectlist = empty($config->fontselectlist) ? '' : $config->fontselectlist;
 
         $langrev = -1;

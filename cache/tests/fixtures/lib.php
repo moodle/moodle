@@ -73,13 +73,13 @@ class cache_config_testing extends cache_config_writer {
             if (class_exists($class) && $class::ready_to_be_used_for_testing()) {
                 /* @var cache_store $class */
                 $writer->configstores['test_application'] = array(
-                    'use_test_store' => true,
                     'name' => 'test_application',
                     'plugin' => $expectedstore,
-                    'alt' => $writer->configstores[$defaultapplication],
                     'modes' => $class::get_supported_modes(),
-                    'features' => $class::get_supported_features()
+                    'features' => $class::get_supported_features(),
+                    'configuration' => $class::unit_test_configuration()
                 );
+
                 $defaultapplication = 'test_application';
             }
         }
@@ -297,6 +297,7 @@ class cache_config_testing extends cache_config_writer {
  * as it is only used during testing and its highly unlikely anyone has used this.
  *
  * @deprecated since 2.9
+ * @todo MDL-55267 This will be deleted in Moodle 3.3.
  * @copyright  2014 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -307,6 +308,9 @@ class cache_config_phpunittest extends cache_config_testing {
 
 /**
  * Dummy object for testing cacheable object interface and interaction
+ *
+ * Wake from cache needs specific testing at times to ensure that during multiple
+ * cache get() requests it's possible to verify that it's getting woken each time.
  *
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -323,20 +327,26 @@ class cache_phpunit_dummy_object extends stdClass implements cacheable_object {
      */
     public $property2;
     /**
+     * Test property time for verifying wake is run at each get() call.
+     * @var float
+     */
+    public $propertytime;
+    /**
      * Constructor
      * @param string $property1
      * @param string $property2
      */
-    public function __construct($property1, $property2) {
+    public function __construct($property1, $property2, $propertytime = null) {
         $this->property1 = $property1;
         $this->property2 = $property2;
+        $this->propertytime = $propertytime === null ? microtime(true) : $propertytime;
     }
     /**
      * Prepares this object for caching
      * @return array
      */
     public function prepare_to_cache() {
-        return array($this->property1.'_ptc', $this->property2.'_ptc');
+        return array($this->property1.'_ptc', $this->property2.'_ptc', $this->propertytime);
     }
     /**
      * Returns this object from the cache
@@ -344,7 +354,15 @@ class cache_phpunit_dummy_object extends stdClass implements cacheable_object {
      * @return cache_phpunit_dummy_object
      */
     public static function wake_from_cache($data) {
-        return new cache_phpunit_dummy_object(array_shift($data).'_wfc', array_shift($data).'_wfc');
+        $time = null;
+        if (!is_null($data[2])) {
+            // Windows 32bit microtime() resolution is 15ms, we ensure the time has moved forward.
+            do {
+                $time = microtime(true);
+            } while ($time == $data[2]);
+
+        }
+        return new cache_phpunit_dummy_object(array_shift($data).'_wfc', array_shift($data).'_wfc', $time);
     }
 }
 
@@ -423,8 +441,18 @@ class cache_phpunit_application extends cache_application {
      * @return false|mixed
      */
     public function phpunit_static_acceleration_get($key) {
-        $key = $this->parse_key($key);
         return $this->static_acceleration_get($key);
+    }
+
+    /**
+     * Purges only the static acceleration while leaving the rest of the store in tack.
+     *
+     * Used for behaving like you have loaded 2 pages, and reset static while the backing store
+     * still contains all the same data.
+     *
+     */
+    public function phpunit_static_acceleration_purge() {
+        $this->static_acceleration_purge();
     }
 }
 
@@ -506,35 +534,5 @@ class cache_phpunit_factory extends cache_factory {
      */
     public static function phpunit_disable() {
         parent::disable();
-    }
-
-    /**
-     * Creates a store instance given its name and configuration.
-     *
-     * If the store has already been instantiated then the original object will be returned. (reused)
-     *
-     * @param string $name The name of the store (must be unique remember)
-     * @param array $details
-     * @param cache_definition $definition The definition to instantiate it for.
-     * @return boolean|cache_store
-     */
-    public function create_store_from_config($name, array $details, cache_definition $definition) {
-
-        if (isset($details['use_test_store'])) {
-            // name, plugin, alt
-            $class = 'cachestore_'.$details['plugin'];
-            $method = 'initialise_unit_test_instance';
-            if (class_exists($class) && method_exists($class, $method)) {
-                $instance = $class::$method($definition);
-
-                if ($instance) {
-                    return $instance;
-                }
-            }
-            $details = $details['alt'];
-            $name = $details['name'];
-        }
-
-        return parent::create_store_from_config($name, $details, $definition);
     }
 }

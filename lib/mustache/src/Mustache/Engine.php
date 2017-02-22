@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2014 Justin Hileman
+ * (c) 2010-2016 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -23,16 +23,18 @@
  */
 class Mustache_Engine
 {
-    const VERSION        = '2.7.0';
+    const VERSION        = '2.11.1';
     const SPEC_VERSION   = '1.1.2';
 
-    const PRAGMA_FILTERS = 'FILTERS';
-    const PRAGMA_BLOCKS  = 'BLOCKS';
+    const PRAGMA_FILTERS      = 'FILTERS';
+    const PRAGMA_BLOCKS       = 'BLOCKS';
+    const PRAGMA_ANCHORED_DOT = 'ANCHORED-DOT';
 
     // Known pragmas
     private static $knownPragmas = array(
-        self::PRAGMA_FILTERS => true,
-        self::PRAGMA_BLOCKS  => true,
+        self::PRAGMA_FILTERS      => true,
+        self::PRAGMA_BLOCKS       => true,
+        self::PRAGMA_ANCHORED_DOT => true,
     );
 
     // Template cache
@@ -124,7 +126,7 @@ class Mustache_Engine
      *         'pragmas' => [Mustache_Engine::PRAGMA_FILTERS],
      *     );
      *
-     * @throws Mustache_Exception_InvalidArgumentException If `escape` option is not callable.
+     * @throws Mustache_Exception_InvalidArgumentException If `escape` option is not callable
      *
      * @param array $options (default: array())
      */
@@ -174,7 +176,7 @@ class Mustache_Engine
         }
 
         if (isset($options['entity_flags'])) {
-          $this->entityFlags = $options['entity_flags'];
+            $this->entityFlags = $options['entity_flags'];
         }
 
         if (isset($options['charset'])) {
@@ -405,7 +407,7 @@ class Mustache_Engine
      *
      * @param string $name
      *
-     * @return boolean True if the helper is present
+     * @return bool True if the helper is present
      */
     public function hasHelper($name)
     {
@@ -427,7 +429,7 @@ class Mustache_Engine
     /**
      * Set the Mustache Logger instance.
      *
-     * @throws Mustache_Exception_InvalidArgumentException If logger is not an instance of Mustache_Logger or Psr\Log\LoggerInterface.
+     * @throws Mustache_Exception_InvalidArgumentException If logger is not an instance of Mustache_Logger or Psr\Log\LoggerInterface
      *
      * @param Mustache_Logger|Psr\Log\LoggerInterface $logger
      */
@@ -772,9 +774,9 @@ class Mustache_Engine
     /**
      * Add a log record if logging is enabled.
      *
-     * @param integer $level   The logging level
-     * @param string  $message The log message
-     * @param array   $context The log context
+     * @param int    $level   The logging level
+     * @param string $message The log message
+     * @param array  $context The log context
      */
     private function log($level, $message, array $context = array())
     {

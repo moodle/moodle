@@ -185,7 +185,8 @@ $CFG->dboptions = isset($CFG->phpunit_dboptions) ? $CFG->phpunit_dboptions : $CF
 $allowed = array('wwwroot', 'dataroot', 'dirroot', 'admin', 'directorypermissions', 'filepermissions',
                  'dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'prefix', 'dboptions',
                  'proxyhost', 'proxyport', 'proxytype', 'proxyuser', 'proxypassword', 'proxybypass', // keep proxy settings from config.php
-                 'altcacheconfigpath', 'pathtogs', 'pathtoclam', 'pathtodu', 'aspellpath', 'pathtodot'
+                 'altcacheconfigpath', 'pathtogs', 'pathtodu', 'aspellpath', 'pathtodot',
+                 'pathtounoconv'
                 );
 $productioncfg = (array)$CFG;
 $CFG = new stdClass();
@@ -218,6 +219,10 @@ require_once("$CFG->dirroot/lib/phpunit/lib.php");
 
 // finish moodle init
 define('ABORT_AFTER_CONFIG_CANCEL', true);
+if (isset($CFG->phpunit_profilingenabled) && $CFG->phpunit_profilingenabled) {
+    $CFG->profilingenabled = true;
+    $CFG->profilingincluded = '*';
+}
 require("$CFG->dirroot/lib/setup.php");
 
 raise_memory_limit(MEMORY_HUGE);

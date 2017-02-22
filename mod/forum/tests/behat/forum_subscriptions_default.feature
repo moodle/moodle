@@ -121,7 +121,7 @@ Feature: A user can control their default discussion subscription settings
     And I follow "Course 1"
     And I follow "Test forum name"
     And I click on "You are subscribed to this discussion. Click to unsubscribe." "link" in the "Test post subject" "table_row"
-    And I follow "Continue"
+    And I should see "Student One will NOT be notified of new posts in 'Test post subject' of 'Test forum name'"
     And I follow "Test post subject"
     When I follow "Reply"
     And "input[name=discussionsubscribe][checked=checked]" "css_element" should exist
@@ -130,7 +130,7 @@ Feature: A user can control their default discussion subscription settings
     And I follow "Course 1"
     And I follow "Test forum name"
     And I click on "You are subscribed to this discussion. Click to unsubscribe." "link" in the "Test post subject" "table_row"
-    And I follow "Continue"
+    And I should see "Student Two will NOT be notified of new posts in 'Test post subject' of 'Test forum name'"
     And I follow "Test post subject"
     And I follow "Reply"
     And "input[name=discussionsubscribe]:not([checked=checked])" "css_element" should exist

@@ -22,7 +22,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
 $id = required_param('id', PARAM_INT); // Course ID.
@@ -61,6 +61,8 @@ if ($delete === md5($course->timemodified)) {
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strdeletingcourse);
+    // This might take a while. Raise the execution time limit.
+    core_php_time_limit::raise();
     // We do this here because it spits out feedback as it goes.
     delete_course($course);
     echo $OUTPUT->heading( get_string("deletedcourse", "", $courseshortname) );
@@ -76,11 +78,12 @@ $strdeletecoursecheck = get_string("deletecoursecheck");
 $message = "{$strdeletecoursecheck}<br /><br />{$coursefullname} ({$courseshortname})";
 
 $continueurl = new moodle_url('/course/delete.php', array('id' => $course->id, 'delete' => md5($course->timemodified)));
+$continuebutton = new single_button($continueurl, get_string('delete'), 'post');
 
 $PAGE->navbar->add($strdeletecheck);
 $PAGE->set_title("$SITE->shortname: $strdeletecheck");
 $PAGE->set_heading($SITE->fullname);
 echo $OUTPUT->header();
-echo $OUTPUT->confirm($message, $continueurl, $categoryurl);
+echo $OUTPUT->confirm($message, $continuebutton, $categoryurl);
 echo $OUTPUT->footer();
 exit;

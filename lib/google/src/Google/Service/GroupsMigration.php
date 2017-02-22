@@ -30,7 +30,9 @@
  */
 class Google_Service_GroupsMigration extends Google_Service
 {
-
+  /** Manage messages in groups on your domain. */
+  const APPS_GROUPS_MIGRATION =
+      "https://www.googleapis.com/auth/apps.groups.migration";
 
   public $archive;
   
@@ -43,6 +45,7 @@ class Google_Service_GroupsMigration extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'groups/v1/groups/';
     $this->version = 'v1';
     $this->serviceName = 'groupsmigration';

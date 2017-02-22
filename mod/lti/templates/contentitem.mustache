@@ -1,0 +1,86 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_lti/contentitem
+
+    Provides a template for the creation of a new external tool instance via the content-item message.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * url The URL the iframe has to load.
+    * postData The JSON object that contains the information to be POSTed for the ContentItemSelectionRequest.
+
+    Example context (json):
+    {
+        "url": "/",
+        "postData": {
+            "id": "1",
+            "course": "1",
+            "title": "Sample title",
+            "text": "This is a description"
+        }
+    }
+
+}}
+<div id="contentitem-container" class="contentitem-container">
+    <div class="contentitem-loading-container loading-screen">
+        {{> mod_lti/loader }}
+        <p class="loading-text">{{#str}} loadinghelp, moodle {{/str}}</p>
+        <p id="tool-loading-failed" class="hidden">{{#str}} register_warning, mod_lti {{/str}}</p>
+    </div>
+    <div class="contentitem-page">
+        <iframe id="contentitem-page-iframe" name="contentitem-page-iframe" class="hidden" tabindex="0">
+        </iframe>
+        <form target="contentitem-page-iframe" action="{{url}}" id="contentitem-request-form" method="post">
+            <input type="hidden" name="id" value="{{postData.id}}" />
+            <input type="hidden" name="course" value="{{postData.course}}" />
+            <input type="hidden" name="title" value="{{postData.title}}" />
+            <input type="hidden" name="text" value="{{postData.text}}" />
+        </form>
+    </div>
+</div>
+{{#js}}
+    require(['jquery'], function($) {
+        var loadingContainer = $('.contentitem-loading-container');
+        var iframe = $('#contentitem-page-iframe');
+        var timeout = setTimeout(function () {
+            var failedContainer = $('#tool-loading-failed');
+            failedContainer.removeClass('hidden');
+        }, 20000);
+
+        // Submit form.
+        $('#contentitem-request-form').submit();
+
+        iframe.on('load', function() {
+            loadingContainer.addClass('hidden');
+            iframe.removeClass('hidden');
+
+            // Adjust iframe's width to the fit the container's width.
+            var containerWidth = $('div.contentitem-container').width();
+            $('#contentitem-page-iframe').width(containerWidth + 'px');
+
+            // Adjust iframe's height to 75% of the width.
+            var containerHeight = containerWidth * 0.75;
+            $('#contentitem-page-iframe').height(containerHeight + 'px');
+        });
+    });
+{{/js}}

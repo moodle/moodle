@@ -445,7 +445,7 @@ class pdf extends \FPDI {
             $filename = \escapeshellarg($this->filename);
             $pagenoinc = \escapeshellarg($pageno + 1);
             $command = "$gsexec -q -sDEVICE=png16m -dSAFER -dBATCH -dNOPAUSE -r$imageres -dFirstPage=$pagenoinc -dLastPage=$pagenoinc ".
-                "-dGraphicsAlphaBits=4 -dTextAlphaBits=4 -sOutputFile=$imagefilearg $filename";
+                "-dDOINTERPOLATE -dGraphicsAlphaBits=4 -dTextAlphaBits=4 -sOutputFile=$imagefilearg $filename";
 
             $output = null;
             $result = exec($command, $output);
@@ -525,7 +525,7 @@ class pdf extends \FPDI {
     /**
      * Test that the configured path to ghostscript is correct and working.
      * @param bool $generateimage - If true - a test image will be generated to verify the install.
-     * @return bool
+     * @return stdClass
      */
     public static function test_gs_path($generateimage = true) {
         global $CFG;

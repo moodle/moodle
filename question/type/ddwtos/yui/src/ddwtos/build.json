@@ -1,0 +1,10 @@
+{
+    "name": "moodle-qtype_ddwtos-dd",
+    "builds": {
+        "moodle-qtype_ddwtos-dd": {
+            "jsfiles": [
+                "ddwtos.js"
+            ]
+        }
+    }
+}

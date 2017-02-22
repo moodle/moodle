@@ -1260,7 +1260,7 @@ class environment_results {
      *
      * @param string $part
      */
-    function environment_results($part) {
+    public function __construct($part) {
         $this->part=$part;
         $this->status=false;
         $this->error_code=NO_ERROR;
@@ -1271,6 +1271,16 @@ class environment_results {
         $this->feedback_str='';
         $this->bypass_str='';
         $this->restrict_str='';
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function environment_results($part) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($part);
     }
 
     /**
@@ -1537,4 +1547,49 @@ function process_environment_result($element, &$result) {
     process_environment_bypass($element, $result);
 /// Process restrict, modifying $result if needed.
     process_environment_restrict($element, $result);
+}
+
+/**
+ * Check if the current PHP version is greater than or equal to
+ * PHP version 7.
+ *
+ * @param object $result an environment_results instance
+ * @return bool result of version check
+ */
+function restrict_php_version_7(&$result) {
+    return restrict_php_version($result, '7');
+}
+
+/**
+ * Check if the current PHP version is greater than or equal to an
+ * unsupported version.
+ *
+ * @param object $result an environment_results instance
+ * @param string $version the version of PHP that can't be used
+ * @return bool result of version check
+ */
+function restrict_php_version(&$result, $version) {
+
+    // Get the current PHP version.
+    $currentversion = normalize_version(phpversion());
+
+    // Confirm we're using a supported PHP version.
+    if (version_compare($currentversion, $version, '<')) {
+        // Everything is ok, the restriction doesn't apply.
+        return false;
+    } else {
+        // We're using an unsupported PHP version, apply restriction.
+        return true;
+    }
+}
+
+/**
+ * Check if the current PHP version is greater than or equal to
+ * PHP version 7.1.
+ *
+ * @param object $result an environment_results instance
+ * @return bool result of version check
+ */
+function restrict_php_version_71(&$result) {
+    return restrict_php_version($result, '7.1');
 }

@@ -110,4 +110,11 @@ class readtracking_enabled extends \core\event\base {
             throw new \coding_exception('Context level must be CONTEXT_MODULE.');
         }
     }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['forumid'] = array('db' => 'forum', 'restore' => 'forum');
+
+        return $othermapped;
+    }
 }

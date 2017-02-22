@@ -29,7 +29,7 @@ class Moxiecode_JSONReader {
 	var $_location, $_lastLocations;
 	var $_needProp;
 
-	function Moxiecode_JSONReader($data) {
+	public function __construct($data) {
 		$this->_data = $data;
 		$this->_len = strlen($data);
 		$this->_pos = -1;
@@ -37,6 +37,16 @@ class Moxiecode_JSONReader {
 		$this->_lastLocations = array();
 		$this->_needProp = false;
 	}
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function Moxiecode_JSONReader($data) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($data);
+    }
 
 	function getToken() {
 		return $this->_token;
@@ -360,8 +370,18 @@ class Moxiecode_JSONReader {
  * @package MCManager.utils
  */
 class Moxiecode_JSON {
-	function Moxiecode_JSON() {
+	public function __construct() {
 	}
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function Moxiecode_JSON() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
+    }
 
 	function decode($input) {
 		$reader = new Moxiecode_JSONReader($input);

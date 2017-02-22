@@ -1,0 +1,44 @@
+// Set image location.
+$breadcrumb-divider: "▶" !default;
+$breadcrumb-divider-rtl: "◀" !default;
+
+// Import the bootstrap variables.
+@import "bootstrap/bootstrap";
+
+// Specific overrides to make Bootstrap RTL.
+@import "moodle/bootstrap-rtl";
+
+// Old Moodle stuff from base theme.
+// Massive, needs broken up.
+@import "moodle/core";
+@import "moodle/icons";
+@import "moodle/admin";
+@import "moodle/blocks";
+@import "moodle/bootswatch";
+@import "moodle/calendar";
+@import "moodle/course";
+@import "moodle/drawer";
+@import "moodle/filemanager";
+@import "moodle/message";
+@import "moodle/question";
+@import "moodle/user";
+@import "moodle/search";
+@import "moodle/forms";
+@import "moodle/login";
+@import "moodle/modules";
+@import "moodle/chat";
+@import "moodle/reports";
+@import "moodle/backup-restore";
+@import "moodle/tables";
+@import "moodle/buttons";
+@import "moodle/grade";
+@import "moodle/templates";
+@import "moodle/undo";
+@import "moodle/debug";
+@import "moodle/expendable";
+@import "moodle/sticky-footer";
+@import "moodle/popover-region";
+@import "moodle/tool_usertours";
+@import "moodle/responsive-tabs";
+@import "moodle/bs2-compat";
+@import "moodle/print";

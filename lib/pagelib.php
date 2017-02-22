@@ -287,6 +287,11 @@ class moodle_page {
     protected $_settingsnav = null;
 
     /**
+     * @var flat_navigation Contains a list of nav nodes, most closely related to the current page.
+     */
+    protected $_flatnav = null;
+
+    /**
      * @var navbar Contains the navbar structure.
      */
     protected $_navbar = null;
@@ -338,6 +343,33 @@ class moodle_page {
      * such as upgrading or completing a quiz.
      */
     protected $_popup_notification_allowed = true;
+
+    /**
+     * @var bool Is the settings menu being forced to display on this page (activities / resources only).
+     * This is only used by themes that use the settings menu.
+     */
+    protected $_forcesettingsmenu = false;
+
+    /**
+     * Force the settings menu to be displayed on this page. This will only force the
+     * settings menu on an activity / resource page that is being displayed on a theme that
+     * uses a settings menu.
+     *
+     * @param bool $forced default of true, can be sent false to turn off the force.
+     */
+    public function force_settings_menu($forced = true) {
+        $this->_forcesettingsmenu = $forced;
+    }
+
+    /**
+     * Check to see if the settings menu is forced to display on this activity / resource page.
+     * This only applies to themes that use the settings menu.
+     *
+     * @return bool True if the settings menu is forced to display.
+     */
+    public function is_settings_menu_forced() {
+        return $this->_forcesettingsmenu;
+    }
 
     // Magic getter methods =============================================================
     // Due to the __get magic below, you normally do not call these as $PAGE->magic_get_x
@@ -443,10 +475,15 @@ class moodle_page {
      * @return context the main context to which this page belongs.
      */
     protected function magic_get_context() {
+        global $CFG;
         if (is_null($this->_context)) {
             if (CLI_SCRIPT or NO_MOODLE_COOKIES) {
                 // Cli scripts work in system context, do not annoy devs with debug info.
                 // Very few scripts do not use cookies, we can safely use system as default context there.
+            } else if (AJAX_SCRIPT && $CFG->debugdeveloper) {
+                // Throw exception inside AJAX script in developer mode, otherwise the debugging message may be missed.
+                throw new coding_exception('$PAGE->context was not set. You may have forgotten '
+                    .'to call require_login() or $PAGE->set_context()');
             } else {
                 debugging('Coding problem: $PAGE->context was not set. You may have forgotten '
                     .'to call require_login() or $PAGE->set_context(). The page may not display '
@@ -722,6 +759,18 @@ class moodle_page {
     }
 
     /**
+     * Returns the flat navigation object
+     * @return flat_navigation
+     */
+    protected function magic_get_flatnav() {
+        if ($this->_flatnav === null) {
+            $this->_flatnav = new flat_navigation($this);
+            $this->_flatnav->initialise();
+        }
+        return $this->_flatnav;
+    }
+
+    /**
      * Returns request IP address.
      *
      * @return string IP address or null if unknown
@@ -822,6 +871,29 @@ class moodle_page {
             $this->_navbar = new navbar($this);
         }
         return $this->_navbar->has_items();
+    }
+
+    /**
+     * Switches from the regular requirements manager to the fragment requirements manager to
+     * capture all necessary JavaScript to display a chunk of HTML such as an mform. This is for use
+     * by the get_fragment() web service and not for use elsewhere.
+     */
+    public function start_collecting_javascript_requirements() {
+        global $CFG;
+        require_once($CFG->libdir.'/outputfragmentrequirementslib.php');
+
+        // Check that the requirements manager has not already been switched.
+        if (get_class($this->_requires) == 'fragment_requirements_manager') {
+            throw new coding_exception('JavaScript collection has already been started.');
+        }
+        // The header needs to have been called to flush out the generic JavaScript for the page. This allows only
+        // JavaScript for the fragment to be collected. _wherethemewasinitialised is set when header() is called.
+        if (!empty($this->_wherethemewasinitialised)) {
+            // Change the current requirements manager over to the fragment manager to capture JS.
+            $this->_requires = new fragment_requirements_manager();
+        } else {
+            throw new coding_exception('$OUTPUT->header() needs to be called before collecting JavaScript requirements.');
+        }
     }
 
     /**
@@ -953,7 +1025,6 @@ class moodle_page {
             }
             return;
         }
-
         // Ideally we should set context only once.
         if (isset($this->_context) && $context->id !== $this->_context->id) {
             $current = $this->_context->contextlevel;
@@ -965,11 +1036,7 @@ class moodle_page {
             } else {
                 // We do not want devs to do weird switching of context levels on the fly because we might have used
                 // the context already such as in text filter in page title.
-                // This is explicitly allowed for webservices though which may
-                // call "external_api::validate_context on many contexts in a single request.
-                if (!WS_SERVER) {
-                    debugging("Coding problem: unsupported modification of PAGE->context from {$current} to {$context->contextlevel}");
-                }
+                debugging("Coding problem: unsupported modification of PAGE->context from {$current} to {$context->contextlevel}");
             }
         }
 
@@ -1080,10 +1147,16 @@ class moodle_page {
      * @param string $pagelayout the page layout this is. For example 'popup', 'home'.
      */
     public function set_pagelayout($pagelayout) {
-        // Uncomment this to debug theme pagelayout issues like missing blocks.
-        // if (!empty($this->_wherethemewasinitialised) && $pagelayout != $this->_pagelayout)
-        //     debugging('Page layout has already been set and cannot be changed.', DEBUG_DEVELOPER);
-        $this->_pagelayout = $pagelayout;
+        global $SESSION;
+
+        if (!empty($SESSION->forcepagelayout)) {
+            $this->_pagelayout = $SESSION->forcepagelayout;
+        } else {
+            // Uncomment this to debug theme pagelayout issues like missing blocks.
+            // if (!empty($this->_wherethemewasinitialised) && $pagelayout != $this->_pagelayout)
+            //     debugging('Page layout has already been set and cannot be changed.', DEBUG_DEVELOPER);
+            $this->_pagelayout = $pagelayout;
+        }
     }
 
     /**
@@ -1472,9 +1545,6 @@ class moodle_page {
                 $title .= ' - ';
             }
             $this->set_title($title . get_string('maintenancemode', 'admin'));
-        } else {
-            // Show the messaging popup if there are messages.
-            message_popup_window();
         }
 
         $this->initialise_standard_body_classes();
@@ -1529,7 +1599,30 @@ class moodle_page {
             $OUTPUT = $this->get_renderer('core', null, $target);
         }
 
+        if (!during_initial_install()) {
+            $filtermanager = filter_manager::instance();
+            $filtermanager->setup_page_for_globally_available_filters($this);
+        }
+
         $this->_wherethemewasinitialised = debug_backtrace();
+    }
+
+    /**
+     * Reset the theme and output for a new context. This only makes sense from
+     * external::validate_context(). Do not cheat.
+     *
+     * @return string the name of the theme that should be used on this page.
+     */
+    public function reset_theme_and_output() {
+        global $COURSE, $SITE;
+
+        $COURSE = clone($SITE);
+        $this->_theme = null;
+        $this->_wherethemewasinitialised = null;
+        $this->_course = null;
+        $this->_cm = null;
+        $this->_module = null;
+        $this->_context = null;
     }
 
     /**
@@ -1560,16 +1653,22 @@ class moodle_page {
             }
         }
 
+        $devicetheme = core_useragent::get_device_type_theme($this->devicetypeinuse);
+
+        // The user is using another device than default, and we have a theme for that, we should use it.
+        $hascustomdevicetheme = core_useragent::DEVICETYPE_DEFAULT != $this->devicetypeinuse && !empty($devicetheme);
+
         foreach ($themeorder as $themetype) {
+
             switch ($themetype) {
                 case 'course':
-                    if (!empty($CFG->allowcoursethemes) && !empty($this->_course->theme) && $this->devicetypeinuse == 'default') {
+                    if (!empty($CFG->allowcoursethemes) && !empty($this->_course->theme) && !$hascustomdevicetheme) {
                         return $this->_course->theme;
                     }
                 break;
 
                 case 'category':
-                    if (!empty($CFG->allowcategorythemes) && $this->devicetypeinuse == 'default') {
+                    if (!empty($CFG->allowcategorythemes) && !$hascustomdevicetheme) {
                         $categories = $this->categories;
                         foreach ($categories as $category) {
                             if (!empty($category->theme)) {
@@ -1586,7 +1685,7 @@ class moodle_page {
                 break;
 
                 case 'user':
-                    if (!empty($CFG->allowuserthemes) && !empty($USER->theme) && $this->devicetypeinuse == 'default') {
+                    if (!empty($CFG->allowuserthemes) && !empty($USER->theme) && !$hascustomdevicetheme) {
                         if ($mnetpeertheme) {
                             return $mnetpeertheme;
                         } else {
@@ -1600,12 +1699,11 @@ class moodle_page {
                         return $mnetpeertheme;
                     }
                     // First try for the device the user is using.
-                    $devicetheme = core_useragent::get_device_type_theme($this->devicetypeinuse);
                     if (!empty($devicetheme)) {
                         return $devicetheme;
                     }
                     // Next try for the default device (as a fallback).
-                    $devicetheme = core_useragent::get_device_type_theme('default');
+                    $devicetheme = core_useragent::get_device_type_theme(core_useragent::DEVICETYPE_DEFAULT);
                     if (!empty($devicetheme)) {
                         return $devicetheme;
                     }
@@ -1728,7 +1826,7 @@ class moodle_page {
             $this->add_body_class('notloggedin');
         }
 
-        if (!empty($USER->editing)) {
+        if ($this->user_is_editing()) {
             $this->add_body_class('editing');
             if (optional_param('bui_moveid', false, PARAM_INT)) {
                 $this->add_body_class('blocks-moving');
@@ -1741,6 +1839,11 @@ class moodle_page {
 
         if ($this->_devicetypeinuse != 'default') {
             $this->add_body_class($this->_devicetypeinuse . 'theme');
+        }
+
+        // Add class for behat site to apply behat related fixes.
+        if (defined('BEHAT_SITE_RUNNING')) {
+            $this->add_body_class('behat-site');
         }
     }
 

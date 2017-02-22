@@ -28,6 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * The mod_choice report viewed event class.
  *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - string content: (optional) The content we are viewing.
+ * }
+ *
  * @package    mod_choice
  * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve
@@ -79,5 +85,14 @@ class report_viewed extends \core\event\base {
     protected function get_legacy_logdata() {
         $url = new \moodle_url('report.php', array('id' => $this->contextinstanceid));
         return array($this->courseid, 'choice', 'report', $url->out(), $this->objectid, $this->contextinstanceid);
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'choice', 'restore' => 'choice');
+    }
+
+    public static function get_other_mapping() {
+        // No need to map the 'content' value.
+        return false;
     }
 }

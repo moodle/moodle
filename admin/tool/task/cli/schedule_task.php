@@ -29,7 +29,7 @@ require_once("$CFG->libdir/clilib.php");
 require_once("$CFG->libdir/cronlib.php");
 
 list($options, $unrecognized) = cli_get_params(
-    array('help' => false, 'list' => false, 'execute' => false),
+    array('help' => false, 'list' => false, 'execute' => false, 'showsql' => false, 'showdebugging' => false),
     array('h' => 'help')
 );
 
@@ -45,6 +45,8 @@ if ($options['help'] or (!$options['list'] and !$options['execute'])) {
 Options:
 --execute=\\\\some\\\\task  Execute scheduled task manually
 --list                List all scheduled tasks
+--showsql             Show sql queries before they are executed
+--showdebugging       Show developer level debugging information
 -h, --help            Print out this help
 
 Example:
@@ -56,6 +58,13 @@ Example:
     die;
 }
 
+if ($options['showdebugging']) {
+    set_debugging(DEBUG_DEVELOPER, true);
+}
+
+if ($options['showsql']) {
+    $DB->set_debug(true);
+}
 if ($options['list']) {
     cli_heading("List of scheduled tasks ($CFG->wwwroot)");
 
@@ -110,7 +119,8 @@ if ($execute = $options['execute']) {
     $predbqueries = $DB->perf_get_queries();
     $pretime = microtime(true);
 
-    mtrace("Scheduled task: " . $task->get_name());
+    $fullname = $task->get_name() . ' (' . get_class($task) . ')';
+    mtrace('Execute scheduled task: ' . $fullname);
     // NOTE: it would be tricky to move this code to \core\task\manager class,
     //       because we want to do detailed error reporting.
     $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
@@ -138,7 +148,7 @@ if ($execute = $options['execute']) {
             mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
             mtrace("... used " . (microtime(1) - $pretime) . " seconds");
         }
-        mtrace("Task completed.");
+        mtrace('Scheduled task complete: ' . $fullname);
         \core\task\manager::scheduled_task_complete($task);
         get_mailer('close');
         exit(0);
@@ -148,7 +158,15 @@ if ($execute = $options['execute']) {
         }
         mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
         mtrace("... used " . (microtime(true) - $pretime) . " seconds");
-        mtrace("Task failed: " . $e->getMessage());
+        mtrace('Scheduled task failed: ' . $fullname . ',' . $e->getMessage());
+        if ($CFG->debugdeveloper) {
+            if (!empty($e->debuginfo)) {
+                mtrace("Debug info:");
+                mtrace($e->debuginfo);
+            }
+            mtrace("Backtrace:");
+            mtrace(format_backtrace($e->getTrace(), true));
+        }
         \core\task\manager::scheduled_task_failed($task);
         get_mailer('close');
         exit(1);

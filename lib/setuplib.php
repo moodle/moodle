@@ -63,7 +63,14 @@ define('MEMORY_HUGE', -4);
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since 2.0
  */
-class object extends stdClass {};
+class object extends stdClass {
+    /**
+     * Constructor.
+     */
+    public function __construct() {
+        debugging("'object' class has been deprecated, please use stdClass instead.", DEBUG_DEVELOPER);
+    }
+};
 
 /**
  * Base Moodle Exception class
@@ -161,6 +168,24 @@ class require_login_exception extends moodle_exception {
      */
     function __construct($debuginfo) {
         parent::__construct('requireloginerror', 'error', '', NULL, $debuginfo);
+    }
+}
+
+/**
+ * Session timeout exception.
+ *
+ * This exception is thrown from require_login()
+ *
+ * @package    core_access
+ * @copyright  2015 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class require_login_session_timeout_exception extends require_login_exception {
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        moodle_exception::__construct('sessionerroruser', 'error');
     }
 }
 
@@ -328,7 +353,7 @@ class file_serving_exception extends moodle_exception {
 }
 
 /**
- * Default exception handler, uncaught exceptions are equivalent to error() in 1.9 and earlier
+ * Default exception handler.
  *
  * @param Exception $ex
  * @return void -does not return. Terminates execution!
@@ -359,8 +384,16 @@ function default_exception_handler($ex) {
                 // If you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
                 $DB->set_debug(0);
             }
-            echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
-        } catch (Exception $out_ex) {
+            echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo,
+                $info->errorcode);
+        } catch (Exception $e) {
+            $out_ex = $e;
+        } catch (Throwable $e) {
+            // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
+            $out_ex = $e;
+        }
+
+        if (isset($out_ex)) {
             // default exception handler MUST not throw any exceptions!!
             // the problem here is we do not know if page already started or not, we only know that somebody messed up in outputlib or theme
             // so we just print at least something instead of "Exception thrown without a stack frame in Unknown on line 0":-(
@@ -428,7 +461,7 @@ function is_early_init($backtrace) {
     $dangerouscode = array(
         array('function' => 'header', 'type' => '->'),
         array('class' => 'bootstrap_renderer'),
-        array('file' => dirname(__FILE__).'/setup.php'),
+        array('file' => __DIR__.'/setup.php'),
     );
     foreach ($backtrace as $stackframe) {
         foreach ($dangerouscode as $pattern) {
@@ -697,13 +730,16 @@ function get_docs_url($path = null) {
 /**
  * Formats a backtrace ready for output.
  *
+ * This function does not include function arguments because they could contain sensitive information
+ * not suitable to be exposed in a response.
+ *
  * @param array $callers backtrace array, as returned by debug_backtrace().
  * @param boolean $plaintext if false, generates HTML, if true generates plain text.
  * @return string formatted backtrace, ready for output.
  */
 function format_backtrace($callers, $plaintext = false) {
     // do not use $CFG->dirroot because it might not be available in destructors
-    $dirroot = dirname(dirname(__FILE__));
+    $dirroot = dirname(__DIR__);
 
     if (empty($callers)) {
         return '';
@@ -933,6 +969,29 @@ function setup_get_remote_url() {
         //Apache server
         $rurl['fullpath'] = $_SERVER['REQUEST_URI'];
 
+        // Fixing a known issue with:
+        // - Apache versions lesser than 2.4.11
+        // - PHP deployed in Apache as PHP-FPM via mod_proxy_fcgi
+        // - PHP versions lesser than 5.6.3 and 5.5.18.
+        if (isset($_SERVER['PATH_INFO']) && (php_sapi_name() === 'fpm-fcgi') && isset($_SERVER['SCRIPT_NAME'])) {
+            $pathinfodec = rawurldecode($_SERVER['PATH_INFO']);
+            $lenneedle = strlen($pathinfodec);
+            // Checks whether SCRIPT_NAME ends with PATH_INFO, URL-decoded.
+            if (substr($_SERVER['SCRIPT_NAME'], -$lenneedle) === $pathinfodec) {
+                // This is the "Apache 2.4.10- running PHP-FPM via mod_proxy_fcgi" fingerprint,
+                // at least on CentOS 7 (Apache/2.4.6 PHP/5.4.16) and Ubuntu 14.04 (Apache/2.4.7 PHP/5.5.9)
+                // => SCRIPT_NAME contains 'slash arguments' data too, which is wrongly exposed via PATH_INFO as URL-encoded.
+                // Fix both $_SERVER['PATH_INFO'] and $_SERVER['SCRIPT_NAME'].
+                $lenhaystack = strlen($_SERVER['SCRIPT_NAME']);
+                $pos = $lenhaystack - $lenneedle;
+                // Here $pos is greater than 0 but let's double check it.
+                if ($pos > 0) {
+                    $_SERVER['PATH_INFO'] = $pathinfodec;
+                    $_SERVER['SCRIPT_NAME'] = substr($_SERVER['SCRIPT_NAME'], 0, $pos);
+                }
+            }
+        }
+
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
         //IIS - needs a lot of tweaking to make it work
         $rurl['fullpath'] = $_SERVER['SCRIPT_NAME'];
@@ -1036,7 +1095,10 @@ function workaround_max_input_vars() {
         return;
     }
 
-    if (count($_POST, COUNT_RECURSIVE) < $max) {
+    // Worst case is advanced checkboxes which use up to two max_input_vars
+    // slots for each entry in $_POST, because of sending two fields with the
+    // same name. So count everything twice just in case.
+    if (count($_POST, COUNT_RECURSIVE) * 2 < $max) {
         return;
     }
 
@@ -1051,6 +1113,15 @@ function workaround_max_input_vars() {
     $delim = '&';
     $fun = create_function('$p', 'return implode("'.$delim.'", $p);');
     $chunks = array_map($fun, array_chunk(explode($delim, $str), $max));
+
+    // Clear everything from existing $_POST array, otherwise it might be included
+    // twice (this affects array params primarily).
+    foreach ($_POST as $key => $value) {
+        unset($_POST[$key]);
+        // Also clear from request array - but only the things that are in $_POST,
+        // that way it will leave the things from a get request if any.
+        unset($_REQUEST[$key]);
+    }
 
     foreach ($chunks as $chunk) {
         $values = array();
@@ -1260,26 +1331,23 @@ function get_real_size($size = 0) {
     if (!$size) {
         return 0;
     }
-    $scan = array();
-    $scan['GB'] = 1073741824;
-    $scan['Gb'] = 1073741824;
-    $scan['G'] = 1073741824;
-    $scan['MB'] = 1048576;
-    $scan['Mb'] = 1048576;
-    $scan['M'] = 1048576;
-    $scan['m'] = 1048576;
-    $scan['KB'] = 1024;
-    $scan['Kb'] = 1024;
-    $scan['K'] = 1024;
-    $scan['k'] = 1024;
 
-    while (list($key) = each($scan)) {
-        if ((strlen($size)>strlen($key))&&(substr($size, strlen($size) - strlen($key))==$key)) {
-            $size = substr($size, 0, strlen($size) - strlen($key)) * $scan[$key];
-            break;
-        }
+    static $binaryprefixes = array(
+        'K' => 1024,
+        'k' => 1024,
+        'M' => 1048576,
+        'm' => 1048576,
+        'G' => 1073741824,
+        'g' => 1073741824,
+        'T' => 1099511627776,
+        't' => 1099511627776,
+    );
+
+    if (preg_match('/^([0-9]+)([KMGT])/i', $size, $matches)) {
+        return $matches[1] * $binaryprefixes[$matches[2]];
     }
-    return $size;
+
+    return (int) $size;
 }
 
 /**
@@ -1313,6 +1381,10 @@ function disable_output_buffering() {
     ini_set('output_handler', '');
 
     error_reporting($olddebug);
+
+    // Disable buffering in nginx.
+    header('X-Accel-Buffering: no');
+
 }
 
 /**
@@ -1323,7 +1395,7 @@ function disable_output_buffering() {
  */
 function redirect_if_major_upgrade_required() {
     global $CFG;
-    $lastmajordbchanges = 2014093001.00;
+    $lastmajordbchanges = 2017021400.00;
     if (empty($CFG->version) or (float)$CFG->version < $lastmajordbchanges or
             during_initial_install() or !empty($CFG->adminsetuppending)) {
         try {
@@ -1672,45 +1744,6 @@ function make_localcache_directory($directory, $exceptiononerror = true) {
     }
 
     return make_writable_directory("$CFG->localcachedir/$directory", $exceptiononerror);
-}
-
-/**
- * Checks if current user is a web crawler.
- *
- * This list can not be made complete, this is not a security
- * restriction, we make the list only to help these sites
- * especially when automatic guest login is disabled.
- *
- * If admin needs security they should enable forcelogin
- * and disable guest access!!
- *
- * @return bool
- */
-function is_web_crawler() {
-    if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) { // Google
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yahoo! Slurp') !== false ) {  // Yahoo
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], '[ZSEBOT]') !== false ) {  // Zoomspider
-            return true;
-        } else if (stripos($_SERVER['HTTP_USER_AGENT'], 'msnbot') !== false ) {  // MSN Search
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'bingbot') !== false ) {  // Bing
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yandex') !== false ) {
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'AltaVista') !== false ) {
-            return true;
-        } else if (stripos($_SERVER['HTTP_USER_AGENT'], 'baiduspider') !== false ) {  // Baidu
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Teoma') !== false ) {  // Ask.com
-            return true;
-        }
-    }
-    return false;
 }
 
 /**

@@ -16,8 +16,6 @@ Feature: Restrict activity availability through date conditions
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And the following config values are set as admin:
-      | enableavailability | 1 |
     And I log in as "teacher1"
     And I am on site homepage
     And I follow "Course 1"
@@ -44,7 +42,8 @@ Feature: Restrict activity availability through date conditions
     And I am on site homepage
     And I follow "Course 1"
     Then I should see "Available from 31 December 2037"
-    And "Test assignment 1" activity should be hidden
+    And "Test assignment 1" activity should be dimmed
+    And "Test assignment 1" "link" should not exist
     And I log out
 
   @javascript

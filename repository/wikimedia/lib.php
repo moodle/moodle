@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once($CFG->dirroot . '/repository/lib.php');
-require_once(dirname(__FILE__) . '/wikimedia.php');
+require_once(__DIR__ . '/wikimedia.php');
 
 /**
  * repository_wikimedia class

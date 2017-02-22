@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/course_competency_settings
+
+    Select an action to execute.
+
+    Classes required for JS:
+    * none
+
+    Data attibutes required for JS:
+    * none
+
+    Context variables required for this template:
+    * courseid
+    * pushratingstouserplans
+
+    Example context (json):
+    {
+        "pushratingstouserplans": false,
+        "courseid": -1
+    }
+}}
+<form data-region="coursecompetencysettings">
+    <input type="hidden" name="courseid" value="{{courseid}}"/>
+    <fieldset>
+        <p>{{#str}}coursecompetencyratingsquestion, tool_lp{{/str}}</p>
+        <label><input type="radio" value="0" name="pushratingstouserplans"
+                {{^settings.pushratingstouserplans}}checked{{/settings.pushratingstouserplans}}>
+            {{#str}}ratingaffectsonlycourse, tool_lp{{/str}}
+        </label>
+        <label><input type="radio" value="1" name="pushratingstouserplans"
+                {{#settings.pushratingstouserplans}}checked{{/settings.pushratingstouserplans}}>
+            {{#str}}ratingaffectsuserplans, tool_lp{{/str}}
+        </label>
+
+    </fieldset>
+    <fieldset class="pull-xs-right">
+        <input type="button" class="btn btn-primary" data-action="save" value="{{#str}}savechanges{{/str}}"/>
+        <input type="button" class="btn btn-secondary" data-action="cancel" value="{{#str}}cancel{{/str}}"/>
+    </fieldset>
+    <div class="clearfix"></div>
+</form>

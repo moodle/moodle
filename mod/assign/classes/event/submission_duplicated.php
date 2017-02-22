@@ -117,4 +117,8 @@ class submission_duplicated extends base {
 
         parent::validate_data();
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'assign_submission', 'restore' => 'submission');
+    }
 }

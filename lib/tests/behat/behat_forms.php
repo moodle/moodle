@@ -28,12 +28,8 @@
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 require_once(__DIR__ . '/../../../lib/behat/behat_field_manager.php');
 
-use Behat\Behat\Context\Step\Given as Given,
-    Behat\Behat\Context\Step\When as When,
-    Behat\Behat\Context\Step\Then as Then,
-    Behat\Gherkin\Node\TableNode as TableNode,
+use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Gherkin\Node\PyStringNode as PyStringNode,
-    Behat\Mink\Element\NodeElement as NodeElement,
     Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
@@ -58,7 +54,27 @@ class behat_forms extends behat_base {
 
         // Ensures the button is present.
         $buttonnode = $this->find_button($button);
+        // Focus on button to ensure it is in viewport, before pressing it.
+        if ($this->running_javascript()) {
+            $buttonnode->focus();
+        }
         $buttonnode->press();
+    }
+
+    /**
+     * Press button with specified id|name|title|alt|value and switch to main window.
+     *
+     * @When /^I press "(?P<button_string>(?:[^"]|\\")*)" and switch to main window$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $button
+     */
+    public function press_button_and_switch_to_main_window($button) {
+        // Ensures the button is present, before pressing.
+        $buttonnode = $this->find_button($button);
+        $buttonnode->press();
+
+        // Switch to main window.
+        $this->getSession()->switchToWindow(behat_general::MAIN_WINDOW_NAME);
     }
 
     /**
@@ -148,6 +164,20 @@ class behat_forms extends behat_base {
     }
 
     /**
+     * Sets the field to wwwroot plus the given path. Include the first slash.
+     *
+     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to local url "(?P<field_path_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param string $path
+     * @return void
+     */
+    public function i_set_the_field_to_local_url($field, $path) {
+        global $CFG;
+        $this->set_field_value($field, $CFG->wwwroot . $path);
+    }
+
+    /**
      * Sets the specified value to the field.
      *
      * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to "(?P<field_value_string>(?:[^"]|\\")*)"$/
@@ -161,9 +191,37 @@ class behat_forms extends behat_base {
     }
 
     /**
+     * Press the key in the field to trigger the javascript keypress event
+     *
+     * Note that the character key will not actually be typed in the input field
+     *
+     * @Given /^I press key "(?P<key_string>(?:[^"]|\\")*)" in the field "(?P<field_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $key either char-code or character itself,
+     *          may optionally be prefixed with ctrl-, alt-, shift- or meta-
+     * @param string $field
+     * @return void
+     */
+    public function i_press_key_in_the_field($key, $field) {
+        if (!$this->running_javascript()) {
+            throw new DriverException('Key press step is not available with Javascript disabled');
+        }
+        $fld = behat_field_manager::get_form_field_from_label($field, $this);
+        $modifier = null;
+        $char = $key;
+        if (preg_match('/-/', $key)) {
+            list($modifier, $char) = preg_split('/-/', $key, 2);
+        }
+        if (is_numeric($char)) {
+            $char = (int)$char;
+        }
+        $fld->key_press($char, $modifier);
+    }
+
+    /**
      * Sets the specified value to the field.
      *
-     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to multiline$/
+     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to multiline:$/
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $field
      * @param PyStringNode $value
@@ -229,9 +287,59 @@ class behat_forms extends behat_base {
 
         // Checks if the provided value matches the current field value.
         if ($formfield->matches($value)) {
-            $fieldvalue = $formfield->get_value();
             throw new ExpectationException(
                 'The \'' . $field . '\' value matches \'' . $value . '\' and it should not match it' ,
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Checks, the field matches the value.
+     *
+     * @Then /^the field with xpath "(?P<xpath_string>(?:[^"]|\\")*)" matches value "(?P<field_value_string>(?:[^"]|\\")*)"$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $fieldxpath
+     * @param string $value
+     * @return void
+     */
+    public function the_field_with_xpath_matches_value($fieldxpath, $value) {
+
+        // Get the field.
+        $fieldnode = $this->find('xpath', $fieldxpath);
+        $formfield = behat_field_manager::get_form_field($fieldnode, $this->getSession());
+
+        // Checks if the provided value matches the current field value.
+        if (!$formfield->matches($value)) {
+            $fieldvalue = $formfield->get_value();
+            throw new ExpectationException(
+                'The \'' . $fieldxpath . '\' value is \'' . $fieldvalue . '\', \'' . $value . '\' expected' ,
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Checks, the field does not match the value.
+     *
+     * @Then /^the field with xpath "(?P<xpath_string>(?:[^"]|\\")*)" does not match value "(?P<field_value_string>(?:[^"]|\\")*)"$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $fieldxpath
+     * @param string $value
+     * @return void
+     */
+    public function the_field_with_xpath_does_not_match_value($fieldxpath, $value) {
+
+        // Get the field.
+        $fieldnode = $this->find('xpath', $fieldxpath);
+        $formfield = behat_field_manager::get_form_field($fieldnode, $this->getSession());
+
+        // Checks if the provided value matches the current field value.
+        if ($formfield->matches($value)) {
+            throw new ExpectationException(
+                'The \'' . $fieldxpath . '\' value matches \'' . $value . '\' and it should not match it' ,
                 $this->getSession()
             );
         }
@@ -389,15 +497,23 @@ class behat_forms extends behat_base {
      * @Given /^I select "(?P<singleselect_option_string>(?:[^"]|\\")*)" from the "(?P<singleselect_name_string>(?:[^"]|\\")*)" singleselect$/
      */
     public function i_select_from_the_singleselect($option, $singleselect) {
-        $actions = array(
-            new Given('I set the field "' . $this->escape($singleselect) . '" to "' . $this->escape($option) . '"'),
-        );
+
+        $this->execute('behat_forms::i_set_the_field_to', array($this->escape($singleselect), $this->escape($option)));
 
         if (!$this->running_javascript()) {
-            $actions[] = new Given('I press "' . get_string('go') . '"');
-        }
+            // Press button in the specified select container.
+            $containerxpath = "//div[" .
+                "(contains(concat(' ', normalize-space(@class), ' '), ' singleselect ') " .
+                    "or contains(concat(' ', normalize-space(@class), ' '), ' urlselect ')".
+                ") and (
+                .//label[contains(normalize-space(string(.)), '" . $singleselect . "')] " .
+                    "or .//select[(./@name='" . $singleselect . "' or ./@id='". $singleselect . "')]" .
+                ")]";
 
-        return $actions;
+            $this->execute('behat_general::i_click_on_in_the',
+                array(get_string('go'), "button", $containerxpath, "xpath_element")
+            );
+        }
     }
 
 }

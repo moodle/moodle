@@ -24,6 +24,12 @@
 
 class data_field_url extends data_field_base {
     var $type = 'url';
+    /**
+     * priority for globalsearch indexing
+     *
+     * @var int
+     */
+    protected static $priority = self::MIN_PRIORITY;
 
     function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $PAGE;
@@ -56,29 +62,47 @@ class data_field_url extends data_field_base {
                 $text = $content->content1;
             }
         }
-        $str = '<div title="' . s($this->field->description) . '">';
+
+        $autolinkable = !empty($this->field->param1) && empty($this->field->param2);
+
+        $str = '<div title="' . s($this->field->description) . '" class="form-inline">';
 
         $label = '<label for="' . $fieldid . '"><span class="accesshide">' . $this->field->name . '</span>';
         if ($this->field->required) {
-            $label .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                       array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            if ($autolinkable) {
+                $label .= html_writer::div(get_string('requiredelement', 'form'), 'accesshide');
+            } else {
+                $label .= html_writer::div($image, 'inline-req');
+            }
         }
         $label .= '</label>';
 
-        if (!empty($this->field->param1) and empty($this->field->param2)) {
+        if ($autolinkable) {
             $str .= '<table><tr><td align="right">';
-            $str .= get_string('url','data').':</td><td>';
+            $str .= '<span class="mod-data-input">' . get_string('url', 'data') . ':</span>';
+            if (!empty($image)) {
+                $str .= $image;
+            }
+            $str .= '</td><td>';
             $str .= $label;
-            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.$url.'" size="60" />';
-            $str .= '<button id="filepicker-button-'.$options->client_id.'" style="display:none">'.$straddlink.'</button></td></tr>';
-            $str .= '<tr><td align="right">'.get_string('text','data').':</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.s($text).'" size="60" /></td></tr>';
+            $str .= '<input type="text" name="field_' . $this->field->id . '_0" id="' . $fieldid . '" value="' . s($url) . '" ' .
+                    'size="40" class="form-control d-inline"/>';
+            $str .= '<button class="btn btn-secondary m-l-1" id="filepicker-button-' . $options->client_id . '" ' .
+                    'style="display:none">' . $straddlink . '</button></td></tr>';
+            $str .= '<tr><td align="right"><span class="mod-data-input">' . get_string('text', 'data') . ':</span></td><td>';
+            $str .= '<input type="text" name="field_' . $this->field->id . '_1" id="field_' . $this->field->id . '_1" ' .
+                    'value="' . s($text) . '" size="40" class="form-control d-inline"/></td></tr>';
             $str .= '</table>';
         } else {
             // Just the URL field
             $str .= $label;
-            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'" size="60" />';
+            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'"';
+            $str .= ' size="40" class="mod-data-input form-control d-inline" />';
             if (count($options->repositories) > 0) {
-                $str .= '<button id="filepicker-button-'.$options->client_id.'" class="visibleifjs">'.$straddlink.'</button>';
+                $str .= '<button id="filepicker-button-' . $options->client_id . '" class="visibleifjs btn btn-secondary m-l-1">' .
+                        $straddlink . '</button>';
             }
         }
 
@@ -92,8 +116,9 @@ class data_field_url extends data_field_base {
     }
 
     function display_search_field($value = '') {
-        return '<label class="accesshide" for="f_'.$this->field->id.'">' . get_string('fieldname', 'data') . '</label>' .
-               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.$value.'" />';
+        return '<label class="accesshide" for="f_' . $this->field->id . '">' . get_string('fieldname', 'data') . '</label>' .
+               '<input type="text" size="16" id="f_' . $this->field->id . '" '.
+               ' name="f_' . $this->field->id . '" value="' . s($value) . '" class="form-control d-inline"/>';
     }
 
     function parse_search_field() {
@@ -128,6 +153,7 @@ class data_field_url extends data_field_base {
                 if ($this->field->param3) {
                     // param3 defines whether this URL should open in a new window.
                     $attributes['target'] = '_blank';
+                    $attributes['rel'] = 'noreferrer';
                 }
 
                 if (empty($text)) {
@@ -141,6 +167,14 @@ class data_field_url extends data_field_base {
             return $str;
         }
         return false;
+    }
+
+    function update_content_import($recordid, $value, $name='') {
+        $values = explode(" ", $value, 2);
+
+        foreach ($values as $index => $value) {
+            $this->update_content($recordid, $value, $name . '_' . $index);
+        }
     }
 
     function update_content($recordid, $value, $name='') {

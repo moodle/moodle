@@ -45,7 +45,7 @@ class edit_backpack_form extends moodleform {
         $mform->addElement('html', html_writer::tag('span', '', array('class' => 'notconnected', 'id' => 'connection-error')));
         $mform->addElement('header', 'backpackheader', get_string('backpackconnection', 'badges'));
         $mform->addHelpButton('backpackheader', 'backpackconnection', 'badges');
-        $mform->addElement('static', 'url', get_string('url'), 'http://' . BADGE_BACKPACKURL);
+        $mform->addElement('static', 'url', get_string('url'), BADGE_BACKPACKURL);
         $status = html_writer::tag('span', get_string('notconnected', 'badges'),
             array('class' => 'notconnected', 'id' => 'connection-status'));
         $mform->addElement('static', 'status', get_string('status'), $status);
@@ -67,7 +67,7 @@ class edit_backpack_form extends moodleform {
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
 
-        $mform->addElement('hidden', 'backpackurl', 'http://' . BADGE_BACKPACKURL);
+        $mform->addElement('hidden', 'backpackurl', BADGE_BACKPACKURL);
         $mform->setType('backpackurl', PARAM_URL);
 
     }
@@ -118,7 +118,7 @@ class edit_collections_form extends moodleform {
 
         $mform->addElement('header', 'backpackheader', get_string('backpackconnection', 'badges'));
         $mform->addHelpButton('backpackheader', 'backpackconnection', 'badges');
-        $mform->addElement('static', 'url', get_string('url'), 'http://' . BADGE_BACKPACKURL);
+        $mform->addElement('static', 'url', get_string('url'), BADGE_BACKPACKURL);
 
         $status = html_writer::tag('span', get_string('connected', 'badges'), array('class' => 'connected'));
         $mform->addElement('static', 'status', get_string('status'), $status);

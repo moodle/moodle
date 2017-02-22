@@ -34,6 +34,7 @@ define('TABLE_VAR_SHOW',   3);
 define('TABLE_VAR_IFIRST', 4);
 define('TABLE_VAR_ILAST',  5);
 define('TABLE_VAR_PAGE',   6);
+define('TABLE_VAR_RESET',  7);
 /**#@-*/
 
 /**#@+
@@ -55,12 +56,18 @@ class flexible_table {
     var $uniqueid        = NULL;
     var $attributes      = array();
     var $headers         = array();
+
+    /**
+     * @var string For create header with help icon.
+     */
+    private $helpforheaders = array();
     var $columns         = array();
     var $column_style    = array();
     var $column_class    = array();
     var $column_suppress = array();
     var $column_nosort   = array('userpic');
     private $column_textsort = array();
+    /** @var boolean Stores if setup has already been called on this flixible table. */
     var $setup           = false;
     var $baseurl         = NULL;
     var $request         = array();
@@ -107,12 +114,6 @@ class flexible_table {
     var $downloadable = false;
 
     /**
-     * @var string which download plugin to use. Default '' means none - print
-     * html table with paging.
-     */
-    var $defaultdownloadformat  = 'csv';
-
-    /**
      * @var bool Has start output been called yet?
      */
     var $started_output = false;
@@ -126,7 +127,7 @@ class flexible_table {
 
     /**
      * Constructor
-     * @param int $uniqueid all tables have to have a unique id, this is used
+     * @param string $uniqueid all tables have to have a unique id, this is used
      *      as a key when storing table properties like sort order in the session.
      */
     function __construct($uniqueid) {
@@ -138,6 +139,7 @@ class flexible_table {
             TABLE_VAR_IFIRST => 'tifirst',
             TABLE_VAR_ILAST  => 'tilast',
             TABLE_VAR_PAGE   => 'page',
+            TABLE_VAR_RESET  => 'treset'
         );
     }
 
@@ -149,10 +151,10 @@ class flexible_table {
      * for you (even if the param is '', which means no download this time.
      * Also you can call this method with no params to get the current set
      * download type.
-     * @param string $download download type. One of csv, tsv, xhtml, ods, etc
+     * @param string $download dataformat type. One of csv, xhtml, ods, etc
      * @param string $filename filename for downloads without file extension.
      * @param string $sheettitle title for downloaded data.
-     * @return string download type.  One of csv, tsv, xhtml, ods, etc
+     * @return string download dataformat type. One of csv, xhtml, ods, etc
      */
     function is_downloading($download = null, $filename='', $sheettitle='') {
         if ($download!==null) {
@@ -176,8 +178,7 @@ class flexible_table {
             $this->exportclass = $exportclass;
             $this->exportclass->table = $this;
         } else if (is_null($this->exportclass) && !empty($this->download)) {
-            $classname = 'table_'.$this->download.'_export_format';
-            $this->exportclass = new $classname($this);
+            $this->exportclass = new table_dataformat_export_format($this, $this->download);
             if (!$this->exportclass->document_started()) {
                 $this->exportclass->start_document($this->filename);
             }
@@ -423,6 +424,17 @@ class flexible_table {
     }
 
     /**
+     * Defines a help icon for the header
+     *
+     * Always use this function if you need to create header with sorting and help icon.
+     *
+     * @param renderable[] $helpicons An array of renderable objects to be used as help icons
+     */
+    public function define_help_for_headers($helpicons) {
+        $this->helpforheaders = $helpicons;
+    }
+
+    /**
      * Must be called after table is defined. Use methods above first. Cannot
      * use functions below till after calling this method.
      * @return type?
@@ -437,10 +449,14 @@ class flexible_table {
         // Load any existing user preferences.
         if ($this->persistent) {
             $this->prefs = json_decode(get_user_preferences('flextable_' . $this->uniqueid), true);
+            $oldprefs = $this->prefs;
         } else if (isset($SESSION->flextable[$this->uniqueid])) {
             $this->prefs = $SESSION->flextable[$this->uniqueid];
+            $oldprefs = $this->prefs;
         }
-        if (!$this->prefs) {
+
+        // Set up default preferences if needed.
+        if (!$this->prefs or optional_param($this->request[TABLE_VAR_RESET], false, PARAM_BOOL)) {
             $this->prefs = array(
                 'collapse' => array(),
                 'sortby'   => array(),
@@ -449,7 +465,10 @@ class flexible_table {
                 'textsort' => $this->column_textsort,
             );
         }
-        $oldprefs = $this->prefs;
+
+        if (!isset($oldprefs)) {
+            $oldprefs = $this->prefs;
+        }
 
         if (($showcol = optional_param($this->request[TABLE_VAR_SHOW], '', PARAM_ALPHANUMEXT)) &&
                 isset($this->columns[$showcol])) {
@@ -971,6 +990,10 @@ class flexible_table {
      */
     function print_nothing_to_display() {
         global $OUTPUT;
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
         $this->print_initials_bar();
 
         echo $OUTPUT->heading(get_string('nothingtodisplay'));
@@ -993,44 +1016,23 @@ class flexible_table {
         }
         return $row;
     }
-    /**
-     * This function is not part of the public api.
-     */
-    function get_download_menu() {
-        $allclasses= get_declared_classes();
-        $exportclasses = array();
-        foreach ($allclasses as $class) {
-            $matches = array();
-            if (preg_match('/^table\_([a-z]+)\_export\_format$/', $class, $matches)) {
-                $type = $matches[1];
-                $exportclasses[$type]= get_string("download$type", 'table');
-            }
-        }
-        return $exportclasses;
-    }
 
     /**
-     * This function is not part of the public api.
+     * Get the html for the download buttons
+     *
+     * Usually only use internally
      */
-    function download_buttons() {
+    public function download_buttons() {
+        global $OUTPUT;
+
         if ($this->is_downloadable() && !$this->is_downloading()) {
-            $downloadoptions = $this->get_download_menu();
-
-            $downloadelements = new stdClass();
-            $downloadelements->formatsmenu = html_writer::select($downloadoptions,
-                    'download', $this->defaultdownloadformat, false);
-            $downloadelements->downloadbutton = '<input type="submit" value="'.
-                    get_string('download').'"/>';
-            $html = '<form action="'. $this->baseurl .'" method="post">';
-            $html .= '<div class="mdl-align">';
-            $html .= html_writer::tag('label', get_string('downloadas', 'table', $downloadelements));
-            $html .= '</div></form>';
-
-            return $html;
+            return $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'),
+                    $this->baseurl->out_omit_querystring(), 'download', $this->baseurl->params());
         } else {
             return '';
         }
     }
+
     /**
      * This function is not part of the public api.
      * You don't normally need to call this. It is called automatically when
@@ -1229,7 +1231,11 @@ class flexible_table {
                                     $name, $primarysortcolumn === $name, $primarysortorder);
                             $this->headers[$index] .= $sortname . ' / ';
                         }
-                        $this->headers[$index] = substr($this->headers[$index], 0, -3);
+                        $helpicon = '';
+                        if (isset($this->helpforheaders[$index])) {
+                            $helpicon = $OUTPUT->render($this->helpforheaders[$index]);
+                        }
+                        $this->headers[$index] = substr($this->headers[$index], 0, -3). $helpicon;
                     }
                 }
                 break;
@@ -1240,8 +1246,12 @@ class flexible_table {
 
                 default:
                 if ($this->is_sortable($column)) {
+                    $helpicon = '';
+                    if (isset($this->helpforheaders[$index])) {
+                        $helpicon = $OUTPUT->render($this->helpforheaders[$index]);
+                    }
                     $this->headers[$index] = $this->sort_link($this->headers[$index],
-                            $column, $primarysortcolumn == $column, $primarysortorder);
+                            $column, $primarysortcolumn == $column, $primarysortorder) . $helpicon;
                 }
             }
 
@@ -1257,7 +1267,11 @@ class flexible_table {
                 if (is_array($this->column_style[$column])) {
                     $attributes['style'] = $this->make_styles_string($this->column_style[$column]);
                 }
-                $content = $this->headers[$index] . html_writer::tag('div',
+                $helpicon = '';
+                if (isset($this->helpforheaders[$index]) && !$this->is_sortable($column)) {
+                    $helpicon  = $OUTPUT->render($this->helpforheaders[$index]);
+                }
+                $content = $this->headers[$index] . $helpicon . html_writer::tag('div',
                         $icon_hide, array('class' => 'commands'));
             }
             echo html_writer::tag('th', $content, $attributes);
@@ -1325,6 +1339,10 @@ class flexible_table {
      */
     function start_html() {
         global $OUTPUT;
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
         // Do we need to print initial bars?
         $this->print_initials_bar();
 
@@ -1362,6 +1380,61 @@ class flexible_table {
             $string .= $property . ':' . $value . ';';
         }
         return $string;
+    }
+
+    /**
+     * Generate the HTML for the table preferences reset button.
+     *
+     * @return string HTML fragment, empty string if no need to reset
+     */
+    protected function render_reset_button() {
+
+        if (!$this->can_be_reset()) {
+            return '';
+        }
+
+        $url = $this->baseurl->out(false, array($this->request[TABLE_VAR_RESET] => 1));
+
+        $html  = html_writer::start_div('resettable mdl-right');
+        $html .= html_writer::link($url, get_string('resettable'));
+        $html .= html_writer::end_div();
+
+        return $html;
+    }
+
+    /**
+     * Are there some table preferences that can be reset?
+     *
+     * If true, then the "reset table preferences" widget should be displayed.
+     *
+     * @return bool
+     */
+    protected function can_be_reset() {
+
+        // Loop through preferences and make sure they are empty or set to the default value.
+        foreach ($this->prefs as $prefname => $prefval) {
+
+            if ($prefname === 'sortby' and !empty($this->sort_default_column)) {
+                // Check if the actual sorting differs from the default one.
+                if (empty($prefval) or $prefval !== array($this->sort_default_column => $this->sort_default_order)) {
+                    return true;
+                }
+
+            } else if ($prefname === 'collapse' and !empty($prefval)) {
+                // Check if there are some collapsed columns (all are expanded by default).
+                foreach ($prefval as $columnname => $iscollapsed) {
+                    if ($iscollapsed) {
+                        return true;
+                    }
+                }
+
+            } else if (!empty($prefval)) {
+                // For all other cases, we just check if some preference is set.
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 
@@ -1530,7 +1603,8 @@ class table_sql extends flexible_table {
     function out($pagesize, $useinitialsbar, $downloadhelpbutton='') {
         global $DB;
         if (!$this->columns) {
-            $onerow = $DB->get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}", $this->sql->params);
+            $onerow = $DB->get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}",
+                $this->sql->params, IGNORE_MULTIPLE);
             //if columns is not set then define columns as the keys of the rows returned
             //from the db.
             $this->define_columns(array_keys((array)$onerow));
@@ -1561,8 +1635,24 @@ class table_default_export_format_parent {
      * started yet.
      */
     var $documentstarted = false;
-    function table_default_export_format_parent(&$table) {
+
+    /**
+     * Constructor
+     *
+     * @param flexible_table $table
+     */
+    public function __construct(&$table) {
         $this->table =& $table;
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function table_default_export_format_parent(&$table) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($table);
     }
 
     function set_table(&$table) {
@@ -1592,328 +1682,105 @@ class table_default_export_format_parent {
     }
 }
 
-
 /**
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Dataformat exporter
+ *
+ * @package    core
+ * @subpackage tablelib
+ * @copyright  2016 Brendan Heywood (brendan@catalyst-au.net)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class table_spreadsheet_export_format_parent extends table_default_export_format_parent {
-    var $currentrow;
-    var $workbook;
-    var $worksheet;
-    /**
-     * @var object format object - format for normal table cells
-     */
-    var $formatnormal;
-    /**
-     * @var object format object - format for header table cells
-     */
-    var $formatheaders;
+class table_dataformat_export_format extends table_default_export_format_parent {
+
+    /** @var $dataformat */
+    protected $dataformat;
+
+    /** @var $rownum */
+    protected $rownum = 0;
+
+    /** @var $columns */
+    protected $columns;
 
     /**
-     * should be overriden in child class.
+     * Constructor
+     *
+     * @param string $table An sql table
+     * @param string $dataformat type of dataformat for export
      */
-    var $fileextension;
+    public function __construct(&$table, $dataformat) {
+        parent::__construct($table);
 
-    /**
-     * This method will be overridden in the child class.
-     */
-    function define_workbook() {
-    }
-
-    function start_document($filename) {
-        $filename = $filename.'.'.$this->fileextension;
-        $this->define_workbook();
-        // format types
-        $this->formatnormal = $this->workbook->add_format();
-        $this->formatnormal->set_bold(0);
-        $this->formatheaders = $this->workbook->add_format();
-        $this->formatheaders->set_bold(1);
-        $this->formatheaders->set_align('center');
-        // Sending HTTP headers
-        $this->workbook->send($filename);
-        $this->documentstarted = true;
-    }
-
-    function start_table($sheettitle) {
-        $this->worksheet = $this->workbook->add_worksheet($sheettitle);
-        $this->currentrow=0;
-    }
-
-    function output_headers($headers) {
-        $colnum = 0;
-        foreach ($headers as $item) {
-            $this->worksheet->write($this->currentrow,$colnum,$item,$this->formatheaders);
-            $colnum++;
+        if (ob_get_length()) {
+            throw new coding_exception("Output can not be buffered before instantiating table_dataformat_export_format");
         }
-        $this->currentrow++;
-    }
 
-    function add_data($row) {
-        $colnum = 0;
-        foreach ($row as $item) {
-            $this->worksheet->write($this->currentrow,$colnum,$item,$this->formatnormal);
-            $colnum++;
+        $classname = 'dataformat_' . $dataformat . '\writer';
+        if (!class_exists($classname)) {
+            throw new coding_exception("Unable to locate dataformat/$dataformat/classes/writer.php");
         }
-        $this->currentrow++;
-        return true;
+        $this->dataformat = new $classname;
+
+        // The dataformat export time to first byte could take a while to generate...
+        set_time_limit(0);
+
+        // Close the session so that the users other tabs in the same session are not blocked.
+        \core\session\manager::write_close();
     }
 
-    function add_seperator() {
-        $this->currentrow++;
-        return true;
-    }
-
-    function finish_table() {
-    }
-
-    function finish_document() {
-        $this->workbook->close();
-        exit;
-    }
-}
-
-
-/**
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class table_excel_export_format extends table_spreadsheet_export_format_parent {
-    var $fileextension = 'xls';
-
-    function define_workbook() {
-        global $CFG;
-        require_once("$CFG->libdir/excellib.class.php");
-        // Creating a workbook
-        $this->workbook = new MoodleExcelWorkbook("-");
-    }
-
-}
-
-
-/**
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class table_ods_export_format extends table_spreadsheet_export_format_parent {
-    var $fileextension = 'ods';
-    function define_workbook() {
-        global $CFG;
-        require_once("$CFG->libdir/odslib.class.php");
-        // Creating a workbook
-        $this->workbook = new MoodleODSWorkbook("-");
-    }
-}
-
-
-/**
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class table_text_export_format_parent extends table_default_export_format_parent {
-    protected $seperator = "tab";
-    protected $mimetype = 'text/tab-separated-values';
-    protected $ext = '.txt';
-    protected $myexporter;
-
-    public function __construct() {
-        $this->myexporter = new csv_export_writer($this->seperator, '"', $this->mimetype);
-    }
-
+    /**
+     * Start document
+     *
+     * @param string $filename
+     */
     public function start_document($filename) {
         $this->filename = $filename;
         $this->documentstarted = true;
-        $this->myexporter->set_filename($filename, $this->ext);
-    }
-
-    public function start_table($sheettitle) {
-        //nothing to do here
-    }
-
-    public function output_headers($headers) {
-        $this->myexporter->add_data($headers);
-    }
-
-    public function add_data($row) {
-        $this->myexporter->add_data($row);
-        return true;
-    }
-
-    public function finish_table() {
-        //nothing to do here
-    }
-
-    public function finish_document() {
-        $this->myexporter->download_file();
-        exit;
+        $this->dataformat->set_filename($filename);
     }
 
     /**
-     * Format a row of data.
-     * @param array $data
+     * Start export
+     *
+     * @param string $sheettitle optional spreadsheet worksheet title
      */
-    protected function format_row($data) {
-        $escapeddata = array();
-        foreach ($data as $value) {
-            $escapeddata[] = '"' . str_replace('"', '""', $value) . '"';
-        }
-        return implode($this->seperator, $escapeddata) . "\n";
-    }
-}
-
-
-/**
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class table_tsv_export_format extends table_text_export_format_parent {
-    protected $seperator = "tab";
-    protected $mimetype = 'text/tab-separated-values';
-    protected $ext = '.txt';
-}
-
-require_once($CFG->libdir . '/csvlib.class.php');
-/**
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class table_csv_export_format extends table_text_export_format_parent {
-    protected $seperator = "comma";
-    protected $mimetype = 'text/csv';
-    protected $ext = '.csv';
-}
-
-/**
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class table_xhtml_export_format extends table_default_export_format_parent {
-    function start_document($filename) {
-        header("Content-Type: application/download\n");
-        header("Content-Disposition: attachment; filename=\"$filename.html\"");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-        header("Pragma: public");
-        //html headers
-        echo <<<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml"
-  xml:lang="en" lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<style type="text/css">/*<![CDATA[*/
-
-.flexible th {
-white-space:normal;
-}
-th.header, td.header, div.header {
-border-color:#DDDDDD;
-background-color:lightGrey;
-}
-.flexible th {
-white-space:nowrap;
-}
-th {
-font-weight:bold;
-}
-
-.generaltable {
-border-style:solid;
-}
-.generalbox {
-border-style:solid;
-}
-body, table, td, th {
-font-family:Arial,Verdana,Helvetica,sans-serif;
-font-size:100%;
-}
-td {
-    border-style:solid;
-    border-width:1pt;
-}
-table {
-    border-collapse:collapse;
-    border-spacing:0pt;
-    width:80%;
-    margin:auto;
-}
-
-h1, h2 {
-    text-align:center;
-}
-.bold {
-font-weight:bold;
-}
-.mdl-align {
-    text-align:center;
-}
-/*]]>*/</style>
-<title>$filename</title>
-</head>
-<body>
-EOF;
-        $this->documentstarted = true;
+    public function start_table($sheettitle) {
+        $this->dataformat->set_sheettitle($sheettitle);
+        $this->dataformat->send_http_headers();
     }
 
-    function start_table($sheettitle) {
-        $this->table->sortable(false);
-        $this->table->collapsible(false);
-        echo "<h2>{$sheettitle}</h2>";
-        $this->table->start_html();
+    /**
+     * Output headers
+     *
+     * @param array $headers
+     */
+    public function output_headers($headers) {
+        $this->columns = $headers;
+        $this->dataformat->write_header($headers);
     }
 
-    function output_headers($headers) {
-        $this->table->print_headers();
-        echo html_writer::start_tag('tbody');
-    }
-
-    function add_data($row) {
-        $this->table->print_row($row);
+    /**
+     * Add a row of data
+     *
+     * @param array $row One record of data
+     */
+    public function add_data($row) {
+        $this->dataformat->write_record($row, $this->rownum++);
         return true;
     }
 
-    function add_seperator() {
-        $this->table->print_row(NULL);
-        return true;
+    /**
+     * Finish export
+     */
+    public function finish_table() {
+        $this->dataformat->write_footer($this->columns);
     }
 
-    function finish_table() {
-        $this->table->finish_html();
-    }
-
-    function finish_document() {
-        echo "</body>\n</html>";
+    /**
+     * Finish download
+     */
+    public function finish_document() {
         exit;
     }
 
-    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
-        if (is_null($options)) {
-            $options = new stdClass;
-        }
-        //some sensible defaults
-        if (!isset($options->para)) {
-            $options->para = false;
-        }
-        if (!isset($options->newlines)) {
-            $options->newlines = false;
-        }
-        if (!isset($options->smiley)) {
-            $options->smiley = false;
-        }
-        if (!isset($options->filter)) {
-            $options->filter = false;
-        }
-        return format_text($text, $format, $options);
-    }
 }
+

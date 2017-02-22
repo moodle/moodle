@@ -1173,7 +1173,7 @@ class graph {
       return array('min' => $min, 'max' => $max);
     }
 
-    function graph() {
+    public function __construct() {
       if (func_num_args() == 2) {
         $this->parameter['width']  = func_get_arg(0);
         $this->parameter['height'] = func_get_arg(1);
@@ -1188,6 +1188,16 @@ class graph {
       $this->init_colours();
 
       //ImageColorTransparent($this->image, $this->colour['white']); // colour for transparency
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function graph() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     /**

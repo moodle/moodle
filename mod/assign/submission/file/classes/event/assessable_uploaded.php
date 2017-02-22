@@ -120,4 +120,7 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
         $this->data['objecttable'] = 'assign_submission';
     }
 
+    public static function get_objectid_mapping() {
+        return array('db' => 'assign_submission', 'restore' => 'submission');
+    }
 }

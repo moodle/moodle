@@ -96,4 +96,16 @@ class group_override_updated extends \core\event\base {
             throw new \coding_exception('The \'groupid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'lesson_overrides', 'restore' => 'lesson_override');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['lessonid'] = array('db' => 'lesson', 'restore' => 'lesson');
+        $othermapped['groupid'] = array('db' => 'groups', 'restore' => 'group');
+
+        return $othermapped;
+    }
 }

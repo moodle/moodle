@@ -23,6 +23,7 @@ if (!is_enabled_auth('shibboleth')) {
 }
 
 // Front channel logout.
+$inputstream = file_get_contents("php://input");
 if ($action == 'logout' && !empty($redirect)) {
 
     if ($USER->auth == 'shibboleth') {
@@ -32,7 +33,7 @@ if ($action == 'logout' && !empty($redirect)) {
         redirect($redirect);
     }
 
-} else if (!empty($HTTP_RAW_POST_DATA)) {
+} else if (!empty($inputstream)) {
 
     // Back channel logout.
     // Set SOAP header.

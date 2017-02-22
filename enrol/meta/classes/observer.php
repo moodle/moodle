@@ -192,9 +192,6 @@ class enrol_meta_observer extends enrol_meta_handler {
         }
 
         foreach ($enrols as $enrol) {
-            $enrol->customint = 0;
-            $DB->update_record('enrol', $enrol);
-
             if ($unenrolaction == ENROL_EXT_REMOVED_SUSPEND or $unenrolaction == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
                 // This makes all enrolments suspended very quickly.
                 $plugin->update_status($enrol, ENROL_INSTANCE_DISABLED);
@@ -203,6 +200,32 @@ class enrol_meta_observer extends enrol_meta_handler {
                 $context = context_course::instance($enrol->courseid);
                 role_unassign_all(array('contextid'=>$context->id, 'component'=>'enrol_meta', 'itemid'=>$enrol->id));
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Triggered via enrol_instance_updated event.
+     *
+     * @param \core\event\enrol_instance_updated $event
+     * @return boolean
+     */
+    public static function enrol_instance_updated(\core\event\enrol_instance_updated $event) {
+        global $DB;
+
+        if (!enrol_is_enabled('meta')) {
+            // This is slow, let enrol_meta_sync() deal with disabled plugin.
+            return true;
+        }
+
+        // Does anything want to sync with this parent?
+        $affectedcourses = $DB->get_fieldset_sql('SELECT DISTINCT courseid FROM {enrol} '.
+                'WHERE customint1 = ? AND enrol = ?',
+                array($event->courseid, 'meta'));
+
+        foreach ($affectedcourses as $courseid) {
+            enrol_meta_sync($courseid);
         }
 
         return true;

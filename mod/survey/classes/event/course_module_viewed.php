@@ -29,6 +29,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * The mod_survery course module viewed event.
  *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - string viewed: what was viewed
+ * }
+ *
  * @package    mod_survey
  * @since      Moodle 2.7
  * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
@@ -66,5 +72,14 @@ class course_module_viewed extends \core\event\course_module_viewed {
         if (empty($this->other['viewed'])) {
             throw new \coding_exception('Other must contain the key viewed.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'survey', 'restore' => 'survey');
+    }
+
+    public static function get_other_mapping() {
+        // No need to map 'viewed'.
+        return false;
     }
 }

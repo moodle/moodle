@@ -26,6 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component  = 'workshopallocation_random';
-$plugin->version    = 2015051100;
-$plugin->requires   = 2015050500;
+$plugin->version    = 2016120500;
+$plugin->requires   = 2016112900;
 $plugin->maturity   = MATURITY_STABLE;

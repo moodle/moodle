@@ -21,6 +21,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /** @global int $CHOICE_COLUMN_HEIGHT */
 global $CHOICE_COLUMN_HEIGHT;
 $CHOICE_COLUMN_HEIGHT = 300;
@@ -79,20 +81,23 @@ function choice_user_outline($course, $user, $mod, $choice) {
 }
 
 /**
- * @global object
+ * Callback for the "Complete" report - prints the activity summary for the given user
+ *
  * @param object $course
  * @param object $user
  * @param object $mod
  * @param object $choice
- * @return string|void
  */
 function choice_user_complete($course, $user, $mod, $choice) {
     global $DB;
-    if ($answer = $DB->get_record('choice_answers', array("choiceid" => $choice->id, "userid" => $user->id))) {
-        $result = new stdClass();
-        $result->info = "'".format_string(choice_get_option_text($choice, $answer->optionid))."'";
-        $result->time = $answer->timemodified;
-        echo get_string("answered", "choice").": $result->info. ".get_string("updated", '', userdate($result->time));
+    if ($answers = $DB->get_records('choice_answers', array("choiceid" => $choice->id, "userid" => $user->id))) {
+        $info = [];
+        foreach ($answers as $answer) {
+            $info[] = "'" . format_string(choice_get_option_text($choice, $answer->optionid)) . "'";
+        }
+        core_collator::asort($info);
+        echo get_string("answered", "choice") . ": ". join(', ', $info) . ". " .
+                get_string("updated", '', userdate($answer->timemodified));
     } else {
         print_string("notanswered", "choice");
     }
@@ -109,14 +114,10 @@ function choice_user_complete($course, $user, $mod, $choice) {
  * @return int
  */
 function choice_add_instance($choice) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/choice/locallib.php');
 
     $choice->timemodified = time();
-
-    if (empty($choice->timerestrict)) {
-        $choice->timeopen = 0;
-        $choice->timeclose = 0;
-    }
 
     //insert answers
     $choice->id = $DB->insert_record("choice", $choice);
@@ -134,6 +135,9 @@ function choice_add_instance($choice) {
         }
     }
 
+    // Add calendar events if necessary.
+    choice_set_events($choice);
+
     return $choice->id;
 }
 
@@ -147,16 +151,11 @@ function choice_add_instance($choice) {
  * @return bool
  */
 function choice_update_instance($choice) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/choice/locallib.php');
 
     $choice->id = $choice->instance;
     $choice->timemodified = time();
-
-
-    if (empty($choice->timerestrict)) {
-        $choice->timeopen = 0;
-        $choice->timeclose = 0;
-    }
 
     //update, delete or insert answers
     foreach ($choice->option as $key => $value) {
@@ -172,8 +171,11 @@ function choice_update_instance($choice) {
             $option->id=$choice->optionid[$key];
             if (isset($value) && $value <> '') {
                 $DB->update_record("choice_options", $option);
-            } else { //empty old option - needs to be deleted.
-                $DB->delete_records("choice_options", array("id"=>$option->id));
+            } else {
+                // Remove the empty (unused) option.
+                $DB->delete_records("choice_options", array("id" => $option->id));
+                // Delete any answers associated with this option.
+                $DB->delete_records("choice_answers", array("choiceid" => $choice->id, "optionid" => $option->id));
             }
         } else {
             if (isset($value) && $value <> '') {
@@ -181,6 +183,9 @@ function choice_update_instance($choice) {
             }
         }
     }
+
+    // Add calendar events if necessary.
+    choice_set_events($choice);
 
     return $DB->update_record('choice', $choice);
 
@@ -240,6 +245,61 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
 }
 
 /**
+ * Modifies responses of other users adding the option $newoptionid to them
+ *
+ * @param array $userids list of users to add option to (must be users without any answers yet)
+ * @param array $answerids list of existing attempt ids of users (will be either appended or
+ *      substituted with the newoptionid, depending on $choice->allowmultiple)
+ * @param int $newoptionid
+ * @param stdClass $choice choice object, result of {@link choice_get_choice()}
+ * @param stdClass $cm
+ * @param stdClass $course
+ */
+function choice_modify_responses($userids, $answerids, $newoptionid, $choice, $cm, $course) {
+    // Get all existing responses and the list of non-respondents.
+    $groupmode = groups_get_activity_groupmode($cm);
+    $onlyactive = $choice->includeinactive ? false : true;
+    $allresponses = choice_get_response_data($choice, $cm, $groupmode, $onlyactive);
+
+    // Check that the option value is valid.
+    if (!$newoptionid || !isset($choice->option[$newoptionid])) {
+        return;
+    }
+
+    // First add responses for users who did not make any choice yet.
+    foreach ($userids as $userid) {
+        if (isset($allresponses[0][$userid])) {
+            choice_user_submit_response($newoptionid, $choice, $userid, $course, $cm);
+        }
+    }
+
+    // Create the list of all options already selected by each user.
+    $optionsbyuser = []; // Mapping userid=>array of chosen choice options.
+    $usersbyanswer = []; // Mapping answerid=>userid (which answer belongs to each user).
+    foreach ($allresponses as $optionid => $responses) {
+        if ($optionid > 0) {
+            foreach ($responses as $userid => $userresponse) {
+                $optionsbyuser += [$userid => []];
+                $optionsbyuser[$userid][] = $optionid;
+                $usersbyanswer[$userresponse->answerid] = $userid;
+            }
+        }
+    }
+
+    // Go through the list of submitted attemptids and find which users answers need to be updated.
+    foreach ($answerids as $answerid) {
+        if (isset($usersbyanswer[$answerid])) {
+            $userid = $usersbyanswer[$answerid];
+            if (!in_array($newoptionid, $optionsbyuser[$userid])) {
+                $options = $choice->allowmultiple ?
+                        array_merge($optionsbyuser[$userid], [$newoptionid]) : $newoptionid;
+                choice_user_submit_response($options, $choice, $userid, $course, $cm);
+            }
+        }
+    }
+}
+
+/**
  * Process user submitted answers for a choice,
  * and either updating them or saving new answers.
  *
@@ -251,7 +311,7 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
  * @return void
  */
 function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm) {
-    global $DB, $CFG;
+    global $DB, $CFG, $USER;
     require_once($CFG->libdir.'/completionlib.php');
 
     $continueurl = new moodle_url('/mod/choice/view.php', array('id' => $cm->id));
@@ -269,6 +329,12 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
         $formanswers = array($formanswer);
     }
 
+    $options = $DB->get_records('choice_options', array('choiceid' => $choice->id), '', 'id');
+    foreach ($formanswers as $key => $val) {
+        if (!isset($options[$val])) {
+            print_error('cannotsubmit', 'choice', $continueurl);
+        }
+    }
     // Start lock to prevent synchronous access to the same data
     // before it's updated, if using limits.
     if ($choice->limitanswers) {
@@ -279,7 +345,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
         $lockfactory = \core\lock\lock_config::get_lock_factory($locktype);
 
         // Opening the lock.
-        $choicelock = $lockfactory->get_lock($resouce, $timeout);
+        $choicelock = $lockfactory->get_lock($resouce, $timeout, MINSECS);
         if (!$choicelock) {
             print_error('cannotsubmit', 'choice', $continueurl);
         }
@@ -338,8 +404,9 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     }
 
     // Check the user hasn't exceeded the maximum selections for the choice(s) they have selected.
+    $answersnapshots = array();
+    $deletedanswersnapshots = array();
     if (!($choice->limitanswers && $choicesexceeded)) {
-        $answersnapshots = array();
         if ($current) {
             // Update an existing answer.
             $existingchoices = array();
@@ -347,8 +414,8 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
                 if (in_array($c->optionid, $formanswers)) {
                     $existingchoices[] = $c->optionid;
                     $DB->set_field('choice_answers', 'timemodified', time(), array('id' => $c->id));
-                    $answersnapshots[] = $c;
                 } else {
+                    $deletedanswersnapshots[] = $c;
                     $DB->delete_records('choice_answers', array('id' => $c->id));
                 }
             }
@@ -365,9 +432,6 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
                     $answersnapshots[] = $newanswer;
                 }
             }
-
-            // Initialised as true, meaning we updated the answer.
-            $answerupdated = true;
         } else {
             // Add new answer.
             foreach ($formanswers as $answer) {
@@ -385,9 +449,6 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
             if ($completion->is_enabled($cm) && $choice->completionsubmit) {
                 $completion->update_state($cm, COMPLETION_COMPLETE);
             }
-
-            // Initalised as false, meaning we submitted a new answer.
-            $answerupdated = false;
         }
     } else {
         // Check to see if current choice already selected - if not display error.
@@ -405,30 +466,12 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
         $choicelock->release();
     }
 
-    // Now record completed event.
-    if (isset($answerupdated)) {
-        $eventdata = array();
-        $eventdata['context'] = $context;
-        $eventdata['objectid'] = $choice->id;
-        $eventdata['userid'] = $userid;
-        $eventdata['courseid'] = $course->id;
-        $eventdata['other'] = array();
-        $eventdata['other']['choiceid'] = $choice->id;
-
-        if ($answerupdated) {
-            $eventdata['other']['optionid'] = $formanswer;
-            $event = \mod_choice\event\answer_updated::create($eventdata);
-        } else {
-            $eventdata['other']['optionid'] = $formanswers;
-            $event = \mod_choice\event\answer_submitted::create($eventdata);
-        }
-        $event->add_record_snapshot('course', $course);
-        $event->add_record_snapshot('course_modules', $cm);
-        $event->add_record_snapshot('choice', $choice);
-        foreach ($answersnapshots as $record) {
-            $event->add_record_snapshot('choice_answers', $record);
-        }
-        $event->trigger();
+    // Trigger events.
+    foreach ($deletedanswersnapshots as $answer) {
+        \mod_choice\event\answer_deleted::create_from_object($answer, $choice, $cm, $course)->trigger();
+    }
+    foreach ($answersnapshots as $answer) {
+        \mod_choice\event\answer_created::create_from_object($answer, $choice, $cm, $course)->trigger();
     }
 }
 
@@ -468,9 +511,20 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses) {
     $display->coursemoduleid = $cm->id;
     $display->courseid = $course->id;
 
+    if (!empty($choice->showunanswered)) {
+        $choice->option[0] = get_string('notanswered', 'choice');
+        $choice->maxanswers[0] = 0;
+    }
+
+    // Remove from the list of non-respondents the users who do not have access to this activity.
+    if (!empty($display->showunanswered) && $allresponses[0]) {
+        $info = new \core_availability\info_module(cm_info::create($cm));
+        $allresponses[0] = $info->filter_user_list($allresponses[0]);
+    }
+
     //overwrite options value;
     $display->options = array();
-    $totaluser = 0;
+    $allusers = [];
     foreach ($choice->option as $optionid => $optiontext) {
         $display->options[$optionid] = new stdClass;
         $display->options[$optionid]->text = $optiontext;
@@ -478,13 +532,13 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses) {
 
         if (array_key_exists($optionid, $allresponses)) {
             $display->options[$optionid]->user = $allresponses[$optionid];
-            $totaluser += count($allresponses[$optionid]);
+            $allusers = array_merge($allusers, array_keys($allresponses[$optionid]));
         }
     }
     unset($display->option);
     unset($display->maxanswers);
 
-    $display->numberofuser = $totaluser;
+    $display->numberofuser = count(array_unique($allusers));
     $context = context_module::instance($cm->id);
     $display->viewresponsecapability = has_capability('mod/choice:readresponses', $context);
     $display->deleterepsonsecapability = has_capability('mod/choice:deleteresponses',$context);
@@ -507,7 +561,7 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses) {
  * @return bool
  */
 function choice_delete_responses($attemptids, $choice, $cm, $course) {
-    global $DB, $CFG;
+    global $DB, $CFG, $USER;
     require_once($CFG->libdir.'/completionlib.php');
 
     if(!is_array($attemptids) || empty($attemptids)) {
@@ -523,13 +577,17 @@ function choice_delete_responses($attemptids, $choice, $cm, $course) {
     $completion = new completion_info($course);
     foreach($attemptids as $attemptid) {
         if ($todelete = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'id' => $attemptid))) {
+            // Trigger the event answer deleted.
+            \mod_choice\event\answer_deleted::create_from_object($todelete, $choice, $cm, $course)->trigger();
             $DB->delete_records('choice_answers', array('choiceid' => $choice->id, 'id' => $attemptid));
-            // Update completion state
-            if ($completion->is_enabled($cm) && $choice->completionsubmit) {
-                $completion->update_state($cm, COMPLETION_INCOMPLETE, $attemptid);
-            }
         }
     }
+
+    // Update completion state.
+    if ($completion->is_enabled($cm) && $choice->completionsubmit) {
+        $completion->update_state($cm, COMPLETION_INCOMPLETE);
+    }
+
     return true;
 }
 
@@ -561,6 +619,10 @@ function choice_delete_instance($id) {
     }
 
     if (! $DB->delete_records("choice", array("id"=>"$choice->id"))) {
+        $result = false;
+    }
+    // Remove old calendar events.
+    if (! $DB->delete_records('event', array('modulename' => 'choice', 'instance' => $choice->id))) {
         $result = false;
     }
 
@@ -801,12 +863,13 @@ function choice_extend_settings_navigation(settings_navigation $settings, naviga
         // Big function, approx 6 SQL calls per user.
         $allresponses = choice_get_response_data($choice, $PAGE->cm, $groupmode, $onlyactive);
 
-        $responsecount =0;
+        $allusers = [];
         foreach($allresponses as $optionid => $userlist) {
             if ($optionid) {
-                $responsecount += count($userlist);
+                $allusers = array_merge($allusers, array_keys($userlist));
             }
         }
+        $responsecount = count(array_unique($allusers));
         $choicenode->add(get_string("viewallresponses", "choice", $responsecount), new moodle_url('/mod/choice/report.php', array('id'=>$PAGE->cm->id)));
     }
 }
@@ -888,8 +951,10 @@ function choice_print_overview($courses, &$htmlarray) {
 
             // Display relevant info based on permissions.
             if (has_capability('mod/choice:readresponses', context_module::instance($choice->coursemodule))) {
-                $attempts = $DB->count_records('choice_answers', array('choiceid' => $choice->id));
-                $str .= $OUTPUT->box(get_string('viewallresponses', 'choice', $attempts), 'info');
+                $attempts = $DB->count_records_sql('SELECT COUNT(DISTINCT userid) FROM {choice_answers} WHERE choiceid = ?',
+                    [$choice->id]);
+                $url = new moodle_url('/mod/choice/report.php', ['id' => $choice->coursemodule]);
+                $str .= $OUTPUT->box(html_writer::link($url, get_string('viewallresponses', 'choice', $attempts)), 'info');
 
             } else if (has_capability('mod/choice:choose', context_module::instance($choice->coursemodule))) {
                 // See if the user has submitted anything.
@@ -920,4 +985,185 @@ function choice_print_overview($courses, &$htmlarray) {
         }
     }
     return;
+}
+
+
+/**
+ * Get my responses on a given choice.
+ *
+ * @param stdClass $choice Choice record
+ * @return array of choice answers records
+ * @since  Moodle 3.0
+ */
+function choice_get_my_response($choice) {
+    global $DB, $USER;
+    return $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
+}
+
+
+/**
+ * Get all the responses on a given choice.
+ *
+ * @param stdClass $choice Choice record
+ * @return array of choice answers records
+ * @since  Moodle 3.0
+ */
+function choice_get_all_responses($choice) {
+    global $DB;
+    return $DB->get_records('choice_answers', array('choiceid' => $choice->id));
+}
+
+
+/**
+ * Return true if we are allowd to view the choice results.
+ *
+ * @param stdClass $choice Choice record
+ * @param rows|null $current my choice responses
+ * @param bool|null $choiceopen if the choice is open
+ * @return bool true if we can view the results, false otherwise.
+ * @since  Moodle 3.0
+ */
+function choice_can_view_results($choice, $current = null, $choiceopen = null) {
+
+    if (is_null($choiceopen)) {
+        $timenow = time();
+        if ($choice->timeclose != 0 && $timenow > $choice->timeclose) {
+            $choiceopen = false;
+        } else {
+            $choiceopen = true;
+        }
+    }
+    if (empty($current)) {
+        $current = choice_get_my_response($choice);
+    }
+
+    if ($choice->showresults == CHOICE_SHOWRESULTS_ALWAYS or
+       ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and !empty($current)) or
+       ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and !$choiceopen)) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $choice     choice object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function choice_view($choice, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $choice->id
+    );
+
+    $event = \mod_choice\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('choice', $choice);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
+
+/**
+ * Check if a choice is available for the current user.
+ *
+ * @param  stdClass  $choice            choice record
+ * @return array                       status (available or not and possible warnings)
+ */
+function choice_get_availability_status($choice) {
+    $available = true;
+    $warnings = array();
+
+    $timenow = time();
+
+    if (!empty($choice->timeopen) && ($choice->timeopen > $timenow)) {
+        $available = false;
+        $warnings['notopenyet'] = userdate($choice->timeopen);
+    } else if (!empty($choice->timeclose) && ($timenow > $choice->timeclose)) {
+        $available = false;
+        $warnings['expired'] = userdate($choice->timeclose);
+    }
+    if (!$choice->allowupdate && choice_get_my_response($choice)) {
+        $available = false;
+        $warnings['choicesaved'] = '';
+    }
+
+    // Choice is available.
+    return array($available, $warnings);
+}
+
+/**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every chat event in the site is checked, else
+ * only chat events belonging to the course specified are checked.
+ * This function is used, in its new format, by restore_refresh_events()
+ *
+ * @param int $courseid
+ * @return bool
+ */
+function choice_refresh_events($courseid = 0) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/choice/locallib.php');
+
+    if ($courseid) {
+        if (! $choices = $DB->get_records("choice", array("course" => $courseid))) {
+            return true;
+        }
+    } else {
+        if (! $choices = $DB->get_records("choice")) {
+            return true;
+        }
+    }
+
+    foreach ($choices as $choice) {
+        choice_set_events($choice);
+    }
+    return true;
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function choice_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB;
+
+    $updates = new stdClass();
+    $choice = $DB->get_record($cm->modname, array('id' => $cm->instance), '*', MUST_EXIST);
+    list($available, $warnings) = choice_get_availability_status($choice);
+    if (!$available) {
+        return $updates;
+    }
+
+    $updates = course_check_module_updates_since($cm, $from, array(), $filter);
+
+    if (!choice_can_view_results($choice)) {
+        return $updates;
+    }
+    // Check if there are new responses in the choice.
+    $updates->answers = (object) array('updated' => false);
+    $select = 'choiceid = :id AND timemodified > :since';
+    $params = array('id' => $choice->id, 'since' => $from);
+    $answers = $DB->get_records_select('choice_answers', $select, $params, '', 'id');
+    if (!empty($answers)) {
+        $updates->answers->updated = true;
+        $updates->answers->itemids = array_keys($answers);
+    }
+
+    return $updates;
 }

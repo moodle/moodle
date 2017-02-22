@@ -96,6 +96,28 @@ function _recaptcha_http_post($host, $path, $data, $port = 80, $https=false) {
         }
 }
 
+/**
+ * Return the recaptcha challenge and image and javascript urls
+ *
+ * @param  string $server    server url
+ * @param  string $pubkey    public key
+ * @param  string $errorpart error part to append
+ * @return array the challenge hash, image and javascript url
+ * @since  Moodle 3.2
+ */
+function recaptcha_get_challenge_hash_and_urls($server, $pubkey, $errorpart = '') {
+    global $CFG;
+
+    require_once($CFG->libdir . '/filelib.php');
+    $html = download_file_content($server . '/noscript?k=' . $pubkey . $errorpart, null, null, false, 300, 20, true);
+    preg_match('/image\?c\=([A-Za-z0-9\-\_]*)\"/', $html, $matches);
+    $challengehash = $matches[1];
+    $imageurl = $server . '/image?c=' . $challengehash;
+
+    $jsurl = $server . '/challenge?k=' . $pubkey . $errorpart;
+
+    return array($challengehash, $imageurl, $jsurl);
+}
 
 
 /**
@@ -111,7 +133,7 @@ function _recaptcha_http_post($host, $path, $data, $port = 80, $https=false) {
  * @return string - The HTML to be embedded in the user's form.
  */
 function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
-    global $CFG, $PAGE;
+    global $PAGE;
 
     $recaptchatype = optional_param('recaptcha', 'image', PARAM_TEXT);
 
@@ -127,14 +149,10 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
 
     $errorpart = "";
     if ($error) {
-       $errorpart = "&amp;error=" . $error;
+        $errorpart = "&amp;error=" . $error;
     }
 
-    require_once $CFG->libdir . '/filelib.php';
-    $html = download_file_content($server . '/noscript?k=' . $pubkey . $errorpart, null, null, false, 300, 20, true);
-    preg_match('/image\?c\=([A-Za-z0-9\-\_]*)\"/', $html, $matches);
-    $challenge_hash = $matches[1];
-    $image_url = $server . '/image?c=' . $challenge_hash;
+    list($challengehash, $imageurl, $jsurl) = recaptcha_get_challenge_hash_and_urls($server, $pubkey, $errorpart);
 
     $strincorrectpleasetryagain = get_string('incorrectpleasetryagain', 'auth');
     $strenterthewordsabove = get_string('enterthewordsabove', 'auth');
@@ -143,10 +161,10 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
     $strgetanaudiocaptcha = get_string('getanaudiocaptcha', 'auth');
     $strgetanimagecaptcha = get_string('getanimagecaptcha', 'auth');
 
-    $return = html_writer::script('', $server . '/challenge?k=' . $pubkey . $errorpart);
+    $return = html_writer::script('', $jsurl);
     $return .= '<noscript>
         <div id="recaptcha_widget_noscript">
-        <div id="recaptcha_image_noscript"><img src="' . $image_url . '" alt="reCAPTCHA"/></div>';
+        <div id="recaptcha_image_noscript"><img src="' . $imageurl . '" alt="reCAPTCHA"/></div>';
 
     if ($error == 'incorrect-captcha-sol') {
         $return .= '<div class="recaptcha_only_if_incorrect_sol" style="color:red">' . $strincorrectpleasetryagain . '</div>';
@@ -155,13 +173,13 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
     if ($recaptchatype == 'image') {
         $return .= '<span class="recaptcha_only_if_image">' . $strenterthewordsabove . '</span>';
     } elseif ($recaptchatype == 'audio') {
-        $return .= '<span class="recaptcha_only_if_audio">' . $strenterthenumbersyouhear . '</span>'; 
+        $return .= '<span class="recaptcha_only_if_audio">' . $strenterthenumbersyouhear . '</span>';
     }
-    
+
     $return .= '<input type="text" id="recaptcha_response_field_noscript" name="recaptcha_response_field" />';
-    $return .= '<input type="hidden" id="recaptcha_challenge_field_noscript" name="recaptcha_challenge_field" value="' . $challenge_hash . '" />';
+    $return .= '<input type="hidden" id="recaptcha_challenge_field_noscript" name="recaptcha_challenge_field" value="' . $challengehash . '" />';
     $return .= '<div><a href="signup.php">' . $strgetanothercaptcha . '</a></div>';
-    
+
     // Disabling audio recaptchas for now: not language-independent
     /*
     if ($recaptchatype == 'image') {
@@ -226,7 +244,7 @@ function recaptcha_check_answer ($privkey, $remoteip, $challenge, $response, $ht
                                                 'challenge' => $challenge,
                                                 'response' => $response
                                                 ),
-                                         $https        
+                                         $https
                                         );
 
         $answers = explode ("\n", $response [1]);

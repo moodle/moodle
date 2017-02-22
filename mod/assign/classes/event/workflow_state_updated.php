@@ -138,4 +138,13 @@ class workflow_state_updated extends base {
             throw new \coding_exception('The \'newstate\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'assign', 'restore' => 'assign');
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

@@ -21,6 +21,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 // Some constants
 define ('DATA_MAX_ENTRIES', 50);
 define ('DATA_PERPAGE_SINGLE', 1);
@@ -62,6 +64,18 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     var $cm;
     /** @var object activity context */
     var $context;
+    /** @var priority for globalsearch indexing */
+    protected static $priority = self::NO_PRIORITY;
+    /** priority value for invalid fields regarding indexing */
+    const NO_PRIORITY = 0;
+    /** priority value for minimum priority */
+    const MIN_PRIORITY = 1;
+    /** priority value for low priority */
+    const LOW_PRIORITY = 2;
+    /** priority value for high priority */
+    const HIGH_PRIORITY = 3;
+    /** priority value for maximum priority */
+    const MAX_PRIORITY = 4;
 
     /**
      * Constructor function
@@ -290,11 +304,13 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         $str = '<div title="' . s($this->field->description) . '">';
         $str .= '<label for="field_'.$this->field->id.'"><span class="accesshide">'.$this->field->name.'</span>';
         if ($this->field->required) {
-            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= html_writer::div($image, 'inline-req');
         }
-        $str .= '</label><input class="basefieldinput" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id;
-        $str .= '" value="'.s($content).'" />';
+        $str .= '</label><input class="basefieldinput form-control d-inline mod-data-input" ' .
+                'type="text" name="field_' . $this->field->id . '" ' .
+                'id="field_' . $this->field->id . '" value="' . s($content) . '" />';
         $str .= '</div>';
 
         return $str;
@@ -334,8 +350,8 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         require_once($CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html');
 
         echo '<div class="mdl-align">';
-        echo '<input type="submit" value="'.$savebutton.'" />'."\n";
-        echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />'."\n";
+        echo '<input type="submit" class="btn btn-primary" value="'.$savebutton.'" />'."\n";
+        echo '<input type="submit" class="btn btn-secondary" name="cancel" value="'.get_string('cancel').'" />'."\n";
         echo '</div>';
 
         echo '</form>';
@@ -474,7 +490,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      * @return string
      */
     function name() {
-        return get_string('name'.$this->type, 'data');
+        return get_string('fieldtypelabel', "datafield_$this->type");
     }
 
     /**
@@ -524,6 +540,27 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     function file_ok($relativepath) {
         return false;
     }
+
+    /**
+     * Returns the priority for being indexed by globalsearch
+     *
+     * @return int
+     */
+    public static function get_priority() {
+        return static::$priority;
+    }
+
+    /**
+     * Returns the presentable string value for a field content.
+     *
+     * The returned string should be plain text.
+     *
+     * @param stdClass $content
+     * @return string
+     */
+    public static function get_content_value($content) {
+        return trim($content->content, "\r\n ");
+    }
 }
 
 
@@ -552,7 +589,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
     if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id')) {
 
         $table = new html_table();
-        $table->attributes['class'] = 'mod-data-default-template';
+        $table->attributes['class'] = 'mod-data-default-template ##approvalstatus##';
         $table->colclasses = array('template-field', 'template-token');
         $table->data = array();
         foreach ($fields as $field) {
@@ -903,15 +940,24 @@ function data_tags_check($dataid, $template) {
  * @return int intance id
  */
 function data_add_instance($data, $mform = null) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/data/locallib.php');
 
     if (empty($data->assessed)) {
         $data->assessed = 0;
     }
 
+    if (empty($data->ratingtime) || empty($data->assessed)) {
+        $data->assesstimestart  = 0;
+        $data->assesstimefinish = 0;
+    }
+
     $data->timemodified = time();
 
     $data->id = $DB->insert_record('data', $data);
+
+    // Add calendar events if necessary.
+    data_set_events($data);
 
     data_grade_item_update($data);
 
@@ -926,7 +972,8 @@ function data_add_instance($data, $mform = null) {
  * @return bool
  */
 function data_update_instance($data) {
-    global $DB, $OUTPUT;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/data/locallib.php');
 
     $data->timemodified = time();
     $data->id           = $data->instance;
@@ -945,6 +992,9 @@ function data_update_instance($data) {
     }
 
     $DB->update_record('data', $data);
+
+    // Add calendar events if necessary.
+    data_set_events($data);
 
     data_grade_item_update($data);
 
@@ -985,6 +1035,13 @@ function data_delete_instance($id) {    // takes the dataid
     // delete all the records and fields
     $DB->delete_records('data_records', array('dataid'=>$id));
     $DB->delete_records('data_fields', array('dataid'=>$id));
+
+    // Remove old calendar events.
+    $events = $DB->get_records('event', array('modulename' => 'data', 'instance' => $id));
+    foreach ($events as $event) {
+        $event = calendar_event::load($event);
+        $event->delete();
+    }
 
     // Delete the instance itself
     $result = $DB->delete_records('data', array('id'=>$id));
@@ -1202,14 +1259,13 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = context_module::instance($cm->id);
 
-    static $fields = NULL;
-    static $isteacher;
-    static $dataid = NULL;
+    static $fields = array();
+    static $dataid = null;
 
     if (empty($dataid)) {
         $dataid = $data->id;
     } else if ($dataid != $data->id) {
-        $fields = NULL;
+        $fields = array();
     }
 
     if (empty($fields)) {
@@ -1217,7 +1273,6 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         foreach ($fieldrecords as $fieldrecord) {
             $fields[]= data_get_field($fieldrecord, $data);
         }
-        $isteacher = has_capability('mod/data:managetemplates', $context);
     }
 
     if (empty($records)) {
@@ -1228,9 +1283,6 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         $jumpurl = new moodle_url('/mod/data/view.php', array('d' => $data->id));
     }
     $jumpurl = new moodle_url($jumpurl, array('page' => $page, 'sesskey' => sesskey()));
-
-    // Check whether this activity is read-only at present
-    $readonly = data_in_readonly_period($data);
 
     foreach ($records as $record) {   // Might be just one for the single template
 
@@ -1249,7 +1301,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
     // Replacing special tags (##Edit##, ##Delete##, ##More##)
         $patterns[]='##edit##';
         $patterns[]='##delete##';
-        if ($canmanageentries || (!$readonly && data_isowner($record->id))) {
+        if (data_user_can_manage_entry($record, $data, $context)) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
                              .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
@@ -1325,6 +1377,15 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
                     array('class' => 'disapprove'));
         } else {
             $replacement[] = '';
+        }
+
+        $patterns[] = '##approvalstatus##';
+        if (!$data->approval) {
+            $replacement[] = '';
+        } else if ($record->approved) {
+            $replacement[] = get_string('approved', 'data');
+        } else {
+            $replacement[] = get_string('notapproved', 'data');
         }
 
         $patterns[]='##comments##';
@@ -1514,6 +1575,58 @@ function data_rating_validate($params) {
     return true;
 }
 
+/**
+ * Can the current user see ratings for a given itemid?
+ *
+ * @param array $params submitted data
+ *            contextid => int contextid [required]
+ *            component => The component for this module - should always be mod_data [required]
+ *            ratingarea => object the context in which the rated items exists [required]
+ *            itemid => int the ID of the object being rated [required]
+ *            scaleid => int scale id [optional]
+ * @return bool
+ * @throws coding_exception
+ * @throws rating_exception
+ */
+function mod_data_rating_can_see_item_ratings($params) {
+    global $DB;
+
+    // Check the component is mod_data.
+    if (!isset($params['component']) || $params['component'] != 'mod_data') {
+        throw new rating_exception('invalidcomponent');
+    }
+
+    // Check the ratingarea is entry (the only rating area in data).
+    if (!isset($params['ratingarea']) || $params['ratingarea'] != 'entry') {
+        throw new rating_exception('invalidratingarea');
+    }
+
+    if (!isset($params['itemid'])) {
+        throw new rating_exception('invaliditemid');
+    }
+
+    $datasql = "SELECT d.id as dataid, d.course, r.groupid
+                  FROM {data_records} r
+                  JOIN {data} d ON r.dataid = d.id
+                 WHERE r.id = :itemid";
+    $dataparams = array('itemid' => $params['itemid']);
+    if (!$info = $DB->get_record_sql($datasql, $dataparams)) {
+        // Item doesn't exist.
+        throw new rating_exception('invaliditemid');
+    }
+
+    // User can see ratings of all participants.
+    if ($info->groupid == 0) {
+        return true;
+    }
+
+    $course = $DB->get_record('course', array('id' => $info->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('data', $info->dataid, $course->id, false, MUST_EXIST);
+
+    // Make sure groups allow this user to see the item they're rating.
+    return groups_group_visible($info->groupid, $course, $cm);
+}
+
 
 /**
  * function that takes in the current data, number of items per page,
@@ -1551,7 +1664,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<label for="pref_perpage">'.get_string('pagesize','data').'</label> ';
     $pagesizes = array(2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
-    echo html_writer::select($pagesizes, 'perpage', $perpage, false, array('id'=>'pref_perpage'));
+    echo html_writer::select($pagesizes, 'perpage', $perpage, false, array('id' => 'pref_perpage', 'class' => 'custom-select'));
 
     if ($advanced) {
         $regsearchclass = 'search_none';
@@ -1560,11 +1673,12 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         $regsearchclass = 'search_inline';
         $advancedsearchclass = 'search_none';
     }
-    echo '<div id="reg_search" class="' . $regsearchclass . '" >&nbsp;&nbsp;&nbsp;';
-    echo '<label for="pref_search">'.get_string('search').'</label> <input type="text" size="16" name="search" id= "pref_search" value="'.s($search).'" /></div>';
+    echo '<div id="reg_search" class="' . $regsearchclass . ' form-inline" >&nbsp;&nbsp;&nbsp;';
+    echo '<label for="pref_search">' . get_string('search') . '</label> <input type="text" ' .
+         'class="form-control" size="16" name="search" id= "pref_search" value="' . s($search) . '" /></div>';
     echo '&nbsp;&nbsp;&nbsp;<label for="pref_sortby">'.get_string('sortby').'</label> ';
     // foreach field, print the option
-    echo '<select name="sort" id="pref_sortby">';
+    echo '<select name="sort" id="pref_sortby" class="custom-select m-r-1">';
     if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'name')) {
         echo '<optgroup label="'.get_string('fields', 'data').'">';
         foreach ($fields as $field) {
@@ -1595,7 +1709,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '</optgroup>';
     echo '</select>';
     echo '<label for="pref_order" class="accesshide">'.get_string('order').'</label>';
-    echo '<select id="pref_order" name="order">';
+    echo '<select id="pref_order" name="order" class="custom-select m-r-1">';
     if ($order == 'ASC') {
         echo '<option value="ASC" selected="selected">'.get_string('ascending','data').'</option>';
     } else {
@@ -1617,8 +1731,10 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $PAGE->requires->js('/mod/data/data.js');
     echo '&nbsp;<input type="hidden" name="advanced" value="0" />';
     echo '&nbsp;<input type="hidden" name="filter" value="1" />';
-    echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" '.$checked.' onchange="showHideAdvSearch(this.checked);" /><label for="advancedcheckbox">'.get_string('advancedsearch', 'data').'</label>';
-    echo '&nbsp;<input type="submit" value="'.get_string('savesettings','data').'" />';
+    echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" ' . $checked . ' ' .
+         'onchange="showHideAdvSearch(this.checked);" class="m-x-1" />' .
+         '<label for="advancedcheckbox">' . get_string('advancedsearch', 'data') . '</label>';
+    echo '&nbsp;<input type="submit" class="btn btn-secondary" value="' . get_string('savesettings', 'data') . '" />';
 
     echo '<br />';
     echo '<div class="' . $advancedsearchclass . '" id="data_adv_form">';
@@ -1634,14 +1750,13 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         data_generate_default_template($data, 'asearchtemplate');
     }
 
-    static $fields = NULL;
-    static $isteacher;
-    static $dataid = NULL;
+    static $fields = array();
+    static $dataid = null;
 
     if (empty($dataid)) {
         $dataid = $data->id;
     } else if ($dataid != $data->id) {
-        $fields = NULL;
+        $fields = array();
     }
 
     if (empty($fields)) {
@@ -1649,8 +1764,6 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         foreach ($fieldrecords as $fieldrecord) {
             $fields[]= data_get_field($fieldrecord, $data);
         }
-
-        $isteacher = has_capability('mod/data:managetemplates', $context);
     }
 
     // Replacing tags
@@ -1672,9 +1785,11 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $fn = !empty($search_array[DATA_FIRSTNAME]->data) ? $search_array[DATA_FIRSTNAME]->data : '';
     $ln = !empty($search_array[DATA_LASTNAME]->data) ? $search_array[DATA_LASTNAME]->data : '';
     $patterns[]    = '/##firstname##/';
-    $replacement[] = '<label class="accesshide" for="u_fn">'.get_string('authorfirstname', 'data').'</label><input type="text" size="16" id="u_fn" name="u_fn" value="'.$fn.'" />';
+    $replacement[] = '<label class="accesshide" for="u_fn">' . get_string('authorfirstname', 'data') . '</label>' .
+                     '<input type="text" class="form-control" size="16" id="u_fn" name="u_fn" value="' . s($fn) . '" />';
     $patterns[]    = '/##lastname##/';
-    $replacement[] = '<label class="accesshide" for="u_ln">'.get_string('authorlastname', 'data').'</label><input type="text" size="16" id="u_ln" name="u_ln" value="'.$ln.'" />';
+    $replacement[] = '<label class="accesshide" for="u_ln">' . get_string('authorlastname', 'data') . '</label>' .
+                     '<input type="text" class="form-control" size="16" id="u_ln" name="u_ln" value="' . s($ln) . '" />';
 
     // actual replacement of the tags
     $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
@@ -1686,7 +1801,10 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo format_text($newtext, FORMAT_HTML, $options);
     echo '</td></tr>';
 
-    echo '<tr><td colspan="4"><br/><input type="submit" value="'.get_string('savesettings','data').'" /><input type="submit" name="resetadv" value="'.get_string('resetsettings','data').'" /></td></tr>';
+    echo '<tr><td colspan="4"><br/>' .
+         '<input type="submit" class="btn btn-primary m-r-1" value="' . get_string('savesettings', 'data') . '" />' .
+         '<input type="submit" class="btn btn-secondary" name="resetadv" value="' . get_string('resetsettings', 'data') . '" />' .
+         '</td></tr>';
     echo '</table>';
     echo '</div>';
     echo '</div>';
@@ -2114,6 +2232,44 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode, $context = nu
             return false;
         }
     }
+}
+
+/**
+ * Check whether the current user is allowed to manage the given record considering manageentries capability,
+ * data_in_readonly_period() result, ownership (determined by data_isowner()) and manageapproved setting.
+ * @param mixed $record record object or id
+ * @param object $data data object
+ * @param object $context context object
+ * @return bool returns true if the user is allowd to edit the entry, false otherwise
+ */
+function data_user_can_manage_entry($record, $data, $context) {
+    global $DB;
+
+    if (has_capability('mod/data:manageentries', $context)) {
+        return true;
+    }
+
+    // Check whether this activity is read-only at present.
+    $readonly = data_in_readonly_period($data);
+
+    if (!$readonly) {
+        // Get record object from db if just id given like in data_isowner.
+        // ...done before calling data_isowner() to avoid querying db twice.
+        if (!is_object($record)) {
+            if (!$record = $DB->get_record('data_records', array('id' => $record))) {
+                return false;
+            }
+        }
+        if (data_isowner($record)) {
+            if ($data->approval && $record->approved) {
+                return $data->manageapproved == 1;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -2714,6 +2870,7 @@ function data_supports($feature) {
         case FEATURE_RATE:                    return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_COMMENT:                 return true;
 
         default: return null;
     }
@@ -3257,6 +3414,7 @@ function data_presets_generate_xml($course, $cm, $data) {
         'maxentries',
         'rssarticles',
         'approval',
+        'manageapproved',
         'defaultsortdir'
     );
 
@@ -3551,6 +3709,11 @@ function data_get_all_recordids($dataid, $selectdata = '', $params = null) {
  * @return array $recordids   An array of record ids.
  */
 function data_get_advance_search_ids($recordids, $searcharray, $dataid) {
+    // Check to see if we have any record IDs.
+    if (empty($recordids)) {
+        // Send back an empty search.
+        return array();
+    }
     $searchcriteria = array_keys($searcharray);
     // Loop through and reduce the IDs one search criteria at a time.
     foreach ($searchcriteria as $key) {
@@ -3781,6 +3944,7 @@ function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
     // Empty form checking - you can't submit an empty form.
     $emptyform = true;
     $requiredfieldsfilled = true;
+    $fieldsvalidated = true;
 
     // Store the notifications.
     $result->generalnotifications = array();
@@ -3818,6 +3982,14 @@ function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
 
         $field = data_get_field($fieldrecord, $mod);
         if (isset($submitteddata[$fieldrecord->id])) {
+            // Field validation check.
+            if (method_exists($field, 'field_validation')) {
+                $errormessage = $field->field_validation($submitteddata[$fieldrecord->id]);
+                if ($errormessage) {
+                    $result->fieldnotifications[$field->field->name][] = $errormessage;
+                    $fieldsvalidated = false;
+                }
+            }
             foreach ($submitteddata[$fieldrecord->id] as $fieldname => $value) {
                 if ($field->notemptyfield($value->value, $value->fieldname)) {
                     // The field has content and the form is not empty.
@@ -3849,7 +4021,83 @@ function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
         $result->generalnotifications[] = get_string('emptyaddform', 'data');
     }
 
-    $result->validated = $requiredfieldsfilled && !$emptyform;
+    $result->validated = $requiredfieldsfilled && !$emptyform && $fieldsvalidated;
 
     return $result;
+}
+
+/**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every data event in the site is checked, else
+ * only data events belonging to the course specified are checked.
+ * This function is used, in its new format, by restore_refresh_events()
+ *
+ * @param int $courseid
+ * @return bool
+ */
+function data_refresh_events($courseid = 0) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/data/locallib.php');
+
+    if ($courseid) {
+        if (! $data = $DB->get_records("data", array("course" => $courseid))) {
+            return true;
+        }
+    } else {
+        if (! $data = $DB->get_records("data")) {
+            return true;
+        }
+    }
+
+    foreach ($data as $datum) {
+        data_set_events($datum);
+    }
+    return true;
+}
+
+/**
+ * Fetch the configuration for this database activity.
+ *
+ * @param   stdClass    $database   The object returned from the database for this instance
+ * @param   string      $key        The name of the key to retrieve. If none is supplied, then all configuration is returned
+ * @param   mixed       $default    The default value to use if no value was found for the specified key
+ * @return  mixed                   The returned value
+ */
+function data_get_config($database, $key = null, $default = null) {
+    if (!empty($database->config)) {
+        $config = json_decode($database->config);
+    } else {
+        $config = new stdClass();
+    }
+
+    if ($key === null) {
+        return $config;
+    }
+
+    if (property_exists($config, $key)) {
+        return $config->$key;
+    }
+    return $default;
+}
+
+/**
+ * Update the configuration for this database activity.
+ *
+ * @param   stdClass    $database   The object returned from the database for this instance
+ * @param   string      $key        The name of the key to set
+ * @param   mixed       $value      The value to set for the key
+ */
+function data_set_config(&$database, $key, $value) {
+    // Note: We must pass $database by reference because there may be subsequent calls to update_record and these should
+    // not overwrite the configuration just set.
+    global $DB;
+
+    $config = data_get_config($database);
+
+    if (!isset($config->$key) || $config->$key !== $value) {
+        $config->$key = $value;
+        $database->config = json_encode($config);
+        $DB->set_field('data', 'config', $database->config, ['id' => $database->id]);
+    }
 }

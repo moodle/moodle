@@ -42,6 +42,7 @@ $search       = optional_param('search', '', PARAM_RAW); // Make sure it is proc
 $roleid       = optional_param('roleid', 0, PARAM_INT); // Optional roleid, 0 means all enrolled users (or all on the frontpage).
 $contextid    = optional_param('contextid', 0, PARAM_INT); // One of this or.
 $courseid     = optional_param('id', 0, PARAM_INT); // This are required.
+$selectall    = optional_param('selectall', false, PARAM_BOOL); // When rendering checkboxes against users mark them all checked.
 
 $PAGE->set_url('/user/index.php', array(
         'page' => $page,
@@ -224,7 +225,9 @@ if ($mycourses = enrol_get_my_courses()) {
     $controlstable->data[0]->cells[] = $OUTPUT->render($select);
 }
 
-$controlstable->data[0]->cells[] = groups_print_course_menu($course, $baseurl->out(), true);
+if ($groupmenu = groups_print_course_menu($course, $baseurl->out(), true)) {
+    $controlstable->data[0]->cells[] = $groupmenu;
+}
 
 if (!isset($hiddenfields['lastaccess'])) {
     // Get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
@@ -504,42 +507,45 @@ if (count($rolenames) > 1) {
     echo '</div>';
 }
 
+$editlink = '';
+if ($course->id != SITEID && has_capability('moodle/course:enrolreview', $context)) {
+    $editlink = new moodle_url('/enrol/users.php', array('id' => $course->id));
+}
+
 if ($roleid > 0) {
     $a = new stdClass();
     $a->number = $totalcount;
     $a->role = $rolenames[$roleid];
     $heading = format_string(get_string('xuserswiththerole', 'role', $a));
 
-    if ($currentgroup and $group) {
+    if ($currentgroup and !empty($group)) {
         $a->group = $group->name;
         $heading .= ' ' . format_string(get_string('ingroup', 'role', $a));
     }
 
-    if ($accesssince) {
+    if ($accesssince && !empty($timeoptions[$accesssince])) {
         $a->timeperiod = $timeoptions[$accesssince];
         $heading .= ' ' . format_string(get_string('inactiveformorethan', 'role', $a));
     }
 
     $heading .= ": $a->number";
 
-    if (user_can_assign($context, $roleid)) {
-        $headingurl = new moodle_url($CFG->wwwroot . '/' . $CFG->admin . '/roles/assign.php',
-                array('roleid' => $roleid, 'contextid' => $context->id));
-        $heading .= $OUTPUT->action_icon($headingurl, new pix_icon('t/edit', get_string('edit')));
+    if (!empty($editlink)) {
+        $editlink->param('role', $roleid);
+        $heading .= $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit')));
     }
     echo $OUTPUT->heading($heading, 3);
 } else {
-    if ($course->id != SITEID && has_capability('moodle/course:enrolreview', $context)) {
-        $editlink = $OUTPUT->action_icon(new moodle_url('/enrol/users.php', array('id' => $course->id)),
-                                         new pix_icon('t/edit', get_string('edit')));
-    } else {
-        $editlink = '';
-    }
     if ($course->id == SITEID and $roleid < 0) {
         $strallparticipants = get_string('allsiteusers', 'role');
     } else {
         $strallparticipants = get_string('allparticipants');
     }
+
+    if (!empty($editlink)) {
+        $editlink = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit')));
+    }
+
     if ($matchcount < $totalcount) {
         echo $OUTPUT->heading($strallparticipants.get_string('labelsep', 'langconfig').$matchcount.'/'.$totalcount . $editlink, 3);
     } else {
@@ -644,7 +650,6 @@ if ($mode === MODE_USERDETAILS) {    // Print simple listing.
                     $row->cells[1]->text .= get_string('role').get_string('labelsep', 'langconfig').$user->role.'<br />';
                 }
                 if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
-                            has_capability('moodle/course:viewhiddenuserfields', $context) or
                             in_array('email', $extrafields) or ($user->id == $USER->id)) {
                     $row->cells[1]->text .= get_string('email').get_string('labelsep', 'langconfig').html_writer::link("mailto:$user->email", $user->email) . '<br />';
                 }
@@ -709,7 +714,12 @@ if ($mode === MODE_USERDETAILS) {    // Print simple listing.
                 $row->cells[2]->text .= implode('', $links);
 
                 if ($bulkoperations) {
-                    $row->cells[2]->text .= '<br /><input type="checkbox" class="usercheckbox" name="user'.$user->id.'" /> ';
+                    if ($selectall) {
+                        $checked = 'checked="true"';
+                    } else {
+                        $checked = '';
+                    }
+                    $row->cells[2]->text .= '<br /><input type="checkbox" class="usercheckbox" name="user'.$user->id.'" ' .$checked .'/> ';
                 }
                 $table->data = array($row);
                 echo html_writer::table($table);
@@ -763,7 +773,12 @@ if ($mode === MODE_USERDETAILS) {    // Print simple listing.
 
             $data = array();
             if ($bulkoperations) {
-                $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" />';
+                if ($selectall) {
+                    $checked = 'checked="true"';
+                } else {
+                    $checked = '';
+                }
+                $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" ' . $checked .'/>';
             }
             $data[] = $OUTPUT->user_picture($user, array('size' => 35, 'courseid' => $course->id));
             $data[] = $profilelink;
@@ -791,10 +806,47 @@ if ($mode === MODE_USERDETAILS) {    // Print simple listing.
 
 }
 
+$perpageurl = clone($baseurl);
+$perpageurl->remove_params('perpage');
+if ($perpage == SHOW_ALL_PAGE_SIZE) {
+    $perpageurl->param('perpage', DEFAULT_PAGE_SIZE);
+    echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showperpage', '', DEFAULT_PAGE_SIZE)), array(), 'showall');
+
+} else if ($matchcount > 0 && $perpage < $matchcount) {
+    $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
+    echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showall', '', $matchcount)), array(), 'showall');
+}
+
 if ($bulkoperations) {
     echo '<br /><div class="buttons">';
-    echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> ';
-    echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> ';
+
+    if ($matchcount > 0 && $perpage < $matchcount) {
+        $perpageurl = clone($baseurl);
+        $perpageurl->remove_params('perpage');
+        $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
+        $perpageurl->param('selectall', true);
+        $showalllink = $perpageurl;
+    } else {
+        $showalllink = false;
+    }
+
+    echo html_writer::start_tag('div', array('class' => 'btn-group'));
+    if ($perpage < $matchcount) {
+        // Select all users, refresh page showing all users and mark them all selected.
+        $label = get_string('selectalluserswithcount', 'moodle', $matchcount);
+        echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checkall', 'class' => 'btn btn-secondary',
+                'value' => $label, 'data-showallink' => $showalllink));
+        // Select all users, mark all users on page as selected.
+        echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checkallonpage', 'class' => 'btn btn-secondary',
+        'value' => get_string('selectallusersonpage')));
+    } else {
+        echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checkallonpage', 'class' => 'btn btn-secondary',
+        'value' => get_string('selectall')));
+    }
+
+    echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checknone', 'class' => 'btn btn-secondary',
+        'value' => get_string('deselectall')));
+    echo html_writer::end_tag('div');
     $displaylist = array();
     $displaylist['messageselect.php'] = get_string('messageselectadd');
     if (!empty($CFG->enablenotes) && has_capability('moodle/notes:manage', $context) && $context->id != $frontpagectx->id) {
@@ -822,17 +874,6 @@ if ($totalcount > $perpage) {
     echo '<form action="index.php" class="searchform"><div><input type="hidden" name="id" value="'.$course->id.'" />';
     echo '<label for="search">' . get_string('search', 'search') . ' </label>';
     echo '<input type="text" id="search" name="search" value="'.s($search).'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
-}
-
-$perpageurl = clone($baseurl);
-$perpageurl->remove_params('perpage');
-if ($perpage == SHOW_ALL_PAGE_SIZE) {
-    $perpageurl->param('perpage', DEFAULT_PAGE_SIZE);
-    echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showperpage', '', DEFAULT_PAGE_SIZE)), array(), 'showall');
-
-} else if ($matchcount > 0 && $perpage < $matchcount) {
-    $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-    echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showall', '', $matchcount)), array(), 'showall');
 }
 
 echo '</div>';  // Userlist.

@@ -4,7 +4,6 @@ Feature: Teacher can choose whether to allow students to change their choice res
   As a teacher
   I need to enable the option to change the choice
 
-  @javascript
   Scenario: Add a choice activity and complete the activity as a student
     Given the following "users" exist:
       | username | firstname | lastname | email |

@@ -22,8 +22,6 @@ Feature: availability_grouping
     And the following "group members" exist:
       | user     | group |
       | student1 | GI1   |
-    And the following config values are set as admin:
-      | enableavailability  | 1 |
 
   @javascript
   Scenario: Test condition

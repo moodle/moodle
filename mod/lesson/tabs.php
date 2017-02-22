@@ -57,9 +57,6 @@ if (has_capability('mod/lesson:viewreports', $context)) {
 if (has_capability('mod/lesson:grade', $context)) {
     $row[] = new tabobject('essay', "$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id", get_string('manualgrading', 'lesson'));
 }
-if ($lesson->highscores) {
-    $row[] = new tabobject('highscores', "$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id", get_string('highscores', 'lesson'));
-}
 
 $tabs[] = $row;
 

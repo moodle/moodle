@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_feedback/summary
+
+    Displays feedback summary
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "completedcount" : 15,
+        "itemscount" : 5,
+        "timeopen" : "May 15, 2016"
+    }
+
+}}
+
+<div class="feedback_info">
+    <span
+        class="feedback_info">{{#str}}completed_feedbacks, mod_feedback{{/str}}: </span><span
+        class="feedback_info_value">{{completedcount}}</span>
+</div>
+
+<div class="feedback_info">
+    <span
+        class="feedback_info">{{#str}}questions, mod_feedback{{/str}}: </span><span
+        class="feedback_info_value">{{itemscount}}</span>
+</div>
+
+{{#timeopen}}
+    <div class="feedback_info">
+        <span
+            class="feedback_info">{{#str}}feedbackopen, mod_feedback{{/str}}: </span><span
+            class="feedback_info_value">{{timeopen}}</span>
+    </div>
+{{/timeopen}}
+
+{{#timeclose}}
+    <div class="feedback_info">
+        <span
+            class="feedback_info">{{#str}}feedbackclose, mod_feedback{{/str}}: </span><span
+            class="feedback_info_value">{{timeclose}}</span>
+    </div>
+{{/timeclose}}
+

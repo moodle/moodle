@@ -74,7 +74,7 @@ class webdav_client {
     private $_header='';
     private $_body='';
     private $_connection_closed = false;
-    private $_maxheaderlenth = 1000;
+    private $_maxheaderlenth = 65536;
     private $_digestchallenge = null;
     private $_cnonce = '';
     private $_nc = 0;

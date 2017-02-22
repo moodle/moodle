@@ -44,15 +44,16 @@ class quiz_overview_table extends quiz_attempts_report_table {
      * @param context $context
      * @param string $qmsubselect
      * @param quiz_overview_options $options
-     * @param array $groupstudents
-     * @param array $students
+     * @param \core\dml\sql_join $groupstudentsjoins
+     * @param \core\dml\sql_join $studentsjoins
      * @param array $questions
      * @param moodle_url $reporturl
      */
     public function __construct($quiz, $context, $qmsubselect,
-            quiz_overview_options $options, $groupstudents, $students, $questions, $reporturl) {
+            quiz_overview_options $options, \core\dml\sql_join $groupstudentsjoins,
+            \core\dml\sql_join $studentsjoins, $questions, $reporturl) {
         parent::__construct('mod-quiz-report-overview-report', $quiz , $context,
-                $qmsubselect, $options, $groupstudents, $students, $questions, $reporturl);
+                $qmsubselect, $options, $groupstudentsjoins, $studentsjoins, $questions, $reporturl);
     }
 
     public function build_table() {
@@ -68,24 +69,39 @@ class quiz_overview_table extends quiz_attempts_report_table {
         // End of adding the data from attempts. Now add averages at bottom.
         $this->add_separator();
 
-        if ($this->groupstudents) {
-            $this->add_average_row(get_string('groupavg', 'grades'), $this->groupstudents);
+        if (!empty($this->groupstudentsjoins->joins)) {
+            $sql = "SELECT DISTINCT u.id
+                      FROM {user} u
+                    {$this->groupstudentsjoins->joins}
+                     WHERE {$this->groupstudentsjoins->wheres}";
+            $groupstudents = $DB->get_records_sql($sql, $this->groupstudentsjoins->params);
+            if ($groupstudents) {
+                $this->add_average_row(get_string('groupavg', 'grades'), $this->groupstudentsjoins);
+            }
         }
 
-        if ($this->students) {
-            $this->add_average_row(get_string('overallaverage', 'grades'), $this->students);
+        if (!empty($this->studentsjoins->joins)) {
+            $sql = "SELECT DISTINCT u.id
+                      FROM {user} u
+                    {$this->studentsjoins->joins}
+                     WHERE {$this->studentsjoins->wheres}";
+            $students = $DB->get_records_sql($sql, $this->studentsjoins->params);
+            if ($students) {
+                $this->add_average_row(get_string('overallaverage', 'grades'), $this->studentsjoins);
+            }
         }
     }
+
 
     /**
      * Add an average grade over the attempts of a set of users.
      * @param string $label the title ot use for this row.
-     * @param array $users the users to average over.
+     * @param \core\dml\sql_join $usersjoins (joins, wheres, params) for the users to average over.
      */
-    protected function add_average_row($label, $users) {
+    protected function add_average_row($label, \core\dml\sql_join $usersjoins) {
         global $DB;
 
-        list($fields, $from, $where, $params) = $this->base_sql($users);
+        list($fields, $from, $where, $params) = $this->base_sql($usersjoins);
         $record = $DB->get_record_sql("
                 SELECT AVG(quiza.sumgrades) AS grade, COUNT(quiza.sumgrades) AS numaveraged
                   FROM $from
@@ -173,7 +189,7 @@ class quiz_overview_table extends quiz_attempts_report_table {
 
     protected function submit_buttons() {
         if (has_capability('mod/quiz:regrade', $this->context)) {
-            echo '<input type="submit" name="regrade" value="' .
+            echo '<input type="submit" class="btn btn-secondary m-r-1" name="regrade" value="' .
                     get_string('regradeselected', 'quiz_overview') . '"/>';
         }
         parent::submit_buttons();

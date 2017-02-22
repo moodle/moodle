@@ -57,13 +57,6 @@ class block_myprofile_edit_form extends block_edit_form {
             $mform->setDefault('config_display_email', '1');
         }
 
-        $mform->addElement('selectyesno', 'config_display_un', get_string('display_un', 'block_myprofile'));
-        if (isset($this->block->config->display_un)) {
-            $mform->setDefault('config_display_un', $this->block->config->display_un);
-        } else {
-            $mform->setDefault('config_display_un', '0');
-        }
-
         $mform->addElement('selectyesno', 'config_display_icq', get_string('display_icq', 'block_myprofile'));
         if (isset($this->block->config->display_icq)) {
             $mform->setDefault('config_display_icq', $this->block->config->display_icq);

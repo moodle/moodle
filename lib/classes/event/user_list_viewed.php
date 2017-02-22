@@ -88,4 +88,12 @@ class user_list_viewed extends base {
     protected function get_legacy_logdata() {
         return array($this->courseid, 'user', 'view all', 'index.php?id=' . $this->courseid, '');
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'course', 'restore' => 'course');
+    }
+
+    public static function get_other_mapping() {
+        return false;
+    }
 }

@@ -44,9 +44,9 @@ class profile_field_menu extends profile_field_base {
      * @param int $fieldid
      * @param int $userid
      */
-    public function profile_field_menu($fieldid = 0, $userid = 0) {
+    public function __construct($fieldid = 0, $userid = 0) {
         // First call parent constructor.
-        $this->profile_field_base($fieldid, $userid);
+        parent::__construct($fieldid, $userid);
 
         // Param 1 for menu type is the options.
         if (isset($this->field->param1)) {
@@ -70,6 +70,16 @@ class profile_field_menu extends profile_field_base {
                 $this->datakey = $key;
             }
         }
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function profile_field_menu($fieldid=0, $userid=0) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($fieldid, $userid);
     }
 
     /**
@@ -154,6 +164,17 @@ class profile_field_menu extends profile_field_base {
             $retval = null;
         }
         return $retval;
+    }
+
+    /**
+     * Return the field type and null properties.
+     * This will be used for validating the data submitted by a user.
+     *
+     * @return array the param type and null property
+     * @since Moodle 3.2
+     */
+    public function get_field_properties() {
+        return array(PARAM_TEXT, NULL_NOT_ALLOWED);
     }
 }
 

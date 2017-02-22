@@ -1,0 +1,72 @@
+.blockmovetarget .accesshide {
+    position: relative;
+    left: initial;
+}
+
+.block_search_forums .searchform {
+    /* Override plugin's default. */
+    text-align: left;
+}
+
+.block.block_navigation .block_tree ul,
+.block_settings .block_tree ul {
+    margin-left: 0;
+}
+
+.block .block-controls {
+    .dropdown-toggle {
+        /* So that the caret takes the colour of the icon. */
+        color: #999;
+    }
+}
+
+$blocks-column-width: 250px !default;
+
+[data-region="blocks-column"] {
+    width: $blocks-column-width;
+    float: right;
+}
+
+$blocks-plus-gutter: $blocks-column-width + $grid-gutter-width;
+
+/* We put an absolutely positioned div in a relatively positioned div so it takes up no space */
+#region-main-settings-menu {
+    position: relative;
+    float: left;
+    width: 100%;
+}
+#region-main-settings-menu > div {
+    position: absolute;
+    right: 0;
+    z-index: 100;
+    margin: 1rem;
+}
+.region_main_settings_menu_proxy {
+    width: 4rem;
+    height: 2rem;
+    background-color: $card-bg;
+    margin-left: $card-spacer-x / 2;
+    margin-bottom: $card-spacer-x / 2;
+    border-bottom-left-radius: 0.5rem;
+    float: right;
+}
+
+// Required for IE11 to prevent blocks being pushed under the content.
+#region-main {
+    float: left;
+    width: 100%;
+}
+#region-main-settings-menu.has-blocks,
+#region-main.has-blocks {
+    display: inline-block;
+    width: calc(100% - #{$blocks-plus-gutter});
+    @include media-breakpoint-down(md) {
+        width: 100%;
+    }
+}
+
+[data-region="blocks-column"] {
+    @include media-breakpoint-down(md) {
+        width: 100%;
+    }
+}

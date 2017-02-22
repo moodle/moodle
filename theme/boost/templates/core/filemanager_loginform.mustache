@@ -1,0 +1,43 @@
+{{!
+    @template core/filemanager_loginform
+
+    This template is actually a template which is then used by YUI JS to
+    generate the markup, so it doesn't make much sense on its own.
+
+    Example context (json): {}
+}}
+<div class="fp-login-form">
+    <div class="fp-content-center">
+        <form class="form">
+            <div class="fp-formset">
+                <div class="fp-login-popup form-group">
+                    <div class="fp-popup">
+                        <p class="mdl-align">
+                            <button class="fp-login-popup-but btn-primary btn">{{#str}}login, repository{{/str}}</button>
+                        </p>
+                    </div>
+                </div>
+                <div class="fp-login-textarea form-group">
+                    <textarea class="form-control"></textarea>
+                </div>
+                <div class="fp-login-select form-group">
+                    <label class="form-control-label"></label>
+                    <select class="form-control"></select>
+                </div>
+                <div class="fp-login-input form-group">
+                    <label class="form-control-label"></label>
+                    <input class="form-control"/>
+                </div>
+                <div class="fp-login-radiogroup form-group">
+                    <label class="form-control-label"></label>
+                    <div class="fp-login-radio"><input class="form-control" /> <label></label></div>
+                </div>
+                <div class="fp-login-checkbox form-group form-inline">
+                    <label class="form-control-label"></label>
+                    <input class="form-control"/>
+                </div>
+            </div>
+            <p class="mdl-align"><button class="fp-login-submit btn-primary btn">{{#str}}submit, repository{{/str}}</button></p>
+        </form>
+    </div>
+</div>

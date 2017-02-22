@@ -81,7 +81,7 @@ switch ($action) {
         // Ask for confirmation, as there is user data available for field.
         $fieldname = $DB->get_field('user_info_field', 'name', array('id' => $id));
         $optionsyes = array ('id' => $id, 'confirm' => 1, 'action' => 'deletefield', 'sesskey' => sesskey());
-        $strheading = get_string('profiledeletefield', 'admin', $fieldname);
+        $strheading = get_string('profiledeletefield', 'admin', format_string($fieldname));
         $PAGE->navbar->add($strheading);
         echo $OUTPUT->header();
         echo $OUTPUT->heading($strheading);
@@ -153,7 +153,7 @@ echo '<div class="profileeditor">';
 // Create a new field link.
 $options = profile_list_datatypes();
 $popupurl = new moodle_url('/user/profile/index.php?id=0&action=editfield');
-echo $OUTPUT->single_select($popupurl, 'datatype', $options, '', null, 'newfieldform', array('label' => $strcreatefield));
+echo $OUTPUT->single_select($popupurl, 'datatype', $options, '', array('' => get_string('choosedots')), 'newfieldform', array('label' => $strcreatefield));
 
 // Add a div with a class so themers can hide, style or reposition the text.
 html_writer::start_tag('div', array('class' => 'adminuseractionhint'));

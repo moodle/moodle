@@ -1,3 +1,31 @@
+=== 3.1 ===
+
+* feedback_get_courses_from_sitecourse_map() now returns course id as 'id' attribute
+* Base class for feedback items - feedback_item_base - has been significantly changed, all item types now
+  must implement method complete_form_element() instead of print_item_preview(), print_item_complete(),
+  print_item_show_value(), check_values(), clean_input_value() and value_is_array(). Rendering the items
+  on complete form, feedback preview, feedback edit and when viewing response is done using moodleform.
+* The following functions have been deprecated:
+  * feedback_print_item_preview()
+  * feedback_print_item_complete()
+  * feedback_print_item_show_value
+  * feedback_check_values()
+  * feedback_clean_input_value()
+  * feedback_get_context()
+  * feedback_create_item()
+  * feedback_set_tmp_values()
+  * feedback_delete_completedtmp()
+  * feedback_get_page_to_continue()
+  * feedback_save_values()
+  * feedback_save_guest_values()
+  * feedback_create_values()
+  * feedback_update_values()
+  * feedback_get_current_completed()
+  * feedback_is_course_in_sitecourse_map()
+  * feedback_is_feedback_in_sitecourse_map()
+  * feedback_clean_up_sitecourse_map()
+  * feedback_print_numeric_option_list()
+
 === 2.7 ===
 
 * The validation of the following events is now stricter (see MDL-45445):

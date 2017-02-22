@@ -39,6 +39,8 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/forms.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
 
+require_sesskey();
+
 $huburl = required_param('huburl', PARAM_URL);
 $huburl = rtrim($huburl, "/");
 

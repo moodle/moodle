@@ -32,7 +32,7 @@
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
+abstract class advanced_testcase extends base_testcase {
     /** @var bool automatically reset everything? null means log changes */
     private $resetAfterTest;
 
@@ -82,15 +82,22 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
             $DB = phpunit_util::get_global_backup('DB');
 
             // Deal with any debugging messages.
-            $debugerror = phpunit_util::display_debugging_messages();
-            phpunit_util::reset_debugging();
-            if ($debugerror) {
-                trigger_error('Unenxpected debugging() call detected.', E_USER_NOTICE);
+            $debugerror = phpunit_util::display_debugging_messages(true);
+            $this->resetDebugging();
+            if (!empty($debugerror)) {
+                trigger_error('Unexpected debugging() call detected.'."\n".$debugerror, E_USER_NOTICE);
             }
 
-        } catch (Exception $e) {
+        } catch (Exception $ex) {
+            $e = $ex;
+        } catch (Throwable $ex) {
+            // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
+            $e = $ex;
+        }
+
+        if (isset($e)) {
             // cleanup after failed expectation
-            phpunit_util::reset_all_data();
+            self::resetAllData();
             throw $e;
         }
 
@@ -104,7 +111,7 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
                 phpunit_util::reset_all_database_sequences();
                 phpunit_util::$lastdbwrites = $DB->perf_get_writes(); // no db reset necessary
             }
-            phpunit_util::reset_all_data(null);
+            self::resetAllData(null);
 
         } else if ($this->resetAfterTest === false) {
             if ($this->testdbtransaction) {
@@ -118,16 +125,16 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
                 try {
                     $this->testdbtransaction->allow_commit();
                 } catch (dml_transaction_exception $e) {
-                    phpunit_util::reset_all_data();
+                    self::resetAllData();
                     throw new coding_exception('Invalid transaction state detected in test '.$this->getName());
                 }
             }
-            phpunit_util::reset_all_data(true);
+            self::resetAllData(true);
         }
 
         // make sure test did not forget to close transaction
         if ($DB->is_transaction_started()) {
-            phpunit_util::reset_all_data();
+            self::resetAllData();
             if ($this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_PASSED
                 or $this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED
                 or $this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE) {
@@ -272,7 +279,10 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
      * @param string $message
      */
     public function assertDebuggingCalled($debugmessage = null, $debuglevel = null, $message = '') {
-        $debugging = phpunit_util::get_debugging_messages();
+        $debugging = $this->getDebuggingMessages();
+        $debugdisplaymessage = "\n".phpunit_util::display_debugging_messages(true);
+        $this->resetDebugging();
+
         $count = count($debugging);
 
         if ($count == 0) {
@@ -283,12 +293,13 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
         }
         if ($count > 1) {
             if ($message === '') {
-                $message = 'Expectation failed, debugging() triggered '.$count.' times.';
+                $message = 'Expectation failed, debugging() triggered '.$count.' times.'.$debugdisplaymessage;
             }
             $this->fail($message);
         }
         $this->assertEquals(1, $count);
 
+        $message .= $debugdisplaymessage;
         $debug = reset($debugging);
         if ($debugmessage !== null) {
             $this->assertSame($debugmessage, $debug->message, $message);
@@ -296,8 +307,45 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
         if ($debuglevel !== null) {
             $this->assertSame($debuglevel, $debug->level, $message);
         }
+    }
 
-        phpunit_util::reset_debugging();
+    /**
+     * Asserts how many times debugging has been called.
+     *
+     * @param int $expectedcount The expected number of times
+     * @param array $debugmessages Expected debugging messages, one for each expected message.
+     * @param array $debuglevels Expected debugging levels, one for each expected message.
+     * @param string $message
+     * @return void
+     */
+    public function assertDebuggingCalledCount($expectedcount, $debugmessages = array(), $debuglevels = array(), $message = '') {
+        if (!is_int($expectedcount)) {
+            throw new coding_exception('assertDebuggingCalledCount $expectedcount argument should be an integer.');
+        }
+
+        $debugging = $this->getDebuggingMessages();
+        $message .= "\n".phpunit_util::display_debugging_messages(true);
+        $this->resetDebugging();
+
+        $this->assertEquals($expectedcount, count($debugging), $message);
+
+        if ($debugmessages) {
+            if (!is_array($debugmessages) || count($debugmessages) != $expectedcount) {
+                throw new coding_exception('assertDebuggingCalledCount $debugmessages should contain ' . $expectedcount . ' messages');
+            }
+            foreach ($debugmessages as $key => $debugmessage) {
+                $this->assertSame($debugmessage, $debugging[$key]->message, $message);
+            }
+        }
+
+        if ($debuglevels) {
+            if (!is_array($debuglevels) || count($debuglevels) != $expectedcount) {
+                throw new coding_exception('assertDebuggingCalledCount $debuglevels should contain ' . $expectedcount . ' messages');
+            }
+            foreach ($debuglevels as $key => $debuglevel) {
+                $this->assertSame($debuglevel, $debugging[$key]->level, $message);
+            }
+        }
     }
 
     /**
@@ -305,12 +353,14 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
      * @param string $message
      */
     public function assertDebuggingNotCalled($message = '') {
-        $debugging = phpunit_util::get_debugging_messages();
+        $debugging = $this->getDebuggingMessages();
         $count = count($debugging);
 
         if ($message === '') {
             $message = 'Expectation failed, debugging() was triggered.';
         }
+        $message .= "\n".phpunit_util::display_debugging_messages(true);
+        $this->resetDebugging();
         $this->assertEquals(0, $count, $message);
     }
 
@@ -446,16 +496,21 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
      * @return void
      */
     public static function tearDownAfterClass() {
-        phpunit_util::reset_all_data();
+        self::resetAllData();
     }
+
 
     /**
      * Reset all database tables, restore global state and clear caches and optionally purge dataroot dir.
-     * @static
+     *
+     * @param bool $detectchanges
+     *      true  - changes in global state and database are reported as errors
+     *      false - no errors reported
+     *      null  - only critical problems are reported as errors
      * @return void
      */
-    public static function resetAllData() {
-        phpunit_util::reset_all_data();
+    public static function resetAllData($detectchanges = false) {
+        phpunit_util::reset_all_data($detectchanges);
     }
 
     /**
@@ -479,6 +534,9 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
         unset($user->description);
         unset($user->access);
         unset($user->preference);
+
+        // Enusre session is empty, as it may contain caches and user specific info.
+        \core\session\manager::init_empty_session();
 
         \core\session\manager::set_user($user);
     }
@@ -590,6 +648,19 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
             } else if ($exclude xor preg_match($fileregexp, $filepath)) {
                 $this->$callback($filepath);
             }
+        }
+    }
+
+    /**
+     * Wait for a second to roll over, ensures future calls to time() return a different result.
+     *
+     * This is implemented instead of sleep() as we do not need to wait a full second. In some cases
+     * due to calls we may wait more than sleep() would have, on average it will be less.
+     */
+    public function waitForSecond() {
+        $starttime = time();
+        while (time() == $starttime) {
+            usleep(50000);
         }
     }
 }

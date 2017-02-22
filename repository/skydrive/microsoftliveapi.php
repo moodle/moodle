@@ -61,18 +61,6 @@ class microsoft_skydrive extends oauth2_client {
     }
 
     /**
-     * Should HTTP GET be used instead of POST?
-     *
-     * The Microsoft API does not support POST, so we should use
-     * GET instead (with the auth_token passed as a GET param).
-     *
-     * @return bool true if GET should be used
-     */
-    protected function use_http_get() {
-        return true;
-    }
-
-    /**
      * Returns the auth url for OAuth 2.0 request
      * @return string the auth url
      */
@@ -86,6 +74,20 @@ class microsoft_skydrive extends oauth2_client {
      */
     protected function token_url() {
         return 'https://login.live.com/oauth20_token.srf';
+    }
+
+    /**
+     * Post request.
+     *
+     * Overridden to convert the data to a string, else curl will set the wrong headers.
+     *
+     * @param string $url The URL.
+     * @param array|string $params The parameters.
+     * @param array $options The options.
+     * @return bool
+     */
+    public function post($url, $params = '', $options = array()) {
+        return parent::post($url, format_postdata_for_curlcall($params), $options);
     }
 
     /**

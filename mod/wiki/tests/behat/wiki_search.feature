@@ -58,7 +58,6 @@ Feature: Users can search wikis
     And I should see "Collaborative teacher1 page"
     And I log out
 
-
   @javascript
   Scenario: Searching individual wiki
     Given I log in as "teacher1"

@@ -26,6 +26,13 @@
  */
 
 /**
+ * Composer error exit status.
+ *
+ * @var int
+ */
+define('TESTING_EXITCODE_COMPOSER', 255);
+
+/**
  * Returns relative path against current working directory,
  * to be used for shell execution hints.
  * @param string $moodlepath starting with "/", ex: "/admin/tool/cli/init.php"
@@ -45,17 +52,21 @@ function testing_cli_argument_path($moodlepath) {
         // This is the real CLI script, work with relative paths.
         $cwd = getcwd();
     }
-    if (substr($cwd, -1) !== DIRECTORY_SEPARATOR) {
-        $cwd .= DIRECTORY_SEPARATOR;
+
+    // Remove last directory separator as $path will not contain one.
+    if ((substr($cwd, -1) === '/') || (substr($cwd, -1) === '\\')) {
+        $cwd = substr($cwd, -1);
     }
+
     $path = realpath($CFG->dirroot.$moodlepath);
 
-    if (strpos($path, $cwd) === 0) {
-        $path = substr($path, strlen($cwd));
-    }
+    // We need standrad directory seperator for path and cwd, so it can be compared.
+    $cwd = testing_cli_fix_directory_separator($cwd);
+    $path = testing_cli_fix_directory_separator($path);
 
-    if (testing_is_cygwin()) {
-        $path = str_replace('\\', '/', $path);
+    if (strpos($path, $cwd) === 0) {
+        // Remove current working directory and directory separator.
+        $path = substr($path, strlen($cwd) + 1);
     }
 
     return $path;
@@ -165,27 +176,57 @@ function testing_error($errorcode, $text = '') {
 /**
  * Updates the composer installer and the dependencies.
  *
- * Includes --dev dependencies.
- *
  * @return void exit() if something goes wrong
  */
 function testing_update_composer_dependencies() {
-
     // To restore the value after finishing.
     $cwd = getcwd();
 
-    // Dirroot.
-    chdir(__DIR__ . '/../..');
+    // Set some paths.
+    $dirroot = dirname(dirname(__DIR__));
+    $composerpath = $dirroot . DIRECTORY_SEPARATOR . 'composer.phar';
+    $composerurl = 'https://getcomposer.org/composer.phar';
 
-    // Download composer.phar if we can.
-    if (!file_exists(__DIR__ . '/../../composer.phar')) {
-        passthru("curl http://getcomposer.org/installer | php", $code);
-        if ($code != 0) {
-            exit($code);
+    // Switch to Moodle's dirroot for easier path handling.
+    chdir($dirroot);
+
+    // Download or update composer.phar. Unfortunately we can't use the curl
+    // class in filelib.php as we're running within one of the test platforms.
+    if (!file_exists($composerpath)) {
+        $file = @fopen($composerpath, 'w');
+        if ($file === false) {
+            $errordetails = error_get_last();
+            $error = sprintf("Unable to create composer.phar\nPHP error: %s",
+                             $errordetails['message']);
+            testing_error(TESTING_EXITCODE_COMPOSER, $error);
+        }
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL,  $composerurl);
+        curl_setopt($curl, CURLOPT_FILE, $file);
+        $result = curl_exec($curl);
+
+        $curlerrno = curl_errno($curl);
+        $curlerror = curl_error($curl);
+        $curlinfo = curl_getinfo($curl);
+
+        curl_close($curl);
+        fclose($file);
+
+        if (!$result) {
+            $error = sprintf("Unable to download composer.phar\ncURL error (%d): %s",
+                             $curlerrno, $curlerror);
+            testing_error(TESTING_EXITCODE_COMPOSER, $error);
+        } else if ($curlinfo['http_code'] === 404) {
+            if (file_exists($composerpath)) {
+                // Deleting the resource as it would contain HTML.
+                unlink($composerpath);
+            }
+            $error = sprintf("Unable to download composer.phar\n" .
+                                "404 http status code fetching $composerurl");
+            testing_error(TESTING_EXITCODE_COMPOSER, $error);
         }
     } else {
-
-        // If it is already there update the installer.
         passthru("php composer.phar self-update", $code);
         if ($code != 0) {
             exit($code);
@@ -198,5 +239,51 @@ function testing_update_composer_dependencies() {
         exit($code);
     }
 
+    // Return to our original location.
     chdir($cwd);
+}
+
+/**
+ * Fix DIRECTORY_SEPARATOR for windows.
+ *
+ * In PHP on Windows, DIRECTORY_SEPARATOR is set to the backslash (\)
+ * character. However, if you're running a Cygwin/Msys/Git shell
+ * exec() calls will return paths using the forward slash (/) character.
+ *
+ * NOTE: Because PHP on Windows will accept either forward or backslashes,
+ * paths should be built using ONLY forward slashes, regardless of
+ * OS. MOODLE_DIRECTORY_SEPARATOR should only be used when parsing
+ * paths returned by the shell.
+ *
+ * @param string $path
+ * @return string.
+ */
+function testing_cli_fix_directory_separator($path) {
+    global $CFG;
+
+    static $dirseparator = null;
+
+    if (!$dirseparator) {
+        // Default directory separator.
+        $dirseparator = DIRECTORY_SEPARATOR;
+
+        // On windows we need to find what directory separator is used.
+        if ($CFG->ostype = 'WINDOWS') {
+            if (!empty($_SERVER['argv'][0])) {
+                if (false === strstr($_SERVER['argv'][0], '\\')) {
+                    $dirseparator = '/';
+                } else {
+                    $dirseparator = '\\';
+                }
+            } else if (testing_is_cygwin()) {
+                $dirseparator = '/';
+            }
+        }
+    }
+
+    // Normalize \ and / to directory separator.
+    $path = str_replace('\\', $dirseparator, $path);
+    $path = str_replace('/', $dirseparator, $path);
+
+    return $path;
 }

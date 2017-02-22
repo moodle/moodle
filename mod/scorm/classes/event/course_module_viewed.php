@@ -53,5 +53,9 @@ class course_module_viewed extends \core\event\course_module_viewed {
         return array($this->courseid, 'scorm', 'pre-view', 'view.php?id=' . $this->contextinstanceid, $this->objectid,
                 $this->contextinstanceid);
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'scorm', 'restore' => 'scorm');
+    }
 }
 

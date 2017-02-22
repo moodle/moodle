@@ -176,6 +176,42 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertEquals($grouping, groups_get_grouping_by_idnumber($course->id, $idnumber2));
     }
 
+
+    public function test_groups_get_members_ids_sql() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+
+        $course = $generator->create_course();
+        $student = $generator->create_user();
+        $plugin = enrol_get_plugin('manual');
+        $role = $DB->get_record('role', array('shortname' => 'student'));
+        $group = $generator->create_group(array('courseid' => $course->id));
+        $instance = $DB->get_record('enrol', array(
+                'courseid' => $course->id,
+                'enrol' => 'manual',
+        ));
+
+        $this->assertNotEquals($instance, false);
+
+        // Enrol the user in the course.
+        $plugin->enrol_user($instance, $student->id, $role->id);
+
+        list($sql, $params) = groups_get_members_ids_sql($group->id, true);
+
+        // Test an empty group.
+        $users = $DB->get_records_sql($sql, $params);
+
+        $this->assertFalse(array_key_exists($student->id, $users));
+        groups_add_member($group->id, $student->id);
+
+        // Test with a group member.
+        $users = $DB->get_records_sql($sql, $params);
+        $this->assertTrue(array_key_exists($student->id, $users));
+    }
+
     public function test_groups_get_group_by_name() {
         $this->resetAfterTest(true);
 

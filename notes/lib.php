@@ -154,7 +154,7 @@ function note_save(&$note) {
  * Deletes a note object based on its id.
  *
  * @param int|object    $note id of the note to delete, or a note object which is to be deleted.
- * @return boolean true if the object was deleted; false otherwise
+ * @return boolean true always
  */
 function note_delete($note) {
     global $DB;
@@ -383,6 +383,11 @@ function core_notes_myprofile_navigation(core_user\output\myprofile\tree $tree, 
 
     if (empty($CFG->enablenotes)) {
         // Notes are disabled, nothing to do.
+        return false;
+    }
+
+    if (isguestuser($user)) {
+        // No notes for guest users.
         return false;
     }
 

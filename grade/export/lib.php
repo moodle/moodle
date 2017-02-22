@@ -237,7 +237,24 @@ abstract class grade_export {
         if (is_array($this->displaytype) && !is_null($gradedisplayconst)) {
             $displaytype = $gradedisplayconst;
         }
-        return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $displaytype, $this->decimalpoints);
+
+        $gradeitem = $this->grade_items[$grade->itemid];
+
+        // We are going to store the min and max so that we can "reset" the grade_item for later.
+        $grademax = $gradeitem->grademax;
+        $grademin = $gradeitem->grademin;
+
+        // Updating grade_item with this grade_grades min and max.
+        $gradeitem->grademax = $grade->get_grade_max();
+        $gradeitem->grademin = $grade->get_grade_min();
+
+        $formattedgrade = grade_format_gradevalue($grade->finalgrade, $gradeitem, false, $displaytype, $this->decimalpoints);
+
+        // Resetting the grade item in case it is reused.
+        $gradeitem->grademax = $grademax;
+        $gradeitem->grademin = $grademin;
+
+        return $formattedgrade;
     }
 
     /**
@@ -608,9 +625,19 @@ class grade_export_update_buffer {
     /**
      * Constructor - creates the buffer and initialises the time stamp
      */
-    public function grade_export_update_buffer() {
+    public function __construct() {
         $this->update_list = array();
         $this->export_time = time();
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function grade_export_update_buffer() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     public function flush($buffersize) {
@@ -672,8 +699,7 @@ class grade_export_update_buffer {
  * @param $courseid int The course being exported
  */
 function export_verify_grades($courseid) {
-    $regraderesult = grade_regrade_final_grades($courseid);
-    if (is_array($regraderesult)) {
-        throw new moodle_exception('gradecantregrade', 'error', '', implode(', ', array_unique($regraderesult)));
+    if (grade_needs_regrade_final_grades($courseid)) {
+        throw new moodle_exception('gradesneedregrading', 'grades');
     }
 }

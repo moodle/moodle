@@ -18,32 +18,27 @@
 /**
  * UI for general plugins management
  *
- * Supported HTTP parameters:
- *
- *  ?fetchremote=1      - check for available updates
- *  ?updatesonly=1      - display plugins with available update only
- *  ?contribonly=1      - display non-standard add-ons only
- *  ?uninstall=foo_bar  - uninstall the given plugin
- *  ?delete=foo_bar     - delete the plugin folder (it must not be installed)
- *  &confirm=1          - confirm the uninstall or delete action
- *
  * @package    core
  * @subpackage admin
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/filelib.php');
 
-$fetchremote = optional_param('fetchremote', false, PARAM_BOOL);
-$updatesonly = optional_param('updatesonly', false, PARAM_BOOL);
-$contribonly = optional_param('contribonly', false, PARAM_BOOL);
-$uninstall   = optional_param('uninstall', '', PARAM_COMPONENT);
-$delete      = optional_param('delete', '', PARAM_COMPONENT);
-$confirmed   = optional_param('confirm', false, PARAM_BOOL);
-$return      = optional_param('return', 'overview', PARAM_ALPHA);
+$fetchupdates = optional_param('fetchupdates', false, PARAM_BOOL); // Check for available plugins updates.
+$updatesonly = optional_param('updatesonly', false, PARAM_BOOL); // Show updateable plugins only.
+$contribonly = optional_param('contribonly', false, PARAM_BOOL); // Show additional plugins only.
+$uninstall = optional_param('uninstall', '', PARAM_COMPONENT); // Uninstall the plugin.
+$delete = optional_param('delete', '', PARAM_COMPONENT); // Delete the plugin folder after it is uninstalled.
+$confirmed = optional_param('confirm', false, PARAM_BOOL); // Confirm the uninstall/delete action.
+$return = optional_param('return', 'overview', PARAM_ALPHA); // Where to return after uninstall.
+$installupdate = optional_param('installupdate', null, PARAM_COMPONENT); // Install given available update.
+$installupdateversion = optional_param('installupdateversion', null, PARAM_INT); // Version of the available update to install.
+$installupdatex = optional_param('installupdatex', false, PARAM_BOOL); // Install all available plugin updates.
+$confirminstallupdate = optional_param('confirminstallupdate', false, PARAM_BOOL); // Available update(s) install confirmed?
 
 // NOTE: do not use admin_externalpage_setup() here because it loads
 //       full admin tree which is not possible during uninstallation.
@@ -52,15 +47,19 @@ require_login();
 $syscontext = context_system::instance();
 require_capability('moodle/site:config', $syscontext);
 
+// URL params we want to maintain on redirects.
+$pageparams = array('updatesonly' => $updatesonly, 'contribonly' => $contribonly);
+$pageurl = new moodle_url('/admin/plugins.php', $pageparams);
+
 $pluginman = core_plugin_manager::instance();
 
 if ($uninstall) {
     require_sesskey();
 
     if (!$confirmed) {
-        admin_externalpage_setup('pluginsoverview');
+        admin_externalpage_setup('pluginsoverview', '', $pageparams);
     } else {
-        $PAGE->set_url('/admin/plugins.php');
+        $PAGE->set_url($pageurl);
         $PAGE->set_context($syscontext);
         $PAGE->set_pagelayout('maintenance');
         $PAGE->set_popup_notification_allowed(false);
@@ -122,7 +121,7 @@ if ($uninstall) {
 if ($delete and $confirmed) {
     require_sesskey();
 
-    $PAGE->set_url('/admin/plugins.php');
+    $PAGE->set_url($pageurl);
     $PAGE->set_context($syscontext);
     $PAGE->set_pagelayout('maintenance');
     $PAGE->set_popup_notification_allowed(false);
@@ -149,13 +148,6 @@ if ($delete and $confirmed) {
             'core_plugin_manager::get_plugin_info() returned not-null versiondb for the plugin to be deleted');
     }
 
-    // Make sure the folder is removable.
-    if (!$pluginman->is_plugin_folder_removable($pluginfo->component)) {
-        throw new moodle_exception('err_removing_unremovable_folder', 'core_plugin', '',
-            array('plugin' => $pluginfo->component, 'rootdir' => $pluginfo->rootdir),
-            'plugin root folder is not removable as expected');
-    }
-
     // Make sure the folder is within Moodle installation tree.
     if (strpos($pluginfo->rootdir, $CFG->dirroot) !== 0) {
         throw new moodle_exception('err_unexpected_plugin_rootdir', 'core_plugin', '',
@@ -164,44 +156,61 @@ if ($delete and $confirmed) {
     }
 
     // So long, and thanks for all the bugs.
-    fulldelete($pluginfo->rootdir);
-    // Reset op code caches.
-    if (function_exists('opcache_reset')) {
-        opcache_reset();
-    }
+    $pluginman->remove_plugin_folder($pluginfo);
+
     // We need to execute upgrade to make sure everything including caches is up to date.
     redirect(new moodle_url('/admin/index.php'));
 }
 
-admin_externalpage_setup('pluginsoverview');
+// Install all avilable updates.
+if ($installupdatex) {
+    require_once($CFG->libdir.'/upgradelib.php');
+    require_sesskey();
+
+    $PAGE->set_url($pageurl);
+    $PAGE->set_context($syscontext);
+    $PAGE->set_pagelayout('maintenance');
+    $PAGE->set_popup_notification_allowed(false);
+
+    $installable = $pluginman->filter_installable($pluginman->available_updates());
+    upgrade_install_plugins($installable, $confirminstallupdate,
+        get_string('updateavailableinstallallhead', 'core_admin'),
+        new moodle_url($PAGE->url, array('installupdatex' => 1, 'confirminstallupdate' => 1))
+    );
+}
+
+// Install single available update.
+if ($installupdate and $installupdateversion) {
+    require_once($CFG->libdir.'/upgradelib.php');
+    require_sesskey();
+
+    $PAGE->set_url($pageurl);
+    $PAGE->set_context($syscontext);
+    $PAGE->set_pagelayout('maintenance');
+    $PAGE->set_popup_notification_allowed(false);
+
+    if ($pluginman->is_remote_plugin_installable($installupdate, $installupdateversion)) {
+        $installable = array($pluginman->get_remote_plugin_info($installupdate, $installupdateversion, true));
+        upgrade_install_plugins($installable, $confirminstallupdate,
+            get_string('updateavailableinstallallhead', 'core_admin'),
+            new moodle_url($PAGE->url, array('installupdate' => $installupdate,
+                'installupdateversion' => $installupdateversion, 'confirminstallupdate' => 1)
+            )
+        );
+    }
+}
+
+admin_externalpage_setup('pluginsoverview', '', $pageparams);
 
 /** @var core_admin_renderer $output */
 $output = $PAGE->get_renderer('core', 'admin');
 
 $checker = \core\update\checker::instance();
 
-// Filtering options.
-$options = array(
-    'updatesonly' => $updatesonly,
-    'contribonly' => $contribonly,
-);
-
-if ($fetchremote) {
+if ($fetchupdates) {
     require_sesskey();
     $checker->fetch();
-    redirect(new moodle_url($PAGE->url, $options));
+    redirect($PAGE->url);
 }
 
-$deployer = \core\update\deployer::instance();
-if ($deployer->enabled()) {
-    $myurl = new moodle_url($PAGE->url, array('updatesonly' => $updatesonly, 'contribonly' => $contribonly));
-    $deployer->initialize($myurl, new moodle_url('/admin'));
-
-    $deploydata = $deployer->submitted_data();
-    if (!empty($deploydata)) {
-        echo $output->upgrade_plugin_confirm_deploy_page($deployer, $deploydata);
-        die();
-    }
-}
-
-echo $output->plugin_management_page($pluginman, $checker, $options);
+echo $output->plugin_management_page($pluginman, $checker, $pageparams);

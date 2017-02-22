@@ -28,7 +28,7 @@
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode;
-use Behat\Behat\Exception\PendingException as PendingException;
+use Behat\Behat\Tester\Exception\PendingException as PendingException;
 
 /**
  * Class to set up quickly a Given environment.
@@ -112,6 +112,10 @@ class behat_data_generators extends behat_base {
             'required' => array('activity', 'idnumber', 'course'),
             'switchids' => array('course' => 'course', 'gradecategory' => 'gradecat')
         ),
+        'blocks' => array(
+            'datagenerator' => 'block_instance',
+            'required' => array('blockname', 'contextlevel', 'reference'),
+        ),
         'group members' => array(
             'datagenerator' => 'group_member',
             'required' => array('user', 'group'),
@@ -159,12 +163,16 @@ class behat_data_generators extends behat_base {
         'question categories' => array(
             'datagenerator' => 'question_category',
             'required' => array('name', 'contextlevel', 'reference'),
-            'switchids' => array('questioncategory' => 'category')
+            'switchids' => array('questioncategory' => 'parent')
         ),
         'questions' => array(
             'datagenerator' => 'question',
             'required' => array('qtype', 'questioncategory', 'name'),
             'switchids' => array('questioncategory' => 'category', 'user' => 'createdby')
+        ),
+        'tags' => array(
+            'datagenerator' => 'tag',
+            'required' => array('name')
         ),
     );
 
@@ -283,6 +291,16 @@ class behat_data_generators extends behat_base {
         if (isset($data['gradetype'])) {
             $data['gradetype'] = constant("GRADE_TYPE_" . strtoupper($data['gradetype']));
         }
+
+        if (!empty($data['category']) && !empty($data['courseid'])) {
+            $cat = grade_category::fetch(array('fullname' => $data['category'], 'courseid' => $data['courseid']));
+            if (!$cat) {
+                throw new Exception('Could not resolve category with name "' . $data['category'] . '"');
+            }
+            unset($data['category']);
+            $data['categoryid'] = $cat->id;
+        }
+
         return $data;
     }
 
@@ -325,6 +343,39 @@ class behat_data_generators extends behat_base {
             throw new Exception('\'' . $activityname . '\' activity can not be added using this step,' .
                 ' use the step \'I add a "ACTIVITY_OR_RESOURCE_NAME_STRING" to section "SECTION_NUMBER"\' instead');
         }
+    }
+
+    /**
+     * Add a block to a page.
+     *
+     * @param array $data should mostly match the fields of the block_instances table.
+     *     The block type is specified by blockname.
+     *     The parentcontextid is set from contextlevel and reference.
+     *     Missing values are filled in by testing_block_generator::prepare_record.
+     *     $data is passed to create_block as both $record and $options. Normally
+     *     the keys are different, so this is a way to let people set values in either place.
+     */
+    protected function process_block_instance($data) {
+
+        if (empty($data['blockname'])) {
+            throw new Exception('\'blocks\' requires the field \'block\' type to be specified');
+        }
+
+        if (empty($data['contextlevel'])) {
+            throw new Exception('\'blocks\' requires the field \'contextlevel\' to be specified');
+        }
+
+        if (!isset($data['reference'])) {
+            throw new Exception('\'blocks\' requires the field \'reference\' to be specified');
+        }
+
+        $context = $this->get_context($data['contextlevel'], $data['reference']);
+        $data['parentcontextid'] = $context->id;
+
+        // Pass $data as both $record and $options. I think that is unlikely to
+        // cause problems since the relevant key names are different.
+        // $options is not used in most blocks I have seen, but where it is, it is necessary.
+        $this->datagenerator->create_block($data['blockname'], $data, $data);
     }
 
     /**

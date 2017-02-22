@@ -1,0 +1,45 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/setting_configduration
+
+    Admin duration setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * options - list of options for units containing name, value, selected
+    * value - yes
+    * id - element id
+
+    Example context (json):
+    {
+        "name": "test",
+        "value": "5",
+        "id": "test0",
+        "options": [ { "name": "Minutes", "value": "mins", "selected": true } ]
+    }
+}}
+<div class="form-duration defaultsnext">
+    <input type="text" size="5" id="{{id}}v" name="{{name}}[v]" value="{{value}}" class="text-ltr">
+    <label class="accesshide" for="{{id}}u">{{#str}}durationunits, admin{{/str}}</label>
+    <select id="{{id}}u" name="{{name}}[u]">
+        {{#options}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+        {{/options}}
+    </select>
+</div>
+

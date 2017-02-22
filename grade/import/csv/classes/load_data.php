@@ -577,6 +577,7 @@ class gradeimport_csv_load_data {
 
                     } else {
                         // The grade item for this is not updated.
+                        $newfeedback->importonlyfeedback = true;
                         $insertid = self::insert_grade_record($newfeedback, $this->studentid);
                         // Check to see if the insert was successful.
                         if (empty($insertid)) {

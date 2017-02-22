@@ -86,15 +86,31 @@ if ($id) {
     } else {
         $category->grade_item_aggregationcoef = format_float($category->grade_item_aggregationcoef, 4);
     }
-
-    if ($category->aggregation == GRADE_AGGREGATE_SUM) {
-        // Input fields for grademin and grademax are disabled for the "Natural" category,
-        // this means they will be ignored if user does not change aggregation method.
-        // But if user does change aggregation method the default values should be used.
-        $category->grademax = 100;
-        $category->grade_item_grademax = 100;
-        $category->grademin = 0;
-        $category->grade_item_grademin = 0;
+    // Check to see if the gradebook is frozen. This allows grades to not be altered at all until a user verifies that they
+    // wish to update the grades.
+    $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $courseid);
+    // Stick with the original code if the grade book is frozen.
+    if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
+        if ($category->aggregation == GRADE_AGGREGATE_SUM) {
+            // Input fields for grademin and grademax are disabled for the "Natural" category,
+            // this means they will be ignored if user does not change aggregation method.
+            // But if user does change aggregation method the default values should be used.
+            $category->grademax = 100;
+            $category->grade_item_grademax = 100;
+            $category->grademin = 0;
+            $category->grade_item_grademin = 0;
+        }
+    } else {
+        if ($category->aggregation == GRADE_AGGREGATE_SUM && !$grade_item->is_calculated()) {
+            // Input fields for grademin and grademax are disabled for the "Natural" category,
+            // this means they will be ignored if user does not change aggregation method.
+            // But if user does change aggregation method the default values should be used.
+            // This does not apply to calculated category totals.
+            $category->grademax = 100;
+            $category->grade_item_grademax = 100;
+            $category->grademin = 0;
+            $category->grade_item_grademin = 0;
+        }
     }
 
 } else {
@@ -220,6 +236,11 @@ if ($mform->is_cancelled()) {
     $grade_item->weightoverride = $itemdata->weightoverride;
 
     $grade_item->outcomeid = null;
+
+    if (!empty($data->grade_item_rescalegrades) && $data->grade_item_rescalegrades == 'yes') {
+        $grade_item->rescale_grades_keep_percentage($grade_item_copy->grademin, $grade_item_copy->grademax, $grade_item->grademin,
+                $grade_item->grademax, 'gradebook');
+    }
 
     // update hiding flag
     if ($hiddenuntil) {

@@ -101,4 +101,66 @@ class core_course_courseformat_testcase extends advanced_testcase {
         $this->assertFalse($modinfoteacher->get_cm($assign1->cmid)->available);
         $this->assertTrue($modinfoteacher->get_cm($assign1->cmid)->uservisible);
     }
+
+    /**
+     * Test for supports_news() with a course format plugin that doesn't define 'news_items' in default blocks.
+     */
+    public function test_supports_news() {
+        $this->resetAfterTest();
+        $format = course_get_format((object)['format' => 'testformat']);
+        $this->assertFalse($format->supports_news());
+    }
+
+    /**
+     * Test for supports_news() for old course format plugins that defines 'news_items' in default blocks.
+     */
+    public function test_supports_news_legacy() {
+        $this->resetAfterTest();
+        $format = course_get_format((object)['format' => 'testlegacy']);
+        $this->assertTrue($format->supports_news());
+    }
+}
+
+/**
+ * Class format_testformat.
+ *
+ * A test class that simulates a course format that doesn't define 'news_items' in default blocks.
+ *
+ * @copyright 2016 Jun Pataleta <jun@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class format_testformat extends format_base {
+    /**
+     * Returns the list of blocks to be automatically added for the newly created course.
+     *
+     * @return array
+     */
+    public function get_default_blocks() {
+        return [
+            BLOCK_POS_RIGHT => [],
+            BLOCK_POS_LEFT => []
+        ];
+    }
+}
+
+/**
+ * Class format_testlegacy.
+ *
+ * A test class that simulates old course formats that define 'news_items' in default blocks.
+ *
+ * @copyright 2016 Jun Pataleta <jun@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class format_testlegacy extends format_base {
+    /**
+     * Returns the list of blocks to be automatically added for the newly created course.
+     *
+     * @return array
+     */
+    public function get_default_blocks() {
+        return [
+            BLOCK_POS_RIGHT => ['news_items'],
+            BLOCK_POS_LEFT => []
+        ];
+    }
 }

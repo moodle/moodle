@@ -304,7 +304,12 @@ class assign_submission_file extends assign_submission_plugin {
                                      false);
 
         foreach ($files as $file) {
-            $result[$file->get_filename()] = $file;
+            // Do we return the full folder path or just the file name?
+            if (isset($submission->exportfullpath) && $submission->exportfullpath == false) {
+                $result[$file->get_filename()] = $file;
+            } else {
+                $result[$file->get_filepath().$file->get_filename()] = $file;
+            }
         }
         return $result;
     }
@@ -480,6 +485,20 @@ class assign_submission_file extends assign_submission_plugin {
     }
 
     /**
+     * Determine if a submission is empty
+     *
+     * This is distinct from is_empty in that it is intended to be used to
+     * determine if a submission made before saving is empty.
+     *
+     * @param stdClass $data The submission data
+     * @return bool
+     */
+    public function submission_is_empty(stdClass $data) {
+        $files = file_get_drafarea_files($data->files_filemanager);
+        return count($files->list) == 0;
+    }
+
+    /**
      * Get file areas returns a list of areas this plugin stores files
      * @return array - An array of fileareas (keys) and descriptions (values)
      */
@@ -528,8 +547,28 @@ class assign_submission_file extends assign_submission_plugin {
         return array(
             'files_filemanager' => new external_value(
                 PARAM_INT,
-                'The id of a draft area containing files for this submission.'
+                'The id of a draft area containing files for this submission.',
+                VALUE_OPTIONAL
             )
         );
+    }
+
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of settings
+     * @since Moodle 3.2
+     */
+    public function get_config_for_external() {
+        global $CFG;
+
+        $configs = $this->get_config();
+
+        // Get a size in bytes.
+        if ($configs->maxsubmissionsizebytes == 0) {
+            $configs->maxsubmissionsizebytes = get_max_upload_file_size($CFG->maxbytes, $this->assignment->get_course()->maxbytes,
+                                                                        get_config('assignsubmission_file', 'maxbytes'));
+        }
+        return (array) $configs;
     }
 }

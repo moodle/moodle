@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 require_once($CFG->libdir . '/rsslib.php');
@@ -29,7 +29,7 @@ require_once($CFG->libdir . '/rsslib.php');
 $id = optional_param('id', 0, PARAM_INT);                   // Course id
 $subscribe = optional_param('subscribe', null, PARAM_INT);  // Subscribe/Unsubscribe all forums
 
-$url = new moodle_url('/mod/forum/index.php', array('id'=>$id));
+$url = new moodle_url('/mod/forum/index.php', array('id' => $id));
 if ($subscribe !== null) {
     require_sesskey();
     $url->param('subscribe', $subscribe);
@@ -37,7 +37,7 @@ if ($subscribe !== null) {
 $PAGE->set_url($url);
 
 if ($id) {
-    if (! $course = $DB->get_record('course', array('id' => $id))) {
+    if (!$course = $DB->get_record('course', array('id' => $id))) {
         print_error('invalidcourseid');
     }
 } else {
@@ -47,7 +47,6 @@ if ($id) {
 require_course_login($course);
 $PAGE->set_pagelayout('incourse');
 $coursecontext = context_course::instance($course->id);
-
 
 unset($SESSION->fromdiscussion);
 
@@ -77,20 +76,7 @@ $stremaildigest  = get_string('emaildigest');
 
 $searchform = forum_search_form($course);
 
-// Retrieve the list of forum digest options for later.
-$digestoptions = forum_get_user_digest_options();
-$digestoptions_selector = new single_select(new moodle_url('/mod/forum/maildigest.php',
-    array(
-        'backtoindex' => 1,
-    )),
-    'maildigest',
-    $digestoptions,
-    null,
-    '');
-$digestoptions_selector->method = 'post';
-
-// Start of the table for General Forums
-
+// Start of the table for General Forums.
 $generaltable = new html_table();
 $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
 $generaltable->align = array ('left', 'left', 'center');
@@ -107,22 +93,6 @@ if ($usetracking = forum_tp_can_track_forums()) {
 
 // Fill the subscription cache for this course and user combination.
 \mod_forum\subscriptions::fill_subscription_cache_for_course($course->id, $USER->id);
-
-$can_subscribe = is_enrolled($coursecontext);
-if ($can_subscribe) {
-    $generaltable->head[] = $strsubscribed;
-    $generaltable->align[] = 'center';
-
-    $generaltable->head[] = $stremaildigest . ' ' . $OUTPUT->help_icon('emaildigesttype', 'mod_forum');
-    $generaltable->align[] = 'center';
-}
-
-if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
-                 isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
-                 $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
-    $generaltable->head[] = $strrss;
-    $generaltable->align[] = 'center';
-}
 
 $usesections = course_format_uses_sections($course->format);
 
@@ -143,8 +113,9 @@ $forums = $DB->get_records_sql("
 $generalforums  = array();
 $learningforums = array();
 $modinfo = get_fast_modinfo($course);
+$showsubscriptioncolumns = false;
 
-foreach ($modinfo->get_instances_of('forum') as $forumid=>$cm) {
+foreach ($modinfo->get_instances_of('forum') as $forumid => $cm) {
     if (!$cm->uservisible or !isset($forums[$forumid])) {
         continue;
     }
@@ -152,14 +123,23 @@ foreach ($modinfo->get_instances_of('forum') as $forumid=>$cm) {
     $forum = $forums[$forumid];
 
     if (!$context = context_module::instance($cm->id, IGNORE_MISSING)) {
-        continue;   // Shouldn't happen
-    }
-
-    if (!has_capability('mod/forum:viewdiscussion', $context)) {
+        // Shouldn't happen.
         continue;
     }
 
-    // fill two type array - order in modinfo is the same as in course
+    if (!has_capability('mod/forum:viewdiscussion', $context)) {
+        // User can't view this one - skip it.
+        continue;
+    }
+
+    // Determine whether subscription options should be displayed.
+    $forum->cansubscribe = mod_forum\subscriptions::is_subscribable($forum);
+    $forum->cansubscribe = $forum->cansubscribe || has_capability('mod/forum:managesubscriptions', $context);
+    $forum->issubscribed = mod_forum\subscriptions::is_subscribed($USER->id, $forum, null, $cm);
+
+    $showsubscriptioncolumns = $showsubscriptioncolumns || $forum->issubscribed || $forum->cansubscribe;
+
+    // Fill two type array - order in modinfo is the same as in course.
     if ($forum->type == 'news' or $forum->type == 'social') {
         $generalforums[$forum->id] = $forum;
 
@@ -171,14 +151,37 @@ foreach ($modinfo->get_instances_of('forum') as $forumid=>$cm) {
     }
 }
 
+if ($showsubscriptioncolumns) {
+    // The user can subscribe to at least one forum.
+    $generaltable->head[] = $strsubscribed;
+    $generaltable->align[] = 'center';
+
+    $generaltable->head[] = $stremaildigest . ' ' . $OUTPUT->help_icon('emaildigesttype', 'mod_forum');
+    $generaltable->align[] = 'center';
+
+}
+
+if ($show_rss = (($showsubscriptioncolumns || $course->id == SITEID) &&
+                 isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
+                 $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
+    $generaltable->head[] = $strrss;
+    $generaltable->align[] = 'center';
+}
+
+
 // Do course wide subscribe/unsubscribe if requested
 if (!is_null($subscribe)) {
-    if (isguestuser() or !$can_subscribe) {
-        // there should not be any links leading to this place, just redirect
-        redirect(new moodle_url('/mod/forum/index.php', array('id' => $id)), get_string('subscribeenrolledonly', 'forum'));
+    if (isguestuser() or !$showsubscriptioncolumns) {
+        // There should not be any links leading to this place, just redirect.
+        redirect(
+                new moodle_url('/mod/forum/index.php', array('id' => $id)),
+                get_string('subscribeenrolledonly', 'forum'),
+                null,
+                \core\output\notification::NOTIFY_ERROR
+            );
     }
     // Can proceed now, the user is not guest and is enrolled
-    foreach ($modinfo->get_instances_of('forum') as $forumid=>$cm) {
+    foreach ($modinfo->get_instances_of('forum') as $forumid => $cm) {
         $forum = $forums[$forumid];
         $modcontext = context_module::instance($cm->id);
         $cansub = false;
@@ -201,18 +204,27 @@ if (!is_null($subscribe)) {
             }
         }
     }
-    $returnto = forum_go_back_to("index.php?id=$course->id");
+    $returnto = forum_go_back_to(new moodle_url('/mod/forum/index.php', array('id' => $course->id)));
     $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
     if ($subscribe) {
-        redirect($returnto, get_string('nowallsubscribed', 'forum', $shortname), 1);
+        redirect(
+                $returnto,
+                get_string('nowallsubscribed', 'forum', $shortname),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
     } else {
-        redirect($returnto, get_string('nowallunsubscribed', 'forum', $shortname), 1);
+        redirect(
+                $returnto,
+                get_string('nowallunsubscribed', 'forum', $shortname),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
     }
 }
 
-/// First, let's process the general forums and build up a display
-
 if ($generalforums) {
+    // Process general forums.
     foreach ($generalforums as $forum) {
         $cm      = $modinfo->instances['forum'][$forum->id];
         $context = context_module::instance($cm->id);
@@ -230,7 +242,7 @@ if ($generalforums) {
                 } else if ($unread = forum_tp_count_forum_unread_posts($cm, $course)) {
                         $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                     $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?f='.
-                                   $forum->id.'&amp;mark=read"><img src="'.$OUTPUT->pix_url('t/markasread') . '" alt="'.$strmarkallread.'" class="iconsmall" /></a></span>';
+                                   $forum->id.'&amp;mark=read&amp;sesskey=' . sesskey() . '"><img src="'.$OUTPUT->pix_url('t/markasread') . '" alt="'.$strmarkallread.'" class="iconsmall" /></a></span>';
                 } else {
                     $unreadlink = '<span class="read">0</span>';
                 }
@@ -245,9 +257,9 @@ if ($generalforums) {
                             'sesskey' => sesskey(),
                         ));
                     if (!isset($untracked[$forum->id])) {
-                        $trackedlink = $OUTPUT->single_button($aurl, $stryes, 'post', array('title'=>$strnotrackforum));
+                        $trackedlink = $OUTPUT->single_button($aurl, $stryes, 'post', array('title' => $strnotrackforum));
                     } else {
-                        $trackedlink = $OUTPUT->single_button($aurl, $strno, 'post', array('title'=>$strtrackforum));
+                        $trackedlink = $OUTPUT->single_button($aurl, $strno, 'post', array('title' => $strtrackforum));
                     }
                 }
             }
@@ -270,21 +282,14 @@ if ($generalforums) {
             $row[] = $trackedlink;    // Tracking.
         }
 
-        if ($can_subscribe) {
+        if ($showsubscriptioncolumns) {
             $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
-                    'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
-                    'cantsubscribe' => '-'), false, false, true);
-
-            $digestoptions_selector->url->param('id', $forum->id);
-            if ($forum->maildigest === null) {
-                $digestoptions_selector->selected = -1;
-            } else {
-                $digestoptions_selector->selected = $forum->maildigest;
-            }
-            $row[] = $OUTPUT->render($digestoptions_selector);
+                'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
+                'cantsubscribe' => '-'), false, false, true);
+            $row[] = forum_index_get_forum_subscription_selector($forum);
         }
 
-        //If this forum has RSS activated, calculate it
+        // If this forum has RSS activated, calculate it.
         if ($show_rss) {
             if ($forum->rsstype and $forum->rssarticles) {
                 //Calculate the tooltip text
@@ -324,7 +329,7 @@ if ($usetracking) {
     $learningtable->align[] = 'center';
 }
 
-if ($can_subscribe) {
+if ($showsubscriptioncolumns) {
     $learningtable->head[] = $strsubscribed;
     $learningtable->align[] = 'center';
 
@@ -332,15 +337,14 @@ if ($can_subscribe) {
     $learningtable->align[] = 'center';
 }
 
-if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
+if ($show_rss = (($showsubscriptioncolumns || $course->id == SITEID) &&
                  isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
                  $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
     $learningtable->head[] = $strrss;
     $learningtable->align[] = 'center';
 }
 
-/// Now let's process the learning forums
-
+// Now let's process the learning forums.
 if ($course->id != SITEID) {    // Only real courses have learning forums
     // 'format_.'$course->format only applicable when not SITEID (format_site is not a format)
     $strsectionname  = get_string('sectionname', 'format_'.$course->format);
@@ -368,7 +372,7 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
                     } else if ($unread = forum_tp_count_forum_unread_posts($cm, $course)) {
                         $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                         $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?f='.
-                                       $forum->id.'&amp;mark=read"><img src="'.$OUTPUT->pix_url('t/markasread') . '" alt="'.$strmarkallread.'" class="iconsmall" /></a></span>';
+                                       $forum->id.'&amp;mark=read&sesskey=' . sesskey() . '"><img src="'.$OUTPUT->pix_url('t/markasread') . '" alt="'.$strmarkallread.'" class="iconsmall" /></a></span>';
                     } else {
                         $unreadlink = '<span class="read">0</span>';
                     }
@@ -378,11 +382,11 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
                     } else if ($forum->trackingtype === FORUM_TRACKING_OFF || ($USER->trackforums == 0)) {
                         $trackedlink = '-';
                     } else {
-                        $aurl = new moodle_url('/mod/forum/settracking.php', array('id'=>$forum->id));
+                        $aurl = new moodle_url('/mod/forum/settracking.php', array('id' => $forum->id));
                         if (!isset($untracked[$forum->id])) {
-                            $trackedlink = $OUTPUT->single_button($aurl, $stryes, 'post', array('title'=>$strnotrackforum));
+                            $trackedlink = $OUTPUT->single_button($aurl, $stryes, 'post', array('title' => $strnotrackforum));
                         } else {
-                            $trackedlink = $OUTPUT->single_button($aurl, $strno, 'post', array('title'=>$strtrackforum));
+                            $trackedlink = $OUTPUT->single_button($aurl, $strno, 'post', array('title' => $strtrackforum));
                         }
                     }
                 }
@@ -416,18 +420,11 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
                 $row[] = $trackedlink;    // Tracking.
             }
 
-            if ($can_subscribe) {
+            if ($showsubscriptioncolumns) {
                 $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
                     'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
                     'cantsubscribe' => '-'), false, false, true);
-
-                $digestoptions_selector->url->param('id', $forum->id);
-                if ($forum->maildigest === null) {
-                    $digestoptions_selector->selected = -1;
-                } else {
-                    $digestoptions_selector->selected = $forum->maildigest;
-                }
-                $row[] = $OUTPUT->render($digestoptions_selector);
+                $row[] = forum_index_get_forum_subscription_selector($forum);
             }
 
             //If this forum has RSS activated, calculate it
@@ -451,25 +448,34 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
     }
 }
 
-
-/// Output the page
+// Output the page.
 $PAGE->navbar->add($strforums);
 $PAGE->set_title("$course->shortname: $strforums");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_button($searchform);
 echo $OUTPUT->header();
 
-// Show the subscribe all options only to non-guest, enrolled users
-if (!isguestuser() && isloggedin() && $can_subscribe) {
+if (!isguestuser() && isloggedin() && $showsubscriptioncolumns) {
+    // Show the subscribe all options only to non-guest, enrolled users.
     echo $OUTPUT->box_start('subscription');
-    echo html_writer::tag('div',
-        html_writer::link(new moodle_url('/mod/forum/index.php', array('id'=>$course->id, 'subscribe'=>1, 'sesskey'=>sesskey())),
-            get_string('allsubscribe', 'forum')),
-        array('class'=>'helplink'));
-    echo html_writer::tag('div',
-        html_writer::link(new moodle_url('/mod/forum/index.php', array('id'=>$course->id, 'subscribe'=>0, 'sesskey'=>sesskey())),
-            get_string('allunsubscribe', 'forum')),
-        array('class'=>'helplink'));
+
+    $subscriptionlink = new moodle_url('/mod/forum/index.php', [
+        'id'        => $course->id,
+        'sesskey'   => sesskey(),
+    ]);
+
+    // Subscribe all.
+    $subscriptionlink->param('subscribe', 1);
+    echo html_writer::tag('div', html_writer::link($subscriptionlink, get_string('allsubscribe', 'forum')), [
+            'class' => 'helplink',
+        ]);
+
+    // Unsubscribe all.
+    $subscriptionlink->param('subscribe', 0);
+    echo html_writer::tag('div', html_writer::link($subscriptionlink, get_string('allunsubscribe', 'forum')), [
+            'class' => 'helplink',
+        ]);
+
     echo $OUTPUT->box_end();
     echo $OUTPUT->box('&nbsp;', 'clearer');
 }
@@ -486,3 +492,24 @@ if ($learningforums) {
 
 echo $OUTPUT->footer();
 
+/**
+ * Get the content of the forum subscription options for this forum.
+ *
+ * @param   stdClass    $forum      The forum to return options for
+ * @return  string
+ */
+function forum_index_get_forum_subscription_selector($forum) {
+    global $OUTPUT, $PAGE;
+
+    if ($forum->cansubscribe || $forum->issubscribed) {
+        if ($forum->maildigest === null) {
+            $forum->maildigest = -1;
+        }
+
+        $renderer = $PAGE->get_renderer('mod_forum');
+        return $OUTPUT->render($renderer->render_digest_options($forum, $forum->maildigest));
+    } else {
+        // This user can subscribe to some forums. Add the empty fields.
+        return '';
+    }
+};

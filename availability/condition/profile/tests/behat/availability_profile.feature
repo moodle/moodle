@@ -16,8 +16,6 @@ Feature: availability_profile
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And the following config values are set as admin:
-      | enableavailability  | 1 |
 
   @javascript
   Scenario: Test condition
@@ -103,7 +101,7 @@ Feature: availability_profile
 
     # Edit it again and check the setting still works.
     When I follow "P1"
-    And I navigate to "Edit settings" node in "Page module administration"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     Then the field "User profile field" matches value "Super field"
     And the field "Value to compare against" matches value "Bananaman"

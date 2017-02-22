@@ -75,8 +75,7 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
         $tokens = array();
         $this->tokenizeDOM(
             $doc->getElementsByTagName('html')->item(0)-> // <html>
-            getElementsByTagName('body')->item(0)-> //   <body>
-            getElementsByTagName('div')->item(0), //     <div>
+            getElementsByTagName('body')->item(0), //   <body>
             $tokens
         );
         return $tokens;
@@ -272,7 +271,7 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
         $ret .= '<html><head>';
         $ret .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
         // No protection if $html contains a stray </div>!
-        $ret .= '</head><body><div>' . $html . '</div></body></html>';
+        $ret .= '</head><body>' . $html . '</body></html>';
         return $ret;
     }
 }

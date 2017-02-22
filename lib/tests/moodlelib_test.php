@@ -202,12 +202,18 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             @optional_param('username');
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             optional_param('', 'default_user', PARAM_RAW);
@@ -248,12 +254,18 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             @optional_param_array('username');
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             optional_param_array('', array('a'=>'default_user'), PARAM_RAW);
@@ -305,6 +317,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             required_param('username', '');
@@ -348,6 +363,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             required_param_array('', PARAM_RAW);
@@ -409,6 +427,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('moodle_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('moodle_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
     }
 
@@ -429,6 +450,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('moodle_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('moodle_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
 
         try {
@@ -583,6 +607,9 @@ class core_moodlelib_testcase extends advanced_testcase {
 
     public function test_clean_param_localurl() {
         global $CFG;
+
+        $this->resetAfterTest();
+
         // External, invalid.
         $this->assertSame('', clean_param('funny:thing', PARAM_LOCALURL));
         $this->assertSame('', clean_param('http://google.com/', PARAM_LOCALURL));
@@ -600,7 +627,6 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // Local absolute HTTPS.
         $httpsroot = str_replace('http:', 'https:', $CFG->wwwroot);
-        $initialloginhttps = $CFG->loginhttps;
         $CFG->loginhttps = false;
         $this->assertSame('', clean_param($httpsroot, PARAM_LOCALURL));
         $this->assertSame('', clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
@@ -608,7 +634,13 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($httpsroot, clean_param($httpsroot, PARAM_LOCALURL));
         $this->assertSame($httpsroot . '/with/something?else=true',
             clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
-        $CFG->loginhttps = $initialloginhttps;
+
+        // Test open redirects are not possible.
+        $CFG->loginhttps = false;
+        $CFG->wwwroot = 'http://www.example.com';
+        $this->assertSame('', clean_param('http://www.example.com.evil.net/hack.php', PARAM_LOCALURL));
+        $CFG->loginhttps = true;
+        $this->assertSame('', clean_param('https://www.example.com.evil.net/hack.php', PARAM_LOCALURL));
     }
 
     public function test_clean_param_file() {
@@ -859,6 +891,14 @@ class core_moodlelib_testcase extends advanced_testcase {
             "be chopped off but <b>should be added back again</b></blockquote></p></div>";
         $this->assertEquals("<div class='frog'><p><blockquote>Long text with " .
             "tags that ...</blockquote></p></div>", shorten_text($text));
+    }
+
+    public function test_shorten_text_with_tags_and_html_comment() {
+        $text = "<div class='frog'><p><blockquote><!--[if !IE]><!-->Long text with ".
+            "tags that will<!--<![endif]--> ".
+            "be chopped off but <b>should be added back again</b></blockquote></p></div>";
+        $this->assertEquals("<div class='frog'><p><blockquote><!--[if !IE]><!-->Long text with " .
+            "tags that ...<!--<![endif]--></blockquote></p></div>", shorten_text($text));
     }
 
     public function test_shorten_text_with_entities() {
@@ -1566,7 +1606,7 @@ class core_moodlelib_testcase extends advanced_testcase {
                 'expectedoutput' => '1309485600'
             ),
             array(
-                'usertimezone' => '14', // Server time.
+                'usertimezone' => '-14', // Server time.
                 'year' => '2011',
                 'month' => '7',
                 'day' => '1',
@@ -1874,6 +1914,10 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $user = $this->getDataGenerator()->create_user(array('idnumber'=>'abc'));
         $user2 = $this->getDataGenerator()->create_user(array('idnumber'=>'xyz'));
+        $usersharedemail1 = $this->getDataGenerator()->create_user(array('email' => 'sharedemail@example.invalid'));
+        $usersharedemail2 = $this->getDataGenerator()->create_user(array('email' => 'sharedemail@example.invalid'));
+        $useremptyemail1 = $this->getDataGenerator()->create_user(array('email' => ''));
+        $useremptyemail2 = $this->getDataGenerator()->create_user(array('email' => ''));
 
         // Delete user and capture event.
         $sink = $this->redirectEvents();
@@ -1938,6 +1982,30 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $result = delete_user($admin);
         $this->assertFalse($result);
+
+        // Simultaneously deleting users with identical email addresses.
+        $result1 = delete_user($usersharedemail1);
+        $result2 = delete_user($usersharedemail2);
+
+        $usersharedemail1after = $DB->get_record('user', array('id' => $usersharedemail1->id));
+        $usersharedemail2after = $DB->get_record('user', array('id' => $usersharedemail2->id));
+        $this->assertTrue($result1);
+        $this->assertTrue($result2);
+        $this->assertStringStartsWith($usersharedemail1->email . '.', $usersharedemail1after->username);
+        $this->assertStringStartsWith($usersharedemail2->email . '.', $usersharedemail2after->username);
+
+        // Simultaneously deleting users without email addresses.
+        $result1 = delete_user($useremptyemail1);
+        $result2 = delete_user($useremptyemail2);
+
+        $useremptyemail1after = $DB->get_record('user', array('id' => $useremptyemail1->id));
+        $useremptyemail2after = $DB->get_record('user', array('id' => $useremptyemail2->id));
+        $this->assertTrue($result1);
+        $this->assertTrue($result2);
+        $this->assertStringStartsWith($useremptyemail1->username . '.' . $useremptyemail1->id . '@unknownemail.invalid.',
+            $useremptyemail1after->username);
+        $this->assertStringStartsWith($useremptyemail2->username . '.' . $useremptyemail2->id . '@unknownemail.invalid.',
+            $useremptyemail2after->username);
 
         $this->resetDebugging();
     }
@@ -2600,13 +2668,132 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
     }
 
+    /**
+     * A data provider for testing email messageid
+     */
+    public function generate_email_messageid_provider() {
+        return array(
+            'nopath' => array(
+                'wwwroot' => 'http://www.example.com',
+                'ids' => array(
+                    'a-custom-id' => '<a-custom-id@www.example.com>',
+                    'an-id-with-/-a-slash' => '<an-id-with-%2F-a-slash@www.example.com>',
+                ),
+            ),
+            'path' => array(
+                'wwwroot' => 'http://www.example.com/path/subdir',
+                'ids' => array(
+                    'a-custom-id' => '<a-custom-id/path/subdir@www.example.com>',
+                    'an-id-with-/-a-slash' => '<an-id-with-%2F-a-slash/path/subdir@www.example.com>',
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Test email message id generation
+     *
+     * @dataProvider generate_email_messageid_provider
+     *
+     * @param string $wwwroot The wwwroot
+     * @param array $msgids An array of msgid local parts and the final result
+     */
+    public function test_generate_email_messageid($wwwroot, $msgids) {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->wwwroot = $wwwroot;
+
+        foreach ($msgids as $local => $final) {
+            $this->assertEquals($final, generate_email_messageid($local));
+        }
+    }
+
+    /**
+     * A data provider for testing email diversion
+     */
+    public function diverted_emails_provider() {
+        return array(
+            'nodiverts' => array(
+                'divertallemailsto' => null,
+                'divertallemailsexcept' => null,
+                array(
+                    'foo@example.com',
+                    'test@real.com',
+                    'fred.jones@example.com',
+                    'dev1@dev.com',
+                    'fred@example.com',
+                    'fred+verp@example.com',
+                ),
+                false,
+            ),
+            'alldiverts' => array(
+                'divertallemailsto' => 'somewhere@elsewhere.com',
+                'divertallemailsexcept' => null,
+                array(
+                    'foo@example.com',
+                    'test@real.com',
+                    'fred.jones@example.com',
+                    'dev1@dev.com',
+                    'fred@example.com',
+                    'fred+verp@example.com',
+                ),
+                true,
+            ),
+            'alsodiverts' => array(
+                'divertallemailsto' => 'somewhere@elsewhere.com',
+                'divertallemailsexcept' => '@dev.com, fred(\+.*)?@example.com',
+                array(
+                    'foo@example.com',
+                    'test@real.com',
+                    'fred.jones@example.com',
+                ),
+                true,
+            ),
+            'divertsexceptions' => array(
+                'divertallemailsto' => 'somewhere@elsewhere.com',
+                'divertallemailsexcept' => '@dev.com, fred(\+.*)?@example.com',
+                array(
+                    'dev1@dev.com',
+                    'fred@example.com',
+                    'fred+verp@example.com',
+                ),
+                false,
+            ),
+        );
+    }
+
+    /**
+     * Test email diversion
+     *
+     * @dataProvider diverted_emails_provider
+     *
+     * @param string $divertallemailsto An optional email address
+     * @param string $divertallemailsexcept An optional exclusion list
+     * @param array $addresses An array of test addresses
+     * @param boolean $expected Expected result
+     */
+    public function test_email_should_be_diverted($divertallemailsto, $divertallemailsexcept, $addresses, $expected) {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->divertallemailsto = $divertallemailsto;
+        $CFG->divertallemailsexcept = $divertallemailsexcept;
+
+        foreach ($addresses as $address) {
+            $this->assertEquals($expected, email_should_be_diverted($address));
+        }
+    }
+
     public function test_email_to_user() {
         global $CFG;
 
         $this->resetAfterTest();
 
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user2 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user3 = $this->getDataGenerator()->create_user(array('maildisplay' => 0));
+        set_config('allowedemaildomains', 'example.com');
 
         $subject = 'subject';
         $messagetext = 'message text';
@@ -2648,16 +2835,29 @@ class core_moodlelib_testcase extends advanced_testcase {
         email_to_user($user1, $user2, $subject, $messagetext);
         $this->assertDebuggingCalled('Unit tests must not send real emails! Use $this->redirectEmails()');
 
-        // Test $CFG->emailonlyfromnoreplyaddress.
-        set_config('emailonlyfromnoreplyaddress', 1);
-        $this->assertNotEmpty($CFG->emailonlyfromnoreplyaddress);
+        // Test that an empty noreplyaddress will default to a no-reply address.
         $sink = $this->redirectEmails();
-        email_to_user($user1, $user2, $subject, $messagetext);
-        unset_config('emailonlyfromnoreplyaddress');
-        email_to_user($user1, $user2, $subject, $messagetext);
+        email_to_user($user1, $user3, $subject, $messagetext);
         $result = $sink->get_messages();
         $this->assertEquals($CFG->noreplyaddress, $result[0]->from);
-        $this->assertNotEquals($CFG->noreplyaddress, $result[1]->from);
+        $sink->close();
+        set_config('noreplyaddress', '');
+        $sink = $this->redirectEmails();
+        email_to_user($user1, $user3, $subject, $messagetext);
+        $result = $sink->get_messages();
+        $this->assertEquals('noreply@www.example.com', $result[0]->from);
+        $sink->close();
+
+        // Test $CFG->allowedemaildomains.
+        set_config('noreplyaddress', 'noreply@www.example.com');
+        $this->assertNotEmpty($CFG->allowedemaildomains);
+        $sink = $this->redirectEmails();
+        email_to_user($user1, $user2, $subject, $messagetext);
+        unset_config('allowedemaildomains');
+        email_to_user($user1, $user2, $subject, $messagetext);
+        $result = $sink->get_messages();
+        $this->assertNotEquals($CFG->noreplyaddress, $result[0]->from);
+        $this->assertEquals($CFG->noreplyaddress, $result[1]->from);
         $sink->close();
     }
 
@@ -2691,6 +2891,149 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertEquals(context_user::instance($user->id), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Data provider for test_generate_confirmation_link
+     * @return Array of confirmation urls and expected resultant confirmation links
+     */
+    public function generate_confirmation_link_provider() {
+        global $CFG;
+        return [
+            "Simple name" => [
+                "username" => "simplename",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/simplename"
+            ],
+            "Period in between words in username" => [
+                "username" => "period.inbetween",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/period%2Einbetween"
+            ],
+            "Trailing periods in username" => [
+                "username" => "trailingperiods...",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/trailingperiods%2E%2E%2E"
+            ],
+            "At symbol in username" => [
+                "username" => "at@symbol",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/at%40symbol"
+            ],
+            "Dash symbol in username" => [
+                "username" => "has-dash",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/has-dash"
+            ],
+            "Underscore in username" => [
+                "username" => "under_score",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/under_score"
+            ],
+            "Many different characters in username" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom relative confirmation url" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "/custom/local/url.php",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom relative confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "/custom/local/url.php?with=param",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?with=param&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom local confirmation url" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => $CFG->wwwroot . "/custom/local/url.php",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom local confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => $CFG->wwwroot . "/custom/local/url.php?with=param",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?with=param&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom external confirmation url" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "http://moodle.org/custom/external/url.php",
+                "expected" => "http://moodle.org/custom/external/url.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom external confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "http://moodle.org/ext.php?with=some&param=eters",
+                "expected" => "http://moodle.org/ext.php?with=some&param=eters&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom external confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "http://moodle.org/ext.php?with=some&data=test",
+                "expected" => "http://moodle.org/ext.php?with=some&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+        ];
+    }
+
+    /**
+     * Test generate_confirmation_link
+     * @dataProvider generate_confirmation_link_provider
+     * @param string $username The name of the user
+     * @param string $confirmationurl The url the user should go to to confirm
+     * @param string $expected The expected url of the confirmation link
+     */
+    public function test_generate_confirmation_link($username, $confirmationurl, $expected) {
+        $this->resetAfterTest();
+        $sink = $this->redirectEmails();
+
+        $user = $this->getDataGenerator()->create_user(
+            [
+                "username" => $username,
+                "confirmed" => false,
+                "email" => 'test@example.com',
+            ]
+        );
+
+        send_confirmation_email($user, $confirmationurl);
+        $sink->close();
+        $messages = $sink->get_messages();
+        $message = array_shift($messages);
+        $messagebody = quoted_printable_decode($message->body);
+
+        $this->assertContains($expected, $messagebody);
+    }
+
+    /**
+     * Test generate_confirmation_link with custom admin link
+     */
+    public function test_generate_confirmation_link_with_custom_admin() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $sink = $this->redirectEmails();
+
+        $admin = $CFG->admin;
+        $CFG->admin = 'custom/admin/path';
+
+        $user = $this->getDataGenerator()->create_user(
+            [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmed" => false,
+                "email" => 'test@example.com',
+            ]
+        );
+        $confirmationurl = "/admin/test.php?with=params";
+        $expected = $CFG->wwwroot . "/" . $CFG->admin . "/test.php?with=params&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E";
+
+        send_confirmation_email($user, $confirmationurl);
+        $sink->close();
+        $messages = $sink->get_messages();
+        $message = array_shift($messages);
+        $messagebody = quoted_printable_decode($message->body);
+
+        $sink->close();
+        $this->assertContains($expected, $messagebody);
+
+        $CFG->admin = $admin;
+    }
+
 
     /**
      * Test remove_course_content deletes course contents
@@ -2802,7 +3145,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertEquals(3, $count);
 
         $count = count_words('one"two three-four');
-        $this->assertEquals(3, $count);
+        $this->assertEquals(2, $count);
 
         $count = count_words('one@two three_four');
         $this->assertEquals(4, $count);
@@ -2869,5 +3212,240 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $_SERVER['HTTP_X_FORWARDED_FOR'] = $xforwardedfor;
 
+    }
+
+    /*
+     * Test emulation of random_bytes() function.
+     */
+    public function test_random_bytes_emulate() {
+        $result = random_bytes_emulate(10);
+        $this->assertSame(10, strlen($result));
+        $this->assertnotSame($result, random_bytes_emulate(10));
+
+        $result = random_bytes_emulate(21);
+        $this->assertSame(21, strlen($result));
+        $this->assertnotSame($result, random_bytes_emulate(21));
+
+        $result = random_bytes_emulate(666);
+        $this->assertSame(666, strlen($result));
+
+        $result = random_bytes_emulate(40);
+        $this->assertSame(40, strlen($result));
+
+        $this->assertDebuggingNotCalled();
+
+        $result = random_bytes_emulate(0);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+
+        $result = random_bytes_emulate(-1);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Test function for creation of random strings.
+     */
+    public function test_random_string() {
+        $pool = 'a-zA-Z0-9';
+
+        $result = random_string(10);
+        $this->assertSame(10, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+        $this->assertNotSame($result, random_string(10));
+
+        $result = random_string(21);
+        $this->assertSame(21, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+        $this->assertNotSame($result, random_string(21));
+
+        $result = random_string(666);
+        $this->assertSame(666, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+
+        $result = random_string();
+        $this->assertSame(15, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+
+        $this->assertDebuggingNotCalled();
+
+        $result = random_string(0);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+
+        $result = random_string(-1);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Test function for creation of complex random strings.
+     */
+    public function test_complex_random_string() {
+        $pool = preg_quote('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~!@#%^&*()_+-=[];,./<>?:{} ', '/');
+
+        $result = complex_random_string(10);
+        $this->assertSame(10, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+        $this->assertNotSame($result, complex_random_string(10));
+
+        $result = complex_random_string(21);
+        $this->assertSame(21, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+        $this->assertNotSame($result, complex_random_string(21));
+
+        $result = complex_random_string(666);
+        $this->assertSame(666, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+
+        $result = complex_random_string();
+        $this->assertEquals(28, strlen($result), '', 4); // Expected length is 24 - 32.
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+
+        $this->assertDebuggingNotCalled();
+
+        $result = complex_random_string(0);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+
+        $result = complex_random_string(-1);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Data provider for private ips.
+     */
+    public function data_private_ips() {
+        return array(
+            array('10.0.0.0'),
+            array('172.16.0.0'),
+            array('192.168.1.0'),
+            array('fdfe:dcba:9876:ffff:fdc6:c46b:bb8f:7d4c'),
+            array('fdc6:c46b:bb8f:7d4c:fdc6:c46b:bb8f:7d4c'),
+            array('fdc6:c46b:bb8f:7d4c:0000:8a2e:0370:7334'),
+            array('127.0.0.1'), // This has been buggy in past: https://bugs.php.net/bug.php?id=53150.
+        );
+    }
+
+    /**
+     * Checks ip_is_public returns false for private ips.
+     *
+     * @param string $ip the ipaddress to test
+     * @dataProvider data_private_ips
+     */
+    public function test_ip_is_public_private_ips($ip) {
+        $this->assertFalse(ip_is_public($ip));
+    }
+
+    /**
+     * Data provider for public ips.
+     */
+    public function data_public_ips() {
+        return array(
+            array('2400:cb00:2048:1::8d65:71b3'),
+            array('2400:6180:0:d0::1b:2001'),
+            array('141.101.113.179'),
+            array('123.45.67.178'),
+        );
+    }
+
+    /**
+     * Checks ip_is_public returns true for public ips.
+     *
+     * @param string $ip the ipaddress to test
+     * @dataProvider data_public_ips
+     */
+    public function test_ip_is_public_public_ips($ip) {
+        $this->assertTrue(ip_is_public($ip));
+    }
+
+    /**
+     * Test the function can_send_from_real_email_address
+     *
+     * @param string $email Email address for the from user.
+     * @param int $display The user's email display preference.
+     * @param bool $samecourse Are the users in the same course?
+     * @param bool $result The expected result.
+     * @dataProvider data_can_send_from_real_email_address
+     */
+    public function test_can_send_from_real_email_address($email, $display, $samecourse, $result) {
+        global $DB;
+        $this->resetAfterTest();
+
+        $fromuser = $this->getDataGenerator()->create_user();
+        $touser = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $alloweddomains = ['example.com'];
+
+        $fromuser->email = $email;
+        $fromuser->maildisplay = $display;
+        if ($samecourse) {
+            $this->getDataGenerator()->enrol_user($fromuser->id, $course->id, 'student');
+            $this->getDataGenerator()->enrol_user($touser->id, $course->id, 'student');
+        } else {
+            $this->getDataGenerator()->enrol_user($fromuser->id, $course->id, 'student');
+        }
+        $this->assertEquals($result, can_send_from_real_email_address($fromuser, $touser, $alloweddomains));
+    }
+
+    /**
+     * Data provider for test_can_send_from_real_email_address.
+     *
+     * @return array Returns an array of test data for the above function.
+     */
+    public function data_can_send_from_real_email_address() {
+        return [
+            // Test from email is in allowed domain.
+            // Test that from display is set to show no one.
+            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_HIDE,
+             'samecourse' => false, 'result' => false],
+            // Test that from display is set to course members only (course member).
+            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+             'samecourse' => true, 'result' => true],
+            // Test that from display is set to course members only (Non course member).
+            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+             'samecourse' => false, 'result' => false],
+             // Test that from display is set to show everyone.
+            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_EVERYONE,
+             'samecourse' => false, 'result' => true],
+
+            // Test from email is not in allowed domain.
+            // Test that from display is set to show no one.
+            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_HIDE,
+             'samecourse' => false, 'result' => false],
+             // Test that from display is set to course members only (course member).
+            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+             'samecourse' => true, 'result' => false],
+             // Test that from display is set to course members only (Non course member.
+            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+             'samecourse' => false, 'result' => false],
+             // Test that from display is set to show everyone.
+            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_EVERYONE,
+             'samecourse' => false, 'result' => false],
+        ];
+    }
+
+    /**
+     * Test that generate_email_processing_address() returns valid email address.
+     */
+    public function test_generate_email_processing_address() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $data = (object)[
+            'id' => 42,
+            'email' => 'my.email+from_moodle@example.com',
+        ];
+
+        $modargs = 'B'.base64_encode(pack('V', $data->id)).substr(md5($data->email), 0, 16);
+
+        $CFG->maildomain = 'example.com';
+        $CFG->mailprefix = 'mdl+';
+        $this->assertTrue(validate_email(generate_email_processing_address(0, $modargs)));
+
+        $CFG->maildomain = 'mail.example.com';
+        $CFG->mailprefix = 'mdl-';
+        $this->assertTrue(validate_email(generate_email_processing_address(23, $modargs)));
     }
 }

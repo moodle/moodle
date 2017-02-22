@@ -52,6 +52,11 @@ require_login($course, false, $cm);
 $contextmodule = context_module::instance($cm->id);
 require_capability('mod/scorm:viewreport', $contextmodule);
 
+// Check user has group access.
+if (!groups_user_groups_visible($course, $userid, $cm)) {
+    throw new moodle_exception('nopermissiontoshow');
+}
+
 // Trigger a user interactions viewed event.
 $event = \mod_scorm\event\interactions_viewed::create(array(
     'context' => $contextmodule,

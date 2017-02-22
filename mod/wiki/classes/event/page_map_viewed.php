@@ -101,4 +101,13 @@ class page_map_viewed extends \core\event\base {
             throw new \coding_exception('The \'option\' value must be set in other, even if 0.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'wiki_pages', 'restore' => 'wiki_page');
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

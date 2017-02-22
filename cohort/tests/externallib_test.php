@@ -34,6 +34,8 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test create_cohorts
+     *
+     * @expectedException required_capability_exception
      */
     public function test_create_cohorts() {
         global $USER, $CFG, $DB;
@@ -97,12 +99,13 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/cohort:manage', $contextid, $roleid);
-        $this->setExpectedException('required_capability_exception');
         $createdcohorts = core_cohort_external::create_cohorts(array($cohort3));
     }
 
     /**
      * Test delete_cohorts
+     *
+     * @expectedException required_capability_exception
      */
     public function test_delete_cohorts() {
         global $USER, $CFG, $DB;
@@ -129,7 +132,6 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         $cohort1 = self::getDataGenerator()->create_cohort();
         $cohort2 = self::getDataGenerator()->create_cohort();
         $this->unassignUserCapability('moodle/cohort:manage', $contextid, $roleid);
-        $this->setExpectedException('required_capability_exception');
         core_cohort_external::delete_cohorts(array($cohort1->id, $cohort2->id));
     }
 
@@ -183,6 +185,8 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test update_cohorts
+     *
+     * @expectedException required_capability_exception
      */
     public function test_update_cohorts() {
         global $USER, $CFG, $DB;
@@ -224,7 +228,6 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/cohort:manage', $context->id, $roleid);
-        $this->setExpectedException('required_capability_exception');
         core_cohort_external::update_cohorts(array($cohort1));
     }
 
@@ -260,6 +263,8 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test update_cohorts without permission on the dest category.
+     *
+     * @expectedException required_capability_exception
      */
     public function test_update_cohorts_missing_dest() {
         global $USER, $CFG, $DB;
@@ -295,12 +300,13 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         // Call the external function.
         // Should fail because we don't have permission on the dest category
-        $this->setExpectedException('required_capability_exception');
         core_cohort_external::update_cohorts(array($cohortupdate));
     }
 
     /**
      * Test update_cohorts without permission on the src category.
+     *
+     * @expectedException required_capability_exception
      */
     public function test_update_cohorts_missing_src() {
         global $USER, $CFG, $DB;
@@ -336,12 +342,13 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         // Call the external function.
         // Should fail because we don't have permission on the src category
-        $this->setExpectedException('required_capability_exception');
         core_cohort_external::update_cohorts(array($cohortupdate));
     }
 
     /**
      * Test add_cohort_members
+     *
+     * @expectedException required_capability_exception
      */
     public function test_add_cohort_members() {
         global $DB;
@@ -387,12 +394,13 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
             'usertype' => array('type' => 'id', 'value' => '2')
             );
         $this->unassignUserCapability('moodle/cohort:assign', $contextid, $roleid);
-        $this->setExpectedException('required_capability_exception');
         $addcohortmembers = core_cohort_external::add_cohort_members(array($cohort2));
     }
 
     /**
      * Test delete_cohort_members
+     *
+     * @expectedException required_capability_exception
      */
     public function test_delete_cohort_members() {
         global $DB;
@@ -444,7 +452,6 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/cohort:assign', $context->id, $roleid);
-        $this->setExpectedException('required_capability_exception');
         core_cohort_external::delete_cohort_members(array($cohortdel1, $cohortdel2));
     }
 }

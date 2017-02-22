@@ -187,4 +187,47 @@ class qtype_multianswer_test extends advanced_testcase {
             }
         }
     }
+    /**
+     *  Verify that the multiplechoice variants parameters are correctly interpreted from
+     *  the question text
+     *
+     *
+     */
+    public function test_questiontext_extraction_of_multiplechoice_subquestions_variants() {
+        $questiontext = array();
+        $questiontext['format'] = FORMAT_HTML;
+        $questiontext['itemid'] = '';
+        $questiontext['text'] = '<p>Match the following cities with the correct state:</p>
+            <ul>
+            <li>1 San Francisco:{1:MULTICHOICE:=California#OK~Arizona#Wrong}</li>
+            <li>2 Tucson:{1:MC:%0%California#Wrong~=Arizona#OK}</li>
+            <li>3 Los Angeles:{1:MULTICHOICE_S:=California#OK~Arizona#Wrong}</li>
+            <li>4 Phoenix:{1:MCS:%0%California#Wrong~=Arizona#OK}</li>
+            <li>5 San Francisco:{1:MULTICHOICE_H:=California#OK~Arizona#Wrong}</li>
+            <li>6 Tucson:{1:MCH:%0%California#Wrong~=Arizona#OK}</li>
+            <li>7 Los Angeles:{1:MULTICHOICE_HS:=California#OK~Arizona#Wrong}</li>
+            <li>8 Phoenix:{1:MCHS:%0%California#Wrong~=Arizona#OK}</li>
+            <li>9 San Francisco:{1:MULTICHOICE_V:=California#OK~Arizona#Wrong}</li>
+            <li>10 Tucson:{1:MCV:%0%California#Wrong~=Arizona#OK}</li>
+            <li>11 Los Angeles:{1:MULTICHOICE_VS:=California#OK~Arizona#Wrong}</li>
+            <li>12 Phoenix:{1:MCVS:%0%California#Wrong~=Arizona#OK}</li>
+            </ul>';
+
+        $q = qtype_multianswer_extract_question($questiontext);
+        foreach ($q->options->questions as $key => $sub) {
+            $this->assertSame($sub->qtype, 'multichoice');
+            if ($key == 1 || $key == 2 || $key == 5 || $key == 6 || $key == 9 || $key == 10) {
+                $this->assertSame($sub->shuffleanswers, 0);
+            } else {
+                $this->assertSame($sub->shuffleanswers, 1);
+            }
+            if ($key == 1 || $key == 2 || $key == 3 || $key == 4) {
+                $this->assertSame($sub->layout, qtype_multichoice_base::LAYOUT_DROPDOWN);
+            } else if ($key == 5 || $key == 6 || $key == 7 || $key == 8) {
+                $this->assertSame($sub->layout, qtype_multichoice_base::LAYOUT_HORIZONTAL);
+            } else if ($key == 9 || $key == 10 || $key == 11 || $key == 12) {
+                $this->assertSame($sub->layout, qtype_multichoice_base::LAYOUT_VERTICAL);
+            }
+        }
+    }
 }

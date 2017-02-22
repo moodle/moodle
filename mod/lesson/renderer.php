@@ -113,6 +113,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $output .=  '<form id="password" method="post" action="'.$CFG->wwwroot.'/mod/lesson/view.php" autocomplete="off">';
         $output .=  '<fieldset class="invisiblefieldset center">';
         $output .=  '<input type="hidden" name="id" value="'. $this->page->cm->id .'" />';
+        $output .=  '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         if ($failedattempt) {
             $output .=  $this->output->notification(get_string('loginfail', 'lesson'));
         }
@@ -413,6 +414,13 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $img = html_writer::img($this->output->pix_url('t/edit'), $label, array('class' => 'iconsmall'));
         $actions[] = html_writer::link($url, $img, array('title' => $label));
 
+        // Duplicate action.
+        $url = new moodle_url('/mod/lesson/lesson.php', array('id' => $this->page->cm->id, 'pageid' => $page->id,
+                'action' => 'duplicate', 'sesskey' => sesskey()));
+        $label = get_string('duplicatepagenamed', 'lesson', format_string($page->title));
+        $img = html_writer::img($this->output->pix_url('e/copy', 'mod_lesson'), $label, array('class' => 'iconsmall'));
+        $actions[] = html_writer::link($url, $img, array('title' => $label));
+
         $url = new moodle_url('/mod/lesson/view.php', array('id' => $this->page->cm->id, 'pageid' => $page->id));
         $label = get_string('previewpagenamed', 'lesson', format_string($page->title));
         $img = html_writer::img($this->output->pix_url('t/preview'), $label, array('class' => 'iconsmall'));
@@ -599,26 +607,6 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $attributes['class'] = $class;
         }
         $output = html_writer::tag('p', $contents, $attributes);
-        return $output;
-    }
-    /**
-     * Returns HTML to display add_highscores_form
-     * @param lesson $lesson
-     * @return string
-     */
-    public function add_highscores_form(lesson $lesson) {
-        global $CFG;
-        $output  = $this->output->box_start('generalbox boxaligncenter');
-        $output .= $this->output->box_start('mdl-align');
-        $output .= '<form id="nickname" method ="post" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php" autocomplete="off">
-             <input type="hidden" name="id" value="'.$this->page->cm->id.'" />
-             <input type="hidden" name="mode" value="save" />
-             <input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        $output .= get_string("entername", "lesson").": <input type=\"text\" name=\"name\" size=\"7\" maxlength=\"5\" />";
-        $output .= $this->output->box("<input type='submit' value='".get_string('submitname', 'lesson')."' />", 'lessonbutton center');
-        $output .= "</form>";
-        $output .= $this->output->box_end();
-        $output .= $this->output->box_end();
         return $output;
     }
 }

@@ -47,7 +47,7 @@ class submission_created extends \mod_assign\event\submission_created {
      */
     protected function init() {
         parent::init();
-        $this->data['objecttable'] = 'assignsubmission_file';
+        $this->data['objecttable'] = 'assignsubmission_onlinetext';
     }
 
     /**
@@ -79,5 +79,10 @@ class submission_created extends \mod_assign\event\submission_created {
         if (!isset($this->other['onlinetextwordcount'])) {
             throw new \coding_exception('The \'onlinetextwordcount\' value must be set in other.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        // No mapping available for 'assignsubmission_onlinetext'.
+        return array('db' => 'assignsubmission_onlinetext', 'restore' => \core\event\base::NOT_MAPPED);
     }
 }

@@ -110,7 +110,9 @@ if (!$restore->is_independent()) {
             // Do actual restore.
             $restore->execute();
             // Get HTML from logger.
-            $loghtml = $logger->get_html();
+            if ($CFG->debugdisplay) {
+                $loghtml = $logger->get_html();
+            }
             // Hide this section because we are now going to make the page show 'finished'.
             echo html_writer::end_div();
             echo html_writer::script('document.getElementById("executionprogress").style.display = "none";');

@@ -26,6 +26,7 @@
  */
 
 require_once('HTML/QuickForm/select.php');
+require_once('templatable_form_element.php');
 
 /**
  * select type form element
@@ -37,7 +38,12 @@ require_once('HTML/QuickForm/select.php');
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_select extends HTML_QuickForm_select{
+class MoodleQuickForm_select extends HTML_QuickForm_select implements templatable {
+
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
+
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
@@ -52,8 +58,18 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
      * @param mixed $options Data to be used to populate options
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      */
-    function MoodleQuickForm_select($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
-        parent::HTML_QuickForm_select($elementName, $elementLabel, $options, $attributes);
+    public function __construct($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+        parent::__construct($elementName, $elementLabel, $options, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_select($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $options, $attributes);
     }
 
     /**
@@ -178,5 +194,36 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
         } else {
             return $this->_prepareValue($cleaned[0], $assoc);
         }
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+
+        $options = [];
+        // Standard option attributes.
+        $standardoptionattributes = ['text', 'value', 'selected', 'disabled'];
+        foreach ($this->_options as $option) {
+            if (is_array($this->_values) && in_array( (string) $option['attr']['value'], $this->_values)) {
+                $this->_updateAttrArray($option['attr'], ['selected' => 'selected']);
+            }
+            $o = [
+                'text' => $option['text'],
+                'value' => $option['attr']['value'],
+                'selected' => !empty($option['attr']['selected']),
+                'disabled' => !empty($option['attr']['disabled']),
+            ];
+            // Set other attributes.
+            $otheroptionattributes = [];
+            foreach ($option['attr'] as $attr => $value) {
+                if (!in_array($attr, $standardoptionattributes) && $attr != 'class' && !is_object($value)) {
+                    $otheroptionattributes[] = $attr . '="' . s($value) . '"';
+                }
+            }
+            $o['optionattributes'] = implode(' ', $otheroptionattributes);
+            $options[] = $o;
+        }
+        $context['options'] = $options;
+
+        return $context;
     }
 }

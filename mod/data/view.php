@@ -22,7 +22,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-    require_once(dirname(__FILE__) . '/../../config.php');
+    require_once(__DIR__ . '/../../config.php');
     require_once($CFG->dirroot . '/mod/data/lib.php');
     require_once($CFG->libdir . '/rsslib.php');
     require_once($CFG->libdir . '/completionlib.php');
@@ -326,6 +326,7 @@
         $PAGE->navbar->add(get_string('search'));
     }
 
+    $PAGE->force_settings_menu();
     $PAGE->set_title($title);
     $PAGE->set_heading($course->fullname);
 
@@ -373,7 +374,7 @@
 
 /// Delete any requested records
 
-    if ($delete && confirm_sesskey() && ($canmanageentries or data_isowner($delete))) {
+    if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, $context))) {
         if ($confirm = optional_param('confirm',0,PARAM_INT)) {
             if (data_delete_record($delete, $data, $course->id, $cm->id)) {
                 echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
@@ -823,16 +824,19 @@ if ($showactivity) {
                         'type' => 'button',
                         'id' => 'checkall',
                         'value' => get_string('selectall'),
+                        'class' => 'btn btn-secondary m-r-1'
                     ));
                 echo html_writer::empty_tag('input', array(
                         'type' => 'button',
                         'id' => 'checknone',
                         'value' => get_string('deselectall'),
+                        'class' => 'btn btn-secondary m-r-1'
                     ));
                 echo html_writer::empty_tag('input', array(
                         'class' => 'form-submit',
                         'type' => 'submit',
                         'value' => get_string('deleteselected'),
+                        'class' => 'btn btn-secondary m-r-1'
                     ));
 
                 $module = array('name' => 'mod_data', 'fullpath' => '/mod/data/module.js');

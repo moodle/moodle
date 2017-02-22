@@ -1,0 +1,1 @@
+define([],function(){return{init:function(a,b,c,d){window.parent&&window.parent.triggerExternalRegistrationComplete({message:a,error:b,id:c,status:d})}}});

@@ -224,7 +224,8 @@ class webservice_rest_server extends webservice_base_server {
         } else if ($desc instanceof external_single_structure) {
             $single = '<SINGLE>'."\n";
             foreach ($desc->keys as $key=>$subdesc) {
-                $single .= '<KEY name="'.$key.'">'.self::xmlize_result($returns[$key], $subdesc).'</KEY>'."\n";
+                $value = isset($returns[$key]) ? $returns[$key] : null;
+                $single .= '<KEY name="'.$key.'">'.self::xmlize_result($value, $subdesc).'</KEY>'."\n";
             }
             $single .= '</SINGLE>'."\n";
             return $single;

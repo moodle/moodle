@@ -51,7 +51,7 @@ class linksettings extends \mod_lti\local\ltiservice\resource_base {
 
         parent::__construct($service);
         $this->id = 'LtiLinkSettings';
-        $this->template = '/links/{link_id}/custom';
+        $this->template = '/links/{link_id}';
         $this->variables[] = 'LtiLink.custom.url';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings+json';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings.simple+json';
@@ -165,6 +165,7 @@ class linksettings extends \mod_lti\local\ltiservice\resource_base {
                     }
                     if ($ok) {
                         $settings = $json->{"@graph"}[0]->custom;
+                        unset($settings->{'@id'});
                     }
                 } else {  // Simple JSON.
                     $json = json_decode($response->get_request_data(), true);

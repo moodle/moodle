@@ -15,18 +15,17 @@
  * limitations under the License.
  */
 
-require_once realpath(dirname(__FILE__) . '/../../autoload.php');
+if (!class_exists('Google_Client')) {
+  require_once dirname(__FILE__) . '/autoload.php';
+}
 
 /**
  * The Google API Client
- * http://code.google.com/p/google-api-php-client/
- *
- * @author Chris Chabot <chabotc@google.com>
- * @author Chirag Shah <chirags@google.com>
+ * https://github.com/google/google-api-php-client
  */
 class Google_Client
 {
-  const LIBVER = "1.1.2";
+  const LIBVER = "1.1.5";
   const USER_AGENT_SUFFIX = "google-api-php-client/";
   /**
    * @var Google_Auth_Abstract $auth
@@ -115,15 +114,45 @@ class Google_Client
 
   /**
    * Attempt to exchange a code for an valid authentication token.
+   * If $crossClient is set to true, the request body will not include
+   * the request_uri argument
    * Helper wrapped around the OAuth 2.0 implementation.
    *
    * @param $code string code from accounts.google.com
+   * @param $crossClient boolean, whether this is a cross-client authentication
    * @return string token
    */
-  public function authenticate($code)
+  public function authenticate($code, $crossClient = false)
   {
     $this->authenticated = true;
-    return $this->getAuth()->authenticate($code);
+    return $this->getAuth()->authenticate($code, $crossClient);
+  }
+  
+  /**
+   * Loads a service account key and parameters from a JSON
+   * file from the Google Developer Console. Uses that and the
+   * given array of scopes to return an assertion credential for
+   * use with refreshTokenWithAssertionCredential.
+   *
+   * @param string $jsonLocation File location of the project-key.json.
+   * @param array $scopes The scopes to assert.
+   * @return Google_Auth_AssertionCredentials.
+   * @
+   */
+  public function loadServiceAccountJson($jsonLocation, $scopes)
+  {
+    $data = json_decode(file_get_contents($jsonLocation));
+    if (isset($data->type) && $data->type == 'service_account') {
+      // Service Account format.
+      $cred = new Google_Auth_AssertionCredentials(
+          $data->client_email,
+          $scopes,
+          $data->private_key
+      );
+      return $cred;
+    } else {
+      throw new Google_Exception("Invalid service account JSON file.");
+    }
   }
 
   /**

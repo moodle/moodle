@@ -39,4 +39,4 @@ $string['clitypevaluedefault'] = 'unesite vrijednost ili pritisnite Enter za kor
 $string['cliunknowoption'] = 'Nepoznate opcije: {$a} Molimo koristite --help opciju.';
 $string['cliyesnoprompt'] = 'unesite y (znači da) ili n (znači ne)';
 $string['environmentrequireinstall'] = 'je neophodno instalirati/omogućiti';
-$string['environmentrequireversion'] = 'neophodna inačica je {$a->needed}, a vi trenutno koristite inačicu {$a->current}';
+$string['environmentrequireversion'] = 'neophodna inačica je {$a->needed}, a vi trenutačno koristite inačicu {$a->current}';

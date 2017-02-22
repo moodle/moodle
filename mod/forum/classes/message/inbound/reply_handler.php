@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
+require_once($CFG->libdir . '/completionlib.php');
 
 /**
  * A Handler to process replies to forum posts.
@@ -244,6 +245,14 @@ class reply_handler extends \core\message\inbound\handler {
         $event->add_record_snapshot('forum_discussions', $discussion);
         $event->trigger();
 
+        // Update completion state.
+        $completion = new \completion_info($course);
+        if ($completion->is_enabled($cm) && ($forum->completionreplies || $forum->completionposts)) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+
+            mtrace("--> Updating completion status for user {$USER->id} in forum {$forum->id} for post {$addpost->id}.");
+        }
+
         mtrace("--> Created a post {$addpost->id} in {$discussion->id}.");
         return $addpost;
     }
@@ -296,6 +305,7 @@ class reply_handler extends \core\message\inbound\handler {
         $a = new \stdClass();
         $a->subject = $handlerresult->subject;
         $discussionurl = new \moodle_url('/mod/forum/discuss.php', array('d' => $handlerresult->discussion));
+        $discussionurl->set_anchor('p' . $handlerresult->id);
         $a->discussionurl = $discussionurl->out();
 
         $message = new \stdClass();
