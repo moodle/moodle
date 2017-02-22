@@ -26,6 +26,9 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/calendar/lib.php');
 
+// Event types.
+define('CHAT_EVENT_TYPE_CHATTIME', 'chattime');
+
 // The HTML head for the message window to start with (<!-- nix --> is used to get some browsers starting with output.
 global $CHAT_HTMLHEAD;
 $CHAT_HTMLHEAD = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head></head>\n<body>\n\n".padding(200);
@@ -115,6 +118,7 @@ function chat_add_instance($chat) {
 
     if ($chat->schedule > 0) {
         $event = new stdClass();
+        $event->type        = CALENDAR_EVENT_TYPE_ACTION;
         $event->name        = $chat->name;
         $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
         $event->courseid    = $chat->course;
@@ -122,8 +126,9 @@ function chat_add_instance($chat) {
         $event->userid      = 0;
         $event->modulename  = 'chat';
         $event->instance    = $returnid;
-        $event->eventtype   = 'chattime';
+        $event->eventtype   = CHAT_EVENT_TYPE_CHATTIME;
         $event->timestart   = $chat->chattime;
+        $event->timesort    = $chat->chattime;
         $event->timeduration = 0;
 
         \core_calendar\event::create($event);
@@ -153,9 +158,11 @@ function chat_update_instance($chat) {
     if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id))) {
 
         if ($chat->schedule > 0) {
+            $event->type        = CALENDAR_EVENT_TYPE_ACTION;
             $event->name        = $chat->name;
             $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
             $event->timestart   = $chat->chattime;
+            $event->timesort    = $chat->chattime;
 
             $calendarevent = \core_calendar\event::load($event->id);
             $calendarevent->update($event);
@@ -168,6 +175,7 @@ function chat_update_instance($chat) {
         // No event, do we need to create one?
         if ($chat->schedule > 0) {
             $event = new stdClass();
+            $event->type        = CALENDAR_EVENT_TYPE_ACTION;
             $event->name        = $chat->name;
             $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
             $event->courseid    = $chat->course;
@@ -175,8 +183,9 @@ function chat_update_instance($chat) {
             $event->userid      = 0;
             $event->modulename  = 'chat';
             $event->instance    = $chat->id;
-            $event->eventtype   = 'chattime';
+            $event->eventtype   = CHAT_EVENT_TYPE_CHATTIME;
             $event->timestart   = $chat->chattime;
+            $event->timesort    = $chat->chattime;
             $event->timeduration = 0;
 
             \core_calendar\event::create($event);
@@ -442,6 +451,7 @@ function chat_refresh_events($courseid = 0) {
         $cm = get_coursemodule_from_instance('chat', $chat->id, $chat->course);
         $event = new stdClass();
         $event->name        = $chat->name;
+        $event->type        = CALENDAR_EVENT_TYPE_ACTION;
         $event->description = format_module_intro('chat', $chat, $cm->id);
         $event->timestart   = $chat->chattime;
 
@@ -455,7 +465,7 @@ function chat_refresh_events($courseid = 0) {
             $event->userid      = 0;
             $event->modulename  = 'chat';
             $event->instance    = $chat->id;
-            $event->eventtype   = 'chattime';
+            $event->eventtype   = CHAT_EVENT_TYPE_CHATTIME;
             $event->timeduration = 0;
             $event->visible = $DB->get_field('course_modules', 'visible', array('module' => $moduleid, 'instance' => $chat->id));
 
@@ -1395,4 +1405,39 @@ function chat_view($chat, $course, $cm, $context) {
     // Completion.
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
+}
+
+/**
+ * Is the event visible?
+ *
+ * @param \core_calendar\event $event
+ * @return bool Returns true if the event is visible to the current user, false otherwise.
+ */
+function mod_chat_core_calendar_is_event_visible(\core_calendar\event $event) {
+    $cm = get_fast_modinfo($event->courseid)->instances['chat'][$event->instance];
+    $context = context_module::instance($cm->id);
+
+    return has_capability('mod/chat:view', $context);
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_chat_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                     \core_calendar\action_factory $factory) {
+    global $DB;
+
+    $cm = get_fast_modinfo($event->courseid)->instances['chat'][$event->instance];
+    $chattime = $DB->get_field('chat', 'chattime', array('id' => $event->instance));
+
+    return $factory->create_instance(
+        get_string('enterchat', 'chat'),
+        new \moodle_url('/mod/chat/view.php', array('id' => $cm->id)),
+        1,
+        time() >= $chattime
+    );
 }
