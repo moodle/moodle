@@ -944,4 +944,22 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         }
         return $DB->get_record('user', ['id' => $userid]);
     }
+
+    /**
+     * Trigger click on node via javascript instead of actually clicking on it via pointer.
+     *
+     * This function resolves the issue of nested elements with click listeners or links - in these cases clicking via
+     * the pointer may accidentally cause a click on the wrong element.
+     * Example of issue: clicking to expand navigation nodes when the config value linkadmincategories is enabled.
+     * @param NodeElement $node
+     */
+    protected function js_trigger_click($node) {
+        if (!$this->running_javascript()) {
+            $node->click();
+        }
+        $this->ensure_node_is_visible($node); // Ensures hidden elements can't be clicked.
+        $xpath = $node->getXpath();
+        $script = "Syn.click({{ELEMENT}})";
+        $this->getSession()->getDriver()->triggerSynScript($xpath, $script);
+    }
 }
