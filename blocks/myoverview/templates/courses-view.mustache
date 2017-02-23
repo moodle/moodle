@@ -38,7 +38,9 @@
     </div>
     <div class="tab-content">
         <div class="tab-pane active fade in" id="myoverview_courses_view_in_progress">
-            {{> block_myoverview/courses-view-in-progress }}
+            {{< block_myoverview/courses-view-by-status }}
+                {{$status}}1{{/status}}
+            {{/ block_myoverview/courses-view-by-status }}
         </div>
         <div class="tab-pane fade" id="myoverview_courses_view_future">
             {{> block_myoverview/courses-view-future }}

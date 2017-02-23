@@ -22,23 +22,44 @@
     Example context (json):
     {}
 }}
-<ul class="list-group unstyled" id="courses-view-in-progress-{{uniqid}}">
-    <span class="hidden" data-region="loading-icon-container">
-        {{> core/loading }}
-    </span>
-    <div id="courses-in-progress-container"
-         data-limit="{{$limit}}6{{/limit}}"
-         data-offset="{{$offset}}0{{/offset}}"
-         data-status="inprogress"
-         data-region="courses-in-progress-container">
+<div id data-limit="{{$limit}}6{{/limit}}" data-status="{{$status}}{{/status}}">
+    {{< block_myoverview/course-paging-content }}
+        {{$id}}paging-content-{{uniqid}}{{/id}}
+    {{/ block_myoverview/course-paging-content }}
+    <div class="text-xs-center text-center">
+        {{< block_myoverview/paging-bar }}
+            {{$id}}paging-bar-{{uniqid}}{{/id}}
+        {{/ block_myoverview/paging-bar }}
     </div>
-</ul>
-<div class="text-xs-center text-center" data-region="courses-in-progress-paging-bar" id="courses-in-progress-paging-bar-{{uniqid}}"></div>
+</div>
 {{#js}}
-require(['jquery', 'block_myoverview/courses_view'], function($, CoursesView) {
-    var root = $("#courses-in-progress-container"),
-    pagingRoot = $("#courses-in-progress-paging-bar-{{uniqid}}");
+require(
+    [
+        'jquery',
+        'core/templates',
+        'block_myoverview/paging_bar',
+        'block_myoverview/paging_content',
+        'block_myoverview/courses_view_repository'
+    ],
+    function($, Templates, PagingBar, PagingContent, CoursesRepository) {
 
-    CoursesView.init(root, pagingRoot);
+    var root = $();
+    var pagingBarElement = $('paging-bar-{{uniqid}}');
+    var pagingContentElement = $('paging-content-{{uniqid}}');
+    var loadContentCallback = function(pageNumber) {
+        var limit = root.attr('data-limit');
+        var offset = (pageNumber - 1) * limit;
+        var status = root.attr('data-status');
+
+        return CoursesRepository.queryFromStatus(status, limit, offset)
+            .then(function(courses) {
+                return Templates.render('block_myoverview/course-paging-content-item', courses);
+            })
+    };
+
+    PagingBar.registerEventListeners(pagingBarElement);
+    var content = new PagingContent(pagingContentElement, pagingBarElement, loadContentCallback);
+
+    content.registerEventListeners();
 });
 {{/js}}
