@@ -76,7 +76,7 @@ class competency extends persistent {
                 'default' => FORMAT_HTML
             ),
             'sortorder' => array(
-                'default' => null,
+                'default' => 0,
                 'type' => PARAM_INT
             ),
             'parentid' => array(
