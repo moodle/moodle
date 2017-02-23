@@ -87,11 +87,14 @@ abstract class event_abstract_factory implements event_factory_interface {
         $module = null;
         $subscription = null;
 
-        if ($dbrow->courseid) {
-            $course = new std_proxy($dbrow->courseid, function($id) use ($coursecache) {
-                return \core_calendar\api::get_course_cached($coursecache, $id);
-            });
+        if ($dbrow->courseid == 0) {
+            $cm = get_coursemodule_from_instance($dbrow->modulename, $dbrow->instance);
+            $dbrow->courseid = get_course($cm->course)->id;
         }
+
+        $course = new std_proxy($dbrow->courseid, function($id) use ($coursecache) {
+            return \core_calendar\api::get_course_cached($coursecache, $id);
+        });
 
         if ($dbrow->groupid) {
             $group = new std_proxy($dbrow->groupid, function($id) {
