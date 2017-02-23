@@ -25,8 +25,9 @@
 }}
 {{#pagingbar}}
 <nav aria-label="{{label}}"
-     id="{{$id}}paging-bar-{{uniqid}}{{/id}}"
-     data-region="paging-bar">
+     id="{{$pagingbarid}}paging-bar-{{uniqid}}{{/pagingbarid}}"
+     data-region="paging-bar"
+     data-page-count="{{pagecount}}">
 
     <ul class="pagination">
         {{#previous}}
@@ -38,13 +39,17 @@
             {{/ block_myoverview/paging-bar-item }}
         {{/previous}}
         {{#first}}
-            {{> block_myoverview/paging-bar-item }}
+            {{< block_myoverview/paging-bar-item }}
+                {{$pagenumber}}first{{/pagenumber}}
+            {{/ block_myoverview/paging-bar-item }}
         {{/first}}
         {{#pages}}
             {{> block_myoverview/paging-bar-item }}
         {{/pages}}
         {{#last}}
-            {{> block_myoverview/paging-bar-item }}
+            {{< block_myoverview/paging-bar-item }}
+                {{$pagenumber}}last{{/pagenumber}}
+            {{/ block_myoverview/paging-bar-item }}
         {{/last}}
         {{#next}}
             {{< block_myoverview/paging-bar-item }}
@@ -58,7 +63,7 @@
 </nav>
 {{#js}}
 require(['jquery', 'block_myoverview/paging_bar'], function($, PagingBar) {
-    var root = $('#{{$id}}paging-bar-{{uniqid}}{{/id}}');
+    var root = $('#{{$pagingbarid}}paging-bar-{{uniqid}}{{/pagingbarid}}');
     PagingBar.registerEventListeners(root);
 });
 {{/js}}

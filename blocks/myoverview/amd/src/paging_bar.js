@@ -26,12 +26,29 @@ define(['jquery', 'core/custom_interaction_events'],
         function($, CustomEvents) {
 
     var SELECTORS = {
-        PAGE_LINK: '[data-region="page-link"]',
-        ACTIVE_PAGE_LINK: '.active > [data-region="page-link"]'
+        ROOT: '[data-region="paging-bar"]',
+        PAGE_ITEM: '[data-region="page-item"]',
+        ACTIVE_PAGE_ITEM: '[data-region="page-item"].active'
     };
 
     var EVENTS = {
         PAGE_SELECTED: 'block_myoverview-paging-bar-page-selected',
+    };
+
+    var getPageByNumber = function(root, pageNumber) {
+        return root.find(SELECTORS.PAGE_ITEM + '[data-page-number="' + pageNumber + '"]');
+    };
+
+    var getPageNumber = function(root, page) {
+        var pageNumber = page.attr('data-page-number');
+
+        if (pageNumber == 'first') {
+            pageNumber = 1;
+        } else if (pageNumber == 'last') {
+            pageNumber = root.attr('data-page-count');
+        }
+
+        return pageNumber;
     };
 
     var registerEventListeners = function(root) {
@@ -40,18 +57,19 @@ define(['jquery', 'core/custom_interaction_events'],
             CustomEvents.events.activate
         ]);
 
-        root.one(CustomEvents.events.activate, SELECTORS.PAGE_LINK, function(e, data) {
-            var page = $(e.target).closest(SELECTORS.PAGE_LINK);
-            var activePage = root.find(SELECTORS.ACTIVE_PAGE_LINK);
-            var isSamePage = page.is(activePage);
+        root.on(CustomEvents.events.activate, SELECTORS.PAGE_ITEM, function(e, data) {
+            var page = $(e.target).closest(SELECTORS.PAGE_ITEM);
+            var activePage = root.find(SELECTORS.ACTIVE_PAGE_ITEM);
+            var pageNumber = getPageNumber(root, page);
+            var isSamePage = pageNumber == getPageNumber(root, activePage);
 
             if (!isSamePage) {
-                root.find(SELECTORS.PAGE_LINK).removeClass('active');
-                page.addClass('active');
+                root.find(SELECTORS.PAGE_ITEM).removeClass('active');
+                getPageByNumber(root, pageNumber).addClass('active');
             }
 
             root.trigger(EVENTS.PAGE_SELECTED, [{
-                pageNumber: page.attr('data-page-number'),
+                pageNumber: pageNumber,
                 isSamePage: isSamePage,
             }]);
 
@@ -62,5 +80,6 @@ define(['jquery', 'core/custom_interaction_events'],
     return {
         registerEventListeners: registerEventListeners,
         events: EVENTS,
+        rootSelector: SELECTORS.ROOT,
     };
 });

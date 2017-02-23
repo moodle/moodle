@@ -45,13 +45,12 @@ class courses_view implements renderable, templatable {
         return [
             'past' => [
                 'pagingbar' => [
+                    'pagecount' => 3,
                     'first' => [
-                        'number' => 1,
                         'page' => '&laquo;',
                         'url' => '#',
                     ],
                     'last' => [
-                        'number' => 3,
                         'page' => '&raquo;',
                         'url' => '#',
                     ],
@@ -77,13 +76,12 @@ class courses_view implements renderable, templatable {
             ],
             'inprogress' => [
                 'pagingbar' => [
+                    'pagecount' => 3,
                     'first' => [
-                        'number' => 1,
                         'page' => '&laquo;',
                         'url' => '#',
                     ],
                     'last' => [
-                        'number' => 3,
                         'page' => '&raquo;',
                         'url' => '#',
                     ],
@@ -109,13 +107,12 @@ class courses_view implements renderable, templatable {
             ],
             'future' => [
                 'pagingbar' => [
+                    'pagecount' => 3,
                     'first' => [
-                        'number' => 1,
                         'page' => '&laquo;',
                         'url' => '#',
                     ],
                     'last' => [
-                        'number' => 3,
                         'page' => '&raquo;',
                         'url' => '#',
                     ],

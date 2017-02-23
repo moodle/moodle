@@ -23,10 +23,12 @@
     {
     }
 }}
-<li class="page-item {{#active}}active{{/active}} {{#disabled}}disabled{{/disabled}}">
+<li class="page-item {{#active}}active{{/active}} {{#disabled}}disabled{{/disabled}}"
+    data-region="page-item"
+    data-page-number="{{$pagenumber}}{{number}}{{/pagenumber}}">
+
     <a href="{{url}}"
        class="page-link"
-       data-page-number="{{number}}"
        data-region="page-link">
         {{$item-content}}
             {{{page}}}

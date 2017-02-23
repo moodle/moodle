@@ -26,6 +26,7 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
         function($, Templates, PagingBar) {
 
     var SELECTORS = {
+        ROOT: '[data-region="paging-content"]',
     };
 
     var PagingContent = function(root, pagingBarElement, loadContentCallback) {
@@ -33,6 +34,8 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
         this.pagingBar = $(pagingBarElement);
         this.loadContent = loadContentCallback;
     };
+
+    PagingContent.rootSelector = SELECTORS.ROOT;
 
     PagingContent.prototype.createPage = function(pageNumber) {
         this.loadContent(pageNumber).done(function(html, js) {

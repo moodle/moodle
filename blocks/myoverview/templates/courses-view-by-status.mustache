@@ -22,14 +22,13 @@
     Example context (json):
     {}
 }}
-<div id data-limit="{{$limit}}6{{/limit}}" data-status="{{$status}}{{/status}}">
-    {{< block_myoverview/course-paging-content }}
-        {{$id}}paging-content-{{uniqid}}{{/id}}
-    {{/ block_myoverview/course-paging-content }}
+<div id="{{$id}}courses-view-status-{{uniqid}}{{/id}}"
+     data-limit="{{$limit}}6{{/limit}}"
+     data-status="{{$status}}{{/status}}">
+
+    {{> block_myoverview/course-paging-content }}
     <div class="text-xs-center text-center">
-        {{< block_myoverview/paging-bar }}
-            {{$id}}paging-bar-{{uniqid}}{{/id}}
-        {{/ block_myoverview/paging-bar }}
+        {{> block_myoverview/paging-bar }}
     </div>
 </div>
 {{#js}}
@@ -43,9 +42,9 @@ require(
     ],
     function($, Templates, PagingBar, PagingContent, CoursesRepository) {
 
-    var root = $();
-    var pagingBarElement = $('paging-bar-{{uniqid}}');
-    var pagingContentElement = $('paging-content-{{uniqid}}');
+    var root = $('{{$id}}courses-view-status-{{uniqid}}{{/id}}');
+    var pagingBarElement = root.find(PagingBar.rootSelector);
+    var pagingContentElement = root.find(PagingContent.rootSelector);
     var loadContentCallback = function(pageNumber) {
         var limit = root.attr('data-limit');
         var offset = (pageNumber - 1) * limit;
@@ -57,9 +56,7 @@ require(
             })
     };
 
-    PagingBar.registerEventListeners(pagingBarElement);
     var content = new PagingContent(pagingContentElement, pagingBarElement, loadContentCallback);
-
     content.registerEventListeners();
 });
 {{/js}}
