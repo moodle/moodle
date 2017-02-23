@@ -281,8 +281,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumber' . $number,
             'description' => 'description' . $number,
             'descriptionformat' => FORMAT_HTML,
-            'competencyframeworkid' => $frameworkid,
-            'sortorder' => 0
+            'competencyframeworkid' => $frameworkid
         );
         $result = external::create_competency($competency);
         return (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
@@ -294,8 +293,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
             'shortname' => 'shortname' . $number,
             'idnumber' => 'idnumber' . $number,
             'description' => 'description' . $number,
-            'descriptionformat' => FORMAT_HTML,
-            'sortorder' => 0
+            'descriptionformat' => FORMAT_HTML
         );
         $result = external::update_competency($competency);
         return external_api::clean_returnvalue(external::update_competency_returns(), $result);
