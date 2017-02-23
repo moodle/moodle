@@ -5811,23 +5811,13 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         $replyto = $noreplyaddress;
     }
 
-    $alloweddomains = null;
-    if (!empty($CFG->allowedemaildomains)) {
-        $alloweddomains = explode(PHP_EOL, $CFG->allowedemaildomains);
-    }
-
-    // Email will be sent using no reply address.
-    if (empty($alloweddomains)) {
-        $usetrueaddress = false;
-    }
-
     if (is_string($from)) { // So we can pass whatever we want if there is need.
         $mail->From     = $noreplyaddress;
         $mail->FromName = $from;
     // Check if using the true address is true, and the email is in the list of allowed domains for sending email,
     // and that the senders email setting is either displayed to everyone, or display to only other users that are enrolled
     // in a course with the sender.
-    } else if ($usetrueaddress && can_send_from_real_email_address($from, $user, $alloweddomains)) {
+    } else if ($usetrueaddress && can_send_from_real_email_address($from, $user)) {
         if (!validate_email($from->email)) {
             debugging('email_to_user: Invalid from-email '.s($from->email).' - not sending');
             // Better not to use $noreplyaddress in this case.
@@ -6063,10 +6053,15 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
  *
  * @param  object $from The user object for the user we are sending the email from.
  * @param  object $user The user object that we are sending the email to.
- * @param  array $alloweddomains An array of allowed domains that we can send email from.
+ * @param  array $unused No longer used.
  * @return bool Returns true if we can use the from user's email adress in the "From" field.
  */
-function can_send_from_real_email_address($from, $user, $alloweddomains) {
+function can_send_from_real_email_address($from, $user, $unused = null) {
+    global $CFG;
+    if (!isset($CFG->allowedemaildomains) || empty(trim($CFG->allowedemaildomains))) {
+        return false;
+    }
+    $alloweddomains = array_map('trim', explode("\n", $CFG->allowedemaildomains));
     // Email is in the list of allowed domains for sending email,
     // and the senders email setting is either displayed to everyone, or display to only other users that are enrolled
     // in a course with the sender.
