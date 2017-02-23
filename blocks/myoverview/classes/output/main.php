@@ -15,34 +15,39 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * myoverview block rendrer
+ * Class containing data for my overview block.
  *
  * @package    block_myoverview
- * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
+ * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace block_myoverview\output;
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-use plugin_renderer_base;
 use renderable;
-
+use renderer_base;
+use templatable;
 /**
- * myoverview block renderer
+ * Class containing data for my overview block.
  *
- * @package    block_myoverview
- * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
+ * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class renderer extends plugin_renderer_base {
+class main implements renderable, templatable {
 
     /**
-     * Return the main content for the block overview.
+     * Export this data so it can be used as the context for a mustache template.
      *
-     * @param main $main The main renderable
-     * @return string HTML string
+     * @param \renderer_base $output
+     * @return stdClass
      */
-    public function render_main(main $main) {
-        return $this->render_from_template('block_myoverview/main', $main->export_for_template($this));
+    public function export_for_template(renderer_base $output) {
+        $coursesummary = new course_summary();
+        $coursesview = new courses_view();
+
+        return [
+            'courses' => $coursesummary->export_for_template($output),
+            'coursesview' => $coursesview->export_for_template($output),
+        ];
     }
 }

@@ -43,7 +43,7 @@ define(['jquery', 'core/custom_interaction_events'],
         root.one(CustomEvents.events.activate, SELECTORS.PAGE_LINK, function(e, data) {
             var page = $(e.target).closest(SELECTORS.PAGE_LINK);
             var activePage = root.find(SELECTORS.ACTIVE_PAGE_LINK);
-            var isSamePage = page.is(activatePage);
+            var isSamePage = page.is(activePage);
 
             if (!isSamePage) {
                 root.find(SELECTORS.PAGE_LINK).removeClass('active');

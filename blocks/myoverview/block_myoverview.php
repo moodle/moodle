@@ -50,8 +50,7 @@ class block_myoverview extends block_base {
             return $this->content;
         }
 
-        $renderable = new \block_myoverview\output\course_summary();
-
+        $renderable = new \block_myoverview\output\main();
         $renderer = $this->page->get_renderer('block_myoverview');
 
         $this->content = new stdClass();

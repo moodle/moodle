@@ -23,6 +23,7 @@
     {
     }
 }}
+{{#pagingbar}}
 <nav aria-label="{{label}}"
      id="{{$id}}paging-bar-{{uniqid}}{{/id}}"
      data-region="paging-bar">
@@ -61,3 +62,4 @@ require(['jquery', 'block_myoverview/paging_bar'], function($, PagingBar) {
     PagingBar.registerEventListeners(root);
 });
 {{/js}}
+{{/pagingbar}}
