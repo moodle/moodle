@@ -2621,10 +2621,10 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 
     // Check that the user account is properly set up. If we can't redirect to
-    // edit their profile, perform just the lax check. It will allow them to
-    // use filepicker on the profile edit page.
+    // edit their profile and this is not a WS request, perform just the lax check.
+    // It will allow them to use filepicker on the profile edit page.
 
-    if ($preventredirect) {
+    if ($preventredirect && !WS_SERVER) {
         $usernotfullysetup = user_not_fully_set_up($USER, false);
     } else {
         $usernotfullysetup = user_not_fully_set_up($USER, true);
