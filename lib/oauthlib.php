@@ -441,6 +441,15 @@ abstract class oauth2_client extends curl {
 
         // We have a token so we are logged in.
         if (isset($this->accesstoken->token)) {
+            // Check that the access token has all the requested scopes.
+            $scopecheck = ' ' . $this->accesstoken->scope . ' ';
+
+            $requiredscopes = explode(' ', $this->scope);
+            foreach ($requiredscopes as $requiredscope) {
+                if (strpos($scopecheck, ' ' . $requiredscope . ' ') === false) {
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -533,6 +542,10 @@ abstract class oauth2_client extends curl {
 
         $r = json_decode($response);
 
+        if (!empty($r->error)) {
+            throw new moodle_exception($r->error . ' ' . $r->error_description);
+        }
+
         if (!isset($r->access_token)) {
             return false;
         }
@@ -548,6 +561,12 @@ abstract class oauth2_client extends curl {
             // Expires 10 seconds before actual expiry.
             $accesstoken->expires = (time() + ($r->expires_in - 10));
         }
+        if (isset($r->scope)) {
+            $accesstoken->scope = $r->scope;
+        } else {
+            $accesstoken->scope = $this->scope;
+        }
+        // Also add the scopes.
         $this->store_token($accesstoken);
 
         return true;

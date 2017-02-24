@@ -2699,9 +2699,38 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2017033100.01) {
 
-        \core\oauth2\api::install_default_issuers();
+         // Define table oauth2_user_field_mapping to be created.
+        $table = new xmldb_table('oauth2_user_field_mapping');
+
+        // Adding fields to table oauth2_user_field_mapping.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('issuerid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('externalfield', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('internalfield', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table oauth2_user_field_mapping.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('issuerkey', XMLDB_KEY_FOREIGN, array('issuerid'), 'oauth2_issuer', array('id'));
+        $table->add_key('uniqexternal', XMLDB_KEY_UNIQUE, array('issuerid', 'externalfield'));
+        $table->add_key('uniqinternal', XMLDB_KEY_UNIQUE, array('issuerid', 'internalfield'));
+
+        // Conditionally launch create table for oauth2_user_field_mapping.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2017033100.01);
+    }
+
+    if ($oldversion < 2017033100.02) {
+
+        \core\oauth2\api::install_default_issuers();
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017033100.02);
     }
 
     return true;

@@ -22,8 +22,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Open ID Connect configuration';
+$string['pluginname'] = 'OAuth 2 Services';
 $string['editissuer'] = 'Edit identity issuer: {$a}';
+$string['editendpoint'] = 'Edit endpoint: {$a->endpoint} for issuer {$a->issuer}';
+$string['endpointsforissuer'] = 'Endpoints for issuer: {$a}';
+$string['edituserfieldmapping'] = 'Edit user field mapping for issuer {$a}';
+$string['userfieldmappingsforissuer'] = 'User field mappings for issuer: {$a}';
+$string['issuers'] = 'Issuers';
+$string['endpointname'] = 'Name';
+$string['endpointname_help'] = 'Key used to search for this endpoint. Must end with "_endpoint".';
+$string['endpointurl'] = 'Url';
+$string['endpointurl_help'] = 'URL for this endpoint. Must use https:// protocol.';
 $string['issuername'] = 'Name';
 $string['issuername_help'] = 'Name of the identity issuer. May be displayed on login page.';
 $string['issuerimage'] = 'Logo URL';
@@ -47,6 +56,8 @@ $string['configuredstatus'] = 'Configured';
 $string['discoverystatus'] = 'Discovery';
 $string['systemauthstatus'] = 'System account connected';
 $string['configured'] = 'Configured';
+$string['editendpoints'] = 'Configure endpoints';
+$string['edituserfieldmappings'] = 'Configure user field mappings';
 $string['notconfigured'] = 'Not configured';
 $string['discovered'] = 'Service discovery successful';
 $string['notdiscovered'] = 'Service discovery not successful';
@@ -55,9 +66,19 @@ $string['notloginissuer'] = 'Do not allow login';
 $string['systemaccountconnected'] = 'System account connected';
 $string['systemaccountnotconnected'] = 'System account not connected';
 $string['createnewissuer'] = 'Create new identity issuer';
+$string['createnewendpoint'] = 'Create new endpoint for issuer "{$a}"';
+$string['createnewuserfieldmapping'] = 'Create new user field mapping for issuer "{$a}"';
 $string['deleteconfirm'] = 'Are you sure you want to delete the identity issuer "{$a}"? Any plugins relying on this issuer will stop working.';
+$string['deleteendpointconfirm'] = 'Are you sure you want to delete the endpoint "{$a->endpoint}" for issuer "{$a->issuer}"? Any plugins relying on this endpoint will stop working.';
+$string['deleteuserfieldmappingconfirm'] = 'Are you sure you want to delete the user field mapping for issuer "{$a}"?';
 $string['issuerdeleted'] = 'Identity issuer deleted';
+$string['endpointdeleted'] = 'Endpoint deleted';
+$string['userfieldmappingdeleted'] = 'User field mapping deleted';
 $string['connectsystemaccount'] = 'Connect to a system account';
 $string['authconfirm'] = 'This action will grant permanent API access to Moodle for the authenticated account. This is intended to be used as a system account for managing files owned by Moodle.';
 $string['authconnected'] = 'The system account is now connected for offline access';
 $string['authnotconnected'] = 'The system account was not connected for offline access';
+$string['userfieldexternalfield'] = 'External field name';
+$string['userfieldexternalfield_help'] = 'Name of the field provided by the external OAuth system.';
+$string['userfieldinternalfield'] = 'Internal field name';
+$string['userfieldinternalfield_help'] = 'Name of the Moodle user field that should be mapped from the external field.';

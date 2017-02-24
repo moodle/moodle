@@ -48,7 +48,7 @@ class issuer extends persistent {
         global $PAGE;
 
         $mform = $this->_form;
-        $provider = $this->get_persistent();
+        $endpoint = $this->get_persistent();
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
@@ -77,7 +77,7 @@ class issuer extends persistent {
         $mform->addHelpButton('baseurl', 'issuerbaseurl', 'tool_oauth2');
 
         // Offline access type
-        $options = $provider->get_behaviour_list();
+        $options = $endpoint->get_behaviour_list();
         $mform->addElement('select', 'behaviour', get_string('issuerbehaviour', 'tool_oauth2'), $options);
         $mform->addHelpButton('behaviour', 'issuerbehaviour', 'tool_oauth2');
 
@@ -97,7 +97,7 @@ class issuer extends persistent {
         $mform->addElement('hidden', 'action', 'edit');
         $mform->setType('action', PARAM_RAW);
 
-        $mform->addElement('hidden', 'id', $provider->get('id'));
+        $mform->addElement('hidden', 'id', $endpoint->get('id'));
         $mform->setType('id', PARAM_INT);
 
         $this->add_action_buttons(true, get_string('savechanges', 'tool_oauth2'));

@@ -26,17 +26,31 @@ namespace core\oauth2;
 defined('MOODLE_INTERNAL') || die();
 
 use core\persistent;
-use lang_string;
 
 /**
- * Class for loading/storing oauth2 endpoints from the DB
+ * Class for loading/storing oauth2 user field mappings from the DB
  *
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class endpoint extends persistent {
+class user_field_mapping extends persistent {
 
-    const TABLE = 'oauth2_endpoint';
+    const TABLE = 'oauth2_user_field_mapping';
+
+    private static $userfields = [
+        'firstname',
+        'middlename',
+        'lastname',
+        'email',
+        'username',
+        'idnumber',
+        'url',
+        'alternatename',
+        'picture',
+        'address',
+        'phone',
+        'lang'
+    ];
 
     /**
      * Return the definition of the properties of this model.
@@ -48,19 +62,17 @@ class endpoint extends persistent {
             'issuerid' => array(
                 'type' => PARAM_INT
             ),
-            'name' => array(
-                'type' => PARAM_RAW,
+            'externalfield' => array(
+                'type' => PARAM_ALPHANUMEXT,
             ),
-            'url' => array(
-                'type' => PARAM_URL,
+            'internalfield' => array(
+                'type' => PARAM_ALPHANUMEXT,
+                'choices' => self::$userfields,
             )
         );
     }
 
-    protected function validate_url($value) {
-        if (strpos($value, 'https://') !== 0) {
-            return new lang_string('sslonlyaccess', 'error');
-        }
-        return true;
+    public function get_internalfield_list() {
+        return array_combine(self::$userfields, self::$userfields);
     }
 }

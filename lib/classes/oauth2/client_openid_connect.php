@@ -37,62 +37,10 @@ use Exception;
  */
 class client_openid_connect extends client {
 
-    /**
-     * Returns a mapping of openid properties to moodle properties.
-     *
-     * @return array
-     */
-    private function get_mapping() {
-        return [
-            'given_name' => 'firstname',
-            'middle_name' => 'middlename',
-            'family_name' => 'lastname',
-            'email' => 'email',
-            'username' => 'username',
-            'website' => 'url',
-            'nickname' => 'alternatename',
-            'picture' => 'picture',
-            'address' => 'address',
-            'phone' => 'phone',
-            'locale' => 'lang'
-        ];
-    }
-
     public function get_additional_login_parameters() {
         if ($this->system) {
             return ['access_type' => 'offline', 'prompt' => 'consent'];
         }
         return [];
     }
-
-    public function get_userinfo() {
-        $url = $this->get_issuer()->get_endpoint_url('userinfo');
-        $response = $this->get($url);
-        if (!$response) {
-            return false;
-        }
-        $userinfo = new stdClass();
-        try {
-            $userinfo = json_decode($response);
-        } catch (Exception $e) {
-            return false;
-        }
-        if (!empty($userinfo->preferred_username)) {
-            $userinfo->username = $userinfo->preferred_username;
-        } else {
-            $userinfo->username = $userinfo->sub;
-        }
-
-        $map = $this->get_mapping();
-
-        $user = new stdClass();
-        foreach ($map as $openidproperty => $moodleproperty) {
-            if (!empty($userinfo->$openidproperty)) {
-                $user->$moodleproperty = $userinfo->$openidproperty;
-            }
-        }
-
-        return (array)$user;
-    }
-
 }

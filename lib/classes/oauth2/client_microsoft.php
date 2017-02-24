@@ -26,6 +26,7 @@ namespace core\oauth2;
 defined('MOODLE_INTERNAL') || die();
 
 use moodle_url;
+use stdClass;
 
 /**
  * We have to call directly to the graph APIs because the Microsoft Open ID Connect API is
@@ -36,19 +37,13 @@ use moodle_url;
  */
 class client_microsoft extends client {
 
-    public function get_additional_login_parameters() {
-        return ['prompt' => 'consent'];
-    }
-
     public function get_login_scopes() {
-        return 'openid profile email user.read';
+        if ($this->system) {
+            return 'openid profile email user.read offline_access';
+        } else {
+            return 'openid profile email user.read';
+        }
     }
 
-    public function get_userinfo() {
-        $me = $client->get('https://graph.microsoft.com/v1.0/me/');
-        var_dump($me);
-
-
-    }
 
 }

@@ -79,7 +79,7 @@ class renderer extends plugin_renderer_base {
             $name = $issuer->get('name');
             $image = $issuer->get('image');
             if ($image) {
-                $name = '<img width=24 height=24 alt="" src="' . $image . '"> ' . $name;
+                $name = '<img width=24 height=24 alt="" src="' . s($image) . '"> ' . s($name);
             }
             $namecell = new html_table_cell($name);
             $namecell->header = true;
@@ -104,7 +104,11 @@ class renderer extends plugin_renderer_base {
             if (!empty($issuer->get('scopessupported'))) {
                 $discovered = $OUTPUT->pix_icon('yes', get_string('discovered', 'tool_oauth2'), 'tool_oauth2');
             } else {
-                $discovered = $OUTPUT->pix_icon('no', get_string('notdiscovered', 'tool_oauth2'), 'tool_oauth2');
+                if ($issuer->get('behaviour') == $issuer::BEHAVIOUR_OPENID_CONNECT) {
+                    $discovered = $OUTPUT->pix_icon('no', get_string('notdiscovered', 'tool_oauth2'), 'tool_oauth2');
+                } else {
+                    $discovered = '-';
+                }
             }
             $discoverystatuscell = new html_table_cell($discovered);
 
@@ -125,22 +129,37 @@ class renderer extends plugin_renderer_base {
 
             $systemauthstatuscell = new html_table_cell($systemauth);
 
-            // Action links.
             $links = '';
+            // Action links.
             $editurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['id' => $issuer->get('id'), 'action' => 'edit']);
             $editlink = html_writer::link($editurl, $OUTPUT->pix_icon('t/edit', get_string('edit')));
-
             $links .= ' ' . $editlink;
+
+            // Endpoints.
+            $editendpointsurl = new moodle_url('/admin/tool/oauth2/endpoints.php', ['issuerid' => $issuer->get('id')]);
+            $str = get_string('editendpoints', 'tool_oauth2');
+            $editendpointlink = html_writer::link($editendpointsurl, $OUTPUT->pix_icon('t/viewdetails', $str));
+            $links .= ' ' . $editendpointlink;
+
+            // User field mapping.
+            $edituserfieldmappingsurl = new moodle_url('/admin/tool/oauth2/userfieldmappings.php', ['issuerid' => $issuer->get('id')]);
+            $str = get_string('edituserfieldmappings', 'tool_oauth2');
+            $edituserfieldmappinglink = html_writer::link($edituserfieldmappingsurl, $OUTPUT->pix_icon('t/user', $str));
+            $links .= ' ' . $edituserfieldmappinglink;
+
+            // Delete.
             $deleteurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['id' => $issuer->get('id'), 'action' => 'delete']);
             $deletelink = html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete')));
             $links .= ' ' . $deletelink;
             if (!$last) {
+                // Move down.
                 $params = ['id' => $issuer->get('id'), 'action' => 'movedown', 'sesskey' => sesskey()];
                 $movedownurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
                 $movedownlink = html_writer::link($movedownurl, $OUTPUT->pix_icon('t/down', get_string('movedown')));
                 $links .= ' ' . $movedownlink;
             }
             if (!$first) {
+                // Move up.
                 $params = ['id' => $issuer->get('id'), 'action' => 'moveup', 'sesskey' => sesskey()];
                 $moveupurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
                 $moveuplink = html_writer::link($moveupurl, $OUTPUT->pix_icon('t/up', get_string('moveup')));
@@ -155,6 +174,121 @@ class renderer extends plugin_renderer_base {
                 $loginissuerstatuscell,
                 $discoverystatuscell,
                 $systemauthstatuscell,
+                $editcell,
+            ]);
+
+            $data[] = $row;
+            $index++;
+        }
+        $table->data = $data;
+        return html_writer::table($table);
+    }
+
+    /**
+     * This function will render one beautiful table with all the endpoints.
+     *
+     * @param \core\oauth2\endpoint[] $endpoints - list of all endpoints.
+     * @return string HTML to output.
+     */
+    public function endpoints_table($endpoints, $issuerid) {
+        global $CFG, $OUTPUT;
+
+        $table = new html_table();
+        $table->head  = [
+            get_string('name'),
+            get_string('url'),
+            get_string('edit'),
+        ];
+        $table->attributes['class'] = 'admintable generaltable';
+        $data = [];
+
+        $index = 0;
+
+        foreach ($endpoints as $endpoint) {
+            // Name.
+            $name = $endpoint->get('name');
+            $namecell = new html_table_cell(s($name));
+            $namecell->header = true;
+
+            // Url
+            $url = $endpoint->get('url');
+            $urlcell = new html_table_cell(s($url));
+
+            $links = '';
+            // Action links.
+            $editparams = ['issuerid' => $issuerid, 'endpointid' => $endpoint->get('id'), 'action' => 'edit'];
+            $editurl = new moodle_url('/admin/tool/oauth2/endpoints.php', $editparams);
+            $editlink = html_writer::link($editurl, $OUTPUT->pix_icon('t/edit', get_string('edit')));
+            $links .= ' ' . $editlink;
+
+            // Delete.
+            $deleteparams = ['issuerid' => $issuerid, 'endpointid' => $endpoint->get('id'), 'action' => 'delete'];
+            $deleteurl = new moodle_url('/admin/tool/oauth2/endpoints.php', $deleteparams);
+            $deletelink = html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete')));
+            $links .= ' ' . $deletelink;
+
+            $editcell = new html_table_cell($links);
+
+            $row = new html_table_row([
+                $namecell,
+                $urlcell,
+                $editcell,
+            ]);
+
+            $data[] = $row;
+            $index++;
+        }
+        $table->data = $data;
+        return html_writer::table($table);
+    }
+
+    /**
+     * This function will render one beautiful table with all the user_field_mappings.
+     *
+     * @param \core\oauth2\user_field_mapping[] $userfieldmappings - list of all user_field_mappings.
+     * @return string HTML to output.
+     */
+    public function user_field_mappings_table($userfieldmappings, $issuerid) {
+        global $CFG, $OUTPUT;
+
+        $table = new html_table();
+        $table->head  = [
+            get_string('userfieldexternalfield', 'tool_oauth2'),
+            get_string('userfieldinternalfield', 'tool_oauth2'),
+            get_string('edit'),
+        ];
+        $table->attributes['class'] = 'admintable generaltable';
+        $data = [];
+
+        $index = 0;
+
+        foreach ($userfieldmappings as $userfieldmapping) {
+            // External field
+            $externalfield = $userfieldmapping->get('externalfield');
+            $externalfieldcell = new html_table_cell(s($externalfield));
+
+            // Internal field
+            $internalfield = $userfieldmapping->get('internalfield');
+            $internalfieldcell = new html_table_cell(s($internalfield));
+
+            $links = '';
+            // Action links.
+            $editparams = ['issuerid' => $issuerid, 'userfieldmappingid' => $userfieldmapping->get('id'), 'action' => 'edit'];
+            $editurl = new moodle_url('/admin/tool/oauth2/userfieldmappings.php', $editparams);
+            $editlink = html_writer::link($editurl, $OUTPUT->pix_icon('t/edit', get_string('edit')));
+            $links .= ' ' . $editlink;
+
+            // Delete.
+            $deleteparams = ['issuerid' => $issuerid, 'userfieldmappingid' => $userfieldmapping->get('id'), 'action' => 'delete'];
+            $deleteurl = new moodle_url('/admin/tool/oauth2/userfieldmappings.php', $deleteparams);
+            $deletelink = html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete')));
+            $links .= ' ' . $deletelink;
+
+            $editcell = new html_table_cell($links);
+
+            $row = new html_table_row([
+                $externalfieldcell,
+                $internalfieldcell,
                 $editcell,
             ]);
 

@@ -30,6 +30,7 @@ require_once($CFG->libdir . '/filelib.php');
 
 use moodle_url;
 use curl;
+use stdClass;
 
 /**
  * Configurable oauth2 client class where the urls come from DB.
@@ -83,35 +84,98 @@ abstract class client extends \oauth2_client {
         return $this->issuer->get_endpoint_url('authorization');
     }
 
-    public function get_issuer() {   
+    /**
+     * Get the oauth2 issuer for this client.
+     *
+     * @return \core\oauth2\issuer Issuer
+     */
+    public function get_issuer() {
         return $this->issuer;
     }
 
+    /**
+     * Override to append additional params to a authentication request.
+     *
+     * @return array (name value pairs).
+     */
     public function get_additional_login_parameters() {
-        if ($this->issuer->get('behaviour') == issuer::BEHAVIOUR_OPENID_CONNECT) {
-            return ['access_type' => 'offline', 'prompt' => 'consent'];
-        }
         return [];
     }
 
+    /**
+     * Override to change the scopes requested with an authentiction request.
+     *
+     * @return string
+     */
     protected function get_login_scopes() {
         return 'openid profile email';
     }
 
     /**
      * Returns the token url for OAuth 2.0 request
+     *
+     * We are overriding the parent function so we get this from the configured endpoint.
+     *
      * @return string the auth url
      */
     protected function token_url() {
         return $this->issuer->get_endpoint_url('token');
     }
 
+    /**
+     * We want a unique key for each issuer / and a different key for system vs user oauth.
+     *
+     * @return string The unique key for the session value.
+     */
     protected function get_tokenname() {
-        $name = static::class;
+        $name = 'oauth2-state-' . $this->issuer->get('id');
         if ($this->system) {
             $name .= '-system';
         }
         return $name;
     }
 
+    protected function get_userinfo_mapping() {
+        $fields = user_field_mapping::get_records(['issuerid' => $this->issuer->get('id')]);
+
+        $map = [];
+        foreach ($fields as $field) {
+            $map[$field->get('externalfield')] = $field->get('internalfield');
+        }
+        return $map;
+    }
+
+    public function get_userinfo() {
+        $url = $this->get_issuer()->get_endpoint_url('userinfo');
+        $response = $this->get($url);
+        if (!$response) {
+            return false;
+        }
+        $userinfo = new stdClass();
+        try {
+            $userinfo = json_decode($response);
+        } catch (Exception $e) {
+            return false;
+        }
+
+        $map = $this->get_userinfo_mapping();
+
+        $user = new stdClass();
+        foreach ($map as $openidproperty => $moodleproperty) {
+            if (!empty($userinfo->$openidproperty)) {
+                $user->$moodleproperty = $userinfo->$openidproperty;
+            }
+        }
+
+        if (!empty($user->picture)) {
+            $user->picture = download_file_content($user->picture, null, null, false, 10, 10, true, null, false);
+        } else {
+            $pictureurl = $this->issuer->get_endpoint_url('userpicture');
+            if (!empty($pictureurl)) {
+                $user->picture = $this->get($pictureurl);
+            }
+        }
+
+        return (array)$user;
+    }
 }

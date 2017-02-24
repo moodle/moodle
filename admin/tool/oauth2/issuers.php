@@ -40,12 +40,12 @@ require_capability('moodle/site:config', context_system::instance());
 $renderer = $PAGE->get_renderer('tool_oauth2');
 
 $action = optional_param('action', '', PARAM_ALPHAEXT);
-$idpid = optional_param('id', '', PARAM_RAW);
+$issuerid = optional_param('id', '', PARAM_RAW);
 $issuer = null;
 $mform = null;
 
-if ($idpid) {
-    $issuer = \core\oauth2\api::get_issuer($idpid);
+if ($issuerid) {
+    $issuer = \core\oauth2\api::get_issuer($issuerid);
     if (!$issuer) {
         print_error('invaliddata');
     }
@@ -53,7 +53,7 @@ if ($idpid) {
 
 if ($action == 'edit') {
     if ($issuer) {
-        $PAGE->navbar->add(get_string('editissuer', 'tool_oauth2', $issuer->get('name')));
+        $PAGE->navbar->add(get_string('editissuer', 'tool_oauth2', s($issuer->get('name'))));
     } else {
         $PAGE->navbar->add(get_string('createnewissuer', 'tool_oauth2'));
     }
@@ -80,7 +80,7 @@ if ($mform && $mform->is_cancelled()) {
     } else {
         echo $OUTPUT->header();
         if ($issuer) {
-            echo $OUTPUT->heading(get_string('editissuer', 'tool_oauth2', $issuer->get('name')));
+            echo $OUTPUT->heading(get_string('editissuer', 'tool_oauth2', s($issuer->get('name'))));
         } else {
             echo $OUTPUT->heading(get_string('createnewissuer', 'tool_oauth2'));
         }
@@ -91,30 +91,30 @@ if ($mform && $mform->is_cancelled()) {
 } else if ($action == 'delete') {
 
     if (!optional_param('confirm', false, PARAM_BOOL)) {
-        $continueparams = ['action' => 'delete', 'id' => $idpid, 'sesskey' => sesskey(), 'confirm' => true];
+        $continueparams = ['action' => 'delete', 'id' => $issuerid, 'sesskey' => sesskey(), 'confirm' => true];
         $continueurl = new moodle_url('/admin/tool/oauth2/issuers.php', $continueparams);
         $cancelurl = new moodle_url('/admin/tool/oauth2/issuers.php');
         echo $OUTPUT->header();
-        echo $OUTPUT->confirm(get_string('deleteconfirm', 'tool_oauth2', $issuer->get('name')), $continueurl, $cancelurl);
+        echo $OUTPUT->confirm(get_string('deleteconfirm', 'tool_oauth2', s($issuer->get('name'))), $continueurl, $cancelurl);
         echo $OUTPUT->footer();
     } else {
         require_sesskey();
-        core\oauth2\api::delete_issuer($idpid);
+        core\oauth2\api::delete_issuer($issuerid);
         redirect($PAGE->url, get_string('issuerdeleted', 'tool_oauth2'), null, \core\output\notification::NOTIFY_SUCCESS);
     }
 
 } else if ($action == 'auth') {
 
     if (!optional_param('confirm', false, PARAM_BOOL)) {
-        $continueparams = ['action' => 'auth', 'id' => $idpid, 'sesskey' => sesskey(), 'confirm' => true];
+        $continueparams = ['action' => 'auth', 'id' => $issuerid, 'sesskey' => sesskey(), 'confirm' => true];
         $continueurl = new moodle_url('/admin/tool/oauth2/issuers.php', $continueparams);
         $cancelurl = new moodle_url('/admin/tool/oauth2/issuers.php');
         echo $OUTPUT->header();
-        echo $OUTPUT->confirm(get_string('authconfirm', 'tool_oauth2', $issuer->get('name')), $continueurl, $cancelurl);
+        echo $OUTPUT->confirm(get_string('authconfirm', 'tool_oauth2', s($issuer->get('name'))), $continueurl, $cancelurl);
         echo $OUTPUT->footer();
     } else {
         require_sesskey();
-        $params = ['sesskey' => sesskey(), 'id' => $idpid, 'action' => 'auth', 'confirm' => true, 'response' => true];
+        $params = ['sesskey' => sesskey(), 'id' => $issuerid, 'action' => 'auth', 'confirm' => true, 'response' => true];
         if (core\oauth2\api::connect_system_account($issuer, new moodle_url('/admin/tool/oauth2/issuers.php', $params))) {
             redirect($PAGE->url, get_string('authconnected', 'tool_oauth2'), null, \core\output\notification::NOTIFY_SUCCESS);
         } else {
@@ -123,12 +123,12 @@ if ($mform && $mform->is_cancelled()) {
     }
 } else if ($action == 'moveup') {
     require_sesskey();
-    core\oauth2\api::move_up_issuer($idpid);
+    core\oauth2\api::move_up_issuer($issuerid);
     redirect($PAGE->url);
 
 } else if ($action == 'movedown') {
     require_sesskey();
-    core\oauth2\api::move_down_issuer($idpid);
+    core\oauth2\api::move_down_issuer($issuerid);
     redirect($PAGE->url);
 
 } else {

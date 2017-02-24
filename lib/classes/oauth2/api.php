@@ -68,6 +68,7 @@ class api {
         $endpoint = new endpoint(0, $record);
         $endpoint->create();
 
+        // Microsoft is a custom setup.
         $record = (object) [
             'name' => 'Microsoft',
             'image' => 'https://www.microsoft.com/favicon.ico',
@@ -81,29 +82,43 @@ class api {
         $issuer = new issuer(0, $record);
         $issuer->create();
 
-        $record = (object) [
-            'issuerid' => $issuer->get('id'),
-            'name' => 'authorization_endpoint',
-            'url' => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
+        $endpoints = [
+            'authorization_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+            'token_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+            'userinfo_endpoint' => 'https://graph.microsoft.com/v1.0/me/',
+            'userpicture_endpoint' => 'https://graph.microsoft.com/v1.0/me/photo/$value',
         ];
-        $endpoint = new endpoint(0, $record);
-        $endpoint->create();
 
-        $record = (object) [
-            'issuerid' => $issuer->get('id'),
-            'name' => 'token_endpoint',
-            'url' => 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
-        ];
-        $endpoint = new endpoint(0, $record);
-        $endpoint->create();
+        foreach ($endpoints as $name => $url) {
+            $record = (object) [
+                'issuerid' => $issuer->get('id'),
+                'name' => $name,
+                'url' => $url
+            ];
+            $endpoint = new endpoint(0, $record);
+            $endpoint->create();
+        }
 
-        $record = (object) [
-            'issuerid' => $issuer->get('id'),
-            'name' => 'end_session_endpoint',
-            'url' => 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+        // Create the field mappings.
+        $mapping = [
+            'givenName' => 'firstname',
+            'surname' => 'lastname',
+            'mail' => 'email',
+            'userPrincipalName' => 'username',
+            'displayName' => 'alternatename',
+            'officeLocation' => 'address',
+            'mobilePhone' => 'phone',
+            'preferredLanguage' => 'lang'
         ];
-        $endpoint = new endpoint(0, $record);
-        $endpoint->create();
+        foreach ($mapping as $external => $internal) {
+            $record = (object) [
+                'issuerid' => $issuer->get('id'),
+                'externalfield' => $external,
+                'internalfield' => $internal
+            ];
+            $userfieldmapping = new user_field_mapping(0, $record);
+            $userfieldmapping->create();
+        }
         return issuer::count_records();
     }
 
@@ -113,6 +128,14 @@ class api {
 
     public static function get_issuer($id) {
         return new issuer($id);
+    }
+
+    public static function get_endpoint($id) {
+        return new endpoint($id);
+    }
+
+    public static function get_user_field_mapping($id) {
+        return new user_field_mapping($id);
     }
 
     public static function get_system_account(issuer $issuer) {
@@ -132,9 +155,11 @@ class api {
     }
 
     public static function get_endpoints(issuer $issuer) {
-        require_capability('moodle/site:config', context_system::instance());
-
         return endpoint::get_records(['issuerid' => $issuer->get('id')]);
+    }
+
+    public static function get_user_field_mappings(issuer $issuer) {
+        return user_field_mapping::get_records(['issuerid' => $issuer->get('id')]);
     }
 
     protected static function guess_image($issuer) {
@@ -202,6 +227,32 @@ class api {
             }
         }
 
+        // We got to here - must be a decent OpenID connect service. Add the default user field mapping list.
+
+        // Create the field mappings.
+        $mapping = [
+            'given_name' => 'firstname',
+            'middle_name' => 'middlename',
+            'family_name' => 'lastname',
+            'email' => 'email',
+            'sub' => 'username',
+            'website' => 'url',
+            'nickname' => 'alternatename',
+            'picture' => 'picture',
+            'address' => 'address',
+            'phone' => 'phone',
+            'locale' => 'lang'
+        ];
+        foreach ($mapping as $external => $internal) {
+            $record = (object) [
+                'issuerid' => $issuer->get('id'),
+                'externalfield' => $external,
+                'internalfield' => $internal
+            ];
+            $userfieldmapping = new user_field_mapping(0, $record);
+            $userfieldmapping->create();
+        }
+
         return endpoint::count_records(['issuerid' => $issuer->get('id')]);
     }
 
@@ -215,6 +266,7 @@ class api {
         // Perform service discovery.
         self::discover_endpoints($issuer);
         self::guess_image($issuer);
+        return $issuer;
     }
 
     public static function create_issuer($data) {
@@ -227,6 +279,45 @@ class api {
         // Perform service discovery.
         self::discover_endpoints($issuer);
         self::guess_image($issuer);
+        return $issuer;
+    }
+
+    public static function update_endpoint($data) {
+        require_capability('moodle/site:config', context_system::instance());
+        $endpoint = new endpoint(0, $data);
+
+        // Will throw exceptions on validation failures.
+        $endpoint->update();
+
+        return $endpoint;
+    }
+
+    public static function create_endpoint($data) {
+        require_capability('moodle/site:config', context_system::instance());
+        $endpoint = new endpoint(0, $data);
+
+        // Will throw exceptions on validation failures.
+        $endpoint->create();
+        return $endpoint;
+    }
+
+    public static function update_user_field_mapping($data) {
+        require_capability('moodle/site:config', context_system::instance());
+        $userfieldmapping = new user_field_mapping(0, $data);
+
+        // Will throw exceptions on validation failures.
+        $userfieldmapping->update();
+
+        return $userfieldmapping;
+    }
+
+    public static function create_user_field_mapping($data) {
+        require_capability('moodle/site:config', context_system::instance());
+        $userfieldmapping = new user_field_mapping(0, $data);
+
+        // Will throw exceptions on validation failures.
+        $userfieldmapping->create();
+        return $userfieldmapping;
     }
 
     /**
@@ -307,7 +398,23 @@ class api {
         }
 
         // Will throw exceptions on validation failures.
-        $issuer->delete();
+        return $issuer->delete();
+    }
+
+    public static function delete_endpoint($id) {
+        require_capability('moodle/site:config', context_system::instance());
+        $endpoint = new endpoint($id);
+
+        // Will throw exceptions on validation failures.
+        return $endpoint->delete();
+    }
+
+    public static function delete_user_field_mapping($id) {
+        require_capability('moodle/site:config', context_system::instance());
+        $userfieldmapping = new user_field_mapping($id);
+
+        // Will throw exceptions on validation failures.
+        return $userfieldmapping->delete();
     }
 
     public static function connect_system_account($issuer, $returnurl) {
@@ -322,6 +429,10 @@ class api {
 
         if (!optional_param('response', false, PARAM_BOOL)) {
             $client->log_out();
+        }
+
+        if (optional_param('error', '', PARAM_RAW)) {
+            return false;
         }
 
         if (!$client->is_logged_in()) {
