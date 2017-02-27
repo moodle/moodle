@@ -34,6 +34,8 @@ use templatable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class courses_view implements renderable, templatable {
+    /** Quantity of courses per page. */
+    const COURSES_PER_PAGE = 6;
 
     /**
      * Export this data so it can be used as the context for a mustache template.
@@ -42,100 +44,41 @@ class courses_view implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        return [
-            'past' => [
-                'pagingbar' => [
-                    'pagecount' => 3,
-                    'first' => [
-                        'page' => '&laquo;',
-                        'url' => '#',
-                    ],
-                    'last' => [
-                        'page' => '&raquo;',
-                        'url' => '#',
-                    ],
-                    'pages' => [
-                        [
-                            'number' => 1,
-                            'page' => 1,
-                            'url' => '#',
-                            'active' => true,
-                        ],
-                        [
-                            'number' => 2,
-                            'page' => 2,
-                            'url' => '#',
-                        ],
-                        [
-                            'number' => 3,
-                            'page' => 3,
-                            'url' => '#',
-                        ],
-                    ]
-                ],
-            ],
-            'inprogress' => [
-                'pagingbar' => [
-                    'pagecount' => 3,
-                    'first' => [
-                        'page' => '&laquo;',
-                        'url' => '#',
-                    ],
-                    'last' => [
-                        'page' => '&raquo;',
-                        'url' => '#',
-                    ],
-                    'pages' => [
-                        [
-                            'number' => 1,
-                            'page' => 1,
-                            'url' => '#',
-                            'active' => true,
-                        ],
-                        [
-                            'number' => 2,
-                            'page' => 2,
-                            'url' => '#',
-                        ],
-                        [
-                            'number' => 3,
-                            'page' => 3,
-                            'url' => '#',
-                        ],
-                    ]
-                ],
-            ],
-            'future' => [
-                'pagingbar' => [
-                    'pagecount' => 3,
-                    'first' => [
-                        'page' => '&laquo;',
-                        'url' => '#',
-                    ],
-                    'last' => [
-                        'page' => '&raquo;',
-                        'url' => '#',
-                    ],
-                    'pages' => [
-                        [
-                            'number' => 1,
-                            'page' => 1,
-                            'url' => '#',
-                            'active' => true,
-                        ],
-                        [
-                            'number' => 2,
-                            'page' => 2,
-                            'url' => '#',
-                        ],
-                        [
-                            'number' => 3,
-                            'page' => 3,
-                            'url' => '#',
-                        ],
-                    ]
-                ],
-            ],
-        ];
+        $courses = enrol_get_my_courses('startdate, enddate');
+        $today = time();
+
+        // How many courses we have per status?
+        $coursesbystatus = ['past' => 0, 'inprogress' => 0, 'future' => 0];
+        foreach ($courses as $course) {
+            $startdate = $course->startdate;
+            $enddate = $course->enddate;
+
+            if ($startdate < $today && $enddate < $today) {
+                $coursesbystatus['past']++;
+            } elseif ($startdate <= $today && $enddate >= $today) {
+                $coursesbystatus['inprogress']++;
+            } else {
+                $coursesbystatus['future']++;
+            }
+        }
+
+        // Build paging bar structure.
+        $pagingbar = [];
+        foreach ($coursesbystatus as $status => $total) {
+            $quantpages = ceil($total / $this::COURSES_PER_PAGE);
+            $pagingbar[$status]['pagingbar']['pagecount'] = $quantpages;
+            $pagingbar[$status]['pagingbar']['first'] = ['page' => '&laquo;', 'url' => '#'];
+            $pagingbar[$status]['pagingbar']['last'] = ['page' => '&raquo;', 'url' => '#'];
+            for ($page = 0; $page < $quantpages; $page++) {
+                $pagingbar[$status]['pagingbar']['pages'][$page] = [
+                    'number' => $page+1,
+                    'page' => $page+1,
+                    'url' => '#',
+                    'active' => ($page == 0 ? true : false)
+                ];
+            }
+        }
+
+        return $pagingbar;
     }
 }
