@@ -1134,6 +1134,11 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
     } else {
         $sharedcourses = enrol_get_shared_courses($USER->id, $user->id, true);
     }
+
+    if (empty($sharedcourses)) {
+        return false;
+    }
+
     foreach ($sharedcourses as $sharedcourse) {
         $coursecontext = context_course::instance($sharedcourse->id);
         if (has_capability('moodle/user:viewdetails', $coursecontext)) {
