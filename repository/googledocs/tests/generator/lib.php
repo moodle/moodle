@@ -47,6 +47,18 @@ class repository_googledocs_generator extends testing_repository_generator {
         if (!isset($record['secret'])) {
             $record['secret'] = 'secret';
         }
+        if (!isset($record['documentformat'])) {
+            $record['documentformat'] = 'pdf';
+        }
+        if (!isset($record['presentationformat'])) {
+            $record['presentationformat'] = 'pdf';
+        }
+        if (!isset($record['drawingformat'])) {
+            $record['drawingformat'] = 'pdf';
+        }
+        if (!isset($record['spreadsheetformat'])) {
+            $record['spreadsheetformat'] = 'pdf';
+        }
         return $record;
     }
 
