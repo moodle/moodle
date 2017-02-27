@@ -30,7 +30,7 @@ define(['jquery'], function($) {
     },
 
     dataCache = {
-        past: [
+        0: [
             {
                 courseid: 1,
                 shortname: 'Course 1',
@@ -128,7 +128,7 @@ define(['jquery'], function($) {
                 status: STATUS.PAST
             }
         ],
-        inprogress: [
+        1: [
             {
                 courseid: 13,
                 shortname: 'Course 13',
@@ -234,7 +234,7 @@ define(['jquery'], function($) {
                 status: STATUS.IN_PROGRESS
             }
         ],
-        future: [
+        2: [
             {
                 courseid: 26,
                 shortname: 'Course 26',
@@ -345,7 +345,8 @@ define(['jquery'], function($) {
      */
     var queryFromStatus = function(status, limit, offset) {
         var deferred = $.Deferred();
-
+        offset = parseInt(offset);
+        limit = parseInt(limit);
         setTimeout(function() {
             deferred.resolve(dataCache[status].slice(offset, offset + limit));
         }, 1000);

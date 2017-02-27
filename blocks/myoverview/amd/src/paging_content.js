@@ -27,6 +27,7 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
 
     var SELECTORS = {
         ROOT: '[data-region="paging-content"]',
+        PAGE_REGION: '[data-region="paging-content-item"]'
     };
 
     var PagingContent = function(root, pagingBarElement, loadContentCallback) {
@@ -38,37 +39,41 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
     PagingContent.rootSelector = SELECTORS.ROOT;
 
     PagingContent.prototype.createPage = function(pageNumber) {
-        this.loadContent(pageNumber).done(function(html, js) {
-            Templates.appendTo(this.root, html, js);
-        }.bind(this));
 
-        var page = null;
-
-        return page;
+        return this.loadContent(pageNumber).then(function(html, js) {
+            console.log(html);
+            Templates.appendNodeContents(this.root, html, js);
+        }.bind(this)).then(function () {
+                return this.findPage(pageNumber);
+            }.bind(this)
+        );
     };
 
     PagingContent.prototype.findPage = function(pageNumber) {
-
+        return this.root.find('[data-page="'+pageNumber+'"]');
     };
 
     PagingContent.prototype.showPage = function(pageNumber) {
+
         var existingPage = this.findPage(pageNumber);
+        this.root.find(SELECTORS.PAGE_REGION).addClass('hidden');
 
-        if (existingPage) {
-            existingPage.addClass('active');
+        if (existingPage.length) {
+            existingPage.removeClass('hidden');
         } else {
-            var newPage = this.createPage(pageNumber);
-            newPage.addClass('active');
-
-            this.root.append(newPage);
+            this.createPage(pageNumber).done(function (newPage) {
+                newPage.removeClass('hidden');
+                }
+            );
         }
     };
 
     PagingContent.prototype.registerEventListeners = function() {
-        this.pagingBar.one(PagingBar.events.PAGE_SELECTED, function(e, data) {
+
+        this.pagingBar.on(PagingBar.events.PAGE_SELECTED, function(e, data) {
             if (!data.isSamePage) {
                 this.showPage(data.pageNumber);
-            };
+            }
         }.bind(this));
     };
 

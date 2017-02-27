@@ -30,53 +30,6 @@ define(['jquery', 'core/templates', 'block_myoverview/courses_view_repository', 
     };
 
     /**
-     * Set a flag on the element to indicate that it has completed
-     * loading all event data.
-     *
-     * @method setLoadedAll
-     * @param {object} root The container element
-     */
-    var setLoadedAll = function(root) {
-        root.attr('data-loaded-all', true);
-    };
-
-    /**
-     * Set the element state to loading.
-     *
-     * @method startLoading
-     * @param {object} root The container element
-     */
-    var startLoading = function(root) {
-        var loadingIcon = root.find(SELECTORS.LOADING_ICON_CONTAINER);
-
-        root.addClass('loading');
-        loadingIcon.removeClass('hidden');
-    };
-
-    /**
-     * Remove the loading state from the element.
-     *
-     * @method stopLoading
-     * @param {object} root The container element
-     */
-    var stopLoading = function(root) {
-        var loadingIcon = root.find(SELECTORS.LOADING_ICON_CONTAINER);
-
-        root.removeClass('loading');
-        loadingIcon.addClass('hidden');
-    };
-
-    /**
-     * Check if the element is currently loading some event data.
-     *
-     * @method isLoading
-     * @param {object} root The container element
-     */
-    var isLoading = function(root) {
-        return root.hasClass('loading');
-    };
-
-    /**
      * Load the module.
      *
      * @method load
@@ -97,7 +50,6 @@ define(['jquery', 'core/templates', 'block_myoverview/courses_view_repository', 
             return $.Deferred().resolve();
         }
 
-        startLoading(root);
 
         // Request data from the server.
         return CoursesRepository.queryFromStatus(status, limit, offset).then(function(courses) {
@@ -112,7 +64,7 @@ define(['jquery', 'core/templates', 'block_myoverview/courses_view_repository', 
 
                 // Render the courses.
                 render(root, courses);
-                setLoadedAll(root);
+
             }
         }).fail(
             Notification.exception
@@ -123,37 +75,6 @@ define(['jquery', 'core/templates', 'block_myoverview/courses_view_repository', 
         });
     };
 
-    /**
-     * Render the paging bar.
-     *
-     * @param pagingRoot The root element of the paging bar.
-     * @param {int} limit Limit of courses per page.
-     * @param {int} total Total of courses per status.
-     * @returns {string} Rendered paging bar html.
-     */
-    var renderPagingBar = function(pagingRoot, limit, total) {
-        pagingRoot = $(pagingRoot);
-        pagingRoot.empty();
-        var pageCounter,
-            pageTotal = total / limit;
-
-        var pagingBar = {
-            haspages: (total > 0),
-            previous : {},
-            pages: [],
-            next: {}
-        };
-
-        for(pageCounter = 0; pageCounter < pageTotal; pageCounter++) {
-            pagingBar.pages.push({page: pageCounter + 1});
-        }
-
-        return Templates.render(
-            'core/paging_bar',pagingBar
-        ).done(function(html, js) {
-            Templates.appendNodeContents(pagingRoot, html, js);
-        });
-    };
 
     /**
      * Render the list of courses.
@@ -173,35 +94,6 @@ define(['jquery', 'core/templates', 'block_myoverview/courses_view_repository', 
             ).done(function(html, js) {
                 Templates.appendNodeContents(root, html, js);
             });
-        });
-    };
-
-    /**
-     * Register event listeners.
-     */
-    var registerEventListener = function(root, pagingRoot) {
-        root = $(root);
-        pagingRoot = $(pagingRoot);
-
-        var offset = +root.attr('data-offset'),
-            limit  = +root.attr('data-limit'),
-            status = root.attr('data-status');
-
-        pagingRoot.on('click', 'a', function(e) {
-            // Don't go anywhere!
-            e.preventDefault();
-
-            var targetElement = $(e.currentTarget);
-
-            var pageNumber = targetElement[0].innerText,
-                calc = (limit * pageNumber / pageNumber);
-
-            if (pageNumber == 1) {
-                calc = 0;
-            }
-
-            root.attr('data-offset', calc);
-            load(root, pagingRoot);
         });
     };
 

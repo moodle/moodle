@@ -27,6 +27,7 @@
      data-status="{{$status}}{{/status}}">
 
     {{> block_myoverview/course-paging-content }}
+
     <div class="text-xs-center text-center">
         {{> block_myoverview/paging-bar }}
     </div>
@@ -42,9 +43,10 @@ require(
     ],
     function($, Templates, PagingBar, PagingContent, CoursesRepository) {
 
-    var root = $('{{$id}}courses-view-status-{{uniqid}}{{/id}}');
+    var root = $('#{{$id}}courses-view-status-{{uniqid}}{{/id}}');
     var pagingBarElement = root.find(PagingBar.rootSelector);
     var pagingContentElement = root.find(PagingContent.rootSelector);
+
     var loadContentCallback = function(pageNumber) {
         var limit = root.attr('data-limit');
         var offset = (pageNumber - 1) * limit;
@@ -52,11 +54,12 @@ require(
 
         return CoursesRepository.queryFromStatus(status, limit, offset)
             .then(function(courses) {
-                return Templates.render('block_myoverview/course-paging-content-item', courses);
+                return Templates.render('block_myoverview/course-paging-content-item', {courses: courses});
             })
     };
 
     var content = new PagingContent(pagingContentElement, pagingBarElement, loadContentCallback);
     content.registerEventListeners();
+    content.showPage(1);
 });
 {{/js}}
