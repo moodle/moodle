@@ -104,7 +104,7 @@ class renderer extends plugin_renderer_base {
             if (!empty($issuer->get('scopessupported'))) {
                 $discovered = $OUTPUT->pix_icon('yes', get_string('discovered', 'tool_oauth2'), 'tool_oauth2');
             } else {
-                if ($issuer->get('behaviour') == $issuer::BEHAVIOUR_OPENID_CONNECT) {
+                if (!empty($issuer->get_endpoint_url('discovery'))) {
                     $discovered = $OUTPUT->pix_icon('no', get_string('notdiscovered', 'tool_oauth2'), 'tool_oauth2');
                 } else {
                     $discovered = '-';

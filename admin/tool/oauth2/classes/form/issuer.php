@@ -76,11 +76,6 @@ class issuer extends persistent {
         $mform->addRule('baseurl', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
         $mform->addHelpButton('baseurl', 'issuerbaseurl', 'tool_oauth2');
 
-        // Offline access type.
-        $options = $endpoint->get_behaviour_list();
-        $mform->addElement('select', 'behaviour', get_string('issuerbehaviour', 'tool_oauth2'), $options);
-        $mform->addHelpButton('behaviour', 'issuerbehaviour', 'tool_oauth2');
-
         // Login scopes.
         $mform->addElement('text', 'loginscopes', get_string('issuerloginscopes', 'tool_oauth2'), 'maxlength="255"');
         $mform->addRule('loginscopes', null, 'required', null, 'client');

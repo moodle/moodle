@@ -37,10 +37,6 @@ class issuer extends persistent {
 
     const TABLE = 'oauth2_issuer';
 
-    const BEHAVIOUR_OPENID_CONNECT = 'Open ID Connect';
-    const BEHAVIOUR_MICROSOFT = 'Microsoft OAuth 2.0';
-    const BEHAVIOUR_OAUTH2 = 'OAuth 2.0';
-
     /**
      * Return the definition of the properties of this model.
      *
@@ -57,18 +53,16 @@ class issuer extends persistent {
                 'default' => null
             ),
             'clientid' => array(
-                'type' => PARAM_RAW
+                'type' => PARAM_RAW,
+                'default' => ''
             ),
             'clientsecret' => array(
-                'type' => PARAM_RAW
-            ),
-            'behaviour' => array(
-                'type' => PARAM_NOTAGS,
-                'choices' => array(self::BEHAVIOUR_OPENID_CONNECT, self::BEHAVIOUR_MICROSOFT, self::BEHAVIOUR_OAUTH2),
-                'default' => self::BEHAVIOUR_OPENID_CONNECT
+                'type' => PARAM_RAW,
+                'default' => ''
             ),
             'baseurl' => array(
-                'type' => PARAM_URL
+                'type' => PARAM_URL,
+                'null' => NULL_ALLOWED,
             ),
             'showonloginpage' => array(
                 'type' => PARAM_BOOL,
@@ -115,27 +109,11 @@ class issuer extends persistent {
     }
 
     public function is_authentication_supported() {
-        $supportedloginbehaviours = [
-            self::BEHAVIOUR_OPENID_CONNECT,
-            self::BEHAVIOUR_MICROSOFT,
-        ];
-        return in_array($this->get('behaviour'), $supportedloginbehaviours);
+        return (!empty($this->get_endpoint_url('userinfo')));
     }
 
     public function is_system_account_setup_supported() {
-        $supportedsystemaccountbehaviours = [
-            self::BEHAVIOUR_OPENID_CONNECT,
-            self::BEHAVIOUR_MICROSOFT,
-        ];
-        return in_array($this->get('behaviour'), $supportedsystemaccountbehaviours);
-    }
-
-    public function get_behaviour_list() {
-        return [
-            self::BEHAVIOUR_OPENID_CONNECT => self::BEHAVIOUR_OPENID_CONNECT,
-            self::BEHAVIOUR_OAUTH2 => self::BEHAVIOUR_OAUTH2,
-            self::BEHAVIOUR_MICROSOFT => self::BEHAVIOUR_MICROSOFT
-        ];
+        return true;
     }
 
     public function is_system_account_connected() {

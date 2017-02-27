@@ -41,19 +41,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class api {
 
-    /**
-     * Called from install.php and upgrade.php - install the default list of issuers
-     * @return int The number of issuers installed.
-     */
-    public static function install_default_issuers() {
-        // Setup default list of identity issuers.
+    private static function create_google() {
         $record = (object) [
             'name' => 'Google',
             'image' => 'https://accounts.google.com/favicon.ico',
-            'behaviour' => issuer::BEHAVIOUR_OPENID_CONNECT,
             'baseurl' => 'http://accounts.google.com/',
-            'clientid' => '',
-            'clientsecret' => '',
             'loginparamsoffline' => 'access_type=offline&prompt=consent',
             'showonloginpage' => true
         ];
@@ -68,17 +60,65 @@ class api {
         ];
         $endpoint = new endpoint(0, $record);
         $endpoint->create();
+    }
 
+    private static function create_facebook() {
+        // Facebook is a custom setup.
+        $record = (object) [
+            'name' => 'Facebook',
+            'image' => 'https://facebookbrand.com/wp-content/themes/fb-branding/prj-fb-branding/assets/images/fb-art.png',
+            'loginscopes' => 'public_profile email',
+            'loginscopesoffline' => 'public_profile email',
+            'showonloginpage' => true
+        ];
+
+        $issuer = new issuer(0, $record);
+        $issuer->create();
+
+        $endpoints = [
+            'authorization_endpoint' => 'https://www.facebook.com/v2.8/dialog/oauth',
+            'token_endpoint' => 'https://graph.facebook.com/v2.8/oauth/access_token',
+            'userinfo_endpoint' => 'https://graph.facebook.com/v2.8/me?fields=id,first_name,last_name,link,picture,name,email'
+        ];
+
+        foreach ($endpoints as $name => $url) {
+            $record = (object) [
+                'issuerid' => $issuer->get('id'),
+                'name' => $name,
+                'url' => $url
+            ];
+            $endpoint = new endpoint(0, $record);
+            $endpoint->create();
+        }
+
+        // Create the field mappings.
+        $mapping = [
+            'name' => 'alternatename',
+            'last_name' => 'lastname',
+            'email' => 'email',
+            'id' => 'username',
+            'first_name' => 'firstname',
+            'picture-data-url' => 'picture',
+            'link' => 'url',
+        ];
+        foreach ($mapping as $external => $internal) {
+            $record = (object) [
+                'issuerid' => $issuer->get('id'),
+                'externalfield' => $external,
+                'internalfield' => $internal
+            ];
+            $userfieldmapping = new user_field_mapping(0, $record);
+            $userfieldmapping->create();
+        }
+    }
+
+    private static function create_microsoft() {
         // Microsoft is a custom setup.
         $record = (object) [
             'name' => 'Microsoft',
             'image' => 'https://www.microsoft.com/favicon.ico',
-            'behaviour' => issuer::BEHAVIOUR_MICROSOFT,
-            'baseurl' => 'http://login.microsoftonline.com/common/oauth2/v2.0/',
-            'clientid' => '',
             'loginscopes' => 'openid profile email user.read',
             'loginscopesoffline' => 'openid profile email user.read offline_access',
-            'clientsecret' => '',
             'showonloginpage' => true
         ];
 
@@ -122,6 +162,18 @@ class api {
             $userfieldmapping = new user_field_mapping(0, $record);
             $userfieldmapping->create();
         }
+    }
+
+    /**
+     * Called from install.php and upgrade.php - install the default list of issuers
+     * @return int The number of issuers installed.
+     */
+    public static function install_default_issuers() {
+        // Setup default list of identity issuers.
+        self::create_google();
+        self::create_microsoft();
+        self::create_facebook();
+
         return issuer::count_records();
     }
 
@@ -175,7 +227,7 @@ class api {
     }
 
     /**
-     * If the behaviour supports discovery for this issuer, try and determine the list of valid endpoints.
+     * If the discovery endpoint exists for this issuer, try and determine the list of valid endpoints.
      *
      * @param issuer $issuer
      * @return int The number of discovered services.
@@ -183,7 +235,7 @@ class api {
     protected static function discover_endpoints($issuer) {
         $curl = new curl();
 
-        if ($issuer->get('behaviour') != issuer::BEHAVIOUR_OPENID_CONNECT) {
+        if (empty($issuer->get('baseurl'))) {
             return 0;
         }
 
@@ -192,7 +244,7 @@ class api {
             $url = $issuer->get('baseurl') . '/.well-known/openid-configuration';
         }
 
-        if (!$json = $curl->get($issuer->get_endpoint_url('discovery'))) {
+        if (!$json = $curl->get($url)) {
             $msg = 'Could not discover end points for identity issuer' . $issuer->get('name');
             throw new moodle_exception($msg);
         }
@@ -231,6 +283,9 @@ class api {
         }
 
         // We got to here - must be a decent OpenID connect service. Add the default user field mapping list.
+        foreach (user_field_mapping::get_records(['issuerid' => $issuer->get('id')]) as $userfieldmapping) {
+            $userfieldmapping->delete();
+        }
 
         // Create the field mappings.
         $mapping = [
