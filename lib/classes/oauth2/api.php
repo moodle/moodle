@@ -197,7 +197,50 @@ class api {
         return system_account::get_record(['issuerid' => $issuer->get('id')]);
     }
 
+    public static function get_system_scopes_for_issuer($issuer) {
+        $scopes = $issuer->get('loginscopesoffline');
+
+        $pluginsfunction = get_plugins_with_function('oauth2_system_scopes', 'lib.php');
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                // Get additional scopes from the plugin.
+                $pluginscopes = $pluginfunction($issuer);
+                if (empty($pluginscopes)) {
+                    continue;
+                }
+
+                // Merge the additional scopes with the existing ones.
+                $additionalscopes = explode(' ', $pluginscopes);
+
+                foreach ($additionalscopes as $scope) {
+                    if (!empty($scope)) {
+                        if (strpos(' ' . $scopes . ' ', ' ' . $scope . ' ') === false) {
+                            $scopes .= ' ' . $scope;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $scopes;
+    }
+
     public static function get_system_oauth_client(issuer $issuer) {
+        $systemaccount = self::get_system_account($issuer);
+        if (empty($systemaccount)) {
+            return false;
+        }
+        // Get all the scopes!
+        $scopes = self::get_system_scopes_for_issuer($issuer);
+
+        $client = new \core\oauth2\client($issuer, null, $scopes, true);
+
+        if (!$client->is_logged_in()) {
+            if (!$client->update_refresh_token($systemaccount)) {
+                return false;
+            }
+        }
+        return $client;
     }
 
     public static function get_user_oauth_client(issuer $issuer, moodle_url $currenturl, $additionalscopes = '') {

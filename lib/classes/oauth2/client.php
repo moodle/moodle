@@ -156,6 +156,65 @@ class client extends \oauth2_client {
         return $map;
     }
 
+    /**
+     * Upgrade a refresh token from oauth 2.0 to an access token
+     *
+     * @return boolean true if token is upgraded succesfully
+     */
+    public function upgrade_refresh_token(system_account $systemaccount) {
+        $refreshtoken = $systemaccount->get('refreshtoken');
+
+        $params = array('refresh_token' => $refreshtoken,
+            'client_id' => $this->clientid,
+            'client_secret' => $this->clientsecret,
+            'grant_type' => 'refresh_token'
+        );
+
+        // Requests can either use http GET or POST.
+        if ($this->use_http_get()) {
+            $response = $this->get($this->token_url(), $params);
+        } else {
+            $response = $this->post($this->token_url(), $this->build_post_data($params));
+        }
+
+        if (!$this->info['http_code'] === 200) {
+            throw new moodle_exception('Could not upgrade oauth token');
+        }
+
+        $r = json_decode($response);
+
+        if (!empty($r->error)) {
+            throw new moodle_exception($r->error . ' ' . $r->error_description);
+        }
+
+        if (!isset($r->access_token)) {
+            return false;
+        }
+
+        if (isset($r->refresh_token)) {
+            $systemaccount->set('refreshtoken', $r->refresh_token);
+            $systemaccount->update();
+            $this->refreshtoken = $r->refresh_token;
+        }
+
+        // Store the token an expiry time.
+        $accesstoken = new stdClass;
+        $accesstoken->token = $r->access_token;
+        if (isset($r->expires_in)) {
+            // Expires 10 seconds before actual expiry.
+            $accesstoken->expires = (time() + ($r->expires_in - 10));
+        }
+        if (isset($r->scope)) {
+            $accesstoken->scope = $r->scope;
+        } else {
+            $accesstoken->scope = $this->scope;
+        }
+        // Also add the scopes.
+        $this->store_token($accesstoken);
+
+        return true;
+    }
+
     public function get_userinfo() {
         $url = $this->get_issuer()->get_endpoint_url('userinfo');
         $response = $this->get($url);
