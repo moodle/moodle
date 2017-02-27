@@ -192,7 +192,17 @@ M.core_comment = {
                         val = val.replace('___name___', list[i].fullname);
                     }
                     if (list[i]['delete']||newcmt) {
-                        list[i].content = '<div class="comment-delete"><a href="#" id ="comment-delete-'+this.client_id+'-'+list[i].id+'" title="'+M.util.get_string('deletecomment', 'moodle')+'"><img alt="" src="'+M.util.image_url('t/delete', 'core')+'" /></a></div>' + list[i].content;
+                        var tokens = {
+                            user: list[i].fullname,
+                            time: list[i].time
+                        };
+                        var deleteStr = Y.Escape.html(M.util.get_string('deletecommentbyon', 'moodle', tokens));
+                        list[i].content = '<div class="comment-delete">' +
+                            '<a href="#" role="button" id ="comment-delete-' + this.client_id + '-' + list[i].id + '"' +
+                            '   title="' + deleteStr + '">' +
+                            '<img alt="' + deleteStr + '" src="' + M.util.image_url('t/delete', 'core') + '" />' +
+                            '</a>' +
+                            '</div>' + list[i].content;
                     }
                     val = val.replace('___time___', list[i].time);
                     val = val.replace('___picture___', list[i].avatar);
