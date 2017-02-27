@@ -14,10 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Javascript to load and render the list of calendar events for a
- * given day range.
+ * Paging content module.
  *
- * @module     block_myoverview/event_list
+ * @module     block_myoverview/paging_content
  * @package    block_myoverview
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,6 +29,14 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
         PAGE_REGION: '[data-region="paging-content-item"]'
     };
 
+    /**
+     * Constructor of the paging content module.
+     *
+     * @param root
+     * @param pagingBarElement
+     * @param loadContentCallback
+     * @constructor
+     */
     var PagingContent = function(root, pagingBarElement, loadContentCallback) {
         this.root = $(root);
         this.pagingBar = $(pagingBarElement);
@@ -38,6 +45,12 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
 
     PagingContent.rootSelector = SELECTORS.ROOT;
 
+    /**
+     * Load content and create page.
+     *
+     * @param pageNumber
+     * @returns {*|Promise}
+     */
     PagingContent.prototype.createPage = function(pageNumber) {
 
         return this.loadContent(pageNumber).then(function(html, js) {
@@ -48,10 +61,21 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
         );
     };
 
+    /**
+     * Find a page by the number.
+     *
+     * @param pageNumber The number of the page to be found.
+     * @returns {*} Page root
+     */
     PagingContent.prototype.findPage = function(pageNumber) {
         return this.root.find('[data-page="'+pageNumber+'"]');
     };
 
+    /**
+     * Make a page visible.
+     *
+     * @param pageNumber The number of the page to be visible.
+     */
     PagingContent.prototype.showPage = function(pageNumber) {
 
         var existingPage = this.findPage(pageNumber);
@@ -62,11 +86,13 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
         } else {
             this.createPage(pageNumber).done(function (newPage) {
                 newPage.removeClass('hidden');
-                }
-            );
+            });
         }
     };
 
+    /**
+     * Event listeners.
+     */
     PagingContent.prototype.registerEventListeners = function() {
 
         this.pagingBar.on(PagingBar.events.PAGE_SELECTED, function(e, data) {

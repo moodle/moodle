@@ -14,10 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Javascript to load and render the list of calendar events for a
- * given day range.
+ * Javascript to load and render the paging bar.
  *
- * @module     block_myoverview/event_list
+ * @module     block_myoverview/paging_bar
  * @package    block_myoverview
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -35,10 +34,24 @@ define(['jquery', 'core/custom_interaction_events'],
         PAGE_SELECTED: 'block_myoverview-paging-bar-page-selected',
     };
 
+    /**
+     * Get the page element by number.
+     *
+     * @param root
+     * @param pageNumber
+     * @returns {*}
+     */
     var getPageByNumber = function(root, pageNumber) {
         return root.find(SELECTORS.PAGE_ITEM + '[data-page-number="' + pageNumber + '"]');
     };
 
+    /**
+     * Get the page number.
+     *
+     * @param root the root element.
+     * @param page the page.
+     * @returns {*} the page number
+     */
     var getPageNumber = function(root, page) {
         var pageNumber = page.attr('data-page-number');
 
@@ -51,6 +64,10 @@ define(['jquery', 'core/custom_interaction_events'],
         return pageNumber;
     };
 
+    /**
+     * Register event listeners for the module.
+     * @param root the root element.
+     */
     var registerEventListeners = function(root) {
         root = $(root);
         CustomEvents.define(root, [
