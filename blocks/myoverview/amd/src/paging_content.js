@@ -41,7 +41,6 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
     PagingContent.prototype.createPage = function(pageNumber) {
 
         return this.loadContent(pageNumber).then(function(html, js) {
-            console.log(html);
             Templates.appendNodeContents(this.root, html, js);
         }.bind(this)).then(function () {
                 return this.findPage(pageNumber);

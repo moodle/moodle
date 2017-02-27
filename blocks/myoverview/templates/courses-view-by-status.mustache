@@ -54,7 +54,7 @@ require(
 
         return CoursesRepository.queryFromStatus(status, limit, offset)
             .then(function(courses) {
-                return Templates.render('block_myoverview/course-paging-content-item', {courses: courses});
+                return Templates.render('block_myoverview/course-paging-content-item', {courses: courses, page: pageNumber});
             })
     };
 
