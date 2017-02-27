@@ -68,5 +68,21 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2016052301) {
+
+        // Get orphaned, duplicate files and delete them.
+        $fs = get_file_storage();
+        $sqllike = $DB->sql_like("filename", "?");
+        $where = "component='assignfeedback_editpdf' AND filearea = 'importhtml' AND " . $sqllike;
+        $filerecords = $DB->get_records_select("files", $where, ["onlinetext-%"]);
+        foreach ($filerecords as $filerecord) {
+            $file = $fs->get_file_instance($filerecord);
+            $file->delete();
+        }
+
+        // Editpdf savepoint reached.
+        upgrade_plugin_savepoint(true, 2016052301, 'assignfeedback', 'editpdf');
+    }
+
     return true;
 }
