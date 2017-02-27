@@ -263,7 +263,7 @@ class comment {
                 'comments',
                 'commentscount',
                 'commentsrequirelogin',
-                'deletecomment',
+                'deletecommentbyon',
             ),
             'moodle'
         );
