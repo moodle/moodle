@@ -74,4 +74,3 @@ function tool_usertours_extend_navigation_user() {
 function tool_usertours_before_footer() {
     \tool_usertours\helper::bootstrap();
 }
-
