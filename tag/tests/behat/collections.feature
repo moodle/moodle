@@ -85,8 +85,7 @@ Feature: Managers can create and manage tag collections
     And I log out
 
   Scenario: Moving tags when changing tag collections
-    And I follow "Preferences" in the user menu
-    And I click on "Edit profile" "link" in the "region-main" "region"
+    And I open my profile in edit mode
     And I expand all fieldsets
     And I set the field "List of interests" to "Swimming, Tag0, Tag3"
     And I press "Update profile"
