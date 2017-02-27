@@ -5,8 +5,7 @@ Feature: Atto equation editor
   @javascript
   Scenario: Create an equation
     Given I log in as "admin"
-    When I follow "Profile" in the user menu
-    And I click on "Edit profile" "link" in the "region-main" "region"
+    When I open my profile in edit mode
     And I set the field "Description" to "<p>Equation test</p>"
     # Set field on the bottom of page, so equation editor dialogue is visible.
     And I expand all fieldsets
@@ -24,8 +23,7 @@ Feature: Atto equation editor
   @javascript
   Scenario: Edit an equation
     Given I log in as "admin"
-    When I follow "Profile" in the user menu
-    And I click on "Edit profile" "link" in the "region-main" "region"
+    When I open my profile in edit mode
     And I set the field "Description" to "<p>\( \pi \)</p>"
     # Set field on the bottom of page, so equation editor dialogue is visible.
     And I expand all fieldsets
