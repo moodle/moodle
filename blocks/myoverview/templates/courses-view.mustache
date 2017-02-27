@@ -24,18 +24,36 @@
 }}
 <div id="courses-view-{{uniqid}}" data-region="courses-view">
     <div class="row text-xs-center text-center">
-        <div class="btn-group m-y-2" role="group">
-            <button type="button" class="btn btn-secondary active" data-action="view-in-progress">
+        <div class="btn-group m-y-2" role="group" data-toggle="btns">
+            <a class="btn btn-default active" href="#myoverview_courses_view_in_progress" data-toggle="tab">
                 {{#str}} inprogress, block_myoverview {{/str}}
-            </button>
-            <button type="button" class="btn btn-secondary" data-action="view-future">
+            </a>
+            <a class="btn btn-default" href="#myoverview_courses_view_future" data-toggle="tab">
                 {{#str}} future, block_myoverview {{/str}}
-            </button>
-            <button type="button" class="btn btn-secondary" data-action="view-past">
+            </a>
+            <a class="btn btn-default" href="#myoverview_courses_view_past" data-toggle="tab">
                 {{#str}} past, block_myoverview {{/str}}
-            </button>
+            </a>
         </div>
     </div>
-    <div class="row">
+    <div class="tab-content">
+        <div class="tab-pane active fade in" id="myoverview_courses_view_in_progress">
+            {{> block_myoverview/courses-view-in-progress }}
+        </div>
+        <div class="tab-pane fade" id="myoverview_courses_view_future">
+            {{> block_myoverview/courses-view-future }}
+        </div>
+        <div class="tab-pane fade" id="myoverview_courses_view_past">
+            {{> block_myoverview/courses-view-past }}
+        </div>
     </div>
 </div>
+{{#js}}
+require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {
+    var root = $('#courses-view-{{uniqid}}');
+    customEvents.define(root, [customEvents.events.activate]);
+    root.on(customEvents.events.activate, '[data-toggle="btns"] > .btn', function() {
+        root.find('.btn.active').removeClass('active');
+    });
+});
+{{/js}}

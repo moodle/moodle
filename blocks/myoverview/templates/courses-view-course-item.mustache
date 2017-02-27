@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/course-summary
+
+    This template renders the course summary (view by courses) for the myoverview block.
+
+    Example context (json):
+    {
+        "shortname": "course 3",
+        "viewurl": "https://www.google.com",
+        "startdate": "Nov 1th, 10am",
+        "enddate": "Nov 4th, 10am",
+        "summary": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+    }
+}}
+<li class="list-group-item col-md-4 m-b-1">
+    <div class="d-inline-block">
+        <div class="d-inline-block m-x-1">
+            <div class="course-info-container" id="course-info-container-{{id}}">
+                <div class="row m-b-1">
+                    <div class="col-md-6">
+                        <!-- Will be replaced by the chart after course completion changes are done. -->
+                        <img height="100px" src="https://conceptdraw.com/a3039c3/p1/preview/640/pict--1-sector-donut-chart-management-indicators---vector-stencils-library.png--diagram-flowchart-example.png">
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="align-text-bottom"><a href="{{viewurl}}">{{shortname}}</a></h3>
+                    </div>
+                </div>
+                <div class="row text-muted m-b-1">
+                    {{startdate}} - {{enddate}}
+                </div>
+                <div class="row text-muted">
+                    {{{summary}}}
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
