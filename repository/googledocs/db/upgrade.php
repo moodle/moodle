@@ -48,5 +48,6 @@ function xmldb_repository_googledocs_upgrade($oldversion) {
         // Plugin savepoint reached.
         upgrade_plugin_savepoint(true, 2017011100, 'repository', 'googledocs');
     }
+
     return true;
 }

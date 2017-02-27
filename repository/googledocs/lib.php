@@ -502,7 +502,6 @@ class repository_googledocs extends repository {
      * @param string $classname repository class name.
      */
     public static function type_config_form($mform, $classname = 'repository') {
-
         $callbackurl = new moodle_url(self::CALLBACKURL);
 
         $a = new stdClass;
@@ -571,7 +570,6 @@ class repository_googledocs extends repository {
         $mform->addElement('select', 'spreadsheetformat', get_string('spreadsheetformat', 'repository_googledocs'), $spreadsheetformat);
         $mform->setDefault('spreadsheetformat', $spreadsheetformat['xlsx']);
         $mform->setType('spreadsheetformat', PARAM_ALPHANUM);
-
     }
 }
 // Icon from: http://www.iconspedia.com/icon/google-2706.html.
