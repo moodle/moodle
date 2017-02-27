@@ -38,7 +38,7 @@ use stdClass;
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class client extends \oauth2_client {
+class client extends \oauth2_client {
 
     /** @var \core\oauth2\issuer $issuer */
     private $issuer;
@@ -52,28 +52,20 @@ abstract class client extends \oauth2_client {
      * @param issuer $issuer
      * @param moodle_url $returnurl
      */
-    public function __construct(issuer $issuer, moodle_url $returnurl, $scopesrequired, $system) {
+    public function __construct(issuer $issuer, moodle_url $returnurl, $scopesrequired, $system = false) {
         $this->issuer = $issuer;
         $this->system = $system;
         $scopes = $this->get_login_scopes();
         $additionalscopes = explode(' ', $scopesrequired);
 
         foreach ($additionalscopes as $scope) {
-            if (strpos(' ' . $scopes . ' ', ' ' . $scope . ' ') === false) {
-                $scopes .= ' ' . $scope;
+            if (!empty($scope)) {
+                if (strpos(' ' . $scopes . ' ', ' ' . $scope . ' ') === false) {
+                    $scopes .= ' ' . $scope;
+                }
             }
         }
         parent::__construct($issuer->get('clientid'), $issuer->get('clientsecret'), $returnurl, $scopes);
-    }
-
-    public static function create(issuer $issuer, moodle_url $returnurl, $scopesrequired, $system = false) {
-        if ($issuer->get('behaviour') == issuer::BEHAVIOUR_OPENID_CONNECT) {
-            return new client_openid_connect($issuer, $returnurl, $scopesrequired, $system);
-        } else if ($issuer->get('behaviour') == issuer::BEHAVIOUR_OAUTH2) {
-            return new client_oauth2($issuer, $returnurl, $scopesrequired, $system);
-        } else if ($issuer->get('behaviour') == issuer::BEHAVIOUR_MICROSOFT) {
-            return new client_microsoft($issuer, $returnurl, $scopesrequired, $system);
-        }
     }
 
     /**
@@ -99,7 +91,22 @@ abstract class client extends \oauth2_client {
      * @return array (name value pairs).
      */
     public function get_additional_login_parameters() {
-        return [];
+        $params = '';
+        if ($this->system) {
+            if (!empty($this->issuer->get('loginparamsoffline'))) {
+                $params = $this->issuer->get('loginparamsoffline');
+            }
+        } else {
+            if (!empty($this->issuer->get('loginparams'))) {
+                $params = $this->issuer->get('loginparams');
+            }
+        }
+        if (empty($params)) {
+            return [];
+        }
+        $result = [];
+        parse_str($params, $result);
+        return $result;
     }
 
     /**
@@ -108,7 +115,11 @@ abstract class client extends \oauth2_client {
      * @return string
      */
     protected function get_login_scopes() {
-        return 'openid profile email';
+        if ($this->system) {
+            return $this->issuer->get('loginscopesoffline');
+        } else {
+            return $this->issuer->get('loginscopes');
+        }
     }
 
     /**
@@ -162,8 +173,23 @@ abstract class client extends \oauth2_client {
 
         $user = new stdClass();
         foreach ($map as $openidproperty => $moodleproperty) {
-            if (!empty($userinfo->$openidproperty)) {
-                $user->$moodleproperty = $userinfo->$openidproperty;
+            // We support nested objects via a-b-c syntax.
+            $getfunc = function($obj, $prop) use (&$getfunc) {
+                $proplist = explode('-', $prop, 2);
+                if (empty($proplist[0]) || empty($obj->{$proplist[0]})) {
+                    return false;
+                }
+                $obj = $obj->{$proplist[0]};
+
+                if (count($proplist) > 1) {
+                    return $getfunc($obj, $proplist[1]);
+                }
+                return $obj;
+            };
+
+            $resolved = $getfunc($userinfo, $openidproperty);
+            if (!empty($resolved)) {
+                $user->$moodleproperty = $resolved;
             }
         }
 

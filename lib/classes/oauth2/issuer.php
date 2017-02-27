@@ -79,6 +79,22 @@ class issuer extends persistent {
                 'null' => NULL_ALLOWED,
                 'default' => null
             ),
+            'loginscopes' => array(
+                'type' => PARAM_RAW,
+                'default' => 'openid profile email'
+            ),
+            'loginscopesoffline' => array(
+                'type' => PARAM_RAW,
+                'default' => 'openid profile email'
+            ),
+            'loginparams' => array(
+                'type' => PARAM_RAW,
+                'default' => ''
+            ),
+            'loginparamsoffline' => array(
+                'type' => PARAM_RAW,
+                'default' => ''
+            ),
             'sortorder' => array(
                 'type' => PARAM_INT,
                 'default' => 0,
@@ -97,6 +113,7 @@ class issuer extends persistent {
         }
         return false;
     }
+
     public function is_authentication_supported() {
         $supportedloginbehaviours = [
             self::BEHAVIOUR_OPENID_CONNECT,

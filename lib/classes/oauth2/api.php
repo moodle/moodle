@@ -54,6 +54,7 @@ class api {
             'baseurl' => 'http://accounts.google.com/',
             'clientid' => '',
             'clientsecret' => '',
+            'loginparamsoffline' => 'access_type=offline&prompt=consent',
             'showonloginpage' => true
         ];
 
@@ -75,6 +76,8 @@ class api {
             'behaviour' => issuer::BEHAVIOUR_MICROSOFT,
             'baseurl' => 'http://login.microsoftonline.com/common/oauth2/v2.0/',
             'clientid' => '',
+            'loginscopes' => 'openid profile email user.read',
+            'loginscopesoffline' => 'openid profile email user.read offline_access',
             'clientsecret' => '',
             'showonloginpage' => true
         ];
@@ -146,7 +149,7 @@ class api {
     }
 
     public static function get_user_oauth_client(issuer $issuer, moodle_url $currenturl, $additionalscopes = '') {
-        $client = \core\oauth2\client::create($issuer, $currenturl, $additionalscopes);
+        $client = new \core\oauth2\client($issuer, $currenturl, $additionalscopes);
 
         if (!$client->is_logged_in()) {
             redirect($client->get_login_url());
@@ -186,7 +189,7 @@ class api {
 
         $url = $issuer->get_endpoint_url('discovery');
         if (!$url) {
-            $url = $issuer->get('url') . '/.well-known/openid-configuration';
+            $url = $issuer->get('baseurl') . '/.well-known/openid-configuration';
         }
 
         if (!$json = $curl->get($issuer->get_endpoint_url('discovery'))) {
@@ -425,7 +428,7 @@ class api {
 
         // Allow callbacks to inject non-standard scopes to the auth request.
 
-        $client = client::create($issuer, $returnurl, $scopesrequired, true);
+        $client = new client($issuer, $returnurl, $scopesrequired, true);
 
         if (!optional_param('response', false, PARAM_BOOL)) {
             $client->log_out();

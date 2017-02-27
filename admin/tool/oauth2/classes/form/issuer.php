@@ -76,10 +76,32 @@ class issuer extends persistent {
         $mform->addRule('baseurl', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
         $mform->addHelpButton('baseurl', 'issuerbaseurl', 'tool_oauth2');
 
-        // Offline access type
+        // Offline access type.
         $options = $endpoint->get_behaviour_list();
         $mform->addElement('select', 'behaviour', get_string('issuerbehaviour', 'tool_oauth2'), $options);
         $mform->addHelpButton('behaviour', 'issuerbehaviour', 'tool_oauth2');
+
+        // Login scopes.
+        $mform->addElement('text', 'loginscopes', get_string('issuerloginscopes', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addRule('loginscopes', null, 'required', null, 'client');
+        $mform->addRule('loginscopes', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('loginscopes', 'issuerloginscopes', 'tool_oauth2');
+
+        // Login scopes offline.
+        $mform->addElement('text', 'loginscopesoffline', get_string('issuerloginscopesoffline', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addRule('loginscopesoffline', null, 'required', null, 'client');
+        $mform->addRule('loginscopesoffline', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('loginscopesoffline', 'issuerloginscopesoffline', 'tool_oauth2');
+
+        // Login params.
+        $mform->addElement('text', 'loginparams', get_string('issuerloginparams', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addRule('loginparams', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('loginparams', 'issuerloginparams', 'tool_oauth2');
+
+        // Login params offline.
+        $mform->addElement('text', 'loginparamsoffline', get_string('issuerloginparamsoffline', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addRule('loginparamsoffline', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('loginparamsoffline', 'issuerloginparamsoffline', 'tool_oauth2');
 
         // Image.
         $mform->addElement('text', 'image', get_string('issuerimage', 'tool_oauth2'), 'maxlength="1024"');
@@ -89,7 +111,6 @@ class issuer extends persistent {
         // Show on login page.
         $mform->addElement('checkbox', 'showonloginpage', get_string('issuershowonloginpage', 'tool_oauth2'));
         $mform->addHelpButton('showonloginpage', 'issuershowonloginpage', 'tool_oauth2');
-        
 
         $mform->addElement('hidden', 'sortorder');
         $mform->setType('sortorder', PARAM_INT);

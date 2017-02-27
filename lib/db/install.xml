@@ -3489,6 +3489,10 @@
         <FIELD NAME="baseurl" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The base url to the issuer"/>
         <FIELD NAME="clientid" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The client id used to connect to this oauth2 service."/>
         <FIELD NAME="clientsecret" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The secret used to connect to this oauth2 service."/>
+        <FIELD NAME="loginscopes" TYPE="text" NOTNULL="true" DEFAULT="openid profile email" SEQUENCE="false" COMMENT="The scopes requested for a normal login attempt."/>
+        <FIELD NAME="loginscopesoffline" TYPE="text" NOTNULL="true" DEFAULT="openid profile email" SEQUENCE="false" COMMENT="The scopes requested for a login attempt to generate a refresh token."/>
+        <FIELD NAME="loginparams" TYPE="text" NOTNULL="true" DEFAULT="" SEQUENCE="false" COMMENT="Additional parameters sent for a login attempt."/>
+        <FIELD NAME="loginparamsoffline" TYPE="text" NOTNULL="true" DEFAULT="openid profile email" SEQUENCE="false" COMMENT="Additional parameters sent for a login attempt to generate a refresh token."/>
         <FIELD NAME="behaviour" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="none" SEQUENCE="false" COMMENT="The type of behaviour for this oauth client."/>
         <FIELD NAME="scopessupported" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The list of scopes this service supports."/>
         <FIELD NAME="showonloginpage" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
