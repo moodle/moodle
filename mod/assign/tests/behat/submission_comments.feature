@@ -33,7 +33,7 @@ Feature: In an assignment, students can comment in their submissions
     And I follow "Save comment"
     Then I should see "First student comment"
     And the field "content" matches value "Add a comment..."
-    And I follow "Delete this comment"
+    And I click on "Delete comment posted by Student 1" "link"
     # Wait for the animation to finish.
     And I wait "2" seconds
     And I set the field "content" to "Second student comment"
