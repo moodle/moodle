@@ -582,19 +582,37 @@ class core_userliblib_testcase extends advanced_testcase {
         $CFG->forceloginforprofiles = 1;
         $this->setUser($user8);
 
-        // By default guest has 'moodle/user:viewdetails' cap.
-        $this->assertTrue(user_can_view_profile($user1));
-        $CFG->forceloginforprofiles = 0;
-        $this->assertTrue(user_can_view_profile($user1));
-
-        // Let us remove this cap.
         $allroles = $DB->get_records_menu('role', array(), 'id', 'archetype, id');
-        assign_capability('moodle/user:viewdetails', CAP_PROHIBIT, $allroles['guest'], context_system::instance()->id, true);
-        reload_all_capabilities();
+        // Let us test with guest user.
+        $this->setGuestUser();
         $CFG->forceloginforprofiles = 1;
-        $this->assertFalse(user_can_view_profile($user1));
+        foreach ($users as $user) {
+            $this->assertFalse(user_can_view_profile($user));
+        }
+
+        // Even with cap, still guests should not be allowed in.
+        assign_capability('moodle/user:viewdetails', CAP_ALLOW, $allroles['guest'], context_system::instance()->id, true);
+        reload_all_capabilities();
+        foreach ($users as $user) {
+            $this->assertFalse(user_can_view_profile($user));
+        }
+
         $CFG->forceloginforprofiles = 0;
-        $this->assertTrue(user_can_view_profile($user1));
+        foreach ($users as $user) {
+            $this->assertTrue(user_can_view_profile($user));
+        }
+
+        // Let us test with Visitor user.
+        $this->setUser($user8);
+        $CFG->forceloginforprofiles = 1;
+        foreach ($users as $user) {
+            $this->assertFalse(user_can_view_profile($user));
+        }
+
+        $CFG->forceloginforprofiles = 0;
+        foreach ($users as $user) {
+            $this->assertTrue(user_can_view_profile($user));
+        }
     }
 
     /**
