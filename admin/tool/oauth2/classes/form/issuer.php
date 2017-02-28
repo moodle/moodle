@@ -70,12 +70,6 @@ class issuer extends persistent {
         $mform->addRule('clientsecret', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('clientsecret', 'issuerclientsecret', 'tool_oauth2');
 
-        // Base Url.
-        $mform->addElement('text', 'baseurl', get_string('issuerbaseurl', 'tool_oauth2'), 'maxlength="1024"');
-        $mform->addRule('baseurl', null, 'required', null, 'client');
-        $mform->addRule('baseurl', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
-        $mform->addHelpButton('baseurl', 'issuerbaseurl', 'tool_oauth2');
-
         // Login scopes.
         $mform->addElement('text', 'loginscopes', get_string('issuerloginscopes', 'tool_oauth2'), 'maxlength="255"');
         $mform->addRule('loginscopes', null, 'required', null, 'client');
@@ -97,6 +91,11 @@ class issuer extends persistent {
         $mform->addElement('text', 'loginparamsoffline', get_string('issuerloginparamsoffline', 'tool_oauth2'), 'maxlength="255"');
         $mform->addRule('loginparamsoffline', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('loginparamsoffline', 'issuerloginparamsoffline', 'tool_oauth2');
+
+        // Base Url.
+        $mform->addElement('text', 'baseurl', get_string('issuerbaseurl', 'tool_oauth2'), 'maxlength="1024"');
+        $mform->addRule('baseurl', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
+        $mform->addHelpButton('baseurl', 'issuerbaseurl', 'tool_oauth2');
 
         // Image.
         $mform->addElement('text', 'image', get_string('issuerimage', 'tool_oauth2'), 'maxlength="1024"');

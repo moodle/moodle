@@ -60,6 +60,7 @@ class api {
         ];
         $endpoint = new endpoint(0, $record);
         $endpoint->create();
+        return $issuer;
     }
 
     private static function create_facebook() {
@@ -67,6 +68,7 @@ class api {
         $record = (object) [
             'name' => 'Facebook',
             'image' => 'https://facebookbrand.com/wp-content/themes/fb-branding/prj-fb-branding/assets/images/fb-art.png',
+            'baseurl' => '',
             'loginscopes' => 'public_profile email',
             'loginscopesoffline' => 'public_profile email',
             'showonloginpage' => true
@@ -110,6 +112,7 @@ class api {
             $userfieldmapping = new user_field_mapping(0, $record);
             $userfieldmapping->create();
         }
+        return $issuer;
     }
 
     private static function create_microsoft() {
@@ -117,6 +120,7 @@ class api {
         $record = (object) [
             'name' => 'Microsoft',
             'image' => 'https://www.microsoft.com/favicon.ico',
+            'baseurl' => '',
             'loginscopes' => 'openid profile email user.read',
             'loginscopesoffline' => 'openid profile email user.read offline_access',
             'showonloginpage' => true
@@ -162,19 +166,20 @@ class api {
             $userfieldmapping = new user_field_mapping(0, $record);
             $userfieldmapping->create();
         }
+        return $issuer;
     }
 
-    /**
-     * Called from install.php and upgrade.php - install the default list of issuers
-     * @return int The number of issuers installed.
-     */
-    public static function install_default_issuers() {
-        // Setup default list of identity issuers.
-        self::create_google();
-        self::create_microsoft();
-        self::create_facebook();
-
-        return issuer::count_records();
+    public static function create_standard_issuer($type) {
+        require_capability('moodle/site:config', context_system::instance());
+        if ($type == 'google') {
+            return self::create_google();
+        } else if ($type == 'microsoft') {
+            return self::create_microsoft();
+        } else if ($type == 'facebook') {
+            return self::create_facebook();
+        } else {
+            throw new moodle_exception('OAuth 2 service type not recognised: ' . $type);
+        }
     }
 
     public static function get_all_issuers() {

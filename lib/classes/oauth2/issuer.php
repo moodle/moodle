@@ -62,7 +62,7 @@ class issuer extends persistent {
             ),
             'baseurl' => array(
                 'type' => PARAM_URL,
-                'null' => NULL_ALLOWED,
+                'default' => ''
             ),
             'showonloginpage' => array(
                 'type' => PARAM_BOOL,
