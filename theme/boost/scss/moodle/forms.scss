@@ -39,6 +39,10 @@
     width: 100%;
 }
 
+#adminsettings .form-control[size] {
+    width: auto;
+}
+
 .mform fieldset.collapsible legend a.fheader {
     padding: 0 5px 0 ($spacer * 1.5);
     margin-left: -($spacer * 1.5);
