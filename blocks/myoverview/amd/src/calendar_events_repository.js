@@ -807,7 +807,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
 
     var groupEventsByCourseAndTime = function(courseId, startTime, limit, offset) {
         var eventsByCourse = {};
-
+        var events = {};
         $.each(dataCache, function(index, value) {
             if (!eventsByCourse[value.courseid]) {
                 eventsByCourse[value.courseid] = {
@@ -822,8 +822,13 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             eventsByCourse[value.courseid].calendarEvents.push(value);
         });
 
+        if (typeof eventsByCourse[courseId] !== 'undefined') {
+            // There are events for this course.
+            events = eventsByCourse[courseId].calendarEvents.slice(offset, offset + limit);
+        }
+
         return {
-            events: eventsByCourse[courseId].calendarEvents.slice(offset, offset + limit),
+            events: events
         };
     };
 

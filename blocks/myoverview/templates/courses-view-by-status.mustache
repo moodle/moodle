@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_myoverview/courses-view
+    @template block_myoverview/courses-view-by-status
 
     This template renders the courses view for the myoverview block.
 
@@ -23,7 +23,6 @@
     {}
 }}
 <div id="{{$id}}courses-view-status-{{uniqid}}{{/id}}"
-     data-limit="{{$limit}}6{{/limit}}"
      data-status="{{$status}}{{/status}}">
 
     {{> block_myoverview/course-paging-content }}
