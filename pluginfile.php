@@ -28,6 +28,7 @@
 if (!defined('NO_DEBUG_DISPLAY')) {
     define('NO_DEBUG_DISPLAY', true);
 }
+define('REQUIRE_SESSION_LOCK', false); // Plugins will need to acquire a lock if they need one.
 
 require_once('config.php');
 require_once('lib/filelib.php');

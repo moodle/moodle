@@ -28,6 +28,8 @@
  */
 
 define('AJAX_SCRIPT', true);
+// Services can declare 'requiresessionlock' in their config located in db/services.php, if not present will default to true.
+define('REQUIRE_SESSION_LOCK', false);
 
 if (!empty($_GET['nosessionupdate'])) {
     define('NO_SESSION_UPDATE', true);
