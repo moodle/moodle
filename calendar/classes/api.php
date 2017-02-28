@@ -2375,4 +2375,38 @@ class api {
             return $mapper->from_event_to_legacy_event($event);
         }, $events);
     }
+
+    /**
+     * Get a list of action events for the logged in user by the given
+     * courses and timesort values.
+     *
+     * The limit number applies per course, not for the result set as a whole.
+     * E.g. Requesting 3 courses with a limit of 10 will result in up to 30
+     * events being returned (up to 10 per course).
+     *
+     * @param array $courses The courses the events must belong to
+     * @param int|null $timesortfrom The start timesort value (inclusive)
+     * @param int|null $timesortto The end timesort value (inclusive)
+     * @param int $limitnum Limit results per course to this amount (between 1 and 50)
+     * @return array A list of event objects indexed by course id
+     */
+    public static function get_action_events_by_courses(
+        $courses = [],
+        $timesortfrom = null,
+        $timesortto = null,
+        $limitnum = 20
+    ) {
+        $return = [];
+        $mapper = \core_calendar\local\event\core_container::get_event_mapper();
+        $eventsbycourses = local_api::get_action_events_by_courses(
+            $courses, $timesortfrom, $timesortto, $limitnum);
+
+        foreach (array_keys($eventsbycourses) as $courseid) {
+            $return[$courseid] = array_map(function($event) use ($mapper) {
+                return $mapper->from_event_to_legacy_event($event);
+            }, $eventsbycourses[$courseid]);
+        }
+
+        return $return;
+    }
 }

@@ -108,4 +108,39 @@ class api {
         return $vault->get_action_events_by_course(
             $USER, $course, $timesortfrom, $timesortto, $afterevent, $limitnum);
     }
+
+    /**
+     * Get a list of action events for the logged in user by the given
+     * courses and timesort values.
+     *
+     * The limit number applies per course, not for the result set as a whole.
+     * E.g. Requesting 3 courses with a limit of 10 will result in up to 30
+     * events being returned (up to 10 per course).
+     *
+     * @param array $courses The courses the events must belong to
+     * @param int|null $timesortfrom The start timesort value (inclusive)
+     * @param int|null $timesortto The end timesort value (inclusive)
+     * @param int $limitnum Limit results per course to this amount (between 1 and 50)
+     * @return array A list of action_event_interface objects indexed by course id
+     */
+    public static function get_action_events_by_courses(
+        $courses = [],
+        $timesortfrom = null,
+        $timesortto = null,
+        $limitnum = 20
+    ) {
+        $return = [];
+
+        foreach ($courses as $course) {
+            $return[$course->id] = self::get_action_events_by_course(
+                $course,
+                $timesortfrom,
+                $timesortto,
+                null,
+                $limitnum
+            );
+        }
+
+        return $return;
+    }
 }
