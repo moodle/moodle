@@ -1701,7 +1701,7 @@ class core_plugin_manager {
 
             'auth' => array(
                 'cas', 'db', 'email', 'fc', 'imap', 'ldap', 'lti', 'manual', 'mnet',
-                'nntp', 'nologin', 'none', 'pam', 'pop3', 'shibboleth', 'webservice'
+                'nntp', 'nologin', 'none', 'oauth2', 'pam', 'pop3', 'shibboleth', 'webservice'
             ),
 
             'availability' => array(
@@ -1902,7 +1902,7 @@ class core_plugin_manager {
                 'assignmentupgrade', 'availabilityconditions', 'behat', 'capability', 'cohortroles', 'customlang',
                 'dbtransfer', 'filetypes', 'generator', 'health', 'innodb', 'installaddon',
                 'langimport', 'log', 'lp', 'lpimportcsv', 'lpmigrate', 'messageinbound', 'mobile', 'multilangupgrade', 'monitor',
-                'phpunit', 'profiling', 'recyclebin', 'replace', 'spamcleaner', 'task', 'templatelibrary',
+                'oauth2', 'phpunit', 'profiling', 'recyclebin', 'replace', 'spamcleaner', 'task', 'templatelibrary',
                 'unittest', 'uploadcourse', 'uploaduser', 'unsuproles', 'usertours', 'xmldb'
             ),
 

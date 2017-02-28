@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * OAuth 2 Endpoing Configuration page.
+ * OAuth 2 Endpoint Configuration page.
  *
  * @package    tool_oauth2
  * @copyright  2017 Damyon Wiese <damyon@moodle.com>

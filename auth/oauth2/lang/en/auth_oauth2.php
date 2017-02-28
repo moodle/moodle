@@ -24,6 +24,6 @@
 
 $string['auth_oauth2description'] = 'OAuth 2 standards based authentication';
 $string['auth_oauth2settings'] = 'OAuth 2 authentication settings.';
-$string['pluginname'] = 'OAuth 2';
-$string['plugindescription'] = 'This authentication plugin displays a list of the configured identity providers on the moodle login page. Selecting an identity provider allows users to login with their credentials from an OAuth 2 provider.';
 $string['notloggedin'] = 'The login attempt failed.';
+$string['plugindescription'] = 'This authentication plugin displays a list of the configured identity providers on the moodle login page. Selecting an identity provider allows users to login with their credentials from an OAuth 2 provider.';
+$string['pluginname'] = 'OAuth 2';

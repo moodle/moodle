@@ -146,6 +146,11 @@ class client extends \oauth2_client {
         return $name;
     }
 
+    /**
+     * Get a list of the mapping user fields in an associative array.
+     *
+     * @return array
+     */
     protected function get_userinfo_mapping() {
         $fields = user_field_mapping::get_records(['issuerid' => $this->issuer->get('id')]);
 
@@ -215,6 +220,12 @@ class client extends \oauth2_client {
         return true;
     }
 
+    /**
+     * Fetch the user info from the user info endpoint and map all
+     * the fields back into moodle fields.
+     *
+     * @return array (Moodle user fields for the logged in user).
+     */
     public function get_userinfo() {
         $url = $this->get_issuer()->get_endpoint_url('userinfo');
         $response = $this->get($url);

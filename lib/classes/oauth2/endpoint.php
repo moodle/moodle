@@ -57,6 +57,13 @@ class endpoint extends persistent {
         );
     }
 
+    /**
+     * Custom validator for end point URLs.
+     * Because we send Bearer tokens we must ensure SSL.
+     *
+     * @param $value The value to check.
+     * @return boolean
+     */
     protected function validate_url($value) {
         if (strpos($value, 'https://') !== 0) {
             return new lang_string('sslonlyaccess', 'error');

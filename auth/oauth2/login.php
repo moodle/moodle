@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Open ID authentication.
+ * Open ID authentication. This file is a simple login entry point for OAuth identity providers.
  *
  * @package auth_oauth2
  * @copyright 2017 Damyon Wiese

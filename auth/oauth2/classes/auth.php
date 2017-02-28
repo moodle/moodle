@@ -179,7 +179,12 @@ class auth extends \auth_plugin_base {
         return false;
     }
 
-    private function is_ready_for_login_page($issuer) {
+    /**
+     * Do some checks on the identity provider before showing it on the login page.
+     * @param core\oauth2\issuer
+     * @return boolean
+     */
+    private function is_ready_for_login_page(\core\oauth2\issuer $issuer) {
         return !empty($issuer->get('clientid')) &&
                 !empty($issuer->get('clientsecret')) &&
                 $issuer->is_authentication_supported() &&
@@ -188,6 +193,9 @@ class auth extends \auth_plugin_base {
 
     /**
      * Return a list of identity providers to display on the login page.
+     *
+     * @param string|moodle_url $wantsurl The requested URL.
+     * @return array (containing url, iconurl and name).
      */
     public function loginpage_idp_list($wantsurl) {
         $providers = \core\oauth2\api::get_all_issuers();

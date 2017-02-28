@@ -72,6 +72,11 @@ class user_field_mapping extends persistent {
         );
     }
 
+    /**
+     * Return the list of internal fields
+     * in a format they can be used for choices in a select menu
+     * @return array
+     */
     public function get_internalfield_list() {
         return array_combine(self::$userfields, self::$userfields);
     }

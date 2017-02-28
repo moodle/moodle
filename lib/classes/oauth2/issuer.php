@@ -96,6 +96,11 @@ class issuer extends persistent {
         );
     }
 
+    /**
+     * Helper the get a named service endpoint.
+     * @param string $type
+     * @return string|false
+     */
     public function get_endpoint_url($type) {
         $endpoint = endpoint::get_record([
             'issuerid' => $this->get('id'),
@@ -108,14 +113,26 @@ class issuer extends persistent {
         return false;
     }
 
+    /**
+     * Does this OAuth service support user authentication?
+     * @return boolean
+     */
     public function is_authentication_supported() {
         return (!empty($this->get_endpoint_url('userinfo')));
     }
 
+    /**
+     * Does this OAuth service support system authentication?
+     * @return boolean
+     */
     public function is_system_account_setup_supported() {
         return true;
     }
 
+    /**
+     * Do we have a refresh token for a system account?
+     * @return boolean
+     */
     public function is_system_account_connected() {
         $sys = system_account::get_record(['issuerid' => $this->get('id')]);
         if (!empty($sys) and !empty($sys->get('refreshtoken'))) {

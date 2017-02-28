@@ -41,6 +41,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class api {
 
+    /**
+     * Create a google ready OAuth 2 service.
+     * @return core\oauth2\issuer
+     */
     private static function create_google() {
         $record = (object) [
             'name' => 'Google',
@@ -63,6 +67,10 @@ class api {
         return $issuer;
     }
 
+    /**
+     * Create a facebook ready OAuth 2 service.
+     * @return core\oauth2\issuer
+     */
     private static function create_facebook() {
         // Facebook is a custom setup.
         $record = (object) [
@@ -115,6 +123,10 @@ class api {
         return $issuer;
     }
 
+    /**
+     * Create a microsoft ready OAuth 2 service.
+     * @return core\oauth2\issuer
+     */
     private static function create_microsoft() {
         // Microsoft is a custom setup.
         $record = (object) [
@@ -182,26 +194,62 @@ class api {
         }
     }
 
+    /**
+     * List all the issuers, ordered by the sortorder field
+     * @return core\oauth2\issuer[]
+     */
     public static function get_all_issuers() {
         return issuer::get_records([], 'sortorder');
     }
 
+    /**
+     * Get a single issuer by id.
+     *
+     * @param int $id
+     * @return core\oauth2\issuer
+     */
     public static function get_issuer($id) {
         return new issuer($id);
     }
 
+    /**
+     * Get a single endpoint by id.
+     *
+     * @param int $id
+     * @return core\oauth2\endpoint
+     */
     public static function get_endpoint($id) {
         return new endpoint($id);
     }
 
+    /**
+     * Get a single user field mapping by id.
+     *
+     * @param int $id
+     * @return core\oauth2\user_field_mapping
+     */
     public static function get_user_field_mapping($id) {
         return new user_field_mapping($id);
     }
 
+    /**
+     * Get the system account for an installed OAuth service.
+     * Never ever ever expose this to a webservice because it contains the refresh token which grants API access.
+     *
+     * @param int $id
+     * @return core\oauth2\user_field_mapping
+     */
     public static function get_system_account(issuer $issuer) {
         return system_account::get_record(['issuerid' => $issuer->get('id')]);
     }
 
+    /**
+     * Get the full list of system scopes required by an oauth issuer.
+     * This includes the list required for login as well as any scopes injected by the oauth2_system_scopes callback in plugins.
+     *
+     * @param core\oauth2\issuer $issuer
+     * @return string
+     */
     public static function get_system_scopes_for_issuer($issuer) {
         $scopes = $issuer->get('loginscopesoffline');
 
@@ -230,6 +278,13 @@ class api {
         return $scopes;
     }
 
+    /**
+     * Get an authenticated oauth2 client using the system account.
+     * This call uses the refresh token to get an access token.
+     *
+     * @param core\oauth2\issuer $issuer
+     * @return core\oauth2\client
+     */
     public static function get_system_oauth_client(issuer $issuer) {
         $systemaccount = self::get_system_account($issuer);
         if (empty($systemaccount)) {
@@ -248,6 +303,15 @@ class api {
         return $client;
     }
 
+    /**
+     * Get an authenticated oauth2 client using the current user account.
+     * This call does the redirect dance back to the current page after authentication.
+     *
+     * @param core\oauth2\issuer $issuer The desired OAuth issuer
+     * @param moodle_url $url The url to the current page.
+     * @param string $additionalscopes The additional scopes required for authorization.
+     * @return core\oauth2\client
+     */
     public static function get_user_oauth_client(issuer $issuer, moodle_url $currenturl, $additionalscopes = '') {
         $client = new \core\oauth2\client($issuer, $currenturl, $additionalscopes);
 
@@ -257,14 +321,31 @@ class api {
         return $client;
     }
 
+    /**
+     * Get the list of defined endpoints for this OAuth issuer
+     *
+     * @param core\oauth2\issuer $issuer The desired OAuth issuer
+     * @return core\oauth2\endpoint[]
+     */
     public static function get_endpoints(issuer $issuer) {
         return endpoint::get_records(['issuerid' => $issuer->get('id')]);
     }
 
+    /**
+     * Get the list of defined mapping from OAuth user fields to moodle user fields.
+     *
+     * @param core\oauth2\issuer $issuer The desired OAuth issuer
+     * @return core\oauth2\user_field_mapping[]
+     */
     public static function get_user_field_mappings(issuer $issuer) {
         return user_field_mapping::get_records(['issuerid' => $issuer->get('id')]);
     }
 
+    /**
+     * Guess an image from the discovery URL.
+     *
+     * @param core\oauth2\issuer $issuer The desired OAuth issuer
+     */
     protected static function guess_image($issuer) {
         if (empty($issuer->get('image'))) {
             $baseurl = parse_url($issuer->get('discoveryurl'));
@@ -362,6 +443,12 @@ class api {
         return endpoint::count_records(['issuerid' => $issuer->get('id')]);
     }
 
+    /**
+     * Take the data from the mform and update the issuer.
+     *
+     * @param stdClass $data
+     * @return core\oauth2\issuer
+     */
     public static function update_issuer($data) {
         require_capability('moodle/site:config', context_system::instance());
         $issuer = new issuer(0, $data);
@@ -375,6 +462,12 @@ class api {
         return $issuer;
     }
 
+    /**
+     * Take the data from the mform and create the issuer.
+     *
+     * @param stdClass $data
+     * @return core\oauth2\issuer
+     */
     public static function create_issuer($data) {
         require_capability('moodle/site:config', context_system::instance());
         $issuer = new issuer(0, $data);
@@ -388,6 +481,12 @@ class api {
         return $issuer;
     }
 
+    /**
+     * Take the data from the mform and update the endpoint.
+     *
+     * @param stdClass $data
+     * @return core\oauth2\endpoint
+     */
     public static function update_endpoint($data) {
         require_capability('moodle/site:config', context_system::instance());
         $endpoint = new endpoint(0, $data);
@@ -398,6 +497,12 @@ class api {
         return $endpoint;
     }
 
+    /**
+     * Take the data from the mform and create the endpoint.
+     *
+     * @param stdClass $data
+     * @return core\oauth2\endpoint
+     */
     public static function create_endpoint($data) {
         require_capability('moodle/site:config', context_system::instance());
         $endpoint = new endpoint(0, $data);
@@ -407,6 +512,12 @@ class api {
         return $endpoint;
     }
 
+    /**
+     * Take the data from the mform and update the user field mapping.
+     *
+     * @param stdClass $data
+     * @return core\oauth2\user_field_mapping
+     */
     public static function update_user_field_mapping($data) {
         require_capability('moodle/site:config', context_system::instance());
         $userfieldmapping = new user_field_mapping(0, $data);
@@ -417,6 +528,12 @@ class api {
         return $userfieldmapping;
     }
 
+    /**
+     * Take the data from the mform and create the user field mapping.
+     *
+     * @param stdClass $data
+     * @return core\oauth2\user_field_mapping
+     */
     public static function create_user_field_mapping($data) {
         require_capability('moodle/site:config', context_system::instance());
         $userfieldmapping = new user_field_mapping(0, $data);
@@ -459,6 +576,14 @@ class api {
         return $result;
     }
 
+    /**
+     * Reorder this identity issuer.
+     *
+     * Requires moodle/site:config capability at the system context.
+     *
+     * @param int $id The id of the identity issuer to move.
+     * @return boolean
+     */
     public static function move_down_issuer($id) {
         require_capability('moodle/site:config', context_system::instance());
         $current = new issuer($id);
@@ -488,6 +613,14 @@ class api {
         return $result;
     }
 
+    /**
+     * Delete an identity issuer.
+     *
+     * Requires moodle/site:config capability at the system context.
+     *
+     * @param int $id The id of the identity issuer to delete.
+     * @return boolean
+     */
     public static function delete_issuer($id) {
         require_capability('moodle/site:config', context_system::instance());
         $issuer = new issuer($id);
@@ -507,6 +640,14 @@ class api {
         return $issuer->delete();
     }
 
+    /**
+     * Delete an endpoint.
+     *
+     * Requires moodle/site:config capability at the system context.
+     *
+     * @param int $id The id of the endpoint to delete.
+     * @return boolean
+     */
     public static function delete_endpoint($id) {
         require_capability('moodle/site:config', context_system::instance());
         $endpoint = new endpoint($id);
@@ -515,6 +656,14 @@ class api {
         return $endpoint->delete();
     }
 
+    /**
+     * Delete a user_field_mapping.
+     *
+     * Requires moodle/site:config capability at the system context.
+     *
+     * @param int $id The id of the user_field_mapping to delete.
+     * @return boolean
+     */
     public static function delete_user_field_mapping($id) {
         require_capability('moodle/site:config', context_system::instance());
         $userfieldmapping = new user_field_mapping($id);
@@ -523,6 +672,15 @@ class api {
         return $userfieldmapping->delete();
     }
 
+    /**
+     * Perform the OAuth dance and get a refresh token.
+     *
+     * Requires moodle/site:config capability at the system context.
+     *
+     * @param core\oauth2\issuer $issuer
+     * @param moodle_url $returnurl The url to the current page (we will be redirected back here after authentication).
+     * @return boolean
+     */
     public static function connect_system_account($issuer, $returnurl) {
         require_capability('moodle/site:config', context_system::instance());
 
