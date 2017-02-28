@@ -64,45 +64,7 @@ function cron_run() {
     // Run all scheduled tasks.
     while (!\core\task\manager::static_caches_cleared_since($timenow) &&
            $task = \core\task\manager::get_next_scheduled_task($timenow)) {
-        $fullname = $task->get_name() . ' (' . get_class($task) . ')';
-        mtrace('Execute scheduled task: ' . $fullname);
-        cron_trace_time_and_memory();
-        $predbqueries = null;
-        $predbqueries = $DB->perf_get_queries();
-        $pretime      = microtime(1);
-        try {
-            get_mailer('buffer');
-            $task->execute();
-            if ($DB->is_transaction_started()) {
-                throw new coding_exception("Task left transaction open");
-            }
-            if (isset($predbqueries)) {
-                mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
-                mtrace("... used " . (microtime(1) - $pretime) . " seconds");
-            }
-            mtrace('Scheduled task complete: ' . $fullname);
-            \core\task\manager::scheduled_task_complete($task);
-        } catch (Exception $e) {
-            if ($DB && $DB->is_transaction_started()) {
-                error_log('Database transaction aborted automatically in ' . get_class($task));
-                $DB->force_transaction_rollback();
-            }
-            if (isset($predbqueries)) {
-                mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
-                mtrace("... used " . (microtime(1) - $pretime) . " seconds");
-            }
-            mtrace('Scheduled task failed: ' . $fullname . ',' . $e->getMessage());
-            if ($CFG->debugdeveloper) {
-                 if (!empty($e->debuginfo)) {
-                    mtrace("Debug info:");
-                    mtrace($e->debuginfo);
-                }
-                mtrace("Backtrace:");
-                mtrace(format_backtrace($e->getTrace(), true));
-            }
-            \core\task\manager::scheduled_task_failed($task);
-        }
-        get_mailer('close');
+        cron_run_inner_scheduled_task($task);
         unset($task);
     }
 
@@ -156,6 +118,140 @@ function cron_run() {
     mtrace('Cron completed at ' . date('H:i:s') . '. Memory used ' . display_size(memory_get_usage()) . '.');
     $difftime = microtime_diff($starttime, microtime());
     mtrace("Execution took ".$difftime." seconds");
+}
+
+/**
+ * Shared code that handles running of a single scheduled task within the cron.
+ *
+ * Not intended for calling directly outside of this library!
+ *
+ * @param \core\task\task_base $task
+ */
+function cron_run_inner_scheduled_task(\core\task\task_base $task) {
+    global $CFG, $DB;
+
+    $fullname = $task->get_name() . ' (' . get_class($task) . ')';
+    mtrace('Execute scheduled task: ' . $fullname);
+    cron_trace_time_and_memory();
+    $predbqueries = null;
+    $predbqueries = $DB->perf_get_queries();
+    $pretime = microtime(1);
+    try {
+        get_mailer('buffer');
+        $task->execute();
+        if ($DB->is_transaction_started()) {
+            throw new coding_exception("Task left transaction open");
+        }
+        if (isset($predbqueries)) {
+            mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
+            mtrace("... used " . (microtime(1) - $pretime) . " seconds");
+        }
+        mtrace('Scheduled task complete: ' . $fullname);
+        \core\task\manager::scheduled_task_complete($task);
+    } catch (Exception $e) {
+        if ($DB && $DB->is_transaction_started()) {
+            error_log('Database transaction aborted automatically in ' . get_class($task));
+            $DB->force_transaction_rollback();
+        }
+        if (isset($predbqueries)) {
+            mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
+            mtrace("... used " . (microtime(1) - $pretime) . " seconds");
+        }
+        mtrace('Scheduled task failed: ' . $fullname . ',' . $e->getMessage());
+        if ($CFG->debugdeveloper) {
+            if (!empty($e->debuginfo)) {
+                mtrace("Debug info:");
+                mtrace($e->debuginfo);
+            }
+            mtrace("Backtrace:");
+            mtrace(format_backtrace($e->getTrace(), true));
+        }
+        \core\task\manager::scheduled_task_failed($task);
+    }
+    get_mailer('close');
+}
+
+/**
+ * Runs a single cron task. This function assumes it is displaying output in pseudo-CLI mode.
+ *
+ * The function will fail if the task is disabled.
+ *
+ * Warning: Because this function closes the browser session, it may not be safe to continue
+ * with other processing (other than displaying the rest of the page) after using this function!
+ *
+ * @param \core\task\scheduled_task $task Task to run
+ * @return bool True if cron run successful
+ */
+function cron_run_single_task(\core\task\scheduled_task $task) {
+    global $CFG, $DB, $USER;
+
+    if (CLI_MAINTENANCE) {
+        echo "CLI maintenance mode active, cron execution suspended.\n";
+        return false;
+    }
+
+    if (moodle_needs_upgrading()) {
+        echo "Moodle upgrade pending, cron execution suspended.\n";
+        return false;
+    }
+
+    // Check task and component is not disabled.
+    $taskname = get_class($task);
+    if ($task->get_disabled()) {
+        echo "Task is disabled ($taskname).\n";
+        return false;
+    }
+    $component = $task->get_component();
+    if ($plugininfo = core_plugin_manager::instance()->get_plugin_info($component)) {
+        if (!$plugininfo->is_enabled() && !$task->get_run_if_component_disabled()) {
+            echo "Component is not enabled ($component).\n";
+            return false;
+        }
+    }
+
+    // Enable debugging features as per config settings.
+    if (!empty($CFG->showcronsql)) {
+        $DB->set_debug(true);
+    }
+    if (!empty($CFG->showcrondebugging)) {
+        set_debugging(DEBUG_DEVELOPER, true);
+    }
+
+    // Increase time and memory limits.
+    core_php_time_limit::raise();
+    raise_memory_limit(MEMORY_EXTRA);
+
+    // Switch to admin account for cron tasks, but close the session so we don't send this stuff
+    // to the browser.
+    session_write_close();
+    $realuser = clone($USER);
+    cron_setup_user(null, null, true);
+
+    // Get lock for cron task.
+    $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+    if (!$cronlock = $cronlockfactory->get_lock('core_cron', 1)) {
+        echo "Unable to get cron lock.\n";
+        return false;
+    }
+    if (!$lock = $cronlockfactory->get_lock($taskname, 1)) {
+        $cronlock->release();
+        echo "Unable to get task lock for $taskname.\n";
+        return false;
+    }
+    $task->set_lock($lock);
+    if (!$task->is_blocking()) {
+        $cronlock->release();
+    } else {
+        $task->set_cron_lock($cronlock);
+    }
+
+    // Run actual tasks.
+    cron_run_inner_scheduled_task($task);
+
+    // Go back to real user account.
+    cron_setup_user($realuser, null, true);
+
+    return true;
 }
 
 /**

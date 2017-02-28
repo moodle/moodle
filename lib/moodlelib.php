@@ -8730,8 +8730,13 @@ function address_in_subnet($addr, $subnetstr) {
  *                      This ensures any messages have time to display before redirect
  */
 function mtrace($string, $eol="\n", $sleep=0) {
+    global $CFG;
 
-    if (defined('STDOUT') && !PHPUNIT_TEST && !defined('BEHAT_TEST')) {
+    if (isset($CFG->mtrace_wrapper) && function_exists($CFG->mtrace_wrapper)) {
+        $fn = $CFG->mtrace_wrapper;
+        $fn($string, $eol);
+        return;
+    } else if (defined('STDOUT') && !PHPUNIT_TEST && !defined('BEHAT_TEST')) {
         fwrite(STDOUT, $string.$eol);
     } else {
         echo $string . $eol;
