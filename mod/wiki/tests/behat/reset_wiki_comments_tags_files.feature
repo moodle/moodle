@@ -1,4 +1,4 @@
-@mod @mod_wiki @javascript
+@mod @mod_wiki @javascript @_file_upload
 Feature: Teachers can reset wiki pages, tags and files
   In order to remove wiki pages, tags and files
   As a teacher
