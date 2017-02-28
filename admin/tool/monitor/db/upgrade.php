@@ -80,10 +80,11 @@ function xmldb_tool_monitor_upgrade($oldversion) {
     if ($oldversion < 2016052306) {
 
         // Delete "orphaned" subscriptions.
-        $deletedcourses = $DB->get_field_sql("SELECT DISTINCT s.courseid
-            FROM {tool_monitor_subscriptions} s
-            LEFT OUTER JOIN {course} c ON c.id = s.courseid
-            WHERE s.courseid <> 0 and c.id IS NULL");
+        $sql = "SELECT DISTINCT s.courseid
+                  FROM {tool_monitor_subscriptions} s
+       LEFT OUTER JOIN {course} c ON c.id = s.courseid
+                 WHERE s.courseid <> 0 and c.id IS NULL";
+        $deletedcourses = $DB->get_field_sql($sql);
         if ($deletedcourses) {
             list($sql, $params) = $DB->get_in_or_equal($deletedcourses);
             $DB->execute("DELETE FROM {tool_monitor_subscriptions} WHERE courseid " . $sql, $params);

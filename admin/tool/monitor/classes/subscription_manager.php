@@ -234,9 +234,9 @@ class subscription_manager {
         global $DB;
 
         // Store all the subscriptions we have to delete.
-        if ($subscriptions = $DB->get_records('tool_monitor_subscriptions', array('courseid' => $coursecontext->instanceid))) {
+        if ($subscriptions = $DB->get_records('tool_monitor_subscriptions', ['courseid' => $coursecontext->instanceid])) {
             // Delete subscriptions in bulk.
-            $DB->delete_records('tool_monitor_subscriptions', array('courseid' => $coursecontext->instanceid));
+            $DB->delete_records('tool_monitor_subscriptions', ['courseid' => $coursecontext->instanceid]);
 
             // Trigger events one by one.
             foreach ($subscriptions as $subscription) {
