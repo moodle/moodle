@@ -158,6 +158,7 @@ if ($mform && $mform->is_cancelled()) {
 } else {
     echo $OUTPUT->header();
     $issuers = core\oauth2\api::get_all_issuers();
+    var_dump(\core\oauth2\api::get_system_oauth_client($issuers[0], $PAGE->url));
     echo $renderer->issuers_table($issuers);
 
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edit']);
@@ -165,4 +166,5 @@ if ($mform && $mform->is_cancelled()) {
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edittemplate']);
     echo $renderer->single_button($addurl, get_string('createnewstandardissuer', 'tool_oauth2'));
     echo $OUTPUT->footer();
+
 }

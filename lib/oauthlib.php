@@ -390,11 +390,13 @@ abstract class oauth2_client extends curl {
     /** var moodle_url URL to return to after authenticating */
     private $returnurl = null;
     /** var string scope of the authentication request */
-    private $scope = '';
+    protected $scope = '';
     /** var stdClass access token object */
     private $accesstoken = null;
     /** var stdClass refresh token string */
     private $refreshtoken = '';
+    /** var string mocknextresponse string */
+    private $mocknextresponse = '';
 
     /**
      * Returns the auth url for OAuth 2.0 request
@@ -474,6 +476,11 @@ abstract class oauth2_client extends curl {
         return new moodle_url('/admin/oauth2callback.php');
     }
 
+    /**
+     * An additional array of url params to pass with a login request.
+     *
+     * @return array of name value pairs.
+     */
     public function get_additional_login_parameters() {
         return [];
     }

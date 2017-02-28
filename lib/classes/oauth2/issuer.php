@@ -97,6 +97,17 @@ class issuer extends persistent {
     }
 
     /**
+     * Hook to execute before validate.
+     *
+     * @return void
+     */
+    protected function before_validate() {
+        if (($this->get('id') && $this->get('sortorder') === null) || !$this->get('id')) {
+            $this->set('sortorder', $this->count_records());
+        }
+    }
+
+    /**
      * Helper the get a named service endpoint.
      * @param string $type
      * @return string|false

@@ -50,9 +50,11 @@ class client extends \oauth2_client {
      * Constructor.
      *
      * @param issuer $issuer
-     * @param moodle_url $returnurl
+     * @param moodle_url|null $returnurl
+     * @param string $scopesrequired
+     * @param boolean $system
      */
-    public function __construct(issuer $issuer, moodle_url $returnurl, $scopesrequired, $system = false) {
+    public function __construct(issuer $issuer, $returnurl, $scopesrequired, $system = false) {
         $this->issuer = $issuer;
         $this->system = $system;
         $scopes = $this->get_login_scopes();
@@ -64,6 +66,9 @@ class client extends \oauth2_client {
                     $scopes .= ' ' . $scope;
                 }
             }
+        }
+        if (empty($returnurl)) {
+            $returnurl = new moodle_url('/');
         }
         parent::__construct($issuer->get('clientid'), $issuer->get('clientsecret'), $returnurl, $scopes);
     }
@@ -170,8 +175,8 @@ class client extends \oauth2_client {
         $refreshtoken = $systemaccount->get('refreshtoken');
 
         $params = array('refresh_token' => $refreshtoken,
-            'client_id' => $this->clientid,
-            'client_secret' => $this->clientsecret,
+            'client_id' => $this->issuer->get('clientid'),
+            'client_secret' => $this->issuer->get('clientsecret'),
             'grant_type' => 'refresh_token'
         );
 

@@ -296,7 +296,7 @@ class api {
         $client = new \core\oauth2\client($issuer, null, $scopes, true);
 
         if (!$client->is_logged_in()) {
-            if (!$client->update_refresh_token($systemaccount)) {
+            if (!$client->upgrade_refresh_token($systemaccount)) {
                 return false;
             }
         }
@@ -685,11 +685,11 @@ class api {
         require_capability('moodle/site:config', context_system::instance());
 
         // We need to authenticate with an oauth 2 client AS a system user and get a refresh token for offline access.
-        $scopesrequired = 'openid email profile';
+        $scopes = self::get_system_scopes_for_issuer($issuer);
 
         // Allow callbacks to inject non-standard scopes to the auth request.
 
-        $client = new client($issuer, $returnurl, $scopesrequired, true);
+        $client = new client($issuer, $returnurl, $scopes, true);
 
         if (!optional_param('response', false, PARAM_BOOL)) {
             $client->log_out();
