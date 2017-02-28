@@ -31,6 +31,7 @@ require_once("$CFG->libdir/externallib.php");
 
 use \core_calendar\local\api as local_api;
 use \core_calendar\external\events_exporter;
+use \core_calendar\external\events_grouped_by_course_exporter;
 use \core_calendar\external\events_related_objects_cache;
 
 /**
@@ -380,6 +381,91 @@ class core_calendar_external extends external_api {
      * @return external_description
      */
     public static function get_calendar_action_events_by_timesort_returns() {
+        return events_exporter::get_read_structure();
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_calendar_action_events_by_course_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'Course id'),
+                'timesortfrom' => new external_value(PARAM_INT, 'Time sort from', VALUE_DEFAULT, null),
+                'timesortto' => new external_value(PARAM_INT, 'Time sort to', VALUE_DEFAULT, null),
+                'aftereventid' => new external_value(PARAM_INT, 'The last seen event id', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 20)
+            )
+        );
+    }
+
+    /**
+     * Get calendar action events for the given course.
+     *
+     * @since Moodle 3.3
+     * @param int $courseid Only events in this course
+     * @param null|int $timesortfrom Events after this time (inclusive)
+     * @param null|int $timesortto Events before this time (inclusive)
+     * @param null|int $aftereventid Get events with ids greater than this one
+     * @param int $limitnum Limit the number of results to this value
+     * @return array
+     */
+    public static function get_calendar_action_events_by_course(
+        $courseid, $timesortfrom = null, $timesortto = null, $aftereventid = 0, $limitnum = 20) {
+
+        global $CFG, $PAGE, $USER;
+
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $user = null;
+        $params = self::validate_parameters(
+            self::get_calendar_action_events_by_course_parameters(),
+            [
+                'courseid' => $courseid,
+                'timesortfrom' => $timesortfrom,
+                'timesortto' => $timesortto,
+                'aftereventid' => $aftereventid,
+                'limitnum' => $limitnum,
+            ]
+        );
+        $context = \context_user::instance($USER->id);
+        self::validate_context($context);
+
+        if (empty($params['aftereventid'])) {
+            $params['aftereventid'] = null;
+        }
+
+        $courses = enrol_get_my_courses('*', 'visible DESC,sortorder ASC', 0, [$courseid]);
+        $courses = array_values($courses);
+
+        if (empty($courses)) {
+            return [];
+        }
+
+        $course = $courses[0];
+        $renderer = $PAGE->get_renderer('core_calendar');
+        $events = local_api::get_action_events_by_course(
+            $course,
+            $params['timesortfrom'],
+            $params['timesortto'],
+            $params['aftereventid'],
+            $params['limitnum']
+        );
+
+        $exportercache = new events_related_objects_cache($events, $courses);
+        $exporter = new events_exporter($events, ['cache' => $exportercache]);
+
+        return $exporter->export($renderer);
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function get_calendar_action_events_by_course_returns() {
         return events_exporter::get_read_structure();
     }
 
