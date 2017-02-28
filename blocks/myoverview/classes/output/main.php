@@ -42,8 +42,11 @@ class main implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        $coursesummary = new course_summary();
-        $coursesview = new courses_view();
+
+        $courses = enrol_get_my_courses('id, shortname, startdate, enddate, summary');
+
+        $coursesummary = new course_summary($courses);
+        $coursesview = new courses_view($courses);
 
         return [
             'courses' => $coursesummary->export_for_template($output),

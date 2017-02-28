@@ -36,6 +36,18 @@ use templatable;
  */
 class course_summary implements renderable, templatable {
 
+    /** @var array $courses List of courses the user is enrolled in. */
+    protected $courses = [];
+
+    /**
+     * The course_summary constructor.
+     *
+     * @param array $courses list of courses.
+     */
+    public function __construct($courses) {
+        $this->courses = $courses;
+    }
+
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
@@ -43,12 +55,11 @@ class course_summary implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        $courses = enrol_get_my_courses('*');
 
         $data = [];
-        foreach ($courses as $courseid => $value) {
+        foreach ($this->courses as $courseid => $value) {
             $context = \context_course::instance($courseid);
-            $exporter = new course_summary_exporter($courses[$courseid], array('context' => $context));
+            $exporter = new course_summary_exporter($this->courses[$courseid], array('context' => $context));
             $data[] = $exporter->export($output);
         }
         return $data;

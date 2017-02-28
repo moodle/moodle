@@ -37,6 +37,18 @@ class courses_view implements renderable, templatable {
     /** Quantity of courses per page. */
     const COURSES_PER_PAGE = 6;
 
+    /** @var array $courses List of courses the user is enrolled in. */
+    protected $courses = [];
+
+    /**
+     * The courses_view constructor.
+     *
+     * @param array $courses list of courses.
+     */
+    public function __construct($courses) {
+        $this->courses = $courses;
+    }
+
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
@@ -44,12 +56,11 @@ class courses_view implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        $courses = enrol_get_my_courses('startdate, enddate');
         $today = time();
 
         // How many courses we have per status?
         $coursesbystatus = ['past' => 0, 'inprogress' => 0, 'future' => 0];
-        foreach ($courses as $course) {
+        foreach ($this->courses as $course) {
             $startdate = $course->startdate;
             $enddate = $course->enddate;
 
