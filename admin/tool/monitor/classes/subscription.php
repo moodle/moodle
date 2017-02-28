@@ -176,8 +176,12 @@ class subscription {
         if (empty($courseid)) {
             return get_string('site');
         } else {
-            $course = get_course($courseid);
-            return format_string($course->fullname, true, array('context' => $context));
+            try {
+                $course = get_course($courseid);
+                return format_string($course->fullname, true, array('context' => $context));
+            } catch (\dml_exception $e) {
+                return '-';
+            }
         }
     }
 
