@@ -850,20 +850,109 @@ class core_calendar_api_testcase extends advanced_testcase {
         $event15 = create_event(array_merge($params, ['name' => 'Event 15', 'timesort' => 7]));
         $event16 = create_event(array_merge($params, ['name' => 'Event 16', 'timesort' => 8]));
 
-        $result = api::get_action_events_by_course_and_timesort($course1, 2, 7, $event3->id, 2);
+        $result = api::get_action_events_by_course($course1, 2, 7, $event3->id, 2);
 
         $this->assertCount(2, $result);
         $this->assertEquals('Event 4', $result[0]->name);
         $this->assertEquals('Event 5', $result[1]->name);
 
-        $result = api::get_action_events_by_course_and_timesort($course1, 2, 7, $event5->id, 2);
+        $result = api::get_action_events_by_course($course1, 2, 7, $event5->id, 2);
 
         $this->assertCount(2, $result);
         $this->assertEquals('Event 6', $result[0]->name);
         $this->assertEquals('Event 7', $result[1]->name);
 
-        $result = api::get_action_events_by_course_and_timesort($course1, 2, 7, $event7->id, 2);
+        $result = api::get_action_events_by_course($course1, 2, 7, $event7->id, 2);
 
         $this->assertEmpty($result);
+    }
+
+    /**
+     * Test that get_action_events_by_courses will return a list of events for each
+     * course you provided as long as the user is enrolled in the course.
+     */
+    public function test_get_action_events_by_courses() {
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance1 = $generator->create_instance(['course' => $course1->id]);
+        $moduleinstance2 = $generator->create_instance(['course' => $course2->id]);
+        $moduleinstance3 = $generator->create_instance(['course' => $course3->id]);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course3->id);
+        $this->resetAfterTest(true);
+        $this->setUser($user);
+
+        $params = [
+            'type' => CALENDAR_EVENT_TYPE_ACTION,
+            'modulename' => 'assign',
+            'instance' => $moduleinstance1->id,
+            'userid' => $user->id,
+            'courseid' => $course1->id,
+            'eventtype' => 'user',
+            'repeats' => 0,
+            'timestart' => 1,
+        ];
+
+        $event1 = create_event(array_merge($params, ['name' => 'Event 1', 'timesort' => 1]));
+        $event2 = create_event(array_merge($params, ['name' => 'Event 2', 'timesort' => 2]));
+
+        $params['courseid'] = $course2->id;
+        $params['instance'] = $moduleinstance2->id;
+        $event3 = create_event(array_merge($params, ['name' => 'Event 3', 'timesort' => 3]));
+        $event4 = create_event(array_merge($params, ['name' => 'Event 4', 'timesort' => 4]));
+        $event5 = create_event(array_merge($params, ['name' => 'Event 5', 'timesort' => 5]));
+
+        $params['courseid'] = $course3->id;
+        $params['instance'] = $moduleinstance3->id;
+        $event6 = create_event(array_merge($params, ['name' => 'Event 6', 'timesort' => 6]));
+        $event7 = create_event(array_merge($params, ['name' => 'Event 7', 'timesort' => 7]));
+        $event8 = create_event(array_merge($params, ['name' => 'Event 8', 'timesort' => 8]));
+        $event9 = create_event(array_merge($params, ['name' => 'Event 9', 'timesort' => 9]));
+
+        $result = api::get_action_events_by_courses([], 1);
+
+        $this->assertEmpty($result);
+
+        $result = api::get_action_events_by_courses([$course1], 3);
+
+        $this->assertEmpty($result[$course1->id]);
+
+        $result = api::get_action_events_by_courses([$course1], 1);
+
+        $this->assertCount(2, $result[$course1->id]);
+        $this->assertEquals('Event 1', $result[$course1->id][0]->name);
+        $this->assertEquals('Event 2', $result[$course1->id][1]->name);
+
+        $result = api::get_action_events_by_courses([$course1, $course2], 1);
+
+        $this->assertCount(2, $result[$course1->id]);
+        $this->assertEquals('Event 1', $result[$course1->id][0]->name);
+        $this->assertEquals('Event 2', $result[$course1->id][1]->name);
+        $this->assertCount(3, $result[$course2->id]);
+        $this->assertEquals('Event 3', $result[$course2->id][0]->name);
+        $this->assertEquals('Event 4', $result[$course2->id][1]->name);
+        $this->assertEquals('Event 5', $result[$course2->id][2]->name);
+
+        $result = api::get_action_events_by_courses([$course1, $course2], 2, 4);
+
+        $this->assertCount(1, $result[$course1->id]);
+        $this->assertEquals('Event 2', $result[$course1->id][0]->name);
+        $this->assertCount(2, $result[$course2->id]);
+        $this->assertEquals('Event 3', $result[$course2->id][0]->name);
+        $this->assertEquals('Event 4', $result[$course2->id][1]->name);
+
+        $result = api::get_action_events_by_courses([$course1, $course2, $course3], 1, null, 1);
+
+        $this->assertCount(1, $result[$course1->id]);
+        $this->assertEquals('Event 1', $result[$course1->id][0]->name);
+        $this->assertCount(1, $result[$course2->id]);
+        $this->assertEquals('Event 3', $result[$course2->id][0]->name);
+        $this->assertCount(1, $result[$course3->id]);
+        $this->assertEquals('Event 6', $result[$course3->id][0]->name);
     }
 }
