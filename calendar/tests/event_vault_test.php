@@ -276,4 +276,339 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $this->assertEquals(sprintf('Event %d', $limit + 4), $events[3]->get_name());
         $this->assertEquals(sprintf('Event %d', $limit + 5), $events[4]->get_name());
     }
+
+    /**
+     * Test that get_action_events_by_course returns events after the
+     * provided timesort value.
+     */
+    public function test_get_action_events_by_course_after_time() {
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $factory = new action_event_test_factory();
+        $vault = new event_vault($factory);
+
+        $this->resetAfterTest(true);
+        $this->setAdminuser();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+
+        for ($i = 1; $i < 6; $i++) {
+            create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course1->id,
+            ]);
+        }
+
+        for ($i = 6; $i < 12; $i++) {
+            create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course2->id,
+            ]);
+        }
+
+        $events = $vault->get_action_events_by_course($user, $course1, 3);
+
+        $this->assertCount(3, $events);
+        $this->assertEquals('Event 3', $events[0]->get_name());
+        $this->assertEquals('Event 4', $events[1]->get_name());
+        $this->assertEquals('Event 5', $events[2]->get_name());
+
+        $events = $vault->get_action_events_by_course($user, $course1, 3, null, null, 1);
+
+        $this->assertCount(1, $events);
+        $this->assertEquals('Event 3', $events[0]->get_name());
+
+        $events = $vault->get_action_events_by_course($user, $course1, 6);
+
+        $this->assertCount(0, $events);
+    }
+
+    /**
+     * Test that get_action_events_by_course returns events before the
+     * provided timesort value.
+     */
+    public function test_get_action_events_by_course_before_time() {
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $factory = new action_event_test_factory();
+        $vault = new event_vault($factory);
+
+        $this->resetAfterTest(true);
+        $this->setAdminuser();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+
+        for ($i = 1; $i < 6; $i++) {
+            create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course1->id,
+            ]);
+        }
+
+        for ($i = 6; $i < 12; $i++) {
+            create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course2->id,
+            ]);
+        }
+
+        $events = $vault->get_action_events_by_course($user, $course1, null, 3);
+
+        $this->assertCount(3, $events);
+        $this->assertEquals('Event 1', $events[0]->get_name());
+        $this->assertEquals('Event 2', $events[1]->get_name());
+        $this->assertEquals('Event 3', $events[2]->get_name());
+
+        $events = $vault->get_action_events_by_course($user, $course1, null, 3, null, 1);
+
+        $this->assertCount(1, $events);
+        $this->assertEquals('Event 1', $events[0]->get_name());
+
+        $events = $vault->get_action_events_by_course($user, $course1, 6);
+
+        $this->assertCount(0, $events);
+    }
+
+    /**
+     * Test that get_action_events_by_course returns events between the
+     * provided timesort values.
+     */
+    public function test_get_action_events_by_course_between_time() {
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $factory = new action_event_test_factory();
+        $vault = new event_vault($factory);
+
+        $this->resetAfterTest(true);
+        $this->setAdminuser();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+
+        for ($i = 1; $i < 6; $i++) {
+            create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course1->id,
+            ]);
+        }
+
+        for ($i = 6; $i < 12; $i++) {
+            create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course2->id,
+            ]);
+        }
+
+        $events = $vault->get_action_events_by_course($user, $course1, 2, 4);
+
+        $this->assertCount(3, $events);
+        $this->assertEquals('Event 2', $events[0]->get_name());
+        $this->assertEquals('Event 3', $events[1]->get_name());
+        $this->assertEquals('Event 4', $events[2]->get_name());
+
+        $events = $vault->get_action_events_by_course($user, $course1, 2, 4, null, 1);
+
+        $this->assertCount(1, $events);
+        $this->assertEquals('Event 2', $events[0]->get_name());
+    }
+
+    /**
+     * Test that get_action_events_by_course returns events between the
+     * provided timesort values and after the last seen event when one is
+     * provided.
+     */
+    public function test_get_action_events_by_course_between_time_after_event() {
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $factory = new action_event_test_factory();
+        $vault = new event_vault($factory);
+        $records = [];
+
+        $this->resetAfterTest(true);
+        $this->setAdminuser();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+
+        for ($i = 1; $i < 21; $i++) {
+            $records[] = create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course1->id,
+            ]);
+        }
+
+        for ($i = 21; $i < 41; $i++) {
+            $records[] = create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course2->id,
+            ]);
+        }
+
+        $aftereventid = $records[6]->id;
+        $afterevent = $vault->get_event_by_id($aftereventid);
+        $events = $vault->get_action_events_by_course($user, $course1, 3, 15, $afterevent);
+
+        $this->assertCount(8, $events);
+        $this->assertEquals('Event 8', $events[0]->get_name());
+
+        $events = $vault->get_action_events_by_course($user, $course1, 3, 15, $afterevent, 3);
+
+        $this->assertCount(3, $events);
+    }
+
+    /**
+     * Test that get_action_events_by_course returns events between the
+     * provided timesort values and the last seen event can be provided to
+     * get paginated results.
+     */
+    public function test_get_action_events_by_course_between_time_skip_even_records() {
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        // The factory will skip events with even ids.
+        $factory = new action_event_test_factory(function($actionevent) {
+            return ($actionevent->get_id() % 2) ? false : true;
+        });
+        $vault = new event_vault($factory);
+
+        $this->resetAfterTest(true);
+        $this->setAdminuser();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+
+        for ($i = 1; $i < 41; $i++) {
+            create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course1->id,
+            ]);
+        }
+
+        for ($i = 41; $i < 81; $i++) {
+            create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course2->id,
+            ]);
+        }
+
+        $events = $vault->get_action_events_by_course($user, $course1, 3, 35, null, 5);
+
+        $this->assertCount(5, $events);
+        $this->assertEquals('Event 3', $events[0]->get_name());
+        $this->assertEquals('Event 5', $events[1]->get_name());
+        $this->assertEquals('Event 7', $events[2]->get_name());
+        $this->assertEquals('Event 9', $events[3]->get_name());
+        $this->assertEquals('Event 11', $events[4]->get_name());
+
+        $afterevent = $events[4];
+        $events = $vault->get_action_events_by_course($user, $course1, 3, 35, $afterevent, 5);
+
+        $this->assertCount(5, $events);
+        $this->assertEquals('Event 13', $events[0]->get_name());
+        $this->assertEquals('Event 15', $events[1]->get_name());
+        $this->assertEquals('Event 17', $events[2]->get_name());
+        $this->assertEquals('Event 19', $events[3]->get_name());
+        $this->assertEquals('Event 21', $events[4]->get_name());
+    }
+
+    /**
+     * Test that get_action_events_by_course returns events between the
+     * provided timesort values. The database will continue to be read until the
+     * number of events requested has been satisfied. In this case the first
+     * five events are rejected so it should require two database requests.
+     */
+    public function test_get_action_events_by_course_between_time_skip_first_records() {
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $limit = 5;
+        $seen = 0;
+        // The factory will skip the first $limit events.
+        $factory = new action_event_test_factory(function($actionevent) use (&$seen, $limit) {
+            if ($seen < $limit) {
+                $seen++;
+                return false;
+            } else {
+                return true;
+            }
+        });
+        $vault = new event_vault($factory);
+
+        $this->resetAfterTest(true);
+        $this->setAdminuser();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+
+        for ($i = 1; $i < 21; $i++) {
+            create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course1->id,
+            ]);
+        }
+
+        for ($i = 21; $i < 41; $i++) {
+            create_event([
+                'name' => sprintf('Event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course2->id,
+            ]);
+        }
+
+        $events = $vault->get_action_events_by_course($user, $course1, 1, 20, null, $limit);
+
+        $this->assertCount($limit, $events);
+        $this->assertEquals(sprintf('Event %d', $limit + 1), $events[0]->get_name());
+        $this->assertEquals(sprintf('Event %d', $limit + 2), $events[1]->get_name());
+        $this->assertEquals(sprintf('Event %d', $limit + 3), $events[2]->get_name());
+        $this->assertEquals(sprintf('Event %d', $limit + 4), $events[3]->get_name());
+        $this->assertEquals(sprintf('Event %d', $limit + 5), $events[4]->get_name());
+    }
 }
