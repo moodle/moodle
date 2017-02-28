@@ -472,6 +472,92 @@ class core_calendar_external extends external_api {
     /**
      * Returns description of method parameters.
      *
+     * @return external_function_parameters
+     */
+    public static function get_calendar_action_events_by_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'Course id')
+                ),
+                'timesortfrom' => new external_value(PARAM_INT, 'Time sort from', VALUE_DEFAULT, null),
+                'timesortto' => new external_value(PARAM_INT, 'Time sort to', VALUE_DEFAULT, null),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 10)
+            )
+        );
+    }
+
+    /**
+     * Get calendar action events for a given list of courses.
+     *
+     * @since Moodle 3.3
+     * @param array $courseids Only include events for these courses
+     * @param null|int $timesortfrom Events after this time (inclusive)
+     * @param null|int $timesortto Events before this time (inclusive)
+     * @param int $limitnum Limit the number of results per course to this value
+     * @return array
+     */
+    public static function get_calendar_action_events_by_courses(
+        array $courseids, $timesortfrom = null, $timesortto = null, $limitnum = 10) {
+
+        global $CFG, $PAGE, $USER;
+
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $user = null;
+        $params = self::validate_parameters(
+            self::get_calendar_action_events_by_courses_parameters(),
+            [
+                'courseids' => $courseids,
+                'timesortfrom' => $timesortfrom,
+                'timesortto' => $timesortto,
+                'limitnum' => $limitnum,
+            ]
+        );
+        $context = \context_user::instance($USER->id);
+        self::validate_context($context);
+
+        if (empty($params['courseids'])) {
+            return ['groupedbycourse' => []];
+        }
+
+        $renderer = $PAGE->get_renderer('core_calendar');
+        $courses = enrol_get_my_courses('*', 'visible DESC,sortorder ASC', 0, $params['courseids']);
+        $courses = array_values($courses);
+
+        if (empty($courses)) {
+            return ['groupedbycourse' => []];
+        }
+
+        $events = local_api::get_action_events_by_courses(
+            $courses,
+            $params['timesortfrom'],
+            $params['timesortto'],
+            $params['limitnum']
+        );
+
+        if (empty($events)) {
+            return ['groupedbycourse' => []];
+        }
+
+        $exportercache = new events_related_objects_cache($events, $courses);
+        $exporter = new events_grouped_by_course_exporter($events, ['cache' => $exportercache]);
+
+        return $exporter->export($renderer);
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function get_calendar_action_events_by_courses_returns() {
+        return events_grouped_by_course_exporter::get_read_structure();
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
      * @return external_function_parameters.
      * @since Moodle 2.5
      */

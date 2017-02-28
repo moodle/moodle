@@ -93,6 +93,15 @@ $functions = array(
         'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries',
         'ajax' => true,
     ),
+    'core_calendar_get_action_events_by_courses' => array(
+        'classname' => 'core_calendar_external',
+        'methodname' => 'get_calendar_action_events_by_courses',
+        'description' => 'Get calendar action events by courses',
+        'classpath' => 'calendar/externallib.php',
+        'type' => 'read',
+        'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries',
+        'ajax' => true,
+    ),
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
         'methodname' => 'add_cohort_members',
