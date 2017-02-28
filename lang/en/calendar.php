@@ -99,6 +99,7 @@ $string['eventcalendareventdeleted'] = 'Calendar event deleted';
 $string['eventsubscriptioncreated'] = 'Calendar subscription created';
 $string['eventsubscriptionupdated'] = 'Calendar subscription updated';
 $string['eventsubscriptiondeleted'] = 'Calendar subscription deleted';
+$string['eventsubscriptioneditwarning'] = 'This calendar event is part of a subscription.  Any changes you make to this event will be lost if the subscription is deleted.';
 $string['expired'] = 'Expired';
 $string['explain_site_timeformat'] = 'You can choose to see times in either 12 or 24 hour format for the whole site. If you choose "default", then the format will be automatically chosen according to the language you use in the site. This setting can be overridden by user preferences.';
 $string['export'] = 'Export';

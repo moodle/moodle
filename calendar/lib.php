@@ -1564,9 +1564,12 @@ function calendar_edit_event_allowed($event) {
         return false;
     }
 
-    // You cannot edit calendar subscription events presently.
-    if (!empty($event->subscriptionid)) {
-        return false;
+    // You cannot edit URL based calendar subscription events presently.
+    if (isset($event->subscriptionid)) {
+        if (!empty($event->subscription->url)) {
+            // This event can be updated externally, so it cannot be edited.
+            return false;
+        }
     }
 
     $sitecontext = context_system::instance();

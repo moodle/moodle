@@ -110,4 +110,17 @@ class behat_calendar extends behat_base {
         $todaysday = ltrim($todaysday, '0');
         return $this->i_hover_over_day_of_this_month_in_calendar($todaysday);
     }
+
+    /**
+     * Navigate to a specific date in the calendar.
+     *
+     * @Given /^I view the calendar for "(?P<month>\d+)" "(?P<year>\d+)"$/
+     * @param int $month the month selected as a number
+     * @param int $year the four digit year
+     */
+    public function i_view_the_calendar_for($month, $year) {
+        $time = make_timestamp($year, $month, 1);
+        $this->getSession()->visit($this->locate_path('/calendar/view.php?view=month&course=1&time='.$time));
+
+    }
 }
