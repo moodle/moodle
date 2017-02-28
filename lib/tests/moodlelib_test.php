@@ -2793,7 +2793,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
         $user2 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
         $user3 = $this->getDataGenerator()->create_user(array('maildisplay' => 0));
-        set_config('allowedemaildomains', 'example.com');
+        set_config('allowedemaildomains', "example.com\r\nmoodle.org");
 
         $subject = 'subject';
         $messagetext = 'message text';
@@ -3366,17 +3366,17 @@ class core_moodlelib_testcase extends advanced_testcase {
      * @param string $email Email address for the from user.
      * @param int $display The user's email display preference.
      * @param bool $samecourse Are the users in the same course?
+     * @param string $config The CFG->allowedemaildomains config values
      * @param bool $result The expected result.
      * @dataProvider data_can_send_from_real_email_address
      */
-    public function test_can_send_from_real_email_address($email, $display, $samecourse, $result) {
-        global $DB;
+    public function test_can_send_from_real_email_address($email, $display, $samecourse, $config, $result) {
         $this->resetAfterTest();
 
         $fromuser = $this->getDataGenerator()->create_user();
         $touser = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
-        $alloweddomains = ['example.com'];
+        set_config('allowedemaildomains', $config);
 
         $fromuser->email = $email;
         $fromuser->maildisplay = $display;
@@ -3386,7 +3386,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         } else {
             $this->getDataGenerator()->enrol_user($fromuser->id, $course->id, 'student');
         }
-        $this->assertEquals($result, can_send_from_real_email_address($fromuser, $touser, $alloweddomains));
+        $this->assertEquals($result, can_send_from_real_email_address($fromuser, $touser));
     }
 
     /**
@@ -3398,31 +3398,95 @@ class core_moodlelib_testcase extends advanced_testcase {
         return [
             // Test from email is in allowed domain.
             // Test that from display is set to show no one.
-            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_HIDE,
-             'samecourse' => false, 'result' => false],
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_HIDE,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
             // Test that from display is set to course members only (course member).
-            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
-             'samecourse' => true, 'result' => true],
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+                'samecourse' => true,
+                'config' => "example.com\r\ntest.com",
+                'result' => true
+            ],
             // Test that from display is set to course members only (Non course member).
-            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
-             'samecourse' => false, 'result' => false],
-             // Test that from display is set to show everyone.
-            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_EVERYONE,
-             'samecourse' => false, 'result' => true],
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
+            // Test that from display is set to show everyone.
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => true
+            ],
+            // Test a few different config value formats for parsing correctness.
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => "\n test.com\nexample.com \n",
+                'result' => true
+            ],
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => "\r\n example.com \r\n test.com \r\n",
+                'result' => true
+            ],
 
             // Test from email is not in allowed domain.
             // Test that from display is set to show no one.
-            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_HIDE,
-             'samecourse' => false, 'result' => false],
-             // Test that from display is set to course members only (course member).
-            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
-             'samecourse' => true, 'result' => false],
-             // Test that from display is set to course members only (Non course member.
-            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
-             'samecourse' => false, 'result' => false],
-             // Test that from display is set to show everyone.
-            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_EVERYONE,
-             'samecourse' => false, 'result' => false],
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_HIDE,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
+            // Test that from display is set to course members only (course member).
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+                'samecourse' => true,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
+            // Test that from display is set to course members only (Non course member.
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
+            // Test that from display is set to show everyone.
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
+            // Test a few erroneous config value and confirm failure.
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => "\r\n   \r\n",
+                'result' => false
+            ],
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => " \n   \n \n ",
+                'result' => false
+            ],
         ];
     }
 
