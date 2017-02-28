@@ -5812,7 +5812,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
 
     $alloweddomains = null;
     if (!empty($CFG->allowedemaildomains)) {
-        $alloweddomains = explode(PHP_EOL, $CFG->allowedemaildomains);
+        $alloweddomains = array_map('trim', explode("\n", $CFG->allowedemaildomains));
     }
 
     // Email will be sent using no reply address.
