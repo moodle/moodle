@@ -476,4 +476,49 @@ class core_enrollib_testcase extends advanced_testcase {
 
         $this->assertGreaterThan($userenrolorig, $userenrolpost);
     }
+
+    /**
+     * Test to confirm that enrol_get_my_courses only return the courses that
+     * the logged in user is enrolled in.
+     */
+    public function test_enrol_get_my_courses_only_enrolled_courses() {
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+        $course4 = $this->getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course3->id);
+        $this->resetAfterTest(true);
+        $this->setUser($user);
+
+        // By default this function should return all of the courses the user
+        // is enrolled in.
+        $courses = enrol_get_my_courses();
+
+        $this->assertCount(3, $courses);
+        $this->assertEquals($course1->id, $courses[$course1->id]->id);
+        $this->assertEquals($course2->id, $courses[$course2->id]->id);
+        $this->assertEquals($course3->id, $courses[$course3->id]->id);
+
+        // If a set of course ids are provided then the result set will only contain
+        // these courses.
+        $courseids = [$course1->id, $course2->id];
+        $courses = enrol_get_my_courses(['id'], 'visible DESC,sortorder ASC', 0, $courseids);
+
+        $this->assertCount(2, $courses);
+        $this->assertEquals($course1->id, $courses[$course1->id]->id);
+        $this->assertEquals($course2->id, $courses[$course2->id]->id);
+
+        // If the course ids list contains any ids for courses the user isn't enrolled in
+        // then they will be ignored (in this case $course4).
+        $courseids = [$course1->id, $course2->id, $course4->id];
+        $courses = enrol_get_my_courses(['id'], 'visible DESC,sortorder ASC', 0, $courseids);
+
+        $this->assertCount(2, $courses);
+        $this->assertEquals($course1->id, $courses[$course1->id]->id);
+        $this->assertEquals($course2->id, $courses[$course2->id]->id);
+    }
 }
