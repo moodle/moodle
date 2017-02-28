@@ -2348,4 +2348,31 @@ class api {
             return $mapper->from_event_to_legacy_event($event);
         }, $events);
     }
+
+    /**
+     * Get a list of action events for the logged in user by the given
+     * course and timesort values.
+     *
+     * @param \stdClass $course The course the events must belong to
+     * @param int|null $timesortfrom The start timesort value (inclusive)
+     * @param int|null $timesortto The end timesort value (inclusive)
+     * @param int|null $aftereventid Only return events after this one
+     * @param int $limitnum Limit results to this amount (between 1 and 50)
+     * @return array A list of action_event_interface objects
+     */
+    public static function get_action_events_by_course(
+        $course,
+        $timesortfrom = null,
+        $timesortto = null,
+        $aftereventid = null,
+        $limitnum = 20
+    ) {
+        $mapper = \core_calendar\local\event\core_container::get_event_mapper();
+        $events = local_api::get_action_events_by_course(
+            $course, $timesortfrom, $timesortto, $aftereventid, $limitnum);
+
+        return array_map(function($event) use ($mapper) {
+            return $mapper->from_event_to_legacy_event($event);
+        }, $events);
+    }
 }

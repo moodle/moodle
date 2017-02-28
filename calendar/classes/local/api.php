@@ -26,6 +26,8 @@ namespace core_calendar\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_calendar\local\event\exceptions\limit_invalid_parameter_exception;
+
 /**
  * Class containing the local calendar API.
  *
@@ -69,5 +71,41 @@ class api {
         }
 
         return $vault->get_action_events_by_timesort($USER, $timesortfrom, $timesortto, $afterevent, $limitnum);
+    }
+
+    /**
+     * Get a list of action events for the logged in user by the given
+     * course and timesort values.
+     *
+     * @param \stdClass $course The course the events must belong to
+     * @param int|null $timesortfrom The start timesort value (inclusive)
+     * @param int|null $timesortto The end timesort value (inclusive)
+     * @param int|null $aftereventid Only return events after this one
+     * @param int $limitnum Limit results to this amount (between 1 and 50)
+     * @return array A list of action_event_interface objects
+     */
+    public static function get_action_events_by_course(
+        $course,
+        $timesortfrom = null,
+        $timesortto = null,
+        $aftereventid = null,
+        $limitnum = 20
+    ) {
+        global $USER;
+
+        if ($limitnum < 1 || $limitnum > 50) {
+            throw new limit_invalid_parameter_exception(
+                "Limit must be between 1 and 50 (inclusive)");
+        }
+
+        $vault = \core_calendar\local\event\core_container::get_event_vault();
+
+        $afterevent = null;
+        if ($aftereventid && $event = $vault->get_event_by_id($aftereventid)) {
+            $afterevent = $event;
+        }
+
+        return $vault->get_action_events_by_course(
+            $USER, $course, $timesortfrom, $timesortto, $afterevent, $limitnum);
     }
 }
