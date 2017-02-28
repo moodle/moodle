@@ -33,33 +33,14 @@
     </div>
 </div>
 {{#js}}
-require(
-    [
-        'jquery',
-        'core/templates',
-        'block_myoverview/paging_bar',
-        'block_myoverview/paging_content',
-        'block_myoverview/courses_view_repository'
-    ],
-    function($, Templates, PagingBar, PagingContent, CoursesRepository) {
+require(['jquery', 'block_myoverview/paging_bar', 'block_myoverview/paging_content'],
+    function($, PagingBar, PagingContent) {
 
     var root = $('#{{$id}}courses-view-status-{{uniqid}}{{/id}}');
     var pagingBarElement = root.find(PagingBar.rootSelector);
     var pagingContentElement = root.find(PagingContent.rootSelector);
 
-    var loadContentCallback = function(pageNumber) {
-        var limit = root.attr('data-limit');
-        var offset = (pageNumber - 1) * limit;
-        var status = root.attr('data-status');
-
-        return CoursesRepository.queryFromStatus(status, limit, offset)
-            .then(function(courses) {
-                return Templates.render('block_myoverview/course-paging-content-item', {courses: courses, page: pageNumber});
-            })
-    };
-
-    var content = new PagingContent(pagingContentElement, pagingBarElement, loadContentCallback);
+    var content = new PagingContent(pagingContentElement, pagingBarElement);
     content.registerEventListeners();
-    content.showPage(1);
 });
 {{/js}}

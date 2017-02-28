@@ -23,7 +23,9 @@
     {
     }
 }}
-<div data-region="paging-content-item" data-page="{{page}}" class="container-fluid">
+<div data-region="paging-content-item"
+     data-page="{{page}}"
+     class="container-fluid {{#active}}active{{/active}}{{^active}}hidden{{/active}}">
     {{$content}}
         {{{content}}}
     {{/content}}

@@ -37,10 +37,10 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
      * @param loadContentCallback
      * @constructor
      */
-    var PagingContent = function(root, pagingBarElement, loadContentCallback) {
+    var PagingContent = function(root, pagingBarElement) {
         this.root = $(root);
         this.pagingBar = $(pagingBarElement);
-        this.loadContent = loadContentCallback;
+
     };
 
     PagingContent.rootSelector = SELECTORS.ROOT;
