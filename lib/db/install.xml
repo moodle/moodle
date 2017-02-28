@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20170224" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20170228" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -3489,10 +3489,10 @@
         <FIELD NAME="baseurl" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The base url to the issuer"/>
         <FIELD NAME="clientid" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The client id used to connect to this oauth2 service."/>
         <FIELD NAME="clientsecret" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The secret used to connect to this oauth2 service."/>
-        <FIELD NAME="loginscopes" TYPE="text" NOTNULL="true" DEFAULT="openid profile email" SEQUENCE="false" COMMENT="The scopes requested for a normal login attempt."/>
-        <FIELD NAME="loginscopesoffline" TYPE="text" NOTNULL="true" DEFAULT="openid profile email" SEQUENCE="false" COMMENT="The scopes requested for a login attempt to generate a refresh token."/>
-        <FIELD NAME="loginparams" TYPE="text" NOTNULL="true" DEFAULT="" SEQUENCE="false" COMMENT="Additional parameters sent for a login attempt."/>
-        <FIELD NAME="loginparamsoffline" TYPE="text" NOTNULL="true" DEFAULT="openid profile email" SEQUENCE="false" COMMENT="Additional parameters sent for a login attempt to generate a refresh token."/>
+        <FIELD NAME="loginscopes" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The scopes requested for a normal login attempt."/>
+        <FIELD NAME="loginscopesoffline" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The scopes requested for a login attempt to generate a refresh token."/>
+        <FIELD NAME="loginparams" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Additional parameters sent for a login attempt."/>
+        <FIELD NAME="loginparamsoffline" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Additional parameters sent for a login attempt to generate a refresh token."/>
         <FIELD NAME="scopessupported" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The list of scopes this service supports."/>
         <FIELD NAME="showonloginpage" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The defined sort order."/>
