@@ -448,7 +448,12 @@ EOD;
 
         $files = array();
         for ($i = 0; $i < $pagecount; $i++) {
-            $image = $pdf->get_image($i);
+            try {
+                $image = $pdf->get_image($i);
+            } catch (\moodle_exception $e) {
+                // We catch only moodle_exception here as other exceptions indicate issue with setup not the pdf.
+                $image = pdf::get_error_image($tmpdir, $i);
+            }
             $record->filename = basename($image);
             $files[$i] = $fs->create_file_from_pathname($record, $tmpdir . '/' . $image);
             @unlink($tmpdir . '/' . $image);
