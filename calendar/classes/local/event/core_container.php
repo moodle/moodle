@@ -75,6 +75,11 @@ class core_container {
     protected static $callbacks = array();
 
     /**
+     * @var stdClass[] An array of cached courses to use with the event factory.
+     */
+    protected static $coursecache = array();
+
+    /**
      * Initialises the dependency graph if it hasn't yet been.
      */
     private static function init() {
@@ -88,13 +93,15 @@ class core_container {
                         return $event;
                     }, function() {
                         return true;
-                    }
+                    },
+                    self::$coursecache
                 )
             );
 
             self::$eventfactory = new event_factory(
                 self::$callbacks[PHPUNIT_TEST ? 'testing' : 'production']['action'],
-                self::$callbacks[PHPUNIT_TEST ? 'testing' : 'production']['visibility']
+                self::$callbacks[PHPUNIT_TEST ? 'testing' : 'production']['visibility'],
+                self::$coursecache
             );
         }
 

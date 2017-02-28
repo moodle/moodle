@@ -53,6 +53,11 @@ abstract class event_abstract_factory implements event_factory_interface {
     protected $visibilitycallbackapplier;
 
     /**
+     * @var array Course cache for use with get_course_cached.
+     */
+    protected $coursecachereference;
+
+    /**
      * Applies component actions to the event.
      *
      * @param event_interface $event The event to be updated.
@@ -74,13 +79,17 @@ abstract class event_abstract_factory implements event_factory_interface {
      * @param callable $actioncallbackapplier     Function to apply component action callbacks.
      * @param callable $visibilitycallbackapplier Function to apply component visibility callbacks.
      */
-    public function __construct(callable $actioncallbackapplier, callable $visibilitycallbackapplier) {
+    public function __construct(
+        callable $actioncallbackapplier,
+        callable $visibilitycallbackapplier,
+        array &$coursecachereference
+    ) {
         $this->actioncallbackapplier = $actioncallbackapplier;
         $this->visibilitycallbackapplier = $visibilitycallbackapplier;
+        $this->coursecachereference = &$coursecachereference;
     }
 
     public function create_instance(\stdClass $dbrow) {
-        $coursecache = [];
         $course = null;
         $group = null;
         $user = null;
@@ -92,8 +101,8 @@ abstract class event_abstract_factory implements event_factory_interface {
             $dbrow->courseid = get_course($cm->course)->id;
         }
 
-        $course = new std_proxy($dbrow->courseid, function($id) use ($coursecache) {
-            return \core_calendar\api::get_course_cached($coursecache, $id);
+        $course = new std_proxy($dbrow->courseid, function($id) {
+            return \core_calendar\api::get_course_cached($this->coursecachereference, $id);
         });
 
         if ($dbrow->groupid) {

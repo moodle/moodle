@@ -54,8 +54,8 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $event = $this->create_event();
-
-        $factory = new event_factory($actioncallbackapplier, $visibilitycallbackapplier);
+        $coursecache = [];
+        $factory = new event_factory($actioncallbackapplier, $visibilitycallbackapplier, $coursecache);
         $dbrow->id = $event->id;
         $instance = $factory->create_instance($dbrow);
 
@@ -81,13 +81,15 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $event = $this->create_event();
+        $coursecache = [];
         $factory = new event_factory(
             function () {
                 return 'hello';
             },
             function () {
                 return true;
-            }
+            },
+            $coursecache
         );
 
         $factory->create_instance(
@@ -122,13 +124,15 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $event = $this->create_event();
+        $coursecache = [];
         $factory = new event_factory(
             function ($event) {
                 return $event;
             },
             function () {
                 return 'asdf';
-            }
+            },
+            $coursecache
         );
 
         $factory->create_instance(
@@ -154,6 +158,56 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         );
     }
 
+    /**
+     * Test the factory's course cache.
+     */
+    public function test_course_cache() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $course = self::getDataGenerator()->create_course();
+        $event = $this->create_event(['courseid' => $course->id]);
+        $coursecache = [];
+        $factory = new event_factory(
+            function ($event) {
+                return $event;
+            },
+            function () {
+                return true;
+            },
+            $coursecache
+        );
+
+        $instance = $factory->create_instance(
+            (object)[
+                'id' => $event->id,
+                'name' => 'test',
+                'description' => 'Test description',
+                'format' => 2,
+                'courseid' => $course->id,
+                'groupid' => 1,
+                'userid' => 1,
+                'repeatid' => 1,
+                'modulename' => 'assign',
+                'instance' => 1,
+                'eventtype' => 'due',
+                'timestart' => 123456789,
+                'timeduration' => 12,
+                'timemodified' => 123456789,
+                'timesort' => 123456789,
+                'visible' => 1,
+                'subscriptionid' => 1
+            ]
+        );
+
+        $instance->get_course()->get('fullname');
+        $this->assertArrayHasKey($course->id, $coursecache);
+    }
+
+    /**
+     * Testcases for the create instance test.
+     *
+     * @return array Array of testcases.
+     */
     public function create_instance_testcases() {
         return [
             'Sample event record with event exposed' => [
