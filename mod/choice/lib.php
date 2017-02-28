@@ -42,6 +42,9 @@ define('CHOICE_SHOWRESULTS_ALWAYS',       '3');
 define('CHOICE_DISPLAY_HORIZONTAL',  '0');
 define('CHOICE_DISPLAY_VERTICAL',    '1');
 
+define('CHOICE_EVENT_TYPE_OPEN', 'open');
+define('CHOICE_EVENT_TYPE_CLOSE', 'close');
+
 /** @global array $CHOICE_PUBLISH */
 global $CHOICE_PUBLISH;
 $CHOICE_PUBLISH = array (CHOICE_PUBLISH_ANONYMOUS  => get_string('publishanonymous', 'choice'),
@@ -1177,6 +1180,51 @@ function choice_check_updates_since(cm_info $cm, $from, $filter = array()) {
     }
 
     return $updates;
+}
+
+/**
+ * Is the event visible?
+ *
+ * @param \core_calendar\event $event
+ * @return bool Returns true if the event is visible to the current user, false otherwise.
+ */
+function mod_choice_core_calendar_is_event_visible(\core_calendar\event $event) {
+    $cm = get_fast_modinfo($event->courseid)->instances['choice'][$event->instance];
+    $context = context_module::instance($cm->id);
+
+    return has_capability('mod/choice:view', $context);
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_choice_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                       \core_calendar\action_factory $factory) {
+    global $DB;
+
+    $cm = get_fast_modinfo($event->courseid)->instances['choice'][$event->instance];
+    $choice = $DB->get_record('choice', array('id' => $event->instance), 'id, timeopen, timeclose');
+
+    if ($choice->timeopen && $choice->timeclose) {
+        $actionable = (time() >= $choice->timeopen) && (time() <= $choice->timeclose);
+    } else if ($choice->timeclose) {
+        $actionable = time() < $choice->timeclose;
+    } else if ($choice->timeopen) {
+        $actionable = time() >= $choice->timeopen;
+    } else {
+        $actionable = true;
+    }
+
+    return $factory->create_instance(
+        get_string('viewchoices', 'choice'),
+        new \moodle_url('/mod/choice/view.php', array('id' => $cm->id)),
+        1,
+        $actionable
+    );
 }
 
 /**
