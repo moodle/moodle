@@ -103,7 +103,7 @@ Feature: tool_monitor_subscriptions
     Given I log in as "admin"
     And I follow "Preferences" in the user menu
     And I click on "Notification preferences" "link" in the "#page-content" "css_element"
-    And I click on ".preference-state" "css_element" in the "Notifications of rule subscriptions" "table_row"
+    And I click on "//td[@data-processor-name='popup']//label[@class='preference-state']" "xpath_element" in the "Notifications of rule subscriptions" "table_row"
     And I wait until the page is ready
     And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
@@ -124,7 +124,7 @@ Feature: tool_monitor_subscriptions
     Given I log in as "teacher1"
     And I follow "Preferences" in the user menu
     And I click on "Notification preferences" "link" in the "#page-content" "css_element"
-    And I click on ".preference-state" "css_element" in the "Notifications of rule subscriptions" "table_row"
+    And I click on "//td[@data-processor-name='popup']//label[@class='preference-state']" "xpath_element" in the "Notifications of rule subscriptions" "table_row"
     And I wait until the page is ready
     And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
