@@ -218,6 +218,9 @@ class mysql_sql_generator extends sql_generator {
             }
         }
 
+        $utf8mb4rowformat = $this->mdb->get_row_format_sql($engine, $collation);
+        $rowformat = ($utf8mb4rowformat == '') ? $rowformat : $utf8mb4rowformat;
+
         $sqlarr = parent::getCreateTableSQL($xmldb_table);
 
         // This is a very nasty hack that tries to use just one query per created table
@@ -238,7 +241,7 @@ class mysql_sql_generator extends sql_generator {
                     if (strpos($collation, 'utf8_') === 0) {
                         $sql .= "\n DEFAULT CHARACTER SET utf8";
                     }
-                    $sql .= "\n DEFAULT COLLATE = $collation";
+                    $sql .= "\n DEFAULT COLLATE = $collation ";
                 }
                 if ($rowformat) {
                     $sql .= $rowformat;
@@ -326,9 +329,12 @@ class mysql_sql_generator extends sql_generator {
      * @return array of sql statements
      */
     public function getCreateTempTableSQL($xmldb_table) {
+        $engine = $this->mdb->get_dbengine();
         // Do we know collation?
         $collation = $this->mdb->get_dbcollation();
         $this->temptables->add_temptable($xmldb_table->getName());
+
+        $rowformat = $this->mdb->get_row_format_sql($engine, $collation);
 
         $sqlarr = parent::getCreateTableSQL($xmldb_table);
 
@@ -341,7 +347,7 @@ class mysql_sql_generator extends sql_generator {
                     if (strpos($collation, 'utf8_') === 0) {
                         $sqlarr[$i] .= " DEFAULT CHARACTER SET utf8";
                     }
-                    $sqlarr[$i] .= " DEFAULT COLLATE $collation";
+                    $sqlarr[$i] .= " DEFAULT COLLATE $collation $rowformat";
                 }
             }
         }

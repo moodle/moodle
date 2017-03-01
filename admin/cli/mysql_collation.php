@@ -64,6 +64,71 @@ if (!empty($options['collation'])) {
         cli_error("Error: collation '$collation' is not available on this server!");
     }
 
+    $collationinfo = explode('_', $collation);
+    $charset = reset($collationinfo);
+
+    $engine = strtolower($DB->get_dbengine());
+
+    // Do checks for utf8mb4.
+    if (strpos($collation, 'utf8mb4') === 0) {
+        // Do we have the right engine?
+        if ($engine !== 'innodb' && $engine !== 'xtradb') {
+            cli_error("Error: '$collation' requires InnoDB or XtraDB set as the engine.");
+        }
+        // Are we using Barracuda?
+        if ($DB->get_row_format() != 'Barracuda') {
+            // Try setting it here.
+            try {
+                $DB->execute("SET GLOBAL innodb_file_format=Barracuda");
+            } catch (dml_exception $e) {
+                cli_error("Error: '$collation' requires the file format to be set to Barracuda.
+                        An attempt was made to change the format, but it failed. Please try doing this manually.");
+            }
+            echo "GLOBAL SETTING: innodb_file_format changed to Barracuda\n";
+        }
+        // Is one file per table being used?
+        if (!$DB->is_file_per_table_enabled()) {
+            try {
+                $DB->execute("SET GLOBAL innodb_file_per_table=1");
+            } catch (dml_exception $e) {
+                cli_error("Error: '$collation' requires the setting 'innodb_file_per_table' be set to 'ON'.
+                        An attempt was made to change the format, but it failed. Please try doing this manually.");
+            }
+            echo "GLOBAL SETTING: innodb_file_per_table changed to 1\n";
+        }
+        // Is large prefix set?
+        if (!$DB->is_large_prefix_enabled()) {
+            try {
+                $DB->execute("SET GLOBAL innodb_large_prefix=1");
+            } catch (dml_exception $e) {
+                cli_error("Error: '$collation' requires the setting 'innodb_large_prefix' be set to 'ON'.
+                        An attempt was made to change the format, but it failed. Please try doing this manually.");
+            }
+            echo "GLOBAL SETTING: innodb_large_prefix changed to 1\n";
+        }
+    }
+
+    $sql = "SHOW VARIABLES LIKE 'collation_database'";
+    if (!$dbcollation = $DB->get_record_sql($sql)) {
+        cli_error("Error: Could not access collation information on the database.");
+    }
+    $sql = "SHOW VARIABLES LIKE 'character_set_database'";
+    if (!$dbcharset = $DB->get_record_sql($sql)) {
+        cli_error("Error: Could not access character set information on the database.");
+    }
+    if ($dbcollation->value !== $collation || $dbcharset->value !== $charset) {
+        // Try to convert the DB.
+        echo "Converting database to '$collation' for $CFG->wwwroot:\n";
+        $sql = "ALTER DATABASE $CFG->dbname DEFAULT CHARACTER SET $charset DEFAULT COLLATE = $collation";
+        try {
+            $DB->change_database_structure($sql);
+        } catch (exception $e) {
+            cli_error("Error: Tried to alter the database with no success. Please try manually changing the database
+                    to the new collation and character set and then run this script again.");
+        }
+        echo "DATABASE CONVERTED\n";
+    }
+
     echo "Converting tables and columns to '$collation' for $CFG->wwwroot:\n";
     $prefix = $DB->get_prefix();
     $prefix = str_replace('_', '\\_', $prefix);
@@ -80,7 +145,7 @@ if (!empty($options['collation'])) {
             $skipped++;
 
         } else {
-            $DB->change_database_structure("ALTER TABLE $table->name DEFAULT COLLATE = $collation");
+            $DB->change_database_structure("ALTER TABLE $table->name DEFAULT CHARACTER SET $charset DEFAULT COLLATE = $collation");
             echo "CONVERTED\n";
             $converted++;
         }
@@ -96,18 +161,32 @@ if (!empty($options['collation'])) {
                 continue;
             }
 
+            // Check for utf8mb4 collation.
+            $rowformat = $DB->get_row_format_sql($engine, $collation);
+
             if ($column->type === 'tinytext' or $column->type === 'mediumtext' or $column->type === 'text' or $column->type === 'longtext') {
                 $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
                 $default = (!is_null($column->default) and $column->default !== '') ? "DEFAULT '$column->default'" : '';
                 // primary, unique and inc are not supported for texts
-                $sql = "ALTER TABLE $table->name MODIFY COLUMN $column->field $column->type COLLATE $collation $notnull $default";
+                $sql = "ALTER TABLE $table->name
+                        MODIFY COLUMN $column->field $column->type
+                        CHARACTER SET $charset
+                        COLLATE $collation $notnull $default";
                 $DB->change_database_structure($sql);
 
             } else if (strpos($column->type, 'varchar') === 0) {
                 $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
                 $default = !is_null($column->default) ? "DEFAULT '$column->default'" : '';
-                // primary, unique and inc are not supported for texts
-                $sql = "ALTER TABLE $table->name MODIFY COLUMN $column->field $column->type COLLATE $collation $notnull $default";
+
+                if ($rowformat != '') {
+                    $sql = "ALTER TABLE $table->name $rowformat";
+                    $DB->change_database_structure($sql);
+                }
+
+                $sql = "ALTER TABLE $table->name
+                        MODIFY COLUMN $column->field $column->type
+                        CHARACTER SET $charset
+                        COLLATE $collation $notnull $default";
                 $DB->change_database_structure($sql);
             } else {
                 echo "ERROR (unknown column type: $column->type)\n";
@@ -180,7 +259,9 @@ function mysql_get_collations() {
     global $DB;
 
     $collations = array();
-    $sql = "SHOW COLLATION WHERE Collation LIKE 'utf8\_%' AND Charset = 'utf8'";
+    $sql = "SHOW COLLATION
+            WHERE Collation LIKE 'utf8\_%' AND Charset = 'utf8'
+               OR Collation LIKE 'utf8mb4\_%' AND Charset = 'utf8mb4'";
     $rs = $DB->get_recordset_sql($sql);
     foreach ($rs as $collation) {
         $collations[$collation->collation] = $collation->collation;

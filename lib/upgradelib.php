@@ -2143,6 +2143,104 @@ function check_database_tables_row_format(environment_results $result) {
 }
 
 /**
+ * This function verfies that the database has tables using InnoDB Antelope row format.
+ *
+ * @param environment_results $result
+ * @return environment_results|null updated results object, or null if no Antelope table has been found.
+ */
+function check_mysql_file_format(environment_results $result) {
+    global $DB;
+
+    if ($DB->get_dbfamily() == 'mysql') {
+        $collation = $DB->get_dbcollation();
+        $collationinfo = explode('_', $collation);
+        $charset = reset($collationinfo);
+
+        if ($charset == 'utf8mb4') {
+            if ($DB->get_row_format() !== "Barracuda") {
+                $result->setInfo('mysql_full_unicode_support#File_format');
+                $result->setStatus(false);
+                return $result;
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * This function verfies that the database has a setting of one file per table. This is required for 'utf8mb4'.
+ *
+ * @param environment_results $result
+ * @return environment_results|null updated results object, or null if innodb_file_per_table = 1.
+ */
+function check_mysql_file_per_table(environment_results $result) {
+    global $DB;
+
+    if ($DB->get_dbfamily() == 'mysql') {
+        $collation = $DB->get_dbcollation();
+        $collationinfo = explode('_', $collation);
+        $charset = reset($collationinfo);
+
+        if ($charset == 'utf8mb4') {
+            if (!$DB->is_file_per_table_enabled()) {
+                $result->setInfo('mysql_full_unicode_support#File_per_table');
+                $result->setStatus(false);
+                return $result;
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * This function verfies that the database has the setting of large prefix enabled. This is required for 'utf8mb4'.
+ *
+ * @param environment_results $result
+ * @return environment_results|null updated results object, or null if innodb_large_prefix = 1.
+ */
+function check_mysql_large_prefix(environment_results $result) {
+    global $DB;
+
+    if ($DB->get_dbfamily() == 'mysql') {
+        $collation = $DB->get_dbcollation();
+        $collationinfo = explode('_', $collation);
+        $charset = reset($collationinfo);
+
+        if ($charset == 'utf8mb4') {
+            if (!$DB->is_large_prefix_enabled()) {
+                $result->setInfo('mysql_full_unicode_support#Large_prefix');
+                $result->setStatus(false);
+                return $result;
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * This function checks the database to see if it is using incomplete unicode support.
+ *
+ * @param  environment_results $result $result
+ * @return environment_results|null updated results object, or null if unicode is fully supported.
+ */
+function check_mysql_incomplete_unicode_support(environment_results $result) {
+    global $DB;
+
+    if ($DB->get_dbfamily() == 'mysql') {
+        $collation = $DB->get_dbcollation();
+        $collationinfo = explode('_', $collation);
+        $charset = reset($collationinfo);
+
+        if ($charset == 'utf8') {
+            $result->setInfo('mysql_full_unicode_support');
+            $result->setStatus(false);
+            return $result;
+        }
+    }
+    return null;
+}
+
+/**
  * Upgrade the minmaxgrade setting.
  *
  * This step should only be run for sites running 2.8 or later. Sites using 2.7 will be fine

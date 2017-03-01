@@ -59,6 +59,13 @@ $CFG->dboptions = array(
     'dbport'    => '',          // the TCP port number to use when connecting
                                 //  to the server. keep empty string for the
                                 //  default port
+    'dbcollation' => 'utf8mb4_unicode_ci', // MySQL has partial and full UTF-8
+                                // support. If you wish to use partial UTF-8
+                                // (three bytes) then set this option to
+                                // 'utf8_unicode_ci', otherwise this option
+                                // can be removed for MySQL (by default it will
+                                // use 'utf8mb4_unicode_ci'. This option should
+                                // be removed for all other databases.
 );
 
 
