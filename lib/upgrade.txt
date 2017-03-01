@@ -1,11 +1,14 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 === 3.3 ===
-* Moodle has support for font-awesome icons. Plugins should use the xxx_get_fontawesome_icon_map callback
-  to map their custom icons to one from font-awesome.
 * The method moodleform::after_definition() has been added and can now be used to add some logic
   to be performed after the form's definition was set. This is useful for intermediate subclasses.
-* $OUTPUT->pix_url() has been deprecated because it is was used mostly to manually generate image tags for icons. Use pix_icon instead.
+* Moodle has support for font-awesome icons. Plugins should use the xxx_get_fontawesome_icon_map callback
+  to map their custom icons to one from font-awesome.
+* $OUTPUT->pix_url() has been deprecated because it is was used mostly to manually generate image tags for icons.
+  We now distinguish between icons and "small images". The difference is that an icon does not have to be rendered as an image tag
+  with a source. It is OK to still have "small images" - if this desired use $OUTPUT->image_icon() and $OUTPUT->image_url(). For
+  other uses - use $OUTPUT->pix_icon() or the pix helper in mustache templates {{#pix}}...{{/pix}}
   For other valid use cases use $OUTPUT->image_url().
 * Activity icons have been split from standard icons. Use $OUTPUT->image_icon instead of $OUTPUT->pix_icon for these
   type of icons (the coloured main icon for each activity).
