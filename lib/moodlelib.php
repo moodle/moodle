@@ -7479,8 +7479,9 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
     // Including both although I doubt that we will find two functions definitions with the same name.
     // Clearning the filename as cache_helper::hash_key only allows a-zA-Z0-9_.
     $key = $function . '_' . clean_param($file, PARAM_ALPHA);
+    $pluginfunctions = $cache->get($key);
 
-    if ($pluginfunctions = $cache->get($key)) {
+    if ($pluginfunctions !== false) {
 
         // Checking that the files are still available.
         foreach ($pluginfunctions as $plugintype => $plugins) {
