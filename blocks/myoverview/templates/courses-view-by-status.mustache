@@ -29,7 +29,9 @@
     {{> block_myoverview/course-paging-content }}
 
     <div class="text-xs-center text-center">
-        {{> block_myoverview/paging-bar }}
+        {{#haspages}}
+            {{> block_myoverview/paging-bar }}
+        {{/haspages}}
     </div>
 </div>
 {{#js}}

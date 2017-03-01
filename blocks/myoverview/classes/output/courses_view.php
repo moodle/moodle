@@ -109,6 +109,10 @@ class courses_view implements renderable, templatable {
             }
         }
 
+        // Check if we have any page to be rendered.
+        $coursesview['haspages'] = ($coursesbystatus['past'] > 0 || $coursesbystatus['inprogress'] > 0 ||
+                $coursesbystatus['future'] > 0);
+
         return $coursesview;
     }
 }
