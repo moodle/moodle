@@ -575,12 +575,14 @@ class pix_icon_font implements templatable {
         $pixdata = $this->pixicon->export_for_template($output);
 
         $title = isset($this->pixicon->attributes['title']) ? $this->pixicon->attributes['title'] : '';
+        $alt = isset($this->pixicon->attributes['alt']) ? $this->pixicon->attributes['alt'] : '';
         if (empty($title)) {
-            $title = isset($this->pixicon->attributes['alt']) ? $this->pixicon->attributes['alt'] : '';
+            $title = $alt;
         }
         $data = array(
             'extraclasses' => $pixdata['extraclasses'],
             'title' => $title,
+            'alt' => $alt,
             'key' => $this->key
         );
 
