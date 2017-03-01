@@ -9,6 +9,10 @@
     padding: 0;
     box-sizing: content-box;
     margin-right: 0.5rem;
+
+    &.spacer {
+        margin-right: 0;
+    }
 }
 
 $icon-color: $body-color !default;
@@ -18,7 +22,7 @@ a .icon {
 }
 
 .navbar-dark a .icon {
-    color: $navbar-dark-color ! important;
+    color: $navbar-dark-color !important; /* stylelint-disable-line declaration-no-important */
 }
 
 a:first-of-type > .icon,
@@ -43,17 +47,6 @@ span:first-of-type > .icon {
     .icon {
         margin-right: 0;
         margin-left: 0.5rem;
-    }
-}
-
-// Fix the space between the dropdown icon and the caret.
-.action-menu {
-    .dropdown-toggle {
-        .icon {
-            // Use a negative margin on the icon to ensure that the dropdown toggle
-            // is an icon and not just text in which case the margin is needed.
-            margin-right: -$caret-width;
-        }
     }
 }
 

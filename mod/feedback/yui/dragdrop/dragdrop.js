@@ -21,7 +21,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
 
             var groups = ['feedbackitem'];
 
-            handletitle = M.util.get_string('move_item', 'feedback');
+            var handletitle = M.util.get_string('move_item', 'feedback');
 
             //Get the list of li's in the lists and add the drag handle.
             basenode = Y.Node.one(CSS.DRAGLIST);

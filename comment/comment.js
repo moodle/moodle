@@ -339,7 +339,6 @@ M.core_comment = {
                     Templates.renderPix('t/delete', 'core', M.util.get_string('deletecomment', 'moodle')).then(function(html) {
                         Y.all('div.comment-delete a').set('innerHTML', html);
                     }).catch(Notification.exception);
-                    
                 });
             },
             register_pagination: function() {

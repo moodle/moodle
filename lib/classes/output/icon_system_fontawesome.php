@@ -28,6 +28,8 @@ namespace core\output;
 use renderer_base;
 use pix_icon;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Class allowing different systems for mapping and rendering icons.
  *
@@ -42,6 +44,11 @@ use pix_icon;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class icon_system_fontawesome extends icon_system_font {
+
+    /**
+     * @var array $map Cached map of moodle icon names to font awesome icon names.
+     */
+    private $map = [];
 
     public function get_core_icon_map() {
         return [
@@ -89,7 +96,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:e/delete' => 'fa-minus',
             'core:e/delete_table' => 'fa-minus',
             'core:e/document_properties' => 'fa-info',
-            'core:e/emoticons' => 'fa-meh-o',
+            'core:e/emoticons' => 'fa-smile-o',
             'core:e/find_replace' => 'fa-search-plus',
             'core:e/forward' => 'fa-arrow-right',
             'core:e/fullpage' => 'fa-arrows-alt',
@@ -241,7 +248,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/completion-manual-enabled' => 'fa-square-o',
             'core:i/completion-manual-y' => 'fa-check-square',
             'core:i/completion-manual-n' => 'fa-square-o',
-            'core:i/completion-self' => 'fa-user-o',
+            'core:i/completion_self' => 'fa-user-o',
             'core:i/lock' => 'fa-lock',
             'core:i/courseevent' => 'fa-calendar',
             'core:i/course' => 'fa-globe',
@@ -252,10 +259,10 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/duration' => 'fa-clock-o',
             'core:i/edit' => 'fa-pencil',
             'core:i/email' => 'fa-envelope',
-            'core:i/enrolmentsuspended' => 'fa-user-circle',
+            'core:i/enrolmentsuspended' => 'fa-pause',
             'core:i/enrolusers' => 'fa-user-plus',
             'core:i/expired' => 'fa-exclamation text-warning',
-            'core:i/export' => 'fa-level-down',
+            'core:i/export' => 'fa-download',
             'core:i/files' => 'fa-file',
             'core:i/filter' => 'fa-filter',
             'core:i/flagged' => 'fa-flag',
@@ -270,7 +277,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/groups' => 'fa-user-circle',
             'core:i/groupv' => 'fa-user-circle-o',
             'core:i/hide' => 'fa-eye',
-            'core:i/heirarchylock' => 'fa-lock',
+            'core:i/hierarchylock' => 'fa-lock',
             'core:i/import' => 'fa-level-up',
             'core:i/info' => 'fa-info',
             'core:i/invalid' => 'fa-exclamation text-danger',
@@ -289,7 +296,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/moodle_host' => 'fa-graduation-cap',
             'core:i/move_2d' => 'fa-arrows',
             'core:i/navigationitem' => 'fa-angle-right',
-            'core:i/ns_red_mark' => 'fa-remove',
+            'core:i/ne_red_mark' => 'fa-remove',
             'core:i/new' => 'fa-plus',
             'core:i/news' => 'fa-newspaper-o',
             'core:i/nosubcat' => 'fa-plus-square-o',
@@ -324,7 +331,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/settings' => 'fa-cogs',
             'core:i/show' => 'fa-eye-slash',
             'core:i/siteevent' => 'fa-share-alt',
-            'core:i/starrating' => 'fa-star',
+            'core:i/star-rating' => 'fa-star',
             'core:i/stats' => 'fa-line-chart',
             'core:i/switch' => 'fa-exchange',
             'core:i/switchrole' => 'fa-user-secret',
@@ -417,8 +424,6 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/viewdetails' => 'fa-list',
         ];
     }
-
-    private $map = [];
 
     /**
      * Overridable function to get a mapping of all icons.

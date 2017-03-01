@@ -162,7 +162,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function section_left_content($section, $course, $onsectionpage) {
-        $o = $this->output->spacer();
+        $o = '';
 
         if ($section->section != 0) {
             // Only in the non-general sections.

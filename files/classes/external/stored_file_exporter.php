@@ -123,9 +123,6 @@ class stored_file_exporter extends \core\external\exporter {
             'icon' => array(
                 'type' => PARAM_RAW,
             ),
-            'iconurl' => array(
-                'type' => PARAM_URL,
-            ),
             'timecreatedformatted' => array(
                 'type' => PARAM_RAW
             ),

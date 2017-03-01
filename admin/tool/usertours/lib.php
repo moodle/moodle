@@ -82,6 +82,6 @@ function tool_usertours_get_fontawesome_icon_map() {
     return [
         'tool_usertours:t/export' => 'fa-download',
         'tool_usertours:i/reload' => 'fa-refresh',
-        'tool_usertours:filler' => 'fa-spacer',
+        'tool_usertours:t/filler' => 'fa-spacer',
     ];
 }

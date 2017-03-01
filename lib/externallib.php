@@ -205,6 +205,7 @@ class external_api {
                 throw new moodle_exception('servicenotavailable', 'webservice');
             }
 
+            // Do not allow access to write or delete webservices as a public user.
             if ($externalfunctioninfo->loginrequired) {
                 if (defined('NO_MOODLE_COOKIES') && NO_MOODLE_COOKIES && !PHPUNIT_TEST) {
                     throw new moodle_exception('servicenotavailable', 'webservice');
@@ -215,8 +216,6 @@ class external_api {
                     require_sesskey();
                 }
             }
-            // Do not allow access to write or delete webservices as a public user.
-
             // Validate params, this also sorts the params properly, we need the correct order in the next part.
             $callable = array($externalfunctioninfo->classname, 'validate_parameters');
             $params = call_user_func($callable,

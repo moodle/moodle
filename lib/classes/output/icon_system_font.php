@@ -25,6 +25,8 @@
 
 namespace core\output;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Class allowing different systems for mapping and rendering icons.
  *

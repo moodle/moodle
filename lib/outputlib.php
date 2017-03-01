@@ -124,7 +124,6 @@ function theme_get_locked_theme_for_device($device) {
     return $CFG->config_php_settings[$themeconfigname];
 }
 
-
 /**
  * This class represents the configuration variables of a Moodle theme.
  *

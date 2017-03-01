@@ -28,6 +28,8 @@ namespace core\output;
 use renderer_base;
 use pix_icon;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Class allowing different systems for mapping and rendering icons.
  *
@@ -42,15 +44,37 @@ use pix_icon;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class icon_system {
+    /**
+     * @const STANDARD Default icon system.
+     */
     const STANDARD = '\\core\\output\\icon_system_standard';
+    /**
+     * @const FONTAWESOME Default icon system.
+     */
     const FONTAWESOME = '\\core\\output\\icon_system_fontawesome';
 
+    /**
+     * @var \core\output\icon_system $instance The cached default instance
+     */
     private static $instance = null;
+
+    /**
+     * @var array $map A cached mapping of moodle icons to other icons
+     */
     private $map = null;
 
+    /**
+     * Constructor
+     */
     private function __construct() {
     }
 
+    /**
+     * Factory method
+     *
+     * @param $type Either a specific type, or null to get the default type.
+     * @return \core\output\icon_system
+     */
     public final static function instance($type = null) {
         global $PAGE;
 

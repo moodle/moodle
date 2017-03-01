@@ -75,7 +75,8 @@ class block_course_overview_renderer extends plugin_renderer_base {
             $moveurl = new moodle_url('/blocks/course_overview/move.php',
                         array('sesskey' => sesskey(), 'moveto' => 0, 'courseid' => $movingcourseid));
             // Create move icon, so it can be used.
-            $movetofirsticon = $this->output->pix_icon('movehere', get_string('movetofirst', 'block_course_overview', $courses[$movingcourseid]->fullname));
+            $name = $courses[$movingcourseid]->fullname;
+            $movetofirsticon = $this->output->pix_icon('movehere', get_string('movetofirst', 'block_course_overview', $name));
             $moveurl = html_writer::link($moveurl, $movetofirsticon);
             $html .= html_writer::tag('div', $moveurl, array('class' => 'movehere'));
         }

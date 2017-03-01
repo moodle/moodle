@@ -107,11 +107,9 @@ class external extends external_api {
     /**
      * Return a mapping of icon names to icons.
      *
-     * @param string $system
      * @return array the mapping
      */
     public static function load_fontawesome_icon_map() {
-        
         $instance = icon_system::instance(icon_system::FONTAWESOME);
 
         $map = $instance->get_icon_name_map();

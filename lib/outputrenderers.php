@@ -2048,12 +2048,10 @@ class core_renderer extends renderer_base {
     /**
      * Renders a pix_icon widget and returns the HTML to display it.
      *
-     * @param pix_icon $icon
+     * @param image_icon $icon
      * @return string HTML fragment
      */
     protected function render_image_icon(image_icon $icon) {
-        global $PAGE;
-
         $system = \core\output\icon_system::instance(\core\output\icon_system::STANDARD);
         return $system->render_pix_icon($this, $icon);
     }
@@ -2082,8 +2080,6 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_pix_icon(pix_icon $icon) {
-        global $PAGE;
-
         $system = \core\output\icon_system::instance();
         return $system->render_pix_icon($this, $icon);
     }
@@ -2095,7 +2091,8 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_pix_emoticon(pix_emoticon $emoticon) {
-        return $this->render_pix_icon($emoticon);
+        $system = \core\output\icon_system::instance(\core\output\icon_system::STANDARD);
+        return $system->render_pix_icon($this, $emoticon);
     }
 
     /**

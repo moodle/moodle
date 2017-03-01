@@ -114,10 +114,9 @@ foreach ($columns as $column) {
     } else {
         $columndir = ($dir == 'asc') ? 'desc' : 'asc';
         $icon = 't/down';
-        $iconstr = 'movedown';
+        $iconstr = $columndir;
         if ($dir != 'asc') {
             $icon = 't/up';
-            $iconstr = 'moveup';
         }
         $columnicon = ' ' . $OUTPUT->pix_icon($icon, get_string($iconstr));
     }

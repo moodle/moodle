@@ -57,7 +57,7 @@ $course = $DB->get_record('mnetservice_enrol_courses', array('id'=>$courseid, 'h
 echo $OUTPUT->header();
 
 // course name
-$icon = $OUTPUT->pix_icon('i/course', get_string('category')); 
+$icon = $OUTPUT->pix_icon('i/course', get_string('category'));
 echo $OUTPUT->heading($icon . s($course->fullname));
 
 // collapsible course summary
