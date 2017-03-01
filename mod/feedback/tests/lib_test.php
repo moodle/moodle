@@ -136,4 +136,150 @@ class mod_feedback_lib_testcase extends advanced_testcase {
         $this->assertTrue($updates->attemptsfinished->updated);
         $this->assertCount(1, $updates->attemptsfinished->itemids);
     }
+
+    /**
+     * Test calendar event visibility.
+     */
+    public function test_feedback_core_calendar_is_event_visible() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $feedback = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id]);
+        $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
+
+        $this->assertTrue(mod_feedback_core_calendar_is_event_visible($event));
+    }
+
+    /**
+     * Test calendar event visibility to a non-user.
+     */
+    public function test_feedback_core_calendar_is_event_visible_as_non_user() {
+        global $CFG;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $feedback = $this->getDataGenerator()->create_module('feedback', array('course' => $course->id));
+        $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
+
+        // Log out the user and set force login to true.
+        \core\session\manager::init_empty_session();
+        $CFG->forcelogin = true;
+
+        $this->assertFalse(mod_feedback_core_calendar_is_event_visible($event));
+    }
+
+    /**
+     * Test calendar event provide action open.
+     */
+    public function test_feedback_core_calendar_provide_event_action_open() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $now = time();
+        $course = $this->getDataGenerator()->create_course();
+        $feedback = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id,
+                'timeopen' => $now - DAYSECS, 'timeclose' => $now + DAYSECS]);
+        $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent = mod_feedback_core_calendar_provide_event_action($event, $factory);
+
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('answerquestions', 'feedback'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    /**
+     * Test calendar event provide action closed.
+     */
+    public function test_feedback_core_calendar_provide_event_action_closed() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $feedback = $this->getDataGenerator()->create_module('feedback', array('course' => $course->id,
+                'timeclose' => time() - DAYSECS));
+        $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent = mod_feedback_core_calendar_provide_event_action($event, $factory);
+
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('answerquestions', 'feedback'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertFalse($actionevent->is_actionable());
+    }
+
+    /**
+     * Test calendar event action open in future.
+     *
+     * @throws coding_exception
+     */
+    public function test_feedback_core_calendar_provide_event_action_open_in_future() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $feedback = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id,
+                'timeopen' => time() + DAYSECS]);
+        $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent = mod_feedback_core_calendar_provide_event_action($event, $factory);
+
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('answerquestions', 'feedback'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertFalse($actionevent->is_actionable());
+    }
+
+    /**
+     * Test calendar event with no time specified.
+     *
+     * @throws coding_exception
+     */
+    public function test_feedback_core_calendar_provide_event_action_no_time_specified() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $feedback = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id]);
+        $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent = mod_feedback_core_calendar_provide_event_action($event, $factory);
+
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('answerquestions', 'feedback'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    /**
+     * Creates an action event.
+     *
+     * @param int $courseid The course id.
+     * @param int $instanceid The feedback id.
+     * @param string $eventtype The event type. eg. FEEDBACK_EVENT_TYPE_OPEN.
+     * @return bool|\core_calendar\event
+     */
+    private function create_action_event($courseid, $instanceid, $eventtype) {
+        $event = new stdClass();
+        $event->name = 'Calendar event';
+        $event->modulename  = 'feedback';
+        $event->courseid = $courseid;
+        $event->instance = $instanceid;
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->eventtype = $eventtype;
+        $event->timestart = time();
+
+        return \core_calendar\event::create($event);
+    }
 }
