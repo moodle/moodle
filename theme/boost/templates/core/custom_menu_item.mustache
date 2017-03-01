@@ -1,6 +1,6 @@
 {{^divider}}
 {{#haschildren}}
-<span class="dropdown nav-item">
+<div class="dropdown nav-item">
     <a class="dropdown-toggle nav-link" id="drop-down-{{uniqid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
         {{text}}
     </a>
@@ -14,7 +14,7 @@
             {{/divider}}
         {{/children}}
     </div>
-</span>
+</div>
 {{/haschildren}}
 {{^haschildren}}
 <a class="nav-item nav-link" href="{{{url}}}" {{#title}}title="{{{title}}}"{{/title}}>{{text}}</a>
