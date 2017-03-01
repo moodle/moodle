@@ -96,3 +96,4 @@ $string['userfieldinternalfield'] = 'Internal field name';
 $string['userfieldinternalfield_help'] = 'Name of the Moodle user field that should be mapped from the external field.';
 $string['createfromtemplate'] = 'Create an OAuth 2 service from a template';
 $string['createfromtemplatedesc'] = 'Choose one of the OAuth 2 service template below to create an OAuth service with a valid configuration for one of the known service types. This will create the OAuth 2 service, with all the correct end points and parameters required for authentication, but you will still need to enter the client ID and secret for the new service before it can be used.';
+$string['serviceshelp'] = 'Service provider setup instructions: (Google, Facebook, Microsoft).';

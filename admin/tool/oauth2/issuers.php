@@ -157,8 +157,9 @@ if ($mform && $mform->is_cancelled()) {
 
 } else {
     echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('pluginname', 'tool_oauth2'));
+    echo $OUTPUT->doc_link('OAuth2_Services', get_string('serviceshelp', 'tool_oauth2'));
     $issuers = core\oauth2\api::get_all_issuers();
-    var_dump(\core\oauth2\api::get_system_oauth_client($issuers[0], $PAGE->url));
     echo $renderer->issuers_table($issuers);
 
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edit']);
