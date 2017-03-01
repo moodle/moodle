@@ -103,16 +103,28 @@ class restore_qtype_random_plugin extends restore_qtype_plugin {
     public function after_execute_question() {
         global $DB;
 
-        // Update any blank random questiontexts to 0.
-        $sql = "UPDATE {question}
-                   SET questiontext = '0'
-                 WHERE qtype = 'random'
-                   AND " . $DB->sql_compare_text('questiontext') . " = ?
-                   AND id IN (SELECT bi.newitemid
-                                FROM {backup_ids_temp} bi
-                               WHERE bi.backupid = ?
-                                 AND bi.itemname = 'question_created')";
+        // For random questions, questiontext should only ever be '0' or '1'.
+        // In the past there were sometimes junk values like ''. If there
+        // were any in the restore, fix them up.
+        //
+        // Note, we cannot just do this in one DB query, because MySQL is useless.
+        // The expected case is that the SELECT returns 0 rows, so loading all the
+        // ids should not be a problem.
+        $problemquestions = $DB->get_records_sql_menu("
+                SELECT q.id, 1
+                  FROM {question} q
+                  JOIN {backup_ids_temp} bi ON q.id = bi.newitemid
+                 WHERE q.qtype = 'random'
+                   AND " . $DB->sql_compare_text('q.questiontext') . " = ?
+                   AND bi.backupid = ?
+                   AND bi.itemname = 'question_created'
+                ", array('', $this->get_restoreid()));
 
-        $DB->execute($sql, array('', $this->get_restoreid()));
+        if (!$problemquestions) {
+            return; // Nothing to do.
+        }
+
+        list($idtest, $params) = $DB->get_in_or_equal(array_keys($problemquestions));
+        $DB->set_field_select('question', 'questiontext', '0', "id $idtest", $params);
     }
 }
