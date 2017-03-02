@@ -994,4 +994,182 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->assertTrue($updates->entries->updated);
         $this->assertEquals([$datarecor1did, $datarecor2did], $updates->entries->itemids, '', 0, 10, true);
     }
+
+    public function test_data_core_calendar_is_event_visible() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a database activity.
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $data->id, DATA_EVENT_TYPE_OPEN);
+
+        // Check that we can see the event.
+        $this->assertTrue(mod_data_core_calendar_is_event_visible($event));
+    }
+
+    public function test_data_core_calendar_is_event_visible_as_non_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a database activity.
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $data->id, DATA_EVENT_TYPE_OPEN);
+
+        // Log out the user and set force login to true.
+        \core\session\manager::init_empty_session();
+        $CFG->forcelogin = true;
+
+        // Check that we can't see the event.
+        $this->assertFalse(mod_data_core_calendar_is_event_visible($event));
+    }
+
+    public function test_data_core_calendar_provide_event_action_open() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a database activity.
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id,
+            'timeavailablefrom' => time() - DAYSECS, 'timeavailableto' => time() + DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $data->id, DATA_EVENT_TYPE_OPEN);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_data_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('add', 'data'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_data_core_calendar_provide_event_action_closed() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a database activity.
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id,
+            'timeavailableto' => time() - DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $data->id, DATA_EVENT_TYPE_OPEN);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_data_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('add', 'data'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertFalse($actionevent->is_actionable());
+    }
+
+    public function test_data_core_calendar_provide_event_action_open_in_future() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a database activity.
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id,
+            'timeavailablefrom' => time() + DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $data->id, DATA_EVENT_TYPE_OPEN);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_data_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('add', 'data'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertFalse($actionevent->is_actionable());
+    }
+
+    public function test_data_core_calendar_provide_event_action_no_time_specified() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a database activity.
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $data->id, DATA_EVENT_TYPE_OPEN);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_data_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('add', 'data'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    /**
+     * Creates an action event.
+     *
+     * @param int $courseid
+     * @param int $instanceid The data id.
+     * @param string $eventtype The event type. eg. DATA_EVENT_TYPE_OPEN.
+     * @return bool|\core_calendar\event
+     */
+    private function create_action_event($courseid, $instanceid, $eventtype) {
+        $event = new stdClass();
+        $event->name = 'Calendar event';
+        $event->modulename  = 'data';
+        $event->courseid = $courseid;
+        $event->instance = $instanceid;
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->eventtype = $eventtype;
+        $event->timestart = time();
+
+        return \core_calendar\event::create($event);
+    }
 }

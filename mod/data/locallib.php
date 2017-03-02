@@ -599,13 +599,17 @@ function data_set_events($data) {
     }
     // Data start calendar events.
     $event = new stdClass();
+    $event->eventtype = DATA_EVENT_TYPE_OPEN;
+    // The DATA_EVENT_TYPE_OPEN event should only be an action event if no close time was specified.
+    $event->type = empty($data->timeavailableto) ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
     if ($event->id = $DB->get_field('event', 'id',
-            array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => 'open'))) {
+            array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => $event->eventtype))) {
         if ($data->timeavailablefrom > 0) {
             // Calendar event exists so update it.
             $event->name         = get_string('calendarstart', 'data', $data->name);
             $event->description  = format_module_intro('data', $data, $data->coursemodule);
             $event->timestart    = $data->timeavailablefrom;
+            $event->timesort     = $data->timeavailablefrom;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
             $calendarevent = \core_calendar\event::load($event->id);
@@ -625,8 +629,8 @@ function data_set_events($data) {
             $event->userid       = 0;
             $event->modulename   = 'data';
             $event->instance     = $data->id;
-            $event->eventtype    = 'open';
             $event->timestart    = $data->timeavailablefrom;
+            $event->timesort     = $data->timeavailablefrom;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
             \core_calendar\event::create($event);
@@ -635,13 +639,16 @@ function data_set_events($data) {
 
     // Data end calendar events.
     $event = new stdClass();
+    $event->type = CALENDAR_EVENT_TYPE_ACTION;
+    $event->eventtype = DATA_EVENT_TYPE_CLOSE;
     if ($event->id = $DB->get_field('event', 'id',
-            array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => 'close'))) {
+            array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => $event->eventtype))) {
         if ($data->timeavailableto > 0) {
             // Calendar event exists so update it.
             $event->name         = get_string('calendarend', 'data', $data->name);
             $event->description  = format_module_intro('data', $data, $data->coursemodule);
             $event->timestart    = $data->timeavailableto;
+            $event->timesort     = $data->timeavailableto;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
             $calendarevent = \core_calendar\event::load($event->id);
@@ -654,7 +661,6 @@ function data_set_events($data) {
     } else {
         // Event doesn't exist so create one.
         if (isset($data->timeavailableto) && $data->timeavailableto > 0) {
-            $event = new stdClass();
             $event->name         = get_string('calendarend', 'data', $data->name);
             $event->description  = format_module_intro('data', $data, $data->coursemodule);
             $event->courseid     = $data->course;
@@ -662,8 +668,8 @@ function data_set_events($data) {
             $event->userid       = 0;
             $event->modulename   = 'data';
             $event->instance     = $data->id;
-            $event->eventtype    = 'close';
             $event->timestart    = $data->timeavailableto;
+            $event->timesort     = $data->timeavailableto;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
             \core_calendar\event::create($event);

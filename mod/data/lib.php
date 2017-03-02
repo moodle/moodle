@@ -39,6 +39,9 @@ define('DATA_PRESET_COMPONENT', 'mod_data');
 define('DATA_PRESET_FILEAREA', 'site_presets');
 define('DATA_PRESET_CONTEXT', SYSCONTEXTID);
 
+define('DATA_EVENT_TYPE_OPEN', 'open');
+define('DATA_EVENT_TYPE_CLOSE', 'close');
+
 // Users having assigned the default role "Non-editing teacher" can export database records
 // Using the mod/data capability "viewalluserpresets" existing in Moodle 1.9.x.
 // In Moodle >= 2, new roles may be introduced and used instead.
@@ -3272,7 +3275,7 @@ function data_extend_navigation($navigation, $course, $module, $cm) {
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
 
-    $numentries = data_numentries($data);
+     $numentries = data_numentries($data);
     $canmanageentries = has_capability('mod/data:manageentries', context_module::instance($cm->id));
 
     if ($data->entriesleft = data_get_entries_left_to_add($data, $numentries, $canmanageentries)) {
@@ -4211,4 +4214,48 @@ function data_check_updates_since(cm_info $cm, $from, $filter = array()) {
     }
 
     return $updates;
+}
+
+/**
+ * Is the event visible?
+ *
+ * @param \core_calendar\event $event
+ * @return bool Returns true if the event is visible to the current user, false otherwise.
+ */
+function mod_data_core_calendar_is_event_visible(\core_calendar\event $event) {
+    $cm = get_fast_modinfo($event->courseid)->instances['data'][$event->instance];
+    $context = context_module::instance($cm->id);
+
+    return has_capability('mod/data:view', $context);
+}
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_data_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                       \core_calendar\action_factory $factory) {
+    global $DB;
+
+    $cm = get_fast_modinfo($event->courseid)->instances['data'][$event->instance];
+    $data = $DB->get_record('data', array('id' => $event->instance), 'id, timeavailablefrom, timeavailableto');
+
+    if ($data->timeavailablefrom && $data->timeavailableto) {
+        $actionable = (time() >= $data->timeavailablefrom) && (time() <= $data->timeavailableto);
+    } else if ($data->timeavailableto) {
+        $actionable = time() < $data->timeavailableto;
+    } else if ($data->timeavailablefrom) {
+        $actionable = time() >= $data->timeavailablefrom;
+    } else {
+        $actionable = true;
+    }
+
+    return $factory->create_instance(
+        get_string('add', 'data'),
+        new \moodle_url('/mod/data/view.php', array('id' => $cm->id)),
+        1,
+        $actionable
+    );
 }
