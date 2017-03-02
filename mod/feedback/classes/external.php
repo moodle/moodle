@@ -168,9 +168,10 @@ class mod_feedback_external extends external_api {
      * @param  stdClass   $cm       course module
      * @param  stdClass   $context  context object
      * @throws moodle_exception
+     * @return feedback_completion feedback completion instance
      * @since  Moodle 3.3
      */
-    protected static function validate_feedback_access($feedback,  $course, $cm, $context) {
+    protected static function validate_feedback_access($feedback,  $course, $cm, $context, $checksubmit = false) {
         $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $course->id);
 
         if (!$feedbackcompletion->can_complete()) {
@@ -180,6 +181,15 @@ class mod_feedback_external extends external_api {
         if (!$feedbackcompletion->is_open()) {
             throw new moodle_exception('feedback_is_not_open', 'feedback');
         }
+
+        if ($feedbackcompletion->is_empty()) {
+            throw new moodle_exception('no_items_available_yet', 'feedback');
+        }
+
+        if ($checksubmit && !$feedbackcompletion->can_submit()) {
+            throw new moodle_exception('this_feedback_is_already_submitted', 'feedback');
+        }
+        return $feedbackcompletion;
     }
 
     /**
@@ -443,6 +453,65 @@ class mod_feedback_external extends external_api {
                 'items' => new external_multiple_structure(
                     feedback_item_exporter::get_read_structure()
                 ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for launch_feedback.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function launch_feedback_parameters() {
+        return new external_function_parameters (
+            array(
+                'feedbackid' => new external_value(PARAM_INT, 'Feedback instance id'),
+            )
+        );
+    }
+
+    /**
+     * Starts or continues a feedback submission
+     *
+     * @param array $feedbackid feedback instance id
+     * @return array of warnings and launch information
+     * @since Moodle 3.3
+     */
+    public static function launch_feedback($feedbackid) {
+        global $PAGE;
+
+        $params = array('feedbackid' => $feedbackid);
+        $params = self::validate_parameters(self::launch_feedback_parameters(), $params);
+        $warnings = array();
+
+        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
+        // Check we can do a new submission (or continue an existing).
+        $feedbackcompletion = self::validate_feedback_access($feedback,  $course, $cm, $context, true);
+
+        $gopage = $feedbackcompletion->get_resume_page();
+        if ($gopage === null) {
+            $gopage = -1; // Last page.
+        }
+
+        $result = array(
+            'gopage' => $gopage,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the launch_feedback return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function launch_feedback_returns() {
+        return new external_single_structure(
+            array(
+                'gopage' => new external_value(PARAM_INT, 'The next page to go (-1 if we were already in the last page). 0 for first page.'),
                 'warnings' => new external_warnings(),
             )
         );

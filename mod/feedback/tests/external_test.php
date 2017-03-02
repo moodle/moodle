@@ -366,4 +366,59 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test launch_feedback.
+     */
+    public function test_launch_feedback() {
+        global $DB;
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Add questions to the feedback, we are adding 2 pages of questions.
+        $itemscreated = self::populate_feedback($this->feedback, 2);
+
+        // First try a feedback we didn't attempt.
+        $result = mod_feedback_external::launch_feedback($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::launch_feedback_returns(), $result);
+        $this->assertEquals(0, $result['gopage']);
+
+        // Now, try a feedback that we attempted.
+        // Force non anonymous.
+        $DB->set_field('feedback', 'anonymous', 0, array('id' => $this->feedback->id));
+        // Add a completed_tmp record.
+        $record = [
+            'feedback' => $this->feedback->id,
+            'userid' => $this->student->id,
+            'guestid' => '',
+            'timemodified' => time() - DAYSECS,
+            'random_response' => 0,
+            'anonymous_response' => 2,
+            'courseid' => $this->course->id,
+        ];
+        $record['id'] = $DB->insert_record('feedback_completedtmp', (object) $record);
+
+        // Add a response to the feedback for each question type with possible values.
+        $response = [
+            'course_id' => $this->course->id,
+            'item' => $itemscreated[1]->id, // First item is the info question.
+            'completed' => $record['id'],
+            'tmp_completed' => $record['id'],
+            'value' => 'A',
+        ];
+        $DB->insert_record('feedback_valuetmp', (object) $response);
+        $response = [
+            'course_id' => $this->course->id,
+            'item' => $itemscreated[2]->id, // Second item is the numeric question.
+            'completed' => $record['id'],
+            'tmp_completed' => $record['id'],
+            'value' => 5,
+        ];
+        $DB->insert_record('feedback_valuetmp', (object) $response);
+
+        $result = mod_feedback_external::launch_feedback($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::launch_feedback_returns(), $result);
+        $this->assertEquals(1, $result['gopage']);
+    }
 }

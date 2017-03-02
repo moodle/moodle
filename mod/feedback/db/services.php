@@ -69,4 +69,12 @@ $functions = array(
         'capabilities'  => 'mod/feedback:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_feedback_launch_feedback' => array(
+        'classname'     => 'mod_feedback_external',
+        'methodname'    => 'launch_feedback',
+        'description'   => 'Starts or continues a feedback submission.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/feedback:complete',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
