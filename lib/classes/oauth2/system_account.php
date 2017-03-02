@@ -37,6 +37,7 @@ use core\persistent;
  */
 class system_account extends persistent {
 
+    /** @const TABLE */
     const TABLE = 'oauth2_system_account';
 
     /**

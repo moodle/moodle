@@ -17,11 +17,13 @@
 /**
  * Class for loading/storing oauth2 endpoints from the DB.
  *
- * @package    core_oauth2
+ * @package    core
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace core\oauth2;
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/filelib.php');
 
@@ -31,7 +33,6 @@ use stdClass;
 use moodle_exception;
 use moodle_url;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Static list of api methods for system oauth2 configuration.
@@ -181,6 +182,11 @@ class api {
         return $issuer;
     }
 
+    /**
+     * Create one of the standard issuers.
+     * @param string $type One of google, facebook, microsoft
+     * @return \core\oauth2\issuer
+     */
     public static function create_standard_issuer($type) {
         require_capability('moodle/site:config', context_system::instance());
         if ($type == 'google') {
@@ -236,8 +242,8 @@ class api {
      * Get the system account for an installed OAuth service.
      * Never ever ever expose this to a webservice because it contains the refresh token which grants API access.
      *
-     * @param int $id
-     * @return core\oauth2\user_field_mapping
+     * @param \core\oauth2\issuer $id
+     * @return \core\oauth2\client
      */
     public static function get_system_account(issuer $issuer) {
         return system_account::get_record(['issuerid' => $issuer->get('id')]);
@@ -247,7 +253,7 @@ class api {
      * Get the full list of system scopes required by an oauth issuer.
      * This includes the list required for login as well as any scopes injected by the oauth2_system_scopes callback in plugins.
      *
-     * @param core\oauth2\issuer $issuer
+     * @param \core\oauth2\issuer $issuer
      * @return string
      */
     public static function get_system_scopes_for_issuer($issuer) {
@@ -308,7 +314,7 @@ class api {
      * This call does the redirect dance back to the current page after authentication.
      *
      * @param core\oauth2\issuer $issuer The desired OAuth issuer
-     * @param moodle_url $url The url to the current page.
+     * @param moodle_url $currenturl The url to the current page.
      * @param string $additionalscopes The additional scopes required for authorization.
      * @return core\oauth2\client
      */
@@ -715,7 +721,7 @@ class api {
         $record = new stdClass();
         $record->issuerid = $issuer->get('id');
         $record->refreshtoken = $refreshtoken;
-        $record->grantedscopes = $scopesrequired;
+        $record->grantedscopes = $scopes;
 
         $systemaccount = new system_account(0, $record);
 

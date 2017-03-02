@@ -142,7 +142,8 @@ class renderer extends plugin_renderer_base {
             $links .= ' ' . $editendpointlink;
 
             // User field mapping.
-            $edituserfieldmappingsurl = new moodle_url('/admin/tool/oauth2/userfieldmappings.php', ['issuerid' => $issuer->get('id')]);
+            $params = ['issuerid' => $issuer->get('id')];
+            $edituserfieldmappingsurl = new moodle_url('/admin/tool/oauth2/userfieldmappings.php', $params);
             $str = get_string('edituserfieldmappings', 'tool_oauth2');
             $edituserfieldmappinglink = html_writer::link($edituserfieldmappingsurl, $OUTPUT->pix_icon('t/user', $str));
             $links .= ' ' . $edituserfieldmappinglink;
@@ -188,6 +189,7 @@ class renderer extends plugin_renderer_base {
      * This function will render one beautiful table with all the endpoints.
      *
      * @param \core\oauth2\endpoint[] $endpoints - list of all endpoints.
+     * @param int $issuerid
      * @return string HTML to output.
      */
     public function endpoints_table($endpoints, $issuerid) {
@@ -210,7 +212,7 @@ class renderer extends plugin_renderer_base {
             $namecell = new html_table_cell(s($name));
             $namecell->header = true;
 
-            // Url
+            // Url.
             $url = $endpoint->get('url');
             $urlcell = new html_table_cell(s($url));
 
@@ -246,6 +248,7 @@ class renderer extends plugin_renderer_base {
      * This function will render one beautiful table with all the user_field_mappings.
      *
      * @param \core\oauth2\user_field_mapping[] $userfieldmappings - list of all user_field_mappings.
+     * @param int $issuerid
      * @return string HTML to output.
      */
     public function user_field_mappings_table($userfieldmappings, $issuerid) {
@@ -263,11 +266,11 @@ class renderer extends plugin_renderer_base {
         $index = 0;
 
         foreach ($userfieldmappings as $userfieldmapping) {
-            // External field
+            // External field.
             $externalfield = $userfieldmapping->get('externalfield');
             $externalfieldcell = new html_table_cell(s($externalfield));
 
-            // Internal field
+            // Internal field.
             $internalfield = $userfieldmapping->get('internalfield');
             $internalfieldcell = new html_table_cell(s($internalfield));
 

@@ -3267,6 +3267,11 @@ class curl {
         $this->responsefinished = false;
     }
 
+    /**
+     * For use only in unit tests - we can pre-set the next curl response.
+     * This is useful for unit testing APIs that call external systems.
+     * @param string $response
+     */
     public static function mock_response($response) {
         if ((defined('PHPUNIT_TEST') && PHPUNIT_TEST)) {
             array_push(self::$mockresponses, $response);

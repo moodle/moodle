@@ -153,7 +153,7 @@ class auth extends \auth_plugin_base {
      *
      * @param stdClass $config
      * @param string $err
-     * @param array userfields
+     * @param array $userfields
      */
     public function config_form($config, $err, $userfields) {
         echo get_string('plugindescription', 'auth_oauth2');
@@ -170,6 +170,7 @@ class auth extends \auth_plugin_base {
     /**
      * Return the userinfo from the oauth handshake. Will only be valid
      * for the logged in user.
+     * @param $string username
      */
     public function get_userinfo($username) {
         $cached = $this->get_static_user_info();
@@ -181,7 +182,7 @@ class auth extends \auth_plugin_base {
 
     /**
      * Do some checks on the identity provider before showing it on the login page.
-     * @param core\oauth2\issuer
+     * @param core\oauth2\issuer $issuer
      * @return boolean
      */
     private function is_ready_for_login_page(\core\oauth2\issuer $issuer) {
@@ -248,6 +249,7 @@ class auth extends \auth_plugin_base {
 
     /**
      * If this user has no picture - but we got one from oauth - set it.
+     * @param stdClass $user
      * @return boolean True if the image was updated.
      */
     private function update_picture($user) {

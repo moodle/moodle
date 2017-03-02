@@ -36,6 +36,7 @@ use lang_string;
  */
 class endpoint extends persistent {
 
+    /** @const TABLE */
     const TABLE = 'oauth2_endpoint';
 
     /**
@@ -61,8 +62,8 @@ class endpoint extends persistent {
      * Custom validator for end point URLs.
      * Because we send Bearer tokens we must ensure SSL.
      *
-     * @param $value The value to check.
-     * @return boolean
+     * @param string $value The value to check.
+     * @return lang_string|boolean
      */
     protected function validate_url($value) {
         if (strpos($value, 'https://') !== 0) {

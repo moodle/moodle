@@ -27,8 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/authlib.php');
 
 /**
- * Plugin for oauth2 authentication. This is a way to use namespaces even though
- * moodle expects a non-namespaced file here.
+ * Plugin for oauth2 authentication. 
  *
  * @package auth_oauth2
  * @copyright 2017 Damyon Wiese

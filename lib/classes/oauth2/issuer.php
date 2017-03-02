@@ -35,6 +35,7 @@ use core\persistent;
  */
 class issuer extends persistent {
 
+    /** @const TABLE */
     const TABLE = 'oauth2_issuer';
 
     /**

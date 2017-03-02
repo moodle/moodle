@@ -35,8 +35,10 @@ use core\persistent;
  */
 class user_field_mapping extends persistent {
 
+    /** @const TABLE */
     const TABLE = 'oauth2_user_field_mapping';
 
+    /** @var array $userfields - List of standard Moodle userfields. */
     private static $userfields = [
         'firstname',
         'middlename',

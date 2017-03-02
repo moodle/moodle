@@ -169,6 +169,7 @@ class client extends \oauth2_client {
     /**
      * Upgrade a refresh token from oauth 2.0 to an access token
      *
+     * @param \core\oauth2\system_account $systemaccount
      * @return boolean true if token is upgraded succesfully
      */
     public function upgrade_refresh_token(system_account $systemaccount) {

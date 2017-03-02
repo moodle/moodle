@@ -37,8 +37,10 @@ use core\form\persistent;
  */
 class issuer extends persistent {
 
+    /** @var string $persistentclass */
     protected static $persistentclass = 'core\\oauth2\\issuer';
 
+    /** @var array $fieldstoremove */
     protected static $fieldstoremove = array('submitbutton', 'action');
 
     /**

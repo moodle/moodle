@@ -37,8 +37,10 @@ use core\form\persistent;
  */
 class user_field_mapping extends persistent {
 
+    /** @var string $persistentclass */
     protected static $persistentclass = 'core\\oauth2\\user_field_mapping';
 
+    /** @var array $fieldstoremove */
     protected static $fieldstoremove = array('submitbutton', 'action');
 
     /**
