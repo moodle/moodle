@@ -5970,6 +5970,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     if ($attachment && $attachname) {
         if (preg_match( "~\\.\\.~" , $attachment )) {
             // Security check for ".." in dir path.
+            $supportuser = core_user::get_support_user();
             $temprecipients[] = array($supportuser->email, fullname($supportuser, true));
             $mail->addStringAttachment('Error in attachment.  User attempted to attach a filename with a unsafe name.', 'error.txt', '8bit', 'text/plain');
         } else {
