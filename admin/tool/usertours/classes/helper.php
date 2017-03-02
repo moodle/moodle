@@ -493,6 +493,10 @@ class helper {
     public static function bootstrap() {
         global $PAGE;
 
+        if (!isloggedin() || isguestuser()) {
+            return;
+        }
+
         if (self::$bootstrapped) {
             return;
         }
