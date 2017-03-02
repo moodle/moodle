@@ -43,11 +43,20 @@
     <div class="container-fluid">
         <div class="row">
             {{#action.itemcount}}
-                <div class="pull-xs-right hidden-sm-down m-l-1">
-                    <span class="tag tag-pill tag-default">{{.}}</span>
-                </div>
+                {{#action.actionable}}
+                    <div class="pull-xs-right hidden-sm-down m-l-1">
+                        <span class="tag tag-pill tag-default">{{.}}</span>
+                    </div>
+                {{/action.actionable}}
             {{/action.itemcount}}
-            <div class="d-inline-block pull-xs-right hidden-sm-down m-l-1"><a href="{{{action.url}}}">{{action.name}}</a></div>
+            <div class="d-inline-block pull-xs-right hidden-sm-down m-l-1">
+                {{#action.actionable}}
+                    <a href="{{{action.url}}}">{{action.name}}</a>
+                {{/action.actionable}}
+                {{^action.actionable}}
+                    <div class="text-muted">{{action.name}}</div>
+                {{/action.actionable}}
+            </div>
             <div class="d-inline-block pull-xs-right hidden-sm-down">{{enddate}}</div>
             <div class="d-inline-block">
                 {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}

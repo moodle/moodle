@@ -48,6 +48,7 @@ class event_action_exporter extends exporter {
         $data->name = $action->get_name();
         $data->url = $action->get_url()->out(true);
         $data->itemcount = $action->get_item_count();
+        $data->actionable = $action->is_actionable();
 
         parent::__construct($data, $related);
     }
@@ -62,6 +63,7 @@ class event_action_exporter extends exporter {
             'name' => ['type' => PARAM_TEXT],
             'url' => ['type' => PARAM_URL],
             'itemcount' => ['type' => PARAM_INT],
+            'actionable' => ['type' => PARAM_BOOL]
         ];
     }
 
