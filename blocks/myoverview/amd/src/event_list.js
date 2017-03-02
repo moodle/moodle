@@ -31,6 +31,7 @@ define(['jquery', 'core/notification', 'core/templates',
 
     var SELECTORS = {
         EMPTY_MESSAGE: '[data-region="empty-message"]',
+        ROOT: '[data-region="event-list-container"]',
         EVENT_LIST: '[data-region="event-list"]',
         EVENT_LIST_CONTENT: '[data-region="event-list-content"]',
         EVENT_LIST_GROUP_CONTAINER: '[data-region="event-list-group-container"]',
@@ -282,15 +283,24 @@ define(['jquery', 'core/notification', 'core/templates',
      * existing list. The events will be loaded based on the set of data attributes
      * on the root element.
      *
+     * This function can be provided with a jQuery promise. If it is then it won't
+     * attempt to load data by itself, instead it will use the given promise.
+     *
+     * The provided promise must resolve with an an object that has an events key
+     * and value is an array of calendar events.
+     * E.g.
+     * { events: ['event 1', 'event 2'] }
+     *
      * @method load
-     * @param {object} The root element of the event list
-     * @param {promise} A jquery promise
+     * @param {object} root The root element of the event list
+     * @param {object} promise A jQuery promise resolved with events
+     * @return {promise} A jquery promise
      */
-    var load = function(root) {
+    var load = function(root, promise) {
         root = $(root);
         var limit = +root.attr('data-limit'),
             courseId = +root.attr('data-course-id'),
-            lastId = root.attr('data-last-id') ? root.attr('data-last-id') : undefined,
+            lastId = root.attr('data-last-id'),
             date = new Date(),
             todayTime = Math.floor(date.setHours(0, 0, 0, 0) / 1000);
 
@@ -301,11 +311,26 @@ define(['jquery', 'core/notification', 'core/templates',
 
         startLoading(root);
 
-        var promise = null;
-        if (courseId) {
-            promise = CalendarEventsRepository.queryFromTimeByCourse(courseId, todayTime, limit, lastId);
-        } else {
-            promise = CalendarEventsRepository.queryFromTime(todayTime, limit, lastId);
+        // If we haven't been provided a promise to resolve the
+        // data then we will load our own.
+        if (typeof promise == 'undefined') {
+            var args = {
+                starttime: todayTime,
+                limit: limit,
+            };
+
+            if (lastId) {
+                args.aftereventid = lastId;
+            }
+
+            // If we have a course id then we only want events from that course.
+            if (courseId) {
+                args.courseid = courseId;
+                promise = CalendarEventsRepository.queryByCourse(args);
+            } else {
+                // Otherwise we want events from any course.
+                promise = CalendarEventsRepository.queryByTime(args);
+            }
         }
 
         // Request data from the server.
@@ -354,7 +379,7 @@ define(['jquery', 'core/notification', 'core/templates',
      */
     var registerEventListeners = function(root) {
         CustomEvents.define(root, [CustomEvents.events.activate]);
-        root.one(CustomEvents.events.activate, SELECTORS.VIEW_MORE_BUTTON, function() {
+        root.on(CustomEvents.events.activate, SELECTORS.VIEW_MORE_BUTTON, function() {
             load(root);
         });
     };
@@ -366,6 +391,7 @@ define(['jquery', 'core/notification', 'core/templates',
             registerEventListeners(root);
         },
         registerEventListeners: registerEventListeners,
-        load: load
+        load: load,
+        rootSelector: SELECTORS.ROOT,
     };
 });

@@ -21,11 +21,16 @@
  * @copyright  2016 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'block_myoverview/event_list'], function($, EventList) {
+define(
+[
+    'jquery',
+    'block_myoverview/event_list',
+    'block_myoverview/calendar_events_repository'
+],
+function($, EventList, EventsRepository) {
 
     var SELECTORS = {
         EVENTS_BY_COURSE_CONTAINER: '[data-region="course-events-container"]',
-        EVENTS_LIST_CONTAINER: '[data-region="event-list-container"]'
     };
 
     /**
@@ -35,11 +40,58 @@ define(['jquery', 'block_myoverview/event_list'], function($, EventList) {
      * @param {Object} root The root element of sort by course list.
      */
     var load = function(root) {
+        var courseBlocks = root.find(SELECTORS.EVENTS_BY_COURSE_CONTAINER);
 
-        root.find(SELECTORS.EVENTS_BY_COURSE_CONTAINER).each(function(index, container) {
+        if (!courseBlocks.length) {
+            return;
+        }
+
+        var date = new Date();
+        var todayTime = Math.floor(date.setHours(0, 0, 0, 0) / 1000);
+        var limit = courseBlocks.attr('data-limit');
+        var courseIds = courseBlocks.map(function() {
+            return $(this).attr('data-course-id');
+        }).get();
+
+        // Load the first set of events for each course in a single request.
+        // We want to avoid sending an individual request for each course because
+        // there could be lots of them.
+        var coursesPromise = EventsRepository.queryByCourses({
+            courseids: courseIds,
+            starttime: todayTime,
+            limit: limit
+        });
+
+        // Load the events into each course block.
+        courseBlocks.each(function(index, container) {
             container = $(container);
-            var eventListContainer = container.find(SELECTORS.EVENTS_LIST_CONTAINER);
-            EventList.load(eventListContainer);
+            var courseId = container.attr('data-course-id');
+            var eventListContainer = container.find(EventList.rootSelector);
+            var promise = $.Deferred();
+
+            // Once all of the course events have been loaded then we need
+            // to extract just the ones relevant to this course block and
+            // hand them to the event list to render.
+            coursesPromise.done(function (result) {
+                var events = [];
+                // Get this course block's events from the collection returned
+                // from the server.
+                var courseGroup = result.groupedbycourse.filter(function(group) {
+                    return group.courseid == courseId;
+                });
+
+                if (courseGroup.length) {
+                    events = courseGroup[0].events;
+                }
+
+                promise.resolve({events: events});
+            }).fail(function(e) {
+                promise.reject(e);
+            });
+
+            // Provide the event list with a promise that will be resolved
+            // when we have received the events from the server.
+            EventList.load(eventListContainer, promise);
         });
     };
 

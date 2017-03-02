@@ -24,834 +24,128 @@
  */
 define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
 
-    var date = new Date(),
-        currentTime = Math.floor(date.setHours(0, 0, 0, 0) / 1000),
-        todayTime = currentTime + (60 * 60),
-        tomorrowTime = currentTime + (60 * 60 * 26),
-        twoWeeksTime = currentTime + (60 * 60 * 24 * 14),
-        twoMonthsTime = currentTime + (60 * 60 * 24 * 56),
-        twoYearsTime = currentTime + (60 * 60 * 24 * 365 * 2),
-        dataCache = [
-        {
-            id: 1,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 1',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 1, 2016',
-            courseEndDate: 'Oct 6, 2016',
-            itemcount: 1,
-            orderTime: todayTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 2,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 2',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 1, 2016',
-            courseEndDate: 'Oct 6, 2016',
-            itemcount: 1,
-            orderTime: todayTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 3,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 3',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 1, 2016',
-            courseEndDate: 'Oct 6, 2016',
-            itemcount: 1,
-            orderTime: todayTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 4,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 4',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: todayTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 5,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 5',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: todayTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 6,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 6',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: todayTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 7,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 7',
-            contexturl: 'https://www.google.com',
-            courseid: 3,
-            coursename: 'Course 3',
-            coursesummary: 'This is a brief summary of course 3',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: tomorrowTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 8,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 8',
-            contexturl: 'https://www.google.com',
-            courseid: 3,
-            coursename: 'Course 3',
-            coursesummary: 'This is a brief summary of course 3',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: tomorrowTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 9,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 9',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: tomorrowTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 10,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 10',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: tomorrowTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 11,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 11',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: tomorrowTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 12,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 12',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: tomorrowTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 13,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 13',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: tomorrowTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 14,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 14',
-            contexturl: 'https://www.google.com',
-            courseid: 3,
-            coursename: 'Course 3',
-            coursesummary: 'This is a brief summary of course 3',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: tomorrowTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 15,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 15',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: tomorrowTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 16,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 16',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: tomorrowTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 17,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 17',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 18,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 18',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 19,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 19',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 20,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 20',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 21,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 21',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 22,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 22',
-            contexturl: 'https://www.google.com',
-            courseid: 3,
-            coursename: 'Course 3',
-            coursesummary: 'This is a brief summary of course 3',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 23,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 23',
-            contexturl: 'https://www.google.com',
-            courseid: 3,
-            coursename: 'Course 3',
-            coursesummary: 'This is a brief summary of course 3',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 24,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 24',
-            contexturl: 'https://www.google.com',
-            courseid: 3,
-            coursename: 'Course 3',
-            coursesummary: 'This is a brief summary of course 3',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 25,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 25',
-            contexturl: 'https://www.google.com',
-            courseid: 3,
-            coursename: 'Course 3',
-            coursesummary: 'This is a brief summary of course 3',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 26,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 26',
-            contexturl: 'https://www.google.com',
-            courseid: 3,
-            coursename: 'Course 3',
-            coursesummary: 'This is a brief summary of course 3',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 27,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 27',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 28,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 28',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 29,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 29',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 30,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 30',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 31,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 31',
-            contexturl: 'https://www.google.com',
-            courseid: 3,
-            coursename: 'Course 3',
-            coursesummary: 'This is a brief summary of course 3',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 32,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 32',
-            contexturl: 'https://www.google.com',
-            courseid: 3,
-            coursename: 'Course 3',
-            coursesummary: 'This is a brief summary of course 3',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoWeeksTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 33,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 33',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoMonthsTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 34,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 34',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',            itemcount: 1,
-            orderTime: twoMonthsTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 35,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 35',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoMonthsTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 36,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 36',
-            contexturl: 'https://www.google.com',
-            courseid: 1,
-            coursename: 'Course 1',
-            coursesummary: 'This is a brief summary of course 1',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoYearsTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 37,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 37',
-            contexturl: 'https://www.google.com',
-            courseid: 2,
-            coursename: 'Course 2',
-            coursesummary: 'This is a brief summary of course 2',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoYearsTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-        {
-            id: 38,
-            actionname: 'Submit assignment',
-            actionurl: 'https://www.google.com',
-            enddate: 'Nov 4th, 10am',
-            contextname: 'Assignment due 38',
-            contexturl: 'https://www.google.com',
-            courseid: 3,
-            coursename: 'Course 3',
-            coursesummary: 'This is a brief summary of course 3',
-            courseStartDate: 'Oct 7, 2016',
-            courseEndDate: 'Oct 14, 2016',
-            itemcount: 1,
-            orderTime: twoYearsTime,
-            icon: {
-                key: 'icon',
-                component: 'mod_assign',
-                alttext: 'Assignment icon',
-            },
-        },
-    ];
-
     var DEFAULT_LIMIT = 20;
 
-    var queryFromTimeByCourse = function(courseId, startTime, limit, offset) {
-        var deferred = $.Deferred();
-
-        setTimeout(function() {
-            deferred.resolve(groupEventsByCourseAndTime(courseId, startTime, limit, offset));
-        }, 1000);
-
-        return deferred.promise();
-    };
-
-    var groupEventsByCourseAndTime = function(courseId, startTime, limit, offset) {
-        var eventsByCourse = {};
-        var events = {};
-        $.each(dataCache, function(index, value) {
-            if (!eventsByCourse[value.courseid]) {
-                eventsByCourse[value.courseid] = {
-                    courseid: value.courseid,
-                    coursename: value.coursename,
-                    coursesummary: value.coursesummary,
-                    courseStartDate: value.courseStartDate,
-                    courseEndDate: value.courseEndDate,
-                    calendarEvents: []
-                };
-            }
-            eventsByCourse[value.courseid].calendarEvents.push(value);
-        });
-
-        if (typeof eventsByCourse[courseId] !== 'undefined') {
-            // There are events for this course.
-            events = eventsByCourse[courseId].calendarEvents.slice(offset, offset + limit);
+    /**
+     * Retrieve a list of calendar events for the logged in user for the
+     * given course.
+     *
+     * Valid args are:
+     * int courseid     Only get events for this course
+     * int starttime    Only get events after this time
+     * int endtime      Only get events before this time
+     * int limit        Limit the number of results returned
+     * int aftereventid Offset the result set from the given id
+     *
+     * @method queryByCourse
+     * @param {object} args The request arguments
+     * @return {promise} Resolved with an array of the calendar events
+     */
+    var queryByCourse = function(args) {
+        if (!args.hasOwnProperty('limit')) {
+            args.limit = DEFAULT_LIMIT;
         }
 
-        return {
-            events: events
+        args.limitnum = args.limit;
+        delete args.limit;
+
+        if (args.hasOwnProperty('starttime')) {
+            args.timesortfrom = args.starttime;
+            delete args.starttime;
+        }
+
+        if (args.hasOwnProperty('endtime')) {
+            args.timesortto = args.endtime;
+            delete args.endtime;
+        }
+
+        var request = {
+            methodname: 'core_calendar_get_action_events_by_course',
+            args: args
         };
+
+        var promise = Ajax.call([request])[0];
+
+        promise.fail(Notification.exception);
+
+        return promise;
+    };
+
+    /**
+     * Retrieve a list of calendar events for the given courses for the
+     * logged in user.
+     *
+     * Valid args are:
+     * array courseids    Get events for these courses
+     * int   starttime    Only get events after this time
+     * int   endtime      Only get events before this time
+     * int   limit        Limit the number of results returned
+     *
+     * @method queryByCourses
+     * @param {object} args The request arguments
+     * @return {promise} Resolved with an array of the calendar events
+     */
+    var queryByCourses = function(args) {
+        if (!args.hasOwnProperty('limit')) {
+            // This is intentionally smaller than the default limit.
+            args.limit = 10;
+        }
+
+        args.limitnum = args.limit;
+        delete args.limit;
+
+        if (args.hasOwnProperty('starttime')) {
+            args.timesortfrom = args.starttime;
+            delete args.starttime;
+        }
+
+        if (args.hasOwnProperty('endtime')) {
+            args.timesortto = args.endtime;
+            delete args.endtime;
+        }
+
+        var request = {
+            methodname: 'core_calendar_get_action_events_by_courses',
+            args: args
+        };
+
+        var promise = Ajax.call([request])[0];
+
+        promise.fail(Notification.exception);
+
+        return promise;
     };
 
     /**
      * Retrieve a list of calendar events for the logged in user after the given
      * time.
      *
-     * @method queryFromTime
-     * @param {int}         startTime    Only get events after this time
-     * @param {int}         limit        Limit the number of results returned
-     * @param {int}         afterEventId Offset the result set from the given id
-     * @return {promise}    Resolved with an array of the calendar events
+     * Valid args are:
+     * int starttime    Only get events after this time
+     * int endtime      Only get events before this time
+     * int limit        Limit the number of results returned
+     * int aftereventid Offset the result set from the given id
+     *
+     * @method queryByTime
+     * @param {object} args The request arguments
+     * @return {promise} Resolved with an array of the calendar events
      */
-    var queryFromTime = function(startTime, limit, afterEventId) {
-        limit = (typeof limit === 'undefined') ? DEFAULT_LIMIT : limit;
+    var queryByTime = function(args) {
+        if (!args.hasOwnProperty('limit')) {
+            args.limit = DEFAULT_LIMIT;
+        }
 
-        var args = {
-            timesortfrom: startTime,
-            limitnum: limit,
-        };
+        args.limitnum = args.limit;
+        delete args.limit;
 
-        if (typeof afterEventId !== 'undefined') {
-            args.aftereventid = afterEventId;
+        if (args.hasOwnProperty('starttime')) {
+            args.timesortfrom = args.starttime;
+            delete args.starttime;
+        }
+
+        if (args.hasOwnProperty('endtime')) {
+            args.timesortto = args.endtime;
+            delete args.endtime;
         }
 
         var request = {
@@ -867,7 +161,8 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
     };
 
     return {
-        queryFromTime: queryFromTime,
-        queryFromTimeByCourse: queryFromTimeByCourse
+        queryByTime: queryByTime,
+        queryByCourse: queryByCourse,
+        queryByCourses: queryByCourses,
     };
 });
