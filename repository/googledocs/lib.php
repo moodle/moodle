@@ -39,28 +39,21 @@ require_once($CFG->libdir . '/google/lib.php');
 class repository_googledocs extends repository {
 
     /**
-     * Google Client.
-     * @var Google_Client
+     * OAuth 2 client
+     * @var \core\oauth2\client
      */
     private $client = null;
 
     /**
-     * Google Drive Service.
-     * @var Google_Drive_Service
+     * OAuth 2 Issuer
+     * @var \core\oauth2\issuer
      */
-    private $service = null;
+    private $issuer = null;
 
     /**
-     * Session key to store the accesstoken.
-     * @var string
+     * Additional scopes required for drive.
      */
-    const SESSIONKEY = 'googledrive_accesstoken';
-
-    /**
-     * URI to the callback file for OAuth.
-     * @var string
-     */
-    const CALLBACKURL = '/admin/oauth2callback.php';
+    const SCOPES = 'https://www.googleapis.com/auth/drive';
 
     /**
      * Constructor.
@@ -74,52 +67,26 @@ class repository_googledocs extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array(), $readonly = 0) {
         parent::__construct($repositoryid, $context, $options, $readonly = 0);
 
-        $callbackurl = new moodle_url(self::CALLBACKURL);
-
-        $this->client = get_google_client();
-        $this->client->setClientId(get_config('googledocs', 'clientid'));
-        $this->client->setClientSecret(get_config('googledocs', 'secret'));
-        $this->client->setScopes(array(Google_Service_Drive::DRIVE_READONLY));
-        $this->client->setRedirectUri($callbackurl->out(false));
-        $this->service = new Google_Service_Drive($this->client);
-
-        $this->check_login();
+        $this->issuer = \core\oauth2\api::get_issuer(get_config('googledocs', 'issuerid'));
     }
 
     /**
-     * Returns the access token if any.
+     * Get a cached user authenticated oauth client.
      *
-     * @return string|null access token.
+     * @return \core\oauth2\client
      */
-    protected function get_access_token() {
-        global $SESSION;
-        if (isset($SESSION->{self::SESSIONKEY})) {
-            return $SESSION->{self::SESSIONKEY};
+    protected function get_user_oauth_client() {
+        if ($this->client) {
+            return $this->client;
         }
-        return null;
-    }
+        $returnurl = new moodle_url('/repository/repository_callback.php');
+        $returnurl->param('callback', 'yes');
+        $returnurl->param('repo_id', $this->id);
+        $returnurl->param('sesskey', sesskey());
 
-    /**
-     * Store the access token in the session.
-     *
-     * @param string $token token to store.
-     * @return void
-     */
-    protected function store_access_token($token) {
-        global $SESSION;
-        $SESSION->{self::SESSIONKEY} = $token;
-    }
+        $this->client = \core\oauth2\api::get_user_oauth_client($this->issuer, $returnurl, self::SCOPES);
 
-    /**
-     * Callback method during authentication.
-     *
-     * @return void
-     */
-    public function callback() {
-        if ($code = optional_param('oauth2code', null, PARAM_RAW)) {
-            $this->client->authenticate($code);
-            $this->store_access_token($this->client->getAccessToken());
-        }
+        return $this->client;
     }
 
     /**
@@ -128,11 +95,8 @@ class repository_googledocs extends repository {
      * @return bool true when logged in.
      */
     public function check_login() {
-        if ($token = $this->get_access_token()) {
-            $this->client->setAccessToken($token);
-            return true;
-        }
-        return false;
+        $client = $this->get_user_oauth_client();
+        return $client->is_logged_in();
     }
 
     /**
@@ -141,13 +105,9 @@ class repository_googledocs extends repository {
      * @return void|array for ajax.
      */
     public function print_login() {
-        $returnurl = new moodle_url('/repository/repository_callback.php');
-        $returnurl->param('callback', 'yes');
-        $returnurl->param('repo_id', $this->id);
-        $returnurl->param('sesskey', sesskey());
+        $client = $this->get_user_oauth_client();
+        $url = $client->get_login_url();
 
-        $url = new moodle_url($this->client->createAuthUrl());
-        $url->param('state', $returnurl->out_as_local_url(false));
         if ($this->options['ajax']) {
             $popup = new stdClass();
             $popup->type = 'popup';
@@ -159,11 +119,11 @@ class repository_googledocs extends repository {
     }
 
     /**
-    * Build the breadcrumb from a path.
-    *
-    * @param string $path to create a breadcrumb from.
-    * @return array containing name and path of each crumb.
-    */
+     * Build the breadcrumb from a path.
+     *
+     * @param string $path to create a breadcrumb from.
+     * @return array containing name and path of each crumb.
+     */
     protected function build_breadcrumb($path) {
         $bread = explode('/', $path);
         $crumbtrail = '';
@@ -181,15 +141,15 @@ class repository_googledocs extends repository {
     }
 
     /**
-    * Generates a safe path to a node.
-    *
-    * Typically, a node will be id|Name of the node.
-    *
-    * @param string $id of the node.
-    * @param string $name of the node, will be URL encoded.
-    * @param string $root to append the node on, must be a result of this function.
-    * @return string path to the node.
-    */
+     * Generates a safe path to a node.
+     *
+     * Typically, a node will be id|Name of the node.
+     *
+     * @param string $id of the node.
+     * @param string $name of the node, will be URL encoded.
+     * @param string $root to append the node on, must be a result of this function.
+     * @return string path to the node.
+     */
     protected function build_node_path($id, $name = '', $root = '') {
         $path = $id;
         if (!empty($name)) {
@@ -202,12 +162,12 @@ class repository_googledocs extends repository {
     }
 
     /**
-    * Returns information about a node in a path.
-    *
-    * @see self::build_node_path()
-    * @param string $node to extrat information from.
-    * @return array about the node.
-    */
+     * Returns information about a node in a path.
+     *
+     * @see self::build_node_path()
+     * @param string $node to extrat information from.
+     * @return array about the node.
+     */
     protected function explode_node_path($node) {
         if (strpos($node, '|') !== false) {
             list($id, $name) = explode('|', $node, 2);
@@ -265,16 +225,17 @@ class repository_googledocs extends repository {
     /**
      * Search throughout the Google Drive.
      *
-     * @param string $search_text text to search for.
+     * @param string $searchtext text to search for.
      * @param int $page search page.
      * @return array of results.
      */
-    public function search($search_text, $page = 0) {
+    public function search($searchtext, $page = 0) {
         $path = $this->build_node_path('root', get_string('pluginname', 'repository_googledocs'));
-        $path = $this->build_node_path('search', $search_text, $path);
+        $str = get_string('searchfor', 'repository_googledocs', $searchtext);
+        $path = $this->build_node_path('search', $str, $path);
 
         // Query the Drive.
-        $q = "fullText contains '" . str_replace("'", "\'", $search_text) . "'";
+        $q = "fullText contains '" . str_replace("'", "\'", $searchtext) . "'";
         $q .= ' AND trashed = false';
         $results = $this->query($q, $path);
 
@@ -304,14 +265,17 @@ class repository_googledocs extends repository {
 
         $files = array();
         $folders = array();
-        $fields = "items(id,title,mimeType,downloadUrl,fileExtension,exportLinks,modifiedDate,fileSize,thumbnailLink)";
-        $params = array('q' => $q, 'fields' => $fields);
         $config = get_config('googledocs');
+        $fields = "files(id,name,mimeType,webContentLink,fileExtension,modifiedTime,size,thumbnailLink,iconLink)";
+        $params = array('q' => $q, 'fields' => $fields, 'spaces' => 'drive');
 
         try {
             // Retrieving files and folders.
-            $response = $this->service->files->listFiles($params);
-        } catch (Google_Service_Exception $e) {
+            $client = $this->get_user_oauth_client();
+            $service = new repository_googledocs\rest($client);
+
+            $response = $service->call('list', $params);
+        } catch (Exception $e) {
             if ($e->getCode() == 403 && strpos($e->getMessage(), 'Access Not Configured') !== false) {
                 // This is raised when the service Drive API has not been enabled on Google APIs control panel.
                 throw new repository_exception('servicenotenabled', 'repository_googledocs');
@@ -320,14 +284,15 @@ class repository_googledocs extends repository {
             }
         }
 
-        $items = isset($response['items']) ? $response['items'] : array();
-        foreach ($items as $item) {
-            if ($item['mimeType'] == 'application/vnd.google-apps.folder') {
+        $base = 'https://www.googleapis.com/drive/v3';
+        $gfiles = isset($response->files) ? $response->files : array();
+        foreach ($gfiles as $gfile) {
+            if ($gfile->mimeType == 'application/vnd.google-apps.folder') {
                 // This is a folder.
-                $folders[$item['title'] . $item['id']] = array(
-                    'title' => $item['title'],
-                    'path' => $this->build_node_path($item['id'], $item['title'], $path),
-                    'date' => strtotime($item['modifiedDate']),
+                $folders[$gfile->name . $gfile->id] = array(
+                    'title' => $gfile->name,
+                    'path' => $this->build_node_path($gfile->id, $gfile->name, $path),
+                    'date' => strtotime($gfile->modifiedTime),
                     'thumbnail' => $OUTPUT->image_url(file_folder_icon(64))->out(false),
                     'thumbnail_height' => 64,
                     'thumbnail_width' => 64,
@@ -335,16 +300,18 @@ class repository_googledocs extends repository {
                 );
             } else {
                 // This is a file.
-                if (isset($item['fileExtension'])) {
-                    // The file has an extension, therefore there is a download link.
-                    $title = $item['title'];
-                    $source = $item['downloadUrl'];
+                if (isset($gfile->fileExtension)) {
+                    // The file has an extension, therefore we can download it.
+                    $title = $gfile->name;
+                    $params = ['alt' => 'media'];
+                    $sourceurl = new moodle_url($base . '/files/' . $gfile->id, $params);
+                    $source = $sourceurl->out(false);
                 } else {
                     // The file is probably a Google Doc file, we get the corresponding export link.
                     // This should be improved by allowing the user to select the type of export they'd like.
-                    $type = str_replace('application/vnd.google-apps.', '', $item['mimeType']);
+                    $type = str_replace('application/vnd.google-apps.', '', $gfile->mimeType);
                     $title = '';
-                    $exportType = '';
+                    $exporttype = '';
                     $types = get_mimetypes_array();
 
                     switch ($type){
@@ -355,54 +322,52 @@ class repository_googledocs extends repository {
                                 // Moodle user 'text/rtf' as the MIME type for RTF files.
                                 // Google uses 'application/rtf' for the same type of file.
                                 // See https://developers.google.com/drive/v3/web/manage-downloads.
-                                $exportType = 'application/rtf';
+                                $exporttype = 'application/rtf';
                             } else {
-                                $exportType = $types[$ext]['type'];
+                                $exporttype = $types[$ext]['type'];
                             }
                             break;
                         case 'presentation':
                             $ext = $config->presentationformat;
                             $title = $item['title'] . '.'. $ext;
-                            $exportType = $types[$ext]['type'];
+                            $exporttype = $types[$ext]['type'];
                             break;
                         case 'spreadsheet':
                             $ext = $config->spreadsheetformat;
                             $title = $item['title'] . '.'. $ext;
-                            $exportType = $types[$ext]['type'];
+                            $exporttype = $types[$ext]['type'];
                             break;
                         case 'drawing':
                             $ext = $config->drawingformat;
                             $title = $item['title'] . '.'. $ext;
-                            $exportType = $types[$ext]['type'];
+                            $exporttype = $types[$ext]['type'];
                             break;
                     }
                     // Skips invalid/unknown types.
-                    if (empty($title) || !isset($item['exportLinks'][$exportType])) {
+                    if (empty($title)) {
                         continue;
                     }
-                    $source = $item['exportLinks'][$exportType];
+                    $params = ['mimeType' => $exporttype];
+                    $sourceurl = new moodle_url($base . '/files/' . $gfile->id . '/export', $params);
+                    $source = $sourceurl->out(false);
                 }
-                // Adds the file to the file list. Using the itemId along with the title as key
+                // Adds the file to the file list. Using the itemId along with the name as key
                 // of the array because Google Drive allows files with identical names.
-                $files[$title . $item['id']] = array(
+                $thumb = '';
+                if (isset($gfile->thumbnailLink)) {
+                    $thumb = $gfile->thumbnailLink;
+                } else if (isset($gfile->iconLink)) {
+                    $thumb = $gfile->iconLink;
+                }
+                $files[$title . $gfile->id] = array(
                     'title' => $title,
                     'source' => $source,
-                    'date' => strtotime($item['modifiedDate']),
-                    'size' => isset($item['fileSize']) ? $item['fileSize'] : null,
-                    'thumbnail' => $OUTPUT->image_url(file_extension_icon($title, 64))->out(false),
+                    'date' => strtotime($gfile->modifiedTime),
+                    'size' => isset($gfile->size) ? $gfile->size : null,
+                    'thumbnail' => $thumb,
                     'thumbnail_height' => 64,
                     'thumbnail_width' => 64,
-                    // Do not use real thumbnails as they wouldn't work if the user disabled 3rd party
-                    // plugins in his browser, or if they're not logged in their Google account.
                 );
-
-                // Sometimes the real thumbnails can't be displayed, for example if 3rd party cookies are disabled
-                // or if the user is not logged in Google anymore. But this restriction does not seem to be applied
-                // to a small subset of files.
-                $extension = strtolower(pathinfo($title, PATHINFO_EXTENSION));
-                if (isset($item['thumbnailLink']) && in_array($extension, array('jpg', 'png', 'txt', 'pdf'))) {
-                    $files[$title . $item['id']]['realthumbnail'] = $item['thumbnailLink'];
-                }
             }
         }
 
@@ -419,7 +384,8 @@ class repository_googledocs extends repository {
      * @return string
      */
     public function logout() {
-        $this->store_access_token(null);
+        $client = $this->get_user_oauth_client();
+        $client->log_out();
         return parent::logout();
     }
 
@@ -433,18 +399,18 @@ class repository_googledocs extends repository {
     public function get_file($reference, $filename = '') {
         global $CFG;
 
-        $auth = $this->client->getAuth();
-        $request = $auth->authenticatedRequest(new Google_Http_Request($reference));
-        if ($request->getResponseHttpCode() == 200) {
-            $path = $this->prepare_file($filename);
-            $content = $request->getResponseBody();
-            if (file_put_contents($path, $content) !== false) {
-                @chmod($path, $CFG->filepermissions);
-                return array(
-                    'path' => $path,
-                    'url' => $reference
-                );
-            }
+        $client = $this->get_user_oauth_client();
+
+        $path = $this->prepare_file($filename);
+        $options = ['filepath' => $path, 'timeout' => 15, 'followlocation' => true, 'maxredirs' => 5];
+        $result = $client->download_one($reference, null, $options);
+
+        if ($result) {
+            @chmod($path, $CFG->filepermissions);
+            return array(
+                'path' => $path,
+                'url' => $reference
+            );
         }
         throw new repository_exception('cannotdownload', 'repository');
     }
@@ -490,9 +456,18 @@ class repository_googledocs extends repository {
      * @return array
      */
     public static function get_type_option_names() {
-        return array('clientid', 'secret', 'pluginname',
+        return array('issuerid', 'pluginname',
             'documentformat', 'drawingformat',
             'presentationformat', 'spreadsheetformat');
+    }
+
+    /**
+     * Store the access token.
+     */
+    public function callback() {
+        $client = $this->get_user_oauth_client();
+        // This will upgrade to an access token if we have an authorization code.
+        $client->is_logged_in();
     }
 
     /**
@@ -502,25 +477,24 @@ class repository_googledocs extends repository {
      * @param string $classname repository class name.
      */
     public static function type_config_form($mform, $classname = 'repository') {
-        $callbackurl = new moodle_url(self::CALLBACKURL);
+        $url = (string)new moodle_url('/admin/tool/oauth2/issuers.php');
 
-        $a = new stdClass;
-        $a->docsurl = get_docs_url('Google_OAuth_2.0_setup');
-        $a->callbackurl = $callbackurl->out(false);
-
-        $mform->addElement('static', null, '', get_string('oauthinfo', 'repository_googledocs', $a));
+        $mform->addElement('static', null, '', get_string('oauth2serviceslink', 'repository_googledocs', $url));
 
         parent::type_config_form($mform);
-        $mform->addElement('text', 'clientid', get_string('clientid', 'repository_googledocs'));
-        $mform->setType('clientid', PARAM_RAW_TRIMMED);
-        $mform->addElement('text', 'secret', get_string('secret', 'repository_googledocs'));
-        $mform->setType('secret', PARAM_RAW_TRIMMED);
+        $options = [];
+        $issuers = \core\oauth2\api::get_all_issuers();
+
+        foreach ($issuers as $issuer) {
+            $options[$issuer->get('id')] = s($issuer->get('name'));
+        }
+        $mform->addElement('select', 'issuerid', get_string('issuer', 'repository_googledocs'), $options);
+        $mform->addHelpButton('issuerid', 'issuer', 'repository_googledocs');
+        $mform->addRule('issuerid', $strrequired, 'required', null, 'client');
 
         $strrequired = get_string('required');
-        $mform->addRule('clientid', $strrequired, 'required', null, 'client');
-        $mform->addRule('secret', $strrequired, 'required', null, 'client');
 
-        $mform->addElement('static', null, '', get_string('importformat', 'repository_googledocs', $a));
+        $mform->addElement('static', null, '', get_string('importformat', 'repository_googledocs'));
 
         // Documents.
         $docsformat = array();

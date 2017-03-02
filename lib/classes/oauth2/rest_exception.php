@@ -15,26 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Open ID authentication.
+ * Rest Exception class containing error code and message.
  *
- * @package auth_oauth2
- * @copyright 2017 Damyon Wiese
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package    core
+ * @copyright  2017 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core\oauth2;
+
+use Exception;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/authlib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 /**
- * Plugin for oauth2 authentication.
+ * Rest Exception class containing error code and message.
  *
- * @package auth_oauth2
- * @copyright 2017 Damyon Wiese
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @copyright  2017 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class auth_plugin_oauth2 extends \auth_oauth2\auth {
+class rest_exception extends Exception {
 
 }
-
-

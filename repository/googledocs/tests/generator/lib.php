@@ -23,6 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use \core\oauth2\issuer;
+use \core\oauth2\endpoint;
+
 /**
  * Google Docs repository data generator class
  *
@@ -41,11 +44,27 @@ class repository_googledocs_generator extends testing_repository_generator {
      */
     protected function prepare_type_record(array $record) {
         $record = parent::prepare_type_record($record);
-        if (!isset($record['clientid'])) {
-            $record['clientid'] = 'clientid';
-        }
-        if (!isset($record['secret'])) {
-            $record['secret'] = 'secret';
+        $issuerrecord = (object) [
+            'name' => 'Google',
+            'image' => 'https://accounts.google.com/favicon.ico',
+            'baseurl' => 'http://accounts.google.com/',
+            'loginparamsoffline' => 'access_type=offline&prompt=consent',
+            'showonloginpage' => true
+        ];
+
+        $issuer = new issuer(0, $issuerrecord);
+        $issuer->create();
+
+        $endpointrecord = (object) [
+            'issuerid' => $issuer->get('id'),
+            'name' => 'discovery_endpoint',
+            'url' => 'https://accounts.google.com/.well-known/openid-configuration'
+        ];
+        $endpoint = new endpoint(0, $endpointrecord);
+        $endpoint->create();
+
+        if (!isset($record['issuerid'])) {
+            $record['issuerid'] = $issuer->get('id');
         }
         if (!isset($record['documentformat'])) {
             $record['documentformat'] = 'pdf';

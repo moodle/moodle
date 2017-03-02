@@ -37,6 +37,10 @@ $returnurl = new moodle_url('/auth/oauth2/login.php', $returnparams);
 $client = \core\oauth2\api::get_user_oauth_client($issuer, $returnurl);
 
 if ($client) {
+    if (!$client->is_logged_in()) {
+        redirect($client->get_login_url());
+    }
+
     $auth = new \auth_oauth2\auth();
     $auth->complete_login($client, $wantsurl);
 } else {

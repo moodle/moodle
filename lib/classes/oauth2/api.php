@@ -321,9 +321,6 @@ class api {
     public static function get_user_oauth_client(issuer $issuer, moodle_url $currenturl, $additionalscopes = '') {
         $client = new \core\oauth2\client($issuer, $currenturl, $additionalscopes);
 
-        if (!$client->is_logged_in()) {
-            redirect($client->get_login_url());
-        }
         return $client;
     }
 
