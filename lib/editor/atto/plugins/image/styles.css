@@ -50,6 +50,8 @@
 .atto_image_button_text-top.img-responsive,
 .atto_image_button_middle.img-responsive,
 .atto_image_button_text-bottom.img-responsive {
+    /* If the image is display: block then linking the image to URLs won't work. */
+    display: inline-block;
     max-width: calc(100% - 1em);
 }
 
