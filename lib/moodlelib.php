@@ -7474,6 +7474,11 @@ function get_plugin_list_with_function($plugintype, $function, $file = 'lib.php'
 function get_plugins_with_function($function, $file = 'lib.php', $include = true) {
     global $CFG;
 
+    if (during_initial_install() || isset($CFG->upgraderunning)) {
+        // API functions _must not_ be called during an installation or upgrade.
+        return [];
+    }
+
     $cache = \cache::make('core', 'plugin_functions');
 
     // Including both although I doubt that we will find two functions definitions with the same name.
