@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 use renderable;
 use renderer_base;
 use templatable;
+use core_course\external\course_summary_exporter;
+
 /**
  * Class containing data for courses view in the myoverview block.
  *
@@ -40,13 +42,18 @@ class courses_view implements renderable, templatable {
     /** @var array $courses List of courses the user is enrolled in. */
     protected $courses = [];
 
+    /** @var array $coursesprogress List of progress percentage for each course. */
+    protected $coursesprogress = [];
+
     /**
      * The courses_view constructor.
      *
      * @param array $courses list of courses.
+     * @param array $coursesprogress list of courses progress.
      */
-    public function __construct($courses) {
+    public function __construct($courses, $coursesprogress) {
         $this->courses = $courses;
+        $this->coursesprogress = $coursesprogress;
     }
 
     /**
@@ -66,12 +73,24 @@ class courses_view implements renderable, templatable {
         foreach ($this->courses as $course) {
             $startdate = $course->startdate;
             $enddate = $course->enddate;
+            $courseid = $course->id;
+            $context = \context_course::instance($courseid);
+            $exporter = new course_summary_exporter($course, [
+                'context' => $context
+            ]);
+            $exportedcourse = $exporter->export($output);
+
+            if (isset($this->coursesprogress[$courseid])) {
+                $courseprogress = $this->coursesprogress[$courseid];
+                $exportedcourse->hasprogress = !is_null($courseprogress);
+                $exportedcourse->progress = $courseprogress;
+            }
 
             if ($startdate < $today && $enddate < $today) {
 
                 $pastpages = floor($coursesbystatus['past'] / $this::COURSES_PER_PAGE);
 
-                $coursesview['past']['pages'][$pastpages]['courses'][] = $course;
+                $coursesview['past']['pages'][$pastpages]['courses'][] = $exportedcourse;
                 $coursesview['past']['pages'][$pastpages]['active'] = ($pastpages == 0 ? true : false);
                 $coursesview['past']['pages'][$pastpages]['page'] = $pastpages + 1;
                 $coursesbystatus['past']++;
@@ -79,14 +98,14 @@ class courses_view implements renderable, templatable {
             } elseif ($startdate <= $today && $enddate >= $today) {
                 $inprogresspages = floor($coursesbystatus['inprogress'] / $this::COURSES_PER_PAGE);
 
-                $coursesview['inprogress']['pages'][$inprogresspages]['courses'][] = $course;
+                $coursesview['inprogress']['pages'][$inprogresspages]['courses'][] = $exportedcourse;
                 $coursesview['inprogress']['pages'][$inprogresspages]['active'] = ($inprogresspages == 0 ? true : false);
                 $coursesview['inprogress']['pages'][$inprogresspages]['page'] = $inprogresspages + 1;
                 $coursesbystatus['inprogress']++;
             } else {
                 $futurepages = floor($coursesbystatus['future'] / $this::COURSES_PER_PAGE);
 
-                $coursesview['future']['pages'][$futurepages]['courses'][] = $course;
+                $coursesview['future']['pages'][$futurepages]['courses'][] = $exportedcourse;
                 $coursesview['future']['pages'][$futurepages]['active'] = ($futurepages == 0 ? true : false);
                 $coursesview['future']['pages'][$futurepages]['page'] = $futurepages + 1;
                 $coursesbystatus['future']++;
@@ -96,22 +115,21 @@ class courses_view implements renderable, templatable {
         // Build courses view paging bar structure.
         foreach ($coursesbystatus as $status => $total) {
             $quantpages = ceil($total / $this::COURSES_PER_PAGE);
-            $coursesview[$status]['pagingbar']['pagecount'] = $quantpages;
-            $coursesview[$status]['pagingbar']['first'] = ['page' => '&laquo;', 'url' => '#'];
-            $coursesview[$status]['pagingbar']['last'] = ['page' => '&raquo;', 'url' => '#'];
-            for ($page = 0; $page < $quantpages; $page++) {
-                $coursesview[$status]['pagingbar']['pages'][$page] = [
-                    'number' => $page+1,
-                    'page' => $page+1,
-                    'url' => '#',
-                    'active' => ($page == 0 ? true : false)
-                ];
+
+            if ($quantpages) {
+                $coursesview[$status]['pagingbar']['pagecount'] = $quantpages;
+                $coursesview[$status]['pagingbar']['first'] = ['page' => '&laquo;', 'url' => '#'];
+                $coursesview[$status]['pagingbar']['last'] = ['page' => '&raquo;', 'url' => '#'];
+                for ($page = 0; $page < $quantpages; $page++) {
+                    $coursesview[$status]['pagingbar']['pages'][$page] = [
+                        'number' => $page+1,
+                        'page' => $page+1,
+                        'url' => '#',
+                        'active' => ($page == 0 ? true : false)
+                    ];
+                }
             }
         }
-
-        // Check if we have any page to be rendered.
-        $coursesview['haspages'] = ($coursesbystatus['past'] > 0 || $coursesbystatus['inprogress'] > 0 ||
-                $coursesbystatus['future'] > 0);
 
         return $coursesview;
     }

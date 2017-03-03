@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 use renderable;
 use renderer_base;
 use templatable;
+use core_completion\progress;
+
 /**
  * Class containing data for my overview block.
  *
@@ -42,9 +44,21 @@ class main implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        $courses = enrol_get_my_courses('id, shortname, startdate, enddate, summary');
-        $coursesummary = new course_summary($courses);
-        $coursesview = new courses_view($courses);
+        $courses = enrol_get_my_courses('*');
+        $coursesprogress = [];
+
+        foreach ($courses as $course) {
+            $percentage = progress::get_course_progress_percentage($course);
+
+            if (!is_null($percentage)) {
+                $percentage = floor($percentage);
+            }
+
+            $coursesprogress[$course->id] = $percentage;
+        }
+
+        $coursesummary = new course_summary($courses, $coursesprogress);
+        $coursesview = new courses_view($courses, $coursesprogress);
 
         return [
             'courses' => $coursesummary->export_for_template($output),

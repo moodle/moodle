@@ -39,13 +39,18 @@ class course_summary implements renderable, templatable {
     /** @var array $courses List of courses the user is enrolled in. */
     protected $courses = [];
 
+    /** @var array $coursesprogress List of progress percentage for each course. */
+    protected $coursesprogress = [];
+
     /**
      * The course_summary constructor.
      *
      * @param array $courses list of courses.
+     * @param array $coursesprogress list of courses progress.
      */
-    public function __construct($courses) {
+    public function __construct($courses, $coursesprogress) {
         $this->courses = $courses;
+        $this->coursesprogress = $coursesprogress;
     }
 
     /**
@@ -60,7 +65,15 @@ class course_summary implements renderable, templatable {
         foreach ($this->courses as $courseid => $value) {
             $context = \context_course::instance($courseid);
             $exporter = new course_summary_exporter($this->courses[$courseid], array('context' => $context));
-            $data[] = $exporter->export($output);
+            $exportedcourse = $exporter->export($output);
+
+            if (isset($this->coursesprogress[$courseid])) {
+                $courseprogress = $this->coursesprogress[$courseid];
+                $exportedcourse->hasprogress = !is_null($courseprogress);
+                $exportedcourse->progress = $courseprogress;
+            }
+
+            $data[] = $exportedcourse;
         }
         return $data;
     }

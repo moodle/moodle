@@ -26,6 +26,8 @@ namespace core_completion;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/completionlib.php');
+
 /**
  * Class used to return completion progress information.
  *
