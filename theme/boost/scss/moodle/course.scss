@@ -1144,6 +1144,20 @@ span.editinstructions {
     opacity: 0.5;
 }
 
+/** Bulk activity completion styles **/
+.topic-section {
+    border-bottom: 1px solid #ccc;
+
+    h3 {
+        display: inline-block;
+    }
+}
+
+.top-section {
+    border-bottom: 1px solid #ccc;
+}
+
+
 /**
  * Display sizes:
  * Large displays                   1200        +

@@ -6865,6 +6865,25 @@ span.editinstructions {
   opacity: 0.5;
   filter: alpha(opacity=50);
 }
+/** Bulk activity completion styles */
+.topic-section {
+  border-bottom: 1px solid #ccc;
+}
+.topic-section h3,
+.topic-section input,
+.topic-section .activityinstance,
+.topic-section .activity-completionstatus {
+  display: inline-block;
+}
+.top-section {
+  border-bottom: 1px solid #ccc;
+}
+.top-section div {
+  display: inline-block;
+}
+.top-section label {
+  font-weight: bold;
+}
 /**
  * Display sizes:
  * Large displays                   1200        +

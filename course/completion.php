@@ -148,9 +148,13 @@ if ($form->is_cancelled()){
     redirect($url);
 }
 
+$renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
+
 // Print the form.
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('editcoursecompletionsettings', 'core_completion'));
+
+echo $renderer->navigation($id, 'completion');
 
 $form->display();
 

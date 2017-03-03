@@ -1,0 +1,121 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/bulkactivitycompletion
+
+    Activity completion selector.
+
+    Example context (json):
+    {
+        "courseid": "2",
+        "sesskey": "AAAAAA",
+        "sections": [{
+            "sectionnumber": "0",
+            "name": "General",
+            "activities": [{
+                "cmid": "4",
+                "modname": "Test activity",
+                "icon": {
+                    "attributes": [
+                        {"name": "src", "value": "https://raw.githubusercontent.com/moodle/moodle/master/pix/t/check.png"},
+                        {"name": "alt", "value": "module icon"}
+                    ]
+                },
+                "completionstatus": {
+                    "string": "Manual",
+                    "icon": {
+                        "attributes": [
+                            {"name": "src", "value": "https://raw.githubusercontent.com/moodle/moodle/master/pix/t/check.png"},
+                            {"name": "alt", "value": "completion icon"}
+                        ]
+                    }
+                }
+            }]
+        }]
+    }
+}}
+<div class="container-fluid">
+    <div class="row m-b-2">
+        <div class="col">{{#str}}bulkactivitydetail, moodle{{/str}}</div>
+    </div>
+<form method="post" action="bulkcompletion.php" class="mform">
+    <div class="row m-b-2">
+        <div class="col">
+            <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" aria-label="{{#str}}updateactivities, completion{{/str}}" />
+            <input type="reset" value="{{#str}}cancel{{/str}}" class="btn btn-secondary" aria-label="{{#str}}resetactivities, completion{{/str}}" />
+        </div>
+    </div>
+    <div class="top-section row m-b-1">
+        <div class="col-sm-6 span6">
+            <input type="checkbox" class="mastercheck m-r-1" aria-label="{{#str}}checkall, completion{{/str}}">
+            <label class="font-weight-bold">{{#str}}activitieslabel, moodle{{/str}}</label>
+        </div>
+        <div class="col-sm-6">
+            <label class="font-weight-bold">{{#str}}completiontracking, moodle{{/str}}</label>
+            <span>{{{helpicon}}}</span>
+        </div>
+    </div>
+    <div class="topics">
+        
+        {{#sections}}
+        
+                <div class="topic-section m-b-1">
+                    <div class="row m-b-1">
+                        <div class="col-sm-12">
+                            <input type="checkbox" data-section-master="{{sectionnumber}}" class="m-r-1" aria-label="{{#str}}checkallsection, completion, {{name}}{{/str}}">
+                            <h3>{{name}}</h3>
+                        </div>
+                    </div>
+                    {{> core_course/activityinstance}}
+                </div>
+        
+        {{/sections}}
+        
+    </div>
+    <input type="hidden" name="id" value="{{courseid}}" />
+    <input type="hidden" name="sesskey" value="{{sesskey}}" />
+    <div class="row">
+        <div class="col">
+            <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" />
+            <input type="reset" value="{{#str}}cancel{{/str}}" class="btn btn-secondary" />
+        </div>
+    </div>
+</form>
+</div>
+
+{{#js}}
+require([
+    'jquery',
+], function($) {
+    $('.mastercheck').click(function() {
+        var checked = $('.mastercheck').is(':checked');
+        $('input[type=checkbox]').each(function() {
+            $(this).prop('checked', checked);
+        });
+    });
+    var mastersection = $('input[data-section-master]');
+    mastersection.click(function() {
+        var checked = $(this).is(':checked');
+        var dataid = $(this).attr('data-section-master');
+        $('input[type=checkbox][data-section=\'' + dataid + '\']').each(function() {
+            $(this).prop('checked', checked);
+        });
+    });
+    
+
+});
+{{/js}}
