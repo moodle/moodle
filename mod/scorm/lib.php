@@ -165,6 +165,7 @@ function scorm_add_instance($scorm, $mform=null) {
     scorm_parse($record, true);
 
     scorm_grade_item_update($record);
+    scorm_update_calendar($record, $cmid);
 
     return $record->id;
 }
@@ -255,6 +256,7 @@ function scorm_update_instance($scorm, $mform=null) {
 
     scorm_grade_item_update($scorm);
     scorm_update_grades($scorm);
+    scorm_update_calendar($scorm, $cmid);
 
     return true;
 }
@@ -1552,4 +1554,67 @@ function mod_scorm_get_fontawesome_icon_map() {
         'mod_scorm:suspend' => 'fa-pause',
         'mod_scorm:wait' => 'fa-clock-o',
     ];
+}
+
+/**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every scorm event in the site is checked, else
+ * only scorm events belonging to the course specified are checked.
+ *
+ * @param int $courseid
+ * @return bool
+ */
+function scorm_refresh_events($courseid = 0) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/mod/scorm/locallib.php');
+
+    if ($courseid) {
+        // Make sure that the course id is numeric.
+        if (!is_numeric($courseid)) {
+            return false;
+        }
+        if (!$scorms = $DB->get_records('scorm', array('course' => $courseid))) {
+            return false;
+        }
+    } else {
+        if (!$scorms = $DB->get_records('scorm')) {
+            return false;
+        }
+    }
+
+    foreach ($scorms as $scorm) {
+        $cm = get_coursemodule_from_instance('scorm', $scorm->id);
+        scorm_update_calendar($scorm, $cm->id);
+    }
+
+    return true;
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_scorm_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                      \core_calendar\action_factory $factory) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/mod/scorm/locallib.php');
+
+    $cm = get_fast_modinfo($event->courseid)->instances['scorm'][$event->instance];
+    $scorm = $DB->get_record('scorm', array('id' => $event->instance));
+
+    // Check that the SCORM activity is open.
+    list($actionable, $warnings) = scorm_get_availability_status($scorm);
+
+    return $factory->create_instance(
+        get_string('enter', 'scorm'),
+        new \moodle_url('/mod/scorm/view.php', array('id' => $cm->id)),
+        1,
+        $actionable
+    );
 }

@@ -51,6 +51,9 @@ define('LASTATTEMPT', '3');
 define('TOCJSLINK', 1);
 define('TOCFULLURL', 2);
 
+define('SCORM_EVENT_TYPE_OPEN', 'open');
+define('SCORM_EVENT_TYPE_CLOSE', 'close');
+
 // Local Library of functions for module scorm.
 
 /**
@@ -2351,4 +2354,102 @@ function scorm_eval_prerequisites($prerequisites, $usertracks) {
         $stack[] = ' '.$element.' ';
     }
     return eval('return '.implode($stack).';');
+}
+
+/**
+ * Update the calendar entries for this scorm activity.
+ *
+ * @param stdClass $scorm the row from the database table scorm.
+ * @param int $cmid The coursemodule id
+ * @return bool
+ */
+function scorm_update_calendar(stdClass $scorm, $cmid) {
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot.'/calendar/lib.php');
+
+    // Scorm start calendar events.
+    $event = new stdClass();
+    $event->eventtype = SCORM_EVENT_TYPE_OPEN;
+    // The SCORM_EVENT_TYPE_OPEN event should only be an action event if no close time is specified.
+    $event->type = empty($scorm->timeclose) ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
+    if ($event->id = $DB->get_field('event', 'id',
+        array('modulename' => 'scorm', 'instance' => $scorm->id, 'eventtype' => $event->eventtype))) {
+        if ((!empty($scorm->timeopen)) && ($scorm->timeopen > 0)) {
+            // Calendar event exists so update it.
+            $event->name = get_string('calendarstart', 'scorm', $scorm->name);
+            $event->description = format_module_intro('scorm', $scorm, $cmid);
+            $event->timestart = $scorm->timeopen;
+            $event->timesort = $scorm->timeopen;
+            $event->visible = instance_is_visible('scorm', $scorm);
+            $event->timeduration = 0;
+
+            $calendarevent = \core_calendar\event::load($event->id);
+            $calendarevent->update($event);
+        } else {
+            // Calendar event is on longer needed.
+            $calendarevent = \core_calendar\event::load($event->id);
+            $calendarevent->delete();
+        }
+    } else {
+        // Event doesn't exist so create one.
+        if ((!empty($scorm->timeopen)) && ($scorm->timeopen > 0)) {
+            $event->name = get_string('calendarstart', 'scorm', $scorm->name);
+            $event->description = format_module_intro('scorm', $scorm, $cmid);
+            $event->courseid = $scorm->course;
+            $event->groupid = 0;
+            $event->userid = 0;
+            $event->modulename = 'scorm';
+            $event->instance = $scorm->id;
+            $event->timestart = $scorm->timeopen;
+            $event->timesort = $scorm->timeopen;
+            $event->visible = instance_is_visible('scorm', $scorm);
+            $event->timeduration = 0;
+
+            \core_calendar\event::create($event);
+        }
+    }
+
+    // Scorm end calendar events.
+    $event = new stdClass();
+    $event->type = CALENDAR_EVENT_TYPE_ACTION;
+    $event->eventtype = SCORM_EVENT_TYPE_CLOSE;
+    if ($event->id = $DB->get_field('event', 'id',
+        array('modulename' => 'scorm', 'instance' => $scorm->id, 'eventtype' => $event->eventtype))) {
+        if ((!empty($scorm->timeclose)) && ($scorm->timeclose > 0)) {
+            // Calendar event exists so update it.
+            $event->name = get_string('calendarend', 'scorm', $scorm->name);
+            $event->description = format_module_intro('scorm', $scorm, $cmid);
+            $event->timestart = $scorm->timeclose;
+            $event->timesort = $scorm->timeclose;
+            $event->visible = instance_is_visible('scorm', $scorm);
+            $event->timeduration = 0;
+
+            $calendarevent = \core_calendar\event::load($event->id);
+            $calendarevent->update($event);
+        } else {
+            // Calendar event is on longer needed.
+            $calendarevent = \core_calendar\event::load($event->id);
+            $calendarevent->delete();
+        }
+    } else {
+        // Event doesn't exist so create one.
+        if ((!empty($scorm->timeclose)) && ($scorm->timeclose > 0)) {
+            $event->name = get_string('calendarend', 'scorm', $scorm->name);
+            $event->description = format_module_intro('scorm', $scorm, $cmid);
+            $event->courseid = $scorm->course;
+            $event->groupid = 0;
+            $event->userid = 0;
+            $event->modulename = 'scorm';
+            $event->instance = $scorm->id;
+            $event->timestart = $scorm->timeclose;
+            $event->timesort = $scorm->timeclose;
+            $event->visible = instance_is_visible('scorm', $scorm);
+            $event->timeduration = 0;
+
+            \core_calendar\event::create($event);
+        }
+    }
+
+    return true;
 }
