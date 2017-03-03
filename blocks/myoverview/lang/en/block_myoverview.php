@@ -26,6 +26,7 @@ $string['future'] = 'Future';
 $string['inprogress'] = 'In progress';
 $string['myoverview:addinstance'] = 'Add a new my overview block';
 $string['myoverview:myaddinstance'] = 'Add a new my overview block to Dashboard';
+$string['noevents'] = 'No upcoming activities due';
 $string['next30days'] = 'Next 30 days';
 $string['next7days'] = 'Next 7 days';
 $string['past'] = 'Past';

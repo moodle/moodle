@@ -30,7 +30,9 @@ define(['jquery', 'core/notification', 'core/templates',
     var SECONDS_IN_DAY = 60 * 60 * 24;
 
     var SELECTORS = {
+        EMPTY_MESSAGE: '[data-region="empty-message"]',
         EVENT_LIST: '[data-region="event-list"]',
+        EVENT_LIST_CONTENT: '[data-region="event-list-content"]',
         EVENT_LIST_GROUP_CONTAINER: '[data-region="event-list-group-container"]',
         LOADING_ICON_CONTAINER: '[data-region="loading-icon-container"]',
         VIEW_MORE_BUTTON: '[data-action="view-more"]'
@@ -105,6 +107,64 @@ define(['jquery', 'core/notification', 'core/templates',
      */
     var isLoading = function(root) {
         return root.hasClass('loading');
+    };
+
+    /**
+     * Flag the root element to remember that it contains events.
+     *
+     * @method setHasContent
+     * @private
+     * @param {object} root The container element
+     */
+    var setHasContent = function(root) {
+        root.attr('data-has-events', true);
+    };
+
+    /**
+     * Check if the root element has had events loaded.
+     *
+     * @method hasContent
+     * @private
+     * @param {object} root The container element
+     * @return {bool}
+     */
+    var hasContent = function(root) {
+        return root.attr('data-has-events') ? true : false;
+    };
+
+    /**
+     * Update the visibility of the content area. The content area
+     * is hidden if we have no events.
+     *
+     * @method updateContentVisibility
+     * @private
+     * @param {object} root The container element
+     * @param {int} eventCount A count of the events we just received.
+     */
+    var updateContentVisibility = function(root, eventCount) {
+        if (eventCount) {
+            // We've rendered some events, let's remember that.
+            setHasContent(root);
+        } else {
+            // If this is the first time trying to load events and
+            // we don't have any then there isn't any so let's show
+            // the empty message.
+            if (!hasContent(root)) {
+                hideContent(root);
+            }
+        }
+    };
+
+    /**
+     * Hide the content area and display the empty content message.
+     *
+     * @method hideContent
+     * @private
+     * @param {object} root The container element
+     */
+    var hideContent = function(root) {
+        root.find(SELECTORS.EVENT_LIST_CONTENT).addClass('hidden');
+        root.find(SELECTORS.EMPTY_MESSAGE).removeClass('hidden');
     };
 
     /**
@@ -263,6 +323,8 @@ define(['jquery', 'core/notification', 'core/templates',
 
                 // Render the events.
                 return render(root, calendarEvents).then(function(renderCount) {
+                    updateContentVisibility(root, calendarEvents.length);
+
                     if (renderCount < calendarEvents.length) {
                         // if the number of events that was rendered is less than
                         // the number we sent for rendering we can assume that there
@@ -273,6 +335,8 @@ define(['jquery', 'core/notification', 'core/templates',
                         setLoadedAll(root);
                     }
                 });
+            } else {
+                updateContentVisibility(root, calendarEvents.length);
             }
         }).fail(
             Notification.exception

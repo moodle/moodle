@@ -29,34 +29,39 @@
      data-last-id="{{$lastid}}{{/lastid}}"
      id="event-list-container-{{$courseid}}{{/courseid}}">
 
-    {{< block_myoverview/event-list-group }}
-        {{$title}}{{#str}} today {{/str}}{{/title}}
-        {{$startday}}0{{/startday}}
-        {{$endday}}1{{/endday}}
-    {{/ block_myoverview/event-list-group }}
-    {{< block_myoverview/event-list-group }}
-        {{$title}}{{#str}} next7days, block_myoverview {{/str}}{{/title}}
-        {{$startday}}1{{/startday}}
-        {{$endday}}7{{/endday}}
-    {{/ block_myoverview/event-list-group }}
-    {{< block_myoverview/event-list-group }}
-        {{$title}}{{#str}} next30days, block_myoverview {{/str}}{{/title}}
-        {{$startday}}7{{/startday}}
-        {{$endday}}30{{/endday}}
-    {{/ block_myoverview/event-list-group }}
-    {{< block_myoverview/event-list-group }}
-        {{$title}}{{#str}} future, block_myoverview {{/str}}{{/title}}
-        {{$startday}}30{{/startday}}
-        {{$endday}}0{{/endday}}
-    {{/ block_myoverview/event-list-group }}
+    <div data-region="event-list-content">
+        {{< block_myoverview/event-list-group }}
+            {{$title}}{{#str}} today {{/str}}{{/title}}
+            {{$startday}}0{{/startday}}
+            {{$endday}}1{{/endday}}
+        {{/ block_myoverview/event-list-group }}
+        {{< block_myoverview/event-list-group }}
+            {{$title}}{{#str}} next7days, block_myoverview {{/str}}{{/title}}
+            {{$startday}}1{{/startday}}
+            {{$endday}}7{{/endday}}
+        {{/ block_myoverview/event-list-group }}
+        {{< block_myoverview/event-list-group }}
+            {{$title}}{{#str}} next30days, block_myoverview {{/str}}{{/title}}
+            {{$startday}}7{{/startday}}
+            {{$endday}}30{{/endday}}
+        {{/ block_myoverview/event-list-group }}
+        {{< block_myoverview/event-list-group }}
+            {{$title}}{{#str}} future, block_myoverview {{/str}}{{/title}}
+            {{$startday}}30{{/startday}}
+            {{$endday}}0{{/endday}}
+        {{/ block_myoverview/event-list-group }}
 
-    <div class="text-xs-center text-center m-y-2">
-        <button type="button" class="btn btn-secondary" data-action="view-more">
-            {{#str}} viewmore {{/str}}
-            <span class="hidden" data-region="loading-icon-container">
-                {{> core/loading }}
-            </span>
-        </button>
+        <div class="text-xs-center text-center m-y-2">
+            <button type="button" class="btn btn-secondary" data-action="view-more">
+                {{#str}} viewmore {{/str}}
+                <span class="hidden" data-region="loading-icon-container">
+                    {{> core/loading }}
+                </span>
+            </button>
+        </div>
+    </div>
+    <div class="hidden" data-region="empty-message">
+        <p class="text-muted">{{#str}} noevents, block_myoverview {{/str}}</p>
     </div>
 </div>
 {{#js}}
