@@ -224,16 +224,19 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
 
         $footer = '';
 
-        $editorparams = array(array('header'=>$header,
-                                    'body'=>$body,
-                                    'footer'=>$footer,
-                                    'linkid'=>$linkid,
-                                    'assignmentid'=>$widget->assignment,
-                                    'userid'=>$widget->userid,
-                                    'attemptnumber'=>$widget->attemptnumber,
-                                    'stampfiles'=>$widget->stampfiles,
-                                    'readonly'=>$widget->readonly,
-                                    'pagetotal'=>$widget->pagetotal));
+        $editorparams = array(
+            array(
+                'header' => $header,
+                'body' => $body,
+                'footer' => $footer,
+                'linkid' => $linkid,
+                'assignmentid' => $widget->assignment,
+                'userid' => $widget->userid,
+                'attemptnumber' => $widget->attemptnumber,
+                'stampfiles' => $widget->stampfiles,
+                'readonly' => $widget->readonly,
+            )
+        );
 
         $this->page->requires->yui_module('moodle-assignfeedback_editpdf-editor',
                                           'M.assignfeedback_editpdf.editor.init',
