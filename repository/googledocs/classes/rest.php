@@ -54,7 +54,76 @@ class rest extends \core\oauth2\rest {
                     'spaces' => PARAM_RAW
                 ],
                 'response' => 'json'
-            ]
+            ],
+            'get' => [
+                'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}',
+                'method' => 'get',
+                'args' => [
+                    'fields' => PARAM_RAW,
+                    'fileid' => PARAM_RAW
+                ],
+                'response' => 'json'
+            ],
+            'copy' => [
+                'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}/copy',
+                'method' => 'post',
+                'args' => [
+                    'fields' => PARAM_RAW,
+                    'fileid' => PARAM_RAW
+                ],
+                'response' => 'json'
+            ],
+            'create' => [
+                'endpoint' => 'https://www.googleapis.com/drive/v3/files',
+                'method' => 'post',
+                'args' => [
+                    'fields' => PARAM_RAW
+                ],
+                'response' => 'json'
+            ],
+            'update' => [
+                'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}',
+                'method' => 'patch',
+                'args' => [
+                    'fileid' => PARAM_RAW,
+                    'fields' => PARAM_RAW,
+                    'addParents' => PARAM_RAW,
+                    'removeParents' => PARAM_RAW
+                ],
+                'response' => 'json'
+            ],
+            'create_permission' => [
+                'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}/permissions',
+                'method' => 'post',
+                'args' => [
+                    'fileid' => PARAM_RAW,
+                    'emailMessage' => PARAM_RAW,
+                    'sendNotificationEmail' => PARAM_RAW,
+                    'transferOwnership' => PARAM_RAW,
+                ],
+                'response' => 'json'
+            ],
+            'update_permission' => [
+                'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}/permissions/{permissionid}',
+                'method' => 'patch',
+                'args' => [
+                    'fileid' => PARAM_RAW,
+                    'permissionid' => PARAM_RAW,
+                    'emailMessage' => PARAM_RAW,
+                    'sendNotificationEmail' => PARAM_RAW,
+                    'transferOwnership' => PARAM_RAW,
+                ],
+                'response' => 'json'
+            ],
+            'list_permissions' => [
+                'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}/permissions',
+                'method' => 'get',
+                'args' => [
+                    'fileid' => PARAM_RAW,
+                    'fields' => PARAM_RAW
+                ],
+                'response' => 'json'
+            ],
         ];
     }
 }

@@ -3459,6 +3459,34 @@ class curl {
     }
 
     /**
+     * HTTP PATCH method
+     *
+     * @param string $url
+     * @param array|string $params
+     * @param array $options
+     * @return bool
+     */
+    public function patch($url, $params = '', $options = array()) {
+        $options['CURLOPT_CUSTOMREQUEST'] = 'PATCH';
+        if (is_array($params)) {
+            $this->_tmp_file_post_params = array();
+            foreach ($params as $key => $value) {
+                if ($value instanceof stored_file) {
+                    $value->add_to_curl_request($this, $key);
+                } else {
+                    $this->_tmp_file_post_params[$key] = $value;
+                }
+            }
+            $options['CURLOPT_POSTFIELDS'] = $this->_tmp_file_post_params;
+            unset($this->_tmp_file_post_params);
+        } else {
+            // $params is the raw post data
+            $options['CURLOPT_POSTFIELDS'] = $params;
+        }
+        return $this->request($url, $options);
+    }
+
+    /**
      * HTTP POST method
      *
      * @param string $url

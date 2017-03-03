@@ -29,6 +29,7 @@
  * Active repository options
  * =====
  * this.active_repo.id
+ * this.active_repo.defaultreturntype
  * this.active_repo.nosearch
  * this.active_repo.norefresh
  * this.active_repo.nologin
@@ -1094,6 +1095,12 @@ M.core_filepicker.init = function(Y, options) {
                 firstfilelink = (firstfilelink==null && allowed) ? filelinktypes[i] : firstfilelink;
                 filelinkcount += allowed ? 1 : 0;
             }
+            var defaultreturntype = this.options.repositories[this.active_repo.id].defaultreturntype;
+            if (defaultreturntype) {
+                if (filelink[defaultreturntype]) {
+                    firstfilelink = defaultreturntype;
+                }
+            }
             // make radio buttons enabled if this file-link-type is available and only if there are more than one file-link-type option
             // check the first available file-link-type option
             for (var linktype in filelink) {
@@ -1415,6 +1422,7 @@ M.core_filepicker.init = function(Y, options) {
             this.objecttag = data.object?data.object:null;
             this.active_repo = {};
             this.active_repo.issearchresult = data.issearchresult ? true : false;
+            this.active_repo.defaultreturntype = data.defaultreturntype?data.defaultreturntype:null;
             this.active_repo.dynload = data.dynload?data.dynload:false;
             this.active_repo.pages = Number(data.pages?data.pages:null);
             this.active_repo.page = Number(data.page?data.page:null);

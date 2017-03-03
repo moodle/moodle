@@ -185,7 +185,6 @@ class repository_googledocs extends repository {
         );
     }
 
-
     /**
      * List the files and folders.
      *
@@ -217,6 +216,7 @@ class repository_googledocs extends repository {
 
         $ret = array();
         $ret['dynload'] = true;
+        $ret['defaultreturntype'] = $this->default_returntype();
         $ret['path'] = $this->build_breadcrumb($path);
         $ret['list'] = $results;
         return $ret;
@@ -266,7 +266,7 @@ class repository_googledocs extends repository {
         $files = array();
         $folders = array();
         $config = get_config('googledocs');
-        $fields = "files(id,name,mimeType,webContentLink,fileExtension,modifiedTime,size,thumbnailLink,iconLink)";
+        $fields = "files(id,name,mimeType,webContentLink,webViewLink,fileExtension,modifiedTime,size,thumbnailLink,iconLink)";
         $params = array('q' => $q, 'fields' => $fields, 'spaces' => 'drive');
 
         try {
@@ -284,7 +284,6 @@ class repository_googledocs extends repository {
             }
         }
 
-        $base = 'https://www.googleapis.com/drive/v3';
         $gfiles = isset($response->files) ? $response->files : array();
         foreach ($gfiles as $gfile) {
             if ($gfile->mimeType == 'application/vnd.google-apps.folder') {
@@ -300,12 +299,11 @@ class repository_googledocs extends repository {
                 );
             } else {
                 // This is a file.
+                $link = isset($gfile->webContentLink) ? $gfile->webContentLink : '';
                 if (isset($gfile->fileExtension)) {
                     // The file has an extension, therefore we can download it.
+                    $source = json_encode(['id' => $gfile->id, 'exportformat' => 'download', 'link' => $link]);
                     $title = $gfile->name;
-                    $params = ['alt' => 'media'];
-                    $sourceurl = new moodle_url($base . '/files/' . $gfile->id, $params);
-                    $source = $sourceurl->out(false);
                 } else {
                     // The file is probably a Google Doc file, we get the corresponding export link.
                     // This should be improved by allowing the user to select the type of export they'd like.
@@ -317,7 +315,7 @@ class repository_googledocs extends repository {
                     switch ($type){
                         case 'document':
                             $ext = $config->documentformat;
-                            $title = $item['title'] . '.'. $ext;
+                            $title = $gfile->name . '.'. $ext;
                             if ($ext === 'rtf') {
                                 // Moodle user 'text/rtf' as the MIME type for RTF files.
                                 // Google uses 'application/rtf' for the same type of file.
@@ -329,17 +327,17 @@ class repository_googledocs extends repository {
                             break;
                         case 'presentation':
                             $ext = $config->presentationformat;
-                            $title = $item['title'] . '.'. $ext;
+                            $title = $gfile->name . '.'. $ext;
                             $exporttype = $types[$ext]['type'];
                             break;
                         case 'spreadsheet':
                             $ext = $config->spreadsheetformat;
-                            $title = $item['title'] . '.'. $ext;
+                            $title = $gfile->name . '.'. $ext;
                             $exporttype = $types[$ext]['type'];
                             break;
                         case 'drawing':
                             $ext = $config->drawingformat;
-                            $title = $item['title'] . '.'. $ext;
+                            $title = $gfile->name . '.'. $ext;
                             $exporttype = $types[$ext]['type'];
                             break;
                     }
@@ -347,9 +345,7 @@ class repository_googledocs extends repository {
                     if (empty($title)) {
                         continue;
                     }
-                    $params = ['mimeType' => $exporttype];
-                    $sourceurl = new moodle_url($base . '/files/' . $gfile->id . '/export', $params);
-                    $source = $sourceurl->out(false);
+                    $source = json_encode(['id' => $gfile->id, 'exportformat' => $exporttype, 'link' => $link]);
                 }
                 // Adds the file to the file list. Using the itemId along with the name as key
                 // of the array because Google Drive allows files with identical names.
@@ -400,10 +396,24 @@ class repository_googledocs extends repository {
         global $CFG;
 
         $client = $this->get_user_oauth_client();
+        $base = 'https://www.googleapis.com/drive/v3';
 
+        $source = json_decode($reference);
+
+        if ($source->exportformat == 'download') {
+            $params = ['alt' => 'media'];
+            $sourceurl = new moodle_url($base . '/files/' . $source->id, $params);
+            $source = $sourceurl->out(false);
+        } else {
+            $params = ['mimeType' => $source->exportformat];
+            $sourceurl = new moodle_url($base . '/files/' . $source->id . '/export', $params);
+            $source = $sourceurl->out(false);
+        }
+
+        // We use download_one and not the rest API because it has special timeouts etc.
         $path = $this->prepare_file($filename);
         $options = ['filepath' => $path, 'timeout' => 15, 'followlocation' => true, 'maxredirs' => 5];
-        $result = $client->download_one($reference, null, $options);
+        $result = $client->download_one($source, null, $options);
 
         if ($result) {
             @chmod($path, $CFG->filepermissions);
@@ -425,7 +435,8 @@ class repository_googledocs extends repository {
      * @return string file reference.
      */
     public function get_file_reference($source) {
-        return clean_param($source, PARAM_URL);
+        // We could do some magic upgrade code here.
+        return $source;
     }
 
     /**
@@ -446,7 +457,34 @@ class repository_googledocs extends repository {
      * @return int
      */
     public function supported_returntypes() {
-        return FILE_INTERNAL;
+        // We can only support references if the system account is connected.
+        if (!empty($this->issuer) && $this->issuer->is_system_account_connected()) {
+            $setting = get_config('googledocs', 'supportedreturntypes');
+            if ($setting == 'internal') {
+                return FILE_INTERNAL;
+            } else if ($setting == 'external') {
+                return FILE_REFERENCE;
+            } else {
+                return FILE_REFERENCE | FILE_INTERNAL;
+            }
+        } else {
+            return FILE_INTERNAL;
+        }
+    }
+
+    /**
+     * Which return type should be selected by default.
+     *
+     * @return int
+     */
+    public function default_returntype() {
+        $setting = get_config('googledocs', 'defaultreturntype');
+        $supported = get_config('googledocs', 'supportedreturntypes');
+        if (($setting == FILE_INTERNAL && $supported != 'external') || $supported == 'internal') {
+            return FILE_INTERNAL;
+        } else {
+            return FILE_REFERENCE;
+        }
     }
 
     /**
@@ -458,7 +496,8 @@ class repository_googledocs extends repository {
     public static function get_type_option_names() {
         return array('issuerid', 'pluginname',
             'documentformat', 'drawingformat',
-            'presentationformat', 'spreadsheetformat');
+            'presentationformat', 'spreadsheetformat',
+            'defaultreturntype', 'supportedreturntypes');
     }
 
     /**
@@ -466,8 +505,346 @@ class repository_googledocs extends repository {
      */
     public function callback() {
         $client = $this->get_user_oauth_client();
-        // This will upgrade to an access token if we have an authorization code.
+        // This will upgrade to an access token if we have an authorization code and save the access token in the session.
         $client->is_logged_in();
+    }
+
+    /**
+     * Repository method to serve the referenced file
+     *
+     * @see send_stored_file
+     *
+     * @param stored_file $storedfile the file that contains the reference
+     * @param int $lifetime Number of seconds before the file should expire from caches (null means $CFG->filelifetime)
+     * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
+     * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
+     * @param array $options additional options affecting the file serving
+     */
+    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
+        // TODO.
+        $source = json_decode($storedfile->get_reference());
+
+        if ($source->link) {
+            header('Location: ' . $source->link);
+        } else {
+            $details = 'File is missing source link';
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+    }
+
+    /**
+     * List the permissions on a file.
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The id of the file.
+     *
+     * @return array
+     */
+    protected function list_file_permissions(\repository_googledocs\rest $client, $fileid) {
+        $fields = "permissions(id,type,emailAddress,role,allowFileDiscovery,displayName)";
+        return $client->call('list_permissions', ['fileid' => $fileid]);
+    }
+
+    /**
+     * See if a folder exists within a folder
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $foldername The folder we are looking for.
+     * @param string $parentid The parent folder we are looking in.
+     *
+     * @return string|boolean The file id if it exists or false.
+     */
+    protected function folder_exists_in_folder(\repository_googledocs\rest $client, $foldername, $parentid) {
+        $q = '\'' . addslashes($parentid) . '\' in parents and trashed = false and name = \'' . addslashes($foldername). '\'';
+        $fields = 'files(id, name)';
+        $params = [ 'q' => $q, 'fields' => $fields];
+        $response = $client->call('list', $params);
+        $missing = true;
+        foreach ($response->files as $child) {
+            if ($child->name == $foldername) {
+                return $child->id;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Create a folder within a folder
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $foldername The folder we are creating.
+     * @param string $parentid The parent folder we are creating in.
+     *
+     * @return string The file id of the new folder.
+     */
+    protected function create_folder_in_folder(\repository_googledocs\rest $client, $foldername, $parentid) {
+        $fields = 'id';
+        $params = ['fields' => $fields];
+        $folder = ['mimeType' => 'application/vnd.google-apps.folder', 'name' => $foldername, 'parents' => [$parentid]];
+        $created = $client->call('create', $params, json_encode($folder));
+        if (empty($created->id)) {
+            $details = 'Cannot create folder:' . $foldername;
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        return $created->id;
+    }
+
+    /**
+     * Get capabilities for a file.
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The file we are checking.
+     *
+     * @return stdClass The file info with capabilities.
+     */
+    protected function get_file_capabilities(\repository_googledocs\rest $client, $fileid) {
+        $fields = "id,capabilities,writersCanShare";
+        $params = [
+            'fileid' => $fileid,
+            'fields' => $fields
+        ];
+        return $client->call('get', $params);
+    }
+
+    /**
+     * Update file owner.
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The file we are updating.
+     *
+     * @return boolean Did it work?
+     */
+    protected function update_file_owner(\repository_googledocs\rest $client, $fileid, $owneremail) {
+        $updateowner = [
+            'emailAddress' => $owneremail,
+            'role' => 'owner',
+            'type' => 'user'
+        ];
+        $params = ['fileid' => $fileid, 'transferOwnership' => 'true'];
+        try {
+            $response = $client->call('create_permission', $params, json_encode($updateowner));
+        } catch (\core\oauth2\rest_exception $re) {
+            return false;
+        }
+        return !empty($response->id);
+    }
+
+    /**
+     * Copy a file and return the new file details. A side effect of the copy
+     * is that the owner will be the account authenticated with this oauth client.
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The file we are copying.
+     *
+     * @return stdClass file details.
+     */
+    protected function copy_file(\repository_googledocs\rest $client, $fileid) {
+        $fields = "id,name,mimeType,webContentLink,webViewLink,size,thumbnailLink,iconLink";
+        $params = [
+            'fileid' => $fileid,
+            'fields' => $fields
+        ];
+        $fileinfo = $client->call('copy', $params, ' ');
+        if (empty($fileinfo->id)) {
+            $details = 'Cannot copy file:' . $fileid;
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        return $fileinfo;
+    }
+
+    /**
+     * Add a writer to the permissions on the file.
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The file we are updating.
+     * @param string $email The email of the writer account to add.
+     * @return boolean
+     */
+    protected function add_writer_to_file($client, $fileid, $email) {
+        $updateeditor = [
+            'emailAddress' => $email,
+            'role' => 'writer',
+            'type' => 'user'
+        ];
+        $params = ['fileid' => $fileid];
+        $response = $client->call('create_permission', $params, json_encode($updateeditor));
+        if (empty($response->id)) {
+            $details = 'Cannot add user ' . $email . ' as a writer for document: ' . $fileid;
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        return true;
+    }
+
+    /**
+     * Move from root to folder
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The file we are updating.
+     * @param string $folderid The id of the folder we are moving to
+     * @return boolean
+     */
+    protected function move_file_from_root_to_folder($client, $fileid, $folderid) {
+        // Set the parent.
+        $params = [
+            'fileid' => $fileid, 'addParents' => $folderid, 'removeParents' => 'root'
+        ];
+        $response = $client->call('update', $params, ' ');
+        if (empty($response->id)) {
+            $details = 'Cannot move the file to a folder: ' . $fileid;
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        return true;
+    }
+
+    /**
+     * Prevent writers from sharing.
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The file we are updating.
+     * @return boolean
+     */
+    protected function prevent_writers_from_sharing_file($client, $fileid) {
+        // We don't want anyone but Moodle to change the sharing settings.
+        $params = [
+            'fileid' => $fileid
+        ];
+        $update = [
+            'writersCanShare' => false
+        ];
+        $response = $client->call('update', $params, json_encode($update));
+        if (empty($response->id)) {
+            $details = 'Cannot prevent writers from sharing document: ' . $fileid;
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        return true;
+    }
+
+    /**
+     * Allow anyone with the link to read the file.
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The file we are updating.
+     * @return boolean
+     */
+    protected function set_file_sharing_anyone_with_link_can_read($client, $fileid) {
+        $updateread = [
+            'type' => 'anyone',
+            'role' => 'reader',
+            'allowFileDiscovery' => 'false'
+        ];
+        $params = ['fileid' => $fileid];
+        $response = $client->call('create_permission', $params, json_encode($updateread));
+        if (empty($response->id) || $response->id != 'anyoneWithLink') {
+            $details = 'Cannot update link sharing for the document: ' . $fileid;
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        return true;
+    }
+
+    /**
+     * Called when a file is selected as a "link".
+     * Invoked at MOODLE/repository/repository_ajax.php
+     *
+     * @param string $reference this reference is generated by
+     *                          repository::get_file_reference()
+     * @param context $context the target context for this new file.
+     * @return string $modifiedreference (final one before saving to DB)
+     */
+    public function reference_file_selected($reference, $context) {
+        // What we need to do here is transfer ownership to the system user (or copy)
+        // then set the permissions so anyone with the share link can view,
+        // finally update the reference to contain the share link if it was not
+        // already there (and point to new file id if we copied).
+        $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
+
+        if ($systemauth === false) {
+            $details = 'Cannot connect as system user';
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        $systemuserinfo = $systemauth->get_userinfo();
+        $systemuseremail = $systemuserinfo['email'];
+
+        $source = json_decode($reference);
+
+        $userauth = $this->get_user_oauth_client();
+        if ($userauth === false) {
+            $details = 'Cannot connect as current user';
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        $userinfo = $userauth->get_userinfo();
+        $useremail = $userinfo['email'];
+
+        $userservice = new repository_googledocs\rest($userauth);
+        $systemservice = new repository_googledocs\rest($systemauth);
+
+        // Get the list of existing permissions so we can see if the owner is already the system account,
+        // and whether we need to update the link sharing options.
+        $permissions = $this->list_file_permissions($userservice, $source->id);
+
+        $readshareupdaterequired = true;
+        $ownerupdaterequired = true;
+        foreach ($permissions->permissions as $permission) {
+            if ($permission->type == 'user' &&
+                    $permission->role == 'owner' &&
+                    isset($permission->emailAddress) &&
+                    $permission->emailAddress == $systemuseremail) {
+                $ownerupdaterequired = false;
+            }
+            if ($permission->id == 'anyoneWithLink' &&
+                    $permission->type == 'anyone' &&
+                    $permission->role == 'reader' &&
+                    $permission->allowFileDiscovery == false) {
+                $readshareupdaterequired = false;
+            }
+        }
+
+        // Now move it to a sensible folder.
+        $contextlist = array_reverse($context->get_parent_contexts(true));
+
+        $parentid = 'root';
+        foreach ($contextlist as $context) {
+            // Make sure a folder exists here.
+            $folderid = $this->folder_exists_in_folder($systemservice, $foldername, $parentid);
+            if ($folderid !== false) {
+                $parentid = $folderid;
+            } else {
+                // Create it.
+                $parentid = $this->create_folder_in_folder($systemservice, $foldername, $parentid);
+            }
+        }
+
+        // See if we have edit capability before the copy.
+        $fileinfo = $this->get_file_capabilities($userservice, $source->id);
+        $canedit = !empty($fileinfo->capabilities->canEdit);
+        $writerscanshare = !empty($fileinfo->writersCanShare);
+
+        // The owner was not the system user so we have to update the file.
+        if ($ownerupdaterequired) {
+
+            $worked = $this->update_file_owner($userservice, $source->id, $systemuseremail);
+            if (!$worked) {
+                // Updating the owner only works for "google files" like documents etc. For binary
+                // files we will get here.
+                $source = $this->copy_file($systemservice, $source->id);
+
+                $readshareupdaterequired = true;
+                $writerscanshare = true;
+
+                if ($canedit) {
+                    $this->add_writer_to_file($systemservice, $source->id, $useremail);
+                }
+            }
+
+            $this->move_file_from_root_to_folder($systemservice, $source->id, $parentid);
+        }
+
+        if ($writerscanshare) {
+            // We don't want anyone but Moodle to change the sharing settings.
+            $this->prevent_writers_from_sharing_file($systemservice, $source->id);
+        }
+
+        if ($readshareupdaterequired) {
+            $this->set_file_sharing_anyone_with_link_can_read($systemservice, $source->id);
+        }
     }
 
     /**
@@ -477,7 +854,8 @@ class repository_googledocs extends repository {
      * @param string $classname repository class name.
      */
     public static function type_config_form($mform, $classname = 'repository') {
-        $url = (string)new moodle_url('/admin/tool/oauth2/issuers.php');
+        $url = new moodle_url('/admin/tool/oauth2/issuers.php');
+        $url = $url->out();
 
         $mform->addElement('static', null, '', get_string('oauth2serviceslink', 'repository_googledocs', $url));
 
@@ -488,11 +866,26 @@ class repository_googledocs extends repository {
         foreach ($issuers as $issuer) {
             $options[$issuer->get('id')] = s($issuer->get('name'));
         }
+
+        $strrequired = get_string('required');
+
         $mform->addElement('select', 'issuerid', get_string('issuer', 'repository_googledocs'), $options);
         $mform->addHelpButton('issuerid', 'issuer', 'repository_googledocs');
         $mform->addRule('issuerid', $strrequired, 'required', null, 'client');
 
-        $strrequired = get_string('required');
+        $mform->addElement('static', null, '', get_string('fileoptions', 'repository_googledocs'));
+        $choices = [
+            'internal' => get_string('internal', 'repository_googledocs'),
+            'external' => get_string('external', 'repository_googledocs'),
+            'both' => get_string('both', 'repository_googledocs')
+        ];
+        $mform->addElement('select', 'supportedreturntypes', get_string('supportedreturntypes', 'repository_googledocs'), $choices);
+
+        $choices = [
+            FILE_INTERNAL => get_string('internal', 'repository_googledocs'),
+            FILE_REFERENCE => get_string('external', 'repository_googledocs'),
+        ];
+        $mform->addElement('select', 'defaultreturntype', get_string('defaultreturntype', 'repository_googledocs'), $choices);
 
         $mform->addElement('static', null, '', get_string('importformat', 'repository_googledocs'));
 
@@ -529,7 +922,8 @@ class repository_googledocs extends repository {
         $presentationformat['txt'] = 'txt';
         core_collator::ksort($presentationformat, core_collator::SORT_NATURAL);
 
-        $mform->addElement('select', 'presentationformat', get_string('presentationformat', 'repository_googledocs'), $presentationformat);
+        $str = get_string('presentationformat', 'repository_googledocs');
+        $mform->addElement('select', 'presentationformat', $str, $presentationformat);
         $mform->setDefault('presentationformat', $presentationformat['pptx']);
         $mform->setType('presentationformat', PARAM_ALPHANUM);
 
@@ -541,9 +935,14 @@ class repository_googledocs extends repository {
         $spreadsheetformat['xlsx'] = 'xlsx';
         core_collator::ksort($spreadsheetformat, core_collator::SORT_NATURAL);
 
-        $mform->addElement('select', 'spreadsheetformat', get_string('spreadsheetformat', 'repository_googledocs'), $spreadsheetformat);
+        $str = get_string('spreadsheetformat', 'repository_googledocs');
+        $mform->addElement('select', 'spreadsheetformat', $str, $spreadsheetformat);
         $mform->setDefault('spreadsheetformat', $spreadsheetformat['xlsx']);
         $mform->setType('spreadsheetformat', PARAM_ALPHANUM);
     }
 }
+
 // Icon from: http://www.iconspedia.com/icon/google-2706.html.
+function repository_googledocs_oauth2_system_scopes() {
+    return 'https://www.googleapis.com/auth/drive';
+}

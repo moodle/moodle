@@ -64,7 +64,7 @@ abstract class rest {
      * @param string $functionname
      * @param array $functionargs
      */
-    public function call($functionname, $functionargs) {
+    public function call($functionname, $functionargs, $rawpost = false) {
         $functions = $this->get_api_functions();
         $supportedmethods = [ 'get', 'put', 'post', 'patch', 'head', 'delete' ];
         if (empty($functions[$functionname])) {
@@ -86,7 +86,30 @@ abstract class rest {
             }
         }
 
+        // Allow params in the URL path like /me/{parent}/children.
+        foreach ($callargs as $argname => $value) {
+            $newendpoint = str_replace('{' . $argname . '}', $value, $endpoint);
+            if ($newendpoint != $endpoint) {
+                $endpoint = $newendpoint;
+                unset($callargs[$argname]);
+            }
+        }
+
+        if ($rawpost !== false) {
+            $queryparams = $this->curl->build_post_data($callargs);
+            if (!empty($queryparams)) {
+                $endpoint .= '?' . $queryparams;
+            }
+            $callargs = $rawpost;
+        }
+
+        error_log('CALL REST');
+        error_log($endpoint);
+        error_log(json_encode($callargs));
+        error_log($method);
+        $this->curl->setHeader('Content-type: application/json');
         $response = $this->curl->$method($endpoint, $callargs);
+        error_log($response);
 
         if ($this->curl->errno == 0) {
             if ($responsetype == 'json') {
