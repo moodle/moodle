@@ -242,6 +242,13 @@ function xmldb_assign_upgrade($oldversion) {
         $select = "modulename = :modulename AND eventtype = :eventtype";
         $DB->set_field_select('event', 'eventtype', 'due', $select, $params);
 
+        // Delete 'open' events.
+        $params = [
+            'modulename' => 'assign',
+            'eventtype' => 'open'
+        ];
+        $DB->delete_records('event', $params);
+
         // Assign savepoint reached.
         upgrade_mod_savepoint(true, 2017021500, 'assign');
     }
