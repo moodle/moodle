@@ -203,8 +203,9 @@ class core_user_external extends external_api {
 
             // Preferences.
             if (!empty($user['preferences'])) {
+                $userobject = (object)$user;
                 foreach ($user['preferences'] as $preference) {
-                    set_user_preference($preference['type'], $preference['value'], $user['id']);
+                    self::set_user_preference($preference['type'], $preference['value'], $userobject);
                 }
             }
 
@@ -433,7 +434,7 @@ class core_user_external extends external_api {
             // Preferences.
             if (!empty($user['preferences'])) {
                 foreach ($user['preferences'] as $preference) {
-                    set_user_preference($preference['type'], $preference['value'], $user['id']);
+                    self::set_user_preference($preference['type'], $preference['value'], $existinguser);
                 }
             }
         }
@@ -1176,6 +1177,35 @@ class core_user_external extends external_api {
         );
     }
 
+    /**
+     * Validates preference value and updates the user preference
+     *
+     * @param string $name
+     * @param string $value
+     * @param stdClass $user
+     */
+    protected static function set_user_preference($name, $value, $user) {
+        $preferences = array(
+            'auth_forcepasswordchange' => PARAM_BOOL,
+            'htmleditor' => PARAM_COMPONENT,
+            'usemodchooser' => PARAM_BOOL,
+            'badgeprivacysetting' => PARAM_BOOL,
+            'blogpagesize' => PARAM_INT,
+            'forum_markasreadonnotification' => PARAM_INT,
+            'calendar_timeformat' => PARAM_NOTAGS,
+            'calendar_startwday' => PARAM_INT,
+            'calendar_maxevents' => PARAM_INT,
+            'calendar_lookahead' => PARAM_INT,
+            'calendar_persistflt' => PARAM_INT
+        );
+        if (isset($preferences[$name])) {
+            $value = clean_param($value, $preferences[$name]);
+            if ($preferences[$name] == PARAM_BOOL) {
+                $value = (int)$value;
+            }
+            set_user_preference($name, $value, $user);
+        }
+    }
 }
 
  /**
