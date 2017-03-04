@@ -1758,7 +1758,7 @@ class grade_report_grader extends grade_report {
 
         // Try looking for old location of user setting that used to store all courses in one serialized user preference.
         if (($oldcollapsedpref = get_user_preferences('grade_report_grader_collapsed_categories')) !== null) {
-            if ($collapsedall = @unserialize($oldcollapsedpref)) {
+            if ($collapsedall = unserialize_array($oldcollapsedpref)) {
                 // We found the old-style preference, filter out only categories that belong to this course and update the prefs.
                 $collapsed = static::filter_collapsed_categories($courseid, $collapsedall);
                 if (!empty($collapsed['aggregatesonly']) || !empty($collapsed['gradesonly'])) {

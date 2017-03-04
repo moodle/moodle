@@ -497,7 +497,14 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'email' => 'usertest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
-            'country' => 'au'
+            'country' => 'au',
+            'preferences' => [[
+                'type' => 'htmleditor',
+                'value' => 'atto'
+            ], [
+                'type' => 'invalidpreference',
+                'value' => 'abcd'
+            ]]
             );
 
         $context = context_system::instance();
@@ -522,6 +529,8 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             $this->assertEquals($dbuser->description, $user1['description']);
             $this->assertEquals($dbuser->city, $user1['city']);
             $this->assertEquals($dbuser->country, $user1['country']);
+            $this->assertEquals('atto', get_user_preferences('htmleditor', null, $dbuser));
+            $this->assertEquals(null, get_user_preferences('invalidpreference', null, $dbuser));
         }
 
         // Call without required capability
@@ -676,7 +685,14 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'email' => 'usertest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
-            'country' => 'au'
+            'country' => 'au',
+            'preferences' => [[
+                'type' => 'htmleditor',
+                'value' => 'atto'
+            ], [
+                'type' => 'invalidpreference',
+                'value' => 'abcd'
+            ]]
             );
 
         $context = context_system::instance();
@@ -712,6 +728,8 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($dbuser->description, $user1['description']);
         $this->assertEquals($dbuser->city, $user1['city']);
         $this->assertEquals($dbuser->country, $user1['country']);
+        $this->assertEquals('atto', get_user_preferences('htmleditor', null, $dbuser));
+        $this->assertEquals(null, get_user_preferences('invalidpreference', null, $dbuser));
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/user:update', $context->id, $roleid);
