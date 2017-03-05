@@ -48,7 +48,7 @@ if ($editorform->is_cancelled()) {
 
     $user->preference_htmleditor = $data->preference_htmleditor;
 
-    useredit_update_user_preference($user, false, false);
+    useredit_update_user_preference($user);
     // Trigger event.
     \core\event\user_updated::create_from_userid($user->id)->trigger();
 

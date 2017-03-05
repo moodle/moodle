@@ -27,6 +27,7 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/blog/lib.php');
 require_once('preferences_form.php');
+require_once($CFG->dirroot.'/user/editlib.php');
 
 $courseid = optional_param('courseid', SITEID, PARAM_INT);
 $modid    = optional_param('modid', null, PARAM_INT);
@@ -81,7 +82,8 @@ if (!$mform->is_cancelled() && $data = $mform->get_data()) {
     if ($pagesize < 1) {
         print_error('invalidpagesize');
     }
-    set_user_preference('blogpagesize', $pagesize);
+    useredit_update_user_preference(['id' => $USER->id,
+        'preference_blogpagesize' => $pagesize]);
 }
 
 if ($mform->is_cancelled()) {
