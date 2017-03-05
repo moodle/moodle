@@ -3346,3 +3346,25 @@ function calendar_get_calendar_context($subscription) {
     }
     return $context;
 }
+
+/**
+ * Implements callback user_preferences, whitelists preferences that users are allowed to update directly
+ *
+ * Used in {@see core_user::fill_preferences_cache()}, see also {@see useredit_update_user_preference()}
+ *
+ * @return array
+ */
+function core_calendar_user_preferences() {
+    $preferences = [];
+    $preferences['calendar_timeformat'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED, 'default' => '0',
+        'choices' => array('0', CALENDAR_TF_12, CALENDAR_TF_24)
+    );
+    $preferences['calendar_startwday'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 0,
+        'choices' => array(0, 1, 2, 3, 4, 5, 6));
+    $preferences['calendar_maxevents'] = array('type' => PARAM_INT, 'choices' => range(1, 20));
+    $preferences['calendar_lookahead'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 365,
+        'choices' => array(365, 270, 180, 150, 120, 90, 60, 30, 21, 14, 7, 6, 5, 4, 3, 2, 1));
+    $preferences['calendar_persistflt'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 0,
+        'choices' => array(0, 1));
+    return $preferences;
+}

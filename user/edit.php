@@ -199,14 +199,16 @@ if ($usernew = $userform->get_data()) {
         // Other users require a confirmation email.
         if (isset($usernew->email) and $user->email != $usernew->email && !has_capability('moodle/user:update', $systemcontext)) {
             $a = new stdClass();
-            $a->newemail = $usernew->preference_newemail = $usernew->email;
-            $usernew->preference_newemailkey = random_string(20);
-            $usernew->preference_newemailattemptsleft = 3;
+            $emailchangedkey = random_string(20);
+            set_user_preference('newemail', $usernew->email, $user->id);
+            set_user_preference('newemailkey', $emailchangedkey, $user->id);
+            set_user_preference('newemailattemptsleft', 3, $user->id);
+
+            $a->newemail = $emailchanged = $usernew->email;
             $a->oldemail = $usernew->email = $user->email;
 
             $emailchangedhtml = $OUTPUT->box(get_string('auth_changingemailaddress', 'auth', $a), 'generalbox', 'notice');
             $emailchangedhtml .= $OUTPUT->continue_button($returnurl);
-            $emailchanged = true;
         }
     }
 
@@ -254,14 +256,14 @@ if ($usernew = $userform->get_data()) {
     \core\event\user_updated::create_from_userid($user->id)->trigger();
 
     // If email was changed and confirmation is required, send confirmation email now to the new address.
-    if ($emailchanged && $CFG->emailchangeconfirmation) {
+    if ($emailchanged !== false && $CFG->emailchangeconfirmation) {
         $tempuser = $DB->get_record('user', array('id' => $user->id), '*', MUST_EXIST);
-        $tempuser->email = $usernew->preference_newemail;
+        $tempuser->email = $emailchanged;
 
         $supportuser = core_user::get_support_user();
 
         $a = new stdClass();
-        $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $usernew->preference_newemailkey . '&id=' . $user->id;
+        $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $emailchangedkey . '&id=' . $user->id;
         $a->site = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
         $a->fullname = fullname($tempuser, true);
         $a->supportemail = $supportuser->email;

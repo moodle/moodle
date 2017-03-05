@@ -1172,3 +1172,69 @@ function message_output_fragment_processor_settings($args = []) {
 
     return $renderer->render_from_template('core_message/preferences_processor', $processoroutput->export_for_template($renderer));
 }
+
+/**
+ * Checks if current user is allowed to edit messaging preferences of another user
+ *
+ * @param stdClass $user user whose preferences we are updating
+ * @return bool
+ */
+function core_message_can_edit_message_profile($user) {
+    global $USER;
+    if ($user->id == $USER->id) {
+        return has_capability('moodle/user:editownmessageprofile', context_system::instance());
+    } else {
+        $personalcontext = context_user::instance($user->id);
+        if (!has_capability('moodle/user:editmessageprofile', $personalcontext)) {
+            return false;
+        }
+        if (isguestuser($user)) {
+            return false;
+        }
+        // No editing of admins by non-admins.
+        if (is_siteadmin($user) and !is_siteadmin($USER)) {
+            return false;
+        }
+        return true;
+    }
+}
+
+/**
+ * Implements callback user_preferences, whitelists preferences that users are allowed to update directly
+ *
+ * Used in {@see core_user::fill_preferences_cache()}, see also {@see useredit_update_user_preference()}
+ *
+ * @return array
+ */
+function core_message_user_preferences() {
+
+    $preferences = [];
+    $preferences['message_blocknoncontacts'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 0,
+        'choices' => array(0, 1));
+    $preferences['/^message_provider_([\w\d_]*)_logged(in|off)$/'] = array('isregex' => true, 'type' => PARAM_NOTAGS,
+        'null' => NULL_NOT_ALLOWED, 'default' => 'none',
+        'permissioncallback' => function ($user, $preferencename) {
+            global $CFG;
+            require_once($CFG->libdir.'/messagelib.php');
+            if (core_message_can_edit_message_profile($user) &&
+                    preg_match('/^message_provider_([\w\d_]*)_logged(in|off)$/', $preferencename, $matches)) {
+                $providers = message_get_providers_for_user($user->id);
+                foreach ($providers as $provider) {
+                    if ($matches[1] === $provider->component . '_' . $provider->name) {
+                       return true;
+                    }
+                }
+            }
+            return false;
+        },
+        'cleancallback' => function ($value, $preferencename) {
+            if ($value === 'none' || empty($value)) {
+                return 'none';
+            }
+            $parts = explode('/,/', $value);
+            $processors = array_keys(get_message_processors());
+            array_filter($parts, function($v) use ($processors) {return in_array($v, $processors);});
+            return $parts ? join(',', $parts) : 'none';
+        });
+    return $preferences;
+}

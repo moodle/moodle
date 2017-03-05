@@ -86,7 +86,7 @@ function block_course_overview_get_myorder() {
     // If preference was not found, look in the old location and convert if found.
     $order = array();
     if ($value = get_user_preferences('course_overview_course_order')) {
-        $order = unserialize($value);
+        $order = unserialize_array($value);
         block_course_overview_update_myorder($order);
         unset_user_preference('course_overview_course_order');
     }

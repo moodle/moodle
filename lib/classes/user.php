@@ -67,6 +67,9 @@ class core_user {
     /** @var array store user fields properties cache. */
     protected static $propertiescache = null;
 
+    /** @var array store user preferences cache. */
+    protected static $preferencescache = null;
+
     /**
      * Return user object from db or create noreply or support user,
      * if userid matches corse_user::NOREPLY_USER or corse_user::SUPPORT_USER
@@ -643,5 +646,221 @@ class core_user {
         }
 
         return self::$propertiescache[$property]['default'];
+    }
+
+    /**
+     * Definition of updateable user preferences and rules for data and access validation.
+     *
+     * array(
+     *     'preferencename' => array(      // Either exact preference name or a regular expression.
+     *          'null' => NULL_ALLOWED,    // Defaults to NULL_NOT_ALLOWED. Takes NULL_NOT_ALLOWED or NULL_ALLOWED.
+     *          'type' => PARAM_TYPE,      // Expected parameter type of the user field - mandatory
+     *          'choices' => array(1, 2..) // An array of accepted values of the user field - optional
+     *          'default' => $CFG->setting // An default value for the field - optional
+     *          'isregex' => false/true    // Whether the name of the preference is a regular expression (default false).
+     *          'permissioncallback' => callable // Function accepting arguments ($user, $preferencename) that checks if current user
+     *                                     // is allowed to modify this preference for given user.
+     *                                     // If not specified core_user::default_preference_permission_check() will be assumed.
+     *          'cleancallback' => callable // Custom callback for cleaning value if something more difficult than just type/choices is needed
+     *                                     // accepts arguments ($value, $preferencename)
+     *     )
+     * )
+     *
+     * @return void
+     */
+    protected static function fill_preferences_cache() {
+        if (self::$preferencescache !== null) {
+            return;
+        }
+
+        // Array of user preferences and expected types/values.
+        // Every preference that can be updated directly by user should be added here.
+        $preferences = array();
+        $preferences['auth_forcepasswordchange'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'choices' => array(0, 1),
+            'permissioncallback' => function($user, $preferencename) {
+                global $USER;
+                $systemcontext = context_system::instance();
+                return ($USER->id != $user->id && (has_capability('moodle/user:update', $systemcontext) ||
+                        ($user->timecreated > time() - 10 && has_capability('moodle/user:create', $systemcontext))));
+            });
+        $preferences['usemodchooser'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 1,
+            'choices' => array(0, 1));
+        $preferences['forum_markasreadonnotification'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 1,
+            'choices' => array(0, 1));
+        $preferences['htmleditor'] = array('type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED,
+            'cleancallback' => function($value, $preferencename) {
+                if (empty($value) || !array_key_exists($value, core_component::get_plugin_list('editor'))) {
+                    return null;
+                }
+                return $value;
+            });
+        $preferences['badgeprivacysetting'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 1,
+            'choices' => array(0, 1), 'permissioncallback' => function($user, $preferencename) {
+                global $CFG, $USER;
+                return !empty($CFG->enablebadges) && $user->id == $USER->id;
+            });
+        $preferences['blogpagesize'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 10,
+            'permissioncallback' => function($user, $preferencename) {
+                global $USER;
+                return $USER->id == $user->id && has_capability('moodle/blog:view', context_system::instance());
+            });
+
+        // Core components that may want to define their preferences.
+        // List of core components implementing callback is hardcoded here for performance reasons.
+        $corecomponents = ['core_message', 'core_calendar'];
+        foreach ($corecomponents as $component) {
+            if (($pluginpreferences = component_callback($component, 'user_preferences')) && is_array($pluginpreferences)) {
+                $preferences += $pluginpreferences;
+            }
+        }
+
+        // Plugins that may define their preferences.
+        if ($pluginsfunction = get_plugins_with_function('user_preferences')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $function) {
+                    if (($pluginpreferences = call_user_func($function)) && is_array($pluginpreferences)) {
+                        $preferences += $pluginpreferences;
+                    }
+                }
+            }
+        }
+
+        self::$preferencescache = $preferences;
+    }
+
+    /**
+     * Retrieves the preference definition
+     *
+     * @param string $preferencename
+     * @return array
+     */
+    protected static function get_preference_definition($preferencename) {
+        self::fill_preferences_cache();
+
+        foreach (self::$preferencescache as $key => $preference) {
+            if (empty($preference['isregex'])) {
+                if ($key === $preferencename) {
+                    return $preference;
+                }
+            } else {
+                if (preg_match($key, $preferencename)) {
+                    return $preference;
+                }
+            }
+        }
+
+        throw new coding_exception('Invalid preference requested.');
+    }
+
+    /**
+     * Default callback used for checking if current user is allowed to change permission of user $user
+     *
+     * @param stdClass $user
+     * @param string $preferencename
+     * @return bool
+     */
+    protected static function default_preference_permission_check($user, $preferencename) {
+        global $USER;
+        if (is_mnet_remote_user($user)) {
+            // Can't edit MNET user.
+            return false;
+        }
+
+        if ($user->id == $USER->id) {
+            // Editing own profile.
+            $systemcontext = context_system::instance();
+            return has_capability('moodle/user:editownprofile', $systemcontext);
+        } else  {
+            // Teachers, parents, etc.
+            $personalcontext = context_user::instance($user->id);
+            if (!has_capability('moodle/user:editprofile', $personalcontext)) {
+                return false;
+            }
+            if (is_siteadmin($user->id) and !is_siteadmin($USER)) {
+                // Only admins may edit other admins.
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Can current user edit preference of this/another user
+     *
+     * @param string $preferencename
+     * @param stdClass $user
+     * @return bool
+     */
+    public static function can_edit_preference($preferencename, $user) {
+        if (!isloggedin() || isguestuser()) {
+            // Guests can not edit anything.
+            return false;
+        }
+
+        try {
+            $definition = self::get_preference_definition($preferencename);
+        } catch (coding_exception $e) {
+            return false;
+        }
+
+        if ($user->deleted || !context_user::instance($user->id, IGNORE_MISSING)) {
+            // User is deleted.
+            return false;
+        }
+
+        if (isset($definition['permissioncallback'])) {
+            $callback = $definition['permissioncallback'];
+            if (is_callable($callback)) {
+                return call_user_func_array($callback, [$user, $preferencename]);
+            } else {
+                throw new coding_exception('Permission callback for preference ' . s($preferencename) . ' is not callable');
+                return false;
+            }
+        } else {
+            return self::default_preference_permission_check($user, $preferencename);
+        }
+    }
+
+    /**
+     * Clean value of a user preference
+     *
+     * @param string $value the user preference value to be cleaned.
+     * @param string $preferencename the user preference name
+     * @return string the cleaned preference value
+     */
+    public static function clean_preference($value, $preferencename) {
+
+        $definition = self::get_preference_definition($preferencename);
+
+        if (isset($definition['type']) && $value !== null) {
+            $value = clean_param($value, $definition['type']);
+        }
+
+        if (isset($definition['cleancallback'])) {
+            $callback = $definition['cleancallback'];
+            if (is_callable($callback)) {
+                return $callback($value, $preferencename);
+            } else {
+                throw new coding_exception('Clean callback for preference ' . s($preferencename) . ' is not callable');
+            }
+        } else if ($value === null && (!isset($definition['null']) || $definition['null'] == NULL_ALLOWED)) {
+            return null;
+        } else if (isset($definition['choices'])) {
+            if (!in_array($value, $definition['choices'])) {
+                if (isset($definition['default'])) {
+                    return $definition['default'];
+                } else {
+                    $first = reset($definition['choices']);
+                    return $first;
+                }
+            } else {
+                return $value;
+            }
+        } else {
+            if ($value === null) {
+                return isset($definition['default']) ? $definition['default'] : '';
+            }
+            return $value;
+        }
     }
 }

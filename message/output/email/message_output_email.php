@@ -164,10 +164,13 @@ class message_output_email extends message_output {
         global $CFG;
 
         if (isset($form->email_email)) {
-            $preferences['message_processor_email_email'] = $form->email_email;
+            $preferences['message_processor_email_email'] = clean_param($form->email_email, PARAM_EMAIL);
         }
         if (isset($form->preference_mailcharset)) {
             $preferences['mailcharset'] = $form->preference_mailcharset;
+            if (!array_key_exists($preferences['mailcharset'], get_list_of_charsets())) {
+                $preferences['mailcharset'] = '0';
+            }
         }
         if (isset($form->mailformat) && isset($form->userid)) {
             require_once($CFG->dirroot.'/user/lib.php');

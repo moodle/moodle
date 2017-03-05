@@ -58,30 +58,14 @@ if ($calendarform->is_cancelled()) {
 } else if ($calendarform->is_submitted() && $calendarform->is_validated() && confirm_sesskey()) {
     $data = $calendarform->get_data();
 
-    // Time format.
-    if ($data->timeformat != CALENDAR_TF_12 && $data->timeformat != CALENDAR_TF_24) {
-        $data->timeformat = '';
-    }
-    set_user_preference('calendar_timeformat', $data->timeformat);
-
-    // Start weekday.
-    $data->startwday = intval($data->startwday);
-    if ($data->startwday < 0 || $data->startwday > 6) {
-        $data->startwday = abs($data->startwday % 7);
-    }
-    set_user_preference('calendar_startwday', $data->startwday);
-
-    // Calendar events.
-    if (intval($data->maxevents) >= 1) {
-        set_user_preference('calendar_maxevents', $data->maxevents);
-    }
-
-    // Calendar lookahead.
-    if (intval($data->lookahead) >= 1) {
-        set_user_preference('calendar_lookahead', $data->lookahead);
-    }
-
-    set_user_preference('calendar_persistflt', intval($data->persistflt));
+    $usernew = ['id' => $USER->id,
+        'preference_calendar_timeformat' => $data->timeformat,
+        'preference_calendar_startwday' => $data->startwday,
+        'preference_calendar_maxevents' => $data->maxevents,
+        'preference_calendar_lookahead' => $data->lookahead,
+        'preference_calendar_persistflt' => $data->persistflt
+    ];
+    useredit_update_user_preference($usernew);
 
     // Calendar type.
     $calendartype = $data->calendartype;
