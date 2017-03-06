@@ -232,6 +232,7 @@ $string['unknownoriginal'] = 'Unknown';
 $string['upload'] = 'Upload this file';
 $string['uploading'] = 'Uploading...';
 $string['uploadsucc'] = 'The file has been uploaded successfully';
+$string['unknownsource'] = 'Unknown source';
 $string['undisclosedsource'] = '(Undisclosed)';
 $string['undisclosedreference'] = '(Undisclosed)';
 $string['uselatestfile'] = 'Use latest file';

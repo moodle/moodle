@@ -299,7 +299,10 @@ class repository_googledocs extends repository {
                 );
             } else {
                 // This is a file.
-                $link = isset($gfile->webContentLink) ? $gfile->webContentLink : '';
+                $link = isset($gfile->webViewLink) ? $gfile->webViewLink : '';
+                if (empty($link)) {
+                    $link = isset($gfile->webContentLink) ? $gfile->webContentLink : '';
+                }
                 if (isset($gfile->fileExtension)) {
                     // The file has an extension, therefore we can download it.
                     $source = json_encode(['id' => $gfile->id, 'exportformat' => 'download', 'link' => $link]);
@@ -521,7 +524,6 @@ class repository_googledocs extends repository {
      * @param array $options additional options affecting the file serving
      */
     public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
-        // TODO.
         $source = json_decode($storedfile->get_reference());
 
         if ($source->link) {
@@ -606,6 +608,23 @@ class repository_googledocs extends repository {
     }
 
     /**
+     * Get simple file info for humans.
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The file we are querying.
+     *
+     * @return stdClass
+     */
+    protected function get_file_summary(\repository_googledocs\rest $client, $fileid) {
+        $fields = "id,name,owners";
+        $params = [
+            'fileid' => $fileid,
+            'fields' => $fields
+        ];
+        return $client->call('get', $params);
+    }
+
+    /**
      * Update file owner.
      *
      * @param \core\oauth2\client $client Authenticated client.
@@ -665,7 +684,7 @@ class repository_googledocs extends repository {
             'role' => 'writer',
             'type' => 'user'
         ];
-        $params = ['fileid' => $fileid];
+        $params = ['fileid' => $fileid, 'sendNotificationEmail' => 'false'];
         $response = $client->call('create_permission', $params, json_encode($updateeditor));
         if (empty($response->id)) {
             $details = 'Cannot add user ' . $email . ' as a writer for document: ' . $fileid;
@@ -783,12 +802,6 @@ class repository_googledocs extends repository {
         $readshareupdaterequired = true;
         $ownerupdaterequired = true;
         foreach ($permissions->permissions as $permission) {
-            if ($permission->type == 'user' &&
-                    $permission->role == 'owner' &&
-                    isset($permission->emailAddress) &&
-                    $permission->emailAddress == $systemuseremail) {
-                $ownerupdaterequired = false;
-            }
             if ($permission->id == 'anyoneWithLink' &&
                     $permission->type == 'anyone' &&
                     $permission->role == 'reader' &&
@@ -797,12 +810,17 @@ class repository_googledocs extends repository {
             }
         }
 
+        // Add Moodle as writer.
+        $this->add_writer_to_file($userservice, $source->id, $systemuseremail);
+
         // Now move it to a sensible folder.
         $contextlist = array_reverse($context->get_parent_contexts(true));
 
         $parentid = 'root';
         foreach ($contextlist as $context) {
             // Make sure a folder exists here.
+            $foldername = $context->get_context_name();
+
             $folderid = $this->folder_exists_in_folder($systemservice, $foldername, $parentid);
             if ($folderid !== false) {
                 $parentid = $folderid;
@@ -812,38 +830,43 @@ class repository_googledocs extends repository {
             }
         }
 
-        // See if we have edit capability before the copy.
-        $fileinfo = $this->get_file_capabilities($userservice, $source->id);
-        $canedit = !empty($fileinfo->capabilities->canEdit);
-        $writerscanshare = !empty($fileinfo->writersCanShare);
-
-        // The owner was not the system user so we have to update the file.
-        if ($ownerupdaterequired) {
-
-            $worked = $this->update_file_owner($userservice, $source->id, $systemuseremail);
-            if (!$worked) {
-                // Updating the owner only works for "google files" like documents etc. For binary
-                // files we will get here.
-                $source = $this->copy_file($systemservice, $source->id);
-
-                $readshareupdaterequired = true;
-                $writerscanshare = true;
-
-                if ($canedit) {
-                    $this->add_writer_to_file($systemservice, $source->id, $useremail);
-                }
-            }
-
-            $this->move_file_from_root_to_folder($systemservice, $source->id, $parentid);
-        }
-
-        if ($writerscanshare) {
-            // We don't want anyone but Moodle to change the sharing settings.
-            $this->prevent_writers_from_sharing_file($systemservice, $source->id);
-        }
+        $this->move_file_from_root_to_folder($systemservice, $source->id, $parentid);
 
         if ($readshareupdaterequired) {
             $this->set_file_sharing_anyone_with_link_can_read($systemservice, $source->id);
+        }
+
+        // We did not update the reference at all.
+        return $reference;
+    }
+
+    /**
+     * Get human readable file info from a the reference.
+     *
+     * @param string $reference
+     * @param int $filestatus
+     */
+    public function get_reference_details($reference, $filestatus = 0) {
+        if (empty($reference)) {
+            return get_string('unknownsource', 'repository');
+        }
+        $source = json_decode($reference);
+        $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
+
+        if ($systemauth === false) {
+            return '';
+        }
+        $systemservice = new repository_googledocs\rest($systemauth);
+        $info = $this->get_file_summary($systemservice, $source->id);
+
+        $owner = '';
+        if (!empty($info->owners[0]->displayName)) {
+            $owner = $info->owners[0]->displayName;
+        }
+        if ($owner) {
+            return get_string('owner', 'repository_googledocs', $owner);
+        } else {
+            return $info->name;
         }
     }
 
