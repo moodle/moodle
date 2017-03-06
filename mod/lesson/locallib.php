@@ -2699,7 +2699,9 @@ class lesson extends lesson_base {
             $result->nodefaultresponse  = true;
         }
 
-        if (isset($USER->modattempts[$lesson->id])) {
+        if ($result->inmediatejump) {
+            return $result;
+        } else if (isset($USER->modattempts[$this->properties->id])) {
             // Make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time.
             if ($USER->modattempts[$lesson->id]->pageid == $page->id && $page->nextpageid == 0) {
                 // Remember, this session variable holds the pageid of the last page that the user saw.
@@ -3228,6 +3230,11 @@ abstract class lesson_page extends lesson_base {
          */
         $result = $this->check_answer();
 
+        // Processes inmediate jumps.
+        if ($result->inmediatejump) {
+            return $result;
+        }
+
         $result->attemptsremaining  = 0;
         $result->maxattemptsreached = false;
 
@@ -3743,6 +3750,7 @@ abstract class lesson_page extends lesson_base {
         $result->userresponse    = null;
         $result->feedback        = '';
         $result->nodefaultresponse  = false; // Flag for redirecting when default feedback is turned off
+        $result->inmediatejump = false; // Flag to detect when we should do a jump from the page without further processing.
         return $result;
     }
 

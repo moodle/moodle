@@ -69,8 +69,8 @@ $reviewmode = $lesson->is_in_review_mode();
 // Process the page responses.
 $result = $lesson->process_page_responses($page);
 
-if ($result->nodefaultresponse) {
-    // Don't display feedback
+if ($result->nodefaultresponse || $result->inmediatejump) {
+    // Don't display feedback or force a redirecto to newpageid.
     redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>$result->newpageid)));
 }
 
