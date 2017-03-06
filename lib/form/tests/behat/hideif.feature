@@ -1,4 +1,4 @@
-@core @javascript
+@core @javascript @core_form
 Feature: hideIf functionality in forms
   For forms including hideIf functions
   As a user
@@ -8,7 +8,9 @@ Feature: hideIf functionality in forms
     Given the following "activities" exist:
       | activity | name | intro                                                                   | course               | section | idnumber |
       | label    | L1   | <a href="lib/form/tests/fixtures/formhideiftestpage.php">HideIfLink</a> | Acceptance test site | 1       | L1       |
+    And I log in as "admin"
     And I am on site homepage
+    And I wait "5" seconds
     And I follow "HideIfLink"
 
   Scenario: When 'eq' hideIf conditions are not met, the relevant elements are shown
@@ -52,14 +54,18 @@ Feature: hideIf functionality in forms
   Scenario: When 'in' hideIf conditions are not met, the relevant elements are shown
     When I set the field "Select example" to "3"
     Then I should see "Test in hideif"
+    And I should see "Date time example"
+    And I should see "Files"
     And "#id_testinhideif" "css_element" should be visible
     And I press "Submit"
-    And I should see "Number of submitted form elements: 6"
+    And I should see "Number of submitted form elements: 8"
     And I should see "[testinhideif] =>"
 
   Scenario: When 'in' hideIf conditions are met, the relevant elements are hidden
     When I set the field "Select example" to "2"
     Then I should not see "Test in hideif"
+    And I should not see "Date time example"
+    And I should not see "Files"
     And "#id_testinhideif" "css_element" should not be visible
     And I press "Submit"
     And I should see "Number of submitted form elements: 5"

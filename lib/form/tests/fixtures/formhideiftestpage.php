@@ -71,6 +71,10 @@ class hideif_form extends moodleform {
         $mform->addElement('text', 'testinhideif', 'Test in hideif');
         $mform->setType('testinhideif', PARAM_TEXT);
         $mform->hideIf('testinhideif', 'selectexample', 'in', [1, 2, 5]);
+        $mform->addElement('date_time_selector', 'testdatetime', 'Date time example', array('optional' => true));
+        $mform->hideIf('testdatetime', 'selectexample', 'in', [1, 2, 5]);
+        $mform->addElement('filemanager', 'files_filemanager', 'Files', null, array());
+        $mform->hideIf('files_filemanager', 'selectexample', 'in', [1, 2, 5]);
 
         $mform->addElement('submit', 'submitform', 'Submit');
     }

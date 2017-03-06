@@ -1466,9 +1466,13 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     protected $clientvalidation = false;
 
     /**
-     * Is this a 'disableIf' dependency of a 'hideIf' dependency?
+     * Is this a 'disableIf' dependency ?
      */
     const DEP_DISABLE = 0;
+
+    /**
+     * Is this a 'hideIf' dependency?
+     */
     const DEP_HIDE = 1;
 
     /**
@@ -2454,7 +2458,7 @@ require(["core/event", "jquery"], function(Event, $) {
                 }
             }
         }
-        foreach ($this->_hideifs as $dependenton => $conditions){
+        foreach ($this->_hideifs as $dependenton => $conditions) {
             $result[$dependenton] = array();
             foreach ($conditions as $condition => $values) {
                 $result[$dependenton][$condition] = array();
