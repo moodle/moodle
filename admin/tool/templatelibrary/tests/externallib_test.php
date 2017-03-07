@@ -70,7 +70,7 @@ class tool_templatelibrary_external_testcase extends externallib_advanced_testca
 
         $originaltheme = $CFG->theme;
         // Change the theme to 'base' because it overrides these templates.
-        $CFG->theme = 'base';
+        $CFG->theme = 'boost';
 
         $template = external::load_canonical_template('core', 'notification_error');
 
