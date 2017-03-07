@@ -238,7 +238,7 @@ class curl_security_helper extends curl_security_helper_base {
         if (!isset($CFG->curlsecurityallowedport)) {
             return [];
         }
-        return array_filter(explode("\n", $CFG->curlsecurityallowedport), function($entry) {
+        return array_filter(array_map('trim', explode("\n", $CFG->curlsecurityallowedport)), function($entry) {
             return !empty($entry);
         });
     }
