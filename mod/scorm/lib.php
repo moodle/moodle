@@ -1580,6 +1580,7 @@ function mod_scorm_get_fontawesome_icon_map() {
 }
 
 /**
+<<<<<<< HEAD
  * This standard function will check all instances of this module
  * and make sure there are up-to-date events created for each of them.
  * If courseid = 0, then every scorm event in the site is checked, else
@@ -1643,4 +1644,85 @@ function mod_scorm_core_calendar_provide_event_action(calendar_event $event,
         1,
         $actionable
     );
+}
+
+/**
+ * Add a get_coursemodule_info function in case any SCORM type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function scorm_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $dbparams = ['id' => $coursemodule->instance];
+    $fields = 'id, completionstatusrequired, completionscorerequired, completionstatusallscos';
+    if (!$scorm = $DB->get_record('scorm', $dbparams, $fields)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['completionstatusrequired'] = $scorm->completionstatusrequired;
+        $result->customdata['customcompletionrules']['completionscorerequired'] = $scorm->completionscorerequired;
+        $result->customdata['customcompletionrules']['completionstatusallscos'] = $scorm->completionstatusallscos;
+    }
+
+    return $result;
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param object $cm the cm_info object.
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_scorm_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (!$cm instanceof cm_info || !isset($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completionstatusrequired':
+                if (is_null($val)) {
+                    continue;
+                }
+                // Determine the selected statuses using a bitwise operation.
+                $cvalues = array();
+                foreach (scorm_status_options(true) as $bit => $string) {
+                    if (($val & $bit) == $bit) {
+                        $cvalues[] = $string;
+                    }
+                }
+                $statusstring = implode(', ', $cvalues);
+                $descriptions[] = get_string('completionstatusrequireddesc', 'scorm', $statusstring);
+                break;
+            case 'completionscorerequired':
+                if (is_null($val)) {
+                    continue;
+                }
+                $descriptions[] = get_string('completionscorerequireddesc', 'scorm', $val);
+                break;
+            case 'completionstatusallscos':
+                if (empty($val)) {
+                    continue;
+                }
+                $descriptions[] = get_string('completionstatusallscos', 'scorm');
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
 }

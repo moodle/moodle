@@ -68,6 +68,7 @@ $string['completiondisabled'] = 'Disabled, not shown in activity settings';
 $string['completionenabled'] = 'Enabled, control via completion and activity settings';
 $string['completionexpected'] = 'Expect completed on';
 $string['completionexpected_help'] = 'This setting specifies the date when the activity is expected to be completed.';
+$string['completionexpecteddesc'] = 'Completion expected on {$a}';
 $string['completionexpectedfor'] = 'Expected completion for \'{$a->modulename}\' activity \'{$a->instancename}\'';
 $string['completionicons'] = 'Completion tick boxes';
 $string['completionicons_help'] = 'A tick next to an activity name may be used to indicate when the activity is complete.
