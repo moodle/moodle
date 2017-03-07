@@ -62,7 +62,7 @@ class competency_framework extends persistent {
         // Description.
         $mform->addElement('editor', 'description',
                            get_string('description', 'tool_lp'), array('rows' => 4));
-        $mform->setType('description', PARAM_RAW);
+        $mform->setType('description', PARAM_CLEANHTML);
         // ID number.
         $mform->addElement('text', 'idnumber', get_string('idnumber', 'tool_lp'), 'maxlength="100"');
         $mform->setType('idnumber', PARAM_RAW);

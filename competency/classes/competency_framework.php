@@ -90,7 +90,7 @@ class competency_framework extends persistent {
                 'type' => PARAM_RAW
             ),
             'description' => array(
-                'type' => PARAM_RAW,
+                'type' => PARAM_CLEANHTML,
                 'default' => ''
             ),
             'descriptionformat' => array(
