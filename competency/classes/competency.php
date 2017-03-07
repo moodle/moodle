@@ -68,7 +68,7 @@ class competency extends persistent {
             ),
             'description' => array(
                 'default' => '',
-                'type' => PARAM_RAW
+                'type' => PARAM_CLEANHTML
             ),
             'descriptionformat' => array(
                 'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
