@@ -1,6 +1,10 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.2.2 ===
+
+* block_manager::get_required_by_theme_block_types() is no longer static.
+
 === 3.1 ===
 
 * The collapsed class was removed from the navigation block to make it compatible with aria.
