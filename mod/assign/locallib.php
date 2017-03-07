@@ -3096,7 +3096,8 @@ class assign {
         }
         // Checks for the edge case when user belongs to no groups and groupmode is sep.
         if ($this->get_course_module()->effectivegroupmode == SEPARATEGROUPS) {
-            $groupflag = !empty(groups_get_activity_allowed_groups($this->get_course_module()));
+            $groupflag = has_capability('moodle/site:accessallgroups', $this->get_context());
+            $groupflag = $groupflag || !empty(groups_get_activity_allowed_groups($this->get_course_module()));
             return (bool)$groupflag;
         }
         return true;
