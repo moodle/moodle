@@ -43,11 +43,11 @@
     <div class="container-fluid">
         <div class="row">
             {{#action.itemcount}}
-                {{#action.actionable}}
+                {{#action.showitemcount}}
                     <div class="pull-xs-right hidden-sm-down m-l-1">
                         <span class="tag tag-pill tag-default">{{.}}</span>
                     </div>
-                {{/action.actionable}}
+                {{/action.showitemcount}}
             {{/action.itemcount}}
             <div class="d-inline-block pull-xs-right hidden-sm-down m-l-1">
                 {{#action.actionable}}
