@@ -624,8 +624,16 @@ class behat_general extends behat_base {
             function($context, $args) {
 
                 foreach ($args['nodes'] as $node) {
-                    if ($node->isVisible()) {
-                        throw new ExpectationException('"' . $args['text'] . '" text was found in the page', $context->getSession());
+                    // If element is removed from dom, then just exit.
+                    try {
+                        // If element is visible then throw exception, so we keep spinning.
+                        if ($node->isVisible()) {
+                            throw new ExpectationException('"' . $args['text'] . '" text was found in the page',
+                                $context->getSession());
+                        }
+                    } catch (WebDriver\Exception\NoSuchElement $e) {
+                        // Do nothing just return, as element is no more on page.
+                        return true;
                     }
                 }
 
@@ -637,7 +645,6 @@ class behat_general extends behat_base {
             false,
             true
         );
-
     }
 
     /**
