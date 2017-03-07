@@ -248,7 +248,8 @@ abstract class persistent {
         $formatted = array();
         foreach ($properties as $property => $definition) {
             $propertyformat = $property . 'format';
-            if ($definition['type'] == PARAM_RAW && array_key_exists($propertyformat, $properties)
+            if (($definition['type'] == PARAM_RAW || $definition['type'] == PARAM_CLEANHTML)
+                    && array_key_exists($propertyformat, $properties)
                     && $properties[$propertyformat]['type'] == PARAM_INT) {
                 $formatted[$property] = $propertyformat;
             }
@@ -615,6 +616,10 @@ abstract class persistent {
                     if ($definition['type'] === PARAM_BOOL && $value === false) {
                         // Validate_param() does not like false with PARAM_BOOL, better to convert it to int.
                         $value = 0;
+                    }
+                    if ($definition['type'] === PARAM_CLEANHTML) {
+                        // We silently clean for this type. It may introduce changes even to valid data.
+                        $value = clean_param($value, PARAM_CLEANHTML);
                     }
                     validate_param($value, $definition['type'], $definition['null']);
                 } catch (invalid_parameter_exception $e) {

@@ -334,7 +334,8 @@ abstract class exporter {
      */
     final protected static function get_format_field($definitions, $property) {
         $formatproperty = $property . 'format';
-        if ($definitions[$property]['type'] == PARAM_RAW && isset($definitions[$formatproperty])
+        if (($definitions[$property]['type'] == PARAM_RAW || $definitions[$property]['type'] == PARAM_CLEANHTML)
+                && isset($definitions[$formatproperty])
                 && $definitions[$formatproperty]['type'] == PARAM_INT) {
             return $formatproperty;
         }
@@ -451,7 +452,7 @@ abstract class exporter {
                 // This is a nested array of more properties.
                 $thisvalue = self::get_read_structure_from_properties($type, $proprequired, $propdefault);
             } else {
-                if ($definition['type'] == PARAM_TEXT) {
+                if ($definition['type'] == PARAM_TEXT || $definition['type'] == PARAM_CLEANHTML) {
                     // PARAM_TEXT always becomes PARAM_RAW because filters may be applied.
                     $type = PARAM_RAW;
                 }
