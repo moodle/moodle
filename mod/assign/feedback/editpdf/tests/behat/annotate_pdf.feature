@@ -130,7 +130,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I navigate to "View all submissions" in current page administration
     And I click on "Edit" "link" in the "Student 2" "table_row"
     And I click on "Grade" "link" in the "Student 2" "table_row"
-    And I wait until the page is ready
+    And I wait for the complete PDF to load
     And I click on ".linebutton" "css_element"
     And I draw on the pdf
     And I press "Save changes"
