@@ -2248,6 +2248,7 @@ class core_course_external extends external_api {
         $coursereturns['overviewfiles']     = $files;
         $coursereturns['contacts']          = $coursecontacts;
         $coursereturns['enrollmentmethods'] = $enroltypes;
+        $coursereturns['sortorder']         = $course->sortorder;
         return $coursereturns;
     }
 
@@ -2361,6 +2362,7 @@ class core_course_external extends external_api {
             'shortname' => new external_value(PARAM_TEXT, 'course short name'),
             'categoryid' => new external_value(PARAM_INT, 'category id'),
             'categoryname' => new external_value(PARAM_TEXT, 'category name'),
+            'sortorder' => new external_value(PARAM_INT, 'Sort order in the category', VALUE_OPTIONAL),
             'summary' => new external_value(PARAM_RAW, 'summary'),
             'summaryformat' => new external_format_value('summary'),
             'summaryfiles' => new external_files('summary files in the summary field', VALUE_OPTIONAL),
@@ -2397,7 +2399,6 @@ class core_course_external extends external_api {
                 'completionnotify' => new external_value(PARAM_INT, '1: yes 0: no', VALUE_OPTIONAL),
                 'lang' => new external_value(PARAM_SAFEDIR, 'Forced course language', VALUE_OPTIONAL),
                 'theme' => new external_value(PARAM_PLUGIN, 'Fame of the forced theme', VALUE_OPTIONAL),
-                'sortorder' => new external_value(PARAM_INT, 'Sort order in the category', VALUE_OPTIONAL),
                 'marker' => new external_value(PARAM_INT, 'Current course marker', VALUE_OPTIONAL),
                 'legacyfiles' => new external_value(PARAM_INT, 'If legacy files are enabled', VALUE_OPTIONAL),
                 'calendartype' => new external_value(PARAM_PLUGIN, 'Calendar type', VALUE_OPTIONAL),
@@ -3002,7 +3003,7 @@ class core_course_external extends external_api {
             // Return information for any user that can access the course.
             $coursefields = array('format', 'showgrades', 'newsitems', 'startdate', 'maxbytes', 'showreports', 'visible',
                 'groupmode', 'groupmodeforce', 'defaultgroupingid', 'enablecompletion', 'completionnotify', 'lang', 'theme',
-                'sortorder', 'marker');
+                'marker');
 
             // Course filters.
             $coursesdata[$course->id]['filters'] = filter_get_available_in_context($context);
