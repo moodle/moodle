@@ -286,6 +286,10 @@ class auth_email_external extends external_api {
         // Validate the data sent.
         $data = $params;
         $data['email2'] = $data['email'];
+        // Force policy agreed if a site policy is set. The client is responsible of implementing the interface check.
+        if (!empty($CFG->sitepolicy)) {
+            $data['policyagreed'] = 1;
+        }
         unset($data['recaptcharesponse']);
         unset($data['customprofilefields']);
         // Add profile fields data.
