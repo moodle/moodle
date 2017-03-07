@@ -78,7 +78,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element implements temp
             $this->_options['maxbytes'] = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $options['maxbytes']);
         }
         if (empty($options['return_types'])) {
-            $this->_options['return_types'] = (FILE_INTERNAL | FILE_REFERENCE);
+            $this->_options['return_types'] = (FILE_INTERNAL | FILE_REFERENCE | FILE_CONTROLLED_LINK);
         }
         $this->_type = 'filemanager';
         parent::__construct($elementName, $elementLabel, $attributes);

@@ -51,6 +51,7 @@ $saveas_path   = optional_param('savepath', '/', PARAM_PATH);   // save as file 
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
 $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
 $usefilereference  = optional_param('usefilereference', false, PARAM_BOOL);
+$usecontrolledlink  = optional_param('usecontrolledlink', false, PARAM_BOOL);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm, false, true);
@@ -220,7 +221,7 @@ switch ($action) {
                 }
             }
 
-            if ($usefilereference) {
+            if ($usefilereference || $usecontrolledlink) {
                 if ($repo->has_moodle_files()) {
                     $sourcefile = repository::get_moodle_file($reference);
                     $record->contenthash = $sourcefile->get_contenthash();

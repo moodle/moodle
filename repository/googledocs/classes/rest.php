@@ -73,6 +73,14 @@ class rest extends \core\oauth2\rest {
                 ],
                 'response' => 'json'
             ],
+            'delete' => [
+                'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}',
+                'method' => 'delete',
+                'args' => [
+                    'fileid' => PARAM_RAW
+                ],
+                'response' => 'json'
+            ],
             'create' => [
                 'endpoint' => 'https://www.googleapis.com/drive/v3/files',
                 'method' => 'post',

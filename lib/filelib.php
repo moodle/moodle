@@ -257,6 +257,21 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
 }
 
 /**
+ * For all files in this file area - walk the file list and copy each to a system owned account, making them read-only.
+ *
+ * @category files
+ * @param stdClass $context context - must already exist
+ * @param string $component
+ * @param string $filearea file area name
+ * @param int $itemid
+ * @return bool
+ */
+function file_prevent_changes_to_external_files($contextid, $component, $filearea, $itemid=false) {
+    $fs = get_file_storage();
+    return $fs->prevent_changes_to_external_files($contextid, $component, $filearea, $itemid);
+}
+
+/**
  * Saves text and files modified by Editor formslib element
  *
  * @category files
@@ -813,7 +828,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         $options['areamaxbytes'] = FILE_AREA_MAX_BYTES_UNLIMITED; // Unlimited.
     }
     $allowreferences = true;
-    if (isset($options['return_types']) && !($options['return_types'] & FILE_REFERENCE)) {
+    if (isset($options['return_types']) && !($options['return_types'] & (FILE_REFERENCE | FILE_CONTROLLED_LINK))) {
         // we assume that if $options['return_types'] is NOT specified, we DO allow references.
         // this is not exactly right. BUT there are many places in code where filemanager options
         // are not passed to file_save_draft_area_files()

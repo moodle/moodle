@@ -125,11 +125,11 @@ class assign_submission_file extends assign_submission_plugin {
      * @return array
      */
     private function get_file_options() {
-        $fileoptions = array('subdirs'=>1,
-                                'maxbytes'=>$this->get_config('maxsubmissionsizebytes'),
-                                'maxfiles'=>$this->get_config('maxfilesubmissions'),
-                                'accepted_types'=>'*',
-                                'return_types'=>FILE_INTERNAL);
+        $fileoptions = array('subdirs' => 1,
+                                'maxbytes' => $this->get_config('maxsubmissionsizebytes'),
+                                'maxfiles' => $this->get_config('maxfilesubmissions'),
+                                'accepted_types' => '*',
+                                'return_types' => (FILE_INTERNAL | FILE_CONTROLLED_LINK));
         if ($fileoptions['maxbytes'] == 0) {
             // Use module default.
             $fileoptions['maxbytes'] = get_config('assignsubmission_file', 'maxbytes');
@@ -174,7 +174,6 @@ class assign_submission_file extends assign_submission_plugin {
      * @return int
      */
     private function count_files($submissionid, $area) {
-
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->assignment->get_context()->id,
                                      'assignsubmission_file',
@@ -551,6 +550,19 @@ class assign_submission_file extends assign_submission_plugin {
                 VALUE_OPTIONAL
             )
         );
+    }
+
+    /**
+     * Make any controlled links in the submission area read-only for the student.
+     *
+     * @param stdClass $submission the assign_submission record being submitted.
+     * @return void
+     */
+    public function submit_for_grading($submission) {
+        file_prevent_changes_to_external_files($this->assignment->get_context()->id,
+                                               'assignsubmission_file',
+                                               ASSIGNSUBMISSION_FILE_FILEAREA,
+                                               $submission->id);
     }
 
     /**

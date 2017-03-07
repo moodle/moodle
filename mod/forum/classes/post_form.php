@@ -50,7 +50,7 @@ class mod_forum_post_form extends moodleform {
             'maxbytes' => $maxbytes,
             'maxfiles' => $forum->maxattachments,
             'accepted_types' => '*',
-            'return_types' => FILE_INTERNAL
+            'return_types' => FILE_INTERNAL | FILE_CONTROLLED_LINK
         );
     }
 

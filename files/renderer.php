@@ -772,6 +772,12 @@ class core_files_renderer extends plugin_renderer_base {
                         <input type="radio"/>
                     </div>
                 </div>
+                <div class="fp-linktype-8 control-group control-radio clearfix">
+                    <label class="control-label control-radio">'.get_string('makefilecontrolledlink', 'repository').'</label>
+                    <div class="controls control-radio">
+                        <input type="radio"/>
+                    </div>
+                </div>
                 <div class="fp-saveas control-group clearfix">
                     <label class="control-label">'.get_string('saveas', 'repository').'</label>
                     <div class="controls">

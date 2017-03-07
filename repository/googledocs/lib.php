@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/repository/lib.php');
-require_once($CFG->libdir . '/google/lib.php');
+require_once($CFG->libdir . '/filebrowser/file_browser.php');
 
 /**
  * Google Docs Plugin
@@ -73,16 +73,21 @@ class repository_googledocs extends repository {
     /**
      * Get a cached user authenticated oauth client.
      *
+     * @param moodle_url $usecurrenturl - Use this url instead of the repo callback.
      * @return \core\oauth2\client
      */
-    protected function get_user_oauth_client() {
+    protected function get_user_oauth_client($overrideurl = false) {
         if ($this->client) {
             return $this->client;
         }
-        $returnurl = new moodle_url('/repository/repository_callback.php');
-        $returnurl->param('callback', 'yes');
-        $returnurl->param('repo_id', $this->id);
-        $returnurl->param('sesskey', sesskey());
+        if ($overrideurl) {
+            $returnurl = $overrideurl;
+        } else {
+            $returnurl = new moodle_url('/repository/repository_callback.php');
+            $returnurl->param('callback', 'yes');
+            $returnurl->param('repo_id', $this->id);
+            $returnurl->param('sesskey', sesskey());
+        }
 
         $this->client = \core\oauth2\api::get_user_oauth_client($this->issuer, $returnurl, self::SCOPES);
 
@@ -455,8 +460,6 @@ class repository_googledocs extends repository {
     /**
      * Tells how the file can be picked from this repository.
      *
-     * Maximum value is FILE_INTERNAL | FILE_EXTERNAL | FILE_REFERENCE.
-     *
      * @return int
      */
     public function supported_returntypes() {
@@ -466,9 +469,9 @@ class repository_googledocs extends repository {
             if ($setting == 'internal') {
                 return FILE_INTERNAL;
             } else if ($setting == 'external') {
-                return FILE_REFERENCE;
+                return FILE_CONTROLLED_LINK;
             } else {
-                return FILE_REFERENCE | FILE_INTERNAL;
+                return FILE_CONTROLLED_LINK | FILE_INTERNAL;
             }
         } else {
             return FILE_INTERNAL;
@@ -486,7 +489,7 @@ class repository_googledocs extends repository {
         if (($setting == FILE_INTERNAL && $supported != 'external') || $supported == 'internal') {
             return FILE_INTERNAL;
         } else {
-            return FILE_REFERENCE;
+            return FILE_CONTROLLED_LINK;
         }
     }
 
@@ -526,12 +529,125 @@ class repository_googledocs extends repository {
     public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
         $source = json_decode($storedfile->get_reference());
 
+        $fb = get_file_browser();
+        $context = context::instance_by_id($storedfile->get_contextid(), MUST_EXIST);
+        $info = $fb->get_file_info($context,
+                                   $storedfile->get_component(),
+                                   $storedfile->get_filearea(),
+                                   $storedfile->get_itemid(),
+                                   $storedfile->get_filepath(),
+                                   $storedfile->get_filename());
+
+        if ($info->is_writable()) {
+            // Add the current user as an OAuth writer.
+            $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
+
+            if ($systemauth === false) {
+                $details = 'Cannot connect as system user';
+                throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+            }
+            $systemservice = new repository_googledocs\rest($systemauth);
+
+            // Get the user oauth so we can get the account to add.
+            $url = moodle_url::make_pluginfile_url($storedfile->get_contextid(),
+                                                   $storedfile->get_component(),
+                                                   $storedfile->get_filearea(),
+                                                   $storedfile->get_itemid(),
+                                                   $storedfile->get_filepath(),
+                                                   $storedfile->get_filename(),
+                                                   $forcedownload);
+            $url->param('sesskey', sesskey());
+            $userauth = $this->get_user_oauth_client($url);
+            if (!$userauth->is_logged_in()) {
+                redirect($userauth->get_login_url());
+            }
+            if ($userauth === false) {
+                $details = 'Cannot connect as current user';
+                throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+            }
+            $userinfo = $userauth->get_userinfo();
+            $useremail = $userinfo['email'];
+
+            $this->add_temp_writer_to_file($systemservice, $source->id, $useremail);
+        }
+
         if ($source->link) {
-            header('Location: ' . $source->link);
+            redirect($source->link);
         } else {
             $details = 'File is missing source link';
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
+    }
+
+    /**
+     * Update an external file so only Moodle has write access to it.
+     * This function must be implemented by all repositories supporting FILE_CONTROLLED_LINK return types.
+     *
+     * Throw exceptions on error and the transaction will be rolled back
+     * (because it is called on an entire filearea at a time).
+     *
+     * @param stored_file $file
+     */
+    public function prevent_changes_to_external_file(stored_file $file) {
+        global $DB;
+
+        // Copy the file (will make it owned by moodle system account).
+        // Update the sharing settings on the file.
+        // Prevent editors from sharing the file.
+        $source = json_decode($file->get_reference());
+
+        $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
+
+        if ($systemauth === false) {
+            $details = 'Cannot connect as system user';
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        $systemservice = new repository_googledocs\rest($systemauth);
+
+        // Copy the file so we get a snapshot file owned by Moodle.
+        $newsource = $this->copy_file($systemservice, $source->id);
+
+        // Set the sharing options.
+        $this->set_file_sharing_anyone_with_link_can_read($systemservice, $newsource->id);
+        $this->prevent_writers_from_sharing_file($systemservice, $newsource->id);
+        // Delete the original file from the Moodle account. This only deletes it for us (not the original owner).
+
+        $summary = $this->get_file_summary($systemservice, $source->id);
+        if (!empty($summary->parents[0])) {
+            $myparent = $summary->parents[0];
+            $this->remove_file_parent($systemservice, $source->id, $myparent);
+        }
+        // We need to change the source on the existing file now to point to the new id.
+        $source->id = $newsource->id;
+        $source->link = isset($newsource->webViewLink) ? $newsource->webViewLink : '';
+        if (empty($source->link)) {
+            $source->link = isset($newsource->webContentLink) ? $newsource->webContentLink : '';
+        }
+        $reference = json_encode($source);
+        $file->set_source($reference);
+
+        // We need to update the reference in the file_reference table.
+        $refid = $file->get_referencefileid();
+        $newref = (object) [
+            'id' => $refid,
+            'reference' => $reference,
+            'referencehash' => sha1($reference)
+        ];
+        $DB->update_record('files_reference', $newref);
+
+        return true;
+    }
+
+    /**
+     * Grant write access and redirect to an edit link for the file.
+     *
+     * @param stored_file $storedfile the file that contains the reference
+     */
+    public function edit_external_file($storedfile) {
+        // Grant writer access to this file.
+
+        // Redirect to the file.
+        $this->send_file($storedfile);
     }
 
     /**
@@ -616,7 +732,7 @@ class repository_googledocs extends repository {
      * @return stdClass
      */
     protected function get_file_summary(\repository_googledocs\rest $client, $fileid) {
-        $fields = "id,name,owners";
+        $fields = "id,name,owners,parents";
         $params = [
             'fileid' => $fileid,
             'fields' => $fields
@@ -671,6 +787,53 @@ class repository_googledocs extends repository {
     }
 
     /**
+     * Delete a file (for the current user).
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The file we are deleting.
+     * @return boolean
+     */
+    protected function delete_file($client, $fileid) {
+        $params = ['fileid' => $fileid];
+        $response = $client->call('delete', $params, ' ');
+        var_dump($response);
+        if (empty($response->id)) {
+            $details = 'Cannot delete file: ' . $fileid;
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        return true;
+    }
+
+    /**
+     * Add a writer to the permissions on the file (temporary).
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The file we are updating.
+     * @param string $email The email of the writer account to add.
+     * @return boolean
+     */
+    protected function add_temp_writer_to_file($client, $fileid, $email) {
+        // Expires in 7 days.
+        $expires = new DateTime();
+        $expires->add(new DateInterval("P7D"));
+
+        $updateeditor = [
+            'emailAddress' => $email,
+            'role' => 'writer',
+            'type' => 'user',
+            'expirationTime' => $expires->format(DateTime::RFC3339)
+        ];
+        $params = ['fileid' => $fileid, 'sendNotificationEmail' => 'false'];
+        $response = $client->call('create_permission', $params, json_encode($updateeditor));
+        if (empty($response->id)) {
+            $details = 'Cannot add user ' . $email . ' as a writer for document: ' . $fileid;
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        return true;
+    }
+
+
+    /**
      * Add a writer to the permissions on the file.
      *
      * @param \core\oauth2\client $client Authenticated client.
@@ -709,6 +872,27 @@ class repository_googledocs extends repository {
         $response = $client->call('update', $params, ' ');
         if (empty($response->id)) {
             $details = 'Cannot move the file to a folder: ' . $fileid;
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+        return true;
+    }
+
+    /**
+     * Remove parent
+     *
+     * @param \core\oauth2\client $client Authenticated client.
+     * @param string $fileid The file we are updating.
+     * @param string $folderid The id of the folder we are removing
+     * @return boolean
+     */
+    protected function remove_file_parent($client, $fileid, $folderid) {
+        // Set the parent.
+        $params = [
+            'fileid' => $fileid, 'removeParents' => $folderid
+        ];
+        $response = $client->call('update', $params, ' ');
+        if (empty($response->id)) {
+            $details = 'Cannot remove the file parent: ' . $fileid . ', ' . $folderid;
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
         return true;
@@ -906,7 +1090,7 @@ class repository_googledocs extends repository {
 
         $choices = [
             FILE_INTERNAL => get_string('internal', 'repository_googledocs'),
-            FILE_REFERENCE => get_string('external', 'repository_googledocs'),
+            FILE_CONTROLLED_LINK => get_string('external', 'repository_googledocs'),
         ];
         $mform->addElement('select', 'defaultreturntype', get_string('defaultreturntype', 'repository_googledocs'), $choices);
 

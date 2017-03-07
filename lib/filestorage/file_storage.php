@@ -2323,4 +2323,35 @@ class file_storage {
         $data = array('id' => $referencefileid, 'lastsync' => $lastsync);
         $DB->update_record('files_reference', (object)$data);
     }
+
+    /**
+     * For an entire file area - walk through the files and for each one that is a controlled link,
+     * call prevent_changes on the repository. Typically this will copy the external file to a system
+     * account controlled by Moodle, remove all write access and update the file reference.
+     *
+     * @param int $contextid
+     * @param string $component
+     * @param string $filearea
+     * @param int $itemid
+     */
+    public function prevent_changes_to_external_files($contextid, $component, $filearea, $itemid = false) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $files = $this->get_area_files($contextid, $component, $filearea, $itemid, 'id', false);
+
+        foreach ($files as $file) {
+            if ($file->is_external_file()) {
+                // Note that this function uses a cache, so we don't need to
+                // double cache these.
+                $repo = repository::get_repository_by_id($file->get_repository_id(), SYSCONTEXTID);
+
+                // We expect this function to throw exceptions on failure.
+                $repo->prevent_changes_to_external_file($file);
+            }
+        }
+        $transaction->allow_commit();
+        return true;
+    }
 }

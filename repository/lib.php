@@ -30,6 +30,8 @@ require_once($CFG->libdir . '/formslib.php');
 define('FILE_EXTERNAL',  1);
 define('FILE_INTERNAL',  2);
 define('FILE_REFERENCE', 4);
+define('FILE_CONTROLLED_LINK', 8);
+
 define('RENAME_SUFFIX', '_2');
 
 /**
@@ -1000,7 +1002,7 @@ abstract class repository implements cacheable_object {
      *           onlyvisible : bool (default true)
      *           type : string return instances of this type only
      *           accepted_types : string|array return instances that contain files of those types (*, web_image, .pdf, ...)
-     *           return_types : int combination of FILE_INTERNAL & FILE_EXTERNAL & FILE_REFERENCE.
+     *           return_types : int combination of FILE_INTERNAL & FILE_EXTERNAL & FILE_REFERENCE & FILE_CONTROLLED_LINK.
      *                          0 means every type. The default is FILE_INTERNAL | FILE_EXTERNAL.
      *           userid : int if specified, instances belonging to other users will not be returned
      *
@@ -2676,6 +2678,19 @@ abstract class repository implements cacheable_object {
     public static function sync_external_file($file, $resetsynchistory = false) {
         throw new coding_exception('Function repository::sync_external_file() can not be used any more. ' .
             'Use repository::sync_reference instead.');
+    }
+
+    /**
+     * Update an external file so only Moodle has write access to it.
+     * This function must be implemented by all repositories supporting FILE_CONTROLLED_LINK return types.
+     *
+     * Throw exceptions on error and the transaction will be rolled back
+     * (because it is called on an entire filearea at a time).
+     *
+     * @param stored_file $file
+     */
+    public function prevent_changes_to_external_file(stored_file $file) {
+        return;
     }
 
     /**

@@ -4361,6 +4361,25 @@ class assign {
     }
 
     /**
+     * Perform an access check to see if the current $USER can edit this group submission.
+     *
+     * @param int $groupid
+     * @return bool
+     */
+    public function can_edit_group_submission($groupid) {
+        global $USER;
+
+        $members = $this->get_submission_group_members($groupid, true);
+        foreach ($members as $member) {
+            // If we can edit any members submission, we can edit the submission for the group.
+            if ($this->can_edit_submission($member->id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Perform an access check to see if the current $USER can view this group submission.
      *
      * @param int $groupid

@@ -580,17 +580,26 @@ abstract class assign_plugin {
     public function get_file_info($browser, $filearea, $itemid, $filepath, $filename) {
         global $CFG, $DB, $USER;
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
-
+        $writeaccess = false;
         // Permission check on the itemid.
 
         if ($this->get_subtype() == 'assignsubmission') {
             if ($itemid) {
-                $record = $DB->get_record('assign_submission', array('id'=>$itemid), 'userid', IGNORE_MISSING);
+                $record = $DB->get_record('assign_submission', array('id'=>$itemid), 'userid,groupid', IGNORE_MISSING);
                 if (!$record) {
                     return null;
                 }
-                if (!$this->assignment->can_view_submission($record->userid)) {
-                    return null;
+                if (!empty($record->userid)) {
+                    if (!$this->assignment->can_view_submission($record->userid)) {
+                        return null;
+                    }
+                    $writeaccess = $this->assignment->can_edit_submission($record->userid);
+                } else {
+                    // Must be a team submission with a group.
+                    if (!$this->assignment->can_view_group_submission($record->groupid)) {
+                        return null;
+                    }
+                    $writeaccess = $this->assignment->can_edit_group_submission($record->groupid);
                 }
             }
         } else {
@@ -609,6 +618,7 @@ abstract class assign_plugin {
                                           $filename))) {
             return null;
         }
+
         return new file_info_stored($browser,
                                     $this->assignment->get_context(),
                                     $storedfile,
@@ -616,7 +626,7 @@ abstract class assign_plugin {
                                     $filearea,
                                     $itemid,
                                     true,
-                                    true,
+                                    $writeaccess,
                                     false);
     }
 

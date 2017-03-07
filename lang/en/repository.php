@@ -160,6 +160,7 @@ $string['lostsource'] = 'Error. Source is missing. {$a}';
 $string['makefileinternal'] = 'Make a copy of the file';
 $string['makefilelink'] = 'Link to the file directly';
 $string['makefilereference'] = 'Create an alias/shortcut to the file';
+$string['makefilecontrolledlink'] = 'Create an access controlled link to the file';
 $string['manage'] = 'Manage repositories';
 $string['manageinstances'] = 'Manage instances';
 $string['manageurl'] = 'Manage';

@@ -559,13 +559,16 @@ function forum_cron() {
                 }
             }
 
+            // We need to prevent changes to controlled links in attachments.
+            $modcontext = context_module::instance($coursemodules[$forumid]->id);
+            file_prevent_changes_to_external_files($modcontext->id, 'mod_forum', 'attachment', $pid);
+
             // Save the Inbound Message datakey here to reduce DB queries later.
             $messageinboundgenerator->set_data($pid);
             $messageinboundhandlers[$pid] = $messageinboundgenerator->fetch_data_key();
 
             // Caching subscribed users of each forum.
             if (!isset($subscribedusers[$forumid])) {
-                $modcontext = context_module::instance($coursemodules[$forumid]->id);
                 if ($subusers = \mod_forum\subscriptions::fetch_subscribed_users($forums[$forumid], 0, $modcontext, 'u.*', true)) {
 
                     foreach ($subusers as $postuser) {

@@ -115,7 +115,7 @@ class qtype_essay_renderer extends qtype_renderer {
         $pickeroptions->itemid = $qa->prepare_response_files_draft_itemid(
                 'attachments', $options->context->id);
         $pickeroptions->context = $options->context;
-        $pickeroptions->return_types = FILE_INTERNAL;
+        $pickeroptions->return_types = FILE_INTERNAL | FILE_CONTROLLED_LINK;
 
         $pickeroptions->itemid = $qa->prepare_response_files_draft_itemid(
                 'attachments', $options->context->id);
