@@ -42,8 +42,7 @@ Feature: Browse course list and return back from enrolment page
     And I press "Save changes"
     And I log out
     When I log in as "user2"
-    And I follow "Preferences" in the user menu
-    And I click on "Edit profile" "link" in the "region-main" "region"
+    And I open my profile in edit mode
     And I expand "Courses" node
     And I expand "Sample category" node
     And I follow "Course 1"

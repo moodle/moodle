@@ -10,8 +10,7 @@ Feature: Transform steps arguments
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
-    And I follow "Preferences" in the user menu
-    And I click on "Edit profile" "link" in the "region-main" "region"
+    And I open my profile in edit mode
 
   Scenario: Use nasty strings on steps arguments
     When I set the field "Surname" to "$NASTYSTRING1"
