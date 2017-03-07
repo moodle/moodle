@@ -5,8 +5,7 @@ Feature: Atto accessibility helper
   @javascript
   Scenario: Images and links
     Given I log in as "admin"
-    And I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I open my profile in edit mode
     And I set the field "Description" to "<p>Some plain text</p><img src='/broken-image' alt='Image 1'/><p><a href='#fsd'>Some link text</a></p>"
     And I select the text in the "Description" Atto editor
     When I click on "Show more buttons" "button"
@@ -21,8 +20,7 @@ Feature: Atto accessibility helper
   @javascript
   Scenario: Styles
     Given I log in as "admin"
-    And I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I open my profile in edit mode
     And I set the field "Description" to "<p>Some plain text</p>"
     When I click on "Show more buttons" "button"
     And I select the text in the "Description" Atto editor
