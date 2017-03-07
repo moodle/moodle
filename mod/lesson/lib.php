@@ -241,7 +241,7 @@ function lesson_refresh_events($courseid = 0) {
     global $DB;
 
     if ($courseid == 0) {
-        if (!$lessons = $DB->get_records('lessons')) {
+        if (!$lessons = $DB->get_records('lesson')) {
             return true;
         }
     } else {
