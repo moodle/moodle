@@ -250,6 +250,30 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_course_get_module' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'get_module',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Returns html with one activity module on course page',
+        'type'        => 'read',
+        'ajax'        => true,
+    ),
+    'core_course_edit_module' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'edit_module',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Performs an action on course module (change visibility, duplicate, delete, etc.)',
+        'type'        => 'write',
+        'ajax'        => true,
+    ),
+    'core_course_edit_section' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'edit_section',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Performs an action on course section (change visibility, set marker, delete)',
+        'type'        => 'write',
+        'ajax'        => true,
+    ),
     'core_course_get_courses' => array(
         'classname' => 'core_course_external',
         'methodname' => 'get_courses',
@@ -702,6 +726,7 @@ $functions = array(
         'description' => 'Retrieve the template data for the conversation list',
         'type' => 'read',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_data_for_messagearea_contacts' => array(
         'classname' => 'core_message_external',
@@ -710,6 +735,7 @@ $functions = array(
         'description' => 'Retrieve the template data for the contact list',
         'type' => 'read',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_data_for_messagearea_messages' => array(
         'classname' => 'core_message_external',
@@ -718,6 +744,7 @@ $functions = array(
         'description' => 'Retrieve the template data for the messages',
         'type' => 'read',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_data_for_messagearea_get_most_recent_message' => array(
         'classname' => 'core_message_external',

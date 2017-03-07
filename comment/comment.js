@@ -57,6 +57,12 @@ M.core_comment = {
                         this.view(0);
                         return false;
                     }, this);
+                    // Also handle space/enter key.
+                    handle.on('key', function(e) {
+                        e.preventDefault();
+                        this.view(0);
+                        return false;
+                    }, '13,32', this);
                 }
                 scope.toggle_textarea(false);
             },
@@ -186,7 +192,17 @@ M.core_comment = {
                         val = val.replace('___name___', list[i].fullname);
                     }
                     if (list[i]['delete']||newcmt) {
-                        list[i].content = '<div class="comment-delete"><a href="#" id ="comment-delete-'+this.client_id+'-'+list[i].id+'" title="'+M.util.get_string('deletecomment', 'moodle')+'"><img alt="" src="'+M.util.image_url('t/delete', 'core')+'" /></a></div>' + list[i].content;
+                        var tokens = {
+                            user: list[i].fullname,
+                            time: list[i].time
+                        };
+                        var deleteStr = Y.Escape.html(M.util.get_string('deletecommentbyon', 'moodle', tokens));
+                        list[i].content = '<div class="comment-delete">' +
+                            '<a href="#" role="button" id ="comment-delete-' + this.client_id + '-' + list[i].id + '"' +
+                            '   title="' + deleteStr + '">' +
+                            '<img alt="' + deleteStr + '" src="' + M.util.image_url('t/delete', 'core') + '" />' +
+                            '</a>' +
+                            '</div>' + list[i].content;
                     }
                     val = val.replace('___time___', list[i].time);
                     val = val.replace('___picture___', list[i].avatar);
@@ -335,6 +351,7 @@ M.core_comment = {
                 );
             },
             view: function(page) {
+                var commenttoggler = Y.one('#comment-link-' + this.client_id);
                 var container = Y.one('#comment-ctrl-'+this.client_id);
                 var ta = Y.one('#dlg-content-'+this.client_id);
                 var img = Y.one('#comment-img-'+this.client_id);
@@ -351,6 +368,9 @@ M.core_comment = {
                     if (img) {
                         img.set('src', M.util.image_url('t/expanded', 'core'));
                     }
+                    if (commenttoggler) {
+                        commenttoggler.setAttribute('aria-expanded', 'true');
+                    }
                 } else {
                     // hide
                     container.setStyle('display', 'none');
@@ -363,6 +383,9 @@ M.core_comment = {
                     img.set('src', M.util.image_url(collapsedimage, 'core'));
                     if (ta) {
                         ta.set('value','');
+                    }
+                    if (commenttoggler) {
+                        commenttoggler.setAttribute('aria-expanded', 'false');
                     }
                 }
                 if (ta) {

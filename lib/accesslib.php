@@ -3649,9 +3649,13 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
                 } else {
                     $unions[] = "SELECT userid
                                    FROM {role_assignments}
-                                  WHERE contextid IN ($ctxids)
-                                        AND roleid IN (".implode(',', array_keys($needed[$cap])) .")
-                                        AND roleid NOT IN (".implode(',', array_keys($prohibited[$cap])) .")";
+                                  WHERE contextid IN ($ctxids) AND roleid IN (".implode(',', array_keys($needed[$cap])) .")
+                                        AND userid NOT IN (
+                                            SELECT userid
+                                              FROM {role_assignments}
+                                             WHERE contextid IN ($ctxids)
+                                                    AND roleid IN (" . implode(',', array_keys($prohibited[$cap])) . ")
+                                                        )";
                 }
             }
         }
@@ -3982,20 +3986,26 @@ function count_role_users($roleid, context $context, $parent = false) {
  * @param int $userid User ID or null for current user
  * @param bool $doanything True if 'doanything' is permitted (default)
  * @param string $fieldsexceptid Leave blank if you only need 'id' in the course records;
- *   otherwise use a comma-separated list of the fields you require, not including id
+ *   otherwise use a comma-separated list of the fields you require, not including id.
+ *   Add ctxid, ctxpath, ctxdepth etc to return course context information for preloading.
  * @param string $orderby If set, use a comma-separated list of fields from course
  *   table with sql modifiers (DESC) if needed
+ * @param int $limit Limit the number of courses to return on success. Zero equals all entries.
  * @return array|bool Array of courses, if none found false is returned.
  */
-function get_user_capability_course($capability, $userid = null, $doanything = true, $fieldsexceptid = '', $orderby = '') {
+function get_user_capability_course($capability, $userid = null, $doanything = true, $fieldsexceptid = '', $orderby = '',
+        $limit = 0) {
     global $DB;
 
     // Convert fields list and ordering
     $fieldlist = '';
     if ($fieldsexceptid) {
-        $fields = explode(',', $fieldsexceptid);
+        $fields = array_map('trim', explode(',', $fieldsexceptid));
         foreach($fields as $field) {
-            $fieldlist .= ',c.'.$field;
+            // Context fields have a different alias and are added further down.
+            if (strpos($field, 'ctx') !== 0) {
+                $fieldlist .= ',c.'.$field;
+            }
         }
     }
     if ($orderby) {
@@ -4016,6 +4026,13 @@ function get_user_capability_course($capability, $userid = null, $doanything = t
 
     $contextpreload = context_helper::get_preload_record_columns_sql('x');
 
+    $contextlist = ['ctxid', 'ctxpath', 'ctxdepth', 'ctxlevel', 'ctxinstance'];
+    $unsetitems = $contextlist;
+    if ($fieldsexceptid) {
+        $coursefields = array_map('trim', explode(',', $fieldsexceptid));
+        $unsetitems = array_diff($contextlist, $coursefields);
+    }
+
     $courses = array();
     $rs = $DB->get_recordset_sql("SELECT c.id $fieldlist, $contextpreload
                                     FROM {course} c
@@ -4023,12 +4040,23 @@ function get_user_capability_course($capability, $userid = null, $doanything = t
                                 $orderby");
     // Check capability for each course in turn
     foreach ($rs as $course) {
-        context_helper::preload_from_record($course);
+        // The preload_from_record() unsets the context related fields, but it is possible that our caller may
+        // want them returned too (so they can use them for their own context preloading). For that reason we
+        // pass a clone.
+        context_helper::preload_from_record(clone($course));
         $context = context_course::instance($course->id);
         if (has_capability($capability, $context, $userid, $doanything)) {
+            // Unset context fields if they were not asked for.
+            foreach ($unsetitems as $item) {
+                unset($course->$item);
+            }
             // We've got the capability. Make the record look like a course record
             // and store it
             $courses[] = $course;
+            $limit--;
+            if ($limit == 0) {
+                break;
+            }
         }
     }
     $rs->close();

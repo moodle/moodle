@@ -99,6 +99,7 @@ class core_course_modlib_testcase extends advanced_testcase {
         $expecteddata->coursemodule       = $assigncm->id;
         $expecteddata->section            = $cw->section;
         $expecteddata->visible            = $assigncm->visible;
+        $expecteddata->visibleoncoursepage = $assigncm->visibleoncoursepage;
         $expecteddata->cmidnumber         = $assigncm->idnumber;
         $expecteddata->groupmode          = groups_get_activity_groupmode($cm);
         $expecteddata->groupingid         = $assigncm->groupingid;

@@ -60,6 +60,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     $newcm->module           = $moduleinfo->module;
     $newcm->instance         = 0; // Not known yet, will be updated later (this is similar to restore code).
     $newcm->visible          = $moduleinfo->visible;
+    $newcm->visibleoncoursepage = $moduleinfo->visibleoncoursepage;
     $newcm->visibleold       = $moduleinfo->visible;
     if (isset($moduleinfo->cmidnumber)) {
         $newcm->idnumber         = $moduleinfo->cmidnumber;
@@ -597,7 +598,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
 
     // Make sure visibility is set correctly (in particular in calendar).
     if (has_capability('moodle/course:activityvisibility', $modcontext)) {
-        set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible);
+        set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible, $moduleinfo->visibleoncoursepage);
     }
 
     if (isset($moduleinfo->cmidnumber)) { // Label.
@@ -655,6 +656,7 @@ function get_moduleinfo_data($cm, $course) {
     $data->coursemodule       = $cm->id;
     $data->section            = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
     $data->visible            = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
+    $data->visibleoncoursepage = $cm->visibleoncoursepage;
     $data->cmidnumber         = $cm->idnumber;          // The cm IDnumber
     $data->groupmode          = groups_get_activity_groupmode($cm); // locked later if forced
     $data->groupingid         = $cm->groupingid;

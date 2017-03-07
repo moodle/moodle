@@ -2,6 +2,15 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 3.3 ===
+* Javascript code for editing activities and sections was moved to an AMD module, course/rest.php is no longer
+  responsible for editing actions, instead it is done in web services. Carefully test all editing actions during upgrade.
+* The new method format_base::allow_stealth_module_visibility() can indicate whether course format supports "stealth"
+  activities mode when they are available but not visible on course page. Course format that supports stealth mode
+  must check $cm->is_visible_on_course_page() when displaying activities list on the course page instead of $cm->uservisible.
+  For all other plugins except course formats the same property $cm->uservisible indicates if the activity contents
+  is actually available to student.
+
 === 3.2 ===
 * Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
 * Course formats can overwrite get_default_course_enddate function to set the default course end date for new courses.

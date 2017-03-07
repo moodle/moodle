@@ -44,7 +44,8 @@ Feature: Restrict activity availability through grade conditions
     And I am on site homepage
     And I follow "Course 1"
     Then I should see "Not available unless: You achieve a required score in Grade assignment"
-    And "Test page name" activity should be hidden
+    And "Test page name" activity should be dimmed
+    And "Test page name" "link" should not exist
     And I follow "Grade assignment"
     And I press "Add submission"
     And I set the following fields to these values:

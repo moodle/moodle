@@ -40,7 +40,7 @@ $PAGE->add_body_class('core_media_preview');
 
 echo $OUTPUT->header();
 
-$mediarenderer = core_media_manager::instance();
+$mediarenderer = core_media_manager::instance($PAGE);
 
 if (isloggedin() and !isguestuser() and $mediarenderer->can_embed_url($url)) {
     require_sesskey();

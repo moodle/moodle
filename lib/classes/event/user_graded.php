@@ -53,10 +53,12 @@ class user_graded extends base {
      * Utility method to create new event.
      *
      * @param \grade_grade $grade
+     * @param null|int $userid Id of user responsible for this event.
+     *
      * @return user_graded
      */
-    public static function create_from_grade(\grade_grade $grade) {
-        $event = self::create(array(
+    public static function create_from_grade(\grade_grade $grade, $userid = null) {
+        $gradedata = array(
             'context'       => \context_course::instance($grade->grade_item->courseid),
             'objectid'      => $grade->id,
             'relateduserid' => $grade->userid,
@@ -64,7 +66,11 @@ class user_graded extends base {
                 'itemid'     => $grade->itemid,
                 'overridden' => !empty($grade->overridden),
                 'finalgrade' => $grade->finalgrade),
-        ));
+        );
+        if ($userid !== null) {
+            $gradedata["userid"] = $userid;
+        }
+        $event = self::create($gradedata);
         $event->grade = $grade;
         return $event;
     }

@@ -71,13 +71,6 @@
             display: table-cell;
             padding-right: 4px;
             min-height: 2em;
-
-            .dimmed {
-                img.activityicon {
-                    opacity: 0.5;
-                    filter: alpha(opacity=50);
-                }
-            }
         }
     }
     .label {
@@ -119,10 +112,24 @@
     }
 }
 
-.activity img.activityicon {
-    margin-right: 6px;
-    vertical-align: text-bottom;
+.activity {
+    img.activityicon {
+        margin-right: 6px;
+        vertical-align: text-bottom;
+    }
+
+    .dimmed {
+        img.activityicon {
+            opacity: 0.5;
+            filter: alpha(opacity=50);
+        }
+    }
+
+    .stealth:not(.dimmed) {
+        opacity: .5;
+    }
 }
+
 .section .activity .activityinstance,
 .section .activity .activityinstance div {
     display: inline-block;
@@ -245,34 +252,31 @@
 }
 .course-content ul li.section.hidden {
     .sectionname > span,
-    .content > div,
-    /* All the divs but the activities which are in a UL. */
-    .activity .activityinstance {
+    .content > div.summary {
         opacity: .5;
     }
-    .sectionname > span,
-    .activity .activityinstance {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
 }
-.course-content ul.topics li.section .content,
-.course-content ul.weeks li.section .content {
-    margin-right: 20px;
-    margin-left: 20px;
-    padding: 0;
+.course-content ul.topics,
+.course-content ul.weeks {
+
+    li.section {
+        padding-bottom: 20px;
+
+        .content {
+            margin-right: 20px;
+            margin-left: 20px;
+            padding: 0;
+        }
+
+        .summary,
+        .content > .availabilityinfo {
+            margin-left: 25px;
+        }
+    }
 }
 
 .course-content {
     margin-top: 0;
-}
-
-.course-content ul.topics li.section {
-    padding-bottom: 20px;
-}
-
-.course-content ul.topics li.section .summary {
-    margin-left: 25px;
 }
 
 .course-content li {
@@ -1052,6 +1056,14 @@ span.editinstructions {
     .select-a-category .alert {
         margin: 1em;
     }
+}
+
+#page-course-management .coursesearchbox input[type="text"] + input[type="submit"] {
+    margin-bottom: 0;
+}
+
+#page-course-management #course-category-listings .detail-pair .pair-value select {
+    max-width: 80%;
 }
 
 #course-category-listings #course-listing .listitem .drag-handle {

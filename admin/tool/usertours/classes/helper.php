@@ -45,6 +45,11 @@ class helper {
     const MOVE_DOWN = 1;
 
     /**
+     * @var boolean Has it been bootstrapped?
+     */
+    private static $bootstrapped = false;
+
+    /**
      * Get the link to edit the step.
      *
      * If no stepid is specified, then a link to create a new step is provided. The $targettype must be specified in this case.
@@ -487,6 +492,15 @@ class helper {
      */
     public static function bootstrap() {
         global $PAGE;
+
+        if (!isloggedin() || isguestuser()) {
+            return;
+        }
+
+        if (self::$bootstrapped) {
+            return;
+        }
+        self::$bootstrapped = true;
 
         if ($tour = manager::get_current_tour()) {
             $PAGE->requires->js_call_amd('tool_usertours/usertours', 'init', [

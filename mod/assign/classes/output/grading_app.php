@@ -88,7 +88,7 @@ class grading_app implements templatable, renderable {
         $export->cmid = $this->assignment->get_course_module()->id;
         $export->contextid = $this->assignment->get_context()->id;
         $export->groupid = $this->groupid;
-        $export->name = $this->assignment->get_instance()->name;
+        $export->name = $this->assignment->get_context()->get_context_name();
         $export->courseid = $this->assignment->get_course()->id;
         $export->participants = array();
         $num = 1;
@@ -97,6 +97,7 @@ class grading_app implements templatable, renderable {
             $user->id = $record->id;
             $user->fullname = fullname($record);
             $user->requiregrading = $record->requiregrading;
+            $user->grantedextension = $record->grantedextension;
             $user->submitted = $record->submitted;
             if (!empty($record->groupid)) {
                 $user->groupid = $record->groupid;

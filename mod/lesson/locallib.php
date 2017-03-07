@@ -618,7 +618,7 @@ function lesson_get_media_html($lesson, $context) {
 
     $extension = resourcelib_get_extension($url->out(false));
 
-    $mediamanager = core_media_manager::instance();
+    $mediamanager = core_media_manager::instance($PAGE);
     $embedoptions = array(
         core_media_manager::OPTION_TRUSTED => true,
         core_media_manager::OPTION_BLOCK => true
@@ -1009,6 +1009,32 @@ class lesson extends lesson_base {
      * @var bool
      */
     protected $loadedallpages = false;
+
+    /**
+     * Course module object gets set and retrieved by directly calling <code>$lesson->cm;</code>
+     * @see get_cm()
+     * @var stdClass
+     */
+    protected $cm = null;
+
+    /**
+     * Context object gets set and retrieved by directly calling <code>$lesson->context;</code>
+     * @see get_context()
+     * @var stdClass
+     */
+    protected $context = null;
+
+    /**
+     * Constructor method
+     *
+     * @param object $properties
+     * @param stdClass $cm course module object
+     * @since Moodle 3.3
+     */
+    public function __construct($properties, $cm = null) {
+        parent::__construct($properties);
+        $this->cm = $cm;
+    }
 
     /**
      * Simply generates a lesson object given an array/object of properties
@@ -2065,6 +2091,169 @@ class lesson extends lesson_base {
             $event->trigger();
         }
 
+    }
+
+    /**
+     * Return the lesson context object.
+     *
+     * @return stdClass context
+     * @since  Moodle 3.3
+     */
+    public function get_context() {
+        if ($this->context == null) {
+            $this->context = context_module::instance($this->get_cm()->id);
+        }
+        return $this->context;
+    }
+
+    /**
+     * Set the lesson course module object.
+     *
+     * @param stdClass $cm course module objct
+     * @since  Moodle 3.3
+     */
+    private function set_cm($cm) {
+        $this->cm = $cm;
+    }
+
+    /**
+     * Return the lesson course module object.
+     *
+     * @return stdClass course module
+     * @since  Moodle 3.3
+     */
+    public function get_cm() {
+        if ($this->cm == null) {
+            $this->cm = get_coursemodule_from_instance('lesson', $this->properties->id);
+        }
+        return $this->cm;
+    }
+
+    /**
+     * Check if the user can manage the lesson activity.
+     *
+     * @return bool true if the user can manage the lesson
+     * @since  Moodle 3.3
+     */
+    public function can_manage() {
+        return has_capability('mod/lesson:manage', $this->get_context());
+    }
+
+    /**
+     * Check if time restriction is applied.
+     *
+     * @return mixed false if  there aren't restrictions or an object with the restriction information
+     * @since  Moodle 3.3
+     */
+    public function get_time_restriction_status() {
+        if ($this->can_manage()) {
+            return false;
+        }
+
+        if (!$this->is_accessible()) {
+            if ($this->properties->deadline != 0 && time() > $this->properties->deadline) {
+                $status = ['reason' => 'lessonclosed', 'time' => $this->properties->deadline];
+            } else {
+                $status = ['reason' => 'lessonopen', 'time' => $this->properties->available];
+            }
+            return (object) $status;
+        }
+        return false;
+    }
+
+    /**
+     * Check if password restriction is applied.
+     *
+     * @param string $userpassword the user password to check (if the restriction is set)
+     * @return mixed false if there aren't restrictions or an object with the restriction information
+     * @since  Moodle 3.3
+     */
+    public function get_password_restriction_status($userpassword) {
+        global $USER;
+        if ($this->can_manage()) {
+            return false;
+        }
+
+        if ($this->properties->usepassword && empty($USER->lessonloggedin[$this->id])) {
+            $correctpass = false;
+            if (!empty($userpassword) &&
+                    (($this->properties->password == md5(trim($userpassword))) || ($this->properties->password == trim($userpassword)))) {
+                // With or without md5 for backward compatibility (MDL-11090).
+                $correctpass = true;
+                $USER->lessonloggedin[$this->id] = true;
+            } else if (isset($this->properties->extrapasswords)) {
+                // Group overrides may have additional passwords.
+                foreach ($this->properties->extrapasswords as $password) {
+                    if (strcmp($password, md5(trim($userpassword))) === 0 || strcmp($password, trim($userpassword)) === 0) {
+                        $correctpass = true;
+                        $USER->lessonloggedin[$this->id] = true;
+                    }
+                }
+            }
+            return !$correctpass;
+        }
+        return false;
+    }
+
+    /**
+     * Check if dependencies restrictions are applied.
+     *
+     * @return mixed false if there aren't restrictions or an object with the restriction information
+     * @since  Moodle 3.3
+     */
+    public function get_dependencies_restriction_status() {
+        global $DB, $USER;
+        if ($this->can_manage()) {
+            return false;
+        }
+
+        if ($dependentlesson = $DB->get_record('lesson', array('id' => $this->properties->dependency))) {
+            // Lesson exists, so we can proceed.
+            $conditions = unserialize($this->properties->conditions);
+            // Assume false for all.
+            $errors = array();
+            // Check for the timespent condition.
+            if ($conditions->timespent) {
+                $timespent = false;
+                if ($attempttimes = $DB->get_records('lesson_timer', array("userid" => $USER->id, "lessonid" => $dependentlesson->id))) {
+                    // Go through all the times and test to see if any of them satisfy the condition.
+                    foreach ($attempttimes as $attempttime) {
+                        $duration = $attempttime->lessontime - $attempttime->starttime;
+                        if ($conditions->timespent < $duration / 60) {
+                            $timespent = true;
+                        }
+                    }
+                }
+                if (!$timespent) {
+                    $errors[] = get_string('timespenterror', 'lesson', $conditions->timespent);
+                }
+            }
+            // Check for the gradebetterthan condition.
+            if ($conditions->gradebetterthan) {
+                $gradebetterthan = false;
+                if ($studentgrades = $DB->get_records('lesson_grades', array("userid" => $USER->id, "lessonid" => $dependentlesson->id))) {
+                    // Go through all the grades and test to see if any of them satisfy the condition.
+                    foreach ($studentgrades as $studentgrade) {
+                        if ($studentgrade->grade >= $conditions->gradebetterthan) {
+                            $gradebetterthan = true;
+                        }
+                    }
+                }
+                if (!$gradebetterthan) {
+                    $errors[] = get_string('gradebetterthanerror', 'lesson', $conditions->gradebetterthan);
+                }
+            }
+            // Check for the completed condition.
+            if ($conditions->completed) {
+                if (!$DB->count_records('lesson_grades', array('userid' => $USER->id, 'lessonid' => $dependentlesson->id))) {
+                    $errors[] = get_string('completederror', 'lesson');
+                }
+            }
+            if (!empty($errors)) {
+                return (object) ['errors' => $errors, 'dependentlesson' => $dependentlesson];
+            }
+        }
+        return false;
     }
 }
 

@@ -79,10 +79,6 @@ a.dimmed_text:visited,
 .dimmed_category a {
   color: #999;
 }
-.activity.label .dimmed_text {
-  opacity: 0.5;
-  filter: alpha(opacity=50);
-}
 .unlist,
 .unlist li,
 .inline-list,
@@ -934,7 +930,12 @@ tr.flagged-tag a {
 .userenrolment .col_group .groups {
   margin-right: 30px;
 }
-.userenrolment .col_role .role,
+.userenrolment .col_role .role {
+  float: left;
+  padding: 0 3px 3px;
+  margin: 0 3px 3px;
+  white-space: nowrap;
+}
 .userenrolment .col_group .group {
   float: left;
   padding: 3px;
@@ -965,8 +966,8 @@ tr.flagged-tag a {
 }
 .userenrolment .col_enrol .enrolment {
   float: left;
-  padding: 3px;
-  margin: 3px;
+  padding: 0 3px 3px;
+  margin: 0 3px 3px;
 }
 .userenrolment .col_enrol .enrolment a {
   float: right;
@@ -3544,11 +3545,6 @@ img.iconsmall {
   padding-right: 4px;
   min-height: 2em;
 }
-.section .activity .contentwithoutlink .dimmed img.activityicon,
-.section .activity .activityinstance .dimmed img.activityicon {
-  opacity: 0.5;
-  filter: alpha(opacity=50);
-}
 .section .label .contentwithoutlink,
 .section .label .activityinstance {
   padding-right: 32px;
@@ -3581,6 +3577,13 @@ img.iconsmall {
 .activity img.activityicon {
   margin-right: 6px;
   vertical-align: text-bottom;
+}
+.activity .dimmed img.activityicon {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+}
+.activity .stealth:not(.dimmed) {
+  opacity: .5;
 }
 .section .activity .activityinstance,
 .section .activity .activityinstance div {
@@ -3695,14 +3698,12 @@ img.iconsmall {
   margin-top: 0;
 }
 .course-content ul li.section.hidden .sectionname > span,
-.course-content ul li.section.hidden .content > div,
-.course-content ul li.section.hidden .activity .activityinstance {
+.course-content ul li.section.hidden .content > div.summary {
   opacity: .5;
 }
-.course-content ul li.section.hidden .sectionname > span,
-.course-content ul li.section.hidden .activity .activityinstance {
-  margin-left: 10px;
-  margin-right: 10px;
+.course-content ul.topics li.section,
+.course-content ul.weeks li.section {
+  padding-bottom: 20px;
 }
 .course-content ul.topics li.section .content,
 .course-content ul.weeks li.section .content {
@@ -3710,14 +3711,14 @@ img.iconsmall {
   margin-left: 20px;
   padding: 0;
 }
+.course-content ul.topics li.section .summary,
+.course-content ul.weeks li.section .summary,
+.course-content ul.topics li.section .content > .availabilityinfo,
+.course-content ul.weeks li.section .content > .availabilityinfo {
+  margin-left: 25px;
+}
 .course-content {
   margin-top: 0;
-}
-.course-content ul.topics li.section {
-  padding-bottom: 20px;
-}
-.course-content ul.topics li.section .summary {
-  margin-left: 25px;
 }
 .course-content li.section ul {
   list-style: disc;
@@ -4458,6 +4459,12 @@ span.editinstructions {
 #course-category-listings .select-a-category .notifymessage,
 #course-category-listings .select-a-category .alert {
   margin: 1em;
+}
+#page-course-management .coursesearchbox input[type="text"] + input[type="submit"] {
+  margin-bottom: 0;
+}
+#page-course-management #course-category-listings .detail-pair .pair-value select {
+  max-width: 80%;
 }
 #course-category-listings #course-listing .listitem .drag-handle {
   display: none;

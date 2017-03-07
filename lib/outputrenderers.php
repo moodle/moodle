@@ -513,9 +513,30 @@ class core_renderer extends renderer_base {
      */
     public function htmlattributes() {
         $return = get_html_lang(true);
+        $attributes = array();
         if ($this->page->theme->doctype !== 'html5') {
-            $return .= ' xmlns="http://www.w3.org/1999/xhtml"';
+            $attributes['xmlns'] = 'http://www.w3.org/1999/xhtml';
         }
+
+        // Give plugins an opportunity to add things like xml namespaces to the html element.
+        // This function should return an array of html attribute names => values.
+        $pluginswithfunction = get_plugins_with_function('add_htmlattributes', 'lib.php');
+        foreach ($pluginswithfunction as $plugins) {
+            foreach ($plugins as $function) {
+                $newattrs = $function();
+                unset($newattrs['dir']);
+                unset($newattrs['lang']);
+                unset($newattrs['xmlns']);
+                unset($newattrs['xml:lang']);
+                $attributes += $newattrs;
+            }
+        }
+
+        foreach ($attributes as $key => $val) {
+            $val = s($val);
+            $return .= " $key=\"$val\"";
+        }
+
         return $return;
     }
 
@@ -539,6 +560,15 @@ class core_renderer extends renderer_base {
         }
 
         $output = '';
+
+        // Give plugins an opportunity to add any head elements. The callback
+        // must always return a string containing valid html head content.
+        $pluginswithfunction = get_plugins_with_function('before_standard_html_head', 'lib.php');
+        foreach ($pluginswithfunction as $plugins) {
+            foreach ($plugins as $function) {
+                $output .= $function();
+            }
+        }
 
         // Allow a url_rewrite plugin to setup any dynamic head content.
         if (isset($CFG->urlrewriteclass) && !isset($CFG->upgraderunning)) {
@@ -628,7 +658,18 @@ class core_renderer extends renderer_base {
         if ($this->page->pagelayout !== 'embedded' && !empty($CFG->additionalhtmltopofbody)) {
             $output .= "\n".$CFG->additionalhtmltopofbody;
         }
+
+        // Give plugins an opportunity to inject extra html content. The callback
+        // must always return a string containing valid html.
+        $pluginswithfunction = get_plugins_with_function('before_standard_top_of_body_html', 'lib.php');
+        foreach ($pluginswithfunction as $plugins) {
+            foreach ($plugins as $function) {
+                $output .= $function();
+            }
+        }
+
         $output .= $this->maintenance_warning();
+
         return $output;
     }
 
@@ -716,7 +757,7 @@ class core_renderer extends renderer_base {
         }
         if (!empty($CFG->debugvalidators)) {
             // NOTE: this is not a nice hack, $PAGE->url is not always accurate and $FULLME neither, it is not a bug if it fails. --skodak
-            $output .= '<div class="validators"><ul>
+            $output .= '<div class="validators"><ul class="list-unstyled m-l-1">
               <li><a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=' . urlencode(qualified_me()) . '">Validate HTML</a></li>
               <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=' . urlencode(qualified_me()) . '">Section 508 Check</a></li>
               <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=0&amp;warnp2n3e=1&amp;url1=' . urlencode(qualified_me()) . '">WCAG 1 (2,3) Check</a></li>
@@ -1001,6 +1042,15 @@ class core_renderer extends renderer_base {
     public function header() {
         global $USER, $CFG, $SESSION;
 
+        // Give plugins an opportunity touch things before the http headers are sent
+        // such as adding additional headers. The return value is ignored.
+        $pluginswithfunction = get_plugins_with_function('before_http_headers', 'lib.php');
+        foreach ($pluginswithfunction as $plugins) {
+            foreach ($plugins as $function) {
+                $function();
+            }
+        }
+
         if (\core\session\manager::is_loggedinas()) {
             $this->page->add_body_class('userloggedinas');
         }
@@ -1111,6 +1161,14 @@ class core_renderer extends renderer_base {
      */
     public function footer() {
         global $CFG, $DB, $PAGE;
+
+        // Give plugins an opportunity to touch the page before JS is finalized.
+        $pluginswithfunction = get_plugins_with_function('before_footer', 'lib.php');
+        foreach ($pluginswithfunction as $plugins) {
+            foreach ($plugins as $function) {
+                $function();
+            }
+        }
 
         $output = $this->container_end_all(true);
 
@@ -2777,7 +2835,7 @@ EOD;
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
-        $button = new single_button($url, get_string('continue'), 'get');
+        $button = new single_button($url, get_string('continue'), 'get', true);
         $button->class = 'continuebutton';
 
         return $this->render($button);

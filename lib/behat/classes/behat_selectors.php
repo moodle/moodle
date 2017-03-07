@@ -26,6 +26,8 @@
 require_once(__DIR__ . '/exact_named_selector.php');
 require_once(__DIR__ . '/partial_named_selector.php');
 
+use Behat\Mink\Exception\ExpectationException as ExpectationException;
+
 /**
  * Moodle selectors manager.
  *
@@ -52,8 +54,22 @@ class behat_selectors {
             $locator = $element;
         } else {
             // Named selectors uses arrays as locators including the type of named selector.
-            $locator = array($selectortype, behat_context_helper::escape($element));
-            $selector = 'named_partial';
+            $allowedselectors = self::get_allowed_selectors();
+            if (!isset($allowedselectors[$selectortype])) {
+                throw new ExpectationException('The "' . $selectortype . '" selector not registered.', $session);
+            }
+            $locator = array($allowedselectors[$selectortype], behat_context_helper::escape($element));
+
+            // Get the selector which should be used.
+            $allowedpartialselectors = behat_partial_named_selector::get_allowed_selectors();
+            $allowedexactselectors = behat_exact_named_selector::get_allowed_selectors();
+            if (isset($allowedpartialselectors[$selectortype])) {
+                $selector = 'named_partial';
+            } else if (isset($allowedexactselectors[$selectortype])) {
+                $selector = 'named_exact';
+            } else {
+                throw new ExpectationException('The "' . $selectortype . '" selector not registered.', $session);
+            }
         }
 
         return array($selector, $locator);

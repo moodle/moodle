@@ -306,6 +306,7 @@ class repository_googledocs extends repository {
         $folders = array();
         $fields = "items(id,title,mimeType,downloadUrl,fileExtension,exportLinks,modifiedDate,fileSize,thumbnailLink)";
         $params = array('q' => $q, 'fields' => $fields);
+        $config = get_config('googledocs');
 
         try {
             // Retrieving files and folders.
@@ -344,18 +345,35 @@ class repository_googledocs extends repository {
                     $type = str_replace('application/vnd.google-apps.', '', $item['mimeType']);
                     $title = '';
                     $exportType = '';
+                    $types = get_mimetypes_array();
+
                     switch ($type){
                         case 'document':
-                            $title = $item['title'] . '.rtf';
-                            $exportType = 'application/rtf';
+                            $ext = $config->documentformat;
+                            $title = $item['title'] . '.'. $ext;
+                            if ($ext === 'rtf') {
+                                // Moodle user 'text/rtf' as the MIME type for RTF files.
+                                // Google uses 'application/rtf' for the same type of file.
+                                // See https://developers.google.com/drive/v3/web/manage-downloads.
+                                $exportType = 'application/rtf';
+                            } else {
+                                $exportType = $types[$ext]['type'];
+                            }
                             break;
                         case 'presentation':
-                            $title = $item['title'] . '.pptx';
-                            $exportType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+                            $ext = $config->presentationformat;
+                            $title = $item['title'] . '.'. $ext;
+                            $exportType = $types[$ext]['type'];
                             break;
                         case 'spreadsheet':
-                            $title = $item['title'] . '.xlsx';
-                            $exportType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                            $ext = $config->spreadsheetformat;
+                            $title = $item['title'] . '.'. $ext;
+                            $exportType = $types[$ext]['type'];
+                            break;
+                        case 'drawing':
+                            $ext = $config->drawingformat;
+                            $title = $item['title'] . '.'. $ext;
+                            $exportType = $types[$ext]['type'];
                             break;
                     }
                     // Skips invalid/unknown types.
@@ -472,7 +490,9 @@ class repository_googledocs extends repository {
      * @return array
      */
     public static function get_type_option_names() {
-        return array('clientid', 'secret', 'pluginname');
+        return array('clientid', 'secret', 'pluginname',
+            'documentformat', 'drawingformat',
+            'presentationformat', 'spreadsheetformat');
     }
 
     /**
@@ -482,7 +502,6 @@ class repository_googledocs extends repository {
      * @param string $classname repository class name.
      */
     public static function type_config_form($mform, $classname = 'repository') {
-
         $callbackurl = new moodle_url(self::CALLBACKURL);
 
         $a = new stdClass;
@@ -500,6 +519,57 @@ class repository_googledocs extends repository {
         $strrequired = get_string('required');
         $mform->addRule('clientid', $strrequired, 'required', null, 'client');
         $mform->addRule('secret', $strrequired, 'required', null, 'client');
+
+        $mform->addElement('static', null, '', get_string('importformat', 'repository_googledocs', $a));
+
+        // Documents.
+        $docsformat = array();
+        $docsformat['html'] = 'html';
+        $docsformat['docx'] = 'docx';
+        $docsformat['odt'] = 'odt';
+        $docsformat['pdf'] = 'pdf';
+        $docsformat['rtf'] = 'rtf';
+        $docsformat['txt'] = 'txt';
+        core_collator::ksort($docsformat, core_collator::SORT_NATURAL);
+
+        $mform->addElement('select', 'documentformat', get_string('docsformat', 'repository_googledocs'), $docsformat);
+        $mform->setDefault('documentformat', $docsformat['rtf']);
+        $mform->setType('documentformat', PARAM_ALPHANUM);
+
+        // Drawing.
+        $drawingformat = array();
+        $drawingformat['jpeg'] = 'jpeg';
+        $drawingformat['png'] = 'png';
+        $drawingformat['svg'] = 'svg';
+        $drawingformat['pdf'] = 'pdf';
+        core_collator::ksort($drawingformat, core_collator::SORT_NATURAL);
+
+        $mform->addElement('select', 'drawingformat', get_string('drawingformat', 'repository_googledocs'), $drawingformat);
+        $mform->setDefault('drawingformat', $drawingformat['pdf']);
+        $mform->setType('drawingformat', PARAM_ALPHANUM);
+
+        // Presentation.
+        $presentationformat = array();
+        $presentationformat['pdf'] = 'pdf';
+        $presentationformat['pptx'] = 'pptx';
+        $presentationformat['txt'] = 'txt';
+        core_collator::ksort($presentationformat, core_collator::SORT_NATURAL);
+
+        $mform->addElement('select', 'presentationformat', get_string('presentationformat', 'repository_googledocs'), $presentationformat);
+        $mform->setDefault('presentationformat', $presentationformat['pptx']);
+        $mform->setType('presentationformat', PARAM_ALPHANUM);
+
+        // Spreadsheet.
+        $spreadsheetformat = array();
+        $spreadsheetformat['csv'] = 'csv';
+        $spreadsheetformat['ods'] = 'ods';
+        $spreadsheetformat['pdf'] = 'pdf';
+        $spreadsheetformat['xlsx'] = 'xlsx';
+        core_collator::ksort($spreadsheetformat, core_collator::SORT_NATURAL);
+
+        $mform->addElement('select', 'spreadsheetformat', get_string('spreadsheetformat', 'repository_googledocs'), $spreadsheetformat);
+        $mform->setDefault('spreadsheetformat', $spreadsheetformat['xlsx']);
+        $mform->setType('spreadsheetformat', PARAM_ALPHANUM);
     }
 }
 // Icon from: http://www.iconspedia.com/icon/google-2706.html.

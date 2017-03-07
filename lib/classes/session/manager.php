@@ -80,6 +80,7 @@ class manager {
             }
 
             self::initialise_user_session($isnewsession);
+            self::$sessionactive = true; // Set here, so the session can be cleared if the security check fails.
             self::check_security();
 
             // Link global $USER and $SESSION,
@@ -97,8 +98,6 @@ class manager {
             self::$sessionactive = false;
             throw $ex;
         }
-
-        self::$sessionactive = true;
     }
 
     /**

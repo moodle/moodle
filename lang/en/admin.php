@@ -596,6 +596,7 @@ $string['htmlsettings'] = 'HTML settings';
 $string['http'] = 'HTTP';
 $string['httpsecurity'] = 'HTTP security';
 $string['hubs'] = 'Hubs';
+$string['incompleteunicodesupport'] = 'The current setup of MySQL or MariaDB is using \'utf8\'. This character set does not support four byte characters which include some emoji. Trying to use these characters will result in an error when updating a record, and any information being sent to the database will be lost. Please consider changing your settings to \'utf8mb4\'. See the documentation for full details.';
 $string['change'] = 'change';
 $string['checkboxno'] = 'No';
 $string['checkboxyes'] = 'Yes';
@@ -674,8 +675,6 @@ $string['logguests_help'] = 'This setting enables logging of actions by guest ac
 $string['loginhttps'] = 'Use HTTPS for logins';
 $string['loginpageautofocus'] = 'Autofocus login page form';
 $string['loginpageautofocus_help'] = 'Enabling this option improves usability of the login page, but automatically focusing fields may be considered an accessibility issue.';
-$string['loginpasswordautocomplete'] = 'Prevent password autocompletion on login form';
-$string['loginpasswordautocomplete_help'] = 'If enabled, users are not allowed to save their account password in their browser.';
 $string['loglifetime'] = 'Keep logs for';
 $string['logo'] = 'Logo';
 $string['logo_desc'] = 'A full logo to be used as decoration by some themes (such as core themes). This image can be quite high resolution because it will be scaled down for use (and cached for performance). Logos that are wider than they are high usually give better results. Formats accepted: PNG and JPG.';
@@ -1135,6 +1134,9 @@ $string['unlockaccount'] = 'Unlock account';
 $string['unoconvwarning'] = 'The version of unoconv you have installed is not supported. Moodle\'s assignment grading feature requires version 0.7 or higher.';
 $string['unsettheme'] = 'Unset theme';
 $string['unsupported'] = 'Unsupported';
+$string['unsupporteddbfileformat'] = 'Your database has tables using Antelope as the file format. Full UTF-8 support in MySQL and MariaDB requires the Barracuda file format. Please convert the tables to the Barracuda file format. See the documentation <a href="https://docs.moodle.org/en/cli">Administration via command line</a> for details of a tool for converting InnoDB tables to Barracuda.';
+$string['unsupporteddbfilepertable'] = 'For full support of UTF-8 both MySQL and MariaDB require you to change your MySQL setting \'innodb_file_per_table\' to \'ON\'. See the documentation for further details.';
+$string['unsupporteddblargeprefix'] = 'For full support of UTF-8 both MySQL and MariaDB require you to change your MySQL setting \'innodb_large_prefix\' to \'ON\'. See the documentation for further details.';
 $string['unsupporteddbstorageengine'] = 'The database storage engine being used is no longer supported.';
 $string['unsupporteddbtablerowformat'] = 'Your database has tables using Antelope as the file format. You are recommended to convert the tables to the Barracuda file format. See the documentation <a href="https://docs.moodle.org/en/cli">Administration via command line</a> for details of a tool for converting InnoDB tables to Barracuda.';
 $string['unsupportedphpversion7'] = 'PHP version 7 is not supported.';
@@ -1241,3 +1243,6 @@ $string['cacheapplication'] = 'Application cache';
 $string['cacheapplicationhelp'] = 'Cached items are shared among all users and expire by a determined time to live (ttl).';
 // Deprecated since Moodle 3.2.
 $string['mobile'] = 'Mobile';
+// Deprecated since Moodle 3.3.
+$string['loginpasswordautocomplete'] = 'Prevent password autocompletion on login form';
+$string['loginpasswordautocomplete_help'] = 'If enabled, users are not allowed to save their account password in their browser.';

@@ -906,7 +906,7 @@ class mod_forum_external extends external_api {
                 'forumid' => new external_value(PARAM_INT, 'Forum instance ID'),
                 'subject' => new external_value(PARAM_TEXT, 'New Discussion subject'),
                 'message' => new external_value(PARAM_RAW, 'New Discussion message (only html format allowed)'),
-                'groupid' => new external_value(PARAM_INT, 'The group, default to -1', VALUE_DEFAULT, -1),
+                'groupid' => new external_value(PARAM_INT, 'The group, default to 0', VALUE_DEFAULT, 0),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
                         array(
@@ -938,7 +938,7 @@ class mod_forum_external extends external_api {
      * @since Moodle 3.0
      * @throws moodle_exception
      */
-    public static function add_discussion($forumid, $subject, $message, $groupid = -1, $options = array()) {
+    public static function add_discussion($forumid, $subject, $message, $groupid = 0, $options = array()) {
         global $DB, $CFG;
         require_once($CFG->dirroot . "/mod/forum/lib.php");
 
@@ -994,7 +994,7 @@ class mod_forum_external extends external_api {
         } else {
             // Check if we receive the default or and empty value for groupid,
             // in this case, get the group for the user in the activity.
-            if ($groupid === -1 or empty($params['groupid'])) {
+            if (empty($params['groupid'])) {
                 $groupid = groups_get_activity_group($cm);
             } else {
                 // Here we rely in the group passed, forum_user_can_post_discussion will validate the group.

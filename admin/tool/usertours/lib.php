@@ -67,3 +67,10 @@ function tool_usertours_inplace_editable($itemtype, $itemid, $newvalue) {
 function tool_usertours_extend_navigation_user() {
     \tool_usertours\helper::bootstrap();
 }
+
+/**
+ * Add JS to bootstrap tours. Only in Moodle 3.3+
+ */
+function tool_usertours_before_footer() {
+    \tool_usertours\helper::bootstrap();
+}

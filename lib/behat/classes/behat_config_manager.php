@@ -87,7 +87,7 @@ class behat_config_manager {
 
         // Behat must have a separate behat.yml to have access to the whole set of features and steps definitions.
         if ($testsrunner === true) {
-            $configfilepath = behat_command::get_behat_dir() . '/behat.yml';
+            $configfilepath = behat_command::get_behat_dir($run) . '/behat.yml';
         } else {
             // Alternative for steps definitions filtering, one for each user.
             $configfilepath = self::get_steps_list_config_filepath();
@@ -117,7 +117,7 @@ class behat_config_manager {
 
         // Get number of parallel runs if not passed.
         if (empty($parallelruns) && ($parallelruns !== false)) {
-            $parallelruns = self::get_parallel_test_runs();
+            $parallelruns = self::get_behat_run_config_value('parallel');
         }
 
         // Behat config file specifing the main context class,
@@ -212,31 +212,49 @@ class behat_config_manager {
      * Returns the path to the parallel run file which specifies if parallel test environment is enabled
      * and how many parallel runs to execute.
      *
-     * @param int $runprocess run process for which behat dir is returned.
      * @return string
      */
-    public final static function get_parallel_test_file_path($runprocess = 0) {
-        return behat_command::get_behat_dir($runprocess) . '/parallel_environment_enabled.txt';
+    public final static function get_behat_run_config_file_path() {
+        return behat_command::get_parent_behat_dir() . '/run_environment.json';
     }
 
     /**
-     * Returns number of parallel runs for which site is initialised.
+     * Get config for parallel run.
      *
-     * @param int $runprocess run process for which behat dir is returned.
-     * @return int
+     * @param string $key Key to store
+     * @return string|int|array value which is stored.
      */
-    public final static function get_parallel_test_runs($runprocess = 0) {
+    public final static function get_behat_run_config_value($key) {
+        $parallelrunconfigfile = self::get_behat_run_config_file_path();
 
-        $parallelrun = 0;
-        // Get parallel run info from first file and last file.
-        $parallelrunconfigfile = self::get_parallel_test_file_path($runprocess);
         if (file_exists($parallelrunconfigfile)) {
-            if ($parallel = file_get_contents($parallelrunconfigfile)) {
-                $parallelrun = (int) $parallel;
+            if ($parallelrunconfigs = @json_decode(file_get_contents($parallelrunconfigfile), true)) {
+                if (isset($parallelrunconfigs[$key])) {
+                    return $parallelrunconfigs[$key];
+                }
             }
         }
 
-        return $parallelrun;
+        return false;
+    }
+
+    /**
+     * Save/update config for parallel run.
+     *
+     * @param string $key Key to store
+     * @param string|int|array $value to store.
+     */
+    public final static function set_behat_run_config_value($key, $value) {
+        $parallelrunconfigs = array();
+        $parallelrunconfigfile = self::get_behat_run_config_file_path();
+
+        // Get any existing config first.
+        if (file_exists($parallelrunconfigfile)) {
+            $parallelrunconfigs = @json_decode(file_get_contents($parallelrunconfigfile), true);
+        }
+        $parallelrunconfigs[$key] = $value;
+
+        @file_put_contents($parallelrunconfigfile, json_encode($parallelrunconfigs, JSON_PRETTY_PRINT));
     }
 
     /**
@@ -247,8 +265,8 @@ class behat_config_manager {
     public final static function drop_parallel_site_links() {
         global $CFG;
 
-        // Get parallel test runs from first run.
-        $parallelrun = self::get_parallel_test_runs(1);
+        // Get parallel test runs.
+        $parallelrun = self::get_behat_run_config_value('parallel');
 
         if (empty($parallelrun)) {
             return false;

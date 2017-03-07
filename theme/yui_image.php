@@ -123,7 +123,7 @@ function yui_image_cached($imagepath, $imagename, $mimetype, $etag) {
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($imagepath)) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: public, max-age=315360000, no-transform');
+    header('Cache-Control: public, max-age='.$lifetime.', no-transform, immutable');
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));

@@ -263,7 +263,7 @@ class comment {
                 'comments',
                 'commentscount',
                 'commentsrequirelogin',
-                'deletecomment',
+                'deletecommentbyon',
             ),
             'moodle'
         );
@@ -460,7 +460,13 @@ class comment {
                 } else {
                     $collapsedimage= 't/collapsed';
                 }
-                $html .= html_writer::start_tag('a', array('class' => 'comment-link', 'id' => 'comment-link-'.$this->cid, 'href' => '#'));
+                $html .= html_writer::start_tag('a', array(
+                    'class' => 'comment-link',
+                    'id' => 'comment-link-'.$this->cid,
+                    'href' => '#',
+                    'role' => 'button',
+                    'aria-expanded' => 'false')
+                );
                 $html .= html_writer::empty_tag('img', array('id' => 'comment-img-'.$this->cid, 'src' => $OUTPUT->pix_url($collapsedimage), 'alt' => $this->linktext, 'title' => $this->linktext));
                 $html .= html_writer::tag('span', $this->linktext.' '.$countstring, array('id' => 'comment-link-text-'.$this->cid));
                 $html .= html_writer::end_tag('a');

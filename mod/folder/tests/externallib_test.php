@@ -152,8 +152,9 @@ class mod_folder_external_testcase extends externallib_advanced_testcase {
         $returndescription = mod_folder_external::get_folders_by_courses_returns();
 
         // Create what we expect to be returned when querying the two courses.
-        $expectedfields = array('id', 'course', 'name', 'intro', 'introformat', 'introfiles', 'revision', 'timemodified',
-                                'display', 'showexpanded', 'showdownloadfolder', 'section', 'visible', 'groupmode', 'groupingid');
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'revision',
+                                'timemodified', 'display', 'showexpanded', 'showdownloadfolder', 'section', 'visible',
+                                'groupmode', 'groupingid');
 
         // Add expected coursemodule and data.
         $folder1->coursemodule = $folder1->cmid;

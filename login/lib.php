@@ -217,7 +217,7 @@ function core_login_process_password_set($token) {
     }
 
     // Token is correct, and unexpired.
-    $mform = new login_set_password_form(null, $user, 'post', '', 'autocomplete="yes"');
+    $mform = new login_set_password_form(null, $user);
     $data = $mform->get_data();
     if (empty($data)) {
         // User hasn't submitted form, they got here directly from email link.

@@ -410,6 +410,36 @@ class format_topics extends format_base {
     public function supports_news() {
         return true;
     }
+
+    /**
+     * Returns whether this course format allows the activity to
+     * have "triple visibility state" - visible always, hidden on course page but available, hidden.
+     *
+     * @param stdClass|cm_info $cm course module (may be null if we are displaying a form for adding a module)
+     * @param stdClass|section_info $section section where this module is located or will be added to
+     * @return bool
+     */
+    public function allow_stealth_module_visibility($cm, $section) {
+        // Allow the third visibility state inside visible sections or in section 0, not allow in orphaned sections.
+        return !$section->section || ($section->visible && $section->section <= $this->get_course()->numsections);
+    }
+
+    public function section_action($section, $action, $sr) {
+        global $PAGE;
+
+        if ($section->section && ($action === 'setmarker' || $action === 'removemarker')) {
+            // Format 'topics' allows to set and remove markers in addition to common section actions.
+            require_capability('moodle/course:setcurrentsection', context_course::instance($this->courseid));
+            course_set_marker($this->courseid, ($action === 'setmarker') ? $section->section : 0);
+            return null;
+        }
+
+        // For show/hide actions call the parent method and return the new content for .section_availability element.
+        $rv = parent::section_action($section, $action, $sr);
+        $renderer = $PAGE->get_renderer('format_topics');
+        $rv['section_availability'] = $renderer->section_availability($this->get_section($section));
+        return $rv;
+    }
 }
 
 /**

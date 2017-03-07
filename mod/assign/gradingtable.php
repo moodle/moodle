@@ -287,6 +287,9 @@ class assign_grading_table extends table_sql implements renderable {
                 $where .= '))';
                 $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
+            } else if ($filter == ASSIGN_FILTER_GRANTED_EXTENSION) {
+                $where .= ' AND uf.extensionduedate > 0 ';
+
             } else if (strpos($filter, ASSIGN_FILTER_SINGLE_USER) === 0) {
                 $userfilter = (int) array_pop(explode('=', $filter));
                 $where .= ' AND (u.id = :userid)';
@@ -307,9 +310,6 @@ class assign_grading_table extends table_sql implements renderable {
                         $params['markerid'] = $markerfilter;
                     }
                 }
-            } else { // Only show users allocated to this marker.
-                $where .= ' AND uf.allocatedmarker = :markerid';
-                $params['markerid'] = $USER->id;
             }
         }
 
@@ -1037,6 +1037,9 @@ class assign_grading_table extends table_sql implements renderable {
         $due = $instance->duedate;
         if ($row->extensionduedate) {
             $due = $row->extensionduedate;
+        } else if (!empty($row->duedate)) {
+            // The override due date.
+            $due = $row->duedate;
         }
 
         $group = false;

@@ -152,7 +152,7 @@ class mod_page_external_testcase extends externallib_advanced_testcase {
         $returndescription = mod_page_external::get_pages_by_courses_returns();
 
         // Create what we expect to be returned when querying the two courses.
-        $expectedfields = array('id', 'course', 'name', 'intro', 'introformat', 'introfiles',
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles',
                                 'content', 'contentformat', 'contentfiles', 'legacyfiles', 'legacyfileslast', 'display',
                                 'displayoptions', 'revision', 'timemodified', 'section', 'visible', 'groupmode', 'groupingid');
 

@@ -42,7 +42,8 @@ Feature: Restrict activity availability through date conditions
     And I am on site homepage
     And I follow "Course 1"
     Then I should see "Available from 31 December 2037"
-    And "Test assignment 1" activity should be hidden
+    And "Test assignment 1" activity should be dimmed
+    And "Test assignment 1" "link" should not exist
     And I log out
 
   @javascript

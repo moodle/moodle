@@ -457,6 +457,23 @@ class core_medialib_testcase extends advanced_testcase {
         $this->assertContains('<source src="http://example.org/test.webm"', $t);
         $this->assertNotContains('<source src="http://example.org/test.flv"', $t);
     }
+
+    /**
+     * Make sure the instance() method returns singleton for the same page and different object for another page
+     */
+    public function test_initialise() {
+        $moodlepage1 = new moodle_page();
+
+        $mediamanager1 = core_media_manager::instance($moodlepage1);
+        $mediamanager2 = core_media_manager::instance($moodlepage1);
+
+        $this->assertSame($mediamanager1, $mediamanager2);
+
+        $moodlepage3 = new moodle_page();
+        $mediamanager3 = core_media_manager::instance($moodlepage3);
+
+        $this->assertNotSame($mediamanager1, $mediamanager3);
+    }
 }
 
 /**
@@ -516,5 +533,13 @@ class core_media_manager_test extends core_media_manager {
             $out .= str_replace('core_media_player_', '', preg_replace('/^media_(.*)_plugin$/', '$1', get_class($player)));
         }
         return $out;
+    }
+
+    /**
+     * Override the constructor to access it.
+     */
+    public function __construct() {
+        global $PAGE;
+        parent::__construct($PAGE);
     }
 }

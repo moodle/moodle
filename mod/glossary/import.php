@@ -144,6 +144,7 @@ if ($xml = glossary_read_imported_file($result)) {
             // New glossary is to be inserted in section 0, it is always visible.
             $glossary->section = 0;
             $glossary->visible = 1;
+            $glossary->visibleoncoursepage = 1;
 
             // Include new glossary and return the new ID
             if ( !($glossary = add_moduleinfo($glossary, $course)) ) {

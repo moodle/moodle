@@ -270,6 +270,7 @@ class core_course_external extends external_api {
                                             context_module::instance($cm->id));
                         //user that can view hidden module should know about the visibility
                         $module['visible'] = $cm->visible;
+                        $module['visibleoncoursepage'] = $cm->visibleoncoursepage;
 
                         // Availability date (also send to user who can see hidden module).
                         if ($CFG->enableavailability && ($canviewhidden || $canupdatecourse)) {
@@ -342,6 +343,8 @@ class core_course_external extends external_api {
                                     'instance' => new external_value(PARAM_INT, 'instance id', VALUE_OPTIONAL),
                                     'description' => new external_value(PARAM_RAW, 'activity description', VALUE_OPTIONAL),
                                     'visible' => new external_value(PARAM_INT, 'is the module visible', VALUE_OPTIONAL),
+                                    'visibleoncoursepage' => new external_value(PARAM_INT, 'is the module visible on course page',
+                                        VALUE_OPTIONAL),
                                     'modicon' => new external_value(PARAM_URL, 'activity icon url'),
                                     'modname' => new external_value(PARAM_PLUGIN, 'activity module type'),
                                     'modplural' => new external_value(PARAM_TEXT, 'activity module plural name'),
@@ -1052,6 +1055,7 @@ class core_course_external extends external_api {
                                             "blocks" (int) Include course blocks (default to 1 that is equal to yes),
                                             "filters" (int) Include course filters  (default to 1 that is equal to yes),
                                             "users" (int) Include users (default to 0 that is equal to no),
+                                            "enrolments" (int) Include enrolment methods (default to 1 - restore only with users),
                                             "role_assignments" (int) Include role assignments  (default to 0 that is equal to no),
                                             "comments" (int) Include user comments  (default to 0 that is equal to no),
                                             "userscompletion" (int) Include user course completion information  (default to 0 that is equal to no),
@@ -1116,6 +1120,7 @@ class core_course_external extends external_api {
             'blocks' => 1,
             'filters' => 1,
             'users' => 0,
+            'enrolments' => backup::ENROL_WITHUSERS,
             'role_assignments' => 0,
             'comments' => 0,
             'userscompletion' => 0,
@@ -1171,7 +1176,9 @@ class core_course_external extends external_api {
         backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $USER->id);
 
         foreach ($backupsettings as $name => $value) {
-            $bc->get_plan()->get_setting($name)->set_value($value);
+            if ($setting = $bc->get_plan()->get_setting($name)) {
+                $bc->get_plan()->get_setting($name)->set_value($value);
+            }
         }
 
         $backupid       = $bc->get_backupid();
@@ -2558,6 +2565,7 @@ class core_course_external extends external_api {
                         'score' => new external_value(PARAM_INT, 'Score', VALUE_OPTIONAL),
                         'indent' => new external_value(PARAM_INT, 'Indentation', VALUE_OPTIONAL),
                         'visible' => new external_value(PARAM_INT, 'If visible', VALUE_OPTIONAL),
+                        'visibleoncoursepage' => new external_value(PARAM_INT, 'If visible on course page', VALUE_OPTIONAL),
                         'visibleold' => new external_value(PARAM_INT, 'Visible old', VALUE_OPTIONAL),
                         'completiongradeitemnumber' => new external_value(PARAM_INT, 'Completion grade item', VALUE_OPTIONAL),
                         'completionview' => new external_value(PARAM_INT, 'Completion view setting', VALUE_OPTIONAL),
@@ -3234,5 +3242,227 @@ class core_course_external extends external_api {
      */
     public static function get_updates_since_returns() {
         return self::check_updates_returns();
+    }
+
+    /**
+     * Parameters for function edit_module()
+     *
+     * @since Moodle 3.3
+     * @return external_function_parameters
+     */
+    public static function edit_module_parameters() {
+        return new external_function_parameters(
+            array(
+                'action' => new external_value(PARAM_ALPHA,
+                    'action: hide, show, stealth, duplicate, delete, moveleft, moveright, group...', VALUE_REQUIRED),
+                'id' => new external_value(PARAM_INT, 'course module id', VALUE_REQUIRED),
+                'sectionreturn' => new external_value(PARAM_INT, 'section to return to', VALUE_DEFAULT, null),
+            ));
+    }
+
+    /**
+     * Performs one of the edit module actions and return new html for AJAX
+     *
+     * Returns html to replace the current module html with, for example:
+     * - empty string for "delete" action,
+     * - two modules html for "duplicate" action
+     * - updated module html for everything else
+     *
+     * Throws exception if operation is not permitted/possible
+     *
+     * @since Moodle 3.3
+     * @param string $action
+     * @param int $id
+     * @param null|int $sectionreturn
+     * @return string
+     */
+    public static function edit_module($action, $id, $sectionreturn = null) {
+        global $PAGE, $DB;
+        // Validate and normalize parameters.
+        $params = self::validate_parameters(self::edit_module_parameters(),
+            array('action' => $action, 'id' => $id, 'sectionreturn' => $sectionreturn));
+        $action = $params['action'];
+        $id = $params['id'];
+        $sectionreturn = $params['sectionreturn'];
+
+        list($course, $cm) = get_course_and_cm_from_cmid($id);
+        $modcontext = context_module::instance($cm->id);
+        $coursecontext = context_course::instance($course->id);
+        self::validate_context($modcontext);
+        $courserenderer = $PAGE->get_renderer('core', 'course');
+        $completioninfo = new completion_info($course);
+
+        switch($action) {
+            case 'hide':
+            case 'show':
+            case 'stealth':
+                require_capability('moodle/course:activityvisibility', $modcontext);
+                $visible = ($action === 'hide') ? 0 : 1;
+                $visibleoncoursepage = ($action === 'stealth') ? 0 : 1;
+                set_coursemodule_visible($id, $visible, $visibleoncoursepage);
+                \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+                break;
+            case 'duplicate':
+                require_capability('moodle/course:manageactivities', $coursecontext);
+                require_capability('moodle/backup:backuptargetimport', $coursecontext);
+                require_capability('moodle/restore:restoretargetimport', $coursecontext);
+                if (!course_allowed_module($course, $cm->modname)) {
+                    throw new moodle_exception('No permission to create that activity');
+                }
+                if ($newcm = duplicate_module($course, $cm)) {
+                    $cm = get_fast_modinfo($course)->get_cm($id);
+                    $newcm = get_fast_modinfo($course)->get_cm($newcm->id);
+                    return $courserenderer->course_section_cm_list_item($course, $completioninfo, $cm, $sectionreturn) .
+                        $courserenderer->course_section_cm_list_item($course, $completioninfo, $newcm, $sectionreturn);
+                }
+                break;
+            case 'groupsseparate':
+            case 'groupsvisible':
+            case 'groupsnone':
+                require_capability('moodle/course:manageactivities', $modcontext);
+                if ($action === 'groupsseparate') {
+                    $newgroupmode = SEPARATEGROUPS;
+                } else if ($action === 'groupsvisible') {
+                    $newgroupmode = VISIBLEGROUPS;
+                } else {
+                    $newgroupmode = NOGROUPS;
+                }
+                if (set_coursemodule_groupmode($cm->id, $newgroupmode)) {
+                    \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+                }
+                break;
+            case 'moveleft':
+            case 'moveright':
+                require_capability('moodle/course:manageactivities', $modcontext);
+                $indent = $cm->indent + (($action === 'moveright') ? 1 : -1);
+                if ($cm->indent >= 0) {
+                    $DB->update_record('course_modules', array('id' => $cm->id, 'indent' => $indent));
+                    rebuild_course_cache($cm->course);
+                }
+                break;
+            case 'delete':
+                require_capability('moodle/course:manageactivities', $modcontext);
+                course_delete_module($cm->id, true);
+                return '';
+            default:
+                throw new coding_exception('Unrecognised action');
+        }
+
+        $cm = get_fast_modinfo($course)->get_cm($id);
+        return $courserenderer->course_section_cm_list_item($course, $completioninfo, $cm, $sectionreturn);
+    }
+
+    /**
+     * Return structure for edit_module()
+     *
+     * @since Moodle 3.3
+     * @return external_description
+     */
+    public static function edit_module_returns() {
+        return new external_value(PARAM_RAW, 'html to replace the current module with');
+    }
+
+    /**
+     * Parameters for function get_module()
+     *
+     * @since Moodle 3.3
+     * @return external_function_parameters
+     */
+    public static function get_module_parameters() {
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'course module id', VALUE_REQUIRED),
+                'sectionreturn' => new external_value(PARAM_INT, 'section to return to', VALUE_DEFAULT, null),
+            ));
+    }
+
+    /**
+     * Returns html for displaying one activity module on course page
+     *
+     * @since Moodle 3.3
+     * @param int $id
+     * @param null|int $sectionreturn
+     * @return string
+     */
+    public static function get_module($id, $sectionreturn = null) {
+        global $PAGE;
+        // Validate and normalize parameters.
+        $params = self::validate_parameters(self::get_module_parameters(),
+            array('id' => $id, 'sectionreturn' => $sectionreturn));
+        $id = $params['id'];
+        $sectionreturn = $params['sectionreturn'];
+
+        // Validate access to the course (note, this is html for the course view page, we don't validate access to the module).
+        list($course, $cm) = get_course_and_cm_from_cmid($id);
+        self::validate_context(context_course::instance($course->id));
+
+        $courserenderer = $PAGE->get_renderer('core', 'course');
+        $completioninfo = new completion_info($course);
+        return $courserenderer->course_section_cm_list_item($course, $completioninfo, $cm, $sectionreturn);
+    }
+
+    /**
+     * Return structure for edit_module()
+     *
+     * @since Moodle 3.3
+     * @return external_description
+     */
+    public static function get_module_returns() {
+        return new external_value(PARAM_RAW, 'html to replace the current module with');
+    }
+
+    /**
+     * Parameters for function edit_section()
+     *
+     * @since Moodle 3.3
+     * @return external_function_parameters
+     */
+    public static function edit_section_parameters() {
+        return new external_function_parameters(
+            array(
+                'action' => new external_value(PARAM_ALPHA, 'action: hide, show, stealth, setmarker, removemarker', VALUE_REQUIRED),
+                'id' => new external_value(PARAM_INT, 'course section id', VALUE_REQUIRED),
+                'sectionreturn' => new external_value(PARAM_INT, 'section to return to', VALUE_DEFAULT, null),
+            ));
+    }
+
+    /**
+     * Performs one of the edit section actions
+     *
+     * @since Moodle 3.3
+     * @param string $action
+     * @param int $id section id
+     * @param int $sectionreturn section to return to
+     * @return string
+     */
+    public static function edit_section($action, $id, $sectionreturn) {
+        global $DB;
+        // Validate and normalize parameters.
+        $params = self::validate_parameters(self::edit_section_parameters(),
+            array('action' => $action, 'id' => $id, 'sectionreturn' => $sectionreturn));
+        $action = $params['action'];
+        $id = $params['id'];
+        $sr = $params['sectionreturn'];
+
+        $section = $DB->get_record('course_sections', array('id' => $id), '*', MUST_EXIST);
+        $coursecontext = context_course::instance($section->course);
+        self::validate_context($coursecontext);
+
+        $rv = course_get_format($section->course)->section_action($section, $action, $sectionreturn);
+        if ($rv) {
+            return json_encode($rv);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return structure for edit_section()
+     *
+     * @since Moodle 3.3
+     * @return external_description
+     */
+    public static function edit_section_returns() {
+        return new external_value(PARAM_RAW, 'Additional data for javascript (JSON-encoded string)');
     }
 }

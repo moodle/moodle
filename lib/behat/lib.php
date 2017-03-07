@@ -274,6 +274,33 @@ function behat_check_config_vars() {
             'Define $CFG->behat_dataroot in config.php');
     }
     clearstatcache();
+    if (!file_exists($CFG->behat_dataroot_parent)) {
+        $permissions = isset($CFG->directorypermissions) ? $CFG->directorypermissions : 02777;
+        umask(0);
+        if (!mkdir($CFG->behat_dataroot_parent, $permissions, true)) {
+            behat_error(BEHAT_EXITCODE_PERMISSIONS, '$CFG->behat_dataroot directory can not be created');
+        }
+    }
+    $CFG->behat_dataroot_parent = realpath($CFG->behat_dataroot_parent);
+    if (empty($CFG->behat_dataroot_parent) or !is_dir($CFG->behat_dataroot_parent) or !is_writable($CFG->behat_dataroot_parent)) {
+        behat_error(BEHAT_EXITCODE_CONFIG,
+            '$CFG->behat_dataroot in config.php must point to an existing writable directory');
+    }
+    if (!empty($CFG->dataroot) and $CFG->behat_dataroot_parent == realpath($CFG->dataroot)) {
+        behat_error(BEHAT_EXITCODE_CONFIG,
+            '$CFG->behat_dataroot in config.php must be different from $CFG->dataroot');
+    }
+    if (!empty($CFG->phpunit_dataroot) and $CFG->behat_dataroot_parent == realpath($CFG->phpunit_dataroot)) {
+        behat_error(BEHAT_EXITCODE_CONFIG,
+            '$CFG->behat_dataroot in config.php must be different from $CFG->phpunit_dataroot');
+    }
+
+    // This request is coming from admin/tool/behat/cli/util.php which will call util_single.php. So just return from
+    // here as we don't need to create a dataroot for single run.
+    if (defined('BEHAT_PARALLEL_UTIL') && BEHAT_PARALLEL_UTIL && empty($CFG->behatrunprocess)) {
+        return;
+    }
+
     if (!file_exists($CFG->behat_dataroot)) {
         $permissions = isset($CFG->directorypermissions) ? $CFG->directorypermissions : 02777;
         umask(0);
@@ -282,18 +309,6 @@ function behat_check_config_vars() {
         }
     }
     $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
-    if (empty($CFG->behat_dataroot) or !is_dir($CFG->behat_dataroot) or !is_writable($CFG->behat_dataroot)) {
-        behat_error(BEHAT_EXITCODE_CONFIG,
-            '$CFG->behat_dataroot in config.php must point to an existing writable directory');
-    }
-    if (!empty($CFG->dataroot) and $CFG->behat_dataroot == realpath($CFG->dataroot)) {
-        behat_error(BEHAT_EXITCODE_CONFIG,
-            '$CFG->behat_dataroot in config.php must be different from $CFG->dataroot');
-    }
-    if (!empty($CFG->phpunit_dataroot) and $CFG->behat_dataroot == realpath($CFG->phpunit_dataroot)) {
-        behat_error(BEHAT_EXITCODE_CONFIG,
-            '$CFG->behat_dataroot in config.php must be different from $CFG->phpunit_dataroot');
-    }
 }
 
 /**
@@ -335,6 +350,10 @@ function behat_update_vars_for_process() {
         'behat_wwwroot', 'behat_dataroot');
     $behatrunprocess = behat_get_run_process();
     $CFG->behatrunprocess = $behatrunprocess;
+
+    // Data directory will be a directory under parent directory.
+    $CFG->behat_dataroot_parent = $CFG->behat_dataroot;
+    $CFG->behat_dataroot .= '/'. BEHAT_PARALLEL_SITE_NAME;
 
     if ($behatrunprocess) {
         if (empty($CFG->behat_parallel_run[$behatrunprocess - 1]['behat_wwwroot'])) {
@@ -459,7 +478,7 @@ function behat_get_run_process() {
             }
             // Check if default behat datroot increment was done.
             if (empty($behatrunprocess)) {
-                $behatdataroot = str_replace("\\", "/", $CFG->behat_dataroot);
+                $behatdataroot = str_replace("\\", "/", $CFG->behat_dataroot . '/' . BEHAT_PARALLEL_SITE_NAME);
                 $behatrunprocess = preg_filter("#^{$behatdataroot}" . "(.+?)[/|\\\]behat[/|\\\]behat\.yml#", '$1',
                     $behatconfig);
             }

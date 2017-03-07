@@ -2663,10 +2663,10 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 
     // Check that the user account is properly set up. If we can't redirect to
-    // edit their profile, perform just the lax check. It will allow them to
-    // use filepicker on the profile edit page.
+    // edit their profile and this is not a WS request, perform just the lax check.
+    // It will allow them to use filepicker on the profile edit page.
 
-    if ($preventredirect) {
+    if ($preventredirect && !WS_SERVER) {
         $usernotfullysetup = user_not_fully_set_up($USER, false);
     } else {
         $usernotfullysetup = user_not_fully_set_up($USER, true);
@@ -2893,7 +2893,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         } else {
             $url = new moodle_url('/');
         }
-        redirect($url, get_string('activityiscurrentlyhidden'));
+        redirect($url, get_string('activityiscurrentlyhidden'), null,
+                \core\output\notification::NOTIFY_ERROR);
     }
 
     // Set the global $COURSE.
@@ -5810,23 +5811,13 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         $replyto = $noreplyaddress;
     }
 
-    $alloweddomains = null;
-    if (!empty($CFG->allowedemaildomains)) {
-        $alloweddomains = explode(PHP_EOL, $CFG->allowedemaildomains);
-    }
-
-    // Email will be sent using no reply address.
-    if (empty($alloweddomains)) {
-        $usetrueaddress = false;
-    }
-
     if (is_string($from)) { // So we can pass whatever we want if there is need.
         $mail->From     = $noreplyaddress;
         $mail->FromName = $from;
     // Check if using the true address is true, and the email is in the list of allowed domains for sending email,
     // and that the senders email setting is either displayed to everyone, or display to only other users that are enrolled
     // in a course with the sender.
-    } else if ($usetrueaddress && can_send_from_real_email_address($from, $user, $alloweddomains)) {
+    } else if ($usetrueaddress && can_send_from_real_email_address($from, $user)) {
         if (!validate_email($from->email)) {
             debugging('email_to_user: Invalid from-email '.s($from->email).' - not sending');
             // Better not to use $noreplyaddress in this case.
@@ -6062,10 +6053,15 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
  *
  * @param  object $from The user object for the user we are sending the email from.
  * @param  object $user The user object that we are sending the email to.
- * @param  array $alloweddomains An array of allowed domains that we can send email from.
+ * @param  array $unused No longer used.
  * @return bool Returns true if we can use the from user's email adress in the "From" field.
  */
-function can_send_from_real_email_address($from, $user, $alloweddomains) {
+function can_send_from_real_email_address($from, $user, $unused = null) {
+    global $CFG;
+    if (!isset($CFG->allowedemaildomains) || empty(trim($CFG->allowedemaildomains))) {
+        return false;
+    }
+    $alloweddomains = array_map('trim', explode("\n", $CFG->allowedemaildomains));
     // Email is in the list of allowed domains for sending email,
     // and the senders email setting is either displayed to everyone, or display to only other users that are enrolled
     // in a course with the sender.
@@ -6369,10 +6365,15 @@ function email_is_not_allowed($email) {
  *
  * @return file_storage
  */
-function get_file_storage() {
+function get_file_storage($reset = false) {
     global $CFG;
 
     static $fs = null;
+
+    if ($reset) {
+        $fs = null;
+        return;
+    }
 
     if ($fs) {
         return $fs;
@@ -6380,19 +6381,7 @@ function get_file_storage() {
 
     require_once("$CFG->libdir/filelib.php");
 
-    if (isset($CFG->filedir)) {
-        $filedir = $CFG->filedir;
-    } else {
-        $filedir = $CFG->dataroot.'/filedir';
-    }
-
-    if (isset($CFG->trashdir)) {
-        $trashdirdir = $CFG->trashdir;
-    } else {
-        $trashdirdir = $CFG->dataroot.'/trashdir';
-    }
-
-    $fs = new file_storage($filedir, $trashdirdir, "$CFG->tempdir/filestorage", $CFG->directorypermissions, $CFG->filepermissions);
+    $fs = new file_storage();
 
     return $fs;
 }
@@ -7485,13 +7474,19 @@ function get_plugin_list_with_function($plugintype, $function, $file = 'lib.php'
 function get_plugins_with_function($function, $file = 'lib.php', $include = true) {
     global $CFG;
 
+    if (during_initial_install() || isset($CFG->upgraderunning)) {
+        // API functions _must not_ be called during an installation or upgrade.
+        return [];
+    }
+
     $cache = \cache::make('core', 'plugin_functions');
 
     // Including both although I doubt that we will find two functions definitions with the same name.
     // Clearning the filename as cache_helper::hash_key only allows a-zA-Z0-9_.
     $key = $function . '_' . clean_param($file, PARAM_ALPHA);
+    $pluginfunctions = $cache->get($key);
 
-    if ($pluginfunctions = $cache->get($key)) {
+    if ($pluginfunctions !== false) {
 
         // Checking that the files are still available.
         foreach ($pluginfunctions as $plugintype => $plugins) {
@@ -8741,8 +8736,13 @@ function address_in_subnet($addr, $subnetstr) {
  *                      This ensures any messages have time to display before redirect
  */
 function mtrace($string, $eol="\n", $sleep=0) {
+    global $CFG;
 
-    if (defined('STDOUT') && !PHPUNIT_TEST && !defined('BEHAT_TEST')) {
+    if (isset($CFG->mtrace_wrapper) && function_exists($CFG->mtrace_wrapper)) {
+        $fn = $CFG->mtrace_wrapper;
+        $fn($string, $eol);
+        return;
+    } else if (defined('STDOUT') && !PHPUNIT_TEST && !defined('BEHAT_TEST')) {
         fwrite(STDOUT, $string.$eol);
     } else {
         echo $string . $eol;
@@ -9023,30 +9023,31 @@ function get_performance_info() {
         // Attempt to avoid devs debugging peformance issues, when its caused by css building and so on.
         $info['html'] .= '<p><strong>Warning: Theme designer mode is enabled.</strong></p>';
     }
-    $info['html'] .= '<ul class="list-unstyled m-l-1">';         // Holds userfriendly HTML representation.
+    $info['html'] .= '<ul class="list-unstyled m-l-1 row">';         // Holds userfriendly HTML representation.
 
     $info['realtime'] = microtime_diff($PERF->starttime, microtime());
 
-    $info['html'] .= '<li class="timeused">'.$info['realtime'].' secs</li> ';
+    $info['html'] .= '<li class="timeused col-sm-4">'.$info['realtime'].' secs</li> ';
     $info['txt'] .= 'time: '.$info['realtime'].'s ';
 
     if (function_exists('memory_get_usage')) {
         $info['memory_total'] = memory_get_usage();
         $info['memory_growth'] = memory_get_usage() - $PERF->startmemory;
-        $info['html'] .= '<li class="memoryused">RAM: '.display_size($info['memory_total']).'</li> ';
+        $info['html'] .= '<li class="memoryused col-sm-4">RAM: '.display_size($info['memory_total']).'</li> ';
         $info['txt']  .= 'memory_total: '.$info['memory_total'].'B (' . display_size($info['memory_total']).') memory_growth: '.
             $info['memory_growth'].'B ('.display_size($info['memory_growth']).') ';
     }
 
     if (function_exists('memory_get_peak_usage')) {
         $info['memory_peak'] = memory_get_peak_usage();
-        $info['html'] .= '<li class="memoryused">RAM peak: '.display_size($info['memory_peak']).'</li> ';
+        $info['html'] .= '<li class="memoryused col-sm-4">RAM peak: '.display_size($info['memory_peak']).'</li> ';
         $info['txt']  .= 'memory_peak: '.$info['memory_peak'].'B (' . display_size($info['memory_peak']).') ';
     }
 
+    $info['html'] .= '</ul><ul class="list-unstyled m-l-1 row">';
     $inc = get_included_files();
     $info['includecount'] = count($inc);
-    $info['html'] .= '<li class="included">Included '.$info['includecount'].' files</li> ';
+    $info['html'] .= '<li class="included col-sm-4">Included '.$info['includecount'].' files</li> ';
     $info['txt']  .= 'includecount: '.$info['includecount'].' ';
 
     if (!empty($CFG->early_install_lang) or empty($PAGE)) {
@@ -9059,7 +9060,7 @@ function get_performance_info() {
         list($filterinfo, $nicenames) = $filtermanager->get_performance_summary();
         $info = array_merge($filterinfo, $info);
         foreach ($filterinfo as $key => $value) {
-            $info['html'] .= "<li class='$key'>$nicenames[$key]: $value </li> ";
+            $info['html'] .= "<li class='$key col-sm-4'>$nicenames[$key]: $value </li> ";
             $info['txt'] .= "$key: $value ";
         }
     }
@@ -9069,23 +9070,23 @@ function get_performance_info() {
         list($filterinfo, $nicenames) = $stringmanager->get_performance_summary();
         $info = array_merge($filterinfo, $info);
         foreach ($filterinfo as $key => $value) {
-            $info['html'] .= "<li class='$key'>$nicenames[$key]: $value </li> ";
+            $info['html'] .= "<li class='$key col-sm-4'>$nicenames[$key]: $value </li> ";
             $info['txt'] .= "$key: $value ";
         }
     }
 
     if (!empty($PERF->logwrites)) {
         $info['logwrites'] = $PERF->logwrites;
-        $info['html'] .= '<li class="logwrites">Log DB writes '.$info['logwrites'].'</li> ';
+        $info['html'] .= '<li class="logwrites col-sm-4">Log DB writes '.$info['logwrites'].'</li> ';
         $info['txt'] .= 'logwrites: '.$info['logwrites'].' ';
     }
 
     $info['dbqueries'] = $DB->perf_get_reads().'/'.($DB->perf_get_writes() - $PERF->logwrites);
-    $info['html'] .= '<li class="dbqueries">DB reads/writes: '.$info['dbqueries'].'</li> ';
+    $info['html'] .= '<li class="dbqueries col-sm-4">DB reads/writes: '.$info['dbqueries'].'</li> ';
     $info['txt'] .= 'db reads/writes: '.$info['dbqueries'].' ';
 
     $info['dbtime'] = round($DB->perf_get_queries_time(), 5);
-    $info['html'] .= '<li class="dbtime">DB queries time: '.$info['dbtime'].' secs</li> ';
+    $info['html'] .= '<li class="dbtime col-sm-4">DB queries time: '.$info['dbtime'].' secs</li> ';
     $info['txt'] .= 'db queries time: ' . $info['dbtime'] . 's ';
 
     if (function_exists('posix_times')) {
@@ -9094,7 +9095,8 @@ function get_performance_info() {
             foreach ($ptimes as $key => $val) {
                 $info[$key] = $ptimes[$key] -  $PERF->startposixtimes[$key];
             }
-            $info['html'] .= "<li class=\"posixtimes\">ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</li> ";
+            $info['html'] .= "<li class=\"posixtimes col-sm-4\">ticks: $info[ticks] user: $info[utime]";
+            $info['html'] .= "sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</li> ";
             $info['txt'] .= "ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime] ";
         }
     }
@@ -9114,20 +9116,22 @@ function get_performance_info() {
     }
     if (!empty($serverload)) {
         $info['serverload'] = $serverload;
-        $info['html'] .= '<li class="serverload">Load average: '.$info['serverload'].'</li> ';
+        $info['html'] .= '<li class="serverload col-sm-4">Load average: '.$info['serverload'].'</li> ';
         $info['txt'] .= "serverload: {$info['serverload']} ";
     }
 
     // Display size of session if session started.
     if ($si = \core\session\manager::get_performance_info()) {
         $info['sessionsize'] = $si['size'];
-        $info['html'] .= $si['html'];
+        $info['html'] .= "<li class=\"serverload col-sm-4\">" . $si['html'] . "</li>";
         $info['txt'] .= $si['txt'];
     }
 
+    $info['html'] .= '</ul>';
     if ($stats = cache_helper::get_stats()) {
-        $html = '<ul class="cachesused list-unstyled m-l-1">';
-        $html .= '<li class="cache-stats-heading">Caches used (hits/misses/sets)</li>';
+        $html = '<ul class="cachesused list-unstyled m-l-1 row">';
+        $html .= '<li class="cache-stats-heading font-weight-bold">Caches used (hits/misses/sets)</li>';
+        $html .= '</ul><ul class="cachesused list-unstyled m-l-1">';
         $text = 'Caches used (hits/misses/sets): ';
         $hits = 0;
         $misses = 0;
@@ -9147,8 +9151,9 @@ function get_performance_info() {
                     $mode = ' <span title="request cache">[r]</span>';
                     break;
             }
-            $html .= '<ul class="cache-definition-stats list-unstyled m-l-1 cache-mode-'.$modeclass.'">';
-            $html .= '<li class="cache-definition-stats-heading p-t-1">'.$definition.$mode.'</li>';
+            $html .= '<ul class="cache-definition-stats list-unstyled m-l-1 cache-mode-'.$modeclass.' card d-inline-block">';
+            $html .= '<li class="cache-definition-stats-heading p-t-1 card-header bg-inverse font-weight-bold">' .
+                $definition . $mode.'</li>';
             $text .= "$definition {";
             foreach ($details['stores'] as $store => $data) {
                 $hits += $data['hits'];
@@ -9162,7 +9167,12 @@ function get_performance_info() {
                     $cachestoreclass = 'hihits text-success';
                 }
                 $text .= "$store($data[hits]/$data[misses]/$data[sets]) ";
-                $html .= "<li class=\"cache-store-stats $cachestoreclass\">$store: $data[hits] / $data[misses] / $data[sets]</li>";
+                $html .= "<li class=\"cache-store-stats $cachestoreclass p-x-1\">" .
+                    "$store: $data[hits] / $data[misses] / $data[sets]</li>";
+                // This makes boxes of same sizes.
+                if (count($details['stores']) == 1) {
+                    $html .= "<li class=\"cache-store-stats $cachestoreclass p-x-1\">&nbsp;</li>";
+                }
             }
             $html .= '</ul>';
             $text .= '} ';
@@ -9178,7 +9188,7 @@ function get_performance_info() {
         $info['txt'] .= 'Caches used (hits/misses/sets): 0/0/0 ';
     }
 
-    $info['html'] = '<div class="performanceinfo siteinfo">'.$info['html'].'</div>';
+    $info['html'] = '<div class="performanceinfo siteinfo container-fluid">'.$info['html'].'</div>';
     return $info;
 }
 

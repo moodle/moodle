@@ -2154,12 +2154,17 @@ class restore_enrolments_structure_step extends restore_structure_step {
 
     protected function define_structure() {
 
-        $enrol = new restore_path_element('enrol', '/enrolments/enrols/enrol');
-        $enrolment = new restore_path_element('enrolment', '/enrolments/enrols/enrol/user_enrolments/enrolment');
+        $userinfo = $this->get_setting_value('users');
+
+        $paths = [];
+        $paths[] = $enrol = new restore_path_element('enrol', '/enrolments/enrols/enrol');
+        if ($userinfo) {
+            $paths[] = new restore_path_element('enrolment', '/enrolments/enrols/enrol/user_enrolments/enrolment');
+        }
         // Attach local plugin stucture to enrol element.
         $this->add_plugin_structure('enrol', $enrol);
 
-        return array($enrol, $enrolment);
+        return $paths;
     }
 
     /**
@@ -2203,7 +2208,14 @@ class restore_enrolments_structure_step extends restore_structure_step {
         $data->roleid   = $this->get_mappingid('role', $data->roleid);
         $data->courseid = $courserec->id;
 
-        if ($this->get_setting_value('enrol_migratetomanual')) {
+        if (!$this->get_setting_value('users') && $this->get_setting_value('enrolments') == backup::ENROL_WITHUSERS) {
+            $converttomanual = true;
+        } else {
+            $converttomanual = ($this->get_setting_value('enrolments') == backup::ENROL_NEVER);
+        }
+
+        if ($converttomanual) {
+            // Restore enrolments as manual enrolments.
             unset($data->sortorder); // Remove useless sortorder from <2.4 backups.
             if (!enrol_is_enabled('manual')) {
                 $this->set_mapping('enrol', $oldid, 0);
@@ -2224,7 +2236,7 @@ class restore_enrolments_structure_step extends restore_structure_step {
         } else {
             if (!enrol_is_enabled($data->enrol) or !isset($this->plugins[$data->enrol])) {
                 $this->set_mapping('enrol', $oldid, 0);
-                $message = "Enrol plugin '$data->enrol' data can not be restored because it is not enabled, use migration to manual enrolments";
+                $message = "Enrol plugin '$data->enrol' data can not be restored because it is not enabled, consider restoring without enrolment methods";
                 $this->log($message, backup::LOG_WARNING);
                 return;
             }
@@ -2670,7 +2682,7 @@ class restore_calendarevents_structure_step extends restore_structure_step {
                 'courseid'       => $this->get_courseid(),
                 'groupid'        => $data->groupid,
                 'userid'         => $data->userid,
-                'repeatid'       => $data->repeatid,
+                'repeatid'       => $this->get_mappingid('event', $data->repeatid),
                 'modulename'     => $data->modulename,
                 'eventtype'      => $data->eventtype,
                 'timestart'      => $this->apply_date_offset($data->timestart),
@@ -2688,17 +2700,26 @@ class restore_calendarevents_structure_step extends restore_structure_step {
                   FROM {event}
                  WHERE " . $DB->sql_compare_text('name', 255) . " = " . $DB->sql_compare_text('?', 255) . "
                    AND courseid = ?
-                   AND repeatid = ?
                    AND modulename = ?
                    AND timestart = ?
                    AND timeduration = ?
                    AND " . $DB->sql_compare_text('description', 255) . " = " . $DB->sql_compare_text('?', 255);
-        $arg = array ($params['name'], $params['courseid'], $params['repeatid'], $params['modulename'], $params['timestart'], $params['timeduration'], $params['description']);
+        $arg = array ($params['name'], $params['courseid'], $params['modulename'], $params['timestart'], $params['timeduration'], $params['description']);
         $result = $DB->record_exists_sql($sql, $arg);
         if (empty($result)) {
             $newitemid = $DB->insert_record('event', $params);
             $this->set_mapping('event', $oldid, $newitemid);
             $this->set_mapping('event_description', $oldid, $newitemid, $restorefiles);
+        }
+        // With repeating events, each event has the repeatid pointed at the first occurrence.
+        // Since the repeatid will be empty when the first occurrence is restored,
+        // Get the repeatid from the second occurrence of the repeating event and use that to update the first occurrence.
+        // Then keep a list of repeatids so we only perform this update once.
+        static $repeatids = array();
+        if (!empty($params['repeatid']) && !in_array($params['repeatid'], $repeatids)) {
+            // This entry is repeated so the repeatid field must be set.
+            $DB->set_field('event', 'repeatid', $params['repeatid'], array('id' => $params['repeatid']));
+            $repeatids[] = $params['repeatid'];
         }
 
     }

@@ -24,8 +24,13 @@
 
 $string['clientid'] = 'Client ID';
 $string['configplugin'] = 'Configure Google Drive plugin';
+$string['docsformat'] = 'Default document import format';
+$string['drawingformat'] = 'Default drawing import format';
 $string['googledocs:view'] = 'View Google Drive repository';
+$string['importformat'] = 'Configure the default import formats from google';
 $string['oauthinfo'] = '<p>To use this plugin, you must register your site with Google, as described in the documentation <a href="{$a->docsurl}">Google OAuth 2.0 setup</a>.</p><p>As part of the registration process, you will need to enter the following URL as \'Authorized Redirect URIs\':</p><p>{$a->callbackurl}</p><p>Once registered, you will be provided with a client ID and secret which can be used to configure all Google Drive and Picasa plugins.</p><p>Please also note that you will have to enable the service \'Drive API\'.</p>';
 $string['pluginname'] = 'Google Drive';
+$string['presentationformat'] = 'Default presentation import format';
 $string['secret'] = 'Secret';
 $string['servicenotenabled'] = 'Access not configured. Make sure the service \'Drive API\' is enabled.';
+$string['spreadsheetformat'] = 'Default spreadsheet import format';

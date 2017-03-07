@@ -33,7 +33,6 @@
         "instructions": "For full access to this site, you first need to create an account.",
         "loginurl": "http://example.com/stable_master/login/index.php",
         "rememberusername": true,
-        "passwordautocomplete": false,
         "signupurl": "http://localhost/stable_master/login/signup.php",
         "cookieshelpiconformatted": "",
         "username": ""
@@ -62,7 +61,7 @@
                     {{{errorformatted}}}
                 </div>
             {{/error}}
-            <form action="{{loginurl}}" method="post" id="login" {{^passwordautocomplete}}autocomplete="off"{{/passwordautocomplete}}>
+            <form action="{{loginurl}}" method="post" id="login">
                 <div class="loginform">
                     <div class="form-label">
                         <label for="username">
@@ -82,7 +81,7 @@
                         <label for="password">{{#str}} password {{/str}}</label>
                     </div>
                     <div class="form-input">
-                        <input type="password" name="password" id="password" size="15" value="" {{^passwordautocomplete}}autocomplete="off"{{/passwordautocomplete}}>
+                        <input type="password" name="password" id="password" size="15" value="">
                     </div>
                 </div>
 

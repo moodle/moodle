@@ -73,7 +73,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($sender2, $recipient);
 
         \core_message\api::mark_all_read_for_user($recipient->id, $sender1->id);
-        $this->assertEquals(message_count_unread_messages($recipient), 6);
+        $this->assertEquals(message_count_unread_messages($recipient), 3);
     }
 
     public function test_mark_all_read_for_user_touser_with_type() {
@@ -338,16 +338,16 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
         $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
         $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        $messageid1 = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
         $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
         $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
         $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
-        $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+        $messageid2 = $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
 
         $this->send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?', 0, $time + 9);
         $this->send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.', 0, $time + 10);
-        $this->send_fake_message($user1, $user4, 'Dope.', 0, $time + 11);
+        $messageid3 = $this->send_fake_message($user1, $user4, 'Dope.', 0, $time + 11);
 
         // Retrieve the conversations.
         $conversations = \core_message\api::get_conversations($user1->id);
@@ -363,17 +363,17 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($user1->id, $message1->useridfrom);
         $this->assertTrue($message1->ismessaging);
         $this->assertEquals('Dope.', $message1->lastmessage);
-        $this->assertNull($message1->messageid);
+        $this->assertEquals($messageid3, $message1->messageid);
         $this->assertNull($message1->isonline);
-        $this->assertTrue($message1->isread);
+        $this->assertFalse($message1->isread);
         $this->assertFalse($message1->isblocked);
-        $this->assertEquals(0, $message1->unreadcount);
+        $this->assertEquals(1, $message1->unreadcount);
 
         $this->assertEquals($user3->id, $message2->userid);
         $this->assertEquals($user3->id, $message2->useridfrom);
         $this->assertTrue($message2->ismessaging);
         $this->assertEquals('Cool.', $message2->lastmessage);
-        $this->assertNull($message2->messageid);
+        $this->assertEquals($messageid2, $message2->messageid);
         $this->assertNull($message2->isonline);
         $this->assertFalse($message2->isread);
         $this->assertFalse($message2->isblocked);
@@ -383,11 +383,525 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($user2->id, $message3->useridfrom);
         $this->assertTrue($message3->ismessaging);
         $this->assertEquals('Word.', $message3->lastmessage);
-        $this->assertNull($message3->messageid);
+        $this->assertEquals($messageid1, $message3->messageid);
         $this->assertNull($message3->isonline);
         $this->assertFalse($message3->isread);
         $this->assertFalse($message3->isblocked);
         $this->assertEquals(2, $message3->unreadcount);
+    }
+
+    /**
+     * Tests retrieving conversations with a limit and offset to ensure pagination works correctly.
+     */
+    public function test_get_conversations_limit_offset() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // The person doing the search.
+        $this->setUser($user1);
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $messageid1 = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        $messageid2 = $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+
+        $this->send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?', 0, $time + 9);
+        $this->send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.', 0, $time + 10);
+        $messageid3 = $this->send_fake_message($user1, $user4, 'Dope.', 0, $time + 11);
+
+        // Retrieve the conversations.
+        $conversations = \core_message\api::get_conversations($user1->id, 1, 1);
+
+        // We should only have one conversation because of the limit.
+        $this->assertCount(1, $conversations);
+
+        $conversation = array_shift($conversations);
+
+        $this->assertEquals($user3->id, $conversation->userid);
+        $this->assertEquals($user3->id, $conversation->useridfrom);
+        $this->assertTrue($conversation->ismessaging);
+        $this->assertEquals('Cool.', $conversation->lastmessage);
+        $this->assertEquals($messageid2, $conversation->messageid);
+        $this->assertNull($conversation->isonline);
+        $this->assertFalse($conversation->isread);
+        $this->assertFalse($conversation->isblocked);
+        $this->assertEquals(2, $conversation->unreadcount);
+
+        // Retrieve the next conversation.
+        $conversations = \core_message\api::get_conversations($user1->id, 2, 1);
+
+        // We should only have one conversation because of the limit.
+        $this->assertCount(1, $conversations);
+
+        $conversation = array_shift($conversations);
+
+        $this->assertEquals($user2->id, $conversation->userid);
+        $this->assertEquals($user2->id, $conversation->useridfrom);
+        $this->assertTrue($conversation->ismessaging);
+        $this->assertEquals('Word.', $conversation->lastmessage);
+        $this->assertEquals($messageid1, $conversation->messageid);
+        $this->assertNull($conversation->isonline);
+        $this->assertFalse($conversation->isread);
+        $this->assertFalse($conversation->isblocked);
+        $this->assertEquals(2, $conversation->unreadcount);
+
+        // Ask for an offset that doesn't exist.
+        $conversations = \core_message\api::get_conversations($user1->id, 4, 1);
+
+        // We should not get any conversations back.
+        $this->assertCount(0, $conversations);
+    }
+
+    /**
+     * Tests retrieving conversations when a conversation contains a deleted user.
+     */
+    public function test_get_conversations_with_deleted_user() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+
+        // Delete the second user.
+        delete_user($user2);
+
+        // Retrieve the conversations.
+        $conversations = \core_message\api::get_conversations($user1->id);
+
+        // We should only have one conversation because the other user was deleted.
+        $this->assertCount(1, $conversations);
+
+        // Confirm the conversation is from the non-deleted user.
+        $conversation = reset($conversations);
+        $this->assertEquals($user3->id, $conversation->userid);
+    }
+
+   /**
+    * The data provider for get_conversations_mixed.
+    *
+    * This provides sets of data to for testing.
+    * @return array
+    */
+   public function get_conversations_mixed_provider() {
+       return array(
+            'Test that conversations with messages contacts is correctly ordered.' => array(
+                'users' => array(
+                    'user1',
+                    'user2',
+                    'user3',
+                ),
+                'contacts' => array(
+                ),
+                'messages' => array(
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S1',
+                    ),
+                    array(
+                        'from'          => 'user2',
+                        'to'            => 'user1',
+                        'state'         => 'unread',
+                        'subject'       => 'S2',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'timecreated'   => 0,
+                        'subject'       => 'S3',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user3',
+                        'state'         => 'read',
+                        'timemodifier'  => 1,
+                        'subject'       => 'S4',
+                    ),
+                    array(
+                        'from'          => 'user3',
+                        'to'            => 'user1',
+                        'state'         => 'read',
+                        'timemodifier'  => 1,
+                        'subject'       => 'S5',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user3',
+                        'state'         => 'read',
+                        'timecreated'   => 0,
+                        'subject'       => 'S6',
+                    ),
+                ),
+                'expectations' => array(
+                    'user1' => array(
+                        // User1 has conversed most recently with user3. The most recent message is M5.
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user3',
+                            'subject'           => 'S5',
+                            'unreadcount'       => 0,
+                        ),
+                        // User1 has also conversed with user2. The most recent message is S2.
+                        array(
+                            'messageposition'   => 1,
+                            'with'              => 'user2',
+                            'subject'           => 'S2',
+                            'unreadcount'       => 1,
+                        ),
+                    ),
+                    'user2' => array(
+                        // User2 has only conversed with user1. Their most recent shared message was S2.
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S2',
+                            'unreadcount'       => 2,
+                        ),
+                    ),
+                    'user3' => array(
+                        // User3 has only conversed with user1. Their most recent shared message was S5.
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S5',
+                            'unreadcount'       => 0,
+                        ),
+                    ),
+                ),
+            ),
+            'Test that users with contacts and messages to self work as expected' => array(
+                'users' => array(
+                    'user1',
+                    'user2',
+                    'user3',
+                ),
+                'contacts' => array(
+                    'user1' => array(
+                        'user2' => 0,
+                        'user3' => 0,
+                    ),
+                    'user2' => array(
+                        'user3' => 0,
+                    ),
+                ),
+                'messages' => array(
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user1',
+                        'state'         => 'unread',
+                        'subject'       => 'S1',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user1',
+                        'state'         => 'unread',
+                        'subject'       => 'S2',
+                    ),
+                ),
+                'expectations' => array(
+                    'user1' => array(
+                        // User1 has conversed most recently with user1. The most recent message is S2.
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S2',
+                            'unreadcount'       => 2,
+                        ),
+                    ),
+                ),
+            ),
+            'Test conversations with a single user, where some messages are read and some are not.' => array(
+                'users' => array(
+                    'user1',
+                    'user2',
+                ),
+                'contacts' => array(
+                ),
+                'messages' => array(
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'read',
+                        'subject'       => 'S1',
+                    ),
+                    array(
+                        'from'          => 'user2',
+                        'to'            => 'user1',
+                        'state'         => 'read',
+                        'subject'       => 'S2',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'timemodifier'  => 1,
+                        'subject'       => 'S3',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'timemodifier'  => 1,
+                        'subject'       => 'S4',
+                    ),
+                ),
+                'expectations' => array(
+                    // The most recent message between user1 and user2 was S4.
+                    'user1' => array(
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user2',
+                            'subject'           => 'S4',
+                            'unreadcount'       => 0,
+                        ),
+                    ),
+                    'user2' => array(
+                        // The most recent message between user1 and user2 was S4.
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S4',
+                            'unreadcount'       => 2,
+                        ),
+                    ),
+                ),
+            ),
+            'Test conversations with a single user, where some messages are read and some are not, and messages ' .
+            'are out of order' => array(
+            // This can happen through a combination of factors including multi-master DB replication with messages
+            // read somehow (e.g. API).
+                'users' => array(
+                    'user1',
+                    'user2',
+                ),
+                'contacts' => array(
+                ),
+                'messages' => array(
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'read',
+                        'subject'       => 'S1',
+                        'timemodifier'  => 1,
+                    ),
+                    array(
+                        'from'          => 'user2',
+                        'to'            => 'user1',
+                        'state'         => 'read',
+                        'subject'       => 'S2',
+                        'timemodifier'  => 2,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S3',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S4',
+                    ),
+                ),
+                'expectations' => array(
+                    // The most recent message between user1 and user2 was S2, even though later IDs have not been read.
+                    'user1' => array(
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user2',
+                            'subject'           => 'S2',
+                            'unreadcount'       => 0,
+                        ),
+                    ),
+                    'user2' => array(
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S2',
+                            'unreadcount'       => 2
+                        ),
+                    ),
+                ),
+            ),
+            'Test unread message count is correct for both users' => array(
+                'users' => array(
+                    'user1',
+                    'user2',
+                ),
+                'contacts' => array(
+                ),
+                'messages' => array(
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'read',
+                        'subject'       => 'S1',
+                        'timemodifier'  => 1,
+                    ),
+                    array(
+                        'from'          => 'user2',
+                        'to'            => 'user1',
+                        'state'         => 'read',
+                        'subject'       => 'S2',
+                        'timemodifier'  => 2,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'read',
+                        'subject'       => 'S3',
+                        'timemodifier'  => 3,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'read',
+                        'subject'       => 'S4',
+                        'timemodifier'  => 4,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S5',
+                        'timemodifier'  => 5,
+                    ),
+                    array(
+                        'from'          => 'user2',
+                        'to'            => 'user1',
+                        'state'         => 'unread',
+                        'subject'       => 'S6',
+                        'timemodifier'  => 6,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S7',
+                        'timemodifier'  => 7,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S8',
+                        'timemodifier'  => 8,
+                    ),
+                ),
+                'expectations' => array(
+                    // The most recent message between user1 and user2 was S2, even though later IDs have not been read.
+                    'user1' => array(
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user2',
+                            'subject'           => 'S8',
+                            'unreadcount'       => 1,
+                        ),
+                    ),
+                    'user2' => array(
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S8',
+                            'unreadcount'       => 3,
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Test get_conversations with a mixture of messages.
+     *
+     * @dataProvider get_conversations_mixed_provider
+     * @param array $usersdata The list of users to create for this test.
+     * @param array $messagesdata The list of messages to create.
+     * @param array $expectations The list of expected outcomes.
+     */
+    public function test_get_conversations_mixed($usersdata, $contacts, $messagesdata, $expectations) {
+        global $DB;
+
+        // Create all of the users.
+        $users = array();
+        foreach ($usersdata as $username) {
+            $users[$username] = $this->getDataGenerator()->create_user(array('username' => $username));
+        }
+
+        foreach ($contacts as $username => $contact) {
+            foreach ($contact as $contactname => $blocked) {
+                $record = new stdClass();
+                $record->userid     = $users[$username]->id;
+                $record->contactid  = $users[$contactname]->id;
+                $record->blocked    = $blocked;
+                $record->id = $DB->insert_record('message_contacts', $record);
+            }
+        }
+
+        $defaulttimecreated = time();
+        foreach ($messagesdata as $messagedata) {
+            $from       = $users[$messagedata['from']];
+            $to         = $users[$messagedata['to']];
+            $subject    = $messagedata['subject'];
+
+            if (isset($messagedata['state']) && $messagedata['state'] == 'unread') {
+                $table = 'message';
+                $messageid = $this->send_fake_message($from, $to, $subject);
+            } else {
+                // If there is no state, or the state is not 'unread', assume the message is read.
+                $table = 'message_read';
+                $messageid = message_post_message($from, $to, $subject, FORMAT_PLAIN);
+            }
+
+            $updatemessage = new stdClass();
+            $updatemessage->id = $messageid;
+            if (isset($messagedata['timecreated'])) {
+                $updatemessage->timecreated = $messagedata['timecreated'];
+            } else if (isset($messagedata['timemodifier'])) {
+                $updatemessage->timecreated = $defaulttimecreated + $messagedata['timemodifier'];
+            } else {
+                $updatemessage->timecreated = $defaulttimecreated;
+            }
+
+            $DB->update_record($table, $updatemessage);
+        }
+
+        foreach ($expectations as $username => $data) {
+            // Get the recent conversations for the specified user.
+            $user = $users[$username];
+            $conversations = array_values(\core_message\api::get_conversations($user->id));
+            foreach ($data as $expectation) {
+                $otheruser = $users[$expectation['with']];
+                $conversation = $conversations[$expectation['messageposition']];
+                $this->assertEquals($otheruser->id, $conversation->userid);
+                $this->assertEquals($expectation['subject'], $conversation->lastmessage);
+                $this->assertEquals($expectation['unreadcount'], $conversation->unreadcount);
+            }
+        }
     }
 
     /**

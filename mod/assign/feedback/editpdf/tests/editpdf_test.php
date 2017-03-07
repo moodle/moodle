@@ -45,7 +45,8 @@ class assignfeedback_editpdf_testcase extends mod_assign_base_testcase {
 
     protected function setUp() {
         // Skip this test if ghostscript is not supported.
-        if (!pdf::test_gs_path(false)) {
+        $result = pdf::test_gs_path(false);
+        if ($result->status !== assignfeedback_editpdf\pdf::GSPATH_OK) {
             $this->markTestSkipped('Ghostscript not setup');
             return;
         }
@@ -215,6 +216,33 @@ class assignfeedback_editpdf_testcase extends mod_assign_base_testcase {
         $this->setUser($this->teachers[0]);
 
         $grade = $assign->get_user_grade($this->students[0]->id, true);
+
+        $contextid = $assign->get_context()->id;
+        $component = 'assignfeedback_editpdf';
+        $filearea = document_services::COMBINED_PDF_FILEAREA;
+        $itemid = $grade->id;
+        $filepath = '/';
+        $filename = document_services::COMBINED_PDF_FILENAME;
+        $fs = \get_file_storage();
+
+        // Generate a blank combined pdf.
+        $record = new \stdClass();
+        $record->contextid = $contextid;
+        $record->component = $component;
+        $record->filearea = $filearea;
+        $record->itemid = $itemid;
+        $record->filepath = $filepath;
+        $record->filename = $filename;
+        $fs->create_file_from_string($record, base64_decode(document_services::BLANK_PDF_BASE64));
+
+        // Verify that the blank combined pdf has the expected hash.
+        $combinedpdf = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename);
+        $this->assertEquals($combinedpdf->get_contenthash(), document_services::BLANK_PDF_HASH);
+
+        // Generate page images and verify that the combined pdf has been replaced.
+        document_services::get_page_images_for_attempt($assign, $this->students[0]->id, -1);
+        $combinedpdf = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename);
+        $this->assertNotEquals($combinedpdf->get_contenthash(), document_services::BLANK_PDF_HASH);
 
         $notempty = page_editor::has_annotations_or_comments($grade->id, false);
         $this->assertFalse($notempty);
