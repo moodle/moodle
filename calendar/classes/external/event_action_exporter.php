@@ -26,8 +26,10 @@ namespace core_calendar\external;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core\external\exporter;
-use \core_calendar\local\interfaces\action_interface;
+use core\external\exporter;
+use core_calendar\local\event\core_container;
+use core_calendar\local\interfaces\action_interface;
+use renderer_base;
 
 /**
  * Class for displaying a calendar event's action.
@@ -68,6 +70,41 @@ class event_action_exporter extends exporter {
     }
 
     /**
+     * Return the list of additional properties.
+     *
+     * @return array
+     */
+    protected static function define_other_properties() {
+        return [
+            'showitemcount' => ['type' => PARAM_BOOL, 'default' => false]
+        ];
+    }
+
+    /**
+     * Get the additional values to inject while exporting.
+     *
+     * @param renderer_base $output The renderer.
+     * @return array Keys are the property names, values are their values.
+     */
+    protected function get_other_values(renderer_base $output) {
+        $event = $this->related['event'];
+
+        $modulename = $event->get_course_module()->get('modname');
+        $component = 'mod_' . $modulename;
+        $showitemcountcallback = 'core_calendar_event_action_shows_item_count';
+        $mapper = core_container::get_event_mapper();
+        $calevent = $mapper->from_event_to_legacy_event($event);
+        $params = [$calevent, $this->data->itemcount];
+        $showitemcount = component_callback($component, $showitemcountcallback, $params, false);
+
+        // Prepare other values data.
+        $data = [
+            'showitemcount' => $showitemcount
+        ];
+        return $data;
+    }
+
+    /**
      * Returns a list of objects that are related.
      *
      * @return array
@@ -75,6 +112,7 @@ class event_action_exporter extends exporter {
     protected static function define_related() {
         return [
             'context' => 'context',
+            'event' => '\\core_calendar\\local\\interfaces\\event_interface'
         ];
     }
 }
