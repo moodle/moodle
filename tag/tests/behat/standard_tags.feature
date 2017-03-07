@@ -89,8 +89,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
   @javascript
   Scenario: Changing standard tags property of tag area
     When I log in as "manager1"
-    And I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I open my profile in edit mode
     And I expand all fieldsets
     And I should not see "Manage standard tags"
     And I set the following fields to these values:

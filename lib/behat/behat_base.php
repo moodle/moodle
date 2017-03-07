@@ -886,4 +886,22 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         // Look for exceptions.
         $this->look_for_exceptions();
     }
+
+    /**
+     * Get the actual user in the behat session (note $USER does not correspond to the behat session's user).
+     * @return mixed
+     * @throws coding_exception
+     */
+    protected function get_session_user() {
+        global $DB;
+        $sid = $this->getSession()->getCookie('MoodleSession');
+        if (empty($sid)) {
+            throw new coding_exception('failed to get moodle session');
+        }
+        $userid = $DB->get_field('sessions', 'userid', ['sid' => $sid]);
+        if (empty($userid)) {
+            throw new coding_exception('failed to get user from seession id '.$sid);
+        }
+        return $DB->get_record('user', ['id' => $userid]);
+    }
 }

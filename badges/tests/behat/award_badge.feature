@@ -31,8 +31,7 @@ Feature: Award badges
     And I press "Enable access"
     And I press "Continue"
     And I click on "Admin User" "link"
-    And I follow "Profile" in the open menu
-    And I follow "Edit profile"
+    And I open my profile in edit mode
     And I expand all fieldsets
     And I set the field "Phone" to "123456789"
     And I press "Update profile"

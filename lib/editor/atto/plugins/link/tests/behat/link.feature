@@ -8,8 +8,7 @@ Feature: Add links to Atto
     And I follow "Manage private files..."
     And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
     And I click on "Save changes" "button"
-    When I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    When I open my profile in edit mode
     And I set the field "Description" to "Super cool"
     And I select the text in the "Description" Atto editor
     And I click on "Link" "button"
