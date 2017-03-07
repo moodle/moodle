@@ -425,7 +425,6 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
             } else {
                 $popupdata = calendar_get_popup(false, $daytime, $popupcontent);
             }
-            $cellattributes = array_merge($cellattributes, $popupdata);
 
             // Class and cell content
             if(isset($typesbyday[$day]['startglobal'])) {
@@ -440,7 +439,14 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
             if ($finishclass) {
                 $class .= ' duration_finish';
             }
-            $cell = html_writer::link($dayhref, $day);
+
+            $data = array(
+                'url' => $dayhref,
+                'day' => $day,
+                'content' => $popupdata['data-core_calendar-popupcontent'],
+                'title' => $popupdata['data-core_calendar-title']
+            );
+            $cell = $OUTPUT->render_from_template('core_calendar/minicalendar_day_link', $data);
         } else {
             $cell = $day;
         }
@@ -482,8 +488,13 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
             if (!isset($eventsbyday[$day]) && !isset($durationbyday[$day])) {
                 $class .= ' eventnone';
                 $popupdata = calendar_get_popup(true, false);
-                $cellattributes = array_merge($cellattributes, $popupdata);
-                $cell = html_writer::link('#', $day);
+                $data = array(
+                    'url' => '#',
+                    'day' => $day,
+                    'content' => $popupdata['data-core_calendar-popupcontent'],
+                    'title' => $popupdata['data-core_calendar-title']
+                );
+                $cell = $OUTPUT->render_from_template('core_calendar/minicalendar_day_link', $data);
             }
             $cell = get_accesshide($today . ' ') . $cell;
         }
@@ -500,12 +511,6 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
     $content .= '</tr>'; // Last row ends
 
     $content .= '</table>'; // Tabular display of days ends
-
-    static $jsincluded = false;
-    if (!$jsincluded) {
-        $PAGE->requires->yui_module('moodle-calendar-info', 'Y.M.core_calendar.info.init');
-        $jsincluded = true;
-    }
     return $content;
 }
 
