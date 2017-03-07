@@ -46,4 +46,4 @@ $string['pluginname'] = 'Moodle Mobile tools';
 $string['smartappbanners'] = 'Smart App Banners (iOS only)';
 $string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';
 $string['typeoflogin'] = 'Type of login';
-$string['typeoflogin_desc'] = 'Choose the type of login.';
+$string['typeoflogin_desc'] = 'If the site uses a SSO authentication method, then select via a browser window or via an embedded browser. An embedded browser provides a better user experience, though it doesn\'t work with all SSO plugins. If using SSO, autologinguests should be disabled.';
