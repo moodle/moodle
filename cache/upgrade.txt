@@ -1,6 +1,14 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
+=== 3.3 ===
+* Identifiers and invalidation events have been explictly been marked as incompatible and will
+  throw a coding exception. Unexpected results would have occurred if the previous behaviour was attempted.
+* Identifiers are now part of loaded caches, so identifiers can only be set at cache::make()
+  a coding_exception will be thrown if attempts are made at other times.
+  Multiple calls to cache::make with different identifiers will produce 2 caches instead of changing the
+  keyspace of a single cache.
+
 === 3.2 ===
 * The following methods have been finally deprecated and should no longer be used.
   - cache_definition::should_be_persistent()

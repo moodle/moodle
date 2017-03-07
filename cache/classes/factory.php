@@ -191,15 +191,18 @@ class cache_factory {
      * @return cache_application|cache_session|cache_request
      */
     public function create_cache_from_definition($component, $area, array $identifiers = array(), $unused = null) {
-        $definitionname = $component.'/'.$area;
+        $identifierstring = empty($identifiers) ? '' : '/'.http_build_query($identifiers);
+        $definitionname = $component.'/'.$area.$identifierstring;
         if (isset($this->cachesfromdefinitions[$definitionname])) {
             $cache = $this->cachesfromdefinitions[$definitionname];
-            $cache->set_identifiers($identifiers);
             return $cache;
         }
         $definition = $this->create_definition($component, $area);
-        $definition->set_identifiers($identifiers);
-        $cache = $this->create_cache($definition);
+        // Identifiers are cached as part of the cache creation, so we store a cloned version of the cache.
+        $cacheddefinition = clone($definition);
+        $cacheddefinition->set_identifiers($identifiers);
+        $cache = $this->create_cache($cacheddefinition);
+
         // Loaders are always held onto to speed up subsequent requests.
         $this->cachesfromdefinitions[$definitionname] = $cache;
         return $cache;
@@ -222,10 +225,14 @@ class cache_factory {
      * @return cache_application|cache_session|cache_request
      */
     public function create_cache_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {
-        $key = "{$mode}_{$component}_{$area}";
-        if (array_key_exists($key, $this->cachesfromparams)) {
+        $identifierstring = empty($identifiers) ? '' : '_'.http_build_query($identifiers);
+        $key = "{$mode}_{$component}_{$area}{$identifierstring}";
+        if (isset($this->cachesfromparams[$key])) {
             return $this->cachesfromparams[$key];
         }
+        // Regular cache definitions are cached inside create_definition().  This is not the case for Adhoc definitions
+        // using load_adhoc().  They are built as a new object on each call.
+        // We do not need to clone the definition because we know it's new.
         $definition = cache_definition::load_adhoc($mode, $component, $area, $options);
         $definition->set_identifiers($identifiers);
         $cache = $this->create_cache($definition);
