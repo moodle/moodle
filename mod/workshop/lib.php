@@ -30,6 +30,11 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/calendar/lib.php');
 
+define('WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN',   'opensubmission');
+define('WORKSHOP_EVENT_TYPE_SUBMISSION_CLOSE',  'closesubmission');
+define('WORKSHOP_EVENT_TYPE_ASSESSMENT_OPEN',   'openassessment');
+define('WORKSHOP_EVENT_TYPE_ASSESSMENT_CLOSE',  'closeassessment');
+
 ////////////////////////////////////////////////////////////////////////////////
 // Moodle core API                                                            //
 ////////////////////////////////////////////////////////////////////////////////
@@ -1698,7 +1703,6 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
     $base->groupid      = 0;
     $base->userid       = 0;
     $base->modulename   = 'workshop';
-    $base->eventtype    = 'pluginname';
     $base->instance     = $workshop->id;
     $base->visible      = instance_is_visible('workshop', $workshop);
     $base->timeduration = 0;
@@ -1706,7 +1710,10 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
     if ($workshop->submissionstart) {
         $event = clone($base);
         $event->name = get_string('submissionstartevent', 'mod_workshop', $workshop->name);
+        $event->eventtype = WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN;
+        $event->type = empty($workshop->submissionend) ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
         $event->timestart = $workshop->submissionstart;
+        $event->timesort  = $workshop->submissionstart;
         if ($reusedevent = array_shift($currentevents)) {
             $event->id = $reusedevent->id;
         } else {
@@ -1721,7 +1728,10 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
     if ($workshop->submissionend) {
         $event = clone($base);
         $event->name = get_string('submissionendevent', 'mod_workshop', $workshop->name);
+        $event->eventtype = WORKSHOP_EVENT_TYPE_SUBMISSION_CLOSE;
+        $event->type      = CALENDAR_EVENT_TYPE_ACTION;
         $event->timestart = $workshop->submissionend;
+        $event->timesort  = $workshop->submissionend;
         if ($reusedevent = array_shift($currentevents)) {
             $event->id = $reusedevent->id;
         } else {
@@ -1736,7 +1746,10 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
     if ($workshop->assessmentstart) {
         $event = clone($base);
         $event->name = get_string('assessmentstartevent', 'mod_workshop', $workshop->name);
+        $event->eventtype = WORKSHOP_EVENT_TYPE_ASSESSMENT_OPEN;
+        $event->type      = empty($workshop->assessmentend) ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
         $event->timestart = $workshop->assessmentstart;
+        $event->timesort  = $workshop->assessmentstart;
         if ($reusedevent = array_shift($currentevents)) {
             $event->id = $reusedevent->id;
         } else {
@@ -1751,7 +1764,10 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
     if ($workshop->assessmentend) {
         $event = clone($base);
         $event->name = get_string('assessmentendevent', 'mod_workshop', $workshop->name);
+        $event->eventtype = WORKSHOP_EVENT_TYPE_ASSESSMENT_CLOSE;
+        $event->type      = CALENDAR_EVENT_TYPE_ACTION;
         $event->timestart = $workshop->assessmentend;
+        $event->timesort  = $workshop->assessmentend;
         if ($reusedevent = array_shift($currentevents)) {
             $event->id = $reusedevent->id;
         } else {
@@ -1768,6 +1784,38 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
         $oldevent = \core_calendar\event::load($oldevent);
         $oldevent->delete();
     }
+}
+
+/**
+ * Is the event visible?
+ *
+ * @param \core_calendar\event $event
+ * @return bool Returns true if the event is visible to the current user, false otherwise.
+ */
+function mod_workshop_core_calendar_is_event_visible(\core_calendar\event $event) {
+    $cm = get_fast_modinfo($event->courseid)->instances['workshop'][$event->instance];
+    $context = context_module::instance($cm->id);
+    return has_capability('mod/workshop:view', $context);
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_workshop_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                         \core_calendar\action_factory $factory) {
+
+    $cm = get_fast_modinfo($event->courseid)->instances['workshop'][$event->instance];
+
+    return $factory->create_instance(
+        get_string('viewworkshopsummary', 'workshop'),
+        new \moodle_url('/mod/workshop/view.php', array('id' => $cm->id)),
+        1,
+        true
+    );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

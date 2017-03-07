@@ -334,6 +334,7 @@ $string['userplanaccessibilitytitle'] = 'Workshop timeline with {$a} phases';
 $string['useselfassessment'] = 'Use self-assessment';
 $string['useselfassessment_help'] = 'If enabled, a user may be allocated their own submission to assess and will receive a grade for assessment in addition to a grade for their submission.';
 $string['useselfassessment_desc'] = 'Students may assess their own work';
+$string['viewworkshopsummary'] = 'View workshop summary';
 $string['weightinfo'] = 'Weight: {$a}';
 $string['withoutsubmission'] = 'Reviewer without own submission';
 $string['workshop:addinstance'] = 'Add a new workshop';
