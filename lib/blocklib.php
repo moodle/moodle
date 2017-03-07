@@ -215,7 +215,7 @@ class block_manager {
         }
 
         $unaddableblocks = self::get_undeletable_block_types();
-        $requiredbythemeblocks = self::get_required_by_theme_block_types();
+        $requiredbythemeblocks = $this->get_required_by_theme_block_types();
         $pageformat = $this->page->pagetype;
         foreach($allblocks as $block) {
             if (!$bi = block_instance($block->name)) {
@@ -246,7 +246,7 @@ class block_manager {
             return false;
         }
 
-        $requiredbythemeblocks = self::get_required_by_theme_block_types();
+        $requiredbythemeblocks = $this->get_required_by_theme_block_types();
         foreach ($this->blockinstances as $region) {
             foreach ($region as $instance) {
                 if (empty($instance->instance->blockname)) {
@@ -380,11 +380,10 @@ class block_manager {
     /**
      * @return array names of block types that must exist on every page with this theme.
      */
-    public static function get_required_by_theme_block_types() {
-        global $CFG, $PAGE;
+    public function get_required_by_theme_block_types() {
         $requiredbythemeblocks = false;
-        if (isset($PAGE->theme->requiredblocks)) {
-            $requiredbythemeblocks = $PAGE->theme->requiredblocks;
+        if (isset($this->page->theme->requiredblocks)) {
+            $requiredbythemeblocks = $this->page->theme->requiredblocks;
         }
 
         if ($requiredbythemeblocks === false) {
@@ -457,7 +456,7 @@ class block_manager {
      * @return array names of block types that cannot be added or deleted. E.g. array('navigation','settings').
      */
     public static function get_undeletable_block_types() {
-        global $CFG, $PAGE;
+        global $CFG;
         $undeletableblocks = false;
         if (isset($CFG->undeletableblocktypes)) {
             $undeletableblocks = $CFG->undeletableblocktypes;
@@ -1072,7 +1071,6 @@ class block_manager {
      * so they are only visible on themes that require them.
      */
     public function create_all_block_instances() {
-        global $PAGE;
         $missing = false;
 
         // If there are any un-removable blocks that were not created - force them.
@@ -1359,7 +1357,7 @@ class block_manager {
         return $this->page->user_can_edit_blocks() && $block->user_can_edit() &&
                 $block->user_can_addto($this->page) &&
                 !in_array($block->instance->blockname, self::get_undeletable_block_types()) &&
-                !in_array($block->instance->blockname, self::get_required_by_theme_block_types());
+                !in_array($block->instance->blockname, $this->get_required_by_theme_block_types());
     }
 
     /**
