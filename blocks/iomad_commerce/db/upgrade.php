@@ -132,5 +132,17 @@ function xmldb_block_iomad_commerce_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2017011000, 'iomad_commerce');
     }
 
+    if ($oldversion < 2017030700) {
+
+        // Changing type of field company on table invoice to char.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('company', XMLDB_TYPE_CHAR, '50', null, null, null, null, 'pp_payerstatus');
+
+        // Launch change of type for field company.
+        $dbman->change_field_type($table, $field);
+
+        // Iomad_commerce savepoint reached.
+        upgrade_block_savepoint(true, 2017030700, 'iomad_commerce');
+    }
     return $result;
 }

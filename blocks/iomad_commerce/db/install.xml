@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/iomad_commerce/db" VERSION="20170110" COMMENT="XMLDB file for Moodle blocks/iomad_commerce"
+<XMLDB PATH="blocks/iomad_commerce/db" VERSION="20170307" COMMENT="XMLDB file for Moodle blocks/iomad_commerce"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -15,7 +15,7 @@
         <FIELD NAME="phone1" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="pp_payerid" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="pp_payerstatus" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="company" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="company" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="address" TYPE="char" LENGTH="70" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="city" TYPE="char" LENGTH="120" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="state" TYPE="char" LENGTH="120" NOTNULL="false" SEQUENCE="false"/>
