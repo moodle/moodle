@@ -29,6 +29,7 @@ require_once($CFG->dirroot . '/user/editlib.php');
 require_once('signup_form.php');
 $wantedcompanyid = required_param('id', PARAM_INT);
 $wantedcompanyshort = required_param('code', PARAM_CLEAN);
+$wanteddepartment = optiona_param('dept', '', PARAM_CLEAN)
 
 // Try to prevent searching for sites that allow sign-up.
 if (!isset($CFG->additionalhtmlhead)) {
@@ -54,6 +55,13 @@ $PAGE->set_context(context_system::instance());
 // Check if the company being passed is valid.
 if (!$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'shortname'=>$wantedcompanyshort))) {
     print_error(get_string('unknown_company', 'local_iomad_signup'));
+}
+
+$company->deptid = 0;
+if (!empty($wanteddepartment)) {
+    if ($department=$DB->get_record('departments', array('companyid' => $company->id, 'shortname' => urldecode($wanteddepartment)))) {
+        $company->deptid = $department->id;
+    }
 }
 
 // Override wanted URL, we do not want to end up here again if user clicks "Login".

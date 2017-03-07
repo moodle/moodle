@@ -138,6 +138,11 @@ class auth_plugin_email extends auth_plugin_base {
             // assign the user to the company.
             $company->assign_user_to_company($user->id);
 
+            // Assign them to any department.
+            if (!empty($user->departmentid)) {
+                $company->assign_user_to_department($user->departmentid, $user->id);
+            }
+
             if ($CFG->local_iomad_signup_autoenrol) {
                 $company->autoenrol($user);
             }
