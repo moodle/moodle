@@ -30,9 +30,7 @@ Feature: Award badges
     And I should not see "Criteria for this badge have not been set up yet."
     And I press "Enable access"
     And I press "Continue"
-    And I click on "Admin User" "link"
-    And I choose "Profile" in the open action menu
-    And I click on "Edit profile" "link" in the "region-main" "region"
+    And I open my profile in edit mode
     And I expand all fieldsets
     And I set the field "Phone" to "123456789"
     And I press "Update profile"

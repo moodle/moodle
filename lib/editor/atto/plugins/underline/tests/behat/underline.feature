@@ -5,8 +5,7 @@ Feature: Atto underline button
   @javascript
   Scenario: Underline some text
     Given I log in as "admin"
-    And I follow "Profile" in the user menu
-    And I click on "Edit profile" "link" in the "region-main" "region"
+    And I open my profile in edit mode
     And I set the field "Description" to "Deprecated HTML Tag"
     And I select the text in the "Description" Atto editor
     And I click on "Show more buttons" "button"
