@@ -226,10 +226,9 @@ function assign_update_events($assign, $override = null) {
     }
     $oldevents = $DB->get_records('event', $conds);
 
-    // Now make a todo list of all that needs to be updated.
+    // Now make a to-do list of all that needs to be updated.
     if (empty($override)) {
-        // We are updating the primary settings for the assign, so we
-        // need to add all the overrides.
+        // We are updating the primary settings for the assign, so we need to add all the overrides.
         $overrides = $DB->get_records('assign_overrides', array('assignid' => $assign->id));
         // As well as the original assign (empty override).
         $overrides[] = new stdClass();
@@ -241,12 +240,9 @@ function assign_update_events($assign, $override = null) {
     foreach ($overrides as $current) {
         $groupid   = isset($current->groupid) ? $current->groupid : 0;
         $userid    = isset($current->userid) ? $current->userid : 0;
-        $allowsubmissionsfromdate  = isset($current->allowsubmissionsfromdate
-        ) ? $current->allowsubmissionsfromdate : $assign->get_context()->allowsubmissionsfromdate;
         $duedate = isset($current->duedate) ? $current->duedate : $assign->get_context()->duedate;
 
-        // Only add open/close events for an override if they differ from the assign default.
-        $addopen  = empty($current->id) || !empty($current->allowsubmissionsfromdate);
+        // Only add 'due' events for an override if they differ from the assign default.
         $addclose = empty($current->id) || !empty($current->duedate);
 
         if (!empty($assign->coursemodule)) {
@@ -263,13 +259,14 @@ function assign_update_events($assign, $override = null) {
         $event->userid      = $userid;
         $event->modulename  = 'assign';
         $event->instance    = $assign->get_context()->id;
-        $event->timestart   = $allowsubmissionsfromdate;
-        $event->timeduration = max($duedate - $allowsubmissionsfromdate, 0);
+        $event->timestart   = $duedate;
+        $event->timeduration = 0;
         $event->visible     = instance_is_visible('assign', $assign);
-        $event->eventtype   = 'open';
+        $event->eventtype   = 'due';
 
-        // Determine the event name.
+        // Determine the event name and priority.
         if ($groupid) {
+            // Group override event.
             $params = new stdClass();
             $params->assign = $assign->get_context()->name;
             $params->group = groups_get_group_name($groupid);
@@ -278,49 +275,32 @@ function assign_update_events($assign, $override = null) {
                 continue;
             }
             $eventname = get_string('overridegroupeventname', 'assign', $params);
+            // Set group override priority.
+            if (isset($current->sortorder)) {
+                $event->priority = $current->sortorder;
+            }
         } else if ($userid) {
+            // User override event.
             $params = new stdClass();
             $params->assign = $assign->get_context()->name;
             $eventname = get_string('overrideusereventname', 'assign', $params);
+            // Set user override priority.
+            $event->priority = CALENDAR_EVENT_USER_OVERRIDE_PRIORITY;
         } else {
+            // The parent event.
             $eventname = $assign->name;
         }
-        if ($addopen or $addclose) {
-            if ($duedate and $allowsubmissionsfromdate and $event->timeduration <= ASSIGN_MAX_EVENT_LENGTH) {
-                // Single event for the whole assign.
-                if ($oldevent = array_shift($oldevents)) {
-                    $event->id = $oldevent->id;
-                } else {
-                    unset($event->id);
-                }
-                $event->name = $eventname;
-                // The method calendar_event::create will reuse a db record if the id field is set.
-                calendar_event::create($event);
+
+        if ($duedate && $addclose) {
+            if ($oldevent = array_shift($oldevents)) {
+                $event->id = $oldevent->id;
             } else {
-                // Separate start and end events.
-                $event->timeduration  = 0;
-                if ($allowsubmissionsfromdate && $addopen) {
-                    if ($oldevent = array_shift($oldevents)) {
-                        $event->id = $oldevent->id;
-                    } else {
-                        unset($event->id);
-                    }
-                    $event->name = $eventname.' ('.get_string('open', 'assign').')';
-                    // The method calendar_event::create will reuse a db record if the id field is set.
-                    calendar_event::create($event);
-                }
-                if ($duedate && $addclose) {
-                    if ($oldevent = array_shift($oldevents)) {
-                        $event->id = $oldevent->id;
-                    } else {
-                        unset($event->id);
-                    }
-                    $event->name      = $eventname.' ('.get_string('duedate', 'assign').')';
-                    $event->timestart = $duedate;
-                    $event->eventtype = 'close';
-                    calendar_event::create($event);
-                }
+                unset($event->id);
             }
+            $event->name      = $eventname.' ('.get_string('duedate', 'assign').')';
+            $event->timestart = $duedate;
+            $event->eventtype = 'due';
+            calendar_event::create($event);
         }
     }
 

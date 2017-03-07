@@ -1202,10 +1202,9 @@ function quiz_update_events($quiz, $override = null) {
     }
     $oldevents = $DB->get_records('event', $conds);
 
-    // Now make a todo list of all that needs to be updated.
+    // Now make a to-do list of all that needs to be updated.
     if (empty($override)) {
-        // We are updating the primary settings for the quiz, so we
-        // need to add all the overrides.
+        // We are updating the primary settings for the lesson, so we need to add all the overrides.
         $overrides = $DB->get_records('quiz_overrides', array('quiz' => $quiz->id));
         // As well as the original quiz (empty override).
         $overrides[] = new stdClass();
@@ -1213,6 +1212,9 @@ function quiz_update_events($quiz, $override = null) {
         // Just do the one override.
         $overrides = array($override);
     }
+
+    // Get group override priorities.
+    $grouppriorities = quiz_get_group_override_priorities($quiz->id);
 
     foreach ($overrides as $current) {
         $groupid   = isset($current->groupid)?  $current->groupid : 0;
@@ -1243,8 +1245,9 @@ function quiz_update_events($quiz, $override = null) {
         $event->visible     = instance_is_visible('quiz', $quiz);
         $event->eventtype   = 'open';
 
-        // Determine the event name.
+        // Determine the event name and priority.
         if ($groupid) {
+            // Group override event.
             $params = new stdClass();
             $params->quiz = $quiz->name;
             $params->group = groups_get_group_name($groupid);
@@ -1253,48 +1256,54 @@ function quiz_update_events($quiz, $override = null) {
                 continue;
             }
             $eventname = get_string('overridegroupeventname', 'quiz', $params);
+            // Set group override priority.
+            if ($grouppriorities !== null) {
+                $openpriorities = $grouppriorities['open'];
+                if (isset($openpriorities[$timeopen])) {
+                    $event->priority = $openpriorities[$timeopen];
+                }
+            }
         } else if ($userid) {
+            // User override event.
             $params = new stdClass();
             $params->quiz = $quiz->name;
             $eventname = get_string('overrideusereventname', 'quiz', $params);
+            // Set user override priority.
+            $event->priority = CALENDAR_EVENT_USER_OVERRIDE_PRIORITY;
         } else {
+            // The parent event.
             $eventname = $quiz->name;
         }
+
         if ($addopen or $addclose) {
-            if ($timeclose and $timeopen and $event->timeduration <= QUIZ_MAX_EVENT_LENGTH) {
-                // Single event for the whole quiz.
+            // Separate start and end events.
+            $event->timeduration  = 0;
+            if ($timeopen && $addopen) {
                 if ($oldevent = array_shift($oldevents)) {
                     $event->id = $oldevent->id;
                 } else {
                     unset($event->id);
                 }
-                $event->name = $eventname;
+                $event->name = $eventname.' ('.get_string('quizopens', 'quiz').')';
                 // The method calendar_event::create will reuse a db record if the id field is set.
                 calendar_event::create($event);
-            } else {
-                // Separate start and end events.
-                $event->timeduration  = 0;
-                if ($timeopen && $addopen) {
-                    if ($oldevent = array_shift($oldevents)) {
-                        $event->id = $oldevent->id;
-                    } else {
-                        unset($event->id);
-                    }
-                    $event->name = $eventname.' ('.get_string('quizopens', 'quiz').')';
-                    // The method calendar_event::create will reuse a db record if the id field is set.
-                    calendar_event::create($event);
+            }
+            if ($timeclose && $addclose) {
+                if ($oldevent = array_shift($oldevents)) {
+                    $event->id = $oldevent->id;
+                } else {
+                    unset($event->id);
                 }
-                if ($timeclose && $addclose) {
-                    if ($oldevent = array_shift($oldevents)) {
-                        $event->id = $oldevent->id;
-                    } else {
-                        unset($event->id);
+                $event->name      = $eventname.' ('.get_string('quizcloses', 'quiz').')';
+                $event->timestart = $timeclose;
+                $event->eventtype = 'close';
+                if ($groupid && $grouppriorities !== null) {
+                    $closepriorities = $grouppriorities['close'];
+                    if (isset($closepriorities[$timeclose])) {
+                        $event->priority = $closepriorities[$timeclose];
                     }
-                    $event->name      = $eventname.' ('.get_string('quizcloses', 'quiz').')';
-                    $event->timestart = $timeclose;
-                    $event->eventtype = 'close';
-                    calendar_event::create($event);
                 }
+                calendar_event::create($event);
             }
         }
     }
@@ -1304,6 +1313,58 @@ function quiz_update_events($quiz, $override = null) {
         $badevent = calendar_event::load($badevent);
         $badevent->delete();
     }
+}
+
+/**
+ * Calculates the priorities of timeopen and timeclose values for group overrides for a quiz.
+ *
+ * @param int $quizid The quiz ID.
+ * @return array|null Array of group override priorities for open and close times. Null if there are no group overrides.
+ */
+function quiz_get_group_override_priorities($quizid) {
+    global $DB;
+
+    // Fetch group overrides.
+    $where = 'quiz = :quiz AND groupid IS NOT NULL';
+    $params = ['quiz' => $quizid];
+    $overrides = $DB->get_records_select('quiz_overrides', $where, $params, '', 'id, timeopen, timeclose');
+    if (!$overrides) {
+        return null;
+    }
+
+    $grouptimeopen = [];
+    $grouptimeclose = [];
+    foreach ($overrides as $override) {
+        if ($override->timeopen !== null && !in_array($override->timeopen, $grouptimeopen)) {
+            $grouptimeopen[] = $override->timeopen;
+        }
+        if ($override->timeclose !== null && !in_array($override->timeclose, $grouptimeclose)) {
+            $grouptimeclose[] = $override->timeclose;
+        }
+    }
+
+    // Sort open times in descending manner. The earlier open time gets higher priority.
+    rsort($grouptimeopen);
+    // Set priorities.
+    $opengrouppriorities = [];
+    $openpriority = 1;
+    foreach ($grouptimeopen as $timeopen) {
+        $opengrouppriorities[$timeopen] = $openpriority++;
+    }
+
+    // Sort close times in ascending manner. The later close time gets higher priority.
+    sort($grouptimeclose);
+    // Set priorities.
+    $closegrouppriorities = [];
+    $closepriority = 1;
+    foreach ($grouptimeclose as $timeclose) {
+        $closegrouppriorities[$timeclose] = $closepriority++;
+    }
+
+    return [
+        'open' => $opengrouppriorities,
+        'close' => $closegrouppriorities
+    ];
 }
 
 /**

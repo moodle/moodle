@@ -2555,5 +2555,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017021400.00);
     }
 
+    if ($oldversion < 2017030700.00) {
+
+        // Define field priority to be added to event.
+        $table = new xmldb_table('event');
+        $field = new xmldb_field('priority', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'subscriptionid');
+
+        // Conditionally launch add field priority.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Create adhoc task for upgrading of existing calendar events.
+        $record = new \stdClass();
+        $record->classname = "\\core\\task\\refresh_mod_calendar_events_task";
+        $record->component = 'core';
+        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+        $nextruntime = time() - 1;
+        $record->nextruntime = $nextruntime;
+        $DB->insert_record('task_adhoc', $record);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017030700.00);
+    }
+
     return true;
 }
