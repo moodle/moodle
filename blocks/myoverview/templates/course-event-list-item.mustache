@@ -15,18 +15,16 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_myoverview/event-list-item
+    @template block_myoverview/course-event-list-item
 
-    This template renders an event list item for the myoverview block.
+    This template renders an event list item for the myoverview block
+    in the courses view.
 
     Example context (json):
     {
         "enddate": "Nov 4th, 10am",
         "name": "Assignment due 1",
         "url": "https://www.google.com",
-        "course": {
-            "fullname": "Course 1"
-        },
         "action": {
             "name": "Submit assignment",
             "url": "https://www.google.com",
@@ -41,36 +39,27 @@
 }}
 <li class="list-group-item event-list-item" data-region="event-list-item">
     <div class="row">
-        <div class="col-xs-12 col-sm-6 col-xl-7">
+        <div class="col-xs-12 col-lg-7">
             <div class="d-inline-block icon-large event-icon">
                 {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
             </div>
             <div class="d-inline-block event-name-container">
                 <a class="event-name text-truncate" href="{{{url}}}">{{name}}</a>
-                <p class="text-muted text-truncate m-b-0">{{course.fullnamedisplay}}</p>
-            </div>
-        </div>
-        <div class="hidden-sm-down col-md-6 col-xl-5">
-            <div class="row">
-                <div class="col-xs-5 text-truncate">
+                <p class="text-muted text-truncate m-b-0">
                     {{#userdate}} {{timesort}}, {{#str}} strftimerecent {{/str}} {{/userdate}}
-                </div>
-                <div class="col-xs-7 text-truncate">
-                    {{#action.actionable}}
-                        <a class="m-r-1" href="{{{action.url}}}">{{action.name}}</a>
-                        {{#action.itemcount}}
-                            <span class="tag tag-pill tag-default pull-xs-right">{{.}}</span>
-                        {{/action.itemcount}}
-                    {{/action.actionable}}
-                    {{^action.actionable}}
-                        <div class="text-muted">{{action.name}}</div>
-                    {{/action.actionable}}
-                </div>
+                </p>
             </div>
         </div>
-        <div class="hidden-xs-down hidden-md-up col-sm-6">
-            <div class="text-xs-right text-truncate">{{enddate}}</div>
+        <div class="hidden-md-down col-lg-5 text-truncate">
+            {{#action.actionable}}
+                <a class="m-r-1" href="{{{action.url}}}">{{action.name}}</a>
+                {{#action.itemcount}}
+                    <span class="tag tag-pill tag-default">{{.}}</span>
+                {{/action.itemcount}}
+            {{/action.actionable}}
+            {{^action.actionable}}
+                <div class="text-muted">{{action.name}}</div>
+            {{/action.actionable}}
         </div>
     </div>
-    <div class="text-xs-right hidden-sm-up text-truncate">{{enddate}}</div>
 </li>

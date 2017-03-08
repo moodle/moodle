@@ -153,7 +153,6 @@ class event_exporter extends exporter {
     protected static function define_other_properties() {
         return [
             'url' => ['type' => PARAM_URL],
-            'enddate' => ['type' => PARAM_TEXT],
             'icon' => [
                 'type' => event_icon_exporter::read_properties_definition(),
             ],
@@ -185,7 +184,6 @@ class event_exporter extends exporter {
         $iconexporter = new event_icon_exporter($event, ['context' => $context]);
 
         $values['url'] = $url->out(false);
-        $values['enddate'] = userdate($timesort, get_string('strftimerecent'));
         $values['icon'] = $iconexporter->export($output);
 
         if ($event instanceof action_event_interface) {

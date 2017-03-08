@@ -1,9 +1,13 @@
 // The only class we need for icons is .icon
 // Standardize the size, padding and alignment for all icons in Moodle.
+
+$icon-width: 16px;
+$icon-height: 16px;
+
 .icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+    font-size: $icon-height;
+    width: $icon-width;
+    height: $icon-height;
     vertical-align: middle;
     margin: 0;
     padding: 0;
@@ -70,4 +74,9 @@ span:first-of-type > .icon {
 // Apply in special cases where the default icons styles does not work properly. Eg file picker buttons.
 .icon-no-spacing a > .icon {
     margin: 0;
+}
+
+.icon-large > .icon {
+    width: ($icon-width * 2);
+    height: ($icon-height * 2);
 }

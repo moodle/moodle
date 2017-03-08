@@ -39,6 +39,11 @@ define(['jquery', 'core/notification', 'core/templates',
         VIEW_MORE_BUTTON: '[data-action="view-more"]'
     };
 
+    var TEMPLATES = {
+        EVENT_LIST_ITEMS: 'block_myoverview/event-list-items',
+        COURSE_EVENT_LIST_ITEMS: 'block_myoverview/course-event-list-items'
+    };
+
     /**
      * Set a flag on the element to indicate that it has completed
      * loading all event data.
@@ -178,11 +183,12 @@ define(['jquery', 'core/notification', 'core/templates',
      * @param {array}   calendarEvents  The list of calendar events
      * @return {promise} Resolved when the elements are attached to the DOM
      */
-    var renderGroup = function(group, calendarEvents) {
+    var renderGroup = function(group, calendarEvents, templateName) {
+
         group.removeClass('hidden');
 
         return Templates.render(
-            'block_myoverview/event-list-items',
+            templateName,
             {events: calendarEvents}
         ).done(function(html, js) {
             Templates.appendNodeContents(group.find(SELECTORS.EVENT_LIST), html, js);
@@ -260,6 +266,11 @@ define(['jquery', 'core/notification', 'core/templates',
      */
     var render = function(root, calendarEvents) {
         var renderCount = 0;
+        var templateName = TEMPLATES.EVENT_LIST_ITEMS;
+
+        if (root.attr('data-course-id')) {
+            templateName = TEMPLATES.COURSE_EVENT_LIST_ITEMS;
+        }
 
         // Loop over each of the element list groups and find the set of calendar events
         // that belong to that group (as defined by the group's day range). The matching
@@ -269,7 +280,7 @@ define(['jquery', 'core/notification', 'core/templates',
 
             if (events.length) {
                 renderCount += events.length;
-                return renderGroup($(container), events);
+                return renderGroup($(container), events, templateName);
             } else {
                 return null;
             }

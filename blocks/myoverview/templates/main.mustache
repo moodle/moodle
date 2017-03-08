@@ -39,14 +39,16 @@
         </ul>
     </div>
 
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane fade in active" id="myoverview_timeline_view">
-            {{> block_myoverview/timeline-view }}
-        </div>
-        <div role="tabpanel" class="tab-pane fade " id="myoverview_courses_view">
-            {{#coursesview}}
-                {{> block_myoverview/courses-view }}
-            {{/coursesview}}
+    <div class="row">
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="myoverview_timeline_view">
+                {{> block_myoverview/timeline-view }}
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="myoverview_courses_view">
+                {{#coursesview}}
+                    {{> block_myoverview/courses-view }}
+                {{/coursesview}}
+            </div>
         </div>
     </div>
 </div>
