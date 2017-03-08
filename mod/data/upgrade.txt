@@ -1,6 +1,12 @@
 This files describes API changes in /mod/data - plugins,
 information provided here is intended especially for developers.
 
+=== 3.3 ===
+
+* External function get_databases_by_courses now return more fields for users with mod/data:viewentry capability enabled:
+    maxentries, rssarticles, singletemplate, listtemplate, listtemplateheader, listtemplatefooter, addtemplate,
+    rsstemplate, rsstitletemplate, csstemplate, jstemplate, asearchtemplate, approval, defaultsort, defaultsortdir, manageapproved.
+
 === 3.2 ===
 
 * New hook - update_content_import - Can be implemented by field subplugins data_field_* class

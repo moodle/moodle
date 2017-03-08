@@ -94,7 +94,9 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         // First for the student user.
         $expectedfields = array('id', 'coursemodule', 'course', 'name', 'comments', 'timeavailablefrom',
                             'timeavailableto', 'timeviewfrom', 'timeviewto', 'requiredentries', 'requiredentriestoview',
-                            'intro', 'introformat', 'introfiles');
+                            'intro', 'introformat', 'introfiles', 'maxentries', 'rssarticles', 'singletemplate', 'listtemplate',
+                            'listtemplateheader', 'listtemplatefooter', 'addtemplate', 'rsstemplate', 'rsstitletemplate',
+                            'csstemplate', 'jstemplate', 'asearchtemplate', 'approval', 'defaultsort', 'defaultsortdir', 'manageapproved');
 
         // Add expected coursemodule.
         $database1->coursemodule = $database1->cmid;
@@ -105,6 +107,10 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $expected1 = array();
         $expected2 = array();
         foreach ($expectedfields as $field) {
+            if ($field == 'approval' or $field == 'manageapproved') {
+                $database1->{$field} = (bool) $database1->{$field};
+                $database2->{$field} = (bool) $database2->{$field};
+            }
             $expected1[$field] = $database1->{$field};
             $expected2[$field] = $database2->{$field};
         }
@@ -143,17 +149,13 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         // Now, try as a teacher for getting all the additional fields.
         self::setUser($teacher);
 
-        $additionalfields = array('maxentries', 'rssarticles', 'singletemplate', 'listtemplate', 'timemodified',
-                                'listtemplateheader', 'listtemplatefooter', 'addtemplate', 'rsstemplate', 'rsstitletemplate',
-                                'csstemplate', 'jstemplate', 'asearchtemplate', 'approval', 'scale', 'assessed', 'assesstimestart',
-                                'assesstimefinish', 'defaultsort', 'defaultsortdir', 'editany', 'notification', 'manageapproved');
+        $additionalfields = array('scale', 'assessed', 'assesstimestart', 'assesstimefinish', 'editany', 'notification', 'timemodified');
 
         foreach ($additionalfields as $field) {
-            if ($field == 'approval' or $field == 'editany') {
-                $expecteddatabases[0][$field] = (bool) $database1->{$field};
-            } else {
-                $expecteddatabases[0][$field] = $database1->{$field};
+            if ($field == 'editany') {
+                $database1->{$field} = (bool) $database1->{$field};
             }
+            $expecteddatabases[0][$field] = $database1->{$field};
         }
         $result = mod_data_external::get_databases_by_courses();
         $result = external_api::clean_returnvalue(mod_data_external::get_databases_by_courses_returns(), $result);
