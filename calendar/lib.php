@@ -855,11 +855,25 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
         $subqueryparams = array_merge($subqueryparams, $inusergroupparams);
     }
 
-    // Set filter condition for the user's courses.
+    // Get courses to be used for the subquery.
+    $subquerycourses = [];
+    if (is_array($courses)) {
+        $subquerycourses = $courses;
+    } else if (is_numeric($courses)) {
+        $subquerycourses[] = $courses;
+    }
+    // Merge with user courses, if necessary.
     if (!empty($usercourses)) {
-        list($inusercourses, $inusercoursesparams) = $DB->get_in_or_equal($usercourses, SQL_PARAMS_NAMED);
-        $subqueryconditions[] = "(ev.groupid = 0 AND ev.courseid $inusercourses)";
-        $subqueryparams = array_merge($subqueryparams, $inusercoursesparams);
+        $subquerycourses = array_merge($subquerycourses, $usercourses);
+        // Make sure we remove duplicate values.
+        $subquerycourses = array_unique($subquerycourses);
+    }
+
+    // Set subquery filter condition for the courses.
+    if (!empty($subquerycourses)) {
+        list($incourses, $incoursesparams) = $DB->get_in_or_equal($subquerycourses, SQL_PARAMS_NAMED);
+        $subqueryconditions[] = "(ev.groupid = 0 AND ev.courseid $incourses)";
+        $subqueryparams = array_merge($subqueryparams, $incoursesparams);
     }
 
     // Build the WHERE condition for the sub-query.
