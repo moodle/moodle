@@ -1,0 +1,32 @@
+<!-- No config needed -->
+<div style="text-align: center"><?php print_string('plugindescription', 'auth_oauth2'); ?></div>
+
+<div class="alert alert-warning m-y-2" style="text-align: center"><?php print_string('createaccountswarning', 'auth_oauth2'); ?></div>
+<?php
+// Set to defaults if undefined.
+if (!isset($config->allowlinkedlogins)) {
+    $config->allowlinkedlogins = true;
+}
+?>
+
+<table cellspacing="0" cellpadding="5" border="0">
+<tr valign="top" class="required">
+    <td align="right">
+        <label for="allowlinkedlogins"><?php print_string('allowlinkedlogins', 'auth_oauth2') ?></label>
+    </td>
+    <td>
+        <input name="allowlinkedlogins" id="allowlinkedlogins" type="checkbox"
+            <?php if ($config->allowlinkedlogins) { echo 'checked="checked"'; } ?>
+        >
+        <?php if (isset($err['allowlinkedlogins'])) { echo $OUTPUT->error_text($err['allowlinkedlogins']); } ?>
+    </td>
+    <td>
+        <?php print_string('allowlinkedloginsdesc', 'auth_oauth2') ?>
+    </td>
+</tr>
+<?php
+
+print_auth_lock_options($this->authtype, $userfields, get_string('auth_fieldlocks_help', 'auth'), false, false);
+
+?>
+</table>

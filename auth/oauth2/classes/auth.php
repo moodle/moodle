@@ -156,14 +156,8 @@ class auth extends \auth_plugin_base {
      * @param array $userfields
      */
     public function config_form($config, $err, $userfields) {
-        echo get_string('plugindescription', 'auth_oauth2');
+        include(__DIR__ . "/../config.html");
 
-        // Force all fields updated on login and locked.
-
-        foreach ($userfields as $field) {
-            set_config('field_updatelocal_' . $field, 'onlogin', 'auth_oauth2');
-            set_config('field_lock_' . $field, 'unlockedifempty', 'auth_oauth2');
-        }
         return;
     }
 
@@ -312,6 +306,14 @@ class auth extends \auth_plugin_base {
         return true;
     }
 
+    public function process_config($config) {
+        // Set to defaults if undefined
+        if (!isset($config->allowlinkedlogins)) {
+             $config->allowlinkedlogins = false;
+        }
+        set_config('allowlinkedlogins', trim($config->allowlinkedlogins), 'auth_oauth2');
+    }
+
     /**
      * Complete the login process after oauth handshake is complete.
      * @param \core\oauth2\client $client
@@ -336,20 +338,33 @@ class auth extends \auth_plugin_base {
 
         $userinfo['username'] = trim(core_text::strtolower($userinfo['username']));
 
-        if (!empty($userinfo['picture'])) {
-            $this->set_static_user_picture($userinfo['picture']);
-            unset($userinfo['picture']);
-        }
+        $userwasmapped = false;
+        if (get_config('auth_oauth2', 'allowlinkedlogins')) {
+            $mappeduser = api::match_username_to_user($userinfo['username'], $client->get_issuer());
 
-        if (!empty($userinfo['lang'])) {
-            $userinfo['lang'] = str_replace('-', '_', trim(core_text::strtolower($userinfo['lang'])));
-            if (!get_string_manager()->translation_exists($userinfo['lang'], false)) {
-                unset($userinfo['lang']);
+            if ($mappeduser) {
+                $userinfo = (array) $mappeduser;
+                $userwasmapped = true;
             }
         }
+
+        if (!$userwasmapped) {
+            if (!empty($userinfo['picture'])) {
+                $this->set_static_user_picture($userinfo['picture']);
+                unset($userinfo['picture']);
+            }
+
+            if (!empty($userinfo['lang'])) {
+                $userinfo['lang'] = str_replace('-', '_', trim(core_text::strtolower($userinfo['lang'])));
+                if (!get_string_manager()->translation_exists($userinfo['lang'], false)) {
+                    unset($userinfo['lang']);
+                }
+            }
+        }
+
         $this->set_static_user_info($userinfo);
 
-        $user = authenticate_user_login($userinfo['username'], '');
+        $user = get_complete_user_data('username', $userinfo['username']);
 
         if ($user) {
             complete_user_login($user);

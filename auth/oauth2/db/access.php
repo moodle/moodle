@@ -15,15 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Capability definitions for this plugin.
  *
- * @package    auth_oauth2
- * @copyright  2017 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   auth_oauth2
+ * @copyright 2017 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+$capabilities = [
 
-defined('MOODLE_INTERNAL') || die();
+    'auth/oauth2:managelinkedlogins' => array(
 
-$plugin->version   = 2017030700;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016112900;        // Requires this Moodle version
-$plugin->component = 'auth_oauth2';       // Full name of the plugin (used for diagnostics)
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        )
+    ),
+];
