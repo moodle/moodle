@@ -67,7 +67,7 @@ class core_container {
     /**
      * @var \core_calendar\local\event\data_access\event_vault $eventvault Event vault.
      */
-    private static $eventvault;
+    protected static $eventvault;
 
     /**
      * @var array A list of callbacks to use.
@@ -84,6 +84,10 @@ class core_container {
      */
     private static function init() {
         if (empty(self::$eventfactory)) {
+            $getcallback = function($which) {
+                return self::$callbacks[PHPUNIT_TEST ? 'testing' : 'production'][$which];
+            };
+
             self::initcallbacks();
             self::$actionfactory = new action_factory();
             self::$actioneventfactory = new action_event_factory();
@@ -91,16 +95,31 @@ class core_container {
                 new event_factory(
                     function(event_interface $event) {
                         return $event;
-                    }, function() {
+                    },
+                    function() {
                         return true;
+                    },
+                    function() {
+                        return false;
                     },
                     self::$coursecache
                 )
             );
 
             self::$eventfactory = new event_factory(
-                self::$callbacks[PHPUNIT_TEST ? 'testing' : 'production']['action'],
-                self::$callbacks[PHPUNIT_TEST ? 'testing' : 'production']['visibility'],
+                $getcallback('action'),
+                $getcallback('visibility'),
+                function ($dbrow) {
+                    $instances = get_fast_modinfo($dbrow->courseid)->instances;
+
+                    if (!isset($instances[$dbrow->modulename]) || !isset($instances[$dbrow->modulename][$dbrow->instance])) {
+                        return true;
+                    }
+
+                    $cm = $instances[$dbrow->modulename][$dbrow->instance];
+
+                    return !(bool)$cm->visible;
+                },
                 self::$coursecache
             );
         }
@@ -122,7 +141,7 @@ class core_container {
     }
 
     /**
-     * Gets the event mapper
+     * Gets the event mapper.
      *
      * @return \core_calendar\local\interfaces\event_mapper_interface
      */

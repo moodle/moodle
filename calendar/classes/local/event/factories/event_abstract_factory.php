@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_calendar\local\event\entities\event;
 use core_calendar\local\event\entities\repeat_event_collection;
+use core_calendar\local\event\exceptions\invalid_callback_exception;
 use core_calendar\local\event\proxies\std_proxy;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
@@ -58,6 +59,11 @@ abstract class event_abstract_factory implements event_factory_interface {
     protected $coursecachereference;
 
     /**
+     * @var callable Bail out check for create_instance.
+     */
+    protected $bailoutcheck;
+
+    /**
      * Applies component actions to the event.
      *
      * @param event_interface $event The event to be updated.
@@ -66,7 +72,7 @@ abstract class event_abstract_factory implements event_factory_interface {
     protected abstract function apply_component_action(event_interface $event);
 
     /**
-     * Exposes the event (or not)
+     * Exposes the event (or not).
      *
      * @param event_interface $event The event to potentially expose.
      * @return event_interface|null The exposed event or null.
@@ -78,18 +84,35 @@ abstract class event_abstract_factory implements event_factory_interface {
      *
      * @param callable $actioncallbackapplier     Function to apply component action callbacks.
      * @param callable $visibilitycallbackapplier Function to apply component visibility callbacks.
+     * @param callable $bailoutcheck              Function to test if we can return null early.
+     * @param array    $coursecachereference      Cache to use with get_course_cached.
      */
     public function __construct(
         callable $actioncallbackapplier,
         callable $visibilitycallbackapplier,
+        callable $bailoutcheck,
         array &$coursecachereference
     ) {
         $this->actioncallbackapplier = $actioncallbackapplier;
         $this->visibilitycallbackapplier = $visibilitycallbackapplier;
+        $this->bailoutcheck = $bailoutcheck;
         $this->coursecachereference = &$coursecachereference;
     }
 
     public function create_instance(\stdClass $dbrow) {
+        $bailcheck = $this->bailoutcheck;
+        $bail = $bailcheck($dbrow);
+
+        if (!is_bool($bail)) {
+            throw new invalid_callback_exception(
+                'Bail check must return true or false'
+            );
+        }
+
+        if ($bail) {
+            return null;
+        }
+
         $course = null;
         $group = null;
         $user = null;

@@ -411,9 +411,9 @@ class core_calendar_api_testcase extends advanced_testcase {
 
         $params = [
             'type' => CALENDAR_EVENT_TYPE_ACTION,
-            'courseid' => 1,
-            'modulename' => 'xyz',
-            'instance' => 1,
+            'courseid' => $course->id,
+            'modulename' => 'assign',
+            'instance' => $moduleinstance->id,
             'userid' => 1,
             'eventtype' => 'user',
             'repeats' => 0,
@@ -463,9 +463,9 @@ class core_calendar_api_testcase extends advanced_testcase {
 
         $params = [
             'type' => CALENDAR_EVENT_TYPE_ACTION,
-            'courseid' => 1,
-            'modulename' => 'xyz',
-            'instance' => 1,
+            'courseid' => $course->id,
+            'modulename' => 'assign',
+            'instance' => $moduleinstance->id,
             'userid' => 1,
             'eventtype' => 'user',
             'repeats' => 0,
@@ -514,9 +514,9 @@ class core_calendar_api_testcase extends advanced_testcase {
 
         $params = [
             'type' => CALENDAR_EVENT_TYPE_ACTION,
-            'courseid' => 1,
-            'modulename' => 'xyz',
-            'instance' => 1,
+            'courseid' => $course->id,
+            'modulename' => 'assign',
+            'instance' => $moduleinstance->id,
             'userid' => 1,
             'eventtype' => 'user',
             'repeats' => 0,
@@ -566,9 +566,9 @@ class core_calendar_api_testcase extends advanced_testcase {
 
         $params = [
             'type' => CALENDAR_EVENT_TYPE_ACTION,
-            'courseid' => 1,
-            'modulename' => 'xyz',
-            'instance' => 1,
+            'courseid' => $course->id,
+            'modulename' => 'assign',
+            'instance' => $moduleinstance->id,
             'userid' => 1,
             'eventtype' => 'user',
             'repeats' => 0,

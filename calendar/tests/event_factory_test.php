@@ -41,6 +41,7 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
      * @param \stdClass $dbrow Row from the event table.
      * @param callable  $actioncallbackapplier     Action callback applier.
      * @param callable  $visibilitycallbackapplier Visibility callback applier.
+     * @param callable  $bailoutcheck              Early bail out check function.
      * @param string    $expectedclass             Class the factory is expected to produce.
      * @param mixed     $expectedattributevalue    Expected value of the modified attribute.
      */
@@ -48,6 +49,7 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         $dbrow,
         callable $actioncallbackapplier,
         callable $visibilitycallbackapplier,
+        callable $bailoutcheck,
         $expectedclass,
         $expectedattributevalue
     ) {
@@ -55,7 +57,12 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         $this->setAdminUser();
         $event = $this->create_event();
         $coursecache = [];
-        $factory = new event_factory($actioncallbackapplier, $visibilitycallbackapplier, $coursecache);
+        $factory = new event_factory(
+            $actioncallbackapplier,
+            $visibilitycallbackapplier,
+            $bailoutcheck,
+            $coursecache
+        );
         $dbrow->id = $event->id;
         $instance = $factory->create_instance($dbrow);
 
@@ -88,6 +95,9 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
             },
             function () {
                 return true;
+            },
+            function () {
+                return false;
             },
             $coursecache
         );
@@ -128,6 +138,55 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         $factory = new event_factory(
             function ($event) {
                 return $event;
+            },
+            function () {
+                return 'asdf';
+            },
+            function () {
+                return false;
+            },
+            $coursecache
+        );
+
+        $factory->create_instance(
+            (object)[
+                'id' => $event->id,
+                'name' => 'test',
+                'description' => 'Test description',
+                'format' => 2,
+                'courseid' => 1,
+                'groupid' => 1,
+                'userid' => 1,
+                'repeatid' => 1,
+                'modulename' => 'assign',
+                'instance' => 1,
+                'eventtype' => 'due',
+                'timestart' => 123456789,
+                'timeduration' => 12,
+                'timemodified' => 123456789,
+                'timesort' => 123456789,
+                'visible' => 1,
+                'subscriptionid' => 1
+            ]
+        );
+    }
+
+    /**
+     * Test invalid callback exception.
+     *
+     * @expectedException \core_calendar\local\event\exceptions\invalid_callback_exception
+     */
+    public function test_invalid_bail_callback() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $event = $this->create_event();
+        $coursecache = [];
+        $factory = new event_factory(
+            function ($event) {
+                return $event;
+            },
+            function () {
+                return true;
             },
             function () {
                 return 'asdf';
@@ -173,6 +232,9 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
             },
             function () {
                 return true;
+            },
+            function () {
+                return false;
             },
             $coursecache
         );
@@ -236,6 +298,9 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
                 'visibilitycallbackapplier' => function(event_interface $event) {
                     return true;
                 },
+                'bailoutcheck' => function() {
+                    return false;
+                },
                 event_interface::class,
                 'Hello'
             ],
@@ -264,6 +329,41 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
                 },
                 'visibilitycallbackapplier' => function(event_interface $event) {
                     return false;
+                },
+                'bailoutcheck' => function() {
+                    return false;
+                },
+                null,
+                null
+            ],
+            'Sample event record with early bail' => [
+                'dbrow' => (object)[
+                    'name' => 'Test event',
+                    'description' => 'Hello',
+                    'format' => 1,
+                    'courseid' => 1,
+                    'groupid' => 1,
+                    'userid' => 1,
+                    'repeatid' => null,
+                    'modulename' => 'Test module',
+                    'instance' => 1,
+                    'eventtype' => 'Due',
+                    'timestart' => 123456789,
+                    'timeduration' => 123456789,
+                    'timemodified' => 123456789,
+                    'timesort' => 123456789,
+                    'visible' => true,
+                    'subscriptionid' => 1
+                ],
+                'actioncallbackapplier' => function(event_interface $event) {
+                    $event->testattribute = 'Hello';
+                    return $event;
+                },
+                'visibilitycallbackapplier' => function(event_interface $event) {
+                    return true;
+                },
+                'bailoutcheck' => function() {
+                    return true;
                 },
                 null,
                 null

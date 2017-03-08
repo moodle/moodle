@@ -52,23 +52,47 @@ class core_calendar_container_testcase extends advanced_testcase {
         $legacyevent = $this->create_event($dbrow);
         $factory = \core_calendar\local\event\core_container::get_event_factory();
 
+        // Test that the container is returning the right type.
         $this->assertInstanceOf(event_factory_interface::class, $factory);
+        // Test that the container is returning the right implementation.
         $this->assertInstanceOf(event_factory::class, $factory);
 
+        // Test that getting the factory a second time returns the same instance.
         $factory2 = \core_calendar\local\event\core_container::get_event_factory();
-
         $this->assertTrue($factory === $factory2);
+    }
 
+    /**
+     * Test that the event factory correctly creates instances of events.
+     *
+     * @dataProvider get_event_factory_testcases()
+     * @param \stdClass $dbrow Row from the "database".
+     */
+    public function test_event_factory_create_instance($dbrow) {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $legacyevent = $this->create_event($dbrow);
+        $factory = \core_calendar\local\event\core_container::get_event_factory();
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        // Set some of the fake dbrow properties to match real data in the DB
+        // this is necessary as the factory hides things that modinfo doesn't
+        // know about.
         $dbrow->id = $legacyevent->id;
+        $dbrow->courseid = $course->id;
+        $dbrow->instance = $moduleinstance->id;
+        $dbrow->modulename = 'assign';
         $event = $factory->create_instance($dbrow);
 
-        if (is_null($event)) {
-            return;
-        }
-
+        // Test that the factory is returning the right type.
         $this->assertInstanceOf(event_interface::class, $event);
+        // Test that the factory is returning the right implementation.
         $this->assertTrue($event instanceof event || $event instanceof action_event);
 
+        // Test that the event created has the correct properties.
         $this->assertEquals($legacyevent->id, $event->get_id());
         $this->assertEquals($dbrow->description, $event->get_description()->get_value());
         $this->assertEquals($dbrow->format, $event->get_description()->get_format());
@@ -99,6 +123,32 @@ class core_calendar_container_testcase extends advanced_testcase {
         } else {
             $this->assertEquals($event->get_subscription()->get_id());
         }
+    }
+
+    /**
+     * Test that the event factory deals with invisible modules properly.
+     *
+     * @dataProvider get_event_factory_testcases()
+     * @param \stdClass $dbrow Row from the "database".
+     */
+    function test_event_factory_when_module_visibility_is_toggled($dbrow) {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $legacyevent = $this->create_event($dbrow);
+        $factory = \core_calendar\local\event\core_container::get_event_factory();
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        $dbrow->courseid = $course->id;
+        $dbrow->instance = $moduleinstance->id;
+        $dbrow->modulename = 'assign';
+
+        set_coursemodule_visible($moduleinstance->cmid, 0);
+        $event = $factory->create_instance($dbrow);
+        // Module is invisible, factory should not produce an event.
+        $this->assertNull($event);
     }
 
     /**
