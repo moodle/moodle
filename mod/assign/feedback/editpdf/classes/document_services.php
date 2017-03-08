@@ -91,7 +91,7 @@ EOD;
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
         if (!is_object($assignment)) {
-            $cm = \get_coursemodule_from_instance('assign', $assignment, 0, false, MUST_EXIST);
+            $cm = get_coursemodule_from_instance('assign', $assignment, 0, false, MUST_EXIST);
             $context = \context_module::instance($cm->id);
 
             $assignment = new \assign($context, null, null);
@@ -158,7 +158,7 @@ EOD;
 
         // Capability checks.
         if (!$assignment->can_view_submission($userid)) {
-            \print_error('nopermission');
+            print_error('nopermission');
         }
 
         $files = array();
@@ -251,7 +251,7 @@ EOD;
 
         // Capability checks.
         if (!$assignment->can_view_submission($userid)) {
-            \print_error('nopermission');
+            print_error('nopermission');
         }
 
         $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
@@ -267,7 +267,7 @@ EOD;
         $itemid = $grade->id;
         $filepath = '/';
         $filename = self::COMBINED_PDF_FILENAME;
-        $fs = \get_file_storage();
+        $fs = get_file_storage();
 
         $combinedpdf = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename);
         if ($combinedpdf && $submission) {
@@ -329,7 +329,7 @@ EOD;
         $assignment = self::get_assignment_from_param($assignment);
 
         if (!$assignment->can_view_submission($userid)) {
-            \print_error('nopermission');
+            print_error('nopermission');
         }
 
         // When in readonly we can return the number of images in the DB because they should already exist,
@@ -365,7 +365,7 @@ EOD;
         $assignment = self::get_assignment_from_param($assignment);
 
         if (!$assignment->can_view_submission($userid)) {
-            \print_error('nopermission');
+            print_error('nopermission');
         }
 
         // Need to generate the page images - first get a combined pdf.
@@ -396,7 +396,7 @@ EOD;
         $record->filearea = self::PAGE_IMAGE_FILEAREA;
         $record->itemid = $grade->id;
         $record->filepath = '/';
-        $fs = \get_file_storage();
+        $fs = get_file_storage();
 
         // Remove the existing content of the filearea.
         $fs->delete_area_files($record->contextid, $record->component, $record->filearea, $record->itemid);
@@ -447,7 +447,7 @@ EOD;
         $assignment = self::get_assignment_from_param($assignment);
 
         if (!$assignment->can_view_submission($userid)) {
-            \print_error('nopermission');
+            print_error('nopermission');
         }
 
         if ($assignment->get_instance()->teamsubmission) {
@@ -463,7 +463,7 @@ EOD;
         $filepath = '/';
         $filearea = self::PAGE_IMAGE_FILEAREA;
 
-        $fs = \get_file_storage();
+        $fs = get_file_storage();
 
         // If we are after the readonly pages...
         if ($readonly) {
@@ -589,10 +589,10 @@ EOD;
         $assignment = self::get_assignment_from_param($assignment);
 
         if (!$assignment->can_view_submission($userid)) {
-            \print_error('nopermission');
+            print_error('nopermission');
         }
         if (!$assignment->can_grade()) {
-            \print_error('nopermission');
+            print_error('nopermission');
         }
 
         // Need to generate the page images - first get a combined pdf.
@@ -608,14 +608,14 @@ EOD;
 
         $file = $document->get_combined_file();
 
-        $tmpdir = \make_temp_directory('assignfeedback_editpdf/final/' . self::hash($assignment, $userid, $attemptnumber));
+        $tmpdir = make_temp_directory('assignfeedback_editpdf/final/' . self::hash($assignment, $userid, $attemptnumber));
         $combined = $tmpdir . '/' . self::COMBINED_PDF_FILENAME;
         $file->copy_content_to($combined); // Copy the file.
 
         $pdf = new pdf();
 
-        $fs = \get_file_storage();
-        $stamptmpdir = \make_temp_directory('assignfeedback_editpdf/stamps/' . self::hash($assignment, $userid, $attemptnumber));
+        $fs = get_file_storage();
+        $stamptmpdir = make_temp_directory('assignfeedback_editpdf/stamps/' . self::hash($assignment, $userid, $attemptnumber));
         $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
         // Copy any new stamps to this instance.
         if ($files = $fs->get_area_files($assignment->get_context()->id,
@@ -735,7 +735,7 @@ EOD;
         $assignment = self::get_assignment_from_param($assignment);
 
         if (!$assignment->can_view_submission($userid)) {
-            \print_error('nopermission');
+            print_error('nopermission');
         }
 
         $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
@@ -746,7 +746,7 @@ EOD;
         $itemid = $grade->id;
         $filepath = '/';
 
-        $fs = \get_file_storage();
+        $fs = get_file_storage();
         $files = $fs->get_area_files($contextid,
                                      $component,
                                      $filearea,
@@ -771,10 +771,10 @@ EOD;
         $assignment = self::get_assignment_from_param($assignment);
 
         if (!$assignment->can_view_submission($userid)) {
-            \print_error('nopermission');
+            print_error('nopermission');
         }
         if (!$assignment->can_grade()) {
-            \print_error('nopermission');
+            print_error('nopermission');
         }
 
         $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
@@ -784,7 +784,7 @@ EOD;
         $filearea = self::FINAL_PDF_FILEAREA;
         $itemid = $grade->id;
 
-        $fs = \get_file_storage();
+        $fs = get_file_storage();
         return $fs->delete_area_files($contextid, $component, $filearea, $itemid);
     }
 
