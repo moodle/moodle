@@ -161,10 +161,10 @@ class event_vault implements event_vault_interface {
     public function get_action_events_by_course(
         \stdClass $user,
         \stdClass $course,
-        int $timesortfrom = null,
-        int $timesortto = null,
+        $timesortfrom = null,
+        $timesortto = null,
         event_interface $afterevent = null,
-        int $limitnum = 20
+        $limitnum = 20
     ) {
         global $DB;
 
