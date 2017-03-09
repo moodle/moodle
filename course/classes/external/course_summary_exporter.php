@@ -42,8 +42,8 @@ class course_summary_exporter extends \core\external\exporter {
 
     protected function get_other_values(renderer_base $output) {
         return array(
+            'fullnamedisplay' => get_course_display_name_for_list($this->data),
             'viewurl' => (new moodle_url('/course/view.php', array('id' => $this->data->id)))->out(false)
-
         );
     }
 
@@ -75,6 +75,9 @@ class course_summary_exporter extends \core\external\exporter {
 
     public static function define_other_properties() {
         return array(
+            'fullnamedisplay' => array(
+                'type' => PARAM_TEXT,
+            ),
             'viewurl' => array(
                 'type' => PARAM_URL,
             )
