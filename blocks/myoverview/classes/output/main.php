@@ -44,7 +44,7 @@ class main implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        $courses = enrol_get_my_courses('*');
+        $courses = enrol_get_my_courses('*', 'fullname ASC');
         $coursesprogress = [];
 
         foreach ($courses as $course) {
