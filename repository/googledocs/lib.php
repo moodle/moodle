@@ -224,6 +224,8 @@ class repository_googledocs extends repository {
         $ret['defaultreturntype'] = $this->default_returntype();
         $ret['path'] = $this->build_breadcrumb($path);
         $ret['list'] = $results;
+        $ret['manage'] = 'https://drive.google.com/';
+
         return $ret;
     }
 
@@ -248,6 +250,7 @@ class repository_googledocs extends repository {
         $ret['dynload'] = true;
         $ret['path'] = $this->build_breadcrumb($path);
         $ret['list'] = $results;
+        $ret['manage'] = 'https://drive.google.com/';
         return $ret;
     }
 

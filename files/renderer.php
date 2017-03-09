@@ -601,7 +601,7 @@ class core_files_renderer extends plugin_renderer_base {
                         </a>
                     </div>
                     <div class="fp-tb-manage">
-                        <a title="'. get_string('settings', 'repository') .'" href="#">
+                        <a title="'. get_string('manageurl', 'repository') .'" href="#">
                             ' . $this->pix_icon('a/setting', '') . '
                         </a>
                     </div>
