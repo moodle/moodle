@@ -115,6 +115,7 @@ $string['csvdownload'] = 'Download in spreadsheet format (UTF-8 .csv)';
 $string['datepassed'] = 'Date passed';
 $string['days'] = 'Days';
 $string['daysoftotal'] = '{$a->days} of {$a->total}';
+$string['defaultcompletion'] = 'Default activity completion';
 $string['deletecompletiondata'] = 'Delete completion data';
 $string['dependencies'] = 'Dependencies';
 $string['dependenciescompleted'] = 'Completion of other courses';

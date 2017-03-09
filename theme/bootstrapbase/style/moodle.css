@@ -6884,6 +6884,9 @@ span.editinstructions {
 .top-section label {
   font-weight: bold;
 }
+.module-section {
+  border-bottom: 1px solid #ccc;
+}
 /**
  * Display sizes:
  * Large displays                   1200        +

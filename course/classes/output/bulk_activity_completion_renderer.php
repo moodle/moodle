@@ -45,9 +45,15 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
         );
 
         $tabs[] = new tabobject(
+            'defaultcompletion',
+            new moodle_url('/course/defaultcompletion.php', ['id' => $courseid]),
+            get_string('defaultcompletion', 'completion')
+        );
+
+        $tabs[] = new tabobject(
             'bulkcompletion',
             new moodle_url('/course/bulkcompletion.php', ['id' => $courseid]),
-            get_string('bulkactivitycompletion', 'completion');
+            get_string('bulkactivitycompletion', 'completion')
         );
 
         return $this->tabtree($tabs, $page);
@@ -56,6 +62,10 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
 
     public function bulkcompletion($data) {
         return parent::render_from_template('core_course/bulkactivitycompletion', $data);
+    }
+
+    public function defaultcompletion($data) {
+        return parent::render_from_template('core_course/defaultactivitycompletion', $data);
     }
 
 }

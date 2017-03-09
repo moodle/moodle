@@ -27,6 +27,7 @@
 namespace core_completion;
 
 use stdClass;
+use context_course;
 
 /**
  * Bulk activity completion manager class
@@ -115,6 +116,25 @@ class manager {
                 break;
         }
         return $strings;
+    }
+
+    public function get_activities_and_resources() {
+        global $DB, $OUTPUT;
+        // Get enabled activities and resources.
+        $modules = $DB->get_records('modules', ['visible' => 1], 'name ASC');
+        $data = new stdClass();
+        $data->courseid = $this->courseid;
+        $data->sesskey = sesskey();
+        $data->helpicon = $OUTPUT->help_icon('temphelp', 'moodle');
+        // Add icon information.
+        $data->modules = array_values($modules);
+        $coursecontext = context_course::instance($this->courseid);
+        foreach ($data->modules as $module) {
+            $module->icon = $OUTPUT->pix_url('icon', $module->name)->out();
+            $module->formatedname = format_string(get_string('pluginname', 'mod_' . $module->name), true, ['context' => $coursecontext]);
+        }
+
+        return $data;
     }
 
 }
