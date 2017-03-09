@@ -69,6 +69,15 @@ echo $OUTPUT->heading(get_string('editcoursecompletionsettings', 'core_completio
 
 echo $renderer->navigation($id, 'bulkcompletion');
 
+$PAGE->requires->yui_module('moodle-core-formchangechecker',
+        'M.core_formchangechecker.init',
+        array(array(
+            'formid' => 'theform'
+        ))
+);
+$PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
+
+
 echo $renderer->bulkcompletion($bulkcompletiondata);
 
 echo $OUTPUT->footer();
