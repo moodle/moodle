@@ -4055,6 +4055,7 @@ EOD;
 
     public function context_header($headerinfo = null, $headinglevel = 1) {
         global $DB, $USER, $CFG;
+        require_once($CFG->dirroot . '/user/lib.php');
         $context = $this->page->context;
         $heading = null;
         $imagedata = null;
@@ -4080,7 +4081,7 @@ EOD;
 
             // Only provide user information if the user is the current user, or a user which the current user can view.
             $canviewdetails = false;
-            if ($user->id == $USER->id || has_capability('moodle/user:viewdetails', $this->page->context)) {
+            if ($user->id == $USER->id || user_can_view_profile($user)) {
                 $canviewdetails = true;
             }
 
