@@ -383,21 +383,21 @@ class oauth_helper {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class oauth2_client extends curl {
-    /** var string client identifier issued to the client */
+    /** @var string $clientid client identifier issued to the client */
     private $clientid = '';
-    /** var string The client secret. */
+    /** @var string $clientsecret The client secret. */
     private $clientsecret = '';
-    /** var moodle_url URL to return to after authenticating */
+    /** @var moodle_url $returnurl URL to return to after authenticating */
     private $returnurl = null;
-    /** var string scope of the authentication request */
+    /** @var string $scope of the authentication request */
     protected $scope = '';
-    /** var stdClass access token object */
+    /** @var stdClass $accesstoken access token object */
     private $accesstoken = null;
-    /** var stdClass refresh token string */
+    /** @var string $refreshtoken refresh token string */
     private $refreshtoken = '';
-    /** var string mocknextresponse string */
+    /** @var string $mocknextresponse string */
     private $mocknextresponse = '';
-    /** var array $upgradedcodes list of upgraded codes in this request */
+    /** @var array $upgradedcodes list of upgraded codes in this request */
     private static $upgradedcodes = [];
 
     /**

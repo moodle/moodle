@@ -17,7 +17,7 @@
 /**
  * Class for loading/storing issuers from the DB.
  *
- * @package    core_oauth2
+ * @package    auth_oauth2
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +35,6 @@ use core\persistent;
  */
 class linked_login extends persistent {
 
-    /** @const TABLE */
     const TABLE = 'auth_oauth2_linked_login';
 
     /**

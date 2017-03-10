@@ -17,7 +17,7 @@
 /**
  * Class for loading/storing oauth2 endpoints from the DB.
  *
- * @package    core_oauth2
+ * @package    core
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,7 +36,6 @@ use lang_string;
  */
 class endpoint extends persistent {
 
-    /** @const TABLE */
     const TABLE = 'oauth2_endpoint';
 
     /**

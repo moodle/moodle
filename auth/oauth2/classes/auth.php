@@ -164,7 +164,7 @@ class auth extends \auth_plugin_base {
     /**
      * Return the userinfo from the oauth handshake. Will only be valid
      * for the logged in user.
-     * @param $string username
+     * @param string $username
      */
     public function get_userinfo($username) {
         $cached = $this->get_static_user_info();
@@ -306,8 +306,12 @@ class auth extends \auth_plugin_base {
         return true;
     }
 
+    /**
+     * Process the config after the form is saved.
+     * @param stdClass $config
+     */
     public function process_config($config) {
-        // Set to defaults if undefined
+        // Set to defaults if undefined.
         if (!isset($config->allowlinkedlogins)) {
              $config->allowlinkedlogins = false;
         }

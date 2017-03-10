@@ -84,7 +84,7 @@ $data->returnurl = $returnurl;
 $data->subwikiid = $subwiki->id;
 $maxbytes = get_max_upload_file_size($CFG->maxbytes, $COURSE->maxbytes);
 $types = FILE_INTERNAL | FILE_REFERENCE | FILE_CONTROLLED_LINK;
-$options = array('subdirs'=>0, 'maxbytes'=>$maxbytes, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>$types);
+$options = array('subdirs' => 0, 'maxbytes' => $maxbytes, 'maxfiles' => -1, 'accepted_types' => '*', 'return_types' => $types);
 file_prepare_standard_filemanager($data, 'files', $options, $context, 'mod_wiki', 'attachments', $subwiki->id);
 
 $mform = new mod_wiki_filesedit_form(null, array('data'=>$data, 'options'=>$options));

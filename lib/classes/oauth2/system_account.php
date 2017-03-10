@@ -16,10 +16,8 @@
 
 /**
  * When using OAuth sometimes it makes sense to authenticate as a system user, and not the current user.
- * In this case we use a refresh token to get an access token and the system admin must manually authorize the
- * system account.
  *
- * @package    core_oauth2
+ * @package    core
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,7 +35,6 @@ use core\persistent;
  */
 class system_account extends persistent {
 
-    /** @const TABLE */
     const TABLE = 'oauth2_system_account';
 
     /**

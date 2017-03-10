@@ -17,7 +17,7 @@
 /**
  * Configurable oauth2 client class.
  *
- * @package    core\oauth2
+ * @package    core
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

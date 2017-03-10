@@ -21,12 +21,18 @@
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace core\oauth2;
 
 use \core\task\scheduled_task;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Simple task to delete old messaging records.
+ * @package    core
+ * @copyright  2017 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class refresh_system_tokens_task extends scheduled_task {
 
@@ -47,7 +53,7 @@ class refresh_system_tokens_task extends scheduled_task {
         $admins = get_admins();
 
         if (empty($admins)) {
-           return;
+            return;
         }
         foreach ($admins as $admin) {
             $strparams = ['siteurl' => $CFG->wwwroot, 'issuer' => $issuer->get('name')];

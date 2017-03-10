@@ -73,7 +73,7 @@ class repository_googledocs extends repository {
     /**
      * Get a cached user authenticated oauth client.
      *
-     * @param moodle_url $usecurrenturl - Use this url instead of the repo callback.
+     * @param moodle_url $overrideurl - Use this url instead of the repo callback.
      * @return \core\oauth2\client
      */
     protected function get_user_oauth_client($overrideurl = false) {
@@ -668,9 +668,9 @@ class repository_googledocs extends repository {
 
     /**
      * List the permissions on a file.
-     * @param \core\oauth2\client $client Authenticated client.
-     * @param string $fileid The id of the file.
      *
+     * @param \repository_googledocs\rest $client Authenticated client.
+     * @param string $fileid The id of the file.
      * @return array
      */
     protected function list_file_permissions(\repository_googledocs\rest $client, $fileid) {
@@ -681,10 +681,9 @@ class repository_googledocs extends repository {
     /**
      * See if a folder exists within a folder
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $foldername The folder we are looking for.
      * @param string $parentid The parent folder we are looking in.
-     *
      * @return string|boolean The file id if it exists or false.
      */
     protected function folder_exists_in_folder(\repository_googledocs\rest $client, $foldername, $parentid) {
@@ -704,7 +703,7 @@ class repository_googledocs extends repository {
     /**
      * Create a folder within a folder
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $foldername The folder we are creating.
      * @param string $parentid The parent folder we are creating in.
      *
@@ -725,7 +724,7 @@ class repository_googledocs extends repository {
     /**
      * Get capabilities for a file.
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $fileid The file we are checking.
      *
      * @return stdClass The file info with capabilities.
@@ -742,7 +741,7 @@ class repository_googledocs extends repository {
     /**
      * Get simple file info for humans.
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $fileid The file we are querying.
      *
      * @return stdClass
@@ -759,8 +758,9 @@ class repository_googledocs extends repository {
     /**
      * Update file owner.
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $fileid The file we are updating.
+     * @param string $owneremail
      *
      * @return boolean Did it work?
      */
@@ -783,7 +783,7 @@ class repository_googledocs extends repository {
      * Copy a file and return the new file details. A side effect of the copy
      * is that the owner will be the account authenticated with this oauth client.
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $fileid The file we are copying.
      * @param string $name The original filename (don't change it).
      *
@@ -811,14 +811,13 @@ class repository_googledocs extends repository {
     /**
      * Delete a file (for the current user).
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $fileid The file we are deleting.
      * @return boolean
      */
-    protected function delete_file($client, $fileid) {
+    protected function delete_file(\repository_googledocs\rest $client, $fileid) {
         $params = ['fileid' => $fileid];
         $response = $client->call('delete', $params, ' ');
-        var_dump($response);
         if (empty($response->id)) {
             $details = 'Cannot delete file: ' . $fileid;
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
@@ -829,12 +828,12 @@ class repository_googledocs extends repository {
     /**
      * Add a writer to the permissions on the file (temporary).
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $fileid The file we are updating.
      * @param string $email The email of the writer account to add.
      * @return boolean
      */
-    protected function add_temp_writer_to_file($client, $fileid, $email) {
+    protected function add_temp_writer_to_file(\repository_googledocs\rest $client, $fileid, $email) {
         // Expires in 7 days.
         $expires = new DateTime();
         $expires->add(new DateInterval("P7D"));
@@ -858,12 +857,12 @@ class repository_googledocs extends repository {
     /**
      * Add a writer to the permissions on the file.
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $fileid The file we are updating.
      * @param string $email The email of the writer account to add.
      * @return boolean
      */
-    protected function add_writer_to_file($client, $fileid, $email) {
+    protected function add_writer_to_file(\repository_googledocs\rest $client, $fileid, $email) {
         $updateeditor = [
             'emailAddress' => $email,
             'role' => 'writer',
@@ -881,12 +880,12 @@ class repository_googledocs extends repository {
     /**
      * Move from root to folder
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $fileid The file we are updating.
      * @param string $folderid The id of the folder we are moving to
      * @return boolean
      */
-    protected function move_file_from_root_to_folder($client, $fileid, $folderid) {
+    protected function move_file_from_root_to_folder(\repository_googledocs\rest $client, $fileid, $folderid) {
         // Set the parent.
         $params = [
             'fileid' => $fileid, 'addParents' => $folderid, 'removeParents' => 'root'
@@ -902,12 +901,12 @@ class repository_googledocs extends repository {
     /**
      * Remove parent
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $fileid The file we are updating.
      * @param string $folderid The id of the folder we are removing
      * @return boolean
      */
-    protected function remove_file_parent($client, $fileid, $folderid) {
+    protected function remove_file_parent(\repository_googledocs\rest $client, $fileid, $folderid) {
         // Set the parent.
         $params = [
             'fileid' => $fileid, 'removeParents' => $folderid
@@ -923,11 +922,11 @@ class repository_googledocs extends repository {
     /**
      * Prevent writers from sharing.
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $fileid The file we are updating.
      * @return boolean
      */
-    protected function prevent_writers_from_sharing_file($client, $fileid) {
+    protected function prevent_writers_from_sharing_file(\repository_googledocs\rest $client, $fileid) {
         // We don't want anyone but Moodle to change the sharing settings.
         $params = [
             'fileid' => $fileid
@@ -946,11 +945,11 @@ class repository_googledocs extends repository {
     /**
      * Allow anyone with the link to read the file.
      *
-     * @param \core\oauth2\client $client Authenticated client.
+     * @param \repository_googledocs\rest $client Authenticated client.
      * @param string $fileid The file we are updating.
      * @return boolean
      */
-    protected function set_file_sharing_anyone_with_link_can_read($client, $fileid) {
+    protected function set_file_sharing_anyone_with_link_can_read(\repository_googledocs\rest $client, $fileid) {
         $updateread = [
             'type' => 'anyone',
             'role' => 'reader',
@@ -1030,7 +1029,7 @@ class repository_googledocs extends repository {
             $foldername = $context->get_context_name();
             $fullpath .= '/' . $foldername;
 
-            $folderid = $cache->get('fullpath');           
+            $folderid = $cache->get('fullpath');
             if (empty($folderid)) {
                 $folderid = $this->folder_exists_in_folder($systemservice, $foldername, $parentid);
             }
@@ -1179,7 +1178,11 @@ class repository_googledocs extends repository {
     }
 }
 
-// Icon from: http://www.iconspedia.com/icon/google-2706.html.
+/**
+ * Callback to get the required scopes for system account.
+ *
+ * @return string
+ */
 function repository_googledocs_oauth2_system_scopes() {
     return 'https://www.googleapis.com/auth/drive';
 }

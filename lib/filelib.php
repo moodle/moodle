@@ -260,7 +260,7 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
  * For all files in this file area - walk the file list and copy each to a system owned account, making them read-only.
  *
  * @category files
- * @param stdClass $context context - must already exist
+ * @param int $contextid context id - must already exist
  * @param string $component
  * @param string $filearea file area name
  * @param int $itemid
@@ -3495,7 +3495,7 @@ class curl {
             $options['CURLOPT_POSTFIELDS'] = $this->_tmp_file_post_params;
             unset($this->_tmp_file_post_params);
         } else {
-            // $params is the raw post data
+            // The variable $params is the raw post data.
             $options['CURLOPT_POSTFIELDS'] = $params;
         }
         return $this->request($url, $options);

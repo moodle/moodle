@@ -45,7 +45,7 @@ class core_calendar_export_form extends moodleform {
         global $CFG, $OUTPUT;
         $mform = $this->_form;
 
-        $mform->addElement('html', '<p>' . $OUTPUT->doc_link('calendar/export', get_string('exporthelp', 'calendar'), true) . '</p>');
+        $mform->addElement('html', $OUTPUT->doc_link('calendar/export', get_string('exporthelp', 'calendar'), true));
 
         $export = array();
         $export[] = $mform->createElement('radio', 'exportevents', '', get_string('eventsall', 'calendar'), 'all');

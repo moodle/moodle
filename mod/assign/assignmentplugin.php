@@ -585,7 +585,7 @@ abstract class assign_plugin {
 
         if ($this->get_subtype() == 'assignsubmission') {
             if ($itemid) {
-                $record = $DB->get_record('assign_submission', array('id'=>$itemid), 'userid,groupid', IGNORE_MISSING);
+                $record = $DB->get_record('assign_submission', array('id' => $itemid), 'userid,groupid', IGNORE_MISSING);
                 if (!$record) {
                     return null;
                 }

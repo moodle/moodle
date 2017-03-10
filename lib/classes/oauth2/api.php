@@ -242,7 +242,7 @@ class api {
      * Get the system account for an installed OAuth service.
      * Never ever ever expose this to a webservice because it contains the refresh token which grants API access.
      *
-     * @param \core\oauth2\issuer $id
+     * @param \core\oauth2\issuer $issuer
      * @return \core\oauth2\client
      */
     public static function get_system_account(issuer $issuer) {

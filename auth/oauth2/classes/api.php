@@ -109,7 +109,6 @@ class api {
         $context = context_user::instance($userid);
         require_capability('auth/oauth2:managelinkedlogins', $context);
 
-
         $record = new stdClass();
         $record->issuerid = $issuer->get('id');
         $record->username = $userinfo['username'];

@@ -21,6 +21,9 @@
  * @copyright 2017 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
 $capabilities = [
 
     'auth/oauth2:managelinkedlogins' => array(
