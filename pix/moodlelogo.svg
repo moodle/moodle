@@ -6,7 +6,7 @@
 <svg version="1.1"
 	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
 	 x="0px" y="0px" width="261px" height="70px" viewBox="0 0 261 70" style="overflow:visible;enable-background:new 0 0 261 70;"
-	 xml:space="preserve">
+	 xml:space="preserve" preserveAspectRatio="xMinYMid meet">
 <defs>
 </defs>
 <radialGradient id="SVGID_1_" cx="138.2432" cy="48.0928" r="123.3346" gradientUnits="userSpaceOnUse">
