@@ -8116,3 +8116,16 @@ function mod_forum_get_fontawesome_icon_map() {
         'mod_forum:t/unsubscribed' => 'fa-envelope-open-o',
     ];
 }
+
+/**
+ * Callback function that determines whether an action event should be showing its item count
+ * based on the event type and the item count.
+ *
+ * @param \core_calendar\event $event The calendar event.
+ * @param int $itemcount The item count associated with the action event.
+ * @return bool
+ */
+function mod_forum_core_calendar_event_action_shows_item_count(\core_calendar\event $event, $itemcount = 0) {
+    // Always show item count for forums if item count is greater than 0.
+    return $itemcount > 0;
+}
