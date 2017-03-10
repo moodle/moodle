@@ -505,10 +505,10 @@ class company {
      * Returns stdclass();
      *
      **/
-    public static function get_userlevel($user) {
+    public function get_userlevel($user) {
 
         global $DB;
-        if ($userdepartment = $DB->get_record('company_users', array('userid' => $user->id))) {
+        if ($userdepartment = $DB->get_record('company_users', array('userid' => $user->id, 'companyid' => $this->id))) {
             $userlevel = $DB->get_record('department', array('id' => $userdepartment->departmentid));
             return $userlevel;
         } else {

@@ -221,12 +221,13 @@ class admin_uploaduser_form2 extends company_moodleform {
         }
 
         // Get the department list.
+	$company = new company($companyid);
         $systemcontext = context_system::instance();
         $parentlevel = company::get_company_parentnode($companyid);
         if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext)) {
             $userhierarchylevel = $parentlevel->id;
         } else {
-            $userlevel = company::get_userlevel($USER);
+            $userlevel = $company->get_userlevel($USER);
             $userhierarchylevel = $userlevel->id;
         }
         $this->departmentid = $userhierarchylevel;

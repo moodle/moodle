@@ -65,7 +65,7 @@ class company_license_users_form extends moodleform {
         if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', context_system::instance())) {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
-            $userlevel = company::get_userlevel($USER);
+            $userlevel = $company->get_userlevel($USER);
             $userhierarchylevel = $userlevel->id;
         }
 
@@ -341,6 +341,7 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
+$company = new company($companyid);
 
 //  Check the license is valid for this company.
 if (!empty($licenseid) && !company::check_valid_company_license($companyid, $licenseid)) {
@@ -373,7 +374,7 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
     }
 
 } else {
-    $userlevel = company::get_userlevel($USER);
+    $userlevel = $company->get_userlevel($USER);
     $userhierarchylevel = $userlevel->id;
     if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
         $alllicenses = true;

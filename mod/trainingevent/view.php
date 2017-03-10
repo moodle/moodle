@@ -68,7 +68,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
             $userhierarchylevel = $parentlevel->id;
         } else {
-            $userlevel = company::get_userlevel($USER);
+            $userlevel = $company->get_userlevel($USER);
             $userhierarchylevel = $userlevel->id;
         }
         $departmentid = $userhierarchylevel;
@@ -658,7 +658,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                 if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
                     $userhierarchylevel = $parentlevel->id;
                 } else {
-                    $userlevel = company::get_userlevel($USER);
+                    $userlevel = $company->get_userlevel($USER);
                     $userhierarchylevel = $userlevel->id;
                 }
                 $departmentid = $userhierarchylevel;
@@ -763,7 +763,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
                 $userhierarchylevel = $parentlevel->id;
             } else {
-                $userlevel = company::get_userlevel($USER);
+                $userlevel = $company->get_userlevel($USER);
                 $userhierarchylevel = $userlevel->id;
             }
             $departmentid = $userhierarchylevel;

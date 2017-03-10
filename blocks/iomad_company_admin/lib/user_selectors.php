@@ -730,7 +730,8 @@ class potential_license_user_selector extends user_selector_base {
                         $shareddepartment = company::get_company_parentnode($this->companyid);
                         $departments = $departments + array($shareddepartment->id => $shareddepartment->id);
                     } else {
-                        $shareddepartment = company::get_userlevel($USER);
+			$company = new company($this->companyid);
+                        $shareddepartment = $company->get_userlevel($USER);
                         $departments = $departments + array($shareddepartment->id => $shareddepartment->id);
                     }
                 }

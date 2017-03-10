@@ -44,7 +44,7 @@ class company_users_course_form extends moodleform {
         if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
-            $userlevel = company::get_userlevel($USER);
+            $userlevel = $company->get_userlevel($USER);
             $userhierarchylevel = $userlevel->id;
         }
 
@@ -256,6 +256,7 @@ iomad::require_capability('block/iomad_company_admin:company_license_users', $co
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
+$company = new company($companyid);
 
 $urlparams = array('companyid' => $companyid, 'licenseid' => $licenseid);
 if ($returnurl) {
@@ -324,7 +325,7 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
                 }
             }
         } else {
-            $userlevel = company::get_userlevel($USER);
+            $userlevel = $company->get_userlevel($USER);
             $userhierarchylevel = $userlevel->id;
             $licenses = company::get_recursive_departments_licenses($userhierarchylevel);
             if (!empty($licenses)) {

@@ -42,7 +42,7 @@ class company_users_course_form extends moodleform {
         if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
-            $userlevel = company::get_userlevel($USER);
+            $userlevel = $company->get_userlevel($USER);
             $userhierarchylevel = $userlevel->id;
         }
 

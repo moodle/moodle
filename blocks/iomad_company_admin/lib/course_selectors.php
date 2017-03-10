@@ -714,7 +714,8 @@ class potential_user_course_selector extends course_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, 'c');
         $params['companyid'] = $this->companyid;
         $params['siteid'] = $SITE->id;
-        $userdepartment = company::get_userlevel($this->user);
+	$company = new company($this->companyid);
+        $userdepartment = $company->get_userlevel($this->user);
 
         if (!$companycourses = $DB->get_records('company_course', array('companyid' => $this->companyid), null, 'courseid')) {
             $companysql = " AND 1=0";

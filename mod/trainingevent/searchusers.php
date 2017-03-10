@@ -105,7 +105,7 @@ if (!empty($departmentid) && !company::check_valid_department($company->id, $dep
 if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
     $userhierarchylevel = $parentlevel->id;
 } else {
-    $userlevel = company::get_userlevel($USER);
+    $userlevel = $company->get_userlevel($USER);
     $userhierarchylevel = $userlevel->id;
 }
 if ($departmentid == 0 ) {
