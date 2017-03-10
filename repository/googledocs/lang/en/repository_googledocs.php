@@ -47,3 +47,4 @@ $string['owner'] = 'Owned by: {$a}';
 $string['oauthinfo'] = '<p>To use this plugin, you must register your site with Google, as described in the documentation <a href="{$a->docsurl}">Google OAuth 2.0 setup</a>.</p><p>As part of the registration process, you will need to enter the following URL as \'Authorized Redirect URIs\':</p><p>{$a->callbackurl}</p><p>Once registered, you will be provided with a client ID and secret which can be used to configure all Google Drive and Picasa plugins.</p><p>Please also note that you will have to enable the service \'Drive API\'.</p>';
 $string['secret'] = 'Secret';
 $string['clientid'] = 'Client ID';
+$string['cachedef_folder'] = 'Google File IDs for folders in the system account';

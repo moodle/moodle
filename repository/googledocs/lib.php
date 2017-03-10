@@ -1022,17 +1022,25 @@ class repository_googledocs extends repository {
         // Now move it to a sensible folder.
         $contextlist = array_reverse($context->get_parent_contexts(true));
 
+        $cache = cache::make('repository_googledocs', 'folder');
         $parentid = 'root';
+        $fullpath = 'root';
         foreach ($contextlist as $context) {
             // Make sure a folder exists here.
             $foldername = $context->get_context_name();
+            $fullpath .= '/' . $foldername;
 
-            $folderid = $this->folder_exists_in_folder($systemservice, $foldername, $parentid);
+            $folderid = $cache->get('fullpath');           
+            if (empty($folderid)) {
+                $folderid = $this->folder_exists_in_folder($systemservice, $foldername, $parentid);
+            }
             if ($folderid !== false) {
+                $cache->set($fullpath, $folderid);
                 $parentid = $folderid;
             } else {
                 // Create it.
                 $parentid = $this->create_folder_in_folder($systemservice, $foldername, $parentid);
+                $cache->set($fullpath, $parentid);
             }
         }
 
