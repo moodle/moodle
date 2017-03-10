@@ -217,6 +217,12 @@ class course_edit_form extends moodleform {
             $mform->addElement('select', 'calendartype', get_string('forcecalendartype', 'calendar'), $calendars);
         }
 
+        $options = range(0, 10);
+        $mform->addElement('select', 'newsitems', get_string('newsitemsnumber'), $options);
+        $courseconfig = get_config('moodlecourse');
+        $mform->setDefault('newsitems', $courseconfig->newsitems);
+        $mform->addHelpButton('newsitems', 'newsitemsnumber');
+
         $mform->addElement('selectyesno', 'showgrades', get_string('showgrades'));
         $mform->addHelpButton('showgrades', 'showgrades');
         $mform->setDefault('showgrades', $courseconfig->showgrades);
@@ -368,19 +374,9 @@ class course_edit_form extends moodleform {
                         'addcourseformatoptionshere');
             }
 
-            if ($courseformat->supports_news()) {
-                // Show the news items select field if the course format supports news.
-                $options = range(0, 10);
-                $newsitems = $mform->createElement('select', 'newsitems', get_string('newsitemsnumber'), $options);
-                $mform->insertElementBefore($newsitems, 'showgrades');
-                $courseconfig = get_config('moodlecourse');
-                $mform->setDefault('newsitems', $courseconfig->newsitems);
-                $mform->addHelpButton('newsitems', 'newsitemsnumber');
-            } else {
-                // Otherwise, create a hidden newsitems element and set its value to 0.
-                $newsitems = $mform->addElement('hidden', 'newsitems', 0);
-                $mform->setType('newsitems', PARAM_INT);
-                $newsitems->setValue(0);
+            // Remove newsitems element if format does not support news.
+            if (!$courseformat->supports_news()) {
+                $mform->removeElement('newsitems');
             }
         }
     }
