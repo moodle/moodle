@@ -63,10 +63,11 @@ function xmldb_repository_googledocs_upgrade($oldversion) {
 
             set_config('issuerid', $issuer->get('id'), 'googledocs');
         }
-        if ($oldversion < 2017030600) {
-            set_config('supportedfiles', 'both', 'googledocs');
-        }
         upgrade_plugin_savepoint(true, 2017030500, 'repository', 'googledocs');
+    }
+    if ($oldversion < 2017030600) {
+        set_config('supportedfiles', 'both', 'googledocs');
+        upgrade_plugin_savepoint(true, 2017030600, 'repository', 'googledocs');
     }
 
     return true;

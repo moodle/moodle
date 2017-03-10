@@ -66,6 +66,12 @@ class repository_googledocs_generator extends testing_repository_generator {
         if (!isset($record['issuerid'])) {
             $record['issuerid'] = $issuer->get('id');
         }
+        if (!isset($record['defaultreturntype'])) {
+            $record['defaultreturntype'] = FILE_INTERNAL;
+        }
+        if (!isset($record['supportedreturntypes'])) {
+            $record['supportedreturntypes'] = 'both';
+        }
         if (!isset($record['documentformat'])) {
             $record['documentformat'] = 'pdf';
         }
