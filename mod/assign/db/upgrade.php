@@ -253,5 +253,33 @@ function xmldb_assign_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2017021500, 'assign');
     }
 
+    if ($oldversion < 2017031000) {
+        // Set priority of assign user overrides.
+        $params = [
+            'modulename' => 'assign',
+            'courseid' => 0,
+            'groupid' => 0,
+            'repeatid' => 0
+        ];
+        $DB->set_field('event', 'priority', CALENDAR_EVENT_USER_OVERRIDE_PRIORITY, $params);
+
+        // Set priority for group overrides for existing assign events.
+        $where = 'groupid IS NOT NULL';
+        $assignoverridesrs = $DB->get_recordset_select('assign_overrides', $where, null, '', 'id, assignid, groupid, sortorder');
+        foreach ($assignoverridesrs as $record) {
+            $params = [
+                'modulename' => 'assign',
+                'instance' => $record->assignid,
+                'groupid' => $record->groupid,
+                'repeatid' => 0
+            ];
+            $DB->set_field('event', 'priority', $record->sortorder, $params);
+        }
+        $assignoverridesrs->close();
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2017031000, 'assign');
+    }
+
     return true;
 }
