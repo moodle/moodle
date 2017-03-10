@@ -313,7 +313,13 @@ class repository_googledocs extends repository {
                 }
                 if (isset($gfile->fileExtension)) {
                     // The file has an extension, therefore we can download it.
-                    $source = json_encode(['id' => $gfile->id, 'exportformat' => 'download', 'link' => $link]);
+                    $source = json_encode([
+                        'id' => $gfile->id,
+                        'name' => $gfile->name,
+                        'exportformat' => 'download',
+                        'link' => $link,
+                        'claimed' => false
+                    ]);
                     $title = $gfile->name;
                 } else {
                     // The file is probably a Google Doc file, we get the corresponding export link.
@@ -356,7 +362,13 @@ class repository_googledocs extends repository {
                     if (empty($title)) {
                         continue;
                     }
-                    $source = json_encode(['id' => $gfile->id, 'exportformat' => $exporttype, 'link' => $link]);
+                    $source = json_encode([
+                        'id' => $gfile->id,
+                        'exportformat' => $exporttype,
+                        'link' => $link,
+                        'name' => $gfile->name,
+                        'claimed' => false
+                    ]);
                 }
                 // Adds the file to the file list. Using the itemId along with the name as key
                 // of the array because Google Drive allows files with identical names.
@@ -541,7 +553,7 @@ class repository_googledocs extends repository {
                                    $storedfile->get_filepath(),
                                    $storedfile->get_filename());
 
-        if ($info->is_writable()) {
+        if (!empty($source->claimed) && $info->is_writable()) {
             // Add the current user as an OAuth writer.
             $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
 
@@ -608,7 +620,7 @@ class repository_googledocs extends repository {
         $systemservice = new repository_googledocs\rest($systemauth);
 
         // Copy the file so we get a snapshot file owned by Moodle.
-        $newsource = $this->copy_file($systemservice, $source->id);
+        $newsource = $this->copy_file($systemservice, $source->id, $source->name);
 
         // Set the sharing options.
         $this->set_file_sharing_anyone_with_link_can_read($systemservice, $newsource->id);
@@ -626,6 +638,7 @@ class repository_googledocs extends repository {
         if (empty($source->link)) {
             $source->link = isset($newsource->webContentLink) ? $newsource->webContentLink : '';
         }
+        $source->claimed = true;
         $reference = json_encode($source);
         $file->set_source($reference);
 
@@ -772,16 +785,22 @@ class repository_googledocs extends repository {
      *
      * @param \core\oauth2\client $client Authenticated client.
      * @param string $fileid The file we are copying.
+     * @param string $name The original filename (don't change it).
      *
      * @return stdClass file details.
      */
-    protected function copy_file(\repository_googledocs\rest $client, $fileid) {
+    protected function copy_file(\repository_googledocs\rest $client, $fileid, $name) {
         $fields = "id,name,mimeType,webContentLink,webViewLink,size,thumbnailLink,iconLink";
         $params = [
             'fileid' => $fileid,
-            'fields' => $fields
+            'fields' => $fields,
         ];
-        $fileinfo = $client->call('copy', $params, ' ');
+        // Keep the original name (don't put copy at the end of it).
+        $copyinfo = [];
+        if (!empty($name)) {
+            $copyinfo = [ 'name' => $name ];
+        }
+        $fileinfo = $client->call('copy', $params, json_encode($copyinfo));
         if (empty($fileinfo->id)) {
             $details = 'Cannot copy file:' . $fileid;
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
