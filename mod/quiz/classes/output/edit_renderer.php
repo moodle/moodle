@@ -91,8 +91,8 @@ class edit_renderer extends \plugin_renderer_base {
             $popups = '';
 
             $popups .= $this->question_bank_loading();
-            $this->page->requires->yui_module('moodle-mod_quiz-quizquestionbank',
-                    'M.mod_quiz.quizquestionbank.init',
+            $this->page->requires->js_call_amd('mod_quiz/questionbank',
+                    'init',
                     array('class' => 'questionbank', 'cmid' => $structure->get_cmid()));
 
             $popups .= $this->random_question_form($pageurl, $contexts, $pagevars);
