@@ -55,10 +55,23 @@ abstract class feedback_item_base {
      * @return bool
      */
     public function get_data() {
+        if ($this->item !== null) {
+            return true;
+        }
         if ($this->item = $this->item_form->get_data()) {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Set the item data (to be used by data generators).
+     *
+     * @param stdClass $itemdata the item data to set
+     * @since Moodle 3.3
+     */
+    public function set_data($itemdata) {
+        $this->item = $itemdata;
     }
 
     /**
