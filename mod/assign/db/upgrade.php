@@ -261,7 +261,8 @@ function xmldb_assign_upgrade($oldversion) {
             'groupid' => 0,
             'repeatid' => 0
         ];
-        $DB->set_field('event', 'priority', CALENDAR_EVENT_USER_OVERRIDE_PRIORITY, $params);
+        // CALENDAR_EVENT_USER_OVERRIDE_PRIORITY has a value of 9999999.
+        $DB->set_field('event', 'priority', 9999999, $params);
 
         // Set priority for group overrides for existing assign events.
         $where = 'groupid IS NOT NULL';
