@@ -243,14 +243,18 @@ class mod_forum_mod_form extends moodleform_mod {
         if (empty($default_values['completionreplies'])) {
             $default_values['completionreplies']=1;
         }
-        $default_values['completionpostsenabled']=
-            !empty($default_values['completionposts']) ? 1 : 0;
+        // Tick by default if Add mode or if completion posts settings is set to 1 or more.
+        if (empty($this->_instance) || !empty($default_values['completionposts'])) {
+            $default_values['completionpostsenabled'] = 1;
+        } else {
+            $default_values['completionpostsenabled'] = 0;
+        }
         if (empty($default_values['completionposts'])) {
             $default_values['completionposts']=1;
         }
     }
 
-      function add_completion_rules() {
+    function add_completion_rules() {
         $mform =& $this->_form;
 
         $group=array();

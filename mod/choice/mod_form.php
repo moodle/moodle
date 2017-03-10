@@ -161,6 +161,8 @@ class mod_choice_mod_form extends moodleform_mod {
         $mform =& $this->_form;
 
         $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'choice'));
+        // Enable this completion rule by default.
+        $mform->setDefault('completionsubmit', 1);
         return array('completionsubmit');
     }
 

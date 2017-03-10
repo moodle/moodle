@@ -204,6 +204,8 @@ class mod_feedback_mod_form extends moodleform_mod {
                            'completionsubmit',
                            '',
                            get_string('completionsubmit', 'feedback'));
+        // Enable this completion rule by default.
+        $mform->setDefault('completionsubmit', 1);
         return array('completionsubmit');
     }
 

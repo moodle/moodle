@@ -519,6 +519,10 @@ class mod_scorm_mod_form extends moodleform_mod {
                 $firstkey = $key;
             }
             $mform->addElement('checkbox', $key, $name, $value);
+            // Default completion rule that requires the SCORM's status be set to "Completed".
+            if ($key === 'completionstatusrequired[4]') {
+                $mform->setDefault($key, 1);
+            }
             $mform->setType($key, PARAM_BOOL);
             $items[] = $key;
         }

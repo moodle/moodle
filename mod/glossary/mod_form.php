@@ -174,10 +174,12 @@ class mod_glossary_mod_form extends moodleform_mod {
         }
 
         // Set up the completion checkboxes which aren't part of standard data.
-        // We also make the default value (if you turn on the checkbox) for those
-        // numbers to be 1, this will not apply unless checkbox is ticked.
-        $default_values['completionentriesenabled']=
-            !empty($default_values['completionentries']) ? 1 : 0;
+        // Tick by default if Add mode or if completion entries settings is set to 1 or more.
+        if (empty($this->_instance) || !empty($default_values['completionentries'])) {
+            $default_values['completionentriesenabled'] = 1;
+        } else {
+            $default_values['completionentriesenabled'] = 0;
+        }
         if (empty($default_values['completionentries'])) {
             $default_values['completionentries']=1;
         }

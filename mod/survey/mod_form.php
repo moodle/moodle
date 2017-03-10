@@ -76,6 +76,8 @@ class mod_survey_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform =& $this->_form;
         $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'survey'));
+        // Enable this completion rule by default.
+        $mform->setDefault('completionsubmit', 1);
         return array('completionsubmit');
     }
 
