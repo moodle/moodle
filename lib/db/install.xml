@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20170228" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20170310" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -3510,6 +3510,8 @@
         <FIELD NAME="issuerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the oauth 2 identity issuer"/>
         <FIELD NAME="refreshtoken" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The refresh token used to request access tokens."/>
         <FIELD NAME="grantedscopes" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The scopes that this system account has been granted access to."/>
+        <FIELD NAME="email" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The email that was connected to this issuer."/>
+        <FIELD NAME="username" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The username that was connected as a system account to this issue."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

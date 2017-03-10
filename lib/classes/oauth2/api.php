@@ -715,10 +715,15 @@ class api {
         if ($systemaccount) {
             $systemaccount->delete();
         }
+
+        $userinfo = $client->get_userinfo();
+
         $record = new stdClass();
         $record->issuerid = $issuer->get('id');
         $record->refreshtoken = $refreshtoken;
         $record->grantedscopes = $scopes;
+        $record->email = $userinfo['email'];
+        $record->username = $userinfo['username'];
 
         $systemaccount = new system_account(0, $record);
 

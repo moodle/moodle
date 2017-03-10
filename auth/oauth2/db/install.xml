@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="auth/oauth2/db" VERSION="20170308" COMMENT="XMLDB file for Moodle auth/oauth2"
+<XMLDB PATH="auth/oauth2/db" VERSION="20170310" COMMENT="XMLDB file for Moodle auth/oauth2"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -13,7 +13,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user account this oauth login is linked to."/>
         <FIELD NAME="issuerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="username" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The external username to map to this moodle account"/>
-        <FIELD NAME="email" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The external email to map to this moodle account"/>
+        <FIELD NAME="email" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The external email to map to this moodle account"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

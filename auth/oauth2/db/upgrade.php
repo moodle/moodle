@@ -70,5 +70,18 @@ function xmldb_auth_oauth2_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017030700, 'auth', 'oauth2');
     }
 
+    if ($oldversion < 2017031000) {
+
+        // Changing type of field email on table auth_oauth2_linked_login to text.
+        $table = new xmldb_table('auth_oauth2_linked_login');
+        $field = new xmldb_field('email', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'username');
+
+        // Launch change of type for field email.
+        $dbman->change_field_type($table, $field);
+
+        // Oauth2 savepoint reached.
+        upgrade_plugin_savepoint(true, 2017031000, 'auth', 'oauth2');
+    }
+
     return true;
 }

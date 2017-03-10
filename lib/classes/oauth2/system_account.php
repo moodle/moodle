@@ -55,6 +55,12 @@ class system_account extends persistent {
             ),
             'grantedscopes' => array(
                 'type' => PARAM_RAW,
+            ),
+            'email' => array(
+                'type' => PARAM_RAW,
+            ),
+            'username' => array(
+                'type' => PARAM_RAW,
             )
         );
     }

@@ -114,7 +114,9 @@ class renderer extends plugin_renderer_base {
 
             // Connected.
             if ($issuer->is_system_account_connected()) {
-                $systemauth = $OUTPUT->pix_icon('yes', get_string('systemaccountconnected', 'tool_oauth2'), 'tool_oauth2');
+                $systemaccount = \core\oauth2\api::get_system_account($issuer);
+                $systemauth = s($systemaccount->get('email')) . ' (' . s($systemaccount->get('username')). ') ';
+                $systemauth .= $OUTPUT->pix_icon('yes', get_string('systemaccountconnected', 'tool_oauth2'), 'tool_oauth2');
             } else {
                 $systemauth = $OUTPUT->pix_icon('no', get_string('systemaccountnotconnected', 'tool_oauth2'), 'tool_oauth2');
             }
