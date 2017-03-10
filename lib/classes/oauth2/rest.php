@@ -103,13 +103,8 @@ abstract class rest {
             $callargs = $rawpost;
         }
 
-        error_log('CALL REST');
-        error_log($endpoint);
-        error_log(json_encode($callargs));
-        error_log($method);
         $this->curl->setHeader('Content-type: application/json');
         $response = $this->curl->$method($endpoint, $callargs);
-        error_log($response);
 
         if ($this->curl->errno == 0) {
             if ($responsetype == 'json') {

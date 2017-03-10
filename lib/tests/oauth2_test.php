@@ -112,7 +112,9 @@ class core_oauth2_testcase extends advanced_testcase {
         $data = (object) [
             'issuerid' => $issuer->get('id'),
             'refreshtoken' => 'abc',
-            'grantedscopes' => $requiredscopes
+            'grantedscopes' => $requiredscopes,
+            'email' => 'sys@example.com',
+            'username' => 'sys'
         ];
         $sys = new \core\oauth2\system_account(0, $data);
         $sys->create();
