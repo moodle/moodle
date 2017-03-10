@@ -516,4 +516,80 @@ class mod_feedback_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_page_items.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_page_items_parameters() {
+        return new external_function_parameters (
+            array(
+                'feedbackid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'page' => new external_value(PARAM_INT, 'The page to get starting by 0'),
+            )
+        );
+    }
+
+    /**
+     * Get a single feedback page items.
+     *
+     * @param int $feedbackid feedback instance id
+     * @param int $page the page to get starting by 0
+     * @return array of warnings and launch information
+     * @since Moodle 3.3
+     */
+    public static function get_page_items($feedbackid, $page) {
+        global $PAGE;
+
+        $params = array('feedbackid' => $feedbackid, 'page' => $page);
+        $params = self::validate_parameters(self::get_page_items_parameters(), $params);
+        $warnings = array();
+
+        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
+
+        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $course->id);
+
+        $page = $params['page'];
+        $pages = $feedbackcompletion->get_pages();
+        $pageitems = $pages[$page];
+        $hasnextpage = $page < count($pages) - 1; // Until we complete this page we can not trust get_next_page().
+        $hasprevpage = $page && ($feedbackcompletion->get_previous_page($page, false) !== null);
+
+        $returneditems = array();
+        foreach ($pageitems as $item) {
+            $itemnumber = empty($item->itemnr) ? null : $item->itemnr;
+            unset($item->itemnr);   // Added by the function, not part of the record.
+            $exporter = new feedback_item_exporter($item, array('context' => $context, 'itemnumber' => $itemnumber));
+            $returneditems[] = $exporter->export($PAGE->get_renderer('core'));
+        }
+
+        $result = array(
+            'items' => $returneditems,
+            'hasprevpage' => $hasprevpage,
+            'hasnextpage' => $hasnextpage,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the get_page_items return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_page_items_returns() {
+        return new external_single_structure(
+            array(
+                'items' => new external_multiple_structure(
+                    feedback_item_exporter::get_read_structure()
+                ),
+                'hasprevpage' => new external_value(PARAM_BOOL, 'Whether is a previous page.'),
+                'hasnextpage' => new external_value(PARAM_BOOL, 'Whether there are more pages.'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

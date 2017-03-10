@@ -421,4 +421,29 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_feedback_external::launch_feedback_returns(), $result);
         $this->assertEquals(1, $result['gopage']);
     }
+
+    /**
+     * Test get_page_items.
+     */
+    public function test_get_page_items() {
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Add questions to the feedback, we are adding 2 pages of questions.
+        $itemscreated = self::populate_feedback($this->feedback, 2);
+
+        // Retrieve first page.
+        $result = mod_feedback_external::get_page_items($this->feedback->id, 0);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_page_items_returns(), $result);
+        $this->assertCount(3, $result['items']);    // The first page has 3 items.
+        $this->assertTrue($result['hasnextpage']);
+        $this->assertFalse($result['hasprevpage']);
+
+        // Retrieve second page.
+        $result = mod_feedback_external::get_page_items($this->feedback->id, 1);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_page_items_returns(), $result);
+        $this->assertCount(5, $result['items']);    // The second page has 5 items (page break doesn't count).
+        $this->assertFalse($result['hasnextpage']);
+        $this->assertTrue($result['hasprevpage']);
+    }
 }
