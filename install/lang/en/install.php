@@ -90,10 +90,9 @@ $string['pathsunsecuredataroot'] = 'Dataroot location is not secure';
 $string['pathswrongadmindir'] = 'Admin directory does not exist';
 $string['phpextension'] = '{$a} PHP extension';
 $string['phpversion'] = 'PHP version';
-$string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).</p>
-<p>You are currently running version {$a}</p>
-<p>You must upgrade PHP or move to a host with a newer version of PHP!<br />
-(In case of 5.0.x you could also downgrade to 4.4.x version)</p>';
+$string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 5.4.4 (7.x has some engine limitations).</p>
+<p>You are currently running version {$a}.</p>
+<p>You must upgrade PHP or move to a host with a newer version of PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'You are seeing this page because you have successfully installed and
     launched the <strong>{$a->packname} {$a->packversion}</strong> package in your computer. Congratulations!';
