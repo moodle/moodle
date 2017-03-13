@@ -247,14 +247,6 @@ class cache_definition {
     protected $datasourcefile = null;
 
     /**
-     * Deprecated - this is completely unused.
-     * @deprecated since 2.9
-     * @todo MDL-55267 This will be deleted in Moodle 3.3.
-     * @var string
-     */
-    protected $datasourceaggregate = null;
-
-    /**
      * Set to true if the cache should hold onto items passing through it to speed up subsequent requests.
      * @var bool
      */
