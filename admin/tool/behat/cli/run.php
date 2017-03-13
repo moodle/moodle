@@ -325,6 +325,7 @@ if ($verbose || $status) {
         }
 
         // Update status after auto-rerun finished.
+        $status = 0;
         foreach ($exitcodes as $name => $exitcode) {
             if ($exitcode) {
                 if (!empty($parallelrun)) {
