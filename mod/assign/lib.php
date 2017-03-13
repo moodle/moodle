@@ -264,7 +264,7 @@ function assign_update_events($assign, $override = null) {
         $event->timeduration = 0;
         $event->timesort    = $event->timestart + $event->timeduration;
         $event->visible     = instance_is_visible('assign', $assigninstance);
-        $event->eventtype   = ASSIGN_EVENT_TYPE_OPEN;
+        $event->eventtype   = ASSIGN_EVENT_TYPE_DUE;
 
         // Determine the event name and priority.
         if ($groupid) {
@@ -300,8 +300,6 @@ function assign_update_events($assign, $override = null) {
                 unset($event->id);
             }
             $event->name      = $eventname.' ('.get_string('duedate', 'assign').')';
-            $event->timestart = $duedate;
-            $event->eventtype = ASSIGN_EVENT_TYPE_CLOSE;
             \core_calendar\event::create($event);
         }
     }
