@@ -4101,3 +4101,33 @@ function data_set_config(&$database, $key, $value) {
         $DB->set_field('data', 'config', $database->config, ['id' => $database->id]);
     }
 }
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $data       data object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.3
+ */
+function data_view($data, $course, $cm, $context) {
+    global $CFG;
+    require_once($CFG->libdir . '/completionlib.php');
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $data->id
+    );
+
+    $event = \mod_data\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('data', $data);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}

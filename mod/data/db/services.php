@@ -34,5 +34,13 @@ $functions = array(
         'type' => 'read',
         'capabilities' => 'mod/data:viewentry',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    )
+    ),
+    'mod_data_view_database' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'view_database',
+        'description'   => 'Simulate the view.php web interface data: trigger events, completion, etc...',
+        'type'          => 'write',
+        'capabilities'  => 'mod/data:viewentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

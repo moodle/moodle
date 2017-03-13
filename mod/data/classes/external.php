@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
+require_once($CFG->dirroot . "/mod/data/locallib.php");
 
 use mod_data\external\database_summary_exporter;
 
@@ -145,6 +146,67 @@ class mod_data_external extends external_api {
                     database_summary_exporter::get_read_structure()
                 ),
                 'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function view_database_parameters() {
+        return new external_function_parameters(
+            array(
+                'databaseid' => new external_value(PARAM_INT, 'data instance id')
+            )
+        );
+    }
+
+    /**
+     * Simulate the data/view.php web interface page: trigger events, completion, etc...
+     *
+     * @param int $databaseid the data instance id
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function view_database($databaseid) {
+        global $DB;
+
+        $params = self::validate_parameters(self::view_database_parameters(), array('databaseid' => $databaseid));
+        $warnings = array();
+
+        // Request and permission validation.
+        $data = $DB->get_record('data', array('id' => $params['databaseid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($data, 'data');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        require_capability('mod/data:viewentry', $context);
+
+        // Call the data/lib API.
+        data_view($data, $course, $cm, $context);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.3
+     */
+    public static function view_database_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
             )
         );
     }
