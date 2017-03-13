@@ -26,12 +26,13 @@ if (!is_enabled_auth('shibboleth')) {
 $inputstream = file_get_contents("php://input");
 if ($action == 'logout' && !empty($redirect)) {
 
-    if ($USER->auth == 'shibboleth') {
-        // Logout out user from application.
+    if (isloggedin($USER) && $USER->auth == 'shibboleth') {
+        // Logout user from application.
         require_logout();
-         // Finally, send user to the return URL.
-        redirect($redirect);
     }
+
+    // Finally, send user to the return URL.
+    redirect($redirect);
 
 } else if (!empty($inputstream)) {
 
