@@ -40,7 +40,9 @@ class mustache_user_date_helper {
     /**
      * Read a timestamp and format from the string.
      *
-     * {{#shortentext}} 1487655635, Y-M-D {{/shortentext}}
+     * {{#userdate}}1487655635, %Y %m %d{{/userdate}}
+     *
+     * There is a list of formats in lang/en/langconfig.php that can be used as the date format.
      *
      * Both args are required. The timestamp must come first.
      *
