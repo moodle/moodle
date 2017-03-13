@@ -55,6 +55,11 @@ class std_proxy implements proxy_interface {
     protected $callback;
 
     /**
+     * @var array $callbackargs Array of arguments to pass to the callback.
+     */
+    protected $callbackargs;
+
+    /**
      * @var \stdClass $base Base class to get members from.
      */
     protected $base;
@@ -69,6 +74,7 @@ class std_proxy implements proxy_interface {
      */
     public function __construct($id, callable $callback, \stdClass $base = null) {
         $this->id = $id;
+        $this->callbackargs = [$id];
         $this->callback = $callback;
         $this->base = $base;
     }
@@ -102,11 +108,7 @@ class std_proxy implements proxy_interface {
     }
 
     public function get_proxied_instance() {
-        if ($this->class) {
-            return $this->class;
-        } else {
-            $callback = $this->callback;
-            return $callback($this->id);
-        }
+        $callback = $this->callback;
+        return $this->class = $this->class ? $this->class : $callback(...$this->callbackargs);
     }
 }

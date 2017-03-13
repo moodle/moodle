@@ -6671,7 +6671,16 @@ function calendar_get_courselink($courseid) {
 function calendar_get_module_cached(&$coursecache, $modulename, $instance) {
     debugging(__FUNCTION__ . '() is deprecated, please use \core_calendar\api::get_module_cached() instead.',
         DEBUG_DEVELOPER);
-    return \core_calendar\api::get_module_cached($coursecache, $modulename, $instance);
+
+    // We have a new implementation of this function in the calendar API class,
+    // so the old implementation must remain here.
+    $module = get_coursemodule_from_instance($modulename, $instance);
+
+    if($module === false) return false;
+    if(!calendar_get_course_cached($coursecache, $module->course)) {
+        return false;
+    }
+    return $module;
 }
 
 /**

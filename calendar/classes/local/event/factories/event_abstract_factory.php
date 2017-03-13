@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use core_calendar\local\event\entities\event;
 use core_calendar\local\event\entities\repeat_event_collection;
 use core_calendar\local\event\exceptions\invalid_callback_exception;
+use core_calendar\local\event\proxies\module_std_proxy;
 use core_calendar\local\event\proxies\std_proxy;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
@@ -57,6 +58,11 @@ abstract class event_abstract_factory implements event_factory_interface {
      * @var array Course cache for use with get_course_cached.
      */
     protected $coursecachereference;
+
+    /**
+     * @var array Module cache reference for use with get_module_cached.
+     */
+    protected $modulecachereference;
 
     /**
      * @var callable Bail out check for create_instance.
@@ -91,12 +97,14 @@ abstract class event_abstract_factory implements event_factory_interface {
         callable $actioncallbackapplier,
         callable $visibilitycallbackapplier,
         callable $bailoutcheck,
-        array &$coursecachereference
+        array &$coursecachereference,
+        array &$modulecachereference
     ) {
         $this->actioncallbackapplier = $actioncallbackapplier;
         $this->visibilitycallbackapplier = $visibilitycallbackapplier;
         $this->bailoutcheck = $bailoutcheck;
         $this->coursecachereference = &$coursecachereference;
+        $this->modulecachereference = &$modulecachereference;
     }
 
     public function create_instance(\stdClass $dbrow) {
@@ -143,13 +151,17 @@ abstract class event_abstract_factory implements event_factory_interface {
 
         if ($dbrow->instance && $dbrow->modulename) {
             $modulename = $dbrow->modulename;
-            $module = new std_proxy($dbrow->instance, function($id) use ($modulename) {
-                return get_coursemodule_from_instance($modulename, $id);
-            },
-            (object)[
-                'modname' => $modulename,
-                'instance' => $dbrow->instance
-            ]);
+            $module = new module_std_proxy(
+                $dbrow->modulename,
+                $dbrow->instance,
+                function($modulename, $instance) {
+                    return \core_calendar\api::get_module_cached(
+                        $this->modulecachereference,
+                        $modulename,
+                        $instance
+                    );
+                }
+            );
         }
 
         if ($dbrow->subscriptionid) {

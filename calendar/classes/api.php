@@ -562,22 +562,17 @@ class api {
     /**
      * Get current module cache.
      *
-     * @param array $coursecache list of course cache
+     * @param array $modulecache in memory module cache
      * @param string $modulename name of the module
      * @param int $instance module instance number
      * @return \stdClass|bool $module information
      */
-    public static function get_module_cached(&$coursecache, $modulename, $instance) {
-        $module = get_coursemodule_from_instance($modulename, $instance);
-
-        if ($module === false) {
-            return false;
+    public static function get_module_cached(&$modulecache, $modulename, $instance) {
+        if (!isset($modulecache[$modulename . '_' . $instance])) {
+            $modulecache[$modulename . '_' . $instance] = get_coursemodule_from_instance($modulename, $instance);
         }
 
-        if (!self::get_course_cached($coursecache, $module->course)) {
-            return false;
-        }
-        return $module;
+        return $modulecache[$modulename . '_' . $instance];
     }
 
     /**

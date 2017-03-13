@@ -57,11 +57,13 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         $this->setAdminUser();
         $event = $this->create_event();
         $coursecache = [];
+        $modulecache = [];
         $factory = new event_factory(
             $actioncallbackapplier,
             $visibilitycallbackapplier,
             $bailoutcheck,
-            $coursecache
+            $coursecache,
+            $modulecache
         );
         $dbrow->id = $event->id;
         $instance = $factory->create_instance($dbrow);
@@ -89,6 +91,7 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         $this->setAdminUser();
         $event = $this->create_event();
         $coursecache = [];
+        $modulecache = [];
         $factory = new event_factory(
             function () {
                 return 'hello';
@@ -99,7 +102,8 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
             function () {
                 return false;
             },
-            $coursecache
+            $coursecache,
+            $modulecache
         );
 
         $factory->create_instance(
@@ -135,6 +139,7 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         $this->setAdminUser();
         $event = $this->create_event();
         $coursecache = [];
+        $modulecache = [];
         $factory = new event_factory(
             function ($event) {
                 return $event;
@@ -145,7 +150,8 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
             function () {
                 return false;
             },
-            $coursecache
+            $coursecache,
+            $modulecache
         );
 
         $factory->create_instance(
@@ -181,6 +187,7 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         $this->setAdminUser();
         $event = $this->create_event();
         $coursecache = [];
+        $modulecache = [];
         $factory = new event_factory(
             function ($event) {
                 return $event;
@@ -191,7 +198,8 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
             function () {
                 return 'asdf';
             },
-            $coursecache
+            $coursecache,
+            $modulecache
         );
 
         $factory->create_instance(
@@ -226,6 +234,7 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
         $course = self::getDataGenerator()->create_course();
         $event = $this->create_event(['courseid' => $course->id]);
         $coursecache = [];
+        $modulecache = [];
         $factory = new event_factory(
             function ($event) {
                 return $event;
@@ -236,7 +245,8 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
             function () {
                 return false;
             },
-            $coursecache
+            $coursecache,
+            $modulecache
         );
 
         $instance = $factory->create_instance(
@@ -263,6 +273,59 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
 
         $instance->get_course()->get('fullname');
         $this->assertArrayHasKey($course->id, $coursecache);
+    }
+
+    /**
+     * Test the factory's module cache.
+     */
+    public function test_module_cache() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $course = self::getDataGenerator()->create_course();
+        $event = $this->create_event(['courseid' => $course->id]);
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assigninstance = $plugingenerator->create_instance(['course' => $course->id]);
+
+        $coursecache = [];
+        $modulecache = [];
+        $factory = new event_factory(
+            function ($event) {
+                return $event;
+            },
+            function () {
+                return true;
+            },
+            function () {
+                return false;
+            },
+            $coursecache,
+            $modulecache
+        );
+
+        $instance = $factory->create_instance(
+            (object)[
+                'id' => $event->id,
+                'name' => 'test',
+                'description' => 'Test description',
+                'format' => 2,
+                'courseid' => $course->id,
+                'groupid' => 1,
+                'userid' => 1,
+                'repeatid' => 1,
+                'modulename' => 'assign',
+                'instance' => $assigninstance->id,
+                'eventtype' => 'due',
+                'timestart' => 123456789,
+                'timeduration' => 12,
+                'timemodified' => 123456789,
+                'timesort' => 123456789,
+                'visible' => 1,
+                'subscriptionid' => 1
+            ]
+        );
+
+        $instance->get_course_module()->get('course');
+        $this->assertArrayHasKey('assign' . '_' . $assigninstance->id, $modulecache);
     }
 
     /**

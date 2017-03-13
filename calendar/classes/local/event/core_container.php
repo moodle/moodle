@@ -81,6 +81,11 @@ class core_container {
     protected static $coursecache = array();
 
     /**
+     * @var stdClass[] An array of cached modules to use with the event factory.
+     */
+    protected static $modulecache = array();
+
+    /**
      * Initialises the dependency graph if it hasn't yet been.
      */
     private static function init() {
@@ -103,7 +108,8 @@ class core_container {
                     function() {
                         return false;
                     },
-                    self::$coursecache
+                    self::$coursecache,
+                    self::$modulecache
                 )
             );
 
@@ -121,7 +127,8 @@ class core_container {
 
                     return !(bool)$cm->visible;
                 },
-                self::$coursecache
+                self::$coursecache,
+                self::$modulecache
             );
         }
 
