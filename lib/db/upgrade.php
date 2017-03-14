@@ -2667,5 +2667,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017040300.06);
     }
 
+    if ($oldversion < 2017040300.12) {
+        // Create adhoc task for upgrading of existing calendar events.
+        $record = new \stdClass();
+        $record->classname = "\\core\\task\\refresh_mod_calendar_events_task";
+        $record->component = 'core';
+
+        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+        $nextruntime = time() - 1;
+        $record->nextruntime = $nextruntime;
+        $DB->insert_record('task_adhoc', $record);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017040300.12);
+    }
+
     return true;
 }
