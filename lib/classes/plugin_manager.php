@@ -1949,7 +1949,7 @@ class core_plugin_manager {
 
         if (!$this->is_plugin_folder_removable($plugin->component)) {
             throw new moodle_exception('err_removing_unremovable_folder', 'core_plugin', '',
-                array('plugin' => $pluginfo->component, 'rootdir' => $pluginfo->rootdir),
+                array('plugin' => $plugin->component, 'rootdir' => $plugin->rootdir),
                 'plugin root folder is not removable as expected');
         }
 
