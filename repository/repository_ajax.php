@@ -278,6 +278,10 @@ switch ($action) {
             } else {
                 // Download file to moodle.
                 $downloadedfile = $repo->get_file($reference, $saveas_filename);
+
+                if (!empty($downloadedfile['newfilename'])) {
+                    $record->filename = $downloadedfile['newfilename'];
+                }
                 if (empty($downloadedfile['path'])) {
                     $err->error = get_string('cannotdownload', 'repository');
                     die(json_encode($err));

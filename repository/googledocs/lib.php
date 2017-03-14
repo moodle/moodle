@@ -331,7 +331,7 @@ class repository_googledocs extends repository {
                     switch ($type){
                         case 'document':
                             $ext = $config->documentformat;
-                            $title = $gfile->name . '.'. $ext;
+                            $title = $gfile->name . '.gdoc';
                             if ($ext === 'rtf') {
                                 // Moodle user 'text/rtf' as the MIME type for RTF files.
                                 // Google uses 'application/rtf' for the same type of file.
@@ -343,12 +343,12 @@ class repository_googledocs extends repository {
                             break;
                         case 'presentation':
                             $ext = $config->presentationformat;
-                            $title = $gfile->name . '.'. $ext;
+                            $title = $gfile->name . '.gslides';
                             $exporttype = $types[$ext]['type'];
                             break;
                         case 'spreadsheet':
                             $ext = $config->spreadsheetformat;
-                            $title = $gfile->name . '.'. $ext;
+                            $title = $gfile->name . '.gsheet';
                             $exporttype = $types[$ext]['type'];
                             break;
                         case 'drawing':
@@ -421,6 +421,7 @@ class repository_googledocs extends repository {
 
         $source = json_decode($reference);
 
+        $newfilename = false;
         if ($source->exportformat == 'download') {
             $params = ['alt' => 'media'];
             $sourceurl = new moodle_url($base . '/files/' . $source->id, $params);
@@ -428,20 +429,36 @@ class repository_googledocs extends repository {
         } else {
             $params = ['mimeType' => $source->exportformat];
             $sourceurl = new moodle_url($base . '/files/' . $source->id . '/export', $params);
+            $types = get_mimetypes_array();
+            $checktype = $source->exportformat;
+            if ($checktype == 'application/rtf') {
+                $checktype = 'text/rtf';
+            }
+            foreach ($types as $extension => $info) {
+                if ($info['type'] == $checktype) {
+                    $newfilename = $source->name . '.' . $extension;
+                    break;
+                }
+            }
             $source = $sourceurl->out(false);
         }
 
         // We use download_one and not the rest API because it has special timeouts etc.
         $path = $this->prepare_file($filename);
         $options = ['filepath' => $path, 'timeout' => 15, 'followlocation' => true, 'maxredirs' => 5];
-        $result = $client->download_one($source, null, $options);
+        $success = $client->download_one($source, null, $options);
 
-        if ($result) {
+        if ($success) {
             @chmod($path, $CFG->filepermissions);
-            return array(
+
+            $result = [
                 'path' => $path,
-                'url' => $reference
-            );
+                'url' => $reference,
+            ];
+            if (!empty($newfilename)) {
+                $result['newfilename'] = $newfilename;
+            }
+            return $result;
         }
         throw new repository_exception('cannotdownload', 'repository');
     }
