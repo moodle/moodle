@@ -23,7 +23,8 @@ Feature: A teacher can use activity completion to track a student progress
       | Survey type | Critical incidents |
       | Description | Test survey description |
       | Completion tracking | Show activity as complete when conditions are met |
-      | id_completionview | 1 |
+      | id_completionview   | 1 |
+      | id_completionsubmit | 0 |
     And I turn editing mode off
     And the "Test survey name" "survey" activity with "auto" completion should be marked as not complete
     When I follow "Test survey name"

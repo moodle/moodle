@@ -26,8 +26,10 @@ Feature: Set a certain number of discussions as a completion condition for a for
       | Forum name | Test forum name |
       | Description | Test forum description |
       | Completion tracking | Show activity as complete when conditions are met |
+      | completionview               | 0 |
+      | completionpostsenabled       | 0 |
       | completiondiscussionsenabled | 1 |
-      | completiondiscussions | 2 |
+      | completiondiscussions        | 2 |
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage

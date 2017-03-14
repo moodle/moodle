@@ -26,6 +26,7 @@ Feature: Set end of lesson reached as a completion condition for a lesson
       | Name | Test lesson |
       | Description | Test lesson description |
       | Completion tracking | Show activity as complete when conditions are met |
+      | completionview       | 0 |
       | completionendreached | 1 |
     And I follow "Test lesson"
     And I follow "Add a content page"

@@ -26,9 +26,10 @@ Feature: Set time spent as a completion condition for a lesson
       | Name | Test lesson |
       | Description | Test lesson description |
       | Completion tracking | Show activity as complete when conditions are met |
-      | completiontimespentenabled | 1 |
+      | completionview                | 0 |
+      | completiontimespentenabled    | 1 |
       | completiontimespent[timeunit] | 1 |
-      | completiontimespent[number] | 10 |
+      | completiontimespent[number]   | 10 |
     And I follow "Test lesson"
     And I follow "Add a content page"
     And I set the following fields to these values:
