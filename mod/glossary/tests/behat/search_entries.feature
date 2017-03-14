@@ -20,7 +20,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
       | activity | name               | intro                     | displayformat  | course | idnumber |
       | glossary | Test glossary name | Test glossary description | fullwithauthor | C1     | g1       |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test glossary name"
     And I add a glossary entries category named "The ones I like"
     And I add a glossary entries category named "All for you"
@@ -30,7 +30,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
       | Categories | All for you |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test glossary name"
     And I add a glossary entry with the following data:
       | Concept | Cucumber |
@@ -38,7 +38,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
       | Categories | The ones I like |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test glossary name"
 
   @javascript

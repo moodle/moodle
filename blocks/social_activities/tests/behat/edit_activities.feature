@@ -20,7 +20,7 @@ Feature: Edit activities in social activities block
   @javascript
   Scenario: Edit name of acitivity in-place in social activities block
     Given I log in as "user1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I set the field "Add an activity to section 'section 0'" to "Forum"
     And I set the field "Forum name" to "My forum name"
@@ -41,7 +41,7 @@ Feature: Edit activities in social activities block
       | allowstealth | 1 |
     And I log out
     And I log in as "user1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add the "Recent activity" block
     And I set the field "Add an activity to section 'section 0'" to "Forum"
@@ -81,7 +81,7 @@ Feature: Edit activities in social activities block
     And I log out
     # Student will not see the module on the course page but can access it from other reports and blocks:
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I should not see "My forum name" in the "Social activities" "block"
     And I click on "My forum name" "link" in the "Recent activity" "block"
     And I should see "My forum name" in the ".breadcrumb" "css_element"

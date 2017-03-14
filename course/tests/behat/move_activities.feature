@@ -15,7 +15,7 @@ Feature: Activities can be moved between sections
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add the "Recent activity" block
     And I follow "Delete Recent activity block"

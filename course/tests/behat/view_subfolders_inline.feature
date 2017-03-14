@@ -15,7 +15,7 @@ Feature: View subfolders in a course in-line
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Folder" to section "3" and I fill the form with:
       | Name | Test folder |
@@ -30,7 +30,7 @@ Feature: View subfolders in a course in-line
 
   @javascript
   Scenario: Add a folder with two subfolders - view on separate page
-    Given I follow "Course 1"
+    Given I am on course page "Course 1"
     And I should not see "Test subfolder 1"
     And I follow "Test folder"
     And I should see "Test subfolder 1"
@@ -39,7 +39,7 @@ Feature: View subfolders in a course in-line
     And I set the field "New folder name" to "Test subfolder 2"
     And I click on "button.fp-dlg-butcreate" "css_element" in the "div.fp-mkdir-dlg" "css_element"
     And I press "Save changes"
-    When I follow "Course 1"
+    When I am on course page "Course 1"
     Then I should not see "Test subfolder 2"
     And I follow "Test folder"
     And I should see "Test subfolder 2"

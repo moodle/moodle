@@ -17,7 +17,7 @@ Feature: A teacher can password protect a lesson
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson |
@@ -33,7 +33,7 @@ Feature: A teacher can password protect a lesson
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I follow "Test lesson"
     Then I should see "Test lesson is a password protected lesson"
     And I should not see "First page contents"

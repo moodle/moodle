@@ -22,7 +22,7 @@ Feature: A teacher checks the grade history report in a course
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | The greatest assignment ever |
@@ -39,7 +39,7 @@ Feature: A teacher checks the grade history report in a course
     And I press "Save changes"
     And I log out
     And I log in as "teacher2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "70.00" to the user "Student 1" for the grade item "The greatest assignment ever"

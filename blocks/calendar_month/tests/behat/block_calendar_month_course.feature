@@ -21,7 +21,7 @@ Feature: Enable the calendar block in a course
       | id_name | Site Event |
     And I log out
     Then I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add the "Calendar" block
     And I hover over today in the calendar

@@ -16,11 +16,11 @@ Feature: Upload users to a cohort
       | Course 2 | C2 | 0 |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add "Cohort sync" enrolment method with:
       | Cohort | Cohort 1 |
     And I am on site homepage
-    And I follow "Course 2"
+    And I am on course page "Course 2"
     And I add "Cohort sync" enrolment method with:
       | Cohort | Cohort 2 |
     When I navigate to "Upload users" node in "Site administration > Users > Accounts"
@@ -37,13 +37,13 @@ Feature: Upload users to a cohort
     And the "Current users" select box should contain "Mary Smith (marysmith@example.com)"
     And the "Current users" select box should contain "Alice Smith (alicesmith@example.com)"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Users > Enrolled users" in current page administration
     And I should see "Tom Jones"
     And I should see "Bob Jones"
     And I should not see "Mary Smith"
     And I am on site homepage
-    And I follow "Course 2"
+    And I am on course page "Course 2"
     And I navigate to "Users > Enrolled users" in current page administration
     And I should see "Mary Smith"
     And I should see "Alice Smith"

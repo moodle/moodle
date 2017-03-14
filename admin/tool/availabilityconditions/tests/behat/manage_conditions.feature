@@ -50,7 +50,7 @@ Feature: Manage availability conditions
     # OK, toggling works. Set the grade one to Hide and we'll go see if it actually worked.
     And I click on "Hide" "icon" in the "Restriction by grade" "table_row"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Page" to section "1"
     And I expand all fieldsets

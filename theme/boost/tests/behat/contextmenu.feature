@@ -18,7 +18,7 @@ Feature: Context settings menu
   Scenario: Teacher can use the context settings menu
     And I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I click on ".context-header-settings-menu [role=button]" "css_element"
     And I choose "Edit settings" in the open action menu
     And I should see "Edit course settings"
@@ -27,6 +27,6 @@ Feature: Context settings menu
   Scenario: Student cannot use the context settings menu
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And ".context-header-settings-menu [role=button]" "css_element" should not exist
     And I log out

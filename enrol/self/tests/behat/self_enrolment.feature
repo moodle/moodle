@@ -21,11 +21,11 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
   @javascript
   Scenario: Self-enrolment enabled as guest
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add "Self enrolment" enrolment method with:
       | Custom instance name | Test student enrolment |
     And I log out
-    When I follow "Course 1"
+    When I am on course page "Course 1"
     And I press "Log in as a guest"
     Then I should see "Guests cannot access this course. Please log in."
     And I press "Continue"
@@ -33,27 +33,27 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
 
   Scenario: Self-enrolment enabled
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I add "Self enrolment" enrolment method with:
       | Custom instance name | Test student enrolment |
     And I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I press "Enrol me"
     Then I should see "Topic 1"
     And I should not see "Enrolment options"
 
   Scenario: Self-enrolment enabled requiring an enrolment key
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I add "Self enrolment" enrolment method with:
       | Custom instance name | Test student enrolment |
       | Enrolment key | moodle_rules |
     And I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I set the following fields to these values:
       | Enrolment key | moodle_rules |
     And I press "Enrol me"
@@ -64,17 +64,17 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
   Scenario: Self-enrolment disabled
     Given I log in as "student1"
     And I am on site homepage
-    When I follow "Course 1"
+    When I am on course page "Course 1"
     Then I should see "You can not enrol yourself in this course"
 
   Scenario: Self-enrolment enabled requiring a group enrolment key
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I add "Self enrolment" enrolment method with:
       | Custom instance name | Test student enrolment |
       | Enrolment key | moodle_rules |
       | Use group enrolment keys | Yes |
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:
@@ -84,7 +84,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I set the following fields to these values:
       | Enrolment key | Test-groupenrolkey1 |
     And I press "Enrol me"

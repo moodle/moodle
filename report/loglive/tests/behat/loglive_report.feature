@@ -14,7 +14,7 @@ Feature: In a report, admin can see loglive data
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
@@ -39,10 +39,10 @@ Feature: In a report, admin can see loglive data
     And I wait to be redirected
     And I should not see "Test name2"
     And I press "Pause live updates"
-    And I follow "Course module created"
+    And I am on course page "Course module created"
     And I switch to "action" window
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a "Database" to section "3" and I fill the form with:
       | Name | Test name2 |
       | Description | Test database description |
@@ -62,10 +62,10 @@ Feature: In a report, admin can see loglive data
     And I wait to be redirected
     And I should not see "Test name2"
     And I press "Pause live updates"
-    And I follow "course_add mod"
+    And I am on course page "Course_add mod"
     And I switch to "action" window
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a "Database" to section "3" and I fill the form with:
       | Name | Test name2 |
       | Description | Test database description |

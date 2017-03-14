@@ -19,7 +19,7 @@ Feature: Users can comment on wiki pages
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Wiki" to section "1" and I fill the form with:
       | Wiki name | Test wiki name |
@@ -33,7 +33,7 @@ Feature: Users can comment on wiki pages
     And I press "Save"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test wiki name"
     And I follow "Comments"
     And I follow "Add comment"
@@ -59,7 +59,7 @@ Feature: Users can comment on wiki pages
   Scenario: Student cannot edit another student's comment
     When I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test wiki name"
     And I follow "Comments"
     Then "Edit" "link" should not exist in the "wiki-comments" "table"
@@ -69,7 +69,7 @@ Feature: Users can comment on wiki pages
   Scenario: Teacher can delete a student comment
     When I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test wiki name"
     And I follow "Comments"
     Then "Edit" "link" should not exist in the "wiki-comments" "table"

@@ -15,7 +15,7 @@ Feature: The section links block allows users to quickly navigate around a moodl
       | user     | course | role |
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "5" and I fill the form with:
       | Assignment name | Test assignment 1 |

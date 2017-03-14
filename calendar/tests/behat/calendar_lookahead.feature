@@ -37,5 +37,5 @@ Feature: Limit displayed upcoming events
     And I press "Save changes"
     And I wait to be redirected
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I should see "Two months away event"

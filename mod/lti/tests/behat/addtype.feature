@@ -18,7 +18,7 @@ Feature: Add preconfigured tools via teacher interface
   @javascript
   Scenario: Add a tool from a cartridge
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "External tool" to section "1" and I fill the form with:
       | Activity name | Test tool activity 1 |
@@ -37,7 +37,7 @@ Feature: Add preconfigured tools via teacher interface
   @javascript @_switch_window
   Scenario: Add a preconfigured tool from a cartridge
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "External tool" to section "1" and I fill the form with:
       | Activity name | Test tool activity 1 |
@@ -61,7 +61,7 @@ Feature: Add preconfigured tools via teacher interface
   @javascript @_switch_window
   Scenario: Add and use a preconfigured tool
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "External tool" to section "1" and I fill the form with:
       | Activity name | Test tool activity 1 |

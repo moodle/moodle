@@ -40,7 +40,7 @@ Feature: display_availability
     # Set up.
     Given I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
     # Add a Page with 1 restriction.
@@ -103,7 +103,7 @@ Feature: display_availability
     Given I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # Page 1 display still there but should be dimmed and not a link.
     Then I should see "Page 1" in the "#section-1 .dimmed_text" "css_element"
@@ -124,7 +124,7 @@ Feature: display_availability
     # Set up.
     Given I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
     # Add a restriction to section 1 (visible to students).
@@ -148,7 +148,7 @@ Feature: display_availability
 
     # This is necessary because otherwise it fails in Chrome, see MDL-44959
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # Add Pages to each section.
     And I add a "Page" to section "1" and I fill the form with:
@@ -173,7 +173,7 @@ Feature: display_availability
     Given I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # The contents of both sections should be hidden.
     Then I should not see "Page 1" in the "region-main" "region"

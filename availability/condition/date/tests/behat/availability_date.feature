@@ -22,7 +22,7 @@ Feature: availability_date
     # Basic setup.
     Given I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
     # Add a Page with a date condition that does match (from the past).
@@ -56,7 +56,7 @@ Feature: availability_date
     When I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # Page 1 should appear, but page 2 does not.
     Then I should see "Page 1" in the "region-main" "region"

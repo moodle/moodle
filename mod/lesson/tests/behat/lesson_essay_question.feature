@@ -16,7 +16,7 @@ Feature: In a lesson activity, teacher can add an essay question
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
@@ -32,7 +32,7 @@ Feature: In a lesson activity, teacher can add an essay question
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I follow "Test lesson name"
     Then I should see "Please write a story about a frog."
     And I set the field "Your answer" to "<p>Once upon a time there was a little <b>green</b> frog."
@@ -47,7 +47,7 @@ Feature: In a lesson activity, teacher can add an essay question
     And I should see "Your current grade without the essay question(s) is 0 out of 1."
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson name"
     And I follow "Grade essays"
     And I should see "Student 1"

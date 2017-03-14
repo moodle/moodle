@@ -22,7 +22,7 @@ Feature: availability_completion
     # Basic setup.
     Given I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
     # Add a Page with a completion tickbox.
@@ -49,7 +49,7 @@ Feature: availability_completion
     When I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # Page 2 should not appear yet.
     Then I should not see "Page 2" in the "region-main" "region"

@@ -21,7 +21,7 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
     And I upload "mod/lesson/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager
     And I click on "Save changes" "button"
     When I am on homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
@@ -79,7 +79,7 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I follow "Test lesson name"
     Then I should see "What animal is an amphibian?"
     And "//*[contains(@class, 'answeroption')]//img[contains(@src, 'pluginfile.php')]" "xpath_element" should exist

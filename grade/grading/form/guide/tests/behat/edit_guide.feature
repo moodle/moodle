@@ -17,7 +17,7 @@ Feature: Marking guides can be created and edited
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment 1 name      |
@@ -93,7 +93,7 @@ Feature: Marking guides can be created and edited
     And I log out
     # Viewing it as a student.
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment 1 name"
     And I should see "80" in the ".feedback" "css_element"
     And I should see "Marking guide test description" in the ".feedback" "css_element"

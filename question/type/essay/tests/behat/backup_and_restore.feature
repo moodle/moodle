@@ -25,7 +25,7 @@ Feature: Test duplicating a quiz containing an Assay question
       | essay-003 | 1 |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
   @javascript
   Scenario: Backup and restore a course containing 3 Essay questions

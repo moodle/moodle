@@ -15,7 +15,7 @@ Feature: Test importing Description questions
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
   @javascript @_file_upload
   Scenario: import a Description question.

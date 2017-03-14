@@ -22,7 +22,7 @@ Feature: Chat reset
 
   Scenario: Use course reset to update chat start date
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I navigate to "Edit settings" node in "Course administration"
     And I set the following fields to these values:
@@ -48,7 +48,7 @@ Feature: Chat reset
     And I press "Reset course"
     And I should see "Date changed" in the "Chats" "table_row"
     And I press "Continue"
-    Then I follow "Course 1"
+    Then I am on course page "Course 1"
     And I follow "Test chat name"
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets

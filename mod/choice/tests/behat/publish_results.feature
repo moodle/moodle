@@ -17,7 +17,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
   Scenario: Do not publish results to students
@@ -29,7 +29,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
       | option[1] | Option 2 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I choose "Option 1" from "Choice 1" choice activity
     Then I should see "Your selection: Option 1"
     And I should not see "Responses"
@@ -44,10 +44,10 @@ Feature: A teacher can choose one of 4 options for publishing choice results
       | Publish results | Show results to students after they answer |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I follow "Choice 1"
     Then I should not see "Responses"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I choose "Option 1" from "Choice 1" choice activity
     And I should see "Your selection: Option 1"
     And I should see "Responses"
@@ -61,13 +61,13 @@ Feature: A teacher can choose one of 4 options for publishing choice results
       | option[1] | Option 2 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I follow "Choice 1"
     Then I should not see "Responses"
     And I choose "Option 1" from "Choice 1" choice activity
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Choice 1"
     And I follow "Edit settings"
     And I expand all fieldsets
@@ -83,7 +83,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I press "Save and return to course"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Choice 1"
     And I should see "Responses"
 
@@ -96,6 +96,6 @@ Feature: A teacher can choose one of 4 options for publishing choice results
       | Publish results | Always show results to students |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I follow "Choice 1"
     And I should see "Responses"

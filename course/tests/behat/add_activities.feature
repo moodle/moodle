@@ -18,7 +18,7 @@ Feature: Add activities to courses
       | student2 | C1 | student |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
   @javascript
@@ -49,7 +49,7 @@ Feature: Add activities to courses
     Given I set the following administration settings values:
       | requiremodintro | Yes |
     When I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
     Then I should see "Required"

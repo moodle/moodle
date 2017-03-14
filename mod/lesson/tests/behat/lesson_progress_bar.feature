@@ -17,7 +17,7 @@ Feature: In a lesson activity, students can see their progress viewing a progres
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
@@ -58,7 +58,7 @@ Feature: In a lesson activity, students can see their progress viewing a progres
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I follow "Test lesson name"
     Then I should see "First page contents"
     And I should see "You have completed 0% of the lesson"

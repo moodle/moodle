@@ -35,7 +35,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | grouping | group |
       | GG1      | G1    |
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
   @javascript

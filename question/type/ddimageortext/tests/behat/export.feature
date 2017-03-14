@@ -21,7 +21,7 @@ Feature: Test exporting drag and drop onto image questions
       | questioncategory | qtype         | name            | template |
       | Test questions   | ddimageortext | Drag onto image | xsection |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
   @javascript
   Scenario: Export a drag and drop onto image question

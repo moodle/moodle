@@ -23,7 +23,7 @@ Feature: tool_monitor_subscriptions
     And I navigate to "Event monitoring rules" node in "Site administration > Reports"
     And I click on "Enable" "link"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     And I press "Add a new rule"
     And I set the following fields to these values:
@@ -133,7 +133,7 @@ Feature: tool_monitor_subscriptions
     And I should see "Subscription successfully created"
     And "#toolmonitorsubs_r0" "css_element" should exist
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I trigger cron
     And I am on site homepage
     When I click on ".popover-region-notifications" "css_element"

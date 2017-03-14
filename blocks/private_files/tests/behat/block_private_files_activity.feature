@@ -18,7 +18,7 @@ Feature: The private files block allows users to store files privately in moodle
       | activity | course | idnumber | name           | intro                 |
       | page    | C1      | page1    | Test page name | Test page description |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I follow "Test page name"
     And I add the "Private files" block

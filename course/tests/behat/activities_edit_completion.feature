@@ -10,7 +10,7 @@ Feature: Edit completion settings of an activity
       | Course 1 | C1        | 1                |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Page" to section "1" and I fill the form with:
       | Name                | TestPage |
@@ -18,7 +18,7 @@ Feature: Edit completion settings of an activity
       | Page content        | x        |
       | Completion tracking | 2        |
       | Require view        | 1        |
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
   Scenario: Completion is not locked when the activity has not yet been viewed
     Given I click on "Edit settings" "link" in the "TestPage" activity

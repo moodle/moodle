@@ -26,7 +26,7 @@ Feature: Browse course list and return back from enrolment page
     Then I should see "Courses" in the ".breadcrumb-nav" "css_element"
     And I click on "Courses" "link" in the ".breadcrumb-nav" "css_element"
     And I follow "Sample category"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I press "Continue"
     And I should see "Sample category" in the ".breadcrumb-nav" "css_element"
 
@@ -45,7 +45,7 @@ Feature: Browse course list and return back from enrolment page
     And I open my profile in edit mode
     And I expand "Courses" node
     And I expand "Sample category" node
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I press "Continue"
     Then I should see "Edit profile" in the ".breadcrumb-nav" "css_element"
 

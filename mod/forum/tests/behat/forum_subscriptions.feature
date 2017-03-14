@@ -16,7 +16,7 @@ Feature: A user can control their own subscription preferences for a forum
       | student1 | C1 | student |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
   Scenario: A disallowed subscription forum cannot be subscribed to
@@ -30,7 +30,7 @@ Feature: A user can control their own subscription preferences for a forum
       | Message | Test post message |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test forum name"
     Then I should not see "Subscribe to this forum"
     And I should not see "Unsubscribe from this forum"
@@ -48,7 +48,7 @@ Feature: A user can control their own subscription preferences for a forum
       | Message | Test post message |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test forum name"
     Then I should not see "Subscribe to this forum"
     And I should not see "Unsubscribe from this forum"
@@ -66,7 +66,7 @@ Feature: A user can control their own subscription preferences for a forum
       | Message | Test post message |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test forum name"
     Then I should see "Subscribe to this forum"
     And I should not see "Unsubscribe from this forum"
@@ -86,7 +86,7 @@ Feature: A user can control their own subscription preferences for a forum
       | Message | Test post message |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test forum name"
     Then I should see "Unsubscribe from this forum"
     And I should not see "Subscribe to this forum"

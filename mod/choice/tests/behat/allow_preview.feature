@@ -17,7 +17,7 @@ Feature: Allow choice preview
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
   Scenario: Enable the choice preview option and view the activity as a student before the opening time
@@ -37,7 +37,7 @@ Feature: Allow choice preview
       | Show preview | 1 |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Choice name"
     Then I should see "This is just a preview of the available options for this activity"
     And the "choice_1" "radio" should be disabled

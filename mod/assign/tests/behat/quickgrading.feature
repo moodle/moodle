@@ -19,7 +19,7 @@ Feature: In an assignment, teachers grade multiple students on one page
       | student1 | C1 | student |
     When I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -27,7 +27,7 @@ Feature: In an assignment, teachers grade multiple students on one page
       | assignsubmission_onlinetext_enabled | 1 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -36,7 +36,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I log out
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -64,7 +64,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And the following config values are set as admin:
       | enableoutcomes | 1 |
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Outcomes" node in "Course administration"
     And I follow "Edit outcomes"
     And I press "Add a new outcome"
@@ -73,7 +73,7 @@ Feature: In an assignment, teachers grade multiple students on one page
       | Name | 1337dom scale |
       | Scale | Noob, Nub, 1337, HaXor |
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Outcomes" node in "Course administration"
     And I follow "Edit outcomes"
     And I press "Add a new outcome"
@@ -82,7 +82,7 @@ Feature: In an assignment, teachers grade multiple students on one page
       | Short name | skillZ! |
       | Scale | 1337dom scale |
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -92,7 +92,7 @@ Feature: In an assignment, teachers grade multiple students on one page
       | M8d skillZ! | 1 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -100,7 +100,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I press "Save changes"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     When I press "Add submission"
     And I set the following fields to these values:
@@ -108,7 +108,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -128,7 +128,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I press "Continue"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I should see "I'm the teacher first feedback"
     And I should see "60.0"
@@ -137,7 +137,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I should see "1337"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I should not see "I'm the teacher first feedback"
     And I should not see "60.0"
@@ -146,7 +146,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I should not see "1337"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Hide User picture" "link"
@@ -167,7 +167,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I press "Continue"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I should see "I'm the teacher first feedback"
     And I should see "60.0"
@@ -176,7 +176,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I should see "1337"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I should not see "I'm the teacher first feedback"
     And I should not see "60.0"

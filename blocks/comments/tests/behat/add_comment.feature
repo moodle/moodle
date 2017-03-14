@@ -17,12 +17,12 @@ Feature: Add a comment to the comments block
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add the "Comments" block
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
   @javascript
   Scenario: Add a comment with Javascript enabled
@@ -69,7 +69,7 @@ Feature: Add a comment to the comments block
     And I add "Super test comment 31" comment to comments block
     Then I should see "Super test comment 01"
     And I should see "Super test comment 31"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I should not see "Super test comment 01"
     And I should not see "Super test comment 02"
     And I should not see "Super test comment 16"

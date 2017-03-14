@@ -17,7 +17,7 @@ Feature: Students can use the recent blog entries block to view recent entries o
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add the "Blog menu" block
     And I add the "Recent blog entries" block
@@ -25,7 +25,7 @@ Feature: Students can use the recent blog entries block to view recent entries o
 
   Scenario: Students use the recent blog entries block to view blogs
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Add an entry about this course"
     When I set the following fields to these values:
       | Entry title | S1 First Blog |
@@ -40,7 +40,7 @@ Feature: Students can use the recent blog entries block to view recent entries o
 
   Scenario: Students only see a few entries in the recent blog entries block
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Add an entry about this course"
     # Blog 1 of 5
     And I set the following fields to these values:
@@ -97,7 +97,7 @@ Feature: Students can use the recent blog entries block to view recent entries o
     And I should see "This is my awesome blog!"
     Then I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I configure the "Recent blog entries" block
     And I set the following fields to these values:

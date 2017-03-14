@@ -21,7 +21,7 @@ Feature: Restrict sections availability through completion or grade conditions
   Scenario: Show section greyed-out to student when completion condition is not satisfied
     Given I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
@@ -45,7 +45,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     Then I should see "Not available unless: The activity Test label is marked complete"
     And I should not see "Test page name"
     And I click on "Not completed: Test label. Select to mark as complete." "icon"
@@ -56,7 +56,7 @@ Feature: Restrict sections availability through completion or grade conditions
   Scenario: Show section greyed-out to student when grade condition is not satisfied
     Given I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Grade assignment |
@@ -79,7 +79,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I log out
     When I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     Then I should see "Not available unless: You achieve a required score in Grade assignment"
     And "Test page name" activity should be hidden
     And I follow "Grade assignment"
@@ -91,7 +91,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I log out
     And I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Grade assignment"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student First" "table_row"
@@ -103,6 +103,6 @@ Feature: Restrict sections availability through completion or grade conditions
     And I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And "Test page name" activity should be visible
     And I should not see "Not available unless: You achieve a required score in Grade assignment"

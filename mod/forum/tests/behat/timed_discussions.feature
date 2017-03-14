@@ -18,7 +18,7 @@ Feature: Users can choose to set start and end time for display of their discuss
     And the following config values are set as admin:
       | forum_enabletimedposts | 1 |
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
@@ -36,14 +36,14 @@ Feature: Users can choose to set start and end time for display of their discuss
       | Message            | Discussion contents 3, first message |
       | timestart[enabled] | 1 |
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test forum name"
     And I should see "Discussion 2 timed"
     And I should see "Discussion 3 timed"
     And ".timedpost" "css_element" should exist
     And I log out
     And I log in as "student1"
-    When I follow "Course 1"
+    When I am on course page "Course 1"
     And I follow "Test forum name"
     Then I should see "Discussion 1"
     And I should not see "Discussion 2 timed"

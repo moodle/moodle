@@ -17,7 +17,7 @@ Feature: Add a quiz
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Quiz" to section "1" and I fill the form with:
       | Name        | Test quiz name        |
@@ -31,7 +31,7 @@ Feature: Add a quiz
       | Feedback for the response 'False'. | So you think it is false                |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test quiz name"
     And I press "Attempt quiz now"
     Then I should see "Question 1"

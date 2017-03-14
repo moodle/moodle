@@ -18,7 +18,7 @@ Feature: Show/hide course sections
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test hidden forum 11 name |
@@ -44,7 +44,7 @@ Feature: Show/hide course sections
       | Forum name | Test hidden forum 32 name |
       | Description | Test hidden forum 32 description |
       | Visible | Show |
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I hide section "1"
     Then section "1" should be hidden
     And section "2" should be visible
@@ -65,7 +65,7 @@ Feature: Show/hide course sections
     And all activities in section "1" should be hidden
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And section "1" should be hidden
     And all activities in section "1" should be hidden
     And section "2" should be visible

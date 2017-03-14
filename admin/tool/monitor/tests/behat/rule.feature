@@ -18,7 +18,7 @@ Feature: tool_monitor_rule
     And I navigate to "Event monitoring rules" node in "Site administration > Reports"
     And I click on "Enable" "link"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     And I press "Add a new rule"
     And I set the following fields to these values:
@@ -46,7 +46,7 @@ Feature: tool_monitor_rule
   Scenario: Add a rule on course level
     Given I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     When I press "Add a new rule"
     And I set the following fields to these values:
@@ -66,7 +66,7 @@ Feature: tool_monitor_rule
 
   Scenario: Delete a rule on course level
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     When I click on "Delete rule" "link"
     Then I should see "Are you sure you want to delete the rule \"New rule course level\"?"
@@ -76,7 +76,7 @@ Feature: tool_monitor_rule
 
   Scenario: Edit a rule on course level
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     When I click on "Edit rule" "link"
     And I set the following fields to these values:
@@ -95,7 +95,7 @@ Feature: tool_monitor_rule
 
   Scenario: Duplicate a rule on course level
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     When I click on "Duplicate rule" "link" in the "New rule course level" "table_row"
     Then I should see "Rule successfully duplicated"
@@ -154,7 +154,7 @@ Feature: tool_monitor_rule
 
   Scenario: Duplicate a rule on site level
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     When I click on "Duplicate rule" "link" in the "New rule site level" "table_row"
     Then I should see "Rule successfully duplicated"

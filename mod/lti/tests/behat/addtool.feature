@@ -28,7 +28,7 @@ Feature: Add tools
   @javascript
   Scenario: Add a tool via the activity picker
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Teaching Tool 1" to section "1"
     # For tool that does not support Content-Item message type, the Select content button must be disabled.

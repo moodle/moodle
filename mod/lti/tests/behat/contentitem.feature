@@ -29,7 +29,7 @@ Feature: Content-Item support
   @javascript
   Scenario: Tool that supports Content-Item Message type should be able to configure a tool via the Select content button
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Teaching Tool 1" to section "1"
     Then the "Select content" "button" should be enabled
@@ -37,7 +37,7 @@ Feature: Content-Item support
   @javascript
   Scenario: Editing a tool's settings that was configured from a preconfigured tool that supports Content-Item.
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Teaching Tool 1" to section "1"
     And the "Select content" "button" should be enabled
@@ -62,7 +62,7 @@ Feature: Content-Item support
     And I press "Save changes"
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "External tool" to section "1"
     # On load with no preconfigured tool selected: Select content button - disabled, Tool URL - enabled.
@@ -89,7 +89,7 @@ Feature: Content-Item support
   @javascript
   Scenario: Editing a manually configured external tool
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "External tool" to section "1"
     And the field "Preconfigured tool" matches value "Automatic, based on tool URL"

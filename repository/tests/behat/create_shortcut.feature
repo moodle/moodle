@@ -21,7 +21,7 @@ Feature: Create shortcuts
     Then I should see "empty.txt" in the "div.fp-content" "css_element"
     And I press "Save changes"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Folder" to section "1"
     And I set the following fields to these values:

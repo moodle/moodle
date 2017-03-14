@@ -13,7 +13,7 @@ Feature: Highlight non-inherited permissions
 
   @javascript
   Scenario: Override a permission
-    Given I follow "Course fullname"
+    Given I am on course page "Course fullname"
     And I navigate to "Users > Permissions" in current page administration
     And I select "Manager (0)" from the "roleid" singleselect
     And I click on "Prohibit" "radio" in the "View added and updated modules in recent activity block" "table_row"

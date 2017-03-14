@@ -17,7 +17,7 @@ Feature: In a lesson activity, students can see questions in random order and a 
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
   Scenario: Lesson with subcluster
@@ -142,7 +142,7 @@ Feature: In a lesson activity, students can see questions in random order and a 
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I follow "Lesson with subcluster"
     Then I should see "First page contents"
     And I press "Next page"

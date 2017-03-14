@@ -10,7 +10,7 @@ Feature: The context of a block can always be returned to it's original state.
       | Course 1 | C1 | 0 |
     And I log in as "admin"
     And I am on site homepage
-    When I follow "Course 1"
+    When I am on course page "Course 1"
     And I follow "Turn editing on"
     And I add the "Tags" block
     Then I should see "Tags" in the "Tags" "block"
@@ -19,7 +19,7 @@ Feature: The context of a block can always be returned to it's original state.
     And I set the following fields to these values:
       | Display on page types | Any page |
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Assignment1 |
       | Description | Description |
@@ -29,11 +29,11 @@ Feature: The context of a block can always be returned to it's original state.
       | Display on page types | Any assignment module page |
     And I press "Save changes"
     And I should see "Tags" in the "Tags" "block"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And "Tags" "block" should not exist
     And I navigate to course participants
     And "Tags" "block" should not exist
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Assignment2 |
       | Description | Description |
@@ -43,7 +43,7 @@ Feature: The context of a block can always be returned to it's original state.
     And I set the following fields to these values:
       | Display on page types | Any page |
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I should see "Tags" in the "Tags" "block"
     And I navigate to course participants
     And I should see "Tags" in the "Tags" "block"

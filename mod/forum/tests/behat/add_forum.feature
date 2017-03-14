@@ -18,7 +18,7 @@ Feature: Add forum activities and discussions
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
@@ -29,7 +29,7 @@ Feature: Add forum activities and discussions
       | Message | This is the body |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I add a new discussion to "Test forum name" forum with:
       | Subject | Post with attachment |
       | Message | This is the body |

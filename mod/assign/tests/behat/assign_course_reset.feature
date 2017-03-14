@@ -23,7 +23,7 @@ Feature: Assign reset
       | Group 1 | C1     | G1       |
       | Group 2 | C1     | G2       |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -36,7 +36,7 @@ Feature: Assign reset
   Scenario: Use course reset to clear all attempt data
     When I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     When I press "Add submission"
     And I set the following fields to these values:
@@ -47,7 +47,7 @@ Feature: Assign reset
     And I should see "Not graded"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I should see "Submitted for grading"
@@ -56,7 +56,7 @@ Feature: Assign reset
         | Delete all submissions | 1  |
     And I press "Reset course"
     And I press "Continue"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     Then I should not see "Submitted for grading"
@@ -81,7 +81,7 @@ Feature: Assign reset
         | Delete all user overrides | 1  |
     And I press "Reset course"
     And I press "Continue"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "User overrides" in current page administration
     Then I should not see "Sam1 Student1"
@@ -105,7 +105,7 @@ Feature: Assign reset
         | Delete all group overrides | 1  |
     And I press "Reset course"
     And I press "Continue"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "Group overrides" in current page administration
     Then I should not see "Group 1"

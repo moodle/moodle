@@ -15,7 +15,7 @@ Feature: Recent files repository lists the recently used files
     And I upload "lib/tests/fixtures/upload_users.csv" file to "Files" filemanager
     And I press "Save changes"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     When I add a "Folder" to section "1"
     And I set the following fields to these values:

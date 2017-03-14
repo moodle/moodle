@@ -21,7 +21,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
       | student2 | C1     | student        |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
 
   @javascript

@@ -19,7 +19,7 @@ Feature: Basic use of the Manual grading report
       | student1 | C1     | student        |
     And I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Quiz" to section "1" and I fill the form with:
       | Name        | Quiz 1             |
@@ -31,7 +31,7 @@ Feature: Basic use of the Manual grading report
       | Grade            | 100%                                 |
 
     # Check report shows nothing when there are no attempts.
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Quiz 1"
     When I navigate to "Results > Manual grading" in current page administration
     Then I should see "Manual grading"
@@ -43,7 +43,7 @@ Feature: Basic use of the Manual grading report
 
     # Create an attempt.
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I should see "Question 1"
@@ -58,7 +58,7 @@ Feature: Basic use of the Manual grading report
 
     # Use the manual grading report.
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Quiz 1"
     And I navigate to "Results > Manual grading" in current page administration
     And I should see "Manual grading"

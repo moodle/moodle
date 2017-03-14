@@ -18,7 +18,7 @@ Feature: Add scorm activity
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "SCORM package" to section "1"
     And I set the following fields to these values:
@@ -31,11 +31,11 @@ Feature: Add scorm activity
     And I should see "Preview"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Awesome SCORM package"
     And I should see "Normal"
     And I press "Enter"
     And I switch to "scorm_object" iframe
     And I should see "Not implemented yet"
     And I switch to the main frame
-    And I follow "Course 1"
+    And I am on course page "Course 1"

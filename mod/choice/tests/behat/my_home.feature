@@ -17,7 +17,7 @@ Feature: Test the display of the choice module on my home
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Choice" to section "1"
     And I expand all fieldsets
@@ -45,7 +45,7 @@ Feature: Test the display of the choice module on my home
 
   Scenario: View my home as a student after answering the choice
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I choose "Option 1" from "Test choice name" choice activity
     And I should see "Your selection: Option 1"
     And I should see "Your choice has been saved"
@@ -56,7 +56,7 @@ Feature: Test the display of the choice module on my home
 
   Scenario: View my home as a teacher
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I choose "Option 1" from "Test choice name" choice activity
     And I should see "Your selection: Option 1"
     And I should see "Your choice has been saved"

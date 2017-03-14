@@ -33,7 +33,7 @@ Feature: Editing a grade item
     And I log out
     And I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I press "Add category"
     And I set the following fields to these values:

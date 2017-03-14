@@ -17,7 +17,7 @@ Feature: Setting grades to pass via workshop editing form
 
   Scenario: Adding a new workshop with grade to pass field set
     Given I log in as "teacher1"
-    And I follow "Course1"
+    And I am on course page "Course1"
     And I turn editing mode on
     When I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Awesome workshop |
@@ -32,7 +32,7 @@ Feature: Setting grades to pass via workshop editing form
 
   Scenario: Adding a new workshop with grade to pass fields left empty
     Given I log in as "teacher1"
-    And I follow "Course1"
+    And I am on course page "Course1"
     And I turn editing mode on
     When I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Another awesome workshop |
@@ -47,7 +47,7 @@ Feature: Setting grades to pass via workshop editing form
 
   Scenario: Adding a new workshop with non-numeric value of a grade to pass
     Given I log in as "teacher1"
-    And I follow "Course1"
+    And I am on course page "Course1"
     And I turn editing mode on
     When I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Almost awesome workshop |
@@ -58,7 +58,7 @@ Feature: Setting grades to pass via workshop editing form
 
   Scenario: Adding a new workshop with invalid value of a grade to pass
     Given I log in as "teacher1"
-    And I follow "Course1"
+    And I am on course page "Course1"
     And I turn editing mode on
     When I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Almost awesome workshop |
@@ -69,7 +69,7 @@ Feature: Setting grades to pass via workshop editing form
 
   Scenario: Emptying grades to pass fields sets them to zero
     Given I log in as "teacher1"
-    And I follow "Course1"
+    And I am on course page "Course1"
     And I turn editing mode on
     And I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Super awesome workshop |

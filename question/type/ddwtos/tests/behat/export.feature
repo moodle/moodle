@@ -21,7 +21,7 @@ Feature: Test exporting drag and drop into text questions
       | questioncategory | qtype  | name         | template |
       | Test questions   | ddwtos | Drag to text | fox      |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
   @javascript
   Scenario: Export a drag and drop into text question

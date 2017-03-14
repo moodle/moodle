@@ -58,7 +58,7 @@ Feature: Enable the course_list block on a category page and view it's contents
     And I should see "Course 2" in the "My courses" "block"
     And I should see "Course 3" in the "My courses" "block"
     And I should not see "Course 4" in the "My courses" "block"
-    And I follow "Course 3"
+    And I am on course page "Course 3"
     And I should see "Course 3"
 
   Scenario: Add the course list block on category page and view as an admin

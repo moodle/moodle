@@ -22,7 +22,7 @@ Feature: We can enter in grades and view reports from the gradebook
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name 1 |
@@ -34,14 +34,14 @@ Feature: We can enter in grades and view reports from the gradebook
       | assignsubmission_onlinetext_enabled | 1 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name 1"
     When I press "Add submission"
     And I set the following fields to these values:
       | Online text | This is a submission for assignment 1 |
     And I press "Save changes"
     Then I should see "Submitted for grading"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name 2"
     When I press "Add submission"
     And I set the following fields to these values:
@@ -50,7 +50,7 @@ Feature: We can enter in grades and view reports from the gradebook
     Then I should see "Submitted for grading"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name 1"

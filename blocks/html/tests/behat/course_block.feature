@@ -17,7 +17,7 @@ Feature: HTML blocks in a course
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
@@ -31,6 +31,6 @@ Feature: HTML blocks in a course
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I should see "First block content" in the "First block header" "block"
     And I should see "Second block content" in the "Second block header" "block"

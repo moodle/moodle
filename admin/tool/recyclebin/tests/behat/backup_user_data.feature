@@ -23,7 +23,7 @@ Feature: Backup user data
   @javascript
   Scenario: Delete and restore a quiz with user data
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Quiz" to section "1" and I fill the form with:
       | Name        | Quiz 1                |
@@ -44,7 +44,7 @@ Feature: Backup user data
       | Feedback for the response 'False'. | So you think it is false                |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "True" "radio" in the "First question" "question"
@@ -55,7 +55,7 @@ Feature: Backup user data
     And I should see "5.00 out of 10.00"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I delete "Quiz 1" activity
     And I run all adhoc tasks
@@ -64,7 +64,7 @@ Feature: Backup user data
     And I click on "Restore" "link" in the "region-main" "region"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I navigate to "User report" in the course gradebook
     Then "Quiz 1" row "Grade" column of "user-grade" table should contain "5"
     And "Quiz 1" row "Percentage" column of "user-grade" table should contain "50"

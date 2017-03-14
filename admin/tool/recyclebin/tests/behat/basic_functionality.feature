@@ -25,7 +25,7 @@ Feature: Basic recycle bin functionality
 
   Scenario: Restore a deleted assignment
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assign |
@@ -38,7 +38,7 @@ Feature: Basic recycle bin functionality
     And I should see "'Test assign' has been restored"
     And I wait to be redirected
     And I am on homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I should see "Test assign" in the "Topic 1" "section"
 
   Scenario: Restore a deleted course
@@ -64,7 +64,7 @@ Feature: Basic recycle bin functionality
   @javascript
   Scenario: Deleting a single item from the recycle bin
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assign |
@@ -84,7 +84,7 @@ Feature: Basic recycle bin functionality
   @javascript
   Scenario: Deleting all the items from the recycle bin
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assign 1 |

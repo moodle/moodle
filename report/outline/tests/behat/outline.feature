@@ -20,7 +20,7 @@ Feature: View an outline report
       | student2 | C1 | student |
     When I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Forum name |
@@ -37,17 +37,17 @@ Feature: View an outline report
       | loglegacy | 1 | logstore_legacy |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Book name"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Book name"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I navigate to "Activity report" node in "Course administration > Reports"
     Then I should see "2 by 2 users" in the "Book name" "table_row"
     And I should see "1 by 1 users" in the "Forum name" "table_row"
@@ -58,18 +58,18 @@ Feature: View an outline report
     And "Disable" "link" should exist in the "Standard log" "table_row"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Book name"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Book name"
     And I log out
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I navigate to "Activity report" node in "Course administration > Reports"
     Then I should see "2 by 2 users" in the "Book name" "table_row"
     And I should see "1 by 1 users" in the "Forum name" "table_row"
@@ -82,17 +82,17 @@ Feature: View an outline report
       | loglegacy | 1 | logstore_legacy |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Book name"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Book name"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I navigate to "Activity report" node in "Course administration > Reports"
     Then I should see "2 by 2 users" in the "Book name" "table_row"
     And I should see "1 by 1 users" in the "Forum name" "table_row"
@@ -102,23 +102,23 @@ Feature: View an outline report
     And "Enable" "link" should exist in the "Legacy log" "table_row"
     And I click on "Disable" "link" in the "Standard log" "table_row"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I navigate to "Activity report" node in "Course administration > Reports"
     Then I should see "No log reader enabled"
 
   Scenario: Multiple views from a single user are identified as not distinct
     Given I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
     And I am on site homepage
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Activity report" node in "Course administration > Reports"
     Then I should see "3 by 1 users" in the "Forum name" "table_row"
     And I should see "-" in the "Book name" "table_row"
@@ -126,25 +126,25 @@ Feature: View an outline report
   Scenario: Multiple views from multiple users are identified as not distinct
     Given I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
     And I am on site homepage
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Forum name"
     And I am on site homepage
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Activity report" node in "Course administration > Reports"
     Then I should see "6 by 2 users" in the "Forum name" "table_row"
     And I should see "-" in the "Book name" "table_row"
@@ -152,7 +152,7 @@ Feature: View an outline report
   Scenario: No views from any users
     Given I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Activity report" node in "Course administration > Reports"
     Then I should see "-" in the "Forum name" "table_row"
     And I should see "-" in the "Book name" "table_row"

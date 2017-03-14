@@ -24,13 +24,13 @@ Feature: The activity results block can have administrator set defaults
       | config_gradeformat | 2 | block_activity_results |
       | config_nameformat  | 2 | block_activity_results |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add the "Activity results" block
     When I configure the "Activity results" block
     And the following fields match these values:
@@ -48,13 +48,13 @@ Feature: The activity results block can have administrator set defaults
       | config_showworst        | 0 | block_activity_results |
       | config_showworst_locked | 1 | block_activity_results |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add the "Activity results" block
     When I configure the "Activity results" block
     And the following fields match these values:

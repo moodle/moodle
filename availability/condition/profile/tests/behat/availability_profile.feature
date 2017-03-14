@@ -22,7 +22,7 @@ Feature: availability_profile
     # Basic setup.
     Given I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
     # Add
@@ -57,7 +57,7 @@ Feature: availability_profile
     When I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # I see P1 but not P2.
     Then I should see "P1" in the "region-main" "region"
@@ -83,7 +83,7 @@ Feature: availability_profile
 
     # Set Page activity which has requirement on this field.
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Page" to section "1"
     And I set the following fields to these values:
@@ -110,5 +110,5 @@ Feature: availability_profile
     And I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     Then I should see "P1" in the "region-main" "region"

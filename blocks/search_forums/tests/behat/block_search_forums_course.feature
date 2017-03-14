@@ -17,7 +17,7 @@ Feature: The search forums block allows users to search for forum posts on cours
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "id_newsitems" to "1"
     And I press "Save and display"
@@ -28,7 +28,7 @@ Feature: The search forums block allows users to search for forum posts on cours
 
   Scenario: Use the search forum block in a course without any forum posts
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I set the following fields to these values:
       | searchform_search | Moodle |
     And I press "Go"
@@ -36,11 +36,11 @@ Feature: The search forums block allows users to search for forum posts on cours
 
   Scenario: Use the search forum block in a course with a hidden forum and search for posts
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a new topic to "Announcements" forum with:
       | Subject | My subject |
       | Message | My message |
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I follow "Announcements"
     And I navigate to "Edit settings" in current page administration
@@ -49,7 +49,7 @@ Feature: The search forums block allows users to search for forum posts on cours
     And I press "Save and return to course"
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And "Search forums" "block" should exist
     And I set the following fields to these values:
       | searchform_search | message |
@@ -58,13 +58,13 @@ Feature: The search forums block allows users to search for forum posts on cours
 
   Scenario: Use the search forum block in a course and search for posts
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a new topic to "Announcements" forum with:
       | Subject | My subject |
       | Message | My message |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And "Search forums" "block" should exist
     And I set the following fields to these values:
       | searchform_search | message |

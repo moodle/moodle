@@ -33,7 +33,7 @@ Feature: edit_availability
       | enableavailability | 0 |
     When I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Page" to section "1"
     Then "Restrict access" "fieldset" should not exist
@@ -46,7 +46,7 @@ Feature: edit_availability
       | enableavailability | 1 |
 
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a "Page" to section "1"
     Then "Restrict access" "fieldset" should exist
 
@@ -58,7 +58,7 @@ Feature: edit_availability
   Scenario: Edit availability using settings in activity form
     # Set up.
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # Add a Page and check it has None in so far.
     And I turn editing mode on
@@ -150,7 +150,7 @@ Feature: edit_availability
     # Set up.
     Given I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
     # Edit a section
@@ -172,7 +172,7 @@ Feature: edit_availability
       | enableavailability | 0 |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1"
     When I expand all fieldsets
@@ -186,7 +186,7 @@ Feature: edit_availability
       | GX1  | C1     | GXI1     |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1"
     And I set the following fields to these values:

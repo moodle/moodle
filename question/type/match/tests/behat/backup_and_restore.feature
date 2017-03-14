@@ -21,7 +21,7 @@ Feature: Test duplicating a quiz containing a Matching question
       | matching-001 | 1 |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
   @javascript
   Scenario: Backup and restore a course containing a Matching question

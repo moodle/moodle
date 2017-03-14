@@ -15,7 +15,7 @@ Feature: The activity results block doesn't display student scores for unsupport
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
   Scenario: Try to configure the block to use an activity without grades

@@ -10,7 +10,7 @@ Feature: Block visibility
       | Course 1 | C1 | 0 |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
   @javascript

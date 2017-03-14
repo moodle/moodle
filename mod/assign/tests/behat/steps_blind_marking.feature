@@ -19,7 +19,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
       | student1 | C1 | student |
     # Add the assignment.
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -31,7 +31,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I log out
     # Add a submission.
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I follow "Test assignment name"
     Then I should not see "Feedback"
     And I should see "Not marked" in the "Grading status" "table_row"
@@ -42,7 +42,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I log out
     # Mark the submission.
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I should see "Not marked" in the "I'm the student's first submission" "table_row"
@@ -81,7 +81,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I press "Continue"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "User report" in the course gradebook
     Then I should see "50"
     And I should see "Great job! Lol, not really."
@@ -109,7 +109,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I should see "Released" in the "Student 1" "table_row"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "User report" in the course gradebook
     Then I should see "50"
     And I should see "Great job! Lol, not really."

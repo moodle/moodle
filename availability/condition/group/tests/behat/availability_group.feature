@@ -22,7 +22,7 @@ Feature: availability_group
     # Basic setup.
     Given I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
     # Start to add a Page. If there aren't any groups, there's no Group option.
@@ -40,7 +40,7 @@ Feature: availability_group
     # This step used to be 'And I follow "C1"', but Chrome thinks the breadcrumb
     # is not clickable, so we'll go via the home page instead.
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a "Page" to section "1"
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
@@ -86,7 +86,7 @@ Feature: availability_group
     When I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # No pages should appear yet.
     Then I should not see "P1" in the "region-main" "region"
@@ -100,7 +100,7 @@ Feature: availability_group
     And I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # P1 (any groups) and P2 should show but not P3.
     Then I should see "P1" in the "region-main" "region"

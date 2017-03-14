@@ -10,14 +10,14 @@ Feature: In a report, admin can filter log data by action
       | Course 1 | C1 | 0 | 1 |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     # Create Action.
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment 1 |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     # View Action.
     And I follow "Test assignment 1"
     # Update Action.

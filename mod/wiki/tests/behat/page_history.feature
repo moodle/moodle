@@ -20,7 +20,7 @@ Feature: A history of each wiki page is available
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Wiki" to section "1" and I fill the form with:
       | Wiki name | Test wiki name |
@@ -34,7 +34,7 @@ Feature: A history of each wiki page is available
     And I press "Save"
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test wiki name"
     And I follow "Edit"
     And I set the following fields to these values:
@@ -42,7 +42,7 @@ Feature: A history of each wiki page is available
     And I press "Save"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test wiki name"
     And I follow "Edit"
     And I set the following fields to these values:

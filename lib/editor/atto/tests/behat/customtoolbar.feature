@@ -14,7 +14,7 @@ Feature: Atto editor with customised toolbar
       | label      | L1   | <a href="../lib/editor/atto/tests/fixtures/custom_toolbar_example.php">FixtureLink</a> | C1     | label1   |
     When I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "FixtureLink"
 
   @javascript

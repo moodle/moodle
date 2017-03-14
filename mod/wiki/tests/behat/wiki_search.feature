@@ -22,7 +22,7 @@ Feature: Users can search wikis
   @javascript
   Scenario: Searching collaborative wiki
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Wiki" to section "1" and I fill the form with:
       | Wiki name | Collaborative wiki name |
@@ -34,10 +34,10 @@ Feature: Users can search wikis
     And I set the following fields to these values:
       | HTML format | Collaborative teacher1 page [[new page]] |
     And I press "Save"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Collaborative wiki name"
     And I follow "new page"
     And I press "Create page"
@@ -61,7 +61,7 @@ Feature: Users can search wikis
   @javascript
   Scenario: Searching individual wiki
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Wiki" to section "1" and I fill the form with:
       | Wiki name | Individual wiki name |
@@ -75,7 +75,7 @@ Feature: Users can search wikis
     And I press "Save"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Individual wiki name"
     And I press "Create page"
     And I set the following fields to these values:
@@ -87,7 +87,7 @@ Feature: Users can search wikis
     And I should not see "Individual teacher1 page"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Individual wiki name"
     And I press "Create page"
     And I set the following fields to these values:
@@ -100,7 +100,7 @@ Feature: Users can search wikis
     And I should not see "Individual teacher1 page"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Individual wiki name"
     And I set the field "searchstring" to "page"
     And I press "Search wikis"
@@ -128,7 +128,7 @@ Feature: Users can search wikis
       | student1 | G1 |
       | student2 | G2 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Wiki" to section "1" and I fill the form with:
       | Wiki name | Group wiki name |
@@ -154,7 +154,7 @@ Feature: Users can search wikis
     And I press "Save"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Group wiki name"
     And I follow "new page1"
     And I press "Create page"
@@ -169,7 +169,7 @@ Feature: Users can search wikis
     And I should not see "All participants teacher1 page"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Group wiki name"
     And I follow "new page2"
     And I press "Create page"
@@ -185,5 +185,5 @@ Feature: Users can search wikis
     And I should not see "All participants teacher1 page"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Group wiki name"

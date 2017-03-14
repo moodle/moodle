@@ -19,7 +19,7 @@ Feature: Allow students to manually mark an activity as complete
       | student1 | C1 | student |
     And I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
@@ -32,12 +32,12 @@ Feature: Allow students to manually mark an activity as complete
     And I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I click on "Not completed: Test forum name. Select to mark as complete." "icon"
     Then the "Test forum name" "forum" activity with "manual" completion should be marked as complete
     And I log out
     And I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Reports > Activity completion" in current page administration
     And "Student First" user has completed "Test forum name" activity

@@ -40,7 +40,7 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
       | G2       | G2G1    |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name  | Multiple groups forum             |
@@ -58,13 +58,13 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
 
   Scenario: Teacher with accessallgroups can post in all groups
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Multiple groups forum"
     When I click on "Add a new discussion topic" "button"
     Then the "Group" select box should contain "All participants"
     And the "Group" select box should contain "G1G1"
     And the "Group" select box should contain "G1G2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Single groups forum"
     And I click on "Add a new discussion topic" "button"
     And the "Group" select box should contain "All participants"
@@ -73,13 +73,13 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
 
   Scenario: Teacher in all groups but without accessallgroups can post in either group but not to All Participants
     Given I log in as "teacher2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Multiple groups forum"
     When I click on "Add a new discussion topic" "button"
     Then the "Group" select box should not contain "All participants"
     And the "Group" select box should contain "G1G1"
     And the "Group" select box should contain "G1G2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Single groups forum"
     And I click on "Add a new discussion topic" "button"
     And I should see "G2G1"

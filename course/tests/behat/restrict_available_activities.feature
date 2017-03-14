@@ -18,7 +18,7 @@ Feature: Restrict activities availability
   @javascript
   Scenario: Activities can be added with the default permissions
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     When I add a "Glossary" to section "1" and I fill the form with:
       | Name | Test glossary name |
@@ -34,13 +34,13 @@ Feature: Restrict activities availability
     And I set the following system permissions of "Teacher" role:
       | mod/chat:addinstance | Prohibit |
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Users > Permissions" in current page administration
     And I override the system permissions of "Teacher" role with:
       | mod/glossary:addinstance | Prohibit |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I turn editing mode on
     Then the "Add an activity to section 'Topic 1'" select box should not contain "Chat"
     Then the "Add an activity to section 'Topic 1'" select box should not contain "Glossary"

@@ -19,7 +19,7 @@ Feature: A teacher can control the subscription to a forum
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name        | Test forum name                |

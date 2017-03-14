@@ -16,7 +16,7 @@ Feature: Edit course settings
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     When I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Course full name | Edited course fullname |

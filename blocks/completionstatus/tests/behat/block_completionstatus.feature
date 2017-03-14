@@ -19,7 +19,7 @@ Feature: Enable Block Completion in a course
 
   Scenario: Add the block to a the course where completion is disabled
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I navigate to "Edit settings" node in "Course administration"
     And I set the following fields to these values:
@@ -30,7 +30,7 @@ Feature: Enable Block Completion in a course
 
   Scenario: Add the block to a the course where completion is not set
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     When I add the "Course completion status" block
     Then I should see "No completion criteria set for this course" in the "Course completion status" "block"
@@ -40,7 +40,7 @@ Feature: Enable Block Completion in a course
       | activity | course | idnumber | name           | intro                 |
       | page     | C1     | page1    | Test page name | Test page description |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I follow "Test page name"
     And I navigate to "Edit settings" in current page administration

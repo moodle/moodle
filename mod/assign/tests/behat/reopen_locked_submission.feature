@@ -20,7 +20,7 @@ Feature: Submissions are unlocked when a new attempt is given
   @javascript
   Scenario: A locked submission should unlock when a new attempt is automatically given.
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -30,7 +30,7 @@ Feature: Submissions are unlocked when a new attempt is given
       | Grade to pass | 50 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -39,7 +39,7 @@ Feature: Submissions are unlocked when a new attempt is given
     And I log out
     And I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Edit" "link" in the "Student 1" "table_row"
@@ -56,7 +56,7 @@ Feature: Submissions are unlocked when a new attempt is given
   @javascript
   Scenario: A locked submission should unlock when a new attempt is manually given.
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -65,7 +65,7 @@ Feature: Submissions are unlocked when a new attempt is given
       | Attempts reopened | Manually |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -74,7 +74,7 @@ Feature: Submissions are unlocked when a new attempt is given
     And I log out
     And I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Edit" "link" in the "Student 1" "table_row"

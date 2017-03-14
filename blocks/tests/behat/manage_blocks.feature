@@ -16,7 +16,7 @@ Feature: Block appearances
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Turn editing on"
     And I add a "Survey" to section "1" and I fill the form with:
       | Name | Test survey name |
@@ -32,7 +32,7 @@ Feature: Block appearances
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Turn editing on"
     And I add the "Comments" block
     And I configure the "Comments" block
@@ -43,7 +43,7 @@ Feature: Block appearances
   Scenario: Block settings can be modified so that a block apprears on any page
     When I follow "Test survey name"
     Then I should see "Comments" in the "Comments" "block"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I configure the "Comments" block
     And I set the following fields to these values:
       | Display on page types | Any course page |

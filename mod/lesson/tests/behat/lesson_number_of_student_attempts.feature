@@ -19,7 +19,7 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
   Scenario: number of student attempts
@@ -79,7 +79,7 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson name"
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -119,7 +119,7 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
     And I should see "Your score is 3 (out of 3)."
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson name"
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:

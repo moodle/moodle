@@ -42,14 +42,14 @@ Feature: The activity results block displays students in groups low scores as sc
       | student5 | G3 |
       | student6 | G3 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "Scales" in the course gradebook
     And I press "Add a new scale"
     And I set the following fields to these values:
       | Name | My Scale |
       | Scale | Disappointing, Not good enough, Average, Good, Very good, Excellent! |
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment |
@@ -58,7 +58,7 @@ Feature: The activity results block displays students in groups low scores as sc
       | id_grade_modgrade_type | Scale |
       | id_grade_modgrade_scale | My Scale |
       | Group mode | Separate groups |
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "Excellent!" to the user "Student 1" for the grade item "Test assignment"
@@ -68,7 +68,7 @@ Feature: The activity results block displays students in groups low scores as sc
     And I give the grade "Good" to the user "Student 5" for the grade item "Test assignment"
     And I give the grade "Average" to the user "Student 6" for the grade item "Test assignment"
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
   Scenario: Try to configure the block on the course page to show 1 low score
     Given I add the "Activity results" block
@@ -83,7 +83,7 @@ Feature: The activity results block displays students in groups low scores as sc
     And I should see "Good" in the "Activity results" "block"
     And I log out
     And I log in as "student5"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I should see "Student 6" in the "Activity results" "block"
     And I should see "Average" in the "Activity results" "block"
 
@@ -102,7 +102,7 @@ Feature: The activity results block displays students in groups low scores as sc
     And I should see "Good" in the "Activity results" "block"
     And I log out
     And I log in as "student3"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I should see "Student 3" in the "Activity results" "block"
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Student 4" in the "Activity results" "block"
@@ -122,7 +122,7 @@ Feature: The activity results block displays students in groups low scores as sc
     And I should see "Good" in the "Activity results" "block"
     And I log out
     And I log in as "student5"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I should see "User S5" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
     And I should see "User S6" in the "Activity results" "block"
@@ -142,7 +142,7 @@ Feature: The activity results block displays students in groups low scores as sc
     And I should see "Good" in the "Activity results" "block"
     And I log out
     And I log in as "student5"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I should see "User" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
     And I should see "Average" in the "Activity results" "block"

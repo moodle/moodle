@@ -26,7 +26,7 @@ Feature: In an assignment, teacher can submit feedback files during grading
       | student1 | G1    |
       | student2 | G1    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name                  | Test assignment name |
@@ -40,7 +40,7 @@ Feature: In an assignment, teacher can submit feedback files during grading
     And I press "Save and display"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I press "Add submission"
     And I upload "mod/assign/feedback/file/tests/fixtures/submission.txt" file to "File submissions" filemanager
@@ -50,7 +50,7 @@ Feature: In an assignment, teacher can submit feedback files during grading
     And I should see "Not graded"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I click on "Grade" "link" in the ".submissionlinks" "css_element"
     And I upload "mod/assign/feedback/file/tests/fixtures/feedback.txt" file to "Feedback files" filemanager
@@ -63,12 +63,12 @@ Feature: In an assignment, teacher can submit feedback files during grading
     And I click on "Course 1" "link" in the "[data-region=assignment-info]" "css_element"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I should see "feedback.txt"
     And I log out
     When I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     Then I should not see "feedback.txt"
 
@@ -79,11 +79,11 @@ Feature: In an assignment, teacher can submit feedback files during grading
     And I click on "Course 1" "link" in the "[data-region=assignment-info]" "css_element"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I should see "feedback.txt"
     And I log out
     When I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     Then I should see "feedback.txt"

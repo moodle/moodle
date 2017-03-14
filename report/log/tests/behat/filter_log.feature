@@ -24,7 +24,7 @@ Feature: In a report, admin can filter log data
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
     And I follow "Home"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to course participants
     And I follow "Student 1"
     And I click on "Log in as" "link"
@@ -44,7 +44,7 @@ Feature: In a report, admin can filter log data
 
   @javascript
   Scenario: Filter log report for standard log reader
-    Given I follow "Course 1"
+    Given I am on course page "Course 1"
     And I navigate to course participants
     And I follow "Student 1"
     And I click on "Log in as" "link"
@@ -65,9 +65,9 @@ Feature: In a report, admin can filter log data
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
     And I follow "Home"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Home"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I navigate to course participants
     And I follow "Student 1"
     And I click on "Log in as" "link"

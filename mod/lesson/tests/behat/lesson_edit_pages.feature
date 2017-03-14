@@ -17,7 +17,7 @@ Feature: In a lesson activity, teacher can edit lesson's pages
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
@@ -70,7 +70,7 @@ Feature: In a lesson activity, teacher can edit lesson's pages
     And I should not see "Second page name"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson name"
     And I should see "First page contents"
     And I press "Next page"
@@ -109,7 +109,7 @@ Feature: In a lesson activity, teacher can edit lesson's pages
     And I should not see "Hardest question ever"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson name"
     And I should see "First page contents"
     And I press "Next page"

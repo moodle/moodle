@@ -19,7 +19,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
       | teacher2 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add the "Latest announcements" block
     And I navigate to "Edit settings" node in "Course administration"
@@ -28,7 +28,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
     And I add a new topic to "Announcements" forum with:
       | Subject | My subject |
       | Message | My message |
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a new topic to "Announcements" forum with:
       | Subject | My subjective|
       | Message | My long message |
@@ -36,7 +36,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
 
   Scenario: Perform an advanced search using any term
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Announcements"
     And I press "Search forums"
     And I should see "Advanced search"
@@ -47,7 +47,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
 
   Scenario: Perform an advanced search avoiding words
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Announcements"
     And I press "Search forums"
     And I should see "Advanced search"
@@ -62,7 +62,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
       | mysql |
       | postgres |
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Announcements"
     And I press "Search forums"
     And I should see "Advanced search"
@@ -73,7 +73,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
 
   Scenario: Perform an advanced search matching the subject
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Announcements"
     And I press "Search forums"
     And I should see "Advanced search"
@@ -84,13 +84,13 @@ Feature: The forum search allows users to perform advanced searches for forum po
 
   Scenario: Perform an advanced search matching the author
     Given I log in as "teacher2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a new topic to "Announcements" forum with:
       | Subject | My Subjects |
       | Message | My message |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Announcements"
     And I press "Search forums"
     And I should see "Advanced search"
@@ -101,7 +101,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
 
   Scenario: Perform an advanced search with multiple words
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Announcements"
     And I press "Search forums"
     And I should see "Advanced search"

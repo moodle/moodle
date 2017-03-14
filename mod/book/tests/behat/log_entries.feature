@@ -11,7 +11,7 @@ Feature: In a book, verify log entries
       | Course 1 | C1 | 0 | 1 |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     When I add a "Book" to section "1" and I fill the form with:
       | Name | Test book |

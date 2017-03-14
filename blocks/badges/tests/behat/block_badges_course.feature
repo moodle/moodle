@@ -15,7 +15,7 @@ Feature: Enable Block Badges in a course
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     # Issue badge 1 of 2
     And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I set the following fields to these values:
@@ -54,7 +54,7 @@ Feature: Enable Block Badges in a course
 
   Scenario: Add the recent badges block to a course.
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     When I add the "Latest badges" block
     Then I should see "Badge 1" in the "Latest badges" "block"
@@ -62,7 +62,7 @@ Feature: Enable Block Badges in a course
 
   Scenario: Add the recent badges block to a course and limit it to only display 1 badge.
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     When I add the "Latest badges" block
     And I configure the "Latest badges" block

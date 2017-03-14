@@ -16,7 +16,7 @@ Feature: Restore Moodle 2 course backups
       | data | C3 | data1 | Test database name | Database description | 2 |
     And I log in as "admin"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
@@ -63,7 +63,7 @@ Feature: Restore Moodle 2 course backups
   Scenario: Restore a backup into the same course removing it's contents before that
     When I backup "Course 1" course using this options:
       | Confirmation | Filename | test_backup.mbz |
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum post backup name |
       | Description | Test forum post backup description |

@@ -21,7 +21,7 @@ Feature: Include responses from inactive users
       | student2 | C1 | student |
       | student3 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
   Scenario: Enable the choice include inactive option and check that responses from inactive students are visible
@@ -34,22 +34,22 @@ Feature: Include responses from inactive users
       | Include responses from inactive/suspended users | Yes |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I choose "Option 1" from "Choice name" choice activity
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I choose "Option 2" from "Choice name" choice activity
     And I log out
     And I log in as "student3"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I choose "Option 3" from "Choice name" choice activity
     And I log out
     And the following "course enrolments" exist:
       | user | course | role | status |
       | student1 | C1 | student | 1 |
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Choice name"
     Then I should see "View 3 responses"
     And I follow "View 3 responses"
@@ -61,7 +61,7 @@ Feature: Include responses from inactive users
       | user | course | role | timestart |
       | student2 | C1 | student | 2145830400 |
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Choice name"
     Then I should see "View 3 responses"
     And I follow "View 3 responses"
@@ -73,7 +73,7 @@ Feature: Include responses from inactive users
       | user | course | role | timeend |
       | student3 | C1 | student | 1425168000 |
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Choice name"
     Then I should see "View 3 responses"
     And I follow "View 3 responses"
@@ -92,22 +92,22 @@ Feature: Include responses from inactive users
       | Include responses from inactive/suspended users | No |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I choose "Option 1" from "Choice name" choice activity
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I choose "Option 2" from "Choice name" choice activity
     And I log out
     And I log in as "student3"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I choose "Option 3" from "Choice name" choice activity
     And I log out
     And the following "course enrolments" exist:
       | user | course | role | status |
       | student1 | C1 | student | 1 |
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Choice name"
     Then I should see "View 2 responses"
     And I follow "View 2 responses"
@@ -119,7 +119,7 @@ Feature: Include responses from inactive users
       | user | course | role | timestart |
       | student2 | C1 | student | 2145830400 |
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Choice name"
     Then I should see "View 1 responses"
     And I follow "View 1 responses"
@@ -131,7 +131,7 @@ Feature: Include responses from inactive users
       | user | course | role | timeend |
       | student3 | C1 | student | 1425168000 |
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Choice name"
     Then I should see "View 0 responses"
     And I follow "View 0 responses"

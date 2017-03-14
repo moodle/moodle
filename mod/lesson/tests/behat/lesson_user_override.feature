@@ -26,7 +26,7 @@ Feature: Lesson user override
       | activity | name             | intro                   | course | idnumber |
       | lesson   | Test lesson name | Test lesson description | C1     | lesson1  |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I follow "Test lesson name"
     And I follow "Add a question page"
@@ -104,7 +104,7 @@ Feature: Lesson user override
     And I should see "Re-takes allowed"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson name"
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -117,7 +117,7 @@ Feature: Lesson user override
     And I should see "Cat is an amphibian"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson name"
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -144,7 +144,7 @@ Feature: Lesson user override
     And I should see "Password protected lesson"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson name"
     Then I should see "Test lesson name is a password protected lesson"
     And I should not see "Cat is an amphibian"
@@ -162,7 +162,7 @@ Feature: Lesson user override
     And I should see "Congratulations - end of lesson reached"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson name"
     And I should see "Test lesson name is a password protected lesson"
     And I should not see "Cat is an amphibian"
@@ -198,13 +198,13 @@ Feature: Lesson user override
     And I should see "Lesson closes"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson"
     Then I should see "This lesson closed on Saturday, 1 January 2000, 8:00"
     And I should not see "Cat is an amphibian"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson"
     And I should see "Cat is an amphibian"
 
@@ -233,13 +233,13 @@ Feature: Lesson user override
     And I should see "Lesson opens"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson"
     Then  I should see "This lesson will be open on Wednesday, 1 January 2020, 8:00"
     And I should not see "Cat is an amphibian"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson"
     And I should see "Cat is an amphibian"
 
@@ -258,7 +258,7 @@ Feature: Lesson user override
     And I should see "Maximum number of attempts"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson name"
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -273,7 +273,7 @@ Feature: Lesson user override
     And I should see "Congratulations - end of lesson reached"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson name"
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:

@@ -176,8 +176,8 @@ Feature: Anonymous feedback
   Scenario: Anonymous feedback in a course
     # Teacher can not
     When I log in as "teacher"
-    And I follow "Course 1"
-    And I follow "Course feedback"
+    And I am on course page "Course 1"
+    And I am on course page "Course feedback"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like this course?           |
@@ -187,8 +187,8 @@ Feature: Anonymous feedback
       | Multiple choice values         | Yes\nNo\nI don't know              |
     And I log out
     And I log in as "user1"
-    And I follow "Course 1"
-    And I follow "Course feedback"
+    And I am on course page "Course 1"
+    And I am on course page "Course feedback"
     And I follow "Preview"
     Then I should see "Do you like this course?"
     And I press "Continue"
@@ -199,8 +199,8 @@ Feature: Anonymous feedback
     And I press "Submit your answers"
     And I log out
     And I log in as "user2"
-    And I follow "Course 1"
-    And I follow "Course feedback"
+    And I am on course page "Course 1"
+    And I am on course page "Course feedback"
     And I follow "Preview"
     And I should see "Do you like this course?"
     And I press "Continue"
@@ -219,8 +219,8 @@ Feature: Anonymous feedback
     And I should see "1 (50.00 %)" in the "No" "table_row"
     And I log out
     And I log in as "teacher"
-    And I follow "Course 1"
-    And I follow "Course feedback"
+    And I am on course page "Course 1"
+    And I am on course page "Course feedback"
     And I follow "Preview"
     And I should see "Do you like this course?"
     And I press "Continue"

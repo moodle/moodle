@@ -22,7 +22,7 @@ Feature: availability_grade
     # Basic setup.
     Given I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
 
     # Add an assignment.
@@ -71,7 +71,7 @@ Feature: availability_grade
     And I click on "Edit settings" "link" in the "P3" activity
     And I expand all fieldsets
     And the field "Maximum grade percentage (exclusive)" matches value ""
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # Add a Page with a grade condition for 10%.
     And I add a "Page" to section "4"
@@ -92,7 +92,7 @@ Feature: availability_grade
     When I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # Do the assignment.
     And I follow "A1"
@@ -111,7 +111,7 @@ Feature: availability_grade
     When I log out
     And I log in as "teacher1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # Give the assignment 40%.
     And I follow "A1"
@@ -127,7 +127,7 @@ Feature: availability_grade
     And I log out
     And I log in as "student1"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
 
     # Check pages are visible.
     Then I should see "P2" in the "region-main" "region"

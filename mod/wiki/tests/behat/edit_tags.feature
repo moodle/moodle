@@ -17,7 +17,7 @@ Feature: Edited wiki pages handle tags correctly
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Wiki" to section "1" and I fill the form with:
       | Wiki name | Test wiki name |
@@ -28,7 +28,7 @@ Feature: Edited wiki pages handle tags correctly
 
   Scenario: Wiki page edition of custom tags works as expected
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test wiki name"
     And I press "Create page"
     When I set the following fields to these values:
@@ -54,7 +54,7 @@ Feature: Edited wiki pages handle tags correctly
     And I press "Continue"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test wiki name"
     And I press "Create page"
     And I click on ".form-autocomplete-downarrow" "css_element"

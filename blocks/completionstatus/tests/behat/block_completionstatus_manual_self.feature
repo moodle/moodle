@@ -17,7 +17,7 @@ Feature: Enable Block Completion in a course using manual self completion
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add the "Course completion status" block
     And I add the "Self completion" block
@@ -28,7 +28,7 @@ Feature: Enable Block Completion in a course using manual self completion
     And I press "Save changes"
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I should see "Status: Not yet started" in the "Course completion status" "block"
     And I should see "No" in the "Self completion" "table_row"
     And I follow "Complete course"
@@ -40,7 +40,7 @@ Feature: Enable Block Completion in a course using manual self completion
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     Then I should see "Status: Complete" in the "Course completion status" "block"
     And I should see "Yes" in the "Self completion" "table_row"
     And I follow "More details"

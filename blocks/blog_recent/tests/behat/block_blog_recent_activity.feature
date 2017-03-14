@@ -19,7 +19,7 @@ Feature: Students can use the recent blog entries block to view recent entries o
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment 1 |
@@ -32,7 +32,7 @@ Feature: Students can use the recent blog entries block to view recent entries o
 
   Scenario: Students use the recent blog entries block to view blogs
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment 1"
     And I follow "Add an entry about this Assignment"
     When I set the following fields to these values:
@@ -48,7 +48,7 @@ Feature: Students can use the recent blog entries block to view recent entries o
 
   Scenario: Students only see a few entries in the recent blog entries block
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment 1"
     And I follow "Add an entry about this Assignment"
     # Blog 1 of 5
@@ -106,7 +106,7 @@ Feature: Students can use the recent blog entries block to view recent entries o
     And I should see "This is my awesome blog!"
     Then I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I follow "Test assignment 1"
     And I configure the "Recent blog entries" block

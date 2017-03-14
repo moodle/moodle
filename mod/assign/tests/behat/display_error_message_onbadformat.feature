@@ -21,7 +21,7 @@ Feature: Check that the assignment grade can not be input in a wrong format.
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -51,7 +51,7 @@ Feature: Check that the assignment grade can not be input in a wrong format.
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |

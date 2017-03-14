@@ -20,7 +20,7 @@ Feature: A teacher can set whether glossary entries are always editable or not
     And the following config values are set as admin:
       | maxeditingtime | 60 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Glossary" to section "1" and I fill the form with:
       | Name | Test glossary name |
@@ -28,7 +28,7 @@ Feature: A teacher can set whether glossary entries are always editable or not
       | Always allow editing | No |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test glossary name"
     When I add a glossary entry with the following data:
       | Concept | Test concept name |

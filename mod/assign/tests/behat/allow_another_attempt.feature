@@ -18,7 +18,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -28,7 +28,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | Attempts reopened | Manually |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     When I press "Add submission"
     And I set the following fields to these values:
@@ -36,7 +36,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -47,13 +47,13 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I click on "Edit settings" "link"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I press "Add a new attempt based on previous submission"
     And I press "Save changes"
     Then I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -89,7 +89,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | student3 | G2 |
       | student4 | G2 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -102,7 +102,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | Group mode | Separate groups |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -110,7 +110,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test assignment name"
     When I navigate to "View all submissions" in current page administration
     Then "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
@@ -131,7 +131,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
 # Behat tests for the group submission, should be uncommented once the MDL-48216 is fixed.
 #    And I log out
 #    And I log in as "student3"
-#    And I follow "Course 1"
+#    And I am on course page "Course 1"
 #    And I follow "Test assignment name"
 #    #And I should see "This is attempt 1 ( 3 attempts allowed )."
 #    And I press "Add submission"
@@ -140,7 +140,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
 #    And I press "Save changes"
 #    And I log out
 #    And I log in as "teacher1"
-#    And I follow "Course 1"
+#    And I am on course page "Course 1"
 #    And I follow "Test assignment name"
 #    And I navigate to "View all submissions" in current page administration
 #    And "Student 1" row "Status" column of "generaltable" table should contain "Reopened"
@@ -153,7 +153,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
 #    And I press "Save changes"
 #    And I log out
 #    And I log in as "student4"
-#    And I follow "Course 1"
+#    And I am on course page "Course 1"
 #    And I follow "Test assignment name"
 #    #And I should see "This is attempt 2 ( 3 attempts allowed )."
 #    And I press "Add submission"
@@ -162,7 +162,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
 #    And I press "Save changes"
 #    And I log out
 #    And I log in as "teacher1"
-#    And I follow "Course 1"
+#    And I am on course page "Course 1"
 #    And I follow "Test assignment name"
 #    I navigate to "View all submissions" in current page administration
 #    And I click on "Grade" "link" in the "Student 1" "table_row"

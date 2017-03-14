@@ -17,7 +17,7 @@ Feature: Set end of lesson reached as a completion condition for a lesson
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I turn editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
@@ -47,22 +47,22 @@ Feature: Set end of lesson reached as a completion condition for a lesson
     And I press "Save page"
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     Then the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
     And I follow "Test lesson"
     And I press "Next page"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     Then the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And I follow "Test lesson"
     And I should see "You have seen more than one page of this lesson already."
     And I should see "Do you want to start at the last page you saw?"
     And I click on "No" "link" in the "#page-content" "css_element"
     And I press "Next page"
     And I press "Next page"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     Then the "Test lesson" "lesson" activity with "auto" completion should be marked as complete
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course page "Course 1"
     And "Student 1" user has completed "Test lesson" activity
