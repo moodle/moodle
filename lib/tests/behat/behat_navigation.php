@@ -290,21 +290,7 @@ class behat_navigation extends behat_base {
             if ($pnode && $this->running_javascript() && $pnode->hasAttribute('aria-expanded') &&
                 ($pnode->getAttribute('aria-expanded') == "false")) {
 
-                $this->ensure_node_is_visible($pnode);
-
-                // If node is a link then some driver click in the middle of the node, which click on link and
-                // page gets redirected. To ensure expansion works in all cases, check if the node to expand is a
-                // link and if yes then click on link and wait for it to navigate to next page with node expanded.
-                $nodetoexpandliteral = behat_context_helper::escape($parentnodes[$i]);
-                $nodetoexpandxpathlink = $pnodexpath . "/a[normalize-space(.)=" . $nodetoexpandliteral . "]";
-
-                if ($nodetoexpandlink = $node->find('xpath', $nodetoexpandxpathlink)) {
-                    $behatgeneralcontext = behat_context_helper::get('behat_general');
-                    $nodetoexpandlink->click();
-                    $behatgeneralcontext->wait_until_the_page_is_ready();
-                } else {
-                    $pnode->click();
-                }
+                $this->js_trigger_click($pnode);
 
                 // Wait for node to load, if not loaded before.
                 if ($pnode->hasAttribute('data-loaded') && $pnode->getAttribute('data-loaded') == "false") {
