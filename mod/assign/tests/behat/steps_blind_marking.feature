@@ -113,3 +113,22 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I navigate to "User report" in the course gradebook
     Then I should see "50"
     And I should see "Great job! Lol, not really."
+
+  @javascript
+  Scenario: Submissions table visible with overrides and blind marking
+    When I follow "Test assignment name"
+    And I navigate to "User overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user      | Student |
+      | id_duedate_enabled | 1 |
+      | duedate[day]       | 1 |
+      | duedate[month]     | January |
+      | duedate[year]      | 2020 |
+      | duedate[hour]      | 08 |
+      | duedate[minute]    | 00 |
+    And I press "Save"
+    And I should see "Wednesday, 1 January 2020, 8:00"
+    And I follow "Test assignment name"
+    And I navigate to "View all submissions" in current page administration
+    And I should see "In review" in the "I'm the student's first submission" "table_row"
