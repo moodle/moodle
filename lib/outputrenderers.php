@@ -592,15 +592,6 @@ class core_renderer extends renderer_base {
             $output .= '<meta http-equiv="refresh" content="'.$this->page->periodicrefreshdelay.';url='.$this->page->url->out().'" />';
         }
 
-        // Smart App Banners meta tag is only displayed if mobile services are enabled and configured.
-        if (!empty($CFG->enablemobilewebservice)) {
-            $mobilesettings = get_config('tool_mobile');
-            if (!empty($mobilesettings->enablesmartappbanners) and !empty($mobilesettings->iosappid)) {
-                $output .= '<meta name="apple-itunes-app" content="app-id=' . s($mobilesettings->iosappid) . ', ';
-                $output .= 'app-argument=' . $this->page->url->out() . '"/>';
-            }
-        }
-
         // Set up help link popups for all links with the helptooltip class
         $this->page->requires->js_init_call('M.util.help_popups.setup');
 
