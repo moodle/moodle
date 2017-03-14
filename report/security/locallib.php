@@ -897,4 +897,3 @@ function report_security_check_preventexecpath($detailed = false) {
 
     return $result;
 }
-
