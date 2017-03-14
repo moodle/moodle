@@ -84,13 +84,17 @@ class completion_criteria_activity extends completion_criteria {
 
             $this->course = $data->id;
 
-            foreach (array_keys($data->criteria_activity) as $activity) {
-
-                $module = $DB->get_record('course_modules', array('id' => $activity));
-                $this->module = self::get_mod_name($module->module);
-                $this->moduleinstance = $activity;
-                $this->id = NULL;
-                $this->insert();
+            // Data comes from advcheckbox, so contains keys for all activities.
+            // A value of 0 is 'not checked' whereas 1 is 'checked'.
+            foreach ($data->criteria_activity as $activity => $val) {
+                // Only update those which are checked.
+                if (!empty($val)) {
+                    $module = $DB->get_record('course_modules', array('id' => $activity));
+                    $this->module = self::get_mod_name($module->module);
+                    $this->moduleinstance = $activity;
+                    $this->id = null;
+                    $this->insert();
+                }
             }
         }
     }
