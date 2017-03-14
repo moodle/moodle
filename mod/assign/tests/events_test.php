@@ -1164,24 +1164,26 @@ class assign_events_testcase extends mod_assign_base_testcase {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
-        $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
-        $this->assign = new assign($assign, null, null);
+        $assigninstance = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
+        $cm = get_coursemodule_from_instance('assign', $assigninstance->id, $course->id);
+        $context = context_module::instance($cm->id);
+        $assign = new assign($context, $cm, $course);
 
         // Create an override.
         $override = new stdClass();
-        $override->assign = $this->assign->get_context()->id;
+        $override->assign = $assigninstance->id;
         $override->userid = 2;
         $override->id = $DB->insert_record('assign_overrides', $override);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $this->assign->delete_override($override->id);
+        $assign->delete_override($override->id);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_assign\event\user_override_deleted', $event);
-        $this->assertEquals(context_module::instance($assign->cmid), $event->get_context());
+        $this->assertEquals(context_module::instance($cm->id), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1192,24 +1194,26 @@ class assign_events_testcase extends mod_assign_base_testcase {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
-        $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
-        $this->assign = new assign($assign, null, null);
+        $assigninstance = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
+        $cm = get_coursemodule_from_instance('assign', $assigninstance->id, $course->id);
+        $context = context_module::instance($cm->id);
+        $assign = new assign($context, $cm, $course);
 
         // Create an override.
         $override = new stdClass();
-        $override->assign = $this->assign->get_context()->id;
+        $override->assign = $assigninstance->id;
         $override->groupid = 2;
         $override->id = $DB->insert_record('assign_overrides', $override);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $this->assign->delete_override($override->id);
+        $assign->delete_override($override->id);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_assign\event\group_override_deleted', $event);
-        $this->assertEquals(context_module::instance($assign->cmid), $event->get_context());
+        $this->assertEquals(context_module::instance($cm->id), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
 }
