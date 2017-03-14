@@ -16320,6 +16320,22 @@ body {
   height: 40px;
   width: 40px;
 }
+.block_myoverview .event-list-item .event-icon {
+  vertical-align: middle;
+}
+.block_myoverview .event-list-item .event-icon::before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+.block_myoverview .event-list-item .event-name-container {
+  vertical-align: middle;
+  max-width: calc(100% - 50px);
+}
+.block_myoverview .event-list-item .event-name-container .event-name {
+  display: block;
+}
 /**
  * Moodle forms HTML isn't changeable via renderers (yet?) so this
  * .less file imports styles from the bootstrap @variables file and
@@ -21688,4 +21704,9 @@ ul.indented-list {
 }
 .text-nowrap {
   white-space: nowrap !important;
+}
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
