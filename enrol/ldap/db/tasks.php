@@ -15,16 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LDAP enrolment plugin version specification.
- *
- * @package    enrol_ldap
- * @author     Iñaki Arenaza
- * @copyright  2010 Iñaki Arenaza <iarenaza@eps.mondragon.edu>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Task definition for enrol_ldap.
+ * @author    Guy Thomas <gthomas@moodlerooms.com>
+ * @copyright Copyright (c) 2017 Blackboard Inc.
+ * @package   enrol_ldap
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016120501;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016112900;        // Requires this Moodle version
-$plugin->component = 'enrol_ldap';      // Full name of the plugin (used for diagnostics)
+$tasks = array(
+    array(
+        'classname' => '\enrol_ldap\task\sync_enrolments',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => 'R',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 1
+    )
+);
+
