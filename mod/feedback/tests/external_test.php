@@ -590,4 +590,42 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(2, $result['itemsdata'][0]['data']); // There are 2 responses per item.
         $this->assertCount(2, $result['itemsdata'][1]['data']);
     }
+
+    /**
+     * Test get_unfinished_responses.
+     */
+    public function test_get_unfinished_responses() {
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Create a very simple feedback.
+        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
+        $numericitem = $feedbackgenerator->create_item_numeric($this->feedback);
+        $textfielditem = $feedbackgenerator->create_item_textfield($this->feedback);
+        $feedbackgenerator->create_item_pagebreak($this->feedback);
+        $labelitem = $feedbackgenerator->create_item_label($this->feedback);
+        $numericitem2 = $feedbackgenerator->create_item_numeric($this->feedback);
+
+        $pagedata = [
+            ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
+            ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'abc'],
+        ];
+        // Process the feedback, there are two pages so the feedback will be unfinished yet.
+        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
+        $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $this->assertFalse($result['completed']);
+
+        // Retrieve the unfinished responses.
+        $result = mod_feedback_external::get_unfinished_responses($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_unfinished_responses_returns(), $result);
+        // Check that ids and responses match.
+        foreach ($result['responses'] as $r) {
+            if ($r['item'] == $numericitem->id) {
+                $this->assertEquals(5, $r['value']);
+            } else {
+                $this->assertEquals($textfielditem->id, $r['item']);
+                $this->assertEquals('abc', $r['value']);
+            }
+        }
+    }
 }

@@ -217,6 +217,23 @@ class mod_feedback_completion extends mod_feedback_structure {
     }
 
     /**
+     * Retrieves responses from an unfinished attempt.
+     *
+     * @return array the responses (from the feedback_valuetmp table)
+     * @since  Moodle 3.3
+     */
+    public function get_unfinished_responses() {
+        global $DB;
+        $responses = array();
+
+        $completedtmp = $this->get_current_completed_tmp();
+        if ($completedtmp) {
+            $responses = $DB->get_records('feedback_valuetmp', ['completed' => $completedtmp->id]);
+        }
+        return $responses;
+    }
+
+    /**
      * Returns all temporary values for this feedback or just a value for an item
      * @param stdClass $item
      * @return array
@@ -224,12 +241,10 @@ class mod_feedback_completion extends mod_feedback_structure {
     protected function get_values_tmp($item = null) {
         global $DB;
         if ($this->valuestmp === null) {
-            $completedtmp = $this->get_current_completed_tmp();
-            if ($completedtmp) {
-                $this->valuestmp = $DB->get_records_menu('feedback_valuetmp',
-                        ['completed' => $completedtmp->id], '', 'item, value');
-            } else {
-                $this->valuestmp = array();
+            $this->valuestmp = array();
+            $responses = $this->get_unfinished_responses();
+            foreach ($responses as $r) {
+                $this->valuestmp[$r->item] = $r->value;
             }
         }
         if ($item) {

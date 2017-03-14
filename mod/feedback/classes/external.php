@@ -31,6 +31,7 @@ require_once("$CFG->libdir/externallib.php");
 use mod_feedback\external\feedback_summary_exporter;
 use mod_feedback\external\feedback_completedtmp_exporter;
 use mod_feedback\external\feedback_item_exporter;
+use mod_feedback\external\feedback_valuetmp_exporter;
 
 /**
  * Feedback external functions
@@ -826,6 +827,68 @@ class mod_feedback_external extends external_api {
                         ),
                     )
                 )
+            ),
+            'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for get_unfinished_responses.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_unfinished_responses_parameters() {
+        return new external_function_parameters (
+            array(
+                'feedbackid' => new external_value(PARAM_INT, 'Feedback instance id.'),
+            )
+        );
+    }
+
+    /**
+     * Retrieves responses from the current unfinished attempt.
+     *
+     * @param array $feedbackid feedback instance id
+     * @return array of warnings and launch information
+     * @since Moodle 3.3
+     */
+    public static function get_unfinished_responses($feedbackid) {
+        global $PAGE;
+
+        $params = array('feedbackid' => $feedbackid);
+        $params = self::validate_parameters(self::get_unfinished_responses_parameters(), $params);
+        $warnings = $itemsdata = array();
+
+        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
+        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $course->id);
+
+        $responses = array();
+        $unfinished = $feedbackcompletion->get_unfinished_responses();
+        foreach ($unfinished as $u) {
+            $exporter = new feedback_valuetmp_exporter($u);
+            $responses[] = $exporter->export($PAGE->get_renderer('core'));
+        }
+
+        $result = array(
+            'responses' => $responses,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the get_unfinished_responses return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_unfinished_responses_returns() {
+        return new external_single_structure(
+            array(
+            'responses' => new external_multiple_structure(
+                feedback_valuetmp_exporter::get_read_structure()
             ),
             'warnings' => new external_warnings(),
             )
