@@ -41,25 +41,25 @@
 }}
 <li class="list-group-item event-list-item" data-region="event-list-item">
     <div class="row">
-        <div class="col-xs-12 col-sm-6 col-xl-7">
+        <div class="col-sm-8 col-lg-6 col-xl-7">
             <div class="d-inline-block icon-large event-icon">
                 {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
             </div>
             <div class="d-inline-block event-name-container">
                 <a class="event-name text-truncate" href="{{{url}}}">{{name}}</a>
-                <p class="text-muted text-truncate m-b-0">{{course.fullnamedisplay}}</p>
+                <p class="small text-muted text-truncate m-b-0">{{course.fullnamedisplay}}</p>
             </div>
         </div>
-        <div class="hidden-sm-down col-md-6 col-xl-5">
+        <div class="col-sm-4 col-lg-6 col-xl-5">
             <div class="row">
-                <div class="col-xs-5 text-truncate">
+                <div class="col-lg-5 text-xs-right text-lg-left text-truncate">
                     {{#userdate}} {{timesort}}, {{#str}} strftimerecent {{/str}} {{/userdate}}
                 </div>
-                <div class="col-xs-7 text-truncate">
+                <div class="hidden-md-down col-lg-7 text-truncate">
                     {{#action.actionable}}
-                        <a class="m-r-1" href="{{{action.url}}}">{{action.name}}</a>
+                        <a href="{{{action.url}}}">{{action.name}}</a>
                         {{#action.itemcount}}
-                            <span class="tag tag-pill tag-default pull-xs-right">{{.}}</span>
+                            <span class="tag tag-pill tag-default">{{.}}</span>
                         {{/action.itemcount}}
                     {{/action.actionable}}
                     {{^action.actionable}}
@@ -68,9 +68,5 @@
                 </div>
             </div>
         </div>
-        <div class="hidden-xs-down hidden-md-up col-sm-6">
-            <div class="text-xs-right text-truncate">{{enddate}}</div>
-        </div>
     </div>
-    <div class="text-xs-right hidden-sm-up text-truncate">{{enddate}}</div>
 </li>
