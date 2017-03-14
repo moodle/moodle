@@ -8078,3 +8078,19 @@ function forum_check_updates_since(cm_info $cm, $from, $filter = array()) {
 
     return $updates;
 }
+
+/**
+ * Check if the user can create attachments in a forum.
+ * @param  stdClass $forum   forum object
+ * @param  stdClass $context context object
+ * @return bool true if the user can create attachments, false otherwise
+ * @since  Moodle 3.3
+ */
+function forum_can_create_attachment($forum, $context) {
+    // If maxbytes == 1 it means no attachments at all.
+    if (empty($forum->maxattachments) || $forum->maxbytes == 1 ||
+            !has_capability('mod/forum:createattachment', $context)) {
+        return false;
+    }
+    return true;
+}

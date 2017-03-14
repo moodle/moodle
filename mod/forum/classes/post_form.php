@@ -133,7 +133,7 @@ class mod_forum_post_form extends moodleform {
             $mform->addHelpButton('discussionsubscribe', 'discussionsubscription', 'forum');
         }
 
-        if (!empty($forum->maxattachments) && $forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
+        if (forum_can_create_attachment($forum, $modcontext)) {
             $mform->addElement('filemanager', 'attachments', get_string('attachment', 'forum'), null, self::attachment_options($forum));
             $mform->addHelpButton('attachments', 'attachment', 'forum');
         }
