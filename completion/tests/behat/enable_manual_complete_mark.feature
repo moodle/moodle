@@ -24,8 +24,9 @@ Feature: Allow students to manually mark an activity as complete
       | Enable completion tracking | Yes |
     And I press "Save and display"
     And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
+      | Forum name          | Test forum name |
+      | Description         | Test forum description |
+      | Completion tracking | Students can manually mark the activity as completed |
     And "Student First" user has not completed "Test forum name" activity
     And I log out
     And I log in as "student1"
