@@ -317,8 +317,7 @@ class repository_googledocs extends repository {
                         'id' => $gfile->id,
                         'name' => $gfile->name,
                         'exportformat' => 'download',
-                        'link' => $link,
-                        'claimed' => false
+                        'link' => $link
                     ]);
                     $title = $gfile->name;
                 } else {
@@ -366,8 +365,7 @@ class repository_googledocs extends repository {
                         'id' => $gfile->id,
                         'exportformat' => $exporttype,
                         'link' => $link,
-                        'name' => $gfile->name,
-                        'claimed' => false
+                        'name' => $gfile->name
                     ]);
                 }
                 // Adds the file to the file list. Using the itemId along with the name as key
@@ -553,7 +551,7 @@ class repository_googledocs extends repository {
                                    $storedfile->get_filepath(),
                                    $storedfile->get_filename());
 
-        if (!empty($source->claimed) && $info->is_writable()) {
+        if ($info->is_writable()) {
             // Add the current user as an OAuth writer.
             $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
 
@@ -592,90 +590,6 @@ class repository_googledocs extends repository {
             $details = 'File is missing source link';
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
-    }
-
-    /**
-     * Update an external file so only Moodle has write access to it.
-     * This function must be implemented by all repositories supporting FILE_CONTROLLED_LINK return types.
-     *
-     * Throw exceptions on error and the transaction will be rolled back
-     * (because it is called on an entire filearea at a time).
-     *
-     * @param stored_file $file
-     */
-    public function prevent_changes_to_external_file(stored_file $file) {
-        global $DB;
-
-        // Copy the file (will make it owned by moodle system account).
-        // Update the sharing settings on the file.
-        // Prevent editors from sharing the file.
-        $source = json_decode($file->get_reference());
-
-        $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
-
-        if ($systemauth === false) {
-            $details = 'Cannot connect as system user';
-            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
-        }
-        $systemservice = new repository_googledocs\rest($systemauth);
-
-        // Copy the file so we get a snapshot file owned by Moodle.
-        $newsource = $this->copy_file($systemservice, $source->id, $source->name);
-
-        // Set the sharing options.
-        $this->set_file_sharing_anyone_with_link_can_read($systemservice, $newsource->id);
-        $this->prevent_writers_from_sharing_file($systemservice, $newsource->id);
-        // Delete the original file from the Moodle account. This only deletes it for us (not the original owner).
-
-        $summary = $this->get_file_summary($systemservice, $source->id);
-        if (!empty($summary->parents[0])) {
-            $myparent = $summary->parents[0];
-            $this->remove_file_parent($systemservice, $source->id, $myparent);
-        }
-        // We need to change the source on the existing file now to point to the new id.
-        $source->id = $newsource->id;
-        $source->link = isset($newsource->webViewLink) ? $newsource->webViewLink : '';
-        if (empty($source->link)) {
-            $source->link = isset($newsource->webContentLink) ? $newsource->webContentLink : '';
-        }
-        $source->claimed = true;
-        $reference = json_encode($source);
-        $file->set_source($reference);
-
-        // We need to update the reference in the file_reference table.
-        $refid = $file->get_referencefileid();
-        $newref = (object) [
-            'id' => $refid,
-            'reference' => $reference,
-            'referencehash' => sha1($reference)
-        ];
-        $DB->update_record('files_reference', $newref);
-
-        return true;
-    }
-
-    /**
-     * Grant write access and redirect to an edit link for the file.
-     *
-     * @param stored_file $storedfile the file that contains the reference
-     */
-    public function edit_external_file($storedfile) {
-        // Grant writer access to this file.
-
-        // Redirect to the file.
-        $this->send_file($storedfile);
-    }
-
-    /**
-     * List the permissions on a file.
-     *
-     * @param \repository_googledocs\rest $client Authenticated client.
-     * @param string $fileid The id of the file.
-     * @return array
-     */
-    protected function list_file_permissions(\repository_googledocs\rest $client, $fileid) {
-        $fields = "permissions(id,type,emailAddress,role,allowFileDiscovery,displayName)";
-        return $client->call('list_permissions', ['fileid' => $fileid]);
     }
 
     /**
@@ -722,23 +636,6 @@ class repository_googledocs extends repository {
     }
 
     /**
-     * Get capabilities for a file.
-     *
-     * @param \repository_googledocs\rest $client Authenticated client.
-     * @param string $fileid The file we are checking.
-     *
-     * @return stdClass The file info with capabilities.
-     */
-    protected function get_file_capabilities(\repository_googledocs\rest $client, $fileid) {
-        $fields = "id,capabilities,writersCanShare";
-        $params = [
-            'fileid' => $fileid,
-            'fields' => $fields
-        ];
-        return $client->call('get', $params);
-    }
-
-    /**
      * Get simple file info for humans.
      *
      * @param \repository_googledocs\rest $client Authenticated client.
@@ -753,30 +650,6 @@ class repository_googledocs extends repository {
             'fields' => $fields
         ];
         return $client->call('get', $params);
-    }
-
-    /**
-     * Update file owner.
-     *
-     * @param \repository_googledocs\rest $client Authenticated client.
-     * @param string $fileid The file we are updating.
-     * @param string $owneremail
-     *
-     * @return boolean Did it work?
-     */
-    protected function update_file_owner(\repository_googledocs\rest $client, $fileid, $owneremail) {
-        $updateowner = [
-            'emailAddress' => $owneremail,
-            'role' => 'owner',
-            'type' => 'user'
-        ];
-        $params = ['fileid' => $fileid, 'transferOwnership' => 'true'];
-        try {
-            $response = $client->call('create_permission', $params, json_encode($updateowner));
-        } catch (\core\oauth2\rest_exception $re) {
-            return false;
-        }
-        return !empty($response->id);
     }
 
     /**
@@ -806,23 +679,6 @@ class repository_googledocs extends repository {
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
         return $fileinfo;
-    }
-
-    /**
-     * Delete a file (for the current user).
-     *
-     * @param \repository_googledocs\rest $client Authenticated client.
-     * @param string $fileid The file we are deleting.
-     * @return boolean
-     */
-    protected function delete_file(\repository_googledocs\rest $client, $fileid) {
-        $params = ['fileid' => $fileid];
-        $response = $client->call('delete', $params, ' ');
-        if (empty($response->id)) {
-            $details = 'Cannot delete file: ' . $fileid;
-            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
-        }
-        return true;
     }
 
     /**
@@ -899,27 +755,6 @@ class repository_googledocs extends repository {
     }
 
     /**
-     * Remove parent
-     *
-     * @param \repository_googledocs\rest $client Authenticated client.
-     * @param string $fileid The file we are updating.
-     * @param string $folderid The id of the folder we are removing
-     * @return boolean
-     */
-    protected function remove_file_parent(\repository_googledocs\rest $client, $fileid, $folderid) {
-        // Set the parent.
-        $params = [
-            'fileid' => $fileid, 'removeParents' => $folderid
-        ];
-        $response = $client->call('update', $params, ' ');
-        if (empty($response->id)) {
-            $details = 'Cannot remove the file parent: ' . $fileid . ', ' . $folderid;
-            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
-        }
-        return true;
-    }
-
-    /**
      * Prevent writers from sharing.
      *
      * @param \repository_googledocs\rest $client Authenticated client.
@@ -971,9 +806,12 @@ class repository_googledocs extends repository {
      * @param string $reference this reference is generated by
      *                          repository::get_file_reference()
      * @param context $context the target context for this new file.
-     * @return string $modifiedreference (final one before saving to DB)
+     * @param string $component the target component for this new file.
+     * @param string $filearea the target filearea for this new file.
+     * @param string $itemid the target itemid for this new file.
+     * @return string updated reference (final one before it's saved to db).
      */
-    public function reference_file_selected($reference, $context) {
+    public function reference_file_selected($reference, $context, $component, $filearea, $itemid) {
         // What we need to do here is transfer ownership to the system user (or copy)
         // then set the permissions so anyone with the share link can view,
         // finally update the reference to contain the share link if it was not
@@ -1000,21 +838,6 @@ class repository_googledocs extends repository {
         $userservice = new repository_googledocs\rest($userauth);
         $systemservice = new repository_googledocs\rest($systemauth);
 
-        // Get the list of existing permissions so we can see if the owner is already the system account,
-        // and whether we need to update the link sharing options.
-        $permissions = $this->list_file_permissions($userservice, $source->id);
-
-        $readshareupdaterequired = true;
-        $ownerupdaterequired = true;
-        foreach ($permissions->permissions as $permission) {
-            if ($permission->id == 'anyoneWithLink' &&
-                    $permission->type == 'anyone' &&
-                    $permission->role == 'reader' &&
-                    $permission->allowFileDiscovery == false) {
-                $readshareupdaterequired = false;
-            }
-        }
-
         // Add Moodle as writer.
         $this->add_writer_to_file($userservice, $source->id, $systemuseremail);
 
@@ -1024,12 +847,22 @@ class repository_googledocs extends repository {
         $cache = cache::make('repository_googledocs', 'folder');
         $parentid = 'root';
         $fullpath = 'root';
+        $allfolders = [];
         foreach ($contextlist as $context) {
             // Make sure a folder exists here.
-            $foldername = $context->get_context_name();
+            $foldername = clean_param($context->get_context_name(), PARAM_PATH);
+            $allfolders[] = $foldername;
+        }
+
+        $allfolders[] = clean_param($component, PARAM_PATH);
+        $allfolders[] = clean_param($filearea, PARAM_PATH);
+        $allfolders[] = clean_param($itemid, PARAM_PATH);
+
+        foreach ($allfolders as $foldername) {
+            // Make sure a folder exists here.
             $fullpath .= '/' . $foldername;
 
-            $folderid = $cache->get('fullpath');
+            $folderid = $cache->get($fullpath);
             if (empty($folderid)) {
                 $folderid = $this->folder_exists_in_folder($systemservice, $foldername, $parentid);
             }
@@ -1043,13 +876,22 @@ class repository_googledocs extends repository {
             }
         }
 
-        $this->move_file_from_root_to_folder($systemservice, $source->id, $parentid);
+        // Copy the file so we get a snapshot file owned by Moodle.
+        $newsource = $this->copy_file($systemservice, $source->id, $source->name);
+        // Move the copied file to the correct folder.
+        $this->move_file_from_root_to_folder($systemservice, $newsource->id, $parentid);
 
-        if ($readshareupdaterequired) {
-            $this->set_file_sharing_anyone_with_link_can_read($systemservice, $source->id);
+        // Set the sharing options.
+        $this->set_file_sharing_anyone_with_link_can_read($systemservice, $newsource->id);
+        $this->prevent_writers_from_sharing_file($systemservice, $newsource->id);
+
+        $source->id = $newsource->id;
+        $source->link = isset($newsource->webViewLink) ? $newsource->webViewLink : '';
+        if (empty($source->link)) {
+            $source->link = isset($newsource->webContentLink) ? $newsource->webContentLink : '';
         }
+        $reference = json_encode($source);
 
-        // We did not update the reference at all.
         return $reference;
     }
 
@@ -1183,6 +1025,9 @@ class repository_googledocs extends repository {
  *
  * @return string
  */
-function repository_googledocs_oauth2_system_scopes() {
-    return 'https://www.googleapis.com/auth/drive';
+function repository_googledocs_oauth2_system_scopes(\core\oauth2\issuer $issuer) {
+    if ($issuer->get('id') == get_config('googledocs', 'issuerid')) {
+        return 'https://www.googleapis.com/auth/drive';
+    }
+    return '';
 }
