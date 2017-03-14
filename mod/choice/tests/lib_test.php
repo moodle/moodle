@@ -102,7 +102,14 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $canview = choice_can_view_results($choice);
         $this->assertTrue($canview);
 
+        // Add a time restriction (choice not open yet).
+        $choice->timeopen = time() + YEARSECS;
+        $DB->update_record('choice', $choice);
+        $canview = choice_can_view_results($choice);
+        $this->assertFalse($canview);
+
         // Show results after closing.
+        $choice->timeopen = 0;
         $choice->showresults = CHOICE_SHOWRESULTS_AFTER_CLOSE;
         $DB->update_record('choice', $choice);
         $canview = choice_can_view_results($choice);
