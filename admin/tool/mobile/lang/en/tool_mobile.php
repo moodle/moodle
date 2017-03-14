@@ -32,7 +32,7 @@ $string['customlangstrings_desc'] = 'Words and phrases displayed in the app can 
 mm.user.student|Learner|en
 mm.user.student|Aprendiz|es
 </pre>
-For a complete list of string identifiers and more information, see the <a href="{$a}">documentation page</a>.';
+For a complete list of string identifiers, see the documentation.';
 $string['custommenuitems'] = 'Custom menu items';
 $string['custommenuitems_desc'] = 'Additional items can be added to the app\'s main menu by specifying them here. Enter each custom menu item on a new line with format: item text, link URL, link-opening method (inappbrowser, browser or embedded) and language code (optional, for displaying the item to users of the specified language only), separated by pipe characters. For example:
 <pre>
