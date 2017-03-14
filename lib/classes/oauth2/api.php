@@ -617,6 +617,39 @@ class api {
     }
 
     /**
+     * Disable an identity issuer.
+     *
+     * Requires moodle/site:config capability at the system context.
+     *
+     * @param int $id The id of the identity issuer to enable.
+     * @return boolean
+     */
+    public static function disable_issuer($id) {
+        require_capability('moodle/site:config', context_system::instance());
+        $issuer = new issuer($id);
+
+        $issuer->set('enabled', 0);
+        return $issuer->update();
+    }
+
+
+    /**
+     * Enable an identity issuer.
+     *
+     * Requires moodle/site:config capability at the system context.
+     *
+     * @param int $id The id of the identity issuer to enable.
+     * @return boolean
+     */
+    public static function enable_issuer($id) {
+        require_capability('moodle/site:config', context_system::instance());
+        $issuer = new issuer($id);
+
+        $issuer->set('enabled', 1);
+        return $issuer->update();
+    }
+
+    /**
      * Delete an identity issuer.
      *
      * Requires moodle/site:config capability at the system context.

@@ -154,6 +154,20 @@ class renderer extends plugin_renderer_base {
             $deleteurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['id' => $issuer->get('id'), 'action' => 'delete']);
             $deletelink = html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete')));
             $links .= ' ' . $deletelink;
+            // Enable / Disable.
+            if ($issuer->get('enabled')) {
+                // Disable.
+                $disableparams = ['id' => $issuer->get('id'), 'sesskey' => sesskey(), 'action' => 'disable'];
+                $disableurl = new moodle_url('/admin/tool/oauth2/issuers.php', $disableparams);
+                $disablelink = html_writer::link($disableurl, $OUTPUT->pix_icon('t/hide', get_string('disable')));
+                $links .= ' ' . $disablelink;
+            } else {
+                // Enable.
+                $enableparams = ['id' => $issuer->get('id'), 'sesskey' => sesskey(), 'action' => 'enable'];
+                $enableurl = new moodle_url('/admin/tool/oauth2/issuers.php', $enableparams);
+                $enablelink = html_writer::link($enableurl, $OUTPUT->pix_icon('t/show', get_string('enable')));
+                $links .= ' ' . $enablelink;
+            }
             if (!$last) {
                 // Move down.
                 $params = ['id' => $issuer->get('id'), 'action' => 'movedown', 'sesskey' => sesskey()];

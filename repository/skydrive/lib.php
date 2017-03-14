@@ -198,6 +198,11 @@ class repository_skydrive extends repository {
             $path = $this->build_node_path('root', get_string('pluginname', 'repository_skydrive'));
         }
 
+        if (!$this->issuer->get('enabled')) {
+            // Empty list of files for disabled repository.
+            return ['dynload' => false, 'list' => [], 'nologin' => true];
+        }
+
         // We analyse the path to extract what to browse.
         $trail = explode('/', $path);
         $uri = array_pop($trail);
@@ -392,6 +397,10 @@ class repository_skydrive extends repository {
     public function get_file($reference, $filename = '') {
         global $CFG;
 
+        if (!$this->issuer->get('enabled')) {
+            throw new repository_exception('cannotdownload', 'repository');
+        }
+
         $client = $this->get_user_oauth_client();
         $base = 'https://graph.microsoft.com/v1.0/';
 
@@ -505,6 +514,10 @@ class repository_skydrive extends repository {
      * @param array $options additional options affecting the file serving
      */
     public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
+        if (!$this->issuer->get('enabled')) {
+            throw new repository_exception('cannotdownload', 'repository');
+        }
+
         $source = json_decode($storedfile->get_reference());
 
         $fb = get_file_browser();

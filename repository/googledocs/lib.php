@@ -201,6 +201,10 @@ class repository_googledocs extends repository {
         if (empty($path)) {
             $path = $this->build_node_path('root', get_string('pluginname', 'repository_googledocs'));
         }
+        if (!$this->issuer->get('enabled')) {
+            // Empty list of files for disabled repository.
+            return ['dynload' => false, 'list' => [], 'nologin' => true];
+        }
 
         // We analyse the path to extract what to browse.
         $trail = explode('/', $path);
@@ -416,6 +420,10 @@ class repository_googledocs extends repository {
     public function get_file($reference, $filename = '') {
         global $CFG;
 
+        if (!$this->issuer->get('enabled')) {
+            throw new repository_exception('cannotdownload', 'repository');
+        }
+
         $client = $this->get_user_oauth_client();
         $base = 'https://www.googleapis.com/drive/v3';
 
@@ -557,6 +565,10 @@ class repository_googledocs extends repository {
      * @param array $options additional options affecting the file serving
      */
     public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
+        if (!$this->issuer->get('enabled')) {
+            throw new repository_exception('cannotdownload', 'repository');
+        }
+
         $source = json_decode($storedfile->get_reference());
 
         $fb = get_file_browser();
@@ -829,6 +841,9 @@ class repository_googledocs extends repository {
      * @return string updated reference (final one before it's saved to db).
      */
     public function reference_file_selected($reference, $context, $component, $filearea, $itemid) {
+        if (!$this->issuer->get('enabled')) {
+            throw new repository_exception('cannotdownload', 'repository');
+        }
         // What we need to do here is transfer ownership to the system user (or copy)
         // then set the permissions so anyone with the share link can view,
         // finally update the reference to contain the share link if it was not
@@ -919,6 +934,9 @@ class repository_googledocs extends repository {
      * @param int $filestatus
      */
     public function get_reference_details($reference, $filestatus = 0) {
+        if (!$this->issuer->get('enabled')) {
+            throw new repository_exception('cannotdownload', 'repository');
+        }
         if (empty($reference)) {
             return get_string('unknownsource', 'repository');
         }

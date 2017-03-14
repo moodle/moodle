@@ -180,7 +180,8 @@ class auth extends \auth_plugin_base {
      * @return boolean
      */
     private function is_ready_for_login_page(\core\oauth2\issuer $issuer) {
-        return !empty($issuer->get('clientid')) &&
+        return $issuer->get('enabled') &&
+                !empty($issuer->get('clientid')) &&
                 !empty($issuer->get('clientsecret')) &&
                 $issuer->is_authentication_supported() &&
                 !empty($issuer->get('showonloginpage'));

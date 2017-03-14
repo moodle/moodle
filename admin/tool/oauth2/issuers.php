@@ -111,6 +111,17 @@ if ($mform && $mform->is_cancelled()) {
         $editurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
         redirect($editurl, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
     }
+} else if ($action == 'enable') {
+
+    require_sesskey();
+    core\oauth2\api::enable_issuer($issuerid);
+    redirect($PAGE->url, get_string('issuerenabled', 'tool_oauth2'), null, \core\output\notification::NOTIFY_SUCCESS);
+
+} else if ($action == 'disable') {
+
+    require_sesskey();
+    core\oauth2\api::disable_issuer($issuerid);
+    redirect($PAGE->url, get_string('issuerdisabled', 'tool_oauth2'), null, \core\output\notification::NOTIFY_SUCCESS);
 
 } else if ($action == 'delete') {
 

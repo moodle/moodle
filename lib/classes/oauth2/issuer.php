@@ -64,6 +64,10 @@ class issuer extends persistent {
                 'type' => PARAM_URL,
                 'default' => ''
             ),
+            'enabled' => array(
+                'type' => PARAM_BOOL,
+                'default' => true
+            ),
             'showonloginpage' => array(
                 'type' => PARAM_BOOL,
                 'default' => false
