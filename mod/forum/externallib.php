@@ -824,6 +824,13 @@ class mod_forum_external extends external_api {
             throw new moodle_exception('nopostforum', 'forum');
         }
 
+        if (!empty($options['attachmentsid'])) {
+            // Ensure that the user has permissions to create attachments.
+            if (!has_capability('mod/forum:createattachment', $context)) {
+                $options['attachmentsid'] = 0;
+            }
+        }
+
         $thresholdwarning = forum_check_throttling($forum, $cm);
         forum_check_blocking_threshold($thresholdwarning);
 
@@ -1002,6 +1009,13 @@ class mod_forum_external extends external_api {
 
         if (!forum_user_can_post_discussion($forum, $groupid, -1, $cm, $context)) {
             throw new moodle_exception('cannotcreatediscussion', 'forum');
+        }
+
+        if (!empty($options['attachmentsid'])) {
+            // Ensure that the user has permissions to create attachments.
+            if (!has_capability('mod/forum:createattachment', $context)) {
+                $options['attachmentsid'] = 0;
+            }
         }
 
         $thresholdwarning = forum_check_throttling($forum, $cm);
