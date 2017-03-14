@@ -185,8 +185,6 @@ class data_field_file extends data_field_base {
         $usercontext = context_user::instance($USER->id);
         $files = $fs->get_area_files($this->context->id, 'mod_data', 'content', $content->id, 'itemid, filepath, filename', false);
 
-        file_prevent_changes_to_external_files($this->context->id, 'mod_data', 'content', $content->id);
-
         // We expect no or just one file (maxfiles = 1 option is set for the form_filemanager).
         if (count($files) == 0) {
             $content->content = null;

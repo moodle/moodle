@@ -1843,13 +1843,6 @@ class workshop {
             workshop_update_grades($workshop);
         }
 
-        if (self::PHASE_ASSESSMENT == $newphase) {
-            file_prevent_changes_to_external_files($this->context->id, 'mod_workshop', 'submission_content');
-        }
-        if (self::PHASE_EVALUATION == $newphase) {
-            file_prevent_changes_to_external_files($this->context->id, 'mod_workshop', 'overallfeedback_attachment');
-        }
-
         $DB->set_field('workshop', 'phase', $newphase, array('id' => $this->id));
         $this->phase = $newphase;
         $eventdata = array(

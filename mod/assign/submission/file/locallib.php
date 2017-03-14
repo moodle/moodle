@@ -553,19 +553,6 @@ class assign_submission_file extends assign_submission_plugin {
     }
 
     /**
-     * Make any controlled links in the submission area read-only for the student.
-     *
-     * @param stdClass $submission the assign_submission record being submitted.
-     * @return void
-     */
-    public function submit_for_grading($submission) {
-        file_prevent_changes_to_external_files($this->assignment->get_context()->id,
-                                               'assignsubmission_file',
-                                               ASSIGNSUBMISSION_FILE_FILEAREA,
-                                               $submission->id);
-    }
-
-    /**
      * Return the plugin configs for external functions.
      *
      * @return array the list of settings

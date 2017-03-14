@@ -257,21 +257,6 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
 }
 
 /**
- * For all files in this file area - walk the file list and copy each to a system owned account, making them read-only.
- *
- * @category files
- * @param int $contextid context id - must already exist
- * @param string $component
- * @param string $filearea file area name
- * @param int $itemid
- * @return bool
- */
-function file_prevent_changes_to_external_files($contextid, $component, $filearea, $itemid=false) {
-    $fs = get_file_storage();
-    return $fs->prevent_changes_to_external_files($contextid, $component, $filearea, $itemid);
-}
-
-/**
  * Saves text and files modified by Editor formslib element
  *
  * @category files
@@ -968,8 +953,15 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             if ($file->is_external_file()) {
                 $repoid = $file->get_repository_id();
                 if (!empty($repoid)) {
+                    $context = context::instance_by_id($contextid, MUST_EXIST);
+                    $repo = repository::get_repository_by_id($repoid, $context);
+
                     $file_record['repositoryid'] = $repoid;
-                    $file_record['reference'] = $file->get_reference();
+                    // This hook gives the repo a place to do some house cleaning, and update the $reference before it's saved
+                    // to the file store. E.g. transfer ownership of the file to a system account etc.
+                    $reference = $repo->reference_file_selected($file->get_reference(), $context, $component, $filearea, $itemid);
+
+                    $file_record['reference'] = $reference;
                 }
             }
 

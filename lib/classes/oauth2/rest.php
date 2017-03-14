@@ -74,6 +74,7 @@ abstract class rest {
 
         $method = $functions[$functionname]['method'];
         $endpoint = $functions[$functionname]['endpoint'];
+
         $responsetype = $functions[$functionname]['response'];
         if (!in_array($method, $supportedmethods)) {
             throw new coding_exception('unsupported api method: ' . $method);
@@ -112,7 +113,7 @@ abstract class rest {
                 $json = json_decode($response);
 
                 if (!empty($json->error)) {
-                    throw new rest_exception($json->error->message, $json->error->code);
+                    throw new rest_exception($json->error->code . ': ' . $json->error->message);
                 }
                 return $json;
             }

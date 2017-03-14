@@ -3531,7 +3531,6 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="issuerkey" TYPE="foreign" FIELDS="issuerid" REFTABLE="oauth2_issuer" REFFIELDS="id"/>
-        <KEY NAME="uniqexternal" TYPE="unique" FIELDS="issuerid, externalfield"/>
         <KEY NAME="uniqinternal" TYPE="unique" FIELDS="issuerid, internalfield"/>
       </KEYS>
     </TABLE>

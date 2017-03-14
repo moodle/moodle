@@ -2719,7 +2719,6 @@ function xmldb_main_upgrade($oldversion) {
         // Adding keys to table oauth2_user_field_mapping.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('issuerkey', XMLDB_KEY_FOREIGN, array('issuerid'), 'oauth2_issuer', array('id'));
-        $table->add_key('uniqexternal', XMLDB_KEY_UNIQUE, array('issuerid', 'externalfield'));
         $table->add_key('uniqinternal', XMLDB_KEY_UNIQUE, array('issuerid', 'internalfield'));
 
         // Conditionally launch create table for oauth2_user_field_mapping.

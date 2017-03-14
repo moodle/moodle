@@ -107,7 +107,7 @@ class api {
             'name' => 'alternatename',
             'last_name' => 'lastname',
             'email' => 'email',
-            'id' => 'username',
+            'third_party_id' => 'username',
             'first_name' => 'firstname',
             'picture-data-url' => 'picture',
             'link' => 'url',

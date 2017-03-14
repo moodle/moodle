@@ -576,11 +576,7 @@ abstract class oauth2_client extends curl {
             // Expires 10 seconds before actual expiry.
             $accesstoken->expires = (time() + ($r->expires_in - 10));
         }
-        if (isset($r->scope)) {
-            $accesstoken->scope = $r->scope;
-        } else {
-            $accesstoken->scope = $this->scope;
-        }
+        $accesstoken->scope = $this->scope;
         // Also add the scopes.
         self::$upgradedcodes[] = $code;
         $this->store_token($accesstoken);

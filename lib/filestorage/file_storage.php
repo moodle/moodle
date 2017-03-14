@@ -1128,9 +1128,8 @@ class file_storage {
         // creating a new file from an existing alias creates new alias implicitly.
         // here we just check the database consistency.
         if (!empty($newrecord->repositoryid)) {
-            if ($newrecord->referencefileid != $this->get_referencefileid($newrecord->repositoryid, $newrecord->reference, MUST_EXIST)) {
-                throw new file_reference_exception($newrecord->repositoryid, $newrecord->reference, $newrecord->referencefileid);
-            }
+            // It is OK if the current reference does not exist. It may have been altered by a repository plugin when the files where saved from a draft area.
+            $newrecord->referencefileid = $this->get_or_create_referencefileid($newrecord->repositoryid, $newrecord->reference);
         }
 
         try {
@@ -2324,34 +2323,4 @@ class file_storage {
         $DB->update_record('files_reference', (object)$data);
     }
 
-    /**
-     * For an entire file area - walk through the files and for each one that is a controlled link,
-     * call prevent_changes on the repository. Typically this will copy the external file to a system
-     * account controlled by Moodle, remove all write access and update the file reference.
-     *
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     */
-    public function prevent_changes_to_external_files($contextid, $component, $filearea, $itemid = false) {
-        global $DB;
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $files = $this->get_area_files($contextid, $component, $filearea, $itemid, 'id', false);
-
-        foreach ($files as $file) {
-            if ($file->is_external_file()) {
-                // Note that this function uses a cache, so we don't need to
-                // double cache these.
-                $repo = repository::get_repository_by_id($file->get_repository_id(), SYSCONTEXTID);
-
-                // We expect this function to throw exceptions on failure.
-                $repo->prevent_changes_to_external_file($file);
-            }
-        }
-        $transaction->allow_commit();
-        return true;
-    }
 }

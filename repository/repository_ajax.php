@@ -228,10 +228,6 @@ switch ($action) {
                     $record->filesize = $sourcefile->get_filesize();
                 }
 
-                // This hook gives the repo a place to do some house cleaning, and update the $reference before it's saved
-                // to the file store. E.g. transfer ownership of the file to a system account etc.
-                $reference = $repo->reference_file_selected($reference, $context);
-
                 // Check if file exists.
                 if (repository::draftfile_exists($itemid, $saveas_path, $saveas_filename)) {
                     // File name being used, rename it.

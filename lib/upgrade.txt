@@ -2,8 +2,7 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 === 3.3 ===
 * Support added for a new type of external file: FILE_CONTROLLED_LINK. This is an external file that Moodle can control
-  the permissions. Moodle can make files read-only or grant temporary write access.
-    To make all the files in file area read only (owned by Moodle) - use file_prevent_changes_to_external_files().
+  the permissions. Moodle makes files read-only but can grant temporary write access.
     When accessing a URL, the info from file_browser::get_file_info will be checked to determine if the user has write access,
     if they do - the remote file will have access controls set to allow editing.
 * The method moodleform::after_definition() has been added and can now be used to add some logic
