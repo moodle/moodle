@@ -13,59 +13,59 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Test that unoconv is configured correctly
  *
- * @package   assignfeedback_editpdf
- * @copyright 2016 Simey Lameze
+ * @package   fileconverter_unoconv
+ * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require(__DIR__ . '/../../../../config.php');
+require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 
 $sendpdf = optional_param('sendpdf', 0, PARAM_BOOL);
 
-$PAGE->set_url(new moodle_url('/mod/assign/feedback/editpdf/testunoconv.php'));
+$PAGE->set_url(new moodle_url('/files/converter/unoconv/testunoconv.php'));
 $PAGE->set_context(context_system::instance());
 
 require_login();
 require_capability('moodle/site:config', context_system::instance());
 
-$strheading = get_string('test_unoconv', 'assignfeedback_editpdf');
+$strheading = get_string('test_unoconv', 'fileconverter_unoconv');
 $PAGE->navbar->add(get_string('administrationsite'));
 $PAGE->navbar->add(get_string('plugins', 'admin'));
 $PAGE->navbar->add(get_string('assignmentplugins', 'mod_assign'));
 $PAGE->navbar->add(get_string('feedbackplugins', 'mod_assign'));
-$PAGE->navbar->add(get_string('pluginname', 'assignfeedback_editpdf'),
-        new moodle_url('/admin/settings.php', array('section' => 'assignfeedback_editpdf')));
+$PAGE->navbar->add(get_string('pluginname', 'fileconverter_unoconv'),
+        new moodle_url('/admin/settings.php', array('section' => 'fileconverterunoconv')));
 $PAGE->navbar->add($strheading);
 $PAGE->set_heading($strheading);
 $PAGE->set_title($strheading);
+
+$converter = new \fileconverter_unoconv\converter();
+
 if ($sendpdf) {
     require_sesskey();
-    // Serve the generated test pdf.
-    file_storage::send_test_pdf();
+
+    $converter->serve_test_document();
     die();
 }
 
-$result = file_storage::test_unoconv_path();
+$result = \fileconverter_unoconv\converter::test_unoconv_path();
 switch ($result->status) {
-    case file_storage::UNOCONVPATH_OK:
-        $msg = $OUTPUT->notification(get_string('test_unoconvok', 'assignfeedback_editpdf'), 'success');
+    case \fileconverter_unoconv\converter::UNOCONVPATH_OK:
+        $msg = $OUTPUT->notification(get_string('test_unoconvok', 'fileconverter_unoconv'), 'success');
         $pdflink = new moodle_url($PAGE->url, array('sendpdf' => 1, 'sesskey' => sesskey()));
-        $msg .= html_writer::link($pdflink, get_string('test_unoconvdownload', 'assignfeedback_editpdf'));
+        $msg .= html_writer::link($pdflink, get_string('test_unoconvdownload', 'fileconverter_unoconv'));
         $msg .= html_writer::empty_tag('br');
         break;
 
-    case file_storage::UNOCONVPATH_ERROR:
-        $msg = $OUTPUT->notification($result->message, 'warning');
-        break;
-
     default:
-        $msg = $OUTPUT->notification(get_string("test_unoconv{$result->status}", 'assignfeedback_editpdf'), 'warning');
+        $msg = $OUTPUT->notification(get_string("test_unoconv{$result->status}", 'fileconverter_unoconv'), 'warning');
         break;
 }
-$returl = new moodle_url('/admin/settings.php', array('section' => 'assignfeedback_editpdf'));
+$returl = new moodle_url('/admin/settings.php', array('section' => 'fileconverter_unoconv'));
 $msg .= $OUTPUT->continue_button($returl);
 
 echo $OUTPUT->header();

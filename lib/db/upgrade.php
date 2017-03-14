@@ -2579,5 +2579,37 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017030700.00);
     }
 
+    if ($oldversion < 2017031400.00) {
+
+        // Define table file_conversion to be created.
+        $table = new xmldb_table('file_conversion');
+
+        // Adding fields to table file_conversion.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sourcefileid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('targetformat', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
+        $table->add_field('statusmessage', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('converter', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('destfileid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('data', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Adding keys to table file_conversion.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('sourcefileid', XMLDB_KEY_FOREIGN, array('sourcefileid'), 'files', array('id'));
+        $table->add_key('destfileid', XMLDB_KEY_FOREIGN, array('destfileid'), 'files', array('id'));
+
+        // Conditionally launch create table for file_conversion.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017031400.00);
+    }
+
     return true;
 }

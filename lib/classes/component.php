@@ -439,6 +439,7 @@ $cache = '.var_export($cache, true).';
             'enrol'       => $CFG->dirroot.'/enrol',
             'error'       => null,
             'filepicker'  => null,
+            'fileconverter' => $CFG->dirroot.'/files/converter',
             'files'       => $CFG->dirroot.'/files',
             'filters'     => null,
             //'fonts'       => null, // Bogus.
@@ -525,6 +526,7 @@ $cache = '.var_export($cache, true).';
             'tool'          => $CFG->dirroot.'/'.$CFG->admin.'/tool',
             'cachestore'    => $CFG->dirroot.'/cache/stores',
             'cachelock'     => $CFG->dirroot.'/cache/locks',
+            'fileconverter' => $CFG->dirroot.'/files/converter',
         );
         $parents = array();
         $subplugins = array();

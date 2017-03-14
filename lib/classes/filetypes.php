@@ -292,6 +292,23 @@ abstract class core_filetypes {
     }
 
     /**
+     * Given a mimetype - return a valid file extension for it.
+     *
+     * @param $mimetype string
+     * @return string|bool False if the mimetype was not known, a string indicating a valid file extension otherwise. It may not
+     *                     be the only valid file extension - just the first one found.
+     */
+    public static function get_file_extension($mimetype) {
+        $types = self::get_types();
+        foreach ($types as $extension => $info) {
+            if ($info['type'] == $mimetype) {
+                return $extension;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Gets all the current types.
      *
      * @return array Associative array from extension to array of data about type

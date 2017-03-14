@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20170207" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20170220" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2388,6 +2388,26 @@
       <INDEXES>
         <INDEX NAME="uq_external_file" UNIQUE="true" FIELDS="referencehash, repositoryid" COMMENT="The combination of repositoryid and reference field is supposed to be a unique identification of an external file. Because the reference is a TEXT field, we can't use to compose the index. So we use the referencehash instead and the file API is responsible to keep it up-to-date"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="file_conversion" COMMENT="Table to track file conversions.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sourcefileid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="targetformat" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="statusmessage" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="converter" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="destfileid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="data" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="sourcefileid" TYPE="foreign" FIELDS="sourcefileid" REFTABLE="files" REFFIELDS="id"/>
+        <KEY NAME="destfileid" TYPE="foreign" FIELDS="destfileid" REFTABLE="files" REFFIELDS="id"/>
+      </KEYS>
     </TABLE>
     <TABLE NAME="repository" COMMENT="This table contains one entry for every configured external repository instance.">
       <FIELDS>

@@ -1755,6 +1755,10 @@ class core_plugin_manager {
                 'imagegallery'
             ),
 
+            'fileconverter' => array(
+                'unoconv'
+            ),
+
             'editor' => array(
                 'atto', 'textarea', 'tinymce'
             ),
