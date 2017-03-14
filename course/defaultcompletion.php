@@ -52,6 +52,7 @@ if ($id) {
 }
 
 // Set up the page.
+navigation_node::override_active_url(new moodle_url('/course/completion.php', array('id' => $course->id)));
 $PAGE->set_course($course);
 $PAGE->set_url('/course/bulkcompletion.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname);

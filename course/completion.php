@@ -53,7 +53,14 @@ if ($id) {
         print_error('invalidcourseid');
     }
     require_login($course);
-    require_capability('moodle/course:update', context_course::instance($course->id));
+    $context = context_course::instance($course->id);
+    if (!has_capability('moodle/course:update', $context)) {
+        if (core_completion\manager::can_edit_bulk_completion($course)) {
+            redirect(new moodle_url('/course/bulkcompletion.php', ['id' => $course->id]));
+        } else {
+            require_capability('moodle/course:update', $context);
+        }
+    }
 
 } else {
     require_login();

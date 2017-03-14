@@ -43,7 +43,6 @@ if ($id) {
         print_error('invalidcourseid');
     }
     require_login($course);
-    require_capability('moodle/course:update', context_course::instance($course->id));
 
 } else {
     require_login();
@@ -51,6 +50,7 @@ if ($id) {
 }
 
 // Set up the page.
+navigation_node::override_active_url(new moodle_url('/course/completion.php', array('id' => $course->id)));
 $PAGE->set_course($course);
 $PAGE->set_url('/course/bulkcompletion.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname);
@@ -58,6 +58,11 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
 // Get all that stuff I need for the renderer.
+if (!core_completion\manager::can_edit_bulk_completion($id)) {
+    throw new required_capability_exception(context_course::instance($course->id),
+        'moodle/course:manageactivities', 'nopermission');
+}
+
 $manager = new \core_completion\manager($id);
 $bulkcompletiondata = $manager->get_activities_and_headings();
 

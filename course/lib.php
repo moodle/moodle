@@ -3870,6 +3870,7 @@ function course_get_user_administration_options($course, $context) {
 
     $options = new stdClass;
     $options->update = has_capability('moodle/course:update', $context);
+    $options->editcompletion = core_completion\manager::can_edit_bulk_completion($course);
     $options->filters = has_capability('moodle/filter:manage', $context) &&
                         count(filter_get_available_in_context($context)) > 0;
     $options->reports = has_capability('moodle/site:viewreports', $context);

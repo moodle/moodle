@@ -38,25 +38,33 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
     public function navigation($courseid, $page) {
         $tabs = [];
 
-        $tabs[] = new tabobject(
-            'completion',
-            new moodle_url('/course/completion.php', ['id' => $courseid]),
-            get_string('coursecompletion', 'completion')
-        );
+        if (has_capability('moodle/course:update', context_course::instance($courseid))) {
+            $tabs[] = new tabobject(
+                'completion',
+                new moodle_url('/course/completion.php', ['id' => $courseid]),
+                get_string('coursecompletion', 'completion')
+            );
 
-        $tabs[] = new tabobject(
-            'defaultcompletion',
-            new moodle_url('/course/defaultcompletion.php', ['id' => $courseid]),
-            get_string('defaultcompletion', 'completion')
-        );
+            $tabs[] = new tabobject(
+                'defaultcompletion',
+                new moodle_url('/course/defaultcompletion.php', ['id' => $courseid]),
+                get_string('defaultcompletion', 'completion')
+            );
+        }
 
-        $tabs[] = new tabobject(
-            'bulkcompletion',
-            new moodle_url('/course/bulkcompletion.php', ['id' => $courseid]),
-            get_string('bulkactivitycompletion', 'completion')
-        );
+        if (core_completion\manager::can_edit_bulk_completion($courseid)) {
+            $tabs[] = new tabobject(
+                'bulkcompletion',
+                new moodle_url('/course/bulkcompletion.php', ['id' => $courseid]),
+                get_string('bulkactivitycompletion', 'completion')
+            );
+        }
 
-        return $this->tabtree($tabs, $page);
+        if (count($tabs) > 1) {
+            return $this->tabtree($tabs, $page);
+        } else {
+            return '';
+        }
     }
 
 
@@ -66,6 +74,10 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
 
     public function defaultcompletion($data) {
         return parent::render_from_template('core_course/defaultactivitycompletion', $data);
+    }
+
+    public function activities_list($data) {
+        return parent::render_from_template('core_course/activityinstance', $data);
     }
 
 }
