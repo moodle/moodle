@@ -780,12 +780,30 @@ class mod_forum_external extends external_api {
         require_once($CFG->dirroot . "/mod/forum/lib.php");
 
         $params = self::validate_parameters(self::add_discussion_post_parameters(),
-                                            array(
-                                                'postid' => $postid,
-                                                'subject' => $subject,
-                                                'message' => $message,
-                                                'options' => $options
-                                            ));
+            array(
+                'postid' => $postid,
+                'subject' => $subject,
+                'message' => $message,
+                'options' => $options
+            )
+        );
+        $warnings = array();
+
+        if (!$parent = forum_get_post_full($params['postid'])) {
+            throw new moodle_exception('invalidparentpostid', 'forum');
+        }
+
+        if (!$discussion = $DB->get_record("forum_discussions", array("id" => $parent->discussion))) {
+            throw new moodle_exception('notpartofdiscussion', 'forum');
+        }
+
+        // Request and permission validation.
+        $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
         // Validate options.
         $options = array(
             'discussionsubscribe' => true,
@@ -803,29 +821,16 @@ class mod_forum_external extends external_api {
                     break;
                 case 'attachmentsid':
                     $value = clean_param($option['value'], PARAM_INT);
+                    // Ensure that the user has permissions to create attachments.
+                    if (!has_capability('mod/forum:createattachment', $context)) {
+                        $value = 0;
+                    }
                     break;
                 default:
                     throw new moodle_exception('errorinvalidparam', 'webservice', '', $name);
             }
             $options[$name] = $value;
         }
-
-        $warnings = array();
-
-        if (!$parent = forum_get_post_full($params['postid'])) {
-            throw new moodle_exception('invalidparentpostid', 'forum');
-        }
-
-        if (!$discussion = $DB->get_record("forum_discussions", array("id" => $parent->discussion))) {
-            throw new moodle_exception('notpartofdiscussion', 'forum');
-        }
-
-        // Request and permission validation.
-        $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
-
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
 
         if (!forum_user_can_post($forum, $discussion, $USER, $cm, $course, $context)) {
             throw new moodle_exception('nopostforum', 'forum');
@@ -955,6 +960,16 @@ class mod_forum_external extends external_api {
                                                 'groupid' => $groupid,
                                                 'options' => $options
                                             ));
+
+        $warnings = array();
+
+        // Request and permission validation.
+        $forum = $DB->get_record('forum', array('id' => $params['forumid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
         // Validate options.
         $options = array(
             'discussionsubscribe' => true,
@@ -976,21 +991,16 @@ class mod_forum_external extends external_api {
                     break;
                 case 'attachmentsid':
                     $value = clean_param($option['value'], PARAM_INT);
+                    // Ensure that the user has permissions to create attachments.
+                    if (!has_capability('mod/forum:createattachment', $context)) {
+                        $value = 0;
+                    }
                     break;
                 default:
                     throw new moodle_exception('errorinvalidparam', 'webservice', '', $name);
             }
             $options[$name] = $value;
         }
-
-        $warnings = array();
-
-        // Request and permission validation.
-        $forum = $DB->get_record('forum', array('id' => $params['forumid']), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
-
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
 
         // Normalize group.
         if (!groups_get_activity_groupmode($cm)) {
