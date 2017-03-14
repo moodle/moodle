@@ -582,6 +582,7 @@ abstract class assign_plugin {
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
         $writeaccess = false;
         // Permission check on the itemid.
+        $assignment = $this->assignment;
 
         if ($this->get_subtype() == 'assignsubmission') {
             if ($itemid) {
@@ -590,16 +591,19 @@ abstract class assign_plugin {
                     return null;
                 }
                 if (!empty($record->userid)) {
-                    if (!$this->assignment->can_view_submission($record->userid)) {
+                    if (!$assignment->can_view_submission($record->userid)) {
                         return null;
                     }
-                    $writeaccess = $this->assignment->can_edit_submission($record->userid);
+
+                    // We only report write access for teachers.
+                    $writeaccess = $assignment->can_grade() && $assignment->can_edit_submission($record->userid);
                 } else {
                     // Must be a team submission with a group.
-                    if (!$this->assignment->can_view_group_submission($record->groupid)) {
+                    if (!$assignment->can_view_group_submission($record->groupid)) {
                         return null;
                     }
-                    $writeaccess = $this->assignment->can_edit_group_submission($record->groupid);
+                    // We only report write access for teachers.
+                    $writeaccess = $assignment->can_grade() && $assignment->can_edit_group_submission($record->groupid);
                 }
             }
         } else {
@@ -610,7 +614,7 @@ abstract class assign_plugin {
         $fs = get_file_storage();
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
-        if (!($storedfile = $fs->get_file($this->assignment->get_context()->id,
+        if (!($storedfile = $fs->get_file($assignment->get_context()->id,
                                           $this->get_subtype() . '_' . $this->get_type(),
                                           $filearea,
                                           $itemid,
@@ -620,7 +624,7 @@ abstract class assign_plugin {
         }
 
         return new file_info_stored($browser,
-                                    $this->assignment->get_context(),
+                                    $assignment->get_context(),
                                     $storedfile,
                                     $urlbase,
                                     $filearea,
