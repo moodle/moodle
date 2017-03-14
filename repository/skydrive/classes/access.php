@@ -15,25 +15,42 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Cache definitions.
+ * Class for loading/storing access records from the DB.
  *
- * @package    repository_skydrive
- * @copyright  2013 Dan Poltawski <dan@moodle.com>
+ * @package    core
+ * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace repository_skydrive;
 
 defined('MOODLE_INTERNAL') || die();
 
-$definitions = array(
-    // Used to store file ids for folders.
-    // The keys used are full path to the folder, the values are the id in google drive.
-    // The static acceleration size has been based upon the depths of a single path.
-    'folder' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => false,
-        'simpledata' => true,
-        'staticacceleration' => true,
-        'staticaccelerationsize' => 10,
-        'canuselocalstore' => true
-    ),
-);
+use core\persistent;
+
+/**
+ * Class for loading/storing issuer from the DB
+ *
+ * @copyright  2017 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class access extends persistent {
+
+    const TABLE = 'repository_skydrive_access';
+
+    /**
+     * Return the definition of the properties of this model.
+     *
+     * @return array
+     */
+    protected static function define_properties() {
+        return array(
+            'permissionid' => array(
+                'type' => PARAM_RAW
+            ),
+            'itemid' => array(
+                'type' => PARAM_RAW
+            )
+        );
+    }
+
+}

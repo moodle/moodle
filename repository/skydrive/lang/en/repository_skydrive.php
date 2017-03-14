@@ -22,10 +22,20 @@
  * @author     Dan Poltawski <dan.poltawski@luns.net.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$string['cachedef_foldername'] = 'Folder name cache';
-$string['clientid'] = 'Client ID';
-$string['configplugin'] = 'Configure Microsoft OneDrive';
-$string['oauthinfo'] = '<p>To use this plugin, you must register your site <a href="https://account.live.com/developers/applications">with Microsoft</a>.<p>As part of the registration process, you will need to enter the following URL as \'Redirect domain\':</p><p>{$a->callbackurl}</p>Once registered, you will be provided with a client ID and secret which can be entered here.</p>';
+$string['configplugin'] = 'Configure OneDrive plugin';
+$string['skydrive:view'] = 'View OneDrive repository';
 $string['pluginname'] = 'Microsoft OneDrive';
-$string['secret'] = 'Secret';
-$string['skydrive:view'] = 'View OneDrive';
+$string['issuer'] = 'OAuth 2 service';
+$string['issuer_help'] = 'Select the OAuth 2 service that is configured to talk to the OneDrive API. If the services does not exist yet, you might need to create it.';
+$string['servicenotenabled'] = 'Access not configured.';
+$string['oauth2serviceslink'] = '<a href="{$a}" title="Link to OAuth Services configuration">OAuth 2 Services Configuration</a>';
+$string['searchfor'] = 'Search for {$a}';
+$string['internal'] = 'Internal (files stored in Moodle)';
+$string['external'] = 'External (only links stored in Moodle)';
+$string['both'] = 'Internal and External';
+$string['supportedreturntypes'] = 'Supported files';
+$string['defaultreturntype'] = 'Default return type';
+$string['fileoptions'] = 'The types and defaults for returned files is configurable here. Note that all files linked externally will be updated so that the owner is the Moodle system account.';
+$string['owner'] = 'Owned by: {$a}';
+$string['cachedef_folder'] = 'OneDrive File IDs for folders in the system account';
+

@@ -15,25 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Cache definitions.
+ * Definition of repository_skydrive scheduled tasks.
  *
- * @package    repository_skydrive
- * @copyright  2013 Dan Poltawski <dan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The handlers defined on this file are processed and registered into
+ * the Moodle DB after any install or upgrade operation. All plugins
+ * support this.
+ *
+ * @package   repository_skydrive
+ * @copyright 2017 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$definitions = array(
-    // Used to store file ids for folders.
-    // The keys used are full path to the folder, the values are the id in google drive.
-    // The static acceleration size has been based upon the depths of a single path.
-    'folder' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => false,
-        'simpledata' => true,
-        'staticacceleration' => true,
-        'staticaccelerationsize' => 10,
-        'canuselocalstore' => true
+/* List of handlers */
+
+$tasks = array(
+    array(
+        'classname' => 'repository_skydrive\remove_temp_access_task',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => 'R',
+        'day' => '*',
+        'dayofweek' => 'R',
+        'month' => '*'
     ),
 );
