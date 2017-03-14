@@ -288,6 +288,20 @@ class cache_config_testing extends cache_config_writer {
         global $CFG;
         return $CFG->wwwroot.'phpunit';
     }
+
+    /**
+     * Checks if the configuration file exists.
+     *
+     * @return bool True if it exists
+     */
+    public static function config_file_exists() {
+        // Allow for late static binding by using static.
+        $configfilepath = static::get_config_file_path();
+
+        // Invalidate opcode php cache, so we get correct status of file.
+        core_component::invalidate_opcode_php_cache($configfilepath);
+        return file_exists($configfilepath);
+    }
 }
 
 /**
