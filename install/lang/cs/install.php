@@ -82,10 +82,9 @@ $string['pathsunsecuredataroot'] = 'Umístění datového adresáře není bezpe
 $string['pathswrongadmindir'] = 'Adresář pro správu serveru (admin) neexistuje';
 $string['phpextension'] = '{$a} PHP rozšíření';
 $string['phpversion'] = 'Verze PHP';
-$string['phpversionhelp'] = '<p>Moodle vyžaduje PHP alespoň verze 4.3.0 nebo 5.1.0 (PHP 5.0.x obsahuje množství chyb).</p>
+$string['phpversionhelp'] = '<p>Moodle vyžaduje PHP alespoň verze 5.6.5 PHP (7.x má určitá omezení jádra).</p>
 <p>Nyní používáte PHP verze {$a}.</p>
-<p>Musíte PHP upgradovat, nebo přejít k hostiteli s vyšší verzí!<br />
-(U PHP 5.0.x můžete také přejít na nižší verzi 4.4.x )</p>';
+<p>Musíte PHP upgradovat, nebo přejít k hostiteli s vyšší verzí!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Podařilo se vám úspěšně nainstalovat a spustit balíček <strong>{$a->packname} {$a->packversion}</strong>. Gratulujeme!';
 $string['welcomep30'] = 'Tato verze <strong>{$a->installername}</strong> obsahuje aplikace k vytvoření prostředí, ve kterém bude provozován váš <strong>Moodle</strong>. Jmenovitě se jedná o:';
