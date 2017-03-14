@@ -79,8 +79,8 @@ $THEME->layouts = [
     // My dashboard page.
     'mydashboard' => array(
         'file' => 'columns2.php',
-        'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre',
+        'regions' => array('content'),
+        'defaultregion' => 'content',
         'options' => array('nonavbar' => true, 'langmenu' => true),
     ),
     // My public page.
