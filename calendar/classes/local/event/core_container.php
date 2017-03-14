@@ -35,6 +35,7 @@ use core_calendar\local\event\factories\action_event_factory;
 use core_calendar\local\event\factories\event_factory;
 use core_calendar\local\event\factories\event_vault_factory;
 use core_calendar\local\event\mappers\event_mapper;
+use core_calendar\local\interfaces\action_event_interface;
 use core_calendar\local\interfaces\event_interface;
 
 /**
@@ -202,6 +203,11 @@ class core_container {
                             $mapper->from_event_to_legacy_event($event)
                         ]
                     );
+
+                    // Do not display the event if there is nothing to action.
+                    if ($event instanceof action_event_interface && $event->get_action()->get_item_count() === 0) {
+                        return false;
+                    }
 
                     // Module does not implement the callback, event should be visible.
                     if (is_null($eventvisible)) {
