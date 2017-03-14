@@ -39,7 +39,6 @@ Feature: Enable Block Completion in a course using manual self completion
     # should be created before the task runs.
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
-    And I am on site homepage
     And I am on course page "Course 1"
     Then I should see "Status: Complete" in the "Course completion status" "block"
     And I should see "Yes" in the "Self completion" "table_row"

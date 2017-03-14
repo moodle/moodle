@@ -13,7 +13,6 @@ Feature: Forms with a multi select field dependency
       | activity   | name | intro                                                                               | course | idnumber |
       | label      | L1   | <a href="../lib/form/tests/fixtures/multi_select_dependencies.php">FixtureLink</a> | C1     | label1   |
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     When I follow "FixtureLink"
     Then the "Enter your name" "field" should be disabled

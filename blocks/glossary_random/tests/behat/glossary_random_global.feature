@@ -23,7 +23,6 @@ Feature: Random glossary entry block linking to global glossary
 
   Scenario: View random (last) entry in the global glossary
     When I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 2"
     And I follow "Tips and Tricks"
     And I press "Add a new entry"
@@ -68,13 +67,11 @@ Feature: Random glossary entry block linking to global glossary
     And I press "Save changes"
     And I log out
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 2"
     And I follow "Tips and Tricks"
     And I follow "Edit settings"
     And I set the field "globalglossary" to "0"
     And I press "Save and return to course"
-    And I am on site homepage
     And I am on course page "Course 1"
     Then I should see "Please configure this block using the edit icon." in the "Tip of the day" "block"
     And I log out

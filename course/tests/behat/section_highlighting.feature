@@ -25,7 +25,6 @@ Feature: Topic's course sections highlighting
     And I turn section "2" highlighting on
     And section "2" should be highlighted
     And section "1" should not be highlighted
-    And I am on homepage
     And I am on course page "Course 1"
     And section "2" should be highlighted
     And section "1" should not be highlighted
@@ -34,7 +33,6 @@ Feature: Topic's course sections highlighting
     And section "2" should not be highlighted
     And I reload the page
     And section "2" should not be highlighted
-    And I am on homepage
     And I am on course page "Course 1"
     And section "2" should not be highlighted
     And I log out

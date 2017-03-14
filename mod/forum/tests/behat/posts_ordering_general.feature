@@ -69,9 +69,8 @@ Feature: New discussions and discussions with recently added replies are display
       | Message | Reply to the first post |
     And I press "Post to forum"
     And I wait to be redirected
-    And I am on site homepage
     And I am on course page "Course 1"
-    And I am on course page "Course general forum"
+    And I follow "Course general forum"
     #
     # Make sure the order of the forum posts is as expected (most recently participated first).
     #

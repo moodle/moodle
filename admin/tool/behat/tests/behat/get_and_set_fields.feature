@@ -33,7 +33,6 @@ Feature: Verify that all form fields values can be get and set
       | activity | course | idnumber | name | intro | firstpagetitle | wikimode | visible |
       | wiki | C1 | wiki1 | Test this one | Test this one | Test this one | collaborative | 0 |
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I navigate to "Reset" node in "Course administration"
     # Select (multi-select) - Checking "the select box should contain".
@@ -48,7 +47,6 @@ Feature: Verify that all form fields values can be get and set
     And the "Unenrol users" select box should not contain "President"
     And the "Unenrol users" select box should not contain "Baker"
     And the "Unenrol users" select box should not contain "President, Baker"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
     And I follow "Test this one"
@@ -115,7 +113,6 @@ Feature: Verify that all form fields values can be get and set
     And the field "one" matches value "1"
     And the field "two" matches value ""
     # Check if field xpath set/match works.
-    And I am on site homepage
     And I am on course page "Course 1"
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field with xpath "//input[@id='id_idnumber']" to "Course id number"

@@ -47,7 +47,6 @@ Feature: Students can edit or delete their forum posts within a set time limit
     And I navigate to "Security > Site policies" in site administration
     And I set the field "Maximum time to edit posts" to "1 minutes"
     And I press "Save changes"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
     And I add the "Recent activity" block

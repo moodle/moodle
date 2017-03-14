@@ -177,7 +177,6 @@ Feature: Group assignment submissions
       | GG1      | G1    |
       | GG1      | G2    |
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
@@ -215,7 +214,6 @@ Feature: Group assignment submissions
     And I press "Save changes"
     And I log out
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I should see "3" in the "Groups" "table_row"

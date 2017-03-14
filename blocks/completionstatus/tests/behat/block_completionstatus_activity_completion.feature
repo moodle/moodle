@@ -66,7 +66,6 @@ Feature: Enable Block Completion in a course using activity completion
     Then I should see "Status: Pending" in the "Course completion status" "block"
     And I should see "0 of 1" in the "Activity completion" "table_row"
     And I trigger cron
-    And I am on site homepage
     And I am on course page "Course 1"
     And I should see "1 of 1" in the "Activity completion" "table_row"
     And I follow "More details"

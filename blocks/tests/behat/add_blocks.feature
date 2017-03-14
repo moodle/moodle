@@ -17,7 +17,6 @@ Feature: Add blocks
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
     When I add the "Blog menu" block

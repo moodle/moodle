@@ -42,7 +42,6 @@ Feature: In a participation report, admin can filter student actions
     And I follow "Test book name"
     And I log out
     When I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     When I navigate to "Course participation" node in "Course administration > Reports"
     And I set the field "instanceid" to "Test book name"
@@ -72,7 +71,6 @@ Feature: In a participation report, admin can filter student actions
     And I follow "Test book name"
     And I log out
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     When I navigate to "Course participation" node in "Course administration > Reports"
     And I set the field "instanceid" to "Test book name"
@@ -87,7 +85,6 @@ Feature: In a participation report, admin can filter student actions
     And I follow "Test book name"
     And I log out
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     When I navigate to "Course participation" node in "Course administration > Reports"
     And I set the field "instanceid" to "Test book name"

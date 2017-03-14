@@ -38,7 +38,6 @@ Feature: Submissions are unlocked when a new attempt is given
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -73,7 +72,6 @@ Feature: Submissions are unlocked when a new attempt is given
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration

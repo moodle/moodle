@@ -78,7 +78,6 @@ Feature: Importing of groups and groupings
   @javascript
   Scenario: Import groups with idnumber when the user does not have proper permissions for the idnumber field
     Given I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I navigate to "Users > Permissions" in current page administration
     And I override the system permissions of "Teacher" role with:

@@ -22,7 +22,6 @@ Feature: tool_monitor_subscriptions
     And I log in as "admin"
     And I navigate to "Event monitoring rules" node in "Site administration > Reports"
     And I click on "Enable" "link"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     And I press "Add a new rule"
@@ -132,7 +131,6 @@ Feature: tool_monitor_subscriptions
     And I follow "Subscribe to rule \"New rule course level\""
     And I should see "Subscription successfully created"
     And "#toolmonitorsubs_r0" "css_element" should exist
-    And I am on site homepage
     And I am on course page "Course 1"
     And I trigger cron
     And I am on site homepage

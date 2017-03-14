@@ -93,7 +93,6 @@ Feature: Organize students into groups
       | Course 1 | C1 | 0 | 1 |
       | Course 2 | C2 | 0 | 1 |
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I navigate to "Users > Groups" in current page administration
     When I press "Create group"
@@ -116,7 +115,6 @@ Feature: Organize students into groups
       | Enrolment key | Abcdef-2 |
     And I press "Save changes"
     And the "groups" select box should contain "Group B (0)"
-    And I am on site homepage
     And I am on course page "Course 2"
     And I navigate to "Users > Groups" in current page administration
     And I press "Create group"

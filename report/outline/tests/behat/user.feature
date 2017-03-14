@@ -17,7 +17,6 @@ Feature: View the user page for the outline report
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     When I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Folder" to section "1" and I fill the form with:

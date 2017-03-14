@@ -9,7 +9,6 @@ Feature: In a report, admin can filter log data by action
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
     # Create Action.

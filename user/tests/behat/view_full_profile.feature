@@ -91,7 +91,6 @@ Feature: Access to full profiles of users
   @javascript
   Scenario: View full profiles of someone in the same group in a course with separate groups.
     Given I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I navigate to "Edit settings" node in "Course administration"
     And I set the following fields to these values:
@@ -106,7 +105,6 @@ Feature: Access to full profiles of users
     And I should see "The details of this user are not available to you"
     And I log out
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I navigate to "Users > Groups" in current page administration
     And I press "Create group"

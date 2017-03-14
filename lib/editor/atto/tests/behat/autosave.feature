@@ -19,7 +19,6 @@ Feature: Atto Autosave
     And I set the field "Autosave frequency" to "3"
     And I set the field with xpath "//select[@name='s_editor_atto_autosavefrequency[u]']" to "seconds"
     And I click on "Save changes" "button"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field with xpath "//select[@name='summary_editor[format]']" to "1"
@@ -55,7 +54,6 @@ Feature: Atto Autosave
     And I follow "Manage private files..."
     And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
     And I click on "Save changes" "button"
-    And I am on homepage
     And I am on course page "Course 1"
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "Course summary" to "<p>Image test</p>"

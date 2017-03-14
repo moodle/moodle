@@ -65,7 +65,6 @@ Feature: Saving, using and deleting feedback templates
     And I follow "Edit questions"
     And I should see "this is a multiple choice 1"
     # Make sure this template is not available in another course
-    And I am on site homepage
     And I am on course page "Course 2"
     And I follow "Learning experience course 2"
     And I follow "Templates"
@@ -111,7 +110,6 @@ Feature: Saving, using and deleting feedback templates
 
   Scenario: Manager can save template as public and it will be available in any course
     When I log in as "manager"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "Learning experience course 1"
     And I follow "Templates"
@@ -134,7 +132,6 @@ Feature: Saving, using and deleting feedback templates
   Scenario: Teacher can delete course templates but can not delete public templates
     # Save feedback as both public and course template
     When I log in as "manager"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "Learning experience course 1"
     And I follow "Templates"
@@ -166,7 +163,6 @@ Feature: Saving, using and deleting feedback templates
   Scenario: Manager can delete both course and public templates
     # Save feedback as both public and course template
     When I log in as "manager"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "Learning experience course 1"
     And I click on "Templates" "link" in the "[role=main]" "css_element"

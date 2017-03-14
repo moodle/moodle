@@ -21,7 +21,6 @@ Feature: availability_date
   Scenario: Test condition
     # Basic setup.
     Given I log in as "teacher1"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
 
@@ -55,7 +54,6 @@ Feature: availability_date
     # Log back in as student.
     When I log out
     And I log in as "student1"
-    And I am on site homepage
     And I am on course page "Course 1"
 
     # Page 1 should appear, but page 2 does not.

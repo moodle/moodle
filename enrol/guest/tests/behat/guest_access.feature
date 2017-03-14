@@ -30,7 +30,6 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I am on site homepage
     And I am on course page "Course 1"
     When I follow "Test forum name"
     Then I should not see "Subscribe to this forum"
@@ -44,7 +43,6 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I am on site homepage
     When I am on course page "Course 1"
     Then I should see "Guest access"
     And I set the following fields to these values:

@@ -18,7 +18,6 @@ Feature: Add or remove items from the TinyMCE editor toolbar
   Scenario: Remove icons
     When the following config values are set as admin:
       | customtoolbar | fontselect,fontsizeselect,formatselect,\|,undo,redo,\|,search,replace,\|,fullscreen | editor_tinymce |
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Database" to section "1"
@@ -29,7 +28,6 @@ Feature: Add or remove items from the TinyMCE editor toolbar
   Scenario: Add icons
     When the following config values are set as admin:
       | customtoolbar | fontselect,fontsizeselect,formatselect,\|,undo,redo,\|,search,replace,\|,fullscreen,anchor | editor_tinymce |
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Database" to section "1"
@@ -37,14 +35,12 @@ Feature: Add or remove items from the TinyMCE editor toolbar
     And "#id_introeditor_tbl .mce_anchor" "css_element" should exist
     And the following config values are set as admin:
       | customtoolbar | fontselect,fontsizeselect,formatselect,\|,undo,redo,\|,search,replace,\|,fullscreen | editor_tinymce |
-    And I am on site homepage
     And I am on course page "Course 1"
     And I add a "Database" to section "1"
     And "#id_introeditor_tbl .mce_anchor" "css_element" should not exist
     And I press "Cancel"
 
   Scenario: Default icons
-    And I am on site homepage
     Given I am on course page "Course 1"
     And I turn editing mode on
     When I add a "Database" to section "1"

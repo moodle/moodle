@@ -15,7 +15,6 @@ Feature: A user can control their own subscription preferences for a discussion
       | user | course | role |
       | student1 | C1 | student |
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
 
@@ -135,7 +134,6 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I log out
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "Test forum name"
     And I navigate to "Edit settings" in current page administration
@@ -181,7 +179,6 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I log out
     And I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "Test forum name"
     And I navigate to "Edit settings" in current page administration

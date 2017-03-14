@@ -24,7 +24,6 @@ Feature: Perform basic calendar functionality
       | user | group |
       | student1 | G1 |
     When I log in as "admin"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
     And I add the "Calendar" block
@@ -36,7 +35,6 @@ Feature: Perform basic calendar functionality
       | Description | Come join this awesome event, sucka! |
     And I log out
     And I log in as "student1"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "This month"
     And I should see "Really awesome event!"
@@ -52,7 +50,6 @@ Feature: Perform basic calendar functionality
       | Description | Come join this awesome event, sucka! |
     And I log out
     And I log in as "student1"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "This month"
     And I should see "Really awesome event!"
@@ -69,7 +66,6 @@ Feature: Perform basic calendar functionality
       | Description | Come join this awesome event |
     And I log out
     And I log in as "student1"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "This month"
     And I follow "Really awesome event!"
@@ -86,7 +82,6 @@ Feature: Perform basic calendar functionality
       | Description | Come join this awesome event, sucka! |
     And I log out
     And I log in as "student1"
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "This month"
     And I should not see "Really awesome event!"

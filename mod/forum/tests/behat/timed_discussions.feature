@@ -17,7 +17,6 @@ Feature: Users can choose to set start and end time for display of their discuss
     And I log in as "admin"
     And the following config values are set as admin:
       | forum_enabletimedposts | 1 |
-    And I am on site homepage
     And I am on course page "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
@@ -35,7 +34,6 @@ Feature: Users can choose to set start and end time for display of their discuss
       | Subject            | Discussion 3 timed visible now       |
       | Message            | Discussion contents 3, first message |
       | timestart[enabled] | 1 |
-    And I am on site homepage
     And I am on course page "Course 1"
     And I follow "Test forum name"
     And I should see "Discussion 2 timed"
