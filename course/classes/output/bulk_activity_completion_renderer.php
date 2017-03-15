@@ -77,7 +77,8 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
     }
 
     public function activities_list($data) {
-        return parent::render_from_template('core_course/activityinstance', $data);
+        return html_writer::div(get_string('affectedactivities', 'completion', count($data->activities))).
+            parent::render_from_template('core_course/activityinstance', $data);
     }
 
 }

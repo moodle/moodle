@@ -181,4 +181,90 @@ class manager {
         }
         return false;
     }
+
+    /**
+     * Applies completion from the bulk edit form to all selected modules
+     *
+     * @param stdClass $data data received from the core_completion_bulkedit_form
+     * @param bool $updateinstance if we need to update the instance tables of the module (i.e. 'assign', 'forum', etc.) -
+     *      if no module-specific completion rules were added to the form, update of the module table is not needed.
+     */
+    public function apply_completion($data, $updateinstances) {
+        $updated = [];
+        $modinfo = get_fast_modinfo($this->courseid);
+
+        $cmids = $data->cmid;
+
+        $data = (array)$data;
+        unset($data['id']); // This is a course id, we don't want to confuse it with cmid or instance id.
+        unset($data['cmid']);
+        unset($data['submitbutton']);
+
+        foreach ($cmids as $cmid) {
+            $cm = $modinfo->get_cm($cmid);
+            if (self::can_edit_bulk_completion($this->courseid, $cm) && $this->apply_completion_cm($cm, $data, $updateinstances)) {
+                $updated[] = $cm->id;
+            }
+        }
+        if ($updated) {
+            // Now that modules are fully updated, also update completion data if required.
+            // This will wipe all user completion data and recalculate it.
+            rebuild_course_cache($this->courseid, true);
+            $modinfo = get_fast_modinfo($this->courseid);
+            $completion = new \completion_info($modinfo->get_course());
+            foreach ($updated as $cmid) {
+                $completion->reset_all_state($modinfo->get_cm($cmid));
+            }
+        }
+    }
+
+    /**
+     * Applies new completion rules to one course module
+     *
+     * @param \cm_info $cm
+     * @param array $data
+     * @param bool $updateinstance if we need to update the instance table of the module (i.e. 'assign', 'forum', etc.) -
+     *      if no module-specific completion rules were added to the form, update of the module table is not needed.
+     * @return bool if module was updated
+     */
+    protected function apply_completion_cm(\cm_info $cm, $data, $updateinstance) {
+        global $DB;
+
+        $defaults = ['completion' => COMPLETION_DISABLED, 'completionview' => COMPLETION_VIEW_NOT_REQUIRED,
+            'completionexpected' => 0, 'completiongradeitemnumber' => null];
+
+        if ($cm->completion == $data['completion'] && $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+            // If old and new completion are either both "manual" or both "none" - no changes are needed.
+            return false;
+        }
+
+        $data += ['completion' => $cm->completion,
+            'completionexpected' => $cm->completionexpected,
+            'completionview' => $cm->completionview];
+
+        if (array_key_exists('completionusegrade', $data)) {
+            // Convert the 'use grade' checkbox into a grade-item number: 0 if checked, null if not.
+            $data['completiongradeitemnumber'] = !empty($data['completionusegrade']) ? 0 : null;
+            unset($data['completionusegrade']);
+        } else {
+            $data['completiongradeitemnumber'] = $cm->completiongradeitemnumber;
+        }
+
+        // Update module instance table.
+        if ($updateinstance) {
+            $moddata = ['id' => $cm->instance, 'timemodified' => time()] + array_diff_key($data, $defaults);
+            $DB->update_record($cm->modname, $moddata);
+        }
+
+        // Update course modules table.
+        $cmdata = ['id' => $cm->id, 'timemodified' => time()] + array_intersect_key($data, $defaults);
+        $DB->update_record('course_modules', $cmdata);
+
+        \core\event\course_module_updated::create_from_cm($cm, $cm->context)->trigger();
+
+        \core\notification::add(get_string('completionupdated', 'completion', $cm->get_formatted_name()),
+            \core\notification::SUCCESS);
+        return true;
+    }
+
 }
