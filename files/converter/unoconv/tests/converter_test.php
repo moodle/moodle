@@ -83,21 +83,18 @@ class fileconverter_unoconv_converter_testcase extends advanced_testcase {
         $testfile = $fs->create_file_from_pathname($filerecord, $source);
 
         $converter = $this->get_testable_mock();
+        $conversion = new \core_files\conversion(0, (object) [
+            'targetformat' => 'pdf',
+        ]);
+        $conversion->set_sourcefile($testfile);
+        $conversion->create();
 
         // Convert the document.
-        $result = $converter->start_document_conversion($testfile, 'pdf');
+        $converter->start_document_conversion($conversion);
+        $result = $conversion->get_destfile();
         $this->assertNotFalse($result);
         $this->assertSame('application/pdf', $result->get_mimetype());
         $this->assertGreaterThan(0, $result->get_filesize());
-
-        // Repeat immediately with the file forcing re-generation.
-        $new = $converter->start_document_conversion($testfile, 'pdf', true);
-        $this->assertNotFalse($new);
-        $this->assertSame('application/pdf', $new->get_mimetype());
-        $this->assertGreaterThan(0, $new->get_filesize());
-        $this->assertNotEquals($result->get_id(), $new->get_id());
-        // Note: We cannot compare contenthash for PDF because the PDF has a unique ID, and a creation timestamp
-        // imprinted in the file.
     }
 
     /**
