@@ -74,7 +74,10 @@ class core_oauth2_testcase extends advanced_testcase {
         $issuer = \core\oauth2\api::create_standard_issuer('microsoft');
 
         $same = \core\oauth2\api::get_issuer($issuer->get('id'));
-        $this->assertEquals($issuer, $same);
+
+        foreach ($same->properties_definition() as $name => $def) {
+            $this->assertTrue($issuer->get($name) == $same->get($name));
+        }
 
         $endpoints = \core\oauth2\api::get_endpoints($issuer);
         $same = \core\oauth2\api::get_endpoint($endpoints[0]->get('id'));
@@ -132,4 +135,71 @@ class core_oauth2_testcase extends advanced_testcase {
         $client = \core\oauth2\api::get_system_oauth_client($issuer);
         $this->assertTrue($client->is_logged_in());
     }
+
+    /**
+     * Tests we can enable and disable an issuer.
+     */
+    public function test_enable_disable_issuer() {
+        global $SESSION;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $issuer = \core\oauth2\api::create_standard_issuer('microsoft');
+
+        $issuerid = $issuer->get('id');
+
+        \core\oauth2\api::enable_issuer($issuerid);
+        $check = \core\oauth2\api::get_issuer($issuer->get('id'));
+        $this->assertTrue((boolean)$check->get('enabled'));
+
+        \core\oauth2\api::enable_issuer($issuerid);
+        $check = \core\oauth2\api::get_issuer($issuer->get('id'));
+        $this->assertTrue((boolean)$check->get('enabled'));
+
+        \core\oauth2\api::disable_issuer($issuerid);
+        $check = \core\oauth2\api::get_issuer($issuer->get('id'));
+        $this->assertFalse((boolean)$check->get('enabled'));
+
+        \core\oauth2\api::enable_issuer($issuerid);
+        $check = \core\oauth2\api::get_issuer($issuer->get('id'));
+        $this->assertTrue((boolean)$check->get('enabled'));
+    }
+
+    /**
+     * Test the alloweddomains for an issuer.
+     */
+    public function test_issuer_alloweddomains() {
+        global $SESSION;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $issuer = \core\oauth2\api::create_standard_issuer('microsoft');
+
+        $issuer->set('alloweddomains', '');
+
+        // Anything is allowed when domain is empty.
+        $this->assertTrue($issuer->is_valid_login_domain(''));
+        $this->assertTrue($issuer->is_valid_login_domain('a@b'));
+        $this->assertTrue($issuer->is_valid_login_domain('longer.example@example.com'));
+
+        $issuer->set('alloweddomains', 'example.com');
+
+        // One domain - must match exactly - no substrings etc.
+        $this->assertFalse($issuer->is_valid_login_domain(''));
+        $this->assertFalse($issuer->is_valid_login_domain('a@b'));
+        $this->assertFalse($issuer->is_valid_login_domain('longer.example@example'));
+        $this->assertTrue($issuer->is_valid_login_domain('longer.example@example.com'));
+
+        $issuer->set('alloweddomains', 'example.com,example.net');
+        // Multiple domains - must match any exactly - no substrings etc.
+        $this->assertFalse($issuer->is_valid_login_domain(''));
+        $this->assertFalse($issuer->is_valid_login_domain('a@b'));
+        $this->assertFalse($issuer->is_valid_login_domain('longer.example@example'));
+        $this->assertFalse($issuer->is_valid_login_domain('invalid@email@example.net'));
+        $this->assertTrue($issuer->is_valid_login_domain('longer.example@example.net'));
+        $this->assertTrue($issuer->is_valid_login_domain('longer.example@example.com'));
+    }
+
 }

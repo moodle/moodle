@@ -144,7 +144,11 @@ class issuer extends persistent {
         }
         $validdomains = explode(',', $this->get('alloweddomains'));
 
-        list($unused, $emaildomain) = explode('@', $email, 2);
+        $parts = explode('@', $email, 2);
+        $emaildomain = '';
+        if (count($parts) > 1) {
+            $emaildomain = $parts[1];
+        }
 
         foreach ($validdomains as $checkdomain) {
             $checkdomain = \core_text::strtolower(trim($checkdomain));
