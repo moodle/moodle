@@ -76,6 +76,7 @@ class auth extends \auth_plugin_base {
         if ($verifyusername == $username) {
             return true;
         }
+        return false;
     }
 
     /**
@@ -369,7 +370,7 @@ class auth extends \auth_plugin_base {
 
         $this->set_static_user_info($userinfo);
 
-        $user = get_complete_user_data('username', $userinfo['username']);
+        $user = authenticate_user_login($userinfo['username'], '');
 
         if ($user) {
             complete_user_login($user);
