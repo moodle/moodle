@@ -28,7 +28,6 @@ use calendar_event;
 use DateInterval;
 use DateTime;
 use moodle_exception;
-use NumberFormatter;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -1049,9 +1048,6 @@ class rrule_manager {
 
         $filteredbyday = [];
 
-        $formatter = new NumberFormatter('en_utf8', NumberFormatter::SPELLOUT);
-        $formatter->setTextAttribute(NumberFormatter::DEFAULT_RULESET, "%spellout-ordinal");
-
         $bounds = $this->get_period_bounds_list($event->timestart, $until);
 
         $nextmonthinterval = new DateInterval('P1M');
@@ -1073,23 +1069,19 @@ class rrule_manager {
                 } else if ($day->value > 0) {
                     // Positive value.
                     if ($this->freq === self::FREQ_YEARLY && empty($this->bymonth)) {
-                        // Nth week day of the year.
-                        $expecteddate = new DateTime($tmpdatetime->format('Y') . '-01-01');
-                        $count = $day->value;
-                        $expecteddate->modify("+$count $dayname");
-                        if ($expecteddate->format('Y-m-d') === $tmpdatetime->format('Y-m-d')) {
-                            $filteredbyday[] = $time;
-                            break;
-                        }
+                        // Get the first day of the year.
+                        $firstdaydate = $tmpdatetime->format('Y') . '-01-01';
                     } else {
-                        // Nth week day of the month.
-                        $expectedmonthyear = $tmpdatetime->format('F Y');
-                        $expectedordinal = $formatter->format($day->value);
-                        $expecteddate = new DateTime("$expectedordinal $dayname of $expectedmonthyear");
-                        if ($expecteddate->format('Y-m-d') === $tmpdatetime->format('Y-m-d')) {
-                            $filteredbyday[] = $time;
-                            break;
-                        }
+                        // Get the first day of the month.
+                        $firstdaydate = $tmpdatetime->format('Y-m') . '-01';
+                    }
+                    $expecteddate = new DateTime($firstdaydate);
+                    $count = $day->value;
+                    // Get the nth week day of the year/month.
+                    $expecteddate->modify("+$count $dayname");
+                    if ($expecteddate->format('Y-m-d') === $tmpdatetime->format('Y-m-d')) {
+                        $filteredbyday[] = $time;
+                        break;
                     }
 
                 } else {
