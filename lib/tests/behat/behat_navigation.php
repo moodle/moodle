@@ -575,19 +575,37 @@ class behat_navigation extends behat_base {
     }
 
     /**
-     * Opens the course page.
+     * Opens the course homepage.
      *
-     * @Given /^I am on course page "(?P<coursefullname_string>(?:[^"]|\\")*)"$/
+     * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage$/
      * @throws coding_exception
      * @param $coursefullname string The full name of the course.
      * @return void
      */
-    public function i_am_on_course_page($coursefullname) {
+    public function i_am_on_course_homepage($coursefullname) {
         global $DB;
-
         $course = $DB->get_record("course", array("fullname" => $coursefullname), 'id', MUST_EXIST);
-
         $url = new moodle_url('/course/view.php', ['id' => $course->id]);
-        $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
+        $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
+    }
+
+    /**
+     * Opens the course homepage with editing mode on.
+     *
+     * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage with editing mode on$/
+     * @throws coding_exception
+     * @param $coursefullname string The course full name of the course.
+     * @return void
+     */
+    public function i_am_on_course_homepage_with_editing_mode_on($coursefullname) {
+        global $DB;
+        $course = $DB->get_record("course", array("fullname" => $coursefullname), 'id', MUST_EXIST);
+        $url = new moodle_url('/course/view.php', ['id' => $course->id]);
+        $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
+        try {
+            $this->execute("behat_forms::press_button", get_string('turneditingon'));
+        } catch (Exception $e) {
+            $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", [get_string('turneditingon')]);
+        }
     }
 }
