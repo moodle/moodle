@@ -278,6 +278,129 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that get_action_events_by_timesort returns events between the
+     * provided timesort values and after the last seen event when one is
+     * provided. This should work even when the event ids aren't ordered the
+     * same as the timesort order.
+     */
+    public function test_get_action_events_by_timesort_non_consecutive_ids() {
+        $this->resetAfterTest(true);
+        $this->setAdminuser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $factory = new action_event_test_factory();
+        $vault = new event_vault($factory);
+
+        /**
+         * The events should be ordered by timesort as follows:
+         *
+         * 1 event 1
+         * 2 event 1
+         * 1 event 2
+         * 2 event 2
+         * 1 event 3
+         * 2 event 3
+         * 1 event 4
+         * 2 event 4
+         * 1 event 5
+         * 2 event 5
+         * 1 event 6
+         * 2 event 6
+         * 1 event 7
+         * 2 event 7
+         * 1 event 8
+         * 2 event 8
+         * 1 event 9
+         * 2 event 9
+         * 1 event 10
+         * 2 event 10
+         */
+        $records = [];
+        for ($i = 1; $i < 11; $i++) {
+            $records[] = create_event([
+                'name' => sprintf('1 event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION
+            ]);
+        }
+
+        for ($i = 1; $i < 11; $i++) {
+            $records[] = create_event([
+                'name' => sprintf('2 event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION
+            ]);
+        }
+
+        /**
+         * Expected result set:
+         *
+         * 2 event 4
+         * 1 event 5
+         * 2 event 5
+         * 1 event 6
+         * 2 event 6
+         * 1 event 7
+         * 2 event 7
+         * 1 event 8
+         * 2 event 8
+         */
+        $aftereventid = $records[3]->id;
+        $afterevent = $vault->get_event_by_id($aftereventid);
+        // Offset results by event with name "1 event 4" which has the same timesort
+        // value as the lower boundary of this query (3). Confirm that the given
+        // $afterevent is used to ignore events with the same timesortfrom values.
+        $events = $vault->get_action_events_by_timesort($user, 3, 8, $afterevent);
+
+        $this->assertCount(9, $events);
+        $this->assertEquals('2 event 4', $events[0]->get_name());
+        $this->assertEquals('2 event 8', $events[8]->get_name());
+
+        /**
+         * Expected result set:
+         *
+         * 2 event 4
+         * 1 event 5
+         */
+        $events = $vault->get_action_events_by_timesort($user, 3, 8, $afterevent, 2);
+
+        $this->assertCount(2, $events);
+        $this->assertEquals('2 event 4', $events[0]->get_name());
+        $this->assertEquals('1 event 5', $events[1]->get_name());
+
+        /**
+         * Expected result set:
+         *
+         * 2 event 8
+         */
+        $aftereventid = $records[7]->id;
+        $afterevent = $vault->get_event_by_id($aftereventid);
+        // Offset results by event with name "1 event 8" which has the same timesort
+        // value as the upper boundary of this query (8). Confirm that the given
+        // $afterevent is used to ignore events with the same timesortto values.
+        $events = $vault->get_action_events_by_timesort($user, 3, 8, $afterevent);
+
+        $this->assertCount(1, $events);
+        $this->assertEquals('2 event 8', $events[0]->get_name());
+
+        /**
+         * Expected empty result set.
+         */
+        $aftereventid = $records[18]->id;
+        $afterevent = $vault->get_event_by_id($aftereventid);
+        // Offset results by event with name "2 event 9" which has a timesort
+        // value larger than the upper boundary of this query (9 > 8). Confirm
+        // that the given $afterevent is used for filtering events.
+        $events = $vault->get_action_events_by_timesort($user, 3, 8, $afterevent);
+
+        $this->assertEmpty($events);
+    }
+
+    /**
      * Test that get_action_events_by_course returns events after the
      * provided timesort value.
      */
@@ -610,5 +733,148 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $this->assertEquals(sprintf('Event %d', $limit + 3), $events[2]->get_name());
         $this->assertEquals(sprintf('Event %d', $limit + 4), $events[3]->get_name());
         $this->assertEquals(sprintf('Event %d', $limit + 5), $events[4]->get_name());
+    }
+
+    /**
+     * Test that get_action_events_by_course returns events between the
+     * provided timesort values and after the last seen event when one is
+     * provided. This should work even when the event ids aren't ordered the
+     * same as the timesort order.
+     */
+    public function test_get_action_events_by_course_non_consecutive_ids() {
+        $this->resetAfterTest(true);
+        $this->setAdminuser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $factory = new action_event_test_factory();
+        $vault = new event_vault($factory);
+
+        $this->setAdminuser();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+
+        /**
+         * The events should be ordered by timesort as follows:
+         *
+         * 1 event 1
+         * 2 event 1
+         * 1 event 2
+         * 2 event 2
+         * 1 event 3
+         * 2 event 3
+         * 1 event 4
+         * 2 event 4
+         * 1 event 5
+         * 2 event 5
+         * 1 event 6
+         * 2 event 6
+         * 1 event 7
+         * 2 event 7
+         * 1 event 8
+         * 2 event 8
+         * 1 event 9
+         * 2 event 9
+         * 1 event 10
+         * 2 event 10
+         */
+        $records = [];
+        for ($i = 1; $i < 11; $i++) {
+            $records[] = create_event([
+                'name' => sprintf('1 event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course1->id,
+            ]);
+        }
+
+        for ($i = 1; $i < 11; $i++) {
+            $records[] = create_event([
+                'name' => sprintf('2 event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course1->id,
+            ]);
+        }
+
+        // Create events for the other course.
+        for ($i = 1; $i < 11; $i++) {
+            $records[] = create_event([
+                'name' => sprintf('3 event %d', $i),
+                'eventtype' => 'user',
+                'userid' => $user->id,
+                'timesort' => $i,
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => $course2->id,
+            ]);
+        }
+
+        /**
+         * Expected result set:
+         *
+         * 2 event 4
+         * 1 event 5
+         * 2 event 5
+         * 1 event 6
+         * 2 event 6
+         * 1 event 7
+         * 2 event 7
+         * 1 event 8
+         * 2 event 8
+         */
+        $aftereventid = $records[3]->id;
+        $afterevent = $vault->get_event_by_id($aftereventid);
+        // Offset results by event with name "1 event 4" which has the same timesort
+        // value as the lower boundary of this query (3). Confirm that the given
+        // $afterevent is used to ignore events with the same timesortfrom values.
+        $events = $vault->get_action_events_by_course($user, $course1, 3, 8, $afterevent);
+
+        $this->assertCount(9, $events);
+        $this->assertEquals('2 event 4', $events[0]->get_name());
+        $this->assertEquals('2 event 8', $events[8]->get_name());
+
+        /**
+         * Expected result set:
+         *
+         * 2 event 4
+         * 1 event 5
+         */
+        $events = $vault->get_action_events_by_course($user, $course1, 3, 8, $afterevent, 2);
+
+        $this->assertCount(2, $events);
+        $this->assertEquals('2 event 4', $events[0]->get_name());
+        $this->assertEquals('1 event 5', $events[1]->get_name());
+
+        /**
+         * Expected result set:
+         *
+         * 2 event 8
+         */
+        $aftereventid = $records[7]->id;
+        $afterevent = $vault->get_event_by_id($aftereventid);
+        // Offset results by event with name "1 event 8" which has the same timesort
+        // value as the upper boundary of this query (8). Confirm that the given
+        // $afterevent is used to ignore events with the same timesortto values.
+        $events = $vault->get_action_events_by_course($user, $course1, 3, 8, $afterevent);
+
+        $this->assertCount(1, $events);
+        $this->assertEquals('2 event 8', $events[0]->get_name());
+
+        /**
+         * Expected empty result set.
+         */
+        $aftereventid = $records[18]->id;
+        $afterevent = $vault->get_event_by_id($aftereventid);
+        // Offset results by event with name "2 event 9" which has a timesort
+        // value larger than the upper boundary of this query (9 > 8). Confirm
+        // that the given $afterevent is used for filtering events.
+        $events = $vault->get_action_events_by_course($user, $course1, 3, 8, $afterevent);
+
+        $this->assertEmpty($events);
     }
 }

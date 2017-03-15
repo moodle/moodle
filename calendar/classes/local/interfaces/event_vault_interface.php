@@ -42,6 +42,9 @@ interface event_vault_interface {
     /**
      * Retrieve an array of events for the given user and time constraints.
      *
+     * If using this function for pagination then you can provide the last event that you've seen
+     * ($afterevent) and it will be used to appropriately offset the result set so that you don't
+     * receive the same events again.
      * @param \stdClass       $user         The user for whom the events belong
      * @param int             $timesortfrom Events with timesort from this value (inclusive)
      * @param int             $timesortto   Events with timesort until this value (inclusive)
@@ -51,6 +54,30 @@ interface event_vault_interface {
      */
     public function get_action_events_by_timesort(
         \stdClass $user,
+        $timesortfrom,
+        $timesortto,
+        event_interface $afterevent,
+        $limitnum
+    );
+
+    /**
+     * Retrieve an array of events for the given user filtered by the course and time constraints.
+     *
+     * If using this function for pagination then you can provide the last event that you've seen
+     * ($afterevent) and it will be used to appropriately offset the result set so that you don't
+     * receive the same events again.
+     *
+     * @param \stdClass            $user         The user for whom the events belong
+     * @param \stdClass            $course       The course to filter by
+     * @param int|null             $timesortfrom Events with timesort from this value (inclusive)
+     * @param int|null             $timesortto   Events with timesort until this value (inclusive)
+     * @param event_interface|null $afterevent   Only return events after this one
+     * @param int                  $limitnum     Return at most this number of events
+     * @return action_event_interface
+     */
+    public function get_action_events_by_course(
+        \stdClass $user,
+        \stdClass $course,
         $timesortfrom,
         $timesortto,
         event_interface $afterevent,
