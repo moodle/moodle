@@ -463,7 +463,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $mang = new rrule_manager($rrule);
         $mang->parse_rrule();
         $mang->create_events($this->event);
-        $records = $DB->get_records('event', array('repeatid' => $this->event->id));
+        $records = $DB->get_records('event', array('repeatid' => $this->event->id), 'timestart ASC');
 
         $expecteddate = clone($startdatetime);
         foreach ($records as $record) {
@@ -584,7 +584,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $mang = new rrule_manager($rrule);
         $mang->parse_rrule();
         $mang->create_events($this->event);
-        $records = $DB->get_records('event', array('repeatid' => $this->event->id));
+        $records = $DB->get_records('event', array('repeatid' => $this->event->id), 'timestart ASC');
         $this->assertCount(3, $records);
 
         $expecteddate = clone($startdatetime);
