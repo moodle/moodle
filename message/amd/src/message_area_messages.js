@@ -140,9 +140,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this.messageArea.onDelegateEvent('focus', SELECTORS.SENDMESSAGETEXT, this._setMessaging.bind(this));
             this.messageArea.onDelegateEvent('blur', SELECTORS.SENDMESSAGETEXT, this._clearMessaging.bind(this));
 
-            this.messageArea.onDelegateEvent(CustomEvents.events.enter, SELECTORS.SENDMESSAGETEXT,
-                this._sendMessageHandler.bind(this));
-
             $(document).on(AutoRows.events.ROW_CHANGE, this._adjustMessagesAreaHeight.bind(this));
 
             // Check if any messages have been displayed on page load.
