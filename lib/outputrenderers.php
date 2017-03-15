@@ -91,6 +91,8 @@ class renderer_base {
             $quotehelper = new \core\output\mustache_quote_helper();
             $jshelper = new \core\output\mustache_javascript_helper($this->page->requires);
             $pixhelper = new \core\output\mustache_pix_helper($this);
+            $shortentexthelper = new \core\output\mustache_shorten_text_helper();
+            $userdatehelper = new \core\output\mustache_user_date_helper();
 
             // We only expose the variables that are exposed to JS templates.
             $safeconfig = $this->page->requires->get_config_for_javascript($this->page, $this);
@@ -99,7 +101,10 @@ class renderer_base {
                              'str' => array($stringhelper, 'str'),
                              'quote' => array($quotehelper, 'quote'),
                              'js' => array($jshelper, 'help'),
-                             'pix' => array($pixhelper, 'pix'));
+                             'pix' => array($pixhelper, 'pix'),
+                             'shortentext' => array($shortentexthelper, 'shorten'),
+                             'userdate' => array($userdatehelper, 'transform'),
+                         );
 
             $this->mustache = new Mustache_Engine(array(
                 'cache' => $cachedir,

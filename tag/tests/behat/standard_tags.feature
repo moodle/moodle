@@ -89,8 +89,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
   @javascript
   Scenario: Changing standard tags property of tag area
     When I log in as "manager1"
-    And I follow "Profile" in the user menu
-    And I click on "Edit profile" "link" in the "region-main" "region"
+    And I open my profile in edit mode
     And I expand all fieldsets
     And I should not see "Manage standard tags"
     And I set the following fields to these values:
@@ -100,8 +99,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
     And I click on "Change standard tag usage" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
     And the field "Change showing standard tags in area User interests" matches value "Don't suggest"
     And I set the field "Change showing standard tags in area User interests" to "Suggest"
-    And I follow "Profile" in the user menu
-    And I click on "Edit profile" "link" in the "region-main" "region"
+    And I open my profile in edit mode
     And I expand all fieldsets
     And I should see "Manage standard tags"
     And I navigate to "Manage tags" node in "Site administration > Appearance"

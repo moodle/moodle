@@ -233,5 +233,54 @@ function xmldb_assign_upgrade($oldversion) {
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2017021500) {
+        // Fix event types of assign events.
+        $params = [
+            'modulename' => 'assign',
+            'eventtype' => 'close'
+        ];
+        $select = "modulename = :modulename AND eventtype = :eventtype";
+        $DB->set_field_select('event', 'eventtype', 'due', $select, $params);
+
+        // Delete 'open' events.
+        $params = [
+            'modulename' => 'assign',
+            'eventtype' => 'open'
+        ];
+        $DB->delete_records('event', $params);
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2017021500, 'assign');
+    }
+
+    if ($oldversion < 2017031000) {
+        // Set priority of assign user overrides.
+        $params = [
+            'modulename' => 'assign',
+            'courseid' => 0,
+            'groupid' => 0,
+            'repeatid' => 0
+        ];
+        // CALENDAR_EVENT_USER_OVERRIDE_PRIORITY has a value of 9999999.
+        $DB->set_field('event', 'priority', 9999999, $params);
+
+        // Set priority for group overrides for existing assign events.
+        $where = 'groupid IS NOT NULL';
+        $assignoverridesrs = $DB->get_recordset_select('assign_overrides', $where, null, '', 'id, assignid, groupid, sortorder');
+        foreach ($assignoverridesrs as $record) {
+            $params = [
+                'modulename' => 'assign',
+                'instance' => $record->assignid,
+                'groupid' => $record->groupid,
+                'repeatid' => 0
+            ];
+            $DB->set_field('event', 'priority', $record->sortorder, $params);
+        }
+        $assignoverridesrs->close();
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2017031000, 'assign');
+    }
+
     return true;
 }

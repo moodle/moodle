@@ -53,6 +53,9 @@ information provided here is intended especially for developers.
 * get_user_capability_course() now has an additional parameter 'limit'. This can be used to return a set number of records with
   the submitted capability. The parameter 'fieldsexceptid' will now accept context fields which can be used for preloading.
 * The caching option 'immutable' has been added to send_stored_file() and send_file().
+* New adhoc task refresh_mod_calendar_events_task that updates existing calendar events of modules.
+* New 'priority' column for the event table to determine which event to show in case of events with user and group overrides.
+* Webservices core_course_search_courses and core_course_get_courses_by_field will always return the sortorder field.
 
 === 3.2 ===
 

@@ -512,6 +512,7 @@ class grade_report_user extends grade_report {
 
                 // Basic grade item information.
                 $gradeitemdata['id'] = $grade_object->id;
+                $gradeitemdata['itemname'] = $grade_object->itemname;
                 $gradeitemdata['itemtype'] = $grade_object->itemtype;
                 $gradeitemdata['itemmodule'] = $grade_object->itemmodule;
                 $gradeitemdata['iteminstance'] = $grade_object->iteminstance;

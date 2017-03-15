@@ -473,6 +473,14 @@ $functions = array(
         'loginrequired' => false,
         'ajax' => true,
     ),
+    'core_get_user_dates' => array(
+        'classname' => 'core_external',
+        'methodname' => 'get_user_dates',
+        'classpath' => 'lib/external/externallib.php',
+        'description' => 'Return formatted timestamps',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_grades_get_grades' => array(
         'classname' => 'core_grades_external',
         'methodname' => 'get_grades',

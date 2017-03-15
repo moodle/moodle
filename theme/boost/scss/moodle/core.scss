@@ -2035,6 +2035,12 @@ $footer-link-color: $brand-primary !default;
     color: $footer-link-color;
 }
 
+.sitelink {
+    img {
+        width: 112px;
+    }
+}
+
 // Make links in a menu clickable anywhere in the row.
 .dropdown-item a {
     display: block;

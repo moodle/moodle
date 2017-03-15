@@ -251,6 +251,7 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $this->assertEquals($course->id, $studentgrades['usergrades'][0]['courseid']);
         $this->assertEquals($student1->id, $studentgrades['usergrades'][0]['userid']);
         // Module grades.
+        $this->assertEquals($assignment->name, $studentgrades['usergrades'][0]['gradeitems'][0]['itemname']);
         $this->assertEquals('mod', $studentgrades['usergrades'][0]['gradeitems'][0]['itemtype']);
         $this->assertEquals('assign', $studentgrades['usergrades'][0]['gradeitems'][0]['itemmodule']);
         $this->assertEquals($assignment->id, $studentgrades['usergrades'][0]['gradeitems'][0]['iteminstance']);
@@ -325,6 +326,7 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
 
         $this->assertEquals($course->id, $studentgrades['usergrades'][0]['courseid']);
         $this->assertEquals($student1->id, $studentgrades['usergrades'][0]['userid']);
+        $this->assertEquals($assignment->name, $studentgrades['usergrades'][0]['gradeitems'][0]['itemname']);
         $this->assertEquals('mod', $studentgrades['usergrades'][0]['gradeitems'][0]['itemtype']);
         $this->assertEquals('assign', $studentgrades['usergrades'][0]['gradeitems'][0]['itemmodule']);
         $this->assertEquals($assignment->id, $studentgrades['usergrades'][0]['gradeitems'][0]['iteminstance']);

@@ -196,7 +196,14 @@ if ($mform->is_cancelled()) {
         $event->trigger();
     }
 
-    lesson_update_events($lesson, $fromform);
+    if ($groupmode) {
+        // Priorities may have shifted, so we need to update all of the calendar events for group overrides.
+        lesson_update_events($lesson);
+    } else {
+        // User override. We only need to update the calendar event for this user override.
+        lesson_update_events($lesson, $fromform);
+    }
+
 
     if (!empty($fromform->submitbutton)) {
         redirect($overridelisturl);

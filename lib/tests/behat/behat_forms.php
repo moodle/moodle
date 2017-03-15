@@ -241,8 +241,9 @@ class behat_forms extends behat_base {
      * @return void
      */
     public function i_set_the_field_with_xpath_to($fieldxpath, $value) {
-        $fieldNode = $this->find('xpath', $fieldxpath);
-        $field = behat_field_manager::get_form_field($fieldNode, $this->getSession());
+        $fieldnode = $this->find('xpath', $fieldxpath);
+        $this->ensure_node_is_visible($fieldnode);
+        $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
         $field->set_value($value);
     }
 

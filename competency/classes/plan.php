@@ -71,7 +71,7 @@ class plan extends persistent {
                 'type' => PARAM_TEXT,
             ),
             'description' => array(
-                'type' => PARAM_RAW,
+                'type' => PARAM_CLEANHTML,
                 'default' => ''
             ),
             'descriptionformat' => array(

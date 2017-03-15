@@ -483,6 +483,7 @@ class gradereport_user_external extends external_api {
                                 new external_single_structure(
                                     array(
                                         'id' => new external_value(PARAM_INT, 'Grade item id'),
+                                        'itemname' => new external_value(PARAM_TEXT, 'Grade item name'),
                                         'itemtype' => new external_value(PARAM_ALPHA, 'Grade item type'),
                                         'itemmodule' => new external_value(PARAM_PLUGIN, 'Grade item module'),
                                         'iteminstance' => new external_value(PARAM_INT, 'Grade item instance'),

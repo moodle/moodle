@@ -201,4 +201,38 @@ class core_external_testcase extends externallib_advanced_testcase {
         $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
         $this->assertEquals('new tag name', $res['value']);
     }
+
+    public function test_get_user_dates() {
+        global $USER, $CFG, $DB;
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Set default timezone to Australia/Perth, else time calculated
+        // will not match expected values.
+        $this->setTimezone(99, 'Australia/Perth');
+
+        $context = context_system::instance();
+        $request = [
+            [
+                'timestamp' => 1293876000,
+                'format' => '%A, %d %B %Y, %I:%M'
+            ],
+            [
+                'timestamp' => 1293876000,
+                'format' => '%d %m %Y'
+            ],
+            [
+                'timestamp' => 1293876000,
+                'format' => 'some invalid format'
+            ],
+        ];
+
+        $result = core_external::get_user_dates($context->id, null, null, $request);
+        $result = external_api::clean_returnvalue(core_external::get_user_dates_returns(), $result);
+
+        $this->assertEquals('Saturday, 1 January 2011, 6:00', $result['dates'][0]);
+        $this->assertEquals('1 01 2011', $result['dates'][1]);
+        $this->assertEquals('some invalid format', $result['dates'][2]);
+    }
 }

@@ -119,6 +119,7 @@ class user_search_testcase extends advanced_testcase {
      * @return void
      */
     public function test_users_access() {
+        global $CFG;
 
         // Returns the instance as long as the area is supported.
         $searcharea = \core_search\manager::get_search_area($this->userareaid);
@@ -127,6 +128,8 @@ class user_search_testcase extends advanced_testcase {
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
         $user4 = self::getDataGenerator()->create_user();
+        $user5 = self::getDataGenerator()->create_user();
+        $user5->id = 0; // Visitor (not guest).
 
         $deleteduser = self::getDataGenerator()->create_user(array('deleted' => 1));
         $unconfirmeduser = self::getDataGenerator()->create_user(array('confirmed' => 0));
@@ -182,6 +185,22 @@ class user_search_testcase extends advanced_testcase {
         $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($suspendeduser->id));
 
         $this->setGuestUser();
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($user1->id));
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($user2->id));
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($user3->id));
+
+        $CFG->forceloginforprofiles = 0;
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($user1->id));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($user2->id));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($user3->id));
+
+        $this->setUser($user5);
+        $CFG->forceloginforprofiles = 1;
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($user1->id));
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($user2->id));
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($user3->id));
+
+        $CFG->forceloginforprofiles = 0;
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($user1->id));
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($user2->id));
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($user3->id));

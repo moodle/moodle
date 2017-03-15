@@ -58,6 +58,7 @@ $string['memorylimithelp'] = '<p>Pašlaik iestatītais PHP atmiņas apjoma ierob
 (atverot šīs lapas, tiks parādīti kļūdas ziņojumi), un fails .htaccess būs jānoņem.</p></li>
 </ol>';
 $string['paths'] = 'Ceļi';
+$string['pathshead'] = 'Apstiprināt ceļus';
 $string['phpversion'] = 'PHP versija';
 $string['phpversionhelp'] = '<p>Sistēmā Moodle jāizmanto PHP, kuras versija ir vismaz 4.3.0 vai 5.1.0 (versijai 5.0.x piemīt vairākas zināmas problēmas).</p>
 <p>Jūs pašlaik lietojat versiju {$a}</p>

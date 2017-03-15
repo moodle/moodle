@@ -200,7 +200,13 @@ EOD;
                         $record->filename = $plugin->get_type() . '-' . $filename;
 
                         $htmlfile = $fs->create_file_from_string($record, $file);
-                        $convertedfile = $fs->get_converted_document($htmlfile, 'pdf');
+                        try {
+                            $convertedfile = $fs->get_converted_document($htmlfile, 'pdf');
+                        } catch (\Exception $e) {
+                            // Let us delete the file and re-throw the exception.
+                            $htmlfile->delete();
+                            throw $e;
+                        }
                         $htmlfile->delete();
                         if ($convertedfile) {
                             $files[$filename] = $convertedfile;

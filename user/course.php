@@ -41,7 +41,8 @@ $redirect = new moodle_url("/user/preferences.php", array('userid' => $user->id)
 if ($courseform->is_cancelled()) {
     redirect($redirect);
 } else if ($data = $courseform->get_data()) {
-    set_user_preference('usemodchooser', $data->enableactivitychooser, $user);
+    useredit_update_user_preference(['id' => $user->id,
+        'preference_usemodchooser' => $data->enableactivitychooser]);
 
     redirect($redirect);
 }

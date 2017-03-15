@@ -62,7 +62,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
      */
 
     public static function create_calendar_event($name, $userid = 0, $type = 'user', $repeats = 0, $timestart  = null, $prop = null) {
-        global $CFG, $DB, $USER, $SITE;
+        global $CFG, $DB, $SITE;
 
         require_once("$CFG->dirroot/calendar/lib.php");
         if (!empty($prop)) {
@@ -100,6 +100,26 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         if (!isset($prop->courseid)) {
             $prop->courseid = $SITE->id;
         }
+
+        // Determine event priority.
+        if ($prop->courseid == 0 && isset($prop->groupid) && $prop->groupid == 0 && !empty($prop->userid)) {
+            // User override event.
+            $prop->priority = CALENDAR_EVENT_USER_OVERRIDE_PRIORITY;
+        } else if ($prop->courseid != $SITE->id && !empty($prop->groupid)) {
+            // Group override event.
+            $priorityparams = ['courseid' => $prop->courseid, 'groupid' => $prop->groupid];
+            // Group override event with the highest priority.
+            $groupevents = $DB->get_records('event', $priorityparams, 'priority DESC', 'id, priority', 0, 1);
+            $priority = 1;
+            if (!empty($groupevents)) {
+                $event = reset($groupevents);
+                if (!empty($event->priority)) {
+                    $priority = $event->priority + 1;
+                }
+            }
+            $prop->priority = $priority;
+        }
+
         $event = new calendar_event($prop);
         return $event->create($prop);
     }
@@ -266,6 +286,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
+        set_config('calendar_adminseesall', 1);
         $this->setAdminUser();
 
         // Create a few stuff to test with.
@@ -296,13 +317,19 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
         $record = new stdClass();
         $record->courseid = $course->id;
+        $record->groupid = 0;
         $record->description = array(
             'format' => FORMAT_HTML,
             'text' => 'Text with img <img src="@@PLUGINFILE@@/fakeimage.png">',
             'itemid' => $draftidfile
         );
         $courseevent = $this->create_calendar_event('course', $USER->id, 'course', 2, time(), $record);
-        $userevent = $this->create_calendar_event('user', $USER->id);
+
+        $record = new stdClass();
+        $record->courseid = 0;
+        $record->groupid = 0;
+        $userevent = $this->create_calendar_event('user', $USER->id, 'user', 0, time(), $record);
+
         $record = new stdClass();
         $record->courseid = $course->id;
         $record->groupid = $group->id;
@@ -335,6 +362,13 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, $withdescription);
 
         // Let's play around with caps.
+
+        // Create user event for the user $user.
+        $record = new stdClass();
+        $record->courseid = 0;
+        $record->groupid = 0;
+        $this->create_calendar_event('user', $user->id, 'user', 0, time(), $record);
+
         $this->setUser($user);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);

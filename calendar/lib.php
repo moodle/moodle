@@ -121,6 +121,11 @@ define('CALENDAR_SUBSCRIPTION_UPDATE', 1);
 define('CALENDAR_SUBSCRIPTION_REMOVE', 2);
 
 /**
+ * CALENDAR_EVENT_USER_OVERRIDE_PRIORITY - Constant for the user override priority.
+ */
+define('CALENDAR_EVENT_USER_OVERRIDE_PRIORITY', 9999999);
+
+/**
  * Return the days of the week
  *
  * @return array array of days
@@ -420,7 +425,6 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
             } else {
                 $popupdata = calendar_get_popup(false, $daytime, $popupcontent);
             }
-            $cellattributes = array_merge($cellattributes, $popupdata);
 
             // Class and cell content
             if(isset($typesbyday[$day]['startglobal'])) {
@@ -435,7 +439,14 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
             if ($finishclass) {
                 $class .= ' duration_finish';
             }
-            $cell = html_writer::link($dayhref, $day);
+
+            $data = array(
+                'url' => $dayhref,
+                'day' => $day,
+                'content' => $popupdata['data-core_calendar-popupcontent'],
+                'title' => $popupdata['data-core_calendar-title']
+            );
+            $cell = $OUTPUT->render_from_template('core_calendar/minicalendar_day_link', $data);
         } else {
             $cell = $day;
         }
@@ -477,8 +488,13 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
             if (!isset($eventsbyday[$day]) && !isset($durationbyday[$day])) {
                 $class .= ' eventnone';
                 $popupdata = calendar_get_popup(true, false);
-                $cellattributes = array_merge($cellattributes, $popupdata);
-                $cell = html_writer::link('#', $day);
+                $data = array(
+                    'url' => '#',
+                    'day' => $day,
+                    'content' => $popupdata['data-core_calendar-popupcontent'],
+                    'title' => $popupdata['data-core_calendar-title']
+                );
+                $cell = $OUTPUT->render_from_template('core_calendar/minicalendar_day_link', $data);
             }
             $cell = get_accesshide($today . ' ') . $cell;
         }
@@ -495,12 +511,6 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
     $content .= '</tr>'; // Last row ends
 
     $content .= '</table>'; // Tabular display of days ends
-
-    static $jsincluded = false;
-    if (!$jsincluded) {
-        $PAGE->requires->yui_module('moodle-calendar-info', 'Y.M.core_calendar.info.init');
-        $jsincluded = true;
-    }
     return $content;
 }
 
@@ -723,85 +733,178 @@ function calendar_add_event_metadata($event) {
  * @param boolean $ignorehidden whether to select only visible events or all events
  * @return array $events of selected events or an empty array if there aren't any (or there was an error)
  */
-function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withduration=true, $ignorehidden=true) {
+function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withduration = true, $ignorehidden = true) {
     global $DB;
 
-    $whereclause = '';
     $params = array();
     // Quick test.
     if (empty($users) && empty($groups) && empty($courses)) {
         return array();
     }
 
+    // Array of filter conditions. To be concatenated by the OR operator.
+    $filters = [];
+
+    // User filter.
     if ((is_array($users) && !empty($users)) or is_numeric($users)) {
         // Events from a number of users
-        if(!empty($whereclause)) $whereclause .= ' OR';
         list($insqlusers, $inparamsusers) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED);
-        $whereclause .= " (e.userid $insqlusers AND e.courseid = 0 AND e.groupid = 0)";
+        $filters[] = "(e.userid $insqlusers AND e.courseid = 0 AND e.groupid = 0)";
         $params = array_merge($params, $inparamsusers);
-    } else if($users === true) {
+    } else if ($users === true) {
         // Events from ALL users
-        if(!empty($whereclause)) $whereclause .= ' OR';
-        $whereclause .= ' (e.userid != 0 AND e.courseid = 0 AND e.groupid = 0)';
-    } else if($users === false) {
-        // No user at all, do nothing
+        $filters[] = "(e.userid != 0 AND e.courseid = 0 AND e.groupid = 0)";
     }
+    // Boolean false (no users at all): We don't need to do anything.
 
+    // Group filter.
     if ((is_array($groups) && !empty($groups)) or is_numeric($groups)) {
         // Events from a number of groups
-        if(!empty($whereclause)) $whereclause .= ' OR';
         list($insqlgroups, $inparamsgroups) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
-        $whereclause .= " e.groupid $insqlgroups ";
+        $filters[] = "e.groupid $insqlgroups";
         $params = array_merge($params, $inparamsgroups);
-    } else if($groups === true) {
+    } else if ($groups === true) {
         // Events from ALL groups
-        if(!empty($whereclause)) $whereclause .= ' OR ';
-        $whereclause .= ' e.groupid != 0';
+        $filters[] = "e.groupid != 0";
     }
-    // boolean false (no groups at all): we don't need to do anything
+    // Boolean false (no groups at all): We don't need to do anything.
 
+    // Course filter.
     if ((is_array($courses) && !empty($courses)) or is_numeric($courses)) {
-        if(!empty($whereclause)) $whereclause .= ' OR';
         list($insqlcourses, $inparamscourses) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
-        $whereclause .= " (e.groupid = 0 AND e.courseid $insqlcourses)";
+        $filters[] = "(e.groupid = 0 AND e.courseid $insqlcourses)";
         $params = array_merge($params, $inparamscourses);
     } else if ($courses === true) {
         // Events from ALL courses
-        if(!empty($whereclause)) $whereclause .= ' OR';
-        $whereclause .= ' (e.groupid = 0 AND e.courseid != 0)';
+        $filters[] = "(e.groupid = 0 AND e.courseid != 0)";
     }
 
     // Security check: if, by now, we have NOTHING in $whereclause, then it means
     // that NO event-selecting clauses were defined. Thus, we won't be returning ANY
     // events no matter what. Allowing the code to proceed might return a completely
     // valid query with only time constraints, thus selecting ALL events in that time frame!
-    if(empty($whereclause)) {
+    if (empty($filters)) {
         return array();
     }
 
-    if($withduration) {
-        $timeclause = '(e.timestart >= '.$tstart.' OR e.timestart + e.timeduration > '.$tstart.') AND e.timestart <= '.$tend;
-    }
-    else {
-        $timeclause = 'e.timestart >= '.$tstart.' AND e.timestart <= '.$tend;
-    }
-    if(!empty($whereclause)) {
-        // We have additional constraints
-        $whereclause = $timeclause.' AND ('.$whereclause.')';
-    }
-    else {
-        // Just basic time filtering
-        $whereclause = $timeclause;
-    }
+    // Build our clause for the filters.
+    $filterclause = implode(' OR ', $filters);
 
+    // Array of where conditions for our query. To be concatenated by the AND operator.
+    $whereconditions = ["($filterclause)"];
+
+    // Time clause.
+    if ($withduration) {
+        $timeclause = "((e.timestart >= :tstart1 OR e.timestart + e.timeduration > :tstart2) AND e.timestart <= :tend)";
+        $params['tstart1'] = $tstart;
+        $params['tstart2'] = $tstart;
+        $params['tend'] = $tend;
+    } else {
+        $timeclause = "(e.timestart >= :tstart AND e.timestart <= :tend)";
+        $params['tstart'] = $tstart;
+        $params['tend'] = $tend;
+    }
+    $whereconditions[] = $timeclause;
+
+    // Show visible only.
     if ($ignorehidden) {
-        $whereclause .= ' AND e.visible = 1';
+        $whereconditions[] = "(e.visible = 1)";
     }
 
+    // Build the main query's WHERE clause.
+    $whereclause = implode(' AND ', $whereconditions);
+
+    // Build SQL subquery and conditions for filtered events based on priorities.
+    $subquerywhere = '';
+    $subqueryconditions = [];
+
+    // Get the user's courses. Otherwise, get the default courses being shown by the calendar.
+    $usercourses = calendar_get_default_courses();
+
+    // Set calendar filters.
+    list($usercourses, $usergroups, $user) = calendar_set_filters($usercourses, true);
+    $subqueryparams = [];
+
+    // Flag to indicate whether the query needs to exclude group overrides.
+    $viewgroupsonly = false;
+
+    if ($user) {
+        // Set filter condition for the user's events.
+        $subqueryconditions[] = "(ev.userid = :user AND ev.courseid = 0 AND ev.groupid = 0)";
+        $subqueryparams['user'] = $user;
+
+        foreach ($usercourses as $courseid) {
+            if (has_capability('moodle/site:accessallgroups', context_course::instance($courseid))) {
+                $usergroupmembership = groups_get_all_groups($courseid, $user, 0, 'g.id');
+                if (count($usergroupmembership) == 0) {
+                    $viewgroupsonly = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Set filter condition for the user's group events.
+    if ($usergroups === true || $viewgroupsonly) {
+        // Fetch group events, but not group overrides.
+        $subqueryconditions[] = "(ev.groupid != 0 AND ev.eventtype = 'group')";
+    } else if (!empty($usergroups)) {
+        // Fetch group events and group overrides.
+        list($inusergroups, $inusergroupparams) = $DB->get_in_or_equal($usergroups, SQL_PARAMS_NAMED);
+        $subqueryconditions[] = "(ev.groupid $inusergroups)";
+        $subqueryparams = array_merge($subqueryparams, $inusergroupparams);
+    }
+
+    // Get courses to be used for the subquery.
+    $subquerycourses = [];
+    if (is_array($courses)) {
+        $subquerycourses = $courses;
+    } else if (is_numeric($courses)) {
+        $subquerycourses[] = $courses;
+    }
+    // Merge with user courses, if necessary.
+    if (!empty($usercourses)) {
+        $subquerycourses = array_merge($subquerycourses, $usercourses);
+        // Make sure we remove duplicate values.
+        $subquerycourses = array_unique($subquerycourses);
+    }
+
+    // Set subquery filter condition for the courses.
+    if (!empty($subquerycourses)) {
+        list($incourses, $incoursesparams) = $DB->get_in_or_equal($subquerycourses, SQL_PARAMS_NAMED);
+        $subqueryconditions[] = "(ev.groupid = 0 AND ev.courseid $incourses)";
+        $subqueryparams = array_merge($subqueryparams, $incoursesparams);
+    }
+
+    // Build the WHERE condition for the sub-query.
+    if (!empty($subqueryconditions)) {
+        $subquerywhere = 'WHERE ' . implode(" OR ", $subqueryconditions);
+    }
+
+    // Merge subquery parameters to the parameters of the main query.
+    if (!empty($subqueryparams)) {
+        $params = array_merge($params, $subqueryparams);
+    }
+
+    // Sub-query that fetches the list of unique events that were filtered based on priority.
+    $subquery = "SELECT ev.modulename,
+                        ev.instance,
+                        ev.eventtype,
+                        MAX(ev.priority) as priority
+                   FROM {event} ev
+                  $subquerywhere
+               GROUP BY ev.modulename, ev.instance, ev.eventtype";
+
+    // Build the main query.
     $sql = "SELECT e.*
               FROM {event} e
-         LEFT JOIN {modules} m ON e.modulename = m.name
-                -- Non visible modules will have a value of 0.
+        INNER JOIN ($subquery) fe
+                ON e.modulename = fe.modulename
+                   AND e.instance = fe.instance
+                   AND e.eventtype = fe.eventtype
+                   AND (e.priority = fe.priority OR (e.priority IS NULL AND fe.priority IS NULL))
+         LEFT JOIN {modules} m
+                ON e.modulename = m.name
              WHERE (m.visible = 1 OR m.visible IS NULL) AND $whereclause
           ORDER BY e.timestart";
     $events = $DB->get_records_sql($sql, $params);
@@ -3345,4 +3448,26 @@ function calendar_get_calendar_context($subscription) {
         $context = context_user::instance($subscription->userid);
     }
     return $context;
+}
+
+/**
+ * Implements callback user_preferences, whitelists preferences that users are allowed to update directly
+ *
+ * Used in {@see core_user::fill_preferences_cache()}, see also {@see useredit_update_user_preference()}
+ *
+ * @return array
+ */
+function core_calendar_user_preferences() {
+    $preferences = [];
+    $preferences['calendar_timeformat'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED, 'default' => '0',
+        'choices' => array('0', CALENDAR_TF_12, CALENDAR_TF_24)
+    );
+    $preferences['calendar_startwday'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 0,
+        'choices' => array(0, 1, 2, 3, 4, 5, 6));
+    $preferences['calendar_maxevents'] = array('type' => PARAM_INT, 'choices' => range(1, 20));
+    $preferences['calendar_lookahead'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 365,
+        'choices' => array(365, 270, 180, 150, 120, 90, 60, 30, 21, 14, 7, 6, 5, 4, 3, 2, 1));
+    $preferences['calendar_persistflt'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 0,
+        'choices' => array(0, 1));
+    return $preferences;
 }

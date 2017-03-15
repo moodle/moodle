@@ -52,9 +52,9 @@ class user extends \core_search\base {
     /**
      * Returns document instances for each record in the recordset.
      *
-     * @param StdClass $record
+     * @param \stdClass $record
      * @param array $options
-     * @return core_search/document
+     * @return \core_search\document
      */
     public function get_document($record, $options = array()) {
 
@@ -105,7 +105,7 @@ class user extends \core_search\base {
      * Returns a url to the profile page of user.
      *
      * @param \core_search\document $doc
-     * @return moodle_url
+     * @return \moodle_url
      */
     public function get_doc_url(\core_search\document $doc) {
         return $this->get_context_url($doc);
@@ -115,7 +115,7 @@ class user extends \core_search\base {
      * Returns a url to the document context.
      *
      * @param \core_search\document $doc
-     * @return moodle_url
+     * @return \moodle_url
      */
     public function get_context_url(\core_search\document $doc) {
         return new \moodle_url('/user/profile.php', array('id' => $doc->get('itemid')));

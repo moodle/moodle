@@ -449,4 +449,52 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $this->assertEquals($quiz2->id, $attempt->quiz);
     }
 
+    /**
+     * Test for quiz_get_group_override_priorities().
+     */
+    public function test_quiz_get_group_override_priorities() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $dg = $this->getDataGenerator();
+        $quizgen = $dg->get_plugin_generator('mod_quiz');
+        $course = $dg->create_course();
+
+        $quiz = $quizgen->create_instance(['course' => $course->id, 'sumgrades' => 2]);
+
+        $this->assertNull(quiz_get_group_override_priorities($quiz->id));
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+
+        $now = 100;
+        $override1 = (object)[
+            'quiz' => $quiz->id,
+            'groupid' => $group1->id,
+            'timeopen' => $now,
+            'timeclose' => $now + 20
+        ];
+        $DB->insert_record('quiz_overrides', $override1);
+
+        $override2 = (object)[
+            'quiz' => $quiz->id,
+            'groupid' => $group2->id,
+            'timeopen' => $now - 10,
+            'timeclose' => $now + 10
+        ];
+        $DB->insert_record('quiz_overrides', $override2);
+
+        $priorities = quiz_get_group_override_priorities($quiz->id);
+        $this->assertNotEmpty($priorities);
+
+        $openpriorities = $priorities['open'];
+        // Override 2's time open has higher priority since it is sooner than override 1's.
+        $this->assertEquals(1, $openpriorities[$override1->timeopen]);
+        $this->assertEquals(2, $openpriorities[$override2->timeopen]);
+
+        $closepriorities = $priorities['close'];
+        // Override 1's time close has higher priority since it is later than override 2's.
+        $this->assertEquals(2, $closepriorities[$override1->timeclose]);
+        $this->assertEquals(1, $closepriorities[$override2->timeclose]);
+    }
 }

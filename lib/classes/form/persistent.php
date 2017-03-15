@@ -223,9 +223,14 @@ abstract class persistent extends moodleform {
         $data = $this->get_persistent()->to_record();
         $class = static::$persistentclass;
         $properties = $class::get_formatted_properties();
+        $allproperties = $class::properties_definition();
 
         foreach ($data as $field => $value) {
-            // Convert formatted properties.
+            // Clean data if it is to be displayed in a form.
+            if (isset($allproperties[$field]['type'])) {
+                $data->$field = clean_param($data->$field, $allproperties[$field]['type']);
+            }
+
             if (isset($properties[$field])) {
                 $data->$field = array(
                     'text' => $data->$field,

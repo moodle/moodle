@@ -147,16 +147,38 @@ function useredit_load_preferences(&$user, $reload=true) {
 }
 
 /**
- * Updates the user preferences for teh given user.
+ * Updates the user preferences for the given user
  *
- * @param stdClass|array $usernew
+ * Only preference that can be updated directly will be updated here. This method is called from various WS
+ * updating users and should be used when updating user details. Plugins may whitelist preferences that can
+ * be updated by defining 'user_preferences' callback, {@see core_user::fill_preferences_cache()}
+ *
+ * Some parts of code may use user preference table to store internal data, in these cases it is acceptable
+ * to call set_user_preference()
+ *
+ * @param stdClass|array $usernew object or array that has user preferences as attributes with keys starting with preference_
  */
 function useredit_update_user_preference($usernew) {
+    global $USER;
     $ua = (array)$usernew;
+    if (is_object($usernew) && isset($usernew->id) && isset($usernew->deleted) && isset($usernew->confirmed)) {
+        // This is already a full user object, maybe not completely full but these fields are enough.
+        $user = $usernew;
+    } else if (empty($ua['id']) || $ua['id'] == $USER->id) {
+        // We are updating current user.
+        $user = $USER;
+    } else {
+        // Retrieve user object.
+        $user = core_user::get_user($ua['id'], '*', MUST_EXIST);
+    }
+
     foreach ($ua as $key => $value) {
         if (strpos($key, 'preference_') === 0) {
             $name = substr($key, strlen('preference_'));
-            set_user_preference($name, $value, $usernew->id);
+            if (core_user::can_edit_preference($name, $user)) {
+                $value = core_user::clean_preference($value, $name);
+                set_user_preference($name, $value, $user->id);
+            }
         }
     }
 }

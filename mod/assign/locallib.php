@@ -1160,8 +1160,14 @@ class assign {
         if ($instance->duedate) {
             $event = new stdClass();
 
+            // Fetch the original due date event. It will have a non-zero course ID and a zero group ID.
+            $select = "modulename = :modulename
+                       AND instance = :instance
+                       AND eventtype = :eventtype
+                       AND groupid = 0
+                       AND courseid <> 0";
             $params = array('modulename' => 'assign', 'instance' => $instance->id, 'eventtype' => $eventtype);
-            $event->id = $DB->get_field('event', 'id', $params);
+            $event->id = $DB->get_field_select('event', 'id', $select, $params);
             $event->name = $instance->name;
             $event->timestart = $instance->duedate;
 
@@ -3064,7 +3070,7 @@ class assign {
      * Throw an error if the permissions to view this users submission are missing.
      *
      * @throws required_capability_exception
-     * @return none
+     * @return void
      */
     public function require_view_submission($userid) {
         if (!$this->can_view_submission($userid)) {
@@ -3076,7 +3082,7 @@ class assign {
      * Throw an error if the permissions to view grades in this assignment are missing.
      *
      * @throws required_capability_exception
-     * @return none
+     * @return void
      */
     public function require_view_grades() {
         if (!$this->can_view_grades()) {
@@ -3094,7 +3100,12 @@ class assign {
         if (!has_any_capability(array('mod/assign:viewgrades', 'mod/assign:grade'), $this->context)) {
             return false;
         }
-
+        // Checks for the edge case when user belongs to no groups and groupmode is sep.
+        if ($this->get_course_module()->effectivegroupmode == SEPARATEGROUPS) {
+            $groupflag = has_capability('moodle/site:accessallgroups', $this->get_context());
+            $groupflag = $groupflag || !empty(groups_get_activity_allowed_groups($this->get_course_module()));
+            return (bool)$groupflag;
+        }
         return true;
     }
 
@@ -8818,6 +8829,14 @@ function reorder_group_overrides($assignid) {
             $f->id = $override->id;
             $f->sortorder = $i++;
             $DB->update_record('assign_overrides', $f);
+
+            // Update priorities of group overrides.
+            $params = [
+                'modulename' => 'assign',
+                'instance' => $override->assignid,
+                'groupid' => $override->groupid
+            ];
+            $DB->set_field('event', 'priority', $f->sortorder, $params);
         }
     }
 }
