@@ -60,4 +60,5 @@ Feature: Change password
     And I click on "Save changes" "button"
     And I should see "Password has been changed"
     And I click on "Continue" "button"
+    And I am on site homepage
     And I should see "Course 1"

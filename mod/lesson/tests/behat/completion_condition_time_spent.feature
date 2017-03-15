@@ -17,8 +17,7 @@ Feature: Set time spent as a completion condition for a lesson
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
@@ -49,7 +48,7 @@ Feature: Set time spent as a completion condition for a lesson
     And I press "Save page"
     And I log out
     When I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     Then the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
     And I follow "Test lesson"
     And I press "Next page"
@@ -58,17 +57,17 @@ Feature: Set time spent as a completion condition for a lesson
     And I press "Next page"
     And I should see "You completed this lesson in"
     And I should see ", which is less than the required time of 10 secs. You might need to attempt the lesson again."
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson"
     And I press "Next page"
     And I wait "11" seconds
     And I press "Next page"
     And I should not see "You might need to attempt the lesson again."
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And the "Test lesson" "lesson" activity with "auto" completion should be marked as complete
     And I log out
     And I log in as "teacher1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And "Student 1" user has completed "Test lesson" activity

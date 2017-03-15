@@ -21,8 +21,7 @@ Feature: Sections can be edited and deleted in weeks format
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: View the default name of the general section in weeks format
     When I click on "Edit section" "link" in the "li#section-0" "css_element"
@@ -67,7 +66,7 @@ Feature: Sections can be edited and deleted in weeks format
     Then I should not see "1 May - 7 May" in the "region-main" "region"
     And "New name for week" "field" should not exist
     And I should see "Midterm evaluation" in the "li#section-1" "css_element"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I should not see "1 May - 7 May" in the "region-main" "region"
     And I should see "Midterm evaluation" in the "li#section-1" "css_element"
 

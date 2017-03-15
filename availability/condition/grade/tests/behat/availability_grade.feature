@@ -21,8 +21,7 @@ Feature: availability_grade
   Scenario: Test condition
     # Basic setup.
     Given I log in as "teacher1"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
     # Add an assignment.
     And I add a "Assignment" to section "1" and I fill the form with:
@@ -70,7 +69,7 @@ Feature: availability_grade
     And I click on "Edit settings" "link" in the "P3" activity
     And I expand all fieldsets
     And the field "Maximum grade percentage (exclusive)" matches value ""
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
 
     # Add a Page with a grade condition for 10%.
     And I add a "Page" to section "4"
@@ -90,7 +89,7 @@ Feature: availability_grade
     # Log in as student without a grade yet.
     When I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
 
     # Do the assignment.
     And I follow "A1"
@@ -108,7 +107,7 @@ Feature: availability_grade
     # Log back in as teacher.
     When I log out
     And I log in as "teacher1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
 
     # Give the assignment 40%.
     And I follow "A1"
@@ -123,7 +122,7 @@ Feature: availability_grade
     # Log back in as student.
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
 
     # Check pages are visible.
     Then I should see "P2" in the "region-main" "region"

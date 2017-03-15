@@ -120,9 +120,7 @@ Feature: Add customised file types
       | Custom description | Froggy file                               |
     And I press "Save changes"
     # Create a resource activity and add it to a course
-    And I am on site homepage
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     When I add a "File" to section "1"
     And I set the following fields to these values:
       | Name        | An example of customised file type |

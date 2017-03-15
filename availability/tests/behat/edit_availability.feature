@@ -32,8 +32,7 @@ Feature: edit_availability
     Given the following config values are set as admin:
       | enableavailability | 0 |
     When I log in as "teacher1"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Page" to section "1"
     Then "Restrict access" "fieldset" should not exist
 
@@ -44,7 +43,7 @@ Feature: edit_availability
     And the following config values are set as admin:
       | enableavailability | 1 |
 
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Page" to section "1"
     Then "Restrict access" "fieldset" should exist
 
@@ -56,10 +55,7 @@ Feature: edit_availability
   Scenario: Edit availability using settings in activity form
     # Set up.
     Given I log in as "teacher1"
-    And I am on course page "Course 1"
-
-    # Add a Page and check it has None in so far.
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Page" to section "1"
     And I expand all fieldsets
     Then I should see "None" in the "Restrict access" "fieldset"
@@ -147,8 +143,7 @@ Feature: edit_availability
   Scenario: Edit availability using settings in section form
     # Set up.
     Given I log in as "teacher1"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
     # Edit a section
     When I edit the section "1"
@@ -168,8 +163,7 @@ Feature: edit_availability
     Given the following config values are set as admin:
       | enableavailability | 0 |
     And I log in as "admin"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1"
     When I expand all fieldsets
     Then "Add group/grouping access restriction" "button" should not exist
@@ -181,8 +175,7 @@ Feature: edit_availability
       | name | course | idnumber |
       | GX1  | C1     | GXI1     |
     And I log in as "admin"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1"
     And I set the following fields to these values:
       | Forum name  | MyForum |

@@ -15,8 +15,7 @@ Feature: A user can control their own subscription preferences for a discussion
       | user | course | role |
       | student1 | C1 | student |
     And I log in as "admin"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: An optional forum can have discussions subscribed to
     Given I add a "Forum" to section "1" and I fill the form with:
@@ -32,7 +31,7 @@ Feature: A user can control their own subscription preferences for a discussion
       | Message | Test post message two |
     And I log out
     When I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     Then I should see "Subscribe to this forum"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
@@ -77,7 +76,7 @@ Feature: A user can control their own subscription preferences for a discussion
       | Message | Test post message two |
     And I log out
     When I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     Then I should see "Unsubscribe from this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
@@ -122,7 +121,7 @@ Feature: A user can control their own subscription preferences for a discussion
       | Message | Test post message two |
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I should see "Subscribe to this forum"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
@@ -134,7 +133,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I log out
     And I log in as "admin"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
@@ -142,7 +141,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I press "Save and return to course"
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I should see "Unsubscribe from this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
@@ -167,7 +166,7 @@ Feature: A user can control their own subscription preferences for a discussion
       | Message | Test post message two |
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I should see "Subscribe to this forum"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
@@ -179,7 +178,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I log out
     And I log in as "admin"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
@@ -187,7 +186,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I press "Save and return to course"
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I should see "Unsubscribe from this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
@@ -212,7 +211,7 @@ Feature: A user can control their own subscription preferences for a discussion
       | Message | Test post message two |
     And I log out
     When I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I should see "Subscribe to this forum"
     And I reply "Test post subject one" post from "Test forum name" forum with:
@@ -248,7 +247,7 @@ Feature: A user can control their own subscription preferences for a discussion
       | Message | Test post message two |
     And I log out
     When I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I should see "Unsubscribe from this forum"
     And I reply "Test post subject one" post from "Test forum name" forum with:
@@ -316,7 +315,7 @@ Feature: A user can control their own subscription preferences for a discussion
       | Message | Test post message one |
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "Test forum name"
     Then "Subscribe to this forum" "link" should exist in current page administration
     And I follow "Test post subject one"

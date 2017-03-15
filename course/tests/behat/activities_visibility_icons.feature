@@ -18,8 +18,7 @@ Feature: Toggle activities visibility from the course page
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
@@ -60,7 +59,7 @@ Feature: Toggle activities visibility from the course page
     And I log out
     # Student should not see this activity.
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I should not see "Test forum name"
     And I log out
 
@@ -78,8 +77,7 @@ Feature: Toggle activities visibility from the course page
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
     And I add a "Forum" to section "2" and I fill the form with:
       | Forum name | Test forum name |
@@ -115,7 +113,7 @@ Feature: Toggle activities visibility from the course page
     And I log out
     # Student will not see the module on the course page but can access it from other reports and blocks:
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And "Test forum name" activity should be hidden
     And I click on "Test forum name" "link" in the "Recent activity" "block"
     And I should see "Test forum name"
@@ -134,8 +132,7 @@ Feature: Toggle activities visibility from the course page
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "2" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
@@ -173,8 +170,7 @@ Feature: Toggle activities visibility from the course page
       | allowstealth | 1 |
     And I log out
     And I log in as "teacher1"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
     And I add a "Assignment" to section "2" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -208,7 +204,7 @@ Feature: Toggle activities visibility from the course page
     And I log out
     # Student will not see the module on the course page but can access it from other reports and blocks:
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And "Test assignment name" activity should be hidden
     And I click on "Test assignment name" "link" in the "Recent activity" "block"
     And I should see "Test assignment name"

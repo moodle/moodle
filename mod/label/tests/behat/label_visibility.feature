@@ -19,8 +19,7 @@ Feature: Check label visibility works
       | teacher | C1 | editingteacher |
       | student | C1 | student |
     Given I log in as "teacher"
-    And I follow "Test"
-    And I turn editing mode on
+    And I am on "Test" course homepage with editing mode on
     When I add a "label" to section "1" and I fill the form with:
       | Label text | Swanky label |
       | Visible | Hide |
@@ -29,7 +28,7 @@ Feature: Check label visibility works
     And "Swanky label" activity should be hidden
     And I log out
     And I log in as "student"
-    And I follow "Test"
+    And I am on "Test" course homepage
     And I should not see "Swanky label"
     And I log out
 
@@ -47,15 +46,14 @@ Feature: Check label visibility works
       | teacher | C1 | editingteacher |
       | student | C1 | student |
     Given I log in as "teacher"
-    And I follow "Test"
-    And I turn editing mode on
+    And I am on "Test" course homepage with editing mode on
     When I add a "label" to section "1" and I fill the form with:
       | Label text | Swanky label |
       | Visible | Show |
     Then "Swanky label" activity should be visible
     And I log out
     And I log in as "student"
-    And I follow "Test"
+    And I am on "Test" course homepage
     And "Swanky label" activity should be visible
     And I log out
 
@@ -73,8 +71,7 @@ Feature: Check label visibility works
       | teacher | C1 | editingteacher |
       | student | C1 | student |
     Given I log in as "teacher"
-    And I follow "Test"
-    And I turn editing mode on
+    And I am on "Test" course homepage with editing mode on
     When I add a "label" to section "1" and I fill the form with:
       | Label text | Swanky label |
       | Visible | Show |
@@ -93,6 +90,6 @@ Feature: Check label visibility works
     And the "Visible" select box should not contain "Show"
     And I log out
     And I log in as "student"
-    And I follow "Test"
+    And I am on "Test" course homepage
     And I should not see "Swanky label"
     And I log out

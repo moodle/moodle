@@ -20,8 +20,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | activity | name             | intro                   | deadline   | retake | course | idnumber |
       | lesson   | Test lesson name | Test lesson description | 1893481200 | 1      | C1     | lesson1  |
     And I log in as "teacher1"
-    And I am on course page "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: A completed lesson with only questions that allows multiple attempts
     Given I follow "Test lesson name"
@@ -53,7 +52,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -104,7 +103,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -140,7 +139,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "First page contents"
     And I press "Next page"
@@ -174,7 +173,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "First page contents"
     And I press "Next page"
@@ -213,7 +212,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -244,7 +243,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "First page contents"
     And I press "Next page"
@@ -332,7 +331,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_0 | True |
       | id_answer_editor_1 | False |
     And I press "Save page"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name 2"
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
@@ -343,8 +342,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_0 | True |
       | id_answer_editor_1 | False |
     And I press "Save page"
-    And I am on homepage
-    And I am on course page "Course 2"
+    And I am on "Course 2" course homepage
     And I follow "Test lesson name 3"
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
@@ -366,14 +364,13 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I am on course page "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "D035 M00d13 r0x0rz j00 b0x0rs?"
     And I set the following fields to these values:
       | True | 1 |
     And I press "Submit"
-    And I am on homepage
-    And I am on course page "Course 2"
+    And I am on "Course 2" course homepage
     And I follow "Test lesson name 3"
     And I should see "D035 M00d13 r0x0rz j00 b0x0rs?"
     And I set the following fields to these values:
