@@ -93,6 +93,10 @@ class issuer extends persistent {
                 'type' => PARAM_RAW,
                 'default' => ''
             ),
+            'alloweddomains' => array(
+                'type' => PARAM_RAW,
+                'default' => ''
+            ),
             'sortorder' => array(
                 'type' => PARAM_INT,
                 'default' => 0,
@@ -124,6 +128,29 @@ class issuer extends persistent {
 
         if ($endpoint) {
             return $endpoint->get('url');
+        }
+        return false;
+    }
+
+    /**
+     * Perform matching against the list of allowed login domains for this issuer.
+     * @return boolean
+     */
+    public function is_valid_login_domain($email) {
+        if (empty($this->get('alloweddomains'))) {
+            return true;
+        }
+        $validdomains = explode(',', $this->get('alloweddomains'));
+
+        list($unused, $emaildomain) = explode('@', $email, 2);
+
+        foreach ($validdomains as $checkdomain) {
+            $checkdomain = \core_text::strtolower(trim($checkdomain));
+
+            if ((\core_text::strlen($checkdomain) == \core_text::strlen($emaildomain)) &&
+                    (\core_text::strpos($checkdomain, $emaildomain) === 0)) {
+                return true;
+            }
         }
         return false;
     }

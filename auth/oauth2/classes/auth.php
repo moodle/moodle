@@ -368,9 +368,14 @@ class auth extends \auth_plugin_base {
             }
         }
 
-        $this->set_static_user_info($userinfo);
+        $issuer = $client->get_issuer();
 
-        $user = authenticate_user_login($userinfo['username'], '');
+        $user = false;
+        if ($issuer->is_valid_login_domain($userinfo['email'])) {
+
+            $this->set_static_user_info($userinfo);
+            $user = authenticate_user_login($userinfo['username'], '');
+        }
 
         if ($user) {
             complete_user_login($user);

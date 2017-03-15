@@ -51,6 +51,9 @@ $string['issuerloginparams'] = 'Additional parameters included in a login reques
 $string['issuerloginparams_help'] = 'Some systems require additional parameters for a login request in order to read the users basic profile.';
 $string['issuerloginparamsoffline'] = 'Additional parameters included in a login request for offline access.';
 $string['issuerloginparamsoffline_help'] = 'Each OAuth system defines a different way to request offline access. E.g. Google requires the additional params: "access_type=offline&prompt=consent" these parameters should be in url query parameter format.';
+$string['issueralloweddomains'] = 'Login domains';
+$string['issueralloweddomains_help'] = 'If set, this setting is a comma separated list of domains that logins will be restricted to when using this provider.';
+$string['issueralloweddomains_link'] = 'OAuth_2_login_domains';
 $string['issuershowonloginpage'] = 'Show on login page.';
 $string['issuershowonloginpage_help'] = 'If the OpenID Connect Authentication plugin is enabled, this login issuer will be listed on the login page to allow users to login with accounts from this issuer.';
 $string['issuerbehaviour'] = 'Behaviour';

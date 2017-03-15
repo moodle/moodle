@@ -99,6 +99,11 @@ class issuer extends persistent {
         $mform->addRule('baseurl', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
         $mform->addHelpButton('baseurl', 'issuerbaseurl', 'tool_oauth2');
 
+        // Allowed Domains.
+        $mform->addElement('text', 'alloweddomains', get_string('issueralloweddomains', 'tool_oauth2'), 'maxlength="1024"');
+        $mform->addRule('alloweddomains', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
+        $mform->addHelpButton('alloweddomains', 'issueralloweddomains', 'tool_oauth2');
+
         // Image.
         $mform->addElement('text', 'image', get_string('issuerimage', 'tool_oauth2'), 'maxlength="1024"');
         $mform->addRule('image', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
@@ -113,6 +118,9 @@ class issuer extends persistent {
 
         $mform->addElement('hidden', 'action', 'edit');
         $mform->setType('action', PARAM_RAW);
+
+        $mform->addElement('hidden', 'enabled', $endpoint->get('enabled'));
+        $mform->setType('enabled', PARAM_BOOL);
 
         $mform->addElement('hidden', 'id', $endpoint->get('id'));
         $mform->setType('id', PARAM_INT);

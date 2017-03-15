@@ -2611,7 +2611,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017031400.00);
     }
 
-    if ($oldversion < 2017032400.21) {
+    if ($oldversion < 2017033100.01) {
 
         // Define table oauth2_issuer to be created.
         $table = new xmldb_table('oauth2_issuer');
@@ -2630,6 +2630,7 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('loginscopesoffline', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
         $table->add_field('loginparams', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
         $table->add_field('loginparamsoffline', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('alloweddomains', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
         $table->add_field('scopessupported', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('showonloginpage', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '1');
         $table->add_field('enabled', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '1');
@@ -2644,10 +2645,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017032400.21);
+        upgrade_main_savepoint(true, 2017033100.01);
     }
 
-    if ($oldversion < 2017032400.22) {
+    if ($oldversion < 2017033100.02) {
 
         // Define table oauth2_endpoint to be created.
         $table = new xmldb_table('oauth2_endpoint');
@@ -2671,10 +2672,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017032400.22);
+        upgrade_main_savepoint(true, 2017033100.02);
     }
 
-    if ($oldversion < 2017032400.23) {
+    if ($oldversion < 2017033100.03) {
 
         // Define table oauth2_system_account to be created.
         $table = new xmldb_table('oauth2_system_account');
@@ -2700,10 +2701,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017032400.23);
+        upgrade_main_savepoint(true, 2017033100.03);
     }
 
-    if ($oldversion < 2017033100.01) {
+    if ($oldversion < 2017033100.04) {
 
         // Define table oauth2_user_field_mapping to be created.
         $table = new xmldb_table('oauth2_user_field_mapping');
@@ -2728,7 +2729,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017033100.01);
+        upgrade_main_savepoint(true, 2017033100.04);
     }
 
     return true;
