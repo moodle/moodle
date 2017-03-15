@@ -271,6 +271,7 @@ class repository_skydrive extends repository {
      *
      * @param string $q search query as expected by the Google API.
      * @param string $path parent path of the current files, will not be used for the query.
+     * @param string $parent Parent id.
      * @param int $page page.
      * @return array of files and folders.
      */
@@ -391,7 +392,7 @@ class repository_skydrive extends repository {
      * Get a file.
      *
      * @param string $reference reference of the file.
-     * @param string $file name to save the file to.
+     * @param string $filename filename to save the file to.
      * @return string JSON encoded array of information about the file.
      */
     public function get_file($reference, $filename = '') {
@@ -726,7 +727,7 @@ class repository_skydrive extends repository {
      *
      * @param \repository_skydrive\rest $client Authenticated client.
      * @param string $fileid The file we are updating.
-     * @param string $userid The userid of the writer account to add.
+     * @param string $useremail The user email of the writer account to add.
      * @return boolean
      */
     protected function add_writer_to_file(\repository_skydrive\rest $client, $fileid, $useremail) {
@@ -767,10 +768,12 @@ class repository_skydrive extends repository {
     }
 
     /**
-     * Get share info.
+     * Copy a shared file to a new folder.
      *
      * @param \repository_skydrive\rest $client Authenticated client.
      * @param string $sharetoken The share we are querying.
+     * @param string $newdrive Id of the drive to copy to.
+     * @param string $parentid Id of the folder to copy to.
      * @return stdClass
      */
     protected function copy_share(\repository_skydrive\rest $client, $sharetoken, $newdrive, $parentid) {
@@ -793,8 +796,8 @@ class repository_skydrive extends repository {
      *   Replace unsafe URL characters with an equivelent character; replace / with _ and + with -.
      *   Append u! to the beginning of the string.
      *
-     * @param string sharingUrl
-     * @return string sharingtoken
+     * @param string $shareurl
+     * @return string The sharing token
      */
     protected function get_share_token($shareurl) {
         return 'u!' . str_replace(['/', '+'], ['_', '-'], rtrim(base64_encode($shareurl), '='));

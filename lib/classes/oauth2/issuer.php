@@ -134,6 +134,8 @@ class issuer extends persistent {
 
     /**
      * Perform matching against the list of allowed login domains for this issuer.
+     *
+     * @param string $email The email to check.
      * @return boolean
      */
     public function is_valid_login_domain($email) {

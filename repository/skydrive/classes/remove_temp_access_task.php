@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Simple task to delete temporary permission records.
- * @package    core
+ * @package    repository_skydrive
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
