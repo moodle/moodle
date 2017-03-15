@@ -1244,3 +1244,4 @@ $string['mobile'] = 'Mobile';
 // Deprecated since Moodle 3.3.
 $string['loginpasswordautocomplete'] = 'Prevent password autocompletion on login form';
 $string['loginpasswordautocomplete_help'] = 'If enabled, users are not allowed to save their account password in their browser.';
+$string['unoconvwarning'] = 'The version of unoconv you have installed is not supported.';
