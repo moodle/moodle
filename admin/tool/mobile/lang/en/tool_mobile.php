@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['androidappid'] = 'Android app\'s unique identifier';
+$string['androidappid_desc'] = 'This setting may be left as default unless you have a custom Android app.';
 $string['autologinkeygenerationlockout'] = 'Auto-login key generation is blocked because of too many requests within an hour.';
 $string['autologinnotallowedtoadmins'] = 'Auto-login is not allowed for site admins.';
 $string['clickheretolaunchtheapp'] = 'Click here if the app does not open automatically.';
@@ -44,15 +46,15 @@ Mis calificaciones | https://someurl.xyz/local/mygrades/index.php | embedded | e
 Use inappbrowser when you want to open the link in a browser without leaving the app, use browser for opening the link in the device default browser and embedded if you want to display the link embedded in a new page in the app.';
 $string['disabledfeatures'] = 'Disabled features';
 $string['disabledfeatures_desc'] = 'Select here the features you want to disable in the Mobile app for your site. Please note that some features listed here could be already disabled via other site settings. You will have to log out and log in again in the app to see the changes.';
-$string['enablesmartappbanners'] = 'Enable Smart App Banners';
-$string['enablesmartappbanners_desc'] = 'This will display a banner promoting the Moodle Mobile app when visiting the site in Mobile Safari.';
+$string['enablesmartappbanners'] = 'Enable App Banners';
+$string['enablesmartappbanners_desc'] = 'This will display a banner promoting the Moodle Mobile app when visiting the site in a Mobile browser.';
 $string['forcedurlscheme'] = 'If you want to allow only your custom branded app to be opened via a browser window, then specify its URL scheme here; otherwise leave the field empty.';
 $string['forcedurlscheme_key'] = 'URL scheme';
 $string['forcelogout'] = 'Force log out';
 $string['forcelogout_desc'] = 'If enabled, the app option \'Change site\' is replaced by \'Log out\'. This results in the user being completely logged out. They must then re-enter their password the next time they wish to access the site.';
 $string['httpsrequired'] = 'HTTPS required';
 $string['invalidprivatetoken'] = 'Invalid private token. Token should not be empty or passed via GET parameter.';
-$string['iosappid'] = 'App\'s unique identifier';
+$string['iosappid'] = 'iOS app\'s unique identifier';
 $string['iosappid_desc'] = 'This setting may be left as default unless you have a custom iOS app.';
 $string['loginintheapp'] = 'Via the app';
 $string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
@@ -65,7 +67,7 @@ $string['mobilecssurl'] = 'CSS';
 $string['mobilefeatures'] = 'Mobile features';
 $string['mobilesettings'] = 'Mobile settings';
 $string['pluginname'] = 'Moodle Mobile tools';
-$string['smartappbanners'] = 'Smart App Banners (iOS only)';
+$string['smartappbanners'] = 'App Banners';
 $string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';
 $string['remoteaddons'] = 'Remote add-ons';
 $string['typeoflogin'] = 'Type of login';
