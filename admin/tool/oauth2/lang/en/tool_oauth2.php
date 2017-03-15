@@ -23,6 +23,8 @@
  */
 
 $string['pluginname'] = 'OAuth 2 Services';
+$string['discovered_help'] = 'Discovered means that the OAuth2 endpoints could be automatically determined from the base url for the OAuth service. Not all services are required to be "discovered", but if they are not, then the endpoints and user mapping information will need to be entered manually.';
+$string['systemaccountconnected_help'] = 'System accounts are used to provide advanced functionality for plugins. They are not required for login functionality only, but other plugins using the OAuth service may offer a reduced set of features if the system account has not been connected. For example repositories cannot support "controlled links" without a system account to perform file operations.';
 $string['editissuer'] = 'Edit identity issuer: {$a}';
 $string['editendpoint'] = 'Edit endpoint: {$a->endpoint} for issuer {$a->issuer}';
 $string['endpointsforissuer'] = 'Endpoints for issuer: {$a}';

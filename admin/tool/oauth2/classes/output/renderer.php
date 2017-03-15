@@ -110,6 +110,8 @@ class renderer extends plugin_renderer_base {
                     $discovered = '-';
                 }
             }
+            $discovered .= ' ' . $OUTPUT->help_icon('discovered', 'tool_oauth2');
+
             $discoverystatuscell = new html_table_cell($discovered);
 
             // Connected.
@@ -128,6 +130,7 @@ class renderer extends plugin_renderer_base {
                 $authlink = html_writer::link($authurl, $icon);
                 $systemauth .= ' ' . $authlink;
             }
+            $systemauth .= ' ' . $OUTPUT->help_icon('systemaccountconnected', 'tool_oauth2');
 
             $systemauthstatuscell = new html_table_cell($systemauth);
 
