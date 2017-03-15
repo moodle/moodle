@@ -64,11 +64,7 @@ $canmanage = $lesson->can_manage();
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
-$reviewmode = false;
-$userhasgrade = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
-if ($userhasgrade && !$lesson->retake) {
-    $reviewmode = true;
-}
+$reviewmode = $lesson->is_in_review_mode();
 
 if ($lesson->usepassword && !empty($userpassword)) {
     require_sesskey();
@@ -97,13 +93,17 @@ if ($pageid == LESSON_UNSEENBRANCHPAGE) {
     $pageid = lesson_unseen_question_jump($lesson, $USER->id, $pageid);
 }
 
+// To avoid multiple calls, store the magic property firstpage.
+$lessonfirstpage = $lesson->firstpage;
+$lessonfirstpageid = $lessonfirstpage ? $lessonfirstpage->id : false;
+
 // display individual pages and their sets of answers
 // if pageid is EOL then the end of the lesson has been reached
 // for flow, changed to simple echo for flow styles, michaelp, moved lesson name and page title down
 $attemptflag = false;
 if (empty($pageid)) {
     // make sure there are pages to view
-    if (!$DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
+    if (!$lessonfirstpageid) {
         if (!$canmanage) {
             $lesson->add_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
         } else {
@@ -116,7 +116,7 @@ if (empty($pageid)) {
     }
 
     // if no pageid given see if the lesson has been started
-    $retries = $DB->count_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $USER->id));
+    $retries = $lesson->count_user_retries($USER->id);
     if ($retries > 0) {
         $attemptflag = true;
     }
@@ -125,57 +125,12 @@ if (empty($pageid)) {
         unset($USER->modattempts[$lesson->id]);  // if no pageid, then student is NOT reviewing
     }
 
-    // If there are any questions that have been answered correctly (or not) in this attempt.
-    $allattempts = $lesson->get_attempts($retries);
-    if (!empty($allattempts)) {
-        $attempt = end($allattempts);
-        $attemptpage = $lesson->load_page($attempt->pageid);
-        $jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
-        // convert the jumpto to a proper page id
-        if ($jumpto == 0) {
-            // Check if a question has been incorrectly answered AND no more attempts at it are left.
-            $nattempts = $lesson->get_attempts($attempt->retry, false, $attempt->pageid, $USER->id);
-            if (count($nattempts) >= $lesson->maxattempts) {
-                $lastpageseen = $lesson->get_next_page($attemptpage->nextpageid);
-            } else {
-                $lastpageseen = $attempt->pageid;
-            }
-        } elseif ($jumpto == LESSON_NEXTPAGE) {
-            $lastpageseen = $lesson->get_next_page($attemptpage->nextpageid);
-        } else if ($jumpto == LESSON_CLUSTERJUMP) {
-            $lastpageseen = $lesson->cluster_jump($attempt->pageid);
-        } else {
-            $lastpageseen = $jumpto;
-        }
-    }
+    $lastpageseen = $lesson->get_last_page_seen($retries);
 
-    if ($branchtables = $DB->get_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries), 'timeseen DESC')) {
-        // in here, user has viewed a branch table
-        $lastbranchtable = current($branchtables);
-        if (count($allattempts) > 0) {
-            if ($lastbranchtable->timeseen > $attempt->timeseen) {
-                // This branch table was viewed more recently than the question page.
-                if (!empty($lastbranchtable->nextpageid)) {
-                    $lastpageseen = $lastbranchtable->nextpageid;
-                } else {
-                    // Next page ID did not exist prior to MDL-34006.
-                    $lastpageseen = $lastbranchtable->pageid;
-                }
-            }
-        } else {
-            // Has not answered any questions but has viewed a branch table.
-            if (!empty($lastbranchtable->nextpageid)) {
-                $lastpageseen = $lastbranchtable->nextpageid;
-            } else {
-                // Next page ID did not exist prior to MDL-34006.
-                $lastpageseen = $lastbranchtable->pageid;
-            }
-        }
-    }
     // Check to see if end of lesson was reached.
-    if ((isset($lastpageseen) && ($lastpageseen != LESSON_EOL))) {
-        if (($DB->count_records('lesson_attempts', array('lessonid' => $lesson->id, 'userid' => $USER->id, 'retry' => $retries)) > 0)
-                || $DB->count_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries)) > 0) {
+    if (($lastpageseen !== false && ($lastpageseen != LESSON_EOL))) {
+        // End not reached. Check if the user left.
+        if ($lesson->left_during_timed_session($retries)) {
 
             echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('leftduringtimedsession', 'lesson'));
             if ($lesson->timelimit) {
@@ -212,7 +167,7 @@ if (empty($pageid)) {
         }
     }
     // start at the first page
-    if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
+    if (!$pageid = $lessonfirstpageid) {
         echo $lessonoutput->header($lesson, $cm, 'view', '', null);
         // Lesson currently has no content. A message for display has been prepared and will be displayed by the header method
         // of the lesson renderer.
@@ -326,7 +281,7 @@ if ($pageid != LESSON_EOL) {
         // this is for modattempts option.  Find the users previous answer to this page,
         //   and then display it below in answer processing
         if (isset($USER->modattempts[$lesson->id])) {
-            $retries = $DB->count_records('lesson_grades', array("lessonid"=>$lesson->id, "userid"=>$USER->id));
+            $retries = $lesson->count_user_retries($USER->id);
             if (!$attempts = $lesson->get_attempts($retries-1, false, $page->id)) {
                 print_error('cannotfindpreattempt', 'lesson');
             }

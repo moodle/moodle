@@ -2255,6 +2255,108 @@ class lesson extends lesson_base {
         }
         return false;
     }
+
+    /**
+     * Check if the lesson is in review mode. (The user already finished it and retakes are not allowed).
+     *
+     * @return bool true if is in review mode
+     * @since  Moodle 3.3
+     */
+    public function is_in_review_mode() {
+        global $DB, $USER;
+
+        $userhasgrade = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+        if ($userhasgrade && !$this->properties->retake) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return the last page the current user saw.
+     *
+     * @param int $retriescount the number of retries for the lesson (the last retry number).
+     * @return mixed false if the user didn't see the lesson or the last page id
+     */
+    public function get_last_page_seen($retriescount) {
+        global $DB, $USER;
+
+        $lastpageseen = false;
+        $allattempts = $this->get_attempts($retriescount);
+        if (!empty($allattempts)) {
+            $attempt = end($allattempts);
+            $attemptpage = $this->load_page($attempt->pageid);
+            $jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
+            // Convert the jumpto to a proper page id.
+            if ($jumpto == 0) {
+                // Check if a question has been incorrectly answered AND no more attempts at it are left.
+                $nattempts = $this->get_attempts($attempt->retry, false, $attempt->pageid, $USER->id);
+                if (count($nattempts) >= $this->properties->maxattempts) {
+                    $lastpageseen = $this->get_next_page($attemptpage->nextpageid);
+                } else {
+                    $lastpageseen = $attempt->pageid;
+                }
+            } else if ($jumpto == LESSON_NEXTPAGE) {
+                $lastpageseen = $this->get_next_page($attemptpage->nextpageid);
+            } else if ($jumpto == LESSON_CLUSTERJUMP) {
+                $lastpageseen = $this->cluster_jump($attempt->pageid);
+            } else {
+                $lastpageseen = $jumpto;
+            }
+        }
+
+        if ($branchtables = $DB->get_records('lesson_branch', array("lessonid" => $this->properties->id, "userid" => $USER->id,
+                "retry" => $retriescount), 'timeseen DESC')) {
+            // In here, user has viewed a branch table.
+            $lastbranchtable = current($branchtables);
+            if (count($allattempts) > 0) {
+                if ($lastbranchtable->timeseen > $attempt->timeseen) {
+                    // This branch table was viewed more recently than the question page.
+                    if (!empty($lastbranchtable->nextpageid)) {
+                        $lastpageseen = $lastbranchtable->nextpageid;
+                    } else {
+                        // Next page ID did not exist prior to MDL-34006.
+                        $lastpageseen = $lastbranchtable->pageid;
+                    }
+                }
+            } else {
+                // Has not answered any questions but has viewed a branch table.
+                if (!empty($lastbranchtable->nextpageid)) {
+                    $lastpageseen = $lastbranchtable->nextpageid;
+                } else {
+                    // Next page ID did not exist prior to MDL-34006.
+                    $lastpageseen = $lastbranchtable->pageid;
+                }
+            }
+        }
+        return $lastpageseen;
+    }
+
+    /**
+     * Return the number of retries in a lesson for a given user.
+     *
+     * @param  int $userid the user id
+     * @return int the retries count
+     * @since  Moodle 3.3
+     */
+    public function count_user_retries($userid) {
+        global $DB;
+
+        return $DB->count_records('lesson_grades', array("lessonid" => $this->properties->id, "userid" => $userid));
+    }
+
+    /**
+     * Check if a user left a timed session.
+     *
+     * @param int $retriescount the number of retries for the lesson (the last retry number).
+     * @return true if the user left the timed session
+     */
+    public function left_during_timed_session($retriescount) {
+        global $DB, $USER;
+
+        $conditions = array('lessonid' => $this->properties->id, 'userid' => $USER->id, 'retry' => $retriescount);
+        return $DB->count_records('lesson_attempts', $conditions) > 0 || $DB->count_records('lesson_branch', $conditions) > 0;
+    }
 }
 
 

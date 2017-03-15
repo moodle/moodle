@@ -378,7 +378,7 @@ switch ($mode) {
             $essaylinks = array();
 
             // Number of attempts on the lesson
-            $attempts = $DB->count_records('lesson_grades', array('userid'=>$userid, 'lessonid'=>$lesson->id));
+            $attempts = $lesson->count_user_retries($userid);
 
             // Go through each essay page
             foreach ($studentessays[$userid] as $page => $tries) {

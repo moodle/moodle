@@ -71,11 +71,7 @@ if (!$canmanage) {
 // record answer (if necessary) and show response (if none say if answer is correct or not)
 $page = $lesson->load_page(required_param('pageid', PARAM_INT));
 
-$userhasgrade = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
-$reviewmode = false;
-if ($userhasgrade && !$lesson->retake) {
-    $reviewmode = true;
-}
+$reviewmode = $lesson->is_in_review_mode();
 
 // Check the page has answers [MDL-25632]
 if (count($page->answers) > 0) {

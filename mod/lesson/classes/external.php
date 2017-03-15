@@ -209,4 +209,211 @@ class mod_lesson_external extends external_api {
             )
         );
     }
+
+    /**
+     * Utility function for validating a lesson.
+     *
+     * @param int $lessonid lesson instance id
+     * @return array array containing the lesson, course, context and course module objects
+     * @since  Moodle 3.3
+     */
+    protected static function validate_lesson($lessonid) {
+        global $DB, $USER;
+
+        // Request and permission validation.
+        $lesson = $DB->get_record('lesson', array('id' => $lessonid), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($lesson, 'lesson');
+
+        $lesson = new lesson($lesson, $cm);
+        $lesson->update_effective_access($USER->id);
+
+        $context = $lesson->context;
+        self::validate_context($context);
+
+        return array($lesson, $course, $cm, $context);
+    }
+
+    /**
+     * Validates a new attempt.
+     *
+     * @param  lesson  $lesson lesson instance
+     * @param  array   $params request parameters
+     * @param  boolean $return whether to return the errors or throw exceptions
+     * @return array          the errors (if return set to true)
+     * @since  Moodle 3.3
+     */
+    protected static function validate_attempt(lesson $lesson, $params, $return = false) {
+        global $USER;
+
+        $errors = array();
+
+        // Avoid checkings for managers.
+        if ($lesson->can_manage()) {
+            return [];
+        }
+
+        // Dead line.
+        if ($timerestriction = $lesson->get_time_restriction_status()) {
+            $error = ["$timerestriction->reason" => userdate($timerestriction->time)];
+            if (!$return) {
+                throw new moodle_exception(key($error), 'lesson', '', current($error));
+            }
+            $errors[key($error)] = current($error);
+        }
+
+        // Password protected lesson code.
+        if ($passwordrestriction = $lesson->get_password_restriction_status($params['password'])) {
+            $error = ["passwordprotectedlesson" => external_format_string($lesson->name, $lesson->context->id)];
+            if (!$return) {
+                throw new moodle_exception(key($error), 'lesson', '', current($error));
+            }
+            $errors[key($error)] = current($error);
+        }
+
+        // Check for dependencies.
+        if ($dependenciesrestriction = $lesson->get_dependencies_restriction_status()) {
+            $errorhtmllist = implode(get_string('and', 'lesson') . ', ', $dependenciesrestriction->errors);
+            $error = ["completethefollowingconditions" => $dependenciesrestriction->dependentlesson->name . $errorhtmllist];
+            if (!$return) {
+                throw new moodle_exception(key($error), 'lesson', '', current($error));
+            }
+            $errors[key($error)] = current($error);
+        }
+
+        // To check only when no page is set (starting or continuing a lesson).
+        if (empty($params['pageid'])) {
+            // To avoid multiple calls, store the magic property firstpage.
+            $lessonfirstpage = $lesson->firstpage;
+            $lessonfirstpageid = $lessonfirstpage ? $lessonfirstpage->id : false;
+
+            // Check if the lesson does not have pages.
+            if (!$lessonfirstpageid) {
+                $error = ["lessonnotready2" => null];
+                if (!$return) {
+                    throw new moodle_exception(key($error), 'lesson');
+                }
+                $errors[key($error)] = current($error);
+            }
+
+            // Get the number of retries (also referenced as attempts), and the last page seen.
+            $attemptscount = $lesson->count_user_retries($USER->id);
+            $lastpageseen = $lesson->get_last_page_seen($attemptscount);
+
+            // Check if the user left a timed session with no retakes.
+            if ($lastpageseen !== false && $lastpageseen != LESSON_EOL) {
+                if ($lesson->left_during_timed_session($attemptscount) && $lesson->timelimit && !$lesson->retake) {
+                    $error = ["leftduringtimednoretake" => null];
+                    if (!$return) {
+                        throw new moodle_exception(key($error), 'lesson');
+                    }
+                    $errors[key($error)] = current($error);
+                }
+            } else if ($attemptscount > 0 && !$lesson->retake) {
+                // The user finished the lesson and no retakes are allowed.
+                $error = ["noretake" => null];
+                if (!$return) {
+                    throw new moodle_exception(key($error), 'lesson');
+                }
+                $errors[key($error)] = current($error);
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Describes the parameters for get_lesson_access_information.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_lesson_access_information_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id')
+            )
+        );
+    }
+
+    /**
+     * Return access information for a given lesson.
+     *
+     * @param int $lessonid lesson instance id
+     * @return array of warnings and the access information
+     * @since Moodle 3.3
+     * @throws  moodle_exception
+     */
+    public static function get_lesson_access_information($lessonid) {
+        global $DB, $USER;
+
+        $warnings = array();
+
+        $params = array(
+            'lessonid' => $lessonid
+        );
+        $params = self::validate_parameters(self::get_lesson_access_information_parameters(), $params);
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+
+        $result = array();
+        // Capabilities first.
+        $result['canmanage'] = $lesson->can_manage();
+        $result['cangrade'] = has_capability('mod/lesson:grade', $context);
+        $result['canviewreports'] = has_capability('mod/lesson:viewreports', $context);
+
+        // Status information.
+        $result['reviewmode'] = $lesson->is_in_review_mode();
+        $result['attemptscount'] = $lesson->count_user_retries($USER->id);
+        $lastpageseen = $lesson->get_last_page_seen($result['attemptscount']);
+        $result['lastpageseen'] = ($lastpageseen !== false) ? $lastpageseen : 0;
+        $result['leftduringtimedsession'] = $lesson->left_during_timed_session($result['attemptscount']);
+        // To avoid multiple calls, store the magic property firstpage.
+        $lessonfirstpage = $lesson->firstpage;
+        $result['firstpageid'] = $lessonfirstpage ? $lessonfirstpage->id : 0;
+
+        // Access restrictions now, we emulate a new attempt access to get the possible warnings.
+        $result['preventaccessreasons'] = [];
+        $validationerrors = self::validate_attempt($lesson, ['password' => ''], true);
+        foreach ($validationerrors as $reason => $data) {
+            $result['preventaccessreasons'][] = [
+                'reason' => $reason,
+                'data' => $data,
+                'message' => get_string($reason, 'lesson', $data),
+            ];
+        }
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_lesson_access_information return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_lesson_access_information_returns() {
+        return new external_single_structure(
+            array(
+                'canmanage' => new external_value(PARAM_BOOL, 'Whether the user can manage the lesson or not.'),
+                'cangrade' => new external_value(PARAM_BOOL, 'Whether the user can grade the lesson or not.'),
+                'canviewreports' => new external_value(PARAM_BOOL, 'Whether the user can view the lesson reports or not.'),
+                'reviewmode' => new external_value(PARAM_BOOL, 'Whether the lesson is in review mode for the current user.'),
+                'attemptscount' => new external_value(PARAM_INT, 'The number of attempts done by the user.'),
+                'lastpageseen' => new external_value(PARAM_INT, 'The last page seen id.'),
+                'leftduringtimedsession' => new external_value(PARAM_BOOL, 'Whether the user left during a timed session.'),
+                'firstpageid' => new external_value(PARAM_INT, 'The lesson first page id.'),
+                'preventaccessreasons' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'reason' => new external_value(PARAM_ALPHANUMEXT, 'Reason lang string code'),
+                            'data' => new external_value(PARAM_RAW, 'Additional data'),
+                            'message' => new external_value(PARAM_RAW, 'Complete html message'),
+                        ),
+                        'The reasons why the user cannot attempt the lesson'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

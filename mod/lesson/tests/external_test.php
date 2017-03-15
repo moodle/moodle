@@ -32,6 +32,30 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 
 /**
+ * Silly class to access mod_lesson_external internal methods.
+ *
+ * @package mod_lesson
+ * @copyright 2017 Juan Leyva <juan@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since  Moodle 3.3
+ */
+class testable_mod_lesson_external extends mod_lesson_external {
+
+    /**
+     * Validates a new attempt.
+     *
+     * @param  lesson  $lesson lesson instance
+     * @param  array   $params request parameters
+     * @param  boolean $return whether to return the errors or throw exceptions
+     * @return [array          the errors (if return set to true)
+     * @since  Moodle 3.3
+     */
+    public static function validate_attempt(lesson $lesson, $params, $return = false) {
+        return parent::validate_attempt($lesson, $params, $return);
+    }
+}
+
+/**
  * Lesson module external functions tests
  *
  * @package    mod_lesson
@@ -53,6 +77,9 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
         $this->lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $this->course->id));
+        $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        $this->page1 = $lessongenerator->create_content($this->lesson);
+        $this->page2 = $lessongenerator->create_question_truefalse($this->lesson);
         $this->context = context_module::instance($this->lesson->cmid);
         $this->cm = get_coursemodule_from_instance('lesson', $this->lesson->id);
 
@@ -190,6 +217,126 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $lessons = mod_lesson_external::get_lessons_by_courses(array($this->course->id));
         $lessons = external_api::clean_returnvalue(mod_lesson_external::get_lessons_by_courses_returns(), $lessons);
         $this->assertFalse(isset($lessons['lessons'][0]['intro']));
+    }
+
+    /**
+     * Test the validate_attempt function.
+     */
+    public function test_validate_attempt() {
+        global $DB;
+
+        $this->setUser($this->student);
+        // Test deadline.
+        $oldtime = time() - DAYSECS;
+        $DB->set_field('lesson', 'deadline', $oldtime, array('id' => $this->lesson->id));
+
+        $lesson = new lesson($DB->get_record('lesson', array('id' => $this->lesson->id)));
+        $validation = testable_mod_lesson_external::validate_attempt($lesson, ['password' => ''], true);
+        $this->assertEquals('lessonclosed', key($validation));
+        $this->assertCount(1, $validation);
+
+        // Test not available yet.
+        $futuretime = time() + DAYSECS;
+        $DB->set_field('lesson', 'deadline', 0, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'available', $futuretime, array('id' => $this->lesson->id));
+
+        $lesson = new lesson($DB->get_record('lesson', array('id' => $this->lesson->id)));
+        $validation = testable_mod_lesson_external::validate_attempt($lesson, ['password' => ''], true);
+        $this->assertEquals('lessonopen', key($validation));
+        $this->assertCount(1, $validation);
+
+        // Test password.
+        $DB->set_field('lesson', 'deadline', 0, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'available', 0, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'usepassword', 1, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'password', 'abc', array('id' => $this->lesson->id));
+
+        $lesson = new lesson($DB->get_record('lesson', array('id' => $this->lesson->id)));
+        $validation = testable_mod_lesson_external::validate_attempt($lesson, ['password' => ''], true);
+        $this->assertEquals('passwordprotectedlesson', key($validation));
+        $this->assertCount(1, $validation);
+
+        $lesson = new lesson($DB->get_record('lesson', array('id' => $this->lesson->id)));
+        $validation = testable_mod_lesson_external::validate_attempt($lesson, ['password' => 'abc'], true);
+        $this->assertCount(0, $validation);
+
+        // Dependencies.
+        $record = new stdClass();
+        $record->course = $this->course->id;
+        $lesson2 = self::getDataGenerator()->create_module('lesson', $record);
+        $DB->set_field('lesson', 'usepassword', 0, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'password', '', array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'dependency', $lesson->id, array('id' => $this->lesson->id));
+
+        $lesson = new lesson($DB->get_record('lesson', array('id' => $this->lesson->id)));
+        $lesson->conditions = serialize((object) ['completed' => true, 'timespent' => 0, 'gradebetterthan' => 0]);
+        $validation = testable_mod_lesson_external::validate_attempt($lesson, ['password' => ''], true);
+        $this->assertEquals('completethefollowingconditions', key($validation));
+        $this->assertCount(1, $validation);
+
+        // Lesson withou pages.
+        $lesson = new lesson($lesson2);
+        $validation = testable_mod_lesson_external::validate_attempt($lesson, ['password' => ''], true);
+        $this->assertEquals('lessonnotready2', key($validation));
+        $this->assertCount(1, $validation);
+
+        // Test retakes.
+        $DB->set_field('lesson', 'dependency', 0, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'retake', 0, array('id' => $this->lesson->id));
+        $record = [
+            'lessonid' => $this->lesson->id,
+            'userid' => $this->student->id,
+            'grade' => 100,
+            'late' => 0,
+            'completed' => 1,
+        ];
+        $DB->insert_record('lesson_grades', (object) $record);
+        $lesson = new lesson($DB->get_record('lesson', array('id' => $this->lesson->id)));
+        $validation = testable_mod_lesson_external::validate_attempt($lesson, ['password' => ''], true);
+        $this->assertEquals('noretake', key($validation));
+        $this->assertCount(1, $validation);
+    }
+
+    /**
+     * Test the get_lesson_access_information function.
+     */
+    public function test_get_lesson_access_information() {
+        global $DB;
+
+        $this->setUser($this->student);
+        // Add previous attempt.
+        $record = [
+            'lessonid' => $this->lesson->id,
+            'userid' => $this->student->id,
+            'grade' => 100,
+            'late' => 0,
+            'completed' => 1,
+        ];
+        $DB->insert_record('lesson_grades', (object) $record);
+
+        $result = mod_lesson_external::get_lesson_access_information($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_access_information_returns(), $result);
+        $this->assertFalse($result['canmanage']);
+        $this->assertFalse($result['cangrade']);
+        $this->assertFalse($result['canviewreports']);
+
+        $this->assertFalse($result['leftduringtimedsession']);
+        $this->assertEquals(1, $result['reviewmode']);
+        $this->assertEquals(1, $result['attemptscount']);
+        $this->assertEquals(0, $result['lastpageseen']);
+        $this->assertEquals($this->page2->id, $result['firstpageid']);
+        $this->assertCount(1, $result['preventaccessreasons']);
+        $this->assertEquals('noretake', $result['preventaccessreasons'][0]['reason']);
+        $this->assertEquals(null, $result['preventaccessreasons'][0]['data']);
+        $this->assertEquals(get_string('noretake', 'lesson'), $result['preventaccessreasons'][0]['message']);
+
+        // Now check permissions as admin.
+        $this->setAdminUser();
+        $result = mod_lesson_external::get_lesson_access_information($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_access_information_returns(), $result);
+        $this->assertTrue($result['canmanage']);
+        $this->assertTrue($result['cangrade']);
+        $this->assertTrue($result['canviewreports']);
     }
 
 }
