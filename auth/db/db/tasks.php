@@ -15,15 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- *
- * @package    auth_db
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Task definition for auth_db.
+ * @author    Guy Thomas <gthomas@moodlerooms.com>
+ * @copyright Copyright (c) 2017 Blackboard Inc.
+ * @package   auth_db
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017022200;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016112900;        // Requires this Moodle version
-$plugin->component = 'auth_db';         // Full name of the plugin (used for diagnostics)
+$tasks = array(
+    array(
+        'classname' => '\auth_db\task\sync_users',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => 'R',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 1
+    )
+);

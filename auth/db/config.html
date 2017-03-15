@@ -46,6 +46,9 @@
     if (!isset($config->removeuser)) {
         $config->removeuser = AUTH_REMOVEUSER_KEEP;
     }
+    if (!isset($config->updateusers)) {
+        $config->updateusers = 0;
+    }
 
     $yesno = array( get_string('no'), get_string('yes') );
 
@@ -265,6 +268,16 @@
     </td>
     <td>
     <?php print_string('auth_remove_user','auth') ?>
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><label for="menuupdateusers"><?php print_string('auth_dbupdateusers', 'auth_db') ?></label></td>
+    <td>
+        <?php echo html_writer::select($yesno, 'updateusers', $config->updateusers, false); ?>
+    </td>
+    <td>
+        <?php print_string('auth_dbupdateusers_description','auth_db') ?>
     </td>
 </tr>
 
