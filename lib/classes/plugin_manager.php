@@ -1757,7 +1757,7 @@ class core_plugin_manager {
             ),
 
             'fileconverter' => array(
-                'unoconv'
+                'unoconv', 'googledrive'
             ),
 
             'editor' => array(
