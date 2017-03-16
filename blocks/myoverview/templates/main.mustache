@@ -23,32 +23,27 @@
     {}
 }}
 
-<div id="block-myoverview-{{uniqid}}" class="block-myoverview container-fluid" data-region="myoverview">
-    <div class="row">
-        <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" href="#myoverview_timeline_view" role="tab" data-toggle="tab">
-                    {{#str}} timeline, block_myoverview {{/str}}
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#myoverview_courses_view" role="tab" data-toggle="tab">
-                    {{#str}} courses {{/str}}
-                </a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="row">
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane fade in active" id="myoverview_timeline_view">
-                {{> block_myoverview/timeline-view }}
-            </div>
-            <div role="tabpanel" class="tab-pane fade" id="myoverview_courses_view">
-                {{#coursesview}}
-                    {{> block_myoverview/courses-view }}
-                {{/coursesview}}
-            </div>
+<div id="block-myoverview-{{uniqid}}" class="block-myoverview" data-region="myoverview">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" href="#myoverview_timeline_view" role="tab" data-toggle="tab">
+                {{#str}} timeline, block_myoverview {{/str}}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#myoverview_courses_view" role="tab" data-toggle="tab">
+                {{#str}} courses {{/str}}
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane fade in active" id="myoverview_timeline_view">
+            {{> block_myoverview/timeline-view }}
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="myoverview_courses_view">
+            {{#coursesview}}
+                {{> block_myoverview/courses-view }}
+            {{/coursesview}}
         </div>
     </div>
 </div>
