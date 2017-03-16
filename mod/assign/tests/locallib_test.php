@@ -1169,10 +1169,12 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $data->grade = '50.0';
 
         // This student will not receive notification.
+        $data->sendstudentnotifications = 1;
         $data->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE;
         $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
 
         // This student will receive notification.
+        $data->sendstudentnotifications = 1;
         $data->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_RELEASED;
         $assign->testable_apply_grade_to_user($data, $this->students[1]->id, 0);
 
