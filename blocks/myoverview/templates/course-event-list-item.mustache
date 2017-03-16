@@ -39,20 +39,20 @@
 }}
 <li class="list-group-item event-list-item" data-region="event-list-item">
     <div class="row">
-        <div class="col-xs-12 col-lg-7">
+        <div class="col-lg-7 col-xl-8">
             <div class="d-inline-block icon-large event-icon">
                 {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
             </div>
             <div class="d-inline-block event-name-container">
                 <a class="event-name text-truncate" href="{{{url}}}">{{name}}</a>
-                <p class="text-muted text-truncate m-b-0">
+                <p class="small text-muted text-truncate m-b-0">
                     {{#userdate}} {{timesort}}, {{#str}} strftimerecent {{/str}} {{/userdate}}
                 </p>
             </div>
         </div>
-        <div class="hidden-md-down col-lg-5 text-truncate">
+        <div class="hidden-md-down col-lg-5 col-xl-4 text-truncate">
             {{#action.actionable}}
-                <a class="m-r-1" href="{{{action.url}}}">{{action.name}}</a>
+                <a href="{{{action.url}}}">{{action.name}}</a>
                 {{#action.itemcount}}
                     <span class="tag tag-pill tag-default">{{.}}</span>
                 {{/action.itemcount}}
