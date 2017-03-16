@@ -1744,6 +1744,7 @@ abstract class enrol_plugin {
         }
 
         $ue->modifierid = $USER->id;
+        $ue->timemodified = time();
         $DB->update_record('user_enrolments', $ue);
         context_course::instance($instance->courseid)->mark_dirty(); // reset enrol caches
 
