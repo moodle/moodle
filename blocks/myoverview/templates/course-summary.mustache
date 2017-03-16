@@ -28,20 +28,32 @@
         "summary": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
     }
 }}
-<div class="d-inline-block m-x-1">
-    <div class="course-info-container" id="course-info-container-{{id}}">
-        <div class="row m-b-1">
-            {{> block_myoverview/progress-chart}}
-        </div>
-        <div class="row m-b-1">
-            <h3><a href="{{viewurl}}">{{fullnamedisplay}}</a></h3>
-        </div>
-        <div class="row text-muted m-b-1">
-            {{#userdate}}{{startdate}}, {{#str}}strftimedate, langconfig{{/str}}{{/userdate}} -
-            {{#userdate}}{{enddate}}, {{#str}}strftimedate, langconfig{{/str}}{{/userdate}}
-        </div>
-        <div class="row text-muted">
-            {{#shortentext}} 140, {{{summary}}}{{/shortentext}}
+<div class="course-info-container" id="course-info-container-{{id}}">
+    <div class="hidden-sm-up">
+        {{> block_myoverview/progress-chart}}
+        <h4 class="h5"><a href="{{viewurl}}">{{fullnamedisplay}}</a></h4>
+    </div>
+    <div class="hidden-sm-down">
+        {{> block_myoverview/progress-chart}}
+        <h4 class="h5"><a href="{{viewurl}}">{{fullnamedisplay}}</a></h4>
+    </div>
+    <div class="hidden-xs-down hidden-md-up">
+        <div class="media">
+            <div class="media-left">
+                <div class="media-object">
+                    {{> block_myoverview/progress-chart}}
+                </div>
+            </div>
+            <div class="media-body">
+                <h4 class="h5"><a href="{{viewurl}}">{{fullnamedisplay}}</a></h4>
+            </div>
         </div>
     </div>
+    <p class="text-muted">
+        {{#userdate}}{{startdate}}, {{#str}}strftimedate, langconfig{{/str}}{{/userdate}} -
+        {{#userdate}}{{enddate}}, {{#str}}strftimedate, langconfig{{/str}}{{/userdate}}
+    </p>
+    <p class="text-muted">
+        {{#shortentext}} 140, {{{summary}}}{{/shortentext}}
+    </p>
 </div>
