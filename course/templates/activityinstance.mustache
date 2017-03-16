@@ -38,7 +38,8 @@
         <div class="mod-indent-outer"></div>
         <div>
                 {{#canmanage}}
-                <input type="checkbox" class="m-r-1" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{modname}}{{/str}}">
+                <label class="accesshide" for="selectactivity_{{cmid}}">Select {{modname}}</label>
+                <input type="checkbox" id="selectactivity_{{cmid}}" class="m-r-1" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{modname}}{{/str}}">
                 {{/canmanage}}
                 <a href="{{url}}">
                 <img src="{{icon}}" class="iconlarge activityicon" alt=" " role="presentation" />
@@ -46,7 +47,7 @@
                 </a>
         </div>
     </div>
-    <div class="activity-completionstatus col-sm-6">
+    <div class="activity-completionstatus col-sm-6" id="completionstatus_{{cmid}}">
         <div class="col-sm-1">
             {{#completionstatus.icon}}
                 <img src="{{completionstatus.icon}}" class="m-r-2" alt=" " role="presentation">

@@ -607,4 +607,31 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
 
         return calendar_event::create($event);
     }
+
+    /**
+     * Test the callback responsible for returning the completion rule descriptions.
+     * This function should work given either an instance of the module (cm_info), such as when checking the active rules,
+     * or if passed a stdClass of similar structure, such as when checking the the default completion settings for a mod type.
+     */
+    public function test_mod_assign_completion_get_active_rule_descriptions() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Two activities, both with automatic completion. One has the 'completionsubmit' rule, one doesn't.
+        $cm1 = $this->create_instance(['completion' => '2', 'completionsubmit' => '1'])->get_course_module();
+        $cm2 = $this->create_instance(['completion' => '2', 'completionsubmit' => '0'])->get_course_module();
+
+        // Data for the stdClass input type.
+        // This type of input would occur when checking the default completion rules for an activity type, where we don't have
+        // any access to cm_info, rather the input is a stdClass containing completion and customdata attributes, just like cm_info.
+        $moddefaults = new stdClass();
+        $moddefaults->customdata = ['customcompletionrules' => ['completionsubmit' => '1']];
+        $moddefaults->completion = 2;
+
+        $activeruledescriptions = [get_string('completionsubmit', 'assign')];
+        $this->assertEquals(mod_assign_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
+        $this->assertEquals(mod_assign_get_completion_active_rule_descriptions($cm2), []);
+        $this->assertEquals(mod_assign_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
+        $this->assertEquals(mod_assign_get_completion_active_rule_descriptions(new stdClass()), []);
+    }
 }

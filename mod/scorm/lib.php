@@ -1580,7 +1580,6 @@ function mod_scorm_get_fontawesome_icon_map() {
 }
 
 /**
-<<<<<<< HEAD
  * This standard function will check all instances of this module
  * and make sure there are up-to-date events created for each of them.
  * If courseid = 0, then every scorm event in the site is checked, else
