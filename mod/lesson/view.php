@@ -26,7 +26,6 @@
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot.'/mod/lesson/locallib.php');
 require_once($CFG->dirroot.'/mod/lesson/view_form.php');
-require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/grade/constants.php');
 
 $id      = required_param('id', PARAM_INT);             // Course Module ID
@@ -37,7 +36,7 @@ $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 
 $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST), $cm);
+$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST), $cm, $course);
 
 require_login($course, false, $cm);
 
@@ -47,10 +46,6 @@ if ($backtocourse) {
 
 // Apply overrides.
 $lesson->update_effective_access($USER->id);
-
-// Mark as viewed
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
 
 $url = new moodle_url('/mod/lesson/view.php', array('id'=>$id));
 if ($pageid !== null) {
@@ -196,14 +191,7 @@ if ($pageid != LESSON_EOL) {
         $page = $lesson->load_page($newpageid);
     }
 
-    // Trigger module viewed event.
-    $event = \mod_lesson\event\course_module_viewed::create(array(
-        'objectid' => $lesson->id,
-        'context' => $context
-    ));
-    $event->add_record_snapshot('course_modules', $cm);
-    $event->add_record_snapshot('course', $course);
-    $event->trigger();
+    $lesson->set_module_viewed();
 
     // This is where several messages (usually warnings) are displayed
     // all of this is displayed above the actual page

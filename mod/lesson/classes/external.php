@@ -224,7 +224,7 @@ class mod_lesson_external extends external_api {
         $lesson = $DB->get_record('lesson', array('id' => $lessonid), '*', MUST_EXIST);
         list($course, $cm) = get_course_and_cm_from_instance($lesson, 'lesson');
 
-        $lesson = new lesson($lesson, $cm);
+        $lesson = new lesson($lesson, $cm, $course);
         $lesson->update_effective_access($USER->id);
 
         $context = $lesson->context;
@@ -416,4 +416,62 @@ class mod_lesson_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for view_lesson.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function view_lesson_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+                'password' => new external_value(PARAM_RAW, 'lesson password', VALUE_DEFAULT, ''),
+            )
+        );
+    }
+
+    /**
+     * Trigger the course module viewed event and update the module completion status.
+     *
+     * @param int $lessonid lesson instance id
+     * @param str $password optional password (the lesson may be protected)
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function view_lesson($lessonid, $password = '') {
+        global $DB;
+
+        $params = array('lessonid' => $lessonid, 'password' => $password);
+        $params = self::validate_parameters(self::view_lesson_parameters(), $params);
+        $warnings = array();
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        self::validate_attempt($lesson, $params);
+
+        $lesson->set_module_viewed();
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the view_lesson return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function view_lesson_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
