@@ -128,6 +128,9 @@ function page_add_instance($data, $mform = null) {
         $DB->update_record('page', $data);
     }
 
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($cmid, 'page', $data->id, $completiontimeexpected);
+
     return $data->id;
 }
 
@@ -168,6 +171,9 @@ function page_update_instance($data, $mform) {
         $DB->update_record('page', $data);
     }
 
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($cmid, 'page', $data->id, $completiontimeexpected);
+
     return true;
 }
 
@@ -182,6 +188,9 @@ function page_delete_instance($id) {
     if (!$page = $DB->get_record('page', array('id'=>$id))) {
         return false;
     }
+
+    $cm = get_coursemodule_from_instance('page', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'page', $id, null);
 
     // note: all context files are deleted automatically
 
@@ -521,4 +530,33 @@ function page_view($page, $course, $cm, $context) {
 function page_check_updates_since(cm_info $cm, $from, $filter = array()) {
     $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
     return $updates;
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_page_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                      \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['page'][$event->instance];
+
+    $course = new stdClass();
+    $course->id = $event->courseid;
+    $completion = new \completion_info($course);
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/page/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }

@@ -88,6 +88,10 @@ function glossary_add_instance($glossary) {
     $glossary->id = $returnid;
     glossary_grade_item_update($glossary);
 
+    $completiontimeexpected = !empty($glossary->completionexpected) ? $glossary->completionexpected : null;
+    \core_completion\api::update_completion_date_event($glossary->coursemodule,
+        'glossary', $glossary->id, $completiontimeexpected);
+
     return $returnid;
 }
 
@@ -132,6 +136,10 @@ function glossary_update_instance($glossary) {
         $DB->execute("UPDATE {glossary_entries} SET approved = 1 where approved <> 1 and glossaryid = ?", array($glossary->id));
     }
     glossary_grade_item_update($glossary);
+
+    $completiontimeexpected = !empty($glossary->completionexpected) ? $glossary->completionexpected : null;
+    \core_completion\api::update_completion_date_event($glossary->coursemodule,
+        'glossary', $glossary->id, $completiontimeexpected);
 
     return true;
 }
@@ -211,6 +219,8 @@ function glossary_delete_instance($id) {
     $fs->delete_area_files($context->id);
 
     glossary_grade_item_delete($glossary);
+
+    \core_completion\api::update_completion_date_event($cm->id, 'glossary', $glossary->id, null);
 
     $DB->delete_records('glossary', array('id'=>$id));
 
@@ -4158,4 +4168,33 @@ function forum_get_fontawesome_icon_map() {
     return [
         'mod_glossary:export' => 'fa-download'
     ];
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_glossary_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                      \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['glossary'][$event->instance];
+
+    $course = new stdClass();
+    $course->id = $event->courseid;
+    $completion = new \completion_info($course);
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/glossary/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }

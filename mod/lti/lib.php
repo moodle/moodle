@@ -127,6 +127,9 @@ function lti_add_instance($lti, $mform) {
         lti_grade_item_update($lti);
     }
 
+    $completiontimeexpected = !empty($lti->completionexpected) ? $lti->completionexpected : null;
+    \core_completion\api::update_completion_date_event($lti->coursemodule, 'lti', $lti->id, $completiontimeexpected);
+
     return $lti->id;
 }
 
@@ -171,6 +174,9 @@ function lti_update_instance($lti, $mform) {
         $lti->typeid = $lti->urlmatchedtypeid;
     }
 
+    $completiontimeexpected = !empty($lti->completionexpected) ? $lti->completionexpected : null;
+    \core_completion\api::update_completion_date_event($lti->coursemodule, 'lti', $lti->id, $completiontimeexpected);
+
     return $DB->update_record('lti', $lti);
 }
 
@@ -199,6 +205,9 @@ function lti_delete_instance($id) {
         $DB->delete_records('lti_tool_settings',
             array('toolproxyid' => $ltitype->toolproxyid, 'course' => $basiclti->course, 'coursemoduleid' => $id));
     }
+
+    $cm = get_coursemodule_from_instance('lti', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'lti', $id, null);
 
     return $DB->delete_records("lti", array("id" => $basiclti->id));
 }
@@ -614,4 +623,33 @@ function mod_lti_get_fontawesome_icon_map() {
     return [
         'mod_lti:warning' => 'fa-exclamation text-warning',
     ];
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_lti_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                      \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['lti'][$event->instance];
+
+    $course = new stdClass();
+    $course->id = $event->courseid;
+    $completion = new \completion_info($course);
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/lti/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }

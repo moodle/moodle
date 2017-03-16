@@ -130,6 +130,9 @@ function forum_add_instance($forum, $mform = null) {
 
     forum_grade_item_update($forum);
 
+    $completiontimeexpected = !empty($forum->completionexpected) ? $forum->completionexpected : null;
+    \core_completion\api::update_completion_date_event($forum->coursemodule, 'forum', $forum->id, $completiontimeexpected);
+
     return $forum->id;
 }
 
@@ -249,6 +252,9 @@ function forum_update_instance($forum, $mform) {
 
     forum_grade_item_update($forum);
 
+    $completiontimeexpected = !empty($forum->completionexpected) ? $forum->completionexpected : null;
+    \core_completion\api::update_completion_date_event($forum->coursemodule, 'forum', $forum->id, $completiontimeexpected);
+
     return true;
 }
 
@@ -282,6 +288,8 @@ function forum_delete_instance($id) {
     $fs->delete_area_files($context->id);
 
     $result = true;
+
+    \core_completion\api::update_completion_date_event($cm->id, 'forum', $forum->id, null);
 
     // Delete digest and subscription preferences.
     $DB->delete_records('forum_digests', array('forum' => $forum->id));
@@ -8128,4 +8136,38 @@ function mod_forum_get_fontawesome_icon_map() {
 function mod_forum_core_calendar_event_action_shows_item_count(\core_calendar\event $event, $itemcount = 0) {
     // Always show item count for forums if item count is greater than 0.
     return $itemcount > 0;
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_forum_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                       \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['forum'][$event->instance];
+    $context = context_module::instance($cm->id);
+
+    if (!has_capability('mod/forum:viewdiscussion', $context)) {
+        return null;
+    }
+
+    $course = new stdClass();
+    $course->id = $event->courseid;
+    $completion = new \completion_info($course);
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/forum/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }

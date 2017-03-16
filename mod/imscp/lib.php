@@ -133,6 +133,9 @@ function imscp_add_instance($data, $mform) {
         }
     }
 
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($cmid, 'imscp', $data->id, $completiontimeexpected);
+
     return $data->id;
 }
 
@@ -196,6 +199,9 @@ function imscp_update_instance($data, $mform) {
     $imscp->structure = is_array($structure) ? serialize($structure) : null;
     $DB->update_record('imscp', $imscp);
 
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($cmid, 'imscp', $imscp->id, $completiontimeexpected);
+
     return true;
 }
 
@@ -210,6 +216,9 @@ function imscp_delete_instance($id) {
     if (!$imscp = $DB->get_record('imscp', array('id' => $id))) {
         return false;
     }
+
+    $cm = get_coursemodule_from_instance('imscp', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'imscp', $id, null);
 
     // Note: all context files are deleted automatically.
 
@@ -457,4 +466,33 @@ function imscp_view($imscp, $course, $cm, $context) {
 function imscp_check_updates_since(cm_info $cm, $from, $filter = array()) {
     $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
     return $updates;
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_imscp_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                      \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['imscp'][$event->instance];
+
+    $course = new stdClass();
+    $course->id = $event->courseid;
+    $completion = new \completion_info($course);
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/imscp/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }

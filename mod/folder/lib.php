@@ -119,6 +119,9 @@ function folder_add_instance($data, $mform) {
         file_save_draft_area_files($draftitemid, $context->id, 'mod_folder', 'content', 0, array('subdirs'=>true));
     }
 
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($data->coursemodule, 'folder', $data->id, $completiontimeexpected);
+
     return $data->id;
 }
 
@@ -145,6 +148,9 @@ function folder_update_instance($data, $mform) {
         file_save_draft_area_files($draftitemid, $context->id, 'mod_folder', 'content', 0, array('subdirs'=>true));
     }
 
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($data->coursemodule, 'folder', $data->id, $completiontimeexpected);
+
     return true;
 }
 
@@ -159,6 +165,9 @@ function folder_delete_instance($id) {
     if (!$folder = $DB->get_record('folder', array('id'=>$id))) {
         return false;
     }
+
+    $cm = get_coursemodule_from_instance('folder', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'folder', $folder->id, null);
 
     // note: all context files are deleted automatically
 
@@ -760,4 +769,33 @@ function folder_print_recent_activity($course, $viewfullnames, $timestart) {
 function folder_check_updates_since(cm_info $cm, $from, $filter = array()) {
     $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
     return $updates;
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_folder_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                     \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['folder'][$event->instance];
+
+    $course = new stdClass();
+    $course->id = $event->courseid;
+    $completion = new \completion_info($course);
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/folder/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }
