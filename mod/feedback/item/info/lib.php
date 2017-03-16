@@ -290,4 +290,11 @@ class feedback_item_info extends feedback_item_base {
     public function can_switch_require() {
         return false;
     }
+
+    public function get_data_for_external($item) {
+        global $DB;
+        $feedback = $DB->get_record('feedback', array('id' => $item->feedback), '*', MUST_EXIST);
+        // Return the default value (course name, category name or timestamp).
+        return $this->get_current_value($item, $feedback, $feedback->course);
+    }
 }

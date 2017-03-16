@@ -260,6 +260,20 @@ abstract class feedback_item_base {
 
         return $actions;
     }
+
+    /**
+     * Return extra data for external functions.
+     *
+     * Some items may have additional configuration data or default values that should be returned for external functions:
+     * - Info elements: The default value information (course or category name)
+     * - Captcha: The recaptcha challenge hash key
+     *
+     * @param stdClass $item the item object
+     * @return str the data, may be json_encoded for large structures
+     */
+    public function get_data_for_external($item) {
+        return null;
+    }
 }
 
 //a dummy class to realize pagebreaks
