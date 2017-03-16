@@ -1,4 +1,4 @@
-@core @core_badges @_file_upload
+@core @core_badges
 Feature: Add badges to the system
   In order to give badges to users for their achievements
   As an admin
@@ -27,7 +27,7 @@ Feature: Add badges to the system
     Given I navigate to "Site badges" node in "Site pages"
     Then I should see "There are no badges available."
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Add a badge
     Given I navigate to "Add a new badge" node in "Site administration > Badges"
     And I set the following fields to these values:

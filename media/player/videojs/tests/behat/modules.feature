@@ -1,4 +1,4 @@
-@media @media_videojs
+@media @media_videojs @_file_upload
 Feature: Embed videos without the media filter
   In order to add helpful resources for students
   As a teacher
