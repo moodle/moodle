@@ -1602,7 +1602,8 @@ class assign {
 
             if ($instance->markingworkflow &&
                     $instance->markingallocation &&
-                    !has_capability('mod/assign:manageallocations', $this->get_context())) {
+                    !has_capability('mod/assign:manageallocations', $this->get_context()) &&
+                    has_capability('mod/assign:grade', $this->get_context())) {
 
                 $additionaljoins .= ' LEFT JOIN {assign_user_flags} uf
                                      ON u.id = uf.userid
