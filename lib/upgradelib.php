@@ -2065,7 +2065,10 @@ function upgrade_fix_missing_root_folders_draft() {
         'filename' => '.',
         'userid' => 0, // Don't rely on any particular user for these system records.
         'filesize' => 0,
-        'contenthash' => sha1(''));
+        // Note: This does not use the file_storage API's hash calculator
+        // because access to core APIs is not allowed during upgrade.
+        'contenthash' => sha1(''),
+    );
     foreach ($rs as $r) {
         $r->pathnamehash = sha1("/$r->contextid/user/draft/$r->itemid/.");
         $DB->insert_record('files', (array)$r + $defaults);
