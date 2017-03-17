@@ -23,7 +23,6 @@ Feature: Basic recycle bin functionality
       | categorybinexpiry | 1209600 | tool_recyclebin |
       | autohide | 0 | tool_recyclebin |
 
-  @javascript
   Scenario: Restore a deleted assignment
     Given I log in as "teacher1"
     And I follow "Course 1"
@@ -32,7 +31,6 @@ Feature: Basic recycle bin functionality
       | Assignment name | Test assign |
       | Description | Test |
     And I delete "Test assign" activity
-    And I run all adhoc tasks
     When I navigate to "Recycle bin" node in "Course administration"
     Then I should see "Test assign"
     And I should see "Contents will be permanently deleted after 7 days"
