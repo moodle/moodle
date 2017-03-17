@@ -30,7 +30,8 @@
         "action": {
             "name": "Submit assignment",
             "url": "https://www.google.com",
-            "itemcount": 1
+            "itemcount": 1,
+            "showitemcount": true
         },
         "icon": {
             "key": "icon",
@@ -59,7 +60,9 @@
                     {{#action.actionable}}
                         <a href="{{{action.url}}}">{{action.name}}</a>
                         {{#action.itemcount}}
-                            <span class="tag tag-pill tag-default">{{.}}</span>
+                            {{#action.showitemcount}}
+                                <span class="tag tag-pill tag-default">{{.}}</span>
+                            {{/action.showitemcount}}
                         {{/action.itemcount}}
                     {{/action.actionable}}
                     {{^action.actionable}}
