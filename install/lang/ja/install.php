@@ -84,11 +84,9 @@ $string['pathsunsecuredataroot'] = 'dataroot ロケーションが安全では�
 $string['pathswrongadmindir'] = 'adminディレクトリがありません。';
 $string['phpextension'] = '{$a} PHP拡張モジュール';
 $string['phpversion'] = 'PHPバージョン';
-$string['phpversionhelp'] = '<p>Moodleには少なくとも4.3.0または5.1.0のPHPバージョンが必要です (5.0.x には既知の多数の問題があります)。</p>
-<p>現在、バージョン {$a} が動作しています。</p>
-<p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!<br />
-(5.0.x の場合、anataha
-バージョン 4.4.x にダウングレードすることもできます。)</p>';
+$string['phpversionhelp'] = '<p>Moodleには少なくとも5.4.4のPHPバージョンが必要です (7.x にはエンジンの制限があります)。</p>
+<p>現在、あなたはバージョン {$a} を動作させています。</p>
+<p>PHPをアップグレードするか新しいバージョンのPHPがインストールされているホストに移動する必要があります。</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'インストールが正常に完了して、あなたのコンピュータで <strong>{$a->packname} {$a->packversion}</strong> パッケージが起動されたため、このページが表示されています。おめでとうございます!';
 $string['welcomep30'] = 'このリリース <strong>{$a->installername}</strong> には<strong>Moodle</strong>で環境を作成するアプリケーションが含まれています。すなわち:';
