@@ -105,10 +105,6 @@ class converter implements \core_files\converter_interface {
             return $this;
         }
 
-        // Update the status to IN_PROGRESS.
-        $conversion->set('status', \core_files\conversion::STATUS_IN_PROGRESS);
-        $conversion->update();
-
         // Copy the file to the tmp dir.
         $uniqdir = make_unique_writable_directory(make_temp_directory('core_file/conversions'));
         \core_shutdown_manager::register_function('remove_dir', array($uniqdir));

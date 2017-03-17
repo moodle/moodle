@@ -118,8 +118,8 @@ class converter {
                 // Unable to fetch the converter instance.
                 // Reset the status back to PENDING so that it may be picked up again.
                 $conversion->set('status', conversion::STATUS_PENDING);
-                $conversion->update();
             }
+            $conversion->update();
         }
 
         // Refresh the status.
@@ -134,6 +134,7 @@ class converter {
             if (!$currentconverter) {
                 // No more converters available.
                 $conversion->set('status', conversion::STATUS_FAILED);
+                $conversion->update();
                 return $this;
             }
 

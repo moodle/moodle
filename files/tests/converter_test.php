@@ -417,6 +417,7 @@ class core_files_converter_testcase extends advanced_testcase {
         $conversion->set_sourcefile($file);
         $conversion->set('targetformat', 'target');
         $conversion->set('status', conversion::STATUS_IN_PROGRESS);
+        $conversion->create();
 
         $converterinstance = $this->get_mocked_converter([
                 'poll_conversion_status',
@@ -484,6 +485,7 @@ class core_files_converter_testcase extends advanced_testcase {
             'sourcefileid' => $file->get_id(),
             'targetformat' => 'target',
         ]);
+        $conversion->create();
 
         $converter->poll_conversion($conversion);
 
