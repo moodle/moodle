@@ -991,4 +991,24 @@ class stored_file {
         // Generate the resized image.
         return resize_image_from_image($original, $imageinfo, $width, $height);
     }
+
+    /**
+     * Check whether the supplied file is the same as this file.
+     *
+     * @param   string $path The path to the file on disk
+     * @return  boolean
+     */
+    public function compare_to_path($path) {
+        return $this->get_contenthash() === file_storage::hash_from_path($path);
+    }
+
+    /**
+     * Check whether the supplied content is the same as this file.
+     *
+     * @param   string $content The file content
+     * @return  boolean
+     */
+    public function compare_to_string($content) {
+        return $this->get_contenthash() === file_storage::hash_from_string($content);
+    }
 }
