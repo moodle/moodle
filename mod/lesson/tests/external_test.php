@@ -401,4 +401,67 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         mod_lesson_external::view_lesson($this->lesson->id);
     }
 
+    /**
+     * Test for get_questions_attempts
+     */
+    public function test_get_questions_attempts() {
+        global $DB;
+
+        $this->setUser($this->student);
+        $attemptnumber = 1;
+
+        // Test lesson without page attempts.
+        $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(0, $result['attempts']);
+
+        // Create a fake attempt for the first possible answer.
+        $p2answers = $DB->get_records('lesson_answers', array('lessonid' => $this->lesson->id, 'pageid' => $this->page2->id), 'id');
+        $answerid = reset($p2answers)->id;
+
+        $newpageattempt = [
+            'lessonid' => $this->lesson->id,
+            'pageid' => $this->page2->id,
+            'userid' => $this->student->id,
+            'answerid' => $answerid,
+            'retry' => $attemptnumber,
+            'correct' => 1,
+            'useranswer' => '1',
+            'timeseen' => time(),
+        ];
+        $DB->insert_record('lesson_attempts', (object) $newpageattempt);
+
+        $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['attempts']);
+
+        $newpageattempt['id'] = $result['attempts'][0]['id'];
+        $this->assertEquals($newpageattempt, $result['attempts'][0]);
+
+        // Test filtering. Only correct.
+        $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber, true);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['attempts']);
+
+        // Test filtering. Only correct only for page 2.
+        $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber, true, $this->page2->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['attempts']);
+
+        // Teacher retrieve student page attempts.
+        $this->setUser($this->teacher);
+        $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber, false, null, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_questions_attempts_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['attempts']);
+
+        // Test exception.
+        $this->setUser($this->student);
+        $this->expectException('moodle_exception');
+        $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber, false, null, $this->teacher->id);
+    }
 }
