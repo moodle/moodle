@@ -130,6 +130,9 @@ class backup_course_task extends backup_task {
         // Generate the course competencies.
         $this->add_step(new backup_course_competencies_structure_step('course_competencies', 'competencies.xml'));
 
+        // Annotate activity completion defaults.
+        $this->add_step(new backup_completion_defaults_structure_step('course_completion_defaults', 'completiondefaults.xml'));
+
         // Generate the inforef file (must be after ALL steps gathering annotations of ANY type)
         $this->add_step(new backup_inforef_structure_step('course', 'inforef.xml'));
 

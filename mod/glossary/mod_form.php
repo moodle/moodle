@@ -210,7 +210,7 @@ class mod_glossary_mod_form extends moodleform_mod {
      *
      * @param stdClass $data passed by reference
      */
-    function data_postprocessing(&$data) {
+    public function data_postprocessing(&$data) {
         parent::data_postprocessing($data);
         if (!empty($data->completionunlocked)) {
             // Turn off completion settings if the checkboxes aren't ticked

@@ -26,53 +26,50 @@ require_once(__DIR__ . "/../config.php");
 require_once($CFG->libdir . '/completionlib.php');
 
 $courseid = required_param('id', PARAM_INT);
-$cmids = optional_param_array('cmid', [], PARAM_INT);
+$modids = optional_param_array('modids', [], PARAM_INT);
 $course = get_course($courseid);
 require_login($course);
 
 navigation_node::override_active_url(new moodle_url('/course/completion.php', array('id' => $course->id)));
-$PAGE->set_url(new moodle_url('/course/editbulkcompletion.php', ['id' => $courseid]));
+$PAGE->set_url(new moodle_url('/course/editdefaultcompletion.php', ['id' => $courseid]));
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
-if (!core_completion\manager::can_edit_bulk_completion($course)) {
-    throw new required_capability_exception(context_course::instance($course->id),
-        'moodle/course:manageactivities', 'nopermission');
-}
+require_capability('moodle/course:update', context_course::instance($course->id));
 
-// Prepare list of modules to be updated.
-$modinfo = get_fast_modinfo($courseid);
-$cms = [];
-foreach ($cmids as $cmid) {
-    $cm = $modinfo->get_cm($cmid);
-    if (core_completion\manager::can_edit_bulk_completion($course, $cm)) {
-        $cms[$cm->id] = $cm;
+// Prepare list of selected modules.
+$manager = new \core_completion\manager($course->id);
+$allmodules = $manager->get_activities_and_resources();
+$modules = [];
+foreach ($allmodules->modules as $module) {
+    if ($module->canmanage && in_array($module->id, $modids)) {
+        $modules[$module->id] = $module;
     }
 }
 
-$returnurl = new moodle_url('/course/bulkcompletion.php', ['id' => $course->id]);
-$manager = new \core_completion\manager($course->id);
-if (empty($cms)) {
+$returnurl = new moodle_url('/course/defaultcompletion.php', ['id' => $course->id]);
+if (empty($modules)) {
     redirect($returnurl);
 }
-$form = new core_completion_bulkedit_form(null, ['cms' => $cms]);
+
+$form = new core_completion_defaultedit_form(null, ['course' => $course, 'modules' => $modules]);
 
 if ($form->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $form->get_data()) {
-    $manager->apply_completion($data, $form->has_custom_completion_rules());
+    $manager->apply_default_completion($data, $form->has_custom_completion_rules());
     redirect($returnurl);
 }
 
 $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('bulkactivitycompletion', 'completion'));
+echo $OUTPUT->heading(get_string('defaultcompletion', 'completion'));
 
-echo $renderer->navigation($course->id, 'bulkcompletion');
+echo $renderer->navigation($course->id, 'defaultcompletion');
 
-echo $renderer->edit_bulk_completion($form, $manager->get_activities(array_keys($cms)));
+echo $renderer->edit_default_completion($form, $modules);
 
 echo $OUTPUT->footer();
 

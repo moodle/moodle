@@ -25,12 +25,12 @@
         "sesskey": "AAAAAA",
         "modules": [{
             "id": "10",
-            "formatedname": "Assignment",
-            "icon": {
-                "attributes": [
-                    {"name": "src", "value": "https://raw.githubusercontent.com/moodle/moodle/master/pix/t/check.png"},
-                    {"name": "alt", "value": "Assignment icon"}
-                ]
+            "formattedname": "Assignment",
+            "canmanage": true,
+            "icon": "https://raw.githubusercontent.com/moodle/moodle/master/mod/assign/pix/icon.png",
+            "completionstatus": {
+                "string": "Manual",
+                "icon": "https://raw.githubusercontent.com/moodle/moodle/master/pix/i/completion-manual-enabled.png"
             }
         }]
     }
@@ -39,7 +39,7 @@
     <div class="row m-b-2">
         <div class="col">{{#str}}bulkactivitydetail, moodle{{/str}}</div>
     </div>
-<form method="post" action="defaultcompletion.php" class="mform" id="theform">
+<form method="post" action="editdefaultcompletion.php" class="mform" id="theform">
     <div class="row m-b-2">
         <div class="col">
             <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" aria-label="{{#str}}updateactivities, completion{{/str}}" />
@@ -58,15 +58,30 @@
     </div>
     <div class="modules">
         {{#modules}}
+            {{#canmanage}}
              <div class="module-section m-b-1">
                 <div class="row m-b-1">
                     <div class="col-sm-12">
                         <input type="checkbox" class="m-r-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{formatedname}}{{/str}}">
                         <img src={{icon}} />
-                        <span>{{formatedname}}</span>
+                        <span>{{formattedname}}</span>
+                    </div>
+                    <div class="activity-completionstatus col-sm-6">
+                        <div class="col-sm-1">
+                            {{#completionstatus.icon}}
+                                <img src="{{completionstatus.icon}}" class="m-r-2">
+                            {{/completionstatus.icon}}
+                            {{^completionstatus.icon}}
+                                <span class="m-r-3"></span>
+                            {{/completionstatus.icon}}
+                        </div>
+                        <div class="col-sm-11">
+                            <span class="text-muted muted">{{{completionstatus.string}}}</span>
+                        </div>
                     </div>
                 </div>
             </div>
+            {{/canmanage}}
         {{/modules}}
     </div>
     <input type="hidden" name="id" value="{{courseid}}" />

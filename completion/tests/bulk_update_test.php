@@ -52,7 +52,8 @@ class core_completion_bulk_update_testcase extends advanced_testcase {
             'choice-2' => ['choice', ['completion' => COMPLETION_TRACKING_MANUAL]],
             'data-1' => ['data', ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]],
             'data-2' => ['data', ['completion' => COMPLETION_TRACKING_MANUAL]],
-            'feedback-1' => ['feedback', ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 0, 'completionsubmit' => 1]],
+            'feedback-1' => ['feedback', ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 0,
+                'completionsubmit' => 1]],
             'feedback-2' => ['feedback', ['completion' => COMPLETION_TRACKING_MANUAL]],
             'folder-1' => ['folder', ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]],
             'folder-2' => ['folder', ['completion' => COMPLETION_TRACKING_MANUAL]],
@@ -210,7 +211,7 @@ class core_completion_bulk_update_testcase extends advanced_testcase {
      * Use bulk completion edit for updating multiple modules
      *
      * @dataProvider bulk_form_submit_multiple_provider
-     * @param array $data
+     * @param array $providerdata
      */
     public function test_bulk_form_submit_multiple($providerdata) {
         global $DB;

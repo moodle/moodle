@@ -2049,34 +2049,6 @@ class cm_info implements IteratorAggregate {
         $this->call_mod_function('cm_info_view');
         $this->state = self::STATE_VIEW;
     }
-
-    /**
-     * Get the descriptions for all active conditional completion rules for the current module.
-     *
-     * @return array $activeruledescriptions an array of strings describing the active completion rules.
-     */
-    public function get_completion_active_rule_descriptions() {
-        $activeruledescriptions = [];
-
-        // Generate the description strings for the core conditional completion rules (if set).
-        if (!empty($this->completionview)) {
-            $activeruledescriptions[] = get_string('completionview_desc', 'core_completion');
-        }
-        if (!empty($this->completionexpected)) {
-            $activeruledescriptions[] = get_string('completionexpecteddesc', 'core_completion',
-                                                   userdate($this->completionexpected));
-        }
-        if (!is_null($this->completiongradeitemnumber)) {
-            $activeruledescriptions[] = get_string('completionusegrade_desc', 'core_completion');
-        }
-
-        // Now, ask the module to provide descriptions for its custom conditional completion rules.
-        if ($customruledescriptions = component_callback($this->modname, 'get_completion_active_rule_descriptions', [$this])) {
-            $activeruledescriptions = array_merge($activeruledescriptions, $customruledescriptions);
-        }
-
-        return $activeruledescriptions;
-    }
 }
 
 

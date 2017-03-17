@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Bulk edit activity completion form
+ * Default activity completion form
  *
  * @package     core_completion
  * @copyright   2017 Marina Glancy
@@ -25,17 +25,17 @@
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * Bulk edit activity completion form
+ * Default activity completion form
  *
  * @package     core_completion
  * @copyright   2017 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_completion_bulkedit_form extends core_completion_edit_base_form {
-    /** @var cm_info[] list of selected course modules */
-    protected $cms = [];
-    /** @var array Do not use directly, call $this->get_module_names() */
-    protected $_modnames = null;
+class core_completion_defaultedit_form extends core_completion_edit_base_form {
+    /** @var array */
+    protected $modules;
+    /** @var array */
+    protected $_modnames;
 
     /**
      * Returns list of types of selected modules
@@ -47,37 +47,39 @@ class core_completion_bulkedit_form extends core_completion_edit_base_form {
             return $this->_modnames;
         }
         $this->_modnames = [];
-        foreach ($this->cms as $cm) {
-            $this->_modnames[$cm->modname] = $cm->modfullname;
+        foreach ($this->modules as $module) {
+            $this->_modnames[$module->name] = $module->formattedname;
         }
         return $this->_modnames;
     }
 
     /**
-     * Form definition
+     * Form definition,
      */
     public function definition() {
-        $this->cms = $this->_customdata['cms'];
-        $cm = reset($this->cms); // First selected course module.
-        $this->course = $cm->get_course();
+        $this->course = $this->_customdata['course'];
+        $this->modules = $this->_customdata['modules'];
 
         $mform = $this->_form;
 
-        foreach ($this->cms as $cm) {
-            $mform->addElement('hidden', 'cmid['.$cm->id.']', $cm->id);
-            $mform->setType('cmid['.$cm->id.']', PARAM_INT);
+        foreach ($this->modules as $modid => $module) {
+            $mform->addElement('hidden', 'modids['.$modid.']', $modid);
+            $mform->setType('modids['.$modid.']', PARAM_INT);
         }
 
         parent::definition();
 
         $modform = $this->get_module_form();
         if ($modform) {
-            // Pre-fill the form with the current completion rules of the first selected module.
-            list($cmrec, $context, $module, $data, $cw) = get_moduleinfo_data($cm->get_course_module_record(), $this->course);
+            $modnames = array_keys($this->get_module_names());
+            $modname = $modnames[0];
+            // Pre-fill the form with the current completion rules of the first selected module type.
+            list($module, $context, $cw, $cmrec, $data) = prepare_new_moduleinfo_data($this->course, $modname, 0);
             $data = (array)$data;
             $modform->data_preprocessing($data);
             // Unset fields that will conflict with this form and set data to this form.
             unset($data['cmid']);
+            unset($data['modids']);
             unset($data['id']);
             $this->set_data($data);
         }

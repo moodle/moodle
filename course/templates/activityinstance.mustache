@@ -24,20 +24,10 @@
         "activities": [{
             "cmid": "4",
             "modname": "Test activity",
-            "icon": {
-                "attributes": [
-                    {"name": "src", "value": "https://raw.githubusercontent.com/moodle/moodle/master/pix/t/check.png"},
-                    {"name": "alt", "value": "Activity icon"}
-                ]
-            },
+            "icon": "https://raw.githubusercontent.com/moodle/moodle/master/mod/feedback/pix/icon.png",
             "completionstatus": {
                 "string": "Manual",
-                "icon": {
-                    "attributes": [
-                        {"name": "src", "value": "https://raw.githubusercontent.com/moodle/moodle/master/pix/t/check.png"},
-                        {"name": "alt", "value": "Completion icon"}
-                    ]
-                }
+                "icon": "https://raw.githubusercontent.com/moodle/moodle/master/pix/i/completion-manual-enabled.png"
             }
         }]
     }
@@ -50,7 +40,7 @@
                 {{#canmanage}}
                 <input type="checkbox" class="m-r-1" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{modname}}{{/str}}">
                 {{/canmanage}}
-                <a href={{url}}>
+                <a href="{{url}}">
                 <img src="{{icon}}" class="iconlarge activityicon" alt=" " role="presentation" />
                 <span class="instancename">{{modname}}</span>
                 </a>

@@ -1179,12 +1179,12 @@ function survey_get_coursemodule_info($coursemodule) {
 /**
  * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
  *
- * @param object $cm the cm_info object.
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
  * @return array $descriptions the array of descriptions for the custom rules.
  */
 function mod_survey_get_completion_active_rule_descriptions($cm) {
     // Values will be present in cm_info, and we assume these are up to date.
-    if (!$cm instanceof cm_info || !isset($cm->customdata['customcompletionrules'])
+    if (empty($cm->customdata['customcompletionrules'])
         || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
         return [];
     }

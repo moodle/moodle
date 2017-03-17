@@ -2,7 +2,7 @@
 require_once ($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/gradelib.php');
-require_once ($CFG->libdir.'/plagiarismlib.php');
+require_once($CFG->libdir.'/plagiarismlib.php');
 
 /**
  * This class adds extra methods to form wrapper specific to be used for module
@@ -931,7 +931,7 @@ abstract class moodleform_mod extends moodleform {
         // If the 'show description' feature is enabled, this checkbox appears below the intro.
         // We want to hide that when using the singleactivity course format because it is confusing.
         if ($this->_features->showdescription  && $this->courseformat->has_view_page()) {
-            $mform->addElement('checkbox', 'showdescription', get_string('showdescription'));
+            $mform->addElement('advcheckbox', 'showdescription', get_string('showdescription'));
             $mform->addHelpButton('showdescription', 'showdescription');
         }
     }

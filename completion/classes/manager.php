@@ -28,6 +28,7 @@ namespace core_completion;
 
 use stdClass;
 use context_course;
+use cm_info;
 
 /**
  * Bulk activity completion manager class
@@ -65,8 +66,7 @@ class manager {
             $sectionobject = new stdClass();
             $sectionobject->sectionnumber = $sectionnumber;
             $sectionobject->name = get_section_name($this->courseid, $sectioninfo);
-            $activitiesdata = $this->get_activities($section, true);
-            $sectionobject->activities = $activitiesdata->activities;
+            $sectionobject->activities = $this->get_activities($section, true);
             $data->sections[] = $sectionobject;
         }
         return $data;
@@ -77,7 +77,7 @@ class manager {
      *
      * @param array $cmids list of course module ids
      * @param bool $withcompletiondetails include completion details
-     * @return \stdClass
+     * @return array
      */
     public function get_activities($cmids, $withcompletiondetails = false) {
         $moduleinfo = get_fast_modinfo($this->courseid);
@@ -96,34 +96,43 @@ class manager {
 
             // Get activity completion information.
             if ($moduleobject->canmanage) {
-                $moduleobject->completionstatus = $this->get_completion_detail($mod); // This is a placeholder only. Must be replaced later.
+                $moduleobject->completionstatus = $this->get_completion_detail($mod);
             } else {
                 $moduleobject->completionstatus = ['icon' => null, 'string' => null];
             }
 
             $activities[] = $moduleobject;
         }
-        return (object)['activities' => $activities];
+        return $activities;
     }
 
-    private function get_completion_detail(\cm_info $mod) {
+
+    /**
+     * Get completion information on the selected module or module type
+     *
+     * @param cm_info|stdClass $mod either instance of cm_info (with 'customcompletionrules' in customdata) or
+     *      object with fields ->completion, ->completionview, ->completionexpected, ->completionusegrade
+     *      and ->customdata['customcompletionrules']
+     * @return array
+     */
+    private function get_completion_detail($mod) {
         global $OUTPUT;
         $strings = [];
         switch ($mod->completion) {
-            case 0:
+            case COMPLETION_TRACKING_NONE:
                 $strings['string'] = get_string('none');
                 break;
 
-            case 1:
+            case COMPLETION_TRACKING_MANUAL:
                 $strings['string'] = get_string('manual');
                 $strings['icon'] = $OUTPUT->pix_url('i/completion-manual-enabled')->out();
                 break;
 
-            case 2:
+            case COMPLETION_TRACKING_AUTOMATIC:
                 $strings['string'] = get_string('withconditions');
 
                 // Get the descriptions for all the active completion rules for the module.
-                if ($ruledescriptions = $mod->get_completion_active_rule_descriptions()) {
+                if ($ruledescriptions = $this->get_completion_active_rule_descriptions($mod)) {
                     foreach ($ruledescriptions as $ruledescription) {
                         $strings['string'] .= \html_writer::empty_tag('br') . $ruledescription;
                     }
@@ -139,8 +148,44 @@ class manager {
         return $strings;
     }
 
+    /**
+     * Get the descriptions for all active conditional completion rules for the current module.
+     *
+     * @param cm_info|stdClass $moduledata either instance of cm_info (with 'customcompletionrules' in customdata) or
+     *      object with fields ->completion, ->completionview, ->completionexpected, ->completionusegrade
+     *      and ->customdata['customcompletionrules']
+     * @return array $activeruledescriptions an array of strings describing the active completion rules.
+     */
+    protected function get_completion_active_rule_descriptions($moduledata) {
+        $activeruledescriptions = [];
+
+        // Generate the description strings for the core conditional completion rules (if set).
+        if (!empty($moduledata->completionview)) {
+            $activeruledescriptions[] = get_string('completionview_desc', 'core_completion');
+        }
+        if ($moduledata instanceof cm_info && !is_null($moduledata->completiongradeitemnumber) ||
+            ($moduledata instanceof stdClass && !empty($moduledata->completionusegrade))) {
+            $activeruledescriptions[] = get_string('completionusegrade_desc', 'core_completion');
+        }
+
+        // Now, ask the module to provide descriptions for its custom conditional completion rules.
+        if ($customruledescriptions = component_callback($moduledata->modname,
+                'get_completion_active_rule_descriptions', [$moduledata])) {
+            $activeruledescriptions = array_merge($activeruledescriptions, $customruledescriptions);
+        }
+
+        if (!empty($moduledata->completionexpected)) {
+            $activeruledescriptions[] = get_string('completionexpecteddesc', 'core_completion',
+                userdate($moduledata->completionexpected));
+        }
+
+        return $activeruledescriptions;
+    }
+
     public function get_activities_and_resources() {
-        global $DB, $OUTPUT;
+        global $DB, $OUTPUT, $CFG;
+        require_once($CFG->dirroot.'/course/lib.php');
+
         // Get enabled activities and resources.
         $modules = $DB->get_records('modules', ['visible' => 1], 'name ASC');
         $data = new stdClass();
@@ -150,9 +195,16 @@ class manager {
         // Add icon information.
         $data->modules = array_values($modules);
         $coursecontext = context_course::instance($this->courseid);
+        $canmanage = has_capability('moodle/course:manageactivities', $coursecontext);
+        $course = get_course($this->courseid);
         foreach ($data->modules as $module) {
             $module->icon = $OUTPUT->pix_url('icon', $module->name)->out();
-            $module->formatedname = format_string(get_string('pluginname', 'mod_' . $module->name), true, ['context' => $coursecontext]);
+            $module->formattedname = format_string(get_string('modulenameplural', 'mod_' . $module->name),
+                true, ['context' => $coursecontext]);
+            $module->canmanage = $canmanage && \course_allowed_module($course, $module->name);
+            $defaults = self::get_default_completion($course, $module, false);
+            $defaults->modname = $module->name;
+            $module->completionstatus = $this->get_completion_detail($defaults);
         }
 
         return $data;
@@ -186,7 +238,7 @@ class manager {
      * Applies completion from the bulk edit form to all selected modules
      *
      * @param stdClass $data data received from the core_completion_bulkedit_form
-     * @param bool $updateinstance if we need to update the instance tables of the module (i.e. 'assign', 'forum', etc.) -
+     * @param bool $updateinstances if we need to update the instance tables of the module (i.e. 'assign', 'forum', etc.) -
      *      if no module-specific completion rules were added to the form, update of the module table is not needed.
      */
     public function apply_completion($data, $updateinstances) {
@@ -267,4 +319,93 @@ class manager {
         return true;
     }
 
+
+    /**
+     * Saves default completion from edit form to all selected module types
+     *
+     * @param stdClass $data data received from the core_completion_bulkedit_form
+     * @param bool $updatecustomrules if we need to update the custom rules of the module -
+     *      if no module-specific completion rules were added to the form, update of the module table is not needed.
+     */
+    public function apply_default_completion($data, $updatecustomrules) {
+        global $DB;
+
+        $courseid = $data->id;
+        $coursecontext = context_course::instance($courseid);
+        if (!$modids = $data->modids) {
+            return;
+        }
+        $defaults = ['completion' => COMPLETION_DISABLED, 'completionview' => COMPLETION_VIEW_NOT_REQUIRED,
+            'completionexpected' => 0, 'completionusegrade' => 0];
+
+        $data = (array)$data;
+
+        if ($updatecustomrules) {
+            $customdata = array_diff_key($data, $defaults);
+            $data['customrules'] = $customdata ? json_encode($customdata) : null;
+            $defaults['customrules'] = null;
+        }
+        $data = array_intersect_key($data, $defaults);
+
+        // Get names of the affected modules.
+        list($modidssql, $params) = $DB->get_in_or_equal($modids);
+        $params[] = 1;
+        $modules = $DB->get_records_select_menu('modules', 'id ' . $modidssql . ' and visible = ?', $params, '', 'id, name');
+
+        foreach ($modids as $modid) {
+            if (!array_key_exists($modid, $modules)) {
+                continue;
+            }
+            if ($defaultsid = $DB->get_field('course_completion_defaults', 'id', ['course' => $courseid, 'module' => $modid])) {
+                $DB->update_record('course_completion_defaults', $data + ['id' => $defaultsid]);
+            } else {
+                $defaultsid = $DB->insert_record('course_completion_defaults', $data + ['course' => $courseid, 'module' => $modid]);
+            }
+            // Trigger event.
+            \core\event\completion_defaults_updated::create([
+                'objectid' => $defaultsid,
+                'context' => $coursecontext,
+                'other' => ['modulename' => $modules[$modid]],
+            ])->trigger();
+            // Add notification.
+            \core\notification::add(get_string('defaultcompletionupdated', 'completion',
+                get_string("modulenameplural", $modules[$modid])), \core\notification::SUCCESS);
+        }
+    }
+
+    /**
+     * Returns default completion rules for given module type in the given course
+     *
+     * @param stdClass $course
+     * @param stdClass $module
+     * @param bool $flatten if true all module custom completion rules become properties of the same object,
+     *   otherwise they can be found as array in ->customdata['customcompletionrules']
+     * @return stdClass
+     */
+    public static function get_default_completion($course, $module, $flatten = true) {
+        global $DB, $CFG;
+        if ($data = $DB->get_record('course_completion_defaults', ['course' => $course->id, 'module' => $module->id],
+            'completion, completionview, completionexpected, completionusegrade, customrules')) {
+            if ($data->customrules && ($customrules = @json_decode($data->customrules, true))) {
+                if ($flatten) {
+                    foreach ($customrules as $key => $value) {
+                        $data->$key = $value;
+                    }
+                } else {
+                    $data->customdata['customcompletionrules'] = $customrules;
+                }
+            }
+            unset($data->customrules);
+        } else {
+            $data = new stdClass();
+            $data->completion = COMPLETION_TRACKING_NONE;
+            if ($CFG->completiondefault) {
+                $completion = new \completion_info(get_fast_modinfo($course->id)->get_course());
+                if ($completion->is_enabled() && plugin_supports('mod', $module->name, FEATURE_MODEDIT_DEFAULT_COMPLETION, true)) {
+                    $data->completion = COMPLETION_TRACKING_MANUAL;
+                }
+            }
+        }
+        return $data;
+    }
 }

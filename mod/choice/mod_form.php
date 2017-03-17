@@ -132,7 +132,7 @@ class mod_choice_mod_form extends moodleform_mod {
      *
      * @param stdClass $data passed by reference
      */
-    function data_postprocessing(&$data) {
+    public function data_postprocessing(&$data) {
         parent::data_postprocessing($data);
         // Set up completion section even if checkbox is not ticked
         if (!empty($data->completionunlocked)) {

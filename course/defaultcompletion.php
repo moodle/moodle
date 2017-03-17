@@ -28,9 +28,7 @@ require_once(__DIR__.'/../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/completionlib.php');
 
-$id = required_param('id', PARAM_INT);       // course id
-// @TODO: Change this to module IDs.
-$cmids = optional_param_array('cmid', [], PARAM_INT);
+$id = required_param('id', PARAM_INT);       // Course id.
 
 // Perform some basic access control checks.
 if ($id) {
@@ -67,7 +65,7 @@ $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 
 // Print the form.
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('editcoursecompletionsettings', 'core_completion'));
+echo $OUTPUT->heading(get_string('defaultcompletion', 'completion'));
 
 echo $renderer->navigation($id, 'defaultcompletion');
 

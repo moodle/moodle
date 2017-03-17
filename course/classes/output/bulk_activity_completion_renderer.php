@@ -76,9 +76,45 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
         return parent::render_from_template('core_course/defaultactivitycompletion', $data);
     }
 
-    public function activities_list($data) {
-        return html_writer::div(get_string('affectedactivities', 'completion', count($data->activities))).
-            parent::render_from_template('core_course/activityinstance', $data);
+    /**
+     * Renders the form for bulk editing activities completion
+     *
+     * @param moodleform $form
+     * @param array $activities
+     * @return string
+     */
+    public function edit_bulk_completion($form, $activities) {
+        ob_start();
+        $form->display();
+        $formhtml = ob_get_contents();
+        ob_end_clean();
+
+        $data = (object)[
+            'form' => $formhtml,
+            'activities' => array_values($activities),
+            'activitiescount' => count($activities),
+        ];
+        return parent::render_from_template('core_course/editbulkactivitycompletion', $data);
     }
 
+    /**
+     * Renders the form for editing default completion
+     *
+     * @param moodleform $form
+     * @param array $modules
+     * @return string
+     */
+    public function edit_default_completion($form, $modules) {
+        ob_start();
+        $form->display();
+        $formhtml = ob_get_contents();
+        ob_end_clean();
+
+        $data = (object)[
+            'form' => $formhtml,
+            'modules' => array_values($modules),
+            'modulescount' => count($modules),
+        ];
+        return parent::render_from_template('core_course/editdefaultcompletion', $data);
+    }
 }

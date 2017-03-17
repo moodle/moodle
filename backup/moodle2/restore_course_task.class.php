@@ -118,6 +118,9 @@ class restore_course_task extends restore_task {
         // Course competencies.
         $this->add_step(new restore_course_competencies_structure_step('course_competencies', 'competencies.xml'));
 
+        // Activity completion defaults.
+        $this->add_step(new restore_completion_defaults_structure_step('course_completion_defaults', 'completiondefaults.xml'));
+
         // At the end, mark it as built
         $this->built = true;
     }

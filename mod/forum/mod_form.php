@@ -300,7 +300,7 @@ class mod_forum_mod_form extends moodleform_mod {
      *
      * @param stdClass $data passed by reference
      */
-    function data_postprocessing(&$data) {
+    public function data_postprocessing(&$data) {
         parent::data_postprocessing($data);
         // Turn off completion settings if the checkboxes aren't ticked
         if (!empty($data->completionunlocked)) {

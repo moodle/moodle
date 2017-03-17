@@ -62,6 +62,7 @@ class core_course_modlib_testcase extends advanced_testcase {
         $expecteddata->instance         = '';
         $expecteddata->coursemodule     = '';
         $expecteddata->advancedgradingmethod_submissions = ''; // Not grading methods enabled by default.
+        $expecteddata->completion       = 0;
         // Unset untestable.
         unset($data->introeditor);
         unset($data->_advancedgradingdata);
