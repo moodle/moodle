@@ -17,7 +17,7 @@
 {{!
     Action menu trigger.
 }}
-<div class="dropdown">
+<div class="dropdown d-inline">
     <a href="#" class="dropdown-toggle" id="action-menu-toggle-{{instance}}" title="{{title}}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{{actiontext}}}{{{menutrigger}}}{{#icon}}{{> core/pix_icon}}{{/icon}}{{#rawicon}}{{{.}}}{{/rawicon}}{{#menutrigger}}<b class="caret"></b>{{/menutrigger}}</a>
     {{#secondary}}
         <div class="dropdown-menu dropdown-menu-right {{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
