@@ -628,4 +628,40 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test get_finished_responses.
+     */
+    public function test_get_finished_responses() {
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Create a very simple feedback.
+        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
+        $numericitem = $feedbackgenerator->create_item_numeric($this->feedback);
+        $textfielditem = $feedbackgenerator->create_item_textfield($this->feedback);
+
+        $pagedata = [
+            ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
+            ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'abc'],
+        ];
+
+        // Process the feedback, there is only one page so the feedback will be completed.
+        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
+        $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $this->assertTrue($result['completed']);
+
+        // Retrieve the responses.
+        $result = mod_feedback_external::get_finished_responses($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_finished_responses_returns(), $result);
+        // Check that ids and responses match.
+        foreach ($result['responses'] as $r) {
+            if ($r['item'] == $numericitem->id) {
+                $this->assertEquals(5, $r['value']);
+            } else {
+                $this->assertEquals($textfielditem->id, $r['item']);
+                $this->assertEquals('abc', $r['value']);
+            }
+        }
+    }
 }

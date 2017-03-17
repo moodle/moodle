@@ -254,6 +254,22 @@ class mod_feedback_completion extends mod_feedback_structure {
     }
 
     /**
+     * Retrieves responses from an finished attempt.
+     *
+     * @return array the responses (from the feedback_value table)
+     * @since  Moodle 3.3
+     */
+    public function get_finished_responses() {
+        global $DB;
+        $responses = array();
+
+        if ($this->completed) {
+            $responses = $DB->get_records('feedback_value', ['completed' => $this->completed->id]);
+        }
+        return $responses;
+    }
+
+    /**
      * Returns all completed values for this feedback or just a value for an item
      * @param stdClass $item
      * @return array
@@ -261,11 +277,10 @@ class mod_feedback_completion extends mod_feedback_structure {
     protected function get_values($item = null) {
         global $DB;
         if ($this->values === null) {
-            if ($this->completed) {
-                $this->values = $DB->get_records_menu('feedback_value',
-                        ['completed' => $this->completed->id], '', 'item, value');
-            } else {
-                $this->values = array();
+            $this->values = array();
+            $responses = $this->get_finished_responses();
+            foreach ($responses as $r) {
+                $this->values[$r->item] = $r->value;
             }
         }
         if ($item) {
@@ -556,9 +571,9 @@ class mod_feedback_completion extends mod_feedback_structure {
      *
      * @return stdClass record from feedback_completed or false if not found
      */
-    protected function find_last_completed() {
+    public function find_last_completed() {
         global $USER, $DB;
-        if (isloggedin() || isguestuser()) {
+        if (!isloggedin() || isguestuser()) {
             // Not possible to retrieve completed feedback for guests.
             return false;
         }
