@@ -33,6 +33,7 @@ use mod_feedback\external\feedback_completedtmp_exporter;
 use mod_feedback\external\feedback_item_exporter;
 use mod_feedback\external\feedback_valuetmp_exporter;
 use mod_feedback\external\feedback_value_exporter;
+use mod_feedback\external\feedback_completed_exporter;
 
 /**
  * Feedback external functions
@@ -1177,6 +1178,66 @@ class mod_feedback_external extends external_api {
                     )
                 ),
                 'totalanonattempts' => new external_value(PARAM_INT, 'Total anonymous responses count.'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for get_last_completed.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_last_completed_parameters() {
+        return new external_function_parameters (
+            array(
+                'feedbackid' => new external_value(PARAM_INT, 'Feedback instance id'),
+            )
+        );
+    }
+
+    /**
+     * Retrieves the last completion record for the current user.
+     *
+     * @param int $feedbackid feedback instance id
+     * @return array of warnings and the last completed record
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_last_completed($feedbackid) {
+        global $PAGE;
+
+        $params = array('feedbackid' => $feedbackid);
+        $params = self::validate_parameters(self::get_last_completed_parameters(), $params);
+        $warnings = array();
+
+        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
+        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $course->id);
+
+        if ($feedbackcompletion->is_anonymous()) {
+             throw new moodle_exception('anonymous', 'feedback');
+        }
+        if ($completed = $feedbackcompletion->find_last_completed()) {
+            $exporter = new feedback_completed_exporter($completed);
+            return array(
+                'completed' => $exporter->export($PAGE->get_renderer('core')),
+                'warnings' => $warnings,
+            );
+        }
+        throw new moodle_exception('not_completed_yet', 'feedback');
+    }
+
+    /**
+     * Describes the get_last_completed return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_last_completed_returns() {
+        return new external_single_structure(
+            array(
+                'completed' => feedback_completed_exporter::get_read_structure(),
                 'warnings' => new external_warnings(),
             )
         );
