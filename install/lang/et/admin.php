@@ -42,3 +42,4 @@ Palun kasuta --help valikut.';
 $string['cliyesnoprompt'] = 'kirjuta y (tähendab jah) või n (tähendab ei)';
 $string['environmentrequireinstall'] = 'on nõutud, et oleks installeeritud ja võimaldatud';
 $string['environmentrequireversion'] = 'versioon {$a->needed} on nõutud, Sinul on jooksmas versioon {$a->current}';
+$string['upgradekeyset'] = 'Versioonitäienduse võti (jätke tühjaks, kui te ei soovi seda määrata)';
