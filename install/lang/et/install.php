@@ -34,6 +34,7 @@ $string['admindirname'] = 'Administreerimiskataloog';
 $string['availablelangs'] = 'Saadaval keelte nimekiri';
 $string['chooselanguagehead'] = 'Valige keel';
 $string['chooselanguagesub'] = 'Palun vali keel, mida kasutatakse AINULT installeerimise käigus. Hiljem saab valida õpikeskkonna ja kasutajate keelt.';
+$string['clialreadyconfigured'] = 'Fail „config.php“ on juba olemas. Kasutage sellele saidile Moodle‘i installimiseks faili „admin/cli/install_database.php“.';
 $string['clialreadyinstalled'] = 'Fail config.php juba eksisteerib, palun kasuta admin/cli/upgrade.php kui soovid uuendada oma saiti.';
 $string['cliinstallheader'] = 'Moodle’i {$a} käsureapõhine installiprogramm';
 $string['databasehost'] = 'Andmebaasi host';
