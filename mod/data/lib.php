@@ -872,10 +872,13 @@ function data_atmaxentries($data){
  * @param object $data
  * @return int
  */
-function data_numentries($data){
+function data_numentries($data, $userid=null) {
     global $USER, $DB;
+    if ($userid === null) {
+        $userid = $USER->id;
+    }
     $sql = 'SELECT COUNT(*) FROM {data_records} WHERE dataid=? AND userid=?';
-    return $DB->count_records_sql($sql, array($data->id, $USER->id));
+    return $DB->count_records_sql($sql, array($data->id, $userid));
 }
 
 /**
@@ -915,6 +918,9 @@ function data_add_record($data, $groupid=0){
         )
     ));
     $event->trigger();
+
+    $course = get_course($cm->course);
+    data_update_completion_state($course, $cm);
 
     return $record->id;
 }
@@ -3940,11 +3946,15 @@ function data_delete_record($recordid, $data, $courseid, $cmid) {
                 ));
                 $event->add_record_snapshot('data_records', $deleterecord);
                 $event->trigger();
+                $course = get_course($courseid);
+                $cm = get_coursemodule_from_instance('data', $data->id, 0, false, MUST_EXIST);
+                data_update_completion_state($course, $cm);
 
                 return true;
             }
         }
     }
+
     return false;
 }
 
@@ -4123,6 +4133,62 @@ function data_set_config(&$database, $key, $value) {
         $database->config = json_encode($config);
         $DB->set_field('data', 'config', $database->config, ['id' => $database->id]);
     }
+}
+/**
+ * Sets the automatic completion state for this database item based on the
+ * count of on its entries.
+ * @since Moodle 3.3
+ * @param object $course Course
+ * @param object $cm course-module
+ */
+function data_update_completion_state($course, $cm) {
+    global $DB;
+    // Get data details.
+    $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
+    // If completion option is enabled, evaluate it and return true/false.
+    $completion = new completion_info($course);
+    if ($data->completionentries && $completion->is_enabled($cm)) {
+        $numentries = data_numentries($data);
+        // Check the number of entries required against the number of entries already made.
+        if ($data->completionentries > 0 && $numentries >= $data->completionentries) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        } else {
+            if ($completion->is_enabled($cm)) {
+                $completion->update_state($cm, COMPLETION_INCOMPLETE);
+            }
+        }
+    }
+}
+
+/**
+ * Obtains the automatic completion state for this database item based on any conditions
+ * on its settings. The call for this is in completion lib where the modulename is appended
+ * to the function name. This is why there are unused parameters.
+ *
+ * @since Moodle 3.3
+ * @param object $course Course
+ * @param object $cm course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ */
+function data_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
+    $result = $type; // Default return value
+    // Get data details.
+    $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
+    // If completion option is enabled, evaluate it and return true/false.
+    if ($data->completionentries) {
+        $data = $DB->get_record('data', array('id' => $cm->instance));
+        $numentries = data_numentries($data);
+        // Check the number of entries required against the number of entries already made.
+        if ($data->completionentries > 0 && $numentries >= $data->completionentries) {
+            $result = true;
+        } else {
+            $result = false;
+        }
+    }
+    return $result;
 }
 
 /**

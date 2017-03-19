@@ -54,6 +54,60 @@ class mod_data_lib_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * Confirms that completionentries is working
+     * Sets it to 1, confirms that
+     * it is not complete. Inserts a record and
+     * confirms that it is complete.
+     */
+    public function test_data_completion() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $CFG->enablecompletion = 1;
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->name = "Mod data completion test";
+        $record->intro = "Some intro of some sort";
+        $record->completionentries = "1";
+        /* completion=2 means Show activity commplete when condition is met and completionentries means 1 record is
+         * required for the activity to be considered complete
+         */
+        $module = $this->getDataGenerator()->create_module('data', $record, array('completion' => 2, 'completionentries' => 1));
+
+        $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
+        $completion = new completion_info($course);
+        $completiondata = $completion->get_data($cm, true, 0);
+        /* Confirm it is not complete as there are no entries */
+        $this->assertNotEquals(1, $completiondata->completionstate);
+
+        $field = data_get_field_new('text', $module);
+        $fielddetail = new stdClass();
+        $fielddetail->d = $module->id;
+        $fielddetail->mode = 'add';
+        $fielddetail->type = 'text';
+        $fielddetail->sesskey = sesskey();
+        $fielddetail->name = 'Name';
+        $fielddetail->description = 'Some name';
+
+        $field->define_field($fielddetail);
+        $field->insert_field();
+        $recordid = data_add_record($module);
+
+        $datacontent = array();
+        $datacontent['fieldid'] = $field->field->id;
+        $datacontent['recordid'] = $recordid;
+        $datacontent['content'] = 'Asterix';
+        $contentid = $DB->insert_record('data_content', $datacontent);
+
+        $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
+        $completion = new completion_info($course);
+        $completiondata = $completion->get_data($cm);
+        /* Confirm it is complete because it has 1 entry */
+        $this->assertEquals(1, $completiondata->completionstate);
+    }
+
     public function test_data_delete_record() {
         global $DB;
 
