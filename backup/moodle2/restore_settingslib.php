@@ -143,6 +143,41 @@ class restore_course_generic_setting extends course_backup_setting {}
  */
 class restore_course_overwrite_conf_setting extends restore_course_generic_setting {}
 
+/**
+ * Setting to switch between current and new course name/startdate
+ *
+ * @copyright   2017 Marina Glancy
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class restore_course_defaultcustom_setting extends restore_course_generic_setting {
+    /**
+     * Validates that the value $value has type $vtype
+     * @param int $vtype
+     * @param mixed $value
+     * @return mixed
+     */
+    public function validate_value($vtype, $value) {
+        if ($value === false) {
+            // Value "false" means default and is allowed for this setting type even if it does not match $vtype.
+            return $value;
+        }
+        return parent::validate_value($vtype, $value);
+    }
+
+    /**
+     * Special method for this element only. When value is "false" returns the default value.
+     * @return mixed
+     */
+    public function get_normalized_value() {
+        $value = $this->get_value();
+        if ($value === false && $this->get_ui() instanceof backup_setting_ui_defaultcustom) {
+            $attributes = $this->get_ui()->get_attributes();
+            return $attributes['defaultvalue'];
+        }
+        return $value;
+    }
+}
+
 
 class restore_course_generic_text_setting extends restore_course_generic_setting {
 

@@ -5125,6 +5125,28 @@ class admin_setting_configselect_with_advanced extends admin_setting_configselec
 
 }
 
+/**
+ * Select with an advanced checkbox that controls an additional $name.'_locked' config setting.
+ *
+ * @copyright 2017 Marina Glancy
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_configselect_with_lock extends admin_setting_configselect {
+    /**
+     * Constructor
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config,
+     *     or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $visiblename localised
+     * @param string $description long localised info
+     * @param array $defaultsetting ('value'=>string, 'locked'=>bool)
+     * @param array $choices array of $value=>$label for each selection
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
+        parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $choices);
+        $this->set_locked_flag_options(admin_setting_flag::ENABLED, !empty($defaultsetting['locked']));
+    }
+}
+
 
 /**
  * Graded roles in gradebook

@@ -26,7 +26,9 @@
 $string['addfields'] = 'Add {$a} field(s) to form';
 $string['advancedelement'] = 'Advanced element';
 $string['close'] = 'Close';
+$string['custom'] = 'Custom';
 $string['day'] = 'Day';
+$string['default'] = 'Default';
 $string['display'] = 'Display';
 $string['err_alphanumeric'] = 'You must enter only letters or numbers here.';
 $string['err_email'] = 'You must enter a valid email address here.';
@@ -47,6 +49,7 @@ $string['miscellaneoussettings'] = 'Miscellaneous settings';
 $string['modstandardels'] = 'Common module settings';
 $string['month'] = 'Month';
 $string['mustbeoverriden'] = 'Abstract form_definition() method in class {$a} must be overridden, please fix the code.';
+$string['newvaluefor'] = 'New value for {$a}';
 $string['nomethodforaddinghelpbutton'] = 'There is no method for adding a help button to form element {$a->name} (class {$a->classname})';
 $string['nonexistentformelements'] = 'Trying to add help buttons to non-existent form elements : {$a}';
 $string['noselection'] = 'No selection';

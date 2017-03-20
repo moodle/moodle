@@ -69,3 +69,4 @@ error:personaneedsjs,core_badges
 error:badjson,core_badges
 error:backpackloginfailed,core_badges
 signinwithyouremail,core_badges
+sectionusedefaultname,core

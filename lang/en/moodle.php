@@ -1649,7 +1649,6 @@ $string['section'] = 'Section';
 $string['sectionactionnotsupported'] = 'Section action "{$a}" is not supported here';
 $string['sectionname'] = 'Section name';
 $string['sections'] = 'Sections';
-$string['sectionusedefaultname'] = 'Use default section name';
 $string['seealsostats'] = 'See also: stats';
 $string['select'] = 'Select';
 $string['selectacategory'] = 'Please select a category';
@@ -2064,3 +2063,4 @@ $string['modchooserdisable'] = 'Activity chooser off';
 
 // Deprecated since Moodle 3.3.
 $string['deletecomment'] = 'Delete this comment';
+$string['sectionusedefaultname'] = 'Use default section name';

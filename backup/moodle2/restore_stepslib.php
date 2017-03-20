@@ -1810,36 +1810,30 @@ class restore_course_structure_step extends restore_structure_step {
         $context = context::instance_by_id($this->task->get_contextid());
         $userid = $this->task->get_userid();
         $target = $this->get_task()->get_target();
-        $isnewcourse = $target != backup::TARGET_CURRENT_ADDING && $target != backup::TARGET_EXISTING_ADDING;
+        $isnewcourse = $target == backup::TARGET_NEW_COURSE;
 
         // When restoring to a new course we can set all the things except for the ID number.
         $canchangeidnumber = $isnewcourse || has_capability('moodle/course:changeidnumber', $context, $userid);
-        $canchangeshortname = $isnewcourse || has_capability('moodle/course:changeshortname', $context, $userid);
-        $canchangefullname = $isnewcourse || has_capability('moodle/course:changefullname', $context, $userid);
         $canchangesummary = $isnewcourse || has_capability('moodle/course:changesummary', $context, $userid);
 
         $data = (object)$data;
         $data->id = $this->get_courseid();
 
+        // Calculate final course names, to avoid dupes.
         $fullname  = $this->get_setting_value('course_fullname');
         $shortname = $this->get_setting_value('course_shortname');
-        $startdate = $this->get_setting_value('course_startdate');
-
-        // Calculate final course names, to avoid dupes.
-        list($fullname, $shortname) = restore_dbops::calculate_course_names($this->get_courseid(), $fullname, $shortname);
-
-        if ($canchangefullname) {
-            $data->fullname = $fullname;
-        } else {
+        list($data->fullname, $data->shortname) = restore_dbops::calculate_course_names($this->get_courseid(),
+            $fullname === false ? $data->fullname : $fullname,
+            $shortname === false ? $data->shortname : $shortname);
+        // Do not modify the course names at all when merging and user selected to keep the names (or prohibited by cap).
+        if (!$isnewcourse && $fullname === false) {
             unset($data->fullname);
         }
-
-        if ($canchangeshortname) {
-            $data->shortname = $shortname;
-        } else {
+        if (!$isnewcourse && $shortname === false) {
             unset($data->shortname);
         }
 
+        // Unset summary if user can't change it.
         if (!$canchangesummary) {
             unset($data->summary);
             unset($data->summaryformat);

@@ -26,19 +26,21 @@ Feature: Sections can be edited and deleted in topics format
 
   Scenario: View the default name of the general section in topics format
     When I click on "Edit section" "link" in the "li#section-0" "css_element"
-    Then I should see "Use default section name [General]"
+    Then the field "Custom" matches value "0"
+    And the field "New value for Section name" matches value "General"
 
   Scenario: Edit the default name of the general section in topics format
     When I click on "Edit section" "link" in the "li#section-0" "css_element"
     And I set the following fields to these values:
-      | Use default section name | 0                           |
-      | name                     | This is the general section |
+      | Custom | 1                     |
+      | New value for Section name      | This is the general section |
     And I press "Save changes"
     Then I should see "This is the general section" in the "li#section-0" "css_element"
 
   Scenario: View the default name of the second section in topics format
     When I click on "Edit topic" "link" in the "li#section-2" "css_element"
-    Then I should see "Use default section name [Topic 2]"
+    Then the field "Custom" matches value "0"
+    And the field "New value for Section name" matches value "Topic 2"
 
   Scenario: Edit section summary in topics format
     When I edit the section "2" and I fill the form with:
@@ -47,8 +49,8 @@ Feature: Sections can be edited and deleted in topics format
 
   Scenario: Edit section default name in topics format
     When I edit the section "2" and I fill the form with:
-      | Use default section name | 0                        |
-      | name                     | This is the second topic |
+      | Custom | 1                      |
+      | New value for Section name      | This is the second topic |
     Then I should see "This is the second topic" in the "li#section-2" "css_element"
     And I should not see "Topic 2" in the "li#section-2" "css_element"
 
