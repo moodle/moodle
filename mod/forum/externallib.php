@@ -1129,6 +1129,8 @@ class mod_forum_external extends external_api {
 
         $result = array();
         $result['status'] = $status;
+        $result['canpindiscussions'] = has_capability('mod/forum:pindiscussions', $context);
+        $result['cancreateattachment'] = forum_can_create_attachment($forum, $context);
         $result['warnings'] = $warnings;
         return $result;
     }
@@ -1143,6 +1145,10 @@ class mod_forum_external extends external_api {
         return new external_single_structure(
             array(
                 'status' => new external_value(PARAM_BOOL, 'True if the user can add discussions, false otherwise.'),
+                'canpindiscussions' => new external_value(PARAM_BOOL, 'True if the user can pin discussions, false otherwise.',
+                    VALUE_OPTIONAL),
+                'cancreateattachment' => new external_value(PARAM_BOOL, 'True if the user can add attachments, false otherwise.',
+                    VALUE_OPTIONAL),
                 'warnings' => new external_warnings()
             )
         );

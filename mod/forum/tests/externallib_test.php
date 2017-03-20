@@ -1001,7 +1001,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
      * Test can_add_discussion. A basic test since all the API functions are already covered by unit tests.
      */
     public function test_can_add_discussion() {
-
+        global $DB;
         $this->resetAfterTest(true);
 
         // Create courses to add the modules.
@@ -1022,11 +1022,24 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $result = mod_forum_external::can_add_discussion($forum->id);
         $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
         $this->assertFalse($result['status']);
+        $this->assertFalse($result['canpindiscussions']);
+        $this->assertTrue($result['cancreateattachment']);
+
+        // Disable attachments.
+        $DB->set_field('forum', 'maxattachments', 0, array('id' => $forum->id));
+        $result = mod_forum_external::can_add_discussion($forum->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
+        $this->assertFalse($result['status']);
+        $this->assertFalse($result['canpindiscussions']);
+        $this->assertFalse($result['cancreateattachment']);
+        $DB->set_field('forum', 'maxattachments', 1, array('id' => $forum->id));    // Enable attachments again.
 
         self::setAdminUser();
         $result = mod_forum_external::can_add_discussion($forum->id);
         $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
         $this->assertTrue($result['status']);
+        $this->assertTrue($result['canpindiscussions']);
+        $this->assertTrue($result['cancreateattachment']);
 
     }
 
