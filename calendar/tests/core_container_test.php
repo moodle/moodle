@@ -39,17 +39,19 @@ use core_calendar\local\interfaces\event_mapper_interface;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_calendar_container_testcase extends advanced_testcase {
+
+    /**
+     * Test setup.
+     */
+    public function setUp() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+    }
+
     /**
      * Test getting the event factory.
-     *
-     * @dataProvider get_event_factory_testcases()
-     * @param \stdClass $dbrow Row from the "database".
      */
-    public function test_get_event_factory($dbrow) {
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-
-        $legacyevent = $this->create_event($dbrow);
+    public function test_get_event_factory() {
         $factory = \core_calendar\local\event\core_container::get_event_factory();
 
         // Test that the container is returning the right type.
@@ -69,9 +71,6 @@ class core_calendar_container_testcase extends advanced_testcase {
      * @param \stdClass $dbrow Row from the "database".
      */
     public function test_event_factory_create_instance($dbrow) {
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-
         $legacyevent = $this->create_event($dbrow);
         $factory = \core_calendar\local\event\core_container::get_event_factory();
         $course = $this->getDataGenerator()->create_course();
@@ -132,9 +131,6 @@ class core_calendar_container_testcase extends advanced_testcase {
      * @param \stdClass $dbrow Row from the "database".
      */
     function test_event_factory_when_module_visibility_is_toggled_as_admin($dbrow) {
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-
         $legacyevent = $this->create_event($dbrow);
         $factory = \core_calendar\local\event\core_container::get_event_factory();
         $course = $this->getDataGenerator()->create_course();
@@ -161,9 +157,6 @@ class core_calendar_container_testcase extends advanced_testcase {
      * @param \stdClass $dbrow Row from the "database".
      */
     function test_event_factory_when_module_visibility_is_toggled_as_guest($dbrow) {
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-
         $legacyevent = $this->create_event($dbrow);
         $factory = \core_calendar\local\event\core_container::get_event_factory();
         $course = $this->getDataGenerator()->create_course();
@@ -184,6 +177,55 @@ class core_calendar_container_testcase extends advanced_testcase {
 
         // Module is invisible to guest users so this should return null.
         $this->assertNull($event);
+    }
+
+    /**
+     * Test that the event factory deals with completion related events properly.
+     */
+    function test_event_factory_with_completion_related_event() {
+        global $CFG;
+
+        $CFG->enablecompletion = true;
+
+        // Create the course we will be using.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+
+        // Add the assignment.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assign = $generator->create_instance(array('course' => $course->id), array('completion' => 1));
+
+        // Create a completion event.
+        $event = new \stdClass();
+        $event->name = 'An event';
+        $event->description = 'Event description';
+        $event->format = FORMAT_HTML;
+        $event->eventtype = \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED;
+        $event->userid = 1;
+        $event->modulename = 'assign';
+        $event->instance = $assign->id;
+        $event->courseid = $course->id;
+        $event->groupid = 0;
+        $event->timestart = time();
+        $event->timesort = time();
+        $event->timemodified = time();
+        $event->timeduration = 0;
+        $event->subscriptionid = null;
+        $legacyevent = $this->create_event($event);
+
+        // Update the id of the event that was created.
+        $event->id = $legacyevent->id;
+
+        // Create the factory we are going to be testing the behaviour of.
+        $factory = \core_calendar\local\event\core_container::get_event_factory();
+
+        // Check that we get the correct instance.
+        $this->assertInstanceOf(event_interface::class, $factory->create_instance($event));
+
+        // Now, disable completion.
+        $CFG->enablecompletion = false;
+
+        // The result should now be null since we have disabled completion.
+        $this->assertNull($factory->create_instance($event));
     }
 
     /**
