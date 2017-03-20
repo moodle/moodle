@@ -61,4 +61,12 @@ $functions = array(
         'capabilities'  => 'mod/feedback:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_feedback_get_items' => array(
+        'classname'     => 'mod_feedback_external',
+        'methodname'    => 'get_items',
+        'description'   => 'Returns the items (questions) in the given feedback.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/feedback:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

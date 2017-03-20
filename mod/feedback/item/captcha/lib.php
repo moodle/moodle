@@ -188,4 +188,18 @@ class feedback_item_captcha extends feedback_item_base {
         unset($actions['update']);
         return $actions;
     }
+
+    public function get_data_for_external($item) {
+        global $CFG;
+
+        if (empty($CFG->recaptchaprivatekey) || empty($CFG->recaptchapublickey)) {
+            return null;
+        }
+
+        require_once($CFG->libdir . '/recaptchalib.php');
+        // We return the public key, maybe we want to use the javascript api to get the image.
+        $data = recaptcha_get_challenge_hash_and_urls(RECAPTCHA_API_SECURE_SERVER, $CFG->recaptchapublickey);
+        $data[] = $CFG->recaptchapublickey;
+        return json_encode($data);
+    }
 }
