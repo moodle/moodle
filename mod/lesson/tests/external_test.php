@@ -137,23 +137,22 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $lesson1 = $this->lesson;
         $lesson1->coursemodule = $lesson1->cmid;
         $lesson1->introformat = 1;
-        $lesson1->section = 0;
-        $lesson1->visible = true;
-        $lesson1->groupmode = 0;
-        $lesson1->groupingid = 0;
         $lesson1->introfiles = [];
         $lesson1->mediafiles = [];
 
         $lesson2->coursemodule = $lesson2->cmid;
         $lesson2->introformat = 1;
-        $lesson2->section = 0;
-        $lesson2->visible = true;
-        $lesson2->groupmode = 0;
-        $lesson2->groupingid = 0;
         $lesson2->introfiles = [];
         $lesson2->mediafiles = [];
 
+        $booltypes = array('practice', 'modattempts', 'usepassword', 'custom', 'ongoing', 'review', 'feedback', 'retake',
+            'slideshow', 'displayleft', 'progressbar', 'allowofflineattempts');
+
         foreach ($expectedfields as $field) {
+            if (in_array($field, $booltypes)) {
+                $lesson1->{$field} = (bool) $lesson1->{$field};
+                $lesson2->{$field} = (bool) $lesson2->{$field};
+            }
             $expected1[$field] = $lesson1->{$field};
             $expected2[$field] = $lesson2->{$field};
         }
