@@ -18,7 +18,7 @@
  * Test plugin enrollib parts.
  *
  * @package    core_enrol
- * @category   phpunit
+ * @category   test
  * @copyright  2017 Darko Miletic
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * Test plugin enrollib parts.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2017 Darko Miletic
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
