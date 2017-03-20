@@ -1027,6 +1027,12 @@ function choice_can_view_results($choice, $current = null, $choiceopen = null) {
 
     if (is_null($choiceopen)) {
         $timenow = time();
+
+        if ($choice->timeopen != 0 && $timenow < $choice->timeopen) {
+            // If the choice is not available, we can't see the results.
+            return false;
+        }
+
         if ($choice->timeclose != 0 && $timenow > $choice->timeclose) {
             $choiceopen = false;
         } else {
