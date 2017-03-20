@@ -65,7 +65,7 @@ switch ($result->status) {
         $msg = $OUTPUT->notification(get_string("test_unoconv{$result->status}", 'fileconverter_unoconv'), 'warning');
         break;
 }
-$returl = new moodle_url('/admin/settings.php', array('section' => 'fileconverter_unoconv'));
+$returl = new moodle_url('/admin/settings.php', array('section' => 'fileconverterunoconv'));
 $msg .= $OUTPUT->continue_button($returl);
 
 echo $OUTPUT->header();
