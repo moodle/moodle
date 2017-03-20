@@ -69,7 +69,7 @@ class api {
                     );
 
                     // All the mobile packages must be under the plugin mobile directory.
-                    $package = $path . DIRECTORY_SEPARATOR . 'mobile' . DIRECTORY_SEPARATOR . $addonname . '.zip';
+                    $package = $path . '/mobile/' . $addonname . '.zip';
                     if (file_exists($package)) {
                         $plugininfo['fileurl'] = $CFG->wwwroot . '' . str_replace($CFG->dirroot, '', $package);
                         $plugininfo['filehash'] = sha1_file($package);
