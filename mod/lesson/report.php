@@ -74,15 +74,13 @@ if ($action === 'delete') {
                     $try -= $modifier;
 
                 /// Clean up the timer table by removing using the order - this is silly, it should be linked to specific attempt (skodak)
-                    $params = array ("userid" => $userid, "lessonid" => $lesson->id);
-                    $timers = $DB->get_records_sql("SELECT id FROM {lesson_timer}
-                                                     WHERE userid = :userid AND lessonid = :lessonid
-                                                  ORDER BY starttime", $params, $try, 1);
+                    $timers = $lesson->get_user_timers($userid, 'starttime', 'id', $try, 1);
                     if ($timers) {
                         $timer = reset($timers);
                         $DB->delete_records('lesson_timer', array('id' => $timer->id));
                     }
 
+                    $params = array ("userid" => $userid, "lessonid" => $lesson->id);
                     // Remove the grade from the grades tables - this is silly, it should be linked to specific attempt (skodak).
                     $grades = $DB->get_records_sql("SELECT id FROM {lesson_grades}
                                                      WHERE userid = :userid AND lessonid = :lessonid
@@ -687,7 +685,8 @@ if ($action === 'delete') {
             $completed = $grade->completed;
             $grade = round($grade->grade, 2);
         }
-        if (!$times = $DB->get_records_select("lesson_timer", "lessonid = :lessonid and userid = :userid", $params, "starttime", "*", $try, 1)) {
+
+        if (!$times = $lesson->get_user_timers($userid, 'starttime', '*', $try, 1)) {
             $timetotake = -1;
         } else {
             $timetotake = current($times);

@@ -1583,10 +1583,9 @@ class lesson extends lesson_base {
 
         // clock code
         // get time information for this user
-        $params = array("lessonid" => $this->properties->id, "userid" => $USER->id);
-        if (!$timer = $DB->get_records('lesson_timer', $params, 'starttime DESC', '*', 0, 1)) {
+        if (!$timer = $this->get_user_timers($USER->id, 'starttime DESC', '*', 0, 1)) {
             $this->start_timer();
-            $timer = $DB->get_records('lesson_timer', $params, 'starttime DESC', '*', 0, 1);
+            $timer = $this->get_user_timers($USER->id, 'starttime DESC', '*', 0, 1);
         }
         $timer = current($timer); // This will get the latest start time record.
 
@@ -2432,6 +2431,28 @@ class lesson extends lesson_base {
         // Mark as viewed.
         $completion = new completion_info($this->get_courserecord());
         $completion->set_module_viewed($this->get_cm());
+    }
+
+    /**
+     * Return the timers in the current lesson for the given user.
+     *
+     * @param  int      $userid    the user id
+     * @param  string   $sort      an order to sort the results in (optional, a valid SQL ORDER BY parameter).
+     * @param  string   $fields    a comma separated list of fields to return
+     * @param  int      $limitfrom return a subset of records, starting at this point (optional).
+     * @param  int      $limitnum  return a subset comprising this many records in total (optional, required if $limitfrom is set).
+     * @return array    list of timers for the given user in the lesson
+     * @since  Moodle 3.3
+     */
+    public function get_user_timers($userid = null, $sort = '', $fields = '*', $limitfrom = 0, $limitnum = 0) {
+        global $DB, $USER;
+
+        if ($userid === null) {
+            $userid = $USER->id;
+        }
+
+        $params = array('lessonid' => $this->properties->id, 'userid' => $userid);
+        return $DB->get_records('lesson_timer', $params, $sort, $fields, $limitfrom, $limitnum);
     }
 }
 

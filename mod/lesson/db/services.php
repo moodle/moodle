@@ -84,4 +84,12 @@ $functions = array(
         'capabilities'  => 'mod/lesson:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_lesson_get_user_timers' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'get_user_timers',
+        'description'   => 'Return the timers in the current lesson for the given user.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
