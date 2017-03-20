@@ -125,7 +125,21 @@ class core_container {
 
                     $cm = $instances[$dbrow->modulename][$dbrow->instance];
 
-                    return !(bool)$cm->uservisible;
+                    if (!$cm->uservisible) {
+                        return true;
+                    }
+
+                    // Ok, now check if we are looking at a completion event.
+                    if ($dbrow->eventtype === \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED) {
+                        // Need to have completion enabled before displaying these events.
+                        $course = new \stdClass();
+                        $course->id = $dbrow->courseid;
+                        $completion = new \completion_info($course);
+
+                        return (bool) !$completion->is_enabled($cm);
+                    }
+
+                    return false;
                 },
                 self::$coursecache,
                 self::$modulecache
