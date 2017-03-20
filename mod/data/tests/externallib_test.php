@@ -257,4 +257,62 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
     }
+
+    /**
+     * Test get_data_access_information for student.
+     */
+    public function test_get_data_access_information_student() {
+        global $DB;
+        // Modify the database to add access restrictions.
+        $this->data->timeavailablefrom = time() + DAYSECS;
+        $this->data->requiredentries = 2;
+        $this->data->requiredentriestoview = 2;
+        $DB->update_record('data', $this->data);
+
+        // Test user with full capabilities.
+        $this->setUser($this->student1);
+
+        $result = mod_data_external::get_data_access_information($this->data->id);
+        $result = external_api::clean_returnvalue(mod_data_external::get_data_access_information_returns(), $result);
+
+        $this->assertEquals(0, $result['groupid']);
+
+        $this->assertFalse($result['canmanageentries']);
+        $this->assertFalse($result['canapprove']);
+        $this->assertTrue($result['canaddentry']);  // It return true because it doen't check time restrictions.
+        $this->assertFalse($result['timeavailable']);
+        $this->assertFalse($result['inreadonlyperiod']);
+        $this->assertEquals(0, $result['numentries']);
+        $this->assertEquals($this->data->requiredentries, $result['entrieslefttoadd']);
+        $this->assertEquals($this->data->requiredentriestoview, $result['entrieslefttoview']);
+    }
+
+    /**
+     * Test get_data_access_information for teacher.
+     */
+    public function test_get_data_access_information_teacher() {
+        global $DB;
+        // Modify the database to add access restrictions.
+        $this->data->timeavailablefrom = time() + DAYSECS;
+        $this->data->requiredentries = 2;
+        $this->data->requiredentriestoview = 2;
+        $DB->update_record('data', $this->data);
+
+        // Test user with full capabilities.
+        $this->setUser($this->teacher);
+
+        $result = mod_data_external::get_data_access_information($this->data->id);
+        $result = external_api::clean_returnvalue(mod_data_external::get_data_access_information_returns(), $result);
+
+        $this->assertEquals(0, $result['groupid']);
+
+        $this->assertTrue($result['canmanageentries']);
+        $this->assertTrue($result['canapprove']);
+        $this->assertTrue($result['canaddentry']);  // It return true because it doen't check time restrictions.
+        $this->assertTrue($result['timeavailable']);
+        $this->assertFalse($result['inreadonlyperiod']);
+        $this->assertEquals(0, $result['numentries']);
+        $this->assertEquals(0, $result['entrieslefttoadd']);
+        $this->assertEquals(0, $result['entrieslefttoview']);
+    }
 }

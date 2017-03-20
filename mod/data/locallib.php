@@ -670,3 +670,97 @@ function data_set_events($data) {
         }
     }
 }
+
+/**
+ * Check if a database is available for the current user.
+ *
+ * @param  stdClass  $data            database record
+ * @param  boolean $canmanageentries  optional, if the user can manage entries
+ * @param  stdClass  $context         Module context, required if $canmanageentries is not set
+ * @return array                      status (available or not and possible warnings)
+ * @since  Moodle 3.3
+ */
+function data_get_time_availability_status($data, $canmanageentries = null, $context = null) {
+    $open = true;
+    $closed = false;
+    $warnings = array();
+
+    if ($canmanageentries === null) {
+        $canmanageentries = has_capability('mod/data:manageentries', $context);
+    }
+
+    if (!$canmanageentries) {
+        $timenow = time();
+
+        if (!empty($data->timeavailablefrom) and $data->timeavailablefrom > $timenow) {
+            $open = false;
+        }
+        if (!empty($data->timeavailableto) and $timenow > $data->timeavailableto) {
+            $closed = true;
+        }
+
+        if (!$open or $closed) {
+            if (!$open) {
+                $warnings['notopenyet'] = userdate($data->timeavailablefrom);
+            }
+            if ($closed) {
+                $warnings['expired'] = userdate($data->timeavailableto);
+            }
+            return array(false, $warnings);
+        }
+    }
+
+    // Database is available.
+    return array(true, $warnings);
+}
+
+/**
+ * Requires a database to be available for the current user.
+ *
+ * @param  stdClass  $data            database record
+ * @param  boolean $canmanageentries  optional, if the user can manage entries
+ * @param  stdClass  $context          Module context, required if $canmanageentries is not set
+ * @throws moodle_exception
+ * @since  Moodle 3.3
+ */
+function data_require_time_available($data, $canmanageentries = null, $context = null) {
+
+    list($available, $warnings) = data_get_time_availability_status($data, $canmanageentries, $context);
+
+    if (!$available) {
+        $reason = current(array_keys($warnings));
+        throw new moodle_exception($reason, 'data', '', $warnings[$reason]);
+    }
+}
+
+/**
+ * Return the number of entries left to add to complete the activity.
+ *
+ * @param  stdClass $data           database object
+ * @param  int $numentries          the number of entries the current user has created
+ * @param  bool $canmanageentries   whether the user can manage entries (teachers, managers)
+ * @return int the number of entries left, 0 if no entries left or if is not required
+ * @since  Moodle 3.3
+ */
+function data_get_entries_left_to_add($data, $numentries, $canmanageentries) {
+    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !$canmanageentries) {
+        return $data->requiredentries - $numentries;
+    }
+    return 0;
+}
+
+/**
+ * Return the number of entires left to add to view other users entries..
+ *
+ * @param  stdClass $data           database object
+ * @param  int $numentries          the number of entries the current user has created
+ * @param  bool $canmanageentries   whether the user can manage entries (teachers, managers)
+ * @return int the number of entries left, 0 if no entries left or if is not required
+ * @since  Moodle 3.3
+ */
+function data_get_entries_left_to_view($data, $numentries, $canmanageentries) {
+    if ($data->requiredentriestoview > 0 && $numentries < $data->requiredentriestoview && !$canmanageentries) {
+        return $data->requiredentriestoview - $numentries;
+    }
+    return 0;
+}

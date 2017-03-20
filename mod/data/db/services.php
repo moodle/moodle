@@ -43,4 +43,12 @@ $functions = array(
         'capabilities'  => 'mod/data:viewentry',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_data_get_data_access_information' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'get_data_access_information',
+        'description'   => 'Return access information for a given database.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/data:viewentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

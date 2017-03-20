@@ -432,19 +432,13 @@
         }
     }
 
+    // If data activity closed dont let students in.
+    list($showactivity, $warnings) = data_get_time_availability_status($data, $canmanageentries);
 
-//if data activity closed dont let students in
-$showactivity = true;
-if (!$canmanageentries) {
-    $timenow = time();
-    if (!empty($data->timeavailablefrom) && $data->timeavailablefrom > $timenow) {
-        echo $OUTPUT->notification(get_string('notopenyet', 'data', userdate($data->timeavailablefrom)));
-        $showactivity = false;
-    } else if (!empty($data->timeavailableto) && $timenow > $data->timeavailableto) {
-        echo $OUTPUT->notification(get_string('expired', 'data', userdate($data->timeavailableto)));
-        $showactivity = false;
+    if (!$showactivity) {
+        $reason = current(array_keys($warnings));
+        echo $OUTPUT->notification(get_string($reason, 'data', $warnings[$reason]));
     }
-}
 
 if ($showactivity) {
     // Print the tabs
@@ -483,18 +477,16 @@ if ($showactivity) {
             }
         }
 
-         $numentries = data_numentries($data);
+        $numentries = data_numentries($data);
     /// Check the number of entries required against the number of entries already made (doesn't apply to teachers)
-        if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !$canmanageentries) {
-            $data->entriesleft = $data->requiredentries - $numentries;
+        if ($data->entriesleft = data_get_entries_left_to_add($data, $numentries, $canmanageentries)) {
             $strentrieslefttoadd = get_string('entrieslefttoadd', 'data', $data);
             echo $OUTPUT->notification($strentrieslefttoadd);
         }
 
     /// Check the number of entries required before to view other participant's entries against the number of entries already made (doesn't apply to teachers)
         $requiredentries_allowed = true;
-        if ($data->requiredentriestoview > 0 && $numentries < $data->requiredentriestoview && !$canmanageentries) {
-            $data->entrieslefttoview = $data->requiredentriestoview - $numentries;
+        if ($data->entrieslefttoview = data_get_entries_left_to_view($data, $numentries, $canmanageentries)) {
             $strentrieslefttoaddtoview = get_string('entrieslefttoaddtoview', 'data', $data);
             echo $OUTPUT->notification($strentrieslefttoaddtoview);
             $requiredentries_allowed = false;
