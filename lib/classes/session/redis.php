@@ -44,6 +44,8 @@ class redis extends handler {
     protected $host = '';
     /** @var int $port The port to connect to */
     protected $port = 6379;
+    /** @var string $auth redis password  */
+    protected $auth = '';
     /** @var int $database the Redis database to store sesions in */
     protected $database = 0;
     /** @var array $servers list of servers parsed from save_path */
@@ -79,6 +81,10 @@ class redis extends handler {
 
         if (isset($CFG->session_redis_port)) {
             $this->port = (int)$CFG->session_redis_port;
+        }
+
+        if (isset($CFG->session_redis_auth)) {
+            $this->auth = $CFG->session_redis_auth;
         }
 
         if (isset($CFG->session_redis_database)) {
@@ -156,6 +162,13 @@ class redis extends handler {
             if (!$this->connection->connect($this->host, $this->port, 1)) {
                 throw new RedisException('Unable to connect to host.');
             }
+
+            if ($this->auth !== '') {
+                if (!$this->connection->auth($this->auth)) {
+                    throw new RedisException('Unable to authenticate.');
+                }
+            }
+
             if (!$this->connection->setOption(\Redis::OPT_SERIALIZER, $this->serializer)) {
                 throw new RedisException('Unable to set Redis PHP Serializer option.');
             }
