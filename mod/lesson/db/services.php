@@ -60,4 +60,20 @@ $functions = array(
         'capabilities'  => 'mod/lesson:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_lesson_get_user_grade' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'get_user_grade',
+        'description'   => 'Return the final grade in the lesson for the given user.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_lesson_get_user_attempt_grade' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'get_user_attempt_grade',
+        'description'   => 'Return grade information in the attempt for a given user.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

@@ -464,4 +464,119 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         $result = mod_lesson_external::get_questions_attempts($this->lesson->id, $attemptnumber, false, null, $this->teacher->id);
     }
+
+    /**
+     * Test get user grade.
+     */
+    public function test_get_user_grade() {
+        global $DB;
+
+        // Add grades for the user.
+        $newgrade = [
+            'lessonid' => $this->lesson->id,
+            'userid' => $this->student->id,
+            'grade' => 50,
+            'late' => 0,
+            'completed' => time(),
+        ];
+        $DB->insert_record('lesson_grades', (object) $newgrade);
+
+        $newgrade = [
+            'lessonid' => $this->lesson->id,
+            'userid' => $this->student->id,
+            'grade' => 100,
+            'late' => 0,
+            'completed' => time(),
+        ];
+        $DB->insert_record('lesson_grades', (object) $newgrade);
+
+        $this->setUser($this->student);
+
+        // Test lesson without multiple attemps. The first result must be returned.
+        $result = mod_lesson_external::get_user_grade($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals(50, $result['grade']);
+        $this->assertEquals('50.00', $result['formattedgrade']);
+
+        // With retakes. By default average.
+        $DB->set_field('lesson', 'retake', 1, array('id' => $this->lesson->id));
+        $result = mod_lesson_external::get_user_grade($this->lesson->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals(75, $result['grade']);
+        $this->assertEquals('75.00', $result['formattedgrade']);
+
+        // With retakes. With max grade setting.
+        $DB->set_field('lesson', 'usemaxgrade', 1, array('id' => $this->lesson->id));
+        $result = mod_lesson_external::get_user_grade($this->lesson->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals(100, $result['grade']);
+        $this->assertEquals('100.00', $result['formattedgrade']);
+
+        // Test as teacher we get the same result.
+        $this->setUser($this->teacher);
+        $result = mod_lesson_external::get_user_grade($this->lesson->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_grade_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals(100, $result['grade']);
+        $this->assertEquals('100.00', $result['formattedgrade']);
+
+        // Test exception. As student try to retrieve grades from teacher.
+        $this->setUser($this->student);
+        $this->expectException('moodle_exception');
+        $result = mod_lesson_external::get_user_grade($this->lesson->id, $this->teacher->id);
+    }
+
+    /**
+     * Test get_user_attempt_grade
+     */
+    public function test_get_user_attempt_grade() {
+        global $DB;
+
+        // Create a fake attempt for the first possible answer.
+        $attemptnumber = 1;
+        $p2answers = $DB->get_records('lesson_answers', array('lessonid' => $this->lesson->id, 'pageid' => $this->page2->id), 'id');
+        $answerid = reset($p2answers)->id;
+
+        $newpageattempt = [
+            'lessonid' => $this->lesson->id,
+            'pageid' => $this->page2->id,
+            'userid' => $this->student->id,
+            'answerid' => $answerid,
+            'retry' => $attemptnumber,
+            'correct' => 1,
+            'useranswer' => '1',
+            'timeseen' => time(),
+        ];
+        $DB->insert_record('lesson_attempts', (object) $newpageattempt);
+
+        // Test first without custom scoring. All questions receive the same value if correctly responsed.
+        $DB->set_field('lesson', 'custom', 0, array('id' => $this->lesson->id));
+        $this->setUser($this->student);
+        $result = mod_lesson_external::get_user_attempt_grade($this->lesson->id, $attemptnumber, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_grade_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals(1, $result['nquestions']);
+        $this->assertEquals(1, $result['attempts']);
+        $this->assertEquals(1, $result['total']);
+        $this->assertEquals(1, $result['earned']);
+        $this->assertEquals(100, $result['grade']);
+        $this->assertEquals(0, $result['nmanual']);
+        $this->assertEquals(0, $result['manualpoints']);
+
+        // With custom scoring, in this case, we don't retrieve any values since we are using questions without particular score.
+        $DB->set_field('lesson', 'custom', 1, array('id' => $this->lesson->id));
+        $result = mod_lesson_external::get_user_attempt_grade($this->lesson->id, $attemptnumber, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_attempt_grade_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals(1, $result['nquestions']);
+        $this->assertEquals(1, $result['attempts']);
+        $this->assertEquals(0, $result['total']);
+        $this->assertEquals(0, $result['earned']);
+        $this->assertEquals(0, $result['grade']);
+        $this->assertEquals(0, $result['nmanual']);
+        $this->assertEquals(0, $result['manualpoints']);
+    }
 }

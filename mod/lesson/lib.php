@@ -718,7 +718,7 @@ function lesson_cron () {
  * @global object
  * @param int $lessonid id of lesson
  * @param int $userid optional user id, 0 means all users
- * @return array array of grades, false if none
+ * @return array array of grades
  */
 function lesson_get_user_grades($lesson, $userid=0) {
     global $CFG, $DB;
