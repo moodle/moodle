@@ -48,8 +48,6 @@ class api {
     const LOGIN_VIA_EMBEDDED_BROWSER = 3;
     /** @var int seconds an auto-login key will expire. */
     const LOGIN_KEY_TTL = 60;
-    /** @var str link to the custom strings documentation for the app */
-    const CUSTOM_STRINGS_DOC_URL = 'https://docs.moodle.org/en/Moodle_Mobile_language_strings_customisation';
 
     /**
      * Returns a list of Moodle plugins supporting the mobile app.

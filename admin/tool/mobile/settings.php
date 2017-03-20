@@ -109,8 +109,7 @@ if ($hassiteconfig) {
 
         $temp->add(new admin_setting_configtextarea('tool_mobile/customlangstrings',
                     new lang_string('customlangstrings', 'tool_mobile'),
-                    new lang_string('customlangstrings_desc', 'tool_mobile', tool_mobile\api::CUSTOM_STRINGS_DOC_URL),
-                    '', PARAM_RAW, '50', '10'));
+                    new lang_string('customlangstrings_desc', 'tool_mobile'), '', PARAM_RAW, '50', '10'));
 
         $ADMIN->add('mobileapp', $temp);
     }
