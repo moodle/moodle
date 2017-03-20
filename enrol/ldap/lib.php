@@ -132,7 +132,7 @@ class enrol_ldap_plugin extends enrol_plugin {
      */
     public function can_hide_show_instance($instance) {
         $context = context_course::instance($instance->courseid);
-        return has_capability('enrol/ldap:config', $context);
+        return has_capability('enrol/ldap:manage', $context);
     }
 
     /**
