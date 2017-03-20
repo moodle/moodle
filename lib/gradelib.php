@@ -1379,9 +1379,10 @@ function grade_update_mod_grades($modinstance, $userid=0) {
         //new grading supported, force updating of grades
         $updateitemfunc($modinstance);
         $updategradesfunc($modinstance, $userid);
-
-    } else {
+    } else if (function_exists($updategradesfunc) xor function_exists($updateitemfunc)) {
         // Module does not support grading?
+        debugging("You have declared one of $updateitemfunc and $updategradesfunc but not both. " .
+                  "This will cause broken behaviour.", DEBUG_DEVELOPER);
     }
 
     return true;
