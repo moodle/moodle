@@ -1281,4 +1281,72 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_lesson_external::get_pages_possible_jumps_returns(), $result);
         $this->assertCount(3, $result['jumps']);
     }
+
+    /*
+     * Test get_lesson user student.
+     */
+    public function test_get_lesson_user_student() {
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Lesson not using password.
+        $result = mod_lesson_external::get_lesson($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
+        $this->assertCount(36, $result['lesson']);  // Expect most of the fields.
+        $this->assertFalse(isset($result['password']));
+    }
+
+    /**
+     * Test get_lesson user student with missing password.
+     */
+    public function test_get_lesson_user_student_with_missing_password() {
+        global $DB;
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+        $DB->set_field('lesson', 'usepassword', 1, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'password', 'abc', array('id' => $this->lesson->id));
+
+        // Lesson not using password.
+        $result = mod_lesson_external::get_lesson($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
+        $this->assertCount(5, $result['lesson']);   // Expect just this few fields.
+        $this->assertFalse(isset($result['intro']));
+    }
+
+    /**
+     * Test get_lesson user student with correct password.
+     */
+    public function test_get_lesson_user_student_with_correct_password() {
+        global $DB;
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+        $password = 'abc';
+        $DB->set_field('lesson', 'usepassword', 1, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'password', $password, array('id' => $this->lesson->id));
+
+        // Lesson not using password.
+        $result = mod_lesson_external::get_lesson($this->lesson->id, $password);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
+        $this->assertCount(36, $result['lesson']);
+        $this->assertFalse(isset($result['intro']));
+    }
+
+    /**
+     * Test get_lesson teacher.
+     */
+    public function test_get_lesson_teacher() {
+        global $DB;
+        // Test user with full capabilities.
+        $this->setUser($this->teacher);
+        $password = 'abc';
+        $DB->set_field('lesson', 'usepassword', 1, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'password', $password, array('id' => $this->lesson->id));
+
+        // Lesson not passing a valid password (but we are teachers, we should see all the info).
+        $result = mod_lesson_external::get_lesson($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
+        $this->assertCount(45, $result['lesson']);  // Expect all the fields.
+        $this->assertEquals($result['lesson']['password'], $password);
+    }
 }

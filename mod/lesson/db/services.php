@@ -156,4 +156,12 @@ $functions = array(
         'capabilities'  => 'mod/lesson:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_lesson_get_lesson' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'get_lesson',
+        'description'   => 'Return information of a given lesson.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );
