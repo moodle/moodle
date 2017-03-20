@@ -15,100 +15,49 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for mod_folder lib
+ * Unit tests for the activity label's lib.
  *
- * @package    mod_folder
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
+ * @package    mod_label
+ * @category   test
+ * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Unit tests for mod_folder lib
+ * Unit tests for the activity label's lib.
  *
- * @package    mod_folder
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
+ * @package    mod_label
+ * @category   test
+ * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
  */
-class mod_folder_lib_testcase extends advanced_testcase {
+class mod_label_lib_testcase extends advanced_testcase {
 
     /**
-     * Setup.
+     * Set up.
      */
     public function setUp() {
         $this->resetAfterTest();
         $this->setAdminUser();
     }
 
-    /**
-     * Prepares things before this test case is initialised
-     * @return void
-     */
-    public static function setUpBeforeClass() {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/folder/lib.php');
-    }
-
-    /**
-     * Test folder_view
-     * @return void
-     */
-    public function test_folder_view() {
-        global $CFG;
-
-        $CFG->enablecompletion = 1;
-
-        // Setup test data.
-        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
-        $folder = $this->getDataGenerator()->create_module('folder', array('course' => $course->id),
-                                                            array('completion' => 2, 'completionview' => 1));
-        $context = context_module::instance($folder->cmid);
-        $cm = get_coursemodule_from_instance('folder', $folder->id);
-
-        // Trigger and capture the event.
-        $sink = $this->redirectEvents();
-
-        folder_view($folder, $course, $cm, $context);
-
-        $events = $sink->get_events();
-        // 2 additional events thanks to completion.
-        $this->assertCount(3, $events);
-        $event = array_shift($events);
-
-        // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\mod_folder\event\course_module_viewed', $event);
-        $this->assertEquals($context, $event->get_context());
-        $moodleurl = new \moodle_url('/mod/folder/view.php', array('id' => $cm->id));
-        $this->assertEquals($moodleurl, $event->get_url());
-        $this->assertEventContextNotUsed($event);
-        $this->assertNotEmpty($event->get_name());
-
-        // Check completion status.
-        $completion = new completion_info($course);
-        $completiondata = $completion->get_data($cm);
-        $this->assertEquals(1, $completiondata->completionstate);
-    }
-
-    public function test_folder_core_calendar_provide_event_action() {
+    public function test_label_core_calendar_provide_event_action() {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
-        $folder = $this->getDataGenerator()->create_module('folder', array('course' => $course->id));
+        $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id));
 
         // Create a calendar event.
-        $event = $this->create_action_event($course->id, $folder->id,
+        $event = $this->create_action_event($course->id, $label->id,
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
 
         // Decorate action event.
-        $actionevent = mod_folder_core_calendar_provide_event_action($event, $factory);
+        $actionevent = mod_label_core_calendar_provide_event_action($event, $factory);
 
         // Confirm the event was decorated.
         $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
@@ -118,21 +67,21 @@ class mod_folder_lib_testcase extends advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_folder_core_calendar_provide_event_action_already_completed() {
+    public function test_label_core_calendar_provide_event_action_already_completed() {
         global $CFG;
 
         $CFG->enablecompletion = 1;
 
         // Create the activity.
         $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
-        $folder = $this->getDataGenerator()->create_module('folder', array('course' => $course->id),
+        $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id),
             array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
 
         // Get some additional data.
-        $cm = get_coursemodule_from_instance('folder', $folder->id);
+        $cm = get_coursemodule_from_instance('label', $label->id);
 
         // Create a calendar event.
-        $event = $this->create_action_event($course->id, $folder->id,
+        $event = $this->create_action_event($course->id, $label->id,
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed.
@@ -143,7 +92,7 @@ class mod_folder_lib_testcase extends advanced_testcase {
         $factory = new \core_calendar\action_factory();
 
         // Decorate action event.
-        $actionevent = mod_folder_core_calendar_provide_event_action($event, $factory);
+        $actionevent = mod_label_core_calendar_provide_event_action($event, $factory);
 
         // Ensure result was null.
         $this->assertNull($actionevent);
@@ -160,7 +109,7 @@ class mod_folder_lib_testcase extends advanced_testcase {
     private function create_action_event($courseid, $instanceid, $eventtype) {
         $event = new stdClass();
         $event->name = 'Calendar event';
-        $event->modulename  = 'folder';
+        $event->modulename  = 'label';
         $event->courseid = $courseid;
         $event->instance = $instanceid;
         $event->type = CALENDAR_EVENT_TYPE_ACTION;
