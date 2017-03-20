@@ -557,8 +557,16 @@ abstract class moodleform_mod extends moodleform {
 
         $section = get_fast_modinfo($COURSE)->get_section_info($this->_section);
         $allowstealth = !empty($CFG->allowstealth) && $this->courseformat->allow_stealth_module_visibility($this->_cm, $section);
-        $mform->addElement('modvisible', 'visible', get_string('visible'), null,
+        if ($allowstealth && $section->visible) {
+            $modvisiblelabel = 'modvisiblewithstealth';
+        } else if ($section->visible) {
+            $modvisiblelabel = 'modvisible';
+        } else {
+            $modvisiblelabel = 'modvisiblehiddensection';
+        }
+        $mform->addElement('modvisible', 'visible', get_string($modvisiblelabel), null,
                 array('allowstealth' => $allowstealth, 'sectionvisible' => $section->visible, 'cm' => $this->_cm));
+        $mform->addHelpButton('visible', $modvisiblelabel);
         if (!empty($this->_cm)) {
             $context = context_module::instance($this->_cm->id);
             if (!has_capability('moodle/course:activityvisibility', $context)) {

@@ -133,8 +133,8 @@ $string['alllogs'] = 'All logs';
 $string['allmods'] = 'All {$a}';
 $string['allow'] = 'Allow';
 $string['allowinternal'] = 'Allow internal methods as well';
-$string['allowstealthmodules'] = 'Allow hidden but available activities';
-$string['allowstealthmodules_help'] = 'If enabled, activities can be marked as hidden on the course page but available by following a link from elsewhere. These activities are listed in the gradebook and other reports';
+$string['allowstealthmodules'] = 'Allow activities to be available but not shown in visible sections of course page';
+$string['allowstealthmodules_help'] = 'If enabled, the Availability setting in Common module settings may have three options, rather than two - \'Show on course page\', \'Hide from students\' and \'Make available but not shown on course page\'. If an activity or resource is made available but not shown on the course page, a link to it must be provided from elsewhere, such as from a page resource. The activity would still be listed in the gradebook and other reports.';
 $string['allownone'] = 'Allow none';
 $string['allownot'] = 'Do not allow';
 $string['allparticipants'] = 'All participants';
@@ -930,7 +930,8 @@ $string['hiddensectionsinvisible'] = 'Hidden sections are completely invisible';
 $string['hide'] = 'Hide';
 $string['hideadvancedsettings'] = 'Hide advanced settings';
 $string['hidechartdata'] = 'Hide chart data';
-$string['hideonfrontpage'] = 'Hide from front page';
+$string['hidefromstudents'] = 'Hide from students';
+$string['hideoncoursepage'] = 'Make available but not shown on course page';
 $string['hidepicture'] = 'Hide picture';
 $string['hidesection'] = 'Hide section {$a}';
 $string['hidesettings'] = 'Hide settings';
@@ -1176,6 +1177,18 @@ $string['missingteacher'] = 'Must choose something';
 $string['missingurl'] = 'Missing URL';
 $string['missingusername'] = 'Missing username';
 $string['moddoesnotsupporttype'] = 'Module {$a->modname} does not support uploads of type {$a->type}';
+$string['modhide'] = 'Hide';
+$string['modshow'] = 'Show';
+$string['modvisible'] = 'Availability';
+$string['modvisible_help'] = 'If the availability is set to \'Show on course page\', the activity or resource is available to students (subject to any access restrictions which may be set).<br><br>
+If the availability is set to \'Hide from students\', the activity or resource is only available to users with permission to view hidden activities (by default, users with the role of teacher or non-editing teacher).';
+$string['modvisiblewithstealth'] = 'Availability';
+$string['modvisiblewithstealth_help'] = 'If the availability is set to \'Show on course page\', the activity or resource is available to students (subject to any access restrictions which may be set).<br><br>
+If the availability is set to \'Hide from students\', the activity or resource is only available to users with permission to view hidden activities (by default, users with the role of teacher or non-editing teacher).<br><br>
+If the course contains many activities or resources, the course page may be simplified by setting the availability to \'Make available but not shown on course page\'. In this case, a link to the activity or resource must be provided from elsewhere, such as from a page resource. The activity would still be listed in the gradebook and other reports.';
+$string['modvisiblehiddensection'] = 'Availability';
+$string['modvisiblehiddensection_help'] = 'If the availability is set to \'Hide from students\', the activity or resource is only available to users with permission to view hidden activities (by default, users with the role of teacher or non-editing teacher).<br><br>
+If the course contains many activities or resources, the course page may be simplified by setting the availability to \'Make available but not shown on course page\'. In this case, a link to the activity or resource must be provided from elsewhere, such as from a page resource. The activity would still be listed in the gradebook and other reports.';
 $string['moodlelogo'] = 'Moodle logo';
 $string['month'] = 'Month';
 $string['months'] = 'Months';
@@ -1715,6 +1728,7 @@ $string['showingacourses'] = 'Showing all {$a} courses';
 $string['showingxofycourses'] = 'Showing courses {$a->start} to {$a->end} of {$a->total} courses';
 $string['showlistofcourses'] = 'Show list of courses';
 $string['showmodulecourse'] = 'Show list of courses containing activity';
+$string['showoncoursepage'] = 'Show on course page';
 $string['showonly'] = 'Show only';
 $string['showperpage'] = 'Show {$a} per page';
 $string['showpopoverwindow'] = 'Show popover window';

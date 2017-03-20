@@ -51,14 +51,13 @@ Feature: Edit activities in main menu block
     And "My forum name" activity in site main menu block should have "Show" editing icon
     And "My forum name" activity in site main menu block should not have "Make available" editing icon
     And "My forum name" activity in site main menu block should have "Make unavailable" editing icon
-    # Make sure that "Visible" dropdown in the edit menu has three options.
+    # Make sure that "Availability" dropdown in the edit menu has three options.
     And I open "My forum name" actions menu in site main menu block
     And I click on "Edit settings" "link" in the "My forum name" activity in site main menu block
     And I expand all fieldsets
-    And the "Visible" select box should contain "Show"
-    And the "Visible" select box should contain "Hidden from students"
-    And the "Visible" select box should not contain "Hide"
-    And the field "Visible" matches value "Available but not displayed on course page"
+    And the "Availability" select box should contain "Show on course page"
+    And the "Availability" select box should contain "Hide from students"
+    And the field "Availability" matches value "Make available but not shown on course page"
     And I press "Save and return to course"
     And "My forum name" activity in site main menu block should be available but hidden from course page
     And I navigate to "Turn editing off" node in "Front page settings"

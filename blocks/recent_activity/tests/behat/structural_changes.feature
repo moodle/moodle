@@ -61,7 +61,7 @@ Feature: View structural changes in recent activity block
     And I add a "Forum" to section "1" and I fill the form with:
       | name        | ForumHidden    |
       | Description | No description |
-      | Visible     | 0              |
+      | Availability | 0             |
     And I add a "Forum" to section "1" and I fill the form with:
       | name        | ForumNoGroups  |
       | Description | No description |
