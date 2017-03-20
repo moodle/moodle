@@ -746,4 +746,90 @@ class mod_lesson_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_content_pages_viewed.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_content_pages_viewed_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+                'lessonattempt' => new external_value(PARAM_INT, 'lesson attempt number'),
+                'userid' => new external_value(PARAM_INT, 'the user id (empty for current user)', VALUE_DEFAULT, null),
+            )
+        );
+    }
+
+    /**
+     * Return the list of content pages viewed by a user during a lesson attempt.
+     *
+     * @param int $lessonid lesson instance id
+     * @param int $lessonattempt lesson attempt number
+     * @param int $userid only fetch attempts of the given user
+     * @return array of warnings and page attempts
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_content_pages_viewed($lessonid, $lessonattempt, $userid = null) {
+        global $USER;
+
+        $params = array(
+            'lessonid' => $lessonid,
+            'lessonattempt' => $lessonattempt,
+            'userid' => $userid,
+        );
+        $params = self::validate_parameters(self::get_content_pages_viewed_parameters(), $params);
+        $warnings = array();
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+
+        // Default value for userid.
+        if (empty($params['userid'])) {
+            $params['userid'] = $USER->id;
+        }
+
+        // Extra checks so only users with permissions can view other users attempts.
+        if ($USER->id != $params['userid']) {
+            self::check_can_view_user_data($params['userid'], $course, $cm, $context);
+        }
+
+        $pages = $lesson->get_content_pages_viewed($params['lessonattempt'], $params['userid']);
+
+        $result = array();
+        $result['pages'] = $pages;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_content_pages_viewed return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_content_pages_viewed_returns() {
+        return new external_single_structure(
+            array(
+                'pages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'The attempt id.'),
+                            'lessonid' => new external_value(PARAM_INT, 'The lesson id.'),
+                            'pageid' => new external_value(PARAM_INT, 'The page id.'),
+                            'userid' => new external_value(PARAM_INT, 'The user who viewed the page.'),
+                            'retry' => new external_value(PARAM_INT, 'The lesson attempt number.'),
+                            'flag' => new external_value(PARAM_INT, '1 if the next page was calculated randomly.'),
+                            'timeseen' => new external_value(PARAM_INT, 'The time the page was seen.'),
+                            'nextpageid' => new external_value(PARAM_INT, 'The next page chosen id.'),
+                        ),
+                        'The content pages viewed.'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

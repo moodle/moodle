@@ -579,4 +579,54 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, $result['nmanual']);
         $this->assertEquals(0, $result['manualpoints']);
     }
+
+    /**
+     * Test get_content_pages_viewed
+     */
+    public function test_get_content_pages_viewed() {
+        global $DB;
+
+        // Create another content pages.
+        $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        $page3 = $lessongenerator->create_content($this->lesson);
+
+        $branch1 = new stdClass;
+        $branch1->lessonid = $this->lesson->id;
+        $branch1->userid = $this->student->id;
+        $branch1->pageid = $this->page1->id;
+        $branch1->retry = 1;
+        $branch1->flag = 0;
+        $branch1->timeseen = time();
+        $branch1->nextpageid = $page3->id;
+        $branch1->id = $DB->insert_record("lesson_branch", $branch1);
+
+        $branch2 = new stdClass;
+        $branch2->lessonid = $this->lesson->id;
+        $branch2->userid = $this->student->id;
+        $branch2->pageid = $page3->id;
+        $branch2->retry = 1;
+        $branch2->flag = 0;
+        $branch2->timeseen = time() + 1;
+        $branch2->nextpageid = 0;
+        $branch2->id = $DB->insert_record("lesson_branch", $branch2);
+
+        // Test first attempt.
+        $result = mod_lesson_external::get_content_pages_viewed($this->lesson->id, 1, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_content_pages_viewed_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['pages']);
+        foreach ($result['pages'] as $page) {
+            if ($page['id'] == $branch1->id) {
+                $this->assertEquals($branch1, (object) $page);
+            } else {
+                $this->assertEquals($branch2, (object) $page);
+            }
+        }
+
+        // Attempt without pages viewed.
+        $result = mod_lesson_external::get_content_pages_viewed($this->lesson->id, 3, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_content_pages_viewed_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(0, $result['pages']);
+    }
 }
