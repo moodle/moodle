@@ -234,4 +234,70 @@ class mod_feedback_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for view_feedback.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function view_feedback_parameters() {
+        return new external_function_parameters (
+            array(
+                'feedbackid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'moduleviewed' => new external_value(PARAM_BOOL, 'If we need to mark the module as viewed for completion',
+                    VALUE_DEFAULT, false),
+            )
+        );
+    }
+
+    /**
+     * Trigger the course module viewed event and update the module completion status.
+     *
+     * @param int $feedbackid feedback instance id
+     * @param bool $moduleviewed If we need to mark the module as viewed for completion
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function view_feedback($feedbackid, $moduleviewed = false) {
+
+        $params = array('feedbackid' => $feedbackid, 'moduleviewed' => $moduleviewed);
+        $params = self::validate_parameters(self::view_feedback_parameters(), $params);
+        $warnings = array();
+
+        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
+        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $course->id);
+
+        // Trigger module viewed event.
+        $feedbackcompletion->trigger_module_viewed($course);
+        if ($params['moduleviewed']) {
+            if (!$feedbackcompletion->is_open()) {
+                throw new moodle_exception('feedback_is_not_open', 'feedback');
+            }
+            // Mark activity viewed for completion-tracking.
+            $feedbackcompletion->set_module_viewed($course);
+        }
+
+        $result = array(
+            'status' => true,
+            'warnings' => $warnings,
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the view_feedback return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function view_feedback_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
