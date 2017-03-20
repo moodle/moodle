@@ -89,8 +89,8 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $choices = array();
         $choices['0'] = get_string('hide');
         $choices['1'] = get_string('show');
-        $mform->addElement('select', 'defaults[visible]', get_string('visible'), $choices);
-        $mform->addHelpButton('defaults[visible]', 'visible');
+        $mform->addElement('select', 'defaults[visible]', get_string('coursevisibility'), $choices);
+        $mform->addHelpButton('defaults[visible]', 'coursevisibility');
         $mform->setDefault('defaults[visible]', $courseconfig->visible);
 
         $mform->addElement('date_selector', 'defaults[startdate]', get_string('startdate'));
