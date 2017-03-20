@@ -204,8 +204,7 @@ function assign_update_instance(stdClass $data, $form) {
  * If $override is non-zero, then it updates only the events
  * associated with the specified override.
  *
- * @uses ASSIGN_MAX_EVENT_LENGTH
- * @param object $assign the assign object.
+ * @param assign $assign the assign object.
  * @param object $override (optional) limit to a specific override
  */
 function assign_update_events($assign, $override = null) {
@@ -213,9 +212,10 @@ function assign_update_events($assign, $override = null) {
 
     require_once($CFG->dirroot . '/calendar/lib.php');
 
+    $assigninstance = $assign->get_instance();
+
     // Load the old events relating to this assign.
-    $conds = array('modulename' => 'assign',
-        'instance' => $assign->get_context()->id);
+    $conds = array('modulename' => 'assign', 'instance' => $assigninstance->id);
     if (!empty($override)) {
         // Only load events for this override.
         if (isset($override->userid)) {
@@ -229,7 +229,7 @@ function assign_update_events($assign, $override = null) {
     // Now make a to-do list of all that needs to be updated.
     if (empty($override)) {
         // We are updating the primary settings for the assign, so we need to add all the overrides.
-        $overrides = $DB->get_records('assign_overrides', array('assignid' => $assign->id));
+        $overrides = $DB->get_records('assign_overrides', array('assignid' => $assigninstance->id));
         // As well as the original assign (empty override).
         $overrides[] = new stdClass();
     } else {
@@ -237,38 +237,38 @@ function assign_update_events($assign, $override = null) {
         $overrides = array($override);
     }
 
+    if (!empty($assign->get_course_module())) {
+        $cmid = $assign->get_course_module()->id;
+    } else {
+        $cmid = get_coursemodule_from_instance('assign', $assigninstance->id, $assigninstance->course)->id;
+    }
+
     foreach ($overrides as $current) {
         $groupid   = isset($current->groupid) ? $current->groupid : 0;
         $userid    = isset($current->userid) ? $current->userid : 0;
-        $duedate = isset($current->duedate) ? $current->duedate : $assign->get_context()->duedate;
+        $duedate = isset($current->duedate) ? $current->duedate : $assigninstance->duedate;
 
         // Only add 'due' events for an override if they differ from the assign default.
         $addclose = empty($current->id) || !empty($current->duedate);
 
-        if (!empty($assign->coursemodule)) {
-            $cmid = $assign->coursemodule;
-        } else {
-            $cmid = get_coursemodule_from_instance('assign', $assign->get_context()->id, $assign->get_context()->course)->id;
-        }
-
         $event = new stdClass();
-        $event->description = format_module_intro('assign', $assign->get_context(), $cmid);
+        $event->description = format_module_intro('assign', $assigninstance, $cmid);
         // Events module won't show user events when the courseid is nonzero.
-        $event->courseid    = ($userid) ? 0 : $assign->get_context()->course;
+        $event->courseid    = ($userid) ? 0 : $assigninstance->course;
         $event->groupid     = $groupid;
         $event->userid      = $userid;
         $event->modulename  = 'assign';
-        $event->instance    = $assign->get_context()->id;
+        $event->instance    = $assigninstance->id;
         $event->timestart   = $duedate;
         $event->timeduration = 0;
-        $event->visible     = instance_is_visible('assign', $assign);
+        $event->visible     = instance_is_visible('assign', $assigninstance);
         $event->eventtype   = 'due';
 
         // Determine the event name and priority.
         if ($groupid) {
             // Group override event.
             $params = new stdClass();
-            $params->assign = $assign->get_context()->name;
+            $params->assign = $assigninstance->name;
             $params->group = groups_get_group_name($groupid);
             if ($params->group === false) {
                 // Group doesn't exist, just skip it.
@@ -282,13 +282,13 @@ function assign_update_events($assign, $override = null) {
         } else if ($userid) {
             // User override event.
             $params = new stdClass();
-            $params->assign = $assign->get_context()->name;
+            $params->assign = $assigninstance->name;
             $eventname = get_string('overrideusereventname', 'assign', $params);
             // Set user override priority.
             $event->priority = CALENDAR_EVENT_USER_OVERRIDE_PRIORITY;
         } else {
             // The parent event.
-            $eventname = $assign->name;
+            $eventname = $assigninstance->name;
         }
 
         if ($duedate && $addclose) {

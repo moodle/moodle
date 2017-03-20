@@ -775,13 +775,16 @@ class assign {
 
         require_once($CFG->dirroot . '/calendar/lib.php');
 
-        $cm = get_coursemodule_from_instance('assign', $this->get_context()->id, $this->get_context()->course);
+        $cm = $this->get_course_module();
+        if (empty($cm)) {
+            $instance = $this->get_instance();
+            $cm = get_coursemodule_from_instance('assign', $instance->id, $instance->course);
+        }
 
         $override = $DB->get_record('assign_overrides', array('id' => $overrideid), '*', MUST_EXIST);
 
         // Delete the events.
-        $conds = array('modulename' => 'assign',
-            'instance' => $this->get_context()->id);
+        $conds = array('modulename' => 'assign', 'instance' => $this->get_instance()->id);
         if (isset($override->userid)) {
             $conds['userid'] = $override->userid;
         } else {
@@ -825,7 +828,7 @@ class assign {
     public function delete_all_overrides() {
         global $DB;
 
-        $overrides = $DB->get_records('assign_overrides', array('assignid' => $this->get_context()->id), 'id');
+        $overrides = $DB->get_records('assign_overrides', array('assignid' => $this->get_instance()->id), 'id');
         foreach ($overrides as $override) {
             $this->delete_override($override->id);
         }

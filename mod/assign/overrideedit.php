@@ -43,18 +43,14 @@ if ($overrideid) {
         print_error('invalidoverrideid', 'assign');
     }
 
-    $assign = new assign($DB->get_record('assign', array('id' => $override->assignid), '*',  MUST_EXIST), null, null);
-
-    list($course, $cm) = get_course_and_cm_from_instance($assign->get_context(), 'assign');
+    list($course, $cm) = get_course_and_cm_from_instance($override->assignid, 'assign');
 
 } else if ($cmid) {
     list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'assign');
-    $assign = new assign($DB->get_record('assign', array('id' => $cm->instance), '*', MUST_EXIST), null, null);
 
 } else {
     print_error('invalidcoursemodule');
 }
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 $url = new moodle_url('/mod/assign/overrideedit.php');
 if ($action) {
@@ -71,6 +67,8 @@ $PAGE->set_url($url);
 require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);
+$assign = new assign($context, $cm, $course);
+$assigninstance = $assign->get_instance();
 
 // Add or edit an override.
 require_capability('mod/assign:manageoverrides', $context);
@@ -87,7 +85,7 @@ if ($overrideid) {
 $keys = array('duedate', 'cutoffdate', 'allowsubmissionsfromdate');
 foreach ($keys as $key) {
     if (!isset($data->{$key}) || $reset) {
-        $data->{$key} = $assign->get_context()->{$key};
+        $data->{$key} = $assigninstance->{$key};
     }
 }
 
@@ -121,11 +119,11 @@ if ($mform->is_cancelled()) {
 
 } else if ($fromform = $mform->get_data()) {
     // Process the data.
-    $fromform->assignid = $assign->get_context()->id;
+    $fromform->assignid = $assigninstance->id;
 
     // Replace unchanged values with null.
     foreach ($keys as $key) {
-        if (($fromform->{$key} == $assign->get_context()->{$key})) {
+        if (($fromform->{$key} == $assigninstance->{$key})) {
             $fromform->{$key} = null;
         }
     }
@@ -142,7 +140,7 @@ if ($mform->is_cancelled()) {
 
     if ($userorgroupchanged) {
         $conditions = array(
-                'assignid' => $assign->get_context()->id,
+                'assignid' => $assigninstance->id,
                 'userid' => empty($fromform->userid) ? null : $fromform->userid,
                 'groupid' => empty($fromform->groupid) ? null : $fromform->groupid);
         if ($oldoverride = $DB->get_record('assign_overrides', $conditions)) {
@@ -162,7 +160,7 @@ if ($mform->is_cancelled()) {
     $params = array(
         'context' => $context,
         'other' => array(
-            'assignid' => $assign->get_context()->id
+            'assignid' => $assigninstance->id
         )
     );
     if (!empty($override->id)) {
@@ -188,8 +186,8 @@ if ($mform->is_cancelled()) {
             $fromform->sortorder = $fromform->id;
 
             $overridecountgroup = $DB->count_records('assign_overrides',
-                array('userid' => null, 'assignid' => $assign->get_context()->id));
-            $overridecountall = $DB->count_records('assign_overrides', array('assignid' => $assign->get_context()->id));
+                array('userid' => null, 'assignid' => $assigninstance->id));
+            $overridecountall = $DB->count_records('assign_overrides', array('assignid' => $assigninstance->id));
             if ((!$overridecountgroup) && ($overridecountall)) { // No group overrides and there are user overrides.
                 $fromform->sortorder = 1;
             } else {
@@ -235,7 +233,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($assign->get_context()->name, true, array('context' => $context)));
+echo $OUTPUT->heading(format_string($assigninstance->name, true, array('context' => $context)));
 
 $mform->display();
 
