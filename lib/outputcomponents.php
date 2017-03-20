@@ -548,6 +548,11 @@ class pix_icon_font implements templatable {
     private $key;
 
     /**
+     * @var bool $mapped The icon could not be mapped.
+     */
+    private $mapped;
+
+    /**
      * Constructor
      *
      * @param pix_icon $pixicon The original icon
@@ -556,12 +561,22 @@ class pix_icon_font implements templatable {
         global $PAGE;
 
         $this->pixicon = $pixicon;
+        $this->mapped = false;
         $iconsystem = \core\output\icon_system::instance();
 
         $this->key = $iconsystem->remap_icon_name($pixicon->pix, $pixicon->component);
-        if (empty($this->key)) {
-            $this->key = $pixicon->pix;
+        if (!empty($this->key)) {
+            $this->mapped = true;
         }
+    }
+
+    /**
+     * Return true if this pix_icon was successfully mapped to an icon font.
+     *
+     * @return bool
+     */
+    public function is_mapped() {
+        return $this->mapped;
     }
 
     /**

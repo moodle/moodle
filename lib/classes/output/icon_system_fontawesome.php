@@ -455,8 +455,12 @@ class icon_system_fontawesome extends icon_system_font {
     public function render_pix_icon(renderer_base $output, pix_icon $icon) {
         $subtype = 'pix_icon_fontawesome';
         $subpix = new $subtype($icon);
+
         $data = $subpix->export_for_template($output);
 
+        if (!$subpix->is_mapped()) {
+            $data['unmappedIcon'] = $icon->export_for_template($output);
+        }
         return $output->render_from_template('core/pix_icon_fontawesome', $data);
     }
 

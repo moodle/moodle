@@ -19,7 +19,7 @@
 
     Moodle pix_icon template.
 
-    The purpose of this template is to render a pix_icon.
+    The purpose of this template is to render a pix_icon. If the icon was not mapped we fall back to normal pix_icon markup.
 
     Classes required for JS:
     * none
@@ -37,8 +37,15 @@
         "key": "fa-meh-o",
         "title": "Meh",
         "alt": "Meh Meh",
-        "extraclasses": "fa-spin"
+        "extraclasses": "fa-spin",
+        "unmappedIcon": false
     }
 
 }}
+{{^unmappedIcon}}
 <i class="icon fa {{key}} fa-fw {{extraclasses}}" aria-hidden="true" title="{{title}}" aria-label="{{alt}}"></i>
+{{/unmappedIcon}}
+{{#unmappedIcon}}
+{{! We cannot include the pix_icon template directly here because we don't have all the mustache helpers loaded. }}
+<img class="icon {{extraclasses}}" {{#attributes}}{{name}}="{{value}}" {{/attributes}}/>
+{{/unmappedIcon}}
