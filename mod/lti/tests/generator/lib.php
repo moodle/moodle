@@ -61,6 +61,9 @@ class mod_lti_generator extends testing_module_generator {
         if (!isset($record->instructorchoiceacceptgrades)) {
             $record->instructorchoiceacceptgrades = 1;
         }
+        if (!isset($record->typeid)) {
+            $record->typeid = null;
+        }
         return parent::create_instance($record, (array)$options);
     }
 }
