@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once("$CFG->libdir/externallib.php");
 
 use mod_feedback\external\feedback_summary_exporter;
+use mod_feedback\external\feedback_completedtmp_exporter;
 
 /**
  * Feedback external functions
@@ -296,6 +297,63 @@ class mod_feedback_external extends external_api {
         return new external_single_structure(
             array(
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for get_current_completed_tmp.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_current_completed_tmp_parameters() {
+        return new external_function_parameters (
+            array(
+                'feedbackid' => new external_value(PARAM_INT, 'Feedback instance id'),
+            )
+        );
+    }
+
+    /**
+     * Returns the temporary completion record for the current user.
+     *
+     * @param int $feedbackid feedback instance id
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_current_completed_tmp($feedbackid) {
+        global $PAGE;
+
+        $params = array('feedbackid' => $feedbackid);
+        $params = self::validate_parameters(self::get_current_completed_tmp_parameters(), $params);
+        $warnings = array();
+
+        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
+        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $course->id);
+
+        if ($completed = $feedbackcompletion->get_current_completed_tmp()) {
+            $exporter = new feedback_completedtmp_exporter($completed);
+            return array(
+                'feedback' => $exporter->export($PAGE->get_renderer('core')),
+                'warnings' => $warnings,
+            );
+        }
+        throw new moodle_exception('not_started', 'feedback');
+    }
+
+    /**
+     * Describes the get_current_completed_tmp return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_current_completed_tmp_returns() {
+        return new external_single_structure(
+            array(
+                'feedback' => feedback_completedtmp_exporter::get_read_structure(),
                 'warnings' => new external_warnings(),
             )
         );

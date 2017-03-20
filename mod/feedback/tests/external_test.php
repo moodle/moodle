@@ -273,4 +273,32 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
     }
+
+    /**
+     * Test get_current_completed_tmp.
+     */
+    public function test_get_current_completed_tmp() {
+        global $DB;
+
+        // Force non anonymous.
+        $DB->set_field('feedback', 'anonymous', 0, array('id' => $this->feedback->id));
+        // Add a completed_tmp record.
+        $record = [
+            'feedback' => $this->feedback->id,
+            'userid' => $this->student->id,
+            'guestid' => '',
+            'timemodified' => time() - DAYSECS,
+            'random_response' => 0,
+            'anonymous_response' => 2,
+            'courseid' => $this->course->id,
+        ];
+        $record['id'] = $DB->insert_record('feedback_completedtmp', (object) $record);
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        $result = mod_feedback_external::get_current_completed_tmp($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_current_completed_tmp_returns(), $result);
+        $this->assertEquals($record['id'], $result['feedback']['id']);
+    }
 }
