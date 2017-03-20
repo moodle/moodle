@@ -48,4 +48,4 @@ if (count($args) == 2) {
     }
 }
 
-redirect($OUTPUT->pix_url('u/f1'));
+redirect($OUTPUT->image_url('u/f1'));

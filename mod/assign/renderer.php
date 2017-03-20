@@ -140,8 +140,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         if ($summary->suspendeduser) {
             $supendedclass = ' usersuspended';
             $suspendedstring = get_string('userenrolmentsuspended', 'grades');
-            $suspendedicon = ' ' . html_writer::empty_tag('img', array('src' => $this->pix_url('i/enrolmentsuspended'),
-                'title' => $suspendedstring, 'alt' => $suspendedstring, 'class' => 'usersuspendedicon'));
+            $suspendedicon = ' ' . $this->pix_icon('i/enrolmentsuspended', $suspendedstring);
         }
         $o .= $this->output->container_start('usersummary');
         $o .= $this->output->box_start('boxaligncenter usersummarysection'.$supendedclass);

@@ -189,29 +189,35 @@ function profile_category_icons($category) {
     $fieldcount    = $DB->count_records('user_info_field', array('categoryid' => $category->id));
 
     // Edit.
-    $editstr = '<a title="'.$stredit.'" href="index.php?id='.$category->id.'&amp;action=editcategory"><img src="'.$OUTPUT->pix_url('t/edit') . '" alt="'.$stredit.'" class="iconsmall" /></a> ';
+    $editstr = '<a title="'.$stredit.'" href="index.php?id='.$category->id.'&amp;action=editcategory">' .
+               $OUTPUT->pix_icon('t/edit', $stredit) .'</a> ';
 
     // Delete.
     // Can only delete the last category if there are no fields in it.
     if (($categorycount > 1) or ($fieldcount == 0)) {
-        $editstr .= '<a title="'.$strdelete.'" href="index.php?id='.$category->id.'&amp;action=deletecategory&amp;sesskey='.sesskey();
-        $editstr .= '"><img src="'.$OUTPUT->pix_url('t/delete') . '" alt="'.$strdelete.'" class="iconsmall" /></a> ';
+        $editstr .= '<a title="'.$strdelete.'"';
+        $editstr .= ' href="index.php?id='.$category->id.'&amp;action=deletecategory&amp;sesskey='.sesskey() . '">';
+        $editstr .= $OUTPUT->pix_icon('t/delete', $strdelete).'</a> ';
     } else {
-        $editstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+        $editstr .= $OUTPUT->spacer() . ' ';
     }
 
     // Move up.
     if ($category->sortorder > 1) {
-        $editstr .= '<a title="'.$strmoveup.'" href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=up&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.$strmoveup.'" class="iconsmall" /></a> ';
+        $editstr .= '<a title="'.$strmoveup.'" ';
+        $editstr .= ' href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=up&amp;sesskey='.sesskey().'">';
+        $editstr .= $OUTPUT->pix_icon('t/up', $strmoveup) . '</a> ';
     } else {
-        $editstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+        $editstr .= $OUTPUT->spacer() . ' ';
     }
 
     // Move down.
     if ($category->sortorder < $categorycount) {
-        $editstr .= '<a title="'.$strmovedown.'" href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=down&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.$strmovedown.'" class="iconsmall" /></a> ';
+        $editstr .= '<a title="'.$strmovedown.'" ';
+        $editstr .= ' href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=down&amp;sesskey='.sesskey().'">';
+        $editstr .= $OUTPUT->pix_icon('t/down', $strmovedown) . '</a> ';
     } else {
-        $editstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+        $editstr .= $OUTPUT->spacer() . ' ';
     }
 
     return $editstr;
@@ -234,24 +240,29 @@ function profile_field_icons($field) {
     $datacount  = $DB->count_records('user_info_data', array('fieldid' => $field->id));
 
     // Edit.
-    $editstr = '<a title="'.$stredit.'" href="index.php?id='.$field->id.'&amp;action=editfield"><img src="'.$OUTPUT->pix_url('t/edit') . '" alt="'.$stredit.'" class="iconsmall" /></a> ';
+    $editstr = '<a title="'.$stredit.'" href="index.php?id='.$field->id.'&amp;action=editfield">';
+    $editstr .= $OUTPUT->pix_icon('t/edit', $stredit) . '</a> ';
 
     // Delete.
-    $editstr .= '<a title="'.$strdelete.'" href="index.php?id='.$field->id.'&amp;action=deletefield&amp;sesskey='.sesskey();
-    $editstr .= '"><img src="'.$OUTPUT->pix_url('t/delete') . '" alt="'.$strdelete.'" class="iconsmall" /></a> ';
+    $editstr .= '<a title="'.$strdelete.'" href="index.php?id='.$field->id.'&amp;action=deletefield&amp;sesskey='.sesskey().'">';
+    $editstr .= $OUTPUT->pix_icon('t/delete', $strdelete) . '</a> ';
 
     // Move up.
     if ($field->sortorder > 1) {
-        $editstr .= '<a title="'.$strmoveup.'" href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=up&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.$strmoveup.'" class="iconsmall" /></a> ';
+        $editstr .= '<a title="'.$strmoveup.'" ';
+        $editstr .= ' href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=up&amp;sesskey='.sesskey().'">';
+        $editstr .= $OUTPUT->pix_icon('t/up', $strmoveup) . '</a> ';
     } else {
-        $editstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+        $editstr .= $OUTPUT->spacer() . ' ';
     }
 
     // Move down.
     if ($field->sortorder < $fieldcount) {
-        $editstr .= '<a title="'.$strmovedown.'" href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=down&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.$strmovedown.'" class="iconsmall" /></a> ';
+        $editstr .= '<a title="'.$strmovedown.'" ';
+        $editstr .= ' href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=down&amp;sesskey='.sesskey().'">';
+        $editstr .= $OUTPUT->pix_icon('t/down', $strmovedown) . '</a> ';
     } else {
-        $editstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+        $editstr .= $OUTPUT->spacer() . ' ';
     }
 
     return $editstr;

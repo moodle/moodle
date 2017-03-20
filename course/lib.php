@@ -1953,7 +1953,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
 
             $actions[$actionname] = new action_menu_link_primary(
                 new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $nextgroupmode)),
-                new pix_icon($groupimage, null, 'moodle', array('class' => 'iconsmall')),
+                new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall')),
                 $grouptitle,
                 array('class' => 'editing_'. $actionname, 'data-action' => $nextactionname,
                     'aria-live' => 'assertive', 'data-sectionreturn' => $sr)

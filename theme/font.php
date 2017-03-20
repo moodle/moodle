@@ -53,6 +53,10 @@ if (!$font) {
     font_not_found();
 }
 
+if ($to = strpos($font, '?')) {
+    $font = substr($font, 0, $to);
+}
+
 if (empty($component) or $component === 'moodle' or $component === 'core') {
     $component = 'core';
 }

@@ -123,7 +123,7 @@ class block_online_users extends block_base {
                     $this->content->text .= $OUTPUT->user_picture($user, array('size'=>16, 'alttext'=>false, 'link'=>false)) .$user->fullname.'</a></div>';
                 }
                 if ($canshowicon and ($USER->id != $user->id) and !isguestuser($user)) {  // Only when logged in and messaging active etc
-                    $anchortagcontents = '<img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="'. get_string('messageselectadd') .'" />';
+                    $anchortagcontents = $OUTPUT->pix_icon('t/message', get_string('messageselectadd'));
                     $anchorurl = new moodle_url('/message/index.php', array('id' => $user->id));
                     $anchortag = html_writer::link($anchorurl, $anchortagcontents,
                         array('title' => get_string('messageselectadd')));

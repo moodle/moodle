@@ -244,12 +244,14 @@ class mod_lti_mod_form extends moodleform_mod {
                 array('sesskey' => sesskey(), 'course' => $COURSE->id));
         $ajaxurl = new moodle_url('/mod/lti/ajax.php');
 
+        // All these icon uses are incorrect. LTI JS needs updating to use AMD modules and templates so it can use
+        // the mustache pix helper - until then LTI will have inconsistent icons.
         $jsinfo = (object)array(
-                        'edit_icon_url' => (string)$OUTPUT->pix_url('t/edit'),
-                        'add_icon_url' => (string)$OUTPUT->pix_url('t/add'),
-                        'delete_icon_url' => (string)$OUTPUT->pix_url('t/delete'),
-                        'green_check_icon_url' => (string)$OUTPUT->pix_url('i/valid'),
-                        'warning_icon_url' => (string)$OUTPUT->pix_url('warning', 'lti'),
+                        'edit_icon_url' => (string)$OUTPUT->image_url('t/edit'),
+                        'add_icon_url' => (string)$OUTPUT->image_url('t/add'),
+                        'delete_icon_url' => (string)$OUTPUT->image_url('t/delete'),
+                        'green_check_icon_url' => (string)$OUTPUT->image_url('i/valid'),
+                        'warning_icon_url' => (string)$OUTPUT->image_url('warning', 'lti'),
                         'instructor_tool_type_edit_url' => $editurl->out(false),
                         'ajax_url' => $ajaxurl->out(true),
                         'courseId' => $COURSE->id

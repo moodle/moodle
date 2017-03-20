@@ -48,8 +48,8 @@ $url = new moodle_url("/admin/tool/lp/competencies.php", array('competencyframew
     'pagecontextid' => $pagecontextid));
 $frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $pagecontextid));
 
-$PAGE->navigation->override_active_url($frameworksurl);
 $PAGE->set_context($pagecontext);
+$PAGE->navigation->override_active_url($frameworksurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_url($url);
 $PAGE->navbar->add($framework->get('shortname'), $url);

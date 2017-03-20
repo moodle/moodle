@@ -271,7 +271,7 @@ abstract class backup_activity_task extends backup_task {
         // - section_included setting (if exists)
         $settingname = $settingprefix . 'included';
         $activity_included = new backup_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
-        $activity_included->get_ui()->set_icon(new pix_icon('icon', get_string('pluginname', $this->modulename),
+        $activity_included->get_ui()->set_icon(new image_icon('icon', get_string('pluginname', $this->modulename),
             $this->modulename, array('class' => 'iconlarge icon-post')));
         $this->add_setting($activity_included);
         // Look for "activities" root setting

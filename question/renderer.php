@@ -45,7 +45,7 @@ class core_question_bank_renderer extends plugin_renderer_base {
         $qtype = question_bank::get_qtype($qtype, false);
         $namestr = $qtype->local_name();
 
-        return $this->pix_icon('icon', $namestr, $qtype->plugin_name(), array('title' => $namestr));
+        return $this->image_icon('icon', $namestr, $qtype->plugin_name(), array('title' => $namestr));
     }
 
     /**

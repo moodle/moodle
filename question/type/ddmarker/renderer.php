@@ -69,7 +69,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
                 $classes[] = 'dragno'.$drag->noofdrags;
             }
             $targeticonhtml =
-                $OUTPUT->pix_icon('crosshairs', '', $componentname, array('class' => 'target'));
+                $OUTPUT->image_icon('crosshairs', '', $componentname, array('class' => 'target'));
 
             $markertextattrs = array('class' => 'markertext');
             $markertext = html_writer::tag('span', $drag->text, $markertextattrs);

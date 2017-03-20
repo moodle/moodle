@@ -55,5 +55,5 @@ Feature: availability_completion
     Then I should not see "Page 2" in the "region-main" "region"
 
     # Mark page 1 complete
-    When I click on ".togglecompletion input[type=image]" "css_element"
+    When I click on ".togglecompletion .icon" "css_element"
     Then I should see "Page 2" in the "region-main" "region"

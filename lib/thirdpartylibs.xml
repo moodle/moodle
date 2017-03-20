@@ -297,4 +297,11 @@
     <license>MIT</license>
     <version>0.0.1</version>
   </library>
+  <library>
+    <location>/fonts</location>
+    <name>Font Awesome by Dave Gandy - http://fontawesome.io</name>
+    <license>SIL OFL</license>
+    <version>4.7.0</version>
+    <licenseversion>1.1</licenseversion>
+  </library>
 </libraries>

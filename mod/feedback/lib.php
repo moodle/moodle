@@ -492,8 +492,7 @@ function feedback_print_recent_mod_activity($activity, $courseid, $detail, $modn
     if ($detail) {
         $modname = $modnames[$activity->type];
         echo '<div class="title">';
-        echo "<img src=\"" . $OUTPUT->pix_url('icon', $activity->type) . "\" ".
-             "class=\"icon\" alt=\"$modname\" />";
+        echo $OUTPUT->image_icon('icon', $modname, $activity->type);
         echo "<a href=\"$CFG->wwwroot/mod/feedback/view.php?id={$activity->cmid}\">{$activity->name}</a>";
         echo '</div>';
     }
@@ -3315,4 +3314,14 @@ function feedback_can_view_analysis($feedback, $context, $courseid = false) {
     }
 
     return feedback_is_already_submitted($feedback->id, $courseid);
+}
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_feedback_get_fontawesome_icon_map() {
+    return [
+        'mod_feedback:required' => 'fa-exclamation-circle',
+        'mod_feedback:notrequired' => 'fa-question-circle-o',
+    ];
 }

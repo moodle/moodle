@@ -94,6 +94,7 @@ Feature: Manage plearning plan
     And I click on "Delete" of edit menu in the "comp1" row
     And "Confirm" "dialogue" should be visible
     And I click on "Confirm" "button"
+    And I wait until the page is ready
     And "comp1" "table_row" should not exist
 
   Scenario: Edit a learning plan
@@ -125,4 +126,5 @@ Feature: Manage plearning plan
     And I click on "Delete" of edit menu in the "Science plan Year-4" row
     And "Confirm" "dialogue" should be visible
     When I click on "Delete" "button"
+    And I wait until the page is ready
     Then I should not see "Science plan Year-4"

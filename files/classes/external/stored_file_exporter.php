@@ -123,9 +123,6 @@ class stored_file_exporter extends \core\external\exporter {
             'icon' => array(
                 'type' => PARAM_RAW,
             ),
-            'iconurl' => array(
-                'type' => PARAM_URL,
-            ),
             'timecreatedformatted' => array(
                 'type' => PARAM_RAW
             ),
@@ -147,7 +144,6 @@ class stored_file_exporter extends \core\external\exporter {
         }
 
         $icon = $this->file->is_directory() ? file_folder_icon() : file_file_icon($this->file);
-        $iconurl = $output->pix_url($icon, 'core');
 
         $url = moodle_url::make_pluginfile_url(
             $this->file->get_contextid(),
@@ -163,7 +159,6 @@ class stored_file_exporter extends \core\external\exporter {
             'filenameshort' => $filenameshort,
             'filesizeformatted' => display_size((int) $this->file->get_filesize()),
             'icon' => $icon,
-            'iconurl' => $iconurl->out(false),
             'url' => $url->out(false),
             'timecreatedformatted' => userdate($this->file->get_timecreated()),
             'timemodifiedformatted' => userdate($this->file->get_timemodified()),

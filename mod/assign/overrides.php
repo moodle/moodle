@@ -180,21 +180,18 @@ foreach ($overrides as $override) {
         // Edit.
         $editurlstr = $overrideediturl->out(true, array('id' => $override->id));
         $iconstr = '<a title="' . get_string('edit') . '" href="'. $editurlstr . '">' .
-                '<img src="' . $OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="' .
-                get_string('edit') . '" /></a> ';
+                $OUTPUT->pix_icon('t/edit', get_string('edit')) . '</a> ';
         // Duplicate.
         $copyurlstr = $overrideediturl->out(true,
                 array('id' => $override->id, 'action' => 'duplicate'));
         $iconstr .= '<a title="' . get_string('copy') . '" href="' . $copyurlstr . '">' .
-                '<img src="' . $OUTPUT->pix_url('t/copy') . '" class="iconsmall" alt="' .
-                get_string('copy') . '" /></a> ';
+                $OUTPUT->pix_icon('t/copy', get_string('copy')) . '</a> ';
     }
     // Delete.
     $deleteurlstr = $overridedeleteurl->out(true,
             array('id' => $override->id, 'sesskey' => sesskey()));
     $iconstr .= '<a title="' . get_string('delete') . '" href="' . $deleteurlstr . '">' .
-            '<img src="' . $OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="' .
-            get_string('delete') . '" /></a> ';
+                $OUTPUT->pix_icon('t/delete', get_string('delete')) . '</a> ';
 
     if ($groupmode) {
         $usergroupstr = '<a href="' . $groupurl->out(true,
@@ -203,19 +200,19 @@ foreach ($overrides as $override) {
         // Move up.
         if ($override->sortorder > 1) {
             $iconstr .= '<a title="'.get_string('moveup').'" href="overrides.php?cmid=' . $cmid .
-                '&amp;id=' . $override->id .'&amp;action=movegroupoverride&amp;dir=up&amp;sesskey='.sesskey().'">
-                <img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.get_string('moveup').'" class="iconsmall" /></a> ';
+                '&amp;id=' . $override->id .'&amp;action=movegroupoverride&amp;dir=up&amp;sesskey='.sesskey().'">' .
+                $OUTPUT->pix_icon('t/up', get_string('moveup')) . '</a> ';
         } else {
-            $iconstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+            $iconstr .= $OUTPUT->spacer() . ' ';
         }
 
         // Move down.
         if ($override->sortorder < $overridecountgroup) {
             $iconstr .= '<a title="'.get_string('movedown').'" href="overrides.php?cmid='.$cmid.
-                '&amp;id=' . $override->id . '&amp;action=movegroupoverride&amp;dir=down&amp;sesskey='.sesskey().'">
-                <img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.get_string('movedown').'" class="iconsmall" /></a> ';
+                '&amp;id=' . $override->id . '&amp;action=movegroupoverride&amp;dir=down&amp;sesskey='.sesskey().'">' .
+                $OUTPUT->pix_icon('t/down', get_string('movedown')) . '</a> ';
         } else {
-            $iconstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+            $iconstr .= $OUTPUT->spacer() . ' ';
         }
 
 

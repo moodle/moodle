@@ -240,15 +240,13 @@ class core_calendar_renderer extends plugin_renderer_base {
 
             $commands  = html_writer::start_tag('div', array('class' => 'commands pull-xs-right'));
             $commands .= html_writer::start_tag('a', array('href' => $editlink));
-            $url = $this->output->pix_url('t/edit');
             $str = get_string('tt_editevent', 'calendar');
-            $commands .= html_writer::empty_tag('img', array('src' => $url, 'alt' => $str, 'title' => $str, 'class' => 'icon'));
+            $commands .= $this->output->pix_icon('t/edit', $str);
             $commands .= html_writer::end_tag('a');
             if ($deletelink != null) {
                 $commands .= html_writer::start_tag('a', array('href' => $deletelink));
-                $url = $this->output->pix_url('t/delete');
                 $str = get_string('tt_deleteevent', 'calendar');
-                $commands .= html_writer::empty_tag('img', array('src' => $url, 'alt' => $str, 'title' => $str, 'class' => 'icon'));
+                $commands .= $this->output->pix_icon('t/delete', $str);
                 $commands .= html_writer::end_tag('a');
             }
             $commands .= html_writer::end_tag('div');

@@ -56,4 +56,5 @@ Feature: Manage plearning plan templates
     And I click on "Delete" of edit menu in the "Science template Year-4" row
     And "Confirm" "dialogue" should be visible
     When I click on "Delete" "button"
+    And I wait until the page is ready
     Then I should not see "Science template Year-4"

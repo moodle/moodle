@@ -116,7 +116,7 @@ class tool_filetypes_renderer extends plugin_renderer_base {
                         $editurl = new \moodle_url('/admin/tool/filetypes/edit.php',
                                 array('oldextension' => $extension));
                         $editbutton = html_writer::link($editurl, $this->pix_icon('t/edit',
-                                get_string('edita', '', s($extension))));
+                                get_string('edita', 'moodle', s($extension))));
                         $deleteurl = new \moodle_url('/admin/tool/filetypes/delete.php',
                                 array('extension' => $extension));
                         $deletebutton = html_writer::link($deleteurl, $this->pix_icon('t/delete',

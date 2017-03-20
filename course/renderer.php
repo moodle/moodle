@@ -531,11 +531,8 @@ class core_course_renderer extends plugin_renderer_base {
                     'type' => 'hidden', 'name' => 'modulename', 'value' => $mod->name));
                 $output .= html_writer::empty_tag('input', array(
                     'type' => 'hidden', 'name' => 'completionstate', 'value' => $newstate));
-                $output .= html_writer::empty_tag('input', array(
-                    'type' => 'image',
-                    'src' => $this->output->pix_url('i/completion-'.$completionicon),
-                    'alt' => $imgalt, 'title' => $imgtitle,
-                    'aria-live' => 'polite'));
+                $output .= html_writer::tag('button',
+                    $this->output->pix_icon('i/completion-' . $completionicon, $imgalt), array('class' => 'btn btn-link'));
                 $output .= html_writer::end_tag('div');
                 $output .= html_writer::end_tag('form');
             } else {
@@ -1107,8 +1104,7 @@ class core_course_renderer extends plugin_renderer_base {
         if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
             if ($course->has_summary() || $course->has_course_contacts() || $course->has_course_overviewfiles()) {
                 $url = new moodle_url('/course/info.php', array('id' => $course->id));
-                $image = html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/info'),
-                    'alt' => $this->strings->summary));
+                $image = $this->output->pix_icon('i/info', $this->strings->summary);
                 $content .= html_writer::link($url, $image, array('title' => $this->strings->summary));
                 // Make sure JS file to expand course content is included.
                 $this->coursecat_include_js();

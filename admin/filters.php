@@ -218,7 +218,7 @@ function get_table_row(\core\plugininfo\filter $plugininfo, $state, $isfirstrow,
 
     // Re-order.
     $updown = '';
-    $spacer = '<img src="' . $OUTPUT->pix_url('spacer') . '" class="iconsmall" alt="" />';
+    $spacer = $OUTPUT->spacer();
     if ($state->active != TEXTFILTER_DISABLED) {
         if (!$isfirstrow) {
             $updown .= $OUTPUT->action_icon(filters_action_url($filter, 'up'), new pix_icon('t/up', get_string('up'), '', array('class' => 'iconsmall')));

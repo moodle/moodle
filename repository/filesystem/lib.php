@@ -311,14 +311,14 @@ class repository_filesystem extends repository {
 
         if ($isdir) {
             $node['children'] = array();
-            $node['thumbnail'] = $OUTPUT->pix_url(file_folder_icon(90))->out(false);
+            $node['thumbnail'] = $OUTPUT->image_url(file_folder_icon(90))->out(false);
             $node['path'] = $this->build_node_path('browse', $relpath, $name, $rootnodepath);
 
         } else {
             $node['source'] = $relpath;
             $node['size'] = filesize($abspath);
-            $node['thumbnail'] = $OUTPUT->pix_url(file_extension_icon($name, 90))->out(false);
-            $node['icon'] = $OUTPUT->pix_url(file_extension_icon($name, 24))->out(false);
+            $node['thumbnail'] = $OUTPUT->image_url(file_extension_icon($name, 90))->out(false);
+            $node['icon'] = $OUTPUT->image_url(file_extension_icon($name, 24))->out(false);
             $node['path'] = $relpath;
 
             if (file_extension_in_typegroup($name, 'image') && ($imageinfo = @getimagesize($abspath))) {
@@ -844,7 +844,7 @@ function repository_filesystem_pluginfile($course, $cm, $context, $filearea, $ar
     // Find stored or generated thumbnail.
     if (!($file = $repo->get_thumbnail($filepath, $filearea))) {
         // Generation failed, redirect to default icon for file extension.
-        redirect($OUTPUT->pix_url(file_extension_icon($file, 90)));
+        redirect($OUTPUT->image_url(file_extension_icon($file, 90)));
     }
     // The thumbnails should not be changing much, but maybe the default lifetime is too long.
     $lifetime = $CFG->filelifetime;

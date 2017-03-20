@@ -216,7 +216,6 @@ class external_api {
                     require_sesskey();
                 }
             }
-
             // Validate params, this also sorts the params properly, we need the correct order in the next part.
             $callable = array($externalfunctioninfo->classname, 'validate_parameters');
             $params = call_user_func($callable,

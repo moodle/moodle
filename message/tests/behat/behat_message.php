@@ -123,6 +123,8 @@ class behat_message extends behat_base {
      * @param string $messagecontent
      */
     public function i_send_message_in_the_message_area($messagecontent) {
+        $this->execute('behat_general::wait_until_the_page_is_ready');
+
         $this->execute('behat_forms::i_set_the_field_with_xpath_to',
             array("//textarea[@data-region='send-message-txt']", $this->escape($messagecontent))
         );

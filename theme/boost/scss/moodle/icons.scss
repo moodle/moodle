@@ -1,6 +1,7 @@
 // The only class we need for icons is .icon
 // Standardize the size, padding and alignment for all icons in Moodle.
 .icon {
+    font-size: 16px;
     width: 16px;
     height: 16px;
     vertical-align: middle;
@@ -8,6 +9,20 @@
     padding: 0;
     box-sizing: content-box;
     margin-right: 0.5rem;
+
+    &.spacer {
+        margin-right: 0;
+    }
+}
+
+$icon-color: $body-color !default;
+
+a .icon {
+    color: $icon-color;
+}
+
+.navbar-dark a .icon {
+    color: $navbar-dark-color !important; /* stylelint-disable-line declaration-no-important */
 }
 
 a:first-of-type > .icon,
@@ -24,24 +39,14 @@ span:first-of-type > .icon {
 .pull-xs-right {
     // Now we need to override the .action-menu .dropdown a:first-of-type > .icon
     // rule above for when actions menus are in the pull-xs-right class.
-    .action-menu .dropdown a:first-of-type > .icon {
-        margin-left: 0.5rem;
+    .dropdown a .icon {
+        margin-left: 0;
+        margin-right: 0.5rem;
     }
 
     .icon {
         margin-right: 0;
         margin-left: 0.5rem;
-    }
-}
-
-// Fix the space between the dropdown icon and the caret.
-.action-menu {
-    .dropdown-toggle {
-        .icon {
-            // Use a negative margin on the icon to ensure that the dropdown toggle
-            // is an icon and not just text in which case the margin is needed.
-            margin-right: -$caret-width;
-        }
     }
 }
 

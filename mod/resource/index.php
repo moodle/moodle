@@ -94,7 +94,7 @@ foreach ($resources as $resource) {
     $icon = '';
     if (!empty($cm->icon)) {
         // each resource file has an icon in 2.0
-        $icon = '<img src="'.$OUTPUT->pix_url($cm->icon).'" class="activityicon" alt="'.get_string('modulename', $cm->modname).'" /> ';
+        $icon = $OUTPUT->pix_icon($cm->icon, get_string('modulename', $cm->modname));
     }
 
     $class = $resource->visible ? '' : 'class="dimmed"'; // hidden modules are dimmed
