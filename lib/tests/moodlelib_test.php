@@ -2859,6 +2859,19 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertNotEquals($CFG->noreplyaddress, $result[0]->from);
         $this->assertEquals($CFG->noreplyaddress, $result[1]->from);
         $sink->close();
+
+        // Try to send an unsafe attachment, we should see an error message in the eventual mail body.
+        $attachment = '../test.txt';
+        $attachname = 'txt';
+
+        $sink = $this->redirectEmails();
+        email_to_user($user1, $user2, $subject, $messagetext, '', $attachment, $attachname);
+        $this->assertSame(1, $sink->count());
+        $result = $sink->get_messages();
+        $this->assertCount(1, $result);
+        $this->assertContains('error.txt', $result[0]->body);
+        $this->assertContains('Error in attachment.  User attempted to attach a filename with a unsafe name.', $result[0]->body);
+        $sink->close();
     }
 
     /**
