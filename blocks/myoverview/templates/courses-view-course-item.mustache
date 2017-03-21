@@ -48,8 +48,10 @@
                 </div>
             </div>
             <p class="text-muted">
-                {{#userdate}}{{startdate}}, {{#str}}strftimedate, langconfig{{/str}}{{/userdate}} -
-                {{#userdate}}{{enddate}}, {{#str}}strftimedate, langconfig{{/str}}{{/userdate}}
+                {{#userdate}}{{startdate}}, {{#str}}strftimedate, langconfig{{/str}}{{/userdate}}
+                {{#enddate}}
+                - {{#userdate}}{{enddate}}, {{#str}}strftimedate, langconfig{{/str}}{{/userdate}}
+                {{/enddate}}
             </p>
             <p class="text-muted">
                 {{#shortentext}} 140, {{{summary}}}{{/shortentext}}
