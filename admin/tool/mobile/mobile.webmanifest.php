@@ -17,7 +17,9 @@
 /**
  * Web manifest for including a native app banner.
  *
- * The banner is only displayed if the user has visited the site twice over two separate days during the course of two weeks.
+ * The banner is only displayed if the user has visited the site twice over two
+ * separate days during the course of two weeks. There is an experimental chrome
+ * flag to allow testing.
  * More information here: https://developer.android.com/distribute/users/banners.html
  *
  * @package    tool_mobile
