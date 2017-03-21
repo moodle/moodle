@@ -230,7 +230,7 @@ define(['jquery', 'core/notification', 'core/templates',
             timeUntilContainerEnd = +container.attr('data-end-day') * SECONDS_IN_DAY,
             timeUntilEventNeedsAction = timeUntilEvent(todayTime, event);
 
-        if (!timeUntilContainerEnd) {
+        if (container.attr('data-end-day') === '') {
             return timeUntilContainerStart <= timeUntilEventNeedsAction;
         } else {
             return timeUntilContainerStart <= timeUntilEventNeedsAction &&
@@ -313,7 +313,11 @@ define(['jquery', 'core/notification', 'core/templates',
             courseId = +root.attr('data-course-id'),
             lastId = root.attr('data-last-id'),
             date = new Date(),
-            todayTime = Math.floor(date.setHours(0, 0, 0, 0) / 1000);
+            startTime;
+
+        date.setDate(date.getDate() - 14);
+        date.setHours(0, 0, 0, 0);
+        startTime = Math.floor(date / 1000);
 
         // Don't load twice.
         if (isLoading(root)) {
@@ -326,7 +330,7 @@ define(['jquery', 'core/notification', 'core/templates',
         // data then we will load our own.
         if (typeof promise == 'undefined') {
             var args = {
-                starttime: todayTime,
+                starttime: startTime,
                 limit: limit,
             };
 

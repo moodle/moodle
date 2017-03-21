@@ -34,3 +34,4 @@ $string['pluginname'] = 'My overview';
 $string['sortbycourses'] = 'Sort by courses';
 $string['sortbydates'] = 'Sort by dates';
 $string['timeline'] = 'Timeline';
+$string['recentlyoverdue'] = 'Recently overdue';

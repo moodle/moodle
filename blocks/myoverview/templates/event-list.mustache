@@ -31,24 +31,34 @@
 
     <div data-region="event-list-content">
         {{< block_myoverview/event-list-group }}
+            {{$title}}{{#str}} recentlyoverdue, block_myoverview {{/str}}{{/title}}
+            {{$extratitleclasses}}text-danger{{/extratitleclasses}}
+            {{$startday}}-14{{/startday}}
+            {{$endday}}0{{/endday}}
+        {{/ block_myoverview/event-list-group }}
+        {{< block_myoverview/event-list-group }}
             {{$title}}{{#str}} today {{/str}}{{/title}}
+            {{$extratitleclasses}}{{/extratitleclasses}}
             {{$startday}}0{{/startday}}
             {{$endday}}1{{/endday}}
         {{/ block_myoverview/event-list-group }}
         {{< block_myoverview/event-list-group }}
             {{$title}}{{#str}} next7days, block_myoverview {{/str}}{{/title}}
+            {{$extratitleclasses}}{{/extratitleclasses}}
             {{$startday}}1{{/startday}}
             {{$endday}}7{{/endday}}
         {{/ block_myoverview/event-list-group }}
         {{< block_myoverview/event-list-group }}
             {{$title}}{{#str}} next30days, block_myoverview {{/str}}{{/title}}
+            {{$extratitleclasses}}{{/extratitleclasses}}
             {{$startday}}7{{/startday}}
             {{$endday}}30{{/endday}}
         {{/ block_myoverview/event-list-group }}
         {{< block_myoverview/event-list-group }}
             {{$title}}{{#str}} future, block_myoverview {{/str}}{{/title}}
+            {{$extratitleclasses}}{{/extratitleclasses}}
             {{$startday}}30{{/startday}}
-            {{$endday}}0{{/endday}}
+            {{$endday}}{{/endday}}
         {{/ block_myoverview/event-list-group }}
 
         <div class="text-xs-center text-center m-y-2">

@@ -66,7 +66,7 @@
      data-end-day="{{$endday}}{{/endday}}"
      class="hidden">
 
-    <h5 class="h6 m-t-1" id="event-list-title-{{uniqid}}"><strong>{{$title}}{{/title}}</strong></h5>
+    <h5 class="h6 m-t-1 {{$extratitleclasses}}{{/extratitleclasses}}" id="event-list-title-{{uniqid}}"><strong>{{$title}}{{/title}}</strong></h5>
     <ul class="list-group unstyled" data-region="event-list" aria-describedby="event-list-title-{{uniqid}}">
         {{$eventlistitems}}
             {{> block_myoverview/event-list-items }}

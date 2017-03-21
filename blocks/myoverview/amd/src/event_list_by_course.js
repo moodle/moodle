@@ -47,7 +47,9 @@ function($, EventList, EventsRepository) {
         }
 
         var date = new Date();
-        var todayTime = Math.floor(date.setHours(0, 0, 0, 0) / 1000);
+        date.setDate(date.getDate() - 14);
+        date.setHours(0, 0, 0, 0);
+        var startTime = Math.floor(date / 1000);
         var limit = courseBlocks.attr('data-limit');
         var courseIds = courseBlocks.map(function() {
             return $(this).attr('data-course-id');
@@ -58,7 +60,7 @@ function($, EventList, EventsRepository) {
         // there could be lots of them.
         var coursesPromise = EventsRepository.queryByCourses({
             courseids: courseIds,
-            starttime: todayTime,
+            starttime: startTime,
             limit: limit
         });
 
