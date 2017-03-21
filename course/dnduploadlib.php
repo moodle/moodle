@@ -560,8 +560,7 @@ class dndupload_ajax_processor {
     protected function create_course_module() {
         global $CFG;
         require_once($CFG->dirroot.'/course/modlib.php');
-        list($module, $context, $cw, $cm, $data) =
-            prepare_new_moduleinfo_data($this->course, $this->module->name, $this->section);
+        list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($this->course, $this->module->name, $this->section);
 
         $data->coursemodule = $data->id = add_course_module($data);
         $this->cm = $data;

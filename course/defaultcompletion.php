@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -33,7 +32,7 @@ $id = required_param('id', PARAM_INT);       // Course id.
 // Perform some basic access control checks.
 if ($id) {
 
-    if($id == SITEID){
+    if ($id == SITEID) {
         // Don't allow editing of 'site course' using this form.
         print_error('cannoteditsiteform');
     }

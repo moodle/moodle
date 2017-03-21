@@ -35,6 +35,13 @@ require_once($CFG->dirroot.'/course/renderer.php');
  */
 class core_course_bulk_activity_completion_renderer extends plugin_renderer_base {
 
+    /**
+     * Render the navigation tabs for the completion page.
+     *
+     * @param int|stdClass $courseorid the course object or id.
+     * @param String $page the tab to focus.
+     * @return string html
+     */
     public function navigation($courseorid, $page) {
         $tabs = core_completion\manager::get_available_completion_tabs($courseorid);
         if (count($tabs) > 1) {
@@ -44,11 +51,22 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
         }
     }
 
-
+    /**
+     * Render the bulk completion tab.
+     *
+     * @param Array|stdClass $data the context data to pass to the template.
+     * @return bool|string
+     */
     public function bulkcompletion($data) {
         return parent::render_from_template('core_course/bulkactivitycompletion', $data);
     }
 
+    /**
+     * Render the default completion tab.
+     *
+     * @param Array|stdClass $data the context data to pass to the template.
+     * @return bool|string
+     */
     public function defaultcompletion($data) {
         return parent::render_from_template('core_course/defaultactivitycompletion', $data);
     }

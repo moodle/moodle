@@ -173,37 +173,42 @@ class core_completion_bulk_update_testcase extends advanced_testcase {
      */
     public function bulk_form_submit_multiple_provider() {
         return [
-            'Several modules with the same module type (choice)' =>
-                [['modulenames' => ['choice', 'choice', 'choice'],
-                'submitdata' => ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionsubmit' => 1],
-                'validatedata' => ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionsubmit' => 1],
-                'cmdata' => ['completion' => COMPLETION_TRACKING_AUTOMATIC],
-                'instancedata' => [
-                    ['completionsubmit' => 1],
-                    ['completionsubmit' => 1],
-                    ['completionsubmit' => 1],
-            ]]],
-            'Several modules with different module type' =>
-                [['modulenames' => ['choice', 'forum'],
+            'Several modules with the same module type (choice)' => [
+                [
+                    'modulenames' => ['choice', 'choice', 'choice'],
+                    'submitdata' => ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionsubmit' => 1],
+                    'validatedata' => ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionsubmit' => 1],
+                    'cmdata' => ['completion' => COMPLETION_TRACKING_AUTOMATIC],
+                    'instancedata' => [['completionsubmit' => 1], ['completionsubmit' => 1], ['completionsubmit' => 1]]
+                ]
+            ],
+            'Several modules with different module type' => [
+                [
+                    'modulenames' => ['choice', 'forum'],
                     'submitdata' => ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1],
                     'validatedata' => ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1],
                     'cmdata' => ['completion' => COMPLETION_TRACKING_AUTOMATIC],
-                    'instancedata' => null]],
-            'Setting manual completion (completionview shoud be ignored)' =>
-                [['modulenames' => ['scorm', 'forum', 'label', 'assign'],
+                    'instancedata' => null
+                ]
+            ],
+            'Setting manual completion (completionview shoud be ignored)' => [
+                [
+                    'modulenames' => ['scorm', 'forum', 'label', 'assign'],
                     'submitdata' => ['completion' => COMPLETION_TRACKING_MANUAL, 'completionview' => 1],
                     'validatedata' => [],
                     'cmdata' => ['completion' => COMPLETION_TRACKING_MANUAL, 'completionview' => 0],
-                    'instancedata' => null]],
-            'If at least one module does not support completionsubmit it can\'t be set' =>
-                [['modulenames' => ['survey', 'wiki'],
+                    'instancedata' => null
+                ]
+            ],
+            'If at least one module does not support completionsubmit it can\'t be set' => [
+                [
+                    'modulenames' => ['survey', 'wiki'],
                     'submitdata' => ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1, 'completionsubmit' => 1],
                     'validatedata' => [],
                     'cmdata' => ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1],
-                    'instancedata' => [
-                        ['completionsubmit' => 0],
-                        []
-                    ]]],
+                    'instancedata' => [['completionsubmit' => 0], []]
+                ]
+            ]
         ];
     }
 

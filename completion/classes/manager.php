@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -32,6 +31,7 @@ use cm_info;
 use tabobject;
 use lang_string;
 use moodle_url;
+defined('MOODLE_INTERNAL') || die;
 
 /**
  * Bulk activity completion manager class
@@ -43,8 +43,15 @@ use moodle_url;
  */
 class manager {
 
+    /**
+     * @var int $courseid the course id.
+     */
     protected $courseid;
 
+    /**
+     * manager constructor.
+     * @param int $courseid the course id.
+     */
     public function __construct($courseid) {
         $this->courseid = $courseid;
     }
@@ -185,6 +192,11 @@ class manager {
         return $activeruledescriptions;
     }
 
+    /**
+     * Gets the course modules for the current course.
+     *
+     * @return stdClass $data containing the modules
+     */
     public function get_activities_and_resources() {
         global $DB, $OUTPUT, $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
@@ -238,7 +250,9 @@ class manager {
     }
 
     /**
-     * @param stdClass|int $courseorid
+     * Gets the available completion tabs for the current course and user.
+     *
+     * @param stdClass|int $courseorid the course object or id.
      * @return tabobject[]
      */
     public static function get_available_completion_tabs($courseorid) {

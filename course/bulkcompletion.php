@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -28,13 +27,13 @@ require_once(__DIR__.'/../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/completionlib.php');
 
-$id = required_param('id', PARAM_INT);       // course id
+$id = required_param('id', PARAM_INT); // Course id.
 $cmids = optional_param_array('cmid', [], PARAM_INT);
 
 // Perform some basic access control checks.
 if ($id) {
 
-    if($id == SITEID){
+    if ($id == SITEID) {
         // Don't allow editing of 'site course' using this form.
         print_error('cannoteditsiteform');
     }
