@@ -126,12 +126,12 @@ class core_calendar_container_testcase extends advanced_testcase {
     }
 
     /**
-     * Test that the event factory deals with invisible modules properly.
+     * Test that the event factory deals with invisible modules properly as admin.
      *
      * @dataProvider get_event_factory_testcases()
      * @param \stdClass $dbrow Row from the "database".
      */
-    function test_event_factory_when_module_visibility_is_toggled($dbrow) {
+    function test_event_factory_when_module_visibility_is_toggled_as_admin($dbrow) {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -141,13 +141,48 @@ class core_calendar_container_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $moduleinstance = $generator->create_instance(['course' => $course->id]);
 
+        $dbrow->id = $legacyevent->id;
         $dbrow->courseid = $course->id;
         $dbrow->instance = $moduleinstance->id;
         $dbrow->modulename = 'assign';
 
         set_coursemodule_visible($moduleinstance->cmid, 0);
+
         $event = $factory->create_instance($dbrow);
-        // Module is invisible, factory should not produce an event.
+
+        // Test that the factory is returning an event as the admin can see hidden course modules.
+        $this->assertInstanceOf(event_interface::class, $event);
+    }
+
+    /**
+     * Test that the event factory deals with invisible modules properly as a guest.
+     *
+     * @dataProvider get_event_factory_testcases()
+     * @param \stdClass $dbrow Row from the "database".
+     */
+    function test_event_factory_when_module_visibility_is_toggled_as_guest($dbrow) {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $legacyevent = $this->create_event($dbrow);
+        $factory = \core_calendar\local\event\core_container::get_event_factory();
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        $dbrow->id = $legacyevent->id;
+        $dbrow->courseid = $course->id;
+        $dbrow->instance = $moduleinstance->id;
+        $dbrow->modulename = 'assign';
+
+        set_coursemodule_visible($moduleinstance->cmid, 0);
+
+        // Set to a user who can not view hidden course modules.
+        $this->setGuestUser();
+
+        $event = $factory->create_instance($dbrow);
+
+        // Module is invisible to guest users so this should return null.
         $this->assertNull($event);
     }
 

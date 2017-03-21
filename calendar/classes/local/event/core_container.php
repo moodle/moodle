@@ -125,7 +125,7 @@ class core_container {
 
                     $cm = $instances[$dbrow->modulename][$dbrow->instance];
 
-                    return !(bool)$cm->visible;
+                    return !(bool)$cm->uservisible;
                 },
                 self::$coursecache,
                 self::$modulecache
