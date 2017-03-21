@@ -193,6 +193,8 @@ if ($pageid != LESSON_EOL) {
 
     $lesson->set_module_viewed();
 
+    $timer = null;
+
     // This is where several messages (usually warnings) are displayed
     // all of this is displayed above the actual page
 
@@ -204,56 +206,15 @@ if ($pageid != LESSON_EOL) {
         $restart  = ($continue && $startlastseen == 'yes');
         $timer = $lesson->update_timer($continue, $restart);
 
-        if ($lesson->timelimit) {
-            $timeleft = $timer->starttime + $lesson->timelimit - time();
-            if ($timeleft <= 0) {
-                // Out of time
-                $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
-                redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>LESSON_EOL, 'outoftime'=>'normal')));
-                die; // Shouldn't be reached, but make sure
-            } else if ($timeleft < 60) {
-                // One minute warning
-                $lesson->add_message(get_string('studentoneminwarning', 'lesson'));
-            }
-        }
-
-        if ($page->qtype == LESSON_PAGE_BRANCHTABLE && $lesson->minquestions) {
-            // tell student how many questions they have seen, how many are required and their grade
-            $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
-            $gradeinfo = lesson_grade($lesson, $ntries);
-            if ($gradeinfo->attempts) {
-                if ($gradeinfo->nquestions < $lesson->minquestions) {
-                    $a = new stdClass;
-                    $a->nquestions   = $gradeinfo->nquestions;
-                    $a->minquestions = $lesson->minquestions;
-                    $lesson->add_message(get_string('numberofpagesviewednotice', 'lesson', $a));
-                }
-
-                if (!$reviewmode && !$lesson->retake){
-                    $lesson->add_message(get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned), 'notify');
-                    if ($lesson->grade != GRADE_TYPE_NONE) {
-                        $a = new stdClass;
-                        $a->grade = number_format($gradeinfo->grade * $lesson->grade / 100, 1);
-                        $a->total = $lesson->grade;
-                        $lesson->add_message(get_string('yourcurrentgradeisoutof', 'lesson', $a), 'notify');
-                    }
-                }
-            }
-        }
-    } else {
-        $timer = null;
-        if ($lesson->timelimit) {
-            $lesson->add_message(get_string('teachertimerwarning', 'lesson'));
-        }
-        if (lesson_display_teacher_warning($lesson)) {
-            // This is the warning msg for teachers to inform them that cluster
-            // and unseen does not work while logged in as a teacher
-            $warningvars = new stdClass();
-            $warningvars->cluster = get_string('clusterjump', 'lesson');
-            $warningvars->unseen = get_string('unseenpageinbranch', 'lesson');
-            $lesson->add_message(get_string('teacherjumpwarning', 'lesson', $warningvars));
+        // Check time limit.
+        if (!$lesson->check_time($timer)) {
+            redirect(new moodle_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => LESSON_EOL, 'outoftime' => 'normal')));
+            die; // Shouldn't be reached, but make sure.
         }
     }
+
+    // Add different informative messages to the given page.
+    $lesson->add_messages_on_page_view($page, $reviewmode);
 
     $PAGE->set_subpage($page->id);
     $currenttab = 'view';

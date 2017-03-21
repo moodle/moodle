@@ -295,6 +295,24 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $validation = testable_mod_lesson_external::validate_attempt($lesson, ['password' => ''], true);
         $this->assertEquals('noretake', key($validation));
         $this->assertCount(1, $validation);
+
+        // Test time limit restriction.
+        $timenow = time();
+        // Create a timer for the current user.
+        $timer1 = new stdClass;
+        $timer1->lessonid = $this->lesson->id;
+        $timer1->userid = $this->student->id;
+        $timer1->completed = 0;
+        $timer1->starttime = $timenow - DAYSECS;
+        $timer1->lessontime = $timenow;
+        $timer1->id = $DB->insert_record("lesson_timer", $timer1);
+
+        // Out of time.
+        $DB->set_field('lesson', 'timelimit', HOURSECS, array('id' => $this->lesson->id));
+        $lesson = new lesson($DB->get_record('lesson', array('id' => $this->lesson->id)));
+        $validation = testable_mod_lesson_external::validate_attempt($lesson, ['password' => '', 'pageid' => 1], true);
+        $this->assertEquals('eolstudentoutoftime', key($validation));
+        $this->assertCount(1, $validation);
     }
 
     /**
@@ -734,5 +752,153 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         foreach ($result['pages'] as $page) {
             $this->assertArrayNotHasKey('title', $page);
         }
+    }
+
+    /**
+     * Test launch_attempt. Time restrictions already tested in test_validate_attempt.
+     */
+    public function test_launch_attempt() {
+        global $DB, $SESSION;
+
+        // Test time limit restriction.
+        $timenow = time();
+        // Create a timer for the current user.
+        $timer1 = new stdClass;
+        $timer1->lessonid = $this->lesson->id;
+        $timer1->userid = $this->student->id;
+        $timer1->completed = 0;
+        $timer1->starttime = $timenow;
+        $timer1->lessontime = $timenow;
+        $timer1->id = $DB->insert_record("lesson_timer", $timer1);
+
+        $DB->set_field('lesson', 'timelimit', 30, array('id' => $this->lesson->id));
+
+        unset($SESSION->lesson_messages);
+        $result = mod_lesson_external::launch_attempt($this->lesson->id, '', 1);
+        $result = external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['messages']);
+        $messages = [];
+        foreach ($result['messages'] as $message) {
+            $messages[] = $message['type'];
+        }
+        sort($messages);
+        $this->assertEquals(['center', 'notifyproblem'], $messages);
+    }
+
+    /**
+     * Test launch_attempt not finished forcing review mode.
+     */
+    public function test_launch_attempt_not_finished_in_review_mode() {
+        global $DB, $SESSION;
+
+        // Create a timer for the current user.
+        $timenow = time();
+        $timer1 = new stdClass;
+        $timer1->lessonid = $this->lesson->id;
+        $timer1->userid = $this->student->id;
+        $timer1->completed = 0;
+        $timer1->starttime = $timenow;
+        $timer1->lessontime = $timenow;
+        $timer1->id = $DB->insert_record("lesson_timer", $timer1);
+
+        unset($SESSION->lesson_messages);
+        $this->setUser($this->teacher);
+        $result = mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
+        $result = external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
+        // Everything ok as teacher.
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(0, $result['messages']);
+        // Should fails as student.
+        $this->setUser($this->student);
+        // Now, try to review this attempt. We should not be able because is a non-finished attempt.
+        $this->setExpectedException('moodle_exception');
+        mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
+    }
+
+    /**
+     * Test launch_attempt just finished forcing review mode.
+     */
+    public function test_launch_attempt_just_finished_in_review_mode() {
+        global $DB, $SESSION, $USER;
+
+        // Create a timer for the current user.
+        $timenow = time();
+        $timer1 = new stdClass;
+        $timer1->lessonid = $this->lesson->id;
+        $timer1->userid = $this->student->id;
+        $timer1->completed = 1;
+        $timer1->starttime = $timenow;
+        $timer1->lessontime = $timenow;
+        $timer1->id = $DB->insert_record("lesson_timer", $timer1);
+
+        // Create attempt.
+        $newpageattempt = [
+            'lessonid' => $this->lesson->id,
+            'pageid' => $this->page2->id,
+            'userid' => $this->student->id,
+            'answerid' => 0,
+            'retry' => 1,
+            'correct' => 1,
+            'useranswer' => '1',
+            'timeseen' => time(),
+        ];
+        $DB->insert_record('lesson_attempts', (object) $newpageattempt);
+        // Create grade.
+        $record = [
+            'lessonid' => $this->lesson->id,
+            'userid' => $this->student->id,
+            'grade' => 100,
+            'late' => 0,
+            'completed' => 1,
+        ];
+        $DB->insert_record('lesson_grades', (object) $record);
+
+        unset($SESSION->lesson_messages);
+        $this->setUser($this->teacher);
+        $result = mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
+        $result = external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
+        // Everything ok as teacher.
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(0, $result['messages']);
+
+        $this->setUser($this->student);
+        $result = mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
+        $result = external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
+        // Everything ok as student.
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(0, $result['messages']);
+    }
+
+    /**
+     * Test launch_attempt not just finished forcing review mode.
+     */
+    public function test_launch_attempt_not_just_finished_in_review_mode() {
+        global $DB, $CFG, $SESSION;
+
+        // Create a timer for the current user.
+        $timenow = time();
+        $timer1 = new stdClass;
+        $timer1->lessonid = $this->lesson->id;
+        $timer1->userid = $this->student->id;
+        $timer1->completed = 1;
+        $timer1->starttime = $timenow - DAYSECS;
+        $timer1->lessontime = $timenow - $CFG->sessiontimeout - HOURSECS;
+        $timer1->id = $DB->insert_record("lesson_timer", $timer1);
+
+        unset($SESSION->lesson_messages);
+
+        // Everything ok as teacher.
+        $this->setUser($this->teacher);
+        $result = mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
+        $result = external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(0, $result['messages']);
+
+        // Fail as student.
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
     }
 }

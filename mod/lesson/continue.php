@@ -53,16 +53,9 @@ $PAGE->navbar->add(get_string('continue', 'lesson'));
 if (!$canmanage) {
     $lesson->displayleft = lesson_displayleftif($lesson);
     $timer = $lesson->update_timer();
-    if ($lesson->timelimit) {
-        $timeleft = ($timer->starttime + $lesson->timelimit) - time();
-        if ($timeleft <= 0) {
-            // Out of time
-            $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
-            redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>LESSON_EOL, 'outoftime'=>'normal')));
-        } else if ($timeleft < 60) {
-            // One minute warning
-            $lesson->add_message(get_string("studentoneminwarning", "lesson"));
-        }
+    if (!$lesson->check_time($timer)) {
+        redirect(new moodle_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => LESSON_EOL, 'outoftime' => 'normal')));
+        die; // Shouldn't be reached, but make sure.
     }
 } else {
     $timer = new stdClass;

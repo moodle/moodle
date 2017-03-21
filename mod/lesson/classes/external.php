@@ -243,7 +243,7 @@ class mod_lesson_external extends external_api {
      * @since  Moodle 3.3
      */
     protected static function validate_attempt(lesson $lesson, $params, $return = false) {
-        global $USER;
+        global $USER, $CFG;
 
         $errors = array();
 
@@ -315,6 +315,43 @@ class mod_lesson_external extends external_api {
                     throw new moodle_exception(key($error), 'lesson');
                 }
                 $errors[key($error)] = current($error);
+            }
+        } else {
+            if (!$timers = $lesson->get_user_timers($USER->id, 'starttime DESC', '*', 0, 1)) {
+                $error = ["cannotfindtimer" => null];
+                if (!$return) {
+                    throw new moodle_exception(key($error), 'lesson');
+                }
+                $errors[key($error)] = current($error);
+            } else {
+                $timer = current($timers);
+                if (!$lesson->check_time($timer)) {
+                    $error = ["eolstudentoutoftime" => null];
+                    if (!$return) {
+                        throw new moodle_exception(key($error), 'lesson');
+                    }
+                    $errors[key($error)] = current($error);
+                }
+
+                // Check if the user want to review an attempt he just finished.
+                if (!empty($params['review'])) {
+                    // Allow review only for completed attempts during active session time.
+                    if ($timer->completed and ($timer->lessontime + $CFG->sessiontimeout > time()) ) {
+                        $ntries = $lesson->count_user_retries($USER->id);
+                        if ($attempts = $lesson->get_attempts($ntries)) {
+                            $lastattempt = end($attempts);
+                            $USER->modattempts[$lesson->id] = $lastattempt->pageid;
+                        }
+                    }
+
+                    if (!isset($USER->modattempts[$lesson->id])) {
+                        $error = ["studentoutoftimeforreview" => null];
+                        if (!$return) {
+                            throw new moodle_exception(key($error), 'lesson');
+                        }
+                        $errors[key($error)] = current($error);
+                    }
+                }
             }
         }
 
@@ -1035,6 +1072,106 @@ class mod_lesson_external extends external_api {
                             'filessizetotal' => new external_value(PARAM_INT, 'The total size of the files'),
                         ),
                         'The lesson pages'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for launch_attempt.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function launch_attempt_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+                'password' => new external_value(PARAM_RAW, 'optional password (the lesson may be protected)', VALUE_DEFAULT, ''),
+                'pageid' => new external_value(PARAM_RAW, 'page id to continue from (only when continuing an attempt)', VALUE_DEFAULT, 0),
+                'review' => new external_value(PARAM_RAW, 'if we want to review just after finishing', VALUE_DEFAULT, false),
+            )
+        );
+    }
+
+    /**
+     * Starts a new attempt or continues an existing one.
+     *
+     * @param int $lessonid lesson instance id
+     * @param str $password optional password (the lesson may be protected)
+     * @param int $pageid page id to continue from (only when continuing an attempt)
+     * @param bool $review if we want to review just after finishing
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function launch_attempt($lessonid, $password = '', $pageid = 0, $review = false) {
+        global $CFG, $USER;
+
+        $params = array('lessonid' => $lessonid, 'password' => $password, 'pageid' => $pageid, 'review' => $review);
+        $params = self::validate_parameters(self::launch_attempt_parameters(), $params);
+        $warnings = $messages = array();
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        self::validate_attempt($lesson, $params);
+
+        $newpageid = 0;
+        // Starting a new lesson attempt.
+        if (empty($params['pageid'])) {
+            // Check if there is a recent timer created during the active session.
+            $alreadystarted = false;
+            if ($timers = $lesson->get_user_timers($USER->id, 'starttime DESC', '*', 0, 1)) {
+                $timer = array_shift($timers);
+                $endtime = $lesson->timelimit > 0 ? min($CFG->sessiontimeout, $lesson->timelimit) : $CFG->sessiontimeout;
+                if (!$timer->completed && $timer->starttime > time() - $endtime) {
+                    $alreadystarted = true;
+                }
+            }
+            if (!$alreadystarted && !$lesson->can_manage()) {
+                $lesson->start_timer();
+            }
+        } else {
+            if ($params['pageid'] == LESSON_EOL) {
+                throw new moodle_exception('endoflesson', 'lesson');
+            }
+            $timer = $lesson->update_timer(true, true);
+            if (!$lesson->check_time($timer)) {
+                throw new moodle_exception('eolstudentoutoftime', 'lesson');
+            }
+        }
+        foreach ($lesson->messages as $message) {
+            $messages[] = array(
+                'message' => $message[0],
+                'type' => $message[1],
+            );
+        }
+
+        $result = array(
+            'status' => true,
+            'messages' => $messages,
+            'warnings' => $warnings,
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the launch_attempt return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function launch_attempt_returns() {
+        return new external_single_structure(
+            array(
+                'messages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'message' => new external_value(PARAM_RAW, 'Message'),
+                            'type' => new external_value(PARAM_ALPHANUMEXT, 'Message type: usually a CSS identifier like:
+                                success, info, warning, error, notifyproblem, notifyerror, notifytiny, notifysuccess')
+                        ), 'The lesson generated messages'
                     )
                 ),
                 'warnings' => new external_warnings(),

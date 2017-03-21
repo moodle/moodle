@@ -100,4 +100,12 @@ $functions = array(
         'capabilities'  => 'mod/lesson:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_lesson_launch_attempt' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'launch_attempt',
+        'description'   => 'Starts a new attempt or continues an existing one.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
