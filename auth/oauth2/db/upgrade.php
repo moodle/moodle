@@ -85,5 +85,27 @@ function xmldb_auth_oauth2_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017031000, 'auth', 'oauth2');
     }
 
+    if ($oldversion < 2017032300) {
+
+        // Define field confirmtoken to be added to auth_oauth2_linked_login.
+        $table = new xmldb_table('auth_oauth2_linked_login');
+        $field = new xmldb_field('confirmtoken', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null, 'email');
+
+        // Conditionally launch add field confirmtoken.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('confirmtokenexpires', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'confirmtoken');
+
+        // Conditionally launch add field confirmtokenexpires.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Oauth2 savepoint reached.
+        upgrade_plugin_savepoint(true, 2017032300, 'auth', 'oauth2');
+    }
+
     return true;
 }

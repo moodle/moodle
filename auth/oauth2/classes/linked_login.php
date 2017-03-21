@@ -55,6 +55,12 @@ class linked_login extends persistent {
             ),
             'email' => array(
                 'type' => PARAM_RAW
+            ),
+            'confirmtoken' => array(
+                'type' => PARAM_RAW
+            ),
+            'confirmtokenexpires' => array(
+                'type' => PARAM_INT
             )
         );
     }

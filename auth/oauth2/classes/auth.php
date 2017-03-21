@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use pix_icon;
 use moodle_url;
 use core_text;
+use context_system;
 use stdClass;
 use core\oauth2\issuer;
 use core\oauth2\client;
@@ -105,7 +106,7 @@ class auth extends \auth_plugin_base {
      * @return bool true means automatically copy data from ext to user table
      */
     public function is_synchronised_with_external() {
-        return true;
+        return false;
     }
 
     /**
@@ -309,15 +310,45 @@ class auth extends \auth_plugin_base {
     }
 
     /**
-     * Process the config after the form is saved.
-     * @param stdClass $config
+     * Confirm the new user as registered.
+     *
+     * @param string $username
+     * @param string $confirmsecret
      */
-    public function process_config($config) {
-        // Set to defaults if undefined.
-        if (!isset($config->allowlinkedlogins)) {
-             $config->allowlinkedlogins = false;
+    function user_confirm($username, $confirmsecret) {
+        global $DB;
+        $user = get_complete_user_data('username', $username);
+
+        if (!empty($user)) {
+            if ($user->auth != $this->authtype) {
+                return AUTH_CONFIRM_ERROR;
+
+            } else if ($user->secret == $confirmsecret && $user->confirmed) {
+                return AUTH_CONFIRM_ALREADY;
+
+            } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
+                $DB->set_field("user", "confirmed", 1, array("id"=>$user->id));
+                return AUTH_CONFIRM_OK;
+            }
+        } else {
+            return AUTH_CONFIRM_ERROR;
         }
-        set_config('allowlinkedlogins', trim($config->allowlinkedlogins), 'auth_oauth2');
+    }
+
+    /**
+     * Print a page showing that a confirm email was sent with instructions.
+     *
+     * @param string title
+     * @param string message
+     */
+    public function print_confirm_required($title, $message) {
+        global $PAGE, $OUTPUT, $CFG;
+
+        $PAGE->navbar->add($title);
+        $PAGE->set_title($title);
+        $PAGE->set_heading($PAGE->course->fullname);
+        echo $OUTPUT->header();
+        notice($message, "$CFG->httpswwwroot/index.php");
     }
 
     /**
@@ -327,7 +358,7 @@ class auth extends \auth_plugin_base {
      * @return none Either redirects or throws an exception
      */
     public function complete_login(client $client, $redirecturl) {
-        global $CFG, $SESSION;
+        global $CFG, $SESSION, $PAGE;
 
         $userinfo = $client->get_userinfo();
 
@@ -336,7 +367,7 @@ class auth extends \auth_plugin_base {
             $SESSION->loginerrormsg = $errormsg;
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
         }
-        if (empty($userinfo['username'])) {
+        if (empty($userinfo['username']) || empty($userinfo['email'])) {
             $errormsg = get_string('notloggedin', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
@@ -344,38 +375,100 @@ class auth extends \auth_plugin_base {
 
         $userinfo['username'] = trim(core_text::strtolower($userinfo['username']));
 
+        // Once we get here we have the user info from oauth.
         $userwasmapped = false;
-        if (get_config('auth_oauth2', 'allowlinkedlogins')) {
-            $mappeduser = api::match_username_to_user($userinfo['username'], $client->get_issuer());
 
-            if ($mappeduser) {
+        // Clean and remember the picture / lang.
+        if (!empty($userinfo['picture'])) {
+            $this->set_static_user_picture($userinfo['picture']);
+            unset($userinfo['picture']);
+        }
+
+        if (!empty($userinfo['lang'])) {
+            $userinfo['lang'] = str_replace('-', '_', trim(core_text::strtolower($userinfo['lang'])));
+            if (!get_string_manager()->translation_exists($userinfo['lang'], false)) {
+                unset($userinfo['lang']);
+            }
+        }
+
+        // First we try and find a defined mapping.
+        $linkedlogin = api::match_username_to_user($userinfo['username'], $client->get_issuer());
+
+        if (!empty($linkedlogin) && empty($linkedlogin->get('confirmtoken'))) {
+            $mappeduser = get_complete_user_data('id', $linkedlogin->get('userid'));
+
+            if ($mappeduser && $mappeduser->confirmed) {
                 $userinfo = (array) $mappeduser;
                 $userwasmapped = true;
+            } else {
+                $errormsg = get_string('confirmationpending', 'auth_oauth2');
+                $SESSION->loginerrormsg = $errormsg;
+                redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
             }
+        } else if (!empty($linkedlogin)) {
+            $errormsg = get_string('confirmationpending', 'auth_oauth2');
+            $SESSION->loginerrormsg = $errormsg;
+            redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+        }
+        $issuer = $client->get_issuer();
+        if (!$issuer->is_valid_login_domain($userinfo['email'])) {
+            $errormsg = get_string('notloggedin', 'auth_oauth2');
+            $SESSION->loginerrormsg = $errormsg;
+            redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
         }
 
         if (!$userwasmapped) {
-            if (!empty($userinfo['picture'])) {
-                $this->set_static_user_picture($userinfo['picture']);
-                unset($userinfo['picture']);
-            }
+            // No defined mapping - we need to see if there is an existing account with the same email.
 
-            if (!empty($userinfo['lang'])) {
-                $userinfo['lang'] = str_replace('-', '_', trim(core_text::strtolower($userinfo['lang'])));
-                if (!get_string_manager()->translation_exists($userinfo['lang'], false)) {
-                    unset($userinfo['lang']);
+            $moodleuser = \core_user::get_user_by_email($userinfo['email']);
+            if (!empty($moodleuser)) {
+                $PAGE->set_url('/auth/oauth2/confirm-link-login.php');
+                $PAGE->set_context(context_system::instance());
+
+                \auth_oauth2\api::send_confirm_link_login_email($userinfo, $issuer, $moodleuser->id);
+                // Request to link to existing account.
+                $emailconfirm = get_string('emailconfirmlink', 'auth_oauth2');
+                $message = get_string('emailconfirmlinksent', 'auth_oauth2', $moodleuser->email);
+                $this->print_confirm_required($emailconfirm, $message);
+                exit();
+
+            } else {
+                // This is a new account.
+                $exists = \core_user::get_user_by_username($userinfo['username']);
+                // Creating a new user?
+                if ($exists) {
+
+                    // The username exists but the emails don't match. Refuse to continue.
+                    $errormsg = get_string('accountexists', 'auth_oauth2');
+                    $SESSION->loginerrormsg = $errormsg;
+                    redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
                 }
+
+                if (email_is_not_allowed($userinfo['email'])) {
+                    // The username exists but the emails don't match. Refuse to continue.
+                    $errormsg = get_string('emailnotallowed', 'auth_oauth2');
+                    $SESSION->loginerrormsg = $errormsg;
+                    redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+                }
+
+                $PAGE->set_url('/auth/oauth2/confirm-account.php');
+                $PAGE->set_context(context_system::instance());
+
+                // Create a new (unconfirmed account) and send an email to confirm it.
+                $user = \auth_oauth2\api::send_confirm_account_email($userinfo, $issuer);
+
+                $this->update_picture($user);
+                $emailconfirm = get_string('emailconfirm');
+                $message = get_string('emailconfirmsent', '', $userinfo['email']);
+                $this->print_confirm_required($emailconfirm, $message);
+                exit();
+
             }
         }
 
-        $issuer = $client->get_issuer();
-
-        $user = false;
-        if ($issuer->is_valid_login_domain($userinfo['email'])) {
-
-            $this->set_static_user_info($userinfo);
-            $user = authenticate_user_login($userinfo['username'], '');
-        }
+        // If we got to here - we must have found a real user account that is confirmed.
+        $this->set_static_user_info($userinfo);
+        $user = authenticate_user_login($userinfo['username'], '');
 
         if ($user) {
             complete_user_login($user);

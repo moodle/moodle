@@ -26,6 +26,7 @@ namespace auth_oauth2;
 use context_user;
 use stdClass;
 use moodle_exception;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -60,7 +61,7 @@ class api {
         $context = context_user::instance($userid);
         require_capability('auth/oauth2:managelinkedlogins', $context);
 
-        return linked_login::get_records(['userid' => $userid]);
+        return linked_login::get_records(['userid' => $userid, 'confirmtoken' => '']);
     }
 
     /**
@@ -75,14 +76,7 @@ class api {
             'issuerid' => $issuer->get('id'),
             'username' => $username
         ];
-        $match = linked_login::get_record($params);
-
-        if ($match) {
-            $user = get_complete_user_data('id', $match->get('userid'));
-
-            return $user;
-        }
-        return false;
+        return linked_login::get_record($params);
     }
 
     /**
@@ -93,9 +87,10 @@ class api {
      * @param array $userinfo as returned from an oauth client.
      * @param \core\oauth2\issuer $issuer
      * @param int $userid (defaults to $USER->id)
-     * @return boolean
+     * @param bool $skippermissions During signup we need to set this before the user is setup for capability checks.
+     * @return bool
      */
-    public static function link_login($userinfo, $issuer, $userid = false) {
+    public static function link_login($userinfo, $issuer, $userid = false, $skippermissions = false) {
         global $USER;
 
         if ($userid === false) {
@@ -107,19 +102,192 @@ class api {
         }
 
         $context = context_user::instance($userid);
-        require_capability('auth/oauth2:managelinkedlogins', $context);
+        if (!$skippermissions) {
+            require_capability('auth/oauth2:managelinkedlogins', $context);
+        }
 
         $record = new stdClass();
         $record->issuerid = $issuer->get('id');
         $record->username = $userinfo['username'];
-        $record->email = $userinfo['email'];
         $record->userid = $userid;
         $existing = linked_login::get_record((array)$record);
         if ($existing) {
+            $existing->set('confirmtoken', '');
+            $existing->update();
             return $existing;
         }
+        $record->email = $userinfo['email'];
+        $record->confirmtoken = '';
         $linkedlogin = new linked_login(0, $record);
         return $linkedlogin->create();
+    }
+
+    /**
+     * Send an email with a link to confirm linking this account.
+     *
+     * @param array $userinfo as returned from an oauth client.
+     * @param \core\oauth2\issuer $issuer
+     * @param int $userid (defaults to $USER->id)
+     * @return bool
+     */
+    public static function send_confirm_link_login_email($userinfo, $issuer, $userid) {
+
+        $record = new stdClass();
+        $record->issuerid = $issuer->get('id');
+        $record->username = $userinfo['username'];
+        $record->userid = $userid;
+        $existing = linked_login::get_record((array)$record);
+        if ($existing) {
+            return false;
+        }
+        $record->email = $userinfo['email'];
+        $record->confirmtoken = random_string(32);
+        $expires = new \DateTime('NOW');
+        $expires->add(new \DateInterval('PT30M'));
+        $record->confirmtokenexpires = $expires->getTimestamp();
+
+        $linkedlogin = new linked_login(0, $record);
+        $linkedlogin->create();
+
+        // Construct the email.
+        $site = get_site();
+        $supportuser = \core_user::get_support_user();
+        $user = get_complete_user_data('id', $userid);
+
+        $data = new stdClass();
+        $data->fullname = fullname($user);
+        $data->sitename  = format_string($site->fullname);
+        $data->admin     = generate_email_signoff();
+        $data->issuername = format_string($issuer->get('name'));
+        $data->linkedemail = format_string($linkedlogin->get('email'));
+
+        $subject = get_string('confirmlinkedloginemailsubject', 'auth_oauth2', format_string($site->fullname));
+
+        $params = [
+            'token' => $linkedlogin->get('confirmtoken'),
+            'userid' => $userid,
+            'username' => $userinfo['username'],
+            'issuerid' => $issuer->get('id'),
+        ];
+        $confirmationurl = new moodle_url('/auth/oauth2/confirm-linkedlogin.php', $params);
+
+        // Remove data parameter just in case it was included in the confirmation so we can add it manually later.
+        $data->link = $confirmationurl->out();
+
+        $message     = get_string('confirmlinkedloginemail', 'auth_oauth2', $data);
+        $messagehtml = text_to_html(get_string('confirmlinkedloginemail', 'auth_oauth2', $data), false, false, true);
+
+        $user->mailformat = 1;  // Always send HTML version as well.
+
+        // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
+        return email_to_user($user, $supportuser, $subject, $message, $messagehtml);
+    }
+
+    /**
+     * Look for a waiting confirmation token, and if we find a match - confirm it.
+     *
+     * @param int $userid
+     * @param string $username
+     * @param int $issuerid
+     * @param string $token
+     * @return boolean True if we linked.
+     */
+    public static function confirm_link_login($userid, $username, $issuerid, $token) {
+        if (empty($token) || empty($userid) || empty($issuerid) || empty($username)) {
+            return false;
+        }
+        $params = [
+            'userid' => $userid,
+            'username' => $username,
+            'issuerid' => $issuerid,
+            'confirmtoken' => $token,
+        ];
+
+        $login = linked_login::get_record($params);
+        if (empty($login)) {
+            return false;
+        }
+        $expires = $login->get('confirmtokenexpires');
+        if (time() > $expires) {
+            $login->delete();
+            return;
+        }
+        $login->set('confirmtokenexpires', 0);
+        $login->set('confirmtoken', '');
+        $login->update();
+        return true;
+    }
+
+    /**
+     * Send an email with a link to confirm creating this account.
+     *
+     * @param array $userinfo as returned from an oauth client.
+     * @param \core\oauth2\issuer $issuer
+     * @param int $userid (defaults to $USER->id)
+     * @return bool
+     */
+    public static function send_confirm_account_email($userinfo, $issuer) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+        require_once($CFG->dirroot.'/user/lib.php');
+
+        $user = new stdClass();
+        $user->username = $userinfo['username'];
+        $user->email = $userinfo['email'];
+        $user->auth = 'oauth2';
+        $user->mnethostid = $CFG->mnet_localhost_id;
+        $user->lastname = isset($userinfo['lastname']) ? $userinfo['lastname'] : '';
+        $user->firstname = isset($userinfo['firstname']) ? $userinfo['firstname'] : '';
+        $user->url = isset($userinfo['url']) ? $userinfo['url'] : '';
+        $user->alternatename = isset($userinfo['alternatename']) ? $userinfo['alternatename'] : '';
+        $user->secret = random_string(15);
+
+        $user->password = '';
+        // This user is not confirmed.
+        $user->confirmed = 0;
+
+        $user->id = user_create_user($user, false, true);
+
+        // The linked account is pre-confirmed.
+        $record = new stdClass();
+        $record->issuerid = $issuer->get('id');
+        $record->username = $userinfo['username'];
+        $record->userid = $user->id;
+        $record->email = $userinfo['email'];
+        $record->confirmtoken = '';
+        $record->confirmtokenexpires = 0;
+
+        $linkedlogin = new linked_login(0, $record);
+        $linkedlogin->create();
+
+        // Construct the email.
+        $site = get_site();
+        $supportuser = \core_user::get_support_user();
+        $user = get_complete_user_data('id', $user->id);
+
+        $data = new stdClass();
+        $data->fullname = fullname($user);
+        $data->sitename  = format_string($site->fullname);
+        $data->admin     = generate_email_signoff();
+
+        $subject = get_string('confirmaccountemailsubject', 'auth_oauth2', format_string($site->fullname));
+
+        $params = [
+            'token' => $user->secret,
+            'username' => $userinfo['username']
+        ];
+        $confirmationurl = new moodle_url('/auth/oauth2/confirm-account.php', $params);
+
+        $data->link = $confirmationurl->out();
+
+        $message     = get_string('confirmaccountemail', 'auth_oauth2', $data);
+        $messagehtml = text_to_html(get_string('confirmaccountemail', 'auth_oauth2', $data), false, false, true);
+
+        $user->mailformat = 1;  // Always send HTML version as well.
+
+        // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
+        email_to_user($user, $supportuser, $subject, $message, $messagehtml);
+        return $user;
     }
 
     /**
