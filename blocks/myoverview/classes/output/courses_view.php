@@ -88,8 +88,17 @@ class courses_view implements renderable, templatable {
                 $exportedcourse->progress = $courseprogress;
             }
 
-            if ($startdate < $today && $enddate < $today) {
+            if ($startdate > $today) {
+                // Courses that have not started yet.
+                $futurepages = floor($coursesbystatus['future'] / $this::COURSES_PER_PAGE);
 
+                $coursesview['future']['pages'][$futurepages]['courses'][] = $exportedcourse;
+                $coursesview['future']['pages'][$futurepages]['active'] = ($futurepages == 0 ? true : false);
+                $coursesview['future']['pages'][$futurepages]['page'] = $futurepages + 1;
+                $coursesbystatus['future']++;
+
+            } else if (!empty($enddate) && $enddate < $today) {
+                // Courses that have already ended.
                 $pastpages = floor($coursesbystatus['past'] / $this::COURSES_PER_PAGE);
 
                 $coursesview['past']['pages'][$pastpages]['courses'][] = $exportedcourse;
@@ -97,20 +106,14 @@ class courses_view implements renderable, templatable {
                 $coursesview['past']['pages'][$pastpages]['page'] = $pastpages + 1;
                 $coursesbystatus['past']++;
 
-            } elseif ($startdate <= $today && $enddate >= $today) {
+            } else {
+                // Courses still in progress. Either their end date is not set, or the end date is not yet past the current date.
                 $inprogresspages = floor($coursesbystatus['inprogress'] / $this::COURSES_PER_PAGE);
 
                 $coursesview['inprogress']['pages'][$inprogresspages]['courses'][] = $exportedcourse;
                 $coursesview['inprogress']['pages'][$inprogresspages]['active'] = ($inprogresspages == 0 ? true : false);
                 $coursesview['inprogress']['pages'][$inprogresspages]['page'] = $inprogresspages + 1;
                 $coursesbystatus['inprogress']++;
-            } else {
-                $futurepages = floor($coursesbystatus['future'] / $this::COURSES_PER_PAGE);
-
-                $coursesview['future']['pages'][$futurepages]['courses'][] = $exportedcourse;
-                $coursesview['future']['pages'][$futurepages]['active'] = ($futurepages == 0 ? true : false);
-                $coursesview['future']['pages'][$futurepages]['page'] = $futurepages + 1;
-                $coursesbystatus['future']++;
             }
         }
 
