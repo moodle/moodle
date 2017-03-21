@@ -628,9 +628,6 @@ abstract class moodleform_mod extends moodleform {
         }
         if ($completion->is_enabled()) {
             $mform->addElement('header', 'activitycompletionheader', get_string('activitycompletion', 'completion'));
-            // With defaults being set, it would be better to expand this section so that the creator can customise when necessary.
-            $mform->setExpanded('activitycompletionheader');
-
             // Unlock button for if people have completed it (will
             // be removed in definition_after_data if they haven't)
             $mform->addElement('submit', 'unlockcompletion', get_string('unlockcompletion', 'completion'));
