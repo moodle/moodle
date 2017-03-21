@@ -24,6 +24,14 @@
 }}
 <ul class="list-group unstyled" id="timeline-view-courses-{{uniqid}}">
     {{#courses}} {{> block_myoverview/course-item }} {{/courses}}
+    {{^courses}}
+        <div class="text-xs-center text-center m-t-3">
+            <img class="empty-placeholder-image-lg"
+                 src="{{urls.noevents}}"
+                 alt="{{#str}} nocoursesinprogress, block_myoverview {{/str}}">
+            <p class="text-muted m-t-1">{{#str}} nocoursesinprogress, block_myoverview {{/str}}</p>
+        </div>
+    {{/courses}}
 </ul>
 {{#js}}
     require(['jquery', 'block_myoverview/event_list_by_course'], function($, EventListByCourse) {

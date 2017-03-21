@@ -23,6 +23,7 @@
     {}
 }}
 <div id="courses-view-{{uniqid}}" data-region="courses-view">
+    {{#hascourses}}
     <div class="text-xs-center text-center">
         <div class="btn-group m-y-2" role="group" data-toggle="btns">
             <a class="btn btn-default active" href="#myoverview_courses_view_in_progress" data-toggle="tab">
@@ -46,6 +47,14 @@
                     {{$pagingcontentid}}pc-for-in-progress{{/pagingcontentid}}
                 {{/ block_myoverview/courses-view-by-status }}
             {{/inprogress}}
+            {{^inprogress}}
+                <div class="text-xs-center text-center m-t-3">
+                    <img class="empty-placeholder-image-lg"
+                         src="{{urls.nocourses}}"
+                         alt="{{#str}} nocoursesinprogress, block_myoverview {{/str}}">
+                    <p class="text-muted m-t-1">{{#str}} nocoursesinprogress, block_myoverview {{/str}}</p>
+                </div>
+            {{/inprogress}}
         </div>
         <div class="tab-pane fade" id="myoverview_courses_view_future">
             {{#future}}
@@ -55,6 +64,14 @@
                     {{$pagingbarid}}pb-for-future{{/pagingbarid}}
                     {{$pagingcontentid}}pc-for-in-progress{{/pagingcontentid}}
                 {{/ block_myoverview/courses-view-by-status }}
+            {{/future}}
+            {{^future}}
+                <div class="text-xs-center text-center m-t-3">
+                    <img class="empty-placeholder-image-lg"
+                         src="{{urls.nocourses}}"
+                         alt="{{#str}} nocoursesfuture, block_myoverview {{/str}}">
+                    <p class="text-muted m-t-1">{{#str}} nocoursesfuture, block_myoverview {{/str}}</p>
+                </div>
             {{/future}}
         </div>
         <div class="tab-pane fade" id="myoverview_courses_view_past">
@@ -66,8 +83,25 @@
                     {{$pagingcontentid}}pc-for-in-progress{{/pagingcontentid}}
                 {{/ block_myoverview/courses-view-by-status }}
             {{/past}}
+            {{^past}}
+                <div class="text-xs-center text-center m-t-3">
+                    <img class="empty-placeholder-image-lg"
+                         src="{{urls.nocourses}}"
+                         alt="{{#str}} nocoursespast, block_myoverview {{/str}}">
+                    <p class="text-muted m-t-1">{{#str}} nocoursespast, block_myoverview {{/str}}</p>
+                </div>
+            {{/past}}
         </div>
     </div>
+    {{/hascourses}}
+    {{^hascourses}}
+    <div class="text-xs-center text-center m-t-3">
+        <img class="empty-placeholder-image-lg"
+             src="{{urls.nocourses}}"
+             alt="{{#str}} nocourses, block_myoverview {{/str}}">
+        <p class="text-muted m-t-1">{{#str}} nocourses, block_myoverview {{/str}}</p>
+    </div>
+    {{/hascourses}}
 </div>
 {{#js}}
 require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {

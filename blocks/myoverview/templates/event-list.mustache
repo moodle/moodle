@@ -70,8 +70,11 @@
             </button>
         </div>
     </div>
-    <div class="hidden" data-region="empty-message">
-        <p class="text-muted">{{#str}} noevents, block_myoverview {{/str}}</p>
+    <div class="hidden text-xs-center text-center m-t-3" data-region="empty-message">
+        <img class="empty-placeholder-image-lg"
+             src="{{urls.noevents}}"
+             alt="{{#str}} noevents, block_myoverview {{/str}}">
+        <p class="text-muted m-t-1">{{#str}} noevents, block_myoverview {{/str}}</p>
     </div>
 </div>
 {{#js}}

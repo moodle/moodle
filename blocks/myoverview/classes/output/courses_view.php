@@ -66,7 +66,9 @@ class courses_view implements renderable, templatable {
         $today = time();
 
         // Build courses view data structure.
-        $coursesview = [];
+        $coursesview = [
+            'hascourses' => !empty($this->courses)
+        ];
 
         // How many courses we have per status?
         $coursesbystatus = ['past' => 0, 'inprogress' => 0, 'future' => 0];

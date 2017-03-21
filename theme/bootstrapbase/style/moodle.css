@@ -16336,6 +16336,14 @@ body {
 .block_myoverview .event-list-item .event-name-container .event-name {
   display: block;
 }
+.block_myoverview .empty-placeholder-image-sm {
+  height: 70px;
+  width: 85px;
+}
+.block_myoverview .empty-placeholder-image-lg {
+  height: 125px;
+  width: 145px;
+}
 /**
  * Moodle forms HTML isn't changeable via renderers (yet?) so this
  * .less file imports styles from the bootstrap @variables file and

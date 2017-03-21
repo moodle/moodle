@@ -17,10 +17,14 @@
 {{!
     @template block_myoverview/paging-bar-item
 
-    This template renders the each course block containing a summary and calendar events.
+    This template renders a single item in the paging bar.
 
     Example context (json):
     {
+        "url": "#",
+        "number": 1,
+        "page": "1",
+        "active": true
     }
 }}
 <li class="page-item {{#active}}active{{/active}} {{#disabled}}disabled{{/disabled}}"

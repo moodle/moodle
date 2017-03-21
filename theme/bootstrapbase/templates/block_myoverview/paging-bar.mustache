@@ -17,10 +17,36 @@
 {{!
     @template block_myoverview/paging-bar
 
-    This template renders the each course block containing a summary and calendar events.
+    This template renders the bootstrap style paging bar.
 
     Example context (json):
     {
+        "pagingbar": {
+            "pagecount": 2,
+            "previous": {},
+            "next": {},
+            "first": {
+                "url": "#",
+                "page": "first"
+            },
+            "last": {
+                "url": "#",
+                "page": "last"
+            },
+            "pages": [
+                {
+                    "url": "#",
+                    "number": 1,
+                    "page": "1",
+                    "active": true
+                },
+                {
+                    "url": "#",
+                    "number": 2,
+                    "page": "2"
+                }
+            ]
+        }
     }
 }}
 {{#pagingbar}}
