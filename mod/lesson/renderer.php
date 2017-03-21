@@ -477,28 +477,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
       * @return string
       */
     public function ongoing_score(lesson $lesson) {
-        global $USER, $DB;
-
-        $context = context_module::instance($this->page->cm->id);
-        if (has_capability('mod/lesson:manage', $context)) {
-            return $this->output->box(get_string('teacherongoingwarning', 'lesson'), "ongoing center");
-        } else {
-            $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
-            if (isset($USER->modattempts[$lesson->id])) {
-                $ntries--;
-            }
-            $gradeinfo = lesson_grade($lesson, $ntries);
-            $a = new stdClass;
-            if ($lesson->custom) {
-                $a->score = $gradeinfo->earned;
-                $a->currenthigh = $gradeinfo->total;
-                return $this->output->box(get_string("ongoingcustom", "lesson", $a), "ongoing center");
-            } else {
-                $a->correct = $gradeinfo->earned;
-                $a->viewed = $gradeinfo->attempts;
-                return $this->output->box(get_string("ongoingnormal", "lesson", $a), "ongoing center");
-            }
-        }
+        return $this->output->box($lesson->get_ongoing_score_message(), "ongoing center");
     }
 
     /**
@@ -508,8 +487,6 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @return string
      */
     public function progress_bar(lesson $lesson) {
-        global $CFG, $USER, $DB;
-
         $context = context_module::instance($this->page->cm->id);
 
         // lesson setting to turn progress bar on or off
@@ -522,53 +499,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
             return $this->output->notification(get_string('progressbarteacherwarning2', 'lesson'));
         }
 
-        if (!isset($USER->modattempts[$lesson->id])) {
-            // all of the lesson pages
-            $pages = $lesson->load_all_pages();
-            foreach ($pages as $page) {
-                if ($page->prevpageid == 0) {
-                    $pageid = $page->id;  // find the first page id
-                    break;
-                }
-            }
-
-            // current attempt number
-            if (!$ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id))) {
-                $ntries = 0;  // may not be necessary
-            }
-
-            $viewedpageids = array();
-            if ($attempts = $lesson->get_attempts($ntries, false)) {
-                foreach($attempts as $attempt) {
-                    $viewedpageids[$attempt->pageid] = $attempt;
-                }
-            }
-
-            $viewedbranches = array();
-            // collect all of the branch tables viewed
-            if ($branches = $lesson->get_content_pages_viewed($ntries, $USER->id, 'timeseen ASC', 'id, pageid')) {
-                foreach($branches as $branch) {
-                    $viewedbranches[$branch->pageid] = $branch;
-                }
-                $viewedpageids = array_merge($viewedpageids, $viewedbranches);
-            }
-
-            // Filter out the following pages:
-            //      End of Cluster
-            //      End of Branch
-            //      Pages found inside of Clusters
-            // Do not filter out Cluster Page(s) because we count a cluster as one.
-            // By keeping the cluster page, we get our 1
-            $validpages = array();
-            while ($pageid != 0) {
-                $pageid = $pages[$pageid]->valid_page_and_view($validpages, $viewedpageids);
-            }
-
-            // progress calculation as a percent
-            $progress = round(count($viewedpageids)/count($validpages), 2) * 100;
-        } else {
-            $progress = 100;
-        }
+        // Check if the user is reviewing the attempt.
+        $progress = $lesson->calculate_progress();
 
         // print out the Progress Bar.  Attempted to put as much as possible in the style sheets.
         $content = '<br />' . html_writer::tag('div', $progress . '%', array('class' => 'progress_bar_completed', 'style' => 'width: '. $progress . '%;'));

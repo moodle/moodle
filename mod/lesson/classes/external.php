@@ -952,6 +952,70 @@ class mod_lesson_external extends external_api {
     }
 
     /**
+     * Describes the external structure for a lesson page.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    protected static function get_page_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'The id of this lesson page'),
+                'lessonid' => new external_value(PARAM_INT, 'The id of the lesson this page belongs to'),
+                'prevpageid' => new external_value(PARAM_INT, 'The id of the page before this one'),
+                'nextpageid' => new external_value(PARAM_INT, 'The id of the next page in the page sequence'),
+                'qtype' => new external_value(PARAM_INT, 'Identifies the page type of this page'),
+                'qoption' => new external_value(PARAM_INT, 'Used to record page type specific options'),
+                'layout' => new external_value(PARAM_INT, 'Used to record page specific layout selections'),
+                'display' => new external_value(PARAM_INT, 'Used to record page specific display selections'),
+                'timecreated' => new external_value(PARAM_INT, 'Timestamp for when the page was created'),
+                'timemodified' => new external_value(PARAM_INT, 'Timestamp for when the page was last modified'),
+                'title' => new external_value(PARAM_RAW, 'The title of this page', VALUE_OPTIONAL),
+                'contents' => new external_value(PARAM_RAW, 'The contents of this page', VALUE_OPTIONAL),
+                'contentsformat' => new external_format_value('contents', VALUE_OPTIONAL),
+                'displayinmenublock' => new external_value(PARAM_BOOL, 'Toggles display in the left menu block'),
+                'type' => new external_value(PARAM_INT, 'The type of the page [question | structure]'),
+                'typeid' => new external_value(PARAM_INT, 'The unique identifier for the page type'),
+                'typestring' => new external_value(PARAM_RAW, 'The string that describes this page type'),
+            ),
+            'Page fields'
+        );
+    }
+
+    /**
+     * Returns the fields of a page object
+     * @param lesson_page $page the lesson page
+     * @param bool $returncontents whether to return the page title and contents
+     * @return stdClass          the fields matching the external page structure
+     * @since Moodle 3.3
+     */
+    protected static function get_page_fields(lesson_page $page, $returncontents = false) {
+        $lesson = $page->lesson;
+        $context = $lesson->context;
+
+        $pagedata = new stdClass; // Contains the data that will be returned by the WS.
+
+        // Return the visible data.
+        $visibleproperties = array('id', 'lessonid', 'prevpageid', 'nextpageid', 'qtype', 'qoption', 'layout', 'display',
+                                    'displayinmenublock', 'type', 'typeid', 'typestring', 'timecreated', 'timemodified');
+        foreach ($visibleproperties as $prop) {
+            $pagedata->{$prop} = $page->{$prop};
+        }
+
+        // Check if we can see title (contents required custom rendering, we won't returning it here @see get_page_data).
+        $canmanage = $lesson->can_manage();
+        // If we are managers or the menu block is enabled and is a content page visible always return contents.
+        if ($returncontents || $canmanage || (lesson_displayleftif($lesson) && $page->displayinmenublock && $page->display)) {
+            $pagedata->title = external_format_string($page->title, $context->id);
+
+            list($pagedata->contents, $pagedata->contentsformat) =
+                external_format_text($page->contents, $page->contentsformat, $context->id, 'mod_lesson', 'page_contents', $page->id);
+
+        }
+        return $pagedata;
+    }
+
+    /**
      * Describes the parameters for get_pages.
      *
      * @return external_external_function_parameters
@@ -988,21 +1052,10 @@ class mod_lesson_external extends external_api {
         $pages = array();
 
         foreach ($lessonpages as $page) {
-            $pagedata = new stdClass; // Contains the data that will be returned by the WS
+            $pagedata = new stdClass();
 
-            // Return the visible data.
-            $visibleproperties = array('id', 'lessonid', 'prevpageid', 'nextpageid', 'qtype', 'qoption', 'layout', 'display',
-                                        'displayinmenublock', 'type', 'typeid', 'typestring', 'timecreated', 'timemodified');
-            foreach ($visibleproperties as $prop) {
-                $pagedata->{$prop} = $page->{$prop};
-            }
-
-            // Check if we can see title (contents required custom rendering, we won't returning it here @see get_page_data).
-            $canmanage = $lesson->can_manage();
-            // If we are managers or the menu block is enabled and is a content page visible.
-            if ($canmanage || (lesson_displayleftif($lesson) && $page->displayinmenublock && $page->display)) {
-                $pagedata->title = external_format_string($page->title, $context->id);
-            }
+            // Get the page object fields.
+            $pagedata->page = self::get_page_fields($page);
 
             // Now, calculate the file area files (maybe we need to download a lesson for offline usage).
             $pagedata->filescount = 0;
@@ -1047,21 +1100,7 @@ class mod_lesson_external extends external_api {
                 'pages' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'The id of this lesson page'),
-                            'lessonid' => new external_value(PARAM_INT, 'The id of the lesson this page belongs to'),
-                            'prevpageid' => new external_value(PARAM_INT, 'The id of the page before this one'),
-                            'nextpageid' => new external_value(PARAM_INT, 'The id of the next page in the page sequence'),
-                            'qtype' => new external_value(PARAM_INT, 'Identifies the page type of this page'),
-                            'qoption' => new external_value(PARAM_INT, 'Used to record page type specific options'),
-                            'layout' => new external_value(PARAM_INT, 'Used to record page specific layout selections'),
-                            'display' => new external_value(PARAM_INT, 'Used to record page specific display selections'),
-                            'timecreated' => new external_value(PARAM_INT, 'Timestamp for when the page was created'),
-                            'timemodified' => new external_value(PARAM_INT, 'Timestamp for when the page was last modified'),
-                            'title' => new external_value(PARAM_RAW, 'The title of this page', VALUE_OPTIONAL),
-                            'displayinmenublock' => new external_value(PARAM_BOOL, 'Toggles display in the left menu block'),
-                            'type' => new external_value(PARAM_INT, 'The type of the page [question | structure]'),
-                            'typeid' => new external_value(PARAM_INT, 'The unique identifier for the page type'),
-                            'typestring' => new external_value(PARAM_RAW, 'The string that describes this page type'),
+                            'page' => self::get_page_structure(),
                             'answerids' => new external_multiple_structure(
                                 new external_value(PARAM_INT, 'Answer id'), 'List of answers ids (empty for content pages in  Moodle 1.9)'
                             ),
@@ -1097,6 +1136,42 @@ class mod_lesson_external extends external_api {
     }
 
     /**
+     * Return lesson messages formatted according the external_messages structure
+     *
+     * @param  lesson $lesson lesson instance
+     * @return array          messages formatted
+     * @since Moodle 3.3
+     */
+    protected static function format_lesson_messages($lesson) {
+        $messages = array();
+        foreach ($lesson->messages as $message) {
+            $messages[] = array(
+                'message' => $message[0],
+                'type' => $message[1],
+            );
+        }
+        return $messages;
+    }
+
+    /**
+     * Return a external structure representing messages.
+     *
+     * @return external_multiple_structure messages structure
+     * @since Moodle 3.3
+     */
+    protected static function external_messages() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'message' => new external_value(PARAM_RAW, 'Message.'),
+                    'type' => new external_value(PARAM_ALPHANUMEXT, 'Message type: usually a CSS identifier like:
+                                success, info, warning, error, notifyproblem, notifyerror, notifytiny, notifysuccess')
+                ), 'The lesson generated messages'
+            )
+        );
+    }
+
+    /**
      * Starts a new attempt or continues an existing one.
      *
      * @param int $lessonid lesson instance id
@@ -1112,7 +1187,7 @@ class mod_lesson_external extends external_api {
 
         $params = array('lessonid' => $lessonid, 'password' => $password, 'pageid' => $pageid, 'review' => $review);
         $params = self::validate_parameters(self::launch_attempt_parameters(), $params);
-        $warnings = $messages = array();
+        $warnings = array();
 
         list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
         self::validate_attempt($lesson, $params);
@@ -1141,12 +1216,7 @@ class mod_lesson_external extends external_api {
                 throw new moodle_exception('eolstudentoutoftime', 'lesson');
             }
         }
-        foreach ($lesson->messages as $message) {
-            $messages[] = array(
-                'message' => $message[0],
-                'type' => $message[1],
-            );
-        }
+        $messages = self::format_lesson_messages($lesson);
 
         $result = array(
             'status' => true,
@@ -1165,15 +1235,162 @@ class mod_lesson_external extends external_api {
     public static function launch_attempt_returns() {
         return new external_single_structure(
             array(
-                'messages' => new external_multiple_structure(
+                'messages' => self::external_messages(),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for get_page_data.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_page_data_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+                'pageid' => new external_value(PARAM_INT, 'the page id'),
+                'password' => new external_value(PARAM_RAW, 'optional password (the lesson may be protected)', VALUE_DEFAULT, ''),
+                'review' => new external_value(PARAM_BOOL, 'if we want to review just after finishing (1 hour margin)',
+                    VALUE_DEFAULT, false),
+                'returncontents' => new external_value(PARAM_BOOL, 'if we must return the complete page contents once rendered',
+                    VALUE_DEFAULT, false),
+            )
+        );
+    }
+
+    /**
+     * Return information of a given page, including its contents.
+     *
+     * @param int $lessonid lesson instance id
+     * @param int $pageid page id
+     * @param str $password optional password (the lesson may be protected)
+     * @param bool $review if we want to review just after finishing (1 hour margin)
+     * @param bool $returncontents if we must return the complete page contents once rendered
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_page_data($lessonid, $pageid,  $password = '', $review = false, $returncontents = false) {
+        global $PAGE;
+
+        $params = array('lessonid' => $lessonid, 'password' => $password, 'pageid' => $pageid, 'review' => $review,
+            'returncontents' => $returncontents);
+        $params = self::validate_parameters(self::get_page_data_parameters(), $params);
+
+        $warnings = $contentfiles = $answerfiles = $responsefiles = array();
+        $pagecontent = $ongoingscore = '';
+        $progress = null;
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        self::validate_attempt($lesson, $params);
+
+        $pageid = $params['pageid'];
+
+        // This is called if a student leaves during a lesson.
+        if ($pageid == LESSON_UNSEENBRANCHPAGE) {
+            $pageid = lesson_unseen_question_jump($lesson, $USER->id, $pageid);
+        }
+
+        if ($pageid != LESSON_EOL) {
+            $reviewmode = $lesson->is_in_review_mode();
+            $lessonoutput = $PAGE->get_renderer('mod_lesson');
+            list($page, $pagecontent) = $lesson->prepare_page_and_contents($pageid, $lessonoutput, $reviewmode);
+            // Page may have changed.
+            $pageid = $page->id;
+
+            $pagedata = self::get_page_fields($page, true);
+
+            // Files.
+            $contentfiles = external_util::get_area_files($context->id, 'mod_lesson', 'page_contents', $page->id);
+
+            // Answers.
+            $answers = array();
+            $pageanswers = $page->get_answers();
+            foreach ($pageanswers as $a) {
+                $answer = array(
+                    'id' => $a->id,
+                    'answerfiles' => external_util::get_area_files($context->id, 'mod_lesson', 'page_answers', $a->id),
+                    'responsefiles' => external_util::get_area_files($context->id, 'mod_lesson', 'page_responses', $a->id),
+                );
+                // For managers, return all the information (including scoring, jumps).
+                if ($lesson->can_manage()) {
+                    $extraproperties = array('jumpto', 'grade', 'score', 'flags', 'timecreated', 'timemodified');
+                    foreach ($extraproperties as $prop) {
+                        $answer[$prop] = $a->{$prop};
+                    }
+                }
+                $answers[] = $answer;
+            }
+
+            // Additional lesson information.
+            if (!$lesson->can_manage()) {
+                if ($lesson->ongoing && !$reviewmode) {
+                    $ongoingscore = $lesson->get_ongoing_score_message();
+                }
+                if ($lesson->progressbar) {
+                    $progress = $lesson->calculate_progress();
+                }
+            }
+        }
+
+        $messages = self::format_lesson_messages($lesson);
+
+        $result = array(
+            'page' => $pagedata,
+            'newpageid' => $pageid,
+            'ongoingscore' => $ongoingscore,
+            'progress' => $progress,
+            'contentfiles' => $contentfiles,
+            'answers' => $answers,
+            'messages' => $messages,
+            'warnings' => $warnings,
+            'displaymenu' => !empty(lesson_displayleftif($lesson)),
+        );
+
+        if ($params['returncontents']) {
+            $result['pagecontent'] = $pagecontent;  // Return the complete page contents rendered.
+        }
+
+        return $result;
+    }
+
+    /**
+     * Describes the get_page_data return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_page_data_returns() {
+        return new external_single_structure(
+            array(
+                'page' => self::get_page_structure(),
+                'newpageid' => new external_value(PARAM_INT, 'New page id (if a jump was made)'),
+                'pagecontent' => new external_value(PARAM_RAW, 'Page html content', VALUE_OPTIONAL),
+                'ongoingscore' => new external_value(PARAM_TEXT, 'The ongoing score message'),
+                'progress' => new external_value(PARAM_INT, 'Progress percentage in the lesson'),
+                'contentfiles' => new external_files(),
+                'answers' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'message' => new external_value(PARAM_RAW, 'Message'),
-                            'type' => new external_value(PARAM_ALPHANUMEXT, 'Message type: usually a CSS identifier like:
-                                success, info, warning, error, notifyproblem, notifyerror, notifytiny, notifysuccess')
-                        ), 'The lesson generated messages'
+                            'id' => new external_value(PARAM_INT, 'The ID of this answer in the database'),
+                            'answerfiles' => new external_files(),
+                            'responsefiles' => new external_files(),
+                            'jumpto' => new external_value(PARAM_INT, 'Identifies where the user goes upon completing a page with this answer',
+                                                            VALUE_OPTIONAL),
+                            'grade' => new external_value(PARAM_INT, 'The grade this answer is worth', VALUE_OPTIONAL),
+                            'score' => new external_value(PARAM_INT, 'The score this answer will give', VALUE_OPTIONAL),
+                            'flags' => new external_value(PARAM_INT, 'Used to store options for the answer', VALUE_OPTIONAL),
+                            'timecreated' => new external_value(PARAM_INT, 'A timestamp of when the answer was created', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'A timestamp of when the answer was modified', VALUE_OPTIONAL),
+                        ), 'The page answers'
+
                     )
                 ),
+                'messages' => self::external_messages(),
+                'displaymenu' => new external_value(PARAM_BOOL, 'Whether we should display the menu or not in this page.'),
                 'warnings' => new external_warnings(),
             )
         );

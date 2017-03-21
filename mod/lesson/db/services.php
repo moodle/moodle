@@ -108,4 +108,12 @@ $functions = array(
         'capabilities'  => 'mod/lesson:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_lesson_get_page_data' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'get_page_data',
+        'description'   => 'Return information of a given page, including its contents.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
