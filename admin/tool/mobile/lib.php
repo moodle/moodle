@@ -36,9 +36,16 @@ function tool_mobile_before_standard_html_head() {
     // Smart App Banners meta tag is only displayed if mobile services are enabled and configured.
     if (!empty($CFG->enablemobilewebservice)) {
         $mobilesettings = get_config('tool_mobile');
-        if (!empty($mobilesettings->enablesmartappbanners) and !empty($mobilesettings->iosappid)) {
-            $output .= '<meta name="apple-itunes-app" content="app-id=' . s($mobilesettings->iosappid) . ', ';
-            $output .= 'app-argument=' . $PAGE->url->out() . '"/>';
+        if (!empty($mobilesettings->enablesmartappbanners)) {
+            if (!empty($mobilesettings->iosappid)) {
+                $output .= '<meta name="apple-itunes-app" content="app-id=' . s($mobilesettings->iosappid) . ', ';
+                $output .= 'app-argument=' . $PAGE->url->out() . '"/>';
+            }
+
+            if (!empty($mobilesettings->androidappid)) {
+                $mobilemanifesturl = "$CFG->wwwroot/$CFG->admin/tool/mobile/mobile.webmanifest.php";
+                $output .= '<link rel="manifest" href="'.$mobilemanifesturl.'" />';
+            }
         }
     }
     return $output;
