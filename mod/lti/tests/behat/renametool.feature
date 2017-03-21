@@ -22,10 +22,6 @@ Feature: Rename external tools via inline editing
     And I turn editing mode on
     And I add a "External tool" to section "1" and I fill the form with:
       | Activity name | Test tool activity 1 |
-    And I open "Test tool activity 1" actions menu
-    And I choose "Edit settings" in the open action menu
-    And I set the field "Tool URL" to local url "/mod/lti/tests/fixtures/ims_cartridge_basic_lti_link.xml"
-    And I press "Save and return to course"
     And I click on "Edit title" "link" in the "li#section-1" "css_element"
     And I set the field "New name for activity Test tool activity 1" to "Test tool activity renamed"
     And I press key "13" in the field "New name for activity Test tool activity 1"
