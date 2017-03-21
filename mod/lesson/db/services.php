@@ -92,4 +92,12 @@ $functions = array(
         'capabilities'  => 'mod/lesson:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_lesson_get_pages' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'get_pages',
+        'description'   => 'Return the list of pages in a lesson (based on the user permissions).',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

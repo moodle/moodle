@@ -913,4 +913,132 @@ class mod_lesson_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_pages.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_pages_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+                'password' => new external_value(PARAM_RAW, 'optional password (the lesson may be protected)', VALUE_DEFAULT, ''),
+            )
+        );
+    }
+
+    /**
+     * Return the list of pages in a lesson (based on the user permissions).
+     *
+     * @param int $lessonid lesson instance id
+     * @param str $password optional password (the lesson may be protected)
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_pages($lessonid, $password = '') {
+
+        $params = array('lessonid' => $lessonid, 'password' => $password);
+        $params = self::validate_parameters(self::get_pages_parameters(), $params);
+        $warnings = array();
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        self::validate_attempt($lesson, $params);
+
+        $lessonpages = $lesson->load_all_pages();
+        $pages = array();
+
+        foreach ($lessonpages as $page) {
+            $pagedata = new stdClass; // Contains the data that will be returned by the WS
+
+            // Return the visible data.
+            $visibleproperties = array('id', 'lessonid', 'prevpageid', 'nextpageid', 'qtype', 'qoption', 'layout', 'display',
+                                        'displayinmenublock', 'type', 'typeid', 'typestring', 'timecreated', 'timemodified');
+            foreach ($visibleproperties as $prop) {
+                $pagedata->{$prop} = $page->{$prop};
+            }
+
+            // Check if we can see title (contents required custom rendering, we won't returning it here @see get_page_data).
+            $canmanage = $lesson->can_manage();
+            // If we are managers or the menu block is enabled and is a content page visible.
+            if ($canmanage || (lesson_displayleftif($lesson) && $page->displayinmenublock && $page->display)) {
+                $pagedata->title = external_format_string($page->title, $context->id);
+            }
+
+            // Now, calculate the file area files (maybe we need to download a lesson for offline usage).
+            $pagedata->filescount = 0;
+            $pagedata->filessizetotal = 0;
+            $files = $page->get_files(false);   // Get files excluding directories.
+            foreach ($files as $file) {
+                $pagedata->filescount++;
+                $pagedata->filessizetotal += $file->get_filesize();
+            }
+
+            // Now the possible answers and page jumps ids.
+            $pagedata->answerids = array();
+            $pagedata->jumps = array();
+            $answers = $page->get_answers();
+            foreach ($answers as $answer) {
+                $pagedata->answerids[] = $answer->id;
+                $pagedata->jumps[] = $answer->jumpto;
+                $files = $answer->get_files(false);   // Get files excluding directories.
+                foreach ($files as $file) {
+                    $pagedata->filescount++;
+                    $pagedata->filessizetotal += $file->get_filesize();
+                }
+            }
+            $pages[] = $pagedata;
+        }
+
+        $result = array();
+        $result['pages'] = $pages;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_pages return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_pages_returns() {
+        return new external_single_structure(
+            array(
+                'pages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'The id of this lesson page'),
+                            'lessonid' => new external_value(PARAM_INT, 'The id of the lesson this page belongs to'),
+                            'prevpageid' => new external_value(PARAM_INT, 'The id of the page before this one'),
+                            'nextpageid' => new external_value(PARAM_INT, 'The id of the next page in the page sequence'),
+                            'qtype' => new external_value(PARAM_INT, 'Identifies the page type of this page'),
+                            'qoption' => new external_value(PARAM_INT, 'Used to record page type specific options'),
+                            'layout' => new external_value(PARAM_INT, 'Used to record page specific layout selections'),
+                            'display' => new external_value(PARAM_INT, 'Used to record page specific display selections'),
+                            'timecreated' => new external_value(PARAM_INT, 'Timestamp for when the page was created'),
+                            'timemodified' => new external_value(PARAM_INT, 'Timestamp for when the page was last modified'),
+                            'title' => new external_value(PARAM_RAW, 'The title of this page', VALUE_OPTIONAL),
+                            'displayinmenublock' => new external_value(PARAM_BOOL, 'Toggles display in the left menu block'),
+                            'type' => new external_value(PARAM_INT, 'The type of the page [question | structure]'),
+                            'typeid' => new external_value(PARAM_INT, 'The unique identifier for the page type'),
+                            'typestring' => new external_value(PARAM_RAW, 'The string that describes this page type'),
+                            'answerids' => new external_multiple_structure(
+                                new external_value(PARAM_INT, 'Answer id'), 'List of answers ids (empty for content pages in  Moodle 1.9)'
+                            ),
+                            'jumps' => new external_multiple_structure(
+                                new external_value(PARAM_INT, 'Page to jump id'), 'List of possible page jumps'
+                            ),
+                            'filescount' => new external_value(PARAM_INT, 'The total number of files attached to the page'),
+                            'filessizetotal' => new external_value(PARAM_INT, 'The total size of the files'),
+                        ),
+                        'The lesson pages'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
