@@ -67,7 +67,7 @@ $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('defaultcompletion', 'completion'));
 
-echo $renderer->navigation($course->id, 'defaultcompletion');
+echo $renderer->navigation($course, 'defaultcompletion');
 
 echo $renderer->edit_default_completion($form, $modules);
 

@@ -55,8 +55,10 @@ if ($id) {
     require_login($course);
     $context = context_course::instance($course->id);
     if (!has_capability('moodle/course:update', $context)) {
-        if (core_completion\manager::can_edit_bulk_completion($course)) {
-            redirect(new moodle_url('/course/bulkcompletion.php', ['id' => $course->id]));
+        // User is not allowed to modify course completion.
+        // Check if they can see default completion or edit bulk completion and redirect there.
+        if ($tabs = core_completion\manager::get_available_completion_tabs($course)) {
+            redirect($tabs[0]->link);
         } else {
             require_capability('moodle/course:update', $context);
         }
@@ -161,7 +163,7 @@ $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('editcoursecompletionsettings', 'core_completion'));
 
-echo $renderer->navigation($id, 'completion');
+echo $renderer->navigation($course, 'completion');
 
 $form->display();
 

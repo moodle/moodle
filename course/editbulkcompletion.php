@@ -37,8 +37,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
 if (!core_completion\manager::can_edit_bulk_completion($course)) {
-    throw new required_capability_exception(context_course::instance($course->id),
-        'moodle/course:manageactivities', 'nopermission');
+    require_capability('moodle/course:manageactivities', context_course::instance($course->id));
 }
 
 // Prepare list of modules to be updated.
@@ -70,7 +69,7 @@ $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('bulkactivitycompletion', 'completion'));
 
-echo $renderer->navigation($course->id, 'bulkcompletion');
+echo $renderer->navigation($course, 'bulkcompletion');
 
 echo $renderer->edit_bulk_completion($form, $manager->get_activities(array_keys($cms)));
 

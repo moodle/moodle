@@ -42,7 +42,7 @@ if ($id) {
         print_error('invalidcourseid');
     }
     require_login($course);
-    require_capability('moodle/course:update', context_course::instance($course->id));
+    require_capability('moodle/course:manageactivities', context_course::instance($course->id));
 
 } else {
     require_login();
@@ -67,7 +67,7 @@ $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('defaultcompletion', 'completion'));
 
-echo $renderer->navigation($id, 'defaultcompletion');
+echo $renderer->navigation($course, 'defaultcompletion');
 
 $PAGE->requires->yui_module('moodle-core-formchangechecker',
         'M.core_formchangechecker.init',

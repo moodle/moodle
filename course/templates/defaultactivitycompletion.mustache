@@ -61,15 +61,16 @@
             {{#canmanage}}
              <div class="module-section m-b-1">
                 <div class="row m-b-1">
-                    <div class="col-sm-12">
-                        <input type="checkbox" class="m-r-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{formatedname}}{{/str}}">
-                        <img src={{icon}} />
+                    <div class="col-sm-6">
+                        <label class="accesshide" for="modtype_{{id}}">Select {{formattedname}}</label>
+                        <input id="modtype_{{id}}" type="checkbox" class="m-r-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{formattedname}}{{/str}}">
+                        <img src="{{icon}}" alt=" " role="presentation" />
                         <span>{{formattedname}}</span>
                     </div>
                     <div class="activity-completionstatus col-sm-6">
                         <div class="col-sm-1">
                             {{#completionstatus.icon}}
-                                <img src="{{completionstatus.icon}}" class="m-r-2">
+                                <img src="{{completionstatus.icon}}" class="m-r-2" alt=" " role="presentation">
                             {{/completionstatus.icon}}
                             {{^completionstatus.icon}}
                                 <span class="m-r-3"></span>

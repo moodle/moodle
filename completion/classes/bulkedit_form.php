@@ -54,6 +54,47 @@ class core_completion_bulkedit_form extends core_completion_edit_base_form {
     }
 
     /**
+     * Returns an instance of component-specific module form for the first selected module
+     *
+     * @return moodleform_mod|null
+     */
+    protected function get_module_form() {
+        global $CFG, $PAGE;
+
+        if ($this->_moduleform) {
+            return $this->_moduleform;
+        }
+
+        $cm = reset($this->cms);
+        $course = $this->course;
+        $modname = $cm->modname;
+
+        $modmoodleform = "$CFG->dirroot/mod/$modname/mod_form.php";
+        if (file_exists($modmoodleform)) {
+            require_once($modmoodleform);
+        } else {
+            print_error('noformdesc');
+        }
+
+        list($cmrec, $context, $module, $data, $cw) = get_moduleinfo_data($cm, $course);
+        $data->return = 0;
+        $data->sr = 0;
+        $data->update = $modname;
+
+        // Initialise the form but discard all JS requirements it adds, our form has already added them.
+        $mformclassname = 'mod_'.$modname.'_mod_form';
+        if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
+            $PAGE->start_collecting_javascript_requirements();
+        }
+        $this->_moduleform = new $mformclassname($data, 0, $cmrec, $course);
+        if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
+            $PAGE->end_collecting_javascript_requirements();
+        }
+
+        return $this->_moduleform;
+    }
+
+    /**
      * Form definition
      */
     public function definition() {

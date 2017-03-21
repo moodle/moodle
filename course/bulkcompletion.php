@@ -57,12 +57,12 @@ $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
-// Get all that stuff I need for the renderer.
+// Check access.
 if (!core_completion\manager::can_edit_bulk_completion($id)) {
-    throw new required_capability_exception(context_course::instance($course->id),
-        'moodle/course:manageactivities', 'nopermission');
+    require_capability('moodle/course:manageactivities', context_course::instance($course->id));
 }
 
+// Get all that stuff I need for the renderer.
 $manager = new \core_completion\manager($id);
 $bulkcompletiondata = $manager->get_activities_and_headings();
 
@@ -72,7 +72,7 @@ $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('bulkactivitycompletion', 'completion'));
 
-echo $renderer->navigation($id, 'bulkcompletion');
+echo $renderer->navigation($course, 'bulkcompletion');
 
 $PAGE->requires->yui_module('moodle-core-formchangechecker',
         'M.core_formchangechecker.init',

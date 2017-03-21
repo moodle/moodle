@@ -29,6 +29,9 @@ namespace core_completion;
 use stdClass;
 use context_course;
 use cm_info;
+use tabobject;
+use lang_string;
+use moodle_url;
 
 /**
  * Bulk activity completion manager class
@@ -232,6 +235,43 @@ class manager {
             }
         }
         return false;
+    }
+
+    /**
+     * @param stdClass|int $courseorid
+     * @return tabobject[]
+     */
+    public static function get_available_completion_tabs($courseorid) {
+        $tabs = [];
+
+        $courseid = is_object($courseorid) ? $courseorid->id : $courseorid;
+        $coursecontext = context_course::instance($courseid);
+
+        if (has_capability('moodle/course:update', $coursecontext)) {
+            $tabs[] = new tabobject(
+                'completion',
+                new moodle_url('/course/completion.php', ['id' => $courseid]),
+                new lang_string('coursecompletion', 'completion')
+            );
+        }
+
+        if (has_capability('moodle/course:manageactivities', $coursecontext)) {
+            $tabs[] = new tabobject(
+                'defaultcompletion',
+                new moodle_url('/course/defaultcompletion.php', ['id' => $courseid]),
+                new lang_string('defaultcompletion', 'completion')
+            );
+        }
+
+        if (self::can_edit_bulk_completion($courseorid)) {
+            $tabs[] = new tabobject(
+                'bulkcompletion',
+                new moodle_url('/course/bulkcompletion.php', ['id' => $courseid]),
+                new lang_string('bulkactivitycompletion', 'completion')
+            );
+        }
+
+        return $tabs;
     }
 
     /**

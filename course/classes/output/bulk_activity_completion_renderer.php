@@ -35,31 +35,8 @@ require_once($CFG->dirroot.'/course/renderer.php');
  */
 class core_course_bulk_activity_completion_renderer extends plugin_renderer_base {
 
-    public function navigation($courseid, $page) {
-        $tabs = [];
-
-        if (has_capability('moodle/course:update', context_course::instance($courseid))) {
-            $tabs[] = new tabobject(
-                'completion',
-                new moodle_url('/course/completion.php', ['id' => $courseid]),
-                get_string('coursecompletion', 'completion')
-            );
-
-            $tabs[] = new tabobject(
-                'defaultcompletion',
-                new moodle_url('/course/defaultcompletion.php', ['id' => $courseid]),
-                get_string('defaultcompletion', 'completion')
-            );
-        }
-
-        if (core_completion\manager::can_edit_bulk_completion($courseid)) {
-            $tabs[] = new tabobject(
-                'bulkcompletion',
-                new moodle_url('/course/bulkcompletion.php', ['id' => $courseid]),
-                get_string('bulkactivitycompletion', 'completion')
-            );
-        }
-
+    public function navigation($courseorid, $page) {
+        $tabs = core_completion\manager::get_available_completion_tabs($courseorid);
         if (count($tabs) > 1) {
             return $this->tabtree($tabs, $page);
         } else {
