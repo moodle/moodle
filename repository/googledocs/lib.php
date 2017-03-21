@@ -580,7 +580,7 @@ class repository_googledocs extends repository {
                                    $storedfile->get_filepath(),
                                    $storedfile->get_filename());
 
-        if ($info->is_writable()) {
+        if (empty($options['offline']) && $info->is_writable()) {
             // Add the current user as an OAuth writer.
             $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
 
@@ -613,7 +613,15 @@ class repository_googledocs extends repository {
             $this->add_temp_writer_to_file($systemservice, $source->id, $useremail);
         }
 
-        if ($source->link) {
+        if (!empty($options['offline'])) {
+            $downloaded = $this->get_file($storedfile->get_reference(), $storedfile->get_filename());
+
+            $filename = $storedfile->get_filename();
+            if (isset($downloaded['newfilename'])) {
+                $filename = $downloaded['newfilename'];
+            }
+            send_file($downloaded['path'], $filename, $lifetime, $filter, false, $forcedownload, '', false, $options);
+        } else if ($source->link) {
             redirect($source->link);
         } else {
             $details = 'File is missing source link';
