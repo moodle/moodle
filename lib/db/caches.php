@@ -309,4 +309,14 @@ $definitions = array(
         'simplevalues' => true,
         'datasource' => '\core_message\time_last_message_between_users',
     ),
+
+    // Caches font awesome icons.
+    'fontawesomeiconmapping' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1
+    ),
+
 );
