@@ -69,8 +69,12 @@
             </div>
         </div>
         <div class="visible-tablet span6">
-            <div class="text-right text-truncate">{{enddate}}</div>
+            <div class="text-right text-truncate">
+                {{#userdate}} {{timesort}}, {{#str}} strftimerecent {{/str}} {{/userdate}}
+            </div>
         </div>
     </div>
-    <div class="text-right visible-phone text-truncate">{{enddate}}</div>
+    <div class="text-right visible-phone text-truncate">
+        {{#userdate}} {{timesort}}, {{#str}} strftimerecent {{/str}} {{/userdate}}
+    </div>
 </li>

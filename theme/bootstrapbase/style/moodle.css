@@ -16359,6 +16359,7 @@ body {
   /*rtl:ignore*/
   left: 50%;
   margin: 0;
+  padding: 0;
   transform: translate(-45%, -45%);
   color: #fff;
   height: 35px;
