@@ -60,13 +60,13 @@ $blocks-plus-gutter: $blocks-column-width + $grid-gutter-width;
 #region-main.has-blocks {
     display: inline-block;
     width: calc(100% - #{$blocks-plus-gutter});
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(lg) {
         width: 100%;
     }
 }
 
 [data-region="blocks-column"] {
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(lg) {
         width: 100%;
     }
 }
