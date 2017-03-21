@@ -662,4 +662,34 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->expectException('moodle_exception');
         $result = user_get_user_details($student, $course1, array('wrongrequiredfield'));
     }
+
+    /**
+     * Regression test for MDL-57840.
+     *
+     * Ensure the fields "auth, confirmed, idnumber, lang, theme, timezone and mailformat" are present when
+     * calling user_get_user_details() function.
+     */
+    public function test_user_get_user_details_missing_fields() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser(); // We need capabilities to view the data.
+        $user = self::getDataGenerator()->create_user([
+                                                          'auth'       => 'auth_something',
+                                                          'confirmed'  => '0',
+                                                          'idnumber'   => 'someidnumber',
+                                                          'lang'       => 'en_ar',
+                                                          'theme'      => 'mytheme',
+                                                          'timezone'   => '50',
+                                                          'mailformat' => '0',
+                                                      ]);
+
+        // Fields that should get by default.
+        $got = user_get_user_details($user);
+        self::assertSame('auth_something', $got['auth']);
+        self::assertSame('0', $got['confirmed']);
+        self::assertSame('someidnumber', $got['idnumber']);
+        self::assertSame('en_ar', $got['lang']);
+        self::assertSame('mytheme', $got['theme']);
+        self::assertSame('50', $got['timezone']);
+        self::assertSame('0', $got['mailformat']);
+    }
 }
