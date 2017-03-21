@@ -332,14 +332,15 @@ M.core_comment = {
                             }
                         }, '13,32');
                         // 13 and 32 are the keycodes for space and enter.
+
+                        require(['core/templates', 'core/notification'], function(Templates, Notification) {
+                            var title = node.getAttribute('title');
+                            Templates.renderPix('t/delete', 'core', title).then(function(html) {
+                                node.set('innerHTML', html);
+                            }).catch(Notification.exception);
+                        });
                     }
                 );
-
-                require(['core/templates', 'core/notification'], function(Templates, Notification) {
-                    Templates.renderPix('t/delete', 'core', M.util.get_string('deletecomment', 'moodle')).then(function(html) {
-                        Y.all('div.comment-delete a').set('innerHTML', html);
-                    }).catch(Notification.exception);
-                });
             },
             register_pagination: function() {
                 var scope = this;
