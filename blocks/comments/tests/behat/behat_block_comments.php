@@ -100,7 +100,7 @@ class behat_block_comments extends behat_base {
 
         // Click on delete icon.
         $this->execute('behat_general::i_click_on_in_the',
-            array(get_string('deletecomment'), "icon", $this->escape($commentxpath), "xpath_element")
+            array("Delete comment posted by", "icon", $this->escape($commentxpath), "xpath_element")
         );
 
         // Wait for the animation to finish, in theory is just 1 sec, adding 4 just in case.
