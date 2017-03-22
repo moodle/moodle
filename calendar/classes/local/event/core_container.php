@@ -31,9 +31,9 @@ namespace core_calendar\local\event;
 defined('MOODLE_INTERNAL') || die();
 
 use core_calendar\action_factory;
+use core_calendar\local\event\data_access\event_vault;
 use core_calendar\local\event\factories\action_event_factory;
 use core_calendar\local\event\factories\event_factory;
-use core_calendar\local\event\factories\event_vault_factory;
 use core_calendar\local\event\mappers\event_mapper;
 use core_calendar\local\interfaces\action_event_interface;
 use core_calendar\local\interfaces\event_interface;
@@ -147,8 +147,7 @@ class core_container {
         }
 
         if (empty(self::$eventvault)) {
-            $vaultfactory = new event_vault_factory();
-            self::$eventvault = $vaultfactory->create_instance(self::$eventfactory);
+            self::$eventvault = new event_vault(self::$eventfactory, self::$eventretrievalstrategy);
         }
     }
 
