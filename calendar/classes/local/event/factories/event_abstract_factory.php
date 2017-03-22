@@ -156,7 +156,7 @@ abstract class event_abstract_factory implements event_factory_interface {
                 function($modulename, $instance) {
                     return \core_calendar\api::get_module_cached(
                         $this->modulecachereference,
-                        $dbrow->modulename,
+                        $modulename,
                         $instance
                     );
                 }
@@ -169,28 +169,28 @@ abstract class event_abstract_factory implements event_factory_interface {
             });
         }
 
-        return $this->expose_event(
-            $this->apply_component_action(
-                new event(
-                    $dbrow->id,
-                    $dbrow->name,
-                    new event_description($dbrow->description, $dbrow->format),
-                    $course,
-                    $group,
-                    $user,
-                    new repeat_event_collection($dbrow->id, $dbrow->repeatid, $this),
-                    $module,
-                    $dbrow->eventtype,
-                    new event_times(
-                        (new \DateTimeImmutable())->setTimestamp($dbrow->timestart),
-                        (new \DateTimeImmutable())->setTimestamp($dbrow->timestart + $dbrow->timeduration),
-                        (new \DateTimeImmutable())->setTimestamp($dbrow->timesort ? $dbrow->timesort : $dbrow->timestart),
-                        (new \DateTimeImmutable())->setTimestamp($dbrow->timemodified)
-                    ),
-                    !empty($dbrow->visible),
-                    $subscription
-                )
-            )
+        $event = new event(
+            $dbrow->id,
+            $dbrow->name,
+            new event_description($dbrow->description, $dbrow->format),
+            $course,
+            $group,
+            $user,
+            new repeat_event_collection($dbrow->id, $dbrow->repeatid, $this),
+            $module,
+            $dbrow->eventtype,
+            new event_times(
+                (new \DateTimeImmutable())->setTimestamp($dbrow->timestart),
+                (new \DateTimeImmutable())->setTimestamp($dbrow->timestart + $dbrow->timeduration),
+                (new \DateTimeImmutable())->setTimestamp($dbrow->timesort ? $dbrow->timesort : $dbrow->timestart),
+                (new \DateTimeImmutable())->setTimestamp($dbrow->timemodified)
+            ),
+            !empty($dbrow->visible),
+            $subscription
         );
+
+        $isactionevent = !empty($dbrow->type) && $dbrow->type == CALENDAR_EVENT_TYPE_ACTION;
+
+        return $isactionevent ? $this->expose_event($this->apply_component_action($event)) : $event;
     }
 }
