@@ -35,6 +35,7 @@ use core_calendar\local\event\data_access\event_vault;
 use core_calendar\local\event\factories\action_event_factory;
 use core_calendar\local\event\factories\event_factory;
 use core_calendar\local\event\mappers\event_mapper;
+use core_calendar\local\event\strategies\raw_event_retrieval_strategy;
 use core_calendar\local\interfaces\action_event_interface;
 use core_calendar\local\interfaces\event_interface;
 
@@ -69,6 +70,11 @@ class core_container {
      * @var \core_calendar\local\event\data_access\event_vault $eventvault Event vault.
      */
     protected static $eventvault;
+
+    /**
+     * @var \core_calendar\local\event\strategies\raw_event_retrieval_strategy $eventretrievalstrategy Event retrieval strategy.
+     */
+    protected static $eventretrievalstrategy;
 
     /**
      * @var array A list of callbacks to use.
@@ -151,6 +157,7 @@ class core_container {
         }
 
         if (empty(self::$eventvault)) {
+            self::$eventretrievalstrategy = new raw_event_retrieval_strategy();
             self::$eventvault = new event_vault(self::$eventfactory, self::$eventretrievalstrategy);
         }
     }

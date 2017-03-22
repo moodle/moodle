@@ -27,9 +27,10 @@ namespace core_calendar\local\event\data_access;
 use core_calendar\local\event\exceptions\limit_invalid_parameter_exception;
 use core_calendar\local\event\exceptions\timesort_invalid_parameter_exception;
 use core_calendar\local\interfaces\action_event_interface;
-use core_calendar\local\interfaces\event_interface;
 use core_calendar\local\interfaces\event_factory_interface;
+use core_calendar\local\interfaces\event_interface;
 use core_calendar\local\interfaces\event_vault_interface;
+use core_calendar\local\interfaces\raw_event_retrieval_strategy_interface;
 
 /**
  * This class will handle interacting with the database layer to retrieve
@@ -48,23 +49,26 @@ class event_vault implements event_vault_interface {
     /**
      * @var event_factory_interface $factory Factory for creating events.
      */
-    private $factory;
+    protected $factory;
+
+    /**
+     * @var raw_event_retrieval_strategy_interface $retrievalstrategy Strategy for getting events from the DB.
+     */
+    protected $retrievalstrategy;
 
     /**
      * Create an event vault.
      *
      * @param event_factory_interface $factory An event factory
      */
-    public function __construct(event_factory_interface $factory) {
+    public function __construct(
+        event_factory_interface $factory,
+        raw_event_retrieval_strategy_interface $retrievalstrategy
+    ) {
         $this->factory = $factory;
+        $this->retrievalstrategy = $retrievalstrategy;
     }
 
-    /**
-     * Retrieve an event for the given id.
-     *
-     * @param int $id The event id
-     * @return event_interface
-     */
     public function get_event_by_id($id) {
         global $DB;
 
@@ -75,89 +79,99 @@ class event_vault implements event_vault_interface {
         }
     }
 
-    /**
-     * Retrieve an array of events for the given user and time constraints.
-     *
-     * If using this function for pagination then you can provide the last event that you've seen
-     * ($afterevent) and it will be used to appropriately offset the result set so that you don't
-     * receive the same events again.
-     *
-     * @param \stdClass            $user         The user for whom the events belong
-     * @param int|null             $timesortfrom Events with timesort from this value (inclusive)
-     * @param int|null             $timesortto   Events with timesort until this value (inclusive)
-     * @param event_interface|null $afterevent   Only return events after this one
-     * @param int                  $limitnum     Return at most this number of events
-     * @throws timesort_invalid_parameter_exception
-     * @throws limit_invalid_parameter_exception
-     * @return action_event_interface
-     */
-    public function get_action_events_by_timesort(
-        \stdClass $user,
+    public function get_events(
+        $timestartfrom = null,
+        $timestartto = null,
         $timesortfrom = null,
         $timesortto = null,
-        event_interface $afterevent = null,
-        $limitnum = 20
+        event_interface $timestartafterevent = null,
+        event_interface $timesortafterevent = null,
+        $limitnum = 20,
+        $type = null,
+        array $usersfilter = null,
+        array $groupsfilter = null,
+        array $coursesfilter = null,
+        $withduration = true,
+        $ignorehidden = true,
+        callable $filter = null
     ) {
         global $DB;
-
-        if (is_null($timesortfrom) && is_null($timesortto)) {
-            throw new timesort_invalid_parameter_exception("Must provide a timesort to and/or from value");
-        }
 
         if ($limitnum < 1 || $limitnum > 50) {
             throw new limit_invalid_parameter_exception("Limit must be between 1 and 50 (inclusive)");
         }
 
-        $lastseentimesort = null;
-        $params = ['type' => CALENDAR_EVENT_TYPE_ACTION];
-        $where = ['type = :type'];
-
-        if (!is_null($afterevent)) {
-            $lastseentimesort = $afterevent->get_times()->get_sort_time()->getTimestamp();
-        }
-
-        if ($timesortfrom) {
-            if ($lastseentimesort && $lastseentimesort >= $timesortfrom) {
-                $where[] = '((timesort = :timesortfrom1 AND id > :timesortfromid) '.
-                           'OR timesort > :timesortfrom2)';
-                $params['timesortfromid'] = $afterevent->get_id();
-                $params['timesortfrom1'] = $lastseentimesort;
-                $params['timesortfrom2'] = $lastseentimesort;
-            } else {
-                $where[] = 'timesort >= :timesortfrom';
-                $params['timesortfrom'] = $timesortfrom;
+        $fromquery = function($field, $timefrom, $lastseenmethod, $afterevent) {
+            if (!$timefrom) {
+                return false;
             }
-        }
 
-        if ($timesortto) {
-            if ($lastseentimesort && $lastseentimesort > $timesortto) {
-                // The last seen event from this set is after the time sort range which
-                // means all events in this range have been seen, so we can just return
-                // early here.
-                return [];
-            } else if ($lastseentimesort && $lastseentimesort == $timesortto) {
-                $where[] = '((timesort = :timesortto1 AND id > :timesorttoid) OR timesort < :timesortto2)';
-                $params['timesorttoid'] = $afterevent->get_id();
-                $params['timesortto1'] = $timesortto;
-                $params['timesortto2'] = $timesortto;
-            } else {
-                $where[] = 'timesort <= :timesortto';
-                $params['timesortto'] = $timesortto;
+            return $this->timefield_pagination_from(
+                $field,
+                $timefrom,
+                $afterevent ? $afterevent->get_times()->{$lastseenmethod}()->getTimestamp() : null,
+                $afterevent ? $afterevent->get_id() : null
+            );
+        };
+
+        $toquery = function($field, $timeto, $lastseenmethod, $afterevent) {
+            if (!$timeto) {
+                return false;
             }
+
+            return $this->timefield_pagination_to(
+                $field,
+                $timeto,
+                $afterevent ? $afterevent->get_times()->{$lastseenmethod}()->getTimestamp() : null,
+                $afterevent ? $afterevent->get_id() : null
+            );
+        };
+
+        $timesortfromquery = $fromquery('timesort', $timesortfrom, 'get_sort_time', $timesortafterevent);
+        $timesorttoquery = $toquery('timesort', $timesortto, 'get_sort_time', $timesortafterevent);
+        $timestartfromquery = $fromquery('timestart', $timestartfrom, 'get_start_time', $timestartafterevent);
+        $timestarttoquery = $toquery('timestart', $timestartto, 'get_start_time', $timestartafterevent);
+
+        if (($timesortto && !$timesorttoquery) || ($timestartto && !$timestarttoquery)) {
+            return [];
         }
 
-        $sql = sprintf("SELECT * FROM {event} WHERE %s ORDER BY timesort ASC, id ASC",
-                       implode(' AND ', $where));
+        $params = array_merge(
+            $type ? ['type' => $type] : [],
+            $timesortfromquery ? $timesortfromquery['params'] : [],
+            $timesorttoquery ? $timesorttoquery['params'] : [],
+            $timestartfromquery ? $timestartfromquery['params'] : [],
+            $timestarttoquery ? $timestarttoquery['params'] : []
+        );
+
+        $where = array_merge(
+            $type ? ['type = :type'] : [],
+            $timesortfromquery ? $timesortfromquery['where'] : [],
+            $timesorttoquery ? $timesorttoquery['where'] : [],
+            $timestartfromquery ? $timestartfromquery['where'] : [],
+            $timestarttoquery ? $timestarttoquery['where'] : []
+        );
 
         $offset = 0;
         $events = [];
-        // We need to continue to pull records from the database until we reach
-        // the requested amount of events because not all records in the database
-        // will be visible for the current user.
-        while ($records = array_values($DB->get_records_sql($sql, $params, $offset, $limitnum))) {
+
+        while ($records = array_values($this->retrievalstrategy->get_raw_events(
+            $usersfilter,
+            $groupsfilter,
+            $coursesfilter,
+            $where,
+            $params,
+            "timesort ASC, id ASC",
+            $offset,
+            $limitnum,
+            $withduration,
+            $ignorehidden
+        ))) {
             foreach ($records as $record) {
                 if ($event = $this->transform_from_database_record($record)) {
-                    if ($event instanceof action_event_interface) {
+                    $filtertest = $filter ? $filter($event) : true;
+
+                    if ($event && $filtertest) {
                         $events[] = $event;
                     }
 
@@ -174,21 +188,31 @@ class event_vault implements event_vault_interface {
         return $events;
     }
 
-    /**
-     * Retrieve an array of events for the given user filtered by the course and time constraints.
-     *
-     * If using this function for pagination then you can provide the last event that you've seen
-     * ($afterevent) and it will be used to appropriately offset the result set so that you don't
-     * receive the same events again.
-     *
-     * @param \stdClass            $user         The user for whom the events belong
-     * @param \stdClass            $course       The course to filter by
-     * @param int|null             $timesortfrom Events with timesort from this value (inclusive)
-     * @param int|null             $timesortto   Events with timesort until this value (inclusive)
-     * @param event_interface|null $afterevent   Only return events after this one
-     * @param int                  $limitnum     Return at most this number of events
-     * @return action_event_interface
-     */
+    public function get_action_events_by_timesort(
+        \stdClass $user,
+        $timesortfrom = null,
+        $timesortto = null,
+        event_interface $afterevent = null,
+        $limitnum = 20
+    ) {
+        return $this->get_events(
+            null,
+            null,
+            $timesortfrom,
+            $timesortto,
+            null,
+            $afterevent,
+            $limitnum,
+            CALENDAR_EVENT_TYPE_ACTION,
+            [$user->id],
+            null,
+            null,
+            function ($event) {
+                return $event instanceof action_event_interface;
+            }
+        );
+    }
+
     public function get_action_events_by_course(
         \stdClass $user,
         \stdClass $course,
@@ -197,81 +221,88 @@ class event_vault implements event_vault_interface {
         event_interface $afterevent = null,
         $limitnum = 20
     ) {
-        global $DB;
-
-        if ($limitnum < 1 || $limitnum > 50) {
-            throw new limit_invalid_parameter_exception("Limit must be between 1 and 50 (inclusive)");
-        }
-
-        $lastseentimesort = null;
-        $params = [
-            'type' => CALENDAR_EVENT_TYPE_ACTION,
-            'courseid' => $course->id,
-        ];
-        $where = [
-            'type = :type',
-            'courseid = :courseid',
-        ];
-
-        if (!is_null($afterevent)) {
-            $lastseentimesort = $afterevent->get_times()->get_sort_time()->getTimestamp();
-        }
-
-        if ($timesortfrom) {
-            if ($lastseentimesort && $lastseentimesort >= $timesortfrom) {
-                $where[] = '((timesort = :timesortfrom1 AND id > :timesortfromid) '.
-                           'OR timesort > :timesortfrom2)';
-                $params['timesortfromid'] = $afterevent->get_id();
-                $params['timesortfrom1'] = $lastseentimesort;
-                $params['timesortfrom2'] = $lastseentimesort;
-            } else {
-                $where[] = 'timesort >= :timesortfrom';
-                $params['timesortfrom'] = $timesortfrom;
-            }
-        }
-
-        if ($timesortto) {
-            if ($lastseentimesort && $lastseentimesort > $timesortto) {
-                // The last seen event from this set is after the time sort range which
-                // means all events in this range have been seen, so we can just return
-                // early here.
-                return [];
-            } else if ($lastseentimesort && $lastseentimesort == $timesortto) {
-                $where[] = '((timesort = :timesortto1 AND id > :timesorttoid) OR timesort < :timesortto2)';
-                $params['timesorttoid'] = $afterevent->get_id();
-                $params['timesortto1'] = $timesortto;
-                $params['timesortto2'] = $timesortto;
-            } else {
-                $where[] = 'timesort <= :timesortto';
-                $params['timesortto'] = $timesortto;
-            }
-        }
-
-        $wheresql = implode(' AND ', $where);
-        $sql = sprintf("SELECT * FROM {event} WHERE %s ORDER BY timesort ASC, id ASC", $wheresql);
-        $offset = 0;
-        $events = [];
-        // We need to continue to pull records from the database until we reach
-        // the requested amount of events because not all records in the database
-        // will be visible for the current user.
-        while ($records = array_values($DB->get_records_sql($sql, $params, $offset, $limitnum))) {
-            foreach ($records as $record) {
-                if ($event = $this->transform_from_database_record($record)) {
-                    if ($event instanceof action_event_interface) {
-                        $events[] = $event;
-                    }
-
-                    if (count($events) == $limitnum) {
-                        // We've got all of the events so break both loops.
-                        break 2;
-                    }
+        return array_values(
+            $this->get_events(
+                null,
+                null,
+                $timesortfrom,
+                $timesortto,
+                null,
+                $afterevent,
+                $limitnum,
+                CALENDAR_EVENT_TYPE_ACTION,
+                [$user->id],
+                null,
+                [$course->id],
+                function ($event) use ($course) {
+                    return $event instanceof action_event_interface && $event->get_course()->get_id() == $course->id;
                 }
+            )
+        );
+    }
+
+    protected function timefield_pagination_from(
+        $field,
+        $timefrom,
+        $lastseentime = null,
+        $lastseenid = null,
+        $withduration = true
+    ) {
+        $where = '';
+        $params = [];
+
+        if ($lastseentime && $lastseentime >= $timefrom) {
+            $where = '((timesort = :timefrom1 AND e.id > :timefromid) OR timesort > :timefrom2)';
+            if ($field === 'timestart') {
+                $where = '((timestart = :timefrom1 AND e.id > :timefromid) OR timestart > :timefrom2' .
+                       ($withduration ? ' OR timestart + timeduration > :timefrom3' : '') . ')';
+            }
+            $params['timefromid'] = $lastseenid;
+            $params['timefrom1'] = $lastseentime;
+            $params['timefrom2'] = $lastseentime;
+            $params['timefrom3'] = $lastseentime;
+        } else {
+            $where = 'timesort >= :timefrom';
+            if ($field === 'timestart') {
+                $where = '(timestart >= :timefrom' .
+                       ($withduration ? ' OR timestart + timeduration > :timefrom2' : '') . ')';
             }
 
-            $offset += $limitnum;
+            $params['timefrom'] = $timefrom;
+            $params['timefrom2'] = $timefrom;
         }
 
-        return $events;
+        return ['where' => [$where], 'params' => $params];
+    }
+
+    protected function timefield_pagination_to(
+        $field,
+        $timeto,
+        $lastseentime = null,
+        $lastseenid = null
+    ) {
+        $where = [];
+        $params = [];
+
+        if ($lastseentime && $lastseentime > $timeto) {
+            // The last seen event from this set is after the time sort range which
+            // means all events in this range have been seen, so we can just return
+            // early here.
+            return false;
+        } else if ($lastseentime && $lastseentime == $timeto) {
+            $where[] = '((timesort = :timeto1 AND e.id > :timetoid) OR timesort < :timeto2)';
+            if ($field === 'timestart') {
+                $where[] = '((timestart = :timeto1 AND e.id > :timetoid) OR timestart < :timeto2)';
+            }
+            $params['timetoid'] = $lastseenid;
+            $params['timeto1'] = $timeto;
+            $params['timeto2'] = $timeto;
+        } else {
+            $where[] = ($field === 'timestart' ? 'timestart' : 'timesort') . ' <= :timeto';
+            $params['timeto'] = $timeto;
+        }
+
+        return ['where' => $where, 'params' => $params];
     }
 
     /**
@@ -280,7 +311,34 @@ class event_vault implements event_vault_interface {
      * @param \stdClass $record The database record
      * @return event_interface|false
      */
-    private function transform_from_database_record(\stdClass $record) {
+    protected function transform_from_database_record(\stdClass $record) {
+         if ($record->courseid == 0 && $record->instance && $record->modulename) {
+             list($course, $cm) = get_course_and_cm_from_instance($record->instance, $record->modulename);
+             $record->courseid = $course->id;
+         }
+
         return $this->factory->create_instance($record);
+    }
+
+    protected function get_from_db(
+        $userid,
+        $whereconditions,
+        $whereparams,
+        $ordersql,
+        $offset,
+        $limitnum
+    ) {
+        return array_values(
+            $this->retrievalstrategy->get_raw_events(
+                [$userid],
+                null,
+                null,
+                $whereconditions,
+                $whereparams,
+                $ordersql,
+                $offset,
+                $limitnum
+            )
+        );
     }
 }

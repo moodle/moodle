@@ -40,6 +40,47 @@ interface event_vault_interface {
     public function get_event_by_id($id);
 
     /**
+     * Get all events restricted by various parameters, taking in to account user and group overrides.
+     *
+     * @param int|null             $timestartfrom         Events with timestart from this value (inclusive).
+     * @param int|null             $timestartto           Events with timestart until this value (inclusive).
+     * @param int|null             $timesortfrom          Events with timesort from this value (inclusive).
+     * @param int|null             $timesortto            Events with timesort until this value (inclusive).
+     * @param event_interface|null $timestartafterevent   Restrict the events in the timestart range to ones
+                                                          after this one.
+     * @param event_interface|null $timesortafterevent    Restrict the events in the timesort range to ones
+                                                          after this one.
+     * @param int                  $limitnum              Return at most this number of events.
+     * @param int                  $type                  Return only events of this type.
+     * @param array|null           $usersfilter           Return only events for these users.
+     * @param array|null           $groupsfilter          Return only events for these groups.
+     * @param array|null           $coursesfilter         Return only events for these courses.
+     * @param bool                 $withduration          If true return only events starting within specified
+     *                                                    timestart otherwise return in progress events as well.
+     * @param bool                 $ignorehidden          If true don't return hidden events.
+     * @param callable             $filter                Additional logic to filter out unwanted events.
+     *                                                    Must return true to keep the event, false to discard
+     *                                                    it.
+     * @return \core_calendar\local\interfaces\event_interface[] Array of event_interfaces.
+     */
+    public function get_events(
+        $timestartfrom = null,
+        $timestartto = null,
+        $timesortfrom = null,
+        $timesortto = null,
+        event_interface $timestartafterevent = null,
+        event_interface $timesortafterevent = null,
+        $limitnum = 20,
+        $type = null,
+        array $usersfilter = null,
+        array $groupsfilter = null,
+        array $coursesfilter = null,
+        $withduration = true,
+        $ignorehidden = true,
+        callable $filter = null
+    );
+
+    /**
      * Retrieve an array of events for the given user and time constraints.
      *
      * If using this function for pagination then you can provide the last event that you've seen

@@ -36,6 +36,73 @@ use core_calendar\local\event\exceptions\limit_invalid_parameter_exception;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class api {
+    /**
+     * Get all events restricted by various parameters, taking in to account user and group overrides.
+     *
+     * @param int|null       $timestartfrom         Events with timestart from this value (inclusive).
+     * @param int|null       $timestartto           Events with timestart until this value (inclusive).
+     * @param int|null       $timesortfrom          Events with timesort from this value (inclusive).
+     * @param int|null       $timesortto            Events with timesort until this value (inclusive).
+     * @param int|null       $timestartaftereventid Restrict the events in the timestart range to ones
+                                                    after this ID.
+     * @param int            $timesortaftereventid  Restrict the events in the timesort range to ones
+                                                    after this ID.
+     * @param int            $limitnum              Return at most this number of events.
+     * @param int            $type                  Return only events of this type.
+     * @param array|null     $usersfilter           Return only events for these users.
+     * @param array|null     $groupsfilter          Return only events for these groups.
+     * @param array|null     $coursesfilter         Return only events for these courses.
+     * @param bool           $withduration          If true return only events starting within specified
+     *                                              timestart otherwise return in progress events as well.
+     * @param bool           $ignorehidden          If true don't return hidden events.
+     * @return \core_calendar\local\interfaces\event_interface[] Array of event_interfaces.
+     */
+    public static function get_events(
+        $timestartfrom = null,
+        $timestartto = null,
+        $timesortfrom = null,
+        $timesortto = null,
+        $timestartaftereventid = null,
+        $timesortaftereventid = null,
+        $limitnum = 20,
+        $type = null,
+        array $usersfilter = null,
+        array $groupsfilter = null,
+        array $coursesfilter = null,
+        $withduration = true,
+        $ignorehidden = true
+    ) {
+        global $USER;
+
+        $vault = \core_calendar\local\event\core_container::get_event_vault();
+
+        $timestartafterevent = null;
+        $timesortafterevent = null;
+
+        if ($timestartaftereventid && $event = $vault->get_event_by_id($timestartaftereventid)) {
+            $timestartafterevent = $event;
+        }
+
+        if ($timesortaftereventid && $event = $vault->get_event_by_id($timesortaftereventid)) {
+            $timesortafterevent = $event;
+        }
+
+        return $vault->get_events(
+            $timestartfrom,
+            $timestartto,
+            $timesortfrom,
+            $timesortto,
+            $timestartafterevent,
+            $timesortafterevent,
+            $limitnum,
+            $type,
+            $usersfilter,
+            $groupsfilter,
+            $coursesfilter,
+            $withduration,
+            $ignorehidden
+        );
+    }
 
     /**
      * Get a list of action events for the logged in user by the given
