@@ -39,16 +39,15 @@ class mod_chat_lib_testcase extends advanced_testcase {
         $this->resetAfterTest();
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event_as_non_user() {
-        global $CFG;
-
+    public function test_chat_core_calendar_provide_event_action_chattime_event_yesterday() {
         $this->setAdminUser();
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
         // Create a chat.
-        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id));
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id,
+            'chattime' => time() - DAYSECS));
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $chat->id, CHAT_EVENT_TYPE_CHATTIME);
@@ -56,25 +55,22 @@ class mod_chat_lib_testcase extends advanced_testcase {
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
 
-        // Log out the user and set force login to true.
-        \core\session\manager::init_empty_session();
-        $CFG->forcelogin = true;
-
         // Decorate action event.
         $actionevent = mod_chat_core_calendar_provide_event_action($event, $factory);
 
-        // Check that we can't see the event.
+        // Confirm the event is not shown at all.
         $this->assertNull($actionevent);
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_today() {
         $this->setAdminUser();
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
         // Create a chat.
-        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id));
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id,
+            'chattime' => usergetmidnight(time())));
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $chat->id, CHAT_EVENT_TYPE_CHATTIME);
@@ -93,7 +89,34 @@ class mod_chat_lib_testcase extends advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event_in_future() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_tonight() {
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a chat.
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id,
+            'chattime' => usergetmidnight(time()) + (23 * HOURSECS)));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $chat->id, CHAT_EVENT_TYPE_CHATTIME);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_chat_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('enterchat', 'chat'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_chat_core_calendar_provide_event_action_chattime_event_tomorrow() {
         $this->setAdminUser();
 
         // Create a course.
