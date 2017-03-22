@@ -3370,18 +3370,6 @@ function feedback_check_updates_since(cm_info $cm, $from, $filter = array()) {
 }
 
 /**
- * Is the event visible?
- *
- * @param \core_calendar\event $event
- * @return bool Returns true if the event is visible to the current user, false otherwise.
- */
-function mod_feedback_core_calendar_is_event_visible(\core_calendar\event $event) {
-    $cm = get_fast_modinfo($event->courseid)->instances['feedback'][$event->instance];
-    $context = context_module::instance($cm->id);
-    return has_capability('mod/feedback:view', $context);
-}
-
-/**
  * Handles creating actions for events.
  *
  * @param \core_calendar\event $event

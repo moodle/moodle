@@ -138,39 +138,6 @@ class mod_feedback_lib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test calendar event visibility.
-     */
-    public function test_feedback_core_calendar_is_event_visible() {
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $course = $this->getDataGenerator()->create_course();
-        $feedback = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id]);
-        $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
-
-        $this->assertTrue(mod_feedback_core_calendar_is_event_visible($event));
-    }
-
-    /**
-     * Test calendar event visibility to a non-user.
-     */
-    public function test_feedback_core_calendar_is_event_visible_as_non_user() {
-        global $CFG;
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $course = $this->getDataGenerator()->create_course();
-        $feedback = $this->getDataGenerator()->create_module('feedback', array('course' => $course->id));
-        $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
-
-        // Log out the user and set force login to true.
-        \core\session\manager::init_empty_session();
-        $CFG->forcelogin = true;
-
-        $this->assertFalse(mod_feedback_core_calendar_is_event_visible($event));
-    }
-
-    /**
      * Test calendar event provide action open.
      */
     public function test_feedback_core_calendar_provide_event_action_open() {
