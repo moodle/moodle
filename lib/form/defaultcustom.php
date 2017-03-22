@@ -126,7 +126,7 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
         if (!$this->has_customize_switch()) {
             $element = $this->createFormElement('hidden', 'customize', 1);
         } else {
-            $element = $this->createFormElement('checkbox', 'customize', '', $this->_options['customlabel']);
+            $element = $this->createFormElement('advcheckbox', 'customize', '', $this->_options['customlabel']);
         }
         $this->_elements[] = $element;
 
@@ -181,12 +181,14 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
                 break;
             case 'createElement':
                 $rv = parent::onQuickFormEvent($event, $arg, $caller);
-                if ($this->_options['type'] === 'text') {
-                    $caller->disabledIf($arg[0] . '[value]', $arg[0] . '[customize]', 'notchecked');
-                } else {
-                    $caller->disabledIf($arg[0] . '[value][day]', $arg[0] . '[customize]', 'notchecked');
-                    $caller->disabledIf($arg[0] . '[value][month]', $arg[0] . '[customize]', 'notchecked');
-                    $caller->disabledIf($arg[0] . '[value][year]', $arg[0] . '[customize]', 'notchecked');
+                if ($this->has_customize_switch()) {
+                    if ($this->_options['type'] === 'text') {
+                        $caller->disabledIf($arg[0] . '[value]', $arg[0] . '[customize]', 'notchecked');
+                    } else {
+                        $caller->disabledIf($arg[0] . '[value][day]', $arg[0] . '[customize]', 'notchecked');
+                        $caller->disabledIf($arg[0] . '[value][month]', $arg[0] . '[customize]', 'notchecked');
+                        $caller->disabledIf($arg[0] . '[value][year]', $arg[0] . '[customize]', 'notchecked');
+                    }
                 }
                 return $rv;
             case 'addElement':
