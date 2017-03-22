@@ -1821,6 +1821,7 @@ function purify_html($text, $options = array()) {
             'mailto' => true
         ));
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
+        $config->set('Attr.EnableID', true);
 
         if ($allowobjectembed) {
             $config->set('HTML.SafeObject', true);
