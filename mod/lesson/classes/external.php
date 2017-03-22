@@ -1090,8 +1090,8 @@ class mod_lesson_external extends external_api {
             array(
                 'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
                 'password' => new external_value(PARAM_RAW, 'optional password (the lesson may be protected)', VALUE_DEFAULT, ''),
-                'pageid' => new external_value(PARAM_RAW, 'page id to continue from (only when continuing an attempt)', VALUE_DEFAULT, 0),
-                'review' => new external_value(PARAM_RAW, 'if we want to review just after finishing', VALUE_DEFAULT, false),
+                'pageid' => new external_value(PARAM_INT, 'page id to continue from (only when continuing an attempt)', VALUE_DEFAULT, 0),
+                'review' => new external_value(PARAM_BOOL, 'if we want to review just after finishing', VALUE_DEFAULT, false),
             )
         );
     }
