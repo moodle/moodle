@@ -51,4 +51,20 @@ interface event_mapper_interface {
      * @return event The mapped legacy event.
      */
     public function from_event_to_legacy_event(event_interface $event);
+
+    /**
+     * Map an event to a stdClass
+     *
+     * @param event_interface $event The legacy event.
+     * @return \stdClass The mapped stdClass.
+     */
+    public function from_event_to_stdclass(event_interface $event);
+
+    /**
+     * Map an event to an associative array.
+     *
+     * @param event_interface $event The legacy event.
+     * @return array The mapped legacy event array.
+     */
+    public function from_event_to_assoc_array(event_interface $event);
 }

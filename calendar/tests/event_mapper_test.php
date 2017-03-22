@@ -71,6 +71,42 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
         $this->assertInstanceOf(event::class, $legacyevent);
     }
 
+    /**
+     * Test event -> stdClass
+     */
+    public function test_from_event_to_stdclass() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $legacyevent = $this->create_event(['modname' => 'assign', 'instance' => 1]);
+        $event = new event_mapper_test_event($legacyevent);
+        $mapper = new event_mapper(
+            new event_mapper_test_event_factory()
+        );
+        $obj = $mapper->from_event_to_stdclass($event);
+        $this->assertInstanceOf(\stdClass::class, $obj);
+        $this->assertEquals($obj->name, $event->get_name());
+        $this->assertEquals($obj->eventtype, $event->get_type());
+        $this->assertEquals($obj->timestart, $event->get_times()->get_start_time()->getTimestamp());
+    }
+
+    /**
+     * Test event -> array
+     */
+    public function test_from_event_to_assoc_array() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $legacyevent = $this->create_event(['modname' => 'assign', 'instance' => 1]);
+        $event = new event_mapper_test_event($legacyevent);
+        $mapper = new event_mapper(
+            new event_mapper_test_event_factory()
+        );
+        $arr = $mapper->from_event_to_assoc_array($event);
+        $this->assertTrue(is_array($arr));
+        $this->assertEquals($arr['name'], $event->get_name());
+        $this->assertEquals($arr['eventtype'], $event->get_type());
+        $this->assertEquals($arr['timestart'], $event->get_times()->get_start_time()->getTimestamp());
+    }
+
     public function test_from_action_event_to_legacy_event() {
         $this->resetAfterTest(true);
         $this->setAdminUser();

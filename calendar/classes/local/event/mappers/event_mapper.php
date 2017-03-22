@@ -85,7 +85,21 @@ class event_mapper implements event_mapper_interface {
         $action = ($event instanceof action_event_interface) ? $event->get_action() : null;
         $timeduration = $event->get_times()->get_end_time()->getTimestamp() - $event->get_times()->get_start_time()->getTimestamp();
 
-        return new event((object) [
+        return new event($this->from_event_to_stdclass($event));
+    }
+
+    public function from_event_to_stdclass(event_interface $event) {
+        $action = ($event instanceof action_event_interface) ? $event->get_action() : null;
+        $timeduration = $event->get_times()->get_end_time()->getTimestamp() - $event->get_times()->get_start_time()->getTimestamp();
+
+        return (object)$this->from_event_to_assoc_array($event);
+    }
+
+    public function from_event_to_assoc_array(event_interface $event) {
+        $action = ($event instanceof action_event_interface) ? $event->get_action() : null;
+        $timeduration = $event->get_times()->get_end_time()->getTimestamp() - $event->get_times()->get_start_time()->getTimestamp();
+
+        return [
             'id'               => $event->get_id(),
             'name'             => $event->get_name(),
             'description'      => $event->get_description()->get_value(),
@@ -94,8 +108,8 @@ class event_mapper implements event_mapper_interface {
             'groupid'          => $event->get_group() ? $event->get_group()->get_id() : null,
             'userid'           => $event->get_user() ? $event->get_user()->get_id() : null,
             'repeatid'         => $event->get_repeats()->get_id(),
-            'modulename'       => $event->get_course_module()->get('modname'),
-            'instance'         => $event->get_course_module()->get('instance'),
+            'modulename'       => $event->get_course_module() ? $event->get_course_module()->get('modname') : null,
+            'instance'         => $event->get_course_module() ? $event->get_course_module()->get('instance') : null,
             'eventtype'        => $event->get_type(),
             'timestart'        => $event->get_times()->get_start_time()->getTimestamp(),
             'timeduration'     => $timeduration,
@@ -106,7 +120,8 @@ class event_mapper implements event_mapper_interface {
             'actionname'       => $action ? $action->get_name() : null,
             'actionurl'        => $action ? $action->get_url() : null,
             'actionnum'        => $action ? $action->get_item_count() : null,
-            'actionactionable' => $action ? $action->is_actionable() : null
-        ]);
+            'actionactionable' => $action ? $action->is_actionable() : null,
+            'sequence' => 1
+        ];
     }
 }
