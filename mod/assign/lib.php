@@ -1747,6 +1747,9 @@ function mod_assign_core_calendar_provide_event_action(\core_calendar\event $eve
 
     $assign = new assign($context, $cm, null);
 
+    // Apply overrides.
+    $assign->update_effective_access($USER->id);
+
     if ($event->eventtype == ASSIGN_EVENT_TYPE_GRADINGDUE) {
         $name = get_string('grade');
         $url = new \moodle_url('/mod/assign/view.php', [
