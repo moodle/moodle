@@ -31,43 +31,7 @@ require_once($CFG->dirroot . '/mod/workshop/lib.php');
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_workshop_lib_testcase extends advanced_testcase
-{
-
-    /**
-     * Test calendar event visibility.
-     */
-    public function test_workshop_core_calendar_is_event_visible()
-    {
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $course = $this->getDataGenerator()->create_course();
-        $workshop = $this->getDataGenerator()->create_module('workshop', ['course' => $course->id]);
-        $event = $this->create_action_event($course->id, $workshop->id, WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN);
-
-        $this->assertTrue(mod_workshop_core_calendar_is_event_visible($event));
-    }
-
-    /**
-     * Test calendar event visibility to a non-user.
-     */
-    public function test_workshop_core_calendar_is_event_visible_as_non_user()
-    {
-        global $CFG;
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $course = $this->getDataGenerator()->create_course();
-        $workshop = $this->getDataGenerator()->create_module('workshop', array('course' => $course->id));
-        $event = $this->create_action_event($course->id, $workshop->id, WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN);
-
-        // Log out the user and set force login to true.
-        \core\session\manager::init_empty_session();
-        $CFG->forcelogin = true;
-
-        $this->assertFalse(mod_workshop_core_calendar_is_event_visible($event));
-    }
+class mod_workshop_lib_testcase extends advanced_testcase {
 
     /**
      * Test calendar event provide action open.
