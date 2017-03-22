@@ -39,23 +39,7 @@ class mod_chat_lib_testcase extends advanced_testcase {
         $this->resetAfterTest();
     }
 
-    public function test_chat_core_calendar_is_event_visible_chattime_event_as_admin() {
-        $this->setAdminUser();
-
-        // Create a course.
-        $course = $this->getDataGenerator()->create_course();
-
-        // Create a chat.
-        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id));
-
-        // Create a calendar event.
-        $event = $this->create_action_event($course->id, $chat->id, CHAT_EVENT_TYPE_CHATTIME);
-
-        // Check that we can see the event.
-        $this->assertTrue(mod_chat_core_calendar_is_event_visible($event));
-    }
-
-    public function test_chat_core_calendar_is_event_visible_chattime_event_as_non_user() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_as_non_user() {
         global $CFG;
 
         $this->setAdminUser();
@@ -69,12 +53,18 @@ class mod_chat_lib_testcase extends advanced_testcase {
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $chat->id, CHAT_EVENT_TYPE_CHATTIME);
 
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
         // Log out the user and set force login to true.
         \core\session\manager::init_empty_session();
         $CFG->forcelogin = true;
 
+        // Decorate action event.
+        $actionevent = mod_chat_core_calendar_provide_event_action($event, $factory);
+
         // Check that we can't see the event.
-        $this->assertFalse(mod_chat_core_calendar_is_event_visible($event));
+        $this->assertNull($actionevent);
     }
 
     public function test_chat_core_calendar_provide_event_action_chattime_event() {
