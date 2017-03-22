@@ -995,48 +995,6 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->assertEquals([$datarecor1did, $datarecor2did], $updates->entries->itemids, '', 0, 10, true);
     }
 
-    public function test_data_core_calendar_is_event_visible() {
-        $this->resetAfterTest();
-
-        $this->setAdminUser();
-
-        // Create a course.
-        $course = $this->getDataGenerator()->create_course();
-
-        // Create a database activity.
-        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id));
-
-        // Create a calendar event.
-        $event = $this->create_action_event($course->id, $data->id, DATA_EVENT_TYPE_OPEN);
-
-        // Check that we can see the event.
-        $this->assertTrue(mod_data_core_calendar_is_event_visible($event));
-    }
-
-    public function test_data_core_calendar_is_event_visible_as_non_user() {
-        global $CFG;
-
-        $this->resetAfterTest();
-
-        $this->setAdminUser();
-
-        // Create a course.
-        $course = $this->getDataGenerator()->create_course();
-
-        // Create a database activity.
-        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id));
-
-        // Create a calendar event.
-        $event = $this->create_action_event($course->id, $data->id, DATA_EVENT_TYPE_OPEN);
-
-        // Log out the user and set force login to true.
-        \core\session\manager::init_empty_session();
-        $CFG->forcelogin = true;
-
-        // Check that we can't see the event.
-        $this->assertFalse(mod_data_core_calendar_is_event_visible($event));
-    }
-
     public function test_data_core_calendar_provide_event_action_open() {
         $this->resetAfterTest();
 
