@@ -1576,11 +1576,14 @@ function lesson_check_updates_since(cm_info $cm, $from, $filter = array()) {
  */
 function mod_lesson_core_calendar_provide_event_action(\core_calendar\event $event,
                                                        \core_calendar\action_factory $factory) {
-    global $DB, $CFG;
+    global $DB, $CFG, $USER;
     require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 
     $cm = get_fast_modinfo($event->courseid)->instances['lesson'][$event->instance];
     $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+
+    // Apply overrides.
+    $lesson->update_effective_access($USER->id);
 
     return $factory->create_instance(
         get_string('startlesson', 'lesson'),
