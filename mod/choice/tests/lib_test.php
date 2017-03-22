@@ -264,48 +264,6 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $this->assertEquals('expired', array_keys($warnings)[0]);
     }
 
-    public function test_choice_core_calendar_is_event_visible() {
-        $this->resetAfterTest();
-
-        $this->setAdminUser();
-
-        // Create a course.
-        $course = $this->getDataGenerator()->create_course();
-
-        // Create a choice.
-        $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id));
-
-        // Create a calendar event.
-        $event = $this->create_action_event($course->id, $choice->id, CHOICE_EVENT_TYPE_OPEN);
-
-        // Check that we can see the event.
-        $this->assertTrue(mod_choice_core_calendar_is_event_visible($event));
-    }
-
-    public function test_choice_core_calendar_is_event_visible_as_non_user() {
-        global $CFG;
-
-        $this->resetAfterTest();
-
-        $this->setAdminUser();
-
-        // Create a course.
-        $course = $this->getDataGenerator()->create_course();
-
-        // Create a choice.
-        $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id));
-
-        // Create a calendar event.
-        $event = $this->create_action_event($course->id, $choice->id, CHOICE_EVENT_TYPE_OPEN);
-
-        // Log out the user and set force login to true.
-        \core\session\manager::init_empty_session();
-        $CFG->forcelogin = true;
-
-        // Check that we can't see the event.
-        $this->assertFalse(mod_choice_core_calendar_is_event_visible($event));
-    }
-
     public function test_choice_core_calendar_provide_event_action_open() {
         $this->resetAfterTest();
 
