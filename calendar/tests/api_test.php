@@ -81,9 +81,13 @@ class core_calendar_api_testcase extends advanced_testcase {
      */
     public function test_get_events_with_disabled_module() {
         global $DB;
-
+        $this->setAdminUser();
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
+        $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assigninstance = $assigngenerator->create_instance(['course' => $course->id]);
+        $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        $lessoninstance = $lessongenerator->create_instance(['course' => $course->id]);
         $student = $generator->create_user();
         $generator->enrol_user($student->id, $course->id, 'student');
         $this->setUser($student);
@@ -96,7 +100,7 @@ class core_calendar_api_testcase extends advanced_testcase {
                 'groupid' => 0,
                 'userid' => 2,
                 'modulename' => 'assign',
-                'instance' => 1,
+                'instance' => $assigninstance->id,
                 'eventtype' => 'due',
                 'timestart' => time(),
                 'timeduration' => 86400,
@@ -109,7 +113,7 @@ class core_calendar_api_testcase extends advanced_testcase {
                 'groupid' => 0,
                 'userid' => 2,
                 'modulename' => 'lesson',
-                'instance' => 1,
+                'instance' => $lessoninstance->id,
                 'eventtype' => 'end',
                 'timestart' => time(),
                 'timeduration' => 86400,
@@ -269,7 +273,7 @@ class core_calendar_api_testcase extends advanced_testcase {
                 'courseid' => SITEID,
                 'groupid' => 0,
                 'userid' => 2,
-                'repeatid' => 1,
+                'repeatid' => $event->id,
                 'modulename' => '0',
                 'instance' => 0,
                 'eventtype' => 'site',
@@ -284,7 +288,7 @@ class core_calendar_api_testcase extends advanced_testcase {
                 'courseid' => SITEID,
                 'groupid' => 0,
                 'userid' => 2,
-                'repeatid' => 1,
+                'repeatid' => $event->id,
                 'modulename' => '0',
                 'instance' => 0,
                 'eventtype' => 'site',
@@ -414,7 +418,7 @@ class core_calendar_api_testcase extends advanced_testcase {
             'courseid' => $course->id,
             'modulename' => 'assign',
             'instance' => $moduleinstance->id,
-            'userid' => 1,
+            'userid' => $user->id,
             'eventtype' => 'user',
             'repeats' => 0,
             'timestart' => 1,

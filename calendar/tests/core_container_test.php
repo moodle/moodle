@@ -210,6 +210,7 @@ class core_calendar_container_testcase extends advanced_testcase {
         $event->timemodified = time();
         $event->timeduration = 0;
         $event->subscriptionid = null;
+        $event->repeatid = 0;
         $legacyevent = $this->create_event($event);
 
         // Update the id of the event that was created.
@@ -276,7 +277,7 @@ class core_calendar_container_testcase extends advanced_testcase {
                     'courseid' => 1,
                     'groupid' => 1,
                     'userid' => 1,
-                    'repeatid' => 1,
+                    'repeatid' => 0,
                     'modulename' => 'assign',
                     'instance' => 2,
                     'eventtype' => 'due',

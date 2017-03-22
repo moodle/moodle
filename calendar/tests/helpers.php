@@ -32,12 +32,13 @@ use core_calendar\local\data_access\event_vault;
 use core_calendar\local\event\entities\action_event;
 use core_calendar\local\event\entities\event;
 use core_calendar\local\event\entities\repeat_event_collection;
+use core_calendar\local\event\proxies\std_proxy;
 use core_calendar\local\event\value_objects\action;
+use core_calendar\local\event\value_objects\event_course_module;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
-use core_calendar\local\event\value_objects\event_course_module;
-use core_calendar\local\event\proxies\std_proxy;
 use core_calendar\local\interfaces\event_factory_interface;
+use core_calendar\local\interfaces\raw_event_retrieval_strategy_interface;
 
 /**
  * Create a calendar event with the given properties.

@@ -85,7 +85,7 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
         }
 
         // Get all events.
-        $events = $retrievalstrategy->get_raw_events(true, 0, true, null, null, null, null);
+        $events = $retrievalstrategy->get_raw_events(null, [0], null);
         $this->assertCount(2, $events);
 
         // Disable the lesson module.
@@ -94,7 +94,7 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
         $DB->update_record('modules', $modulerecord);
 
         // Check that we only return the assign event.
-        $events = $retrievalstrategy->get_raw_events(true, 0, true, null, null, null, null);
+        $events = $retrievalstrategy->get_raw_events(null, [0], null);
         $this->assertCount(1, $events);
         $event = reset($events);
         $this->assertEquals('assign', $event->modulename);

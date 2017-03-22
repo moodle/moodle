@@ -28,6 +28,7 @@ global $CFG;
 require_once($CFG->dirroot . '/calendar/tests/helpers.php');
 
 use core_calendar\local\event\data_access\event_vault;
+use core_calendar\local\event\strategies\raw_event_retrieval_strategy;
 
 /**
  * This file contains the class that handles testing of the calendar event vault.
@@ -44,11 +45,13 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
      */
     public function test_get_action_events_by_timesort_after_time() {
         $this->resetAfterTest(true);
-        $this->setAdminuser();
 
         $user = $this->getDataGenerator()->create_user();
         $factory = new action_event_test_factory();
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
+
+        $this->setUser($user);
 
         for ($i = 1; $i < 6; $i++) {
             create_event([
@@ -87,7 +90,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
 
         $user = $this->getDataGenerator()->create_user();
         $factory = new action_event_test_factory();
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         for ($i = 1; $i < 6; $i++) {
             create_event([
@@ -95,7 +99,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
                 'eventtype' => 'user',
                 'userid' => $user->id,
                 'timesort' => $i,
-                'type' => CALENDAR_EVENT_TYPE_ACTION
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => 1
             ]);
         }
 
@@ -126,7 +131,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
 
         $user = $this->getDataGenerator()->create_user();
         $factory = new action_event_test_factory();
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         for ($i = 1; $i < 6; $i++) {
             create_event([
@@ -134,7 +140,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
                 'eventtype' => 'user',
                 'userid' => $user->id,
                 'timesort' => $i,
-                'type' => CALENDAR_EVENT_TYPE_ACTION
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => 1
             ]);
         }
 
@@ -162,7 +169,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
 
         $user = $this->getDataGenerator()->create_user();
         $factory = new action_event_test_factory();
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         $records = [];
         for ($i = 1; $i < 21; $i++) {
@@ -171,7 +179,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
                 'eventtype' => 'user',
                 'userid' => $user->id,
                 'timesort' => $i,
-                'type' => CALENDAR_EVENT_TYPE_ACTION
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => 1
             ]);
         }
 
@@ -201,7 +210,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $factory = new action_event_test_factory(function($actionevent) {
             return ($actionevent->get_id() % 2) ? false : true;
         });
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         for ($i = 1; $i < 41; $i++) {
             create_event([
@@ -209,7 +219,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
                 'eventtype' => 'user',
                 'userid' => $user->id,
                 'timesort' => $i,
-                'type' => CALENDAR_EVENT_TYPE_ACTION
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => 1
             ]);
         }
 
@@ -255,7 +266,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
                 return true;
             }
         });
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         for ($i = 1; $i < 21; $i++) {
             create_event([
@@ -263,7 +275,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
                 'eventtype' => 'user',
                 'userid' => $user->id,
                 'timesort' => $i,
-                'type' => CALENDAR_EVENT_TYPE_ACTION
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => 1
             ]);
         }
 
@@ -289,7 +302,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
 
         $user = $this->getDataGenerator()->create_user();
         $factory = new action_event_test_factory();
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         /**
          * The events should be ordered by timesort as follows:
@@ -322,7 +336,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
                 'eventtype' => 'user',
                 'userid' => $user->id,
                 'timesort' => $i,
-                'type' => CALENDAR_EVENT_TYPE_ACTION
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => 1
             ]);
         }
 
@@ -332,7 +347,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
                 'eventtype' => 'user',
                 'userid' => $user->id,
                 'timesort' => $i,
-                'type' => CALENDAR_EVENT_TYPE_ACTION
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'courseid' => 1
             ]);
         }
 
@@ -396,7 +412,6 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         // value larger than the upper boundary of this query (9 > 8). Confirm
         // that the given $afterevent is used for filtering events.
         $events = $vault->get_action_events_by_timesort($user, 3, 8, $afterevent);
-
         $this->assertEmpty($events);
     }
 
@@ -409,7 +424,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
         $factory = new action_event_test_factory();
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         $this->resetAfterTest(true);
         $this->setAdminuser();
@@ -439,7 +455,6 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         }
 
         $events = $vault->get_action_events_by_course($user, $course1, 3);
-
         $this->assertCount(3, $events);
         $this->assertEquals('Event 3', $events[0]->get_name());
         $this->assertEquals('Event 4', $events[1]->get_name());
@@ -464,7 +479,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
         $factory = new action_event_test_factory();
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         $this->resetAfterTest(true);
         $this->setAdminuser();
@@ -519,7 +535,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
         $factory = new action_event_test_factory();
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         $this->resetAfterTest(true);
         $this->setAdminuser();
@@ -571,7 +588,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
         $factory = new action_event_test_factory();
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
         $records = [];
 
         $this->resetAfterTest(true);
@@ -626,7 +644,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $factory = new action_event_test_factory(function($actionevent) {
             return ($actionevent->get_id() % 2) ? false : true;
         });
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         $this->resetAfterTest(true);
         $this->setAdminuser();
@@ -696,7 +715,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
                 return true;
             }
         });
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         $this->resetAfterTest(true);
         $this->setAdminuser();
@@ -749,7 +769,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
         $factory = new action_event_test_factory();
-        $vault = new event_vault($factory);
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
 
         $this->setAdminuser();
         $this->getDataGenerator()->enrol_user($user->id, $course1->id);
