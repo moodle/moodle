@@ -58,6 +58,11 @@ class mod_folder_mod_form extends moodleform_mod {
             $mform->hardFreeze('display');
         }
         $mform->setExpanded('content');
+		
+        // Adding option to show root folder expanded or collapsed.
+        $mform->addElement('advcheckbox', 'showexpandedroot', get_string('showexpandedroot', 'folder'));
+        $mform->addHelpButton('showexpandedroot', 'showexpandedroot', 'mod_folder');
+        $mform->setDefault('showexpandedroot', $config->showexpandedroot);		
 
         // Adding option to show sub-folders expanded or collapsed by default.
         $mform->addElement('advcheckbox', 'showexpanded', get_string('showexpanded', 'folder'));

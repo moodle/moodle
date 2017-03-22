@@ -30,7 +30,11 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('folder/requiremodintro',
         get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
 
-    $settings->add(new admin_setting_configcheckbox('folder/showexpanded',
+	$settings->add(new admin_setting_configcheckbox('folder/showexpandedroot',
+            get_string('showexpandedroot', 'folder'),
+            get_string('showexpandedroot_help', 'folder'), 1));
+
+	$settings->add(new admin_setting_configcheckbox('folder/showexpanded',
             get_string('showexpanded', 'folder'),
             get_string('showexpanded_help', 'folder'), 1));
 }
