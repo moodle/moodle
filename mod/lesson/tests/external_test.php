@@ -974,4 +974,72 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $this->setExpectedException('moodle_exception');
         $result = mod_lesson_external::get_page_data($this->lesson->id, $this->page2->id, '', false, true);
     }
+
+    /**
+     * Test process_page
+     */
+    public function test_process_page() {
+        global $DB;
+
+        $this->setUser($this->student);
+        // First we need to launch the lesson so the timer is on.
+        mod_lesson_external::launch_attempt($this->lesson->id);
+
+        // Configure the lesson to return feedback and avoid custom scoring.
+        $DB->set_field('lesson', 'feedback', 1, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'progressbar', 1, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'custom', 0, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'maxattempts', 3, array('id' => $this->lesson->id));
+
+        // Now, we can directly launch mocking the data.
+
+        // First incorrect response.
+        $answerincorrect = 0;
+        $answercorrect = 0;
+        $p2answers = $DB->get_records('lesson_answers', array('lessonid' => $this->lesson->id, 'pageid' => $this->page2->id), 'id');
+        foreach ($p2answers as $answer) {
+            if ($answer->jumpto == 0) {
+                $answerincorrect = $answer->id;
+            } else {
+                $answercorrect = $answer->id;
+            }
+        }
+
+        $data = array(
+            array(
+                'name' => 'answerid',
+                'value' => $answerincorrect,
+            ),
+            array(
+                'name' => '_qf__lesson_display_answer_form_truefalse',
+                'value' => 1,
+            )
+        );
+        $result = mod_lesson_external::process_page($this->lesson->id, $this->page2->id, $data);
+        $result = external_api::clean_returnvalue(mod_lesson_external::process_page_returns(), $result);
+
+        $this->assertEquals($this->page2->id, $result['newpageid']);    // Same page, since the answer was incorrect.
+        $this->assertFalse($result['correctanswer']);   // Incorrect answer.
+        $this->assertEquals(50, $result['progress']);
+
+        // Correct response.
+        $data = array(
+            array(
+                'name' => 'answerid',
+                'value' => $answercorrect,
+            ),
+            array(
+                'name' => '_qf__lesson_display_answer_form_truefalse',
+                'value' => 1,
+            )
+        );
+
+        $result = mod_lesson_external::process_page($this->lesson->id, $this->page2->id, $data);
+        $result = external_api::clean_returnvalue(mod_lesson_external::process_page_returns(), $result);
+
+        $this->assertEquals($this->page1->id, $result['newpageid']);    // Next page, the answer was correct.
+        $this->assertTrue($result['correctanswer']);    // Correct response.
+        $this->assertFalse($result['maxattemptsreached']);  // Still one attempt.
+        $this->assertEquals(50, $result['progress']);
+    }
 }

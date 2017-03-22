@@ -160,6 +160,8 @@ class lesson_page_type_branchtable extends lesson_page {
     public function check_answer() {
         global $USER, $DB, $PAGE, $CFG;
 
+        $result = parent::check_answer();
+
         require_sesskey();
         $newpageid = optional_param('jumpto', null, PARAM_INT);
         // going to insert into lesson_branch
@@ -210,7 +212,10 @@ class lesson_page_type_branchtable extends lesson_page {
         $branch->nextpageid = $newpageid;
         $DB->insert_record("lesson_branch", $branch);
 
-        redirect(new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id, 'pageid' => $newpageid)));
+        // This will force to redirect to the newpageid.
+        $result->inmediatejump = true;
+        $result->newpageid = $newpageid;
+        return $result;
     }
 
     public function display_answers(html_table $table) {

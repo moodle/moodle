@@ -2675,6 +2675,121 @@ class lesson extends lesson_base {
 
         return array($page, $lessoncontent);
     }
+
+    /**
+     * Process page responses.
+     *
+     * @param lesson_page $page page object
+     * @since  Moodle 3.3
+     */
+    public function process_page_responses(lesson_page $page) {
+        global $USER, $DB;
+
+        $canmanage = $this->can_manage();
+        $context = $this->get_context();
+
+        // Check the page has answers [MDL-25632].
+        if (count($page->answers) > 0) {
+            $result = $page->record_attempt($context);
+        } else {
+            // The page has no answers so we will just progress to the next page in the
+            // sequence (as set by newpageid).
+            $result = new stdClass;
+            $result->newpageid       = optional_param('newpageid', $page->nextpageid, PARAM_INT);
+            $result->nodefaultresponse  = true;
+        }
+
+        if ($result->inmediatejump) {
+            return $result;
+        } else if (isset($USER->modattempts[$this->properties->id])) {
+            // Make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time.
+            if ($USER->modattempts[$this->properties->id]->pageid == $page->id && $page->nextpageid == 0) {
+                // Remember, this session variable holds the pageid of the last page that the user saw.
+                $result->newpageid = LESSON_EOL;
+            } else {
+                $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+                $nretakes--; // Make sure we are looking at the right try.
+                $attempts = $DB->get_records("lesson_attempts", array("lessonid" => $this->properties->id, "userid" => $USER->id, "retry" => $nretakes), "timeseen", "id, pageid");
+                $found = false;
+                $temppageid = 0;
+                // Make sure that the newpageid always defaults to something valid.
+                $result->newpageid = LESSON_EOL;
+                foreach ($attempts as $attempt) {
+                    if ($found && $temppageid != $attempt->pageid) {
+                        // Now try to find the next page, make sure next few attempts do no belong to current page.
+                        $result->newpageid = $attempt->pageid;
+                        break;
+                    }
+                    if ($attempt->pageid == $page->id) {
+                        $found = true; // If found current page.
+                        $temppageid = $attempt->pageid;
+                    }
+                }
+            }
+        } else if ($result->newpageid != LESSON_CLUSTERJUMP && $page->id != 0 && $result->newpageid > 0) {
+            // Going to check to see if the page that the user is going to view next, is a cluster page.
+            // If so, dont display, go into the cluster.
+            // The $result->newpageid > 0 is used to filter out all of the negative code jumps.
+            $newpage = $this->load_page($result->newpageid);
+            if ($newpageid = $newpage->override_next_page($result->newpageid)) {
+                $result->newpageid = $newpageid;
+            }
+        } else if ($result->newpageid == LESSON_UNSEENBRANCHPAGE) {
+            if ($canmanage) {
+                if ($page->nextpageid == 0) {
+                    $result->newpageid = LESSON_EOL;
+                } else {
+                    $result->newpageid = $page->nextpageid;
+                }
+            } else {
+                $result->newpageid = lesson_unseen_question_jump($this, $USER->id, $page->id);
+            }
+        } else if ($result->newpageid == LESSON_PREVIOUSPAGE) {
+            $result->newpageid = $page->prevpageid;
+        } else if ($result->newpageid == LESSON_RANDOMPAGE) {
+            $result->newpageid = lesson_random_question_jump($this, $page->id);
+        } else if ($result->newpageid == LESSON_CLUSTERJUMP) {
+            if ($canmanage) {
+                if ($page->nextpageid == 0) {  // If teacher, go to next page.
+                    $result->newpageid = LESSON_EOL;
+                } else {
+                    $result->newpageid = $page->nextpageid;
+                }
+            } else {
+                $result->newpageid = $lesson->cluster_jump($page->id);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Add different informative messages to the given page.
+     *
+     * @param lesson_page $page page object
+     * @param stdClass $result the page processing result object
+     * @param bool $reviewmode whether we are in review mode or not
+     * @since  Moodle 3.3
+     */
+    public function add_messages_on_page_process(lesson_page $page, $result, $reviewmode) {
+
+        if ($this->can_manage()) {
+            // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher.
+            if (lesson_display_teacher_warning($this)) {
+                $warningvars = new stdClass();
+                $warningvars->cluster = get_string("clusterjump", "lesson");
+                $warningvars->unseen = get_string("unseenpageinbranch", "lesson");
+                $this->add_message(get_string("teacherjumpwarning", "lesson", $warningvars));
+            }
+            // Inform teacher that s/he will not see the timer.
+            if ($this->properties->timelimit) {
+                $lesson->add_message(get_string("teachertimerwarning", "lesson"));
+            }
+        }
+        // Report attempts remaining.
+        if ($result->attemptsremaining != 0 && $this->properties->review && !$reviewmode) {
+            $this->add_message(get_string('attemptsremaining', 'lesson', $result->attemptsremaining));
+        }
+    }
 }
 
 
@@ -3114,6 +3229,11 @@ abstract class lesson_page extends lesson_base {
          * against what ever custom criteria they have defined
          */
         $result = $this->check_answer();
+
+        // Processes inmediate jumps.
+        if ($result->inmediatejump) {
+            return $result;
+        }
 
         $result->attemptsremaining  = 0;
         $result->maxattemptsreached = false;
@@ -3630,6 +3750,7 @@ abstract class lesson_page extends lesson_base {
         $result->userresponse    = null;
         $result->feedback        = '';
         $result->nodefaultresponse  = false; // Flag for redirecting when default feedback is turned off
+        $result->inmediatejump = false; // Flag to detect when we should do a jump from the page without further processing.
         return $result;
     }
 
