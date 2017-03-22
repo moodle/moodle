@@ -67,11 +67,12 @@ class repeat_event_collection implements event_collection_interface {
      * Constructor.
      *
      * @param int                     $parentid ID of the parent event.
+     * @param int                     $repeatid If non-zero this will be used as the parent id.
      * @param event_factory_interface $factory  Event factory.
      * @throws no_repeat_parent_exception If the parent record can't be loaded.
      */
-    public function __construct($parentid, event_factory_interface $factory) {
-        $this->parentid = $parentid;
+    public function __construct($parentid, $repeatid, event_factory_interface $factory) {
+        $this->parentid = $repeatid ? $repeatid : $parentid;
         $this->factory = $factory;
 
         if (!$this->get_parent_record()) {
