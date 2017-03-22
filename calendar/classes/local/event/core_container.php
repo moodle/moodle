@@ -117,6 +117,10 @@ class core_container {
                 $getcallback('action'),
                 $getcallback('visibility'),
                 function ($dbrow) {
+                    if (empty($dbrow->modulename)) {
+                        return false;
+                    }
+
                     $instances = get_fast_modinfo($dbrow->courseid)->instances;
 
                     if (!isset($instances[$dbrow->modulename]) || !isset($instances[$dbrow->modulename][$dbrow->instance])) {

@@ -127,7 +127,7 @@ abstract class event_abstract_factory implements event_factory_interface {
         $module = null;
         $subscription = null;
 
-        if ($dbrow->courseid == 0) {
+        if ($dbrow->courseid == 0 && !empty($dbrow->modulename)) {
             $cm = get_coursemodule_from_instance($dbrow->modulename, $dbrow->instance);
             $dbrow->courseid = get_course($cm->course)->id;
         }
@@ -149,15 +149,14 @@ abstract class event_abstract_factory implements event_factory_interface {
             });
         }
 
-        if ($dbrow->instance && $dbrow->modulename) {
-            $modulename = $dbrow->modulename;
+        if ($dbrow->instance && !empty($dbrow->modulename)) {
             $module = new module_std_proxy(
                 $dbrow->modulename,
                 $dbrow->instance,
                 function($modulename, $instance) {
                     return \core_calendar\api::get_module_cached(
                         $this->modulecachereference,
-                        $modulename,
+                        $dbrow->modulename,
                         $instance
                     );
                 }
