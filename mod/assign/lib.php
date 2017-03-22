@@ -1756,6 +1756,14 @@ function mod_assign_core_calendar_provide_event_action(\core_calendar\event $eve
         $itemcount = $assign->count_submissions_need_grading();
         $actionable = $assign->can_grade() && (time() >= $assign->get_instance()->allowsubmissionsfromdate);
     } else {
+        $usersubmission = $assign->get_user_submission($USER->id, false);
+        if ($usersubmission && $usersubmission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+            // The user has already submitted.
+            // We do not want to change the text to edit the submission, we want to remove the event from the Dashboard entirely.
+            return null;
+        }
+
+        // The user has not yet submitted anything. Show the addsubmission link.
         $name = get_string('addsubmission', 'assign');
         $url = new \moodle_url('/mod/assign/view.php', [
             'id' => $cm->id,
