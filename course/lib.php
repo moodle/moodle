@@ -2491,7 +2491,7 @@ function update_course($data, $editoroptions = NULL) {
     // Set newsitems to 0 if format does not support announcements.
     if (isset($data->format)) {
         $newcourseformat = course_get_format((object)['format' => $data->format]);
-        if (!empty($data->newsitems) && !$newcourseformat->supports_news()) {
+        if (!$newcourseformat->supports_news()) {
             $data->newsitems = 0;
         }
     }
