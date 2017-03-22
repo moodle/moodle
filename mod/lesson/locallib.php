@@ -2756,7 +2756,7 @@ class lesson extends lesson_base {
                     $result->newpageid = $page->nextpageid;
                 }
             } else {
-                $result->newpageid = $lesson->cluster_jump($page->id);
+                $result->newpageid = $this->cluster_jump($page->id);
             }
         }
         return $result;
