@@ -122,6 +122,7 @@ class courses_view implements renderable, templatable {
             $quantpages = ceil($total / $this::COURSES_PER_PAGE);
 
             if ($quantpages) {
+                $coursesview[$status]['pagingbar']['disabled'] = ($quantpages <= 1);
                 $coursesview[$status]['pagingbar']['pagecount'] = $quantpages;
                 $coursesview[$status]['pagingbar']['first'] = ['page' => '&laquo;', 'url' => '#'];
                 $coursesview[$status]['pagingbar']['last'] = ['page' => '&raquo;', 'url' => '#'];
