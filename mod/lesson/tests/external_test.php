@@ -1042,4 +1042,93 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse($result['maxattemptsreached']);  // Still one attempt.
         $this->assertEquals(50, $result['progress']);
     }
+
+    /**
+     * Test finish attempt not doing anything.
+     */
+    public function test_finish_attempt_not_doing_anything() {
+
+        $this->setUser($this->student);
+        // First we need to launch the lesson so the timer is on.
+        mod_lesson_external::launch_attempt($this->lesson->id);
+
+        $result = mod_lesson_external::finish_attempt($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::finish_attempt_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $returneddata = [];
+        foreach ($result['data'] as $data) {
+            $returneddata[$data['name']] = $data['value'];
+        }
+        $this->assertEquals(1, $returneddata['gradelesson']);   // Graded lesson.
+        $this->assertEquals(1, $returneddata['welldone']);      // Finished correctly (even without grades).
+        $gradeinfo = json_decode($returneddata['gradeinfo']);
+        $expectedgradeinfo = (object) [
+            'nquestions' => 0,
+            'attempts' => 0,
+            'total' => 0,
+            'earned' => 0,
+            'grade' => 0,
+            'nmanual' => 0,
+            'manualpoints' => 0,
+        ];
+    }
+
+    /**
+     * Test finish attempt with correct answer.
+     */
+    public function test_finish_attempt_with_correct_answer() {
+        global $DB;
+
+        $this->setUser($this->student);
+        // First we need to launch the lesson so the timer is on.
+        mod_lesson_external::launch_attempt($this->lesson->id);
+
+        // Attempt a question, correct answer.
+        $DB->set_field('lesson', 'custom', 0, array('id' => $this->lesson->id));
+        $DB->set_field('lesson', 'progressbar', 1, array('id' => $this->lesson->id));
+
+        $answercorrect = 0;
+        $p2answers = $DB->get_records('lesson_answers', array('lessonid' => $this->lesson->id, 'pageid' => $this->page2->id), 'id');
+        foreach ($p2answers as $answer) {
+            if ($answer->jumpto != 0) {
+                $answercorrect = $answer->id;
+            }
+        }
+
+        $data = array(
+            array(
+                'name' => 'answerid',
+                'value' => $answercorrect,
+            ),
+            array(
+                'name' => '_qf__lesson_display_answer_form_truefalse',
+                'value' => 1,
+            )
+        );
+        $result = mod_lesson_external::process_page($this->lesson->id, $this->page2->id, $data);
+        $result = external_api::clean_returnvalue(mod_lesson_external::process_page_returns(), $result);
+
+        $result = mod_lesson_external::finish_attempt($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::finish_attempt_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $returneddata = [];
+        foreach ($result['data'] as $data) {
+            $returneddata[$data['name']] = $data['value'];
+        }
+        $this->assertEquals(1, $returneddata['gradelesson']);   // Graded lesson.
+        $this->assertEquals(1, $returneddata['numberofpagesviewed']);
+        $this->assertEquals(1, $returneddata['numberofcorrectanswers']);
+        $gradeinfo = json_decode($returneddata['gradeinfo']);
+        $expectedgradeinfo = (object) [
+            'nquestions' => 1,
+            'attempts' => 1,
+            'total' => 1,
+            'earned' => 1,
+            'grade' => 100,
+            'nmanual' => 0,
+            'manualpoints' => 0,
+        ];
+    }
 }
