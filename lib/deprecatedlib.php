@@ -6739,7 +6739,188 @@ function calendar_add_event_metadata($event) {
  */
 function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withduration=true, $ignorehidden=true) {
     debugging(__FUNCTION__ . '() is deprecated, please use \core_calendar\api::get_events() instead.', DEBUG_DEVELOPER);
-    return \core_calendar\api::get_events($tstart, $tend, $users, $groups, $courses, $withduration, $ignorehidden);
+
+    // We have a new implementation of this function in the calendar API class, which has slightly different behaviour
+    // so the old implementation must remain here.
+    global $DB;
+    $params = array();
+
+    // Quick test.
+    if (empty($users) && empty($groups) && empty($courses)) {
+        return array();
+    }
+
+    // Array of filter conditions. To be concatenated by the OR operator.
+    $filters = [];
+
+    // User filter.
+    if ((is_array($users) && !empty($users)) or is_numeric($users)) {
+        // Events from a number of users.
+        list($insqlusers, $inparamsusers) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED);
+        $filters[] = "(e.userid $insqlusers AND e.courseid = 0 AND e.groupid = 0)";
+        $params = array_merge($params, $inparamsusers);
+    } else if ($users === true) {
+        // Events from ALL users.
+        $filters[] = "(e.userid != 0 AND e.courseid = 0 AND e.groupid = 0)";
+    }
+
+    // Boolean false (no users at all): We don't need to do anything.
+    // Group filter.
+    if ((is_array($groups) && !empty($groups)) or is_numeric($groups)) {
+        // Events from a number of groups.
+        list($insqlgroups, $inparamsgroups) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
+        $filters[] = "e.groupid $insqlgroups";
+        $params = array_merge($params, $inparamsgroups);
+    } else if ($groups === true) {
+        // Events from ALL groups.
+        $filters[] = "e.groupid != 0";
+    }
+
+    // Boolean false (no groups at all): We don't need to do anything.
+    // Course filter.
+    if ((is_array($courses) && !empty($courses)) or is_numeric($courses)) {
+        list($insqlcourses, $inparamscourses) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
+        $filters[] = "(e.groupid = 0 AND e.courseid $insqlcourses)";
+        $params = array_merge($params, $inparamscourses);
+    } else if ($courses === true) {
+        // Events from ALL courses.
+        $filters[] = "(e.groupid = 0 AND e.courseid != 0)";
+    }
+
+    // Security check: if, by now, we have NOTHING in $whereclause, then it means
+    // that NO event-selecting clauses were defined. Thus, we won't be returning ANY
+    // events no matter what. Allowing the code to proceed might return a completely
+    // valid query with only time constraints, thus selecting ALL events in that time frame!
+    if (empty($filters)) {
+        return array();
+    }
+
+    // Build our clause for the filters.
+    $filterclause = implode(' OR ', $filters);
+
+    // Array of where conditions for our query. To be concatenated by the AND operator.
+    $whereconditions = ["($filterclause)"];
+
+    // Time clause.
+    if ($withduration) {
+        $timeclause = "((e.timestart >= :tstart1 OR e.timestart + e.timeduration > :tstart2) AND e.timestart <= :tend)";
+        $params['tstart1'] = $tstart;
+        $params['tstart2'] = $tstart;
+        $params['tend'] = $tend;
+    } else {
+        $timeclause = "(e.timestart >= :tstart AND e.timestart <= :tend)";
+        $params['tstart'] = $tstart;
+        $params['tend'] = $tend;
+    }
+    $whereconditions[] = $timeclause;
+
+    // Show visible only.
+    if ($ignorehidden) {
+        $whereconditions[] = "(e.visible = 1)";
+    }
+
+    // Build the main query's WHERE clause.
+    $whereclause = implode(' AND ', $whereconditions);
+
+    // Build SQL subquery and conditions for filtered events based on priorities.
+    $subquerywhere = '';
+    $subqueryconditions = [];
+
+    // Get the user's courses. Otherwise, get the default courses being shown by the calendar.
+    $usercourses = \core_calendar\api::get_default_courses();
+
+    // Set calendar filters.
+    list($usercourses, $usergroups, $user) = \core_calendar\api::set_filters($usercourses, true);
+    $subqueryparams = [];
+
+    // Flag to indicate whether the query needs to exclude group overrides.
+    $viewgroupsonly = false;
+    if ($user) {
+        // Set filter condition for the user's events.
+        $subqueryconditions[] = "(ev.userid = :user AND ev.courseid = 0 AND ev.groupid = 0)";
+        $subqueryparams['user'] = $user;
+        foreach ($usercourses as $courseid) {
+            if (has_capability('moodle/site:accessallgroups', context_course::instance($courseid))) {
+                $usergroupmembership = groups_get_all_groups($courseid, $user, 0, 'g.id');
+                if (count($usergroupmembership) == 0) {
+                    $viewgroupsonly = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Set filter condition for the user's group events.
+    if ($usergroups === true || $viewgroupsonly) {
+        // Fetch group events, but not group overrides.
+        $subqueryconditions[] = "(ev.groupid != 0 AND ev.eventtype = 'group')";
+    } else if (!empty($usergroups)) {
+        // Fetch group events and group overrides.
+        list($inusergroups, $inusergroupparams) = $DB->get_in_or_equal($usergroups, SQL_PARAMS_NAMED);
+        $subqueryconditions[] = "(ev.groupid $inusergroups)";
+        $subqueryparams = array_merge($subqueryparams, $inusergroupparams);
+    }
+
+    // Get courses to be used for the subquery.
+    $subquerycourses = [];
+    if (is_array($courses)) {
+        $subquerycourses = $courses;
+    } else if (is_numeric($courses)) {
+        $subquerycourses[] = $courses;
+    }
+
+    // Merge with user courses, if necessary.
+    if (!empty($usercourses)) {
+        $subquerycourses = array_merge($subquerycourses, $usercourses);
+        // Make sure we remove duplicate values.
+        $subquerycourses = array_unique($subquerycourses);
+    }
+
+    // Set subquery filter condition for the courses.
+    if (!empty($subquerycourses)) {
+        list($incourses, $incoursesparams) = $DB->get_in_or_equal($subquerycourses, SQL_PARAMS_NAMED);
+        $subqueryconditions[] = "(ev.groupid = 0 AND ev.courseid $incourses)";
+        $subqueryparams = array_merge($subqueryparams, $incoursesparams);
+    }
+
+    // Build the WHERE condition for the sub-query.
+    if (!empty($subqueryconditions)) {
+        $subquerywhere = 'WHERE ' . implode(" OR ", $subqueryconditions);
+    }
+
+    // Merge subquery parameters to the parameters of the main query.
+    if (!empty($subqueryparams)) {
+        $params = array_merge($params, $subqueryparams);
+    }
+
+    // Sub-query that fetches the list of unique events that were filtered based on priority.
+    $subquery = "SELECT ev.modulename,
+                            ev.instance,
+                            ev.eventtype,
+                            MAX(ev.priority) as priority
+                       FROM {event} ev
+                      $subquerywhere
+                   GROUP BY ev.modulename, ev.instance, ev.eventtype";
+
+    // Build the main query.
+    $sql = "SELECT e.*
+                  FROM {event} e
+            INNER JOIN ($subquery) fe
+                    ON e.modulename = fe.modulename
+                       AND e.instance = fe.instance
+                       AND e.eventtype = fe.eventtype
+                       AND (e.priority = fe.priority OR (e.priority IS NULL AND fe.priority IS NULL))
+             LEFT JOIN {modules} m
+                    ON e.modulename = m.name
+                 WHERE (m.visible = 1 OR m.visible IS NULL) AND $whereclause
+              ORDER BY e.timestart";
+    $events = $DB->get_records_sql($sql, $params);
+
+    if ($events === false) {
+        $events = array();
+    }
+
+    return $events;
 }
 
 /**
