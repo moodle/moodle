@@ -326,6 +326,11 @@ class core_enrol_external extends external_api {
             $course->fullname = external_format_string($course->fullname, $context->id);
             $course->shortname = external_format_string($course->shortname, $context->id);
 
+            $progress = null;
+            if ($course->enablecompletion) {
+                $progress = \core_completion\progress::get_course_progress_percentage($course);
+            }
+
             $result[] = array(
                 'id' => $course->id,
                 'shortname' => $course->shortname,
@@ -339,7 +344,8 @@ class core_enrol_external extends external_api {
                 'showgrades' => $course->showgrades,
                 'lang' => $course->lang,
                 'enablecompletion' => $course->enablecompletion,
-                'category' => $course->category
+                'category' => $course->category,
+                'progress' => $progress,
             );
         }
 
@@ -369,6 +375,7 @@ class core_enrol_external extends external_api {
                     'enablecompletion' => new external_value(PARAM_BOOL, 'true if completion is enabled, otherwise false',
                                                                 VALUE_OPTIONAL),
                     'category' => new external_value(PARAM_INT, 'course category id', VALUE_OPTIONAL),
+                    'progress' => new external_value(PARAM_FLOAT, 'Progress percentage', VALUE_OPTIONAL),
                 )
             )
         );
