@@ -39,6 +39,7 @@ $string['cannotsavemd5file'] = 'Ei saa salvestada md5 faili.';
 $string['cannotsavezipfile'] = 'Ei saa salvestada ZIP faili.';
 $string['cannotunzipfile'] = 'Ei saa lahti pakkida faili.';
 $string['componentisuptodate'] = 'Komponent on ajakohane';
+$string['dmlexceptiononinstall'] = '<p>Ilmnes andmebaasitõrge [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'Alla laetud faili kontroll ebaõnnestus.';
 $string['invalidmd5'] = 'Vigane md5';
 $string['missingrequiredfield'] = 'Mõni nõutav väli on puudu';
