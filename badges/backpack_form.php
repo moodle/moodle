@@ -101,6 +101,8 @@ class edit_backpack_form extends moodleform {
             $request = $bp->curl_request('user');
             if (isset($request->status) && $request->status == 'missing') {
                 $errors['email'] = get_string('error:nosuchuser', 'badges');
+            } else if (!isset($request->status) || $request->status !== 'okay') {
+                $errors['email'] = get_string('backpackconnectionunexpectedresult', 'badges');
             }
         }
         return $errors;
