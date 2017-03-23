@@ -80,10 +80,9 @@ $string['pathsunsecuredataroot'] = 'Dataroot lokacija nije bezbedna';
 $string['pathswrongadmindir'] = 'Admin direktorijum ne postoji';
 $string['phpextension'] = '{$a} PHP ekstenѕija';
 $string['phpversion'] = 'PHP verzija';
-$string['phpversionhelp'] = '<p>Moodle zahteva najmanje PHP verziju 4.3.0 ili 5.1.0 (5.0.x ima  brojne uočene probleme).</p>
+$string['phpversionhelp'] = '<p>Moodle zahteva najmanje PHP verziju 5.6.7 (7.0.x ima neka ograničenja).</p>
 <p>Trenutno koristite verziju {$a}</p>
-<p>Morate nadograditi PHP ili premestiti Moodle na veb server sa novijom verzijom PHP-a!</br>
-(U slučaju verzije 5.0.x možete, takođe, da se vratite na 4.4.x verziju)</p>';
+<p>Morate da nadogradite PHP ili da premestiti Moodle na veb server sa novijom verzijom PHP-a.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Ovu stranicu vidite zato što ste uspešno instalirali i pokrenuli <strong>{$a->packname} {$a->packversion}</strong> paket na svom serveru. Čestitamo!';
 $string['welcomep30'] = 'Ovo izdanje <strong>{$a->installername}</strong> uključuje aplikacije za kreiranje okruženja u kojem će <strong>Moodle</strong> uspešno funkcionisati, konkretno:';

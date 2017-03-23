@@ -82,10 +82,9 @@ $string['pathsunsecuredataroot'] = 'A localização da pasta de dados não é se
 $string['pathswrongadmindir'] = 'Diretório Admin não existe';
 $string['phpextension'] = 'Extensão PHP {$a}';
 $string['phpversion'] = 'Versão do PHP';
-$string['phpversionhelp'] = '<p>Moodle requer a versão 4.3.0 de PHP ou posterior.</p>
-<p>A sua versão é  a {$a}</p>
-<p>Atualize a versão do PHP!</p>
-(atenção, a versão 5.0.x tem muitos problemas - use a versão 5.1.0 ou a 4.4)';
+$string['phpversionhelp'] = '<p>O Moodle requer uma versão PHP de pelo menos 5.6.5 (o 7.x tem algumas limitações do motor). </p>
+<p>Atualmente, você está executando a versão {$ a}. </p>
+<p>Você deve atualizar o PHP ou migrar para um host com uma versão mais recente do PHP. </p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Você está vendo esa página pois instalou com sucesso o pacote<strong>{$a->packname} {$a->packversion}</strong>. Parabéns!';
 $string['welcomep30'] = 'Esta versão do <strong>{$a->installername}</strong> inclui as aplicações para a criação de um ambiente em que <strong>Moodle</strong> possa operar:';

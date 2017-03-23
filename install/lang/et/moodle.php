@@ -31,6 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'Keel';
+$string['moodlelogo'] = 'Moodle‘i logo';
 $string['next'] = 'Järgmine';
 $string['previous'] = 'Eelmine';
 $string['reload'] = 'Laadi uuesti';
