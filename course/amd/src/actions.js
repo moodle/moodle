@@ -355,14 +355,21 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          */
         var replaceActionItem = function(actionitem, image, stringname,
                                            stringcomponent, titlestr, titlecomponent, newaction) {
-            actionitem.find('img').attr('src', url.imageUrl(image, 'core'));
+
             str.get_string(stringname, stringcomponent).done(function(newstring) {
                 actionitem.find('span.menu-action-text').html(newstring);
                 actionitem.attr('title', newstring);
             });
             if (titlestr) {
-                str.get_string(titlestr, titlecomponent).done(function(newtitle) {
+                str.get_string(titlestr, titlecomponent).then(function(newtitle) {
+                    templates.renderPix(image, 'core', newtitle).then(function(html) {
+                        actionitem.find('.icon').replaceWith(html);
+                    });
                     actionitem.attr('title', newtitle);
+                });
+            } else {
+                templates.renderPix(image, 'core', '').then(function(html) {
+                    actionitem.find('.icon').replaceWith(html);
                 });
             }
             actionitem.attr('data-action', newaction);
