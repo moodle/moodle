@@ -43,11 +43,20 @@ if (!is_null($storedsecret)) {
         $data->email = $storedemail;
         $bp = new OpenBadgesBackpackHandler($data);
 
+        // Make sure we have all the required information before trying to save the connection.
+        $backpackuser = $bp->curl_request('user');
+        if (isset($backpackuser->status) && $backpackuser->status === 'okay' && isset($backpackuser->userId)) {
+            $backpackuid = $backpackuser->userId;
+        } else {
+            redirect(new moodle_url($redirect), get_string('backpackconnectionunexpectedresult', 'badges'),
+                null, \core\output\notification::NOTIFY_ERROR);
+        }
+
         $obj = new stdClass();
         $obj->userid = $USER->id;
         $obj->email = $data->email;
         $obj->backpackurl = $data->backpackurl;
-        $obj->backpackuid = $bp->curl_request('user')->userId;
+        $obj->backpackuid = $backpackuid;
         $obj->autosync = 0;
         $obj->password = '';
         $DB->insert_record('badge_backpack', $obj);

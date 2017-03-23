@@ -94,6 +94,7 @@ For more information about Persona visit <a href="https://login.persona.org/abou
 $string['backpackconnectioncancelattempt'] = 'Connect using a different email address';
 $string['backpackconnectionconnect'] = 'Connect to Backpack';
 $string['backpackconnectionresendemail'] = 'Resend verification email';
+$string['backpackconnectionunexpectedresult'] = 'There was a problem contacting the Backpack. Please try again.<br><br>If this problem persists, please contact your system administrator.';
 $string['backpackemailverificationpending'] = 'Verification pending';
 $string['backpackemailverifyemailbody'] = 'Hi,
 
