@@ -250,6 +250,7 @@ function lti_verify_message($key, $sharedsecrets, $body, $headers = null) {
             // TODO: Switch to core oauthlib once implemented - MDL-30149.
             lti\handle_oauth_body_post($key, $secret, $body, $headers);
         } catch (Exception $e) {
+            debugging('LTI message verification failed: '.$e->getMessage());
             $signaturefailed = true;
         }
 
