@@ -247,7 +247,7 @@ class core_calendar_events_testcase extends advanced_testcase {
         $expectedlog = array($SITE->id, 'calendar', 'edit', 'event.php?action=edit&amp;id=' . $calevent->id ,
             $calevent->name);
         $this->assertEventLegacyLogData($expectedlog, $event);
-        $other = array('repeatid' => 0, 'timestart' => time(), 'name' => 'Some wickedly awesome event yo!');
+        $other = array('repeatid' => 0, 'timestart' => $time, 'name' => 'Some wickedly awesome event yo!');
         $this->assertEquals($other, $event->other);
         $this->assertEventContextNotUsed($event);
         $this->assertEquals($dbrecord, $event->get_record_snapshot('event', $event->objectid));
