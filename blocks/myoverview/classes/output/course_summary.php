@@ -57,14 +57,16 @@ class course_summary implements renderable, templatable {
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param \renderer_base $output
-     * @return stdClass
+     * @return array
      */
     public function export_for_template(renderer_base $output) {
 
         $data = [];
-        foreach ($this->courses as $courseid => $value) {
+        foreach ($this->courses as $courseid => $course) {
             $context = \context_course::instance($courseid);
-            $exporter = new course_summary_exporter($this->courses[$courseid], array('context' => $context));
+            // Convert summary to plain text.
+            $course->summary = content_to_text($course->summary, false);
+            $exporter = new course_summary_exporter($course, array('context' => $context));
             $exportedcourse = $exporter->export($output);
 
             if (isset($this->coursesprogress[$courseid])) {

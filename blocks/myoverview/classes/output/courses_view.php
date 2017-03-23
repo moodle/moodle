@@ -77,6 +77,8 @@ class courses_view implements renderable, templatable {
             $enddate = $course->enddate;
             $courseid = $course->id;
             $context = \context_course::instance($courseid);
+            // Convert summary to plain text.
+            $course->summary = content_to_text($course->summary, false);
             $exporter = new course_summary_exporter($course, [
                 'context' => $context
             ]);
