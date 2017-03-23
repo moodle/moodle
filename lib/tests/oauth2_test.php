@@ -140,8 +140,6 @@ class core_oauth2_testcase extends advanced_testcase {
      * Tests we can enable and disable an issuer.
      */
     public function test_enable_disable_issuer() {
-        global $SESSION;
-
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -170,8 +168,6 @@ class core_oauth2_testcase extends advanced_testcase {
      * Test the alloweddomains for an issuer.
      */
     public function test_issuer_alloweddomains() {
-        global $SESSION;
-
         $this->resetAfterTest();
         $this->setAdminUser();
 

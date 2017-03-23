@@ -621,7 +621,7 @@ class api {
      *
      * Requires moodle/site:config capability at the system context.
      *
-     * @param int $id The id of the identity issuer to enable.
+     * @param int $id The id of the identity issuer to disable.
      * @return boolean
      */
     public static function disable_issuer($id) {

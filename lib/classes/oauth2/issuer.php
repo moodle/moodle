@@ -150,6 +150,7 @@ class issuer extends persistent {
             $emaildomain = $parts[1];
         }
 
+        $emaildomain = \core_text::strtolower(trim($emaildomain));
         foreach ($validdomains as $checkdomain) {
             $checkdomain = \core_text::strtolower(trim($checkdomain));
 
