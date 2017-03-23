@@ -2822,6 +2822,7 @@ class lesson extends lesson_base {
             'reviewlesson' => false,
             'modattemptsnoteacher' => false,
             'activitylink' => false,
+            'progresscompleted' => false,
         );
 
         $ntries = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
