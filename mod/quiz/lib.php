@@ -65,6 +65,12 @@ define('QUIZ_NAVMETHOD_SEQ',  'sequential');
 /**#@-*/
 
 /**
+ * Event types.
+ */
+define('QUIZ_EVENT_TYPE_OPEN', 'open');
+define('QUIZ_EVENT_TYPE_CLOSE', 'close');
+
+/**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will create a new instance and return the id number
@@ -1232,6 +1238,7 @@ function quiz_update_events($quiz, $override = null) {
         }
 
         $event = new stdClass();
+        $event->type = !$timeclose ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
         $event->description = format_module_intro('quiz', $quiz, $cmid);
         // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $quiz->course;
@@ -1241,8 +1248,9 @@ function quiz_update_events($quiz, $override = null) {
         $event->instance    = $quiz->id;
         $event->timestart   = $timeopen;
         $event->timeduration = max($timeclose - $timeopen, 0);
+        $event->timesort    = $timeopen;
         $event->visible     = instance_is_visible('quiz', $quiz);
-        $event->eventtype   = 'open';
+        $event->eventtype   = QUIZ_EVENT_TYPE_OPEN;
 
         // Determine the event name and priority.
         if ($groupid) {
@@ -1293,9 +1301,11 @@ function quiz_update_events($quiz, $override = null) {
                 } else {
                     unset($event->id);
                 }
+                $event->type      = CALENDAR_EVENT_TYPE_ACTION;
                 $event->name      = $eventname.' ('.get_string('quizcloses', 'quiz').')';
                 $event->timestart = $timeclose;
-                $event->eventtype = 'close';
+                $event->timesort  = $timeclose;
+                $event->eventtype = QUIZ_EVENT_TYPE_CLOSE;
                 if ($groupid && $grouppriorities !== null) {
                     $closepriorities = $grouppriorities['close'];
                     if (isset($closepriorities[$timeclose])) {
@@ -2064,4 +2074,59 @@ function mod_quiz_get_fontawesome_icon_map() {
     return [
         'mod_quiz:navflagged' => 'fa-flag',
     ];
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param \core_calendar\event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_quiz_core_calendar_provide_event_action(\core_calendar\event $event,
+                                                     \core_calendar\action_factory $factory) {
+    global $CFG, $USER;
+
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
+    $cm = get_fast_modinfo($event->courseid)->instances['quiz'][$event->instance];
+    $quizobj = quiz::create($cm->instance, $USER->id);
+    $quiz = $quizobj->get_quiz();
+
+    // Check they have capabilities allowing them to view the quiz.
+    if (!has_any_capability(array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $quizobj->get_context())) {
+        return null;
+    }
+
+    quiz_update_effective_access($quiz, $USER->id);
+
+    // Check if quiz is closed, if so don't display it.
+    if (!empty($quiz->timeclose) && $quiz->timeclose <= time()) {
+        return null;
+    }
+
+    $attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id);
+    if (!empty($attempts)) {
+        // The student's last attempt is finished.
+        return null;
+    }
+
+    $name = get_string('attemptquiznow', 'quiz');
+    $url = new \moodle_url('/mod/quiz/view.php', [
+        'id' => $cm->id
+    ]);
+    $itemcount = 1;
+    $actionable = true;
+
+    // Check if the quiz is not currently actionable.
+    if (!empty($quiz->timeopen) && $quiz->timeopen > time()) {
+        $actionable = false;
+    }
+
+    return $factory->create_instance(
+        $name,
+        $url,
+        $itemcount,
+        $actionable
+    );
 }
