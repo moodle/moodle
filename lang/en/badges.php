@@ -87,6 +87,7 @@ Currently, only <a href="http://backpack.openbadges.org">Mozilla OpenBadges Back
 $string['backpackconnectioncancelattempt'] = 'Connect using a different email address';
 $string['backpackconnectionconnect'] = 'Connect to Backpack';
 $string['backpackconnectionresendemail'] = 'Resend verification email';
+$string['backpackconnectionunexpectedresult'] = 'There was a problem contacting the Backpack. Please try again.<br><br>If this problem persists, please contact your system administrator.';
 $string['backpackdetails'] = 'Backpack settings';
 $string['backpackemail'] = 'Email address';
 $string['backpackemail_help'] = 'The email address associated with your backpack. While you are connected, any badges earned on this site will be associated with this email address.';
