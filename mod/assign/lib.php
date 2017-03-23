@@ -248,7 +248,7 @@ function assign_update_events($assign, $override = null) {
         $groupid   = isset($current->groupid) ? $current->groupid : 0;
         $userid    = isset($current->userid) ? $current->userid : 0;
         $allowsubmissionsfromdate  = isset($current->allowsubmissionsfromdate
-        ) ? $current->allowsubmissionsfromdate : $assign->get_context()->allowsubmissionsfromdate;
+        ) ? $current->allowsubmissionsfromdate : $assigninstance->allowsubmissionsfromdate;
         $duedate = isset($current->duedate) ? $current->duedate : $assigninstance->duedate;
 
         // Only add open/close events for an override if they differ from the assign default.
