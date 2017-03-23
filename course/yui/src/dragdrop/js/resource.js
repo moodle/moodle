@@ -106,7 +106,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
             // Replace move icons
             var move = resourcesnode.one('a.' + CSS.EDITINGMOVE);
             if (move) {
-                var sr = move.getData('sr');
+                var sr = move.getData('sectionreturn');
                 move.replace(this.get_drag_handle(M.util.get_string('movecoursemodule', 'moodle'),
                              CSS.EDITINGMOVE, CSS.ICONCLASS, true).setAttribute('data-sectionreturn', sr));
             }
