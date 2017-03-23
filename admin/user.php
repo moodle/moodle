@@ -187,7 +187,8 @@
             } else {
                 $columnicon = ($dir == "ASC") ? "sort_asc" : "sort_desc";
             }
-            $columnicon = $OUTPUT->pix_icon('t/' . $columnicon, get_string($columndir), 'core', ['class' => 'iconsort']);
+            $columnicon = $OUTPUT->pix_icon('t/' . $columnicon, get_string(strtolower($columndir)), 'core',
+                                            ['class' => 'iconsort']);
 
         }
         $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";
