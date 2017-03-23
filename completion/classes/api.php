@@ -50,7 +50,10 @@ class api {
      * @return bool
      */
     public static function update_completion_date_event($cmid, $modulename, $instanceid, $completionexpectedtime) {
-        global $DB;
+        global $CFG, $DB;
+
+        // Required for calendar constant CALENDAR_EVENT_TYPE_ACTION.
+        require_once($CFG->dirroot . '/calendar/lib.php');
 
         $instance = $DB->get_record($modulename, array('id' => $instanceid), '*', MUST_EXIST);
         $course = $DB->get_record('course', array('id' => $instance->course), '*', MUST_EXIST);
