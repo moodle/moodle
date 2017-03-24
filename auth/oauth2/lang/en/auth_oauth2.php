@@ -65,20 +65,20 @@ line at the top of your web browser window.
 If you need help, please contact the site administrator,
 {$a->admin}';
 $string['confirmlinkedloginemailsubject'] = '{$a}: linked login confirmation';
-$string['confirmaccountemail'] = 'Hi {$a->fullname},                                                                                 
-                                                                                                                                    
-A new account has been requested at \'{$a->sitename}\'                                                                              
-using your email address.                                                                                                           
-                                                                                                                                    
-To confirm your new account, please go to this web address:                                                                         
-                                                                                                                                    
-{$a->link}                                                                                                                          
-                                                                                                                                    
-In most mail programs, this should appear as a blue link                                                                            
-which you can just click on.  If that doesn\'t work,                                                                                
-then cut and paste the address into the address                                                                                     
-line at the top of your web browser window.                                                                                         
-                                                                                                                                    
-If you need help, please contact the site administrator,                                                                            
+$string['confirmaccountemail'] = 'Hi {$a->fullname},
+
+A new account has been requested at \'{$a->sitename}\'
+using your email address.
+
+To confirm your new account, please go to this web address:
+
+{$a->link}
+
+In most mail programs, this should appear as a blue link
+which you can just click on.  If that doesn\'t work,
+then cut and paste the address into the address
+line at the top of your web browser window.
+
+If you need help, please contact the site administrator,
 {$a->admin}';
 $string['confirmaccountemailsubject'] = '{$a}: account confirmation';

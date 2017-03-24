@@ -64,6 +64,7 @@ abstract class rest {
      * @param string $functionname
      * @param array $functionargs
      * @param string $rawpost Optional param to include in the body of a post.
+     * @return string|object
      */
     public function call($functionname, $functionargs, $rawpost = false) {
         $functions = $this->get_api_functions();

@@ -131,7 +131,6 @@ class api {
      * @return bool
      */
     public static function send_confirm_link_login_email($userinfo, $issuer, $userid) {
-
         $record = new stdClass();
         $record->issuerid = $issuer->get('id');
         $record->username = $userinfo['username'];

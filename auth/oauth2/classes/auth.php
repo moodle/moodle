@@ -315,7 +315,7 @@ class auth extends \auth_plugin_base {
      * @param string $username
      * @param string $confirmsecret
      */
-    function user_confirm($username, $confirmsecret) {
+    public function user_confirm($username, $confirmsecret) {
         global $DB;
         $user = get_complete_user_data('username', $username);
 
@@ -326,8 +326,8 @@ class auth extends \auth_plugin_base {
             } else if ($user->secret == $confirmsecret && $user->confirmed) {
                 return AUTH_CONFIRM_ALREADY;
 
-            } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
-                $DB->set_field("user", "confirmed", 1, array("id"=>$user->id));
+            } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in.
+                $DB->set_field("user", "confirmed", 1, array("id" => $user->id));
                 return AUTH_CONFIRM_OK;
             }
         } else {
@@ -338,8 +338,8 @@ class auth extends \auth_plugin_base {
     /**
      * Print a page showing that a confirm email was sent with instructions.
      *
-     * @param string title
-     * @param string message
+     * @param string $title
+     * @param string $message
      */
     public function print_confirm_required($title, $message) {
         global $PAGE, $OUTPUT, $CFG;

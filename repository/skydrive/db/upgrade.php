@@ -17,6 +17,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Upgrade this plugin.
+ *
  * @param int $oldversion the version we are upgrading from
  * @package repository_skydrive
  * @return bool result

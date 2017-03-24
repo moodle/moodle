@@ -1007,6 +1007,7 @@ class repository_skydrive extends repository {
 /**
  * Callback to get the required scopes for system account.
  *
+ * @param \core\oauth2\issuer $issuer
  * @return string
  */
 function repository_skydrive_oauth2_system_scopes(\core\oauth2\issuer $issuer) {

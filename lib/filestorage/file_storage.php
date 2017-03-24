@@ -1128,7 +1128,8 @@ class file_storage {
         // creating a new file from an existing alias creates new alias implicitly.
         // here we just check the database consistency.
         if (!empty($newrecord->repositoryid)) {
-            // It is OK if the current reference does not exist. It may have been altered by a repository plugin when the files where saved from a draft area.
+            // It is OK if the current reference does not exist. It may have been altered by a repository plugin when the files
+            // where saved from a draft area.
             $newrecord->referencefileid = $this->get_or_create_referencefileid($newrecord->repositoryid, $newrecord->reference);
         }
 
