@@ -45,8 +45,7 @@
 <form method="post" action="editbulkcompletion.php" class="mform" id="theform">
     <div class="row m-b-2">
         <div class="col">
-            <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" aria-label="{{#str}}updateactivities, completion{{/str}}" />
-            <input type="reset" value="{{#str}}cancel{{/str}}" class="btn btn-secondary" aria-label="{{#str}}resetactivities, completion{{/str}}" />
+            <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" aria-label="{{#str}}updateactivities, completion{{/str}}" disabled/>
         </div>
     </div>
     <div class="top-section row m-b-1">
@@ -76,8 +75,7 @@
     <input type="hidden" name="sesskey" value="{{sesskey}}" />
     <div class="row">
         <div class="col">
-            <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" />
-            <input type="reset" value="{{#str}}cancel{{/str}}" class="btn btn-secondary" />
+            <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" disabled/>
         </div>
     </div>
 </form>
@@ -91,6 +89,7 @@ require([
         var checked = $('.mastercheck').is(':checked');
         $('input[type=checkbox]').each(function() {
             $(this).prop('checked', checked);
+            $(this).trigger('change'); // Hmmm. Could be smarter about this and only trigger once for the first checkbox.
         });
     });
     var mastersection = $('input[data-section-master]');
@@ -99,7 +98,27 @@ require([
         var dataid = $(this).attr('data-section-master');
         $('input[type=checkbox][data-section=\'' + dataid + '\']').each(function() {
             $(this).prop('checked', checked);
+            $(this).trigger('change'); // Hmmm. Could be smarter about this and only trigger once for the first checkbox.
         });
+    });
+
+    $('input[type=checkbox][id^=selectactivity_]').change(function() {
+        if ($(this).is(':checked')) {
+            $('[name=submitbutton]').removeAttr('disabled');
+        } else {
+            // Is this the last activity checkbox to be un-checked? If so, disable the edit button.
+            var somechecked = false;
+            $('input[type=checkbox][id^=selectactivity_]').each(function() {
+                if ($(this).is(':checked')) {
+                    somechecked = true;
+                    return false;
+                }
+                return true;
+            });
+            if (!somechecked) {
+                $('[name=submitbutton]').attr('disabled', 'disabled');
+            }
+        }
     });
 });
 {{/js}}

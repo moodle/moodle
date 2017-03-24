@@ -42,8 +42,7 @@
 <form method="post" action="editdefaultcompletion.php" class="mform" id="theform">
     <div class="row m-b-2">
         <div class="col">
-            <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" aria-label="{{#str}}updateactivities, completion{{/str}}" />
-            <input type="reset" value="{{#str}}cancel{{/str}}" class="btn btn-secondary" aria-label="{{#str}}resetactivities, completion{{/str}}" />
+            <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" aria-label="{{#str}}updateactivities, completion{{/str}}" disabled/>
         </div>
     </div>
     <div class="top-section row m-b-1">
@@ -90,7 +89,6 @@
     <div class="row">
         <div class="col">
             <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" />
-            <input type="reset" value="{{#str}}cancel{{/str}}" class="btn btn-secondary" />
         </div>
     </div>
 </form>
@@ -104,7 +102,27 @@ require([
         var checked = $('.mastercheck').is(':checked');
         $('input[type=checkbox]').each(function() {
             $(this).prop('checked', checked);
+            $(this).trigger('change');
         });
+    });
+
+    $('input[type=checkbox][id^=modtype_]').change(function() {
+        if ($(this).is(':checked')) {
+            $('[name=submitbutton]').removeAttr('disabled');
+        } else {
+            // Is this the last activity checkbox to be un-checked? If so, disable the edit button.
+            var somechecked = false;
+            $('input[type=checkbox][id^=modtype_]').each(function() {
+                if ($(this).is(':checked')) {
+                    somechecked = true;
+                    return false;
+                }
+                return true;
+            });
+            if (!somechecked) {
+                $('[name=submitbutton]').attr('disabled', 'disabled');
+            }
+        }
     });
 });
 {{/js}}
