@@ -4174,3 +4174,41 @@ function mod_data_get_fontawesome_icon_map() {
         'mod_data:field/url' => 'fa-link',
     ];
 }
+
+/*
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function data_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/data/locallib.php');
+
+    $updates = course_check_module_updates_since($cm, $from, array(), $filter);
+
+    // Check for new entries.
+    $updates->entries = (object) array('updated' => false);
+
+    $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
+    $searcharray = [];
+    $searcharray[DATA_TIMEMODIFIED] = new stdClass();
+    $searcharray[DATA_TIMEMODIFIED]->sql     = '';
+    $searcharray[DATA_TIMEMODIFIED]->params  = array();
+    $searcharray[DATA_TIMEMODIFIED]->field   = 'r.timemodified';
+    $searcharray[DATA_TIMEMODIFIED]->data    = $from;
+
+    $currentgroup = groups_get_activity_group($cm);
+    list($entries, $maxcount, $totalcount, $page, $nowperpage, $sort, $mode) =
+        data_search_entries($data, $cm, $cm->context, 'list', $currentgroup, '', null, null, 0, 0, true, $searcharray);
+
+    if (!empty($entries)) {
+        $updates->entries->updated = true;
+        $updates->entries->itemids = array_keys($entries);
+    }
+
+    return $updates;
+}

@@ -921,4 +921,77 @@ class mod_data_lib_testcase extends advanced_testcase {
         $completiondata = $completion->get_data($cm);
         $this->assertEquals(1, $completiondata->completionstate);
     }
+
+    /**
+     * Test check_updates_since callback.
+     */
+    public function test_check_updates_since() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        // Create user.
+        $student = self::getDataGenerator()->create_user();
+        // User enrolment.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id, 'manual');
+        $this->setCurrentTimeStart();
+        $record = array(
+            'course' => $course->id,
+        );
+        $data = $this->getDataGenerator()->create_module('data', $record);
+        $cm = get_coursemodule_from_instance('data', $data->id, $course->id);
+        $cm = cm_info::create($cm);
+        $this->setUser($student);
+
+        // Check that upon creation, the updates are only about the new configuration created.
+        $onehourago = time() - HOURSECS;
+        $updates = data_check_updates_since($cm, $onehourago);
+        foreach ($updates as $el => $val) {
+            if ($el == 'configuration') {
+                $this->assertTrue($val->updated);
+                $this->assertTimeCurrent($val->timeupdated);
+            } else {
+                $this->assertFalse($val->updated);
+            }
+        }
+
+        // Add a couple of entries.
+        $datagenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $fieldtypes = array('checkbox', 'date');
+
+        $count = 1;
+        // Creating test Fields with default parameter values.
+        foreach ($fieldtypes as $fieldtype) {
+            // Creating variables dynamically.
+            $fieldname = 'field-' . $count;
+            $record = new StdClass();
+            $record->name = $fieldname;
+            $record->type = $fieldtype;
+            $record->required = 1;
+
+            ${$fieldname} = $datagenerator->create_field($record, $data);
+            $count++;
+        }
+
+        $fields = $DB->get_records('data_fields', array('dataid' => $data->id), 'id');
+
+        $contents = array();
+        $contents[] = array('opt1', 'opt2', 'opt3', 'opt4');
+        $contents[] = '01-01-2037'; // It should be lower than 2038, to avoid failing on 32-bit windows.
+        $count = 0;
+        $fieldcontents = array();
+        foreach ($fields as $fieldrecord) {
+            $fieldcontents[$fieldrecord->id] = $contents[$count++];
+        }
+
+        $datarecor1did = $datagenerator->create_entry($data, $fieldcontents);
+        $datarecor2did = $datagenerator->create_entry($data, $fieldcontents);
+        $records = $DB->get_records('data_records', array('dataid' => $data->id));
+        $this->assertCount(2, $records);
+        // Check we received the entries updated.
+        $updates = data_check_updates_since($cm, $onehourago);
+        $this->assertTrue($updates->entries->updated);
+        $this->assertEquals([$datarecor1did, $datarecor2did], $updates->entries->itemids, '', 0, 10, true);
+    }
 }
