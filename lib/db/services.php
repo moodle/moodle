@@ -56,7 +56,8 @@ $functions = array(
         'description' => 'Create calendar events',
         'classpath' => 'calendar/externallib.php',
         'type' => 'write',
-        'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries'
+        'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_calendar_delete_calendar_events' => array(
         'classname' => 'core_calendar_external',
@@ -64,7 +65,8 @@ $functions = array(
         'description' => 'Delete calendar events',
         'classpath' => 'calendar/externallib.php',
         'type' => 'write',
-        'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries'
+        'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_calendar_get_calendar_events' => array(
         'classname' => 'core_calendar_external',
