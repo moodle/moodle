@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for plugin 'fileconverter_example'
+ * Strings for plugin 'fileconverter_googledrive'
  *
- * @package   fileconverter_example
+ * @package   fileconverter_googledrive
  * @copyright 2017 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

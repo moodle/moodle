@@ -3607,7 +3607,7 @@ class curl {
         $fp = false;
         if (isset($params['file'])) {
             $file = $params['file'];
-            if(is_file($file)) {
+            if (is_file($file)) {
                 $fp   = fopen($file, 'r');
                 $size = filesize($file);
                 $options['CURLOPT_PUT']        = 1;
@@ -3617,7 +3617,7 @@ class curl {
                 return null;
             }
             if (!isset($this->options['CURLOPT_USERPWD'])) {
-                $this->setopt(array('CURLOPT_USERPWD'=>'anonymous: noreply@moodle.org'));
+                $this->setopt(array('CURLOPT_USERPWD' => 'anonymous: noreply@moodle.org'));
             }
         } else {
             $options['CURLOPT_CUSTOMREQUEST'] = 'PUT';

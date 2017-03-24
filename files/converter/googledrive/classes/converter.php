@@ -39,6 +39,7 @@ use \core_files\conversion;
  */
 class converter implements \core_files\converter_interface {
 
+    /** @var array $imports List of supported import file formats */
     private static $imports = [
         'doc' => 'application/vnd.google-apps.document',
         'docx' => 'application/vnd.google-apps.document',
@@ -49,6 +50,7 @@ class converter implements \core_files\converter_interface {
         'pptx' => 'application/vnd.google-apps.presentation'
     ];
 
+    /** @var array $export List of supported export file formats */
     private static $exports = [
         'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'rtf' => 'application/rtf',
@@ -61,8 +63,7 @@ class converter implements \core_files\converter_interface {
     /**
      * Convert a document to a new format and return a conversion object relating to the conversion in progress.
      *
-     * @param   conversion $conversion The file to be converted
-     * @param   string $format The target file format
+     * @param   \core_files\conversion $conversion The file to be converted
      * @return  this
      */
     public function start_document_conversion(\core_files\conversion $conversion) {

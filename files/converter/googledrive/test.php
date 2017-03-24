@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test that unoconv is configured correctly
+ * Test that googledrive is configured correctly
  *
- * @package   fileconverter_unoconv
+ * @package   fileconverter_googledrive
  * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
