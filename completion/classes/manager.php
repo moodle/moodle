@@ -135,7 +135,7 @@ class manager {
 
             case COMPLETION_TRACKING_MANUAL:
                 $strings['string'] = get_string('manual');
-                $strings['icon'] = $OUTPUT->pix_url('i/completion-manual-enabled')->out();
+                $strings['icon'] = $OUTPUT->pix_icon('i/completion-manual-y', get_string('completion_manual', 'completion'));
                 break;
 
             case COMPLETION_TRACKING_AUTOMATIC:
@@ -148,7 +148,7 @@ class manager {
                     }
                 }
 
-                $strings['icon'] = $OUTPUT->pix_url('i/completion-auto-enabled')->out();
+                $strings['icon'] = $OUTPUT->pix_icon('i/completion-auto-y', get_string('completion_automatic', 'completion'));
                 break;
 
             default:
@@ -213,7 +213,7 @@ class manager {
         $canmanage = has_capability('moodle/course:manageactivities', $coursecontext);
         $course = get_course($this->courseid);
         foreach ($data->modules as $module) {
-            $module->icon = $OUTPUT->pix_url('icon', $module->name)->out();
+            $module->icon = $OUTPUT->image_url('icon', $module->name)->out();
             $module->formattedname = format_string(get_string('modulenameplural', 'mod_' . $module->name),
                 true, ['context' => $coursecontext]);
             $module->canmanage = $canmanage && \course_allowed_module($course, $module->name);

@@ -33,7 +33,7 @@
     }
 }}
 {{#activities}}
-<div class="row m-b-1">
+<div class="row m-b-1 row-fluid">
     <div class="activityinstance col-sm-6 span6">
         <div class="mod-indent-outer"></div>
         <div>
@@ -47,16 +47,16 @@
                 </a>
         </div>
     </div>
-    <div class="activity-completionstatus col-sm-6" id="completionstatus_{{cmid}}">
-        <div class="col-sm-1">
+    <div class="activity-completionstatus col-sm-6 span6" id="completionstatus_{{cmid}}">
+        <div class="col-sm-1 span1  p-l-0">
             {{#completionstatus.icon}}
-                <img src="{{completionstatus.icon}}" class="m-r-2" alt=" " role="presentation">
+                {{{completionstatus.icon}}}
             {{/completionstatus.icon}}
             {{^completionstatus.icon}}
                 <span class="m-r-3"></span>
             {{/completionstatus.icon}}
         </div>
-        <div class="col-sm-11">
+        <div class="col-sm-11 span11  p-l-0">
             <span class="text-muted muted">{{{completionstatus.string}}}</span>
         </div>
     </div>

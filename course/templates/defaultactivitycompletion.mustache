@@ -60,23 +60,23 @@
         {{#modules}}
             {{#canmanage}}
              <div class="module-section m-b-1">
-                <div class="row m-b-1">
-                    <div class="col-sm-6">
+                <div class="row m-b-1 row-fluid">
+                    <div class="col-sm-6 span6">
                         <label class="accesshide" for="modtype_{{id}}">Select {{formattedname}}</label>
                         <input id="modtype_{{id}}" type="checkbox" class="m-r-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{formattedname}}{{/str}}">
                         <img src="{{icon}}" alt=" " role="presentation" />
                         <span>{{formattedname}}</span>
                     </div>
-                    <div class="activity-completionstatus col-sm-6">
-                        <div class="col-sm-1">
+                    <div class="activity-completionstatus col-sm-6 span6">
+                        <div class="col-sm-1 span1 p-l-0">
                             {{#completionstatus.icon}}
-                                <img src="{{completionstatus.icon}}" class="m-r-2" alt=" " role="presentation">
+                                {{{completionstatus.icon}}}
                             {{/completionstatus.icon}}
                             {{^completionstatus.icon}}
                                 <span class="m-r-3"></span>
                             {{/completionstatus.icon}}
                         </div>
-                        <div class="col-sm-11">
+                        <div class="col-sm-11 span11 p-l-0">
                             <span class="text-muted muted">{{{completionstatus.string}}}</span>
                         </div>
                     </div>
