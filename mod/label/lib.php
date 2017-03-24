@@ -111,7 +111,7 @@ function label_delete_instance($id) {
     $result = true;
 
     $cm = get_coursemodule_from_instance('label', $id);
-    \core_completion\api::update_completion_date_event('label', $label->id, null);
+    \core_completion\api::update_completion_date_event($cm->id, 'label', $label->id, null);
 
     if (! $DB->delete_records("label", array("id"=>$label->id))) {
         $result = false;
