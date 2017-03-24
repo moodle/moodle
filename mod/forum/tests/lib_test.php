@@ -2055,6 +2055,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $discussiong3u3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
         self::setUser($user1);
+
         // Test retrieve discussions not passing the groupid parameter. We will receive only first group discussions.
         $discussions = forum_get_discussions($cm);
         self::assertCount(2, $discussions);
