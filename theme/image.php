@@ -235,13 +235,20 @@ function send_cached_image($imagepath, $etag) {
     header('Cache-Control: public, max-age='.$lifetime.', no-transform, immutable');
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
-    header('Content-Length: '.filesize($imagepath));
 
     if (xsendfile($imagepath)) {
         die;
     }
 
-    // no need to gzip already compressed images ;-)
+    if ($mimetype === 'image/svg+xml') {
+        // SVG format is a text file. So we can compress SVG files.
+        if (!min_enable_zlib_compression()) {
+            header('Content-Length: '.filesize($imagepath));
+        }
+    } else {
+        // No need to compress other image formats.
+        header('Content-Length: '.filesize($imagepath));
+    }
 
     readfile($imagepath);
     die;
