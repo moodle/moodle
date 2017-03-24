@@ -579,7 +579,7 @@ class behat_navigation extends behat_base {
      *
      * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage$/
      * @throws coding_exception
-     * @param $coursefullname string The full name of the course.
+     * @param string $coursefullname The full name of the course.
      * @return void
      */
     public function i_am_on_course_homepage($coursefullname) {
@@ -594,7 +594,7 @@ class behat_navigation extends behat_base {
      *
      * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage with editing mode on$/
      * @throws coding_exception
-     * @param $coursefullname string The course full name of the course.
+     * @param string $coursefullname The course full name of the course.
      * @return void
      */
     public function i_am_on_course_homepage_with_editing_mode_on($coursefullname) {

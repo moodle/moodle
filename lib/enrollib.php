@@ -544,7 +544,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
  * @param array $courseids the list of course ids to filter by
  * @return array
  */
-function enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder ASC',
+function enrol_get_my_courses($fields = null, $sort = 'visible DESC,sortorder ASC',
                               $limit = 0, $courseids = []) {
     global $DB, $USER;
 

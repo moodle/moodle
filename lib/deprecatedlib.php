@@ -6676,8 +6676,10 @@ function calendar_get_module_cached(&$coursecache, $modulename, $instance) {
     // so the old implementation must remain here.
     $module = get_coursemodule_from_instance($modulename, $instance);
 
-    if($module === false) return false;
-    if(!calendar_get_course_cached($coursecache, $module->course)) {
+    if ($module === false) {
+        return false;
+    }
+    if (!calendar_get_course_cached($coursecache, $module->course)) {
         return false;
     }
     return $module;
