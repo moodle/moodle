@@ -1710,11 +1710,17 @@ function assign_check_updates_since(cm_info $cm, $from, $filter = array()) {
 /**
  * Is the event visible?
  *
+ * This is used to determine global visibility of an event in all places throughout Moodle. For example,
+ * the ASSIGN_EVENT_TYPE_GRADINGDUE event will not be shown to students on their calendar, and
+ * ASSIGN_EVENT_TYPE_DUE events will not be shown to teachers.
+ *
  * @param \core_calendar\event $event
  * @return bool Returns true if the event is visible to the current user, false otherwise.
  */
 function mod_assign_core_calendar_is_event_visible(\core_calendar\event $event) {
-    global $USER;
+    global $CFG, $USER;
+
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
     $cm = get_fast_modinfo($event->courseid)->instances['assign'][$event->instance];
     $context = context_module::instance($cm->id);
