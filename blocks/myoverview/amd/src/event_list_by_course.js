@@ -74,7 +74,7 @@ function($, EventList, EventsRepository) {
             // Once all of the course events have been loaded then we need
             // to extract just the ones relevant to this course block and
             // hand them to the event list to render.
-            coursesPromise.done(function (result) {
+            coursesPromise.done(function(result) {
                 var events = [];
                 // Get this course block's events from the collection returned
                 // from the server.

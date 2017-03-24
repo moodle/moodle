@@ -110,6 +110,7 @@ define(['jquery', 'core/notification', 'core/templates',
      * @method isLoading
      * @private
      * @param {object} root The container element
+     * @returns {Boolean}
      */
     var isLoading = function(root) {
         return root.hasClass('loading');
@@ -181,6 +182,7 @@ define(['jquery', 'core/notification', 'core/templates',
      * @private
      * @param {object}  group           The group container element
      * @param {array}   calendarEvents  The list of calendar events
+     * @param {string}  templateName    The template name
      * @return {promise} Resolved when the elements are attached to the DOM
      */
     var renderGroup = function(group, calendarEvents, templateName) {
@@ -389,8 +391,7 @@ define(['jquery', 'core/notification', 'core/templates',
      * Register the event listeners for the container element.
      *
      * @method registerEventListeners
-     * @param {object} The root element of the event list
-     * @param {promise} A jquery promise
+     * @param {object} root The root element of the event list
      */
     var registerEventListeners = function(root) {
         CustomEvents.define(root, [CustomEvents.events.activate]);

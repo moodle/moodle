@@ -32,9 +32,8 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
     /**
      * Constructor of the paging content module.
      *
-     * @param root
-     * @param pagingBarElement
-     * @param loadContentCallback
+     * @param {object} root
+     * @param {object} pagingBarElement
      * @constructor
      */
     var PagingContent = function(root, pagingBarElement) {
@@ -48,14 +47,14 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
     /**
      * Load content and create page.
      *
-     * @param pageNumber
+     * @param {Number} pageNumber
      * @returns {*|Promise}
      */
     PagingContent.prototype.createPage = function(pageNumber) {
 
         return this.loadContent(pageNumber).then(function(html, js) {
             Templates.appendNodeContents(this.root, html, js);
-        }.bind(this)).then(function () {
+        }.bind(this)).then(function() {
                 return this.findPage(pageNumber);
             }.bind(this)
         );
@@ -64,17 +63,17 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
     /**
      * Find a page by the number.
      *
-     * @param pageNumber The number of the page to be found.
+     * @param {Number} pageNumber The number of the page to be found.
      * @returns {*} Page root
      */
     PagingContent.prototype.findPage = function(pageNumber) {
-        return this.root.find('[data-page="'+pageNumber+'"]');
+        return this.root.find('[data-page="' + pageNumber + '"]');
     };
 
     /**
      * Make a page visible.
      *
-     * @param pageNumber The number of the page to be visible.
+     * @param {Number} pageNumber The number of the page to be visible.
      */
     PagingContent.prototype.showPage = function(pageNumber) {
 
@@ -84,7 +83,7 @@ define(['jquery', 'core/templates', 'block_myoverview/paging_bar'],
         if (existingPage.length) {
             existingPage.removeClass('hidden');
         } else {
-            this.createPage(pageNumber).done(function (newPage) {
+            this.createPage(pageNumber).done(function(newPage) {
                 newPage.removeClass('hidden');
             });
         }

@@ -37,8 +37,8 @@ define(['jquery', 'core/custom_interaction_events'],
     /**
      * Get the page element by number.
      *
-     * @param root
-     * @param pageNumber
+     * @param {object} root The root element.
+     * @param {Number} pageNumber The page number.
      * @returns {*}
      */
     var getPageByNumber = function(root, pageNumber) {
@@ -48,8 +48,8 @@ define(['jquery', 'core/custom_interaction_events'],
     /**
      * Get the page number.
      *
-     * @param root the root element.
-     * @param page the page.
+     * @param {object} root The root element.
+     * @param {object} page The page.
      * @returns {*} the page number
      */
     var getPageNumber = function(root, page) {
@@ -66,7 +66,7 @@ define(['jquery', 'core/custom_interaction_events'],
 
     /**
      * Register event listeners for the module.
-     * @param root the root element.
+     * @param {object} root The root element.
      */
     var registerEventListeners = function(root) {
         root = $(root);

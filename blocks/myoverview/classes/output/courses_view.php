@@ -128,8 +128,8 @@ class courses_view implements renderable, templatable {
                 $coursesview[$status]['pagingbar']['last'] = ['page' => '&raquo;', 'url' => '#'];
                 for ($page = 0; $page < $quantpages; $page++) {
                     $coursesview[$status]['pagingbar']['pages'][$page] = [
-                        'number' => $page+1,
-                        'page' => $page+1,
+                        'number' => $page + 1,
+                        'page' => $page + 1,
                         'url' => '#',
                         'active' => ($page == 0 ? true : false)
                     ];
