@@ -197,7 +197,7 @@ function quiz_delete_instance($id) {
 
     $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
     foreach ($events as $event) {
-        $event = calendar_event::load($event);
+        $event = core_calendar\event::load($event);
         $event->delete();
     }
 
