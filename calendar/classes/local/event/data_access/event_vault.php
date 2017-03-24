@@ -207,6 +207,8 @@ class event_vault implements event_vault_interface {
             [$user->id],
             null,
             null,
+            true,
+            true,
             function ($event) {
                 return $event instanceof action_event_interface;
             }
@@ -234,6 +236,8 @@ class event_vault implements event_vault_interface {
                 [$user->id],
                 null,
                 [$course->id],
+                true,
+                true,
                 function ($event) use ($course) {
                     return $event instanceof action_event_interface && $event->get_course()->get_id() == $course->id;
                 }
