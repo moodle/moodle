@@ -37,7 +37,7 @@ Feature: Marking guides can be created and edited
       | Comment 1 |
       | Comment 2 |
       | Comment 3 |
-      | Comment 4 |
+      | Comment "4" |
     And I press "Save marking guide and make it ready"
     Then I should see "Ready for use"
     And I should see "Guide criterion A"
@@ -46,7 +46,7 @@ Feature: Marking guides can be created and edited
     And I should see "Comment 1"
     And I should see "Comment 2"
     And I should see "Comment 3"
-    And I should see "Comment 4"
+    And I should see "Comment \"4\""
 
   @javascript
   Scenario: Deleting criterion and comment
@@ -66,7 +66,7 @@ Feature: Marking guides can be created and edited
     And I press "Save"
     Then I should see "Comment 1"
     And I should see "Comment 2"
-    And I should see "Comment 4"
+    And I should see "Comment \"4\""
     But I should not see "Comment 3"
 
   @javascript
@@ -80,9 +80,9 @@ Feature: Marking guides can be created and edited
     # Inserting frequently used comment.
     And I click on "Insert frequently used comment" "button" in the "Guide criterion B" "table_row"
     And I wait "1" seconds
-    And I press "Comment 4"
+    And I press "Comment \"4\""
     And I wait "1" seconds
-    Then the field "Guide criterion B criterion remark" matches value "Comment 4"
+    Then the field "Guide criterion B criterion remark" matches value "Comment \"4\""
     When I press "Save changes"
     And I press "Ok"
     And I follow "Edit settings"
@@ -98,7 +98,7 @@ Feature: Marking guides can be created and edited
     And I should see "80" in the ".feedback" "css_element"
     And I should see "Marking guide test description" in the ".feedback" "css_element"
     And I should see "Very good"
-    And I should see "Comment 4"
+    And I should see "Comment \"4\""
     And I should see "Nice!"
 
   Scenario: I can use marking guides to grade and edit them later updating students grades with Javascript disabled
