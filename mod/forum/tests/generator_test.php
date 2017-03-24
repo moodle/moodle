@@ -117,6 +117,11 @@ class mod_forum_generator_testcase extends advanced_testcase {
         // Check the discussions were correctly created.
         $this->assertEquals(3, $DB->count_records_select('forum_discussions', 'forum = :forum',
             array('forum' => $forum->id)));
+
+        $record['tags'] = array('Cats', 'mice');
+        $record = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        $this->assertEquals(array('Cats', 'mice'),
+            array_values(core_tag_tag::get_item_tags_array('mod_forum', 'forum_posts', $record->firstpost)));
     }
 
     /**
@@ -160,6 +165,11 @@ class mod_forum_generator_testcase extends advanced_testcase {
         // is generated as well, so we should have 4 posts, not 3.
         $this->assertEquals(4, $DB->count_records_select('forum_posts', 'discussion = :discussion',
             array('discussion' => $discussion->id)));
+
+        $record->tags = array('Cats', 'mice');
+        $record = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        $this->assertEquals(array('Cats', 'mice'),
+            array_values(core_tag_tag::get_item_tags_array('mod_forum', 'forum_posts', $record->id)));
     }
 
     public function test_create_content() {
@@ -187,16 +197,21 @@ class mod_forum_generator_testcase extends advanced_testcase {
         $post3 = $generator->create_content($forum, array('discussion' => $post1->discussion));
         // This should create posts answering another post.
         $post4 = $generator->create_content($forum, array('parent' => $post2->id));
+        // This should create post with tags.
+        $post5 = $generator->create_content($forum, array('parent' => $post2->id, 'tags' => array('Cats', 'mice')));
 
         $discussionrecords = $DB->get_records('forum_discussions', array('forum' => $forum->id));
         $postrecords = $DB->get_records('forum_posts');
         $postrecords2 = $DB->get_records('forum_posts', array('discussion' => $post1->discussion));
         $this->assertEquals(1, count($discussionrecords));
-        $this->assertEquals(4, count($postrecords));
-        $this->assertEquals(4, count($postrecords2));
+        $this->assertEquals(5, count($postrecords));
+        $this->assertEquals(5, count($postrecords2));
         $this->assertEquals($post1->id, $discussionrecords[$post1->discussion]->firstpost);
         $this->assertEquals($post1->id, $postrecords[$post2->id]->parent);
         $this->assertEquals($post1->id, $postrecords[$post3->id]->parent);
         $this->assertEquals($post2->id, $postrecords[$post4->id]->parent);
+
+        $this->assertEquals(array('Cats', 'mice'),
+            array_values(core_tag_tag::get_item_tags_array('mod_forum', 'forum_posts', $post5->id)));
     }
 }

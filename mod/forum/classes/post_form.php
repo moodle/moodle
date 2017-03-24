@@ -238,6 +238,13 @@ class mod_forum_post_form extends moodleform {
             $mform->setConstants(array('timestart' => 0, 'timeend' => 0));
         }
 
+        if (core_tag_tag::is_enabled('mod_forum', 'forum_posts')) {
+            $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
+
+            $mform->addElement('tags', 'tags', get_string('tags'),
+                array('itemtype' => 'forum_posts', 'component' => 'mod_forum'));
+        }
+
         //-------------------------------------------------------------------------------
         // buttons
         if (isset($post->edit)) { // hack alert

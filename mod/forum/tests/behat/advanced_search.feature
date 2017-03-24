@@ -18,6 +18,9 @@ Feature: The forum search allows users to perform advanced searches for forum po
       | teacher1 | C1 | editingteacher |
       | teacher2 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "tags" exist:
+      | name         | isstandard  |
+      | SearchedTag  | 1           |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Latest announcements" block
@@ -27,6 +30,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
     And I add a new topic to "Announcements" forum with:
       | Subject | My subject |
       | Message | My message |
+      | Tags    | SearchedTag |
     And I am on "Course 1" course homepage
     And I add a new topic to "Announcements" forum with:
       | Subject | My subjective|
@@ -108,3 +112,16 @@ Feature: The forum search allows users to perform advanced searches for forum po
     When I press "Search forums"
     Then I should not see "My message"
     And I should see "My subjective"
+
+  @javascript
+  Scenario: Perform an advanced search using tags
+    Given I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Announcements"
+    And I press "Search forums"
+    And I should see "Advanced search"
+    And I set the field "Is tagged with" to "SearchedTag"
+    And I click on "[data-value='SearchedTag']" "css_element"
+    When I press "Search forums"
+    Then I should see "My subject"
+    And I should not see "My subjective"
