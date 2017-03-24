@@ -59,8 +59,8 @@ class main implements renderable, templatable {
 
         $coursesummary = new course_summary($courses, $coursesprogress);
         $coursesview = new courses_view($courses, $coursesprogress);
-        $nocoursesurl = $output->pix_url('courses', 'block_myoverview')->out();
-        $noeventsurl = $output->pix_url('activities', 'block_myoverview')->out();
+        $nocoursesurl = $output->image_url('courses', 'block_myoverview')->out();
+        $noeventsurl = $output->image_url('activities', 'block_myoverview')->out();
 
         return [
             'courses' => $coursesummary->export_for_template($output),
