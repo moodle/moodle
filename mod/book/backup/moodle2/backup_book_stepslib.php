@@ -31,6 +31,9 @@ class backup_book_activity_structure_step extends backup_activity_structure_step
 
     protected function define_structure() {
 
+        // To know if we are including userinfo.
+        $userinfo = $this->get_setting_value('userinfo');
+
         // Define each element separated.
         $book = new backup_nested_element('book', array('id'), array(
             'name', 'intro', 'introformat', 'numbering', 'navstyle',
@@ -39,6 +42,9 @@ class backup_book_activity_structure_step extends backup_activity_structure_step
         $chapter = new backup_nested_element('chapter', array('id'), array(
             'pagenum', 'subchapter', 'title', 'content', 'contentformat',
             'hidden', 'timemcreated', 'timemodified', 'importsrc'));
+
+        $tags = new backup_nested_element('tags');
+        $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
 
         $book->add_child($chapters);
         $chapters->add_child($chapter);
@@ -50,6 +56,22 @@ class backup_book_activity_structure_step extends backup_activity_structure_step
         // Define file annotations
         $book->annotate_files('mod_book', 'intro', null); // This file area hasn't itemid
         $chapter->annotate_files('mod_book', 'chapter', 'id');
+
+        $chapter->add_child($tags);
+        $tags->add_child($tag);
+
+        // All these source definitions only happen if we are including user info.
+        if ($userinfo) {
+            $tag->set_source_sql('SELECT t.id, t.name, t.rawname
+                                    FROM {tag} t
+                                    JOIN {tag_instance} ti ON ti.tagid = t.id
+                                   WHERE ti.itemtype = ?
+                                     AND ti.component = ?
+                                     AND ti.itemid = ?', array(
+                backup_helper::is_sqlparam('book_chapters'),
+                backup_helper::is_sqlparam('mod_book'),
+                backup::VAR_PARENTID));
+        }
 
         // Return the root element (book), wrapped into standard activity structure
         return $this->prepare_activity_structure($book);

@@ -15,16 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book plugin version info
+ * Tag areas in component mod_book
  *
- * @package    mod_book
- * @copyright  2004-2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_book
+ * @copyright 2017 Andrew Hancox <andrewdchancox@googlemail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_book'; // Full name of the plugin (used for diagnostics)
-$plugin->version   = 2016120501; // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016112900; // Requires this Moodle version
-$plugin->cron      = 0;          // Period for cron to check this module (secs)
+
+$tagareas = array(
+    array(
+        'itemtype' => 'book_chapters',
+        'component' => 'mod_book',
+        'callback' => 'mod_book_get_tagged_chapters',
+        'callbackfile' => '/mod/book/locallib.php',
+    ),
+);

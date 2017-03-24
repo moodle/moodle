@@ -30,11 +30,15 @@ defined('MOODLE_INTERNAL') || die;
 class restore_book_activity_structure_step extends restore_activity_structure_step {
 
     protected function define_structure() {
-
         $paths = array();
+        $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('book', '/activity/book');
         $paths[] = new restore_path_element('book_chapter', '/activity/book/chapters/chapter');
+
+        if ($userinfo) {
+            $paths[] = new restore_path_element('book_tag', '/activity/book/chapters/chapter/tags/tag');
+        }
 
         // Return the paths wrapped into standard activity structure
         return $this->prepare_activity_structure($paths);
@@ -70,6 +74,20 @@ class restore_book_activity_structure_step extends restore_activity_structure_st
 
         $newitemid = $DB->insert_record('book_chapters', $data);
         $this->set_mapping('book_chapter', $oldid, $newitemid, true);
+    }
+
+    protected function process_book_tag($data) {
+        $data = (object)$data;
+
+        if (!core_tag_tag::is_enabled('mod_book', 'book_chapters')) { // Tags disabled in server, nothing to process.
+            return;
+        }
+
+        $tag = $data->rawname;
+        $itemid = $this->get_new_parentid('book_chapter');
+
+        $context = context_module::instance($this->task->get_moduleid());
+        core_tag_tag::add_item_tag('mod_book', 'book_chapters', $itemid, $context, $tag);
     }
 
     protected function after_execute() {

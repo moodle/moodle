@@ -236,4 +236,94 @@ class mod_book_lib_testcase extends advanced_testcase {
 
         return calendar_event::create($event);
     }
+
+    public function test_mod_book_get_tagged_chapters() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Setup test data.
+        $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
+        $course3 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course1 = $this->getDataGenerator()->create_course();
+        $book1 = $this->getDataGenerator()->create_module('book', array('course' => $course1->id));
+        $book2 = $this->getDataGenerator()->create_module('book', array('course' => $course2->id));
+        $book3 = $this->getDataGenerator()->create_module('book', array('course' => $course3->id));
+        $chapter11 = $bookgenerator->create_content($book1, array('tags' => array('Cats', 'Dogs')));
+        $chapter12 = $bookgenerator->create_content($book1, array('tags' => array('Cats', 'mice')));
+        $chapter13 = $bookgenerator->create_content($book1, array('tags' => array('Cats')));
+        $chapter14 = $bookgenerator->create_content($book1);
+        $chapter15 = $bookgenerator->create_content($book1, array('tags' => array('Cats')));
+        $chapter16 = $bookgenerator->create_content($book1, array('tags' => array('Cats'), 'hidden' => true));
+        $chapter21 = $bookgenerator->create_content($book2, array('tags' => array('Cats')));
+        $chapter22 = $bookgenerator->create_content($book2, array('tags' => array('Cats', 'Dogs')));
+        $chapter23 = $bookgenerator->create_content($book2, array('tags' => array('mice', 'Cats')));
+        $chapter31 = $bookgenerator->create_content($book3, array('tags' => array('mice', 'Cats')));
+
+        $tag = core_tag_tag::get_by_name(0, 'Cats');
+
+        // Admin can see everything.
+        $res = mod_book_get_tagged_chapters($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$chapter = */0);
+        $this->assertRegExp('/'.$chapter11->title.'</', $res->content);
+        $this->assertRegExp('/'.$chapter12->title.'</', $res->content);
+        $this->assertRegExp('/'.$chapter13->title.'</', $res->content);
+        $this->assertNotRegExp('/'.$chapter14->title.'</', $res->content);
+        $this->assertRegExp('/'.$chapter15->title.'</', $res->content);
+        $this->assertRegExp('/'.$chapter16->title.'</', $res->content);
+        $this->assertNotRegExp('/'.$chapter21->title.'</', $res->content);
+        $this->assertNotRegExp('/'.$chapter22->title.'</', $res->content);
+        $this->assertNotRegExp('/'.$chapter23->title.'</', $res->content);
+        $this->assertNotRegExp('/'.$chapter31->title.'</', $res->content);
+        $this->assertEmpty($res->prevpageurl);
+        $this->assertNotEmpty($res->nextpageurl);
+        $res = mod_book_get_tagged_chapters($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$chapter = */1);
+        $this->assertNotRegExp('/'.$chapter11->title.'</', $res->content);
+        $this->assertNotRegExp('/'.$chapter12->title.'</', $res->content);
+        $this->assertNotRegExp('/'.$chapter13->title.'</', $res->content);
+        $this->assertNotRegExp('/'.$chapter14->title.'</', $res->content);
+        $this->assertNotRegExp('/'.$chapter15->title.'</', $res->content);
+        $this->assertNotRegExp('/'.$chapter16->title.'</', $res->content);
+        $this->assertRegExp('/'.$chapter21->title.'</', $res->content);
+        $this->assertRegExp('/'.$chapter22->title.'</', $res->content);
+        $this->assertRegExp('/'.$chapter23->title.'</', $res->content);
+        $this->assertRegExp('/'.$chapter31->title.'</', $res->content);
+        $this->assertNotEmpty($res->prevpageurl);
+        $this->assertEmpty($res->nextpageurl);
+
+        // Create and enrol a user.
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($student->id, $course2->id, $studentrole->id, 'manual');
+        $this->setUser($student);
+        core_tag_index_builder::reset_caches();
+
+        // User can not see chapters in course 3 because he is not enrolled.
+        $res = mod_book_get_tagged_chapters($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$chapter = */1);
+        $this->assertRegExp('/'.$chapter22->title.'/', $res->content);
+        $this->assertRegExp('/'.$chapter23->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$chapter31->title.'/', $res->content);
+
+        // User can search book chapters inside a course.
+        $coursecontext = context_course::instance($course1->id);
+        $res = mod_book_get_tagged_chapters($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */$coursecontext->id, /*$rec = */1, /*$chapter = */0);
+        $this->assertRegExp('/'.$chapter11->title.'/', $res->content);
+        $this->assertRegExp('/'.$chapter12->title.'/', $res->content);
+        $this->assertRegExp('/'.$chapter13->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$chapter14->title.'/', $res->content);
+        $this->assertRegExp('/'.$chapter15->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$chapter21->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$chapter22->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$chapter23->title.'/', $res->content);
+        $this->assertEmpty($res->nextpageurl);
+
+        // User cannot see hidden chapters.
+        $this->assertNotRegExp('/'.$chapter16->title.'/', $res->content);
+    }
 }
