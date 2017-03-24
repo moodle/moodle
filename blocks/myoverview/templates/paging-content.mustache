@@ -17,10 +17,22 @@
 {{!
     @template block_myoverview/paging-content
 
-    This template renders the each course block containing a summary and calendar events.
+    This template renders each of the content regions for a paginated
+    content section.
 
     Example context (json):
     {
+        "pages": [
+            {
+                "active": true,
+                "page": 1,
+                "content": "<p>Some page content</p>"
+            },
+            {
+                "page": 2,
+                "content": "<p>Some page content</p>"
+            }
+        ]
     }
 }}
 <div id="{{$pagingcontentid}}paging-content-{{uniqid}}{{/pagingcontentid}}" data-region="paging-content">

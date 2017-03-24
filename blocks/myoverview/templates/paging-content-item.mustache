@@ -17,15 +17,19 @@
 {{!
     @template block_myoverview/paging-content-item
 
-    This template renders the each course block containing a summary and calendar events.
+    This template renders the content of a page. It is to be used with
+    the paging bar to toggle visibility of the content items.
 
     Example context (json):
     {
+        "active": true,
+        "page": 1,
+        "content": "<p>Some page content</p>"
     }
 }}
 <div data-region="paging-content-item"
      data-page="{{page}}"
-     class="{{#active}}active{{/active}}{{^active}}hidden{{/active}}">
+     class="{{^active}}hidden{{/active}} {{$classes}}{{/classes}}">
     {{$content}}
         {{{content}}}
     {{/content}}

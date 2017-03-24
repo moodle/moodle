@@ -17,13 +17,32 @@
 {{!
     @template block_myoverview/course-paging-content-item
 
-    This template renders the each course block containing a summary and calendar events.
+    This template renders each course block.
 
     Example context (json):
     {
+        "page": 1,
+        "active": true,
+        "courses": [
+            {
+                "fullnamedisplay": "course 1",
+                "viewurl": "https://www.google.com",
+                "startdate": 1490252232,
+                "enddate": 1490252232,
+                "summary": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+            },
+            {
+                "fullnamedisplay": "course 2",
+                "viewurl": "https://www.google.com",
+                "startdate": 1490252232,
+                "enddate": 1490252232,
+                "summary": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+            }
+        ]
     }
 }}
 {{< block_myoverview/paging-content-item }}
+    {{$classes}}row{{/classes}}
     {{$content}}
         {{#courses}}
             {{> block_myoverview/courses-view-course-item }}
