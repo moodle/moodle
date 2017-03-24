@@ -27,7 +27,6 @@ namespace core_calendar\local\event\proxies;
 defined('MOODLE_INTERNAL') || die();
 
 use core_calendar\local\interfaces\proxy_interface;
-use core_calendar\local\event\exceptions\member_does_not_exist_exception;
 
 /**
  * Course module stdClass proxy.
@@ -42,6 +41,15 @@ use core_calendar\local\event\exceptions\member_does_not_exist_exception;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class module_std_proxy extends std_proxy implements proxy_interface {
+
+    /**
+     * module_std_proxy constructor.
+     *
+     * @param int $modulename The module name.
+     * @param callable $instance The module instance.
+     * @param callable $callback Callback to load the class.
+     * @param \stdClass $base Class containing base values.
+     */
     public function __construct($modulename, $instance, callable $callback, \stdClass $base = null) {
         $this->modulename = $modulename;
         $this->instance = $instance;

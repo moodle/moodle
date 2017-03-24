@@ -38,6 +38,9 @@ class core_calendar_module_std_proxy_testcase extends advanced_testcase {
      */
     public $objects;
 
+    /**
+     * Sets up the fixture. This method is called before a test is executed.
+     */
     public function setUp() {
         $this->objects = [
             'somemodule_someinstance' => (object) [
@@ -105,7 +108,6 @@ class core_calendar_module_std_proxy_testcase extends advanced_testcase {
      * Test getting a non existant member.
      *
      * @dataProvider test_get_set_testcases()
-     * @expectedException \core_calendar\local\event\exceptions\member_does_not_exist_exception
      * @param string $modulename Object module name.
      * @param string $instance   Object instance.
      */
@@ -118,6 +120,7 @@ class core_calendar_module_std_proxy_testcase extends advanced_testcase {
             }
         );
 
+        $this->expectException('\core_calendar\local\event\exceptions\member_does_not_exist_exception');
         $proxy->get('thisdoesnotexist');
     }
 
@@ -125,7 +128,6 @@ class core_calendar_module_std_proxy_testcase extends advanced_testcase {
      * Test setting a non existant member.
      *
      * @dataProvider test_get_set_testcases()
-     * @expectedException \core_calendar\local\event\exceptions\member_does_not_exist_exception
      * @param string $modulename Object module name.
      * @param string $instance   Object instance.
      */
@@ -138,6 +140,7 @@ class core_calendar_module_std_proxy_testcase extends advanced_testcase {
             }
         );
 
+        $this->expectException('\core_calendar\local\event\exceptions\member_does_not_exist_exception');
         $proxy->set('thisdoesnotexist', 'should break');
     }
 

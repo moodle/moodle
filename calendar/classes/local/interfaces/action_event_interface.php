@@ -26,8 +26,6 @@ namespace core_calendar\local\interfaces;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\event_interface;
-
 /**
  * Interface for an action event class.
  *
@@ -38,7 +36,7 @@ interface action_event_interface extends event_interface {
     /**
      * Get the action event's action.
      *
-     * @return \core_calendar\local\event\value_objects\action_interface
+     * @return action_interface
      */
     public function get_action();
 }

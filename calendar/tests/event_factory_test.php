@@ -83,8 +83,6 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
 
     /**
      * Test invalid callback exception.
-     *
-     * @expectedException \core_calendar\local\event\exceptions\invalid_callback_exception
      */
     public function test_invalid_action_callback() {
         $this->resetAfterTest(true);
@@ -106,6 +104,7 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
             $modulecache
         );
 
+        $this->expectException('\core_calendar\local\event\exceptions\invalid_callback_exception');
         $factory->create_instance(
             (object)[
                 'id' => $event->id,
@@ -132,8 +131,6 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
 
     /**
      * Test invalid callback exception.
-     *
-     * @expectedException \core_calendar\local\event\exceptions\invalid_callback_exception
      */
     public function test_invalid_visibility_callback() {
         $this->resetAfterTest(true);
@@ -155,6 +152,7 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
             $modulecache
         );
 
+        $this->expectException('\core_calendar\local\event\exceptions\invalid_callback_exception');
         $factory->create_instance(
             (object)[
                 'id' => $event->id,
@@ -181,8 +179,6 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
 
     /**
      * Test invalid callback exception.
-     *
-     * @expectedException \core_calendar\local\event\exceptions\invalid_callback_exception
      */
     public function test_invalid_bail_callback() {
         $this->resetAfterTest(true);
@@ -204,6 +200,7 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
             $modulecache
         );
 
+        $this->expectException('\core_calendar\local\event\exceptions\invalid_callback_exception');
         $factory->create_instance(
             (object)[
                 'id' => $event->id,
@@ -446,7 +443,7 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
      * Helper function to create calendar events using the old code.
      *
      * @param array $properties A list of calendar event properties to set
-     * @return event
+     * @return \core_calendar\event
      */
     protected function create_event($properties = []) {
         $record = new \stdClass();

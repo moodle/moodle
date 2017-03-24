@@ -50,6 +50,7 @@ class event_exporter extends exporter {
      * Constructor.
      *
      * @param event_interface $event
+     * @param array $related The related data.
      */
     public function __construct(event_interface $event, $related = []) {
         $this->event = $event;

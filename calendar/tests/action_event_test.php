@@ -95,6 +95,7 @@ class core_calendar_action_event_testcase extends advanced_testcase {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_calendar_action_event_test_event implements event_interface {
+
     public function get_id() {
         return 1729;
     }
@@ -156,8 +157,14 @@ class core_calendar_action_event_test_event implements event_interface {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_calendar_action_event_test_event_collection implements event_collection_interface {
+    /**
+     * @var array
+     */
     protected $events;
 
+    /**
+     * core_calendar_action_event_test_event_collection constructor.
+     */
     public function __construct() {
         $this->events = [
             'not really an event hahaha',

@@ -50,35 +50,35 @@ interface event_interface {
     /**
      * Get the event's description.
      *
-     * @return \core_calendar\local\event\value_objects\description_interface
+     * @return description_interface
      */
     public function get_description();
 
     /**
      * Get the course object associated with the event.
      *
-     * @return \core_calendar\local\event\proxies\proxy_interface
+     * @return proxy_interface
      */
     public function get_course();
 
     /**
      * Get the course module object that created the event.
      *
-     * @return \core_calendar\local\event\proxies\proxy_interface
+     * @return proxy_interface
      */
     public function get_course_module();
 
     /**
      * Get the group object associated with the event.
      *
-     * @return \core_calendar\local\event\value_objects\proxy_interface
+     * @return proxy_interface
      */
     public function get_group();
 
     /**
      * Get the user object associated with the event.
      *
-     * @return \core_calendar\local\event\proxies\proxy_interface
+     * @return proxy_interface
      */
     public function get_user();
 
@@ -92,21 +92,21 @@ interface event_interface {
     /**
      * Get the times associated with the event.
      *
-     * @return \core_calendar\local\event\value_objects\times_interface
+     * @return times_interface
      */
     public function get_times();
 
     /**
      * Get repeats of this event.
      *
-     * @return \core_calendar\local\event\entities\event_collection_interface
+     * @return event_collection_interface
      */
     public function get_repeats();
 
     /**
-     * Get the event's subscritpion.
+     * Get the event's subscription.
      *
-     * @return \core_calendar\local\event\proxies\proxy_interface
+     * @return proxy_interface
      */
     public function get_subscription();
 

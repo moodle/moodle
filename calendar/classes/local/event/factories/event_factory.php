@@ -37,6 +37,7 @@ use core_calendar\local\interfaces\event_interface;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class event_factory extends event_abstract_factory {
+
     protected function apply_component_action(event_interface $event) {
         $callbackapplier = $this->actioncallbackapplier;
         $callbackresult = $callbackapplier($event);

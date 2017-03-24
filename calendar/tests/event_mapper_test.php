@@ -57,7 +57,7 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
     }
 
     /**
-     * Test event -> legacy event
+     * Test event -> legacy event.
      */
     public function test_from_event_to_legacy_event() {
         $this->resetAfterTest(true);
@@ -72,7 +72,7 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
     }
 
     /**
-     * Test event -> stdClass
+     * Test event -> stdClass.
      */
     public function test_from_event_to_stdclass() {
         $this->resetAfterTest(true);
@@ -90,7 +90,7 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
     }
 
     /**
-     * Test event -> array
+     * Test event -> array.
      */
     public function test_from_event_to_assoc_array() {
         $this->resetAfterTest(true);
@@ -107,6 +107,9 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
         $this->assertEquals($arr['timestart'], $event->get_times()->get_start_time()->getTimestamp());
     }
 
+    /**
+     * Test for action event -> legacy event.
+     */
     public function test_from_action_event_to_legacy_event() {
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -157,6 +160,7 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class event_mapper_test_event_factory implements event_factory_interface {
+
     public function create_instance(\stdClass $dbrow) {
         return new event_mapper_test_event();
     }
@@ -174,6 +178,10 @@ class event_mapper_test_action_event implements action_event_interface {
      */
     protected $event;
 
+    /**
+     * event_mapper_test_action_event constructor.
+     * @param event_interface $event
+     */
     public function __construct(event_interface $event) {
         $this->event = $event;
     }
@@ -269,7 +277,7 @@ class event_mapper_test_event implements event_interface {
     protected $subscriptionproxy;
 
     /**
-     *  Constructor.
+     * Constructor.
      *
      * @param \core_calendar\event $legacyevent Legacy event to exctract IDs etc from.
      */
@@ -349,7 +357,6 @@ class event_mapper_test_event implements event_interface {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class event_mapper_test_proxy implements proxy_interface {
-
     /**
      * @var int $id Proxied ID.
      */

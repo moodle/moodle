@@ -36,6 +36,7 @@ use core_calendar\local\event\value_objects\action;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class action_factory implements action_factory_interface {
+
     public function create_instance($name, \moodle_url $url, $itemcount, $actionable) {
         return new action ($name, $url, $itemcount, $actionable);
     }

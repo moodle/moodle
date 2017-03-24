@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains event class for providing the related objects when exporting
- * a list of calendar events.
+ * Contains event class for providing the related objects when exporting a list of calendar events.
  *
  * @package   core_calendar
  * @copyright 2017 Ryan Wyllie <ryan@moodle.com>
@@ -27,11 +26,12 @@ namespace core_calendar\external;
 
 defined('MOODLE_INTERNAL') || die();
 
+use context;
 use \core_calendar\local\interfaces\event_interface;
+use stdClass;
 
 /**
- * Class to providing the related objects when exporting
- * a list of calendar events.
+ * Class to providing the related objects when exporting a list of calendar events.
  *
  * This class is only meant for use with exporters. It attempts to bulk load
  * the related objects for a list of events and cache them to avoid having
@@ -66,7 +66,7 @@ class events_related_objects_cache {
     /**
      * Constructor.
      *
-     * @param array $event Array of event_interface events
+     * @param array $events Array of event_interface events
      * @param array $courses Array of courses to populate the cache with
      */
     public function __construct(array $events, array $courses = null) {
@@ -84,7 +84,7 @@ class events_related_objects_cache {
     /**
      * Get the related course object for a given event.
      *
-     * @param event_interface $event.
+     * @param event_interface $event The event object.
      * @return stdClass|null
      */
     public function get_course(event_interface $event) {
@@ -103,7 +103,7 @@ class events_related_objects_cache {
     /**
      * Get the related context for a given event.
      *
-     * @param event_interface $event.
+     * @param event_interface $event The event object.
      * @return context|null
      */
     public function get_context(event_interface $event) {
@@ -132,7 +132,7 @@ class events_related_objects_cache {
     /**
      * Get the related group object for a given event.
      *
-     * @param event_interface $event.
+     * @param event_interface $event The event object.
      * @return stdClass|null
      */
     public function get_group(event_interface $event) {
@@ -151,7 +151,7 @@ class events_related_objects_cache {
     /**
      * Get the related course module for a given event.
      *
-     * @param event_interface $event.
+     * @param event_interface $event The event object.
      * @return stdClass|null
      */
     public function get_course_module(event_interface $event) {

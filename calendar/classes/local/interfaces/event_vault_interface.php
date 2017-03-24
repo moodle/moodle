@@ -24,6 +24,8 @@
 
 namespace core_calendar\local\interfaces;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Interface for an event vault class
  *
@@ -42,26 +44,23 @@ interface event_vault_interface {
     /**
      * Get all events restricted by various parameters, taking in to account user and group overrides.
      *
-     * @param int|null             $timestartfrom         Events with timestart from this value (inclusive).
-     * @param int|null             $timestartto           Events with timestart until this value (inclusive).
-     * @param int|null             $timesortfrom          Events with timesort from this value (inclusive).
-     * @param int|null             $timesortto            Events with timesort until this value (inclusive).
-     * @param event_interface|null $timestartafterevent   Restrict the events in the timestart range to ones
-                                                          after this one.
-     * @param event_interface|null $timesortafterevent    Restrict the events in the timesort range to ones
-                                                          after this one.
-     * @param int                  $limitnum              Return at most this number of events.
-     * @param int                  $type                  Return only events of this type.
-     * @param array|null           $usersfilter           Return only events for these users.
-     * @param array|null           $groupsfilter          Return only events for these groups.
-     * @param array|null           $coursesfilter         Return only events for these courses.
-     * @param bool                 $withduration          If true return only events starting within specified
-     *                                                    timestart otherwise return in progress events as well.
-     * @param bool                 $ignorehidden          If true don't return hidden events.
-     * @param callable             $filter                Additional logic to filter out unwanted events.
-     *                                                    Must return true to keep the event, false to discard
-     *                                                    it.
-     * @return \core_calendar\local\interfaces\event_interface[] Array of event_interfaces.
+     * @param int|null              $timestartfrom         Events with timestart from this value (inclusive).
+     * @param int|null              $timestartto           Events with timestart until this value (inclusive).
+     * @param int|null              $timesortfrom          Events with timesort from this value (inclusive).
+     * @param int|null              $timesortto            Events with timesort until this value (inclusive).
+     * @param event_interface|null  $timestartafterevent   Restrict the events in the timestart range to ones after this one.
+     * @param event_interface|null  $timesortafterevent    Restrict the events in the timesort range to ones after this one.
+     * @param int                   $limitnum              Return at most this number of events.
+     * @param int|null              $type                  Return only events of this type.
+     * @param array|null            $usersfilter           Return only events for these users.
+     * @param array|null            $groupsfilter          Return only events for these groups.
+     * @param array|null            $coursesfilter         Return only events for these courses.
+     * @param bool                  $withduration          If true return only events starting within specified
+     *                                                     timestart otherwise return in progress events as well.
+     * @param bool                  $ignorehidden          If true don't return hidden events.
+     * @param callable|null         $filter                Additional logic to filter out unwanted events.
+     *                                                     Must return true to keep the event, false to discard it.
+     * @return event_interface[] Array of event_interfaces.
      */
     public function get_events(
         $timestartfrom = null,
@@ -108,12 +107,12 @@ interface event_vault_interface {
      * ($afterevent) and it will be used to appropriately offset the result set so that you don't
      * receive the same events again.
      *
-     * @param \stdClass            $user         The user for whom the events belong
-     * @param \stdClass            $course       The course to filter by
-     * @param int|null             $timesortfrom Events with timesort from this value (inclusive)
-     * @param int|null             $timesortto   Events with timesort until this value (inclusive)
-     * @param event_interface|null $afterevent   Only return events after this one
-     * @param int                  $limitnum     Return at most this number of events
+     * @param \stdClass       $user         The user for whom the events belong
+     * @param \stdClass       $course       The course to filter by
+     * @param int             $timesortfrom Events with timesort from this value (inclusive)
+     * @param int             $timesortto   Events with timesort until this value (inclusive)
+     * @param event_interface $afterevent   Only return events after this one
+     * @param int             $limitnum     Return at most this number of events
      * @return action_event_interface
      */
     public function get_action_events_by_course(

@@ -39,7 +39,7 @@ use core_calendar\local\event\exceptions\no_repeat_parent_exception;
  */
 class repeat_event_collection implements event_collection_interface {
     /**
-     * @var DB_QUERY_LIMIT How many records to pull from the DB at once.
+     * @var int DB_QUERY_LIMIT How many records to pull from the DB at once.
      */
     const DB_QUERY_LIMIT = 100;
 

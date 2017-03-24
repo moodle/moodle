@@ -48,7 +48,7 @@ class event_description implements description_interface {
     /**
      * Constructor.
      *
-     * @param stirng $value  The description's value.
+     * @param string $value  The description's value.
      * @param int    $format The description's format.
      */
     public function __construct($value, $format) {

@@ -42,6 +42,7 @@ class event_icon_exporter extends exporter {
      * Constructor.
      *
      * @param event_interface $event
+     * @param array $related The related data.
      */
     public function __construct(event_interface $event, $related = []) {
         $coursemodule = $event->get_course_module();

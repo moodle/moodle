@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains event class for displaying a list of calendar events for
- * a single course.
+ * Contains event class for displaying a list of calendar events for a single course.
  *
  * @package   core_calendar
  * @copyright 2017 Ryan Wyllie <ryan@moodle.com>

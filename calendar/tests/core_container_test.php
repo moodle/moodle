@@ -130,7 +130,7 @@ class core_calendar_container_testcase extends advanced_testcase {
      * @dataProvider get_event_factory_testcases()
      * @param \stdClass $dbrow Row from the "database".
      */
-    function test_event_factory_when_module_visibility_is_toggled_as_admin($dbrow) {
+    public function test_event_factory_when_module_visibility_is_toggled_as_admin($dbrow) {
         $legacyevent = $this->create_event($dbrow);
         $factory = \core_calendar\local\event\core_container::get_event_factory();
         $course = $this->getDataGenerator()->create_course();
@@ -156,7 +156,7 @@ class core_calendar_container_testcase extends advanced_testcase {
      * @dataProvider get_event_factory_testcases()
      * @param \stdClass $dbrow Row from the "database".
      */
-    function test_event_factory_when_module_visibility_is_toggled_as_guest($dbrow) {
+    public function test_event_factory_when_module_visibility_is_toggled_as_guest($dbrow) {
         $legacyevent = $this->create_event($dbrow);
         $factory = \core_calendar\local\event\core_container::get_event_factory();
         $course = $this->getDataGenerator()->create_course();
@@ -182,7 +182,7 @@ class core_calendar_container_testcase extends advanced_testcase {
     /**
      * Test that the event factory deals with completion related events properly.
      */
-    function test_event_factory_with_completion_related_event() {
+    public function test_event_factory_with_completion_related_event() {
         global $CFG;
 
         $CFG->enablecompletion = true;
@@ -296,7 +296,7 @@ class core_calendar_container_testcase extends advanced_testcase {
      * Helper function to create calendar events using the old code.
      *
      * @param array $properties A list of calendar event properties to set
-     * @return event
+     * @return \core_calendar\event|bool
      */
     protected function create_event($properties = []) {
         $record = new \stdClass();

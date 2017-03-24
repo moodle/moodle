@@ -98,7 +98,6 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
      * Test getting a non existant member.
      *
      * @dataProvider test_get_set_testcases()
-     * @expectedException \core_calendar\local\event\exceptions\member_does_not_exist_exception
      * @param int $id ID of the object being proxied.
      */
     public function test_get_invalid_member($id) {
@@ -106,6 +105,7 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
             return $this->objects[$id];
         });
 
+        $this->expectException('\core_calendar\local\event\exceptions\member_does_not_exist_exception');
         $proxy->get('thisdoesnotexist');
     }
 
@@ -113,7 +113,6 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
      * Test setting a non existant member.
      *
      * @dataProvider test_get_set_testcases()
-     * @expectedException \core_calendar\local\event\exceptions\member_does_not_exist_exception
      * @param int $id ID of the object being proxied.
      */
     public function test_set_invalid_member($id) {
@@ -121,6 +120,7 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
             return $this->objects[$id];
         });
 
+        $this->expectException('\core_calendar\local\event\exceptions\member_does_not_exist_exception');
         $proxy->set('thisdoesnotexist', 'should break');
     }
 

@@ -62,6 +62,7 @@ class core_calendar_action_event_factory_testcase extends advanced_testcase {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class action_event_factory_test_event implements event_interface {
+
     public function get_id() {
         return 1729;
     }

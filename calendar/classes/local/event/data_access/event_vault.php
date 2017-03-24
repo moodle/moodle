@@ -24,8 +24,9 @@
 
 namespace core_calendar\local\event\data_access;
 
+defined('MOODLE_INTERNAL') || die();
+
 use core_calendar\local\event\exceptions\limit_invalid_parameter_exception;
-use core_calendar\local\event\exceptions\timesort_invalid_parameter_exception;
 use core_calendar\local\interfaces\action_event_interface;
 use core_calendar\local\interfaces\event_factory_interface;
 use core_calendar\local\interfaces\event_interface;
@@ -33,6 +34,8 @@ use core_calendar\local\interfaces\event_vault_interface;
 use core_calendar\local\interfaces\raw_event_retrieval_strategy_interface;
 
 /**
+ * Event vault class.
+ *
  * This class will handle interacting with the database layer to retrieve
  * the records. This is required to house the complex logic required for
  * pagination because it's not a one-to-one mapping between database records
@@ -60,6 +63,7 @@ class event_vault implements event_vault_interface {
      * Create an event vault.
      *
      * @param event_factory_interface $factory An event factory
+     * @param raw_event_retrieval_strategy_interface $retrievalstrategy
      */
     public function __construct(
         event_factory_interface $factory,
@@ -245,6 +249,16 @@ class event_vault implements event_vault_interface {
         );
     }
 
+    /**
+     * Generates SQL subquery and parameters for 'from' pagination.
+     *
+     * @param string    $field
+     * @param int       $timefrom
+     * @param int|null  $lastseentime
+     * @param int|null  $lastseenid
+     * @param bool      $withduration
+     * @return array
+     */
     protected function timefield_pagination_from(
         $field,
         $timefrom,
@@ -279,6 +293,15 @@ class event_vault implements event_vault_interface {
         return ['where' => [$where], 'params' => $params];
     }
 
+    /**
+     * Generates SQL subquery and parameters for 'to' pagination.
+     *
+     * @param string   $field
+     * @param int      $timeto
+     * @param int|null $lastseentime
+     * @param int|null $lastseenid
+     * @return array|bool
+     */
     protected function timefield_pagination_to(
         $field,
         $timeto,
@@ -313,17 +336,28 @@ class event_vault implements event_vault_interface {
      * Create an event from a database record.
      *
      * @param \stdClass $record The database record
-     * @return event_interface|false
+     * @return event_interface|null
      */
     protected function transform_from_database_record(\stdClass $record) {
-         if ($record->courseid == 0 && $record->instance && $record->modulename) {
-             list($course, $cm) = get_course_and_cm_from_instance($record->instance, $record->modulename);
-             $record->courseid = $course->id;
-         }
+        if ($record->courseid == 0 && $record->instance && $record->modulename) {
+            list($course, $cm) = get_course_and_cm_from_instance($record->instance, $record->modulename);
+            $record->courseid = $course->id;
+        }
 
         return $this->factory->create_instance($record);
     }
 
+    /**
+     * Fetches records from DB.
+     *
+     * @param int    $userid
+     * @param string $whereconditions
+     * @param array  $whereparams
+     * @param string $ordersql
+     * @param int    $offset
+     * @param int    $limitnum
+     * @return array
+     */
     protected function get_from_db(
         $userid,
         $whereconditions,

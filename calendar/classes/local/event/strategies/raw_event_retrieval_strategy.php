@@ -37,6 +37,7 @@ use core_calendar\local\interfaces\raw_event_retrieval_strategy_interface;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_interface {
+
     public function get_raw_events(
         array $usersfilter = null,
         array $groupsfilter = null,
@@ -49,7 +50,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
         $ignorehidden = true
     ) {
         return $this->get_raw_events_legacy_implementation(
-            !is_null($usersfilter) ? $usersfilter : true, //true means no filter in old implementation
+            !is_null($usersfilter) ? $usersfilter : true, // True means no filter in old implementation.
             !is_null($groupsfilter) ? $groupsfilter : true,
             !is_null($coursesfilter) ? $coursesfilter : true,
             $whereconditions,
@@ -67,10 +68,14 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
      * @param array|int|boolean $users array of users, user id or boolean for all/no user events
      * @param array|int|boolean $groups array of groups, group id or boolean for all/no group events
      * @param array|int|boolean $courses array of courses, course id or boolean for all/no course events
-     * @param boolean $withduration whether only events starting within time range selected
-     *                              or events in progress/already started selected as well
+     * @param string $whereconditions The conditions in the WHERE clause.
+     * @param array $whereparams The parameters for the WHERE clause.
+     * @param string $ordersql The ORDER BY clause.
+     * @param int $offset Offset.
+     * @param int $limitnum Limit.
      * @param boolean $ignorehidden whether to select only visible events or all events
-     * @return array $events of selected events or an empty array if there aren't any (or there was an error)     */
+     * @return array $events of selected events or an empty array if there aren't any (or there was an error)
+     */
     protected function get_raw_events_legacy_implementation(
         $users,
         $groups,

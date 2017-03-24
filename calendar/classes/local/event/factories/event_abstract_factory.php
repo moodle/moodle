@@ -92,6 +92,7 @@ abstract class event_abstract_factory implements event_factory_interface {
      * @param callable $visibilitycallbackapplier Function to apply component visibility callbacks.
      * @param callable $bailoutcheck              Function to test if we can return null early.
      * @param array    $coursecachereference      Cache to use with get_course_cached.
+     * @param array    $modulecachereference      Cache to use with get_module_cached.
      */
     public function __construct(
         callable $actioncallbackapplier,

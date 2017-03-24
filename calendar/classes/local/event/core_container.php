@@ -82,12 +82,12 @@ class core_container {
     protected static $callbacks = array();
 
     /**
-     * @var stdClass[] An array of cached courses to use with the event factory.
+     * @var \stdClass[] An array of cached courses to use with the event factory.
      */
     protected static $coursecache = array();
 
     /**
-     * @var stdClass[] An array of cached modules to use with the event factory.
+     * @var \stdClass[] An array of cached modules to use with the event factory.
      */
     protected static $modulecache = array();
 

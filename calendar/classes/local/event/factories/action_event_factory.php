@@ -38,10 +38,8 @@ use core_calendar\local\interfaces\event_interface;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class action_event_factory implements action_event_factory_interface {
-    public function create_instance(
-        event_interface $event,
-        action_interface $action
-    ) {
+
+    public function create_instance(event_interface $event, action_interface $action) {
         return new action_event($event, $action);
     }
 }

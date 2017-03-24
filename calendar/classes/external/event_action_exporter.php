@@ -43,7 +43,8 @@ class event_action_exporter extends exporter {
     /**
      * Constructor.
      *
-     * @param action_interface $action
+     * @param action_interface $action The action object.
+     * @param array $related Related data.
      */
     public function __construct(action_interface $action, $related = []) {
         $data = new \stdClass();

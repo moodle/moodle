@@ -28,17 +28,14 @@ global $CFG;
 
 require_once($CFG->dirroot . '/calendar/lib.php');
 
-use core_calendar\local\data_access\event_vault;
 use core_calendar\local\event\entities\action_event;
 use core_calendar\local\event\entities\event;
 use core_calendar\local\event\entities\repeat_event_collection;
 use core_calendar\local\event\proxies\std_proxy;
 use core_calendar\local\event\value_objects\action;
-use core_calendar\local\event\value_objects\event_course_module;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
 use core_calendar\local\interfaces\event_factory_interface;
-use core_calendar\local\interfaces\raw_event_retrieval_strategy_interface;
 
 /**
  * Create a calendar event with the given properties.
@@ -68,9 +65,15 @@ function create_event($properties) {
 
 /**
  * A test factory that will create action events.
+ *
+ * @copyright 2017 Ryan Wyllie <ryan@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
 class action_event_test_factory implements event_factory_interface {
 
+    /**
+     * @var callable $callback.
+     */
     private $callback;
 
     /**
@@ -79,6 +82,8 @@ class action_event_test_factory implements event_factory_interface {
      *
      * The callback will be given the event and should return true if the event
      * should be returned and false otherwise.
+     *
+     * @param callable $callback The callback.
      */
     public function __construct($callback = null) {
         $this->callback = $callback;

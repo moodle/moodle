@@ -305,7 +305,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $strategy = new raw_event_retrieval_strategy();
         $vault = new event_vault($factory, $strategy);
 
-        /**
+        /*
          * The events should be ordered by timesort as follows:
          *
          * 1 event 1
@@ -352,7 +352,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
             ]);
         }
 
-        /**
+        /*
          * Expected result set:
          *
          * 2 event 4
@@ -376,7 +376,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $this->assertEquals('2 event 4', $events[0]->get_name());
         $this->assertEquals('2 event 8', $events[8]->get_name());
 
-        /**
+        /*
          * Expected result set:
          *
          * 2 event 4
@@ -388,7 +388,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $this->assertEquals('2 event 4', $events[0]->get_name());
         $this->assertEquals('1 event 5', $events[1]->get_name());
 
-        /**
+        /*
          * Expected result set:
          *
          * 2 event 8
@@ -403,7 +403,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $this->assertCount(1, $events);
         $this->assertEquals('2 event 8', $events[0]->get_name());
 
-        /**
+        /*
          * Expected empty result set.
          */
         $aftereventid = $records[18]->id;
@@ -776,7 +776,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course1->id);
         $this->getDataGenerator()->enrol_user($user->id, $course2->id);
 
-        /**
+        /*
          * The events should be ordered by timesort as follows:
          *
          * 1 event 1
@@ -835,7 +835,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
             ]);
         }
 
-        /**
+        /*
          * Expected result set:
          *
          * 2 event 4
@@ -859,7 +859,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $this->assertEquals('2 event 4', $events[0]->get_name());
         $this->assertEquals('2 event 8', $events[8]->get_name());
 
-        /**
+        /*
          * Expected result set:
          *
          * 2 event 4
@@ -871,7 +871,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $this->assertEquals('2 event 4', $events[0]->get_name());
         $this->assertEquals('1 event 5', $events[1]->get_name());
 
-        /**
+        /*
          * Expected result set:
          *
          * 2 event 8
@@ -886,7 +886,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $this->assertCount(1, $events);
         $this->assertEquals('2 event 8', $events[0]->get_name());
 
-        /**
+        /*
          * Expected empty result set.
          */
         $aftereventid = $records[18]->id;

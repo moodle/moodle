@@ -41,13 +41,12 @@ class core_calendar_repeat_event_collection_testcase extends advanced_testcase {
     /**
      * Test that creating a repeat collection for a parent that doesn't
      * exist throws an exception.
-     *
-     * @expectedException \core_calendar\local\event\exceptions\no_repeat_parent_exception
      */
     public function test_no_parent_collection() {
         $this->resetAfterTest(true);
         $parentid = 123122131;
         $factory = new core_calendar_repeat_event_collection_event_test_factory();
+        $this->expectException('\core_calendar\local\event\exceptions\no_repeat_parent_exception');
         $collection = new repeat_event_collection($parentid, null, $factory);
     }
 
@@ -119,7 +118,7 @@ class core_calendar_repeat_event_collection_testcase extends advanced_testcase {
      * Helper function to create calendar events using the old code.
      *
      * @param array $properties A list of calendar event properties to set
-     * @return event
+     * @return \core_calendar\event
      */
     protected function create_event($properties = []) {
         $record = new \stdClass();
@@ -149,6 +148,7 @@ class core_calendar_repeat_event_collection_testcase extends advanced_testcase {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_calendar_repeat_event_collection_event_test_factory implements event_factory_interface {
+
     public function create_instance(\stdClass $dbrow) {
         $identity = function($id) {
             return $id;

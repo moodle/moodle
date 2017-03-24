@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains event class for displaying a list of calendar events grouped
- * by course id.
+ * Contains event class for displaying a list of calendar events grouped by course id.
  *
  * @package   core_calendar
  * @copyright 2017 Ryan Wyllie <ryan@moodle.com>
@@ -52,7 +51,7 @@ class events_grouped_by_course_exporter extends exporter {
     /**
      * Constructor.
      *
-     * @param array $events An array of event_interface objects
+     * @param array $eventsbycourse An array of event_interface objects
      * @param array $related An array of related objects
      */
     public function __construct(array $eventsbycourse, $related = []) {

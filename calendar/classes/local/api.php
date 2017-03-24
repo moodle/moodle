@@ -39,22 +39,20 @@ class api {
     /**
      * Get all events restricted by various parameters, taking in to account user and group overrides.
      *
-     * @param int|null       $timestartfrom         Events with timestart from this value (inclusive).
-     * @param int|null       $timestartto           Events with timestart until this value (inclusive).
-     * @param int|null       $timesortfrom          Events with timesort from this value (inclusive).
-     * @param int|null       $timesortto            Events with timesort until this value (inclusive).
-     * @param int|null       $timestartaftereventid Restrict the events in the timestart range to ones
-                                                    after this ID.
-     * @param int            $timesortaftereventid  Restrict the events in the timesort range to ones
-                                                    after this ID.
-     * @param int            $limitnum              Return at most this number of events.
-     * @param int            $type                  Return only events of this type.
-     * @param array|null     $usersfilter           Return only events for these users.
-     * @param array|null     $groupsfilter          Return only events for these groups.
-     * @param array|null     $coursesfilter         Return only events for these courses.
-     * @param bool           $withduration          If true return only events starting within specified
-     *                                              timestart otherwise return in progress events as well.
-     * @param bool           $ignorehidden          If true don't return hidden events.
+     * @param int|null      $timestartfrom         Events with timestart from this value (inclusive).
+     * @param int|null      $timestartto           Events with timestart until this value (inclusive).
+     * @param int|null      $timesortfrom          Events with timesort from this value (inclusive).
+     * @param int|null      $timesortto            Events with timesort until this value (inclusive).
+     * @param int|null      $timestartaftereventid Restrict the events in the timestart range to ones after this ID.
+     * @param int|null      $timesortaftereventid  Restrict the events in the timesort range to ones after this ID.
+     * @param int           $limitnum              Return at most this number of events.
+     * @param int|null      $type                  Return only events of this type.
+     * @param array|null    $usersfilter           Return only events for these users.
+     * @param array|null    $groupsfilter          Return only events for these groups.
+     * @param array|null    $coursesfilter         Return only events for these courses.
+     * @param bool          $withduration          If true return only events starting within specified
+     *                                             timestart otherwise return in progress events as well.
+     * @param bool          $ignorehidden          If true don't return hidden events.
      * @return \core_calendar\local\interfaces\event_interface[] Array of event_interfaces.
      */
     public static function get_events(
@@ -113,6 +111,7 @@ class api {
      * @param int|null $aftereventid Only return events after this one
      * @param int $limitnum Limit results to this amount (between 1 and 50)
      * @return array A list of action_event_interface objects
+     * @throws \moodle_exception
      */
     public static function get_action_events_by_timesort(
         $timesortfrom = null,
@@ -150,6 +149,7 @@ class api {
      * @param int|null $aftereventid Only return events after this one
      * @param int $limitnum Limit results to this amount (between 1 and 50)
      * @return array A list of action_event_interface objects
+     * @throws limit_invalid_parameter_exception
      */
     public static function get_action_events_by_course(
         $course,
