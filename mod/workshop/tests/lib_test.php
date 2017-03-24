@@ -36,8 +36,7 @@ class mod_workshop_lib_testcase extends advanced_testcase {
     /**
      * Test calendar event provide action open.
      */
-    public function test_workshop_core_calendar_provide_event_action_open()
-    {
+    public function test_workshop_core_calendar_provide_event_action_open() {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -60,8 +59,7 @@ class mod_workshop_lib_testcase extends advanced_testcase {
     /**
      * Test calendar event provide action closed.
      */
-    public function test_workshop_core_calendar_provide_event_action_closed()
-    {
+    public function test_workshop_core_calendar_provide_event_action_closed() {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -85,8 +83,7 @@ class mod_workshop_lib_testcase extends advanced_testcase {
      *
      * @throws coding_exception
      */
-    public function test_workshop_core_calendar_provide_event_action_open_in_future()
-    {
+    public function test_workshop_core_calendar_provide_event_action_open_in_future() {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -110,8 +107,7 @@ class mod_workshop_lib_testcase extends advanced_testcase {
      *
      * @throws coding_exception
      */
-    public function test_workshop_core_calendar_provide_event_action_no_time_specified()
-    {
+    public function test_workshop_core_calendar_provide_event_action_no_time_specified() {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -137,8 +133,7 @@ class mod_workshop_lib_testcase extends advanced_testcase {
      * @param string $eventtype The event type. eg. WORKSHOP_EVENT_TYPE_OPEN.
      * @return bool|\core_calendar\event
      */
-    private function create_action_event($courseid, $instanceid, $eventtype)
-    {
+    private function create_action_event($courseid, $instanceid, $eventtype) {
         $event = new stdClass();
         $event->name = 'Calendar event';
         $event->modulename = 'workshop';
