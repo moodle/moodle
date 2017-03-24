@@ -332,7 +332,19 @@
 }
 
 .block_myoverview {
+    background-color: transparent;
+
     .event-list-item {
+        border-bottom: 1px solid @tableBorder;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+
+        &:last-of-type {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
         .event-icon {
             vertical-align: middle;
 
@@ -367,5 +379,14 @@
     .courses-view-course-item {
         height: 220px;
         overflow-y: hidden;
+    }
+
+    h4 {
+        font-weight: normal;
+    }
+
+    .well {
+        background-color: @white;
+        box-shadow: none;
     }
 }

@@ -16365,6 +16365,19 @@ body {
   height: 35px;
   width: 35px;
 }
+.block_myoverview {
+  background-color: transparent;
+}
+.block_myoverview .event-list-item {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.block_myoverview .event-list-item:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
 .block_myoverview .event-list-item .event-icon {
   vertical-align: middle;
 }
@@ -16392,6 +16405,13 @@ body {
 .block_myoverview .courses-view-course-item {
   height: 220px;
   overflow-y: hidden;
+}
+.block_myoverview h4 {
+  font-weight: normal;
+}
+.block_myoverview .well {
+  background-color: #fff;
+  box-shadow: none;
 }
 /**
  * Moodle forms HTML isn't changeable via renderers (yet?) so this

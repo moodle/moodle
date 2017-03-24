@@ -22,13 +22,15 @@
 
     Example context (json):
     {
-        "enddate": "Nov 4th, 10am",
         "name": "Assignment due 1",
         "url": "https://www.google.com",
+        "timesort": 1490320388,
         "action": {
             "name": "Submit assignment",
             "url": "https://www.google.com",
-            "itemcount": 1
+            "itemcount": 1,
+            "showitemcount": true,
+            "actionable": true
         },
         "icon": {
             "key": "icon",
@@ -37,29 +39,57 @@
         }
     }
 }}
-<li class="list-group-item event-list-item m-b-1" data-region="event-list-item">
-    <div class="row-fluid">
-        <div class="span8">
+<li class="list-group-item event-list-item" data-region="event-list-item">
+    <div class="row-fluid visible-desktop">
+        <div class="span7">
             <div class="d-inline-block event-icon">
                 {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
             </div>
             <div class="d-inline-block event-name-container">
                 <a class="event-name text-truncate" href="{{{url}}}">{{name}}</a>
-                <div class="text-muted text-truncate">
-                    {{#userdate}} {{timesort}}, {{#str}} strftimerecent {{/str}} {{/userdate}}
+                <div class="muted text-truncate">
+                    <small>{{#userdate}} {{timesort}}, {{#str}} strftimerecent {{/str}} {{/userdate}}</small>
                 </div>
             </div>
         </div>
-        <div class="visible-desktop span4 text-truncate">
+        <div class="span5 text-truncate">
             {{#action.actionable}}
                 <a href="{{{action.url}}}">{{action.name}}</a>
                 {{#action.itemcount}}
-                    <span class="tag tag-pill tag-default">{{.}}</span>
+                    {{#action.showitemcount}}
+                        <span class="badge">{{.}}</span>
+                    {{/action.showitemcount}}
                 {{/action.itemcount}}
             {{/action.actionable}}
             {{^action.actionable}}
                 <div class="text-muted">{{action.name}}</div>
             {{/action.actionable}}
+        </div>
+    </div>
+    <div class="row-fluid visible-tablet">
+        <div class="span12">
+            <div class="d-inline-block event-icon">
+                {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
+            </div>
+            <div class="d-inline-block event-name-container">
+                <a class="event-name text-truncate" href="{{{url}}}">{{name}}</a>
+                <div class="muted text-truncate">
+                    <small>{{#userdate}} {{timesort}}, {{#str}} strftimerecent {{/str}} {{/userdate}}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid visible-phone">
+        <div class="span12">
+            <div class="d-inline-block event-icon">
+                {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
+            </div>
+            <div class="d-inline-block event-name-container">
+                <a class="event-name text-truncate" href="{{{url}}}">{{name}}</a>
+                <div class="muted text-truncate">
+                    <small>{{#userdate}} {{timesort}}, {{#str}} strftimerecent {{/str}} {{/userdate}}</small>
+                </div>
+            </div>
         </div>
     </div>
 </li>
