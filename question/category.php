@@ -134,6 +134,10 @@ $PAGE->set_title(get_string('editcategories', 'question'));
 $PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();
 
+// Print horizontal nav if needed.
+$renderer = $PAGE->get_renderer('core_question', 'bank');
+echo $renderer->extra_horizontal_navigation();
+
 // Display the UI.
 if (!empty($param->edit)) {
     $qcobject->edit_single_category($param->edit);

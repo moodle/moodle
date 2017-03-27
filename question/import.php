@@ -73,6 +73,10 @@ $PAGE->set_title($txt->importquestions);
 $PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();
 
+// Print horizontal nav if needed.
+$renderer = $PAGE->get_renderer('core_question', 'bank');
+echo $renderer->extra_horizontal_navigation();
+
 // file upload form sumitted
 if ($form = $import_form->get_data()) {
 

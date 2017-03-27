@@ -36,6 +36,16 @@ defined('MOODLE_INTERNAL') || die();
 class core_question_bank_renderer extends plugin_renderer_base {
 
     /**
+     * Display additional navigation if needed.
+     *
+     * @return string
+     */
+    public function extra_horizontal_navigation() {
+        // Overwrite in child themes if needed.
+        return '';
+    }
+
+    /**
      * Output the icon for a question type.
      *
      * @param string $qtype the question type.
