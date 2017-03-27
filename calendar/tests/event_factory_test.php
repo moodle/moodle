@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/calendar/lib.php');
+
 use core_calendar\local\event\factories\event_factory;
 use core_calendar\local\interfaces\event_interface;
 
