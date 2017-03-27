@@ -73,10 +73,9 @@ $string['pathsunsecuredataroot'] = 'Der Speicherort des Verzeichnisses \'dataroo
 $string['pathswrongadmindir'] = 'Das Admin-Verzeichnis existiert nicht';
 $string['phpextension'] = 'PHP-Extension {$a}';
 $string['phpversion'] = 'PHP-Version';
-$string['phpversionhelp'] = '<p>Moodle erwartet als PHP-Version mindestens 4.3.0/4.4.0 oder 5.1.0 (5.0.x weist eine Reihe bekannter Fehler auf).</p>
-<p>Sie nutzen momentan die Version {$a}.</p>
-<p>Sie müssen Ihre PHP-Version aktualisieren oder auf einen Rechner wechseln, der eine neuere Version von PHP nutzt.<br />
-(Im Falle von 5.0.x könnten Sie auch zu einer Version 4.3.x/4.4.x downgraden)</p>';
+$string['phpversionhelp'] = '<p>Moodle benötigt mindestens die PHP-Version 5.6.5. (7.x weist einige EInschränkungen auf).</p>
+<p>Sie nutzen im Moment die Version {$a}.</p>
+<p>Sie müssen die PHP-Version aktualisieren oder auf einen Server wechseln, der eine aktuellere Version von PHP nutzt.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Sie haben das Paket <strong>{$a->packname} {$a->packversion}</strong> erfolgreich auf Ihrem Computer installiert.';
 $string['welcomep30'] = 'Diese Version von <strong>{$a->installername}</strong> enthält folgende Anwendungen, mit denen Sie <strong>Moodle</strong> ausführen können:';
