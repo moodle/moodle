@@ -323,6 +323,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                                     $discussion1reply1->id, '/', $filename),
                     'timemodified' => $timepost,
                     'mimetype' => 'image/jpeg',
+                    'isexternalfile' => false,
                 )
             ),
             'totalscore' => $discussion1reply1->totalscore,

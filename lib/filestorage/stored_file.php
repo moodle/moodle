@@ -807,6 +807,22 @@ class stored_file {
     }
 
     /**
+     * Returns repository type.
+     *
+     * @return mixed str|null the repository type or null if is not an external file
+     * @since  Moodle 3.3
+     */
+    public function get_repository_type() {
+
+        if (!empty($this->repository)) {
+            return $this->repository->get_typename();
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
      * get reference file id
      * @return int
      */
