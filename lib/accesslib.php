@@ -180,6 +180,7 @@ if (!defined('CONTEXT_CACHE_MAX_SIZE')) {
  */
 global $ACCESSLIB_PRIVATE;
 $ACCESSLIB_PRIVATE = new stdClass();
+$ACCESSLIB_PRIVATE->cacheroledefs    = array(); // Holds site-wide role definitions.
 $ACCESSLIB_PRIVATE->dirtycontexts    = null;    // Dirty contexts cache, loaded from DB once per page
 $ACCESSLIB_PRIVATE->accessdatabyuser = array(); // Holds the cache of $accessdata structure for users (including $USER)
 
@@ -216,15 +217,42 @@ function accesslib_clear_all_caches_for_unit_testing() {
 function accesslib_clear_all_caches($resetcontexts) {
     global $ACCESSLIB_PRIVATE;
 
-    // Reset builtin static cache.
-    get_role_definitions(array(), true);
-
     $ACCESSLIB_PRIVATE->dirtycontexts    = null;
     $ACCESSLIB_PRIVATE->accessdatabyuser = array();
+    $ACCESSLIB_PRIVATE->cacheroledefs    = array();
+
+    $cache = cache::make('core', 'roledefs');
+    $cache->purge();
 
     if ($resetcontexts) {
         context_helper::reset_caches();
     }
+}
+
+/**
+ * Clears accesslib's private cache of a specific role or roles. ONLY BE USED FROM THIS LIBRARY FILE!
+ *
+ * This reset does not touch global $USER.
+ *
+ * @access private
+ * @param int|array $roles
+ * @return void
+ */
+function accesslib_clear_role_cache($roles) {
+    global $ACCESSLIB_PRIVATE;
+
+    if (!is_array($roles)) {
+        $roles = [$roles];
+    }
+
+    foreach ($roles as $role) {
+        if (isset($ACCESSLIB_PRIVATE->cacheroledefs[$role])) {
+            unset($ACCESSLIB_PRIVATE->cacheroledefs[$role]);
+        }
+    }
+
+    $cache = cache::make('core', 'roledefs');
+    $cache->delete_many($roles);
 }
 
 /**
@@ -242,49 +270,34 @@ function get_role_access($roleid) {
 
 /**
  * Fetch raw "site wide" role definitions.
+ * Even MUC static acceleration cache appears a bit slow for this.
+ * Important as can be hit hundreds of times per page.
  *
  * @param array $roleids List of role ids to fetch definitions for.
- * @param bool $resetcache Reset the inbuilt static cache.
  * @return array Complete definition for each requested role.
  */
-function get_role_definitions(array $roleids, $resetcache = false, $resetmuc = array()) {
-    global $DB;
-
-    // Even MUC static acceleration cache appears a bit slow for this.
-    // Important as can be hit hundreds of times per page.
-    static $cache_roledefs = null;
-    static $cache_roleids = null;
-
-    if ($resetcache) {
-        $cache_roledefs = null;
-        $cache_roleids = null;
-        if ($resetmuc) {
-            $cache = cache::make('core', 'roledefs');
-            $cache->delete_many($resetmuc);
-        }
-        return;
-    }
-
-    if ($roleids === $cache_roleids) {
-        return $cache_roledefs;
-    }
+function get_role_definitions(array $roleids) {
+    global $ACCESSLIB_PRIVATE;
 
     if (empty($roleids)) {
         return array();
     }
 
-    $cache = cache::make('core', 'roledefs');
-    $cache_roledefs = array_filter($cache->get_many($roleids));
+    // Grab all keys we have not yet got in our static cache.
+    if ($uncached = array_diff($roleids, array_keys($ACCESSLIB_PRIVATE->cacheroledefs))) {
+        $cache = cache::make('core', 'roledefs');
+        $ACCESSLIB_PRIVATE->cacheroledefs += array_filter($cache->get_many($uncached));
 
-    if ($uncached = array_diff($roleids, array_keys($cache_roledefs))) {
-        $uncached = get_role_definitions_uncached($uncached);
-        $cache->set_many($uncached);
+        // Check we have the remaining keys from the MUC.
+        if ($uncached = array_diff($roleids, array_keys($ACCESSLIB_PRIVATE->cacheroledefs))) {
+            $uncached = get_role_definitions_uncached($uncached);
+            $ACCESSLIB_PRIVATE->cacheroledefs += $uncached;
+            $cache->set_many($uncached);
+        }
     }
 
-    $cache_roledefs += $uncached;
-    $cache_roleids = $roleids;
-
-    return $cache_roledefs;
+    // Return just the roles we need.
+    return array_intersect_key($ACCESSLIB_PRIVATE->cacheroledefs, array_flip($roleids));
 }
 
 /**
@@ -304,10 +317,10 @@ function get_role_definitions_uncached(array $roleids) {
     $rdefs = array();
 
     $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
-            FROM {role_capabilities} rc
-            JOIN {context} ctx ON rc.contextid = ctx.id
-            WHERE rc.roleid $sql
-            ORDER BY ctx.path, rc.roleid, rc.capability";
+              FROM {role_capabilities} rc
+              JOIN {context} ctx ON rc.contextid = ctx.id
+             WHERE rc.roleid $sql
+          ORDER BY ctx.path, rc.roleid, rc.capability";
     $rs = $DB->get_recordset_sql($sql, $params);
 
     foreach ($rs as $rd) {
@@ -805,7 +818,7 @@ function require_capability($capability, context $context, $userid = null, $doan
  * @return array access info array
  */
 function get_user_roles_sitewide_accessdata($userid) {
-    global $CFG, $DB, $ACCESSLIB_PRIVATE;
+    global $CFG, $DB;
 
     $accessdata = get_empty_accessdata();
 
@@ -825,9 +838,9 @@ function get_user_roles_sitewide_accessdata($userid) {
 
     // Preload every assigned role.
     $sql = "SELECT ctx.path, ra.roleid, ra.contextid
-            FROM {role_assignments} ra
-            JOIN {context} ctx ON ctx.id = ra.contextid
-            WHERE ra.userid = :userid";
+              FROM {role_assignments} ra
+              JOIN {context} ctx ON ctx.id = ra.contextid
+             WHERE ra.userid = :userid";
 
     $rs = $DB->get_recordset_sql($sql, array('userid' => $userid));
 
@@ -889,7 +902,8 @@ function get_user_accessdata($userid, $preloadonly=false) {
             }
 
         } else {
-            $accessdata = get_user_roles_sitewide_accessdata($userid); // includes default role and frontpage role
+            // Includes default role and frontpage role.
+            $accessdata = get_user_roles_sitewide_accessdata($userid);
         }
 
         $ACCESSLIB_PRIVATE->accessdatabyuser[$userid] = $accessdata;
@@ -1241,7 +1255,7 @@ function delete_role($roleid) {
     $event->trigger();
 
     // Reset any cache of this role, including MUC.
-    get_role_definitions(array(), true, array($roleid));
+    accesslib_clear_role_cache($roleid);
 
     return true;
 }
@@ -1296,7 +1310,7 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
     }
 
     // Reset any cache of this role, including MUC.
-    get_role_definitions(array(), true, array($roleid));
+    accesslib_clear_role_cache($roleid);
 
     return true;
 }
@@ -1327,7 +1341,7 @@ function unassign_capability($capability, $roleid, $contextid = null) {
     }
 
     // Reset any cache of this role, including MUC.
-    get_role_definitions(array(), true, array($roleid));
+    accesslib_clear_role_cache($roleid);
 
     return true;
 }
@@ -2057,7 +2071,7 @@ function reset_role_capabilities($roleid) {
     }
 
     // Reset any cache of this role, including MUC.
-    get_role_definitions(array(), true, array($roleid));
+    accesslib_clear_role_cache($roleid);
 
     // Mark the system context dirty.
     context_system::instance()->mark_dirty();
@@ -4242,7 +4256,7 @@ function role_cap_duplicate($sourcerole, $targetrole) {
     }
 
     // Reset any cache of this role, including MUC.
-    get_role_definitions(array(), true, array($targetrole));
+    accesslib_clear_role_cache($targetrole);
 }
 
 /**
@@ -4987,9 +5001,8 @@ abstract class context extends stdClass implements IteratorAggregate {
 
         if ($ids) {
             // Reset any cache of these roles, including MUC.
-            get_role_definitions(array(), true, $ids);
+            accesslib_clear_role_cache($ids);
         }
-
     }
 
     /**
