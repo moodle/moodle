@@ -61,6 +61,11 @@ class conversion extends \core\persistent {
      */
     const TABLE = 'file_conversion';
 
+    /**
+     * Define properties.
+     *
+     * @return array
+     */
     protected static function define_properties() {
         return array(
             'sourcefileid' => [
@@ -209,7 +214,7 @@ class conversion extends \core\persistent {
     /**
      * Fetch the source file.
      *
-     * @return  stored_file|false
+     * @return  stored_file|false The source file
      */
     public function get_sourcefile() {
         $fs = get_file_storage();
@@ -276,7 +281,7 @@ class conversion extends \core\persistent {
     /**
      * Get the destination file.
      *
-     * @return  stored_file|this
+     * @return  stored_file|bool Destination file
      */
     public function get_destfile() {
         $fs = get_file_storage();
@@ -287,7 +292,7 @@ class conversion extends \core\persistent {
     /**
      * Helper to ensure that the returned status is always an int.
      *
-     * @return  int
+     * @return  int status
      */
     protected function get_status() {
         return (int) $this->raw_get('status');
@@ -296,7 +301,7 @@ class conversion extends \core\persistent {
     /**
      * Get an instance of the current converter.
      *
-     * @return  converter_interface|false
+     * @return  converter_interface|false current converter instance
      */
     public function get_converter_instance() {
         $currentconverter = $this->get('converter');
@@ -311,7 +316,7 @@ class conversion extends \core\persistent {
     /**
      * Transform data into a storable format.
      *
-     * @param   stdClass $data The data to be stored
+     * @param   \stdClass $data The data to be stored
      * @return  $this
      */
     protected function set_data($data) {
@@ -323,7 +328,7 @@ class conversion extends \core\persistent {
     /**
      * Transform data into a storable format.
      *
-     * @return  stdClass The stored data
+     * @return  \stdClass The stored data
      */
     protected function get_data() {
         $data = $this->raw_get('data');
@@ -338,7 +343,7 @@ class conversion extends \core\persistent {
     /**
      * Return the file record base for use in the files table.
      *
-     * @return  array
+     * @return  array|bool
      */
     protected function get_file_record() {
         $file = $this->get_sourcefile();
