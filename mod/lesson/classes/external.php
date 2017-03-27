@@ -29,6 +29,8 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 
+use mod_lesson\external\lesson_summary_exporter;
+
 /**
  * Lesson external functions
  *
@@ -39,6 +41,48 @@ require_once($CFG->dirroot . '/mod/lesson/locallib.php');
  * @since      Moodle 3.3
  */
 class mod_lesson_external extends external_api {
+
+    /**
+     * Return a lesson record ready for being exported.
+     *
+     * @param  stdClass $lessonrecord lesson record
+     * @param  string $password       lesson password
+     * @return stdClass the lesson record ready for exporting.
+     */
+    protected static function get_lesson_summary_for_exporter($lessonrecord, $password = '') {
+        global $USER;
+
+        $lesson = new lesson($lessonrecord);
+        $lesson->update_effective_access($USER->id);
+        $lessonavailable = $lesson->get_time_restriction_status() === false;
+        $lessonavailable = $lessonavailable && $lesson->get_password_restriction_status($password) === false;
+        $lessonavailable = $lessonavailable && $lesson->get_dependencies_restriction_status() === false;
+        $canmanage = $lesson->can_manage();
+
+        if (!$canmanage && !$lessonavailable) {
+            $fields = array('intro', 'introfiles', 'mediafiles', 'practice', 'modattempts', 'usepassword',
+                'grade', 'custom', 'ongoing', 'usemaxgrade',
+                'maxanswers', 'maxattempts', 'review', 'nextpagedefault', 'feedback', 'minquestions',
+                'maxpages', 'timelimit', 'retake', 'mediafile', 'mediaheight', 'mediawidth',
+                'mediaclose', 'slideshow', 'width', 'height', 'bgcolor', 'displayleft', 'displayleftif',
+                'progressbar', 'allowofflineattempts');
+
+            foreach ($fields as $field) {
+                unset($lessonrecord->{$field});
+            }
+        }
+
+        // Fields only for managers.
+        if (!$canmanage) {
+            $fields = array('password', 'dependency', 'conditions', 'activitylink', 'available', 'deadline',
+                            'timemodified', 'completionendreached', 'completiontimespent');
+
+            foreach ($fields as $field) {
+                unset($lessonrecord->{$field});
+            }
+        }
+        return $lessonrecord;
+    }
 
     /**
      * Describes the parameters for get_lessons_by_courses.
@@ -65,7 +109,7 @@ class mod_lesson_external extends external_api {
      * @since Moodle 3.3
      */
     public static function get_lessons_by_courses($courseids = array()) {
-        global $USER;
+        global $PAGE;
 
         $warnings = array();
         $returnedlessons = array();
@@ -89,49 +133,17 @@ class mod_lesson_external extends external_api {
             // Get the lessons in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
             $lessons = get_all_instances_in_courses("lesson", $courses);
-            foreach ($lessons as $lesson) {
-                $context = context_module::instance($lesson->coursemodule);
+            foreach ($lessons as $lessonrecord) {
+                $context = context_module::instance($lessonrecord->coursemodule);
 
-                $lesson = new lesson($lesson);
-                $lesson->update_effective_access($USER->id);
+                // Remove fields added by get_all_instances_in_courses.
+                unset($lessonrecord->coursemodule, $lessonrecord->section, $lessonrecord->visible, $lessonrecord->groupmode,
+                    $lessonrecord->groupingid);
 
-                // Entry to return.
-                $lessondetails = array();
-                // First, we return information that any user can see in the web interface.
-                $lessondetails['id'] = $lesson->id;
-                $lessondetails['coursemodule']      = $lesson->coursemodule;
-                $lessondetails['course']            = $lesson->course;
-                $lessondetails['name']              = external_format_string($lesson->name, $context->id);
+                $lessonrecord = self::get_lesson_summary_for_exporter($lessonrecord);
 
-                $lessonavailable = $lesson->get_time_restriction_status() === false;
-                $lessonavailable = $lessonavailable && $lesson->get_password_restriction_status('') === false;
-                $lessonavailable = $lessonavailable && $lesson->get_dependencies_restriction_status() === false;
-
-                if ($lessonavailable) {
-                    // Format intro.
-                    list($lessondetails['intro'], $lessondetails['introformat']) = external_format_text($lesson->intro,
-                                                                    $lesson->introformat, $context->id, 'mod_lesson', 'intro', null);
-
-                    $lessondetails['introfiles'] = external_util::get_area_files($context->id, 'mod_lesson', 'intro', false, false);
-                    $lessondetails['mediafiles'] = external_util::get_area_files($context->id, 'mod_lesson', 'mediafile', 0);
-                    $viewablefields = array('practice', 'modattempts', 'usepassword', 'grade', 'custom', 'ongoing', 'usemaxgrade',
-                                            'maxanswers', 'maxattempts', 'review', 'nextpagedefault', 'feedback', 'minquestions',
-                                            'maxpages', 'timelimit', 'retake', 'mediafile', 'mediaheight', 'mediawidth',
-                                            'mediaclose', 'slideshow', 'width', 'height', 'bgcolor', 'displayleft', 'displayleftif',
-                                            'progressbar', 'allowofflineattempts');
-
-                    // Fields only for managers.
-                    if ($lesson->can_manage()) {
-                        $additionalfields = array('password', 'dependency', 'conditions', 'activitylink', 'available', 'deadline',
-                                                  'timemodified', 'completionendreached', 'completiontimespent');
-                        $viewablefields = array_merge($viewablefields, $additionalfields);
-                    }
-
-                    foreach ($viewablefields as $field) {
-                        $lessondetails[$field] = $lesson->{$field};
-                    }
-                }
-                $returnedlessons[] = $lessondetails;
+                $exporter = new lesson_summary_exporter($lessonrecord, array('context' => $context));
+                $returnedlessons[] = $exporter->export($PAGE->get_renderer('core'));
             }
         }
         $result = array();
@@ -150,62 +162,7 @@ class mod_lesson_external extends external_api {
         return new external_single_structure(
             array(
                 'lessons' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
-                            'course' => new external_value(PARAM_INT, 'Foreign key reference to the course this lesson is part of.'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id.'),
-                            'name' => new external_value(PARAM_RAW, 'Lesson name.'),
-                            'intro' => new external_value(PARAM_RAW, 'Lesson introduction text.', VALUE_OPTIONAL),
-                            'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
-                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
-                            'practice' => new external_value(PARAM_INT, 'Practice lesson?', VALUE_OPTIONAL),
-                            'modattempts' => new external_value(PARAM_INT, 'Allow student review?', VALUE_OPTIONAL),
-                            'usepassword' => new external_value(PARAM_INT, 'Password protected lesson?', VALUE_OPTIONAL),
-                            'password' => new external_value(PARAM_RAW, 'Password', VALUE_OPTIONAL),
-                            'dependency' => new external_value(PARAM_INT, 'Dependent on (another lesson id)', VALUE_OPTIONAL),
-                            'conditions' => new external_value(PARAM_RAW, 'Conditions to enable the lesson', VALUE_OPTIONAL),
-                            'grade' => new external_value(PARAM_INT, 'The total that the grade is scaled to be out of',
-                                                            VALUE_OPTIONAL),
-                            'custom' => new external_value(PARAM_INT, 'Custom scoring?', VALUE_OPTIONAL),
-                            'ongoing' => new external_value(PARAM_INT, 'Display ongoing score?', VALUE_OPTIONAL),
-                            'usemaxgrade' => new external_value(PARAM_INT, 'How to calculate the final grade', VALUE_OPTIONAL),
-                            'maxanswers' => new external_value(PARAM_INT, 'Maximum answers per page', VALUE_OPTIONAL),
-                            'maxattempts' => new external_value(PARAM_INT, 'Maximum attempts', VALUE_OPTIONAL),
-                            'review' => new external_value(PARAM_INT, 'Provide option to try a question again', VALUE_OPTIONAL),
-                            'nextpagedefault' => new external_value(PARAM_INT, 'Action for a correct answer', VALUE_OPTIONAL),
-                            'feedback' => new external_value(PARAM_INT, 'Display default feedback', VALUE_OPTIONAL),
-                            'minquestions' => new external_value(PARAM_INT, 'Minimum number of questions', VALUE_OPTIONAL),
-                            'maxpages' => new external_value(PARAM_INT, 'Number of pages to show', VALUE_OPTIONAL),
-                            'timelimit' => new external_value(PARAM_INT, 'Time limit', VALUE_OPTIONAL),
-                            'retake' => new external_value(PARAM_INT, 'Re-takes allowed', VALUE_OPTIONAL),
-                            'activitylink' => new external_value(PARAM_INT, 'Link to next activity', VALUE_OPTIONAL),
-                            'mediafile' => new external_value(PARAM_RAW, 'Local file path or full external URL', VALUE_OPTIONAL),
-                            'mediafiles' => new external_files('Media files', VALUE_OPTIONAL),
-                            'mediaheight' => new external_value(PARAM_INT, 'Popup for media file height', VALUE_OPTIONAL),
-                            'mediawidth' => new external_value(PARAM_INT, 'Popup for media with', VALUE_OPTIONAL),
-                            'mediaclose' => new external_value(PARAM_INT, 'Display a close button in the popup?', VALUE_OPTIONAL),
-                            'slideshow' => new external_value(PARAM_INT, 'Display lesson as slideshow', VALUE_OPTIONAL),
-                            'width' => new external_value(PARAM_INT, 'Slideshow width', VALUE_OPTIONAL),
-                            'height' => new external_value(PARAM_INT, 'Slideshow height', VALUE_OPTIONAL),
-                            'bgcolor' => new external_value(PARAM_TEXT, 'Slideshow bgcolor', VALUE_OPTIONAL),
-                            'displayleft' => new external_value(PARAM_INT, 'Display left pages menu?', VALUE_OPTIONAL),
-                            'displayleftif' => new external_value(PARAM_INT, 'Minimum grade to display menu', VALUE_OPTIONAL),
-                            'progressbar' => new external_value(PARAM_INT, 'Display progress bar?', VALUE_OPTIONAL),
-                            'available' => new external_value(PARAM_INT, 'Available from', VALUE_OPTIONAL),
-                            'deadline' => new external_value(PARAM_INT, 'Available until', VALUE_OPTIONAL),
-                            'timemodified' => new external_value(PARAM_INT, 'Last time settings were updated', VALUE_OPTIONAL),
-                            'completionendreached' => new external_value(PARAM_INT, 'Require end reached for completion?',
-                                                                            VALUE_OPTIONAL),
-                            'completiontimespent' => new external_value(PARAM_INT, 'Student must do this activity at least for',
-                                                                        VALUE_OPTIONAL),
-                            'allowofflineattempts' => new external_value(PARAM_INT, 'Whether to allow the lesson to be attempted
-                                                                            offline in the mobile app', VALUE_OPTIONAL),
-                            'visible' => new external_value(PARAM_INT, 'Visible?', VALUE_OPTIONAL),
-                            'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
-                            'groupingid' => new external_value(PARAM_INT, 'Grouping id', VALUE_OPTIONAL),
-                        )
-                    )
+                    lesson_summary_exporter::get_read_structure()
                 ),
                 'warnings' => new external_warnings(),
             )
@@ -223,16 +180,16 @@ class mod_lesson_external extends external_api {
         global $DB, $USER;
 
         // Request and permission validation.
-        $lesson = $DB->get_record('lesson', array('id' => $lessonid), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($lesson, 'lesson');
+        $lessonrecord = $DB->get_record('lesson', array('id' => $lessonid), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($lessonrecord, 'lesson');
 
-        $lesson = new lesson($lesson, $cm, $course);
+        $lesson = new lesson($lessonrecord, $cm, $course);
         $lesson->update_effective_access($USER->id);
 
         $context = $lesson->context;
         self::validate_context($context);
 
-        return array($lesson, $course, $cm, $context);
+        return array($lesson, $course, $cm, $context, $lessonrecord);
     }
 
     /**
@@ -392,7 +349,7 @@ class mod_lesson_external extends external_api {
         );
         $params = self::validate_parameters(self::get_lesson_access_information_parameters(), $params);
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
 
         $result = array();
         // Capabilities first.
@@ -487,7 +444,7 @@ class mod_lesson_external extends external_api {
         $params = self::validate_parameters(self::view_lesson_parameters(), $params);
         $warnings = array();
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
         self::validate_attempt($lesson, $params);
 
         $lesson->set_module_viewed();
@@ -576,7 +533,7 @@ class mod_lesson_external extends external_api {
         $params = self::validate_parameters(self::get_questions_attempts_parameters(), $params);
         $warnings = array();
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
 
         // Default value for userid.
         if (empty($params['userid'])) {
@@ -659,7 +616,7 @@ class mod_lesson_external extends external_api {
         $params = self::validate_parameters(self::get_user_grade_parameters(), $params);
         $warnings = array();
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
 
         // Default value for userid.
         if (empty($params['userid'])) {
@@ -770,7 +727,7 @@ class mod_lesson_external extends external_api {
         $params = self::validate_parameters(self::get_user_attempt_grade_parameters(), $params);
         $warnings = array();
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
 
         // Default value for userid.
         if (empty($params['userid'])) {
@@ -840,7 +797,7 @@ class mod_lesson_external extends external_api {
         $params = self::validate_parameters(self::get_content_pages_viewed_parameters(), $params);
         $warnings = array();
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
 
         // Default value for userid.
         if (empty($params['userid'])) {
@@ -923,7 +880,7 @@ class mod_lesson_external extends external_api {
         $params = self::validate_parameters(self::get_user_timers_parameters(), $params);
         $warnings = array();
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
 
         // Default value for userid.
         if (empty($params['userid'])) {
@@ -1065,7 +1022,7 @@ class mod_lesson_external extends external_api {
         $params = self::validate_parameters(self::get_pages_parameters(), $params);
         $warnings = array();
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
         self::validate_attempt($lesson, $params);
 
         $lessonpages = $lesson->load_all_pages();
@@ -1209,7 +1166,7 @@ class mod_lesson_external extends external_api {
         $params = self::validate_parameters(self::launch_attempt_parameters(), $params);
         $warnings = array();
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
         self::validate_attempt($lesson, $params);
 
         $newpageid = 0;
@@ -1304,7 +1261,7 @@ class mod_lesson_external extends external_api {
         $pagecontent = $ongoingscore = '';
         $progress = null;
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
         self::validate_attempt($lesson, $params);
 
         $pageid = $params['pageid'];
@@ -1466,7 +1423,7 @@ class mod_lesson_external extends external_api {
         $pagecontent = $ongoingscore = '';
         $progress = null;
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
 
         // Update timer so the validation can check the time restrictions.
         $timer = $lesson->update_timer();
@@ -1595,7 +1552,7 @@ class mod_lesson_external extends external_api {
 
         $warnings = array();
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
 
         // Update timer so the validation can check the time restrictions.
         $timer = $lesson->update_timer();
@@ -1703,7 +1660,7 @@ class mod_lesson_external extends external_api {
         $params = self::validate_parameters(self::get_attempts_overview_parameters(), $params);
         $studentsdata = $warnings = array();
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
         require_capability('mod/lesson:viewreports', $context);
 
         if (!empty($params['groupid'])) {
@@ -1820,7 +1777,7 @@ class mod_lesson_external extends external_api {
         $params = self::validate_parameters(self::get_user_attempt_parameters(), $params);
         $warnings = array();
 
-        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
 
         // Default value for userid.
         if (empty($params['userid'])) {
@@ -1974,6 +1931,63 @@ class mod_lesson_external extends external_api {
                         ), 'Jump for a page answer'
                     )
                 ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for get_lesson.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_lesson_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+                'password' => new external_value(PARAM_RAW, 'lesson password', VALUE_DEFAULT, ''),
+            )
+        );
+    }
+
+    /**
+     * Return information of a given lesson.
+     *
+     * @param int $lessonid lesson instance id
+     * @param str $password optional password (the lesson may be protected)
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_lesson($lessonid, $password = '') {
+        global $PAGE;
+
+        $params = array('lessonid' => $lessonid, 'password' => $password);
+        $params = self::validate_parameters(self::get_lesson_parameters(), $params);
+        $warnings = array();
+
+        list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
+
+        $lessonrecord = self::get_lesson_summary_for_exporter($lessonrecord, $params['password']);
+        $exporter = new lesson_summary_exporter($lessonrecord, array('context' => $context));
+
+        $result = array();
+        $result['lesson'] = $exporter->export($PAGE->get_renderer('core'));
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_lesson return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_lesson_returns() {
+        return new external_single_structure(
+            array(
+                'lesson' => lesson_summary_exporter::get_read_structure(),
                 'warnings' => new external_warnings(),
             )
         );
