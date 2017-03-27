@@ -254,7 +254,12 @@ class mod_forum_mod_form extends moodleform_mod {
         }
     }
 
-    function add_completion_rules() {
+    /**
+     * Add custom completion rules.
+     *
+     * @return array Array of string IDs of added items, empty array if none
+     */
+    public function add_completion_rules() {
         $mform =& $this->_form;
 
         $group=array();
