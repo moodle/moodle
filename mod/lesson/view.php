@@ -121,6 +121,16 @@ if (empty($pageid)) {
 
     $lastpageseen = $lesson->get_last_page_seen($retries);
 
+    // Check if the lesson was attempted in an external device like the mobile app.
+    // This check makes sense only when the lesson allows offline attempts.
+    if ($lesson->allowofflineattempts && $timers = $lesson->get_user_timers($USER->id, 'starttime DESC', '*', 0, 1)) {
+        $timer = current($timers);
+        if (!empty($timer->timemodifiedoffline)) {
+            $lasttime = format_time(time() - $timer->timemodifiedoffline);
+            $lesson->add_message(get_string('offlinedatamessage', 'lesson', $lasttime), 'warning');
+        }
+    }
+
     // Check to see if end of lesson was reached.
     if (($lastpageseen !== false && ($lastpageseen != LESSON_EOL))) {
         // End not reached. Check if the user left.

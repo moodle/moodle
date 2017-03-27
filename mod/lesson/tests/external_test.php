@@ -131,7 +131,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
                                 'maxanswers', 'maxattempts', 'review', 'nextpagedefault', 'feedback', 'minquestions',
                                 'maxpages', 'timelimit', 'retake', 'mediafile', 'mediafiles', 'mediaheight', 'mediawidth',
                                 'mediaclose', 'slideshow', 'width', 'height', 'bgcolor', 'displayleft', 'displayleftif',
-                                'progressbar');
+                                'progressbar', 'allowofflineattempts');
 
         // Add expected coursemodule and data.
         $lesson1 = $this->lesson;
@@ -661,6 +661,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $timer1->completed = 1;
         $timer1->starttime = time() - WEEKSECS;
         $timer1->lessontime = time();
+        $timer1->timemodifiedoffline = time();
         $timer1->id = $DB->insert_record("lesson_timer", $timer1);
 
         $timer2 = new stdClass;
@@ -669,6 +670,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $timer2->completed = 0;
         $timer2->starttime = time() - DAYSECS;
         $timer2->lessontime = time() + 1;
+        $timer2->timemodifiedoffline = time() + 1;
         $timer2->id = $DB->insert_record("lesson_timer", $timer2);
 
         // Test retrieve timers.
