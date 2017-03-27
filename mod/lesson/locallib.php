@@ -1010,6 +1010,149 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
 }
 
 /**
+ * Return information about one user attempt (including answers)
+ * @param  lesson $lesson  lesson instance
+ * @param  int $userid     the user id
+ * @param  int $attempt    the attempt number
+ * @return array the user answers (array) and user data stats (object)
+ * @since  Moodle 3.3
+ */
+function lesson_get_user_detailed_report_data(lesson $lesson, $userid, $attempt) {
+    global $DB;
+
+    $context = $lesson->context;
+    if (!empty($userid)) {
+        // Apply overrides.
+        $lesson->update_effective_access($userid);
+    }
+
+    $lessonpages = $lesson->load_all_pages();
+    foreach ($lessonpages as $lessonpage) {
+        if ($lessonpage->prevpageid == 0) {
+            $pageid = $lessonpage->id;
+        }
+    }
+
+    // now gather the stats into an object
+    $firstpageid = $pageid;
+    $pagestats = array();
+    while ($pageid != 0) { // EOL
+        $page = $lessonpages[$pageid];
+        $params = array ("lessonid" => $lesson->id, "pageid" => $page->id);
+        if ($allanswers = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND pageid = :pageid", $params, "timeseen")) {
+            // get them ready for processing
+            $orderedanswers = array();
+            foreach ($allanswers as $singleanswer) {
+                // ordering them like this, will help to find the single attempt record that we want to keep.
+                $orderedanswers[$singleanswer->userid][$singleanswer->retry][] = $singleanswer;
+            }
+            // this is foreach user and for each try for that user, keep one attempt record
+            foreach ($orderedanswers as $orderedanswer) {
+                foreach($orderedanswer as $tries) {
+                    $page->stats($pagestats, $tries);
+                }
+            }
+        } else {
+            // no one answered yet...
+        }
+        //unset($orderedanswers);  initialized above now
+        $pageid = $page->nextpageid;
+    }
+
+    $manager = lesson_page_type_manager::get($lesson);
+    $qtypes = $manager->get_page_type_strings();
+
+    $answerpages = array();
+    $answerpage = "";
+    $pageid = $firstpageid;
+    // cycle through all the pages
+    //  foreach page, add to the $answerpages[] array all the data that is needed
+    //  from the question, the users attempt, and the statistics
+    // grayout pages that the user did not answer and Branch, end of branch, cluster
+    // and end of cluster pages
+    while ($pageid != 0) { // EOL
+        $page = $lessonpages[$pageid];
+        $answerpage = new stdClass;
+        $data ='';
+
+        $answerdata = new stdClass;
+        // Set some defaults for the answer data.
+        $answerdata->score = null;
+        $answerdata->response = null;
+        $answerdata->responseformat = FORMAT_PLAIN;
+
+        $answerpage->title = format_string($page->title);
+
+        $options = new stdClass;
+        $options->noclean = true;
+        $options->overflowdiv = true;
+        $options->context = $context;
+        $answerpage->contents = format_text($page->contents, $page->contentsformat, $options);
+
+        $answerpage->qtype = $qtypes[$page->qtype].$page->option_description_string();
+        $answerpage->grayout = $page->grayout;
+        $answerpage->context = $context;
+
+        if (empty($userid)) {
+            // there is no userid, so set these vars and display stats.
+            $answerpage->grayout = 0;
+            $useranswer = null;
+        } elseif ($useranswers = $DB->get_records("lesson_attempts",array("lessonid"=>$lesson->id, "userid"=>$userid, "retry"=>$attempt,"pageid"=>$page->id), "timeseen")) {
+            // get the user's answer for this page
+            // need to find the right one
+            $i = 0;
+            foreach ($useranswers as $userattempt) {
+                $useranswer = $userattempt;
+                $i++;
+                if ($lesson->maxattempts == $i) {
+                    break; // reached maxattempts, break out
+                }
+            }
+        } else {
+            // user did not answer this page, gray it out and set some nulls
+            $answerpage->grayout = 1;
+            $useranswer = null;
+        }
+        $i = 0;
+        $n = 0;
+        $answerpages[] = $page->report_answers(clone($answerpage), clone($answerdata), $useranswer, $pagestats, $i, $n);
+        $pageid = $page->nextpageid;
+    }
+
+    $userstats = new stdClass;
+    if (!empty($userid)) {
+        $params = array("lessonid"=>$lesson->id, "userid"=>$userid);
+
+        $alreadycompleted = true;
+
+        if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid and userid = :userid", $params, "completed", "*", $attempt, 1)) {
+            $userstats->grade = -1;
+            $userstats->completed = -1;
+            $alreadycompleted = false;
+        } else {
+            $userstats->grade = current($grades);
+            $userstats->completed = $userstats->grade->completed;
+            $userstats->grade = round($userstats->grade->grade, 2);
+        }
+
+        if (!$times = $lesson->get_user_timers($userid, 'starttime', '*', $attempt, 1)) {
+            $userstats->timetotake = -1;
+            $alreadycompleted = false;
+        } else {
+            $userstats->timetotake = current($times);
+            $userstats->timetotake = $userstats->timetotake->lessontime - $userstats->timetotake->starttime;
+        }
+
+        if ($alreadycompleted) {
+            $userstats->gradeinfo = lesson_grade($lesson, $attempt, $userid);
+        }
+    }
+
+    return array($answerpages, $userstats);
+}
+
+
+/**
  * Abstract class that page type's MUST inherit from.
  *
  * This is the abstract class that ALL add page type forms must extend.
