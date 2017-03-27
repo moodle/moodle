@@ -109,6 +109,7 @@ class assign_submission_file extends assign_submission_plugin {
 
         $name = get_string('acceptedfiletypes', 'assignsubmission_file');
         $mform->addElement('text', 'assignsubmission_file_filetypes', $name);
+        $mform->addHelpButton('assignsubmission_file_filetypes', 'acceptedfiletypes', 'assignsubmission_file');
         $mform->setType('assignsubmission_file_filetypes', PARAM_RAW);
         $mform->setDefault('assignsubmission_file_filetypes', $defaultfiletypes);
         $mform->disabledIf('assignsubmission_file_filetypes', 'assignsubmission_file_enabled', 'notchecked');
