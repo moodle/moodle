@@ -195,5 +195,99 @@ class block_iomad_company_admin_external extends external_api {
             )
         );
     }
+
+    /**
+     * block_iomad_company_admin_edit_companies
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function edit_companies_parameters() {
+        return new external_function_parameters(
+            array(
+                'companies' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'Company id number'),
+                            'name' => new external_value(PARAM_TEXT, 'Company long name', VALUE_OPTIONAL),
+                            'shortname' => new external_value(PARAM_TEXT, 'Compay short name', VALUE_OPTIONAL),
+                            'city' => new external_value(PARAM_TEXT, 'Company location city', VALUE_OPTIONAL),
+                            'country' => new external_value(PARAM_TEXT, 'Company location country', VALUE_OPTIONAL),
+                            'maildisplay' => new external_value(PARAM_INT, 'User default email display', VALUE_OPTIONAL),
+                            'mailformat' => new external_value(PARAM_INT, 'User default email format', VALUE_OPTIONAL),
+                            'maildigest' => new external_value(PARAM_INT, 'User default digest type', VALUE_OPTIONAL),
+                            'autosubscribe' => new external_value(PARAM_INT, 'User default forum auto-subscribe', VALUE_OPTIONAL),
+                            'trackforums' => new external_value(PARAM_INT, 'User default forum tracking', VALUE_OPTIONAL),
+                            'htmleditor' => new external_value(PARAM_INT, 'User default text editor', VALUE_OPTIONAL),
+                            'screenreader' => new external_value(PARAM_INT, 'User default screen reader', VALUE_OPTIONAL),
+                            'timezone' => new external_value(PARAM_TEXT, 'User default timezone', VALUE_OPTIONAL),
+                            'lang' => new external_value(PARAM_TEXT, 'User default language', VALUE_OPTIONAL),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_edit_companies
+     *
+     * Implement create_company
+     * @param $company
+     * @return boolean success
+     */
+    public static function edit_companies($companies) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::edit_companies_parameters(), array('companies' => $companies));
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:company_add', $context);
+
+        foreach ($params['companies'] as $company) {
+
+            $id = $company['id'];
+
+            // does this company exist
+            if (!$oldcompany = $DB->get_record('company', array('id' => $id))) {
+                throw new invalid_parameter_exception("Company id=$id does not exist");
+            }
+
+            // Copy whatever vars we have
+            foreach ($company as $key => $value) {
+                $oldcompany->$key = $value;
+            }
+
+            // check we haven't created a name clash
+            if ($duplicate = $DB->get_record('company', array('name' => $oldcompany->name))) {
+                if ($duplicate->id != $oldcompany->id) {
+                    throw new invalid_parameter_exception('Duplicate company name');
+                }
+            }
+            if ($duplicate = $DB->get_record('company', array('shortname' => $oldcompany->shortname))) {
+                if ($duplicate->id != $oldcompany->id) {
+                    throw new invalid_parameter_exception('Duplicate company shortname');
+                }
+            }
+
+            // Update the company record
+            $DB->update_record('company', $oldcompany);
+        }
+
+        return true;
+    }
+
+    /**
+     * block_iomad_company_admin_create_companies
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function edit_companies_returns() {
+        return new external_value(PARAM_BOOL, 'Success or failure');
+    }
 }
 
