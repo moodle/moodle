@@ -89,7 +89,7 @@ class core_text {
         $GLOBALS['TYPO3_CONF_VARS']['BE']['folderCreateMask'] = decoct($CFG->directorypermissions);
 
         // Default mask for Typo
-        $GLOBALS['TYPO3_CONF_VARS']['BE']['fileCreateMask'] = $CFG->directorypermissions;
+        $GLOBALS['TYPO3_CONF_VARS']['BE']['fileCreateMask'] = decoct($CFG->filepermissions);
 
         // This full path constants must be defined too, transforming backslashes
         // to forward slashed because Typo3 requires it.
