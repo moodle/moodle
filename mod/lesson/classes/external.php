@@ -1883,4 +1883,99 @@ class mod_lesson_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_pages_possible_jumps.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_pages_possible_jumps_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+            )
+        );
+    }
+
+    /**
+     * Return all the possible jumps for the pages in a given lesson.
+     *
+     * You may expect different results on consecutive executions due to the random nature of the lesson module.
+     *
+     * @param int $lessonid lesson instance id
+     * @return array of warnings and possible jumps
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_pages_possible_jumps($lessonid) {
+        global $USER;
+
+        $params = array('lessonid' => $lessonid);
+        $params = self::validate_parameters(self::get_pages_possible_jumps_parameters(), $params);
+
+        $warnings = $jumps = array();
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+
+        // Only return for managers or if offline attempts are enabled.
+        if ($lesson->can_manage() || $lesson->allowofflineattempts) {
+
+            $lessonpages = $lesson->load_all_pages();
+            foreach ($lessonpages as $page) {
+                $jump = array();
+                $jump['pageid'] = $page->id;
+
+                $answers = $page->get_answers();
+                if (count($answers) > 0) {
+                    foreach ($answers as $answer) {
+                        $jump['answerid'] = $answer->id;
+                        $jump['jumpto'] = $answer->jumpto;
+                        $jump['calculatedjump'] = $lesson->calculate_new_page_on_jump($page, $answer->jumpto);
+                        // Special case, only applies to branch/end of branch.
+                        if ($jump['calculatedjump'] == LESSON_RANDOMBRANCH) {
+                            $jump['calculatedjump'] = lesson_unseen_branch_jump($lesson, $USER->id);
+                        }
+                        $jumps[] = $jump;
+                    }
+                } else {
+                    // Imported lessons from 1.x.
+                    $jump['answerid'] = 0;
+                    $jump['jumpto'] = $page->nextpageid;
+                    $jump['calculatedjump'] = $lesson->calculate_new_page_on_jump($page, $page->nextpageid);
+                    $jumps[] = $jump;
+                }
+            }
+        }
+
+        $result = array(
+            'jumps' => $jumps,
+            'warnings' => $warnings,
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the get_pages_possible_jumps return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_pages_possible_jumps_returns() {
+        return new external_single_structure(
+            array(
+                'jumps' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'pageid' => new external_value(PARAM_INT, 'The page id'),
+                            'answerid' => new external_value(PARAM_INT, 'The answer id'),
+                            'jumpto' => new external_value(PARAM_INT, 'The jump (page id or type of jump)'),
+                            'calculatedjump' => new external_value(PARAM_INT, 'The real page id (or EOL) to jump'),
+                        ), 'Jump for a page answer'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
