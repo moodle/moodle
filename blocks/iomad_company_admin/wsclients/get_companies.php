@@ -12,9 +12,8 @@
  *
  */
 
-/// SETUP - NEED TO BE CHANGED
-$token = 'de12b1fc61ed026d4038eaef7b17deac';
-$domainname = 'http://localhost/iomad32';
+require(dirname(__FILE__) . '/config.php');
+
 $functionname = 'block_iomad_company_admin_get_companies';
 
 /// PARAMETERS
