@@ -75,8 +75,8 @@ if (!array_key_exists($action, $actionoptions)) {
     $action = '';
 }
 
-$PAGE->set_title($course->shortname .': '. $strparticipation);
-$PAGE->set_heading($course->fullname);
+$PAGE->set_title(format_string($course->shortname, true, array('context' => $context)) .': '. $strparticipation);
+$PAGE->set_heading(format_string($course->fullname, true, array('context' => $context)));
 echo $OUTPUT->header();
 
 $uselegacyreader = false; // Use legacy reader with sql_internal_table_reader to aggregate records.
@@ -327,7 +327,7 @@ if (!empty($instanceid) && !empty($roleid)) {
 
     $a = new stdClass();
     $a->count = $totalcount;
-    $a->items = $role->name;
+    $a->items = format_string($role->name, true, array('context' => $context));
 
     if ($matchcount != $totalcount) {
         $a->count = $matchcount.'/'.$a->count;
