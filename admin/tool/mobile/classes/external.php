@@ -150,6 +150,16 @@ class external extends external_api {
                 'launchurl' => new external_value(PARAM_URL, 'SSO login launch URL. Empty if it won\'t be used.', VALUE_OPTIONAL),
                 'mobilecssurl' => new external_value(PARAM_URL, 'Mobile custom CSS theme', VALUE_OPTIONAL),
                 'tool_mobile_disabledfeatures' => new external_value(PARAM_RAW, 'Disabled features in the app', VALUE_OPTIONAL),
+                'identityproviders' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_TEXT, 'The identity provider name.'),
+                            'iconurl' => new external_value(PARAM_URL, 'The icon URL for the provider.'),
+                            'url' => new external_value(PARAM_URL, 'The URL of the provider.'),
+                        )
+                    ),
+                    'Identity providers', VALUE_OPTIONAL
+                ),
                 'warnings' => new external_warnings(),
             )
         );

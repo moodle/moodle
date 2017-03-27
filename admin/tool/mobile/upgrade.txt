@@ -4,4 +4,5 @@ Information provided here is intended especially for developers.
 === 3.3 ===
 
  * External function tool_mobile::get_public_config now returns the mobilecssurl field (Mobile custom CSS theme).
+ * External function tool_mobile::get_public_config now returns the identityproviders field (list of external identity providers).
 

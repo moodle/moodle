@@ -153,6 +153,14 @@ class api {
             $settings['compactlogourl'] = $compactlogourl->out(false);
         }
 
+        // Identity providers.
+        $authsequence = get_enabled_auth_plugins(true);
+        $identityproviders = \auth_plugin_base::get_identity_providers($authsequence);
+        $identityprovidersdata = \auth_plugin_base::prepare_identity_providers_for_output($identityproviders, $OUTPUT);
+        if (!empty($identityprovidersdata)) {
+            $settings['identityproviders'] = $identityprovidersdata;
+        }
+
         return $settings;
     }
 
