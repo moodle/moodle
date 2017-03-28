@@ -48,15 +48,15 @@ class renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function issuers_table($issuers) {
-        global $CFG, $OUTPUT;
+        global $CFG;
 
         $table = new html_table();
         $table->head  = [
             get_string('name'),
             get_string('configuredstatus', 'tool_oauth2'),
             get_string('loginissuer', 'tool_oauth2'),
-            get_string('discoverystatus', 'tool_oauth2') . ' ' . $OUTPUT->help_icon('discovered', 'tool_oauth2'),
-            get_string('systemauthstatus', 'tool_oauth2') . ' ' . $OUTPUT->help_icon('systemaccountconnected', 'tool_oauth2'),
+            get_string('discoverystatus', 'tool_oauth2') . ' ' . $this->help_icon('discovered', 'tool_oauth2'),
+            get_string('systemauthstatus', 'tool_oauth2') . ' ' . $this->help_icon('systemaccountconnected', 'tool_oauth2'),
             get_string('edit'),
         ];
         $table->attributes['class'] = 'admintable generaltable';
@@ -86,26 +86,26 @@ class renderer extends plugin_renderer_base {
 
             // Configured.
             if ($issuer->is_configured()) {
-                $configured = $OUTPUT->pix_icon('yes', get_string('configured', 'tool_oauth2'), 'tool_oauth2');
+                $configured = $this->pix_icon('yes', get_string('configured', 'tool_oauth2'), 'tool_oauth2');
             } else {
-                $configured = $OUTPUT->pix_icon('no', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');
+                $configured = $this->pix_icon('no', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');
             }
             $configuredstatuscell = new html_table_cell($configured);
 
             // Login issuer.
             if (!empty($issuer->get('showonloginpage'))) {
-                $loginissuer = $OUTPUT->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
+                $loginissuer = $this->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
             } else {
-                $loginissuer = $OUTPUT->pix_icon('no', get_string('notloginissuer', 'tool_oauth2'), 'tool_oauth2');
+                $loginissuer = $this->pix_icon('no', get_string('notloginissuer', 'tool_oauth2'), 'tool_oauth2');
             }
             $loginissuerstatuscell = new html_table_cell($loginissuer);
 
             // Discovered.
             if (!empty($issuer->get('scopessupported'))) {
-                $discovered = $OUTPUT->pix_icon('yes', get_string('discovered', 'tool_oauth2'), 'tool_oauth2');
+                $discovered = $this->pix_icon('yes', get_string('discovered', 'tool_oauth2'), 'tool_oauth2');
             } else {
                 if (!empty($issuer->get_endpoint_url('discovery'))) {
-                    $discovered = $OUTPUT->pix_icon('no', get_string('notdiscovered', 'tool_oauth2'), 'tool_oauth2');
+                    $discovered = $this->pix_icon('no', get_string('notdiscovered', 'tool_oauth2'), 'tool_oauth2');
                 } else {
                     $discovered = '-';
                 }
@@ -117,14 +117,14 @@ class renderer extends plugin_renderer_base {
             if ($issuer->is_system_account_connected()) {
                 $systemaccount = \core\oauth2\api::get_system_account($issuer);
                 $systemauth = s($systemaccount->get('email')) . ' (' . s($systemaccount->get('username')). ') ';
-                $systemauth .= $OUTPUT->pix_icon('yes', get_string('systemaccountconnected', 'tool_oauth2'), 'tool_oauth2');
+                $systemauth .= $this->pix_icon('yes', get_string('systemaccountconnected', 'tool_oauth2'), 'tool_oauth2');
             } else {
-                $systemauth = $OUTPUT->pix_icon('no', get_string('systemaccountnotconnected', 'tool_oauth2'), 'tool_oauth2');
+                $systemauth = $this->pix_icon('no', get_string('systemaccountnotconnected', 'tool_oauth2'), 'tool_oauth2');
             }
 
             $params = ['id' => $issuer->get('id'), 'action' => 'auth'];
             $authurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
-            $icon = $OUTPUT->pix_icon('auth', get_string('connectsystemaccount', 'tool_oauth2'), 'tool_oauth2');
+            $icon = $this->pix_icon('auth', get_string('connectsystemaccount', 'tool_oauth2'), 'tool_oauth2');
             $authlink = html_writer::link($authurl, $icon);
             $systemauth .= ' ' . $authlink;
 
@@ -133,52 +133,52 @@ class renderer extends plugin_renderer_base {
             $links = '';
             // Action links.
             $editurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['id' => $issuer->get('id'), 'action' => 'edit']);
-            $editlink = html_writer::link($editurl, $OUTPUT->pix_icon('t/edit', get_string('edit')));
+            $editlink = html_writer::link($editurl, $this->pix_icon('t/edit', get_string('edit')));
             $links .= ' ' . $editlink;
 
             // Endpoints.
             $editendpointsurl = new moodle_url('/admin/tool/oauth2/endpoints.php', ['issuerid' => $issuer->get('id')]);
             $str = get_string('editendpoints', 'tool_oauth2');
-            $editendpointlink = html_writer::link($editendpointsurl, $OUTPUT->pix_icon('t/viewdetails', $str));
+            $editendpointlink = html_writer::link($editendpointsurl, $this->pix_icon('t/viewdetails', $str));
             $links .= ' ' . $editendpointlink;
 
             // User field mapping.
             $params = ['issuerid' => $issuer->get('id')];
             $edituserfieldmappingsurl = new moodle_url('/admin/tool/oauth2/userfieldmappings.php', $params);
             $str = get_string('edituserfieldmappings', 'tool_oauth2');
-            $edituserfieldmappinglink = html_writer::link($edituserfieldmappingsurl, $OUTPUT->pix_icon('t/user', $str));
+            $edituserfieldmappinglink = html_writer::link($edituserfieldmappingsurl, $this->pix_icon('t/user', $str));
             $links .= ' ' . $edituserfieldmappinglink;
 
             // Delete.
             $deleteurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['id' => $issuer->get('id'), 'action' => 'delete']);
-            $deletelink = html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete')));
+            $deletelink = html_writer::link($deleteurl, $this->pix_icon('t/delete', get_string('delete')));
             $links .= ' ' . $deletelink;
             // Enable / Disable.
             if ($issuer->get('enabled')) {
                 // Disable.
                 $disableparams = ['id' => $issuer->get('id'), 'sesskey' => sesskey(), 'action' => 'disable'];
                 $disableurl = new moodle_url('/admin/tool/oauth2/issuers.php', $disableparams);
-                $disablelink = html_writer::link($disableurl, $OUTPUT->pix_icon('t/hide', get_string('disable')));
+                $disablelink = html_writer::link($disableurl, $this->pix_icon('t/hide', get_string('disable')));
                 $links .= ' ' . $disablelink;
             } else {
                 // Enable.
                 $enableparams = ['id' => $issuer->get('id'), 'sesskey' => sesskey(), 'action' => 'enable'];
                 $enableurl = new moodle_url('/admin/tool/oauth2/issuers.php', $enableparams);
-                $enablelink = html_writer::link($enableurl, $OUTPUT->pix_icon('t/show', get_string('enable')));
+                $enablelink = html_writer::link($enableurl, $this->pix_icon('t/show', get_string('enable')));
                 $links .= ' ' . $enablelink;
             }
             if (!$last) {
                 // Move down.
                 $params = ['id' => $issuer->get('id'), 'action' => 'movedown', 'sesskey' => sesskey()];
                 $movedownurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
-                $movedownlink = html_writer::link($movedownurl, $OUTPUT->pix_icon('t/down', get_string('movedown')));
+                $movedownlink = html_writer::link($movedownurl, $this->pix_icon('t/down', get_string('movedown')));
                 $links .= ' ' . $movedownlink;
             }
             if (!$first) {
                 // Move up.
                 $params = ['id' => $issuer->get('id'), 'action' => 'moveup', 'sesskey' => sesskey()];
                 $moveupurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
-                $moveuplink = html_writer::link($moveupurl, $OUTPUT->pix_icon('t/up', get_string('moveup')));
+                $moveuplink = html_writer::link($moveupurl, $this->pix_icon('t/up', get_string('moveup')));
                 $links .= ' ' . $moveuplink;
             }
 
@@ -208,7 +208,7 @@ class renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function endpoints_table($endpoints, $issuerid) {
-        global $CFG, $OUTPUT;
+        global $CFG;
 
         $table = new html_table();
         $table->head  = [
@@ -235,13 +235,13 @@ class renderer extends plugin_renderer_base {
             // Action links.
             $editparams = ['issuerid' => $issuerid, 'endpointid' => $endpoint->get('id'), 'action' => 'edit'];
             $editurl = new moodle_url('/admin/tool/oauth2/endpoints.php', $editparams);
-            $editlink = html_writer::link($editurl, $OUTPUT->pix_icon('t/edit', get_string('edit')));
+            $editlink = html_writer::link($editurl, $this->pix_icon('t/edit', get_string('edit')));
             $links .= ' ' . $editlink;
 
             // Delete.
             $deleteparams = ['issuerid' => $issuerid, 'endpointid' => $endpoint->get('id'), 'action' => 'delete'];
             $deleteurl = new moodle_url('/admin/tool/oauth2/endpoints.php', $deleteparams);
-            $deletelink = html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete')));
+            $deletelink = html_writer::link($deleteurl, $this->pix_icon('t/delete', get_string('delete')));
             $links .= ' ' . $deletelink;
 
             $editcell = new html_table_cell($links);
@@ -267,7 +267,7 @@ class renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function user_field_mappings_table($userfieldmappings, $issuerid) {
-        global $CFG, $OUTPUT;
+        global $CFG;
 
         $table = new html_table();
         $table->head  = [
@@ -293,13 +293,13 @@ class renderer extends plugin_renderer_base {
             // Action links.
             $editparams = ['issuerid' => $issuerid, 'userfieldmappingid' => $userfieldmapping->get('id'), 'action' => 'edit'];
             $editurl = new moodle_url('/admin/tool/oauth2/userfieldmappings.php', $editparams);
-            $editlink = html_writer::link($editurl, $OUTPUT->pix_icon('t/edit', get_string('edit')));
+            $editlink = html_writer::link($editurl, $this->pix_icon('t/edit', get_string('edit')));
             $links .= ' ' . $editlink;
 
             // Delete.
             $deleteparams = ['issuerid' => $issuerid, 'userfieldmappingid' => $userfieldmapping->get('id'), 'action' => 'delete'];
             $deleteurl = new moodle_url('/admin/tool/oauth2/userfieldmappings.php', $deleteparams);
-            $deletelink = html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete')));
+            $deletelink = html_writer::link($deleteurl, $this->pix_icon('t/delete', get_string('delete')));
             $links .= ' ' . $deletelink;
 
             $editcell = new html_table_cell($links);

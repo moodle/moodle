@@ -47,7 +47,7 @@ class renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function linked_logins_table($linkedlogins) {
-        global $CFG, $OUTPUT;
+        global $CFG;
 
         $table = new html_table();
         $table->head  = [
@@ -76,7 +76,7 @@ class renderer extends plugin_renderer_base {
             // Delete.
             $deleteparams = ['linkedloginid' => $linkedlogin->get('id'), 'action' => 'delete', 'sesskey' => sesskey()];
             $deleteurl = new moodle_url('/auth/oauth2/linkedlogins.php', $deleteparams);
-            $deletelink = html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete')));
+            $deletelink = html_writer::link($deleteurl, $this->pix_icon('t/delete', get_string('delete')));
             $links .= ' ' . $deletelink;
 
             $editcell = new html_table_cell($links);
