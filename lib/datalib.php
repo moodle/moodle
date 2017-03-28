@@ -787,7 +787,7 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
             $searchcond[] = "$concat $REGEXP :ss$i";
             $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
 
-        } else if (substr($searchterm,0,1) == "-") {
+        } else if ((substr($searchterm,0,1) == "-") && (core_text::strlen($searchterm) > 1)) {
             $searchterm = trim($searchterm, '+-');
             $searchterm = preg_quote($searchterm, '|');
             $searchcond[] = "$concat $NOTREGEXP :ss$i";
