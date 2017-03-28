@@ -35,10 +35,6 @@ $PAGE->set_heading($strheading);
 
 require_login();
 
-if (!get_config('auth_oauth2', 'allowlinkedlogins')) {
-    throw new moodle_exception('Linked logins are disabled.');
-}
-
 $action = optional_param('action', '', PARAM_ALPHAEXT);
 if ($action == 'new') {
     require_sesskey();

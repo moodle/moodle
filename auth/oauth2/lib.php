@@ -42,10 +42,8 @@ function auth_oauth2_extend_navigation_user_settings(navigation_node $useraccoun
     if (!\core\session\manager::is_loggedinas()) {
         if (has_capability('auth/oauth2:managelinkedlogins', $context)) {
 
-            if (get_config('auth_oauth2', 'allowlinkedlogins')) {
-                $parent = $useraccount->parent->find('useraccount', navigation_node::TYPE_CONTAINER);
-                $parent->add(get_string('linkedlogins', 'auth_oauth2'), new moodle_url('/auth/oauth2/linkedlogins.php'));
-            }
+            $parent = $useraccount->parent->find('useraccount', navigation_node::TYPE_CONTAINER);
+            $parent->add(get_string('linkedlogins', 'auth_oauth2'), new moodle_url('/auth/oauth2/linkedlogins.php'));
         }
     }
 }
