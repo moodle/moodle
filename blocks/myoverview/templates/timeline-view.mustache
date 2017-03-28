@@ -48,7 +48,7 @@ require(['jquery', 'core/custom_interaction_events'], function($, customEvents) 
     var root = $('#timeline-view-{{uniqid}}');
     customEvents.define(root, [customEvents.events.activate]);
     root.on(customEvents.events.activate, '[data-toggle="btns"] > .btn', function() {
-      	root.find('.btn.active').removeClass('active');
+        root.find('.btn.active').removeClass('active');
     });
 });
 {{/js}}
