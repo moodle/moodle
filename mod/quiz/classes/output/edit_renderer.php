@@ -204,7 +204,7 @@ class edit_renderer extends \plugin_renderer_base {
         if (!$structure->can_be_repaginated()) {
             $buttonoptions['disabled'] = 'disabled';
         } else {
-            $this->page->requires->yui_module('moodle-mod_quiz-repaginate', 'M.mod_quiz.repaginate.init');
+            $this->page->requires->>js_call_amd('mod_quiz/amdrepaginate', 'init');
         }
 
         return html_writer::tag('div',
