@@ -422,7 +422,6 @@ class mod_feedback_external extends external_api {
         $warnings = array();
 
         list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
-        self::validate_feedback_access($feedback,  $course, $cm, $context);
 
         $feedbackstructure = new mod_feedback_structure($feedback, $cm, $course->id);
         $returneditems = array();
