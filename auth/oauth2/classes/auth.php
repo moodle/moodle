@@ -73,6 +73,10 @@ class auth extends \auth_plugin_base {
      */
     public function user_login($username, $password) {
         $cached = $this->get_static_user_info();
+        if (empty($cached)) {
+            // This means we were called as part of a normal login flow - without using oauth.
+            return false;
+        }
         $verifyusername = $cached['username'];
         if ($verifyusername == $username) {
             return true;
