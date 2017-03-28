@@ -58,6 +58,30 @@ class core_user {
      */
     const MAILDISPLAY_COURSE_MEMBERS_ONLY = 2;
 
+    /**
+     * List of fields that can be synched/locked during authentication.
+     */
+    const AUTHSYNCFIELDS = [
+        'firstname',
+        'lastname',
+        'email',
+        'city',
+        'country',
+        'lang',
+        'description',
+        'url',
+        'idnumber',
+        'institution',
+        'department',
+        'phone1',
+        'phone2',
+        'address',
+        'firstnamephonetic',
+        'lastnamephonetic',
+        'middlename',
+        'alternatename'
+    ];
+
     /** @var stdClass keep record of noreply user */
     public static $noreplyuser = false;
 
@@ -887,4 +911,5 @@ class core_user {
             return $value;
         }
     }
+
 }

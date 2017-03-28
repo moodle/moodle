@@ -37,21 +37,14 @@ class user_field_mapping extends persistent {
 
     const TABLE = 'oauth2_user_field_mapping';
 
-    /** @var array $userfields - List of standard Moodle userfields. */
-    private static $userfields = [
-        'firstname',
-        'middlename',
-        'lastname',
-        'email',
-        'username',
-        'idnumber',
-        'url',
-        'alternatename',
-        'picture',
-        'address',
-        'phone',
-        'lang'
-    ];
+    /**
+     * Return the list of valid internal user fields.
+     *
+     * @return array
+     */
+    private static function get_user_fields() {
+        return array_merge(\core_user::AUTHSYNCFIELDS, ['picture']);
+    }
 
     /**
      * Return the definition of the properties of this model.
@@ -68,7 +61,7 @@ class user_field_mapping extends persistent {
             ),
             'internalfield' => array(
                 'type' => PARAM_ALPHANUMEXT,
-                'choices' => self::$userfields,
+                'choices' => self::get_user_fields()
             )
         );
     }
@@ -79,6 +72,6 @@ class user_field_mapping extends persistent {
      * @return array
      */
     public function get_internalfield_list() {
-        return array_combine(self::$userfields, self::$userfields);
+        return array_combine(self::get_user_fields(), self::get_user_fields());
     }
 }
