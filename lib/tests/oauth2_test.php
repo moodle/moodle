@@ -25,16 +25,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Tests for myprofilelib apis.
+ * Tests for oauth2 apis (\core\oauth2\*).
  *
  * @package    core
- * @copyright  2015 onwards Ankit agarwal <ankit.agrr@gmail.com>
+ * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 class core_oauth2_testcase extends advanced_testcase {
 
     /**
-     * Tests the core_myprofile_navigation() function as an admin viewing a user's course profile.
+     * Tests the crud operations on oauth2 issuers.
      */
     public function test_create_and_delete_standard_issuers() {
         $this->resetAfterTest();
@@ -103,8 +103,6 @@ class core_oauth2_testcase extends advanced_testcase {
      * Tests we can get a logged in oauth client for a system account.
      */
     public function test_get_system_oauth_client() {
-        global $SESSION;
-
         $this->resetAfterTest();
         $this->setAdminUser();
 
