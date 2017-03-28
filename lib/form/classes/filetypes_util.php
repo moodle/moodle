@@ -56,7 +56,7 @@ class filetypes_util {
      *
      * The return value can be used as the accepted_types option for the filepicker.
      *
-     * @param string|array $extensions list of file extensions, groups or mimetypes
+     * @param string|array $types List of file extensions, groups or mimetypes
      * @return array of strings
      */
     public function normalize_file_types($types) {
@@ -97,8 +97,10 @@ class filetypes_util {
                 $types[$i] = clean_param($type, PARAM_FILE);
             } else if ($this->looks_like_mimetype($type)) {
                 // All good, it looks like a mimetype.
+                continue;
             } else if ($this->is_filetype_group($type)) {
                 // All good, it is a known type group.
+                continue;
             } else {
                 // We assume the user typed something like "png" so we consider
                 // it an extension.
@@ -189,8 +191,8 @@ class filetypes_util {
      */
     public function get_group_description($group) {
 
-		if (get_string_manager()->string_exists('group:'.$group, 'core_mimetypes')) {
-			return get_string('group:'.$group, 'core_mimetypes');
+        if (get_string_manager()->string_exists('group:'.$group, 'core_mimetypes')) {
+            return get_string('group:'.$group, 'core_mimetypes');
         } else {
             return s($group);
         }
@@ -254,8 +256,8 @@ class filetypes_util {
      * Prepares data for the filetypes-browser.mustache
      *
      * @param string|array $onlytypes Allow selection from these file types only; for example 'web_image'.
-     * @param bool allowall Allow to select 'All file types'. Does not apply with onlytypes are set.
-     * @param $current string|array Current values that should be selected.
+     * @param bool $allowall Allow to select 'All file types'. Does not apply with onlytypes are set.
+     * @param string|array $current Current values that should be selected.
      * @return object
      */
     public function data_for_browser($onlytypes=null, $allowall=true, $current=null) {
@@ -475,6 +477,7 @@ class filetypes_util {
         foreach ($this->normalize_file_types($types) as $type) {
             if ($this->is_filetype_group($type)) {
                 // The type is a group that exists.
+                continue;
             } else if ($this->looks_like_mimetype($type)) {
                 // If there's no extension associated with that mimetype, we consider it unknown.
                 if (empty(file_get_typegroup('extension', [$type]))) {

@@ -469,6 +469,15 @@ $functions = array(
         'type'        => 'write',
         'classpath'   => 'files/externallib.php',
     ),
+    'core_form_get_filetypes_browser_data' => array(
+        'classname' => 'core_form\external',
+        'methodname' => 'get_filetypes_browser_data',
+        'classpath' => '',
+        'description' => 'Provides data for the filetypes element browser.',
+        'type' => 'read',
+        'loginrequired' => false,
+        'ajax' => true,
+    ),
     'core_get_component_strings' => array(
         'classname' => 'core_external',
         'methodname' => 'get_component_strings',

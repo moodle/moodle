@@ -51,21 +51,21 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
     /**
      * Constructor
      *
-     * @param string $elementName Element's name
-     * @param string $elementLabel Label(s) for an element
+     * @param string $elementname Element's name
+     * @param string $elementlabel Label(s) for an element
      * @param array $options element options:
      *   'onlytypes': Allow selection from these file types only; for example ['onlytypes' => ['web_image']].
      *   'allowall': Allow to select 'All file types', defaults to true. Does not apply with onlytypes are set.
      * @param array|string $attributes Either a typical HTML attribute string or an associative array
      */
-    public function __construct($elementName = null, $elementLabel = null, $options = null, $attributes = null) {
+    public function __construct($elementname = null, $elementlabel = null, $options = null, $attributes = null) {
 
-        parent::__construct($elementName, $elementLabel);
+        parent::__construct($elementname, $elementlabel);
         $this->_type = 'filetypes';
 
         // Hard-frozen elements do not get the name populated automatically,
         // which leads to PHP notice. Add it explicitly here.
-        $this->setAttributes(array('name' => $elementName));
+        $this->setAttributes(array('name' => $elementname));
         $this->updateAttributes($attributes);
 
         if (is_array($options) && $options) {
@@ -95,18 +95,19 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
             $this->createFormElement('static', 'browser', null,
                 '<span data-filetypesbrowser="'.$this->getAttribute('id').'"></span>'),
 
-            $this->createFormElement('static', 'descriptions'),
+            $this->createFormElement('static', 'descriptions', null,
+                '<div data-filetypesdescriptions="'.$this->getAttribute('id').'"></div>')
         ]);
     }
 
     /**
      * Return the selected file types.
      *
-     * @param array $submitValues submitted values
+     * @param array $submitted submitted values
      * @param bool $assoc if true the retured value is associated array
      * @return array
      */
-    public function exportValue(&$submitValues, $assoc = false) {
+    public function exportValue(&$submitted, $assoc = false) {
 
         $value = '';
         $filetypeselement = null;
@@ -118,7 +119,7 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
         }
 
         if ($filetypeselement) {
-            $formval = $filetypeselement->exportValue($submitValues[$this->getName()], false);
+            $formval = $filetypeselement->exportValue($submitted[$this->getName()], false);
             if ($formval) {
                 $value = $this->util->normalize_file_types($formval);
                 if ($value === ['*'] && !$this->allowall) {
@@ -140,6 +141,13 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
      */
     public function accept(&$renderer, $required = false, $error = null) {
         global $PAGE;
+
+        $PAGE->requires->js_call_amd('core_form/filetypes', 'init', [
+            $this->getAttribute('id'),
+            $this->getLabel(),
+            $this->onlytypes,
+            $this->allowall,
+        ]);
 
         if ($this->isFrozen()) {
             // Don't render the choose button if the control is frozen.
@@ -179,11 +187,12 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
                 }
                 if ($value['filetypes'] !== null) {
                     $filetypes = $this->util->normalize_file_types($value['filetypes']);
-					if ($filetypes === ['*'] && !$this->allowall) {
-						$filetypes = [];
-					}
-                    $value['descriptions'] = $OUTPUT->render_from_template('core_form/filetypes-descriptions',
-                        $this->util->describe_file_types($filetypes));
+                    if ($filetypes === ['*'] && !$this->allowall) {
+                        $filetypes = [];
+                    }
+                    $value['descriptions'] = '<div data-filetypesdescriptions="'.$this->getAttribute('id').'">' .
+                        $OUTPUT->render_from_template('core_form/filetypes-descriptions',
+                            $this->util->describe_file_types($filetypes)).'</div>';
                 }
                 $this->setValue($value);
                 return true;
