@@ -3107,7 +3107,8 @@ class lesson extends lesson_base {
         }
 
         // Progress calculation as a percent.
-        return round(count($viewedpageids) / count($validpages), 2) * 100;
+        $progress = round(count($viewedpageids) / count($validpages), 2) * 100;
+        return (int) $progress;
     }
 
     /**
