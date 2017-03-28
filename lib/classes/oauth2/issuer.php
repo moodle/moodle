@@ -163,6 +163,15 @@ class issuer extends persistent {
     }
 
     /**
+     * Return true if this issuer looks like it has been configured.
+     *
+     * @return boolean
+     */
+    public function is_configured() {
+        return (!empty($this->get('clientid')) && !empty($this->get('clientsecret')));
+    }
+
+    /**
      * Does this OAuth service support system authentication?
      * @return boolean
      */
@@ -175,6 +184,9 @@ class issuer extends persistent {
      * @return boolean
      */
     public function is_system_account_connected() {
+        if (!$this->is_configured()) {
+            return false;
+        }
         $sys = system_account::get_record(['issuerid' => $this->get('id')]);
         if (!empty($sys) and !empty($sys->get('refreshtoken'))) {
             return true;

@@ -85,7 +85,7 @@ class renderer extends plugin_renderer_base {
             $namecell->header = true;
 
             // Configured.
-            if (!empty($issuer->get('clientid')) && !empty($issuer->get('clientsecret'))) {
+            if ($issuer->is_configured()) {
                 $configured = $OUTPUT->pix_icon('yes', get_string('configured', 'tool_oauth2'), 'tool_oauth2');
             } else {
                 $configured = $OUTPUT->pix_icon('no', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');
