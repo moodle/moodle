@@ -106,8 +106,8 @@ class course_edit_form extends moodleform {
         $choices = array();
         $choices['0'] = get_string('hide');
         $choices['1'] = get_string('show');
-        $mform->addElement('select', 'visible', get_string('visible'), $choices);
-        $mform->addHelpButton('visible', 'visible');
+        $mform->addElement('select', 'visible', get_string('coursevisibility'), $choices);
+        $mform->addHelpButton('visible', 'coursevisibility');
         $mform->setDefault('visible', $courseconfig->visible);
         if (!empty($course->id)) {
             if (!has_capability('moodle/course:visibility', $coursecontext)) {
