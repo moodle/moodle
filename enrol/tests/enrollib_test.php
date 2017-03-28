@@ -422,4 +422,58 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertEquals('self', $event->other['enrol']);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Confirms that timemodified field was updated after modification of user enrollment
+     */
+    public function test_enrollment_update_timemodified() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $datagen = $this->getDataGenerator();
+
+        /** @var enrol_manual_plugin $manualplugin */
+        $manualplugin = enrol_get_plugin('manual');
+        $this->assertNotNull($manualplugin);
+
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        $course = $datagen->create_course();
+        $user = $datagen->create_user();
+
+        $instanceid = null;
+        $instances = enrol_get_instances($course->id, true);
+        foreach ($instances as $inst) {
+            if ($inst->enrol == 'manual') {
+                $instanceid = (int)$inst->id;
+                break;
+            }
+        }
+        if (empty($instanceid)) {
+            $instanceid = $manualplugin->add_default_instance($course);
+            if (empty($instanceid)) {
+                $instanceid = $manualplugin->add_instance($course);
+            }
+        }
+        $this->assertNotNull($instanceid);
+
+        $instance = $DB->get_record('enrol', ['id' => $instanceid], '*', MUST_EXIST);
+        $manualplugin->enrol_user($instance, $user->id, $studentroleid, 0, 0, ENROL_USER_ACTIVE);
+        $userenrolorig = (int)$DB->get_field(
+            'user_enrolments',
+            'timemodified',
+            ['enrolid' => $instance->id, 'userid' => $user->id],
+            MUST_EXIST
+        );
+        $this->waitForSecond();
+        $this->waitForSecond();
+        $manualplugin->update_user_enrol($instance, $user->id, ENROL_USER_SUSPENDED);
+        $userenrolpost = (int)$DB->get_field(
+            'user_enrolments',
+            'timemodified',
+            ['enrolid' => $instance->id, 'userid' => $user->id],
+            MUST_EXIST
+        );
+
+        $this->assertGreaterThan($userenrolorig, $userenrolpost);
+    }
 }
