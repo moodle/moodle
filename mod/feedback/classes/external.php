@@ -610,7 +610,7 @@ class mod_feedback_external extends external_api {
                             'name' => new external_value(PARAM_NOTAGS, 'The response name (usually type[index]_id).'),
                             'value' => new external_value(PARAM_RAW, 'The response value.'),
                         )
-                    ), 'The data to be processed.'
+                    ), 'The data to be processed.', VALUE_DEFAULT, array()
                 ),
                 'goprevious' => new external_value(PARAM_BOOL, 'Whether we want to jump to previous page.', VALUE_DEFAULT, false),
             )
@@ -627,7 +627,7 @@ class mod_feedback_external extends external_api {
      * @return array of warnings and launch information
      * @since Moodle 3.3
      */
-    public static function process_page($feedbackid, $page, $responses, $goprevious = false) {
+    public static function process_page($feedbackid, $page, $responses = [], $goprevious = false) {
         global $USER, $SESSION;
 
         $params = array('feedbackid' => $feedbackid, 'page' => $page, 'responses' => $responses, 'goprevious' => $goprevious);
