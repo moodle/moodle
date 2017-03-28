@@ -156,15 +156,14 @@ function xmldb_feedback_upgrade($oldversion) {
               GROUP BY userid, feedback, courseid
                 HAVING COUNT(id) > 1";
 
-        if ($duplicatedrows = $DB->get_recordset_sql($sql)) {
-            foreach ($duplicatedrows as $row) {
-                $DB->delete_records_select('feedback_completed', 'userid = ? AND feedback = ? AND courseid = ? AND id <> ?', array(
-                    $row->userid,
-                    $row->feedback,
-                    $row->courseid,
-                    $row->maxid,
-                ));
-            }
+        $duplicatedrows = $DB->get_recordset_sql($sql);
+        foreach ($duplicatedrows as $row) {
+            $DB->delete_records_select('feedback_completed', 'userid = ? AND feedback = ? AND courseid = ? AND id <> ?', array(
+                $row->userid,
+                $row->feedback,
+                $row->courseid,
+                $row->maxid,
+            ));
         }
         $duplicatedrows->close();
 
