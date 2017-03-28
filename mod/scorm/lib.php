@@ -518,7 +518,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
 }
 
 /**
- * Function to be run periodically according to the moodle cron
+ * Function to be run periodically according to the moodle Tasks API
  * This function searches for things that need to be done, such
  * as sending out mail, toggling flags etc ...
  *
@@ -526,7 +526,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
  * @global object
  * @return boolean
  */
-function scorm_cron () {
+function scorm_cron_scheduled_task () {
     global $CFG, $DB;
 
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
