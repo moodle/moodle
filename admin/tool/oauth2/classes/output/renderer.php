@@ -79,7 +79,7 @@ class renderer extends plugin_renderer_base {
             $name = $issuer->get('name');
             $image = $issuer->get('image');
             if ($image) {
-                $name = '<img width=24 height=24 alt="" src="' . s($image) . '"> ' . s($name);
+                $name = '<img width="24" height="24" alt="" src="' . s($image) . '"> ' . s($name);
             }
             $namecell = new html_table_cell($name);
             $namecell->header = true;
