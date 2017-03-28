@@ -959,4 +959,101 @@ class mod_feedback_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_non_respondents.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_non_respondents_parameters() {
+        return new external_function_parameters (
+            array(
+                'feedbackid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group.',
+                                                VALUE_DEFAULT, 0),
+                'sort' => new external_value(PARAM_ALPHA, 'Sort param, must be firstname, lastname or lastaccess (default).',
+                                                VALUE_DEFAULT, 'lastaccess'),
+                'page' => new external_value(PARAM_INT, 'The page of records to return.', VALUE_DEFAULT, 0),
+                'perpage' => new external_value(PARAM_INT, 'The number of records to return per page.', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Retrieves a list of students who didn't submit the feedback.
+     *
+     * @param int $feedbackid feedback instance id
+     * @param int $groupid Group id, 0 means that the function will determine the user group'
+     * @param str $sort sort param, must be firstname, lastname or lastaccess (default)
+     * @param int $page the page of records to return
+     * @param int $perpage the number of records to return per page
+     * @return array of warnings and users ids
+     * @since Moodle 3.3
+     */
+    public static function get_non_respondents($feedbackid, $groupid = 0, $sort = 'lastaccess', $page = 0, $perpage = 0) {
+
+        $params = array('feedbackid' => $feedbackid, 'groupid' => $groupid, 'sort' => $sort, 'page' => $page, 'perpage' => $perpage);
+        $params = self::validate_parameters(self::get_non_respondents_parameters(), $params);
+        $warnings = $itemsdata = array();
+
+        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
+
+        // Check permissions.
+        require_capability('mod/feedback:viewreports', $context);
+
+        if (!empty($params['groupid'])) {
+            $groupid = $params['groupid'];
+            // Determine is the group is visible to user.
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            // Check to see if groups are being used here.
+            if ($groupmode = groups_get_activity_groupmode($cm)) {
+                $groupid = groups_get_activity_group($cm);
+                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
+                if (!groups_group_visible($groupid, $course, $cm)) {
+                    throw new moodle_exception('notingroup');
+                }
+            } else {
+                $groupid = 0;
+            }
+        }
+
+        if ($params['sort'] !== 'firstname' && $params['sort'] !== 'lastname' && $params['sort'] !== 'lastaccess') {
+            throw new invalid_parameter_exception('Invalid sort param, must be firstname, lastname or lastaccess.');
+        }
+        $params['sort'] = 'u.' . $params['sort'];
+
+        // Check if we are page filtering.
+        if ($params['page'] == 0 && $params['perpage'] == 0) {
+            $params['page'] = false;
+            $params['perpage'] = false;
+        }
+        $users = feedback_get_incomplete_users($cm, $groupid, $params['sort'], $params['page'], $params['perpage']);
+
+        $result = array(
+            'users' => $users,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the get_non_respondents return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_non_respondents_returns() {
+        return new external_single_structure(
+            array(
+            'users' => new external_multiple_structure(
+                new external_value(PARAM_INT, 'The user id')
+            ),
+            'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
