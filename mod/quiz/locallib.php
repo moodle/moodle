@@ -1929,7 +1929,7 @@ class qubaids_for_quiz extends qubaid_join {
         }
 
         if ($onlyfinished) {
-            $where .= ' AND state == :statefinished';
+            $where .= ' AND state = :statefinished';
             $params['statefinished'] = quiz_attempt::FINISHED;
         }
 
