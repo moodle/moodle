@@ -30,6 +30,8 @@ require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . "/mod/data/locallib.php");
 
 use mod_data\external\database_summary_exporter;
+use mod_data\external\record_exporter;
+use mod_data\external\content_exporter;
 
 /**
  * Database module external functions
@@ -318,6 +320,162 @@ class mod_data_external extends external_api {
                 'numentries' => new external_value(PARAM_INT, 'The number of entries the current user added.'),
                 'entrieslefttoadd' => new external_value(PARAM_INT, 'The number of entries left to complete the activity.'),
                 'entrieslefttoview' => new external_value(PARAM_INT, 'The number of entries left to view other users entries.'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_entries_parameters() {
+        return new external_function_parameters(
+            array(
+                'databaseid' => new external_value(PARAM_INT, 'data instance id'),
+                'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group',
+                                                   VALUE_DEFAULT, 0),
+                'returncontents' => new external_value(PARAM_BOOL, 'Whether to return contents or not. This will return each entry
+                                                        raw contents and the complete list view (using the template).',
+                                                        VALUE_DEFAULT, false),
+                'sort' => new external_value(PARAM_INT, 'Sort the records by this field id, reserved ids are:
+                                                0: timeadded
+                                                -1: firstname
+                                                -2: lastname
+                                                -3: approved
+                                                -4: timemodified.
+                                                Empty for using the default database setting.', VALUE_DEFAULT, null),
+                'order' => new external_value(PARAM_ALPHA, 'The direction of the sorting: \'ASC\' or \'DESC\'.
+                                                Empty for using the default database setting.', VALUE_DEFAULT, null),
+                'page' => new external_value(PARAM_INT, 'The page of records to return.', VALUE_DEFAULT, 0),
+                'perpage' => new external_value(PARAM_INT, 'The number of records to return per page', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Return access information for a given feedback
+     *
+     * @param int $databaseid       the data instance id
+     * @param int $groupid          (optional) group id, 0 means that the function will determine the user group
+     * @param bool $returncontents  Whether to return the entries contents or not
+     * @param str $sort             sort by this field
+     * @param int $order            the direction of the sorting
+     * @param int $page             page of records to return
+     * @param int $perpage          number of records to return per page
+     * @return array of warnings and the entries
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_entries($databaseid, $groupid = 0, $returncontents = false, $sort = null, $order = null,
+            $page = 0, $perpage = 0) {
+        global $PAGE, $DB;
+
+        $params = array('databaseid' => $databaseid, 'groupid' => $groupid, 'returncontents' => $returncontents ,
+                        'sort' => $sort, 'order' => $order, 'page' => $page, 'perpage' => $perpage);
+        $params = self::validate_parameters(self::get_entries_parameters(), $params);
+        $warnings = array();
+
+        if (!empty($params['order'])) {
+            $params['order'] = strtoupper($params['order']);
+            if ($params['order'] != 'ASC' && $params['order'] != 'DESC') {
+                throw new invalid_parameter_exception('Invalid value for sortdirection parameter (value: ' . $params['order'] . ')');
+            }
+        }
+
+        list($database, $course, $cm, $context) = self::validate_database($params['databaseid']);
+        // Check database is open in time.
+        data_require_time_available($database, null, $context);
+
+        if (!empty($params['groupid'])) {
+            $groupid = $params['groupid'];
+            // Determine is the group is visible to user.
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            // Check to see if groups are being used here.
+            if ($groupmode = groups_get_activity_groupmode($cm)) {
+                $groupid = groups_get_activity_group($cm);
+                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
+                if (!groups_group_visible($groupid, $course, $cm)) {
+                    throw new moodle_exception('notingroup');
+                }
+            } else {
+                $groupid = 0;
+            }
+        }
+
+        list($records, $maxcount, $totalcount, $page, $nowperpage, $sort, $mode) =
+            data_search_entries($database, $cm, $context, 'list', $groupid, '', $params['sort'], $params['order'],
+                $params['page'], $params['perpage']);
+
+        $entries = [];
+        $contentsids = [];  // Store here the content ids of the records returned.
+        foreach ($records as $record) {
+            $user = user_picture::unalias($record, null, 'userid');
+            $related = array('context' => $context, 'database' => $database, 'user' => $user);
+
+            $contents = $DB->get_records('data_content', array('recordid' => $record->id));
+            $contentsids = array_merge($contentsids, array_keys($contents));
+            if ($params['returncontents']) {
+                $related['contents'] = $contents;
+            } else {
+                $related['contents'] = null;
+            }
+
+            $exporter = new record_exporter($record, $related);
+            $entries[] = $exporter->export($PAGE->get_renderer('core'));
+        }
+
+        // Retrieve total files size for the records retrieved.
+        $totalfilesize = 0;
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'mod_data', 'content');
+        foreach ($files as $file) {
+            if ($file->is_directory() || !in_array($file->get_itemid(), $contentsids)) {
+                continue;
+            }
+            $totalfilesize += $file->get_filesize();
+        }
+
+        $result = array(
+            'entries' => $entries,
+            'totalcount' => $totalcount,
+            'totalfilesize' => $totalfilesize,
+            'warnings' => $warnings
+        );
+
+        // Check if we should return the list rendered.
+        if ($params['returncontents']) {
+            ob_start();
+            // The return parameter stops the execution after the first record.
+            data_print_template('listtemplate', $records, $database, '', $page, false);
+            $result['listviewcontents'] = ob_get_contents();
+            ob_end_clean();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.3
+     */
+    public static function get_entries_returns() {
+        return new external_single_structure(
+            array(
+                'entries' => new external_multiple_structure(
+                    record_exporter::get_read_structure()
+                ),
+                'totalcount' => new external_value(PARAM_INT, 'Total count of records.'),
+                'totalfilesize' => new external_value(PARAM_INT, 'Total size (bytes) of the files included in the records.'),
+                'listviewcontents' => new external_value(PARAM_RAW, 'The list view contents as is rendered in the site.',
+                                                            VALUE_OPTIONAL),
                 'warnings' => new external_warnings()
             )
         );

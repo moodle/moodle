@@ -51,4 +51,12 @@ $functions = array(
         'capabilities'  => 'mod/data:viewentry',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_data_get_entries' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'get_entries',
+        'description'   => 'Return the complete list of entries of the given database.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/data:viewentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
