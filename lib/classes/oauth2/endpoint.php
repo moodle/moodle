@@ -49,7 +49,7 @@ class endpoint extends persistent {
                 'type' => PARAM_INT
             ),
             'name' => array(
-                'type' => PARAM_RAW,
+                'type' => PARAM_ALPHANUMEXT,
             ),
             'url' => array(
                 'type' => PARAM_URL,
