@@ -649,11 +649,12 @@ class mod_feedback_external extends external_api {
         $_POST['courseid'] = $course->id;
         $_POST['gopage'] = $params['page'];
         $_POST['_qf__mod_feedback_complete_form'] = 1;
+
+        // Determine where to go, backwards or forward.
         if (!$params['goprevious']) {
+            $_POST['gonextpage'] = 1;   // Even if we are saving values we need this set.
             if ($feedbackcompletion->get_next_page($params['page'], false) === null) {
                 $_POST['savevalues'] = 1;   // If there is no next page, it means we are finishing the feedback.
-            } else {
-                $_POST['gonextpage'] = 1;   // If we are not going to previous page or finishing we are going forward.
             }
         }
 
