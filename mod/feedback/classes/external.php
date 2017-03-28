@@ -642,7 +642,12 @@ class mod_feedback_external extends external_api {
         // Create the $_POST object required by the feedback question engine.
         $_POST = array();
         foreach ($responses as $response) {
-            $_POST[$response['name']] = $response['value'];
+            // First check if we are handling array parameters.
+            if (preg_match('/(.+)\[(.+)\]$/', $response['name'], $matches)) {
+                $_POST[$matches[1]][$matches[2]] = $response['value'];
+            } else {
+                $_POST[$response['name']] = $response['value'];
+            }
         }
         // Force fields.
         $_POST['id'] = $cm->id;
