@@ -3496,7 +3496,7 @@ class lesson extends lesson_base {
 
                 $url = new moodle_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $pageid));
             }
-            $data->reviewlesson = $url;
+            $data->reviewlesson = $url->out(false);
         } else if ($this->properties->modattempts && $canmanage) {
             $data->modattemptsnoteacher = true;
         }

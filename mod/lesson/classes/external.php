@@ -294,12 +294,20 @@ class mod_lesson_external extends external_api {
 
                 // Check if the user want to review an attempt he just finished.
                 if (!empty($params['review'])) {
-                    // Allow review only for completed attempts during active session time.
-                    if ($timer->completed and ($timer->lessontime + $CFG->sessiontimeout > time()) ) {
+                    // Allow review only for attempts during active session time.
+                    if ($timer->lessontime + $CFG->sessiontimeout > time()) {
                         $ntries = $lesson->count_user_retries($USER->id);
-                        if ($attempts = $lesson->get_attempts($ntries)) {
-                            $lastattempt = end($attempts);
-                            $USER->modattempts[$lesson->id] = $lastattempt->pageid;
+                        $ntries--;  // Need to look at the old attempts.
+                        if ($params['pageid'] == LESSON_EOL) {
+                            if ($attempts = $lesson->get_attempts($ntries)) {
+                                $lastattempt = end($attempts);
+                                $USER->modattempts[$lesson->id] = $lastattempt->pageid;
+                            }
+                        } else {
+                            if ($attempts = $lesson->get_attempts($ntries, false, $params['pageid'])) {
+                                $lastattempt = end($attempts);
+                                $USER->modattempts[$lesson->id] = $lastattempt;
+                            }
                         }
                     }
 
@@ -1582,7 +1590,7 @@ class mod_lesson_external extends external_api {
          $validmessages = array(
             'notenoughtimespent', 'numberofpagesviewed', 'youshouldview', 'numberofcorrectanswers',
             'displayscorewithessays', 'displayscorewithoutessays', 'yourcurrentgradeisoutof', 'eolstudentoutoftimenoanswers',
-            'welldone', 'displayofgrade', 'reviewlesson', 'modattemptsnoteacher', 'progresscompleted');
+            'welldone', 'displayofgrade', 'modattemptsnoteacher', 'progresscompleted');
 
         $data = array();
         foreach ($result as $el => $value) {
