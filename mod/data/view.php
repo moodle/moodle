@@ -327,11 +327,9 @@
     $canmanageentries = has_capability('mod/data:manageentries', $context);
 
 
-    // detect entries not approved yet and show hint instead of not found error
-    if ($record and $data->approval and !$record->approved and $record->userid != $USER->id and !$canmanageentries) {
-        if (!$currentgroup or $record->groupid == $currentgroup or $record->groupid == 0) {
-            print_error('notapproved', 'data');
-        }
+    // Detect entries not approved yet and show hint instead of not found error.
+    if ($record and !data_can_view_record($data, $record, $currentgroup, $canmanageentries)) {
+        print_error('notapproved', 'data');
     }
 
     echo $OUTPUT->heading(format_string($data->name), 2);

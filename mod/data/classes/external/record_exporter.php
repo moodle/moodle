@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use renderer_base;
+use core_user;
 
 /**
  * Class for exporting record data.
@@ -78,7 +79,7 @@ class record_exporter extends exporter {
     protected static function define_related() {
         return array(
             'database' => 'stdClass',
-            'user' => 'stdClass',
+            'user' => 'stdClass?',
             'context' => 'context',
             'contents' => 'stdClass[]?',
         );
@@ -93,6 +94,7 @@ class record_exporter extends exporter {
             'fullname' => array(
                 'type' => PARAM_TEXT,
                 'description' => 'The user who created the entry fullname.',
+                'optional' => true,
             ),
             'contents' => array(
                 'type' => content_exporter::read_properties_definition(),
@@ -108,8 +110,15 @@ class record_exporter extends exporter {
 
         $values = array(
             'canmanageentry' => data_user_can_manage_entry($this->data, $this->related['database'], $this->related['context']),
-            'fullname' => fullname($this->related['user']),
         );
+
+        if (!empty($this->related['user']) and !empty($this->related['user']->id)) {
+            $values['fullname'] = fullname($this->related['user']);
+        } else if ($this->data->userid) {
+            $user = core_user::get_user($this->data->userid);
+            $values['fullname'] = fullname($user);
+        }
+
         if (!empty($this->related['contents'])) {
             $contents = [];
             foreach ($this->related['contents'] as $content) {

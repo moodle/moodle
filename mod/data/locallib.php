@@ -1024,17 +1024,37 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
     if (!$records = $DB->get_records_sql($sqlselect, $allparams, $page * $nowperpage, $nowperpage)) {
         // Nothing to show!
         if ($record) {         // Something was requested so try to show that at least (bug 5132)
-            if ($canmanageentries || empty($data->approval) ||
-                     $record->approved || (isloggedin() && $record->userid == $USER->id)) {
-                if (!$currentgroup || $record->groupid == $currentgroup || $record->groupid == 0) {
-                    // OK, we can show this one
-                    $records = array($record->id => $record);
-                    $totalcount = 1;
-                }
+            if (data_can_view_record($data, $record, $currentgroup, $canmanageentries)) {
+                // OK, we can show this one
+                $records = array($record->id => $record);
+                $totalcount = 1;
             }
         }
 
     }
 
     return [$records, $maxcount, $totalcount, $page, $nowperpage, $sort, $mode];
+}
+
+/**
+ * Check if the current user can view the given record.
+ *
+ * @param  stdClass $data           database record
+ * @param  stdClass $record         the record (entry) to check
+ * @param  int $currentgroup        current group
+ * @param  bool $canmanageentries   if the user can manage entries
+ * @return bool true if the user can view the entry
+ * @since  Moodle 3.3
+ */
+function data_can_view_record($data, $record, $currentgroup, $canmanageentries) {
+    global $USER;
+
+    if ($canmanageentries || empty($data->approval) ||
+             $record->approved || (isloggedin() && $record->userid == $USER->id)) {
+
+        if (!$currentgroup || $record->groupid == $currentgroup || $record->groupid == 0) {
+            return true;
+        }
+    }
+    return false;
 }

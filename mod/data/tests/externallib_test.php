@@ -335,6 +335,8 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
     public function populate_database_with_entries() {
         global $DB;
 
+        // Force approval.
+        $DB->set_field('data', 'approval', 1, array('id' => $this->data->id));
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
         $fieldtypes = array('checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url');
 
@@ -374,10 +376,17 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $entry11 = $generator->create_entry($this->data, $fieldcontents, $this->group1->id);
         $this->setUser($this->student2);
         $entry12 = $generator->create_entry($this->data, $fieldcontents, $this->group1->id);
+        $entry13 = $generator->create_entry($this->data, $fieldcontents, $this->group1->id);
 
         $this->setUser($this->student3);
         $entry21 = $generator->create_entry($this->data, $fieldcontents, $this->group2->id);
-        return [$entry11, $entry12, $entry21];
+
+        // Approve all except $entry13.
+        $DB->set_field('data_records', 'approved', 1, ['id' => $entry11]);
+        $DB->set_field('data_records', 'approved', 1, ['id' => $entry12]);
+        $DB->set_field('data_records', 'approved', 1, ['id' => $entry21]);
+
+        return [$entry11, $entry12, $entry13, $entry21];
     }
 
     /**
@@ -385,7 +394,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_get_entries() {
         global $DB;
-        list($entry11, $entry12, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
 
         // First of all, expect to see only my group entries (not other users in other groups ones).
         $this->setUser($this->student1);
@@ -407,8 +416,8 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = mod_data_external::get_entries($this->data->id);
         $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-        $this->assertCount(2, $result['entries']);
-        $this->assertEquals(2, $result['totalcount']);
+        $this->assertCount(3, $result['entries']);  // I can see my entry not approved yet.
+        $this->assertEquals(3, $result['totalcount']);
 
         // Now try with the user in the second group that must see only one entry.
         $this->setUser($this->student3);
@@ -427,11 +436,11 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = mod_data_external::get_entries($this->data->id);
         $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-        $this->assertCount(3, $result['entries']);
-        $this->assertEquals(3, $result['totalcount']);
+        $this->assertCount(4, $result['entries']);  // I can see the not approved one.
+        $this->assertEquals(4, $result['totalcount']);
 
         $entries = $DB->get_records('data_records', array('dataid' => $this->data->id), 'id');
-        $this->assertCount(3, $entries);
+        $this->assertCount(4, $entries);
         $count = 0;
         foreach ($entries as $entry) {
             $this->assertEquals($entry->id, $result['entries'][$count]['id']);
@@ -486,5 +495,110 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue(strpos($result['listviewcontents'], 'menu1') !== false);
         $this->assertTrue(strpos($result['listviewcontents'], 'text for testing') !== false);
         $this->assertTrue(strpos($result['listviewcontents'], 'sampleurl') !== false);
+    }
+
+    /**
+     * Test get_entry_visible_groups.
+     */
+    public function test_get_entry_visible_groups() {
+        global $DB;
+
+        $DB->set_field('course', 'groupmode', VISIBLEGROUPS, ['id' => $this->course->id]);
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        // Check I can see my approved group entries.
+        $this->setUser($this->student1);
+        $result = mod_data_external::get_entry($entry11);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals($entry11, $result['entry']['id']);
+        $this->assertTrue($result['entry']['approved']);
+        $this->assertTrue($result['entry']['canmanageentry']); // Is mine, I can manage it.
+
+        // Entry from other group.
+        $result = mod_data_external::get_entry($entry21);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals($entry21, $result['entry']['id']);
+    }
+
+    /**
+     * Test get_entry_separated_groups.
+     */
+    public function test_get_entry_separated_groups() {
+        global $DB;
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        // Check I can see my approved group entries.
+        $this->setUser($this->student1);
+        $result = mod_data_external::get_entry($entry11);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals($entry11, $result['entry']['id']);
+        $this->assertTrue($result['entry']['approved']);
+        $this->assertTrue($result['entry']['canmanageentry']); // Is mine, I can manage it.
+
+        // Retrieve contents.
+        data_generate_default_template($this->data, 'singletemplate', 0, false, true);
+        $result = mod_data_external::get_entry($entry11, true);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(9, $result['entry']['contents']);
+        $this->assertTrue(strpos($result['entryviewcontents'], 'opt1') !== false);
+        $this->assertTrue(strpos($result['entryviewcontents'], 'January') !== false);
+        $this->assertTrue(strpos($result['entryviewcontents'], 'menu1') !== false);
+        $this->assertTrue(strpos($result['entryviewcontents'], 'text for testing') !== false);
+        $this->assertTrue(strpos($result['entryviewcontents'], 'sampleurl') !== false);
+
+        // This is in my group but I'm not the author.
+        $result = mod_data_external::get_entry($entry12);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals($entry12, $result['entry']['id']);
+        $this->assertTrue($result['entry']['approved']);
+        $this->assertFalse($result['entry']['canmanageentry']); // Not mine.
+
+        $this->setUser($this->student3);
+        $result = mod_data_external::get_entry($entry21);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals($entry21, $result['entry']['id']);
+        $this->assertTrue($result['entry']['approved']);
+        $this->assertTrue($result['entry']['canmanageentry']); // Is mine, I can manage it.
+
+        // As teacher I should be able to see all the entries.
+        $this->setUser($this->teacher);
+        $result = mod_data_external::get_entry($entry11);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertEquals($entry11, $result['entry']['id']);
+
+        $result = mod_data_external::get_entry($entry12);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertEquals($entry12, $result['entry']['id']);
+        // This is the not approved one.
+        $result = mod_data_external::get_entry($entry13);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertEquals($entry13, $result['entry']['id']);
+
+        $result = mod_data_external::get_entry($entry21);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertEquals($entry21, $result['entry']['id']);
+
+        // Now, try to get an entry not approved yet.
+        $this->setUser($this->student1);
+        $this->expectException('moodle_exception');
+        $result = mod_data_external::get_entry($entry13);
+    }
+
+    /**
+     * Test get_entry from other group in separated groups.
+     */
+    public function test_get_entry_other_group_separated_groups() {
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        // We should not be able to view other gropu entries (in separated groups).
+        $this->setUser($this->student1);
+        $this->expectException('moodle_exception');
+        $result = mod_data_external::get_entry($entry21);
     }
 }
