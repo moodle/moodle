@@ -1,5 +1,5 @@
 <?php
 
 /// SETUP - NEED TO BE CHANGED
-$token = 'de12b1fc61ed026d4038eaef7b17deac';
-$domainname = 'http://localhost/iomad32';
+$token = '471673db5d6b00d1cc305175196aacd7';
+$domainname = 'http://pc164-239.cent.gla.ac.uk/iomad32';

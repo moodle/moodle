@@ -10,29 +10,38 @@
 /**
  * XML-RPC client for Moodle 2
  *
- * @authorr Jerome Mouneyrac
  */
 
 require(dirname(__FILE__) . '/config.php');
 
-$functionname = 'block_iomad_company_admin_create_companies';
+$functionname = 'block_iomad_company_admin_get_companies';
 
 /// PARAMETERS
-$company1 = new stdClass;
-$company1->name = 'Sproatly Sprockets';
-$company1->shortname = 'sproatly';
-$company1->city = 'Glasgow';
-$company1->country = 'UK';
+$params = array();
 
-$params = array(
-    $company1,
-);
-
-// XML-RPC CALL
+/// XML-RPC CALL
+echo "STEP1: Get the current companies\n";
+//header('Content-Type: text/plain');
 $serverurl = $domainname . '/webservice/xmlrpc/server.php'. '?wstoken=' . $token;
 require_once('./curl.php');
 $curl = new curl;
 $post = xmlrpc_encode_request($functionname, array($params));
+//var_dump($post); die;
+$resp = xmlrpc_decode($curl->post($serverurl, $post));
+print_r($resp);
+
+// Change some details in one of the companies
+$resp[1]['name'] = 'Globex Corporation';
+$resp[1]['shortname'] = 'globex';
+
+// Send it back
+$functionname = 'block_iomad_company_admin_edit_companies';
+
+// XML-RPC CALL
+//header('Content-Type: text/plain');
+$serverurl = $domainname . '/webservice/xmlrpc/server.php'. '?wstoken=' . $token;
+$curl = new curl;
+$post = xmlrpc_encode_request($functionname, array($resp));
 //var_dump($post); die;
 $resp = xmlrpc_decode($curl->post($serverurl, $post));
 print_r($resp);
