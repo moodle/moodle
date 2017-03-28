@@ -626,9 +626,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         }
         // We must add countall to all in case it was the requested ID.
         $all['countall'] = $count;
-        foreach ($all as $key => $children) {
-            $coursecattreecache->set($key, $children);
-        }
+        $coursecattreecache->set_many($all);
         if (array_key_exists($id, $all)) {
             return $all[$id];
         }
