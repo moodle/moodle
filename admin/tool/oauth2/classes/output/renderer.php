@@ -122,13 +122,11 @@ class renderer extends plugin_renderer_base {
                 $systemauth = $OUTPUT->pix_icon('no', get_string('systemaccountnotconnected', 'tool_oauth2'), 'tool_oauth2');
             }
 
-            if ($issuer->is_system_account_setup_supported()) {
-                $params = ['id' => $issuer->get('id'), 'action' => 'auth'];
-                $authurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
-                $icon = $OUTPUT->pix_icon('auth', get_string('connectsystemaccount', 'tool_oauth2'), 'tool_oauth2');
-                $authlink = html_writer::link($authurl, $icon);
-                $systemauth .= ' ' . $authlink;
-            }
+            $params = ['id' => $issuer->get('id'), 'action' => 'auth'];
+            $authurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+            $icon = $OUTPUT->pix_icon('auth', get_string('connectsystemaccount', 'tool_oauth2'), 'tool_oauth2');
+            $authlink = html_writer::link($authurl, $icon);
+            $systemauth .= ' ' . $authlink;
 
             $systemauthstatuscell = new html_table_cell($systemauth);
 

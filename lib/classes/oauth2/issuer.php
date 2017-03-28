@@ -172,14 +172,6 @@ class issuer extends persistent {
     }
 
     /**
-     * Does this OAuth service support system authentication?
-     * @return boolean
-     */
-    public function is_system_account_setup_supported() {
-        return true;
-    }
-
-    /**
      * Do we have a refresh token for a system account?
      * @return boolean
      */
