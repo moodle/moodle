@@ -934,7 +934,7 @@ class mod_lesson_external extends external_api {
      * @return external_single_structure
      * @since Moodle 3.3
      */
-    protected static function get_page_structure() {
+    protected static function get_page_structure($required = VALUE_REQUIRED) {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'The id of this lesson page'),
@@ -955,7 +955,7 @@ class mod_lesson_external extends external_api {
                 'typeid' => new external_value(PARAM_INT, 'The unique identifier for the page type'),
                 'typestring' => new external_value(PARAM_RAW, 'The string that describes this page type'),
             ),
-            'Page fields'
+            'Page fields', $required
         );
     }
 
@@ -1257,9 +1257,9 @@ class mod_lesson_external extends external_api {
             'returncontents' => $returncontents);
         $params = self::validate_parameters(self::get_page_data_parameters(), $params);
 
-        $warnings = $contentfiles = $answerfiles = $responsefiles = array();
+        $warnings = $contentfiles = $answerfiles = $responsefiles = $answers = array();
         $pagecontent = $ongoingscore = '';
-        $progress = null;
+        $progress = $pagedata = null;
 
         list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
         self::validate_attempt($lesson, $params);
@@ -1274,42 +1274,44 @@ class mod_lesson_external extends external_api {
         if ($pageid != LESSON_EOL) {
             $reviewmode = $lesson->is_in_review_mode();
             $lessonoutput = $PAGE->get_renderer('mod_lesson');
-            list($page, $pagecontent) = $lesson->prepare_page_and_contents($pageid, $lessonoutput, $reviewmode);
-            // Page may have changed.
-            $pageid = $page->id;
+            // Prepare page contents avoiding redirections.
+            list($pageid, $page, $pagecontent) = $lesson->prepare_page_and_contents($pageid, $lessonoutput, $reviewmode, false);
 
-            $pagedata = self::get_page_fields($page, true);
+            if ($pageid > 0) {
 
-            // Files.
-            $contentfiles = external_util::get_area_files($context->id, 'mod_lesson', 'page_contents', $page->id);
+                $pagedata = self::get_page_fields($page, true);
 
-            // Answers.
-            $answers = array();
-            $pageanswers = $page->get_answers();
-            foreach ($pageanswers as $a) {
-                $answer = array(
-                    'id' => $a->id,
-                    'answerfiles' => external_util::get_area_files($context->id, 'mod_lesson', 'page_answers', $a->id),
-                    'responsefiles' => external_util::get_area_files($context->id, 'mod_lesson', 'page_responses', $a->id),
-                );
-                // For managers, return all the information (including correct answers, jumps).
-                // If the teacher enabled offline attempts, this information will be downloaded too.
-                if ($lesson->can_manage() || $lesson->allowofflineattempts) {
-                    $extraproperties = array('jumpto', 'grade', 'score', 'flags', 'timecreated', 'timemodified');
-                    foreach ($extraproperties as $prop) {
-                        $answer[$prop] = $a->{$prop};
+                // Files.
+                $contentfiles = external_util::get_area_files($context->id, 'mod_lesson', 'page_contents', $page->id);
+
+                // Answers.
+                $answers = array();
+                $pageanswers = $page->get_answers();
+                foreach ($pageanswers as $a) {
+                    $answer = array(
+                        'id' => $a->id,
+                        'answerfiles' => external_util::get_area_files($context->id, 'mod_lesson', 'page_answers', $a->id),
+                        'responsefiles' => external_util::get_area_files($context->id, 'mod_lesson', 'page_responses', $a->id),
+                    );
+                    // For managers, return all the information (including correct answers, jumps).
+                    // If the teacher enabled offline attempts, this information will be downloaded too.
+                    if ($lesson->can_manage() || $lesson->allowofflineattempts) {
+                        $extraproperties = array('jumpto', 'grade', 'score', 'flags', 'timecreated', 'timemodified');
+                        foreach ($extraproperties as $prop) {
+                            $answer[$prop] = $a->{$prop};
+                        }
                     }
+                    $answers[] = $answer;
                 }
-                $answers[] = $answer;
-            }
 
-            // Additional lesson information.
-            if (!$lesson->can_manage()) {
-                if ($lesson->ongoing && !$reviewmode) {
-                    $ongoingscore = $lesson->get_ongoing_score_message();
-                }
-                if ($lesson->progressbar) {
-                    $progress = $lesson->calculate_progress();
+                // Additional lesson information.
+                if (!$lesson->can_manage()) {
+                    if ($lesson->ongoing && !$reviewmode) {
+                        $ongoingscore = $lesson->get_ongoing_score_message();
+                    }
+                    if ($lesson->progressbar) {
+                        $progress = $lesson->calculate_progress();
+                    }
                 }
             }
         }
@@ -1317,7 +1319,6 @@ class mod_lesson_external extends external_api {
         $messages = self::format_lesson_messages($lesson);
 
         $result = array(
-            'page' => $pagedata,
             'newpageid' => $pageid,
             'ongoingscore' => $ongoingscore,
             'progress' => $progress,
@@ -1328,6 +1329,9 @@ class mod_lesson_external extends external_api {
             'displaymenu' => !empty(lesson_displayleftif($lesson)),
         );
 
+        if (!empty($pagedata)) {
+            $result['page'] = $pagedata;
+        }
         if ($params['returncontents']) {
             $result['pagecontent'] = $pagecontent;  // Return the complete page contents rendered.
         }
@@ -1344,7 +1348,7 @@ class mod_lesson_external extends external_api {
     public static function get_page_data_returns() {
         return new external_single_structure(
             array(
-                'page' => self::get_page_structure(),
+                'page' => self::get_page_structure(VALUE_OPTIONAL),
                 'newpageid' => new external_value(PARAM_INT, 'New page id (if a jump was made)'),
                 'pagecontent' => new external_value(PARAM_RAW, 'Page html content', VALUE_OPTIONAL),
                 'ongoingscore' => new external_value(PARAM_TEXT, 'The ongoing score message'),

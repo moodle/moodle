@@ -1,5 +1,10 @@
 This files describes API changes in the lesson code.
 
+=== 3.3 ===
+
+* lesson::callback_on_view() has an additional optional parameter $redirect default to true.
+  It can be set to false to avoid redirection and return the page to redirect.
+
 === 3.1 ===
 * Removed the unused file reformat.php
 * removedoublecr() and importmodifiedaikenstyle() have now been removed.
