@@ -53,11 +53,11 @@ class issuer extends persistent {
                 'default' => null
             ),
             'clientid' => array(
-                'type' => PARAM_RAW,
+                'type' => PARAM_RAW_TRIMMED,
                 'default' => ''
             ),
             'clientsecret' => array(
-                'type' => PARAM_RAW,
+                'type' => PARAM_RAW_TRIMMED,
                 'default' => ''
             ),
             'baseurl' => array(
