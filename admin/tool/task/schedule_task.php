@@ -24,6 +24,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('NO_OUTPUT_BUFFERING', true);
+
 require('../../../config.php');
 
 require_once($CFG->libdir.'/cronlib.php');
@@ -36,12 +38,6 @@ require_once($CFG->libdir.'/cronlib.php');
  */
 function tool_task_mtrace_wrapper($message, $eol) {
     echo s($message . $eol);
-    // Both types of flush may be necessary in order to actually output progressively to browser.
-    // It depends on the theme.
-    if (ob_get_status()) {
-        ob_flush();
-    }
-    flush();
 }
 
 // Allow execution of single task. This requires login and has different rules.
