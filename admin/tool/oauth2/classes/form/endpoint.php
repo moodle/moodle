@@ -55,19 +55,19 @@ class endpoint extends persistent {
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
         // Name.
-        $mform->addElement('text', 'name', get_string('endpointname', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addElement('text', 'name', get_string('endpointname', 'tool_oauth2'));
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'endpointname', 'tool_oauth2');
 
         // Url.
-        $mform->addElement('text', 'url', get_string('endpointurl', 'tool_oauth2'), 'maxlength="1024"');
+        $mform->addElement('text', 'url', get_string('endpointurl', 'tool_oauth2'));
         $mform->addRule('url', null, 'required', null, 'client');
         $mform->addRule('url', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
         $mform->addHelpButton('url', 'endpointurl', 'tool_oauth2');
 
         $mform->addElement('hidden', 'action', 'edit');
-        $mform->setType('action', PARAM_RAW);
+        $mform->setType('action', PARAM_ALPHA);
 
         $mform->addElement('hidden', 'issuerid', $endpoint->get('issuerid'));
         $mform->setType('issuerid', PARAM_INT);

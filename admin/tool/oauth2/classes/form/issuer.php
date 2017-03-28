@@ -55,52 +55,52 @@ class issuer extends persistent {
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
         // Name.
-        $mform->addElement('text', 'name', get_string('issuername', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addElement('text', 'name', get_string('issuername', 'tool_oauth2'));
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'issuername', 'tool_oauth2');
 
         // Client ID.
-        $mform->addElement('text', 'clientid', get_string('issuerclientid', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addElement('text', 'clientid', get_string('issuerclientid', 'tool_oauth2'));
         $mform->addRule('clientid', null, 'required', null, 'client');
         $mform->addRule('clientid', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('clientid', 'issuerclientid', 'tool_oauth2');
 
         // Client Secret.
-        $mform->addElement('text', 'clientsecret', get_string('issuerclientsecret', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addElement('text', 'clientsecret', get_string('issuerclientsecret', 'tool_oauth2'));
         $mform->addRule('clientsecret', null, 'required', null, 'client');
         $mform->addRule('clientsecret', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('clientsecret', 'issuerclientsecret', 'tool_oauth2');
 
         // Login scopes.
-        $mform->addElement('text', 'loginscopes', get_string('issuerloginscopes', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addElement('text', 'loginscopes', get_string('issuerloginscopes', 'tool_oauth2'));
         $mform->addRule('loginscopes', null, 'required', null, 'client');
         $mform->addRule('loginscopes', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('loginscopes', 'issuerloginscopes', 'tool_oauth2');
 
         // Login scopes offline.
-        $mform->addElement('text', 'loginscopesoffline', get_string('issuerloginscopesoffline', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addElement('text', 'loginscopesoffline', get_string('issuerloginscopesoffline', 'tool_oauth2'));
         $mform->addRule('loginscopesoffline', null, 'required', null, 'client');
         $mform->addRule('loginscopesoffline', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('loginscopesoffline', 'issuerloginscopesoffline', 'tool_oauth2');
 
         // Login params.
-        $mform->addElement('text', 'loginparams', get_string('issuerloginparams', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addElement('text', 'loginparams', get_string('issuerloginparams', 'tool_oauth2'));
         $mform->addRule('loginparams', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('loginparams', 'issuerloginparams', 'tool_oauth2');
 
         // Login params offline.
-        $mform->addElement('text', 'loginparamsoffline', get_string('issuerloginparamsoffline', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addElement('text', 'loginparamsoffline', get_string('issuerloginparamsoffline', 'tool_oauth2'));
         $mform->addRule('loginparamsoffline', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('loginparamsoffline', 'issuerloginparamsoffline', 'tool_oauth2');
 
         // Base Url.
-        $mform->addElement('text', 'baseurl', get_string('issuerbaseurl', 'tool_oauth2'), 'maxlength="1024"');
+        $mform->addElement('text', 'baseurl', get_string('issuerbaseurl', 'tool_oauth2'));
         $mform->addRule('baseurl', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
         $mform->addHelpButton('baseurl', 'issuerbaseurl', 'tool_oauth2');
 
         // Allowed Domains.
-        $mform->addElement('text', 'alloweddomains', get_string('issueralloweddomains', 'tool_oauth2'), 'maxlength="1024"');
+        $mform->addElement('text', 'alloweddomains', get_string('issueralloweddomains', 'tool_oauth2'));
         $mform->addRule('alloweddomains', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
         $mform->addHelpButton('alloweddomains', 'issueralloweddomains', 'tool_oauth2');
 
@@ -117,7 +117,7 @@ class issuer extends persistent {
         $mform->setType('sortorder', PARAM_INT);
 
         $mform->addElement('hidden', 'action', 'edit');
-        $mform->setType('action', PARAM_RAW);
+        $mform->setType('action', PARAM_ALPHA);
 
         $mform->addElement('hidden', 'enabled', $endpoint->get('enabled'));
         $mform->setType('enabled', PARAM_BOOL);

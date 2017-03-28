@@ -55,7 +55,7 @@ class user_field_mapping extends persistent {
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
         // External.
-        $mform->addElement('text', 'externalfield', get_string('userfieldexternalfield', 'tool_oauth2'), 'maxlength="255"');
+        $mform->addElement('text', 'externalfield', get_string('userfieldexternalfield', 'tool_oauth2'));
         $mform->addRule('externalfield', null, 'required', null, 'client');
         $mform->addRule('externalfield', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('externalfield', 'userfieldexternalfield', 'tool_oauth2');
@@ -66,7 +66,7 @@ class user_field_mapping extends persistent {
         $mform->addHelpButton('internalfield', 'userfieldinternalfield', 'tool_oauth2');
 
         $mform->addElement('hidden', 'action', 'edit');
-        $mform->setType('action', PARAM_RAW);
+        $mform->setType('action', PARAM_ALPHA);
 
         $mform->addElement('hidden', 'issuerid', $userfieldmapping->get('issuerid'));
         $mform->setConstant('issuerid', $this->_customdata['issuerid']);
