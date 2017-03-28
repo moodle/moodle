@@ -82,7 +82,6 @@ $string['createnewissuer'] = 'Create new custom service';
 $string['createnewgoogleissuer'] = 'Create new Google service';
 $string['createnewmicrosoftissuer'] = 'Create new Microsoft service';
 $string['createnewfacebookissuer'] = 'Create new Facebook service';
-$string['createnewstandardissuer'] = 'Create service from a template';
 $string['createnewendpoint'] = 'Create new endpoint for issuer "{$a}"';
 $string['createnewuserfieldmapping'] = 'Create new user field mapping for issuer "{$a}"';
 $string['deleteconfirm'] = 'Are you sure you want to delete the identity issuer "{$a}"? Any plugins relying on this issuer will stop working.';

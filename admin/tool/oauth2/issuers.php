@@ -66,7 +66,6 @@ if ($mform && $mform->is_cancelled()) {
 } else if ($action == 'edit') {
 
     if ($data = $mform->get_data()) {
-
         try {
             if (!empty($data->id)) {
                 core\oauth2\api::update_issuer($data);
@@ -89,28 +88,12 @@ if ($mform && $mform->is_cancelled()) {
     }
 } else if ($action == 'edittemplate') {
 
-    $type = optional_param('type', '', PARAM_ALPHA);
-    if (empty($type)) {
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('createfromtemplate', 'tool_oauth2'));
-        echo '<p>' . get_string('createfromtemplatedesc', 'tool_oauth2') . '</p>';
-        $params = ['action' => 'edittemplate', 'type' => 'google', 'sesskey' => sesskey()];
-        $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
-        echo $renderer->single_button($addurl, get_string('createnewgoogleissuer', 'tool_oauth2'));
-        $params = ['action' => 'edittemplate', 'type' => 'microsoft', 'sesskey' => sesskey()];
-        $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
-        echo $renderer->single_button($addurl, get_string('createnewmicrosoftissuer', 'tool_oauth2'));
-        $params = ['action' => 'edittemplate', 'type' => 'facebook', 'sesskey' => sesskey()];
-        $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
-        echo $renderer->single_button($addurl, get_string('createnewfacebookissuer', 'tool_oauth2'));
-        echo $OUTPUT->footer();
-    } else {
-        require_sesskey();
-        $issuer = core\oauth2\api::create_standard_issuer($type);
-        $params = ['action' => 'edit', 'id' => $issuer->get('id')];
-        $editurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
-        redirect($editurl, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
-    }
+    $type = required_param('type', PARAM_ALPHA);
+    require_sesskey();
+    $issuer = core\oauth2\api::create_standard_issuer($type);
+    $params = ['action' => 'edit', 'id' => $issuer->get('id')];
+    $editurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+    redirect($editurl, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
 } else if ($action == 'enable') {
 
     require_sesskey();
@@ -173,10 +156,17 @@ if ($mform && $mform->is_cancelled()) {
     $issuers = core\oauth2\api::get_all_issuers();
     echo $renderer->issuers_table($issuers);
 
+    $params = ['action' => 'edittemplate', 'type' => 'google', 'sesskey' => sesskey()];
+    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+    echo $renderer->single_button($addurl, get_string('createnewgoogleissuer', 'tool_oauth2'));
+    $params = ['action' => 'edittemplate', 'type' => 'microsoft', 'sesskey' => sesskey()];
+    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+    echo $renderer->single_button($addurl, get_string('createnewmicrosoftissuer', 'tool_oauth2'));
+    $params = ['action' => 'edittemplate', 'type' => 'facebook', 'sesskey' => sesskey()];
+    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+    echo $renderer->single_button($addurl, get_string('createnewfacebookissuer', 'tool_oauth2'));
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edit']);
     echo $renderer->single_button($addurl, get_string('createnewissuer', 'tool_oauth2'));
-    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edittemplate']);
-    echo $renderer->single_button($addurl, get_string('createnewstandardissuer', 'tool_oauth2'));
     echo $OUTPUT->footer();
 
 }
