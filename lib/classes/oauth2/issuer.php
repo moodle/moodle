@@ -142,6 +142,7 @@ class issuer extends persistent {
         if (empty($this->get('alloweddomains'))) {
             return true;
         }
+
         $validdomains = explode(',', $this->get('alloweddomains'));
 
         $parts = explode('@', $email, 2);
@@ -150,16 +151,7 @@ class issuer extends persistent {
             $emaildomain = $parts[1];
         }
 
-        $emaildomain = \core_text::strtolower(trim($emaildomain));
-        foreach ($validdomains as $checkdomain) {
-            $checkdomain = \core_text::strtolower(trim($checkdomain));
-
-            if ((\core_text::strlen($checkdomain) == \core_text::strlen($emaildomain)) &&
-                    (\core_text::strpos($checkdomain, $emaildomain) === 0)) {
-                return true;
-            }
-        }
-        return false;
+        return \core\ip_utils::is_domain_in_allowed_list($emaildomain, $validdomains);
     }
 
     /**

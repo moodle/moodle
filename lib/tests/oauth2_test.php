@@ -196,6 +196,14 @@ class core_oauth2_testcase extends advanced_testcase {
         $this->assertFalse($issuer->is_valid_login_domain('invalid@email@example.net'));
         $this->assertTrue($issuer->is_valid_login_domain('longer.example@example.net'));
         $this->assertTrue($issuer->is_valid_login_domain('longer.example@example.com'));
+
+        $issuer->set('alloweddomains', '*.example.com');
+        // Wildcard.
+        $this->assertFalse($issuer->is_valid_login_domain(''));
+        $this->assertFalse($issuer->is_valid_login_domain('a@b'));
+        $this->assertFalse($issuer->is_valid_login_domain('longer.example@example'));
+        $this->assertFalse($issuer->is_valid_login_domain('longer.example@example.com'));
+        $this->assertTrue($issuer->is_valid_login_domain('longer.example@sub.example.com'));
     }
 
 }
