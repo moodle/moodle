@@ -546,7 +546,15 @@ class phpunit_util extends testing_util {
             <testsuite name="@component@_testsuite">
                 <directory suffix="_test.php">.</directory>
             </testsuite>
-        </testsuites>';
+        </testsuites>
+        <filter>
+            <whitelist processUncoveredFilesFromWhitelist="false">
+                <directory suffix=".php">.</directory>
+                <exclude>
+                    <directory suffix="_test.php">.</directory>
+                </exclude>
+            </whitelist>
+        </filter>';
 
         // Start a sequence between 100000 and 199000 to ensure each call to init produces
         // different ids in the database.  This reduces the risk that hard coded values will
