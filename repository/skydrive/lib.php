@@ -237,7 +237,7 @@ class repository_skydrive extends repository {
     }
 
     /**
-     * Search throughout the Google Drive.
+     * Search throughout the OneDrive
      *
      * @param string $searchtext text to search for.
      * @param int $page search page.
@@ -261,15 +261,16 @@ class repository_skydrive extends repository {
     }
 
     /**
-     * Query Google Drive for files and folders using a search query.
+     * Query OneDrive for files and folders using a search query.
      *
      * Documentation about the query format can be found here:
-     *   https://developers.google.com/drive/search-parameters
+     *   https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/resources/driveitem
+     *   https://developer.microsoft.com/en-us/graph/docs/overview/query_parameters
      *
      * This returns a list of files and folders with their details as they should be
      * formatted and returned by functions such as get_listing() or search().
      *
-     * @param string $q search query as expected by the Google API.
+     * @param string $q search query as expected by the Graph API.
      * @param string $path parent path of the current files, will not be used for the query.
      * @param string $parent Parent id.
      * @param int $page page.
@@ -327,8 +328,6 @@ class repository_skydrive extends repository {
                         'link' => $remotefile->webUrl
                     ]);
 
-                // Adds the file to the file list. Using the itemId along with the name as key
-                // of the array because Google Drive allows files with identical names.
                 $thumb = '';
                 $thumbwidth = 0;
                 $thumbheight = 0;
