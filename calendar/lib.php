@@ -279,7 +279,7 @@ class calendar_event {
         if (method_exists($this, 'get_'.$key)) {
             return $this->{'get_'.$key}();
         }
-        if (!isset($this->properties->{$key})) {
+        if (!property_exists($this->properties, $key)) {
             throw new \coding_exception('Undefined property requested');
         }
         return $this->properties->{$key};
