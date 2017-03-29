@@ -30,7 +30,6 @@ $string['active'] = 'Active';
 $string['activeusers'] = 'Active users';
 $string['activities'] = 'Activities';
 $string['activities_help'] = 'Activities, such as forums, quizzes and wikis, enable interactive content to be added to the course.';
-$string['activitieslabel'] = 'Activities / Resources';
 $string['activity'] = 'Activity';
 $string['activityclipboard'] = 'Moving this activity: {$a}';
 $string['activityiscurrentlyhidden'] = 'Sorry, this activity is currently hidden';
@@ -218,7 +217,6 @@ $string['blocksuccess'] = '{$a} tables have been set up correctly';
 $string['brief'] = 'Brief';
 $string['bulkactions'] = 'Bulk actions';
 $string['bulkactionselect'] = '{$a} bulk action selection';
-$string['bulkactivitydetail'] = 'Select the activities you wish to bulk edit.';
 $string['bulkmovecoursessuccess'] = 'Successfully moved {$a->courses} courses into {$a->category}';
 $string['bycourseorder'] = 'By course order';
 $string['byname'] = 'by {$a}';
@@ -262,7 +260,6 @@ $string['commentsrequirelogin'] = 'You need to log in to view the comments.';
 $string['comparelanguage'] = 'Compare and edit current language';
 $string['complete'] = 'Complete';
 $string['completereport'] = 'Complete report';
-$string['completiontracking'] = 'Completion tracking';
 $string['configuration'] = 'Configuration';
 $string['confirm'] = 'Confirm';
 $string['confirmdeletesection'] = 'Are you absolutely sure you want to completely delete "{$a}" and all the activities it contains?';
@@ -1109,7 +1106,6 @@ $string['manageeditorfiles'] = 'Manage files used by editor';
 $string['managefilters'] = 'Filters';
 $string['managemodules'] = 'Modules';
 $string['manageroles'] = 'Roles and permissions';
-$string['manual'] = 'Manual';
 $string['markallread'] = 'Mark all as read';
 $string['markedthistopic'] = 'This topic is highlighted as the current topic';
 $string['markthistopic'] = 'Highlight this topic as the current topic';
@@ -1868,12 +1864,6 @@ $string['targetrole'] = 'Target role';
 $string['teacheronly'] = 'for the {$a} only';
 $string['teacherroles'] = '{$a} roles';
 $string['teachers'] = 'Teachers';
-$string['temphelp'] = 'Completion tracking';
-$string['temphelp_help'] = '<strong>None:</strong> Do not indicate activity completion
-
-<strong>Manual:</strong> Students can manually mark the activity as completed
-
-<strong>With condition(s):</strong> Show activity as complete when conditions are met';
 $string['textediting'] = 'Text editor';
 $string['textediting_help'] = 'If an HTML editor such as Atto or TinyMCE is selected, text input areas will have a toolbar with buttons for easily adding content.
 
@@ -2037,7 +2027,6 @@ $string['whattocallzip'] = 'What do you want to call the zip file?';
 $string['whattodo'] = 'What to do';
 $string['windowclosing'] = 'This window should close automatically. If not, please close it now.';
 $string['withchosenfiles'] = 'With chosen files';
-$string['withconditions'] = 'With conditions';
 $string['withdisablednote'] = '{$a} (disabled)';
 $string['withoutuserdata'] = 'without user data';
 $string['withselectedusers'] = 'With selected users...';

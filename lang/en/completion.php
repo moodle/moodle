@@ -26,6 +26,7 @@
 
 $string['achievinggrade'] = 'Achieving grade';
 $string['activities'] = 'Activities';
+$string['activitieslabel'] = 'Activities / Resources';
 $string['activityaggregation'] = 'Condition requires';
 $string['activityaggregation_all'] = 'ALL selected activities to be completed';
 $string['activityaggregation_any'] = 'ANY selected activities to be completed';
@@ -39,6 +40,13 @@ $string['any'] = 'Any';
 $string['approval'] = 'Approval';
 $string['badautocompletion'] = 'When you select automatic completion, you must also enable at least one requirement (below).';
 $string['bulkactivitycompletion'] = 'Bulk edit activity completion';
+$string['bulkactivitydetail'] = 'Select the activities you wish to bulk edit.';
+$string['bulkcompletiontracking'] = 'Completion tracking';
+$string['bulkcompletiontracking_help'] = '<strong>None:</strong> Do not indicate activity completion
+
+<strong>Manual:</strong> Students can manually mark the activity as completed
+
+<strong>With condition(s):</strong> Show activity as complete when conditions are met';
 $string['checkall'] = 'Check or uncheck all activities and resources';
 $string['checkallsection'] = 'Check or uncheck all activities and resources in the following section: {$a}';
 $string['checkactivity'] = 'Checkbox for activity / resource: {$a}';
@@ -144,6 +152,7 @@ $string['fraction'] = 'Fraction';
 $string['graderequired'] = 'Required course grade';
 $string['gradexrequired'] = '{$a} required';
 $string['inprogress'] = 'In progress';
+$string['manual'] = 'Manual';
 $string['manualcompletionby'] = 'Manual completion by others';
 $string['manualcompletionbynote'] = 'Note: The capability moodle/course:markcomplete must be allowed for a role to appear in the list.';
 $string['manualselfcompletion'] = 'Manual self completion';
@@ -192,6 +201,7 @@ $string['usealternateselector'] = 'Use the alternate course selector';
 $string['usernotenroled'] = 'User is not enrolled in this course';
 $string['viewcoursereport'] = 'View course report';
 $string['viewingactivity'] = 'Viewing the {$a}';
+$string['withconditions'] = 'With conditions';
 $string['writingcompletiondata'] = 'Writing completion data';
 $string['xdays'] = '{$a} days';
 $string['yourprogress'] = 'Your progress';

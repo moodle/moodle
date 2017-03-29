@@ -68,7 +68,7 @@ class manager {
         $data = new stdClass;
         $data->courseid = $this->courseid;
         $data->sesskey = sesskey();
-        $data->helpicon = $OUTPUT->help_icon('temphelp', 'moodle');
+        $data->helpicon = $OUTPUT->help_icon('bulkcompletiontracking', 'core_completion');
         $data->sections = [];
         foreach ($sections as $sectionnumber => $section) {
             $sectioninfo = $moduleinfo->get_section_info($sectionnumber);
@@ -134,12 +134,12 @@ class manager {
                 break;
 
             case COMPLETION_TRACKING_MANUAL:
-                $strings['string'] = get_string('manual');
+                $strings['string'] = get_string('manual', 'completion');
                 $strings['icon'] = $OUTPUT->pix_icon('i/completion-manual-y', get_string('completion_manual', 'completion'));
                 break;
 
             case COMPLETION_TRACKING_AUTOMATIC:
-                $strings['string'] = get_string('withconditions');
+                $strings['string'] = get_string('withconditions', 'completion');
 
                 // Get the descriptions for all the active completion rules for the module.
                 if ($ruledescriptions = $this->get_completion_active_rule_descriptions($mod)) {
@@ -171,11 +171,11 @@ class manager {
 
         // Generate the description strings for the core conditional completion rules (if set).
         if (!empty($moduledata->completionview)) {
-            $activeruledescriptions[] = get_string('completionview_desc', 'core_completion');
+            $activeruledescriptions[] = get_string('completionview_desc', 'completion');
         }
         if ($moduledata instanceof cm_info && !is_null($moduledata->completiongradeitemnumber) ||
             ($moduledata instanceof stdClass && !empty($moduledata->completionusegrade))) {
-            $activeruledescriptions[] = get_string('completionusegrade_desc', 'core_completion');
+            $activeruledescriptions[] = get_string('completionusegrade_desc', 'completion');
         }
 
         // Now, ask the module to provide descriptions for its custom conditional completion rules.
@@ -185,7 +185,7 @@ class manager {
         }
 
         if (!empty($moduledata->completionexpected)) {
-            $activeruledescriptions[] = get_string('completionexpecteddesc', 'core_completion',
+            $activeruledescriptions[] = get_string('completionexpecteddesc', 'completion',
                 userdate($moduledata->completionexpected));
         }
 
@@ -206,7 +206,7 @@ class manager {
         $data = new stdClass();
         $data->courseid = $this->courseid;
         $data->sesskey = sesskey();
-        $data->helpicon = $OUTPUT->help_icon('temphelp', 'moodle');
+        $data->helpicon = $OUTPUT->help_icon('bulkcompletiontracking', 'core_completion');
         // Add icon information.
         $data->modules = array_values($modules);
         $coursecontext = context_course::instance($this->courseid);
