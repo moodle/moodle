@@ -67,7 +67,11 @@ class repository_googledocs extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array(), $readonly = 0) {
         parent::__construct($repositoryid, $context, $options, $readonly = 0);
 
-        $this->issuer = \core\oauth2\api::get_issuer(get_config('googledocs', 'issuerid'));
+        try {
+            $this->issuer = \core\oauth2\api::get_issuer(get_config('googledocs', 'issuerid'));
+        } catch (dml_missing_record_exception $e) {
+            $this->disabled = true;
+        }
     }
 
     /**
