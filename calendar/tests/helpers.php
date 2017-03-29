@@ -41,7 +41,7 @@ use core_calendar\local\interfaces\event_factory_interface;
  * Create a calendar event with the given properties.
  *
  * @param array $properties The properties to set on the event
- * @return \core_calendar\event
+ * @return \calendar_event
  */
 function create_event($properties) {
     $record = new \stdClass();
@@ -59,7 +59,7 @@ function create_event($properties) {
         $record->$name = $value;
     }
 
-    $event = new \core_calendar\event($record);
+    $event = new \calendar_event($record);
     return $event->create($record);
 }
 

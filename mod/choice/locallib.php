@@ -57,11 +57,11 @@ function choice_set_events($choice) {
             $event->timesort     = $choice->timeopen;
             $event->visible      = instance_is_visible('choice', $choice);
             $event->timeduration = 0;
-            $calendarevent = \core_calendar\event::load($event->id);
+            $calendarevent = calendar_event::load($event->id);
             $calendarevent->update($event);
         } else {
             // Calendar event is on longer needed.
-            $calendarevent = \core_calendar\event::load($event->id);
+            $calendarevent = calendar_event::load($event->id);
             $calendarevent->delete();
         }
     } else {
@@ -78,7 +78,7 @@ function choice_set_events($choice) {
             $event->timesort     = $choice->timeopen;
             $event->visible      = instance_is_visible('choice', $choice);
             $event->timeduration = 0;
-            \core_calendar\event::create($event);
+            calendar_event::create($event);
         }
     }
 
@@ -96,11 +96,11 @@ function choice_set_events($choice) {
             $event->timesort     = $choice->timeclose;
             $event->visible      = instance_is_visible('choice', $choice);
             $event->timeduration = 0;
-            $calendarevent = \core_calendar\event::load($event->id);
+            $calendarevent = calendar_event::load($event->id);
             $calendarevent->update($event);
         } else {
             // Calendar event is on longer needed.
-            $calendarevent = \core_calendar\event::load($event->id);
+            $calendarevent = calendar_event::load($event->id);
             $calendarevent->delete();
         }
     } else {
@@ -117,7 +117,7 @@ function choice_set_events($choice) {
             $event->timesort     = $choice->timeclose;
             $event->visible      = instance_is_visible('choice', $choice);
             $event->timeduration = 0;
-            \core_calendar\event::create($event);
+            calendar_event::create($event);
         }
     }
 }

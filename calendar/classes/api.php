@@ -280,7 +280,7 @@ class api {
                     if (!isset($events[$eventid])) {
                         continue;
                     }
-                    $event = new event($events[$eventid]);
+                    $event = new \calendar_event($events[$eventid]);
                     $popupalt  = '';
                     $component = 'moodle';
                     if (!empty($event->modulename)) {
@@ -1354,7 +1354,7 @@ class api {
     /**
      * Return the capability for editing calendar event
      *
-     * @param event $event event object
+     * @param \calendar_event $event event object
      * @return bool capability to edit event
      */
     public static function can_edit_event($event) {
@@ -1444,7 +1444,7 @@ class api {
     /**
      * Get event format time
      *
-     * @param event $event event object
+     * @param \calendar_event $event event object
      * @param int $now current time in gmt
      * @param array $linkparams list of params for event link
      * @param bool $usecommonwords the words as formatted date/time.
@@ -1884,7 +1884,7 @@ class api {
         } else {
             $return = CALENDAR_IMPORT_EVENT_INSERTED; // Insert.
         }
-        if ($createdevent = event::create($eventrecord, false)) {
+        if ($createdevent = \calendar_event::create($eventrecord, false)) {
             if (!empty($event->properties['RRULE'])) {
                 // Repeating events.
                 date_default_timezone_set($tz); // Change time zone to parse all events.

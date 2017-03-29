@@ -24,7 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\event;
+global $CFG;
+require_once($CFG->dirroot . '/calendar/lib.php');
+
 use core_calendar\local\event\mappers\event_mapper;
 use core_calendar\local\event\value_objects\action;
 use core_calendar\local\event\value_objects\event_description;
@@ -68,7 +70,7 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
             new event_mapper_test_event_factory()
         );
         $legacyevent = $mapper->from_event_to_legacy_event($event);
-        $this->assertInstanceOf(event::class, $legacyevent);
+        $this->assertInstanceOf(calendar_event::class, $legacyevent);
     }
 
     /**
@@ -121,7 +123,7 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
             new event_mapper_test_event_factory()
         );
         $legacyevent = $mapper->from_event_to_legacy_event($event);
-        $this->assertInstanceOf(event::class, $legacyevent);
+        $this->assertInstanceOf(calendar_event::class, $legacyevent);
         $this->assertEquals($legacyevent->actionname, 'test action');
         $this->assertInstanceOf(\moodle_url::class, $legacyevent->actionurl);
         $this->assertEquals($legacyevent->actionnum, 1729);
@@ -132,7 +134,7 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
      * Helper function to create calendar events using the old code.
      *
      * @param array $properties A list of calendar event properties to set
-     * @return event
+     * @return calendar_event
      */
     protected function create_event($properties = []) {
         $record = new \stdClass();
@@ -148,7 +150,7 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
             $record->$name = $value;
         }
 
-        $event = new \core_calendar\event($record);
+        $event = new calendar_event($record);
         return $event->create($record, false);
     }
 }
@@ -279,7 +281,7 @@ class event_mapper_test_event implements event_interface {
     /**
      * Constructor.
      *
-     * @param \core_calendar\event $legacyevent Legacy event to exctract IDs etc from.
+     * @param calendar_event $legacyevent Legacy event to exctract IDs etc from.
      */
     public function __construct($legacyevent = null) {
         if ($legacyevent) {

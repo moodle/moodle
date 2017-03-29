@@ -113,7 +113,7 @@ $calendar->prepare_for_view($course, $courses);
 $formoptions = new stdClass;
 if ($eventid !== 0) {
     $title = get_string('editevent', 'calendar');
-    $event = \core_calendar\event::load($eventid);
+    $event = calendar_event::load($eventid);
     if (!\core_calendar\api::can_edit_event($event)) {
         print_error('nopermissions');
     }
@@ -149,7 +149,7 @@ if ($eventid !== 0) {
         }
     }
     $event->timestart = $time;
-    $event = new \core_calendar\event($event);
+    $event = new calendar_event($event);
     if (!\core_calendar\api::can_add_event($event)) {
         print_error('nopermissions');
     }

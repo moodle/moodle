@@ -26,7 +26,6 @@ namespace core_calendar\local\event\mappers;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\event;
 use core_calendar\local\interfaces\event_factory_interface;
 use core_calendar\local\interfaces\event_interface;
 use core_calendar\local\interfaces\action_event_interface;
@@ -53,7 +52,7 @@ class event_mapper implements event_mapper_interface {
         $this->factory = $factory;
     }
 
-    public function from_legacy_event_to_event(event $legacyevent) {
+    public function from_legacy_event_to_event(\calendar_event $legacyevent) {
         $coalesce = function($property) use ($legacyevent) {
             return property_exists($legacyevent, $property) ? $legacyevent->{$property} : null;
         };
@@ -85,7 +84,7 @@ class event_mapper implements event_mapper_interface {
         $action = ($event instanceof action_event_interface) ? $event->get_action() : null;
         $timeduration = $event->get_times()->get_end_time()->getTimestamp() - $event->get_times()->get_start_time()->getTimestamp();
 
-        return new event($this->from_event_to_stdclass($event));
+        return new \calendar_event($this->from_event_to_stdclass($event));
     }
 
     public function from_event_to_stdclass(event_interface $event) {

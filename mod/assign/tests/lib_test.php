@@ -593,7 +593,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
      *
      * @param int $instanceid The assign id.
      * @param string $eventtype The event type. eg. ASSIGN_EVENT_TYPE_DUE.
-     * @return bool|\core_calendar\event
+     * @return bool|calendar_event
      */
     private function create_action_event($instanceid, $eventtype) {
         $event = new stdClass();
@@ -605,6 +605,6 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $event->eventtype = $eventtype;
         $event->timestart = time();
 
-        return \core_calendar\event::create($event);
+        return calendar_event::create($event);
     }
 }

@@ -189,7 +189,7 @@ class core_calendar_renderer extends plugin_renderer_base {
             $underway = array();
             // First, print details about events that start today
             foreach ($events as $event) {
-                $event = new \core_calendar\event($event);
+                $event = new calendar_event($event);
                 $event->calendarcourseid = $calendar->courseid;
                 if ($event->timestart >= $calendar->timestamp_today() && $event->timestart <= $calendar->timestamp_tomorrow()-1) {  // Print it now
                     $event->time = \core_calendar\api::get_format_event_time($event, time(), null, false,
@@ -220,11 +220,11 @@ class core_calendar_renderer extends plugin_renderer_base {
     /**
      * Displays an event
      *
-     * @param \core_calendar\event $event
+     * @param calendar_event $event
      * @param bool $showactions
      * @return string
      */
-    public function event(\core_calendar\event $event, $showactions=true) {
+    public function event(calendar_event $event, $showactions=true) {
         global $CFG;
 
         $event = \core_calendar\api::add_event_metadata($event);
@@ -375,7 +375,7 @@ class core_calendar_renderer extends plugin_renderer_base {
             $calendar->courses);
         if (!empty($events)) {
             foreach($events as $eventid => $event) {
-                $event = new \core_calendar\event($event);
+                $event = new calendar_event($event);
                 if (!empty($event->modulename)) {
                     $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
                     if (!\core_availability\info_module::is_user_visible($cm, 0, false)) {
@@ -552,8 +552,8 @@ class core_calendar_renderer extends plugin_renderer_base {
         if ($events) {
             $output .= html_writer::start_tag('div', array('class' => 'eventlist'));
             foreach ($events as $event) {
-                // Convert to \core_calendar\event object so that we transform description accordingly.
-                $event = new \core_calendar\event($event);
+                // Convert to calendar_event object so that we transform description accordingly.
+                $event = new calendar_event($event);
                 $event->calendarcourseid = $calendar->courseid;
                 $output .= $this->event($event);
             }

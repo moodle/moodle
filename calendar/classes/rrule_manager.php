@@ -223,7 +223,7 @@ class rrule_manager {
     /**
      * Create events for specified rrule.
      *
-     * @param event $passedevent Properties of event to create.
+     * @param \calendar_event $passedevent Properties of event to create.
      * @throws moodle_exception
      */
     public function create_events($passedevent) {
@@ -245,7 +245,7 @@ class rrule_manager {
 
         // Adjust the parent event's timestart, if necessary.
         if (count($eventtimes) > 0 && !in_array($eventrec->timestart, $eventtimes)) {
-            $calevent = new event($eventrec);
+            $calevent = new \calendar_event($eventrec);
             $updatedata = (object)['timestart' => $eventtimes[0], 'repeatid' => $eventrec->id];
             $calevent->update($updatedata, false);
             $eventrec->timestart = $calevent->timestart;
@@ -719,7 +719,7 @@ class rrule_manager {
             $cloneevent->repeatid = $event->id;
             $cloneevent->timestart = $time;
             unset($cloneevent->id);
-            event::create($cloneevent, false);
+            \calendar_event::create($cloneevent, false);
         }
     }
 

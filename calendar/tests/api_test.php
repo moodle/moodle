@@ -121,7 +121,7 @@ class core_calendar_api_testcase extends advanced_testcase {
             ]
         ];
         foreach ($events as $event) {
-            \core_calendar\event::create($event, false);
+            calendar_event::create($event, false);
         }
         $timestart = time() - 60;
         $timeend = time() + 60;
@@ -232,7 +232,7 @@ class core_calendar_api_testcase extends advanced_testcase {
             ],
         ];
         foreach ($events as $event) {
-            \core_calendar\event::create($event, false);
+            calendar_event::create($event, false);
         }
         $timestart = $now - 100;
         $timeend = $now + (3 * 86400);
@@ -298,7 +298,7 @@ class core_calendar_api_testcase extends advanced_testcase {
             ],
         ];
         foreach ($repeatingevents as $event) {
-            \core_calendar\event::create($event, false);
+            calendar_event::create($event, false);
         }
         // Make sure repeating events are not filtered out.
         $events = \core_calendar\api::get_events($timestart, $timeend, true, true, true);

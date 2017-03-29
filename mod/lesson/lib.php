@@ -208,8 +208,8 @@ function lesson_update_events($lesson, $override = null) {
                     unset($event->id);
                 }
                 $event->name = $eventname.' ('.get_string('lessonopens', 'lesson').')';
-                // The method \core_calendar\event::create will reuse a db record if the id field is set.
-                \core_calendar\event::create($event);
+                // The method calendar_event::create will reuse a db record if the id field is set.
+                calendar_event::create($event);
             }
             if ($deadline && $addclose) {
                 if ($oldevent = array_shift($oldevents)) {
@@ -228,14 +228,14 @@ function lesson_update_events($lesson, $override = null) {
                         $event->priority = $closepriorities[$deadline];
                     }
                 }
-                \core_calendar\event::create($event);
+                calendar_event::create($event);
             }
         }
     }
 
     // Delete any leftover events.
     foreach ($oldevents as $badevent) {
-        $badevent = \core_calendar\event::load($badevent);
+        $badevent = calendar_event::load($badevent);
         $badevent->delete();
     }
 }
@@ -1570,11 +1570,11 @@ function lesson_check_updates_since(cm_info $cm, $from, $filter = array()) {
 /**
  * Handles creating actions for events.
  *
- * @param \core_calendar\event $event
+ * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
  * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
  */
-function mod_lesson_core_calendar_provide_event_action(\core_calendar\event $event,
+function mod_lesson_core_calendar_provide_event_action(calendar_event $event,
                                                        \core_calendar\action_factory $factory) {
     global $DB, $CFG, $USER;
     require_once($CFG->dirroot . '/mod/lesson/locallib.php');

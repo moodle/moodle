@@ -83,7 +83,7 @@ class core_calendar_external extends external_api {
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($params['events'] as $event) {
-            $eventobj = \core_calendar\event::load($event['eventid']);
+            $eventobj = calendar_event::load($event['eventid']);
 
             // Let's check if the user is allowed to delete an event.
             if (!\core_calendar\api::can_edit_event($eventobj)) {
@@ -247,7 +247,7 @@ class core_calendar_external extends external_api {
         foreach ($eventlist as $eventid => $eventobj) {
             $event = (array) $eventobj;
             // Description formatting.
-            $calendareventobj = new \core_calendar\event($event);
+            $calendareventobj = new calendar_event($event);
             list($event['description'], $event['format']) = $calendareventobj->format_external_text();
 
             if ($hassystemcap) {
@@ -260,7 +260,7 @@ class core_calendar_external extends external_api {
                 }
             } else {
                 // Can the user actually see this event?
-                $eventobj = \core_calendar\event::load($eventobj);
+                $eventobj = calendar_event::load($eventobj);
                 if (($eventobj->courseid == $SITE->id) ||
                             (!empty($eventobj->groupid) && in_array($eventobj->groupid, $groups)) ||
                             (!empty($eventobj->courseid) && in_array($eventobj->courseid, $courses)) ||
@@ -620,7 +620,7 @@ class core_calendar_external extends external_api {
                 $event['repeat'] = 0;
             }
 
-            $eventobj = new \core_calendar\event($event);
+            $eventobj = new calendar_event($event);
 
             // Let's check if the user is allowed to delete an event.
             if (!\core_calendar\api::can_add_event($eventobj)) {

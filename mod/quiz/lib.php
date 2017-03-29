@@ -197,7 +197,7 @@ function quiz_delete_instance($id) {
 
     $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
     foreach ($events as $event) {
-        $event = core_calendar\event::load($event);
+        $event = calendar_event::load($event);
         $event->delete();
     }
 
@@ -229,7 +229,7 @@ function quiz_delete_override($quiz, $overrideid) {
             'instance' => $quiz->id, 'groupid' => (int)$override->groupid,
             'userid' => (int)$override->userid));
     foreach ($events as $event) {
-        $eventold = \core_calendar\event::load($event);
+        $eventold = calendar_event::load($event);
         $eventold->delete();
     }
 
@@ -1292,8 +1292,8 @@ function quiz_update_events($quiz, $override = null) {
                     unset($event->id);
                 }
                 $event->name = $eventname.' ('.get_string('quizopens', 'quiz').')';
-                // The method \core_calendar\event::create will reuse a db record if the id field is set.
-                \core_calendar\event::create($event);
+                // The method calendar_event::create will reuse a db record if the id field is set.
+                calendar_event::create($event);
             }
             if ($timeclose && $addclose) {
                 if ($oldevent = array_shift($oldevents)) {
@@ -1312,14 +1312,14 @@ function quiz_update_events($quiz, $override = null) {
                         $event->priority = $closepriorities[$timeclose];
                     }
                 }
-                \core_calendar\event::create($event);
+                calendar_event::create($event);
             }
         }
     }
 
     // Delete any leftover events.
     foreach ($oldevents as $badevent) {
-        $badevent = \core_calendar\event::load($badevent);
+        $badevent = calendar_event::load($badevent);
         $badevent->delete();
     }
 }
@@ -2079,11 +2079,11 @@ function mod_quiz_get_fontawesome_icon_map() {
 /**
  * Handles creating actions for events.
  *
- * @param \core_calendar\event $event
+ * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
  * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
  */
-function mod_quiz_core_calendar_provide_event_action(\core_calendar\event $event,
+function mod_quiz_core_calendar_provide_event_action(calendar_event $event,
                                                      \core_calendar\action_factory $factory) {
     global $CFG, $USER;
 

@@ -992,10 +992,10 @@ function set_coursemodule_visible($id, $visible, $visibleoncoursepage = 1) {
             ($events = $DB->get_records('event', array('instance' => $cm->instance, 'modulename' => $modulename)))) {
         foreach($events as $event) {
             if ($visible) {
-                $event = new \core_calendar\event($event);
+                $event = new calendar_event($event);
                 $event->toggle_visibility(true);
             } else {
-                $event = new \core_calendar\event($event);
+                $event = new calendar_event($event);
                 $event->toggle_visibility(false);
             }
         }
@@ -1169,7 +1169,7 @@ function course_delete_module($cmid, $async = false) {
     // Delete events from calendar.
     if ($events = $DB->get_records('event', array('instance' => $cm->instance, 'modulename' => $modulename))) {
         foreach($events as $event) {
-            $calendarevent = \core_calendar\event::load($event->id);
+            $calendarevent = calendar_event::load($event->id);
             $calendarevent->delete();
         }
     }

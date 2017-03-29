@@ -80,7 +80,7 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
         ];
 
         foreach ($events as $event) {
-            \core_calendar\event::create($event, false);
+            calendar_event::create($event, false);
         }
 
         // Get all events.
@@ -200,7 +200,7 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
         ];
 
         foreach ($events as $event) {
-            \core_calendar\event::create($event, false);
+            calendar_event::create($event, false);
         }
 
         $timestart = $now - 100;
@@ -270,7 +270,7 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
         ];
 
         foreach ($repeatingevents as $event) {
-            \core_calendar\event::create($event, false);
+            calendar_event::create($event, false);
         }
 
         // Make sure repeating events are not filtered out.

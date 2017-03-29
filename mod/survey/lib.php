@@ -1089,11 +1089,11 @@ function survey_check_updates_since(cm_info $cm, $from, $filter = array()) {
 /**
  * Handles creating actions for events.
  *
- * @param \core_calendar\event $event
+ * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
  * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
  */
-function mod_survey_core_calendar_provide_event_action(\core_calendar\event $event,
+function mod_survey_core_calendar_provide_event_action(calendar_event $event,
                                                       \core_calendar\action_factory $factory) {
     $cm = get_fast_modinfo($event->courseid)->instances['survey'][$event->instance];
     $context = context_module::instance($cm->id);

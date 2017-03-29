@@ -313,7 +313,7 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
      * @param int $courseid
      * @param int $instanceid The data id.
      * @param string $eventtype The event type. eg. DATA_EVENT_TYPE_OPEN.
-     * @return bool|\core_calendar\event
+     * @return bool|calendar_event
      */
     private function create_action_event($courseid, $instanceid, $eventtype) {
         $event = new stdClass();
@@ -325,6 +325,6 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
         $event->eventtype = $eventtype;
         $event->timestart = time();
 
-        return \core_calendar\event::create($event);
+        return calendar_event::create($event);
     }
 }

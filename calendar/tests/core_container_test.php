@@ -296,7 +296,7 @@ class core_calendar_container_testcase extends advanced_testcase {
      * Helper function to create calendar events using the old code.
      *
      * @param array $properties A list of calendar event properties to set
-     * @return \core_calendar\event|bool
+     * @return calendar_event|bool
      */
     protected function create_event($properties = []) {
         $record = new \stdClass();
@@ -312,7 +312,7 @@ class core_calendar_container_testcase extends advanced_testcase {
             $record->$name = $value;
         }
 
-        $event = new \core_calendar\event($record);
+        $event = new calendar_event($record);
         return $event->create($record, false);
     }
 }

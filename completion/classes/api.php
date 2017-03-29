@@ -85,11 +85,11 @@ class api {
                 $event->visible = instance_is_visible($modulename, $instance);
                 $event->timeduration = 0;
 
-                $calendarevent = \core_calendar\event::load($event->id);
+                $calendarevent = \calendar_event::load($event->id);
                 $calendarevent->update($event);
             } else {
                 // Calendar event is no longer needed.
-                $calendarevent = \core_calendar\event::load($event->id);
+                $calendarevent = \calendar_event::load($event->id);
                 $calendarevent->delete();
             }
         } else {
@@ -107,7 +107,7 @@ class api {
                 $event->visible = instance_is_visible($modulename, $instance);
                 $event->timeduration = 0;
 
-                \core_calendar\event::create($event);
+                \calendar_event::create($event);
             }
         }
 

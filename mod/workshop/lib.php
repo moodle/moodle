@@ -270,7 +270,7 @@ function workshop_delete_instance($id) {
     // delete the calendar events
     $events = $DB->get_records('event', array('modulename' => 'workshop', 'instance' => $workshop->id));
     foreach ($events as $event) {
-        $event = \core_calendar\event::load($event);
+        $event = calendar_event::load($event);
         $event->delete();
     }
 
@@ -1721,7 +1721,7 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             unset($event->id);
         }
         // update() will reuse a db record if the id field is set
-        $eventobj = new \core_calendar\event($event);
+        $eventobj = new calendar_event($event);
         $eventobj->update($event, false);
     }
 
@@ -1739,7 +1739,7 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             unset($event->id);
         }
         // update() will reuse a db record if the id field is set
-        $eventobj = new \core_calendar\event($event);
+        $eventobj = new calendar_event($event);
         $eventobj->update($event, false);
     }
 
@@ -1757,7 +1757,7 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             unset($event->id);
         }
         // update() will reuse a db record if the id field is set
-        $eventobj = new \core_calendar\event($event);
+        $eventobj = new calendar_event($event);
         $eventobj->update($event, false);
     }
 
@@ -1775,13 +1775,13 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             unset($event->id);
         }
         // update() will reuse a db record if the id field is set
-        $eventobj = new \core_calendar\event($event);
+        $eventobj = new calendar_event($event);
         $eventobj->update($event, false);
     }
 
     // delete any leftover events
     foreach ($currentevents as $oldevent) {
-        $oldevent = \core_calendar\event::load($oldevent);
+        $oldevent = calendar_event::load($oldevent);
         $oldevent->delete();
     }
 }
@@ -1789,11 +1789,11 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
 /**
  * Handles creating actions for events.
  *
- * @param \core_calendar\event $event
+ * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
  * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
  */
-function mod_workshop_core_calendar_provide_event_action(\core_calendar\event $event,
+function mod_workshop_core_calendar_provide_event_action(calendar_event $event,
                                                          \core_calendar\action_factory $factory) {
 
     $cm = get_fast_modinfo($event->courseid)->instances['workshop'][$event->instance];

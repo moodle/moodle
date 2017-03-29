@@ -1057,7 +1057,7 @@ function data_delete_instance($id) {    // takes the dataid
     // Remove old calendar events.
     $events = $DB->get_records('event', array('modulename' => 'data', 'instance' => $id));
     foreach ($events as $event) {
-        $event = \core_calendar\event::load($event);
+        $event = calendar_event::load($event);
         $event->delete();
     }
 
@@ -4219,11 +4219,11 @@ function data_check_updates_since(cm_info $cm, $from, $filter = array()) {
 /**
  * Handles creating actions for events.
  *
- * @param \core_calendar\event $event
+ * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
  * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
  */
-function mod_data_core_calendar_provide_event_action(\core_calendar\event $event,
+function mod_data_core_calendar_provide_event_action(calendar_event $event,
                                                        \core_calendar\action_factory $factory) {
     global $DB;
 

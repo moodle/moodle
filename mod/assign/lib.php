@@ -300,13 +300,13 @@ function assign_update_events($assign, $override = null) {
                 unset($event->id);
             }
             $event->name      = $eventname.' ('.get_string('duedate', 'assign').')';
-            \core_calendar\event::create($event);
+            calendar_event::create($event);
         }
     }
 
     // Delete any leftover events.
     foreach ($oldevents as $badevent) {
-        $badevent = \core_calendar\event::load($badevent);
+        $badevent = calendar_event::load($badevent);
         $badevent->delete();
     }
 }
@@ -1714,10 +1714,10 @@ function assign_check_updates_since(cm_info $cm, $from, $filter = array()) {
  * the ASSIGN_EVENT_TYPE_GRADINGDUE event will not be shown to students on their calendar, and
  * ASSIGN_EVENT_TYPE_DUE events will not be shown to teachers.
  *
- * @param \core_calendar\event $event
+ * @param calendar_event $event
  * @return bool Returns true if the event is visible to the current user, false otherwise.
  */
-function mod_assign_core_calendar_is_event_visible(\core_calendar\event $event) {
+function mod_assign_core_calendar_is_event_visible(calendar_event $event) {
     global $CFG, $USER;
 
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
@@ -1737,11 +1737,11 @@ function mod_assign_core_calendar_is_event_visible(\core_calendar\event $event) 
 /**
  * Handles creating actions for events.
  *
- * @param \core_calendar\event $event
+ * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
  * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
  */
-function mod_assign_core_calendar_provide_event_action(\core_calendar\event $event,
+function mod_assign_core_calendar_provide_event_action(calendar_event $event,
                                                        \core_calendar\action_factory $factory) {
 
     global $CFG, $USER;
@@ -1794,11 +1794,11 @@ function mod_assign_core_calendar_provide_event_action(\core_calendar\event $eve
  * Callback function that determines whether an action event should be showing its item count
  * based on the event type and the item count.
  *
- * @param \core_calendar\event $event The calendar event.
+ * @param calendar_event $event The calendar event.
  * @param int $itemcount The item count associated with the action event.
  * @return bool
  */
-function mod_assign_core_calendar_event_action_shows_item_count(\core_calendar\event $event, $itemcount = 0) {
+function mod_assign_core_calendar_event_action_shows_item_count(calendar_event $event, $itemcount = 0) {
     // List of event types where the action event's item count should be shown.
     $eventtypesshowingitemcount = [
         ASSIGN_EVENT_TYPE_GRADINGDUE

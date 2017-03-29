@@ -40,7 +40,7 @@ use core_calendar\rrule_manager;
  */
 class core_calendar_rrule_manager_testcase extends advanced_testcase {
 
-    /** @var core_calendar\event a dummy event */
+    /** @var calendar_event a dummy event */
     protected $event;
 
     /**
@@ -78,7 +78,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $event->groupid = 0;
         $event->courseid = 0;
         $event->eventtype = 'user';
-        $eventobj = core_calendar\event::create($event, false);
+        $eventobj = calendar_event::create($event, false);
         $DB->set_field('event', 'repeatid', $eventobj->id, array('id' => $eventobj->id));
         $eventobj->repeatid = $eventobj->id;
         $this->event = $eventobj;
@@ -2703,7 +2703,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $newdatetime = DateTime::createFromFormat('Ymd\THis', $datestr, $timezone);
 
         // Update the start date of the parent event.
-        $calevent = core_calendar\event::load($this->event->id);
+        $calevent = calendar_event::load($this->event->id);
         $updatedata = (object)[
             'timestart' => $newdatetime->getTimestamp(),
             'repeatid' => $this->event->id

@@ -261,7 +261,7 @@ class mod_survey_lib_testcase extends advanced_testcase {
      * @param int $courseid The course id.
      * @param int $instanceid The instance id.
      * @param string $eventtype The event type.
-     * @return bool|\core_calendar\event
+     * @return bool|calendar_event
      */
     private function create_action_event($courseid, $instanceid, $eventtype) {
         $event = new stdClass();
@@ -273,6 +273,6 @@ class mod_survey_lib_testcase extends advanced_testcase {
         $event->eventtype = $eventtype;
         $event->timestart = time();
 
-        return \core_calendar\event::create($event);
+        return calendar_event::create($event);
     }
 }

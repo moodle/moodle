@@ -818,7 +818,7 @@ function feedback_set_events($feedback) {
         if ($eventid) {
             // Calendar event exists so update it.
             $event->id = $eventid;
-            $calendarevent = \core_calendar\event::load($event->id);
+            $calendarevent = calendar_event::load($event->id);
             $calendarevent->update($event);
         } else {
             // Event doesn't exist so create one.
@@ -828,11 +828,11 @@ function feedback_set_events($feedback) {
             $event->modulename   = 'feedback';
             $event->instance     = $feedback->id;
             $event->eventtype    = FEEDBACK_EVENT_TYPE_OPEN;
-            \core_calendar\event::create($event);
+            calendar_event::create($event);
         }
     } else if ($eventid) {
         // Calendar event is on longer needed.
-        $calendarevent = \core_calendar\event::load($eventid);
+        $calendarevent = calendar_event::load($eventid);
         $calendarevent->delete();
     }
 
@@ -853,7 +853,7 @@ function feedback_set_events($feedback) {
         if ($eventid) {
             // Calendar event exists so update it.
             $event->id = $eventid;
-            $calendarevent = \core_calendar\event::load($event->id);
+            $calendarevent = calendar_event::load($event->id);
             $calendarevent->update($event);
         } else {
             // Event doesn't exist so create one.
@@ -862,11 +862,11 @@ function feedback_set_events($feedback) {
             $event->userid       = 0;
             $event->modulename   = 'feedback';
             $event->instance     = $feedback->id;
-            \core_calendar\event::create($event);
+            calendar_event::create($event);
         }
     } else if ($eventid) {
         // Calendar event is on longer needed.
-        $calendarevent = \core_calendar\event::load($eventid);
+        $calendarevent = calendar_event::load($eventid);
         $calendarevent->delete();
     }
 }
@@ -3372,11 +3372,11 @@ function feedback_check_updates_since(cm_info $cm, $from, $filter = array()) {
 /**
  * Handles creating actions for events.
  *
- * @param \core_calendar\event $event
+ * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
  * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
  */
-function mod_feedback_core_calendar_provide_event_action(\core_calendar\event $event,
+function mod_feedback_core_calendar_provide_event_action(calendar_event $event,
                                                          \core_calendar\action_factory $factory) {
     global $DB;
 

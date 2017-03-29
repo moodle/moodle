@@ -8129,11 +8129,11 @@ function mod_forum_get_fontawesome_icon_map() {
  * Callback function that determines whether an action event should be showing its item count
  * based on the event type and the item count.
  *
- * @param \core_calendar\event $event The calendar event.
+ * @param calendar_event $event The calendar event.
  * @param int $itemcount The item count associated with the action event.
  * @return bool
  */
-function mod_forum_core_calendar_event_action_shows_item_count(\core_calendar\event $event, $itemcount = 0) {
+function mod_forum_core_calendar_event_action_shows_item_count(calendar_event $event, $itemcount = 0) {
     // Always show item count for forums if item count is greater than 0.
     return $itemcount > 0;
 }
@@ -8141,11 +8141,11 @@ function mod_forum_core_calendar_event_action_shows_item_count(\core_calendar\ev
 /**
  * Handles creating actions for events.
  *
- * @param \core_calendar\event $event
+ * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
  * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
  */
-function mod_forum_core_calendar_provide_event_action(\core_calendar\event $event,
+function mod_forum_core_calendar_provide_event_action(calendar_event $event,
                                                        \core_calendar\action_factory $factory) {
     $cm = get_fast_modinfo($event->courseid)->instances['forum'][$event->instance];
     $context = context_module::instance($cm->id);

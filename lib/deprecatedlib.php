@@ -1163,41 +1163,41 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
 
 /**
- * @deprecated please use \core_calendar\event::create() instead.
+ * @deprecated please use calendar_event::create() instead.
  */
 function add_event($event) {
-    throw new coding_exception('add_event() can not be used any more, please use \core_calendar\event::create() instead.');
+    throw new coding_exception('add_event() can not be used any more, please use calendar_event::create() instead.');
 }
 
 /**
- * @deprecated please \core_calendar\event->update() instead.
+ * @deprecated please calendar_event->update() instead.
  */
 function update_event($event) {
-    throw new coding_exception('update_event() is removed, please use \core_calendar\event->update() instead.');
+    throw new coding_exception('update_event() is removed, please use calendar_event->update() instead.');
 }
 
 /**
- * @deprecated please use \core_calendar\event->delete() instead.
+ * @deprecated please use calendar_event->delete() instead.
  */
 function delete_event($id) {
     throw new coding_exception('delete_event() can not be used any more, please use '.
-        '\core_calendar\event->delete() instead.');
+        'calendar_event->delete() instead.');
 }
 
 /**
- * @deprecated please use \core_calendar\event->toggle_visibility(false) instead.
+ * @deprecated please use calendar_event->toggle_visibility(false) instead.
  */
 function hide_event($event) {
     throw new coding_exception('hide_event() can not be used any more, please use '.
-        '\core_calendar\event->toggle_visibility(false) instead.');
+        'calendar_event->toggle_visibility(false) instead.');
 }
 
 /**
- * @deprecated please use \core_calendar\event->toggle_visibility(true) instead.
+ * @deprecated please use calendar_event->toggle_visibility(true) instead.
  */
 function show_event($event) {
     throw new coding_exception('show_event() can not be used any more, please use '.
-        '\core_calendar\event->toggle_visibility(true) instead.');
+        'calendar_event->toggle_visibility(true) instead.');
 }
 
 /**
@@ -7177,7 +7177,7 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
  * Return the capability for editing calendar event.
  *
  * @deprecated since 3.3
- * @param \core_calendar\event $event event object
+ * @param calendar_event $event event object
  * @return bool capability to edit event
  */
 function calendar_edit_event_allowed($event) {
@@ -7204,7 +7204,7 @@ function calendar_get_default_courses() {
  * Get event format time.
  *
  * @deprecated since 3.3
- * @param \core_calendar\event $event event object
+ * @param calendar_event $event event object
  * @param int $now current time in gmt
  * @param array $linkparams list of params for event link
  * @param bool $usecommonwords the words as formatted date/time.

@@ -26,8 +26,6 @@ namespace core_calendar\local\interfaces;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\event;
-
 /**
  * Interface for an event mapper class
  *
@@ -38,16 +36,16 @@ interface event_mapper_interface {
     /**
      * Map a legacy event to an event.
      *
-     * @param event $event The legacy event.
+     * @param \calendar_event $event The legacy event.
      * @return event_interface The mapped event.
      */
-    public function from_legacy_event_to_event(event $event);
+    public function from_legacy_event_to_event(\calendar_event $event);
 
     /**
      * Map an event to a legacy event.
      *
      * @param event_interface $event The legacy event.
-     * @return event The mapped legacy event.
+     * @return \calendar_event The mapped legacy event.
      */
     public function from_event_to_legacy_event(event_interface $event);
 

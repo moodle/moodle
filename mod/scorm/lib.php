@@ -1595,11 +1595,11 @@ function scorm_refresh_events($courseid = 0) {
 /**
  * Handles creating actions for events.
  *
- * @param \core_calendar\event $event
+ * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
  * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
  */
-function mod_scorm_core_calendar_provide_event_action(\core_calendar\event $event,
+function mod_scorm_core_calendar_provide_event_action(calendar_event $event,
                                                       \core_calendar\action_factory $factory) {
     global $CFG, $DB;
 
