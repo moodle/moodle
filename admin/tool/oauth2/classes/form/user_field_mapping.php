@@ -52,8 +52,6 @@ class user_field_mapping extends persistent {
         $mform = $this->_form;
         $userfieldmapping = $this->get_persistent();
 
-        $mform->addElement('header', 'generalhdr', get_string('general'));
-
         // External.
         $mform->addElement('text', 'externalfield', get_string('userfieldexternalfield', 'tool_oauth2'));
         $mform->addRule('externalfield', null, 'required', null, 'client');

@@ -47,12 +47,10 @@ class issuer extends persistent {
      * Define the form - called by parent constructor
      */
     public function definition() {
-        global $PAGE;
+        global $PAGE, $OUTPUT;
 
         $mform = $this->_form;
         $endpoint = $this->get_persistent();
-
-        $mform->addElement('header', 'generalhdr', get_string('general'));
 
         // Name.
         $mform->addElement('text', 'name', get_string('issuername', 'tool_oauth2'));

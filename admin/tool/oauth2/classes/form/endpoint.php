@@ -52,8 +52,6 @@ class endpoint extends persistent {
         $mform = $this->_form;
         $endpoint = $this->get_persistent();
 
-        $mform->addElement('header', 'generalhdr', get_string('general'));
-
         // Name.
         $mform->addElement('text', 'name', get_string('endpointname', 'tool_oauth2'));
         $mform->addRule('name', null, 'required', null, 'client');
