@@ -212,7 +212,7 @@ class filetypes_util {
 
         foreach ($types as $type) {
             if ($type === '*') {
-                $desc = get_string('any', 'core_mimetypes');
+                $desc = get_string('filetypesany', 'core_form');
                 $descriptions[$desc] = [];
             } else if ($group = $this->is_filetype_group($type)) {
                 $desc = $this->get_group_description($type);
@@ -248,5 +248,188 @@ class filetypes_util {
             'hasdescriptions' => !empty($data),
             'descriptions' => array_values($data),
         ];
+    }
+
+    /**
+     * Prepares data for the filetypes-browser.mustache
+     *
+     * @param string|array $onlytypes Allow selection from these file types only; for example 'web_image'.
+     * @param bool allowall Allow to select 'All file types'. Does not apply with onlytypes are set.
+     * @param $current string|array Current values that should be selected.
+     * @return object
+     */
+    public function data_for_browser($onlytypes=null, $allowall=true, $current=null) {
+
+        $groups = [];
+        $current = $this->normalize_file_types($current);
+
+        // Firstly populate the tree of extensions categorized into groups.
+
+        foreach ($this->get_groups_info() as $groupkey => $groupinfo) {
+            if (empty($groupinfo->extensions)) {
+                continue;
+            }
+
+            $group = (object) [
+                'key' => $groupkey,
+                'name' => $this->get_group_description($groupkey),
+                'selectable' => true,
+                'selected' => in_array($groupkey, $current),
+                'ext' => implode(' ', $groupinfo->extensions),
+                'expanded' => false,
+            ];
+
+            $types = [];
+
+            foreach ($groupinfo->extensions as $extension) {
+                if ($onlytypes && !$this->is_whitelisted($extension, $onlytypes)) {
+                    $group->selectable = false;
+                    $group->expanded = true;
+                    $group->ext = '';
+                    continue;
+                }
+
+                $desc = get_mimetype_description(['filename' => 'fakefile'.$extension]);
+
+                if ($selected = in_array($extension, $current)) {
+                    $group->expanded = true;
+                }
+
+                $types[] = (object) [
+                    'key' => $extension,
+                    'name' => get_mimetype_description(['filename' => 'fakefile'.$extension]),
+                    'selected' => $selected,
+                    'ext' => $extension,
+                ];
+            }
+
+            if (empty($types)) {
+                continue;
+            }
+
+            core_collator::asort_objects_by_property($types, 'name', core_collator::SORT_NATURAL);
+
+            $group->types = array_values($types);
+            $groups[] = $group;
+        }
+
+        core_collator::asort_objects_by_property($groups, 'name', core_collator::SORT_NATURAL);
+
+        // Append all other uncategorized extensions.
+
+        $others = [];
+
+        foreach (core_filetypes::get_types() as $extension => $info) {
+            $extension = '.'.$extension;
+            if ($onlytypes && !$this->is_whitelisted($extension, $onlytypes)) {
+                continue;
+            }
+            if (!isset($info['groups']) || empty($info['groups'])) {
+                $others[] = (object) [
+                    'key' => $extension,
+                    'name' => get_mimetype_description(['filename' => 'fakefile'.$extension]),
+                    'selected' => in_array($extension, $current),
+                    'ext' => $extension,
+                ];
+            }
+        }
+
+        core_collator::asort_objects_by_property($others, 'name', core_collator::SORT_NATURAL);
+
+        if (!empty($others)) {
+            $groups[] = (object) [
+                'key' => '',
+                'name' => get_string('filetypesothers', 'core_form'),
+                'selectable' => false,
+                'selected' => false,
+                'ext' => '',
+                'types' => array_values($others),
+                'expanded' => true,
+            ];
+        }
+
+        if (empty($onlytypes) and $allowall) {
+            array_unshift($groups, (object) [
+                'key' => '*',
+                'name' => get_string('filetypesany', 'core_form'),
+                'selectable' => true,
+                'selected' => in_array('*', $current),
+                'ext' => null,
+                'types' => [],
+                'expanded' => false,
+            ]);
+        }
+
+        $groups = array_values($groups);
+
+        return $groups;
+    }
+
+    /**
+     * Expands the file types into the list of file extensions.
+     *
+     * The groups and mimetypes are expanded into the list of their associated file
+     * extensions. Depending on the $keepgroups and $keepmimetypes, the groups
+     * and mimetypes themselves are either kept in the list or removed.
+     *
+     * @param string|array $types
+     * @param bool $keepgroups Keep the group item in the list after expansion
+     * @param bool $keepmimetypes Keep the mimetype item in the list after expansion
+     * @return array list of extensions and eventually groups and types
+     */
+    public function expand($types, $keepgroups=false, $keepmimetypes=false) {
+
+        $expanded = [];
+
+        foreach ($this->normalize_file_types($types) as $type) {
+            if ($group = $this->is_filetype_group($type)) {
+                foreach ($group->extensions as $ext) {
+                    $expanded[$ext] = true;
+                }
+                if ($keepgroups) {
+                    $expanded[$type] = true;
+                }
+
+            } else if ($this->looks_like_mimetype($type)) {
+                // A mime type expands to the associated extensions.
+                foreach (file_get_typegroup('extension', [$type]) as $ext) {
+                    $expanded[$ext] = true;
+                }
+                if ($keepmimetypes) {
+                    $expanded[$type] = true;
+                }
+
+            } else {
+                // Single extension expands to itself.
+                $expanded[$type] = true;
+            }
+        }
+
+        return array_keys($expanded);
+    }
+
+    /**
+     * Should the given file type be considered as a part of the given whitelist.
+     *
+     * If multiple types are provided, all of them must be part of the
+     * whitelist.
+     *
+     * @param string $types One or more types in a string (space , or ; separated)
+     * @param string|array $whitelist an array or string of whitelisted types
+     * @return boolean
+     */
+    public function is_whitelisted($types, $whitelist) {
+
+        $whitelistedtypes = $this->expand($whitelist, true, true);
+
+        if (empty($whitelistedtypes) || $whitelistedtypes == ['*']) {
+            return true;
+        }
+
+        $giventypes = $this->normalize_file_types($types);
+
+        $intersection = array_intersect($giventypes, $whitelistedtypes);
+
+        return !empty($intersection);
     }
 }

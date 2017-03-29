@@ -35,7 +35,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['any'] = 'All file types';
 $string['application/epub_zip'] = 'EPUB ebook';
 $string['application/msword'] = 'Word document';
 $string['application/pdf'] = 'PDF document';

@@ -165,4 +165,145 @@ class filetypes_util_testcase extends advanced_testcase {
         $this->assertEquals('application/x-something-really-unlikely-ever-exist', $desc->descriptions[0]->description);
         $this->assertEmpty($desc->descriptions[0]->extensions);
     }
+
+    /**
+     * Test expanding mime types into extensions.
+     */
+    public function test_expand() {
+
+        $this->resetAfterTest(true);
+        $util = new filetypes_util();
+
+        $this->assertSame([], $util->expand(''));
+
+        $expanded = $util->expand('document .cdr text/plain');
+        $this->assertNotContains('document', $expanded);
+        $this->assertNotContains('text/plain', $expanded);
+        $this->assertContains('.doc', $expanded);
+        $this->assertContains('.odt', $expanded);
+        $this->assertContains('.txt', $expanded);
+        $this->assertContains('.cdr', $expanded);
+
+        $expanded = $util->expand('document .cdr text/plain', true, false);
+        $this->assertContains('document', $expanded);
+        $this->assertNotContains('text/plain', $expanded);
+        $this->assertContains('.doc', $expanded);
+        $this->assertContains('.odt', $expanded);
+        $this->assertContains('.txt', $expanded);
+        $this->assertContains('.cdr', $expanded);
+
+        $expanded = $util->expand('document .cdr text/plain', false, true);
+        $this->assertNotContains('document', $expanded);
+        $this->assertContains('text/plain', $expanded);
+        $this->assertContains('.doc', $expanded);
+        $this->assertContains('.odt', $expanded);
+        $this->assertContains('.txt', $expanded);
+        $this->assertContains('.cdr', $expanded);
+
+        $this->assertSame([], $util->expand('foo/bar', true, false));
+        $this->assertSame(['foo/bar'], $util->expand('foo/bar', true, true));
+    }
+
+    /**
+     * Test checking that a type is among others.
+     */
+    public function test_is_whitelisted() {
+
+        $this->resetAfterTest(true);
+        $util = new filetypes_util();
+
+        // These should be intuitively true.
+        $this->assertTrue($util->is_whitelisted('txt', 'text/plain'));
+        $this->assertTrue($util->is_whitelisted('txt', 'doc txt rtf'));
+        $this->assertTrue($util->is_whitelisted('.txt', '.doc;.txt;.rtf'));
+        $this->assertTrue($util->is_whitelisted('audio', 'text/plain audio video'));
+        $this->assertTrue($util->is_whitelisted('text/plain', 'text/plain audio video'));
+        $this->assertTrue($util->is_whitelisted('jpg jpe jpeg', 'image/jpeg'));
+
+        // These should be intuitively false.
+        $this->assertFalse($util->is_whitelisted('.gif', 'text/plain'));
+
+        // Not all text/plain formats are in the document group.
+        $this->assertFalse($util->is_whitelisted('text/plain', 'document'));
+
+        // Not all documents (and also the group itself) is not a plain text.
+        $this->assertFalse($util->is_whitelisted('document', 'text/plain'));
+
+        // Any type is included if the filter is empty.
+        $this->assertTrue($util->is_whitelisted('txt', ''));
+        $this->assertTrue($util->is_whitelisted('txt', '*'));
+    }
+
+    /**
+     * Test populating the tree for the browser.
+     */
+    public function test_data_for_browser() {
+
+        $this->resetAfterTest(true);
+        $util = new filetypes_util();
+
+        $data = $util->data_for_browser();
+        $this->assertContainsOnly('object', $data);
+        foreach ($data as $group) {
+            $this->assertObjectHasAttribute('key', $group);
+            $this->assertObjectHasAttribute('types', $group);
+            if ($group->key !== '') {
+                $this->assertTrue($group->selectable);
+            }
+        }
+
+        // All these three files are in both "image" and also "web_image"
+        // groups. We display both groups.
+        $data = $util->data_for_browser('jpg png gif', true, '.gif');
+        $this->assertEquals(2, count($data));
+        $this->assertTrue($data[0]->key !== $data[1]->key);
+        foreach ($data as $group) {
+            $this->assertTrue(($group->key === 'image' || $group->key === 'web_image'));
+            $this->assertEquals(3, count($group->types));
+            $this->assertFalse($group->selectable);
+            foreach ($group->types as $ext) {
+                if ($ext->key === '.gif') {
+                    $this->assertTrue($ext->selected);
+                } else {
+                    $this->assertFalse($ext->selected);
+                }
+            }
+        }
+
+        // There is a group web_image which is a subset of the group image. The
+        // file extensions that fall into both groups will be displayed twice.
+        $data = $util->data_for_browser('web_image');
+        foreach ($data as $group) {
+            $this->assertTrue(($group->key === 'image' || $group->key === 'web_image'));
+        }
+
+        // Check that "All file types" are displayed first.
+        $data = $util->data_for_browser();
+        $group = array_shift($data);
+        $this->assertEquals('*', $group->key);
+
+        // Check that "All file types" is not displayed if should not.
+        $data = $util->data_for_browser(null, false);
+        $group = array_shift($data);
+        $this->assertNotEquals('*', $group->key);
+
+        // Groups with an extension selected start expanded. The "Other files"
+        // starts expanded. The rest start collapsed.
+        $data = $util->data_for_browser(null, false, '.png');
+        foreach ($data as $group) {
+            if ($group->key === 'document') {
+                $this->assertfalse($group->expanded);
+            } else if ($group->key === '') {
+                $this->assertTrue($group->expanded);
+            }
+            foreach ($group->types as $ext) {
+                foreach ($group->types as $ext) {
+                    if ($ext->key === '.png') {
+                        $this->assertTrue($ext->selected);
+                        $this->assertTrue($group->expanded);
+                    }
+                }
+            }
+        }
+    }
 }
