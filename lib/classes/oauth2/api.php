@@ -167,7 +167,7 @@ class api {
             'userPrincipalName' => 'username',
             'displayName' => 'alternatename',
             'officeLocation' => 'address',
-            'mobilePhone' => 'phone',
+            'mobilePhone' => 'phone1',
             'preferredLanguage' => 'lang'
         ];
         foreach ($mapping as $external => $internal) {
@@ -430,7 +430,7 @@ class api {
             'nickname' => 'alternatename',
             'picture' => 'picture',
             'address' => 'address',
-            'phone' => 'phone',
+            'phone' => 'phone1',
             'locale' => 'lang'
         ];
         foreach ($mapping as $external => $internal) {

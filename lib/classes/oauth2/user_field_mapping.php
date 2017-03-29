@@ -43,7 +43,7 @@ class user_field_mapping extends persistent {
      * @return array
      */
     private static function get_user_fields() {
-        return array_merge(\core_user::AUTHSYNCFIELDS, ['picture']);
+        return array_merge(\core_user::AUTHSYNCFIELDS, ['picture', 'username']);
     }
 
     /**
