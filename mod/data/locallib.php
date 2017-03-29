@@ -1058,3 +1058,22 @@ function data_can_view_record($data, $record, $currentgroup, $canmanageentries) 
     }
     return false;
 }
+
+/**
+ * Return all the field instances for a given database.
+ *
+ * @param  stdClass $data database object
+ * @return array field instances
+ * @since  Moodle 3.3
+ */
+function data_get_field_instances($data) {
+    global $DB;
+
+    $instances = [];
+    if ($fields = $DB->get_records('data_fields', array('dataid' => $data->id), 'id')) {
+        foreach ($fields as $field) {
+            $instances[] = data_get_field($field, $data);
+        }
+    }
+    return $instances;
+}

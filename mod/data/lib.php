@@ -560,6 +560,22 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     public static function get_content_value($content) {
         return trim($content->content, "\r\n ");
     }
+
+    /**
+     * Return the plugin configs for external functions,
+     * in some cases the configs will need formatting or be returned only if the current user has some capabilities enabled.
+     *
+     * @return array the list of config parameters
+     * @since Moodle 3.3
+     */
+    public function get_config_for_external() {
+        // Return all the field configs to null (maybe there is a private key for a service or something similar there).
+        $configs = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $configs["param$i"] = null;
+        }
+        return $configs;
+    }
 }
 
 
