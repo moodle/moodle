@@ -53,6 +53,7 @@ $string['endpointname'] = 'Name';
 $string['endpointsforissuer'] = 'Endpoints for issuer: {$a}';
 $string['endpointurl_help'] = 'URL for this endpoint. Must use https:// protocol.';
 $string['endpointurl'] = 'Url';
+$string['issuersetup'] = 'Detailed instructions on configuring the common OAuth 2 Services';
 $string['issueralloweddomains_help'] = 'If set, this setting is a comma separated list of domains that logins will be restricted to when using this provider.';
 $string['issueralloweddomains_link'] = 'OAuth_2_login_domains';
 $string['issueralloweddomains'] = 'Login domains';

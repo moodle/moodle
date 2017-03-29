@@ -52,6 +52,8 @@ class issuer extends persistent {
         $mform = $this->_form;
         $endpoint = $this->get_persistent();
 
+        $mform->addElement('html', $OUTPUT->page_doc_link(get_string('issuersetup', 'tool_oauth2')));
+
         // Name.
         $mform->addElement('text', 'name', get_string('issuername', 'tool_oauth2'));
         $mform->addRule('name', null, 'required', null, 'client');
