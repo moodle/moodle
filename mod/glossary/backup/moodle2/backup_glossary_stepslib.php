@@ -53,6 +53,9 @@ class backup_glossary_activity_structure_step extends backup_activity_structure_
             'teacherentry', 'sourceglossaryid', 'usedynalink', 'casesensitive',
             'fullmatch', 'approved'));
 
+        $tags = new backup_nested_element('tags');
+        $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
+
         $aliases = new backup_nested_element('aliases');
 
         $alias = new backup_nested_element('alias', array('id'), array(
@@ -83,6 +86,9 @@ class backup_glossary_activity_structure_step extends backup_activity_structure_
         $entry->add_child($ratings);
         $ratings->add_child($rating);
 
+        $entry->add_child($tags);
+        $tags->add_child($tag);
+
         $glossary->add_child($categories);
         $categories->add_child($category);
 
@@ -108,6 +114,16 @@ class backup_glossary_activity_structure_step extends backup_activity_structure_
             $rating->set_source_alias('rating', 'value');
 
             $categoryentry->set_source_table('glossary_entries_categories', array('categoryid' => backup::VAR_PARENTID));
+
+            $tag->set_source_sql('SELECT t.id, t.name, t.rawname
+                                    FROM {tag} t
+                                    JOIN {tag_instance} ti ON ti.tagid = t.id
+                                   WHERE ti.itemtype = ?
+                                     AND ti.component = ?
+                                     AND ti.itemid = ?', array(
+                backup_helper::is_sqlparam('glossary_entries'),
+                backup_helper::is_sqlparam('mod_glossary'),
+                backup::VAR_PARENTID));
         }
 
         // Define id annotations

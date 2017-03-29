@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/glossary/lib.php');
+require_once($CFG->dirroot . '/mod/glossary/locallib.php');
 
 /**
  * Glossary lib testcase.
@@ -193,5 +194,95 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $event->timestart = time();
 
         return calendar_event::create($event);
+    }
+
+    public function test_mod_glossary_get_tagged_entries() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Setup test data.
+        $glossarygenerator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $course3 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course1 = $this->getDataGenerator()->create_course();
+        $glossary1 = $this->getDataGenerator()->create_module('glossary', array('course' => $course1->id));
+        $glossary2 = $this->getDataGenerator()->create_module('glossary', array('course' => $course2->id));
+        $glossary3 = $this->getDataGenerator()->create_module('glossary', array('course' => $course3->id));
+        $entry11 = $glossarygenerator->create_content($glossary1, array('tags' => array('Cats', 'Dogs')));
+        $entry12 = $glossarygenerator->create_content($glossary1, array('tags' => array('Cats', 'mice')));
+        $entry13 = $glossarygenerator->create_content($glossary1, array('tags' => array('Cats')));
+        $entry14 = $glossarygenerator->create_content($glossary1);
+        $entry15 = $glossarygenerator->create_content($glossary1, array('tags' => array('Cats')));
+        $entry16 = $glossarygenerator->create_content($glossary1, array('tags' => array('Cats'), 'approved' => false));
+        $entry21 = $glossarygenerator->create_content($glossary2, array('tags' => array('Cats')));
+        $entry22 = $glossarygenerator->create_content($glossary2, array('tags' => array('Cats', 'Dogs')));
+        $entry23 = $glossarygenerator->create_content($glossary2, array('tags' => array('mice', 'Cats')));
+        $entry31 = $glossarygenerator->create_content($glossary3, array('tags' => array('mice', 'Cats')));
+
+        $tag = core_tag_tag::get_by_name(0, 'Cats');
+
+        // Admin can see everything.
+        $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$entry = */0);
+        $this->assertRegExp('/'.$entry11->concept.'</', $res->content);
+        $this->assertRegExp('/'.$entry12->concept.'</', $res->content);
+        $this->assertRegExp('/'.$entry13->concept.'</', $res->content);
+        $this->assertNotRegExp('/'.$entry14->concept.'</', $res->content);
+        $this->assertRegExp('/'.$entry15->concept.'</', $res->content);
+        $this->assertRegExp('/'.$entry16->concept.'</', $res->content);
+        $this->assertNotRegExp('/'.$entry21->concept.'</', $res->content);
+        $this->assertNotRegExp('/'.$entry22->concept.'</', $res->content);
+        $this->assertNotRegExp('/'.$entry23->concept.'</', $res->content);
+        $this->assertNotRegExp('/'.$entry31->concept.'</', $res->content);
+        $this->assertEmpty($res->prevpageurl);
+        $this->assertNotEmpty($res->nextpageurl);
+        $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$entry = */1);
+        $this->assertNotRegExp('/'.$entry11->concept.'</', $res->content);
+        $this->assertNotRegExp('/'.$entry12->concept.'</', $res->content);
+        $this->assertNotRegExp('/'.$entry13->concept.'</', $res->content);
+        $this->assertNotRegExp('/'.$entry14->concept.'</', $res->content);
+        $this->assertNotRegExp('/'.$entry15->concept.'</', $res->content);
+        $this->assertNotRegExp('/'.$entry16->concept.'</', $res->content);
+        $this->assertRegExp('/'.$entry21->concept.'</', $res->content);
+        $this->assertRegExp('/'.$entry22->concept.'</', $res->content);
+        $this->assertRegExp('/'.$entry23->concept.'</', $res->content);
+        $this->assertRegExp('/'.$entry31->concept.'</', $res->content);
+        $this->assertNotEmpty($res->prevpageurl);
+        $this->assertEmpty($res->nextpageurl);
+
+        // Create and enrol a user.
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($student->id, $course2->id, $studentrole->id, 'manual');
+        $this->setUser($student);
+        core_tag_index_builder::reset_caches();
+
+        // User can not see entries in course 3 because he is not enrolled.
+        $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$entry = */1);
+        $this->assertRegExp('/'.$entry22->concept.'/', $res->content);
+        $this->assertRegExp('/'.$entry23->concept.'/', $res->content);
+        $this->assertNotRegExp('/'.$entry31->concept.'/', $res->content);
+
+        // User can search glossary entries inside a course.
+        $coursecontext = context_course::instance($course1->id);
+        $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */$coursecontext->id, /*$rec = */1, /*$entry = */0);
+        $this->assertRegExp('/'.$entry11->concept.'/', $res->content);
+        $this->assertRegExp('/'.$entry12->concept.'/', $res->content);
+        $this->assertRegExp('/'.$entry13->concept.'/', $res->content);
+        $this->assertNotRegExp('/'.$entry14->concept.'/', $res->content);
+        $this->assertRegExp('/'.$entry15->concept.'/', $res->content);
+        $this->assertNotRegExp('/'.$entry21->concept.'/', $res->content);
+        $this->assertNotRegExp('/'.$entry22->concept.'/', $res->content);
+        $this->assertNotRegExp('/'.$entry23->concept.'/', $res->content);
+        $this->assertEmpty($res->nextpageurl);
+
+        // User cannot see hidden entries.
+        $this->assertNotRegExp('/'.$entry16->concept.'/', $res->content);
     }
 }

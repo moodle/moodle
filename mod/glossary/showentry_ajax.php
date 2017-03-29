@@ -73,6 +73,11 @@ if ($entries) {
         $options->context = $context;
         $entries[$key]->definition = format_text($definition, $entry->definitionformat, $options);
 
+        if (core_tag_tag::is_enabled('mod_glossary', 'glossary_entries')) {
+            $entries[$key]->definition .= $OUTPUT->tag_list(
+                core_tag_tag::get_item_tags('mod_glossary', 'glossary_entries', $entry->id), null, 'glossary-tags');
+        }
+
         $entries[$key]->attachments = '';
         if (!empty($entries[$key]->attachment)) {
             $attachments = glossary_print_attachments($entry, $cm, 'html');

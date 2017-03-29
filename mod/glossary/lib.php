@@ -2173,7 +2173,7 @@ function  glossary_print_entry_ratings($course, $entry) {
  * @param int $displayformat
  */
 function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
-    global $USER,$CFG, $DB;
+    global $USER, $CFG, $DB, $OUTPUT;
 
     echo '<div class="boxaligncenter">';
     echo '<table class="glossarypopup" cellspacing="0"><tr>';

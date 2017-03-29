@@ -2,7 +2,7 @@
 
 function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $aliases=true) {
 
-    global $CFG, $USER;
+    global $CFG, $USER, $OUTPUT;
 
     echo '<table class="glossarypost dictionary" cellspacing="0">';
     echo '<tr valign="top">';
@@ -13,6 +13,9 @@ function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='
     echo '</div> ';
     glossary_print_entry_definition($entry, $glossary, $cm);
     glossary_print_entry_attachment($entry, $cm, 'html');
+    if (core_tag_tag::is_enabled('mod_glossary', 'glossary_entries')) {
+        echo $OUTPUT->tag_list(core_tag_tag::get_item_tags('mod_glossary', 'glossary_entries', $entry->id), null, 'glossary-tags');
+    }
     echo '</td></tr>';
     echo '<tr valign="top"><td class="entrylowersection">';
     glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $aliases);
