@@ -1028,10 +1028,13 @@ class mod_feedback_external extends external_api {
 
         // Check if we are page filtering.
         if ($params['page'] == 0 && $params['perpage'] == 0) {
-            $params['page'] = false;
-            $params['perpage'] = false;
+            $perpage = false;
+            $page = false;
+        } else {
+            $perpage = $params['perpage'];
+            $page = $perpage * $params['page'];
         }
-        $users = feedback_get_incomplete_users($cm, $groupid, $params['sort'], $params['page'], $params['perpage']);
+        $users = feedback_get_incomplete_users($cm, $groupid, $params['sort'], $page, $perpage);
 
         $result = array(
             'users' => $users,
