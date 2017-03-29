@@ -1821,8 +1821,10 @@ class mod_lesson_external extends external_api {
                                     'response' => new external_value(PARAM_RAW, 'The response text.'),
                                     'responseformat' => new external_format_value('response.'),
                                     'answers' => new external_multiple_structure(
-                                        new external_multiple_structure(new external_value(PARAM_RAW, 'Possible answers and info.'))
-                                    )
+                                        new external_multiple_structure(new external_value(PARAM_RAW, 'Possible answers and info.')),
+                                        'User answers',
+                                        VALUE_OPTIONAL
+                                    ),
                                 ), 'Answer data (empty in content pages created in Moodle 1.x).', VALUE_OPTIONAL
                             )
                         )

@@ -327,7 +327,7 @@ if ($action === 'delete') {
         $table->data[] = array($fontstart.get_string("question", "lesson").": <br />".$fontend.$fontstart2.$page->contents.$fontend2, " ");
         $table->data[] = array($fontstart.get_string("answer", "lesson").":".$fontend, ' ');
         // apply the font to each answer
-        if (!empty($page->answerdata)) {
+        if (!empty($page->answerdata->answers)) {
             foreach ($page->answerdata->answers as $answer){
                 $modified = array();
                 foreach ($answer as $single) {
