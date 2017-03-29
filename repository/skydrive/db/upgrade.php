@@ -53,5 +53,26 @@ function xmldb_repository_skydrive_upgrade($oldversion) {
         // Skydrive savepoint reached.
         upgrade_plugin_savepoint(true, 2017031400, 'repository', 'skydrive');
     }
+    if ($oldversion < 2017032800) {
+        $clientid = get_config('clientid', 'skydrive');
+        $secret = get_config('secret', 'skydrive');
+
+        // Update from repo config to use an OAuth service.
+        if (!empty($clientid) && !empty($secret)) {
+            $issuer = \core\oauth2\api::create_standard_issuer('microsoft');
+
+            $issuer->set('clientid', $clientid);
+            $issuer->set('secret', $secret);
+
+            $issuer->update();
+
+            set_config('issuerid', $issuer->get('id'), 'skydrive');
+        }
+        upgrade_plugin_savepoint(true, 2017032800, 'repository', 'skydrive');
+    }
+    if ($oldversion < 2017032900) {
+        set_config('supportedfiles', 'both', 'skydrive');
+        upgrade_plugin_savepoint(true, 2017032900, 'repository', 'skydrive');
+    }
     return true;
 }
