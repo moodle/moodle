@@ -99,13 +99,11 @@ class event_vault implements event_vault_interface {
         $ignorehidden = true,
         callable $filter = null
     ) {
-        global $DB;
-
         if ($limitnum < 1 || $limitnum > 50) {
             throw new limit_invalid_parameter_exception("Limit must be between 1 and 50 (inclusive)");
         }
 
-        $fromquery = function($field, $timefrom, $lastseenmethod, $afterevent) {
+        $fromquery = function($field, $timefrom, $lastseenmethod, $afterevent, $withduration) {
             if (!$timefrom) {
                 return false;
             }
@@ -114,7 +112,8 @@ class event_vault implements event_vault_interface {
                 $field,
                 $timefrom,
                 $afterevent ? $afterevent->get_times()->{$lastseenmethod}()->getTimestamp() : null,
-                $afterevent ? $afterevent->get_id() : null
+                $afterevent ? $afterevent->get_id() : null,
+                $withduration
             );
         };
 
@@ -131,9 +130,9 @@ class event_vault implements event_vault_interface {
             );
         };
 
-        $timesortfromquery = $fromquery('timesort', $timesortfrom, 'get_sort_time', $timesortafterevent);
+        $timesortfromquery = $fromquery('timesort', $timesortfrom, 'get_sort_time', $timesortafterevent, $withduration);
         $timesorttoquery = $toquery('timesort', $timesortto, 'get_sort_time', $timesortafterevent);
-        $timestartfromquery = $fromquery('timestart', $timestartfrom, 'get_start_time', $timestartafterevent);
+        $timestartfromquery = $fromquery('timestart', $timestartfrom, 'get_start_time', $timestartafterevent, $withduration);
         $timestarttoquery = $toquery('timestart', $timestartto, 'get_start_time', $timestartafterevent);
 
         if (($timesortto && !$timesorttoquery) || ($timestartto && !$timestarttoquery)) {
@@ -168,7 +167,6 @@ class event_vault implements event_vault_interface {
             "timesort ASC, id ASC",
             $offset,
             $limitnum,
-            $withduration,
             $ignorehidden
         ))) {
             foreach ($records as $record) {
