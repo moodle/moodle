@@ -1304,7 +1304,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         // Lesson not using password.
         $result = mod_lesson_external::get_lesson($this->lesson->id);
         $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
-        $this->assertCount(5, $result['lesson']);   // Expect just this few fields.
+        $this->assertCount(6, $result['lesson']);   // Expect just this few fields.
         $this->assertFalse(isset($result['intro']));
     }
 

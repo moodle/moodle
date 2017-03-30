@@ -65,7 +65,7 @@ class mod_lesson_external extends external_api {
                 'maxanswers', 'maxattempts', 'review', 'nextpagedefault', 'feedback', 'minquestions',
                 'maxpages', 'timelimit', 'retake', 'mediafile', 'mediaheight', 'mediawidth',
                 'mediaclose', 'slideshow', 'width', 'height', 'bgcolor', 'displayleft', 'displayleftif',
-                'progressbar', 'allowofflineattempts');
+                'progressbar');
 
             foreach ($fields as $field) {
                 unset($lessonrecord->{$field});
