@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains the class containing unit tests for the calendar API.
+ * Contains the class containing unit tests for the calendar local API.
  *
  * @package    core_calendar
  * @copyright  2017 Mark Nelson <markn@moodle.com>
@@ -26,16 +26,14 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/helpers.php');
 
-use \core_calendar\api;
-
 /**
- * Class contaning unit tests for the calendar API.
+ * Class contaning unit tests for the calendar local API.
  *
  * @package    core_calendar
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_api_testcase extends advanced_testcase {
+class core_calendar_local_api_testcase extends advanced_testcase {
 
     /**
      * Tests set up
@@ -83,15 +81,15 @@ class core_calendar_api_testcase extends advanced_testcase {
         $event8 = create_event(array_merge($params, ['name' => 'Event 8', 'timesort' => 8]));
 
         $this->setUser($user);
-        $result = api::get_action_events_by_timesort(5);
+        $result = \core_calendar\local\api::get_action_events_by_timesort(5);
 
         $this->assertCount(4, $result);
-        $this->assertEquals('Event 5', $result[0]->name);
-        $this->assertEquals('Event 6', $result[1]->name);
-        $this->assertEquals('Event 7', $result[2]->name);
-        $this->assertEquals('Event 8', $result[3]->name);
+        $this->assertEquals('Event 5', $result[0]->get_name());
+        $this->assertEquals('Event 6', $result[1]->get_name());
+        $this->assertEquals('Event 7', $result[2]->get_name());
+        $this->assertEquals('Event 8', $result[3]->get_name());
 
-        $result = api::get_action_events_by_timesort(9);
+        $result = \core_calendar\local\api::get_action_events_by_timesort(9);
 
         $this->assertEmpty($result);
     }
@@ -135,15 +133,15 @@ class core_calendar_api_testcase extends advanced_testcase {
         $event8 = create_event(array_merge($params, ['name' => 'Event 8', 'timesort' => 9]));
 
         $this->setUser($user);
-        $result = api::get_action_events_by_timesort(null, 5);
+        $result = \core_calendar\local\api::get_action_events_by_timesort(null, 5);
 
         $this->assertCount(4, $result);
-        $this->assertEquals('Event 1', $result[0]->name);
-        $this->assertEquals('Event 2', $result[1]->name);
-        $this->assertEquals('Event 3', $result[2]->name);
-        $this->assertEquals('Event 4', $result[3]->name);
+        $this->assertEquals('Event 1', $result[0]->get_name());
+        $this->assertEquals('Event 2', $result[1]->get_name());
+        $this->assertEquals('Event 3', $result[2]->get_name());
+        $this->assertEquals('Event 4', $result[3]->get_name());
 
-        $result = api::get_action_events_by_timesort(null, 1);
+        $result = \core_calendar\local\api::get_action_events_by_timesort(null, 1);
 
         $this->assertEmpty($result);
     }
@@ -186,15 +184,15 @@ class core_calendar_api_testcase extends advanced_testcase {
         $event8 = create_event(array_merge($params, ['name' => 'Event 8', 'timesort' => 8]));
 
         $this->setUser($user);
-        $result = api::get_action_events_by_timesort(3, 6);
+        $result = \core_calendar\local\api::get_action_events_by_timesort(3, 6);
 
         $this->assertCount(4, $result);
-        $this->assertEquals('Event 3', $result[0]->name);
-        $this->assertEquals('Event 4', $result[1]->name);
-        $this->assertEquals('Event 5', $result[2]->name);
-        $this->assertEquals('Event 6', $result[3]->name);
+        $this->assertEquals('Event 3', $result[0]->get_name());
+        $this->assertEquals('Event 4', $result[1]->get_name());
+        $this->assertEquals('Event 5', $result[2]->get_name());
+        $this->assertEquals('Event 6', $result[3]->get_name());
 
-        $result = api::get_action_events_by_timesort(10, 15);
+        $result = \core_calendar\local\api::get_action_events_by_timesort(10, 15);
 
         $this->assertEmpty($result);
     }
@@ -238,19 +236,19 @@ class core_calendar_api_testcase extends advanced_testcase {
         $event8 = create_event(array_merge($params, ['name' => 'Event 8', 'timesort' => 8]));
 
         $this->setUser($user);
-        $result = api::get_action_events_by_timesort(2, 7, $event3->id, 2);
+        $result = \core_calendar\local\api::get_action_events_by_timesort(2, 7, $event3->id, 2);
 
         $this->assertCount(2, $result);
-        $this->assertEquals('Event 4', $result[0]->name);
-        $this->assertEquals('Event 5', $result[1]->name);
+        $this->assertEquals('Event 4', $result[0]->get_name());
+        $this->assertEquals('Event 5', $result[1]->get_name());
 
-        $result = api::get_action_events_by_timesort(2, 7, $event5->id, 2);
+        $result = \core_calendar\local\api::get_action_events_by_timesort(2, 7, $event5->id, 2);
 
         $this->assertCount(2, $result);
-        $this->assertEquals('Event 6', $result[0]->name);
-        $this->assertEquals('Event 7', $result[1]->name);
+        $this->assertEquals('Event 6', $result[0]->get_name());
+        $this->assertEquals('Event 7', $result[1]->get_name());
 
-        $result = api::get_action_events_by_timesort(2, 7, $event7->id, 2);
+        $result = \core_calendar\local\api::get_action_events_by_timesort(2, 7, $event7->id, 2);
 
         $this->assertEmpty($result);
     }
@@ -307,15 +305,15 @@ class core_calendar_api_testcase extends advanced_testcase {
         $event15 = create_event(array_merge($params, ['name' => 'Event 15', 'timesort' => 7]));
         $event16 = create_event(array_merge($params, ['name' => 'Event 16', 'timesort' => 8]));
 
-        $result = api::get_action_events_by_course($course1, 5);
+        $result = \core_calendar\local\api::get_action_events_by_course($course1, 5);
 
         $this->assertCount(4, $result);
-        $this->assertEquals('Event 5', $result[0]->name);
-        $this->assertEquals('Event 6', $result[1]->name);
-        $this->assertEquals('Event 7', $result[2]->name);
-        $this->assertEquals('Event 8', $result[3]->name);
+        $this->assertEquals('Event 5', $result[0]->get_name());
+        $this->assertEquals('Event 6', $result[1]->get_name());
+        $this->assertEquals('Event 7', $result[2]->get_name());
+        $this->assertEquals('Event 8', $result[3]->get_name());
 
-        $result = api::get_action_events_by_course($course1, 9);
+        $result = \core_calendar\local\api::get_action_events_by_course($course1, 9);
 
         $this->assertEmpty($result);
     }
@@ -372,15 +370,15 @@ class core_calendar_api_testcase extends advanced_testcase {
         $event15 = create_event(array_merge($params, ['name' => 'Event 15', 'timesort' => 8]));
         $event16 = create_event(array_merge($params, ['name' => 'Event 16', 'timesort' => 9]));
 
-        $result = api::get_action_events_by_course($course1, null, 5);
+        $result = \core_calendar\local\api::get_action_events_by_course($course1, null, 5);
 
         $this->assertCount(4, $result);
-        $this->assertEquals('Event 1', $result[0]->name);
-        $this->assertEquals('Event 2', $result[1]->name);
-        $this->assertEquals('Event 3', $result[2]->name);
-        $this->assertEquals('Event 4', $result[3]->name);
+        $this->assertEquals('Event 1', $result[0]->get_name());
+        $this->assertEquals('Event 2', $result[1]->get_name());
+        $this->assertEquals('Event 3', $result[2]->get_name());
+        $this->assertEquals('Event 4', $result[3]->get_name());
 
-        $result = api::get_action_events_by_course($course1, null, 1);
+        $result = \core_calendar\local\api::get_action_events_by_course($course1, null, 1);
 
         $this->assertEmpty($result);
     }
@@ -437,15 +435,15 @@ class core_calendar_api_testcase extends advanced_testcase {
         $event15 = create_event(array_merge($params, ['name' => 'Event 15', 'timesort' => 7]));
         $event16 = create_event(array_merge($params, ['name' => 'Event 16', 'timesort' => 8]));
 
-        $result = api::get_action_events_by_course($course1, 3, 6);
+        $result = \core_calendar\local\api::get_action_events_by_course($course1, 3, 6);
 
         $this->assertCount(4, $result);
-        $this->assertEquals('Event 3', $result[0]->name);
-        $this->assertEquals('Event 4', $result[1]->name);
-        $this->assertEquals('Event 5', $result[2]->name);
-        $this->assertEquals('Event 6', $result[3]->name);
+        $this->assertEquals('Event 3', $result[0]->get_name());
+        $this->assertEquals('Event 4', $result[1]->get_name());
+        $this->assertEquals('Event 5', $result[2]->get_name());
+        $this->assertEquals('Event 6', $result[3]->get_name());
 
-        $result = api::get_action_events_by_course($course1, 10, 15);
+        $result = \core_calendar\local\api::get_action_events_by_course($course1, 10, 15);
 
         $this->assertEmpty($result);
     }
@@ -503,19 +501,19 @@ class core_calendar_api_testcase extends advanced_testcase {
         $event15 = create_event(array_merge($params, ['name' => 'Event 15', 'timesort' => 7]));
         $event16 = create_event(array_merge($params, ['name' => 'Event 16', 'timesort' => 8]));
 
-        $result = api::get_action_events_by_course($course1, 2, 7, $event3->id, 2);
+        $result = \core_calendar\local\api::get_action_events_by_course($course1, 2, 7, $event3->id, 2);
 
         $this->assertCount(2, $result);
-        $this->assertEquals('Event 4', $result[0]->name);
-        $this->assertEquals('Event 5', $result[1]->name);
+        $this->assertEquals('Event 4', $result[0]->get_name());
+        $this->assertEquals('Event 5', $result[1]->get_name());
 
-        $result = api::get_action_events_by_course($course1, 2, 7, $event5->id, 2);
+        $result = \core_calendar\local\api::get_action_events_by_course($course1, 2, 7, $event5->id, 2);
 
         $this->assertCount(2, $result);
-        $this->assertEquals('Event 6', $result[0]->name);
-        $this->assertEquals('Event 7', $result[1]->name);
+        $this->assertEquals('Event 6', $result[0]->get_name());
+        $this->assertEquals('Event 7', $result[1]->get_name());
 
-        $result = api::get_action_events_by_course($course1, 2, 7, $event7->id, 2);
+        $result = \core_calendar\local\api::get_action_events_by_course($course1, 2, 7, $event7->id, 2);
 
         $this->assertEmpty($result);
     }
@@ -567,45 +565,45 @@ class core_calendar_api_testcase extends advanced_testcase {
         $event8 = create_event(array_merge($params, ['name' => 'Event 8', 'timesort' => 8]));
         $event9 = create_event(array_merge($params, ['name' => 'Event 9', 'timesort' => 9]));
 
-        $result = api::get_action_events_by_courses([], 1);
+        $result = \core_calendar\local\api::get_action_events_by_courses([], 1);
 
         $this->assertEmpty($result);
 
-        $result = api::get_action_events_by_courses([$course1], 3);
+        $result = \core_calendar\local\api::get_action_events_by_courses([$course1], 3);
 
         $this->assertEmpty($result[$course1->id]);
 
-        $result = api::get_action_events_by_courses([$course1], 1);
+        $result = \core_calendar\local\api::get_action_events_by_courses([$course1], 1);
 
         $this->assertCount(2, $result[$course1->id]);
-        $this->assertEquals('Event 1', $result[$course1->id][0]->name);
-        $this->assertEquals('Event 2', $result[$course1->id][1]->name);
+        $this->assertEquals('Event 1', $result[$course1->id][0]->get_name());
+        $this->assertEquals('Event 2', $result[$course1->id][1]->get_name());
 
-        $result = api::get_action_events_by_courses([$course1, $course2], 1);
+        $result = \core_calendar\local\api::get_action_events_by_courses([$course1, $course2], 1);
 
         $this->assertCount(2, $result[$course1->id]);
-        $this->assertEquals('Event 1', $result[$course1->id][0]->name);
-        $this->assertEquals('Event 2', $result[$course1->id][1]->name);
+        $this->assertEquals('Event 1', $result[$course1->id][0]->get_name());
+        $this->assertEquals('Event 2', $result[$course1->id][1]->get_name());
         $this->assertCount(3, $result[$course2->id]);
-        $this->assertEquals('Event 3', $result[$course2->id][0]->name);
-        $this->assertEquals('Event 4', $result[$course2->id][1]->name);
-        $this->assertEquals('Event 5', $result[$course2->id][2]->name);
+        $this->assertEquals('Event 3', $result[$course2->id][0]->get_name());
+        $this->assertEquals('Event 4', $result[$course2->id][1]->get_name());
+        $this->assertEquals('Event 5', $result[$course2->id][2]->get_name());
 
-        $result = api::get_action_events_by_courses([$course1, $course2], 2, 4);
+        $result = \core_calendar\local\api::get_action_events_by_courses([$course1, $course2], 2, 4);
 
         $this->assertCount(1, $result[$course1->id]);
-        $this->assertEquals('Event 2', $result[$course1->id][0]->name);
+        $this->assertEquals('Event 2', $result[$course1->id][0]->get_name());
         $this->assertCount(2, $result[$course2->id]);
-        $this->assertEquals('Event 3', $result[$course2->id][0]->name);
-        $this->assertEquals('Event 4', $result[$course2->id][1]->name);
+        $this->assertEquals('Event 3', $result[$course2->id][0]->get_name());
+        $this->assertEquals('Event 4', $result[$course2->id][1]->get_name());
 
-        $result = api::get_action_events_by_courses([$course1, $course2, $course3], 1, null, 1);
+        $result = \core_calendar\local\api::get_action_events_by_courses([$course1, $course2, $course3], 1, null, 1);
 
         $this->assertCount(1, $result[$course1->id]);
-        $this->assertEquals('Event 1', $result[$course1->id][0]->name);
+        $this->assertEquals('Event 1', $result[$course1->id][0]->get_name());
         $this->assertCount(1, $result[$course2->id]);
-        $this->assertEquals('Event 3', $result[$course2->id][0]->name);
+        $this->assertEquals('Event 3', $result[$course2->id][0]->get_name());
         $this->assertCount(1, $result[$course3->id]);
-        $this->assertEquals('Event 6', $result[$course3->id][0]->name);
+        $this->assertEquals('Event 6', $result[$course3->id][0]->get_name());
     }
 }
