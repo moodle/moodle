@@ -432,4 +432,64 @@ class filetypes_util {
 
         return !empty($intersection);
     }
+
+    /**
+     * Is the given filename of an allowed file type?
+     *
+     * Empty whitelist is interpretted as "any file type is allowed" rather
+     * than "no file can be uploaded".
+     *
+     * @param string $filename the file name
+     * @param string|array $whitelist list of allowed file extensions
+     * @return boolean True if the file type is allowed, false if not
+     */
+    public function is_allowed_file_type($filename, $whitelist) {
+
+        $allowedextensions = $this->expand($whitelist);
+
+        if (empty($allowedextensions) || $allowedextensions == ['*']) {
+            return true;
+        }
+
+        $haystack = strrev(trim(strtolower($filename)));
+
+        foreach ($allowedextensions as $extension) {
+            if (strpos($haystack, strrev($extension)) === 0) {
+                // The file name ends with the extension.
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns file types from the list that are not recognized
+     *
+     * @param string|array $types list of user-defined file types
+     * @return array A list of unknown file types.
+     */
+    public function get_unknown_file_types($types) {
+        $unknown = [];
+
+        foreach ($this->normalize_file_types($types) as $type) {
+            if ($this->is_filetype_group($type)) {
+                // The type is a group that exists.
+            } else if ($this->looks_like_mimetype($type)) {
+                // If there's no extension associated with that mimetype, we consider it unknown.
+                if (empty(file_get_typegroup('extension', [$type]))) {
+                    $unknown[$type] = true;
+                }
+            } else {
+                $coretypes = core_filetypes::get_types();
+                $typecleaned = str_replace(".", "", $type);
+                if (empty($coretypes[$typecleaned])) {
+                    // If there's no extension, it doesn't exist.
+                    $unknown[$type] = true;
+                }
+            }
+        }
+
+        return array_keys($unknown);
+    }
 }
