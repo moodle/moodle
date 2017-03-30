@@ -25,6 +25,7 @@
 $string['configplugin'] = 'Configure OneDrive plugin';
 $string['skydrive:view'] = 'View OneDrive repository';
 $string['pluginname'] = 'Microsoft OneDrive';
+$string['importskydrivefiles'] = 'Import files from Microsoft SkyDrive repository';
 $string['issuer'] = 'OAuth 2 service';
 $string['issuer_help'] = 'Select the OAuth 2 service that is configured to talk to the OneDrive API. If the services does not exist yet, you might need to create it.';
 $string['servicenotenabled'] = 'Access not configured.';
@@ -33,9 +34,13 @@ $string['searchfor'] = 'Search for {$a}';
 $string['internal'] = 'Internal (files stored in Moodle)';
 $string['external'] = 'External (only links stored in Moodle)';
 $string['both'] = 'Internal and External';
+$string['skydrivefilesexist'] = 'Files found in the Microsoft SkyDrive repository. This repository is deprecated by Microsoft - the files can be automatically imported to this Microsoft OneDrive repository.';
 $string['supportedreturntypes'] = 'Supported files';
 $string['defaultreturntype'] = 'Default return type';
 $string['fileoptions'] = 'The types and defaults for returned files is configurable here. Note that all files linked externally will be updated so that the owner is the Moodle system account.';
 $string['owner'] = 'Owned by: {$a}';
 $string['cachedef_folder'] = 'OneDrive File IDs for folders in the system account';
+$string['confirmimportskydrive'] = 'Are you sure you want to import all files from the "Microsoft SkyDrive" repository to the "Microsoft OneDrive" repository? As long as the Microsoft OneDrive repository is already configured and working - all imported files will continue working as before. There is no way to undo these changes.';
+$string['skydrivefilesimported'] = 'All files were imported from the Microsoft SkyDrive repository.';
+$string['skydrivefilesnotimported'] = 'Some files could not be imported from the Microsoft SkyDrive repository.';
 

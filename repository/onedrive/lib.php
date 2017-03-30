@@ -981,16 +981,97 @@ class repository_onedrive extends repository {
     }
 
     /**
+     * Return true if any instances of the skydrive repo exist - and we can import them.
+     *
+     * @return bool
+     */
+    public static function can_import_skydrive_files() {
+        global $DB;
+
+        $skydrive = $DB->get_record('repository', ['type' => 'skydrive'], 'id', IGNORE_MISSING);
+        $onedrive = $DB->get_record('repository', ['type' => 'onedrive'], 'id', IGNORE_MISSING);
+
+        if (empty($skydrive) || empty($onedrive)) {
+            return false;
+        }
+
+        $ready = true;
+        try {
+            $issuer = \core\oauth2\api::get_issuer(get_config('onedrive', 'issuerid'));
+            if (!$issuer->get('enabled')) {
+                $ready = false;
+            }
+            if (!$issuer->is_configured()) {
+                $ready = false;
+            }
+        } catch (dml_missing_record_exception $e) {
+            $ready = false;
+        }
+        if (!$ready) {
+            return false;
+        }
+
+        $sql = "SELECT count('x')
+                  FROM {repository_instances} i, {repository} r
+                 WHERE r.type=:plugin AND r.id=i.typeid";
+        $params = array('plugin' => 'skydrive');
+        return $DB->count_records_sql($sql, $params) > 0;
+    }
+
+    /**
+     * Import all the files that were created with the skydrive repo to this repo.
+     *
+     * @return bool
+     */
+    public static function import_skydrive_files() {
+        global $DB;
+
+        if (!self::can_import_skydrive_files()) {
+            return false;
+        }
+        // Should only be one of each.
+        $skydrivetype = repository::get_type_by_typename('skydrive');
+
+        $skydriveinstances = repository::get_instances(['type' => 'skydrive']);
+        $skydriveinstance = reset($skydriveinstances);
+        $onedriveinstances = repository::get_instances(['type' => 'onedrive']);
+        $onedriveinstance = reset($onedriveinstances);
+
+        // Update all file references.
+        $DB->set_field('files_reference', 'repositoryid', $onedriveinstance->id, ['repositoryid' => $skydriveinstance->id]);
+
+        // Delete and disable the skydrive repo.
+        $skydrivetype->delete();
+        core_plugin_manager::reset_caches();
+
+        $sql = "SELECT count('x')
+                  FROM {repository_instances} i, {repository} r
+                 WHERE r.type=:plugin AND r.id=i.typeid";
+        $params = array('plugin' => 'skydrive');
+        return $DB->count_records_sql($sql, $params) == 0;
+    }
+
+    /**
      * Edit/Create Admin Settings Moodle form.
      *
      * @param moodleform $mform Moodle form (passed by reference).
      * @param string $classname repository class name.
      */
     public static function type_config_form($mform, $classname = 'repository') {
+        global $OUTPUT;
+
         $url = new moodle_url('/admin/tool/oauth2/issuers.php');
         $url = $url->out();
 
         $mform->addElement('static', null, '', get_string('oauth2serviceslink', 'repository_onedrive', $url));
+
+        if (self::can_import_skydrive_files()) {
+            $notice = get_string('skydrivefilesexist', 'repository_onedrive');
+            $url = new moodle_url('/repository/onedrive/importskydrive.php');
+            $attrs = ['class' => 'btn btn-primary'];
+            $button = $OUTPUT->action_link($url, get_string('importskydrivefiles', 'repository_onedrive'), null, $attrs);
+            $mform->addElement('static', null, '', $OUTPUT->notification($notice) . $button);
+        }
 
         parent::type_config_form($mform);
         $options = [];
@@ -1019,6 +1100,7 @@ class repository_onedrive extends repository {
             FILE_CONTROLLED_LINK => get_string('external', 'repository_onedrive'),
         ];
         $mform->addElement('select', 'defaultreturntype', get_string('defaultreturntype', 'repository_onedrive'), $choices);
+
     }
 }
 
