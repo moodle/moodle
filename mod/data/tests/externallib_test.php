@@ -887,7 +887,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::add_entry_returns(), $result);
 
         $newentryid = $result['newentryid'];
-        $result = mod_data_external::get_entry($newentryid, 0, true);
+        $result = mod_data_external::get_entry($newentryid, true);
         $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
         $this->assertEquals($this->student1->id, $result['entry']['userid']);
         $this->assertCount(9, $result['entry']['contents']);
@@ -1074,7 +1074,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, $result['generalnotifications']);
         $this->assertCount(0, $result['fieldnotifications']);
 
-        $result = mod_data_external::get_entry($entry11, 0, true);
+        $result = mod_data_external::get_entry($entry11, true);
         $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
         $this->assertEquals($this->student1->id, $result['entry']['userid']);
         $this->assertCount(9, $result['entry']['contents']);
