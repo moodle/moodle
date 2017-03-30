@@ -742,8 +742,12 @@ class mod_data_external extends external_api {
             $fn = $ln = ''; // Defaults for first and last name.
             // Force defaults for advanced search.
             foreach ($params['advsearch'] as $adv) {
-                if ($adv['name'] == 'fn' || $adv['name'] == 'ln') {
-                    $$adv['name'] = json_decode($adv['value']);
+                if ($adv['name'] == 'fn') {
+                    $fn = json_decode($adv['value']);
+                    continue;
+                }
+                if ($adv['name'] == 'ln') {
+                    $ln = json_decode($adv['value']);
                     continue;
                 }
                 $defaults[$adv['name']] = json_decode($adv['value']);
