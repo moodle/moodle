@@ -28,7 +28,7 @@ use core_calendar\local\event\entities\event;
 use core_calendar\local\event\proxies\std_proxy;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
-use core_calendar\local\interfaces\event_collection_interface;
+use core_calendar\local\event\entities\event_collection_interface;
 
 /**
  * Event testcase.

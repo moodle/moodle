@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_calendar\local\interfaces;
+namespace core_calendar\local\event\factories;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +37,7 @@ interface event_factory_interface {
      * Creates an instance of an event.
      *
      * @param \stdClass $dbrow The event row from the database.
-     * @return \core_calendar\local\interfaces\event_interface
+     * @return \core_calendar\local\event\entities\event_interface
      */
     public function create_instance(\stdClass $dbrow);
 }

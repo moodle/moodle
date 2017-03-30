@@ -27,7 +27,7 @@ namespace core_calendar\external;
 defined('MOODLE_INTERNAL') || die();
 
 use \core\external\exporter;
-use \core_calendar\local\interfaces\event_interface;
+use \core_calendar\local\event\entities\event_interface;
 
 /**
  * Class for displaying a calendar event's icon.

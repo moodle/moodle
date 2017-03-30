@@ -27,9 +27,8 @@ namespace core_calendar\local\event\factories;
 defined('MOODLE_INTERNAL') || die();
 
 use core_calendar\local\event\entities\action_event;
-use core_calendar\local\interfaces\action_event_factory_interface;
-use core_calendar\local\interfaces\action_interface;
-use core_calendar\local\interfaces\event_interface;
+use core_calendar\local\event\entities\action_interface;
+use core_calendar\local\event\entities\event_interface;
 
 /**
  * Action event factory class.

@@ -26,7 +26,7 @@ namespace core_calendar\local\event\value_objects;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\action_interface;
+use core_calendar\local\event\entities\action_interface;
 
 /**
  * Class representing an action a user should take

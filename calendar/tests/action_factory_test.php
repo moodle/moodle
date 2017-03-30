@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use core_calendar\action_factory;
-use core_calendar\local\interfaces\action_interface;
+use core_calendar\local\event\entities\action_interface;
 
 /**
  * Action factory testcase.

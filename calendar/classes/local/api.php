@@ -55,7 +55,7 @@ class api {
      * @param bool          $withduration          If true return only events starting within specified
      *                                             timestart otherwise return in progress events as well.
      * @param bool          $ignorehidden          If true don't return hidden events.
-     * @return \core_calendar\local\interfaces\event_interface[] Array of event_interfaces.
+     * @return \core_calendar\local\event\entities\event_interface[] Array of event_interfaces.
      */
     public static function get_events(
         $timestartfrom = null,
@@ -117,7 +117,15 @@ class api {
      * @param boolean $ignorehidden whether to select only visible events or all events
      * @return array $events of selected events or an empty array if there aren't any (or there was an error)
      */
-    public static function get_legacy_events($tstart, $tend, $users, $groups, $courses, $withduration = true, $ignorehidden = true) {
+    public static function get_legacy_events(
+        $tstart,
+        $tend,
+        $users,
+        $groups,
+        $courses,
+        $withduration = true,
+        $ignorehidden = true
+    ) {
         $fixedparams = array_map(function($param) {
             if ($param === true) {
                 return null;

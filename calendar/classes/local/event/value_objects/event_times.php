@@ -26,8 +26,6 @@ namespace core_calendar\local\event\value_objects;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\times_interface;
-
 /**
  * Class representing event times.
  *

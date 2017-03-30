@@ -26,11 +26,11 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_calendar\local\event\entities\action_event;
 use core_calendar\local\event\entities\event;
+use core_calendar\local\event\entities\event_interface;
 use core_calendar\local\event\factories\event_factory;
+use core_calendar\local\event\factories\event_factory_interface;
 use core_calendar\local\event\mappers\event_mapper;
-use core_calendar\local\interfaces\event_factory_interface;
-use core_calendar\local\interfaces\event_interface;
-use core_calendar\local\interfaces\event_mapper_interface;
+use core_calendar\local\event\mappers\event_mapper_interface;
 
 /**
  * Core container testcase.

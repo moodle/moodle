@@ -24,9 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_calendar\local\event\entities\action_event_interface;
+use core_calendar\local\event\entities\event_interface;
 use core_calendar\local\event\factories\action_event_factory;
-use core_calendar\local\interfaces\action_event_interface;
-use core_calendar\local\interfaces\event_interface;
 use core_calendar\local\event\value_objects\action;
 
 /**

@@ -27,8 +27,7 @@ namespace core_calendar\external;
 defined('MOODLE_INTERNAL') || die();
 
 use \core\external\exporter;
-use \core_calendar\local\interfaces\event_interface;
-use \core_calendar\local\interfaces\action_event_interface;
+use \core_calendar\local\event\entities\event_interface;
 use \core_course\external\course_summary_exporter;
 use \renderer_base;
 

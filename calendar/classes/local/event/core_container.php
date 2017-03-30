@@ -32,12 +32,11 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_calendar\action_factory;
 use core_calendar\local\event\data_access\event_vault;
+use core_calendar\local\event\entities\event_interface;
 use core_calendar\local\event\factories\action_event_factory;
 use core_calendar\local\event\factories\event_factory;
 use core_calendar\local\event\mappers\event_mapper;
 use core_calendar\local\event\strategies\raw_event_retrieval_strategy;
-use core_calendar\local\interfaces\action_event_interface;
-use core_calendar\local\interfaces\event_interface;
 
 /**
  * Core container.
@@ -57,7 +56,7 @@ class core_container {
     protected static $actioneventfactory;
 
     /**
-     * @var \core_calendar\local\interfaces\event_mapper_interface $eventmapper Event mapper.
+     * @var \core_calendar\local\event\mappers\event_mapper_interface $eventmapper Event mapper.
      */
     protected static $eventmapper;
 
@@ -67,12 +66,12 @@ class core_container {
     protected static $actionfactory;
 
     /**
-     * @var \core_calendar\local\event\data_access\event_vault $eventvault Event vault.
+     * @var event_vault $eventvault Event vault.
      */
     protected static $eventvault;
 
     /**
-     * @var \core_calendar\local\event\strategies\raw_event_retrieval_strategy $eventretrievalstrategy Event retrieval strategy.
+     * @var raw_event_retrieval_strategy $eventretrievalstrategy Event retrieval strategy.
      */
     protected static $eventretrievalstrategy;
 
@@ -175,7 +174,7 @@ class core_container {
     /**
      * Gets the event mapper.
      *
-     * @return \core_calendar\local\interfaces\event_mapper_interface
+     * @return event_mapper
      */
     public static function get_event_mapper() {
         self::init();
@@ -185,7 +184,7 @@ class core_container {
     /**
      * Return an event vault.
      *
-     * @return \core_calendar\local\event\data_access\event_vault
+     * @return event_vault
      */
     public static function get_event_vault() {
         self::init();

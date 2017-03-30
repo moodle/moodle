@@ -26,10 +26,10 @@ namespace core_calendar\local\event\mappers;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\event_factory_interface;
-use core_calendar\local\interfaces\event_interface;
-use core_calendar\local\interfaces\action_event_interface;
-use core_calendar\local\interfaces\event_mapper_interface;
+use core_calendar\event;
+use core_calendar\local\event\entities\action_event_interface;
+use core_calendar\local\event\entities\event_interface;
+use core_calendar\local\event\factories\event_factory_interface;
 
 /**
  * Event mapper class.

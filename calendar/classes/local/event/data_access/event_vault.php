@@ -26,12 +26,12 @@ namespace core_calendar\local\event\data_access;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_calendar\local\event\entities\action_event_interface;
+use core_calendar\local\event\entities\event_interface;
 use core_calendar\local\event\exceptions\limit_invalid_parameter_exception;
-use core_calendar\local\interfaces\action_event_interface;
-use core_calendar\local\interfaces\event_factory_interface;
-use core_calendar\local\interfaces\event_interface;
-use core_calendar\local\interfaces\event_vault_interface;
-use core_calendar\local\interfaces\raw_event_retrieval_strategy_interface;
+use core_calendar\local\event\factories\action_factory_interface;
+use core_calendar\local\event\factories\event_factory_interface;
+use core_calendar\local\event\strategies\raw_event_retrieval_strategy_interface;
 
 /**
  * Event vault class.

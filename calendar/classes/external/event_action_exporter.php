@@ -27,8 +27,8 @@ namespace core_calendar\external;
 defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
+use core_calendar\local\event\entities\action_interface;
 use core_calendar\local\event\core_container;
-use core_calendar\local\interfaces\action_interface;
 use renderer_base;
 
 /**
@@ -113,7 +113,7 @@ class event_action_exporter extends exporter {
     protected static function define_related() {
         return [
             'context' => 'context',
-            'event' => '\\core_calendar\\local\\interfaces\\event_interface'
+            'event' => '\\core_calendar\\local\\event\\entities\\event_interface'
         ];
     }
 }

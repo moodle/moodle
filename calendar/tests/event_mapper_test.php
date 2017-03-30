@@ -31,11 +31,12 @@ use core_calendar\local\event\mappers\event_mapper;
 use core_calendar\local\event\value_objects\action;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
-use core_calendar\local\interfaces\action_event_interface;
-use core_calendar\local\interfaces\event_collection_interface;
-use core_calendar\local\interfaces\event_factory_interface;
-use core_calendar\local\interfaces\event_interface;
-use core_calendar\local\interfaces\proxy_interface;
+use core_calendar\local\event\factories\action_factory_interface;
+use core_calendar\local\event\entities\event_collection_interface;
+use core_calendar\local\event\factories\event_factory_interface;
+use core_calendar\local\event\entities\event_interface;
+use core_calendar\local\event\entities\action_event_interface;
+use core_calendar\local\event\proxies\proxy_interface;
 
 /**
  * Event mapper testcase.
@@ -123,6 +124,7 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
             new event_mapper_test_event_factory()
         );
         $legacyevent = $mapper->from_event_to_legacy_event($event);
+
         $this->assertInstanceOf(calendar_event::class, $legacyevent);
         $this->assertEquals($legacyevent->actionname, 'test action');
         $this->assertInstanceOf(\moodle_url::class, $legacyevent->actionurl);

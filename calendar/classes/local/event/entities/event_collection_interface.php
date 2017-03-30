@@ -15,37 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Action event factory interface.
+ * Interface for an event collection class.
  *
  * @package    core_calendar
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_calendar\local\interfaces;
+namespace core_calendar\local\event\entities;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\event_interface;
-use core_calendar\local\interfaces\action_interface;
-
 /**
- * Interface for an action event factory class.
+ * Interface for an event collection class.
  *
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface action_event_factory_interface {
+interface event_collection_interface extends \IteratorAggregate {
     /**
-     * Create an instance of an action event.
+     * Get the event collection's ID.
      *
-     * @param event_interface  $event  The event the action event will be attached to.
-     * @param action_interface $action The action tha the action event is attached to.
-     *
-     * @return event_interface
+     * @return int
      */
-    public function create_instance(
-        event_interface $event,
-        action_interface $action
-    );
+    public function get_id();
+
+    /**
+     * Get the total number of repeats in the collection.
+     *
+     * @return int
+     */
+    public function get_num();
 }

@@ -26,7 +26,6 @@ namespace core_calendar\local\event\proxies;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\proxy_interface;
 use core_calendar\local\event\exceptions\member_does_not_exist_exception;
 
 /**

@@ -26,8 +26,6 @@ namespace core_calendar\local\event\proxies;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\proxy_interface;
-
 /**
  * Course module stdClass proxy.
  *

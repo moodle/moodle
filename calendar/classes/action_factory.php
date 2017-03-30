@@ -26,7 +26,7 @@ namespace core_calendar;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\action_factory_interface;
+use core_calendar\local\event\factories\action_factory_interface;
 use core_calendar\local\event\value_objects\action;
 
 /**

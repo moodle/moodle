@@ -26,11 +26,9 @@ namespace core_calendar\local\event\entities;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\event_collection_interface;
-use core_calendar\local\interfaces\event_interface;
-use core_calendar\local\interfaces\proxy_interface;
-use core_calendar\local\interfaces\description_interface;
-use core_calendar\local\interfaces\times_interface;
+use core_calendar\local\event\proxies\proxy_interface;
+use core_calendar\local\event\value_objects\description_interface;
+use core_calendar\local\event\value_objects\times_interface;
 
 /**
  * Class representing a calendar event.

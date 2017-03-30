@@ -15,49 +15,56 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Action interface.
+ * Times interface.
  *
  * @package    core_calendar
- * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
+ * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_calendar\local\interfaces;
+namespace core_calendar\local\event\value_objects;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Interface for a action class.
+ * Interface for various times.
  *
- * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
+ * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface action_interface {
+interface times_interface {
     /**
-     * Get the name of the action.
+     * Get the start time.
      *
-     * @return string
+     * @return \DateTimeImmutable
      */
-    public function get_name();
+    public function get_start_time();
 
     /**
-     * Get the URL of the action.
+     * Get the end time.
      *
-     * @return \moodle_url
+     * @return \DateTimeImmutable
      */
-    public function get_url();
+    public function get_end_time();
 
     /**
-     * Get the number of items that need actioning.
+     * Get the duration (the time between start and end).
      *
-     * @return int
+     * @return \DateInterval
      */
-    public function get_item_count();
+    public function get_duration();
 
     /**
-     * Get the actions actionability.
+     * Get the sort time.
      *
-     * @return bool
+     * @return \DateTimeImmutable
      */
-    public function is_actionable();
+    public function get_sort_time();
+
+    /**
+     * Get the modified time.
+     *
+     * @return \DateTimeImmutable
+     */
+    public function get_modified_time();
 }

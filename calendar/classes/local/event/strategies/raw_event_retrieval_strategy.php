@@ -26,8 +26,6 @@ namespace core_calendar\local\event\strategies;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\raw_event_retrieval_strategy_interface;
-
 /**
  * Raw event retrieval strategy.
  *

@@ -27,7 +27,7 @@ namespace core_calendar\external;
 defined('MOODLE_INTERNAL') || die();
 
 use context;
-use \core_calendar\local\interfaces\event_interface;
+use \core_calendar\local\event\entities\event_interface;
 use stdClass;
 
 /**

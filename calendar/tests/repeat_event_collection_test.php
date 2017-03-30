@@ -29,7 +29,7 @@ use core_calendar\local\event\entities\repeat_event_collection;
 use core_calendar\local\event\proxies\std_proxy;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
-use core_calendar\local\interfaces\event_factory_interface;
+use core_calendar\local\event\factories\event_factory_interface;
 
 /**
  * Repeat event collection tests.

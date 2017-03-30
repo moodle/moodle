@@ -22,9 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_calendar\local\interfaces;
+namespace core_calendar\local\event\data_access;
 
 defined('MOODLE_INTERNAL') || die();
+
+use core_calendar\local\event\entities\event_interface;
 
 /**
  * Interface for an event vault class

@@ -27,8 +27,7 @@ namespace core_calendar\local\event\factories;
 defined('MOODLE_INTERNAL') || die();
 
 use core_calendar\local\event\exceptions\invalid_callback_exception;
-use core_calendar\local\event\factories\event_abstract_factory;
-use core_calendar\local\interfaces\event_interface;
+use core_calendar\local\event\entities\event_interface;
 
 /**
  * Event factory class.

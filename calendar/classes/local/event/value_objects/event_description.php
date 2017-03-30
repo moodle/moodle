@@ -26,8 +26,6 @@ namespace core_calendar\local\event\value_objects;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\description_interface;
-
 /**
  * Class representing a description value object.
  *

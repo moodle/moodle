@@ -28,8 +28,8 @@ use core_calendar\local\event\entities\action_event;
 use core_calendar\local\event\value_objects\action;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
-use core_calendar\local\interfaces\event_collection_interface;
-use core_calendar\local\interfaces\event_interface;
+use core_calendar\local\event\entities\event_collection_interface;
+use core_calendar\local\event\entities\event_interface;
 
 /**
  * Action event testcase.

@@ -15,56 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Times interface.
+ * Calendar action event interface.
  *
  * @package    core_calendar
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_calendar\local\interfaces;
+namespace core_calendar\local\event\entities;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Interface for various times.
+ * Interface for an action event class.
  *
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface times_interface {
+interface action_event_interface extends event_interface {
     /**
-     * Get the start time.
+     * Get the action event's action.
      *
-     * @return \DateTimeImmutable
+     * @return action_interface
      */
-    public function get_start_time();
-
-    /**
-     * Get the end time.
-     *
-     * @return \DateTimeImmutable
-     */
-    public function get_end_time();
-
-    /**
-     * Get the duration (the time between start and end).
-     *
-     * @return \DateInterval
-     */
-    public function get_duration();
-
-    /**
-     * Get the sort time.
-     *
-     * @return \DateTimeImmutable
-     */
-    public function get_sort_time();
-
-    /**
-     * Get the modified time.
-     *
-     * @return \DateTimeImmutable
-     */
-    public function get_modified_time();
+    public function get_action();
 }

@@ -26,9 +26,7 @@ namespace core_calendar\local\event\entities;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\event_collection_interface;
-use core_calendar\local\interfaces\event_factory_interface;
-use core_calendar\local\interfaces\event_interface;
+use core_calendar\local\event\factories\event_factory_interface;
 use core_calendar\local\event\exceptions\no_repeat_parent_exception;
 
 /**

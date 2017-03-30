@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_calendar\local\interfaces;
+namespace core_calendar\local\event\factories;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +34,7 @@ interface action_factory_interface {
      * @param \moodle_url $url        The action's URL.
      * @param int         $itemcount  The number of items needing action.
      * @param bool        $actionable The action's actionability.
-     * @return \core_calendar\local\interfaces\action_interface The action.
+     * @return \core_calendar\local\event\entities\action_interface The action.
      */
     public function create_instance($name, \moodle_url $url, $itemcount, $actionable);
 }
