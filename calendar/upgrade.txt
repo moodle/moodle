@@ -4,55 +4,9 @@ information provided here is intended especially for developers.
 === 3.3 ===
 * calendar_event_hook() has been removed. Developers should be using the Moodle events system to achieve this behaviour,
   rather than using a hacky calendar specific implementation.
-* calendar_get_days() is deprecated, please use \core_calendar\api::get_days() instead.
-* calendar_get_subscription() is deprecated, please use \core_calendar\api::get_subscription() instead.
-* calendar_get_starting_weekday() is deprecated, please use \core_calendar\api::get_starting_weekday() instead.
-* calendar_get_mini() is deprecated, please use \core_calendar\api::get_mini_calendar() instead.
-* calendar_get_popup() is deprecated, please use \core_calendar\api::get_popup() instead.
-* calendar_get_upcoming() is deprecated, please use \core_calendar\api::get_upcoming() instead.
-* calendar_get_courselink() is deprecated, please use \core_calendar\api::get_courselink() instead.
-* calendar_get_module_cached() is deprecated, please use \core_calendar\api::get_module_cached() instead.
-* calendar_get_course_cached() is deprecated, please use \core_calendar\api::get_course_cached() instead.
-* calendar_get_group_cached() is deprecated, please use \core_calendar\api::get_group_cached() instead.
-* calendar_add_event_metadata() is deprecated, please use \core_calendar\api::add_event_metadata() instead.
-* calendar_get_events() is deprecated, please use \core_calendar\api::get_events() instead.
-* calendar_get_events_by_id() is deprecated, please use \core_calendar\api::get_events_by_id() instead.
-* calendar_top_controls() is deprecated, please use \core_calendar\api::get_top_controls() instead.
-* calendar_filter_controls_element() is deprecated, please use \core_calendar\api::get_filter_controls_element() instead.
-* calendar_filter_controls() is deprecated, please use \core_calendar\api::get_filter_controls() instead.
-* calendar_day_representation() is deprecated, please use \core_calendar\api::get_day_representation() instead.
-* calendar_time_representation() is deprecated, please use \core_calendar\api::get_time_representation() instead.
-* calendar_get_link_href() is deprecated, please use \core_calendar\api::get_link_href() instead.
-* calendar_get_link_previous() is deprecated, please use \core_calendar\api::get_link_previous() instead.
-* calendar_get_link_next() is deprecated, please use \core_calendar\api::get_link_next() instead.
 * calendar_wday_name() is deprecated and no longer used in core.
-* calendar_days_in_month() is deprecated, please use \core_calendar\api::get_days_in_month() instead.
 * calendar_get_block_upcoming() is deprecated, please use block_calendar_upcoming::get_upcoming_content() instead.
-* calendar_add_month() is deprecated, please use \core_calendar\api::get_next_month() instead.
-* calendar_sub_month() is deprecated, please use \core_calendar\api::get_prev_month() instead.
-* calendar_events_by_day() is deprecated, please use \core_calendar\api::get_events_by_day() instead.
-* calendar_set_filters() is deprecated, please use \core_calendar\api::set_filters() instead.
-* calendar_edit_event_allowed() is deprecated, please use \core_calendar\api::can_edit_event() instead.
-* calendar_get_default_courses() is deprecated, please use \core_calendar\api::get_default_courses() instead.
-* calendar_format_event_time() is deprecated, please use \core_calendar\api::get_format_event_time() instead.
 * calendar_print_month_selector() is deprecated and no longer used in core.
-* calendar_show_event_type() is deprecated, please use \core_calendar\api::show_event_type() instead.
-* calendar_set_event_type_display() is deprecated, please use \core_calendar\api::set_event_type_display() instead.
-* calendar_get_allowed_types() is deprecated, please use \core_calendar\api::get_allowed_types() instead.
-* calendar_user_can_add_event() is deprecated, please use \core_calendar\api::can_add_event_to_course() instead.
-* calendar_add_event_allowed() is deprecated, please use \core_calendar\api::can_add_event() instead.
-* calendar_get_pollinterval_choices() is deprecated, please use \core_calendar\api::get_poll_interval_choices() instead.
-* calendar_get_eventtype_choices() is deprecated, please use \core_calendar\api::get_event_type_choices() instead.
-* calendar_add_subscription() is deprecated, please use \core_calendar\api::add_subscription() instead.
-* calendar_add_icalendar_event() is deprecated, please use \core_calendar\api::add_icalendar_event() instead.
-* calendar_process_subscription_row() is deprecated, please use \core_calendar\api::process_subscription_row() instead.
-* calendar_delete_subscription() is deprecated, please use \core_calendar\api::delete_subscription() instead.
-* calendar_get_icalendar() is deprecated, please use \core_calendar\api::get_icalendar() instead.
-* calendar_import_icalendar_events() is deprecated, please use \core_calendar\api::import_icalendar_events() instead.
-* calendar_update_subscription_events() is deprecated, please use \core_calendar\api::update_subscription_events() instead.
-* calendar_update_subscription() is deprecated, please use \core_calendar\api::update_subscription() instead.
-* calendar_can_edit_subscription() is deprecated, please use \core_calendar\api::can_edit_subscription() instead.
-* calendar_get_calendar_context() is deprecated, please use \core_calendar\api::get_calendar_context() instead.
 * calendar_cron() is deprecated and should not be used. Please use the core\task\calendar_cron_task instead.
 
 === 3.2 ===

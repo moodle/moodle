@@ -1063,6 +1063,745 @@ class calendar_information {
 }
 
 /**
+ * Get calendar events.
+ *
+ * @param int $tstart Start time of time range for events
+ * @param int $tend End time of time range for events
+ * @param array|int|boolean $users array of users, user id or boolean for all/no user events
+ * @param array|int|boolean $groups array of groups, group id or boolean for all/no group events
+ * @param array|int|boolean $courses array of courses, course id or boolean for all/no course events
+ * @param boolean $withduration whether only events starting within time range selected
+ *                              or events in progress/already started selected as well
+ * @param boolean $ignorehidden whether to select only visible events or all events
+ * @return array $events of selected events or an empty array if there aren't any (or there was an error)
+ */
+function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withduration=true, $ignorehidden=true) {
+    // We have a new implementation of this function in the calendar API class, which has slightly different behaviour
+    // so the old implementation must remain here.
+    global $DB;
+    $params = array();
+
+    // Quick test.
+    if (empty($users) && empty($groups) && empty($courses)) {
+        return array();
+    }
+
+    // Array of filter conditions. To be concatenated by the OR operator.
+    $filters = [];
+
+    // User filter.
+    if ((is_array($users) && !empty($users)) or is_numeric($users)) {
+        // Events from a number of users.
+        list($insqlusers, $inparamsusers) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED);
+        $filters[] = "(e.userid $insqlusers AND e.courseid = 0 AND e.groupid = 0)";
+        $params = array_merge($params, $inparamsusers);
+    } else if ($users === true) {
+        // Events from ALL users.
+        $filters[] = "(e.userid != 0 AND e.courseid = 0 AND e.groupid = 0)";
+    }
+
+    // Boolean false (no users at all): We don't need to do anything.
+    // Group filter.
+    if ((is_array($groups) && !empty($groups)) or is_numeric($groups)) {
+        // Events from a number of groups.
+        list($insqlgroups, $inparamsgroups) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
+        $filters[] = "e.groupid $insqlgroups";
+        $params = array_merge($params, $inparamsgroups);
+    } else if ($groups === true) {
+        // Events from ALL groups.
+        $filters[] = "e.groupid != 0";
+    }
+
+    // Boolean false (no groups at all): We don't need to do anything.
+    // Course filter.
+    if ((is_array($courses) && !empty($courses)) or is_numeric($courses)) {
+        list($insqlcourses, $inparamscourses) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
+        $filters[] = "(e.groupid = 0 AND e.courseid $insqlcourses)";
+        $params = array_merge($params, $inparamscourses);
+    } else if ($courses === true) {
+        // Events from ALL courses.
+        $filters[] = "(e.groupid = 0 AND e.courseid != 0)";
+    }
+
+    // Security check: if, by now, we have NOTHING in $whereclause, then it means
+    // that NO event-selecting clauses were defined. Thus, we won't be returning ANY
+    // events no matter what. Allowing the code to proceed might return a completely
+    // valid query with only time constraints, thus selecting ALL events in that time frame!
+    if (empty($filters)) {
+        return array();
+    }
+
+    // Build our clause for the filters.
+    $filterclause = implode(' OR ', $filters);
+
+    // Array of where conditions for our query. To be concatenated by the AND operator.
+    $whereconditions = ["($filterclause)"];
+
+    // Time clause.
+    if ($withduration) {
+        $timeclause = "((e.timestart >= :tstart1 OR e.timestart + e.timeduration > :tstart2) AND e.timestart <= :tend)";
+        $params['tstart1'] = $tstart;
+        $params['tstart2'] = $tstart;
+        $params['tend'] = $tend;
+    } else {
+        $timeclause = "(e.timestart >= :tstart AND e.timestart <= :tend)";
+        $params['tstart'] = $tstart;
+        $params['tend'] = $tend;
+    }
+    $whereconditions[] = $timeclause;
+
+    // Show visible only.
+    if ($ignorehidden) {
+        $whereconditions[] = "(e.visible = 1)";
+    }
+
+    // Build the main query's WHERE clause.
+    $whereclause = implode(' AND ', $whereconditions);
+
+    // Build SQL subquery and conditions for filtered events based on priorities.
+    $subquerywhere = '';
+    $subqueryconditions = [];
+
+    // Get the user's courses. Otherwise, get the default courses being shown by the calendar.
+    $usercourses = \core_calendar\api::get_default_courses();
+
+    // Set calendar filters.
+    list($usercourses, $usergroups, $user) = \core_calendar\api::set_filters($usercourses, true);
+    $subqueryparams = [];
+
+    // Flag to indicate whether the query needs to exclude group overrides.
+    $viewgroupsonly = false;
+    if ($user) {
+        // Set filter condition for the user's events.
+        $subqueryconditions[] = "(ev.userid = :user AND ev.courseid = 0 AND ev.groupid = 0)";
+        $subqueryparams['user'] = $user;
+        foreach ($usercourses as $courseid) {
+            if (has_capability('moodle/site:accessallgroups', context_course::instance($courseid))) {
+                $usergroupmembership = groups_get_all_groups($courseid, $user, 0, 'g.id');
+                if (count($usergroupmembership) == 0) {
+                    $viewgroupsonly = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Set filter condition for the user's group events.
+    if ($usergroups === true || $viewgroupsonly) {
+        // Fetch group events, but not group overrides.
+        $subqueryconditions[] = "(ev.groupid != 0 AND ev.eventtype = 'group')";
+    } else if (!empty($usergroups)) {
+        // Fetch group events and group overrides.
+        list($inusergroups, $inusergroupparams) = $DB->get_in_or_equal($usergroups, SQL_PARAMS_NAMED);
+        $subqueryconditions[] = "(ev.groupid $inusergroups)";
+        $subqueryparams = array_merge($subqueryparams, $inusergroupparams);
+    }
+
+    // Get courses to be used for the subquery.
+    $subquerycourses = [];
+    if (is_array($courses)) {
+        $subquerycourses = $courses;
+    } else if (is_numeric($courses)) {
+        $subquerycourses[] = $courses;
+    }
+
+    // Merge with user courses, if necessary.
+    if (!empty($usercourses)) {
+        $subquerycourses = array_merge($subquerycourses, $usercourses);
+        // Make sure we remove duplicate values.
+        $subquerycourses = array_unique($subquerycourses);
+    }
+
+    // Set subquery filter condition for the courses.
+    if (!empty($subquerycourses)) {
+        list($incourses, $incoursesparams) = $DB->get_in_or_equal($subquerycourses, SQL_PARAMS_NAMED);
+        $subqueryconditions[] = "(ev.groupid = 0 AND ev.courseid $incourses)";
+        $subqueryparams = array_merge($subqueryparams, $incoursesparams);
+    }
+
+    // Build the WHERE condition for the sub-query.
+    if (!empty($subqueryconditions)) {
+        $subquerywhere = 'WHERE ' . implode(" OR ", $subqueryconditions);
+    }
+
+    // Merge subquery parameters to the parameters of the main query.
+    if (!empty($subqueryparams)) {
+        $params = array_merge($params, $subqueryparams);
+    }
+
+    // Sub-query that fetches the list of unique events that were filtered based on priority.
+    $subquery = "SELECT ev.modulename,
+                            ev.instance,
+                            ev.eventtype,
+                            MAX(ev.priority) as priority
+                       FROM {event} ev
+                      $subquerywhere
+                   GROUP BY ev.modulename, ev.instance, ev.eventtype";
+
+    // Build the main query.
+    $sql = "SELECT e.*
+                  FROM {event} e
+            INNER JOIN ($subquery) fe
+                    ON e.modulename = fe.modulename
+                       AND e.instance = fe.instance
+                       AND e.eventtype = fe.eventtype
+                       AND (e.priority = fe.priority OR (e.priority IS NULL AND fe.priority IS NULL))
+             LEFT JOIN {modules} m
+                    ON e.modulename = m.name
+                 WHERE (m.visible = 1 OR m.visible IS NULL) AND $whereclause
+              ORDER BY e.timestart";
+    $events = $DB->get_records_sql($sql, $params);
+
+    if ($events === false) {
+        $events = array();
+    }
+
+    return $events;
+}
+
+/**
+ * Return the days of the week.
+ *
+ * @return array array of days
+ */
+function calendar_get_days() {
+    return \core_calendar\api::get_days();
+}
+
+/**
+ * Get the subscription from a given id.
+ *
+ * @since Moodle 2.5
+ * @param int $id id of the subscription
+ * @return stdClass Subscription record from DB
+ * @throws moodle_exception for an invalid id
+ */
+function calendar_get_subscription($id) {
+    return \core_calendar\api::get_subscription($id);
+}
+
+/**
+ * Gets the first day of the week.
+ *
+ * Used to be define('CALENDAR_STARTING_WEEKDAY', blah);
+ *
+ * @return int
+ */
+function calendar_get_starting_weekday() {
+    return \core_calendar\api::get_starting_weekday();
+}
+
+/**
+ * Generates the HTML for a miniature calendar.
+ *
+ * @param array $courses list of course to list events from
+ * @param array $groups list of group
+ * @param array $users user's info
+ * @param int|bool $calmonth calendar month in numeric, default is set to false
+ * @param int|bool $calyear calendar month in numeric, default is set to false
+ * @param string|bool $placement the place/page the calendar is set to appear - passed on the the controls function
+ * @param int|bool $courseid id of the course the calendar is displayed on - passed on the the controls function
+ * @param int $time the unixtimestamp representing the date we want to view, this is used instead of $calmonth
+ *     and $calyear to support multiple calendars
+ * @return string $content return html table for mini calendar
+ */
+function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyear = false, $placement = false,
+                           $courseid = false, $time = 0) {
+    return \core_calendar\api::get_mini_calendar($courses, $groups, $users, $calmonth, $calyear, $placement,
+        $courseid, $time);
+}
+
+/**
+ * Gets the calendar popup.
+ *
+ * It called at multiple points in from calendar_get_mini.
+ * Copied and modified from calendar_get_mini.
+ *
+ * @param bool $today false except when called on the current day.
+ * @param mixed $timestart $events[$eventid]->timestart, OR false if there are no events.
+ * @param string $popupcontent content for the popup window/layout.
+ * @return string eventid for the calendar_tooltip popup window/layout.
+ */
+function calendar_get_popup($today = false, $timestart, $popupcontent = '') {
+    return \core_calendar\api::get_popup($today, $timestart, $popupcontent);
+}
+
+/**
+ * Gets the calendar upcoming event.
+ *
+ * @param array $courses array of courses
+ * @param array|int|bool $groups array of groups, group id or boolean for all/no group events
+ * @param array|int|bool $users array of users, user id or boolean for all/no user events
+ * @param int $daysinfuture number of days in the future we 'll look
+ * @param int $maxevents maximum number of events
+ * @param int $fromtime start time
+ * @return array $output array of upcoming events
+ */
+function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
+    return \core_calendar\api::get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime);
+}
+
+/**
+ * Get a HTML link to a course.
+ *
+ * @param int $courseid the course id
+ * @return string a link to the course (as HTML); empty if the course id is invalid
+ */
+function calendar_get_courselink($courseid) {
+    return \core_calendar\api::get_courselink($courseid);
+}
+
+/**
+ * Get current module cache.
+ *
+ * @param array $coursecache list of course cache
+ * @param string $modulename name of the module
+ * @param int $instance module instance number
+ * @return stdClass|bool $module information
+ */
+function calendar_get_module_cached(&$coursecache, $modulename, $instance) {
+    // We have a new implementation of this function in the calendar API class,
+    // so the old implementation must remain here.
+    $module = get_coursemodule_from_instance($modulename, $instance);
+
+    if ($module === false) {
+        return false;
+    }
+    if (!calendar_get_course_cached($coursecache, $module->course)) {
+        return false;
+    }
+    return $module;
+}
+
+/**
+ * Get current course cache.
+ *
+ * @param array $coursecache list of course cache
+ * @param int $courseid id of the course
+ * @return stdClass $coursecache[$courseid] return the specific course cache
+ */
+function calendar_get_course_cached(&$coursecache, $courseid) {
+    return \core_calendar\api::get_course_cached($coursecache, $courseid);
+}
+
+/**
+ * Get group from groupid for calendar display
+ *
+ * @param int $groupid
+ * @return stdClass group object with fields 'id', 'name' and 'courseid'
+ */
+function calendar_get_group_cached($groupid) {
+    return \core_calendar\api::get_group_cached($groupid);
+}
+
+/**
+ * Add calendar event metadata
+ *
+ * @param stdClass $event event info
+ * @return stdClass $event metadata
+ */
+function calendar_add_event_metadata($event) {
+    return \core_calendar\api::add_event_metadata($event);
+}
+
+/**
+ * Get calendar events by id.
+ *
+ * @since Moodle 2.5
+ * @param array $eventids list of event ids
+ * @return array Array of event entries, empty array if nothing found
+ */
+function calendar_get_events_by_id($eventids) {
+    return \core_calendar\api::get_events_by_id($eventids);
+}
+
+/**
+ * Get control options for calendar.
+ *
+ * @param string $type of calendar
+ * @param array $data calendar information
+ * @return string $content return available control for the calender in html
+ */
+function calendar_top_controls($type, $data) {
+    return \core_calendar\api::get_top_controls($type, $data);
+}
+
+/**
+ * Formats a filter control element.
+ *
+ * @param moodle_url $url of the filter
+ * @param int $type constant defining the type filter
+ * @return string html content of the element
+ */
+function calendar_filter_controls_element(moodle_url $url, $type) {
+    return \core_calendar\api::get_filter_controls_element($url, $type);
+}
+
+/**
+ * Get the controls filter for calendar.
+ *
+ * Filter is used to hide calendar info from the display page.
+ *
+
+ * @param moodle_url $returnurl return-url for filter controls
+ * @return string $content return filter controls in html
+ */
+function calendar_filter_controls(moodle_url $returnurl) {
+    return \core_calendar\api::get_filter_controls($returnurl);
+}
+
+/**
+ * Return the representation day.
+ *
+ * @param int $tstamp Timestamp in GMT
+ * @param int|bool $now current Unix timestamp
+ * @param bool $usecommonwords
+ * @return string the formatted date/time
+ */
+function calendar_day_representation($tstamp, $now = false, $usecommonwords = true) {
+    return \core_calendar\api::get_day_representation($tstamp, $now, $usecommonwords);
+}
+
+/**
+ * return the formatted representation time.
+ *
+
+ * @param int $time the timestamp in UTC, as obtained from the database
+ * @return string the formatted date/time
+ */
+function calendar_time_representation($time) {
+    return \core_calendar\api::get_time_representation($time);
+}
+
+/**
+ * Adds day, month, year arguments to a URL and returns a moodle_url object.
+ *
+ * @param string|moodle_url $linkbase
+ * @param int $d The number of the day.
+ * @param int $m The number of the month.
+ * @param int $y The number of the year.
+ * @param int $time the unixtime, used for multiple calendar support. The values $d,
+ *     $m and $y are kept for backwards compatibility.
+ * @return moodle_url|null $linkbase
+ */
+function calendar_get_link_href($linkbase, $d, $m, $y, $time = 0) {
+    return \core_calendar\api::get_link_href($linkbase, $d, $m, $y, $time);
+}
+
+/**
+ * Build and return a previous month HTML link, with an arrow.
+ *
+ * @param string $text The text label.
+ * @param string|moodle_url $linkbase The URL stub.
+ * @param int $d The number of the date.
+ * @param int $m The number of the month.
+ * @param int $y year The number of the year.
+ * @param bool $accesshide Default visible, or hide from all except screenreaders.
+ * @param int $time the unixtime, used for multiple calendar support. The values $d,
+ *     $m and $y are kept for backwards compatibility.
+ * @return string HTML string.
+ */
+function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide = false, $time = 0) {
+    return \core_calendar\api::get_link_previous($text, $linkbase, $d, $m, $y, $accesshide, $time);
+}
+
+/**
+ * Build and return a next month HTML link, with an arrow.
+ *
+ * @param string $text The text label.
+ * @param string|moodle_url $linkbase The URL stub.
+ * @param int $d the number of the Day
+ * @param int $m The number of the month.
+ * @param int $y The number of the year.
+ * @param bool $accesshide Default visible, or hide from all except screenreaders.
+ * @param int $time the unixtime, used for multiple calendar support. The values $d,
+ *     $m and $y are kept for backwards compatibility.
+ * @return string HTML string.
+ */
+function calendar_get_link_next($text, $linkbase, $d, $m, $y, $accesshide = false, $time = 0) {
+    return \core_calendar\api::get_link_next($text, $linkbase, $d, $m, $y, $accesshide, $time);
+}
+
+/**
+ * Return the number of days in month.
+ *
+ * @param int $month the number of the month.
+ * @param int $year the number of the year
+ * @return int
+ */
+function calendar_days_in_month($month, $year) {
+    return \core_calendar\api::get_days_in_month($month, $year);
+}
+
+/**
+ * Get the next following month.
+ *
+ * @param int $month the number of the month.
+ * @param int $year the number of the year.
+ * @return array the following month
+ */
+function calendar_add_month($month, $year) {
+    return \core_calendar\api::get_next_month($month, $year);
+}
+
+/**
+ * Get the previous month.
+ *
+ * @param int $month the number of the month.
+ * @param int $year the number of the year.
+ * @return array previous month
+ */
+function calendar_sub_month($month, $year) {
+    return \core_calendar\api::get_prev_month($month, $year);
+}
+
+/**
+ * Get per-day basis events
+ *
+ * @param array $events list of events
+ * @param int $month the number of the month
+ * @param int $year the number of the year
+ * @param array $eventsbyday event on specific day
+ * @param array $durationbyday duration of the event in days
+ * @param array $typesbyday event type (eg: global, course, user, or group)
+ * @param array $courses list of courses
+ * @return void
+ */
+function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$durationbyday, &$typesbyday, &$courses) {
+    \core_calendar\api::get_events_by_day($events, $month, $year, $eventsbyday, $durationbyday, $typesbyday, $courses);
+}
+
+/**
+ * Returns the courses to load events for.
+ *
+ * @param array $courseeventsfrom An array of courses to load calendar events for
+ * @param bool $ignorefilters specify the use of filters, false is set as default
+ * @return array An array of courses, groups, and user to load calendar events for based upon filters
+ */
+function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
+    return \core_calendar\api::set_filters($courseeventsfrom, $ignorefilters);
+}
+
+/**
+ * Return the capability for editing calendar event.
+ *
+ * @param calendar_event $event event object
+ * @return bool capability to edit event
+ */
+function calendar_edit_event_allowed($event) {
+    return \core_calendar\api::can_edit_event($event);
+}
+
+/**
+ * Returns the default courses to display on the calendar when there isn't a specific
+ * course to display.
+ *
+ * @return array $courses Array of courses to display
+ */
+function calendar_get_default_courses() {
+    return \core_calendar\api::get_default_courses();
+}
+
+/**
+ * Get event format time.
+ *
+ * @param calendar_event $event event object
+ * @param int $now current time in gmt
+ * @param array $linkparams list of params for event link
+ * @param bool $usecommonwords the words as formatted date/time.
+ * @param int $showtime determine the show time GMT timestamp
+ * @return string $eventtime link/string for event time
+ */
+function calendar_format_event_time($event, $now, $linkparams = null, $usecommonwords = true, $showtime = 0) {
+    return \core_calendar\api::get_format_event_time($event, $now, $linkparams, $usecommonwords, $showtime);
+}
+
+/**
+ * Checks to see if the requested type of event should be shown for the given user.
+ *
+ * @param int $type The type to check the display for (default is to display all)
+ * @param stdClass|int|null $user The user to check for - by default the current user
+ * @return bool True if the tyep should be displayed false otherwise
+ */
+function calendar_show_event_type($type, $user = null) {
+    return \core_calendar\api::show_event_type($type, $user);
+}
+
+/**
+ * Sets the display of the event type given $display.
+ *
+ * If $display = true the event type will be shown.
+ * If $display = false the event type will NOT be shown.
+ * If $display = null the current value will be toggled and saved.
+ *
+ * @param int $type object of CALENDAR_EVENT_XXX
+ * @param bool $display option to display event type
+ * @param stdClass|int $user moodle user object or id, null means current user
+ */
+function calendar_set_event_type_display($type, $display = null, $user = null) {
+    \core_calendar\api::set_event_type_display($type, $display, $user);
+}
+
+/**
+ * Get calendar's allowed types.
+ *
+ * @param stdClass $allowed list of allowed edit for event  type
+ * @param stdClass|int $course object of a course or course id
+ */
+function calendar_get_allowed_types(&$allowed, $course = null) {
+    \core_calendar\api::get_allowed_types($allowed, $course);
+}
+
+/**
+ * See if user can add calendar entries at all used to print the "New Event" button.
+ *
+ * @param stdClass $course object of a course or course id
+ * @return bool has the capability to add at least one event type
+ */
+function calendar_user_can_add_event($course) {
+    return \core_calendar\api::can_add_event_to_course($course);
+}
+
+/**
+ * Check wether the current user is permitted to add events.
+ *
+ * @param stdClass $event object of event
+ * @return bool has the capability to add event
+ */
+function calendar_add_event_allowed($event) {
+    return \core_calendar\api::can_add_event($event);
+}
+
+/**
+ * Returns option list for the poll interval setting.
+ *
+ * @return array An array of poll interval options. Interval => description.
+ */
+function calendar_get_pollinterval_choices() {
+    return \core_calendar\api::get_poll_interval_choices();
+}
+
+/**
+ * Returns option list of available options for the calendar event type, given the current user and course.
+ *
+ * @param int $courseid The id of the course
+ * @return array An array containing the event types the user can create.
+ */
+function calendar_get_eventtype_choices($courseid) {
+    return \core_calendar\api::get_event_type_choices($courseid);
+}
+
+/**
+ * Add an iCalendar subscription to the database.
+ *
+ * @param stdClass $sub The subscription object (e.g. from the form)
+ * @return int The insert ID, if any.
+ */
+function calendar_add_subscription($sub) {
+    return \core_calendar\api::add_subscription($sub);
+}
+
+/**
+ * Add an iCalendar event to the Moodle calendar.
+ *
+ * @param stdClass $event The RFC-2445 iCalendar event
+ * @param int $courseid The course ID
+ * @param int $subscriptionid The iCalendar subscription ID
+ * @param string $timezone The X-WR-TIMEZONE iCalendar property if provided
+ * @throws dml_exception A DML specific exception is thrown for invalid subscriptionids.
+ * @return int Code: CALENDAR_IMPORT_EVENT_UPDATED = updated,  CALENDAR_IMPORT_EVENT_INSERTED = inserted, 0 = error
+ */
+function calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timezone='UTC') {
+    return \core_calendar\api::add_icalendar_event($event, $courseid, $subscriptionid, $timezone);
+}
+
+/**
+ * Update a subscription from the form data in one of the rows in the existing subscriptions table.
+ *
+ * @param int $subscriptionid The ID of the subscription we are acting upon.
+ * @param int $pollinterval The poll interval to use.
+ * @param int $action The action to be performed. One of update or remove.
+ * @throws dml_exception if invalid subscriptionid is provided
+ * @return string A log of the import progress, including errors
+ */
+function calendar_process_subscription_row($subscriptionid, $pollinterval, $action) {
+    return \core_calendar\api::process_subscription_row($subscriptionid, $pollinterval, $action);
+}
+
+/**
+ * Delete subscription and all related events.
+ *
+ * @param int|stdClass $subscription subscription or it's id, which needs to be deleted.
+ */
+function calendar_delete_subscription($subscription) {
+    \core_calendar\api::delete_subscription($subscription);
+}
+
+/**
+ * From a URL, fetch the calendar and return an iCalendar object.
+ *
+ * @param string $url The iCalendar URL
+ * @return iCalendar The iCalendar object
+ */
+function calendar_get_icalendar($url) {
+    return \core_calendar\api::get_icalendar($url);
+}
+
+/**
+ * Import events from an iCalendar object into a course calendar.
+ *
+ * @param iCalendar $ical The iCalendar object.
+ * @param int $courseid The course ID for the calendar.
+ * @param int $subscriptionid The subscription ID.
+ * @return string A log of the import progress, including errors.
+ */
+function calendar_import_icalendar_events($ical, $courseid, $subscriptionid = null) {
+    return \core_calendar\api::import_icalendar_events($ical, $courseid, $subscriptionid);
+}
+
+/**
+ * Fetch a calendar subscription and update the events in the calendar.
+ *
+ * @param int $subscriptionid The course ID for the calendar.
+ * @return string A log of the import progress, including errors.
+ */
+function calendar_update_subscription_events($subscriptionid) {
+    return \core_calendar\api::update_subscription_events($subscriptionid);
+}
+
+/**
+ * Update a calendar subscription. Also updates the associated cache.
+ *
+ * @param stdClass|array $subscription Subscription record.
+ * @throws coding_exception If something goes wrong
+ * @since Moodle 2.5
+ */
+function calendar_update_subscription($subscription) {
+    \core_calendar\api::update_subscription($subscription);
+}
+
+/**
+ * Checks to see if the user can edit a given subscription feed.
+ *
+ * @param mixed $subscriptionorid Subscription object or id
+ * @return bool true if current user can edit the subscription else false
+ */
+function calendar_can_edit_subscription($subscriptionorid) {
+    return \core_calendar\api::can_edit_subscription($subscriptionorid);
+}
+
+/**
+ * Helper function to determine the context of a calendar subscription.
+ * Subscriptions can be created in two contexts COURSE, or USER.
+ *
+ * @param stdClass $subscription
+ * @return context instance
+ */
+function calendar_get_calendar_context($subscription) {
+    return \core_calendar\api::get_calendar_context($subscription);
+}
+
+/**
  * Implements callback user_preferences, whitelists preferences that users are allowed to update directly
  *
  * Used in {@see core_user::fill_preferences_cache()}, see also {@see useredit_update_user_preference()}
