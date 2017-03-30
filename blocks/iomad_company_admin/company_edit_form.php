@@ -111,7 +111,7 @@ class company_edit_form extends company_moodleform {
                                                   categoryid = (
                                                     SELECT profileid from {company}
                                                     WHERE id = :companyid
-                                                  )", array('companyid' => $companyid));
+                                                  )", array('companyid' => $this->companyid));
         } else {
             $companyfields = array();
         }
@@ -191,12 +191,12 @@ class company_edit_form extends company_moodleform {
         $mform->setDefault('lang', $CFG->lang);
 
         /* === end user defaults === */
-        $companyTheme = $this->companyrecord->theme;
+        $companytheme = $this->companyrecord->theme;
         $ischild = false;
         try {
-            $theme = theme_config::load($companyTheme);
-            foreach ($theme->parents as $parentsTheme) {
-                if($parentsTheme == 'iomad' || $parentsTheme == 'bootstrap' ){
+            $theme = theme_config::load($companytheme);
+            foreach ($theme->parents as $parentstheme) {
+                if($parentstheme == 'iomad' || $parentstheme == 'bootstrap' ){
                     $ischild = true;
                     break;
                 }
@@ -243,16 +243,14 @@ class company_edit_form extends company_moodleform {
                 $mform->addElement('select', 'theme',
                                     get_string('selectatheme', 'block_iomad_company_admin'),
                                     $themeselectarray);
+                $mform->getElement('theme')->setSelected($companytheme);
             } else {
                 $mform->addElement('hidden', 'theme', $this->companyrecord->theme);
                 $mform->setType('theme', PARAM_TEXT);
             }
 
             // If theme is already set to a real theme, dont show this.
-            if (!isset($this->companyrecord->theme)) {
-                $this->companyrecord->theme = 'iomadbootstrap';
-            }
-            if ($this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'iomadbootstrap' || $ischild) {
+            if ($this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'iomadbootstrap' || $this->companyrecord->theme == 'iomadboost' || $ischild) {
                 $mform->addElement('HTML', get_string('theoptionsbelow',
                                                       'block_iomad_company_admin'));
                 $mform->addElement('filemanager', 'companylogo',
