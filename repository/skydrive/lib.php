@@ -68,6 +68,10 @@ class repository_skydrive extends repository {
         } catch (dml_missing_record_exception $e) {
             $this->disabled = true;
         }
+
+        if ($this->issuer && !$this->issuer->get('enabled')) {
+            $this->disabled = true;
+        }
     }
 
     /**
@@ -202,7 +206,7 @@ class repository_skydrive extends repository {
             $path = $this->build_node_path('root', get_string('pluginname', 'repository_skydrive'));
         }
 
-        if (!$this->issuer->get('enabled')) {
+        if ($this->disabled) {
             // Empty list of files for disabled repository.
             return ['dynload' => false, 'list' => [], 'nologin' => true];
         }
@@ -401,7 +405,7 @@ class repository_skydrive extends repository {
     public function get_file($reference, $filename = '') {
         global $CFG;
 
-        if (!$this->issuer->get('enabled')) {
+        if ($this->disabled) {
             throw new repository_exception('cannotdownload', 'repository');
         }
 
@@ -518,7 +522,7 @@ class repository_skydrive extends repository {
      * @param array $options additional options affecting the file serving
      */
     public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
-        if (!$this->issuer->get('enabled')) {
+        if ($this->disabled) {
             throw new repository_exception('cannotdownload', 'repository');
         }
 

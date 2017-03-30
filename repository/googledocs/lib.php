@@ -72,6 +72,10 @@ class repository_googledocs extends repository {
         } catch (dml_missing_record_exception $e) {
             $this->disabled = true;
         }
+
+        if ($this->issuer && !$this->issuer->get('enabled')) {
+            $this->disabled = true;
+        }
     }
 
     /**
@@ -863,7 +867,7 @@ class repository_googledocs extends repository {
 
 
         // Check this issuer is enabled.
-        if (!$this->issuer->get('enabled')) {
+        if ($this->disabled) {
             throw new repository_exception('cannotdownload', 'repository');
         }
 
@@ -956,7 +960,7 @@ class repository_googledocs extends repository {
      * @param int $filestatus
      */
     public function get_reference_details($reference, $filestatus = 0) {
-        if (!$this->issuer->get('enabled')) {
+        if ($this->disabled) {
             throw new repository_exception('cannotdownload', 'repository');
         }
         if (empty($reference)) {
