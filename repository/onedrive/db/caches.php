@@ -17,7 +17,7 @@
 /**
  * Cache definitions.
  *
- * @package    repository_skydrive
+ * @package    repository_onedrive
  * @copyright  2013 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

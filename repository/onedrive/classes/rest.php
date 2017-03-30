@@ -17,11 +17,11 @@
 /**
  * Microsoft Graph API Rest Interface.
  *
- * @package    repository_skydrive
+ * @package    repository_onedrive
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace repository_skydrive;
+namespace repository_onedrive;
 
 defined('MOODLE_INTERNAL') || die();
 

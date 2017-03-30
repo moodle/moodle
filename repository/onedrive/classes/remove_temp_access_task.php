@@ -17,12 +17,12 @@
 /**
  * A scheduled task.
  *
- * @package    repository_skydrive
+ * @package    repository_onedrive
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace repository_skydrive;
+namespace repository_onedrive;
 
 use \core\task\scheduled_task;
 
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Simple task to delete temporary permission records.
- * @package    repository_skydrive
+ * @package    repository_onedrive
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,7 +42,7 @@ class remove_temp_access_task extends scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('removetempaccesstask', 'repository_skydrive');
+        return get_string('removetempaccesstask', 'repository_onedrive');
     }
 
     /**
@@ -55,7 +55,7 @@ class remove_temp_access_task extends scheduled_task {
         $expires->sub(new DateInterval("P7D"));
         $timestamp = $expires->getTimestamp();
 
-        $issuerid = get_config('repository_skydrive', 'issuerid');
+        $issuerid = get_config('repository_onedrive', 'issuerid');
         $issuer = \core\oauth2\api::get_issuer_by_id($issuerid);
 
         // Add the current user as an OAuth writer.
@@ -65,7 +65,7 @@ class remove_temp_access_task extends scheduled_task {
             $details = 'Cannot connect as system user';
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
-        $systemservice = new repository_skydrive\rest($systemauth);
+        $systemservice = new repository_onedrive\rest($systemauth);
 
         foreach ($accessrecords as $access) {
             if ($access->get('timemodified') < $timestamp) {

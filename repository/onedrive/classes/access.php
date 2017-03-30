@@ -17,11 +17,11 @@
 /**
  * Class for loading/storing access records from the DB.
  *
- * @package    repository_skydrive
+ * @package    repository_onedrive
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace repository_skydrive;
+namespace repository_onedrive;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,13 +30,13 @@ use core\persistent;
 /**
  * Class for loading/storing issuer from the DB
  *
- * @package    repository_skydrive
+ * @package    repository_onedrive
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class access extends persistent {
 
-    const TABLE = 'repository_skydrive_access';
+    const TABLE = 'repository_onedrive_access';
 
     /**
      * Return the definition of the properties of this model.

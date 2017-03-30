@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="repository/skydrive/db" VERSION="20170314" COMMENT="XMLDB file for Moodle repository/skydrive"
+<XMLDB PATH="repository/onedrive/db" VERSION="20170314" COMMENT="XMLDB file for Moodle repository/onedrive"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="repository_skydrive_access" COMMENT="List of temporary access grants.">
+    <TABLE NAME="repository_onedrive_access" COMMENT="List of temporary access grants.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>

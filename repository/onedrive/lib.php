@@ -17,7 +17,7 @@
 /**
  * Microsoft Live Skydrive Repository Plugin
  *
- * @package    repository_skydrive
+ * @package    repository_onedrive
  * @copyright  2012 Lancaster University Network Services Ltd
  * @author     Dan Poltawski <dan.poltawski@luns.net.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,14 +26,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Microsoft skydrive repository plugin.
+ * Microsoft onedrive repository plugin.
  *
- * @package    repository_skydrive
+ * @package    repository_onedrive
  * @copyright  2012 Lancaster University Network Services Ltd
  * @author     Dan Poltawski <dan.poltawski@luns.net.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class repository_skydrive extends repository {
+class repository_onedrive extends repository {
     /**
      * OAuth 2 client
      * @var \core\oauth2\client
@@ -64,7 +64,7 @@ class repository_skydrive extends repository {
         parent::__construct($repositoryid, $context, $options, $readonly = 0);
 
         try {
-            $this->issuer = \core\oauth2\api::get_issuer(get_config('skydrive', 'issuerid'));
+            $this->issuer = \core\oauth2\api::get_issuer(get_config('onedrive', 'issuerid'));
         } catch (dml_missing_record_exception $e) {
             $this->disabled = true;
         }
@@ -203,7 +203,7 @@ class repository_skydrive extends repository {
      */
     public function get_listing($path='', $page = '') {
         if (empty($path)) {
-            $path = $this->build_node_path('root', get_string('pluginname', 'repository_skydrive'));
+            $path = $this->build_node_path('root', get_string('pluginname', 'repository_onedrive'));
         }
 
         if ($this->disabled) {
@@ -224,7 +224,7 @@ class repository_skydrive extends repository {
             $id = 'root';
 
             // Append the active path for search.
-            $str = get_string('searchfor', 'repository_skydrive', $searchtext);
+            $str = get_string('searchfor', 'repository_onedrive', $searchtext);
             $path = $this->build_node_path('search', $str, $path);
         }
 
@@ -252,8 +252,8 @@ class repository_skydrive extends repository {
      * @return array of results.
      */
     public function search($searchtext, $page = 0) {
-        $path = $this->build_node_path('root', get_string('pluginname', 'repository_skydrive'));
-        $str = get_string('searchfor', 'repository_skydrive', $searchtext);
+        $path = $this->build_node_path('root', get_string('pluginname', 'repository_onedrive'));
+        $str = get_string('searchfor', 'repository_onedrive', $searchtext);
         $path = $this->build_node_path('search', $str, $path);
 
         // Query the Drive.
@@ -295,7 +295,7 @@ class repository_skydrive extends repository {
         try {
             // Retrieving files and folders.
             $client = $this->get_user_oauth_client();
-            $service = new repository_skydrive\rest($client);
+            $service = new repository_onedrive\rest($client);
 
             if (!empty($q)) {
                 $params['search'] = urlencode($q);
@@ -308,7 +308,7 @@ class repository_skydrive extends repository {
             }
         } catch (Exception $e) {
             if ($e->getCode() == 403 && strpos($e->getMessage(), 'Access Not Configured') !== false) {
-                throw new repository_exception('servicenotenabled', 'repository_skydrive');
+                throw new repository_exception('servicenotenabled', 'repository_onedrive');
             } else {
                 throw $e;
             }
@@ -463,7 +463,7 @@ class repository_skydrive extends repository {
     public function supported_returntypes() {
         // We can only support references if the system account is connected.
         if (!empty($this->issuer) && $this->issuer->is_system_account_connected()) {
-            $setting = get_config('skydrive', 'supportedreturntypes');
+            $setting = get_config('onedrive', 'supportedreturntypes');
             if ($setting == 'internal') {
                 return FILE_INTERNAL;
             } else if ($setting == 'external') {
@@ -482,8 +482,8 @@ class repository_skydrive extends repository {
      * @return int
      */
     public function default_returntype() {
-        $setting = get_config('skydrive', 'defaultreturntype');
-        $supported = get_config('skydrive', 'supportedreturntypes');
+        $setting = get_config('onedrive', 'defaultreturntype');
+        $supported = get_config('onedrive', 'supportedreturntypes');
         if (($setting == FILE_INTERNAL && $supported != 'external') || $supported == 'internal') {
             return FILE_INTERNAL;
         } else {
@@ -545,7 +545,7 @@ class repository_skydrive extends repository {
                 $details = 'Cannot connect as system user';
                 throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
             }
-            $systemservice = new repository_skydrive\rest($systemauth);
+            $systemservice = new repository_onedrive\rest($systemauth);
 
             // Get the user oauth so we can get the account to add.
             $url = moodle_url::make_pluginfile_url($storedfile->get_contextid(),
@@ -585,11 +585,11 @@ class repository_skydrive extends repository {
     /**
      * List the permissions on a file.
      *
-     * @param \repository_skydrive\rest $client Authenticated client.
+     * @param \repository_onedrive\rest $client Authenticated client.
      * @param string $fileid The id of the file.
      * @return array
      */
-    protected function list_file_permissions(\repository_skydrive\rest $client, $fileid) {
+    protected function list_file_permissions(\repository_onedrive\rest $client, $fileid) {
         $fields = "id,roles,link,grantedTo";
         return $client->call('list_permissions', ['fileid' => $fileid, '$select' => $fields]);
     }
@@ -597,11 +597,11 @@ class repository_skydrive extends repository {
     /**
      * See if a folder exists within a folder
      *
-     * @param \repository_skydrive\rest $client Authenticated client.
+     * @param \repository_onedrive\rest $client Authenticated client.
      * @param string $fullpath
      * @return string|boolean The file id if it exists or false.
      */
-    protected function get_file_id_by_path(\repository_skydrive\rest $client, $fullpath) {
+    protected function get_file_id_by_path(\repository_onedrive\rest $client, $fullpath) {
         $fields = "id";
         try {
             $response = $client->call('get_file_by_path', ['fullpath' => $fullpath, '$select' => $fields]);
@@ -614,11 +614,11 @@ class repository_skydrive extends repository {
     /**
      * Delete a file by full path.
      *
-     * @param \repository_skydrive\rest $client Authenticated client.
+     * @param \repository_onedrive\rest $client Authenticated client.
      * @param string $fullpath
      * @return boolean
      */
-    protected function delete_file_by_path(\repository_skydrive\rest $client, $fullpath) {
+    protected function delete_file_by_path(\repository_onedrive\rest $client, $fullpath) {
         try {
             $response = $client->call('delete_file_by_path', ['fullpath' => $fullpath]);
         } catch (\core\oauth2\rest_exception $re) {
@@ -631,11 +631,11 @@ class repository_skydrive extends repository {
     /**
      * Get a file summary by full path.
      *
-     * @param \repository_skydrive\rest $client Authenticated client.
+     * @param \repository_onedrive\rest $client Authenticated client.
      * @param string $fullpath
      * @return stdClass
      */
-    protected function get_file_summary_by_path(\repository_skydrive\rest $client, $fullpath) {
+    protected function get_file_summary_by_path(\repository_onedrive\rest $client, $fullpath) {
         $fields = "folder,id,lastModifiedDateTime,name,size,webUrl,createdByUser";
         $response = $client->call('get_file_by_path', ['fullpath' => $fullpath, '$select' => $fields]);
         if (empty($response->id)) {
@@ -648,13 +648,13 @@ class repository_skydrive extends repository {
     /**
      * Create a folder within a folder
      *
-     * @param \repository_skydrive\rest $client Authenticated client.
+     * @param \repository_onedrive\rest $client Authenticated client.
      * @param string $foldername The folder we are creating.
      * @param string $parentid The parent folder we are creating in.
      *
      * @return string The file id of the new folder.
      */
-    protected function create_folder_in_folder(\repository_skydrive\rest $client, $foldername, $parentid) {
+    protected function create_folder_in_folder(\repository_onedrive\rest $client, $foldername, $parentid) {
         $params = ['parentid' => $parentid];
         $folder = [ 'name' => $foldername, 'folder' => [ 'childCount' => 0 ]];
         $created = $client->call('create_folder', $params, json_encode($folder));
@@ -668,12 +668,12 @@ class repository_skydrive extends repository {
     /**
      * Get simple file info for humans.
      *
-     * @param \repository_skydrive\rest $client Authenticated client.
+     * @param \repository_onedrive\rest $client Authenticated client.
      * @param string $fileid The file we are querying.
      *
      * @return stdClass
      */
-    protected function get_file_summary(\repository_skydrive\rest $client, $fileid) {
+    protected function get_file_summary(\repository_onedrive\rest $client, $fileid) {
         $fields = "folder,id,lastModifiedDateTime,name,size,webUrl,createdByUser";
         $response = $client->call('get', ['fileid' => $fileid, '$select' => $fields]);
         return $response;
@@ -682,11 +682,11 @@ class repository_skydrive extends repository {
     /**
      * Get the id of this users root drive.
      *
-     * @param \repository_skydrive\rest $client Authenticated client.
+     * @param \repository_onedrive\rest $client Authenticated client.
      *
      * @return string id
      */
-    protected function get_root_drive_id(\repository_skydrive\rest $client) {
+    protected function get_root_drive_id(\repository_onedrive\rest $client) {
         $response = $client->call('get_drive', []);
 
         if (empty($response->id)) {
@@ -699,12 +699,12 @@ class repository_skydrive extends repository {
     /**
      * Add a writer to the permissions on the file (temporary).
      *
-     * @param \repository_skydrive\rest $client Authenticated client.
+     * @param \repository_onedrive\rest $client Authenticated client.
      * @param string $fileid The file we are updating.
      * @param string $email The email of the writer account to add.
      * @return boolean
      */
-    protected function add_temp_writer_to_file(\repository_skydrive\rest $client, $fileid, $email) {
+    protected function add_temp_writer_to_file(\repository_onedrive\rest $client, $fileid, $email) {
         // Expires in 7 days.
         $expires = new DateTime();
         $expires->add(new DateInterval("P7D"));
@@ -722,12 +722,12 @@ class repository_skydrive extends repository {
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
         // Store the permission id in the DB. Scheduled task will remove this permission after 7 days.
-        if ($access = repository_skydrive\access::get_record(['permissionid' => $response->value[0]->id, 'itemid' => $fileid ])) {
+        if ($access = repository_onedrive\access::get_record(['permissionid' => $response->value[0]->id, 'itemid' => $fileid ])) {
             // Update the timemodified.
             $access->update();
         } else {
             $record = (object) [ 'permissionid' => $response->value[0]->id, 'itemid' => $fileid ];
-            $access = new repository_skydrive\access(0, $record);
+            $access = new repository_onedrive\access(0, $record);
             $access->create();
         }
         return true;
@@ -736,12 +736,12 @@ class repository_skydrive extends repository {
     /**
      * Add a writer to the permissions on the file.
      *
-     * @param \repository_skydrive\rest $client Authenticated client.
+     * @param \repository_onedrive\rest $client Authenticated client.
      * @param string $fileid The file we are updating.
      * @param string $useremail The user email of the writer account to add.
      * @return boolean
      */
-    protected function add_writer_to_file(\repository_skydrive\rest $client, $fileid, $useremail) {
+    protected function add_writer_to_file(\repository_onedrive\rest $client, $fileid, $useremail) {
         $updateeditor = [
             'recipients' => [ [ 'email' => $useremail ] ],
             'roles' => ['write'],
@@ -760,11 +760,11 @@ class repository_skydrive extends repository {
     /**
      * Allow anyone with the link to read the file.
      *
-     * @param \repository_skydrive\rest $client Authenticated client.
+     * @param \repository_onedrive\rest $client Authenticated client.
      * @param string $fileid The file we are updating.
      * @return boolean
      */
-    protected function set_file_sharing_anyone_with_link_can_read(\repository_skydrive\rest $client, $fileid) {
+    protected function set_file_sharing_anyone_with_link_can_read(\repository_onedrive\rest $client, $fileid) {
         $updateread = [
             'type' => 'view',
             'scope' => 'anonymous'
@@ -781,13 +781,13 @@ class repository_skydrive extends repository {
     /**
      * Copy a shared file to a new folder.
      *
-     * @param \repository_skydrive\rest $client Authenticated client.
+     * @param \repository_onedrive\rest $client Authenticated client.
      * @param string $sharetoken The share we are querying.
      * @param string $newdrive Id of the drive to copy to.
      * @param string $parentid Id of the folder to copy to.
      * @return stdClass
      */
-    protected function copy_share(\repository_skydrive\rest $client, $sharetoken, $newdrive, $parentid) {
+    protected function copy_share(\repository_onedrive\rest $client, $sharetoken, $newdrive, $parentid) {
         $folder = [
             'parentReference' => ['id' => $parentid, 'driveId' => $newdrive]
         ];
@@ -857,8 +857,8 @@ class repository_skydrive extends repository {
         $userinfo = $userauth->get_userinfo();
         $useremail = $userinfo['email'];
 
-        $userservice = new repository_skydrive\rest($userauth);
-        $systemservice = new repository_skydrive\rest($systemauth);
+        $userservice = new repository_onedrive\rest($userauth);
+        $systemservice = new repository_onedrive\rest($systemauth);
 
         // Get the list of existing permissions so we can see if the owner is already the system account,
         // and whether we need to update the link sharing options.
@@ -883,7 +883,7 @@ class repository_skydrive extends repository {
         // Now copy it to a sensible folder.
         $contextlist = array_reverse($context->get_parent_contexts(true));
 
-        $cache = cache::make('repository_skydrive', 'folder');
+        $cache = cache::make('repository_onedrive', 'folder');
         $parentid = 'root';
         $fullpath = '';
         $allfolders = [];
@@ -966,7 +966,7 @@ class repository_skydrive extends repository {
         if ($systemauth === false) {
             return '';
         }
-        $systemservice = new repository_skydrive\rest($systemauth);
+        $systemservice = new repository_onedrive\rest($systemauth);
         $info = $this->get_file_summary($systemservice, $source->id);
 
         $owner = '';
@@ -974,7 +974,7 @@ class repository_skydrive extends repository {
             $owner = $info->createdByUser->displayName;
         }
         if ($owner) {
-            return get_string('owner', 'repository_skydrive', $owner);
+            return get_string('owner', 'repository_onedrive', $owner);
         } else {
             return $info->name;
         }
@@ -990,7 +990,7 @@ class repository_skydrive extends repository {
         $url = new moodle_url('/admin/tool/oauth2/issuers.php');
         $url = $url->out();
 
-        $mform->addElement('static', null, '', get_string('oauth2serviceslink', 'repository_skydrive', $url));
+        $mform->addElement('static', null, '', get_string('oauth2serviceslink', 'repository_onedrive', $url));
 
         parent::type_config_form($mform);
         $options = [];
@@ -1002,23 +1002,23 @@ class repository_skydrive extends repository {
 
         $strrequired = get_string('required');
 
-        $mform->addElement('select', 'issuerid', get_string('issuer', 'repository_skydrive'), $options);
-        $mform->addHelpButton('issuerid', 'issuer', 'repository_skydrive');
+        $mform->addElement('select', 'issuerid', get_string('issuer', 'repository_onedrive'), $options);
+        $mform->addHelpButton('issuerid', 'issuer', 'repository_onedrive');
         $mform->addRule('issuerid', $strrequired, 'required', null, 'client');
 
-        $mform->addElement('static', null, '', get_string('fileoptions', 'repository_skydrive'));
+        $mform->addElement('static', null, '', get_string('fileoptions', 'repository_onedrive'));
         $choices = [
-            'internal' => get_string('internal', 'repository_skydrive'),
-            'external' => get_string('external', 'repository_skydrive'),
-            'both' => get_string('both', 'repository_skydrive')
+            'internal' => get_string('internal', 'repository_onedrive'),
+            'external' => get_string('external', 'repository_onedrive'),
+            'both' => get_string('both', 'repository_onedrive')
         ];
-        $mform->addElement('select', 'supportedreturntypes', get_string('supportedreturntypes', 'repository_skydrive'), $choices);
+        $mform->addElement('select', 'supportedreturntypes', get_string('supportedreturntypes', 'repository_onedrive'), $choices);
 
         $choices = [
-            FILE_INTERNAL => get_string('internal', 'repository_skydrive'),
-            FILE_CONTROLLED_LINK => get_string('external', 'repository_skydrive'),
+            FILE_INTERNAL => get_string('internal', 'repository_onedrive'),
+            FILE_CONTROLLED_LINK => get_string('external', 'repository_onedrive'),
         ];
-        $mform->addElement('select', 'defaultreturntype', get_string('defaultreturntype', 'repository_skydrive'), $choices);
+        $mform->addElement('select', 'defaultreturntype', get_string('defaultreturntype', 'repository_onedrive'), $choices);
     }
 }
 
@@ -1028,9 +1028,9 @@ class repository_skydrive extends repository {
  * @param \core\oauth2\issuer $issuer
  * @return string
  */
-function repository_skydrive_oauth2_system_scopes(\core\oauth2\issuer $issuer) {
-    if ($issuer->get('id') == get_config('skydrive', 'issuerid')) {
-        return repository_skydrive::SCOPES;
+function repository_onedrive_oauth2_system_scopes(\core\oauth2\issuer $issuer) {
+    if ($issuer->get('id') == get_config('onedrive', 'issuerid')) {
+        return repository_onedrive::SCOPES;
     }
     return '';
 }
