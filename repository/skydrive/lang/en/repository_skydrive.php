@@ -29,3 +29,4 @@ $string['oauthinfo'] = '<p>To use this plugin, you must register your site <a hr
 $string['pluginname'] = 'Microsoft SkyDrive';
 $string['secret'] = 'Secret';
 $string['skydrive:view'] = 'View SkyDrive';
+$string['deprecatedwarning'] = 'Warning: The API used by this repository plugin has been deprecated by Microsoft and it will stop working eventually. Please migrate to the newer "Microsoft OneDrive" repository.';
