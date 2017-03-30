@@ -137,6 +137,7 @@ Feature: Award badges
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
+      | id_completion | 1                     |
     And I am on "Course 1" course homepage
     And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I follow "Add a new badge"
@@ -157,7 +158,7 @@ Feature: Award badges
     And I click on "Course 1" "link" in the "region-main" "region"
     Then I should not see "badges"
     And I am on "Course 1" course homepage
-    And I press "Mark as complete: Test assignment name"
+    And I click on "Not completed: Test assignment name" "icon"
     And I follow "Profile" in the user menu
     And I click on "Course 1" "link" in the "region-main" "region"
     Then I should see "Course Badge"
@@ -186,6 +187,7 @@ Feature: Award badges
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
+      | id_completion | 1                     |
     And I navigate to "Course completion" node in "Course administration"
     And I set the field "id_overall_aggregation" to "2"
     And I click on "Condition: Activity completion" "link"
@@ -211,7 +213,7 @@ Feature: Award badges
     And I click on "Course 1" "link" in the "region-main" "region"
     Then I should not see "badges"
     And I am on "Course 1" course homepage
-    And I click on "Not completed: Test assignment name. Select to mark as complete." "icon"
+    And I click on "Not completed: Test assignment name" "icon"
     And I log out
     # Completion cron won't mark the whole course completed unless the
     # individual criteria was marked completed more than a second ago. So
