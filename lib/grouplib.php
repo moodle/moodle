@@ -426,10 +426,7 @@ function groups_has_membership($cm, $userid=null) {
 function groups_get_members($groupid, $fields='u.*', $sort='lastname ASC') {
     global $DB;
 
-    return $DB->get_records_sql("SELECT $fields
-                                   FROM {user} u, {groups_members} gm
-                                  WHERE u.id = gm.userid AND gm.groupid = ?
-                               ORDER BY $sort", array($groupid));
+    return groups_get_groups_members([$groupid], $fields, $sort);
 }
 
 
@@ -1132,4 +1129,48 @@ function groups_user_groups_visible($course, $userid, $cm = null) {
         }
     }
     return false;
+}
+
+/**
+ * Returns the users in the specified groups.
+ *
+ * @param array $groupsids The list of groups ids to check
+ * @param int $fields The fields to return
+ * @param int $sort optional sorting of returned users
+ * @return array|bool Returns an array of the users for the specified group or false if no users or an error returned.
+ * @since  Moodle 3.3
+ */
+function groups_get_groups_members($groupsids, $fields='u.*', $sort='lastname ASC') {
+    global $DB;
+
+    list($insql, $params) = $DB->get_in_or_equal($groupsids);
+
+    return $DB->get_records_sql("SELECT $fields
+                                   FROM {user} u, {groups_members} gm
+                                  WHERE u.id = gm.userid AND gm.groupid $insql
+                               GROUP BY u.id
+                               ORDER BY $sort", $params);
+}
+
+/**
+ * Returns users who share group membership with the specified user in the given actiivty.
+ *
+ * @param stdClass|cm_info $cm course module
+ * @param int $userid user id (empty for current user)
+ * @return array a list of user
+ * @since  Moodle 3.3
+ */
+function groups_get_activity_shared_group_members($cm, $userid = null) {
+    global $USER;
+
+    if (empty($userid)) {
+        $userid = $USER;
+    }
+
+    $groupsids = array_keys(groups_get_activity_allowed_groups($cm, $userid));
+    // No groups no users.
+    if (empty($groupsids)) {
+        return [];
+    }
+    return groups_get_groups_members($groupsids);
 }
