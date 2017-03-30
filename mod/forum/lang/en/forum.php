@@ -286,6 +286,8 @@ Users with the capability to reply to locked discussions can unlock a discussion
 $string['longpost'] = 'Long post';
 $string['mailnow'] = 'Send forum post notifications with no editing-time delay';
 $string['manydiscussions'] = 'Discussions per page';
+$string['managesubscriptionsoff'] = 'Finish managing subscriptions';
+$string['managesubscriptionson'] = 'Manage subscriptions';
 $string['markalldread'] = 'Mark all posts in this discussion read.';
 $string['markallread'] = 'Mark all posts in this forum read.';
 $string['markasreadonnotification'] = 'When sending forum post notifications';
