@@ -2023,9 +2023,9 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $cm = get_coursemodule_from_instance('forum', $forum->id);
 
         // Create groups.
-        $group1 = self::getDataGenerator()->create_group(array('courseid' => $course->id));
-        $group2 = self::getDataGenerator()->create_group(array('courseid' => $course->id));
-        $group3 = self::getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group1 = self::getDataGenerator()->create_group(array('courseid' => $course->id, 'name' => 'group1'));
+        $group2 = self::getDataGenerator()->create_group(array('courseid' => $course->id, 'name' => 'group2'));
+        $group3 = self::getDataGenerator()->create_group(array('courseid' => $course->id, 'name' => 'group3'));
 
         // Add the user1 to g1 and g2 groups.
         groups_add_member($group1->id, $user1->id);
