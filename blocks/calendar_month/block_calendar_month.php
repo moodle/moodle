@@ -70,25 +70,25 @@ class block_calendar_month extends block_base {
         if ($issite) {
             // Being displayed at site level. This will cause the filter to fall back to auto-detecting
             // the list of courses it will be grabbing events from.
-            $filtercourse = \core_calendar\api::get_default_courses();
+            $filtercourse = calendar_get_default_courses();
         } else {
             // Forcibly filter events to include only those from the particular course we are in.
             $filtercourse = array($courseid => $this->page->course);
         }
 
-        list($courses, $group, $user) = \core_calendar\api::set_filters($filtercourse);
+        list($courses, $group, $user) = calendar_set_filters($filtercourse);
         if ($issite) {
             // For the front page.
-            $this->content->text .= \core_calendar\api::get_mini_calendar($courses, $group, $user, false, false,
+            $this->content->text .= calendar_get_mini($courses, $group, $user, false, false,
                 'frontpage', $courseid, $time);
             // No filters for now.
         } else {
             // For any other course.
-            $this->content->text .= \core_calendar\api::get_mini_calendar($courses, $group, $user, false, false,
+            $this->content->text .= calendar_get_mini($courses, $group, $user, false, false,
                 'course', $courseid, $time);
             $this->content->text .= '<h3 class="eventskey">'.get_string('eventskey', 'calendar').'</h3>';
             $this->content->text .= '<div class="filters calendar_filters">' .
-                \core_calendar\api::get_filter_controls($this->page->url) . '</div>';
+                calendar_filter_controls($this->page->url) . '</div>';
         }
 
         return $this->content;

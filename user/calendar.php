@@ -46,7 +46,7 @@ if (isset($CFG->calendar_maxevents)) {
 $calendarform = new core_user\form\calendar_form(null, array('userid' => $user->id));
 
 $user->timeformat = get_user_preferences('calendar_timeformat', '');
-$user->startwday  = \core_calendar\api::get_starting_weekday();
+$user->startwday  = calendar_get_starting_weekday();
 $user->maxevents  = get_user_preferences('calendar_maxevents', $defaultmaxevents);
 $user->lookahead  = get_user_preferences('calendar_lookahead', $defaultlookahead);
 $user->persistflt = get_user_preferences('calendar_persistflt', 0);

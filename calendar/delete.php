@@ -59,7 +59,7 @@ if (!$course) {
 }
 
 // Check the user has the required capabilities to edit an event
-if (!\core_calendar\api::can_edit_event($event)) {
+if (!calendar_edit_event_allowed($event)) {
     print_error('nopermissions');
 }
 

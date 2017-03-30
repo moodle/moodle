@@ -53,7 +53,7 @@ class core_calendar_cron_task_testcase extends advanced_testcase {
         $subscription->url = $subscriptionurl;
         $subscription->pollinterval = 86400;
         $subscription->lastupdated = 0;
-        \core_calendar\api::add_subscription($subscription);
+        calendar_add_subscription($subscription);
 
         $this->expectOutputRegex('/Events imported: .* Events updated:/');
         $task = new \core\task\calendar_cron_task();
@@ -70,7 +70,7 @@ class core_calendar_cron_task_testcase extends advanced_testcase {
         $subscription->url = 'brokenurl';
         $subscription->pollinterval = 86400;
         $subscription->lastupdated = 0;
-        \core_calendar\api::add_subscription($subscription);
+        calendar_add_subscription($subscription);
 
         $this->expectOutputRegex('/Error updating calendar subscription: The given iCal URL is invalid/');
         $task = new \core\task\calendar_cron_task();

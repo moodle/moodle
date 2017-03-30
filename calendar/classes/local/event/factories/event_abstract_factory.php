@@ -134,12 +134,12 @@ abstract class event_abstract_factory implements event_factory_interface {
         }
 
         $course = new std_proxy($dbrow->courseid, function($id) {
-            return \core_calendar\api::get_course_cached($this->coursecachereference, $id);
+            return calendar_get_course_cached($this->coursecachereference, $id);
         });
 
         if ($dbrow->groupid) {
             $group = new std_proxy($dbrow->groupid, function($id) {
-                return \core_calendar\api::get_group_cached($id);
+                return calendar_get_group_cached($id);
             });
         }
 
@@ -155,7 +155,7 @@ abstract class event_abstract_factory implements event_factory_interface {
                 $dbrow->modulename,
                 $dbrow->instance,
                 function($modulename, $instance) {
-                    return \core_calendar\api::get_module_cached(
+                    return calendar_get_module_cached(
                         $this->modulecachereference,
                         $modulename,
                         $instance
@@ -166,7 +166,7 @@ abstract class event_abstract_factory implements event_factory_interface {
 
         if ($dbrow->subscriptionid) {
             $subscription = new std_proxy($dbrow->subscriptionid, function($id) {
-                return \core_calendar\api::get_subscription($id);
+                return calendar_get_subscription($id);
             });
         }
 

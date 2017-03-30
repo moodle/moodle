@@ -94,7 +94,7 @@ if ($courseid != SITEID && !empty($courseid)) {
     $issite = false;
 } else {
     $course = get_site();
-    $courses = \core_calendar\api::get_default_courses();
+    $courses = calendar_get_default_courses();
     $issite = true;
 }
 require_login($course, false);
@@ -114,7 +114,7 @@ $formoptions = new stdClass;
 if ($eventid !== 0) {
     $title = get_string('editevent', 'calendar');
     $event = calendar_event::load($eventid);
-    if (!\core_calendar\api::can_edit_event($event)) {
+    if (!calendar_edit_event_allowed($event)) {
         print_error('nopermissions');
     }
     $event->action = $action;
@@ -122,7 +122,7 @@ if ($eventid !== 0) {
     $event->timedurationuntil = $event->timestart + $event->timeduration;
     $event->count_repeats();
 
-    if (!\core_calendar\api::can_add_event($event)) {
+    if (!calendar_add_event_allowed($event)) {
         print_error('nopermissions');
     }
 
@@ -134,7 +134,7 @@ if ($eventid !== 0) {
 
 } else {
     $title = get_string('newevent', 'calendar');
-    \core_calendar\api::get_allowed_types($formoptions->eventtypes, $course);
+    calendar_get_allowed_types($formoptions->eventtypes, $course);
     $event = new stdClass();
     $event->action = $action;
     $event->course = $courseid;
@@ -150,7 +150,7 @@ if ($eventid !== 0) {
     }
     $event->timestart = $time;
     $event = new calendar_event($event);
-    if (!\core_calendar\api::can_add_event($event)) {
+    if (!calendar_add_event_allowed($event)) {
         print_error('nopermissions');
     }
 }

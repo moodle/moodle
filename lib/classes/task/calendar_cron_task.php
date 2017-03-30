@@ -62,7 +62,7 @@ class calendar_cron_task extends scheduled_task {
         foreach ($subscriptions as $sub) {
             mtrace("Updating calendar subscription {$sub->name} in course {$sub->courseid}");
             try {
-                $log = \core_calendar\api::update_subscription_events($sub->id);
+                $log = calendar_update_subscription_events($sub->id);
                 mtrace(trim(strip_tags($log)));
             } catch (\moodle_exception $ex) {
                 mtrace('Error updating calendar subscription: ' . $ex->getMessage());

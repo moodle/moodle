@@ -65,14 +65,14 @@ class block_calendar_upcoming extends block_base {
             if ($courseshown == SITEID) {
                 // Being displayed at site level. This will cause the filter to fall back to auto-detecting
                 // the list of courses it will be grabbing events from.
-                $filtercourse = \core_calendar\api::get_default_courses();
+                $filtercourse = calendar_get_default_courses();
             } else {
                 // Forcibly filter events to include only those from the particular course we are in.
                 $filtercourse = array($courseshown => $this->page->course);
             }
         }
 
-        list($courses, $group, $user) = \core_calendar\api::set_filters($filtercourse);
+        list($courses, $group, $user) = calendar_set_filters($filtercourse);
 
         $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
         if (isset($CFG->calendar_lookahead)) {
@@ -85,7 +85,7 @@ class block_calendar_upcoming extends block_base {
             $defaultmaxevents = intval($CFG->calendar_maxevents);
         }
         $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
-        $events = \core_calendar\api::get_upcoming($courses, $group, $user, $lookahead, $maxevents);
+        $events = calendar_get_upcoming($courses, $group, $user, $lookahead, $maxevents);
 
         if (!empty($this->instance)) {
             $link = 'view.php?view=day&amp;course='.$courseshown.'&amp;';
@@ -120,14 +120,14 @@ class block_calendar_upcoming extends block_base {
             if (!isset($events[$i]->time)) {
                 continue;
             }
-            $events[$i] = \core_calendar\api::add_event_metadata($events[$i]);
+            $events[$i] = calendar_add_event_metadata($events[$i]);
             $content .= '<div class="event"><span class="icon c0">' . $events[$i]->icon . '</span>';
             if (!empty($events[$i]->referer)) {
                 // That's an activity event, so let's provide the hyperlink.
                 $content .= $events[$i]->referer;
             } else {
                 if (!empty($linkhref)) {
-                    $href = \core_calendar\api::get_link_href(new \moodle_url(CALENDAR_URL . $linkhref), 0, 0, 0,
+                    $href = calendar_get_link_href(new \moodle_url(CALENDAR_URL . $linkhref), 0, 0, 0,
                         $events[$i]->timestart);
                     $href->set_anchor('event_' . $events[$i]->id);
                     $content .= \html_writer::link($href, $events[$i]->name);
