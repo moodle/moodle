@@ -6882,7 +6882,9 @@ class assign {
         }
 
         // Do not show if we are editing a previous attempt.
-        if ($attemptnumber == -1 && $this->get_instance()->attemptreopenmethod != ASSIGN_ATTEMPT_REOPEN_METHOD_NONE) {
+        if (($attemptnumber == -1 ||
+            ($attemptnumber + 1) == count($this->get_all_submissions($userid))) &&
+            $this->get_instance()->attemptreopenmethod != ASSIGN_ATTEMPT_REOPEN_METHOD_NONE) {
             $mform->addElement('header', 'attemptsettings', get_string('attemptsettings', 'assign'));
             $attemptreopenmethod = get_string('attemptreopenmethod_' . $this->get_instance()->attemptreopenmethod, 'assign');
             $mform->addElement('static', 'attemptreopenmethod', get_string('attemptreopenmethod', 'assign'), $attemptreopenmethod);
