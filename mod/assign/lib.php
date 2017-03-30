@@ -1692,5 +1692,35 @@ function assign_check_updates_since(cm_info $cm, $from, $filter = array()) {
         $updates->grades->itemids = array_keys($grades);
     }
 
+    // Now, teachers should see other students updates.
+    if (has_capability('mod/assign:viewgrades', $cm->context)) {
+        $params = array('id' => $cm->instance, 'since1' => $from, 'since2' => $from);
+        $select = 'assignment = :id AND (timecreated > :since1 OR timemodified > :since2)';
+
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+            $groupusers = array_keys(groups_get_activity_shared_group_members($cm));
+            if (empty($groupusers)) {
+                return $updates;
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($groupusers, SQL_PARAMS_NAMED);
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
+
+        $updates->usersubmissions = (object) array('updated' => false);
+        $submissions = $DB->get_records_select('assign_submission', $select, $params, '', 'id');
+        if (!empty($submissions)) {
+            $updates->usersubmissions->updated = true;
+            $updates->usersubmissions->itemids = array_keys($submissions);
+        }
+
+        $updates->usergrades = (object) array('updated' => false);
+        $grades = $DB->get_records_select('assign_grades', $select, $params, '', 'id');
+        if (!empty($grades)) {
+            $updates->usergrades->updated = true;
+            $updates->usergrades->itemids = array_keys($grades);
+        }
+    }
+
     return $updates;
 }

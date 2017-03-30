@@ -4202,6 +4202,10 @@ function data_check_updates_since(cm_info $cm, $from, $filter = array()) {
     $searcharray[DATA_TIMEMODIFIED]->data    = $from;
 
     $currentgroup = groups_get_activity_group($cm);
+    // Teachers should retrieve all entries when not in separate groups.
+    if (has_capability('mod/data:manageentries', $cm->context) && groups_get_activity_groupmode($cm) != SEPARATEGROUPS) {
+        $currentgroup = 0;
+    }
     list($entries, $maxcount, $totalcount, $page, $nowperpage, $sort, $mode) =
         data_search_entries($data, $cm, $cm->context, 'list', $currentgroup, '', null, null, 0, 0, true, $searcharray);
 
