@@ -350,7 +350,7 @@ $tasks = array(
     array(
         'classname' => 'core\oauth2\refresh_system_tokens_task',
         'blocking' => 0,
-        'minute' => 'R',
+        'minute' => '30',
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
