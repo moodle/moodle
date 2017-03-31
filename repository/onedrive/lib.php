@@ -537,7 +537,7 @@ class repository_onedrive extends repository {
                                    $storedfile->get_filepath(),
                                    $storedfile->get_filename());
 
-        if (empty($options['offline']) && $info->is_writable()) {
+        if (empty($options['offline']) && !empty($info) && $info->is_writable()) {
             // Add the current user as an OAuth writer.
             $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
 
