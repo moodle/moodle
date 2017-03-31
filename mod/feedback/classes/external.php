@@ -992,10 +992,12 @@ class mod_feedback_external extends external_api {
      * @since Moodle 3.3
      */
     public static function get_non_respondents($feedbackid, $groupid = 0, $sort = 'lastaccess', $page = 0, $perpage = 0) {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
         $params = array('feedbackid' => $feedbackid, 'groupid' => $groupid, 'sort' => $sort, 'page' => $page, 'perpage' => $perpage);
         $params = self::validate_parameters(self::get_non_respondents_parameters(), $params);
-        $warnings = $itemsdata = array();
+        $warnings = $nonrespondents = array();
 
         list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
 
@@ -1024,20 +1026,28 @@ class mod_feedback_external extends external_api {
         if ($params['sort'] !== 'firstname' && $params['sort'] !== 'lastname' && $params['sort'] !== 'lastaccess') {
             throw new invalid_parameter_exception('Invalid sort param, must be firstname, lastname or lastaccess.');
         }
-        $params['sort'] = 'u.' . $params['sort'];
 
         // Check if we are page filtering.
-        if ($params['page'] == 0 && $params['perpage'] == 0) {
-            $perpage = false;
-            $page = false;
+        if ($params['perpage'] == 0) {
+            $page = $params['page'];
+            $perpage = FEEDBACK_DEFAULT_PAGE_COUNT;
         } else {
             $perpage = $params['perpage'];
             $page = $perpage * $params['page'];
         }
-        $users = feedback_get_incomplete_users($cm, $groupid, $params['sort'], $page, $perpage);
+        $users = feedback_get_incomplete_users($cm, $groupid, $params['sort'], $page, $perpage, true);
+        foreach ($users as $user) {
+            $nonrespondents[] = [
+                'courseid' => $course->id,
+                'userid'   => $user->id,
+                'fullname' => fullname($user),
+                'started'  => $user->feedbackstarted
+            ];
+        }
 
         $result = array(
-            'users' => $users,
+            'users' => $nonrespondents,
+            'total' => feedback_count_incomplete_users($cm, $groupid),
             'warnings' => $warnings
         );
         return $result;
@@ -1052,10 +1062,18 @@ class mod_feedback_external extends external_api {
     public static function get_non_respondents_returns() {
         return new external_single_structure(
             array(
-            'users' => new external_multiple_structure(
-                new external_value(PARAM_INT, 'The user id')
-            ),
-            'warnings' => new external_warnings(),
+                'users' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'Course id'),
+                            'userid' => new external_value(PARAM_INT, 'The user id'),
+                            'fullname' => new external_value(PARAM_TEXT, 'User full name'),
+                            'started' => new external_value(PARAM_BOOL, 'If the user has started the attempt'),
+                        )
+                    )
+                ),
+                'total' => new external_value(PARAM_INT, 'Total number of non respondents'),
+                'warnings' => new external_warnings(),
             )
         );
     }
