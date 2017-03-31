@@ -365,12 +365,12 @@ class auth extends \auth_plugin_base {
         $userinfo = $client->get_userinfo();
 
         if (!$userinfo) {
-            $errormsg = get_string('notloggedin', 'auth_oauth2');
+            $errormsg = get_string('loginerror_nouserinfo', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
         }
         if (empty($userinfo['username']) || empty($userinfo['email'])) {
-            $errormsg = get_string('notloggedin', 'auth_oauth2');
+            $errormsg = get_string('loginerror_userincomplete', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
         }
@@ -414,7 +414,7 @@ class auth extends \auth_plugin_base {
         }
         $issuer = $client->get_issuer();
         if (!$issuer->is_valid_login_domain($userinfo['email'])) {
-            $errormsg = get_string('notloggedin', 'auth_oauth2');
+            $errormsg = get_string('notloggedindebug', 'auth_oauth2', get_string('loginerror_invaliddomain', 'auth_oauth2'));
             $SESSION->loginerrormsg = $errormsg;
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
         }
@@ -448,7 +448,8 @@ class auth extends \auth_plugin_base {
 
                 if (email_is_not_allowed($userinfo['email'])) {
                     // The username exists but the emails don't match. Refuse to continue.
-                    $errormsg = get_string('emailnotallowed', 'auth_oauth2');
+                    $reason = get_string('loginerror_invaliddomain', 'auth_oauth2');
+                    $errormsg = get_string('notloggedindebug', 'auth_oauth2', $reason);
                     $SESSION->loginerrormsg = $errormsg;
                     redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
                 }
@@ -477,7 +478,7 @@ class auth extends \auth_plugin_base {
             $this->update_picture($user);
             redirect($redirecturl);
         }
-        $errormsg = get_string('notloggedin', 'auth_oauth2');
+        $errormsg = get_string('notloggedindebug', 'auth_oauth2', get_string('loginerror_authenticationfailed', 'auth_oauth2'));
         $SESSION->loginerrormsg = $errormsg;
         redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
     }

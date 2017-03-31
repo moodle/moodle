@@ -269,6 +269,10 @@ class client extends \oauth2_client {
             }
         }
 
+        if (empty($user->username) && !empty($user->email)) {
+            $user->username = $user->email;
+        }
+
         if (!empty($user->picture)) {
             $user->picture = download_file_content($user->picture, null, null, false, 10, 10, true, null, false);
         } else {
