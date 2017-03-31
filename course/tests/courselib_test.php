@@ -678,6 +678,29 @@ class core_course_courselib_testcase extends advanced_testcase {
         }
     }
 
+    public function test_update_course_section_time_modified() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create the course with sections.
+        $course = $this->getDataGenerator()->create_course(array('numsections' => 10), array('createsections' => true));
+        $sections = $DB->get_records('course_sections', array('course' => $course->id));
+
+        // Get the last section's time modified value.
+        $section = array_pop($sections);
+        $oldtimemodified = $section->timemodified;
+
+        // Update the section.
+        sleep(1); // Ensuring that the section update occurs at a different timestamp.
+        course_update_section($course, $section, array());
+
+        // Check that the time has changed.
+        $section = $DB->get_record('course_sections', array('id' => $section->id));
+        $newtimemodified = $section->timemodified;
+        $this->assertGreaterThan($oldtimemodified, $newtimemodified);
+    }
+
     public function test_course_add_cm_to_section() {
         global $DB;
         $this->resetAfterTest(true);

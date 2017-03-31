@@ -267,7 +267,7 @@ class backup_module_structure_step extends backup_structure_step {
             'added', 'score', 'indent', 'visible', 'visibleoncoursepage',
             'visibleold', 'groupmode', 'groupingid',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
-            'availability', 'showdescription'));
+            'availability', 'showdescription', 'timemodified'));
 
         $tags = new backup_nested_element('tags');
         $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
@@ -291,7 +291,8 @@ class backup_module_structure_step extends backup_structure_step {
         // Set the sources
         $concat = $DB->sql_concat("'mod_'", 'm.name');
         $module->set_source_sql("
-            SELECT cm.*, cp.value AS version, m.name AS modulename, s.id AS sectionid, s.section AS sectionnumber
+            SELECT cm.*, cp.value AS version, m.name AS modulename, s.id AS sectionid, s.section AS sectionnumber,
+            s.timemodified AS timemodified
               FROM {course_modules} cm
               JOIN {modules} m ON m.id = cm.module
               JOIN {config_plugins} cp ON cp.plugin = $concat AND cp.name = 'version'
@@ -325,7 +326,7 @@ class backup_section_structure_step extends backup_structure_step {
 
         $section = new backup_nested_element('section', array('id'), array(
                 'number', 'name', 'summary', 'summaryformat', 'sequence', 'visible',
-                'availabilityjson'));
+                'availabilityjson', 'timemodified'));
 
         // attach format plugin structure to $section element, only one allowed
         $this->add_plugin_structure('format', $section, false);

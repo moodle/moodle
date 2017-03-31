@@ -795,7 +795,8 @@ class restore_rebuild_course_cache extends restore_execution_step {
             if (!$DB->record_exists('course_sections', array('course' => $this->get_courseid(), 'section' => $i))) {
                 $sectionrec = array(
                     'course' => $this->get_courseid(),
-                    'section' => $i);
+                    'section' => $i,
+                    'timemodified' => 0);
                 $DB->insert_record('course_sections', $sectionrec); // missing section created
             }
         }
@@ -1592,6 +1593,8 @@ class restore_section_structure_step extends restore_structure_step {
                             $data, true);
                 }
             }
+
+            $section->timemodified = !isset($data->timemodified) ? 0 : $this->apply_date_offset($data->timemodified);
             $newitemid = $DB->insert_record('course_sections', $section);
             $section->id = $newitemid;
 
@@ -1611,6 +1614,7 @@ class restore_section_structure_step extends restore_structure_step {
                 $restorefiles = true;
             }
 
+            $section->timemodified = !isset($data->timemodified) ? 0 : $this->apply_date_offset($data->timemodified);
             // Don't update availability (I didn't see a useful way to define
             // whether existing or new one should take precedence).
 
@@ -4014,6 +4018,8 @@ class restore_module_structure_step extends restore_structure_step {
         $oldid = $data->id;
         $this->task->set_old_moduleversion($data->version);
 
+        $timemodified = !isset($data->timemodified) ? 0 : $this->apply_date_offset($data->timemodified);
+
         $data->course = $this->task->get_courseid();
         $data->module = $DB->get_field('modules', 'id', array('name' => $data->modulename));
         // Map section (first try by course_section mapping match. Useful in course and section restores)
@@ -4032,11 +4038,13 @@ class restore_module_structure_step extends restore_structure_step {
         if (!$data->section) { // no sections in course, create section 0 and 1 and assign module to 1
             $sectionrec = array(
                 'course' => $this->get_courseid(),
-                'section' => 0);
+                'section' => 0,
+                'timemodified' => $timemodified);
             $DB->insert_record('course_sections', $sectionrec); // section 0
             $sectionrec = array(
                 'course' => $this->get_courseid(),
-                'section' => 1);
+                'section' => 1,
+                'timemodified' => $timemodified);
             $data->section = $DB->insert_record('course_sections', $sectionrec); // section 1
         }
         $data->groupingid= $this->get_mappingid('grouping', $data->groupingid);      // grouping

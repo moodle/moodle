@@ -863,6 +863,7 @@ function course_create_section($courseorid, $position = 0, $skipcheck = false) {
     $cw->name = null;
     $cw->visible = 1;
     $cw->availability = null;
+    $cw->timemodified = time();
     $cw->id = $DB->insert_record("course_sections", $cw);
 
     // Now move it to the specified position.
@@ -1611,6 +1612,7 @@ function course_update_section($course, $section, $data) {
 
     // Update record in the DB and course format options.
     $data['id'] = $section->id;
+    $data['timemodified'] = time();
     $DB->update_record('course_sections', $data);
     rebuild_course_cache($courseid, true);
     course_get_format($courseid)->update_section_format_options($data);
