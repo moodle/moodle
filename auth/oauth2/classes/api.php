@@ -76,7 +76,15 @@ class api {
             'issuerid' => $issuer->get('id'),
             'username' => $username
         ];
-        return linked_login::get_record($params);
+        $result = linked_login::get_record($params);
+
+        if ($result) {
+            $user = \core_user::get_user($result->get('userid'));
+            if (!empty($user) && !$user->deleted) {
+                return $result;
+            }
+        }
+        return false;
     }
 
     /**
