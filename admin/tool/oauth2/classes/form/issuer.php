@@ -50,9 +50,15 @@ class issuer extends persistent {
         global $PAGE, $OUTPUT;
 
         $mform = $this->_form;
-        $endpoint = $this->get_persistent();
+        $issuer = $this->get_persistent();
 
-        $mform->addElement('html', $OUTPUT->page_doc_link(get_string('issuersetup', 'tool_oauth2')));
+        $docslink = optional_param('docslink', '', PARAM_ALPHAEXT);
+        if ($docslink) {
+            $name = s($issuer->get('name'));
+            $mform->addElement('html', $OUTPUT->doc_link($docslink, get_string('issuersetuptype', 'tool_oauth2', $name)));
+        } else {
+            $mform->addElement('html', $OUTPUT->page_doc_link(get_string('issuersetup', 'tool_oauth2')));
+        }
 
         // Name.
         $mform->addElement('text', 'name', get_string('issuername', 'tool_oauth2'));
@@ -119,10 +125,10 @@ class issuer extends persistent {
         $mform->addElement('hidden', 'action', 'edit');
         $mform->setType('action', PARAM_ALPHA);
 
-        $mform->addElement('hidden', 'enabled', $endpoint->get('enabled'));
+        $mform->addElement('hidden', 'enabled', $issuer->get('enabled'));
         $mform->setType('enabled', PARAM_BOOL);
 
-        $mform->addElement('hidden', 'id', $endpoint->get('id'));
+        $mform->addElement('hidden', 'id', $issuer->get('id'));
         $mform->setType('id', PARAM_INT);
 
         $this->add_action_buttons(true, get_string('savechanges', 'tool_oauth2'));

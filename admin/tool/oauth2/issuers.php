@@ -89,9 +89,10 @@ if ($mform && $mform->is_cancelled()) {
 } else if ($action == 'edittemplate') {
 
     $type = required_param('type', PARAM_ALPHA);
+    $docs = required_param('docslink', PARAM_ALPHAEXT);
     require_sesskey();
     $issuer = core\oauth2\api::create_standard_issuer($type);
-    $params = ['action' => 'edit', 'id' => $issuer->get('id')];
+    $params = ['action' => 'edit', 'id' => $issuer->get('id'), 'docslink' => $docs];
     $editurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     redirect($editurl, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
 } else if ($action == 'enable') {
@@ -156,13 +157,17 @@ if ($mform && $mform->is_cancelled()) {
     $issuers = core\oauth2\api::get_all_issuers();
     echo $renderer->issuers_table($issuers);
 
-    $params = ['action' => 'edittemplate', 'type' => 'google', 'sesskey' => sesskey()];
+    $docs = 'admin/tool/oauth2/issuers/google';
+    $params = ['action' => 'edittemplate', 'type' => 'google', 'sesskey' => sesskey(), 'docslink' => $docs];
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('createnewgoogleissuer', 'tool_oauth2'));
-    $params = ['action' => 'edittemplate', 'type' => 'microsoft', 'sesskey' => sesskey()];
+    $docs = 'admin/tool/oauth2/issuers/microsoft';
+    $params = ['action' => 'edittemplate', 'type' => 'microsoft', 'sesskey' => sesskey(), 'docslink' => $docs];
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('createnewmicrosoftissuer', 'tool_oauth2'));
-    $params = ['action' => 'edittemplate', 'type' => 'facebook', 'sesskey' => sesskey()];
+    $docs = 'admin/tool/oauth2/issuers/facebook';
+    $params = ['action' => 'edittemplate', 'type' => 'microsoft', 'sesskey' => sesskey(), 'docslink' => $docs];
+    $params = ['action' => 'edittemplate', 'type' => 'facebook', 'sesskey' => sesskey(), 'docslink' => $docs];
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('createnewfacebookissuer', 'tool_oauth2'));
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edit']);
