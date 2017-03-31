@@ -321,6 +321,9 @@ class manager {
             foreach ($updated as $cmid) {
                 $completion->reset_all_state($modinfo->get_cm($cmid));
             }
+
+            // And notify the user of the result.
+            \core\notification::add(get_string('activitycompletionupdated', 'core_completion'), \core\notification::SUCCESS);
         }
     }
 
@@ -368,8 +371,6 @@ class manager {
 
         \core\event\course_module_updated::create_from_cm($cm, $cm->context)->trigger();
 
-        \core\notification::add(get_string('completionupdated', 'completion', $cm->get_formatted_name()),
-            \core\notification::SUCCESS);
         return true;
     }
 
@@ -421,10 +422,9 @@ class manager {
                 'context' => $coursecontext,
                 'other' => ['modulename' => $modules[$modid]],
             ])->trigger();
-            // Add notification.
-            \core\notification::add(get_string('defaultcompletionupdated', 'completion',
-                get_string("modulenameplural", $modules[$modid])), \core\notification::SUCCESS);
         }
+        // Add notification.
+        \core\notification::add(get_string('defaultcompletionupdated', 'completion'), \core\notification::SUCCESS);
     }
 
     /**
