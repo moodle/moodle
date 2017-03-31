@@ -14496,6 +14496,9 @@ body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebrea
 .path-mod-forum .forumheaderlist .discussion .lastpost {
   vertical-align: top;
 }
+.path-mod-forum .forumheaderlist .discussion .unread img {
+  margin: 0;
+}
 .forumpost {
   min-height: 20px;
   padding: 19px;
