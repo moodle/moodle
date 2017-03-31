@@ -2247,7 +2247,7 @@ class calendar_event {
     protected function get_description() {
         global $CFG;
 
-        require_once($CFG->libdir . '/filelib.php');
+        
 
         if ($this->_description === null) {
             // Check if we have already resolved the context for this event
@@ -3235,8 +3235,7 @@ function calendar_delete_subscription($subscription) {
 function calendar_get_icalendar($url) {
     global $CFG;
 
-    require_once($CFG->libdir.'/filelib.php');
-
+    
     $curl = new curl();
     $curl->setopt(array('CURLOPT_FOLLOWLOCATION' => 1, 'CURLOPT_MAXREDIRS' => 5));
     $calendar = $curl->get($url);
@@ -3413,7 +3412,7 @@ function calendar_cron() {
     global $CFG, $DB;
 
     // In order to execute this we need bennu.
-    require_once($CFG->libdir.'/bennu/bennu.inc.php');
+    
 
     mtrace('Updating calendar subscriptions:');
     cron_trace_time_and_memory();
