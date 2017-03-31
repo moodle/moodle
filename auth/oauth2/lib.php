@@ -48,3 +48,12 @@ function auth_oauth2_extend_navigation_user_settings(navigation_node $useraccoun
     }
 }
 
+/**
+ * Callback to remove linked logins for deleted users.
+ *
+ * @param stdClass $user
+ */
+function auth_oauth2_pre_user_delete($user) {
+    global $DB;
+    $DB->delete_records(auth_oauth2\linked_login::TABLE, ['userid' => $user->id]);
+}
