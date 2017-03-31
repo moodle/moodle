@@ -164,6 +164,7 @@ $string['markingyourselfcomplete'] = 'Marking yourself complete';
 $string['modifybulkactions'] = 'Modify the actions you wish to bulk edit';
 $string['moredetails'] = 'More details';
 $string['nocriteriaset'] = 'No completion criteria set for this course';
+$string['nogradeitem'] = 'Require grade can not be enabled for <b>{$a}</b> because grades are not available there';
 $string['notcompleted'] = 'Not completed';
 $string['notenroled'] = 'You are not enrolled in this course';
 $string['nottracked'] = 'You are currently not being tracked by completion in this course';

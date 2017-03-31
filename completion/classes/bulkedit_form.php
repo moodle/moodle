@@ -123,4 +123,38 @@ class core_completion_bulkedit_form extends core_completion_edit_base_form {
             $this->set_data($data);
         }
     }
+
+    /**
+     * Form validation
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
+    public function validation($data, $files) {
+        global $CFG;
+        $errors = parent::validation($data, $files);
+
+        // Completion: Don't let them choose automatic completion without turning
+        // on some conditions.
+        if (array_key_exists('completion', $data) &&
+                $data['completion'] == COMPLETION_TRACKING_AUTOMATIC && !empty($data['completionusegrade'])) {
+            require_once($CFG->libdir.'/gradelib.php');
+            $moduleswithoutgradeitem = [];
+            foreach ($this->cms as $cm) {
+                $item = grade_item::fetch(array('courseid' => $cm->course, 'itemtype' => 'mod',
+                    'itemmodule' => $cm->modname, 'iteminstance' => $cm->instance,
+                    'itemnumber' => 0));
+                if (!$item) {
+                    $moduleswithoutgradeitem[] = $cm->get_formatted_name();
+                }
+            }
+            if ($moduleswithoutgradeitem) {
+                $errors['completionusegrade'] = get_string('nogradeitem', 'completion', join(', ', $moduleswithoutgradeitem));
+            }
+        }
+
+        return $errors;
+    }
 }
