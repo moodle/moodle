@@ -282,6 +282,18 @@ class client extends \oauth2_client {
             }
         }
 
+        if (!empty($user->picture)) {
+            // If it doesn't look like a picture lets unset it.
+            if (function_exists('imagecreatefromstring')) {
+                $img = @imagecreatefromstring($user->picture);
+                if (empty($img)) {
+                    unset($user->picture);
+                } else {
+                    imagedestroy($img);
+                }
+            }
+        }
+
         return (array)$user;
     }
 }
