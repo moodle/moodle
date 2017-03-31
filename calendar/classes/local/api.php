@@ -31,6 +31,8 @@ use core_calendar\local\event\exceptions\limit_invalid_parameter_exception;
 /**
  * Class containing the local calendar API.
  *
+ * This should not be used outside of core_calendar.
+ *
  * @package    core_calendar
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -100,6 +102,54 @@ class api {
             $withduration,
             $ignorehidden
         );
+    }
+
+    /**
+     * Get legacy calendar events
+     *
+     * @param int $tstart Start time of time range for events
+     * @param int $tend End time of time range for events
+     * @param array|int|boolean $users array of users, user id or boolean for all/no user events
+     * @param array|int|boolean $groups array of groups, group id or boolean for all/no group events
+     * @param array|int|boolean $courses array of courses, course id or boolean for all/no course events
+     * @param boolean $withduration whether only events starting within time range selected
+     *                              or events in progress/already started selected as well
+     * @param boolean $ignorehidden whether to select only visible events or all events
+     * @return array $events of selected events or an empty array if there aren't any (or there was an error)
+     */
+    public static function get_legacy_events($tstart, $tend, $users, $groups, $courses, $withduration = true, $ignorehidden = true) {
+        $fixedparams = array_map(function($param) {
+            if ($param === true) {
+                return null;
+            }
+
+            if (!is_array($param)) {
+                return [$param];
+            }
+
+            return $param;
+        }, [$users, $groups, $courses]);
+
+        $mapper = \core_calendar\local\event\core_container::get_event_mapper();
+        $events = self::get_events(
+            $tstart,
+            $tend,
+            null,
+            null,
+            null,
+            null,
+            40,
+            null,
+            $fixedparams[0],
+            $fixedparams[1],
+            $fixedparams[2],
+            $withduration,
+            $ignorehidden
+        );
+
+        return array_reduce($events, function($carry, $event) use ($mapper) {
+            return $carry + [$event->get_id() => $mapper->from_event_to_stdclass($event)];
+        }, []);
     }
 
     /**
