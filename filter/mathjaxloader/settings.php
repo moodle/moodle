@@ -33,14 +33,14 @@ if ($ADMIN->fulltree) {
     $item = new admin_setting_configtext('filter_mathjaxloader/httpurl',
                                          new lang_string('httpurl', 'filter_mathjaxloader'),
                                          new lang_string('httpurl_help', 'filter_mathjaxloader'),
-                                         'http://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js',
+                                         'http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js',
                                          PARAM_RAW);
     $settings->add($item);
 
     $item = new admin_setting_configtext('filter_mathjaxloader/httpsurl',
                                          new lang_string('httpsurl', 'filter_mathjaxloader'),
                                          new lang_string('httpsurl_help', 'filter_mathjaxloader'),
-                                         'https://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js',
+                                         'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js',
                                          PARAM_RAW);
     $settings->add($item);
 
@@ -51,6 +51,7 @@ if ($ADMIN->fulltree) {
     $settings->add($item);
 
     $default = '
+MathJax.Ajax.config.path["Contrib"] = "{wwwroot}/filter/mathjaxloader/contrib";
 MathJax.Hub.Config({
     config: ["Accessible.js", "Safe.js"],
     errorSettings: { message: ["!"] },
