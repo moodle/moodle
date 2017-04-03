@@ -42,6 +42,7 @@ $string['maxfilessubmission'] = 'Maximum number of uploaded files';
 $string['maxfilessubmission_help'] = 'If file submissions are enabled, each student will be able to upload up to this number of files for their submission.';
 $string['maximumsubmissionsize'] = 'Maximum submission size';
 $string['maximumsubmissionsize_help'] = 'Files uploaded by students may be up to this size.';
+$string['nonexistentfiletypes'] = 'The following file types were not recognised: {$a}';
 $string['numfilesforlog'] = 'The number of file(s) : {$a} file(s).';
 $string['pluginname'] = 'File submissions';
 $string['siteuploadlimit'] = 'Site upload limit';
