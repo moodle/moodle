@@ -25,11 +25,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Function to upgrade auth_mnet.
  * @param int $oldversion the version we are upgrading from
  * @return bool result
  */
 function xmldb_auth_mnet_upgrade($oldversion) {
-    global $CFG;
+    global $CFG, $DB;
 
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
@@ -45,6 +46,11 @@ function xmldb_auth_mnet_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
+    if ($oldversion < 2017020700) {
+        // Convert info in config plugins from auth/mnet to auth_mnet.
+        $DB->set_field('config_plugins', 'plugin', 'auth_mnet', array('plugin' => 'auth/mnet'));
+        upgrade_plugin_savepoint(true, 2017020700, 'auth', 'mnet');
+    }
 
     return true;
 }

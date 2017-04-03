@@ -54,7 +54,7 @@ class sync_users extends \core\task\scheduled_task {
         }
 
         $dbauth = get_auth_plugin('db');
-        $config = get_config('auth/db');
+        $config = get_config('auth_db');
         $trace = new \text_progress_trace();
         $update = !empty($config->updateusers);
         $dbauth->sync_users($trace, $update);
