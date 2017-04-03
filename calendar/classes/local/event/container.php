@@ -32,8 +32,9 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_calendar\action_factory;
 use core_calendar\local\event\data_access\event_vault;
+use core_calendar\local\event\entities\action_event;
+use core_calendar\local\event\entities\action_event_interface;
 use core_calendar\local\event\entities\event_interface;
-use core_calendar\local\event\factories\action_event_factory;
 use core_calendar\local\event\factories\event_factory;
 use core_calendar\local\event\mappers\event_mapper;
 use core_calendar\local\event\strategies\raw_event_retrieval_strategy;
@@ -49,11 +50,6 @@ class container {
      * @var event_factory $eventfactory Event factory.
      */
     protected static $eventfactory;
-
-    /**
-     * @var action_event_factory $actioneventfactory Action event factory.
-     */
-    protected static $actioneventfactory;
 
     /**
      * @var \core_calendar\local\event\mappers\event_mapper_interface $eventmapper Event mapper.
@@ -101,7 +97,6 @@ class container {
 
             self::initcallbacks();
             self::$actionfactory = new action_factory();
-            self::$actioneventfactory = new action_event_factory();
             self::$eventmapper = new event_mapper(
                 new event_factory(
                     function(event_interface $event) {
@@ -198,7 +193,8 @@ class container {
         self::$callbacks = array(
             'testing' => array(
                 'action' => function (event_interface $event) {
-                    return self::$actioneventfactory->create_instance($event,
+                    return new action_event(
+                        $event,
                         new \core_calendar\local\event\value_objects\action(
                             'test',
                             new \moodle_url('http://example.com'),
@@ -222,7 +218,7 @@ class container {
                         ]
                     );
 
-                    return $action ? self::$actioneventfactory->create_instance($event, $action) : $event;
+                    return $action ? new action_event($event, $action) : $event;
                 },
                 'visibility' => function (event_interface $event) {
                     $mapper = self::$eventmapper;
