@@ -110,7 +110,7 @@ class info_module extends info {
     }
 
     protected function get_view_hidden_capability() {
-        return 'moodle/course:viewhiddenactivities';
+        return 'moodle/course:ignoreavailabilityrestrictions';
     }
 
     public function get_user_list_sql($onlyactive = true) {
