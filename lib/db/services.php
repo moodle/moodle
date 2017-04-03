@@ -1912,7 +1912,17 @@ $functions = array(
         'description' => 'Return some site info / user info / list web service functions',
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    )
+    ),
+
+    // Blocks functions.
+    'core_block_get_course_blocks' => array(
+        'classname'     => 'core_block_external',
+        'methodname'    => 'get_course_blocks',
+        'description'   => 'Returns blocks information for a course.',
+        'type'          => 'read',
+        'capabilities'  => '',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );
 
 $services = array(
