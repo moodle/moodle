@@ -142,6 +142,14 @@ MathJax.Hub.Config({
         $newcdnurl = filter_mathjaxloader_upgrade_cdn_cloudflare($httpsurl, false);
         set_config('httpsurl', $newcdnurl, 'filter_mathjaxloader');
 
+        $mathjaxconfig = get_config('filter_mathjaxloader', 'mathjaxconfig');
+        if (strpos($mathjaxconfig, 'MathJax.Ajax.config.path') === false) {
+            $newconfig = 'MathJax.Ajax.config.path["Contrib"] = "{wwwroot}/filter/mathjaxloader/contrib";' . "\n";
+            $newconfig .= $mathjaxconfig;
+
+            set_config('mathjaxconfig', $newconfig, 'filter_mathjaxloader');
+        }
+
         upgrade_plugin_savepoint(true, 2016052301, 'filter', 'mathjaxloader');
     }
 

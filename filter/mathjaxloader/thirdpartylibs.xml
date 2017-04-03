@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>contrib/a11y</location>
+    <name>MathJax-a11y</name>
+    <license>Apache</license>
+    <version>1.1.0</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+</libraries>
