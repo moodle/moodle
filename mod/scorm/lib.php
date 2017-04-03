@@ -1525,6 +1525,29 @@ function scorm_check_updates_since(cm_info $cm, $from, $filter = array()) {
         $updates->tracks->updated = true;
         $updates->tracks->itemids = array_keys($tracks);
     }
+
+    // Now, teachers should see other students updates.
+    if (has_capability('mod/scorm:viewreport', $cm->context)) {
+        $select = 'scormid = ? AND timemodified > ?';
+        $params = array($scorm->id, $from);
+
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+            $groupusers = array_keys(groups_get_activity_shared_group_members($cm));
+            if (empty($groupusers)) {
+                return $updates;
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($groupusers);
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
+
+        $updates->usertracks = (object) array('updated' => false);
+        $tracks = $DB->get_records_select('scorm_scoes_track', $select, $params, '', 'id');
+        if (!empty($tracks)) {
+            $updates->usertracks->updated = true;
+            $updates->usertracks->itemids = array_keys($tracks);
+        }
+    }
     return $updates;
 }
 

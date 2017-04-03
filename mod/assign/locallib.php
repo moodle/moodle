@@ -5562,10 +5562,8 @@ class assign {
     public function get_shared_group_members($cm, $userid) {
         if (!isset($this->sharedgroupmembers[$userid])) {
             $this->sharedgroupmembers[$userid] = array();
-            $groupsids = array_keys(groups_get_activity_allowed_groups($cm, $userid));
-            foreach ($groupsids as $groupid) {
-                $members = array_keys(groups_get_members($groupid, 'u.id'));
-                $this->sharedgroupmembers[$userid] = array_merge($this->sharedgroupmembers[$userid], $members);
+            if ($members = groups_get_activity_shared_group_members($cm, $userid)) {
+                $this->sharedgroupmembers[$userid] = array_keys($members);
             }
         }
 

@@ -1072,5 +1072,28 @@ function survey_check_updates_since(cm_info $cm, $from, $filter = array()) {
         $updates->answers->updated = true;
         $updates->answers->itemids = array_keys($answers);
     }
+
+    // Now, teachers should see other students updates.
+    if (has_capability('mod/survey:readresponses', $cm->context)) {
+        $select = 'survey = ? AND time > ?';
+        $params = array($cm->instance, $from);
+
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+            $groupusers = array_keys(groups_get_activity_shared_group_members($cm));
+            if (empty($groupusers)) {
+                return $updates;
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($groupusers);
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
+
+        $updates->useranswers = (object) array('updated' => false);
+        $answers = $DB->get_records_select('survey_answers', $select, $params, '', 'id');
+        if (!empty($answers)) {
+            $updates->useranswers->updated = true;
+            $updates->useranswers->itemids = array_keys($answers);
+        }
+    }
     return $updates;
 }

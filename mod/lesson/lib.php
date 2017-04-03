@@ -1508,7 +1508,7 @@ function lesson_check_updates_since(cm_info $cm, $from, $filter = array()) {
     $updates->pages = (object) array('updated' => false);
     $updates->answers = (object) array('updated' => false);
     $select = 'lessonid = ? AND (timecreated > ? OR timemodified > ?)';
-    $params = array($cm->instance, $USER->id, $from);
+    $params = array($cm->instance, $from, $from);
 
     $pages = $DB->get_records_select('lesson_pages', $select, $params, '', 'id');
     if (!empty($pages)) {
@@ -1556,5 +1556,54 @@ function lesson_check_updates_since(cm_info $cm, $from, $filter = array()) {
         $updates->timers->itemids = array_keys($timers);
     }
 
+    // Now, teachers should see other students updates.
+    if (has_capability('mod/lesson:viewreports', $cm->context)) {
+        $select = 'lessonid = ? AND timeseen > ?';
+        $params = array($cm->instance, $from);
+
+        $insql = '';
+        $inparams = [];
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+            $groupusers = array_keys(groups_get_activity_shared_group_members($cm));
+            if (empty($groupusers)) {
+                return $updates;
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($groupusers);
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
+
+        $updates->userquestionattempts = (object) array('updated' => false);
+        $updates->usergrades = (object) array('updated' => false);
+        $updates->userpagesviewed = (object) array('updated' => false);
+        $updates->usertimers = (object) array('updated' => false);
+
+        $questionattempts = $DB->get_records_select('lesson_attempts', $select, $params, '', 'id');
+        if (!empty($questionattempts)) {
+            $updates->userquestionattempts->updated = true;
+            $updates->userquestionattempts->itemids = array_keys($questionattempts);
+        }
+        $pagesviewed = $DB->get_records_select('lesson_branch', $select, $params, '', 'id');
+        if (!empty($pagesviewed)) {
+            $updates->userpagesviewed->updated = true;
+            $updates->userpagesviewed->itemids = array_keys($pagesviewed);
+        }
+
+        $select = 'lessonid = ? AND completed > ? ' . $insql;
+        $grades = $DB->get_records_select('lesson_grades', $select, $params, '', 'id');
+        if (!empty($grades)) {
+            $updates->usergrades->updated = true;
+            $updates->usergrades->itemids = array_keys($grades);
+        }
+
+        $select = 'lessonid = ? AND (starttime > ? OR lessontime > ? OR timemodifiedoffline > ?) ' . $insql;
+        $params = array($cm->instance, $from, $from, $from);
+        $params = array_merge($params, $inparams);
+        $timers = $DB->get_records_select('lesson_timer', $select, $params, '', 'id');
+        if (!empty($timers)) {
+            $updates->usertimers->updated = true;
+            $updates->usertimers->itemids = array_keys($timers);
+        }
+    }
     return $updates;
 }

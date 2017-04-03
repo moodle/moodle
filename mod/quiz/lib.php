@@ -2048,6 +2048,35 @@ function quiz_check_updates_since(cm_info $cm, $from, $filter = array()) {
         $updates->grades->itemids = array_keys($grades);
     }
 
+    // Now, teachers should see other students updates.
+    if (has_capability('mod/quiz:viewreports', $cm->context)) {
+        $select = 'quiz = ? AND timemodified > ?';
+        $params = array($cm->instance, $from);
+
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+            $groupusers = array_keys(groups_get_activity_shared_group_members($cm));
+            if (empty($groupusers)) {
+                return $updates;
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($groupusers);
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
+
+        $updates->userattempts = (object) array('updated' => false);
+        $attempts = $DB->get_records_select('quiz_attempts', $select, $params, '', 'id');
+        if (!empty($attempts)) {
+            $updates->userattempts->updated = true;
+            $updates->userattempts->itemids = array_keys($attempts);
+        }
+
+        $updates->usergrades = (object) array('updated' => false);
+        $grades = $DB->get_records_select('quiz_grades', $select, $params, '', 'id');
+        if (!empty($grades)) {
+            $updates->usergrades->updated = true;
+            $updates->usergrades->itemids = array_keys($grades);
+        }
+    }
     return $updates;
 }
 

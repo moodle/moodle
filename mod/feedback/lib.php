@@ -3357,5 +3357,35 @@ function feedback_check_updates_since(cm_info $cm, $from, $filter = array()) {
         $updates->attemptsunfinished->itemids = array_keys($attemptsunfinished);
     }
 
+    // Now, teachers should see other students updates.
+    if (has_capability('mod/feedback:viewreports', $cm->context)) {
+        $select = 'feedback = ? AND timemodified > ?';
+        $params = array($cm->instance, $from);
+
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+            $groupusers = array_keys(groups_get_activity_shared_group_members($cm));
+            if (empty($groupusers)) {
+                return $updates;
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($groupusers);
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
+
+        $updates->userattemptsfinished = (object) array('updated' => false);
+        $attemptsfinished = $DB->get_records_select('feedback_completed', $select, $params, '', 'id');
+        if (!empty($attemptsfinished)) {
+            $updates->userattemptsfinished->updated = true;
+            $updates->userattemptsfinished->itemids = array_keys($attemptsfinished);
+        }
+
+        $updates->userattemptsunfinished = (object) array('updated' => false);
+        $attemptsunfinished = $DB->get_records_select('feedback_completedtmp', $select, $params, '', 'id');
+        if (!empty($attemptsunfinished)) {
+            $updates->userattemptsunfinished->updated = true;
+            $updates->userattemptsunfinished->itemids = array_keys($attemptsunfinished);
+        }
+    }
+
     return $updates;
 }
