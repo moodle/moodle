@@ -4434,6 +4434,10 @@ function forum_add_new_post($post, $mform, $unused = null) {
         forum_tp_mark_post_read($post->userid, $post);
     }
 
+    if (isset($post->tags)) {
+        core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $post->id, $context, $post->tags);
+    }
+
     // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
     forum_trigger_content_uploaded_event($post, $cm, 'forum_add_new_post');
 
@@ -4494,6 +4498,10 @@ function forum_update_post($newpost, $mform, $unused = null) {
     $DB->update_record('forum_discussions', $discussion);
 
     forum_add_attachment($post, $forum, $cm, $mform);
+
+    if (isset($newpost->tags)) {
+        core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $post->id, $context, $newpost->tags);
+    }
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($USER->id, $post);
@@ -4571,6 +4579,10 @@ function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=nu
 
     if (!empty($cm->id)) {
         forum_add_attachment($post, $forum, $cm, $mform, $unused);
+    }
+
+    if (isset($discussion->tags)) {
+        core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $post->id, context_module::instance($cm->id), $discussion->tags);
     }
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
@@ -5308,12 +5320,16 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
     }
 
     if ($forum->type == 'qanda') {
+        if (has_capability('mod/forum:viewqandawithoutposting', $modcontext, $user->id) || $post->userid == $user->id
+                || (isset($discussion->firstpost) && $discussion->firstpost == $post->id)) {
+            return true;
+        }
         $firstpost = forum_get_firstpost_from_discussion($discussion->id);
+        if ($firstpost->userid == $user->id) {
+            return true;
+        }
         $userfirstpost = forum_get_user_posted_time($discussion->id, $user->id);
-
-        return (($userfirstpost !== false && (time() - $userfirstpost >= $CFG->maxeditingtime)) ||
-                $firstpost->id == $post->id || $post->userid == $user->id || $firstpost->userid == $user->id ||
-                has_capability('mod/forum:viewqandawithoutposting', $modcontext, $user->id));
+        return (($userfirstpost !== false && (time() - $userfirstpost >= $CFG->maxeditingtime)));
     }
     return true;
 }

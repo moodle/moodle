@@ -589,7 +589,8 @@ function mod_forum_get_tagged_posts($tag, $exclusivemode = false, $fromctx = 0, 
 
     // Build the SQL query.
     $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
-    $query = "SELECT fp.id, fp.subject, fd.forum, fp.discussion, f.type, fd.timestart, fd.timeend, fd.groupid, fp.parent, fp.userid,
+    $query = "SELECT fp.id, fp.subject, fd.forum, fp.discussion, f.type, fd.timestart, fd.timeend, fd.groupid, fd.firstpost,
+                    fp.parent, fp.userid,
                     cm.id AS cmid, c.id AS courseid, c.shortname, c.fullname, $ctxselect
                 FROM {forum_posts} fp
                 JOIN {forum_discussions} fd ON fp.discussion = fd.id
@@ -636,8 +637,9 @@ function mod_forum_get_tagged_posts($tag, $exclusivemode = false, $fromctx = 0, 
         }
         $modinfo = get_fast_modinfo($builder->get_course($courseid));
         // Set accessibility of this item and all other items in the same course.
-        $builder->walk(function ($taggeditem) use ($courseid, $modinfo, $builder) {
-            if ($taggeditem->courseid == $courseid) {
+        $builder->walk(function ($taggeditem) use ($courseid, $modinfo, $builder, $item) {
+            // Checking permission for Q&A forums performs additional DB queries, do not do them in bulk.
+            if ($taggeditem->courseid == $courseid && ($taggeditem->type != 'qanda' || $taggeditem->id == $item->id)) {
                 $cm = $modinfo->get_cm($taggeditem->cmid);
                 $forum = (object)['id'     => $taggeditem->forum,
                                   'course' => $taggeditem->courseid,
@@ -646,7 +648,8 @@ function mod_forum_get_tagged_posts($tag, $exclusivemode = false, $fromctx = 0, 
                 $discussion = (object)['id'        => $taggeditem->discussion,
                                        'timestart' => $taggeditem->timestart,
                                        'timeend'   => $taggeditem->timeend,
-                                       'groupid'   => $taggeditem->groupid
+                                       'groupid'   => $taggeditem->groupid,
+                                       'firstpost' => $taggeditem->firstpost
                 ];
                 $post = (object)['id' => $taggeditem->id,
                                        'parent' => $taggeditem->parent,

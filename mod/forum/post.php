@@ -757,8 +757,6 @@ if ($mform_post->is_cancelled()) {
             $discussionurl = new moodle_url("/mod/forum/discuss.php", array('d' => $discussion->id), 'p' . $fromform->id);
         }
 
-        core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $fromform->id, $modcontext, $fromform->tags);
-
         $params = array(
             'context' => $modcontext,
             'objectid' => $fromform->id,
@@ -809,10 +807,6 @@ if ($mform_post->is_cancelled()) {
                 $discussionurl = new moodle_url("/mod/forum/view.php", array('f' => $forum->id), 'p'.$fromform->id);
             } else {
                 $discussionurl = new moodle_url("/mod/forum/discuss.php", array('d' => $discussion->id), 'p'.$fromform->id);
-            }
-
-            if (core_tag_tag::is_enabled('mod_forum', 'forum_posts') && isset($data->tags)) {
-                core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $fromform->id, $modcontext, $fromform->tags);
             }
 
             $params = array(
@@ -941,8 +935,6 @@ if ($mform_post->is_cancelled()) {
                 ($forum->completiondiscussions || $forum->completionposts)) {
             $completion->update_state($cm, COMPLETION_COMPLETE);
         }
-
-        core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $fromform->firstpost, $modcontext, $fromform->tags);
 
         // Redirect back to the discussion.
         redirect(
