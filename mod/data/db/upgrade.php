@@ -97,6 +97,9 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2016090600, 'data');
     }
 
+    // Automatically generated Moodle v3.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
     if ($oldversion < 2017032800) {
 
         // Define field completionentries to be added to data. Require a number of entries to be considered complete.
@@ -111,9 +114,6 @@ function xmldb_data_upgrade($oldversion) {
         // Data savepoint reached.
         upgrade_mod_savepoint(true, 2017032800, 'data');
     }
-
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
 
     return true;
 }

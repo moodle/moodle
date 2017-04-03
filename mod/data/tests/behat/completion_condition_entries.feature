@@ -1,6 +1,6 @@
 @mod @mod_data
 Feature: Set entries required as a completion condition for a data item
-  In order to ensure students make a minimum number of entries 
+  In order to ensure students make a minimum number of entries
   As a teacher
   I need to set entries required to mark the database activity as completed
 
