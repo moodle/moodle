@@ -1184,4 +1184,42 @@ class mod_data_lib_testcase extends advanced_testcase {
 
         return calendar_event::create($event);
     }
+
+    /**
+     * Test the callback responsible for returning the completion rule descriptions.
+     * This function should work given either an instance of the module (cm_info), such as when checking the active rules,
+     * or if passed a stdClass of similar structure, such as when checking the the default completion settings for a mod type.
+     */
+    public function test_mod_data_completion_get_active_rule_descriptions() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Two activities, both with automatic completion. One has the 'completionentries' rule, one doesn't.
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 2]);
+        $data1 = $this->getDataGenerator()->create_module('data', [
+            'course' => $course->id,
+            'completion' => 2,
+            'completionentries' => 3
+        ]);
+        $data2 = $this->getDataGenerator()->create_module('data', [
+            'course' => $course->id,
+            'completion' => 2,
+            'completionentries' => 0
+        ]);
+        $cm1 = cm_info::create(get_coursemodule_from_instance('data', $data1->id));
+        $cm2 = cm_info::create(get_coursemodule_from_instance('data', $data2->id));
+
+        // Data for the stdClass input type.
+        // This type of input would occur when checking the default completion rules for an activity type, where we don't have
+        // any access to cm_info, rather the input is a stdClass containing completion and customdata attributes, just like cm_info.
+        $moddefaults = new stdClass();
+        $moddefaults->customdata = ['customcompletionrules' => ['completionentries' => 3]];
+        $moddefaults->completion = 2;
+
+        $activeruledescriptions = [get_string('completionentriesdesc', 'data', 3)];
+        $this->assertEquals(mod_data_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
+        $this->assertEquals(mod_data_get_completion_active_rule_descriptions($cm2), []);
+        $this->assertEquals(mod_data_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
+        $this->assertEquals(mod_data_get_completion_active_rule_descriptions(new stdClass()), []);
+    }
 }
