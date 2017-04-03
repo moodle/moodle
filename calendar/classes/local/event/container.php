@@ -52,7 +52,7 @@ class container {
     protected static $eventfactory;
 
     /**
-     * @var \core_calendar\local\event\mappers\event_mapper_interface $eventmapper Event mapper.
+     * @var event_mapper $eventmapper Event mapper.
      */
     protected static $eventmapper;
 
@@ -91,6 +91,11 @@ class container {
      */
     private static function init() {
         if (empty(self::$eventfactory)) {
+            // When testing the container's components, we need to make sure
+            // the callback implementations in modules are not executed, since
+            // we cannot control their output from PHPUnit. To do this we have
+            // a set of 'testing' callbacks that the factory can use. This way
+            // we know exactly how the factory behaves when being tested.
             $getcallback = function($which) {
                 return self::$callbacks[PHPUNIT_TEST ? 'testing' : 'production'][$which];
             };
@@ -98,13 +103,23 @@ class container {
             self::initcallbacks();
             self::$actionfactory = new action_factory();
             self::$eventmapper = new event_mapper(
+                // The event mapper we return from here needs to know how to
+                // make events, so it needs an event factory. However we can't
+                // give it the same one as we store and return in the container
+                // as that one uses all our plumbing to control event visibility.
+                //
+                // So we make a new even factory that doesn't do anyting other than
+                // return the instance.
                 new event_factory(
+                    // Never apply actions, simply return.
                     function(event_interface $event) {
                         return $event;
                     },
+                    // Never hide an event.
                     function() {
                         return true;
                     },
+                    // Never bail out early when instantiating an event.
                     function() {
                         return false;
                     },
@@ -117,18 +132,21 @@ class container {
                 $getcallback('action'),
                 $getcallback('visibility'),
                 function ($dbrow) {
+                    // At present we only handle callbacks in course modules.
                     if (empty($dbrow->modulename)) {
                         return false;
                     }
 
                     $instances = get_fast_modinfo($dbrow->courseid)->instances;
 
+                    // If modinfo doesn't know about the module, we should ignore it.
                     if (!isset($instances[$dbrow->modulename]) || !isset($instances[$dbrow->modulename][$dbrow->instance])) {
                         return true;
                     }
 
                     $cm = $instances[$dbrow->modulename][$dbrow->instance];
 
+                    // If the module is not visible to the current user, we should ignore it.
                     if (!$cm->uservisible) {
                         return true;
                     }
@@ -188,10 +206,15 @@ class container {
 
     /**
      * Initialises the callbacks.
+     *
+     * There are two sets here, one is used during PHPUnit runs.
+     * See the comment at the start of the init method for more
+     * detail.
      */
     private static function initcallbacks() {
         self::$callbacks = array(
             'testing' => array(
+                // Always return an action event.
                 'action' => function (event_interface $event) {
                     return new action_event(
                         $event,
@@ -202,12 +225,17 @@ class container {
                             true
                         ));
                 },
+                // Always be visible.
                 'visibility' => function (event_interface $event) {
                     return true;
                 }
             ),
             'production' => array(
+                // This function has type event_interface -> event_interface.
+                // This is enforced by the event_factory.
                 'action' => function (event_interface $event) {
+                    // Callbacks will get supplied a "legacy" version
+                    // of the event class.
                     $mapper = self::$eventmapper;
                     $action = component_callback(
                         'mod_' . $event->get_course_module()->get('modname'),
@@ -218,8 +246,15 @@ class container {
                         ]
                     );
 
+                    // If we get an action back, return an action event, otherwise
+                    // continue piping through the original event.
+                    //
+                    // If a module does not implement the callback, component_callback
+                    // returns null.
                     return $action ? new action_event($event, $action) : $event;
                 },
+                // This function has type event_interface -> bool.
+                // This is enforced by the event_factory.
                 'visibility' => function (event_interface $event) {
                     $mapper = self::$eventmapper;
                     $eventvisible = component_callback(
