@@ -3493,6 +3493,7 @@
         <FIELD NAME="loginscopesoffline" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The scopes requested for a login attempt to generate a refresh token."/>
         <FIELD NAME="loginparams" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Additional parameters sent for a login attempt."/>
         <FIELD NAME="loginparamsoffline" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Additional parameters sent for a login attempt to generate a refresh token."/>
+        <FIELD NAME="alloweddomains" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Allowed domains for this issuer."/>
         <FIELD NAME="scopessupported" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The list of scopes this service supports."/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="showonloginpage" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
