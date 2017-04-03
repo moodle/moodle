@@ -58,6 +58,30 @@ class core_user {
      */
     const MAILDISPLAY_COURSE_MEMBERS_ONLY = 2;
 
+    /**
+     * List of fields that can be synched/locked during authentication.
+     */
+    const AUTHSYNCFIELDS = [
+        'firstname',
+        'lastname',
+        'email',
+        'city',
+        'country',
+        'lang',
+        'description',
+        'url',
+        'idnumber',
+        'institution',
+        'department',
+        'phone1',
+        'phone2',
+        'address',
+        'firstnamephonetic',
+        'lastnamephonetic',
+        'middlename',
+        'alternatename'
+    ];
+
     /** @var stdClass keep record of noreply user */
     public static $noreplyuser = false;
 
@@ -100,6 +124,29 @@ class core_user {
         }
     }
 
+    /**
+     * Return user object from db based on their email.
+     *
+     * @param string $email The email of the user searched.
+     * @param string $fields A comma separated list of user fields to be returned, support and noreply user.
+     * @param int $mnethostid The id of the remote host.
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if user not found, debug message if more found;
+     *                        IGNORE_MULTIPLE means return first user, ignore multiple user records found(not recommended);
+     *                        MUST_EXIST means throw an exception if no user record or multiple records found.
+     * @return stdClass|bool user record if found, else false.
+     * @throws dml_exception if user record not found and respective $strictness is set.
+     */
+    public static function get_user_by_email($email, $fields = '*', $mnethostid = null, $strictness = IGNORE_MISSING) {
+        global $DB, $CFG;
+
+        // Because we use the username as the search criteria, we must also restrict our search based on mnet host.
+        if (empty($mnethostid)) {
+            // If empty, we restrict to local users.
+            $mnethostid = $CFG->mnet_localhost_id;
+        }
+
+        return $DB->get_record('user', array('email' => $email, 'mnethostid' => $mnethostid), $fields, $strictness);
+    }
 
     /**
      * Return user object from db based on their username.
@@ -864,4 +911,5 @@ class core_user {
             return $value;
         }
     }
+
 }

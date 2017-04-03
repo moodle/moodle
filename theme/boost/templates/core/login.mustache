@@ -178,7 +178,12 @@
                 <div class="potentialidplist" class="m-t-1">
                     {{#identityproviders}}
                         <div class="potentialidp">
-                            <a href="{{url}}" title={{#quote}}{{name}}{{/quote}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{name}}</a>
+                            <a href="{{url}}" title={{#quote}}{{name}}{{/quote}} class="btn btn-secondary btn-block">
+                                {{#iconurl}}
+                                    <img src="{{iconurl}}" alt="" width="24" height="24"/>
+                                {{/iconurl}}
+                                {{name}}
+                            </a>
                         </div>
                     {{/identityproviders}}
                 </div>

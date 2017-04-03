@@ -601,7 +601,7 @@ class core_files_renderer extends plugin_renderer_base {
                         </a>
                     </div>
                     <div class="fp-tb-manage">
-                        <a title="'. get_string('settings', 'repository') .'" href="#">
+                        <a title="'. get_string('manageurl', 'repository') .'" href="#">
                             ' . $this->pix_icon('a/setting', '') . '
                         </a>
                     </div>
@@ -768,6 +768,12 @@ class core_files_renderer extends plugin_renderer_base {
                 </div>
                 <div class="fp-linktype-4 control-group control-radio clearfix">
                     <label class="control-label control-radio">'.get_string('makefilereference', 'repository').'</label>
+                    <div class="controls control-radio">
+                        <input type="radio"/>
+                    </div>
+                </div>
+                <div class="fp-linktype-8 control-group control-radio clearfix">
+                    <label class="control-label control-radio">'.get_string('makefilecontrolledlink', 'repository').'</label>
                     <div class="controls control-radio">
                         <input type="radio"/>
                     </div>

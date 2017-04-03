@@ -155,6 +155,7 @@ $string['submissionmodifiedgroup'] = 'The submission has been modified by somebo
 $string['duedatereached'] = 'The due date for this assignment has now passed';
 $string['duedatevalidation'] = 'Due date must be after the allow submissions from date.';
 $string['editattemptfeedback'] = 'Edit the grade and feedback for attempt number {$a}.';
+$string['editonline'] = 'Edit online';
 $string['editingpreviousfeedbackwarning'] = 'You are editing the feedback for a previous attempt. This is attempt {$a->attemptnumber} out of {$a->totalattempts}.';
 $string['editoverride'] = 'Edit override';
 $string['editsubmission'] = 'Edit submission';

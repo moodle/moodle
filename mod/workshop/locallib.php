@@ -2512,7 +2512,7 @@ class workshop {
             'subdirs' => true,
             'maxfiles' => $this->nattachments,
             'maxbytes' => $this->maxbytes,
-            'return_types' => FILE_INTERNAL,
+            'return_types' => FILE_INTERNAL | FILE_CONTROLLED_LINK,
         );
 
         if ($acceptedtypes = self::normalize_file_extensions($this->submissionfiletypes)) {
@@ -2554,7 +2554,7 @@ class workshop {
             'subdirs' => 1,
             'maxbytes' => $this->overallfeedbackmaxbytes,
             'maxfiles' => $this->overallfeedbackfiles,
-            'return_types' => FILE_INTERNAL,
+            'return_types' => FILE_INTERNAL | FILE_CONTROLLED_LINK,
         );
 
         if ($acceptedtypes = self::normalize_file_extensions($this->overallfeedbackfiletypes)) {

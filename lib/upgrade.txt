@@ -1,6 +1,12 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 === 3.3 ===
+* The information returned by the idp list has changed. This is usually only rendered by the login page and login block.
+  The icon attribute is removed and an iconurl attribute has been added.
+* Support added for a new type of external file: FILE_CONTROLLED_LINK. This is an external file that Moodle can control
+  the permissions. Moodle makes files read-only but can grant temporary write access.
+    When accessing a URL, the info from file_browser::get_file_info will be checked to determine if the user has write access,
+    if they do - the remote file will have access controls set to allow editing.
 * The method moodleform::after_definition() has been added and can now be used to add some logic
   to be performed after the form's definition was set. This is useful for intermediate subclasses.
 * Moodle has support for font-awesome icons. Plugins should use the xxx_get_fontawesome_icon_map callback

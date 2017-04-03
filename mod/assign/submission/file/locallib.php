@@ -125,11 +125,11 @@ class assign_submission_file extends assign_submission_plugin {
      * @return array
      */
     private function get_file_options() {
-        $fileoptions = array('subdirs'=>1,
-                                'maxbytes'=>$this->get_config('maxsubmissionsizebytes'),
-                                'maxfiles'=>$this->get_config('maxfilesubmissions'),
-                                'accepted_types'=>'*',
-                                'return_types'=>FILE_INTERNAL);
+        $fileoptions = array('subdirs' => 1,
+                                'maxbytes' => $this->get_config('maxsubmissionsizebytes'),
+                                'maxfiles' => $this->get_config('maxfilesubmissions'),
+                                'accepted_types' => '*',
+                                'return_types' => (FILE_INTERNAL | FILE_CONTROLLED_LINK));
         if ($fileoptions['maxbytes'] == 0) {
             // Use module default.
             $fileoptions['maxbytes'] = get_config('assignsubmission_file', 'maxbytes');
@@ -174,7 +174,6 @@ class assign_submission_file extends assign_submission_plugin {
      * @return int
      */
     private function count_files($submissionid, $area) {
-
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->assignment->get_context()->id,
                                      'assignsubmission_file',

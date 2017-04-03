@@ -85,7 +85,7 @@ class data_field_file extends data_field_base {
         $options->maxfiles  = 1; // Limit to one file for the moment, this may be changed if requested as a feature in the future.
         $options->itemid    = $itemid;
         $options->accepted_types = '*';
-        $options->return_types = FILE_INTERNAL;
+        $options->return_types = FILE_INTERNAL | FILE_CONTROLLED_LINK;
         $options->context = $PAGE->context;
 
         $fm = new form_filemanager($options);
