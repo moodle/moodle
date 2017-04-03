@@ -106,14 +106,16 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
 
         this.hide();
 
-        if (comment.pageno === editor.currentpage) {
-            comment.drawable.nodes[0].one('textarea').focus();
-        } else {
+        comment.pageno = comment.clean().pageno;
+        if (comment.pageno !== editor.currentpage) {
             // Comment is on a different page.
             editor.currentpage = comment.pageno;
             editor.change_page();
-            comment.drawable.nodes[0].one('textarea').focus();
         }
+
+        comment.node = comment.drawable.nodes[0].one('textarea');
+        comment.node.ancestor('div').removeClass('commentcollapsed');
+        comment.node.focus();
     },
 
     /**

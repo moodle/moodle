@@ -634,17 +634,15 @@ EOD;
         $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
         page_editor::release_drafts($grade->id);
 
+        $allcomments = array();
+
         for ($i = 0; $i < $pagecount; $i++) {
             $pdf->copy_page();
             $comments = page_editor::get_comments($grade->id, $i, false);
             $annotations = page_editor::get_annotations($grade->id, $i, false);
 
-            foreach ($comments as $comment) {
-                $pdf->add_comment($comment->rawtext,
-                                  $comment->x,
-                                  $comment->y,
-                                  $comment->width,
-                                  $comment->colour);
+            if (!empty($comments)) {
+                $allcomments[$i] = $comments;
             }
 
             foreach ($annotations as $annotation) {
@@ -656,6 +654,18 @@ EOD;
                                      $annotation->type,
                                      $annotation->path,
                                      $stamptmpdir);
+            }
+        }
+
+        if (!empty($allcomments)) {
+            // Append all comments to the end of the document.
+            $links = $pdf->append_comments($allcomments);
+            // Add the comment markers with links.
+            foreach ($allcomments as $pageno => $comments) {
+                foreach ($comments as $index => $comment) {
+                    $pdf->add_comment_marker($comment->pageno, $index, $comment->x, $comment->y, $links[$pageno][$index],
+                            $comment->colour);
+                }
             }
         }
 

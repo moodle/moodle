@@ -45,6 +45,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'navigate-page-select' => 'k',
             'navigate-next-button' => 'l',
             'searchcomments' => 'h',
+            'expcolcomments' => 'g',
             'comment' => 'z',
             'commentcolour' => 'x',
             'select' => 'c',
@@ -155,6 +156,8 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $navigation2 .= $this->render_toolbar_button('comment_search', 'searchcomments', $this->get_shortcut('searchcomments'));
         $navigation2 = html_writer::div($navigation2, 'navigation-search', array('role'=>'navigation'));
 
+        $navigation3 .= $this->render_toolbar_button('comment_expcol', 'expcolcomments', $this->get_shortcut('expcolcomments'));
+        $navigation3 = html_writer::div($navigation3, 'navigation-expcol', array('role' => 'navigation'));
 
         $toolbar1 = '';
         $toolbar2 = '';
@@ -191,6 +194,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         // Toobars written in reverse order because they are floated right.
         $pageheader = html_writer::div($navigation1 .
                                        $navigation2 .
+                                       $navigation3 .
                                        $toolbar4 .
                                        $toolbar3 .
                                        $toolbar2 .
