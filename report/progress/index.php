@@ -384,15 +384,15 @@ foreach($progress as $user) {
     foreach($activities as $activity) {
 
         // Get progress information and state
-        if (array_key_exists($activity->id,$user->progress)) {
-            $thisprogress=$user->progress[$activity->id];
-            $state=$thisprogress->completionstate;
+        if (array_key_exists($activity->id, $user->progress)) {
+            $thisprogress = $user->progress[$activity->id];
+            $state = $thisprogress->completionstate;
             $overrideby = $thisprogress->overrideby;
-            $date=userdate($thisprogress->timemodified);
+            $date = userdate($thisprogress->timemodified);
         } else {
-            $state=COMPLETION_INCOMPLETE;
+            $state = COMPLETION_INCOMPLETE;
             $overrideby = 0;
-            $date='';
+            $date = '';
         }
 
         // Work out how it corresponds to an icon
@@ -431,16 +431,14 @@ foreach($progress as $user) {
         if ($csv) {
             print $sep.csv_quote($describe).$sep.csv_quote($date);
         } else {
-            $celltext = '<img src="'.$OUTPUT->image_url('i/'.$completionicon).
-                '" alt="'.s($describe).'" title="'.s($fulldescribe).'" />';
+            $celltext = $OUTPUT->pix_icon('i/' . $completionicon, s($fulldescribe));
             if (has_capability('moodle/course:overridecompletion', $context) &&
                     $state != COMPLETION_COMPLETE_PASS && $state != COMPLETION_COMPLETE_FAIL) {
                 $newstate = ($state == COMPLETION_COMPLETE) ? COMPLETION_INCOMPLETE : COMPLETION_COMPLETE;
                 $changecompl = $user->id . '-' . $activity->id . '-' . $newstate;
                 $url = new moodle_url($PAGE->url, array('sesskey' => sesskey(),
                     'changecompl' => $changecompl));
-                $celltext = html_writer::link($url, $celltext, array('class' => 'changecompl',
-                    'data-changecompl' => $changecompl));
+                $celltext = html_writer::link($url, $celltext, array('class' => 'changecompl', 'data-changecompl' => $changecompl));
             }
             print '<td class="completion-progresscell '.$formattedactivities[$activity->id]->datepassedclass.'">'.
                 $celltext . '</td>';

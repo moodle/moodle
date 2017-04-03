@@ -201,8 +201,7 @@ class core_completion_external extends external_api {
         $a->activity = $cm->id;
         $fulldescribe = get_string('progress-title', 'completion', $a);
 
-        $img = '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).
-                '" alt="'.s($describe).'" title="'.s($fulldescribe).'" />';
+        $img = $OUTPUT->pix_icon('i/' . $completionicon, s($fulldescribe));
 
         // Set data values for next completion change.
         $otherstate = ($state == COMPLETION_COMPLETE) ? COMPLETION_INCOMPLETE : COMPLETION_COMPLETE;
