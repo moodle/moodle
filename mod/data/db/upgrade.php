@@ -104,7 +104,7 @@ function xmldb_data_upgrade($oldversion) {
 
         // Define field completionentries to be added to data. Require a number of entries to be considered complete.
         $table = new xmldb_table('data');
-        $field = new xmldb_field('completionentries', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'config');
+        $field = new xmldb_field('completionentries', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'config');
 
         // Conditionally launch add field timemodified.
         if (!$dbman->field_exists($table, $field)) {
