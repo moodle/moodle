@@ -120,14 +120,14 @@ class mod_data_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform = & $this->_form;
         $group = array();
-        $group[] = $mform->createElement('checkbox', 'completionentriesendabled', '',
+        $group[] = $mform->createElement('checkbox', 'completionentriesenabled', '',
                 get_string('completionentriescount', 'data'));
         $group[] = $mform->createElement('text', 'completionentries',
                 get_string('completionentriescount', 'data'), array('size' => '1'));
 
         $mform->addGroup($group, 'completionentriesgroup', get_string('completionentries', 'data'),
                 array(' '), false);
-        $mform->disabledIf('completionentries', 'completionentriesendabled', 'notchecked');
+        $mform->disabledIf('completionentries', 'completionentriesenabled', 'notchecked');
         $mform->setDefault('completionentries', 1);
         $mform->setType('completionentries', PARAM_INT);
         /* This ensures the elements are disabled unless completion rules are enabled */
@@ -151,8 +151,11 @@ class mod_data_mod_form extends moodleform_mod {
        *
        */
     public function data_preprocessing(&$defaultvalues) {
-        $defaultvalues['completionentriesendabled'] = !empty($defaultvalues['completionentries']) ? 1 : 0;
         parent::data_preprocessing($defaultvalues);
+        $defaultvalues['completionentriesenabled'] = !empty($defaultvalues['completionentries']) ? 1 : 0;
+        if (empty($defaultvalues['completionentries'])) {
+            $defaultvalues['completionentries'] = 1;
+        }
     }
 
     /**
@@ -168,12 +171,11 @@ class mod_data_mod_form extends moodleform_mod {
 
         if (!empty($data->completionunlocked)) {
             $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
-            if (empty($data->completionentries) || !$autocompletion) {
-                 $data->completionentries = 0;
+            if (empty($data->completionentriesenabled) || !$autocompletion) {
+                $data->completionentries = 0;
             }
         }
 
-        $data->completionunlocked = true;
         return $data;
     }
 

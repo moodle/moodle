@@ -920,7 +920,7 @@ function data_add_record($data, $groupid=0){
     $event->trigger();
 
     $course = get_course($cm->course);
-    data_update_completion_state($course, $cm);
+    data_update_completion_state($data, $course, $cm);
 
     return $record->id;
 }
@@ -2890,6 +2890,7 @@ function data_supports($feature) {
         case FEATURE_GROUPINGS:               return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_COMPLETION_HAS_RULES:    return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
         case FEATURE_RATE:                    return true;
@@ -3948,7 +3949,7 @@ function data_delete_record($recordid, $data, $courseid, $cmid) {
                 $event->trigger();
                 $course = get_course($courseid);
                 $cm = get_coursemodule_from_instance('data', $data->id, 0, false, MUST_EXIST);
-                data_update_completion_state($course, $cm);
+                data_update_completion_state($data, $course, $cm);
 
                 return true;
             }
@@ -4138,24 +4139,20 @@ function data_set_config(&$database, $key, $value) {
  * Sets the automatic completion state for this database item based on the
  * count of on its entries.
  * @since Moodle 3.3
+ * @param object $data The data object for this activity
  * @param object $course Course
  * @param object $cm course-module
  */
-function data_update_completion_state($course, $cm) {
-    global $DB;
-    // Get data details.
-    $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
+function data_update_completion_state($data, $course, $cm) {
     // If completion option is enabled, evaluate it and return true/false.
     $completion = new completion_info($course);
     if ($data->completionentries && $completion->is_enabled($cm)) {
         $numentries = data_numentries($data);
         // Check the number of entries required against the number of entries already made.
-        if ($data->completionentries > 0 && $numentries >= $data->completionentries) {
+        if ($numentries >= $data->completionentries) {
             $completion->update_state($cm, COMPLETION_COMPLETE);
         } else {
-            if ($completion->is_enabled($cm)) {
-                $completion->update_state($cm, COMPLETION_INCOMPLETE);
-            }
+            $completion->update_state($cm, COMPLETION_INCOMPLETE);
         }
     }
 }
@@ -4182,7 +4179,7 @@ function data_get_completion_state($course, $cm, $userid, $type) {
         $data = $DB->get_record('data', array('id' => $cm->instance));
         $numentries = data_numentries($data);
         // Check the number of entries required against the number of entries already made.
-        if ($data->completionentries > 0 && $numentries >= $data->completionentries) {
+        if ($numentries >= $data->completionentries) {
             $result = true;
         } else {
             $result = false;

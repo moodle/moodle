@@ -28,7 +28,7 @@ Scenario:
       | Name | Test database name |
       | Description | Test database description |
       | Completion tracking | Show activity as complete when conditions are met |
-      | completionentriesendabled | checked |
+      | completionentriesenabled | checked |
       | completionentries        | 2 |
     And I follow "Course 1"
     And I add a "Text input" field to "Test database name" database and I fill the form with:
