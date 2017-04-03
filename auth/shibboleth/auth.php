@@ -40,7 +40,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
      */
     public function __construct() {
         $this->authtype = 'shibboleth';
-        $this->config = get_config('auth/shibboleth');
+        $this->config = get_config('auth_shibboleth');
     }
 
     /**
@@ -244,102 +244,6 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         }
     }
 
-
-
-    /**
-     * Prints a form for configuring this authentication plugin.
-     *
-     * This function is called from admin/auth.php, and outputs a full page with
-     * a form for configuring this plugin.
-     *
-     * @param array $page An object containing all the data for this page.
-     */
-    function config_form($config, $err, $user_fields) {
-        include "config.html";
-    }
-
-    /**
-     * Processes and stores configuration data for this authentication plugin.
-     *
-     *
-     * @param object $config Configuration object
-     */
-    function process_config($config) {
-        global $CFG;
-
-        // set to defaults if undefined
-        if (!isset($config->auth_instructions) or empty($config->user_attribute)) {
-            $config->auth_instructions = get_string('auth_shib_instructions', 'auth_shibboleth', $CFG->wwwroot.'/auth/shibboleth/index.php');
-        }
-        if (!isset ($config->user_attribute)) {
-            $config->user_attribute = '';
-        }
-        if (!isset ($config->convert_data)) {
-            $config->convert_data = '';
-        }
-
-        if (!isset($config->changepasswordurl)) {
-            $config->changepasswordurl = '';
-        }
-
-        if (!isset($config->login_name)) {
-            $config->login_name = 'Shibboleth Login';
-        }
-
-        // Clean idp list
-        if (isset($config->organization_selection) && !empty($config->organization_selection) && isset($config->alt_login) && $config->alt_login == 'on') {
-            $idp_list = get_idp_list($config->organization_selection);
-            if (count($idp_list) < 1){
-                return false;
-            }
-            $config->organization_selection = '';
-            foreach ($idp_list as $idp => $value){
-                $config->organization_selection .= $idp.', '.$value[0].', '.$value[1]."\n";
-            }
-        }
-
-
-        // save settings
-        set_config('user_attribute',    $config->user_attribute,    'auth/shibboleth');
-
-        if (isset($config->organization_selection) && !empty($config->organization_selection)) {
-            set_config('organization_selection',    $config->organization_selection,    'auth/shibboleth');
-        }
-        set_config('logout_handler',    $config->logout_handler,    'auth/shibboleth');
-        set_config('logout_return_url',    $config->logout_return_url,    'auth/shibboleth');
-        set_config('login_name',    $config->login_name,    'auth/shibboleth');
-        set_config('convert_data',      $config->convert_data,      'auth/shibboleth');
-        set_config('auth_instructions', $config->auth_instructions, 'auth/shibboleth');
-        set_config('changepasswordurl', $config->changepasswordurl, 'auth/shibboleth');
-
-        // Overwrite alternative login URL if integrated WAYF is used
-        if (isset($config->alt_login) && $config->alt_login == 'on'){
-            set_config('alt_login',    $config->alt_login,    'auth/shibboleth');
-            set_config('alternateloginurl', $CFG->wwwroot.'/auth/shibboleth/login.php');
-        } else {
-            // Check if integrated WAYF was enabled and is now turned off
-            // If it was and only then, reset the Moodle alternate URL
-            if (isset($this->config->alt_login) and $this->config->alt_login == 'on'){
-                set_config('alt_login',    'off',    'auth/shibboleth');
-                set_config('alternateloginurl', '');
-            }
-            $config->alt_login = 'off';
-        }
-
-        // Check values and return false if something is wrong
-        // Patch Anyware Technologies (14/05/07)
-        if (($config->convert_data != '')&&(!file_exists($config->convert_data) || !is_readable($config->convert_data))){
-            return false;
-        }
-
-        // Check if there is at least one entry in the IdP list
-        if (isset($config->organization_selection) && empty($config->organization_selection) && isset($config->alt_login) && $config->alt_login == 'on'){
-            return false;
-        }
-
-        return true;
-    }
-
     /**
      * Cleans and returns first of potential many values (multi-valued attributes)
      *
@@ -350,6 +254,28 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         $clean_string = rtrim($list[0]);
 
         return $clean_string;
+    }
+
+    /**
+     * Test if settings are correct, print info to output.
+     */
+    public function test_settings() {
+        global $OUTPUT;
+
+        if (!isset($this->config->user_attribute) || empty($this->config->user_attribute)) {
+            echo $OUTPUT->notification(get_string("shib_not_set_up_error", "auth_shibboleth"), 'notifyproblem');
+            return;
+        }
+        if ($this->config->convert_data and $this->config->convert_data != '' and !is_readable($this->config->convert_data)) {
+            echo $OUTPUT->notification(get_string("auth_shib_convert_data_warning", "auth_shibboleth"), 'notifyproblem');
+            return;
+        }
+        if (isset($this->config->organization_selection) && empty($this->config->organization_selection) &&
+                isset($this->config->alt_login) && $this->config->alt_login == 'on') {
+
+            echo $OUTPUT->notification(get_string("auth_shib_no_organizations_warning", "auth_shibboleth"), 'notifyproblem');
+            return;
+        }
     }
 }
 
@@ -378,7 +304,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
      *
      */
     function print_idp_list(){
-        $config = get_config('auth/shibboleth');
+        $config = get_config('auth_shibboleth');
 
         $IdPs = get_idp_list($config->organization_selection);
         if (isset($_COOKIE['_saml_idp'])){

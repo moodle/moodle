@@ -386,8 +386,10 @@ class auth_plugin_base {
      * @param object $config
      * @param object $err
      * @param array $user_fields
+     * @deprecated since Moodle 3.3
      */
     function config_form($config, $err, $user_fields) {
+        debugging('Use of config.html files have been deprecated, please update your code to use the admin settings API.');
         //override if needed
     }
 
@@ -396,8 +398,10 @@ class auth_plugin_base {
      * do stuff before it is inserted in config_plugin
      * @param object object with submitted configuration settings (without system magic quotes)
      * @param array $err array of error messages
+     * @deprecated since Moodle 3.3
      */
      function validate_form($form, &$err) {
+        debugging('Use of config.html files have been deprecated, please update your code to use the admin settings API.');
         //override if needed
     }
 
@@ -405,8 +409,10 @@ class auth_plugin_base {
      * Processes and stores configuration data for this authentication plugin.
      *
      * @param object object with submitted configuration settings (without system magic quotes)
+     * @deprecated since Moodle 3.3
      */
     function process_config($config) {
+        debugging('Use of config.html files have been deprecated, please update your code to use the admin settings API.');
         //override if needed
         return true;
     }
@@ -914,4 +920,86 @@ function signup_is_enabled() {
         }
     }
     return false;
+}
+
+/**
+ * Helper function used to print locking for auth plugins on admin pages.
+ * @param stdclass $settings Moodle admin settings instance
+ * @param string $auth authentication plugin shortname
+ * @param array $userfields user profile fields
+ * @param string $helptext help text to be displayed at top of form
+ * @param boolean $mapremotefields Map fields or lock only.
+ * @param boolean $updateremotefields Allow remote updates
+ * @param array $customfields list of custom profile fields
+ * @since Moodle 3.3
+ */
+function display_auth_lock_options($settings, $auth, $userfields, $helptext, $mapremotefields, $updateremotefields, $customfields = array()) {
+    global $DB;
+
+    // Introductory explanation and help text.
+    if ($mapremotefields) {
+        $settings->add(new admin_setting_heading($auth.'/data_mapping', new lang_string('auth_data_mapping', 'auth'), $helptext));
+    } else {
+        $settings->add(new admin_setting_heading($auth.'/auth_fieldlocks', new lang_string('auth_fieldlocks', 'auth'), $helptext));
+    }
+
+    // Generate the list of options.
+    $lockoptions = array ('unlocked'        => get_string('unlocked', 'auth'),
+                          'unlockedifempty' => get_string('unlockedifempty', 'auth'),
+                          'locked'          => get_string('locked', 'auth'));
+    $updatelocaloptions = array('oncreate'  => get_string('update_oncreate', 'auth'),
+                                'onlogin'   => get_string('update_onlogin', 'auth'));
+    $updateextoptions = array('0'  => get_string('update_never', 'auth'),
+                              '1'  => get_string('update_onupdate', 'auth'));
+
+    // Generate the list of profile fields to allow updates / lock.
+    if (!empty($customfields)) {
+        $userfields = array_merge($userfields, $customfields);
+        $customfieldname = $DB->get_records('user_info_field', null, '', 'shortname, name');
+    }
+
+    foreach ($userfields as $field) {
+
+        // Define the fieldname we display to the  user.
+        // this includes special handling for some profile fields.
+        $fieldname = $field;
+        if ($fieldname === 'lang') {
+            $fieldname = get_string('language');
+        } else if (!empty($customfields) && in_array($field, $customfields)) {
+            // If custom field then pick name from database.
+            $fieldshortname = str_replace('profile_field_', '', $fieldname);
+            $fieldname = $customfieldname[$fieldshortname]->name;
+        } else if ($fieldname == 'url') {
+            $fieldname = get_string('webpage');
+        } else {
+            $fieldname = get_string($fieldname);
+        }
+
+        // Generate the list of fields / mappings.
+        if ($mapremotefields) {
+            // We are mapping to a remote field here.
+            // Mapping.
+            $settings->add(new admin_setting_configtext("auth_{$auth}/field_map_{$field}",
+                    $fieldname, '', '', PARAM_ALPHANUMEXT, 30));
+
+            // Update local.
+            $settings->add(new admin_setting_configselect("auth_{$auth}/field_updatelocal_{$field}",
+                    get_string('auth_updatelocal', 'auth'), '', 'oncreate', $updatelocaloptions));
+
+            // Update remote.
+            if ($updateremotefields) {
+                    $settings->add(new admin_setting_configselect("auth_{$auth}/field_updateremote_{$field}",
+                        get_string('auth_updateremote', 'auth'), '', 0, $updateextoptions));
+            }
+
+            // Lock fields.
+            $settings->add(new admin_setting_configselect("auth_{$auth}/field_lock_{$field}",
+                    get_string('auth_fieldlock', 'auth'), '', 'unlocked', $lockoptions));
+
+        } else {
+            // Lock fields Only.
+            $settings->add(new admin_setting_configselect("auth_{$auth}/field_lock_{$field}",
+                    get_string('auth_fieldlock', 'auth'), '', 'unlocked', $lockoptions));
+        }
+    }
 }

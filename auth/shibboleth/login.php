@@ -33,7 +33,7 @@ $PAGE->https_required();
     }
 
     // Set SAML domain cookie
-    $config = get_config('auth/shibboleth');
+    $config = get_config('auth_shibboleth');
 
 
     $IdPs = get_idp_list($config->organization_selection);
