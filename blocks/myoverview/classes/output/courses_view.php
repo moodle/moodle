@@ -97,6 +97,7 @@ class courses_view implements renderable, templatable {
                 $coursesview['future']['pages'][$futurepages]['courses'][] = $exportedcourse;
                 $coursesview['future']['pages'][$futurepages]['active'] = ($futurepages == 0 ? true : false);
                 $coursesview['future']['pages'][$futurepages]['page'] = $futurepages + 1;
+                $coursesview['future']['haspages'] = true;
                 $coursesbystatus['future']++;
 
             } else if (!empty($enddate) && $enddate < $today) {
@@ -106,6 +107,7 @@ class courses_view implements renderable, templatable {
                 $coursesview['past']['pages'][$pastpages]['courses'][] = $exportedcourse;
                 $coursesview['past']['pages'][$pastpages]['active'] = ($pastpages == 0 ? true : false);
                 $coursesview['past']['pages'][$pastpages]['page'] = $pastpages + 1;
+                $coursesview['past']['haspages'] = true;
                 $coursesbystatus['past']++;
 
             } else {
@@ -115,6 +117,7 @@ class courses_view implements renderable, templatable {
                 $coursesview['inprogress']['pages'][$inprogresspages]['courses'][] = $exportedcourse;
                 $coursesview['inprogress']['pages'][$inprogresspages]['active'] = ($inprogresspages == 0 ? true : false);
                 $coursesview['inprogress']['pages'][$inprogresspages]['page'] = $inprogresspages + 1;
+                $coursesview['inprogress']['haspages'] = true;
                 $coursesbystatus['inprogress']++;
             }
         }

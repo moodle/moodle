@@ -24,6 +24,7 @@
 
 $string['future'] = 'Future';
 $string['inprogress'] = 'In progress';
+$string['morecourses'] = 'More courses';
 $string['myoverview:addinstance'] = 'Add a new my overview block';
 $string['myoverview:myaddinstance'] = 'Add a new my overview block to Dashboard';
 $string['nocourses'] = 'No courses';
