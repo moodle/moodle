@@ -31,6 +31,8 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_filter_mathjaxloader_upgrade($oldversion) {
     global $CFG, $DB;
 
+    require_once($CFG->dirroot . '/filter/mathjaxloader/db/upgradelib.php');
+
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2014081100) {
@@ -157,6 +159,14 @@ MathJax.Hub.Config({
     }
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
+    if ($oldversion < 2017040300) {
+
+        $httpsurl = get_config('filter_mathjaxloader', 'httpsurl');
+        $newcdnurl = filter_mathjaxloader_upgrade_cdn_cloudflare($httpsurl, false);
+
+        set_config('httpsurl', $newcdnurl, 'filter_mathjaxloader');
+        upgrade_plugin_savepoint(true, 2017040300, 'filter', 'mathjaxloader');
+    }
 
     return true;
 }
