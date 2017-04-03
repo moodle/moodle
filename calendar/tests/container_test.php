@@ -52,7 +52,7 @@ class core_calendar_container_testcase extends advanced_testcase {
      * Test getting the event factory.
      */
     public function test_get_event_factory() {
-        $factory = \core_calendar\local\event\core_container::get_event_factory();
+        $factory = \core_calendar\local\event\container::get_event_factory();
 
         // Test that the container is returning the right type.
         $this->assertInstanceOf(event_factory_interface::class, $factory);
@@ -60,7 +60,7 @@ class core_calendar_container_testcase extends advanced_testcase {
         $this->assertInstanceOf(event_factory::class, $factory);
 
         // Test that getting the factory a second time returns the same instance.
-        $factory2 = \core_calendar\local\event\core_container::get_event_factory();
+        $factory2 = \core_calendar\local\event\container::get_event_factory();
         $this->assertTrue($factory === $factory2);
     }
 
@@ -72,7 +72,7 @@ class core_calendar_container_testcase extends advanced_testcase {
      */
     public function test_event_factory_create_instance($dbrow) {
         $legacyevent = $this->create_event($dbrow);
-        $factory = \core_calendar\local\event\core_container::get_event_factory();
+        $factory = \core_calendar\local\event\container::get_event_factory();
         $course = $this->getDataGenerator()->create_course();
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $moduleinstance = $generator->create_instance(['course' => $course->id]);
@@ -132,7 +132,7 @@ class core_calendar_container_testcase extends advanced_testcase {
      */
     public function test_event_factory_when_module_visibility_is_toggled_as_admin($dbrow) {
         $legacyevent = $this->create_event($dbrow);
-        $factory = \core_calendar\local\event\core_container::get_event_factory();
+        $factory = \core_calendar\local\event\container::get_event_factory();
         $course = $this->getDataGenerator()->create_course();
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $moduleinstance = $generator->create_instance(['course' => $course->id]);
@@ -158,7 +158,7 @@ class core_calendar_container_testcase extends advanced_testcase {
      */
     public function test_event_factory_when_module_visibility_is_toggled_as_guest($dbrow) {
         $legacyevent = $this->create_event($dbrow);
-        $factory = \core_calendar\local\event\core_container::get_event_factory();
+        $factory = \core_calendar\local\event\container::get_event_factory();
         $course = $this->getDataGenerator()->create_course();
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $moduleinstance = $generator->create_instance(['course' => $course->id]);
@@ -217,7 +217,7 @@ class core_calendar_container_testcase extends advanced_testcase {
         $event->id = $legacyevent->id;
 
         // Create the factory we are going to be testing the behaviour of.
-        $factory = \core_calendar\local\event\core_container::get_event_factory();
+        $factory = \core_calendar\local\event\container::get_event_factory();
 
         // Check that we get the correct instance.
         $this->assertInstanceOf(event_interface::class, $factory->create_instance($event));
@@ -233,12 +233,12 @@ class core_calendar_container_testcase extends advanced_testcase {
      * Test getting the event mapper.
      */
     public function test_get_event_mapper() {
-        $mapper = \core_calendar\local\event\core_container::get_event_mapper();
+        $mapper = \core_calendar\local\event\container::get_event_mapper();
 
         $this->assertInstanceOf(event_mapper_interface::class, $mapper);
         $this->assertInstanceOf(event_mapper::class, $mapper);
 
-        $mapper2 = \core_calendar\local\event\core_container::get_event_mapper();
+        $mapper2 = \core_calendar\local\event\container::get_event_mapper();
 
         $this->assertTrue($mapper === $mapper2);
     }

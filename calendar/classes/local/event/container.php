@@ -44,7 +44,7 @@ use core_calendar\local\event\strategies\raw_event_retrieval_strategy;
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_container {
+class container {
     /**
      * @var event_factory $eventfactory Event factory.
      */

@@ -74,7 +74,7 @@ class api {
     ) {
         global $USER;
 
-        $vault = \core_calendar\local\event\core_container::get_event_vault();
+        $vault = \core_calendar\local\event\container::get_event_vault();
 
         $timestartafterevent = null;
         $timesortafterevent = null;
@@ -138,7 +138,7 @@ class api {
             return $param;
         }, [$users, $groups, $courses]);
 
-        $mapper = \core_calendar\local\event\core_container::get_event_mapper();
+        $mapper = \core_calendar\local\event\container::get_event_mapper();
         $events = self::get_events(
             $tstart,
             $tend,
@@ -187,7 +187,7 @@ class api {
             throw new \moodle_exception("Limit must be between 1 and 50 (inclusive)");
         }
 
-        $vault = \core_calendar\local\event\core_container::get_event_vault();
+        $vault = \core_calendar\local\event\container::get_event_vault();
 
         $afterevent = null;
         if ($aftereventid && $event = $vault->get_event_by_id($aftereventid)) {
@@ -223,7 +223,7 @@ class api {
                 "Limit must be between 1 and 50 (inclusive)");
         }
 
-        $vault = \core_calendar\local\event\core_container::get_event_vault();
+        $vault = \core_calendar\local\event\container::get_event_vault();
 
         $afterevent = null;
         if ($aftereventid && $event = $vault->get_event_by_id($aftereventid)) {

@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use core_calendar\local\event\entities\action_interface;
-use core_calendar\local\event\core_container;
+use core_calendar\local\event\container;
 use renderer_base;
 
 /**
@@ -93,7 +93,7 @@ class event_action_exporter extends exporter {
         $modulename = $event->get_course_module()->get('modname');
         $component = 'mod_' . $modulename;
         $showitemcountcallback = 'core_calendar_event_action_shows_item_count';
-        $mapper = core_container::get_event_mapper();
+        $mapper = container::get_event_mapper();
         $calevent = $mapper->from_event_to_legacy_event($event);
         $params = [$calevent, $this->data->itemcount];
         $showitemcount = component_callback($component, $showitemcountcallback, $params, false);
