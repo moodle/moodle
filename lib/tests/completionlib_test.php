@@ -243,8 +243,15 @@ class core_completionlib_testcase extends advanced_testcase {
             ->method('internal_set_data')
             ->with($cm, $comparewith);
         $c->update_state($cm, COMPLETION_COMPLETE, 100, true);
+        // And confirm that the status can be changed back to incomplete without an override.
+        $c->update_state($cm, COMPLETION_INCOMPLETE, 100);
+        $c->expects($this->at(0))
+            ->method('get_data')
+            ->with($cm, false, 100)
+            ->will($this->returnValue($current));
+        $c->get_data($cm, false, 100);
 
-        // Auto tracking, change state by overriding it manually.
+        // Auto, change state via override, incomplete to complete.
         $cm = (object)array('id' => 13, 'course' => 42, 'completion' => COMPLETION_TRACKING_AUTOMATIC);
         $current = (object)array('completionstate' => COMPLETION_INCOMPLETE, 'overrideby' => null);
         $c->expects($this->at(0))
@@ -265,8 +272,22 @@ class core_completionlib_testcase extends advanced_testcase {
             ->method('internal_set_data')
             ->with($cm, $comparewith);
         $c->update_state($cm, COMPLETION_COMPLETE, 100, true);
+        $c->expects($this->at(0))
+            ->method('get_data')
+            ->with($cm, false, 100)
+            ->will($this->returnValue($changed));
+        $c->get_data($cm, false, 100);
 
-        // Auto tracking, but current state is set by override, so do nothing.
+        // Now confirm that the status cannot be changed back to incomplete without an override.
+        // I.e. test that automatic completion won't trigger a change back to COMPLETION_INCOMPLETE when overridden.
+        $c->update_state($cm, COMPLETION_INCOMPLETE, 100);
+        $c->expects($this->at(0))
+            ->method('get_data')
+            ->with($cm, false, 100)
+            ->will($this->returnValue($changed));
+        $c->get_data($cm, false, 100);
+
+        // Now confirm the status can be changed back from complete to incomplete using an override.
         $cm = (object)array('id' => 13, 'course' => 42, 'completion' => COMPLETION_TRACKING_AUTOMATIC);
         $current = (object)array('completionstate' => COMPLETION_COMPLETE, 'overrideby' => 2);
         $c->expects($this->at(0))
@@ -275,10 +296,23 @@ class core_completionlib_testcase extends advanced_testcase {
             ->will($this->returnValue(true));
         $c->expects($this->at(1))
             ->method('get_data')
-            ->with($cm, false, 0)
+            ->with($cm, false, 100)
             ->will($this->returnValue($current));
-        $c->update_state($cm, COMPLETION_COMPLETE_PASS);
-
+        $changed = clone($current);
+        $changed->timemodified = time();
+        $changed->completionstate = COMPLETION_INCOMPLETE;
+        $changed->overrideby = 314159;
+        $comparewith = new phpunit_constraint_object_is_equal_with_exceptions($changed);
+        $comparewith->add_exception('timemodified', 'assertGreaterThanOrEqual');
+        $c->expects($this->at(2))
+            ->method('internal_set_data')
+            ->with($cm, $comparewith);
+        $c->update_state($cm, COMPLETION_INCOMPLETE, 100, true);
+        $c->expects($this->at(0))
+            ->method('get_data')
+            ->with($cm, false, 100)
+            ->will($this->returnValue($changed));
+        $c->get_data($cm, false, 100);
     }
 
     public function test_internal_get_state() {

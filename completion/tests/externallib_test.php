@@ -191,99 +191,58 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
      */
     public function test_override_activity_completion_status() {
         global $DB, $CFG;
-
         $this->resetAfterTest(true);
 
+        // Create course with teacher and student enrolled.
         $CFG->enablecompletion = true;
+        $course  = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
         $student = $this->getDataGenerator()->create_user();
         $teacher = $this->getDataGenerator()->create_user();
-
-        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
-
-        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id),
-                                                             array('completion' => 1));
-        $forum = $this->getDataGenerator()->create_module('forum',  array('course' => $course->id),
-                                                             array('completion' => 2));
-
-        $cmdata = get_coursemodule_from_id('data', $data->cmid);
-        $cmforum = get_coursemodule_from_id('forum', $forum->cmid);
-
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
-
         $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
 
-        $completion = new completion_info($course);
+        // Create 2 activities, one with manual completion (data), one with automatic completion triggered by viewiung it (forum).
+        $data    = $this->getDataGenerator()->create_module('data', ['course' => $course->id], ['completion' => 1]);
+        $forum   = $this->getDataGenerator()->create_module('forum',  ['course' => $course->id],
+                                                            ['completion' => 2, 'completionview' => 1]);
+        $cmdata = get_coursemodule_from_id('data', $data->cmid);
+        $cmforum = get_coursemodule_from_id('forum', $forum->cmid);
 
+        // Manually complete the data activity as the student.
         $this->setUser($student);
-
-        // Mark data activity complete by student.
+        $completion = new completion_info($course);
         $completion->update_state($cmdata, COMPLETION_COMPLETE);
-        $completiondata = $completion->get_data($cmdata);
 
+        // Test overriding the status of the manual-completion-activity 'incomplete'.
         $this->setUser($teacher);
-
-        // Override data completion state to incomplete.
         $result = core_completion_external::override_activity_completion_status($student->id, $data->cmid, COMPLETION_INCOMPLETE);
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(
-            core_completion_external::override_activity_completion_status_returns(), $result);
+        $result = external_api::clean_returnvalue(core_completion_external::override_activity_completion_status_returns(), $result);
         $this->assertTrue($result['status']);
-
-        // Check in DB.
-        $this->assertEquals(COMPLETION_INCOMPLETE, $DB->get_field('course_modules_completion', 'completionstate',
-                            array('coursemoduleid' => $data->cmid)));
-
-        // Check using the API.
         $completiondata = $completion->get_data($cmdata, false, $student->id);
         $this->assertEquals(COMPLETION_INCOMPLETE, $completiondata->completionstate);
 
-        // Override data completion state to complete.
+        // Test overriding the status of the manual-completion-activity back to 'complete'.
         $result = core_completion_external::override_activity_completion_status($student->id, $data->cmid, COMPLETION_COMPLETE);
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(
-            core_completion_external::override_activity_completion_status_returns(), $result);
+        $result = external_api::clean_returnvalue(core_completion_external::override_activity_completion_status_returns(), $result);
         $this->assertTrue($result['status']);
-
-        // Check in DB.
-        $this->assertEquals(COMPLETION_COMPLETE, $DB->get_field('course_modules_completion', 'completionstate',
-                            array('coursemoduleid' => $data->cmid)));
-
-        // Check using the API.
         $completiondata = $completion->get_data($cmdata, false, $student->id);
         $this->assertEquals(COMPLETION_COMPLETE, $completiondata->completionstate);
 
-        // Override forum completion state to complete.
+        // Test overriding the status of the auto-completion-activity to 'complete'.
         $result = core_completion_external::override_activity_completion_status($student->id, $forum->cmid, COMPLETION_COMPLETE);
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(
-            core_completion_external::override_activity_completion_status_returns(), $result);
+        $result = external_api::clean_returnvalue(core_completion_external::override_activity_completion_status_returns(), $result);
         $this->assertTrue($result['status']);
-
-        // Check in DB.
-        $this->assertEquals(COMPLETION_COMPLETE, $DB->get_field('course_modules_completion', 'completionstate',
-                            array('coursemoduleid' => $forum->cmid)));
-
-        // Check using the API.
         $completionforum = $completion->get_data($cmforum, false, $student->id);
         $this->assertEquals(COMPLETION_COMPLETE, $completionforum->completionstate);
 
-        // Override forum completion state to incomplete.
+        // Test overriding the status of the auto-completion-activity to 'incomplete'.
         $result = core_completion_external::override_activity_completion_status($student->id, $forum->cmid, COMPLETION_INCOMPLETE);
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(
-            core_completion_external::override_activity_completion_status_returns(), $result);
+        $result = external_api::clean_returnvalue(core_completion_external::override_activity_completion_status_returns(), $result);
         $this->assertTrue($result['status']);
-
-        // Check in DB.
-        $this->assertEquals(COMPLETION_INCOMPLETE, $DB->get_field('course_modules_completion', 'completionstate',
-                            array('coursemoduleid' => $forum->cmid)));
-
-        // Check using the API.
         $completionforum = $completion->get_data($cmforum, false, $student->id);
         $this->assertEquals(COMPLETION_INCOMPLETE, $completionforum->completionstate);
-
     }
 
     /**
