@@ -2651,7 +2651,7 @@ function mdie($msg='', $errorcode=1) {
  * Print a message and exit.
  *
  * @param string $message The message to print in the notice
- * @param string $link The link to use for the continue button
+ * @param moodle_url|string $link The link to use for the continue button
  * @param object $course A course object. Unused.
  * @return void This function simply exits
  */
