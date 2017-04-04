@@ -490,11 +490,14 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
                 $sqlstrings = [];
                 foreach (explode(',', $value) as $tag) {
                     $paramname = $name1 . '_' . $nexttagfield;
-                    if (!isset($tagfields[$nexttagfield])) {
-                        throw new coding_exception('Not enough tag fields supplied for search.');
+                    if (isset($tagfields[$nexttagfield])) {
+                        $sqlstrings[]       = "($tagfields[$nexttagfield] = :$paramname)";
+                        $params[$paramname] = $tag;
+                    } else if (!isset($tagfields[$nexttagfield]) && !isset($stoppedprocessingtags)) {
+                        // Show a debugging message the first time we hit this.
+                        $stoppedprocessingtags = true;
+                        \core\notification::add(get_string('toomanytags'), \core\notification::WARNING);
                     }
-                    $sqlstrings[] = "($tagfields[$nexttagfield] = :$paramname)";
-                    $params[$paramname] = $tag;
                     $nexttagfield++;
                 }
                 $SQLString .= implode(' AND ', $sqlstrings);

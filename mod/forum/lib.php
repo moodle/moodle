@@ -2098,16 +2098,21 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
 
         $tagjoins = '';
         $tagfields = [];
+        $tagfieldcount = 0;
         foreach ($parsearray as $token) {
             if ($token->getType() == TOKEN_TAGS) {
-                for ($i = substr_count($token->getValue(), ','); $i >= 0; $i--) {
-                    $tagjoins .= "\n LEFT JOIN {tag_instance} ti_$i
-                                        ON p.id = ti_$i.itemid
-                                            AND ti_$i.component='mod_forum'
-                                            AND ti_$i.itemtype = 'forum_posts'";
-                    $tagjoins .= "\n LEFT JOIN {tag} t_$i ON t_$i.id = ti_$i.tagid";
-                    $tagfields[] = "t_$i.rawname";
-
+                for ($i = 0; $i <= substr_count($token->getValue(), ','); $i++) {
+                    // Queries can only have a limited number of joins so set a limit sensible users won't exceed.
+                    if ($tagfieldcount > 10) {
+                        continue;
+                    }
+                    $tagjoins .= " LEFT JOIN {tag_instance} ti_$tagfieldcount
+                                        ON p.id = ti_$tagfieldcount.itemid
+                                            AND ti_$tagfieldcount.component = 'mod_forum'
+                                            AND ti_$tagfieldcount.itemtype = 'forum_posts'";
+                    $tagjoins .= " LEFT JOIN {tag} t_$tagfieldcount ON t_$tagfieldcount.id = ti_$tagfieldcount.tagid";
+                    $tagfields[] = "t_$tagfieldcount.rawname";
+                    $tagfieldcount++;
                 }
             }
         }
