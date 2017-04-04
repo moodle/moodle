@@ -152,22 +152,6 @@ class auth extends \auth_plugin_base {
     }
 
     /**
-     * Prints a form for configuring this authentication plugin.
-     *
-     * This function is called from admin/auth.php, and outputs a full page with
-     * a form for configuring this plugin.
-     *
-     * @param stdClass $config
-     * @param string $err
-     * @param array $userfields
-     */
-    public function config_form($config, $err, $userfields) {
-        include(__DIR__ . "/../config.html");
-
-        return;
-    }
-
-    /**
      * Return the userinfo from the oauth handshake. Will only be valid
      * for the logged in user.
      * @param string $username
