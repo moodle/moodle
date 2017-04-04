@@ -51,6 +51,7 @@ class block_iomad_company_admin_external extends external_api {
                             'screenreader' => new external_value(PARAM_INT, 'User default screen reader', VALUE_DEFAULT, 0),
                             'timezone' => new external_value(PARAM_TEXT, 'User default timezone', VALUE_DEFAULT, '99'),
                             'lang' => new external_value(PARAM_TEXT, 'User default language', VALUE_DEFAULT, 'en'),
+                            'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0', VALUE_DEFAULT, 0),
                         )
                     )
                 )
@@ -136,6 +137,7 @@ class block_iomad_company_admin_external extends external_api {
                      'screenreader' => new external_value(PARAM_INT, 'User default screen reader'),
                      'timezone' => new external_value(PARAM_TEXT, 'User default timezone'),
                      'lang' => new external_value(PARAM_TEXT, 'User default language'),
+                     'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0'),
                 )
             )
         );
@@ -215,6 +217,7 @@ class block_iomad_company_admin_external extends external_api {
                      'screenreader' => new external_value(PARAM_INT, 'User default screen reader'),
                      'timezone' => new external_value(PARAM_TEXT, 'User default timezone'),
                      'lang' => new external_value(PARAM_TEXT, 'User default language'),
+                     'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0'),
                 )
             )
         );
@@ -246,6 +249,7 @@ class block_iomad_company_admin_external extends external_api {
                             'screenreader' => new external_value(PARAM_INT, 'User default screen reader', VALUE_OPTIONAL),
                             'timezone' => new external_value(PARAM_TEXT, 'User default timezone', VALUE_OPTIONAL),
                             'lang' => new external_value(PARAM_TEXT, 'User default language', VALUE_OPTIONAL),
+                            'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0', VALUE_DEFAULT, 0),
                         )
                     )
                 )
