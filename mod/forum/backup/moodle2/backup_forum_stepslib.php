@@ -60,8 +60,8 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
             'mailed', 'subject', 'message', 'messageformat',
             'messagetrust', 'attachment', 'totalscore', 'mailnow'));
 
-        $tags = new backup_nested_element('tags');
-        $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
+        $tags = new backup_nested_element('poststags');
+        $tag = new backup_nested_element('tag', array('id'), array('itemid', 'rawname'));
 
         $ratings = new backup_nested_element('ratings');
 
@@ -113,11 +113,11 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
         $forum->add_child($trackedprefs);
         $trackedprefs->add_child($track);
 
+        $forum->add_child($tags);
+        $tags->add_child($tag);
+
         $discussion->add_child($posts);
         $posts->add_child($post);
-
-        $posts->add_child($tags);
-        $tags->add_child($tag);
 
         $post->add_child($ratings);
         $ratings->add_child($rating);
@@ -154,15 +154,18 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
                                                       'itemid'     => backup::VAR_PARENTID));
             $rating->set_source_alias('rating', 'value');
 
-            $tag->set_source_sql('SELECT t.id, t.name, t.rawname
-                                    FROM {tag} t
-                                    JOIN {tag_instance} ti ON ti.tagid = t.id
-                                   WHERE ti.itemtype = ?
-                                     AND ti.component = ?
-                                     AND ti.itemid = ?', array(
-                backup_helper::is_sqlparam('forum_posts'),
-                backup_helper::is_sqlparam('mod_forum'),
-                backup::VAR_PARENTID));
+            if (core_tag_tag::is_enabled('mod_forum', 'forum_posts')) {
+                // Backup all tags for all forum posts in this forum.
+                $tag->set_source_sql('SELECT t.id, ti.itemid, t.rawname
+                                        FROM {tag} t
+                                        JOIN {tag_instance} ti ON ti.tagid = t.id
+                                       WHERE ti.itemtype = ?
+                                         AND ti.component = ?
+                                         AND ti.contextid = ?', array(
+                    backup_helper::is_sqlparam('forum_posts'),
+                    backup_helper::is_sqlparam('mod_forum'),
+                    backup::VAR_CONTEXTID));
+            }
         }
 
         // Define id annotations

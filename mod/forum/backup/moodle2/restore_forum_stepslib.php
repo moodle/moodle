@@ -40,7 +40,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         if ($userinfo) {
             $paths[] = new restore_path_element('forum_discussion', '/activity/forum/discussions/discussion');
             $paths[] = new restore_path_element('forum_post', '/activity/forum/discussions/discussion/posts/post');
-            $paths[] = new restore_path_element('forum_tag', '/activity/forum/discussions/discussion/posts/post/tags/tag');
+            $paths[] = new restore_path_element('forum_tag', '/activity/forum/poststags/tag');
             $paths[] = new restore_path_element('forum_discussion_sub', '/activity/forum/discussions/discussion/discussion_subs/discussion_sub');
             $paths[] = new restore_path_element('forum_rating', '/activity/forum/discussions/discussion/posts/post/ratings/rating');
             $paths[] = new restore_path_element('forum_subscription', '/activity/forum/subscriptions/subscription');
@@ -126,7 +126,10 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         }
 
         $tag = $data->rawname;
-        $itemid = $this->get_new_parentid('forum_post');
+        if (!$itemid = $this->get_mappingid('forum_post', $data->itemid)) {
+            // Some orphaned tag, we could not find the restored post for it - ignore.
+            return;
+        }
 
         $context = context_module::instance($this->task->get_moduleid());
         core_tag_tag::add_item_tag('mod_forum', 'forum_posts', $itemid, $context, $tag);
