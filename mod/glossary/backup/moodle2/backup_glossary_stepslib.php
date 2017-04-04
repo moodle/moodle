@@ -53,8 +53,8 @@ class backup_glossary_activity_structure_step extends backup_activity_structure_
             'teacherentry', 'sourceglossaryid', 'usedynalink', 'casesensitive',
             'fullmatch', 'approved'));
 
-        $tags = new backup_nested_element('tags');
-        $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
+        $tags = new backup_nested_element('entriestags');
+        $tag = new backup_nested_element('tag', array('id'), array('itemid', 'rawname'));
 
         $aliases = new backup_nested_element('aliases');
 
@@ -80,14 +80,14 @@ class backup_glossary_activity_structure_step extends backup_activity_structure_
         $glossary->add_child($entries);
         $entries->add_child($entry);
 
+        $glossary->add_child($tags);
+        $tags->add_child($tag);
+
         $entry->add_child($aliases);
         $aliases->add_child($alias);
 
         $entry->add_child($ratings);
         $ratings->add_child($rating);
-
-        $entry->add_child($tags);
-        $tags->add_child($tag);
 
         $glossary->add_child($categories);
         $categories->add_child($category);
@@ -115,15 +115,17 @@ class backup_glossary_activity_structure_step extends backup_activity_structure_
 
             $categoryentry->set_source_table('glossary_entries_categories', array('categoryid' => backup::VAR_PARENTID));
 
-            $tag->set_source_sql('SELECT t.id, t.name, t.rawname
-                                    FROM {tag} t
-                                    JOIN {tag_instance} ti ON ti.tagid = t.id
-                                   WHERE ti.itemtype = ?
-                                     AND ti.component = ?
-                                     AND ti.itemid = ?', array(
-                backup_helper::is_sqlparam('glossary_entries'),
-                backup_helper::is_sqlparam('mod_glossary'),
-                backup::VAR_PARENTID));
+            if (core_tag_tag::is_enabled('mod_glossary', 'glossary_entries')) {
+                $tag->set_source_sql('SELECT t.id, ti.itemid, t.rawname
+                                        FROM {tag} t
+                                        JOIN {tag_instance} ti ON ti.tagid = t.id
+                                       WHERE ti.itemtype = ?
+                                         AND ti.component = ?
+                                         AND ti.contextid = ?', array(
+                    backup_helper::is_sqlparam('glossary_entries'),
+                    backup_helper::is_sqlparam('mod_glossary'),
+                    backup::VAR_CONTEXTID));
+            }
         }
 
         // Define id annotations
