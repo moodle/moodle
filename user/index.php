@@ -567,44 +567,8 @@ if ($mode === MODE_USERDETAILS) {    // Print simple listing.
     } else {
         if ($totalcount > $perpage) {
 
-            $firstinitial = $table->get_initial_first();
-            $lastinitial  = $table->get_initial_last();
-            $strall = get_string('all');
-            $alpha  = explode(',', get_string('alphabet', 'langconfig'));
-
-            // Bar of first initials.
-
-            echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
-            if (!empty($firstinitial)) {
-                echo '<a href="'.$baseurl->out().'&amp;sifirst=">'.$strall.'</a>';
-            } else {
-                echo '<strong>'.$strall.'</strong>';
-            }
-            foreach ($alpha as $letter) {
-                if ($letter == $firstinitial) {
-                    echo ' <strong>'.$letter.'</strong>';
-                } else {
-                    echo ' <a href="'.$baseurl->out().'&amp;sifirst='.$letter.'">'.$letter.'</a>';
-                }
-            }
-            echo '</div>';
-
-            // Bar of last initials.
-
-            echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
-            if (!empty($lastinitial)) {
-                echo '<a href="'.$baseurl->out().'&amp;silast=">'.$strall.'</a>';
-            } else {
-                echo '<strong>'.$strall.'</strong>';
-            }
-            foreach ($alpha as $letter) {
-                if ($letter == $lastinitial) {
-                    echo ' <strong>'.$letter.'</strong>';
-                } else {
-                    echo ' <a href="'.$baseurl->out().'&amp;silast='.$letter.'">'.$letter.'</a>';
-                }
-            }
-            echo '</div>';
+            // Initials bar.
+            $table->print_initials_bar();
 
             $pagingbar = new paging_bar($matchcount, intval($table->get_page_start() / $perpage), $perpage, $baseurl);
             $pagingbar->pagevar = 'spage';

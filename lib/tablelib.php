@@ -907,8 +907,12 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      * @return string initial of first name we are currently filtering by
+     *
+     * @deprecated since Moodle 3.3
      */
     function get_initial_first() {
+        debugging('Method get_initial_first() is no longer used and has been deprecated, ' .
+            'to print initials bar call print_initials_bar()', DEBUG_DEVELOPER);
         if (!$this->use_initials) {
             return NULL;
         }
@@ -919,8 +923,12 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      * @return string initial of last name we are currently filtering by
+     *
+     * @deprecated since Moodle 3.3
      */
     function get_initial_last() {
+        debugging('Method get_initial_last() is no longer used and has been deprecated, ' .
+            'to print initials bar call print_initials_bar()', DEBUG_DEVELOPER);
         if (!$this->use_initials) {
             return NULL;
         }
@@ -935,10 +943,16 @@ class flexible_table {
      * @param string $class class name to add to this initial bar.
      * @param string $title the name to put in front of this initial bar.
      * @param string $urlvar URL parameter name for this initial.
+     *
+     * @deprecated since Moodle 3.3
      */
     protected function print_one_initials_bar($alpha, $current, $class, $title, $urlvar) {
+
+        debugging('Method print_one_initials_bar() is no longer used and has been deprecated, ' .
+            'to print initials bar call print_initials_bar()', DEBUG_DEVELOPER);
+
         echo html_writer::start_tag('div', array('class' => 'initialbar ' . $class)) .
-                $title . ' : ';
+            $title . ' : ';
         if ($current) {
             echo html_writer::link($this->baseurl->out(false, array($urlvar => '')), get_string('all'));
         } else {
@@ -960,29 +974,29 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function print_initials_bar() {
+        global $OUTPUT;
+
         if ((!empty($this->prefs['i_last']) || !empty($this->prefs['i_first']) ||$this->use_initials)
-                    && isset($this->columns['fullname'])) {
+            && isset($this->columns['fullname'])) {
 
-            $alpha  = explode(',', get_string('alphabet', 'langconfig'));
-
-            // Bar of first initials
             if (!empty($this->prefs['i_first'])) {
                 $ifirst = $this->prefs['i_first'];
             } else {
                 $ifirst = '';
             }
-            $this->print_one_initials_bar($alpha, $ifirst, 'firstinitial',
-                    get_string('firstname'), $this->request[TABLE_VAR_IFIRST]);
 
-            // Bar of last initials
             if (!empty($this->prefs['i_last'])) {
                 $ilast = $this->prefs['i_last'];
             } else {
                 $ilast = '';
             }
-            $this->print_one_initials_bar($alpha, $ilast, 'lastinitial',
-                    get_string('lastname'), $this->request[TABLE_VAR_ILAST]);
+
+            $prefixfirst = $this->request[TABLE_VAR_IFIRST];
+            $prefixlast = $this->request[TABLE_VAR_ILAST];
+            echo $OUTPUT->initials_bar($ifirst, 'firstinitial', get_string('firstname'), $prefixfirst, $this->baseurl);
+            echo $OUTPUT->initials_bar($ilast, 'lastinitial', get_string('lastname'), $prefixlast, $this->baseurl);
         }
+
     }
 
     /**
