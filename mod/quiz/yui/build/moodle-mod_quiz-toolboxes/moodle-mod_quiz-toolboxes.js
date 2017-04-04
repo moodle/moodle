@@ -46,7 +46,7 @@ var CSS = {
         COMMANDSPAN: '.commands',
         CONTENTAFTERLINK: 'div.contentafterlink',
         CONTENTWITHOUTLINK: 'div.contentwithoutlink',
-        DELETESECTIONICON: 'a.editing_delete img',
+        DELETESECTIONICON: 'a.editing_delete .icon',
         DESELECTALL: '#questiondeselectall',
         EDITMAXMARK: 'a.editing_maxmark',
         EDITSECTION: 'a.editing_section',
