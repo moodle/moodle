@@ -414,25 +414,42 @@ class filetypes_util {
      * Should the given file type be considered as a part of the given whitelist.
      *
      * If multiple types are provided, all of them must be part of the
-     * whitelist.
+     * whitelist. Empty type is part of any whitelist. Any type is part of an
+     * empty whitelist.
      *
-     * @param string $types One or more types in a string (space , or ; separated)
-     * @param string|array $whitelist an array or string of whitelisted types
+     * @param string|array $types File types to be checked
+     * @param string|array $whitelist An array or string of whitelisted types
      * @return boolean
      */
     public function is_whitelisted($types, $whitelist) {
+        return empty($this->get_not_whitelisted($types, $whitelist));
+    }
+
+    /**
+     * Returns all types that are not part of the give whitelist.
+     *
+     * This is similar check to the {@link self::is_whitelisted()} but this one
+     * actually returns the extra types.
+     *
+     * @param string|array $types File types to be checked
+     * @param string|array $whitelist An array or string of whitelisted types
+     * @return array Types not present in the whitelist
+     */
+    public function get_not_whitelisted($types, $whitelist) {
 
         $whitelistedtypes = $this->expand($whitelist, true, true);
 
         if (empty($whitelistedtypes) || $whitelistedtypes == ['*']) {
-            return true;
+            return [];
         }
 
         $giventypes = $this->normalize_file_types($types);
 
-        $intersection = array_intersect($giventypes, $whitelistedtypes);
+        if (empty($giventypes)) {
+            return [];
+        }
 
-        return !empty($intersection);
+        return array_diff($giventypes, $whitelistedtypes);
     }
 
     /**

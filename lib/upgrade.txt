@@ -1,6 +1,13 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+
+* Added new moodleform element 'filetypes' and new admin setting widget 'admin_setting_filetypes'. These new widgets
+  allow users to define a list of file types; either by typing them manually or selecting them from a list. The widgets
+  directly support the syntax used to feed the 'accepted_types' option of the filemanager and filepicker elements. File
+  types can be specified as extensions (.jpg or just jpg), mime types (text/plain) or groups (image).
+
 === 3.3.1 ===
 
 * ldap_get_entries_moodle() now always returns lower-cased attribute names in the returned entries.

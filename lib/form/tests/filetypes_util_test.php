@@ -219,6 +219,7 @@ class filetypes_util_testcase extends advanced_testcase {
         $this->assertTrue($util->is_whitelisted('audio', 'text/plain audio video'));
         $this->assertTrue($util->is_whitelisted('text/plain', 'text/plain audio video'));
         $this->assertTrue($util->is_whitelisted('jpg jpe jpeg', 'image/jpeg'));
+        $this->assertTrue($util->is_whitelisted(['jpg', 'jpe', '.png'], 'image'));
 
         // These should be intuitively false.
         $this->assertFalse($util->is_whitelisted('.gif', 'text/plain'));
@@ -229,9 +230,44 @@ class filetypes_util_testcase extends advanced_testcase {
         // Not all documents (and also the group itself) is not a plain text.
         $this->assertFalse($util->is_whitelisted('document', 'text/plain'));
 
+        // This may look wrong at the first sight as you might expect that the
+        // mimetype should simply map to an extension ...
+        $this->assertFalse($util->is_whitelisted('image/jpeg', '.jpg'));
+
+        // But it is principally same situation as this (there is no 1:1 mapping).
+        $this->assertFalse($util->is_whitelisted('.c', '.txt'));
+        $this->assertTrue($util->is_whitelisted('.txt .c', 'text/plain'));
+        $this->assertFalse($util->is_whitelisted('text/plain', '.c'));
+
         // Any type is included if the filter is empty.
         $this->assertTrue($util->is_whitelisted('txt', ''));
         $this->assertTrue($util->is_whitelisted('txt', '*'));
+
+        // Empty value is part of any whitelist.
+        $this->assertTrue($util->is_whitelisted('', '.txt'));
+    }
+
+    /**
+     * Test getting types not present in a whitelist.
+     */
+    public function test_get_not_whitelisted() {
+
+        $this->resetAfterTest(true);
+        $util = new filetypes_util();
+
+        $this->assertEmpty($util->get_not_whitelisted('txt', 'text/plain'));
+        $this->assertEmpty($util->get_not_whitelisted('txt', '.doc .txt .rtf'));
+        $this->assertEmpty($util->get_not_whitelisted('txt', 'text/plain'));
+        $this->assertEmpty($util->get_not_whitelisted(['jpg', 'jpe', 'jpeg'], 'image/jpeg'));
+        $this->assertEmpty($util->get_not_whitelisted('', 'foo/bar'));
+        $this->assertEmpty($util->get_not_whitelisted('.foobar', ''));
+        $this->assertEmpty($util->get_not_whitelisted('.foobar', '*'));
+
+        // Returned list is normalized so extensions have the dot added.
+        $this->assertContains('.exe', $util->get_not_whitelisted('exe', '.c .h'));
+
+        // If this looks wrong to you, see {@link test_is_whitelisted()} for more details on this behaviour.
+        $this->assertContains('image/jpeg', $util->get_not_whitelisted('image/jpeg', '.jpg .jpeg'));
     }
 
     /**
