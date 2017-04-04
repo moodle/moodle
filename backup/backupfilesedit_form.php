@@ -30,7 +30,7 @@ class backup_files_edit_form extends moodleform {
     public function definition() {
         $mform =& $this->_form;
 
-        $types = (FILE_INTERNAL | FILE_REFERENCE | FILE_CONTRLLED_LINK);
+        $types = (FILE_INTERNAL | FILE_REFERENCE | FILE_CONTROLLED_LINK);
         $options = array('subdirs' => 0, 'maxfiles' => -1, 'accepted_types' => '*', 'return_types' => $types);
 
         $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, $options);
