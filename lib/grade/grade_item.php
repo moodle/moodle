@@ -1408,7 +1408,10 @@ class grade_item extends grade_object {
             $deletionpending = course_module_instance_pending_deletion($this->courseid, $this->itemmodule, $this->iteminstance);
             $deletionnotice = get_string('gradesmoduledeletionprefix', 'grades');
 
-            return $deletionpending ? format_string($deletionnotice . ' ' . $this->itemname) : format_string($this->itemname);
+            $options = ['context' => context_course::instance($this->courseid)];
+            return $deletionpending ?
+                format_string($deletionnotice . ' ' . $this->itemname, true, $options) :
+                format_string($this->itemname, true, $options);
 
         } else if ($this->is_course_item()) {
             return get_string('coursetotal', 'grades');
