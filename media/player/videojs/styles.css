@@ -1330,3 +1330,7 @@ video::-webkit-media-text-track-display {
 .video-js.vjs-error {
   height: 150px;
 }
+/* Minimum height for videos should not be less than the size of play button. */
+.mediaplugin_videojs video {
+  min-height: 32px;
+}
