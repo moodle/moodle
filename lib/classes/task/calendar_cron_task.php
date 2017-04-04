@@ -50,9 +50,6 @@ class calendar_cron_task extends scheduled_task {
 
         require_once($CFG->libdir . '/bennu/bennu.inc.php');
 
-        mtrace('Updating calendar subscriptions:');
-        cron_trace_time_and_memory();
-
         $time = time();
         $sql = "SELECT *
                   FROM {event_subscriptions}
@@ -68,8 +65,6 @@ class calendar_cron_task extends scheduled_task {
                 mtrace('Error updating calendar subscription: ' . $ex->getMessage());
             }
         }
-
-        mtrace('Finished updating calendar subscriptions.');
 
         return true;
     }
