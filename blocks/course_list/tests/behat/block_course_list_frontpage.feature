@@ -52,7 +52,7 @@ Feature: Enable the course_list block on the frontpage and view it's contents
     And I should see "Course 2" in the "My courses" "block"
     And I should see "Course 3" in the "My courses" "block"
     And I should not see "Course 4" in the "My courses" "block"
-    And I follow "Course 3"
+    And I am on "Course 3" course homepage
     And I should see "Course 3"
 
   Scenario: Add the course list block on the frontpage page and view as an admin

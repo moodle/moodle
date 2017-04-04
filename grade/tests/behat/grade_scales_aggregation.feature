@@ -38,7 +38,7 @@ Feature: Control the aggregation of the scales
 
   Scenario Outline: Scales can be excluded from aggregation
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     When I give the grade "10" to the user "Student 1" for the grade item "Grade me"
@@ -59,7 +59,7 @@ Feature: Control the aggregation of the scales
       | grade_includescalesinaggregation | 1 |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > User report" in the course gradebook
     And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
@@ -83,7 +83,7 @@ Feature: Control the aggregation of the scales
   @javascript
   Scenario: Weights of scales cannot be edited when they are not aggregated
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     When I set the following settings for grade item "Course 1":
@@ -98,7 +98,7 @@ Feature: Control the aggregation of the scales
     And I should not see "Weight"
     And the following config values are set as admin:
       | grade_includescalesinaggregation | 1 |
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Override weight of Grade me" to "1"
     And the field "Override weight of Grade me" matches value "95.238"

@@ -17,8 +17,7 @@ Feature: Setting grades to pass via workshop editing form
 
   Scenario: Adding a new workshop with grade to pass field set
     Given I log in as "teacher1"
-    And I follow "Course1"
-    And I turn editing mode on
+    And I am on "Course1" course homepage with editing mode on
     When I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Awesome workshop |
       | Description | Grades to pass are set here |
@@ -32,8 +31,7 @@ Feature: Setting grades to pass via workshop editing form
 
   Scenario: Adding a new workshop with grade to pass fields left empty
     Given I log in as "teacher1"
-    And I follow "Course1"
-    And I turn editing mode on
+    And I am on "Course1" course homepage with editing mode on
     When I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Another awesome workshop |
       | Description | No grades to pass are set here |
@@ -47,8 +45,7 @@ Feature: Setting grades to pass via workshop editing form
 
   Scenario: Adding a new workshop with non-numeric value of a grade to pass
     Given I log in as "teacher1"
-    And I follow "Course1"
-    And I turn editing mode on
+    And I am on "Course1" course homepage with editing mode on
     When I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Almost awesome workshop |
       | Description | Invalid grade to pass is set here |
@@ -58,8 +55,7 @@ Feature: Setting grades to pass via workshop editing form
 
   Scenario: Adding a new workshop with invalid value of a grade to pass
     Given I log in as "teacher1"
-    And I follow "Course1"
-    And I turn editing mode on
+    And I am on "Course1" course homepage with editing mode on
     When I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Almost awesome workshop |
       | Description | Invalid grade to pass is set here |
@@ -69,8 +65,7 @@ Feature: Setting grades to pass via workshop editing form
 
   Scenario: Emptying grades to pass fields sets them to zero
     Given I log in as "teacher1"
-    And I follow "Course1"
-    And I turn editing mode on
+    And I am on "Course1" course homepage with editing mode on
     And I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Super awesome workshop |
       | Description | Grade to pass are set and then unset here |

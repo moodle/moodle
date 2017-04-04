@@ -18,8 +18,7 @@ Feature: Rename external tools via inline editing
   @javascript
   Scenario: Add a tool and inline edit
     When I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "External tool" to section "1" and I fill the form with:
       | Activity name | Test tool activity 1 |
     And I click on "Edit title" "link" in the "li#section-1" "css_element"

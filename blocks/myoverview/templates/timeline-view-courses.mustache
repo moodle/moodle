@@ -1,0 +1,41 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/timeline-view-courses
+
+    This template renders the timeline view by courses for the myoverview block.
+
+    Example context (json):
+    {}
+}}
+<ul class="list-group unstyled" id="timeline-view-courses-{{uniqid}}">
+    {{#courses}} {{> block_myoverview/course-item }} {{/courses}}
+    {{^courses}}
+        <div class="text-xs-center text-center m-t-3">
+            <img class="empty-placeholder-image-lg"
+                 src="{{urls.noevents}}"
+                 alt="{{#str}} nocoursesinprogress, block_myoverview {{/str}}">
+            <p class="text-muted m-t-1">{{#str}} nocoursesinprogress, block_myoverview {{/str}}</p>
+        </div>
+    {{/courses}}
+</ul>
+{{#js}}
+    require(['jquery', 'block_myoverview/event_list_by_course'], function($, EventListByCourse) {
+    var root = $("#timeline-view-courses-{{uniqid}}");
+    EventListByCourse.init(root);
+    });
+{{/js}}

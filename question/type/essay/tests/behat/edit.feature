@@ -23,7 +23,7 @@ Feature: Test editing an Essay question
       | Test questions   | essay | essay-002 | editorfilepicker |
       | Test questions   | essay | essay-003 | plain            |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Question bank" node in "Course administration"
 
   Scenario: Edit an Essay question

@@ -45,7 +45,7 @@ Feature: Expand the courses nodes within the navigation block
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
     And I turn editing mode off
-    And I follow "Course 2"
+    And I am on "Course 2" course homepage
     And I navigate to "Enrolment methods" node in "Course administration > Users"
     And I click on "Edit" "link" in the "Guest access" "table_row"
     And I set the following fields to these values:

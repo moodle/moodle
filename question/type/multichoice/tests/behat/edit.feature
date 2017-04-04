@@ -22,7 +22,7 @@ Feature: Test editing a Multiple choice question
       | Test questions   | multichoice | Multiple choice for editing | two_of_four |
       | Test questions   | multichoice | Single choice for editing   | one_of_four |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Question bank" node in "Course administration"
 
   Scenario: Edit a Multiple choice question with multiple response (checkboxes)

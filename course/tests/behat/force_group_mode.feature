@@ -15,8 +15,7 @@ Feature: Force group mode in a course
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Chat" to section "1" and I fill the form with:
       | Name of this chat room | Chat room |
       | Description | Chat description |

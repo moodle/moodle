@@ -2732,5 +2732,76 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017033100.04);
     }
 
+    if ($oldversion < 2017040400.00) {
+
+        // If the 'Course overview' block is no longer present, replace with the 'My overview' block.
+        if (!file_exists($CFG->dirroot . '/blocks/course_overview/block_course_overview.php')) {
+            $DB->set_field('block_instances', 'blockname', 'myoverview', array('blockname' => 'course_overview'));
+        }
+
+        upgrade_main_savepoint(true, 2017040400.00);
+    }
+
+    if ($oldversion < 2017040401.00) {
+
+        // If the 'Course overview' block is no longer present, remove it.
+        // Note - we do not need to completely remove the block context etc because we
+        // have replaced all occurrences of the 'Course overview' block with the 'My overview'
+        // block in the upgrade step above.
+        if (!file_exists($CFG->dirroot . '/blocks/course_overview/block_course_overview.php')) {
+            // Delete the block from the block table.
+            $DB->delete_records('block', array('name' => 'course_overview'));
+            // Remove capabilities.
+            capabilities_cleanup('block_course_overview');
+            // Clean config.
+            unset_all_config_for_plugin('block_course_overview');
+        }
+
+        upgrade_main_savepoint(true, 2017040401.00);
+    }
+
+    if ($oldversion < 2017040402.00) {
+
+        // Define fields to be added to the 'event' table.
+        $table = new xmldb_table('event');
+        $fieldtype = new xmldb_field('type', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, 0, 'instance');
+        $fieldtimesort = new xmldb_field('timesort', XMLDB_TYPE_INTEGER, '10', null, false, null, null, 'timeduration');
+
+        // Conditionally launch add field.
+        if (!$dbman->field_exists($table, $fieldtype)) {
+            $dbman->add_field($table, $fieldtype);
+        }
+
+        // Conditionally launch add field.
+        if (!$dbman->field_exists($table, $fieldtimesort)) {
+            $dbman->add_field($table, $fieldtimesort);
+        }
+
+        // Now, define the index we will be adding.
+        $index = new xmldb_index('type-timesort', XMLDB_INDEX_NOTUNIQUE, array('type', 'timesort'));
+
+        // Conditionally launch add index.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2017040402.00);
+    }
+
+    if ($oldversion < 2017040403.00) {
+        // Create adhoc task for upgrading of existing calendar events.
+        $record = new \stdClass();
+        $record->classname = "\\core\\task\\refresh_mod_calendar_events_task";
+        $record->component = 'core';
+
+        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+        $nextruntime = time() - 1;
+        $record->nextruntime = $nextruntime;
+        $DB->insert_record('task_adhoc', $record);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017040403.00);
+    }
+
     return true;
 }

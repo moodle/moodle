@@ -17,8 +17,7 @@ Feature: In a lesson activity, students can see questions in random order
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Lesson with two clusters
     Given I add a "Lesson" to section "1" and I fill the form with:
@@ -122,7 +121,7 @@ Feature: In a lesson activity, students can see questions in random order
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "Lesson with clusters"
     Then I should see "First page contents"
     And I press "Next page"

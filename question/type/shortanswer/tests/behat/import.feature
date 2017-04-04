@@ -15,7 +15,7 @@ Feature: Test importing Short answer questions
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   @javascript @_file_upload
   Scenario: import Matching question.

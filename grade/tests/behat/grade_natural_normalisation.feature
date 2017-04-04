@@ -31,7 +31,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
       | assign | C1 | a6 | Test assignment six | Submit something! | Sub category 1 | 10 |
       | assign | C1 | a7 | Test assignment seven | Submit nothing! | Sub category 1 | 15 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
 
   @javascript

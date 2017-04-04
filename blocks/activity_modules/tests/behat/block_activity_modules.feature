@@ -110,48 +110,47 @@ Feature: Block activity modules
 
     When I log in as "admin"
     And I am on course index
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Activities" block
     And I click on "Assignments" "link" in the "Activities" "block"
     Then I should see "Test assignment name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Chats" "link" in the "Activities" "block"
     And I should see "Test chat name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Choices" "link" in the "Activities" "block"
     And I should see "Test choice name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Databases" "link" in the "Activities" "block"
     And I should see "Test database name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Feedback" "link" in the "Activities" "block"
     And I should see "Test feedback name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Forums" "link" in the "Activities" "block"
     And I should see "Test forum name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "External tools" "link" in the "Activities" "block"
     And I should see "Test lti name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Quizzes" "link" in the "Activities" "block"
     And I should see "Test quiz name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Glossaries" "link" in the "Activities" "block"
     And I should see "Test glossary name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "SCORM packages" "link" in the "Activities" "block"
     And I should see "Test scorm name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Lessons" "link" in the "Activities" "block"
     And I should see "Test lesson name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Wikis" "link" in the "Activities" "block"
     And I should see "Test wiki name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Workshop" "link" in the "Activities" "block"
     And I should see "Test workshop name"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Resources" "link" in the "Activities" "block"
     And I should see "Test book name"
     And I should see "Test page name"

@@ -20,8 +20,7 @@ Feature: Test duplicating a quiz containing a drag and drop markers question
     And quiz "Test quiz" contains the following questions:
       | Drag markers | 1 |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   @javascript
   Scenario: Backup and restore a course containing a drag and drop markers question

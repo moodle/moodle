@@ -38,7 +38,7 @@ Feature: Basic use of the Grades report
 
     # Add some attempts
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "True" "radio" in the "First question" "question"
@@ -49,7 +49,7 @@ Feature: Basic use of the Grades report
     And I log out
 
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "True" "radio" in the "First question" "question"
@@ -61,7 +61,7 @@ Feature: Basic use of the Grades report
 
     # Basic check of the Grades report
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I navigate to "Results > Grades" in current page administration
     Then I should see "Attempts: 2"

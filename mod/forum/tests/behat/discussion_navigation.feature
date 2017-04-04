@@ -34,7 +34,7 @@ Feature: A user can navigate to previous and next discussions
       | activity   | name                   | intro             | course | idnumber     | groupmode |
       | forum      | Test forum name        | Test forum name   | C1     | forum        | 0         |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 |
@@ -75,7 +75,7 @@ Feature: A user can navigate to previous and next discussions
       | activity   | name                   | intro             | course | idnumber     | groupmode |
       | forum      | Test forum name        | Test forum name   | C1     | forum        | 2         |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 Group 0 |
@@ -101,7 +101,7 @@ Feature: A user can navigate to previous and next discussions
       | Group   | Group 2 |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I select "All participants" from the "Visible groups" singleselect
     And I follow "Discussion 1 Group 0"
@@ -132,7 +132,7 @@ Feature: A user can navigate to previous and next discussions
       | activity   | name                   | intro             | course | idnumber     | groupmode |
       | forum      | Test forum name        | Test forum name   | C1     | forum        | 1         |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 Group 0 |
@@ -158,7 +158,7 @@ Feature: A user can navigate to previous and next discussions
       | Group   | Group 2 |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I follow "Discussion 1 Group 1"
     Then I should see "Discussion 2 Group 0"

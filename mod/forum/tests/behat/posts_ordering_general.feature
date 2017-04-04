@@ -17,8 +17,7 @@ Feature: New discussions and discussions with recently added replies are display
       | teacher1  | C1        | editingteacher  |
       | student1  | C1        | student         |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name  | Course general forum                |
       | Description | Single discussion forum description |
@@ -33,7 +32,7 @@ Feature: New discussions and discussions with recently added replies are display
   @javascript
   Scenario: Replying to a forum post or editing it puts the discussion to the front
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course general forum"
     #
     # Add three posts into the forum.
@@ -61,7 +60,7 @@ Feature: New discussions and discussions with recently added replies are display
     # Reply to another forum post.
     #
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course general forum"
     And I follow "Forum post 1"
     And I click on "Reply" "link" in the "//div[@aria-label='Forum post 1 by Student 1']" "xpath_element"
@@ -69,8 +68,7 @@ Feature: New discussions and discussions with recently added replies are display
       | Message | Reply to the first post |
     And I press "Post to forum"
     And I wait to be redirected
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course general forum"
     #
     # Make sure the order of the forum posts is as expected (most recently participated first).

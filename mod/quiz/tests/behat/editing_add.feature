@@ -18,7 +18,7 @@ Feature: Edit quiz page - adding things
       | activity   | name   | intro                           | course | idnumber |
       | quiz       | Quiz 1 | Quiz 1 for testing the Add menu | C1     | quiz1    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I navigate to "Edit quiz" in current page administration
     Then I should see "Editing quiz: Quiz 1"
@@ -108,7 +108,7 @@ Feature: Edit quiz page - adding things
       in various categories and add them to the question bank.
 
     # Create a couple of sub categories.
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Categories" node in "Course administration > Question bank"
     Then I should see "Add category"
     Then I set the field "Parent category" to "Default for C1"
@@ -190,7 +190,7 @@ Feature: Edit quiz page - adding things
 
     # Add questions from question bank using the Add menu.
     # Add Essay 03 from question bank.
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I navigate to "Edit quiz" in current page administration
     And I open the "last" add to quiz menu

@@ -15,9 +15,7 @@ Feature: Students can choose from 4 discussion display options and their choice 
       | user | course | role |
       | student1 | C1 | student |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
@@ -35,7 +33,7 @@ Feature: Students can choose from 4 discussion display options and their choice 
       | Message | Discussion contents 2, second message |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   Scenario: Display replies flat, with oldest first
     Given I reply "Discussion 1" post from "Test forum name" forum with:

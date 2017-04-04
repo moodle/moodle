@@ -19,8 +19,7 @@ Feature: We can change the grading type and maximum grade point values
       | Grade point maximum | 900 |
       | Grade point default | 800 |
     And I press "Save changes"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   @javascript
   Scenario: Validate that switching the type of grading used correctly disables input form elements
@@ -97,8 +96,7 @@ Feature: We can change the grading type and maximum grade point values
     And I set the following fields to these values:
       | Grade point maximum | 100 |
     And I press "Save changes"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test Assignment 1"
     And I navigate to "Edit settings" in current page administration
     And I press "Save and display"

@@ -23,14 +23,14 @@ Feature: A teacher can move discussions between forums
       | forum      | Test forum 1           | Test forum 2      | C1     | forum        | 0         |
       | forum      | Test forum 2           | Test forum 1      | C1     | forum        | 0         |
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum 1"
     And I add a new discussion to "Test forum 1" forum with:
       | Subject | Discussion 1 |
       | Message | Test post message |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum 1"
     And I follow "Discussion 1"
     When I set the field "jump" to "Test forum 2"

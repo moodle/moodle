@@ -15,7 +15,7 @@ Feature: Enable Block Badges on the dashboard and view awarded badges
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     # Issue badge 1 of 2
     And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I set the following fields to these values:

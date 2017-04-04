@@ -33,7 +33,7 @@ Feature: Grant an extension to an offline student
       | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | duedate    |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I navigate to "View all submissions" in current page administration
     And I click on "Edit" "link" in the "Student 1" "table_row"
@@ -44,7 +44,7 @@ Feature: Grant an extension to an offline student
     Then I should see "Extension granted until:" in the "Student 1" "table_row"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should see "Extension due date"
 
@@ -54,7 +54,7 @@ Feature: Grant an extension to an offline student
       | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | duedate    |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I navigate to "View all submissions" in current page administration
     And I set the field "selectall" to "1"
@@ -76,7 +76,7 @@ Feature: Grant an extension to an offline student
     And I should see "Extension granted until:" in the "Student 6" "table_row"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should see "Extension due date"
 
@@ -86,7 +86,7 @@ Feature: Grant an extension to an offline student
       | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | allowsubmissionsfromdate    | duedate    |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400                  | 1388620800 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I navigate to "View all submissions" in current page administration
     And I click on "Edit" "link" in the "Student 1" "table_row"
@@ -108,7 +108,7 @@ Feature: Grant an extension to an offline student
       | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | allowsubmissionsfromdate    | duedate    |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400                  | 1388620800 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I navigate to "View all submissions" in current page administration
     And I set the field "selectall" to "1"

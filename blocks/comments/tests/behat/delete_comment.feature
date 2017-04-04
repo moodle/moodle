@@ -18,16 +18,15 @@ Feature: Delete comment block messages
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Comments" block
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add "Comment from student1" comment to comments block
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add "Comment from teacher1" comment to comments block
     When I delete "Comment from student1" comment from comments block
     Then I should not see "Comment from student1"

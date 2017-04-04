@@ -34,8 +34,7 @@ Feature: Outcome grading
       | Short name | OT |
       | Scale | Test Scale |
     And I press "Save changes"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Outcomes" node in "Course administration"
     And I set the field "Available standard outcomes" to "Outcome Test"
     And I click on "#add" "css_element"
@@ -43,8 +42,7 @@ Feature: Outcome grading
 
   Scenario: Giving an outcome to a student
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Test assignment description |
@@ -52,7 +50,7 @@ Feature: Outcome grading
       | Outcome Test | 1 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -60,7 +58,7 @@ Feature: Outcome grading
     And I press "Save changes"
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 0" "table_row"
@@ -85,13 +83,11 @@ Feature: Outcome grading
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration
     And I add "Student 0 (student0@example.com)" user to "Group 1" group members
     And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Test assignment description |
@@ -101,7 +97,7 @@ Feature: Outcome grading
       | Outcome Test | 1 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -109,7 +105,7 @@ Feature: Outcome grading
     And I press "Save changes"
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 0" "table_row"

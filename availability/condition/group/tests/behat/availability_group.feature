@@ -21,9 +21,7 @@ Feature: availability_group
   Scenario: Test condition
     # Basic setup.
     Given I log in as "teacher1"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
     # Start to add a Page. If there aren't any groups, there's no Group option.
     And I add a "Page" to section "1"
@@ -39,8 +37,7 @@ Feature: availability_group
       | G2       | C1     | GI2      |
     # This step used to be 'And I follow "C1"', but Chrome thinks the breadcrumb
     # is not clickable, so we'll go via the home page instead.
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Page" to section "1"
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
@@ -85,8 +82,7 @@ Feature: availability_group
     # Log back in as student.
     When I log out
     And I log in as "student1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
     # No pages should appear yet.
     Then I should not see "P1" in the "region-main" "region"
@@ -99,8 +95,7 @@ Feature: availability_group
       | student1 | GI1   |
     And I log out
     And I log in as "student1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
     # P1 (any groups) and P2 should show but not P3.
     Then I should see "P1" in the "region-main" "region"

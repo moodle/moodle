@@ -28,7 +28,7 @@ Feature: The student can navigate to their grades page and user grade report.
       | assign | C1 | a3 | Test assignment three | Submit something! | 150 |
       | assign | C2 | a4 | Test assignment four | Submit something! | 150 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "150.00" to the user "Student 1" for the grade item "Test assignment one"

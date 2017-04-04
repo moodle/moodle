@@ -21,7 +21,7 @@ Feature: Preview a Description question
       | questioncategory | qtype       | name            | template |
       | Test questions   | description | description-001 | info     |
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Question bank" node in "Course administration"
 
   @javascript @_switch_window

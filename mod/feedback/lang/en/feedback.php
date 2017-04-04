@@ -32,6 +32,7 @@ $string['anonymous'] = 'Anonymous';
 $string['anonymous_edit'] = 'Record user names';
 $string['anonymous_entries'] = 'Anonymous entries ({$a})';
 $string['anonymous_user'] = 'Anonymous user';
+$string['answerquestions'] = 'Answer the questions';
 $string['append_new_items'] = 'Append new items';
 $string['autonumbering'] = 'Auto number questions';
 $string['autonumbering_help'] = 'Enables or disables automated numbers for each question';

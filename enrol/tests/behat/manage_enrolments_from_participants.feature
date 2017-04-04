@@ -19,7 +19,7 @@ Feature: Manage enrollments from participants page
       | student2 | C1 | student |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to course participants
 
   Scenario: Check the participants link when "All partipants" selected

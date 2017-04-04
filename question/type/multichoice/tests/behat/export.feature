@@ -22,7 +22,7 @@ Feature: Test exporting Multiple choice questions
       | Test questions   | multichoice  | Multi-choice-001 | two_of_four |
       | Test questions   | multichoice  | Multi-choice-002 | one_of_four |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   Scenario: Export a Multiple choice question
     When I navigate to "Export" node in "Course administration > Question bank"

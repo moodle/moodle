@@ -17,8 +17,7 @@ Feature: Restrict availability of the choice module to a deadline
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Enable the choice activity with a start deadline in the future
     Given I add a "Choice" to section "1" and I fill the form with:
@@ -32,7 +31,7 @@ Feature: Restrict availability of the choice module to a deadline
       | timeopen[year] | 2037 |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Choice name"
     Then I should see "Sorry, this activity is not available until"
 
@@ -48,7 +47,7 @@ Feature: Restrict availability of the choice module to a deadline
       | timeopen[year] | 2007 |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Choice name"
     And "choice_1" "radio" should exist
     And "choice_2" "radio" should exist
@@ -66,7 +65,7 @@ Feature: Restrict availability of the choice module to a deadline
       | timeclose[year] | 2037 |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Choice name"
     And "choice_1" "radio" should exist
     And "choice_2" "radio" should exist
@@ -84,6 +83,6 @@ Feature: Restrict availability of the choice module to a deadline
       | timeclose[year] | 2007 |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Choice name"
     Then I should see "Sorry, this activity closed on"

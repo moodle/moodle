@@ -1823,6 +1823,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $courses = array($course1->id , $course2->id);
 
         $result = core_course_external::get_activities_overview($courses);
+        $this->assertDebuggingCalledCount(8);
         $result = external_api::clean_returnvalue(core_course_external::get_activities_overview_returns(), $result);
 
         // There should be one entry for course1, and no others.

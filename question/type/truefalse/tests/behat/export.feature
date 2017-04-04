@@ -21,7 +21,7 @@ Feature: Test exporting True/False questions
       | questioncategory | qtype     | name           | template |
       | Test questions   | truefalse | true-false-001 | true     |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   Scenario: Export a True/False question
     When I navigate to "Export" node in "Course administration > Question bank"

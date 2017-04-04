@@ -60,13 +60,137 @@ $blocks-plus-gutter: $blocks-column-width + $grid-gutter-width;
 #region-main.has-blocks {
     display: inline-block;
     width: calc(100% - #{$blocks-plus-gutter});
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(lg) {
         width: 100%;
     }
 }
 
 [data-region="blocks-column"] {
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(lg) {
         width: 100%;
+    }
+}
+
+$chart-size: 70px;
+$doughnut-border-size: 15px;
+$doughnut-dasharray: 173;
+$doughnut-empty-colour: $gray-lighter;
+$doughnut-fill-colour: $brand-warning;
+
+.progress-chart-container {
+    height: $chart-size;
+    width: $chart-size;
+
+    .progress-doughnut {
+        position: relative;
+        height: $chart-size;
+        width: $chart-size;
+        background-clip: padding-box;
+        border: $doughnut-border-size solid $doughnut-empty-colour;
+        border-radius: 50%;
+        box-sizing: border-box;
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            /*rtl:ignore*/
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: $doughnut-empty-colour;
+
+            &.has-percent {
+                color: $doughnut-fill-colour;
+            }
+        }
+
+        .progress-indicator {
+            position: absolute;
+            top: ($doughnut-border-size * -1);
+            left: ($doughnut-border-size * -1);
+            height: $chart-size;
+            width: $chart-size;
+
+            svg {
+                position: relative;
+                height: 100%;
+                width: 100%;
+
+                .circle {
+                    stroke-width: $doughnut-border-size;
+                    stroke: $doughnut-fill-colour;
+                    fill: none;
+                    stroke-dasharray: $doughnut-dasharray;
+                    stroke-dashoffset: $doughnut-dasharray;
+                    transform: rotate(-90deg);
+                    transform-origin: center center;
+
+                    @for $i from 1 through 100 {
+                        &.percent-#{$i} {
+                            stroke-dashoffset: $doughnut-dasharray - ($i / 100 * $doughnut-dasharray);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .no-progress {
+        height: $chart-size;
+        width: $chart-size;
+        background-color: $doughnut-empty-colour;
+        border-radius: 50%;
+        position: relative;
+
+        .icon {
+            position: absolute;
+            top: 50%;
+            /*rtl:ignore*/
+            left: 50%;
+            margin: 0;
+            transform: translate(-48%, -50%);
+            color: #fff;
+            height: ($chart-size / 2) + 10px;
+            width: ($chart-size / 2) + 10px;
+            font-size: ($chart-size / 2) + 10px;
+        }
+    }
+}
+
+.block_myoverview {
+    .event-list-item {
+        .event-icon {
+            vertical-align: middle;
+
+            &::before {
+                content: '';
+                display: inline-block;
+                height: 100%;
+                vertical-align: middle;
+            }
+        }
+
+        .event-name-container {
+            vertical-align: middle;
+            max-width: calc(100% - 50px);
+
+            .event-name {
+                display: block;
+            }
+        }
+    }
+
+    .empty-placeholder-image-sm {
+        height: 70px;
+        width: 85px;
+    }
+
+    .empty-placeholder-image-lg {
+        height: 125px;
+        width: 145px;
+    }
+
+    .courses-view-course-item {
+        height: 220px;
+        overflow-y: hidden;
     }
 }

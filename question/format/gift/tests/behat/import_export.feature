@@ -15,7 +15,7 @@ Feature: Test importing questions from GIFT format.
       | user    | course | role           |
       | teacher | C1     | editingteacher |
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   @javascript @_file_upload
   Scenario: import some GIFT questions

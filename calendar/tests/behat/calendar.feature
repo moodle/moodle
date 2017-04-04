@@ -24,9 +24,7 @@ Feature: Perform basic calendar functionality
       | user | group |
       | student1 | G1 |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Calendar" block
 
   Scenario: Create a site event
@@ -36,8 +34,7 @@ Feature: Perform basic calendar functionality
       | Description | Come join this awesome event, sucka! |
     And I log out
     And I log in as "student1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "This month"
     And I should see "Really awesome event!"
     And I log out
@@ -52,8 +49,7 @@ Feature: Perform basic calendar functionality
       | Description | Come join this awesome event, sucka! |
     And I log out
     And I log in as "student1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "This month"
     And I should see "Really awesome event!"
     And I log out
@@ -69,8 +65,7 @@ Feature: Perform basic calendar functionality
       | Description | Come join this awesome event |
     And I log out
     And I log in as "student1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "This month"
     And I follow "Really awesome event!"
     And "Group 1" "text" should exist in the ".eventlist" "css_element"
@@ -86,8 +81,7 @@ Feature: Perform basic calendar functionality
       | Description | Come join this awesome event, sucka! |
     And I log out
     And I log in as "student1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "This month"
     And I should not see "Really awesome event!"
 

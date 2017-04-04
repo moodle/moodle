@@ -22,7 +22,7 @@ Feature: Chat calendar entries
       | activity | name           | intro                 | course | idnumber | schedule |
       | chat     | Test chat name | Test chat description | C1     | chat1    | 0 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I navigate to "Calendar" node in "Site pages"
     Then I should not see "Test chat name"
 
@@ -31,6 +31,6 @@ Feature: Chat calendar entries
       | activity | name           | intro                 | course | idnumber | schedule |
       | chat     | Test chat name | Test chat description | C1     | chat1    | 1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I navigate to "Calendar" node in "Site pages"
     Then I should see "Test chat name"

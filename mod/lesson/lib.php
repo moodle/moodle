@@ -154,6 +154,7 @@ function lesson_update_events($lesson, $override = null) {
         }
 
         $event = new stdClass();
+        $event->type = !$deadline ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
         $event->description = format_module_intro('lesson', $lesson, $cmid);
         // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $lesson->course;
@@ -163,8 +164,9 @@ function lesson_update_events($lesson, $override = null) {
         $event->instance    = $lesson->id;
         $event->timestart   = $available;
         $event->timeduration = max($deadline - $available, 0);
+        $event->timesort    = $available;
         $event->visible     = instance_is_visible('lesson', $lesson);
-        $event->eventtype   = 'open';
+        $event->eventtype   = LESSON_EVENT_TYPE_OPEN;
 
         // Determine the event name and priority.
         if ($groupid) {
@@ -215,9 +217,11 @@ function lesson_update_events($lesson, $override = null) {
                 } else {
                     unset($event->id);
                 }
+                $event->type      = CALENDAR_EVENT_TYPE_ACTION;
                 $event->name      = $eventname.' ('.get_string('lessoncloses', 'lesson').')';
                 $event->timestart = $deadline;
-                $event->eventtype = 'close';
+                $event->timesort  = $deadline;
+                $event->eventtype = LESSON_EVENT_TYPE_CLOSE;
                 if ($groupid && $grouppriorities !== null) {
                     $closepriorities = $grouppriorities['close'];
                     if (isset($closepriorities[$deadline])) {
@@ -527,6 +531,8 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
  * lessons that have a deadline that has not already passed
  * and it is available for taking.
  *
+ * @deprecated since 3.3
+ *
  * @global object
  * @global stdClass
  * @global object
@@ -537,6 +543,8 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
  */
 function lesson_print_overview($courses, &$htmlarray) {
     global $USER, $CFG, $DB, $OUTPUT;
+
+    debugging('The function lesson_print_overview() is now deprecated.', DEBUG_DEVELOPER);
 
     if (!$lessons = get_all_instances_in_courses('lesson', $courses)) {
         return;
@@ -718,7 +726,7 @@ function lesson_cron () {
  * @global object
  * @param int $lessonid id of lesson
  * @param int $userid optional user id, 0 means all users
- * @return array array of grades
+ * @return array array of grades, false if none
  */
 function lesson_get_user_grades($lesson, $userid=0) {
     global $CFG, $DB;
@@ -1606,4 +1614,30 @@ function lesson_check_updates_since(cm_info $cm, $from, $filter = array()) {
         }
     }
     return $updates;
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_lesson_core_calendar_provide_event_action(calendar_event $event,
+                                                       \core_calendar\action_factory $factory) {
+    global $DB, $CFG, $USER;
+    require_once($CFG->dirroot . '/mod/lesson/locallib.php');
+
+    $cm = get_fast_modinfo($event->courseid)->instances['lesson'][$event->instance];
+    $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+
+    // Apply overrides.
+    $lesson->update_effective_access($USER->id);
+
+    return $factory->create_instance(
+        get_string('startlesson', 'lesson'),
+        new \moodle_url('/mod/lesson/view.php', ['id' => $cm->id]),
+        1,
+        $lesson->is_accessible()
+    );
 }

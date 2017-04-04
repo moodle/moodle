@@ -118,19 +118,25 @@ function assign_refresh_events($courseid = 0) {
         }
     }
     foreach ($assigns as $assign) {
-        // Use assignment's course column if courseid parameter is not given.
-        if (!$courseid) {
-            $courseid = $assign->course;
-            if (!$course = $DB->get_record('course', array('id' => $courseid), '*')) {
-                continue;
-            }
-        }
-        if (!$cm = get_coursemodule_from_instance('assign', $assign->id, $courseid, false)) {
-            continue;
-        }
+        // Get course and course module for the assignment.
+        list($course, $cm) = get_course_and_cm_from_instance($assign->id, 'assign', $assign->course);
+
+        // Refresh the assignment's calendar events.
         $context = context_module::instance($cm->id);
         $assignment = new assign($context, $cm, $course);
         $assignment->update_calendar($cm->id);
+
+        // Refresh the calendar events also for the assignment overrides.
+        $overrides = $DB->get_records('assign_overrides', ['assignid' => $assign->id], '', 'id, groupid, userid');
+        foreach ($overrides as $override) {
+            if (empty($override->userid)) {
+                unset($override->userid);
+            }
+            if (empty($override->groupid)) {
+                unset($override->groupid);
+            }
+            assign_update_events($assignment, $override);
+        }
     }
 
     return true;
@@ -252,6 +258,7 @@ function assign_update_events($assign, $override = null) {
         $addclose = empty($current->id) || !empty($current->duedate);
 
         $event = new stdClass();
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
         $event->description = format_module_intro('assign', $assigninstance, $cmid);
         // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $assigninstance->course;
@@ -261,8 +268,9 @@ function assign_update_events($assign, $override = null) {
         $event->instance    = $assigninstance->id;
         $event->timestart   = $duedate;
         $event->timeduration = 0;
+        $event->timesort    = $event->timestart + $event->timeduration;
         $event->visible     = instance_is_visible('assign', $assigninstance);
-        $event->eventtype   = 'due';
+        $event->eventtype   = ASSIGN_EVENT_TYPE_DUE;
 
         // Determine the event name and priority.
         if ($groupid) {
@@ -298,8 +306,6 @@ function assign_update_events($assign, $override = null) {
                 unset($event->id);
             }
             $event->name      = $eventname.' ('.get_string('duedate', 'assign').')';
-            $event->timestart = $duedate;
-            $event->eventtype = 'due';
             calendar_event::create($event);
         }
     }
@@ -484,13 +490,16 @@ function assign_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * Print an overview of all assignments
  * for the courses.
  *
+ * @deprecated since 3.3
+ *
  * @param mixed $courses The list of courses to print the overview for
  * @param array $htmlarray The array of html to return
- *
  * @return true
  */
 function assign_print_overview($courses, &$htmlarray) {
     global $CFG, $DB;
+
+    debugging('The function assign_print_overview() is now deprecated.', DEBUG_DEVELOPER);
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return true;
@@ -624,6 +633,8 @@ function assign_print_overview($courses, &$htmlarray) {
  * This api generates html to be displayed to students in print overview section, related to their submission status of the given
  * assignment.
  *
+ * @deprecated since 3.3
+ *
  * @param array $mysubmissions list of submissions of current user indexed by assignment id.
  * @param string $sqlassignmentids sql clause used to filter open assignments.
  * @param array $assignmentidparams sql params used to filter open assignments.
@@ -635,6 +646,8 @@ function assign_print_overview($courses, &$htmlarray) {
 function assign_get_mysubmission_details_for_print_overview(&$mysubmissions, $sqlassignmentids, $assignmentidparams,
                                                             $assignment) {
     global $USER, $DB;
+
+    debugging('The function assign_get_mysubmission_details_for_print_overview() is now deprecated.', DEBUG_DEVELOPER);
 
     if ($assignment->nosubmissions) {
         // Offline assignment. No need to display alerts for offline assignments.
@@ -710,6 +723,8 @@ function assign_get_mysubmission_details_for_print_overview(&$mysubmissions, $sq
  * This api generates html to be displayed to teachers in print overview section, related to the grading status of the given
  * assignment's submissions.
  *
+ * @deprecated since 3.3
+ *
  * @param array $unmarkedsubmissions list of submissions of that are currently unmarked indexed by assignment id.
  * @param string $sqlassignmentids sql clause used to filter open assignments.
  * @param array $assignmentidparams sql params used to filter open assignments.
@@ -722,6 +737,9 @@ function assign_get_mysubmission_details_for_print_overview(&$mysubmissions, $sq
 function assign_get_grade_details_for_print_overview(&$unmarkedsubmissions, $sqlassignmentids, $assignmentidparams,
                                                      $assignment, $context) {
     global $DB;
+
+    debugging('The function assign_get_grade_details_for_print_overview() is now deprecated.', DEBUG_DEVELOPER);
+
     if (!isset($unmarkedsubmissions)) {
         // Build up and array of unmarked submissions indexed by assignment id/ userid
         // for use where the user has grading rights on assignment.
@@ -1723,4 +1741,104 @@ function assign_check_updates_since(cm_info $cm, $from, $filter = array()) {
     }
 
     return $updates;
+}
+
+/**
+ * Is the event visible?
+ *
+ * This is used to determine global visibility of an event in all places throughout Moodle. For example,
+ * the ASSIGN_EVENT_TYPE_GRADINGDUE event will not be shown to students on their calendar, and
+ * ASSIGN_EVENT_TYPE_DUE events will not be shown to teachers.
+ *
+ * @param calendar_event $event
+ * @return bool Returns true if the event is visible to the current user, false otherwise.
+ */
+function mod_assign_core_calendar_is_event_visible(calendar_event $event) {
+    global $CFG, $USER;
+
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+    $cm = get_fast_modinfo($event->courseid)->instances['assign'][$event->instance];
+    $context = context_module::instance($cm->id);
+
+    $assign = new assign($context, $cm, null);
+
+    if ($event->eventtype == ASSIGN_EVENT_TYPE_GRADINGDUE) {
+        return $assign->can_grade();
+    } else {
+        return !$assign->can_grade() && $assign->can_view_submission($USER->id);
+    }
+}
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_assign_core_calendar_provide_event_action(calendar_event $event,
+                                                       \core_calendar\action_factory $factory) {
+
+    global $CFG, $USER;
+
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+    $cm = get_fast_modinfo($event->courseid)->instances['assign'][$event->instance];
+    $context = context_module::instance($cm->id);
+
+    $assign = new assign($context, $cm, null);
+
+    // Apply overrides.
+    $assign->update_effective_access($USER->id);
+
+    if ($event->eventtype == ASSIGN_EVENT_TYPE_GRADINGDUE) {
+        $name = get_string('grade');
+        $url = new \moodle_url('/mod/assign/view.php', [
+            'id' => $cm->id,
+            'action' => 'grader'
+        ]);
+        $itemcount = $assign->count_submissions_need_grading();
+        $actionable = $assign->can_grade() && (time() >= $assign->get_instance()->allowsubmissionsfromdate);
+    } else {
+        $usersubmission = $assign->get_user_submission($USER->id, false);
+        if ($usersubmission && $usersubmission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+            // The user has already submitted.
+            // We do not want to change the text to edit the submission, we want to remove the event from the Dashboard entirely.
+            return null;
+        }
+
+        // The user has not yet submitted anything. Show the addsubmission link.
+        $name = get_string('addsubmission', 'assign');
+        $url = new \moodle_url('/mod/assign/view.php', [
+            'id' => $cm->id,
+            'action' => 'editsubmission'
+        ]);
+        $itemcount = 1;
+        $actionable = $assign->is_any_submission_plugin_enabled() && $assign->can_edit_submission($USER->id);
+    }
+
+    return $factory->create_instance(
+        $name,
+        $url,
+        $itemcount,
+        $actionable
+    );
+}
+
+/**
+ * Callback function that determines whether an action event should be showing its item count
+ * based on the event type and the item count.
+ *
+ * @param calendar_event $event The calendar event.
+ * @param int $itemcount The item count associated with the action event.
+ * @return bool
+ */
+function mod_assign_core_calendar_event_action_shows_item_count(calendar_event $event, $itemcount = 0) {
+    // List of event types where the action event's item count should be shown.
+    $eventtypesshowingitemcount = [
+        ASSIGN_EVENT_TYPE_GRADINGDUE
+    ];
+    // For mod_assign, item count should be shown if the event type is 'gradingdue' and there is one or more item count.
+    return in_array($event->eventtype, $eventtypesshowingitemcount) && $itemcount > 0;
 }

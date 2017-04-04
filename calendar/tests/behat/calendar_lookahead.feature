@@ -17,8 +17,7 @@ Feature: Limit displayed upcoming events
     And I log in as "teacher1"
 
   Scenario: I view calendar details for a future event
-    Given I follow "C1"
-    And I turn editing mode on
+    Given I am on "Course 1" course homepage with editing mode on
     And I add the "Calendar" block
     And I add the "Upcoming events" block
     And I follow "This month"
@@ -36,6 +35,5 @@ Feature: Limit displayed upcoming events
       | Upcoming events look-ahead | 3 months |
     And I press "Save changes"
     And I wait to be redirected
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "Two months away event"

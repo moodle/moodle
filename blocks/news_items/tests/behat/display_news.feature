@@ -17,8 +17,7 @@ Feature: Latest announcements block displays the course latest news
     And I enrol "Teacher 1" user as "Teacher"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Latest announcements" block
     And I turn editing mode off
     When I add a new topic to "Announcements" forum with:
@@ -30,7 +29,7 @@ Feature: Latest announcements block displays the course latest news
     And I add a new topic to "Announcements" forum with:
       | Subject | Discussion Three |
       | Message | Not important |
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     Then I should see "Discussion One" in the "Latest announcements" "block"
     And I should see "Discussion Two" in the "Latest announcements" "block"
     And I should see "Discussion Three" in the "Latest announcements" "block"

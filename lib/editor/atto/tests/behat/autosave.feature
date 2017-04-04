@@ -19,8 +19,7 @@ Feature: Atto Autosave
     And I set the field "Autosave frequency" to "3"
     And I set the field with xpath "//select[@name='s_editor_atto_autosavefrequency[u]']" to "seconds"
     And I click on "Save changes" "button"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field with xpath "//select[@name='summary_editor[format]']" to "1"
     And I click on "Save and display" "button"
@@ -29,14 +28,14 @@ Feature: Atto Autosave
   @javascript
   Scenario: Restore a draft
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "Course summary" to "This is my draft"
     # Wait for the autosave
     And I wait "5" seconds
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" node in "Course administration"
     # Wait for the autorestore
     And I wait "2" seconds
@@ -45,7 +44,7 @@ Feature: Atto Autosave
   @javascript
   Scenario: Do not restore a draft if files have been modified
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "Course summary" to "This is my draft"
     # Wait for the autosave
@@ -55,8 +54,7 @@ Feature: Atto Autosave
     And I follow "Manage private files..."
     And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
     And I click on "Save changes" "button"
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "Course summary" to "<p>Image test</p>"
     And I select the text in the "Course summary" Atto editor
@@ -72,27 +70,27 @@ Feature: Atto Autosave
     And I click on "Save and display" "button"
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" node in "Course administration"
     Then I should not see "This is my draft"
 
   @javascript
   Scenario: Do not restore a draft if text has been modified
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "Course summary" to "This is my draft"
     # Wait for the autosave
     And I wait "5" seconds
     And I log out
     And I log in as "teacher2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "Course summary" to "Modified text"
     And I click on "Save and display" "button"
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" node in "Course administration"
     Then I should not see "This is my draft"
     And I should see "Modified text"

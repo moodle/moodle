@@ -20,7 +20,7 @@ Feature: Rename roles within a course
       | teacher2 | C1 | teacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | Tutor |
@@ -33,7 +33,7 @@ Feature: Rename roles within a course
     And the "roleid" select box should contain "Tutor"
     And the "roleid" select box should contain "Learner"
     And the "roleid" select box should not contain "Student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | |

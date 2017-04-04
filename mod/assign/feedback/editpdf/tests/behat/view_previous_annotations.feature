@@ -19,8 +19,7 @@ Feature: In an assignment, teacher can view the feedback for a previous attempt.
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your PDF file |
@@ -30,7 +29,7 @@ Feature: In an assignment, teacher can view the feedback for a previous attempt.
       | Maximum attempts | Unlimited |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I upload "mod/assign/feedback/editpdf/tests/fixtures/submission.pdf" file to "File submissions" filemanager
@@ -41,7 +40,7 @@ Feature: In an assignment, teacher can view the feedback for a previous attempt.
     And I should see "Not graded"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Edit" "link" in the "Submitted for grading" "table_row"

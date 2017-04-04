@@ -408,6 +408,8 @@ class mod_lesson_mod_form extends moodleform_mod {
 
         $mform->addElement('checkbox', 'completionendreached', get_string('completionendreached', 'lesson'),
                 get_string('completionendreached_desc', 'lesson'));
+        // Enable this completion rule by default.
+        $mform->setDefault('completionendreached', 1);
 
         $group = array();
         $group[] =& $mform->createElement('checkbox', 'completiontimespentenabled', '',

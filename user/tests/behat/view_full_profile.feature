@@ -24,19 +24,19 @@ Feature: Access to full profiles of users
 
   Scenario: Viewing full profiles with default settings
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     # Another student's full profile is not visible
     And I navigate to course participants
     And I follow "Student 2"
     Then I should not see "Full profile"
     # Teacher's full profile is visible
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to course participants
     And I follow "Teacher 1"
     And I follow "Full profile"
     And I should see "First access to site"
     # Own full profile is visible
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to course participants
     And I click on "Student 1" "link" in the "#participants" "css_element"
     And I follow "Full profile"
@@ -47,7 +47,7 @@ Feature: Access to full profiles of users
     Given the following config values are set as admin:
       |  forceloginforprofiles | 0 |
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to course participants
     And I follow "Student 2"
     And I follow "Full profile"
@@ -59,7 +59,7 @@ Feature: Access to full profiles of users
       | moodle/user:viewdetails | Allow |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to course participants
     And I follow "Student 2"
     And I follow "Full profile"
@@ -91,8 +91,7 @@ Feature: Access to full profiles of users
   @javascript
   Scenario: View full profiles of someone in the same group in a course with separate groups.
     Given I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" node in "Course administration"
     And I set the following fields to these values:
       | Group mode | Separate groups |
@@ -106,8 +105,7 @@ Feature: Access to full profiles of users
     And I should see "The details of this user are not available to you"
     And I log out
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:

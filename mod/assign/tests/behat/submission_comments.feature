@@ -22,7 +22,7 @@ Feature: In an assignment, students can comment in their submissions
       | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 1 |
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I press "Add submission"
     And I set the following fields to these values:
@@ -50,7 +50,7 @@ Feature: In an assignment, students can comment in their submissions
       | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignmentsubmission_file_enabled | assignfeedback_comments_enabled |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 0 | 0 | 1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -70,7 +70,7 @@ Feature: In an assignment, students can comment in their submissions
       | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignmentsubmission_file_enabled | assignfeedback_comments_enabled |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 0 | 0 | 1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"

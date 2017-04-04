@@ -20,7 +20,7 @@ Feature: I need to export grades as xml
       | activity | course | idnumber | name | intro |
       | assign | C1 | a1 | Test assignment name | Submit something! |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name"

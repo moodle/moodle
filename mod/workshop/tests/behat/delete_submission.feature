@@ -25,7 +25,7 @@ Feature: Workshop submission removal
       | workshop | TestWorkshop | Test workshop description | c1     | workshop1 |
     # Teacher sets up assessment form and changes the phase to submission.
     And I log in as "teacher1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I edit assessment form in workshop "TestWorkshop" as:"
       | id_description__idx_0_editor | Aspect1 |
       | id_description__idx_1_editor | Aspect2 |
@@ -34,7 +34,7 @@ Feature: Workshop submission removal
     And I log out
     # Student1 submits.
     And I log in as "student1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission1  |
@@ -42,14 +42,14 @@ Feature: Workshop submission removal
     And I log out
     # Student2 submits.
     And I log in as "student2"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission2  |
       | Submission content | Some content |
     And I log out
     # Teacher allocates student3 to be reviewer of student2's submission.
     And I log in as "teacher1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     And I allocate submissions in workshop "TestWorkshop" as:"
       | Participant   | Reviewer      |
@@ -58,7 +58,7 @@ Feature: Workshop submission removal
 
   Scenario: Students can delete their submissions as long as the submissions are editable and not allocated for assessments
     Given I log in as "student1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     When I follow "Submission1"
     Then I should see "Submission1"
@@ -71,12 +71,12 @@ Feature: Workshop submission removal
 
   Scenario: Students cannot delete their submissions if the submissions are not editable
     Given I log in as "teacher1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     And I change phase in workshop "TestWorkshop" to "Closed"
     And I log out
     And I log in as "student1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     When I follow "Submission1"
     Then I should see "Submission1"
@@ -84,7 +84,7 @@ Feature: Workshop submission removal
 
   Scenario: Students cannot delete their submissions if the submissions are allocated for assessments
     Given I log in as "student2"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     When I follow "Submission2"
     Then I should see "Submission2"
@@ -92,7 +92,7 @@ Feature: Workshop submission removal
 
   Scenario: Teachers can delete submissions even if the submissions are allocated for assessments.
     Given I log in as "teacher1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     And "Submission1" "link" should exist
     And "Submission2" "link" should exist

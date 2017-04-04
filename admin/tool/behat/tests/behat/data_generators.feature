@@ -57,8 +57,7 @@ Feature: Set up contextual data for tests
       | Grouping 1 | C1 | GG1 |
       | Grouping 2 | C1 | GG2 |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration
     Then I should see "Group 1"
     And I should see "Group 2"
@@ -87,8 +86,7 @@ Feature: Set up contextual data for tests
       | mod/forum:editanypost | Allow | student | Course | C1 |
       | mod/forum:replynews | Prevent | editingteacher | Course | C1 |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Users > Permissions" in current page administration
     And I set the field "Advanced role override" to "Student (1)"
     Then "mod/forum:editanypost" capability has "Allow" permission
@@ -108,7 +106,7 @@ Feature: Set up contextual data for tests
       | user | course | role |
       | student1 | C1 | student |
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     Then I should see "Topic 1"
 
   Scenario: Add role assigns
@@ -144,24 +142,20 @@ Feature: Set up contextual data for tests
     Then "Edit settings" "link" should exist in current page administration
     And I log out
     And I log in as "user2"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And "Turn editing on" "link" should exist in current page administration
     And I log out
     And I log in as "user3"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And "Turn editing on" "link" should exist in current page administration
     And I log out
     And I log in as "user4"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And "Turn editing on" "link" should exist in current page administration
     And I log out
     And I log in as "user5"
     And I should see "You are logged in as"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "You can not enrol yourself in this course."
 
   Scenario: Add modules
@@ -199,8 +193,7 @@ Feature: Set up contextual data for tests
       | activity   | name                            | intro                         | course | idnumber    | grade |
       | assign     | Test assignment name with scale | Test assignment description   | C1     | assign1     | Test Scale 1 |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     Then I should see "Test assignment name"
     # Assignment 2.2 module type is disabled by default
     # And I should see "Test assignment22 name"
@@ -261,8 +254,7 @@ Feature: Set up contextual data for tests
       | grouping | group |
       | GG1 | G1 |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration
     Then the "groups" select box should contain "Group 1 (1)"
     And the "groups" select box should contain "Group 2 (1)"
@@ -321,7 +313,7 @@ Feature: Set up contextual data for tests
       | Grade sub category 2 | C1 | Grade category 1 |
     When I log in as "admin"
     And I am on course index
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     Then I should see "Grade category 1"
     And I should see "Grade sub category 2"
@@ -344,8 +336,7 @@ Feature: Set up contextual data for tests
       | Test Grade Item 2 | C1 | Grade category 1 |
       | Test Grade Item 3 | C1 | Grade sub category 2 |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     Then I should see "Test Grade Item 1"
     And I follow "Edit   Test Grade Item 1"
@@ -373,8 +364,7 @@ Feature: Set up contextual data for tests
       | name | scale |
       | Test Scale 1 | Disappointing, Good, Very good, Excellent |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Scales" in the course gradebook
     Then I should see "Test Scale 1"
     And I should see "Disappointing,  Good,  Very good,  Excellent"
@@ -395,8 +385,7 @@ Feature: Set up contextual data for tests
     And the following config values are set as admin:
       | enableoutcomes | 1 |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Outcomes"
     Then I should see "Grade outcome 1" in the "#addoutcomes" "css_element"
     And I should see "Grade outcome 2" in the "#removeoutcomes" "css_element"
@@ -424,8 +413,7 @@ Feature: Set up contextual data for tests
     And the following config values are set as admin:
       | enableoutcomes | 1 |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     Then I should see "Test Outcome Grade Item 1"
     And I follow "Edit   Test Outcome Grade Item 1"
@@ -442,6 +430,5 @@ Feature: Set up contextual data for tests
       | blockname    | contextlevel | reference | pagetypepattern | defaultregion |
       | online_users | Course       | C1        | course-view-*   | site-pre      |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     Then I should see "Online users"

@@ -21,8 +21,7 @@ Feature: Average grades are displayed in the gradebook
       | student2 | C1 | student |
       | student3 | C1 | student |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     # Enable averages
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the following fields to these values:
@@ -58,8 +57,7 @@ Feature: Average grades are displayed in the gradebook
 
     # Check the user grade table
     And I log in as "student1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "User report" in the course gradebook
     Then I should see "50.00" in the ".level2.column-grade" "css_element"
     Then I should see "50.00" in the ".level2.column-average" "css_element"

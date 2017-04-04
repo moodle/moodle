@@ -57,7 +57,7 @@ Feature: Group overview
 
   Scenario: Filter the overview in various different ways
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Groups" node in "Course administration > Users"
     And I follow "Overview"
 

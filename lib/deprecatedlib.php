@@ -6457,14 +6457,14 @@ function message_get_recent_conversations($userorid, $limitfrom = 0, $limitto = 
              WHERE otheruser.deleted = 0 AND message.notification = 0
           ORDER BY message.timecreated DESC";
     $params = array(
-            'userid1' => $user->id,
-            'userid2' => $user->id,
-            'userid3' => $user->id,
-            'userid4' => $user->id,
-            'userid5' => $user->id,
-            'userid6' => $user->id,
-            'userid7' => $user->id
-        );
+        'userid1' => $user->id,
+        'userid2' => $user->id,
+        'userid3' => $user->id,
+        'userid4' => $user->id,
+        'userid5' => $user->id,
+        'userid6' => $user->id,
+        'userid7' => $user->id
+    );
     $read = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
 
     // We want to get the messages that have not been read. These are stored in the 'message' table. It is the
@@ -6525,4 +6525,109 @@ function message_get_recent_conversations($userorid, $limitfrom = 0, $limitto = 
     $conversations = array_reverse($conversations);
 
     return $conversations;
+}
+
+/**
+ * Display calendar preference button.
+ *
+ * @param stdClass $course course object
+ * @deprecated since Moodle 3.2
+ * @return string return preference button in html
+ */
+function calendar_preferences_button(stdClass $course) {
+    debugging('This should no longer be used, the calendar preferences are now linked to the user preferences page.');
+
+    global $OUTPUT;
+
+    // Guests have no preferences.
+    if (!isloggedin() || isguestuser()) {
+        return '';
+    }
+
+    return $OUTPUT->single_button(new moodle_url('/user/calendar.php'), get_string("preferences", "calendar"));
+}
+
+/**
+ * Return the name of the weekday
+ *
+ * @deprecated since 3.3
+ * @param string $englishname
+ * @return string of the weekeday
+ */
+function calendar_wday_name($englishname) {
+    debugging(__FUNCTION__ . '() is deprecated and no longer used in core.', DEBUG_DEVELOPER);
+    return get_string(strtolower($englishname), 'calendar');
+}
+
+/**
+ * Get the upcoming event block.
+ *
+ * @deprecated since 3.3
+ * @param array $events list of events
+ * @param moodle_url|string $linkhref link to event referer
+ * @param boolean $showcourselink whether links to courses should be shown
+ * @return string|null $content html block content
+ */
+function calendar_get_block_upcoming($events, $linkhref = null, $showcourselink = false) {
+    global $CFG;
+
+    debugging(__FUNCTION__ . '() is deprecated, please use block_calendar_upcoming::get_upcoming_content() instead.',
+        DEBUG_DEVELOPER);
+
+    require_once($CFG->dirroot . '/blocks/moodleblock.class.php');
+    require_once($CFG->dirroot . '/blocks/calendar_upcoming/block_calendar_upcoming.php');
+    return block_calendar_upcoming::get_upcoming_content($events, $linkhref, $showcourselink);
+}
+
+/**
+ * Display month selector options.
+ *
+ * @deprecated since 3.3
+ * @param string $name for the select element
+ * @param string|array $selected options for select elements
+ */
+function calendar_print_month_selector($name, $selected) {
+    debugging(__FUNCTION__ . '() is deprecated and no longer used in core.', DEBUG_DEVELOPER);
+    $months = array();
+    for ($i = 1; $i <= 12; $i++) {
+        $months[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), '%B');
+    }
+    echo html_writer::label(get_string('months'), 'menu'. $name, false, array('class' => 'accesshide'));
+    echo html_writer::select($months, $name, $selected, false);
+}
+
+/**
+ * Update calendar subscriptions.
+ *
+ * @deprecated since 3.3
+ * @return bool
+ */
+function calendar_cron() {
+    debugging(__FUNCTION__ . '() is deprecated and should not be used. Please use the core\task\calendar_cron_task instead.',
+        DEBUG_DEVELOPER);
+
+    global $CFG, $DB;
+
+    // In order to execute this we need bennu.
+    require_once($CFG->libdir.'/bennu/bennu.inc.php');
+
+    mtrace('Updating calendar subscriptions:');
+    cron_trace_time_and_memory();
+
+    $time = time();
+    $subscriptions = $DB->get_records_sql('SELECT * FROM {event_subscriptions} WHERE pollinterval > 0
+      AND lastupdated + pollinterval < ?', array($time));
+    foreach ($subscriptions as $sub) {
+        mtrace("Updating calendar subscription {$sub->name} in course {$sub->courseid}");
+        try {
+            $log = calendar_update_subscription_events($sub->id);
+            mtrace(trim(strip_tags($log)));
+        } catch (moodle_exception $ex) {
+            mtrace('Error updating calendar subscription: ' . $ex->getMessage());
+        }
+    }
+
+    mtrace('Finished updating calendar subscriptions.');
+
+    return true;
 }

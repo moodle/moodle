@@ -636,7 +636,6 @@ abstract class moodleform_mod extends moodleform {
         }
         if ($completion->is_enabled()) {
             $mform->addElement('header', 'activitycompletionheader', get_string('activitycompletion', 'completion'));
-
             // Unlock button for if people have completed it (will
             // be removed in definition_after_data if they haven't)
             $mform->addElement('submit', 'unlockcompletion', get_string('unlockcompletion', 'completion'));
@@ -647,7 +646,13 @@ abstract class moodleform_mod extends moodleform {
             $trackingdefault = COMPLETION_TRACKING_NONE;
             // If system and activity default is on, set it.
             if ($CFG->completiondefault && $this->_features->defaultcompletion) {
-                $trackingdefault = COMPLETION_TRACKING_MANUAL;
+                $hasrules = plugin_supports('mod', $this->_modname, FEATURE_COMPLETION_HAS_RULES, true);
+                $tracksviews = plugin_supports('mod', $this->_modname, FEATURE_COMPLETION_TRACKS_VIEWS, true);
+                if ($hasrules || $tracksviews) {
+                    $trackingdefault = COMPLETION_TRACKING_AUTOMATIC;
+                } else {
+                    $trackingdefault = COMPLETION_TRACKING_MANUAL;
+                }
             }
 
             $mform->addElement('select', 'completion', get_string('completion', 'completion'),
@@ -662,6 +667,10 @@ abstract class moodleform_mod extends moodleform {
                 $mform->addElement('checkbox', 'completionview', get_string('completionview', 'completion'),
                     get_string('completionview_desc', 'completion'));
                 $mform->disabledIf('completionview', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
+                // Check by default if automatic completion tracking is set.
+                if ($trackingdefault == COMPLETION_TRACKING_AUTOMATIC) {
+                    $mform->setDefault('completionview', 1);
+                }
                 $gotcompletionoptions = true;
             }
 

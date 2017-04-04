@@ -31,7 +31,7 @@ Feature: Add notes to course participants
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Participants"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 1')]//input[@type='checkbox']" to "1"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 2')]//input[@type='checkbox']" to "1"
@@ -51,7 +51,7 @@ Feature: Add notes to course participants
     And I follow "Participants"
     And I follow "Student 2"
     And I follow "Notes"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Participants"
     And I follow "Notes"
     Then I should see "Student 1"

@@ -18,8 +18,7 @@ Feature: Managers can create courses
     And I enrol "Student 1" user as "Student"
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Latest announcements" block
     Then "Latest announcements" "block" should exist
     And I follow "Announcements"
@@ -28,7 +27,7 @@ Feature: Managers can create courses
     And "Subscription mode > Forced subscription" "text" should exist in current page administration
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Announcements"
     And "Add a new topic" "button" should not exist
     And "Forced subscription" "text" should exist in current page administration

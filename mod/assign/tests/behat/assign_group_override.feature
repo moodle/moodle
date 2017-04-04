@@ -30,8 +30,7 @@ Feature: Assign group override
       | student2 | G2 |
       | student3 | G1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
@@ -112,12 +111,12 @@ Feature: Assign group override
     And I should see "Wednesday, 1 January 2020, 8:00"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     Then I should see "Saturday, 1 January 2000, 8:00"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should see "Wednesday, 1 January 2020, 8:00"
 
@@ -148,12 +147,12 @@ Feature: Assign group override
     And I should see "Wednesday, 1 January 2020, 8:00"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     Then I should not see "Make changes to your submission"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should see "Make changes to your submission"
 
@@ -184,13 +183,13 @@ Feature: Assign group override
     And I should see "Thursday, 1 January 2015, 8:00"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     Then I should see "This assignment will accept submissions from Wednesday, 1 January 2020, 8:00"
     And I should not see "Add submission"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should not see "This assignment will accept submissions from Wednesday, 1 January 2020, 8:00"
 
@@ -235,16 +234,16 @@ Feature: Assign group override
     And I should see "Friday, 1 January 2021, 8:00"
     And I log out
     Then I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should see "This assignment will accept submissions from Friday, 1 January 2021, 8:00"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should see "This assignment will accept submissions from Tuesday, 1 January 2030, 8:00"
     And I log out
     And I log in as "student3"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should see "This assignment will accept submissions from Wednesday, 1 January 2020, 8:00"

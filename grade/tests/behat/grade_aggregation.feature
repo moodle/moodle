@@ -41,7 +41,7 @@ Feature: We can use calculated grade totals
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I change window size to "large"
@@ -256,7 +256,7 @@ Feature: We can use calculated grade totals
     And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Test outcome item one":
      | Extra credit     | 1   |
@@ -268,7 +268,7 @@ Feature: We can use calculated grade totals
     And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Course 1":
       | Aggregation                     | Natural |
@@ -370,8 +370,7 @@ Feature: We can use calculated grade totals
   Scenario: Natural aggregation with drop lowest
     When I log out
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I set the following settings for grade item "Sub category 1":

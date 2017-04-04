@@ -65,7 +65,7 @@ Feature: Feedbacks in courses with groups
   @javascript
   Scenario: Non anonymous feedback with groups in a course
     When I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
@@ -91,7 +91,7 @@ Feature: Feedbacks in courses with groups
       | I don't know | 1 |
     # View analysis, user1 should only see one group - group 1
     And I log in as "user1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: Group 1"
@@ -101,7 +101,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # View analysis, user3 should only see one group - group 2
     And I log in as "user3"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: Group 2"
@@ -111,7 +111,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # View analysis, user2 should see a group selector and be able to change the group but not view all.
     And I log in as "user2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Submitted answers"
     And the field "Separate groups" matches value "Group 1"
@@ -126,7 +126,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # User without group can see all participants only
     And I log in as "user7"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: All participants"
@@ -137,7 +137,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # Teacher can browse everybody
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I navigate to "Analysis" in current page administration
     And the field "Separate groups" matches value "All participants"
@@ -168,7 +168,7 @@ Feature: Feedbacks in courses with groups
   @javascript
   Scenario: Anonymous feedback with groups in a course
     When I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course anon feedback"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
@@ -181,7 +181,7 @@ Feature: Feedbacks in courses with groups
     And I log in as "user1" and complete feedback "Course anon feedback" in course "Course 1" with:
       | Not at all | 1 |
     And I log in as "user1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course anon feedback"
     And I follow "Submitted answers"
     And I should see "There are insufficient responses for this group"
@@ -201,7 +201,7 @@ Feature: Feedbacks in courses with groups
       | I don't know | 1 |
     # View analysis, user1 should only see one group - group 1
     And I log in as "user1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course anon feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: Group 1"
@@ -211,7 +211,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # View analysis, user3 should only see one group - group 2
     And I log in as "user3"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course anon feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: Group 2"
@@ -221,7 +221,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # View analysis, user2 should see a group selector and be able to change the group but not view all.
     And I log in as "user2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course anon feedback"
     And I follow "Submitted answers"
     And the field "Separate groups" matches value "Group 1"
@@ -236,7 +236,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # User without group can see all participants only
     And I log in as "user7"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course anon feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: All participants"
@@ -247,7 +247,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # Teacher can browse everybody
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course anon feedback"
     And I navigate to "Analysis" in current page administration
     And the field "Separate groups" matches value "All participants"

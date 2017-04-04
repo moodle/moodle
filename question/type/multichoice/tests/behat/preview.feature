@@ -22,7 +22,7 @@ Feature: Preview a Multiple choice question
       | Test questions   | multichoice | Multi-choice-001 | two_of_four |
       | Test questions   | multichoice | Multi-choice-002 | one_of_four |
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Question bank" node in "Course administration"
 
   @javascript @_switch_window

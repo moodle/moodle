@@ -19,8 +19,7 @@ Feature: Calculated grade items can be used in the gradebook
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
 
   @javascript

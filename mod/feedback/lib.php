@@ -40,6 +40,10 @@ define('FEEDBACK_RESETFORM_DROP', 'feedback_drop_feedback_');
 define('FEEDBACK_MAX_PIX_LENGTH', '400'); //max. Breite des grafischen Balkens in der Auswertung
 define('FEEDBACK_DEFAULT_PAGE_COUNT', 20);
 
+// Event types.
+define('FEEDBACK_EVENT_TYPE_OPEN', 'open');
+define('FEEDBACK_EVENT_TYPE_CLOSE', 'close');
+
 /**
  * Returns all other caps used in module.
  *
@@ -799,13 +803,16 @@ function feedback_set_events($feedback) {
 
     // Feedback start calendar events.
     $eventid = $DB->get_field('event', 'id',
-            array('modulename' => 'feedback', 'instance' => $feedback->id, 'eventtype' => 'open'));
+            array('modulename' => 'feedback', 'instance' => $feedback->id, 'eventtype' => FEEDBACK_EVENT_TYPE_OPEN));
 
     if (isset($feedback->timeopen) && $feedback->timeopen > 0) {
         $event = new stdClass();
+        $event->eventtype    = FEEDBACK_EVENT_TYPE_OPEN;
+        $event->type         = empty($feedback->timeclose) ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
         $event->name         = get_string('calendarstart', 'feedback', $feedback->name);
         $event->description  = format_module_intro('feedback', $feedback, $feedback->coursemodule);
         $event->timestart    = $feedback->timeopen;
+        $event->timesort     = $feedback->timeopen;
         $event->visible      = instance_is_visible('feedback', $feedback);
         $event->timeduration = 0;
         if ($eventid) {
@@ -820,7 +827,7 @@ function feedback_set_events($feedback) {
             $event->userid       = 0;
             $event->modulename   = 'feedback';
             $event->instance     = $feedback->id;
-            $event->eventtype    = 'open';
+            $event->eventtype    = FEEDBACK_EVENT_TYPE_OPEN;
             calendar_event::create($event);
         }
     } else if ($eventid) {
@@ -831,13 +838,16 @@ function feedback_set_events($feedback) {
 
     // Feedback close calendar events.
     $eventid = $DB->get_field('event', 'id',
-            array('modulename' => 'feedback', 'instance' => $feedback->id, 'eventtype' => 'close'));
+            array('modulename' => 'feedback', 'instance' => $feedback->id, 'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE));
 
     if (isset($feedback->timeclose) && $feedback->timeclose > 0) {
         $event = new stdClass();
+        $event->type         = CALENDAR_EVENT_TYPE_ACTION;
+        $event->eventtype    = FEEDBACK_EVENT_TYPE_CLOSE;
         $event->name         = get_string('calendarend', 'feedback', $feedback->name);
         $event->description  = format_module_intro('feedback', $feedback, $feedback->coursemodule);
         $event->timestart    = $feedback->timeclose;
+        $event->timesort     = $feedback->timeclose;
         $event->visible      = instance_is_visible('feedback', $feedback);
         $event->timeduration = 0;
         if ($eventid) {
@@ -852,7 +862,6 @@ function feedback_set_events($feedback) {
             $event->userid       = 0;
             $event->modulename   = 'feedback';
             $event->instance     = $feedback->id;
-            $event->eventtype    = 'close';
             calendar_event::create($event);
         }
     } else if ($eventid) {
@@ -3389,3 +3398,37 @@ function feedback_check_updates_since(cm_info $cm, $from, $filter = array()) {
 
     return $updates;
 }
+
+/**
+ * Handles creating actions for events.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ */
+function mod_feedback_core_calendar_provide_event_action(calendar_event $event,
+                                                         \core_calendar\action_factory $factory) {
+    global $DB;
+
+    $cm = get_fast_modinfo($event->courseid)->instances['feedback'][$event->instance];
+    $feedback = $DB->get_record('feedback', ['id' => $event->instance], 'id, timeopen, timeclose');
+
+    $now = time();
+    if ($feedback->timeopen && $feedback->timeclose) {
+        $actionable = ($now >= $feedback->timeopen) && ($now <= $feedback->timeclose);
+    } else if ($feedback->timeclose) {
+        $actionable = $now < $feedback->timeclose;
+    } else if ($feedback->timeopen) {
+        $actionable = $now >= $feedback->timeopen;
+    } else {
+        $actionable = true;
+    }
+
+    return $factory->create_instance(
+        get_string('answerquestions', 'feedback'),
+        new \moodle_url('/mod/feedback/view.php', ['id' => $cm->id]),
+        1,
+        $actionable
+    );
+}
+

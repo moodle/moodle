@@ -24,7 +24,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
       | assign   | C1     | a4       | Test assignment four (extra) | x     | 20    |
       | assign   | C1     | a5       | Test assignment five (extra) | x     | 10    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Test assignment four (extra)":
       | Extra credit | 1 |

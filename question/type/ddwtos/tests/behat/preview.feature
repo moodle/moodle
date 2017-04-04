@@ -21,7 +21,7 @@ Feature: Preview a drag-drop into text question
       | questioncategory | qtype  | name         | template |
       | Test questions   | ddwtos | Drag to text | fox      |
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Question bank" node in "Course administration"
 
   @javascript @_bug_phantomjs

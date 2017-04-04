@@ -30,7 +30,7 @@ Feature: The various checks that may happen when an attept is started
       | question | page |
       | TF1      | 1    |
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     Then I should see "Text of the first question"
@@ -44,7 +44,7 @@ Feature: The various checks that may happen when an attept is started
       | question | page |
       | TF1      | 1    |
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     Then I should see "To attempt this quiz you need to know the quiz password" in the "Start attempt" "dialogue"
@@ -62,7 +62,7 @@ Feature: The various checks that may happen when an attept is started
       | question | page |
       | TF1      | 1    |
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "Cancel" "button" in the "Start attempt" "dialogue"
@@ -78,7 +78,7 @@ Feature: The various checks that may happen when an attept is started
       | question | page |
       | TF1      | 1    |
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I set the field "Quiz password" to "Toad"
@@ -102,7 +102,7 @@ Feature: The various checks that may happen when an attept is started
       | question | page |
       | TF1      | 1    |
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I set the field "Quiz password" to "Toad"

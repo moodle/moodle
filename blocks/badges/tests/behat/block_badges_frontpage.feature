@@ -20,7 +20,7 @@ Feature: Enable Block Badges on the frontpage and view awarded badges
     And I add the "Latest badges" block
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     # Issue badge 1 of 2
     And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I set the following fields to these values:

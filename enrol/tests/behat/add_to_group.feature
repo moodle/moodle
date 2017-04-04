@@ -24,7 +24,7 @@ Feature: Users can be added to multiple groups at once
 
   Scenario: Adding a user to one group
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Enrolled users" node in "Course administration > Users"
     And I click on "Add user into group" "link" in the "student1" "table_row"
     When I set the field "Add user into group" to "Group 1"
@@ -33,7 +33,7 @@ Feature: Users can be added to multiple groups at once
 
   Scenario: Adding a user to multiple group
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Enrolled users" node in "Course administration > Users"
     And I click on "Add user into group" "link" in the "student1" "table_row"
     When I set the field "Add user into group" to "Group 1, Group 2, Group 3"

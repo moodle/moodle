@@ -15,8 +15,7 @@ Feature: Check a SCORM package with missing Organisational structure.
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     When I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "SCORM package" to section "1"
     And I set the following fields to these values:
       | Name | MissingOrg SCORM package |
@@ -28,7 +27,7 @@ Feature: Check a SCORM package with missing Organisational structure.
     And I should see "Preview"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "MissingOrg SCORM package"
     And I should see "Normal"
     And I press "Enter"

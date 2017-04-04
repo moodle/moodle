@@ -33,8 +33,7 @@ Feature: Verify that all form fields values can be get and set
       | activity | course | idnumber | name | intro | firstpagetitle | wikimode | visible |
       | wiki | C1 | wiki1 | Test this one | Test this one | Test this one | collaborative | 0 |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Reset" node in "Course administration"
     # Select (multi-select) - Checking "the select box should contain".
     And I expand all fieldsets
@@ -48,9 +47,7 @@ Feature: Verify that all form fields values can be get and set
     And the "Unenrol users" select box should not contain "President"
     And the "Unenrol users" select box should not contain "Baker"
     And the "Unenrol users" select box should not contain "President, Baker"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I follow "Test this one"
     And I press "Create page"
     # Text (textarea & editor) & Select (multi-select) - Checking "I set the following fields to these values".
@@ -100,7 +97,7 @@ Feature: Verify that all form fields values can be get and set
       | Default format | HTML |
       | Force format | 1 |
     And I press "Cancel"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     # Radio - Checking "I set the field" and "the field matches value".
     And I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Test choice name |
@@ -115,8 +112,7 @@ Feature: Verify that all form fields values can be get and set
     And the field "one" matches value "1"
     And the field "two" matches value ""
     # Check if field xpath set/match works.
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field with xpath "//input[@id='id_idnumber']" to "Course id number"
     And the field with xpath "//input[@name='idnumber']" matches value "Course id number"
@@ -129,7 +125,7 @@ Feature: Verify that all form fields values can be get and set
 
   @javascript
   Scenario: with JS enabled all form fields getters and setters works as expected
-    Then I follow "Course 1"
+    Then I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration
     # Select (multi-select & AJAX) - Checking "I set the field" and "select box should contain".
     And I set the field "groups" to "Group 2"
@@ -141,7 +137,7 @@ Feature: Verify that all form fields values can be get and set
     And the "members" select box should contain "Student 2"
     And the "members" select box should not contain "Student 3"
     # Checkbox (AJAX) - Checking "I set the field" and "I set the following fields to these values".
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Lesson" to section "1"
     And I set the following fields to these values:
       | Name | Test lesson |

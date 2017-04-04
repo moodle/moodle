@@ -17,8 +17,7 @@ Feature: Blog posts are always displayed in reverse chronological order
       | teacher1  | C1        | editingteacher  |
       | student1  | C1        | student         |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name  | Course blog forum                               |
       | Description | Single discussion forum description             |
@@ -33,7 +32,7 @@ Feature: Blog posts are always displayed in reverse chronological order
   @javascript
   Scenario: Replying to a blog post or editing it does not affect its display order
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course blog forum"
     #
     # Add three posts into the blog.
@@ -60,7 +59,7 @@ Feature: Blog posts are always displayed in reverse chronological order
     # Reply to another blog post.
     #
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course blog forum"
     And I click on "Discuss this topic" "link" in the "//div[@aria-label='Blog post 1 by Student 1']" "xpath_element"
     And I click on "Reply" "link" in the "//div[@aria-label='Blog post 1 by Student 1']" "xpath_element"
@@ -69,7 +68,7 @@ Feature: Blog posts are always displayed in reverse chronological order
     And I press "Post to forum"
     And I wait to be redirected
     And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course blog forum"
     #
     # Make sure the order of the blog posts is still reverse chronological.

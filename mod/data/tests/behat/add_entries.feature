@@ -21,7 +21,7 @@ Feature: Users can add entries to database activities
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
@@ -33,7 +33,7 @@ Feature: Users can add entries to database activities
     And I wait until the page is ready
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
       | Test field name | Student original entry |
       | Test field 2 name | Student original entry 2 |
@@ -70,7 +70,7 @@ Feature: Users can add entries to database activities
     # Now I will bulk delete the rest of the entries.
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test database name"
     And I press "Select all"
     And I press "Delete selected"

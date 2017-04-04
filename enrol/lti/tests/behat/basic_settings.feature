@@ -30,7 +30,7 @@ Feature: Check that settings are adhered to when creating an enrolment plugin
 
   Scenario: As an admin set site-wide settings for the enrolment plugin and ensure they are used
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Enrolment methods" node in "Course administration > Users"
     And I select "Publish as LTI tool" from the "Add method" singleselect
     When I expand all fieldsets

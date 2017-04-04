@@ -32,7 +32,7 @@ Feature: Attempt a quiz
       | TF1      | 1    |         |
       | TF2      | 1    | 3.0     |
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "True" "radio" in the "First question" "question"
@@ -68,7 +68,7 @@ Feature: Attempt a quiz
       | Section 3 | 5         | 0       |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 
@@ -111,7 +111,7 @@ Feature: Attempt a quiz
       | TF1      | 1    |
       | TF2      | 2    |
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     Then I should see "Text of the first question"

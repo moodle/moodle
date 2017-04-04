@@ -27,7 +27,7 @@ Feature: Workshop submission and assessment
       | workshop | TestWorkshop | Test workshop description | c1     | workshop1 |
 # teacher1 sets up assessment form and changes the phase to submission
     When I log in as "teacher1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I edit assessment form in workshop "TestWorkshop" as:"
       | id_description__idx_0_editor | Aspect1 |
       | id_description__idx_1_editor | Aspect2 |
@@ -36,7 +36,7 @@ Feature: Workshop submission and assessment
     And I log out
 # student1 submits
     And I log in as "student1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     Then I should see "Submit your work"
     And I add a submission in workshop "TestWorkshop" as:"
@@ -46,21 +46,21 @@ Feature: Workshop submission and assessment
     And I log out
 # student2 submits
     And I log in as "student2"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission2  |
       | Submission content | Some content |
     And I log out
 # student3 submits
     And I log in as "student3"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission3  |
       | Submission content | Some content |
     And I log out
 # teacher1 allocates reviewers and changes the phase to assessment
     And I log in as "teacher1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     And I should see "to allocate: 3"
     And I should see "There is at least one author who has not yet submitted their work"
@@ -82,7 +82,7 @@ Feature: Workshop submission and assessment
     And I log out
 # student1 assesses work of student2 and student3
     And I log in as "student1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 2') and contains(.,'total: 2')]" "xpath_element" should exist
     And I assess submission "Sam2" in workshop "TestWorkshop" as:"
@@ -92,7 +92,7 @@ Feature: Workshop submission and assessment
       | peercomment__idx_1      | Amazing           |
       | Feedback for the author | Good work         |
     And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 1') and contains(.,'total: 2')]" "xpath_element" should exist
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I assess submission "Sam3" in workshop "TestWorkshop" as:"
       | grade__idx_0            | 9 / 10      |
       | peercomment__idx_0      | Well done   |
@@ -103,7 +103,7 @@ Feature: Workshop submission and assessment
     And I log out
 # student2 assesses work of student1
     And I log in as "student2"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 1') and contains(.,'total: 1')]" "xpath_element" should exist
     And I assess submission "Sam1" in workshop "TestWorkshop" as:"
@@ -116,7 +116,7 @@ Feature: Workshop submission and assessment
     And I log out
 # teacher1 makes sure he can see all peer grades
     And I log in as "teacher1"
-    And I follow "Course1"
+    And I am on "Course1" course homepage
     And I follow "TestWorkshop"
     And I should see grade "52" for workshop participant "Sam1" set by peer "Sam2"
     And I should see grade "60" for workshop participant "Sam2" set by peer "Sam1"

@@ -18,7 +18,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
       | activity   | name                   | intro                   | course  | idnumber  |
       | forum      | Test forum name        | Test forum description  | C1      | forum     |
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Forum post subject |
       | Message | This is the body |
@@ -47,9 +47,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
     And I navigate to "Security > Site policies" in site administration
     And I set the field "Maximum time to edit posts" to "1 minutes"
     And I press "Save changes"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
@@ -57,7 +55,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
       | Description | Test forum description |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I wait "61" seconds
     And I follow "Forum post subject"
     Then I should not see "Edit" in the "region-main" "region"

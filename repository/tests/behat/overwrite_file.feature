@@ -28,9 +28,7 @@ Feature: Overwrite file feature
       | Save as | empty_copy.txt |
     And I should see "2" elements in "Files" filemanager
     And I press "Save changes"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Folder" to section "1"
     And I set the following fields to these values:
       | Name | Test folder |
