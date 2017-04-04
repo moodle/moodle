@@ -36,7 +36,7 @@ Feature: The my overview block allows users to easily access their courses and s
     And I should see "View choices" in the "My overview" "block"
     And I should see "Feedback Test feedback 1 closes" in the "My overview" "block"
     And I should see "Answer the questions" in the "My overview" "block"
-    And I should see "##tomorrow##d M, H:i##" in the "My overview" "block"
+    And I should see "##tomorrow##j M, H:i##" in the "My overview" "block"
     And I should see "Future" in the "My overview" "block"
     And I should see "Choice Test choice 3 closes" in the "My overview" "block"
     And I should see "Feedback Test feedback 3 closes" in the "My overview" "block"
