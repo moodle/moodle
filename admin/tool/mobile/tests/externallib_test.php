@@ -140,7 +140,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'frontpageloggedin', 'value' => $CFG->frontpageloggedin),
             array('name' => 'maxcategorydepth', 'value' => $CFG->maxcategorydepth),
             array('name' => 'frontpagecourselimit', 'value' => $CFG->frontpagecourselimit),
-            array('name' => 'numsections', 'value' => course_get_format($SITE)->get_course()->numsections),
+            array('name' => 'numsections', 'value' => course_get_format($SITE)->get_last_section_number()),
             array('name' => 'newsitems', 'value' => $SITE->newsitems),
             array('name' => 'commentsperpage', 'value' => $CFG->commentsperpage),
             array('name' => 'disableuserimages', 'value' => $CFG->disableuserimages),

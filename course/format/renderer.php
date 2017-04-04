@@ -303,7 +303,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $sectionreturn = $onsectionpage ? $section->section : null;
 
         $coursecontext = context_course::instance($course->id);
-        $isstealth = isset($course->numsections) && ($section->section > $course->numsections);
+        $numsections = course_get_format($course)->get_last_section_number();
+        $isstealth = $section->section > $numsections;
 
         $baseurl = course_get_url($course, $sectionreturn);
         $baseurl->param('sesskey', sesskey());
@@ -369,7 +370,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                         }
 
                         $url = clone($baseurl);
-                        if ($section->section < $course->numsections) { // Add a arrow to move section down.
+                        if ($section->section < $numsections) { // Add a arrow to move section down.
                             $url->param('section', $section->section);
                             $url->param('move', 1);
                             $strmovedown = get_string('movedown');
@@ -643,7 +644,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         }
 
         $forward = $sectionno + 1;
-        while ($forward <= $course->numsections and empty($links['next'])) {
+        $numsections = course_get_format($course)->get_last_section_number();
+        while ($forward <= $numsections and empty($links['next'])) {
             if ($canviewhidden || $sections[$forward]->uservisible) {
                 $params = array();
                 if (!$sections[$forward]->visible) {
@@ -731,7 +733,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $sectionmenu[course_get_url($course)->out(false)] = get_string('maincoursepage');
         $modinfo = get_fast_modinfo($course);
         $section = 1;
-        while ($section <= $course->numsections) {
+        $numsections = course_get_format($course)->get_last_section_number();
+        while ($section <= $numsections) {
             $thissection = $modinfo->get_section_info($section);
             $showsection = $thissection->uservisible or !$course->hiddensections;
             if (($showsection) && ($section != $displaysection) && ($url = course_get_url($course, $section))) {
@@ -869,6 +872,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         // Now the list of sections..
         echo $this->start_section_list();
+        $numsections = course_get_format($course)->get_last_section_number();
 
         foreach ($modinfo->get_section_info_all() as $section => $thissection) {
             if ($section == 0) {
@@ -881,7 +885,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 }
                 continue;
             }
-            if ($section > $course->numsections) {
+            if ($section > $numsections) {
                 // activities inside this section are 'orphaned', this section will be printed as 'stealth' below
                 continue;
             }
@@ -917,7 +921,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         if ($PAGE->user_is_editing() and has_capability('moodle/course:update', $context)) {
             // Print stealth sections if present.
             foreach ($modinfo->get_section_info_all() as $section => $thissection) {
-                if ($section <= $course->numsections or empty($modinfo->sections[$section])) {
+                if ($section <= $numsections or empty($modinfo->sections[$section])) {
                     // this is not stealth section or it is empty
                     continue;
                 }
@@ -927,6 +931,34 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             }
 
             echo $this->end_section_list();
+
+            echo $this->change_number_sections($course, 0);
+        } else {
+            echo $this->end_section_list();
+        }
+
+    }
+
+    /**
+     * Returns controls in the bottom of the page to increase/decrease number of sections
+     *
+     * @param stdClass $course
+     * @param int|null $sectionreturn
+     * @return string
+     */
+    protected function change_number_sections($course, $sectionreturn = null) {
+        $coursecontext = context_course::instance($course->id);
+        if (!has_capability('moodle/course:update', $coursecontext)) {
+            return '';
+        }
+
+        $options = course_get_format($course)->get_format_options();
+        $supportsnumsections = array_key_exists('numsections', $options);
+
+        if ($supportsnumsections) {
+            // Current course format has 'numsections' option, which is very confusing and we suggest course format
+            // developers to get rid of it (see MDL-57769 on how to do it).
+            // Display "Increase section" / "Decrease section" links.
 
             echo html_writer::start_tag('div', array('id' => 'changenumsections', 'class' => 'mdl-right'));
 
@@ -951,10 +983,28 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             }
 
             echo html_writer::end_tag('div');
-        } else {
-            echo $this->end_section_list();
-        }
 
+        } else if (course_get_format($course)->uses_sections()) {
+            // Current course format does not have 'numsections' option but it has multiple sections suppport.
+            // Display the "Add section" link that will insert a section in the end.
+            // Note to course format developers: inserting sections in the other positions should check both
+            // capabilities 'moodle/course:update' and 'moodle/course:movesections'.
+
+            echo html_writer::start_tag('div', array('id' => 'changenumsections', 'class' => 'mdl-right'));
+            if (get_string_manager()->string_exists('addsection', 'format_'.$course->format)) {
+                $straddsection = get_string('addsection', 'format_'.$course->format);
+            } else {
+                $straddsection = get_string('addsection');
+            }
+            $url = new moodle_url('/course/changenumsections.php',
+                ['courseid' => $course->id, 'insertsection' => 0, 'sesskey' => sesskey()]);
+            if ($sectionreturn !== null) {
+                $url->param('sectionreturn', $sectionreturn);
+            }
+            $icon = $this->output->pix_icon('t/add', $straddsection);
+            echo html_writer::link($url, $icon . $straddsection, array('class' => 'add-section'));
+            echo html_writer::end_tag('div');
+        }
     }
 
     /**

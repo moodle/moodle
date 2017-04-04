@@ -185,7 +185,7 @@ class api {
             $settings->frontpageloggedin = $CFG->frontpageloggedin;
             $settings->maxcategorydepth = $CFG->maxcategorydepth;
             $settings->frontpagecourselimit = $CFG->frontpagecourselimit;
-            $settings->numsections = course_get_format($SITE)->get_course()->numsections;
+            $settings->numsections = course_get_format($SITE)->get_last_section_number();
             $settings->newsitems = $SITE->newsitems;
             $settings->commentsperpage = $CFG->commentsperpage;
 

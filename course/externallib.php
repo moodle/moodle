@@ -160,7 +160,7 @@ class core_course_external extends external_api {
             //retrieve sections
             $modinfo = get_fast_modinfo($course);
             $sections = $modinfo->get_section_info_all();
-            $coursenumsections = course_get_format($course)->get_course()->numsections;
+            $coursenumsections = course_get_format($course)->get_last_section_number();
 
             //for each sections (first displayed to last displayed)
             $modinfosections = $modinfo->get_sections();
@@ -468,6 +468,8 @@ class core_course_external extends external_api {
                     // For backward-compartibility
                     $courseinfo['hiddensections'] = $courseformatoptions['hiddensections'];
                 }
+                // Return numsections for backward-compatibility with clients who expect it.
+                $courseinfo['numsections'] = course_get_format($course)->get_last_section_number();
                 $courseinfo['groupmode'] = $course->groupmode;
                 $courseinfo['groupmodeforce'] = $course->groupmodeforce;
                 $courseinfo['defaultgroupingid'] = $course->defaultgroupingid;
