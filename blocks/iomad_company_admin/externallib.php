@@ -76,6 +76,9 @@ class block_iomad_company_admin_external extends external_api {
         self::validate_context($context);
         require_capability('block/iomad_company_admin:company_add', $context);
 
+        // Array to return newly created records
+        $companyinfo = array();
+
         foreach ($params['companies'] as $company) {
 
             // does this company already exist
@@ -88,6 +91,8 @@ class block_iomad_company_admin_external extends external_api {
 
             // Create the company record
             $companyid = $DB->insert_record('company', $company);
+            $newcompany = $DB->get_record('company', array('id' => $companyid));
+            $companyinfo[] = (array)$newcompany;
 
             // Set up course category for company.
             $coursecat = new stdclass();
@@ -104,7 +109,7 @@ class block_iomad_company_admin_external extends external_api {
             $DB->update_record('company', $companydetails);
         }
 
-        return true;
+        return $companyinfo;
     }
 
     /**
@@ -114,7 +119,26 @@ class block_iomad_company_admin_external extends external_api {
      * @return external_description
      */
     public static function create_companies_returns() {
-        return new external_value(PARAM_BOOL, 'Success or failure');
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                     'id' => new external_value(PARAM_INT, 'Companid ID'),
+                     'name' => new external_value(PARAM_TEXT, 'Company long name'),
+                     'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
+                     'city' => new external_value(PARAM_TEXT, 'Company location city'),
+                     'country' => new external_value(PARAM_TEXT, 'Company location country'),
+                     'maildisplay' => new external_value(PARAM_INT, 'User default email display'),
+                     'mailformat' => new external_value(PARAM_INT, 'User default email format'),
+                     'maildigest' => new external_value(PARAM_INT, 'User default digest type'),
+                     'autosubscribe' => new external_value(PARAM_INT, 'User default forum auto-subscribe'),
+                     'trackforums' => new external_value(PARAM_INT, 'User default forum tracking'),
+                     'htmleditor' => new external_value(PARAM_INT, 'User default text editor'),
+                     'screenreader' => new external_value(PARAM_INT, 'User default screen reader'),
+                     'timezone' => new external_value(PARAM_TEXT, 'User default timezone'),
+                     'lang' => new external_value(PARAM_TEXT, 'User default language'),
+                )
+            )
+        );
     }
 
     /**
