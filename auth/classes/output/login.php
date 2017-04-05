@@ -103,12 +103,7 @@ class login implements renderable, templatable {
         }
 
         // Identity providers.
-        $identityproviders = [];
-        foreach ($authsequence as $authname) {
-            $authplugin = get_auth_plugin($authname);
-            $identityproviders = array_merge($identityproviders, $authplugin->loginpage_idp_list($SESSION->wantsurl));
-        }
-        $this->identityproviders = $identityproviders;
+        $this->identityproviders = \auth_plugin_base::get_identity_providers($authsequence);
     }
 
     /**
@@ -121,21 +116,8 @@ class login implements renderable, templatable {
     }
 
     public function export_for_template(renderer_base $output) {
-        global $CFG;
 
-        $identityproviders = array_map(function($idp) use ($output) {
-
-            if (!empty($idp['icon'])) {
-                $idp['iconurl'] = $output->pix_url($idp['icon']->key, $idp['icon']->component);
-            } else if ($idp['iconurl'] instanceof moodle_url) {
-                $idp['iconurl'] = $idp['iconurl']->out(false);
-            }
-            unset($idp['icon']);
-            if ($idp['url'] instanceof moodle_url) {
-                $idp['url'] = $idp['url']->out(false);
-            }
-            return $idp;
-        }, $this->identityproviders);
+        $identityproviders = \auth_plugin_base::prepare_identity_providers_for_output($this->identityproviders, $output);
 
         $data = new stdClass();
         $data->autofocusform = $this->autofocusform;
