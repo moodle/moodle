@@ -15,15 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * scorm version information.
+ * Definition of Forum scheduled tasks.
  *
- * @package    mod_scorm
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_scorm
+ * @category  task
+ * @copyright 2017 Abhishek kumar <ganitgenius@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017032900;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2016112900;    // Requires this Moodle version.
-$plugin->component = 'mod_scorm';   // Full name of the plugin (used for diagnostics).
+$tasks = array(
+    array(
+        'classname' => 'mod_scorm\task\cron_task',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    )
+);
