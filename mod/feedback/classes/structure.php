@@ -36,7 +36,7 @@ class mod_feedback_structure {
     protected $feedback;
     /** @var cm_info */
     protected $cm;
-    /** @var int */
+    /** @var int course where the feedback is filled. For feedbacks that are NOT on the front page this is 0 */
     protected $courseid = 0;
     /** @var int */
     protected $templateid;
