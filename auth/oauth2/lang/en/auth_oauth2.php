@@ -77,6 +77,7 @@ $string['loginerror_userincomplete'] = 'The user information returned did not co
 $string['loginerror_nouserinfo'] = 'No user information was returned. The OAuth 2 service may be configured incorrectly.';
 $string['loginerror_invaliddomain'] = 'The email address is not allowed at this site.';
 $string['loginerror_authenticationfailed'] = 'The authentication process failed.';
+$string['loginerror_cannotcreateaccounts'] = 'The account does not exist and this site does not allow self-registration.';
 $string['notloggedindebug'] = 'The login attempt failed. Reason: {$a}';
 $string['notwhileloggedinas'] = 'Linked logins cannot be managed while logged in as another user.';
 $string['oauth2:managelinkedlogins'] = 'Manage own linked login accounts';
