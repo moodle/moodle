@@ -1,6 +1,14 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.3 ===
+
+ * External functions that were returning file information now return the following additional file fields:
+   - mimetype (the file mime type)
+   - isexternalfile (if is a file reference to a external repository)
+   - repositorytype (the repository name in case is a external file)
+   Those fields are VALUE_OPTIONAL for backwards compatibility.
+
 === 3.2 ===
 
 * Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
