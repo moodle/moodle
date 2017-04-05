@@ -6382,12 +6382,17 @@ function forum_tp_get_course_unread_posts($userid, $courseid) {
  * @global object
  * @param object $cm
  * @param object $course
+ * @param bool   $resetreadcache optional, true to reset the function static $readcache var
  * @return int
  */
-function forum_tp_count_forum_unread_posts($cm, $course) {
+function forum_tp_count_forum_unread_posts($cm, $course, $resetreadcache = false) {
     global $CFG, $USER, $DB;
 
     static $readcache = array();
+
+    if ($resetreadcache) {
+        $readcache = array();
+    }
 
     $forumid = $cm->instance;
 
