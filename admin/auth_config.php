@@ -16,7 +16,7 @@ $err = array();
 
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageauths";
 
-debugging("Use of config.html files in authentication plugins have been depreciated. " .
+debugging("Use of config.html files in authentication plugins have been deprecated. " .
           " Please migrate your plugin to use the admin settings API", DEBUG_DEVELOPER);
 
 // save configuration changes
@@ -107,7 +107,7 @@ exit;
  */
 function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, $updateopts, $customfields = array()) {
     global $DB, $OUTPUT;
-    debugging("The function 'print_auth_lock_options' has been depreciated, " .
+    debugging("The function 'print_auth_lock_options' has been deprecated, " .
               "Please migrate your code to use the admin settings API and use the function 'display_auth_lock_options' instead. ",
               DEBUG_DEVELOPER);
 
