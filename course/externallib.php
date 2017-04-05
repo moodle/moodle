@@ -363,6 +363,11 @@ class core_course_external extends external_api {
                                                   'timecreated' => new external_value(PARAM_INT, 'Time created'),
                                                   'timemodified' => new external_value(PARAM_INT, 'Time modified'),
                                                   'sortorder' => new external_value(PARAM_INT, 'Content sort order'),
+                                                  'mimetype' => new external_value(PARAM_RAW, 'File mime type.', VALUE_OPTIONAL),
+                                                  'isexternalfile' => new external_value(PARAM_BOOL, 'Whether is an external file.',
+                                                    VALUE_OPTIONAL),
+                                                  'repositorytype' => new external_value(PARAM_PLUGIN, 'The repository type for external files.',
+                                                    VALUE_OPTIONAL),
 
                                                   // copyright related info
                                                   'userid' => new external_value(PARAM_INT, 'User who added this content to moodle'),

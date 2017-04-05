@@ -1309,6 +1309,10 @@ class external_util {
                 $file['mimetype'] = $areafile->get_mimetype();
                 $file['filesize'] = $areafile->get_filesize();
                 $file['timemodified'] = $areafile->get_timemodified();
+                $file['isexternalfile'] = $areafile->is_external_file();
+                if ($file['isexternalfile']) {
+                    $file['repositorytype'] = $areafile->get_repository_type();
+                }
                 $fileitemid = $useitemidinurl ? $areafile->get_itemid() : null;
                 $file['fileurl'] = moodle_url::make_webservice_pluginfile_url($contextid, $component, $filearea,
                                     $fileitemid, $areafile->get_filepath(), $areafile->get_filename())->out(false);
@@ -1345,6 +1349,8 @@ class external_files extends external_multiple_structure {
                     'fileurl' => new external_value(PARAM_URL, 'Downloadable file url.', VALUE_OPTIONAL),
                     'timemodified' => new external_value(PARAM_INT, 'Time modified.', VALUE_OPTIONAL),
                     'mimetype' => new external_value(PARAM_RAW, 'File mime type.', VALUE_OPTIONAL),
+                    'isexternalfile' => new external_value(PARAM_BOOL, 'Whether is an external file.', VALUE_OPTIONAL),
+                    'repositorytype' => new external_value(PARAM_PLUGIN, 'The repository type for external files.', VALUE_OPTIONAL),
                 ),
                 'File.'
             ),
@@ -1396,6 +1402,18 @@ class external_files extends external_multiple_structure {
                 'description' => 'File mime type.',
                 'optional' => true,
                 'null' => NULL_NOT_ALLOWED,
+            ),
+            'isexternalfile' => array(
+                'type' => PARAM_BOOL,
+                'description' => 'Whether is an external file.',
+                'optional' => true,
+                'null' => NULL_NOT_ALLOWED,
+            ),
+            'repositorytype' => array(
+                'type' => PARAM_PLUGIN,
+                'description' => 'The repository type for the external files.',
+                'optional' => true,
+                'null' => NULL_ALLOWED,
             ),
         ];
     }
