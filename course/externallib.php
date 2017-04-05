@@ -433,7 +433,9 @@ class core_course_external extends external_api {
                 $exceptionparam->courseid = $course->id;
                 throw new moodle_exception('errorcoursecontextnotvalid', 'webservice', '', $exceptionparam);
             }
-            require_capability('moodle/course:view', $context);
+            if ($course->id != SITEID) {
+                require_capability('moodle/course:view', $context);
+            }
 
             $courseinfo = array();
             $courseinfo['id'] = $course->id;
