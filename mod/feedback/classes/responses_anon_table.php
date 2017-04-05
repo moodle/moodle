@@ -41,8 +41,9 @@ class mod_feedback_responses_anon_table extends mod_feedback_responses_table {
 
     /**
      * Initialises table
+     * @param int $group retrieve only users from this group (optional)
      */
-    public function init() {
+    public function init($group = 0) {
 
         $cm = $this->feedbackstructure->get_cm();
         $this->uniqueid = 'feedback-showentry-anon-list-' . $cm->instance;
@@ -78,7 +79,7 @@ class mod_feedback_responses_anon_table extends mod_feedback_responses_table {
             $where .= ' AND c.courseid = :courseid';
         }
 
-        $group = groups_get_activity_group($this->feedbackstructure->get_cm(), true);
+        $group = (empty($group)) ? groups_get_activity_group($this->feedbackstructure->get_cm(), true) : $group;
         if ($group) {
             $where .= ' AND c.userid IN (SELECT g.userid FROM {groups_members} g WHERE g.groupid = :group)';
             $params['group'] = $group;
@@ -109,5 +110,20 @@ class mod_feedback_responses_anon_table extends mod_feedback_responses_table {
             return html_writer::link($this->get_link_single_entry($row),
                     get_string('response_nr', 'feedback').': '. $row->random_response);
         }
+    }
+
+    /**
+     * Add data for the external structure that will be returned.
+     *
+     * @param stdClass $row a database query record row
+     * @since Moodle 3.3
+     */
+    protected function add_data_for_external($row) {
+        $this->dataforexternal[] = [
+            'id' => $row->id,
+            'courseid' => $row->courseid,
+            'number' => $row->random_response,
+            'responses' => $this->get_responses_for_external($row)
+        ];
     }
 }
