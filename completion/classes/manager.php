@@ -457,6 +457,7 @@ class manager {
                 $completion = new \completion_info(get_fast_modinfo($course->id)->get_course());
                 if ($completion->is_enabled() && plugin_supports('mod', $module->name, FEATURE_MODEDIT_DEFAULT_COMPLETION, true)) {
                     $data->completion = COMPLETION_TRACKING_MANUAL;
+                    $data->completionview = 1;
                 }
             }
         }

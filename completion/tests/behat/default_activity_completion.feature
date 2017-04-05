@@ -38,10 +38,11 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     And I should see "Completion tracking"
     And I should see "The changes will affect the following 1 Activities/Resources"
     And I should see "Student must submit to this activity to complete it"
-    And I select "Show activity as complete when conditions are met" from the "completion" singleselect
-    And I click on "completionview" "checkbox"
-    And I click on "completionusegrade" "checkbox"
-    And I click on "completionsubmit" "checkbox"
+    And I set the following fields to these values:
+      | completion | Show activity as complete when conditions are met|
+      | completionview | 1 |
+      | completionusegrade | 1 |
+      | completionsubmit | 1 |
     And I click on "Save changes" "button"
     Then I should see "Changes saved"
     And I should see "With conditions" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
