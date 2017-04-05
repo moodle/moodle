@@ -1187,7 +1187,7 @@ function choice_check_updates_since(cm_info $cm, $from, $filter = array()) {
  *
  * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
- * @return \core_calendar\local\event\value_objects\action|\core_calendar\local\interfaces\action_interface|null
+ * @return \core_calendar\local\event\entities\action_interface|null
  */
 function mod_choice_core_calendar_provide_event_action(calendar_event $event,
                                                        \core_calendar\action_factory $factory) {
