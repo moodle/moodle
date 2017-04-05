@@ -251,7 +251,6 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/completion_self' => 'fa-user-o',
             'core:i/lock' => 'fa-lock',
             'core:i/courseevent' => 'fa-calendar',
-            'core:i/course' => 'fa-globe',
             'core:i/db' => 'fa-database',
             'core:i/delete' => 'fa-trash',
             'core:i/down' => 'fa-arrow-down',
