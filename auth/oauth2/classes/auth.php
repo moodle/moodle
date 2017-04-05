@@ -518,28 +518,15 @@ class auth extends \auth_plugin_base {
                 $message = get_string('emailconfirmsent', '', $userinfo['email']);
                 $this->print_confirm_required($emailconfirm, $message);
                 exit();
-
             }
         }
 
-        // If we got to here - we must have found a real user account that is confirmed.
-        $this->set_static_user_info($userinfo);
-        $user = authenticate_user_login($userinfo['username'], '');
-
-        if ($user) {
-            complete_user_login($user);
-            $this->update_picture($user);
-            redirect($redirecturl);
-        }
-        // Trigger login failed event.
-        $failurereason = AUTH_LOGIN_FAILED;
-        $event = \core\event\user_login_failed::create(['other' => ['username' => $userinfo['username'],
-                                                                    'reason' => $failurereason]]);
-        $event->trigger();
-
-        $errormsg = get_string('notloggedindebug', 'auth_oauth2', get_string('loginerror_authenticationfailed', 'auth_oauth2'));
-        $SESSION->loginerrormsg = $errormsg;
-        redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+        // We used to call authenticate_user - but that won't work if the current user has a different default authentication
+        // method. Since we now ALWAYS link a login - if we get to here we can directly allow the user in.
+        $user = (object) $userinfo;
+        complete_user_login($user);
+        $this->update_picture($user);
+        redirect($redirecturl);
     }
 }
 
