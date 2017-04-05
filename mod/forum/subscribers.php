@@ -104,12 +104,16 @@ if (has_capability('mod/forum:managesubscriptions', $context) && \mod_forum\subs
     if ($edit != -1) {
         $USER->subscriptionsediting = $edit;
     }
-    $PAGE->set_button(forum_update_subscriptions_button($course->id, $id));
+    $updatesubscriptionsbutton = forum_update_subscriptions_button($course->id, $id);
 } else {
+    $updatesubscriptionsbutton = '';
     unset($USER->subscriptionsediting);
 }
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('forum', 'forum').' '.$strsubscribers);
+if (!empty($updatesubscriptionsbutton)) {
+    echo \html_writer::div($updatesubscriptionsbutton, 'pull-right');
+}
 if (empty($USER->subscriptionsediting)) {
     $subscribers = \mod_forum\subscriptions::fetch_subscribed_users($forum, $currentgroup, $context);
     if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
@@ -118,6 +122,9 @@ if (empty($USER->subscriptionsediting)) {
     echo $forumoutput->subscriber_overview($subscribers, $forum, $course);
 } else {
     echo $forumoutput->subscriber_selection_form($existingselector, $subscriberselector);
+}
+if (!empty($updatesubscriptionsbutton)) {
+    echo $updatesubscriptionsbutton;
 }
 echo $OUTPUT->footer();
 
