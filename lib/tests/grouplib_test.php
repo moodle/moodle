@@ -1421,10 +1421,12 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertTrue($generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user1->id)));
         $this->assertTrue($generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user2->id)));
 
-        // Test get_groups_members.
-        $members = groups_get_groups_members([$group1->id, $group2->id], 'u.*', 'id ASC');
+        // Test get_groups_members (with extra field and ordering).
+        $members = groups_get_groups_members([$group1->id, $group2->id], ['lastaccess'], 'u.id ASC');
         $this->assertCount(2, $members);
         $this->assertEquals([$user1->id, $user2->id], array_keys($members));
+        $this->assertTrue(isset($members[$user1->id]->lastaccess));
+        $this->assertTrue(isset($members[$user2->id]->lastaccess));
 
         // Group with just one.
         $members = groups_get_groups_members([$group1->id]);
