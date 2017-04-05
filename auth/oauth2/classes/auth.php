@@ -365,11 +365,23 @@ class auth extends \auth_plugin_base {
         $userinfo = $client->get_userinfo();
 
         if (!$userinfo) {
+            // Trigger login failed event.
+            $failurereason = AUTH_LOGIN_NOUSER;
+            $event = \core\event\user_login_failed::create(['other' => ['username' => $userinfo['username'],
+                                                                        'reason' => $failurereason]]);
+            $event->trigger();
+
             $errormsg = get_string('loginerror_nouserinfo', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
         }
         if (empty($userinfo['username']) || empty($userinfo['email'])) {
+            // Trigger login failed event.
+            $failurereason = AUTH_LOGIN_NOUSER;
+            $event = \core\event\user_login_failed::create(['other' => ['username' => $userinfo['username'],
+                                                                        'reason' => $failurereason]]);
+            $event->trigger();
+
             $errormsg = get_string('loginerror_userincomplete', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
@@ -403,17 +415,35 @@ class auth extends \auth_plugin_base {
                 $userinfo = (array) $mappeduser;
                 $userwasmapped = true;
             } else {
+                // Trigger login failed event.
+                $failurereason = AUTH_LOGIN_UNAUTHORISED;
+                $event = \core\event\user_login_failed::create(['other' => ['username' => $userinfo['username'],
+                                                                            'reason' => $failurereason]]);
+                $event->trigger();
+
                 $errormsg = get_string('confirmationpending', 'auth_oauth2');
                 $SESSION->loginerrormsg = $errormsg;
                 redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
             }
         } else if (!empty($linkedlogin)) {
+            // Trigger login failed event.
+            $failurereason = AUTH_LOGIN_UNAUTHORISED;
+            $event = \core\event\user_login_failed::create(['other' => ['username' => $userinfo['username'],
+                                                                        'reason' => $failurereason]]);
+            $event->trigger();
+
             $errormsg = get_string('confirmationpending', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
         }
         $issuer = $client->get_issuer();
         if (!$issuer->is_valid_login_domain($userinfo['email'])) {
+            // Trigger login failed event.
+            $failurereason = AUTH_LOGIN_UNAUTHORISED;
+            $event = \core\event\user_login_failed::create(['other' => ['username' => $userinfo['username'],
+                                                                        'reason' => $failurereason]]);
+            $event->trigger();
+
             $errormsg = get_string('notloggedindebug', 'auth_oauth2', get_string('loginerror_invaliddomain', 'auth_oauth2'));
             $SESSION->loginerrormsg = $errormsg;
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
@@ -439,6 +469,11 @@ class auth extends \auth_plugin_base {
                 $exists = \core_user::get_user_by_username($userinfo['username']);
                 // Creating a new user?
                 if ($exists) {
+                    // Trigger login failed event.
+                    $failurereason = AUTH_LOGIN_FAILED;
+                    $event = \core\event\user_login_failed::create(['other' => ['username' => $userinfo['username'],
+                                                                                'reason' => $failurereason]]);
+                    $event->trigger();
 
                     // The username exists but the emails don't match. Refuse to continue.
                     $errormsg = get_string('accountexists', 'auth_oauth2');
@@ -447,8 +482,26 @@ class auth extends \auth_plugin_base {
                 }
 
                 if (email_is_not_allowed($userinfo['email'])) {
+                    // Trigger login failed event.
+                    $failurereason = AUTH_LOGIN_FAILED;
+                    $event = \core\event\user_login_failed::create(['other' => ['username' => $userinfo['username'],
+                                                                                'reason' => $failurereason]]);
+                    $event->trigger();
                     // The username exists but the emails don't match. Refuse to continue.
                     $reason = get_string('loginerror_invaliddomain', 'auth_oauth2');
+                    $errormsg = get_string('notloggedindebug', 'auth_oauth2', $reason);
+                    $SESSION->loginerrormsg = $errormsg;
+                    redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+                }
+
+                if (!empty($CFG->authpreventaccountcreation)) {
+                    // Trigger login failed event.
+                    $failurereason = AUTH_LOGIN_UNAUTHORISED;
+                    $event = \core\event\user_login_failed::create(['other' => ['username' => $userinfo['username'],
+                                                                                'reason' => $failurereason]]);
+                    $event->trigger();
+                    // The username does not exist and settings prevent creating new accounts.
+                    $reason = get_string('loginerror_cannotcreateaccounts', 'auth_oauth2');
                     $errormsg = get_string('notloggedindebug', 'auth_oauth2', $reason);
                     $SESSION->loginerrormsg = $errormsg;
                     redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
@@ -478,6 +531,12 @@ class auth extends \auth_plugin_base {
             $this->update_picture($user);
             redirect($redirecturl);
         }
+        // Trigger login failed event.
+        $failurereason = AUTH_LOGIN_FAILED;
+        $event = \core\event\user_login_failed::create(['other' => ['username' => $userinfo['username'],
+                                                                    'reason' => $failurereason]]);
+        $event->trigger();
+
         $errormsg = get_string('notloggedindebug', 'auth_oauth2', get_string('loginerror_authenticationfailed', 'auth_oauth2'));
         $SESSION->loginerrormsg = $errormsg;
         redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
