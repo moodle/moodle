@@ -126,6 +126,7 @@ class api {
         }
         $record->email = $userinfo['email'];
         $record->confirmtoken = '';
+        $record->confirmtokenexpires = 0;
         $linkedlogin = new linked_login(0, $record);
         return $linkedlogin->create();
     }
