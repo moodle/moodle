@@ -133,28 +133,28 @@ class core_medialib_testcase extends advanced_testcase {
      */
     public function test_get_players() {
         // All players are initially disabled (except link, which you can't).
-        $manager = new core_media_manager_test();
-        $this->assertEmpty($manager->get_players_test());
+        $manager = core_media_manager::instance();
+        $this->assertEmpty($this->get_players_test($manager));
 
         // A couple enabled, check the order.
         \core\plugininfo\media::set_enabled_plugins('youtube,html5audio');
-        $manager = new core_media_manager_test();
-        $this->assertSame('youtube, html5audio', $manager->get_players_test());
+        $manager = core_media_manager::instance();
+        $this->assertSame('youtube, html5audio', $this->get_players_test($manager));
 
         // Test SWF and HTML5 media order.
         \core\plugininfo\media::set_enabled_plugins('html5video,html5audio,swf');
-        $manager = new core_media_manager_test();
-        $this->assertSame('html5video, html5audio, swf', $manager->get_players_test());
+        $manager = core_media_manager::instance();
+        $this->assertSame('html5video, html5audio, swf', $this->get_players_test($manager));
 
         // Make sure that our test plugin is considered installed.
         \core\plugininfo\media::set_enabled_plugins('test,html5video');
-        $manager = new core_media_manager_test();
-        $this->assertSame('test, html5video', $manager->get_players_test());
+        $manager = core_media_manager::instance();
+        $this->assertSame('test, html5video', $this->get_players_test($manager));
 
         // Make sure that non-existing plugin is NOT considered installed.
         \core\plugininfo\media::set_enabled_plugins('nonexistingplugin,html5video');
-        $manager = new core_media_manager_test();
-        $this->assertSame('html5video', $manager->get_players_test());
+        $manager = core_media_manager::instance();
+        $this->assertSame('html5video', $this->get_players_test($manager));
     }
 
     /**
@@ -474,6 +474,27 @@ class core_medialib_testcase extends advanced_testcase {
 
         $this->assertNotSame($mediamanager1, $mediamanager3);
     }
+
+
+    /**
+     * Access list of players as string, shortening it by getting rid of
+     * repeated text.
+     * @param core_media_manager $manager The core_media_manager instance
+     * @return string Comma-separated list of players
+     */
+    public function get_players_test($manager) {
+        $method = new ReflectionMethod("core_media_manager", "get_players");
+        $method->setAccessible(true);
+        $players = $method->invoke($manager);
+        $out = '';
+        foreach ($players as $player) {
+            if ($out) {
+                $out .= ', ';
+            }
+            $out .= str_replace('core_media_player_', '', preg_replace('/^media_(.*)_plugin$/', '$1', get_class($player)));
+        }
+        return $out;
+    }
 }
 
 /**
@@ -511,35 +532,5 @@ class media_test_plugin extends core_media_player {
 
     public function get_rank() {
         return 10;
-    }
-}
-
-/**
- * Media renderer override for testing purposes.
- */
-class core_media_manager_test extends core_media_manager {
-    /**
-     * Access list of players as string, shortening it by getting rid of
-     * repeated text.
-     * @return string Comma-separated list of players
-     */
-    public function get_players_test() {
-        $players = $this->get_players();
-        $out = '';
-        foreach ($players as $player) {
-            if ($out) {
-                $out .= ', ';
-            }
-            $out .= str_replace('core_media_player_', '', preg_replace('/^media_(.*)_plugin$/', '$1', get_class($player)));
-        }
-        return $out;
-    }
-
-    /**
-     * Override the constructor to access it.
-     */
-    public function __construct() {
-        global $PAGE;
-        parent::__construct($PAGE);
     }
 }
