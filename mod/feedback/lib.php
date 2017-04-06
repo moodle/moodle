@@ -2970,9 +2970,10 @@ function feedback_print_numeric_option_list($startval, $endval, $selectval = '',
  * @param object $feedback
  * @param object $course
  * @param stdClass|int $user
+ * @param stdClass $completed record from feedback_completed if known
  * @return void
  */
-function feedback_send_email($cm, $feedback, $course, $user) {
+function feedback_send_email($cm, $feedback, $course, $user, $completed = null) {
     global $CFG, $DB;
 
     if ($feedback->email_notification == 0) {  // No need to do anything
@@ -3021,6 +3022,13 @@ function feedback_send_email($cm, $feedback, $course, $user) {
             $info->url = $CFG->wwwroot.'/mod/feedback/show_entries.php?'.
                             'id='.$cm->id.'&'.
                             'userid=' . $user->id;
+            if ($completed) {
+                $info->url .= '&showcompleted=' . $completed->id;
+                if ($feedback->course == SITEID) {
+                    // Course where feedback was completed (for site feedbacks only).
+                    $info->url .= '&courseid=' . $completed->courseid;
+                }
+            }
 
             $a = array('username' => $info->username, 'feedbackname' => $feedback->name);
 
