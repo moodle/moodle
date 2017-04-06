@@ -20,7 +20,7 @@ Feature: Add a new user tour
       | Display in middle of page   | Welcome           | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful |
     And I add steps to the "First tour" tour:
       | targettype                  | targetvalue_block | Title             | Content |
-      | Block                       | My overview       | My overview   | This area shows you what's happening in some of your courses  |
+      | Block                       | Course overview   | Course overview   | This area shows you what's happening in some of your courses  |
       | Block                       | Calendar          | Calendar          | This is the Calendar. All of your assignments and due dates can be found here |
     And I add steps to the "First tour" tour:
       | targettype                  | targetvalue_selector | Title             | Content |

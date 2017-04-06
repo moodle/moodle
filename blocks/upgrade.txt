@@ -4,9 +4,9 @@ information provided here is intended especially for developers.
 === 3.3 ===
 
 * block_manager::get_required_by_theme_block_types() is no longer static.
-* The 'Course overview' block has been removed from core as it is being replaced by the 'My overview' block.
-  During the upgrade process the 'Course overview' block will be uninstalled and all its settings will be deleted.
-  If you wish to keep the 'Course overview' block and its settings, download it from moodle.org and put it back in
+* The plugin block_course_overview has been removed from core and is being replaced by block_myoverview.
+  During the upgrade process the block_course_overview block will be uninstalled and all its settings will be deleted.
+  If you wish to keep the block_course_overview block and its settings, download it from moodle.org and put it back in
   the blocks/ directory BEFORE UPGRADING.
 
 === 3.1 ===

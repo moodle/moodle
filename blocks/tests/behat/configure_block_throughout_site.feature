@@ -70,4 +70,4 @@ Feature: Add and configure blocks throughout the site
       | Block title | Foo " onload="document.getElementsByTagName('body')[0].remove()" alt=" |
       | Content     | Example |
     When I press "Save changes"
-    Then I should see "My overview"
+    Then I should see "Course overview"
