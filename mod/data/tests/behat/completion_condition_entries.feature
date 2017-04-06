@@ -4,14 +4,14 @@ Feature: Set entries required as a completion condition for a data item
   As a teacher
   I need to set entries required to mark the database activity as completed
 
-Scenario:
+Scenario: Two entries required to complete the activity
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@example.com |
       | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | fullname | shortname | enablecompletion |
+      | Course 1 | C1        | 1                |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -19,11 +19,6 @@ Scenario:
     And I log in as "teacher1"
     And I follow "C1"
     And I turn editing mode on
-    And I navigate to "Edit settings" in current page administration
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-    And I press "Save and display"
-    #Two entries required to complete the activity
     And I add a "Database" to section "1" and I fill the form with:
       | Name | Test database name |
       | Description | Test database description |
@@ -54,6 +49,14 @@ Scenario:
     And I press "Save and view"
     And I log out
     And I log in as "teacher1"
+    And I follow "C1"
+    Then "Student 1" user has completed "Test database name" activity
+    And I follow "Course 1"
+    And I follow "Test database name"
+    And I navigate to "Edit settings" in current page administration
+    And I press "Unlock completion"
+    And I set the field "completionentries" to "1"
+    And I press "Save and display"
     And I follow "C1"
     Then "Student 1" user has completed "Test database name" activity
     And I log out
