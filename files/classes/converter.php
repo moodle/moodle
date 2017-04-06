@@ -39,7 +39,7 @@ class converter {
     /**
      * Get a list of enabled plugins and classes.
      *
-     * @return  array
+     * @return  array List of enabled plugins
      */
     protected function get_enabled_plugins() {
         $plugins = \core\plugininfo\fileconverter::get_enabled_plugins();
@@ -57,7 +57,7 @@ class converter {
      *
      * This allows for mocking of the file_storage API.
      *
-     * @return file_storage
+     * @return \file_storage
      */
     protected function get_file_storage() {
         return get_file_storage();
@@ -69,7 +69,7 @@ class converter {
      * @param   stored_file $file The file to convert
      * @param   string $format The desired target file format (file extension)
      * @param   boolean $forcerefresh If true, the file will be converted every time (not cached).
-     * @return  conversion
+     * @return  conversion conversion object
      */
     public function start_conversion(stored_file $file, $format, $forcerefresh = false) {
         $conversions = conversion::get_conversions_for_file($file, $format);
@@ -160,7 +160,7 @@ class converter {
      *
      * @param   array $converters The list of converters to try
      * @param   string|null $currentconverter The converter currently in use
-     * @return  string|false
+     * @return  string|false Name of next converter if present
      */
     protected function get_next_converter($converters, $currentconverter = null) {
         if ($currentconverter) {
@@ -226,7 +226,7 @@ class converter {
 
         $from = \core_filetypes::get_file_extension($file->get_mimetype());
         if (!$from) {
-            // No mimetype could be found. Unable to determine converter.
+            // No mime type could be found. Unable to determine converter.
             return false;
         }
 

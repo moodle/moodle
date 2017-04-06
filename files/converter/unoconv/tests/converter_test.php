@@ -24,7 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * A set of tests for some of the unoconv functionality within Moodle.
  *
