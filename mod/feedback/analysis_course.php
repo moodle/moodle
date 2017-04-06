@@ -82,6 +82,15 @@ $mygroupid = false;
 
 $courseselectform->display();
 
+// Button "Export to excel".
+if (has_capability('mod/feedback:viewreports', $context) && $feedbackstructure->get_items()) {
+    echo $OUTPUT->container_start('form-buttons');
+    $aurl = new moodle_url('/mod/feedback/analysis_to_excel.php',
+        ['sesskey' => sesskey(), 'id' => $id, 'courseid' => (int)$courseid]);
+    echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'feedback'));
+    echo $OUTPUT->container_end();
+}
+
 // Show the summary.
 $summary = new mod_feedback\output\summary($feedbackstructure);
 echo $OUTPUT->render_from_template('mod_feedback/summary', $summary->export_for_template($OUTPUT));
