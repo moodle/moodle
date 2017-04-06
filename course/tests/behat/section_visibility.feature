@@ -43,7 +43,6 @@ Feature: Show/hide course sections
       | Forum name | Test hidden forum 32 name |
       | Description | Test hidden forum 32 description |
       | Availability | Show on course page |
-      | Visible | Show |
     And I am on "Course 1" course homepage
     When I hide section "1"
     Then section "1" should be hidden
