@@ -24,7 +24,7 @@ Feature: Add activities to courses
     When I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
       | Description | Test database description |
-      | Entries required for completion | 9 |
+      | ID number | TESTNAME |
       | Allow comments on entries | Yes |
     And I turn editing mode off
     Then I should not see "Adding a new"
@@ -33,7 +33,7 @@ Feature: Add activities to courses
     And I click on "Edit settings" "link" in the "Test name" activity
     And I expand all fieldsets
     And the field "Name" matches value "Test name"
-    And the field "Entries required for completion" matches value "9"
+    And the field "ID number" matches value "TESTNAME"
     And the field "Allow comments on entries" matches value "Yes"
 
   @javascript
