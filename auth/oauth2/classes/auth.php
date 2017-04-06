@@ -256,6 +256,7 @@ class auth extends \auth_plugin_base {
 
         require_once($CFG->libdir . '/filelib.php');
         require_once($CFG->libdir . '/gdlib.php');
+        require_once($CFG->dirroot . '/user/lib.php');
 
         $fs = get_file_storage();
         $userid = $user->id;
@@ -373,6 +374,7 @@ class auth extends \auth_plugin_base {
 
             $errormsg = get_string('loginerror_nouserinfo', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
+            $client->log_out();
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
         }
         if (empty($userinfo['username']) || empty($userinfo['email'])) {
@@ -384,10 +386,12 @@ class auth extends \auth_plugin_base {
 
             $errormsg = get_string('loginerror_userincomplete', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
+            $client->log_out();
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
         }
 
         $userinfo['username'] = trim(core_text::strtolower($userinfo['username']));
+        $oauthemail = $userinfo['email'];
 
         // Once we get here we have the user info from oauth.
         $userwasmapped = false;
@@ -423,6 +427,7 @@ class auth extends \auth_plugin_base {
 
                 $errormsg = get_string('confirmationpending', 'auth_oauth2');
                 $SESSION->loginerrormsg = $errormsg;
+                $client->log_out();
                 redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
             }
         } else if (!empty($linkedlogin)) {
@@ -434,10 +439,12 @@ class auth extends \auth_plugin_base {
 
             $errormsg = get_string('confirmationpending', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
+            $client->log_out();
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
         }
+
         $issuer = $client->get_issuer();
-        if (!$issuer->is_valid_login_domain($userinfo['email'])) {
+        if (!$issuer->is_valid_login_domain($oauthemail)) {
             // Trigger login failed event.
             $failurereason = AUTH_LOGIN_UNAUTHORISED;
             $event = \core\event\user_login_failed::create(['other' => ['username' => $userinfo['username'],
@@ -446,6 +453,7 @@ class auth extends \auth_plugin_base {
 
             $errormsg = get_string('notloggedindebug', 'auth_oauth2', get_string('loginerror_invaliddomain', 'auth_oauth2'));
             $SESSION->loginerrormsg = $errormsg;
+            $client->log_out();
             redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
         }
 
@@ -478,6 +486,7 @@ class auth extends \auth_plugin_base {
                     // The username exists but the emails don't match. Refuse to continue.
                     $errormsg = get_string('accountexists', 'auth_oauth2');
                     $SESSION->loginerrormsg = $errormsg;
+                    $client->log_out();
                     redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
                 }
 
@@ -491,6 +500,7 @@ class auth extends \auth_plugin_base {
                     $reason = get_string('loginerror_invaliddomain', 'auth_oauth2');
                     $errormsg = get_string('notloggedindebug', 'auth_oauth2', $reason);
                     $SESSION->loginerrormsg = $errormsg;
+                    $client->log_out();
                     redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
                 }
 
@@ -504,6 +514,7 @@ class auth extends \auth_plugin_base {
                     $reason = get_string('loginerror_cannotcreateaccounts', 'auth_oauth2');
                     $errormsg = get_string('notloggedindebug', 'auth_oauth2', $reason);
                     $SESSION->loginerrormsg = $errormsg;
+                    $client->log_out();
                     redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
                 }
 
