@@ -1584,7 +1584,9 @@ class mod_lesson_external extends external_api {
             throw new moodle_exception(key($validation), 'lesson', '', current($validation));   // Throw first error.
         }
 
-        $result = $lesson->process_eol_page($params['outoftime']);
+        // Set out of time to normal (it is the only existing mode).
+        $outoftimemode = $params['outoftime'] ? 'normal' : '';
+        $result = $lesson->process_eol_page($outoftimemode);
 
         // Return the data.
          $validmessages = array(
