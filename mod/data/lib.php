@@ -4166,21 +4166,24 @@ function data_update_completion_state($data, $course, $cm) {
  * to the function name. This is why there are unused parameters.
  *
  * @since Moodle 3.3
- * @param object $course Course
- * @param object $cm course-module
+ * @param stdClass $course Course
+ * @param cm_info|stdClass $cm course-module
  * @param int $userid User ID
  * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
  * @return bool True if completed, false if not, $type if conditions not set.
  */
 function data_get_completion_state($course, $cm, $userid, $type) {
-    global $DB;
+    global $DB, $PAGE;
     $result = $type; // Default return value
     // Get data details.
-    $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
+    if (isset($PAGE->cm->id) && $PAGE->cm->id == $cm->id) {
+        $data = $PAGE->activityrecord;
+    } else {
+        $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
+    }
     // If completion option is enabled, evaluate it and return true/false.
     if ($data->completionentries) {
-        $data = $DB->get_record('data', array('id' => $cm->instance));
-        $numentries = data_numentries($data);
+        $numentries = data_numentries($data, $userid);
         // Check the number of entries required against the number of entries already made.
         if ($numentries >= $data->completionentries) {
             $result = true;
