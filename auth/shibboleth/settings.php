@@ -77,6 +77,6 @@ if ($ADMIN->fulltree) {
     // Display locking / mapping of profile fields.
     $authplugin = get_auth_plugin($this->name);
     display_auth_lock_options($settings, $authplugin->authtype, $authplugin->userfields,
-            '', true, true, $authplugin->get_custom_user_profile_fields());
+            '', true, false, $authplugin->get_custom_user_profile_fields());
 
 }
