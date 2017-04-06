@@ -163,13 +163,14 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
                 // Format the answer text.
                 $answer = $question->answers[$answerid];
-                $answer->answer = $question->format_text($answer->answer, $answer->answerformat,
-                                                         $qa, 'question', 'answer', $answerid);
+                $answertext = $question->format_text($answer->answer, $answer->answerformat,
+                                                     $qa, 'question', 'answer', $answerid);
+
                 // The original "id" revealed the correct order of the answers
                 // because $answer->fraction holds the correct order number.
                 // Therefore we use the $answer's md5key for the "id".
                 $params = array('class' => $class, 'id' => $answer->md5key);
-                $result .= html_writer::tag('li', $img.$answer->answer, $params);
+                $result .= html_writer::tag('li', $img.$answertext, $params);
             }
         }
 
@@ -204,71 +205,76 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $gradedetails = '';
         $scoredetails = '';
 
-        // If required, add explanation of grade calculation.
+        // Decide if we should show grade explanation for "partial" or "wrong" states.
+        // This should detect "^graded(partial|wrong)$" and possibly others.
         if ($step = $qa->get_last_step()) {
-            $state = $step->get_state();
-            if ($state == 'gradedpartial' || $state == 'gradedwrong') {
+            $show = preg_match('/(partial|wrong)$/', $step->get_state());
+        } else {
+            $show = false;
+        }
 
-                $plugin = 'qtype_ordering';
-                $question = $qa->get_question();
+        // If required, add explanation of grade calculation.
+        if ($show) {
 
-                // show grading details if they are required
-                if ($question->options->showgrading) {
+            $plugin = 'qtype_ordering';
+            $question = $qa->get_question();
 
-                    // Fetch grading type.
-                    $gradingtype = $question->options->gradingtype;
-                    $gradingtype = qtype_ordering_question::get_grading_types($gradingtype);
+            // show grading details if they are required
+            if ($question->options->showgrading) {
 
-                    // Format grading type, e.g. Grading type: Relative to next item, excluding last item.
-                    if ($gradingtype) {
-                        $gradingtype = get_string('gradingtype', $plugin).': '.$gradingtype;
-                        $gradingtype = html_writer::tag('p', $gradingtype, array('class' => 'gradingtype'));
+                // Fetch grading type.
+                $gradingtype = $question->options->gradingtype;
+                $gradingtype = qtype_ordering_question::get_grading_types($gradingtype);
+
+                // Format grading type, e.g. Grading type: Relative to next item, excluding last item.
+                if ($gradingtype) {
+                    $gradingtype = get_string('gradingtype', $plugin).': '.$gradingtype;
+                    $gradingtype = html_writer::tag('p', $gradingtype, array('class' => 'gradingtype'));
+                }
+
+                // Fetch grade details and score details.
+                if ($currentresponse = $question->currentresponse) {
+
+                    $totalscore = 0;
+                    $totalmaxscore = 0;
+
+                    $layoutclass = $question->get_ordering_layoutclass();
+                    $params = array('class' => $layoutclass);
+
+                    $scoredetails .= html_writer::tag('p', get_string('scoredetails', $plugin));
+                    $scoredetails .= html_writer::start_tag('ol', array('class' => 'scoredetails'));
+
+                    // Format scoredetails, e.g. 1 /2 = 50%, for each item.
+                    foreach ($currentresponse as $position => $answerid) {
+                        if (array_key_exists($answerid, $question->answers)) {
+                            $answer = $question->answers[$answerid];
+                            $score = $this->get_ordering_item_score($question, $position, $answerid);
+                            list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
+                            if ($maxscore === null) {
+                                $score = get_string('noscore', $plugin);
+                            } else {
+                                $totalscore += $score;
+                                $totalmaxscore += $maxscore;
+                                $score = "$score / $maxscore = $percent%";
+                            }
+                            $scoredetails .= html_writer::tag('li', $score, $params);
+                        }
                     }
 
-                    // Fetch grade details and score details.
-                    if ($currentresponse = $question->currentresponse) {
+                    $scoredetails .= html_writer::end_tag('ol');
 
-                        $totalscore = 0;
-                        $totalmaxscore = 0;
-
-                        $layoutclass = $question->get_ordering_layoutclass();
-                        $params = array('class' => $layoutclass);
-
-                        $scoredetails .= html_writer::tag('p', get_string('scoredetails', $plugin));
-                        $scoredetails .= html_writer::start_tag('ol', array('class' => 'scoredetails'));
-
-                        // Format scoredetails, e.g. 1 /2 = 50%, for each item.
-                        foreach ($currentresponse as $position => $answerid) {
-                            if (array_key_exists($answerid, $question->answers)) {
-                                $answer = $question->answers[$answerid];
-                                $score = $this->get_ordering_item_score($question, $position, $answerid);
-                                list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
-                                if ($maxscore === null) {
-                                    $score = get_string('noscore', $plugin);
-                                } else {
-                                    $totalscore += $score;
-                                    $totalmaxscore += $maxscore;
-                                    $score = "$score / $maxscore = $percent%";
-                                }
-                                $scoredetails .= html_writer::tag('li', $score, $params);
-                            }
-                        }
-
-                        $scoredetails .= html_writer::end_tag('ol');
-
-                        if ($totalmaxscore == 0) {
-                            $scoredetails = ''; // ALL_OR_NOTHING.
+                    if ($totalmaxscore == 0) {
+                        $scoredetails = ''; // ALL_OR_NOTHING.
+                    } else {
+                        // Format gradedetails, e.g. 4 /6 = 67%.
+                        if ($totalscore == 0) {
+                            $gradedetails = 0;
                         } else {
-                            // Format gradedetails, e.g. 4 /6 = 67%.
-                            if ($totalscore == 0) {
-                                $gradedetails = 0;
-                            } else {
-                                $gradedetails = round(100 * $totalscore / $totalmaxscore, 0);
-                            }
-                            $gradedetails = "$totalscore / $totalmaxscore = $gradedetails%";
-                            $gradedetails = get_string('gradedetails', $plugin).': '.$gradedetails;
-                            $gradedetails = html_writer::tag('p', $gradedetails, array('class' => 'gradedetails'));
+                            $gradedetails = round(100 * $totalscore / $totalmaxscore, 0);
                         }
+                        $gradedetails = "$totalscore / $totalmaxscore = $gradedetails%";
+                        $gradedetails = get_string('gradedetails', $plugin).': '.$gradedetails;
+                        $gradedetails = html_writer::tag('p', $gradedetails, array('class' => 'gradedetails'));
                     }
                 }
             }
@@ -278,7 +284,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
     }
 
     /**
-     * Gereate an automatic description of the correct response to this question.
+     * Generate an automatic description of the correct response to this question.
      * Not all question types can do this. If it is not possible, this method
      * should just return an empty string.
      *
@@ -316,7 +322,9 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $correctresponse = $question->correctresponse;
             foreach ($correctresponse as $position => $answerid) {
                 $answer = $question->answers[$answerid];
-                $output .= html_writer::tag('li', $answer->answer, array('class' => $layoutclass));
+                $answertext = $question->format_text($answer->answer, $answer->answerformat,
+                                                     $qa, 'question', 'answer', $answerid);
+                $output .= html_writer::tag('li', $answertext, array('class' => $layoutclass));
             }
             $output .= html_writer::end_tag('ol');
         }

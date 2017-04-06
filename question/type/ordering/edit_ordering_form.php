@@ -141,10 +141,10 @@ class qtype_ordering_edit_form extends question_edit_form {
         // Adjust HTML editor and removal buttons.
         $this->adjust_html_editors($mform, $name, $repeats);
 
-        // Adding feedback fields.
+        // Adding feedback fields (=Combined feedback).
         $this->add_combined_feedback_fields(false);
 
-        // Adding interactive settings.
+        // Adding interactive settings (=Multiple tries).
         $this->add_interactive_settings(false, false);
     }
 

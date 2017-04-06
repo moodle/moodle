@@ -371,7 +371,7 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     /**
-     * Checks whether the users is allow to be served a particular file.
+     * Checks whether the user has permission to access a particular file.
      *
      * @param question_attempt $qa the question attempt being displayed.
      * @param question_display_options $options the options that control display of the question.
@@ -388,7 +388,7 @@ class qtype_ordering_question extends question_graded_automatically {
                 return array_key_exists($answerid, $this->answers);
             }
             if (in_array($filearea, $this->qtype->feedbackfields)) {
-                return $this->check_combined_feedback_file_access($qa, $options, $filearea);
+                return $this->check_combined_feedback_file_access($qa, $options, $filearea, $args);
             }
             if ($filearea == 'hint') {
                 return $this->check_hint_file_access($qa, $options, $args);
@@ -397,11 +397,42 @@ class qtype_ordering_question extends question_graded_automatically {
         return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 
-    /*
-     * ------------------
-     * Custom methods
-     * ------------------
+    ///////////////////////////////////////////////////////
+    // methods from "question_graded_automatically" class
+    // see "question/type/questionbase.php"
+    ///////////////////////////////////////////////////////
+
+    /**
+     * Check a request for access to a file belonging to a combined feedback field.
+     *
+     * Fix a bug in Moodle 2.9 & 3.0, in which this method does not declare $args,
+     * so trying to use $args[0] always fails and images in feedback are not shown.
+     *
+     * @param question_attempt $qa the question attempt being displayed.
+     * @param question_display_options $options the options that control display of the question.
+     * @param string $filearea the name of the file area.
+     * @param array $args the remaining bits of the file path.
+     * @return bool whether access to the file should be allowed.
      */
+    protected function check_combined_feedback_file_access($qa, $options, $filearea, $args = null) {
+        $state = $qa->get_state();
+        if (! $state->is_finished()) {
+            $response = $qa->get_last_qt_data();
+            if (! $this->is_gradable_response($response)) {
+                return false;
+            }
+            list($fraction, $state) = $this->grade_response($response);
+        }
+        if ($state->get_feedback_class().'feedback' == $filearea) {
+            return ($this->id == reset($args));
+        } else {
+            return false;
+        }
+    }
+
+    ///////////////////////////////////////////////////////
+    // Custom methods
+    ///////////////////////////////////////////////////////
 
     /**
      * Returns response mform field name
