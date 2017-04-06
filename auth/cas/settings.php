@@ -78,7 +78,7 @@ if ($ADMIN->fulltree) {
         }
         $settings->add(new admin_setting_configselect('auth_cas/language',
                 new lang_string('auth_cas_language_key', 'auth_cas'),
-                new lang_string('auth_cas_language', 'auth_cas'), '', $CASLANGUAGES));
+                new lang_string('auth_cas_language', 'auth_cas'), PHPCAS_LANG_ENGLISH, $CASLANGUAGES));
 
         // Proxy.
         $yesno = array(
