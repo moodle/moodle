@@ -164,7 +164,7 @@ class event_vault implements event_vault_interface {
             $coursesfilter,
             $where,
             $params,
-            "timesort ASC, id ASC",
+            "e.timesort ASC, e.id ASC",
             $offset,
             $limitnum,
             $ignorehidden

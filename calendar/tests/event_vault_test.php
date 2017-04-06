@@ -206,7 +206,7 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $this->setAdminuser();
 
         $user = $this->getDataGenerator()->create_user();
-        // The factory will skip events with even ids.
+        // The factory will return every event that is divisible by 2.
         $factory = new action_event_test_factory(function($actionevent) {
             static $count = 0;
             $count++;
@@ -642,9 +642,11 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
-        // The factory will skip events with even ids.
+        // The factory will return every event that is divisible by 2.
         $factory = new action_event_test_factory(function($actionevent) {
-            return ($actionevent->get_id() % 2) ? false : true;
+            static $count = 0;
+            $count++;
+            return ($count % 2) ? true : false;
         });
         $strategy = new raw_event_retrieval_strategy();
         $vault = new event_vault($factory, $strategy);
