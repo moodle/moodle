@@ -70,7 +70,7 @@ Feature: Initials bar
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
       | assign   | C1     | assign1  | TestAssignment | Test assignment description | 0                                   | 0                             |
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "TestAssignment"
     When I navigate to "View all submissions" in current page administration
     And ".initialbarall.letter.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
@@ -96,8 +96,7 @@ Feature: Initials bar
     And I should not see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "TestAssignment"
     When I navigate to "View all submissions" in current page administration
     And ".initialbarall.letter.active" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
@@ -130,7 +129,7 @@ Feature: Initials bar
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
       | assign   | C1     | assign1  | TestAssignment | Test assignment description | 0                                   | 0                             |
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "TestAssignment"
     When I navigate to "View all submissions" in current page administration
     And I select "View gradebook" from the "jump" singleselect
@@ -157,8 +156,7 @@ Feature: Initials bar
     And I should not see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "TestAssignment"
     When I navigate to "View all submissions" in current page administration
     And I select "View gradebook" from the "jump" singleselect
@@ -192,7 +190,7 @@ Feature: Initials bar
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
       | assign   | C1     | assign1  | TestAssignment | Test assignment description | 0                                   | 0                             |
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Participants"
     And I select "Brief" from the "mode" singleselect
     And ".initialbarall.letter.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
@@ -218,8 +216,7 @@ Feature: Initials bar
     And I should not see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Participants"
     And I select "Brief" from the "mode" singleselect
     And ".initialbarall.letter.active" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
@@ -252,7 +249,7 @@ Feature: Initials bar
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
       | assign   | C1     | assign1  | TestAssignment | Test assignment description | 0                                   | 0                             |
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Participants"
     And I select "User details" from the "mode" singleselect
     And ".initialbarall.letter.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
@@ -278,8 +275,7 @@ Feature: Initials bar
     And I should not see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Participants"
     And I select "User details" from the "mode" singleselect
     And ".initialbarall.letter.active" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
@@ -312,8 +308,7 @@ Feature: Initials bar
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
       | assign   | C1     | assign1  | TestAssignment | Test assignment description | 0                                   | 0                             |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "TestAssignment"
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
@@ -325,7 +320,7 @@ Feature: Initials bar
     And I click on "Save changes" "button"
     And I log out
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "More..." in current page administration
     And I follow "Activity completion"
     And ".initialbarall.letter.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
@@ -351,8 +346,7 @@ Feature: Initials bar
     And I should not see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "More..." in current page administration
     And I follow "Activity completion"
     And ".initialbarall.letter.active" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
