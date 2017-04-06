@@ -40,8 +40,8 @@ if ($confirmed) {
 
     // The user has confirmed successfully, let's log them in.
 
-    if (!$user = get_complete_user_data('username', $username)) {
-        print_error('cannotfinduser', '', '', s($username));
+    if (!$user = get_complete_user_data('id', $userid)) {
+        print_error('cannotfinduser', '', '', $userid);
     }
 
     if (!$user->suspended) {
