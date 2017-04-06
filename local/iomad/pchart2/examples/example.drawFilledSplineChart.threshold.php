@@ -43,7 +43,7 @@
  $myPicture->drawScale($ScaleSettings);
 
  /* Define the visual thresholds */
- $Threshold = ""; 
+ $Threshold = []; 
  $Threshold[] = array("Min"=>-100,"Max"=>-35,"R"=>117,"G"=>140,"B"=>240,"Alpha"=>40); 
  $Threshold[] = array("Min"=>-35,"Max"=>35,"R"=>240,"G"=>232,"B"=>20,"Alpha"=>60);
  $Threshold[] = array("Min"=>35,"Max"=>100,"R"=>240,"G"=>121,"B"=>20,"Alpha"=>80);

@@ -44,7 +44,7 @@
  /* Create 11 random nodes */ 
  for($i=0;$i<=10;$i++)
   {
-   $Connections = ""; $RdCx = rand(0,1);
+   $Connections = []; $RdCx = rand(0,1);
    for($j=0;$j<=$RdCx;$j++)
     {
      $RandCx = rand(0,10);

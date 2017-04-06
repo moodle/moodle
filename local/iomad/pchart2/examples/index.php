@@ -36,7 +36,7 @@
  /* Build a list of the examples & categories */
  $DirectoryHandle = opendir(".");
   {
-   $Tree = "";
+   $Tree = array();
    while (($FileName = readdir($DirectoryHandle)) !== false)
    {
     if ( !in_array($FileName,$Exclusion))

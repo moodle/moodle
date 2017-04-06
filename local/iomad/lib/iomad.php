@@ -1206,11 +1206,12 @@ class iomad {
                 AND du.userid = u.id
                 AND d.id = du.departmentid
                 AND cl.id = clu.licenseid
-                AND cl.expirydate > unix_timestamp()
+                AND cl.expirydate > :timestamp
                 $showusedsql
                 $showsuspendedsql
                 $completionsql
                 $searchinfo->sqlsort ";
+        $searchinfo->searchparams['timestamp'] = time();
         $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
         $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
         $numusers = count($countusers);

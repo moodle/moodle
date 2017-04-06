@@ -73,7 +73,7 @@
  $Indicator = new pIndicator($myPicture);
 
  /* Define the indicator sections */
- $IndicatorSections   = "";
+ $IndicatorSections   = [];
  $IndicatorSections[] = array("Start"=>0,"End"=>29,"Caption"=>"Low","R"=>0,"G"=>142,"B"=>176);
  $IndicatorSections[] = array("Start"=>30,"End"=>49,"Caption"=>"Moderate","R"=>108,"G"=>157,"B"=>49);
  $IndicatorSections[] = array("Start"=>50,"End"=>80,"Caption"=>"High","R"=>226,"G"=>74,"B"=>14);

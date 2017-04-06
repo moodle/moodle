@@ -29,7 +29,7 @@
  $myPicture->setShadow(TRUE,array("X"=>2,"Y"=>2,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10));
 
  /* Create some filling thresholds */
- $Threshold = ""; 
+ $Threshold = []; 
  $Threshold[] = array("MinX"=>100,"MaxX"=>60,"R"=>200,"G"=>200,"B"=>200,"Alpha"=>50); 
  $Threshold[] = array("MinX"=>140,"MaxX"=>100,"R"=>220,"G"=>220,"B"=>220,"Alpha"=>50);
  $Threshold[] = array("MinX"=>180,"MaxX"=>140,"R"=>240,"G"=>240,"B"=>240,"Alpha"=>50);
@@ -40,7 +40,7 @@
 
  for($i=1;$i<=4;$i++)
   {
-   $Points = "";
+   $Points = [];
    for($j=0;$j<=360;$j=$j+(360/$Step))
     {
      $Points[] = cos(deg2rad($j))*50+($i*140);
