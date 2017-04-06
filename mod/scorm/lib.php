@@ -1562,8 +1562,8 @@ function scorm_check_updates_since(cm_info $cm, $from, $filter = array()) {
  */
 function mod_scorm_get_fontawesome_icon_map() {
     return [
-        'mod_scorm:assetc' => 'fa-archive-o',
-        'mod_scorm:asset' => 'fa-archive-o',
+        'mod_scorm:assetc' => 'fa-file-archive-o',
+        'mod_scorm:asset' => 'fa-file-archive-o',
         'mod_scorm:browsed' => 'fa-book',
         'mod_scorm:completed' => 'fa-check-square-o',
         'mod_scorm:failed' => 'fa-times',
