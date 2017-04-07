@@ -80,17 +80,17 @@ define('GRADE_AGGREGATE_SUM', 13);
 define('GRADE_TYPE_NONE', 0);
 
 /**
- * GRADE_TYPE_NONE - The grade is a numeric value
+ * GRADE_TYPE_VALUE - The grade is a numeric value
  */
 define('GRADE_TYPE_VALUE', 1);
 
 /**
- * GRADE_TYPE_NONE - The grade is a value from the set of values available in a grade scale.
+ * GRADE_TYPE_SCALE - The grade is a value from the set of values available in a grade scale.
  */
 define('GRADE_TYPE_SCALE', 2);
 
 /**
- * GRADE_TYPE_NONE - Feedback only.
+ * GRADE_TYPE_TEXT - Feedback only.
  */
 define('GRADE_TYPE_TEXT', 3);
 
