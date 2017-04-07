@@ -30,7 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatedboninstall'] = '<p>No és pot crear la base de dades.</p> <p>La base de dades especificada no existeix i l\'usuari que heu proporcionat no té permís per a crear-la.</p>
+$string['cannotcreatedboninstall'] = '<p>No es pot crear la base de dades.</p> <p>La base de dades especificada no existeix i l\'usuari que heu proporcionat no té permís per a crear-la.</p>
 <p>L\'administrador del lloc hauria de verificar la configuració de la base de dades.</p>';
 $string['cannotcreatelangdir'] = 'No s\'ha pogut crear el directori d\'idiomes';
 $string['cannotcreatetempdir'] = 'No s\'ha pogut crear el directori temporal';

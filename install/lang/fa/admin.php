@@ -42,3 +42,4 @@ $string['cliunknowoption'] = 'گزینه‌های شناخته نشده:
 $string['cliyesnoprompt'] = 'یکی از گزینه‌های ب (به معنای بلی) یا خ (به نشانه خیر) را تایپ کنید';
 $string['environmentrequireinstall'] = 'باید نصب و فعال باشد';
 $string['environmentrequireversion'] = 'نسخهٔ {$a->needed} لازم است و شما نسخهٔ {$a->current} را دارید';
+$string['upgradekeyset'] = 'کلید ارتقا (برای تعیین نکردن خالی بگذارید)';
