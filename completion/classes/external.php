@@ -198,7 +198,7 @@ class core_completion_external extends external_api {
         $a->state = $describe;
         $a->date = $date;
         $a->user = fullname($user);
-        $a->activity = $cm->id;
+        $a->activity = $cm->name;
         $fulldescribe = get_string('progress-title', 'completion', $a);
 
         $img = $OUTPUT->pix_icon('i/' . $completionicon, s($fulldescribe));
