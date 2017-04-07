@@ -228,7 +228,7 @@ $filename = 'icalexport.ics';
 header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
 header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
 header('Expires: '. gmdate('D, d M Y H:i:s', 0) .'GMT');
-header('Pragma: no-cache');
+header('Pragma: public');
 header('Accept-Ranges: none'); // Comment out if PDFs do not work...
 header('Content-disposition: attachment; filename='.$filename);
 header('Content-length: '.strlen($serialized));
