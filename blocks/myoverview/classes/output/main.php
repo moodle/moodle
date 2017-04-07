@@ -62,6 +62,7 @@ class main implements renderable, templatable {
         $noeventsurl = $output->image_url('activities', 'block_myoverview')->out();
 
         return [
+            'midnight' => usergetmidnight(time()),
             'coursesview' => $coursesview->export_for_template($output),
             'urls' => [
                 'nocourses' => $nocoursesurl,

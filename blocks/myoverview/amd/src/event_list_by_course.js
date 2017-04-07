@@ -29,6 +29,8 @@ define(
 ],
 function($, EventList, EventsRepository) {
 
+    var SECONDS_IN_DAY = 60 * 60 * 24;
+
     var SELECTORS = {
         EVENTS_BY_COURSE_CONTAINER: '[data-region="course-events-container"]',
     };
@@ -46,10 +48,8 @@ function($, EventList, EventsRepository) {
             return;
         }
 
-        var date = new Date();
-        date.setDate(date.getDate() - 14);
-        date.setHours(0, 0, 0, 0);
-        var startTime = Math.floor(date / 1000);
+        var midnight = root.attr('data-midnight');
+        var startTime = midnight - (14 * SECONDS_IN_DAY);
         var limit = courseBlocks.attr('data-limit');
         var courseIds = courseBlocks.map(function() {
             return $(this).attr('data-course-id');
