@@ -283,6 +283,8 @@ class repository_onedrive extends repository {
      * @param string $parent Parent id.
      * @param int $page page.
      * @return array of files and folders.
+     * @throws Exception
+     * @throws repository_exception
      */
     protected function query($q, $path = null, $parent = null, $page = 0) {
         global $OUTPUT;
@@ -322,7 +324,7 @@ class repository_onedrive extends repository {
                     'title' => $remotefile->name,
                     'path' => $this->build_node_path($remotefile->id, $remotefile->name, $path),
                     'date' => strtotime($remotefile->lastModifiedDateTime),
-                    'thumbnail' => $OUTPUT->pix_url(file_folder_icon(64))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(64))->out(false),
                     'thumbnail_height' => 64,
                     'thumbnail_width' => 64,
                     'children' => []
