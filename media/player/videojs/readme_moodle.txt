@@ -1,4 +1,4 @@
-VideoJS 5.12.6
+VideoJS 5.18.4
 --------------
 https://github.com/videojs/video.js
 
