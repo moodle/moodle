@@ -179,6 +179,9 @@ class core_string_manager_standard implements core_string_manager {
 
             // Now loop through all langs in correct order.
             $deps = $this->get_language_dependencies($lang);
+
+            $deps[] = 'en';
+
             foreach ($deps as $dep) {
                 // Legacy location - used by contrib only.
                 if (file_exists("$location/lang/$dep/$file.php")) {
@@ -187,6 +190,16 @@ class core_string_manager_standard implements core_string_manager {
                 // The main lang string location.
                 if (file_exists("$this->otherroot/$dep/$file.php")) {
                     include("$this->otherroot/$dep/$file.php");
+                }
+                // Allow plugins to override strings of other plugins (See MDL-46582)
+                foreach (core_component::get_plugin_types() as $plugintype => $plugintypedir) {
+                    foreach (core_component::get_plugin_list($plugintype) as $pluginname => $plugindir) {
+                        $filename = "$plugindir/lang/$dep/{$file}.php";
+
+                        if (file_exists($filename)) {
+                            include($filename);
+                        }
+                    }
                 }
                 // Local customisations.
                 if (!$disablelocal and file_exists("$this->localroot/{$dep}_local/$file.php")) {
