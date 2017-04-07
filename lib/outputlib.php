@@ -1646,12 +1646,13 @@ class theme_config {
      *
      * Use this function sparingly and never for icons. For icons use pix_icon or the pix helper in a mustache template.
      *
+     * @deprecated since Moodle 3.3
      * @param string $imagename the name of the icon.
      * @param string $component specification of one plugin like in get_string()
      * @return moodle_url
      */
     public function pix_url($imagename, $component) {
-        debugging('pix_url is deprecated. Use image_url for images and pix_icon for icons.');
+        debugging('pix_url is deprecated. Use image_url for images and pix_icon for icons.', DEBUG_DEVELOPER);
         return $this->image_url($imagename, $component);
     }
 
