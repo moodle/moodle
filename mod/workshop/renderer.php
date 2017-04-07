@@ -295,31 +295,36 @@ class mod_workshop_renderer extends plugin_renderer_base {
         foreach ($plan->phases as $phasecode => $phase) {
             $o .= html_writer::start_tag('dl', array('class' => 'phase'));
             $actions = '';
-            foreach ($phase->actions as $action) {
-                switch ($action->type) {
-                    case 'switchphase':
-                        $icon = 'i/marker';
-                        if ($phasecode == workshop::PHASE_ASSESSMENT
-                            and $plan->workshop->phase == workshop::PHASE_SUBMISSION
-                            and $plan->workshop->phaseswitchassessment) {
-                            $icon = 'i/scheduled';
+
+            if ($phase->active) {
+                // Mark the section as the current one.
+                $icon = $this->output->pix_icon('i/marked', '', 'moodle', ['role' => 'presentation']);
+                $actions .= get_string('userplancurrentphase', 'workshop').' '.$icon;
+
+            } else {
+                // Display a control widget to switch to the given phase or mark the phase as the current one.
+                foreach ($phase->actions as $action) {
+                    if ($action->type === 'switchphase') {
+                        if ($phasecode == workshop::PHASE_ASSESSMENT && $plan->workshop->phase == workshop::PHASE_SUBMISSION
+                                && $plan->workshop->phaseswitchassessment) {
+                            $icon = new pix_icon('i/scheduled', get_string('switchphaseauto', 'mod_workshop'));
+                        } else {
+                            $icon = new pix_icon('i/marker', get_string('switchphase'.$phasecode, 'mod_workshop'));
                         }
-                        $actions .= $this->output->action_icon($action->url,
-                            new pix_icon($icon, get_string('switchphase', 'workshop')));
-                        break;
+                        $actions .= $this->output->action_icon($action->url, $icon, null, null, true);
+                    }
                 }
             }
+
             if (!empty($actions)) {
                 $actions = $this->output->container($actions, 'actions');
             }
-            $title = html_writer::span($phase->title, '', array('id' => 'mod_workshop-userplancurrenttasks'));
-            if ($phase->active) {
-                $title .= ' ' . html_writer::span(get_string('userplancurrentphase', 'workshop'), 'accesshide');
-            }
             $classes = 'phase' . $phasecode;
             if ($phase->active) {
+                $title = html_writer::span($phase->title, 'phasetitle', ['id' => 'mod_workshop-userplancurrenttasks']);
                 $classes .= ' active';
             } else {
+                $title = html_writer::span($phase->title, 'phasetitle');
                 $classes .= ' nonactive';
             }
             $o .= html_writer::start_tag('dt', array('class' => $classes));
