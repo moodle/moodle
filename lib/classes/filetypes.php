@@ -135,8 +135,7 @@ abstract class core_filetypes {
             'jmx' => array('type' => 'text/xml', 'icon' => 'markup'),
             'jnlp' => array('type' => 'application/x-java-jnlp-file', 'icon' => 'markup'),
             'jpe' => array('type' => 'image/jpeg', 'icon' => 'jpeg', 'groups' => array('image', 'web_image'), 'string' => 'image'),
-            'jpeg' => array('type' => 'image/jpeg', 'icon' => 'jpeg', 'groups' => array('image', 'web_image'), 'string' => 'image'),
-            'jpg' => array('type' => 'image/jpeg', 'icon' => 'jpeg', 'groups' => array('image', 'web_image'), 'string' => 'image'),
+            
             'jqz' => array('type' => 'text/xml', 'icon' => 'markup'),
             'js' => array('type' => 'application/x-javascript', 'icon' => 'text', 'groups' => array('web_file')),
             'latex' => array('type' => 'application/x-latex', 'icon' => 'text'),
