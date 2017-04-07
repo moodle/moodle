@@ -49,7 +49,7 @@ class assignment_submitted extends \core\event\base {
     }
  
     public function get_url() {
-        return new \moodle_url('view.php', array('cmid' => $this->contextinstanceid));
+        return new \moodle_url('/mod/kalvidassign/view.php', array('cmid' => $this->contextinstanceid));
     }
  
     public function get_legacy_logdata() {

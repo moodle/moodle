@@ -49,7 +49,7 @@ class single_submission_page_viewed extends \core\event\base {
     }
  
     public function get_url() {
-        return new \moodle_url('single_submission.php', array('cmid' => $this->contextinstanceid));
+        return new \moodle_url('/mod/kalvidassign/single_submission.php', array('cmid' => $this->contextinstanceid));
     }
  
     public function get_legacy_logdata() {
