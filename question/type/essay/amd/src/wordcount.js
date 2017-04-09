@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,17 +14,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the essay question type.
+ * Provides a word and character count to a essay question textarea.
  *
- * @package    qtype
- * @subpackage essay
- * @copyright  2005 Mark Nielsen
+ * @module     qtype_essay/wordcount
+ * @class      contentitem_return
+ * @package    qtype_essay
+ * @copyright  2017 Luca Bösch <luca.boesch@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      3.5
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'qtype_essay';
-$plugin->version   = 2017110200;
-$plugin->requires  = 2017050500;
-$plugin->maturity  = MATURITY_STABLE;
+define(['jquery', 'core/str', 'qtype_essay/wordcount'], function($, str) {
+  return {
+    /**
+     * Init function.
+     *
+     * @param {array} params The passed data.
+     */
+    init: function(params) {
+      var count = params.editorname + ' ' +  params.wordlimit + ' ' + params.charlimit;
+      $('.wordcount').first().html(count);
+    }
+  };
+});

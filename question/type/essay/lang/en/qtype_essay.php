@@ -24,9 +24,12 @@
  */
 
 $string['allowattachments'] = 'Allow attachments';
+$string['atlimit_help'] = 'Response length is at the allowed limit for this question';
 $string['attachmentsoptional'] = 'Attachments are optional';
 $string['attachmentsrequired'] = 'Require attachments';
 $string['attachmentsrequired_help'] = 'This option specifies the minimum number of attachments required for a response to be considered gradable.';
+$string['characters'] = 'Characters';
+$string['charlimit'] = 'Character limit';
 $string['formateditor'] = 'HTML editor';
 $string['formateditorfilepicker'] = 'HTML editor with file picker';
 $string['formatmonospaced'] = 'Plain text, monospaced font';
@@ -38,6 +41,7 @@ $string['mustattach'] = 'When "No online text" is selected, or responses are opt
 $string['mustrequire'] = 'When "No online text" is selected, or responses are optional, you must require at least one attachment.';
 $string['mustrequirefewer'] = 'You cannot require more attachments than you allow.';
 $string['nlines'] = '{$a} lines';
+$string['overlimit_help'] = 'Response length is over the limit for this question';
 $string['pluginname'] = 'Essay';
 $string['pluginname_help'] = 'In response to a question, the respondent may upload one or more files and/or enter text online. A response template may be provided. Responses must be graded manually.';
 $string['pluginname_link'] = 'question/type/essay';
@@ -46,6 +50,18 @@ $string['pluginnameediting'] = 'Editing an Essay question';
 $string['pluginnamesummary'] = 'Allows a response of a file upload and/or online text. This must then be graded manually.';
 $string['responsefieldlines'] = 'Input box size';
 $string['responseformat'] = 'Response format';
+$string['responseheader'] = 'Response';
+$string['responselimithard'] = 'Hard limit';
+$string['responselimitsoft'] = 'Soft limit';
+$string['responselimitpolicy'] = 'Response limit';
+$string['responselimitpolicy_help'] = 'This setting has three options:
+<ul>
+<li>Unlimited  = no limit is imposed on user response</li>
+<li>Soft limit = displays response word/character count to user and grader, but does not block user submission</li>
+<li>Hard limit = forces user to limit word/character count of response</li>
+</ul>
+Responses can be limited by words and/or characters.  Any non-zero limits will be imposed according to the policy chosen here.
+Note that count in an HTML formatted response are complicated by HTML data.';
 $string['responseoptions'] = 'Response Options';
 $string['responserequired'] = 'Require text';
 $string['responsenotrequired'] = 'Text input is optional';
@@ -53,3 +69,5 @@ $string['responseisrequired'] = 'Require the student to enter text';
 $string['responsetemplate'] = 'Response template';
 $string['responsetemplateheader'] = 'Response Template';
 $string['responsetemplate_help'] = 'Any text entered here will be displayed in the response input box when a new attempt at the question starts.';
+$string['wordlimit'] = 'Word limit';
+$string['words'] = 'Words';

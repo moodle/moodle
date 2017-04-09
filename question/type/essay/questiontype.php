@@ -36,6 +36,10 @@ require_once($CFG->libdir . '/questionlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essay extends question_type {
+    const LIMIT_NONE = 0;
+    const LIMIT_SOFT = 1;
+    const LIMIT_HARD = 2;
+
     public function is_manual_graded() {
         return true;
     }
@@ -72,6 +76,13 @@ class qtype_essay extends question_type {
         $options->graderinfoformat = $formdata->graderinfo['format'];
         $options->responsetemplate = $formdata->responsetemplate['text'];
         $options->responsetemplateformat = $formdata->responsetemplate['format'];
+        $options->responselimitpolicy = $formdata->responselimitpolicy;
+        if (isset($formdata->wordlimit)) {
+            $options->wordlimit = $formdata->wordlimit;
+        }
+        if (isset($formdata->charlimit)) {
+            $options->charlimit = $formdata->charlimit;
+        }
         $DB->update_record('qtype_essay_options', $options);
     }
 
@@ -86,6 +97,9 @@ class qtype_essay extends question_type {
         $question->graderinfoformat = $questiondata->options->graderinfoformat;
         $question->responsetemplate = $questiondata->options->responsetemplate;
         $question->responsetemplateformat = $questiondata->options->responsetemplateformat;
+        $question->responselimitpolicy = $questiondata->options->responselimitpolicy;
+        $question->wordlimit = $questiondata->options->wordlimit;
+        $question->charlimit = $questiondata->options->charlimit;
     }
 
     public function delete_question($questionid, $contextid) {
@@ -106,6 +120,17 @@ class qtype_essay extends question_type {
             'plain' => get_string('formatplain', 'qtype_essay'),
             'monospaced' => get_string('formatmonospaced', 'qtype_essay'),
             'noinline' => get_string('formatnoinline', 'qtype_essay'),
+        );
+    }
+
+    /**
+     * @return array the choices that should be offered for the word count policy.
+     */
+    public function response_limit_policies() {
+        return array(
+            self::LIMIT_NONE => get_string('unlimited'),
+            self::LIMIT_SOFT => get_string('responselimitsoft', 'qtype_essay'),
+            self::LIMIT_HARD => get_string('responselimithard', 'qtype_essay'),
         );
     }
 

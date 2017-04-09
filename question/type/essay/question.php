@@ -51,6 +51,9 @@ class qtype_essay_question extends question_with_responses {
     public $graderinfoformat;
     public $responsetemplate;
     public $responsetemplateformat;
+    public $responselimitpolicy;
+    public $wordlimit;
+    public $charlimit;
 
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
         return question_engine::make_behaviour('manualgraded', $qa, $preferredbehaviour);
@@ -146,5 +149,9 @@ class qtype_essay_question extends question_with_responses {
             return parent::check_file_access($qa, $options, $component,
                     $filearea, $args, $forcedownload);
         }
+    }
+
+    public function has_response_limit() {
+        return !empty($this->responselimitpolicy);
     }
 }

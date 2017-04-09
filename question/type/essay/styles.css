@@ -23,3 +23,21 @@
 .que.essay div.qtype_essay_response textarea {
     width: 100%;
 }
+
+.que.essay .wordcount {
+    text-align: right;
+}
+
+.que.essay span.current {
+    font-weight: bold;
+}
+
+.que.essay span.current.atlimit {
+    text-decoration: blink;
+}
+
+.que.essay span.current.overlimit {
+    border-bottom: thin dotted;
+    color: red;
+    font-style: italic;
+}

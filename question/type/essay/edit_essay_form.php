@@ -65,6 +65,18 @@ class qtype_essay_edit_form extends question_edit_form {
         $mform->addHelpButton('attachmentsrequired', 'attachmentsrequired', 'qtype_essay');
         $mform->disabledIf('attachmentsrequired', 'attachments', 'eq', 0);
 
+        $mform->addElement('select', 'responselimitpolicy',
+                get_string('responselimitpolicy', 'qtype_essay'), $qtype->response_limit_policies());
+        $mform->addHelpButton('responselimitpolicy', 'responselimitpolicy', 'qtype_essay');
+
+        $mform->addElement('text', 'wordlimit', get_string('wordlimit', 'qtype_essay'), array('size' => 3));
+        $mform->disabledIf('wordlimit', 'responselimitpolicy', 'eq', 0);
+        $mform->setType('wordlimit', PARAM_INT);
+
+        $mform->addElement('text', 'charlimit', get_string('charlimit', 'qtype_essay'), array('size' => 3));
+        $mform->disabledIf('charlimit', 'responselimitpolicy', 'eq', 0);
+        $mform->setType('charlimit', PARAM_INT);
+
         $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_essay'));
         $mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_essay'),
                 array('rows' => 10),  array_merge($this->editoroptions, array('maxfiles' => 0)));
@@ -88,6 +100,9 @@ class qtype_essay_edit_form extends question_edit_form {
         $question->responsefieldlines = $question->options->responsefieldlines;
         $question->attachments = $question->options->attachments;
         $question->attachmentsrequired = $question->options->attachmentsrequired;
+        $question->responselimitpolicy = $question->options->responselimitpolicy;
+        $question->wordlimit = $question->options->wordlimit;
+        $question->charlimit = $question->options->charlimit;
 
         $draftid = file_get_submitted_draft_itemid('graderinfo');
         $question->graderinfo = array();

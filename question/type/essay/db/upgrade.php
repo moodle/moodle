@@ -30,16 +30,31 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion the version we are upgrading from.
  */
 function xmldb_qtype_essay_upgrade($oldversion) {
-    global $CFG;
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/feedback/db/upgradelib.php');
+    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Automatically generated Moodle v3.2.0 release upgrade line.
+    // Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
+
+    // Add reponse limit functionality.
+    if ($oldversion < 2017110200) {
+        $table = new xmldb_table('qtype_essay_options');
+        $field = new xmldb_field('responselimitpolicy', XMLDB_TYPE_INTEGER, '4', null, true, false, 0, 'responsetemplateformat');
+        $dbman->add_field($table, $field);
+        $field = new xmldb_field('wordlimit', XMLDB_TYPE_INTEGER, '4', null, false, false, null, 'responselimitpolicy');
+        $dbman->add_field($table, $field);
+        $field = new xmldb_field('charlimit', XMLDB_TYPE_INTEGER, '4', null, false, false, null, 'wordlimit');
+        $dbman->add_field($table, $field);
+
+        upgrade_plugin_savepoint(true, 2017110200, 'qtype', 'essay');
+    }
 
     return true;
 }

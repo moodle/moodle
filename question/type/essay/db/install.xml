@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/essay/db" VERSION="20140113" COMMENT="XMLDB file for Moodle question/type/essay"
+<XMLDB PATH="question/type/essay/db" VERSION="20171102" COMMENT="XMLDB file for Moodle question/type/essay"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -17,6 +17,9 @@
         <FIELD NAME="graderinfoformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for graderinfo."/>
         <FIELD NAME="responsetemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The template to pre-populate student's response field during attempt."/>
         <FIELD NAME="responsetemplateformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for responsetemplate."/>
+        <FIELD NAME="responselimitpolicy" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Response limit policy" PREVIOUS="responsetemplateformat" NEXT="wordlimit"/>
+        <FIELD NAME="wordlimit" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Word limit" PREVIOUS="responselimitpolicy" NEXT="charlimit"/>
+        <FIELD NAME="charlimit" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Character limit" PREVIOUS="wordlimit"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
