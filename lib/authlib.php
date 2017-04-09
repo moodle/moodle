@@ -980,26 +980,26 @@ function display_auth_lock_options($settings, $auth, $userfields, $helptext, $ma
             // We are mapping to a remote field here.
             // Mapping.
             $settings->add(new admin_setting_configtext("auth_{$auth}/field_map_{$field}",
-                    $fieldname, '', '', PARAM_ALPHANUMEXT, 30));
+                    get_string('auth_fieldmapping', 'auth', $fieldname), '', '', PARAM_ALPHANUMEXT, 30));
 
             // Update local.
             $settings->add(new admin_setting_configselect("auth_{$auth}/field_updatelocal_{$field}",
-                    get_string('auth_updatelocal', 'auth'), '', 'oncreate', $updatelocaloptions));
+                    get_string('auth_updatelocalfield', 'auth', $fieldname), '', 'oncreate', $updatelocaloptions));
 
             // Update remote.
             if ($updateremotefields) {
                     $settings->add(new admin_setting_configselect("auth_{$auth}/field_updateremote_{$field}",
-                        get_string('auth_updateremote', 'auth'), '', 0, $updateextoptions));
+                        get_string('auth_updateremotefield', 'auth', $fieldname), '', 0, $updateextoptions));
             }
 
             // Lock fields.
             $settings->add(new admin_setting_configselect("auth_{$auth}/field_lock_{$field}",
-                    get_string('auth_fieldlock', 'auth'), '', 'unlocked', $lockoptions));
+                    get_string('auth_fieldlockfield', 'auth', $fieldname), '', 'unlocked', $lockoptions));
 
         } else {
             // Lock fields Only.
             $settings->add(new admin_setting_configselect("auth_{$auth}/field_lock_{$field}",
-                    get_string('auth_fieldlock', 'auth'), '', 'unlocked', $lockoptions));
+                    get_string('auth_fieldlockfield', 'auth', $fieldname), '', 'unlocked', $lockoptions));
         }
     }
 }
