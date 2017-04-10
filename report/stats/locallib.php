@@ -85,16 +85,25 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
         $userid = 0;
     }
 
-    $courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname');
+    $courses = $DB->get_recordset('course', null, 'shortname', 'id,shortname,visible');
     $courseoptions = array();
 
     foreach ($courses as $c) {
+        context_helper::preload_from_record($c);
         $context = context_course::instance($c->id);
 
         if (has_capability('report/stats:view', $context)) {
+            if (isset($c->visible) && $c->visible <= 0) {
+                // For hidden courses, require visibility check.
+                if (!has_capability('moodle/course:viewhiddencourses', $context)) {
+                    continue;
+                }
+            }
             $courseoptions[$c->id] = format_string($c->shortname, true, array('context' => $context));
         }
     }
+
+    $courses->close();
 
     $reportoptions = stats_get_report_options($course->id, $mode);
     $timeoptions = report_stats_timeoptions($mode);
