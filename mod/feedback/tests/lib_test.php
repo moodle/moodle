@@ -230,6 +230,97 @@ class mod_feedback_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * A user that cannot submit the feedback should not see the event.
+     */
+    public function test_feedback_core_calendar_is_event_visible_can_not_submit() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $course = $this->getDataGenerator()->create_course();
+        $feedback = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id]);
+        $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
+        $cm = get_coursemodule_from_instance('feedback', $feedback->id);
+        $context = context_module::instance($cm->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id, 'manual');
+
+        $this->setUser($user);
+
+        assign_capability('mod/feedback:complete', CAP_PROHIBIT, $studentrole->id, $context);
+        $context->mark_dirty();
+
+        $visible = mod_feedback_core_calendar_is_event_visible($event);
+
+        $this->assertFalse($visible);
+    }
+
+    /**
+     * A user that can submit the feedback should see the event.
+     */
+    public function test_feedback_core_calendar_is_event_visible_can_submit() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $course = $this->getDataGenerator()->create_course();
+        $feedback = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id]);
+        $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
+        $cm = get_coursemodule_from_instance('feedback', $feedback->id);
+        $context = context_module::instance($cm->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id, 'manual');
+
+        $this->setUser($user);
+
+        assign_capability('mod/feedback:complete', CAP_ALLOW, $studentrole->id, $context->id);
+        $context->mark_dirty();
+
+        $visible = mod_feedback_core_calendar_is_event_visible($event);
+
+        $this->assertTrue($visible);
+    }
+
+    /**
+     * A user that has already submitted feedback should not have an action.
+     */
+    public function test_feedback_core_calendar_provide_event_action_already_submitted() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $course = $this->getDataGenerator()->create_course();
+        $feedback = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id]);
+        $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
+        $cm = get_coursemodule_from_instance('feedback', $feedback->id);
+        $context = context_module::instance($cm->id);
+
+        $this->setUser($user);
+
+        $record = [
+            'feedback' => $feedback->id,
+            'userid' => $user->id,
+            'timemodified' => time(),
+            'random_response' => 0,
+            'anonymous_response' => FEEDBACK_ANONYMOUS_NO,
+            'courseid' => 0,
+        ];
+        $DB->insert_record('feedback_completed', (object) $record);
+
+        $factory = new \core_calendar\action_factory();
+        $action = mod_feedback_core_calendar_provide_event_action($event, $factory);
+
+        $this->assertNull($action);
+    }
+
+    /**
      * Creates an action event.
      *
      * @param int $courseid The course id.

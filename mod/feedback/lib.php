@@ -3419,6 +3419,23 @@ function feedback_check_updates_since(cm_info $cm, $from, $filter = array()) {
 }
 
 /**
+ * The event is only visible anywhere if the user can submit feedback.
+ *
+ * @param calendar_event $event
+ * @return bool Returns true if the event is visible to the current user, false otherwise.
+ */
+function mod_feedback_core_calendar_is_event_visible(calendar_event $event) {
+    global $DB;
+
+    $cm = get_fast_modinfo($event->courseid)->instances['feedback'][$event->instance];
+    $feedback = $DB->get_record('feedback', ['id' => $event->instance]);
+    $feedbackcompletion = new mod_feedback_completion($feedback, $cm, 0);
+
+    // The event is only visible if the user can submit it.
+    return $feedbackcompletion->can_complete();
+}
+
+/**
  * This function receives a calendar event and returns the action associated with it, or null if there is none.
  *
  * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
@@ -3433,7 +3450,13 @@ function mod_feedback_core_calendar_provide_event_action(calendar_event $event,
     global $DB;
 
     $cm = get_fast_modinfo($event->courseid)->instances['feedback'][$event->instance];
-    $feedback = $DB->get_record('feedback', ['id' => $event->instance], 'id, timeopen, timeclose');
+    $feedback = $DB->get_record('feedback', ['id' => $event->instance]);
+    $feedbackcompletion = new mod_feedback_completion($feedback, $cm, 0);
+
+    if ($feedbackcompletion->is_already_submitted()) {
+        // There is no action if the user has already submitted the feedback.
+        return null;
+    }
 
     $now = time();
     if ($feedback->timeopen && $feedback->timeclose) {
