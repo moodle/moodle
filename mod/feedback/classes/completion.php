@@ -458,6 +458,21 @@ class mod_feedback_completion extends mod_feedback_structure {
     }
 
     /**
+     * If user has already completed the feedback, create the temproray values from last completed attempt
+     *
+     * @return stdClass record from feedback_completedtmp or false if not found
+     */
+    public function create_completed_tmp_from_last_completed() {
+        if (!$this->get_current_completed_tmp()) {
+            $lastcompleted = $this->find_last_completed();
+            if ($lastcompleted) {
+                $this->completedtmp = feedback_set_tmp_values($lastcompleted);
+            }
+        }
+        return $this->completedtmp;
+    }
+
+    /**
      * Saves unfinished response to the temporary table
      *
      * This is called when user proceeds to the next/previous page in the complete form
@@ -683,6 +698,7 @@ class mod_feedback_completion extends mod_feedback_structure {
         $urltogo = null;
 
         // Save the form for later during the request.
+        $this->create_completed_tmp_from_last_completed();
         $this->form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_COMPLETE,
             $this, 'feedback_complete_form', array('gopage' => $gopage));
 
