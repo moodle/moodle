@@ -1881,8 +1881,6 @@ function feedback_print_item_show_value($item, $value = false) {
  */
 function feedback_set_tmp_values($feedbackcompleted) {
     global $DB;
-    debugging('Function feedback_set_tmp_values() is deprecated and since it is '
-            . 'no longer used in mod_feedback', DEBUG_DEVELOPER);
 
     //first we create a completedtmp
     $tmpcpl = new stdClass();
