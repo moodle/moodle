@@ -62,7 +62,7 @@
             <div class="card-block">
                 <div class="container">
                     <div class="row">
-                        <div class="col-sm-6 push-sm-6">
+                        <div class="col-sm-9 push-sm-3">
                             <ul class="list-unstyled">
                                 {{#node.children}}
                                     {{^children.count}}
@@ -81,11 +81,11 @@
                                 {{#is_short_branch}}
                                     <hr>
                                     <div class="row">
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-3">
                                             {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
                                             {{^action}}<h4>{{text}}<h4>{{/action}}
                                         </div>
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-9">
                                             <ul class="list-unstyled">
                                                 {{#children}}
                                                     {{> core/settings_link_page_single }}
@@ -108,11 +108,11 @@
                     <div class="card-block">
                         <div class="container">
                             <div class="row">
-                                <div class="col-sm-6">
+                                <div class="col-sm-3">
                                     {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
                                     {{^action}}<h4>{{text}}<h4>{{/action}}
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-9">
                                     <ul class="list-unstyled">
                                         {{#children}}
                                             {{#display}}
@@ -129,11 +129,11 @@
                                     {{#children.count}}
                                         <hr>
                                         <div class="row">
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-3">
                                                 {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
                                                 {{^action}}<h4>{{text}}<h4>{{/action}}
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-9">
                                                 <ul class="list-unstyled">
                                                     {{#children}}
                                                         {{> core/settings_link_page_single }}

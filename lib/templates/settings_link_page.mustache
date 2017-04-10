@@ -57,7 +57,7 @@
         <div class="well">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="span6 offset6">
+                    <div class="span9 offset3">
                         <ul class="unstyled indented-list">
                             {{#node.children}}
                                 {{^children.count}}
@@ -76,11 +76,11 @@
                             {{#is_short_branch}}
                                 <hr>
                                 <div class="row">
-                                    <div class="span6">
+                                    <div class="span3">
                                         {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
                                         {{^action}}<h4>{{text}}<h4>{{/action}}
                                     </div>
-                                    <div class="span6">
+                                    <div class="span9">
                                         <ul class="unstyled indented-list">
                                             {{#children}}
                                                 {{> core/settings_link_page_single }}
@@ -101,11 +101,11 @@
                 <div class="well">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="span6">
+                            <div class="span3">
                                 {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
                                 {{^action}}<h4>{{text}}<h4>{{/action}}
                             </div>
-                            <div class="span6">
+                            <div class="span9">
                                 <ul class="unstyled">
                                     {{#children}}
                                         {{#display}}
@@ -122,11 +122,11 @@
                                 {{#children.count}}
                                     <hr>
                                     <div class="row">
-                                        <div class="span6">
+                                        <div class="span3">
                                             {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
                                             {{^action}}<h4>{{text}}<h4>{{/action}}
                                         </div>
-                                        <div class="span6">
+                                        <div class="span9">
                                             <ul class="unstyled indented-list">
                                                 {{#children}}
                                                     {{> core/settings_link_page_single }}
