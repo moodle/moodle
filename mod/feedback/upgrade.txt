@@ -1,3 +1,7 @@
+=== 3.2.3 ===
+
+* Function feedback_set_tmp_values is not deprecated anymore.
+
 === 3.1 ===
 
 * feedback_get_courses_from_sitecourse_map() now returns course id as 'id' attribute
