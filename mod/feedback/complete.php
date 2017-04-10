@@ -92,6 +92,7 @@ $cansubmit = $feedbackcompletion->can_submit();
 
 // Initialise the form processing feedback completion.
 if (!$feedbackcompletion->is_empty() && $cansubmit) {
+    $feedbackcompletion->create_completed_tmp_from_last_completed();
     $form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_COMPLETE,
             $feedbackcompletion, 'feedback_complete_form', array('gopage' => $gopage));
     if ($form->is_cancelled()) {
