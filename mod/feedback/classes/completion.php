@@ -498,7 +498,7 @@ class mod_feedback_completion extends mod_feedback_structure {
 
         // Send email.
         if ($this->feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
-            feedback_send_email($this->cm, $this->feedback, $this->cm->get_course(), $USER);
+            feedback_send_email($this->cm, $this->feedback, $this->cm->get_course(), $USER, $this->completed);
         } else {
             feedback_send_email_anonym($this->cm, $this->feedback, $this->cm->get_course());
         }
