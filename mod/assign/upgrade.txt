@@ -1,6 +1,8 @@
 This files describes API changes in the assign code.
 
 === 3.3 ===
+* All pluginfile file serving functions now pass through the options to send_stored_file() (all assignment plugins should do
+  the same).
 * Fixed calendar event types for overridden due dates from 'close' to 'due'.
 * Removed calendar event type of 'open', since mod_assign only has the 'due' event type. No point in creating an override event
 for an event type that does not exist.
