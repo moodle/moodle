@@ -188,7 +188,7 @@ class client extends \oauth2_client {
             $response = $this->post($this->token_url(), $this->build_post_data($params));
         }
 
-        if (!$this->info['http_code'] === 200) {
+        if ($this->info['http_code'] !== 200) {
             throw new moodle_exception('Could not upgrade oauth token');
         }
 
