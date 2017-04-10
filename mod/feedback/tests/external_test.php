@@ -833,4 +833,91 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
             $this->assertNotEmpty($attempt['userid']);  // Is not anonymous.
         }
     }
+
+    /**
+     * Test get_last_completed for feedback anonymous not completed.
+     */
+    public function test_get_last_completed_anonymous_not_completed() {
+        global $DB;
+
+        // Force anonymous.
+        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_YES, array('id' => $this->feedback->id));
+
+        // Test user with full capabilities that didn't complete the feedback.
+        $this->setUser($this->student);
+
+        $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
+        $this->expectException('moodle_exception');
+        mod_feedback_external::get_last_completed($this->feedback->id);
+    }
+
+    /**
+     * Test get_last_completed for feedback anonymous and completed.
+     */
+    public function test_get_last_completed_anonymous_completed() {
+        global $DB;
+
+        // Force anonymous.
+        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_YES, array('id' => $this->feedback->id));
+        // Add one completion record..
+        $record = [
+            'feedback' => $this->feedback->id,
+            'userid' => $this->student->id,
+            'timemodified' => time() - DAYSECS,
+            'random_response' => 0,
+            'anonymous_response' => FEEDBACK_ANONYMOUS_YES,
+            'courseid' => $this->course->id,
+        ];
+        $record['id'] = $DB->insert_record('feedback_completed', (object) $record);
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
+        $this->expectException('moodle_exception');
+        mod_feedback_external::get_last_completed($this->feedback->id);
+    }
+
+    /**
+     * Test get_last_completed for feedback not anonymous and completed.
+     */
+    public function test_get_last_completed_not_anonymous_completed() {
+        global $DB;
+
+        // Force non anonymous.
+        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->feedback->id));
+        // Add one completion record..
+        $record = [
+            'feedback' => $this->feedback->id,
+            'userid' => $this->student->id,
+            'timemodified' => time() - DAYSECS,
+            'random_response' => 0,
+            'anonymous_response' => FEEDBACK_ANONYMOUS_NO,
+            'courseid' => $this->course->id,
+        ];
+        $record['id'] = $DB->insert_record('feedback_completed', (object) $record);
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+        $result = mod_feedback_external::get_last_completed($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_last_completed_returns(), $result);
+        $this->assertEquals($record, $result['completed']);
+    }
+
+    /**
+     * Test get_last_completed for feedback not anonymous and not completed.
+     */
+    public function test_get_last_completed_not_anonymous_not_completed() {
+        global $DB;
+
+        // Force anonymous.
+        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->feedback->id));
+
+        // Test user with full capabilities that didn't complete the feedback.
+        $this->setUser($this->student);
+
+        $this->expectExceptionMessage(get_string('not_completed_yet', 'feedback'));
+        $this->expectException('moodle_exception');
+        mod_feedback_external::get_last_completed($this->feedback->id);
+    }
 }
