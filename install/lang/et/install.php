@@ -30,20 +30,20 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Administreerimiskataloog';
-$string['availablelangs'] = 'Saadaval keelte nimekiri';
+$string['admindirname'] = 'Halduskataloog';
+$string['availablelangs'] = 'Saadaolevad keelepaketid';
 $string['chooselanguagehead'] = 'Valige keel';
-$string['chooselanguagesub'] = 'Palun vali keel, mida kasutatakse AINULT installeerimise käigus. Hiljem saab valida õpikeskkonna ja kasutajate keelt.';
-$string['clialreadyconfigured'] = 'Fail „config.php“ on juba olemas. Kasutage sellele saidile Moodle‘i installimiseks faili „admin/cli/install_database.php“.';
-$string['clialreadyinstalled'] = 'Fail config.php juba eksisteerib, palun kasuta admin/cli/upgrade.php kui soovid uuendada oma saiti.';
+$string['chooselanguagesub'] = 'Valige Moodle’i keel. Valitud keelt kasutatakse õpikeskkonna vaikekeelena ja seda saab hiljem muuta.';
+$string['clialreadyconfigured'] = 'Fail „config.php“ on juba olemas. Kasutage sellele saidile Moodle’i installimiseks faili „admin/cli/install_database.php“.';
+$string['clialreadyinstalled'] = 'Konfiguratsioonifail config.php on juba olemas. Palun kasutage Moodle’i selles õpikeskkonnas uuendamiseks faili admin/cli/install_database.php.';
 $string['cliinstallheader'] = 'Moodle’i {$a} käsureapõhine installiprogramm';
 $string['databasehost'] = 'Andmebaasi host';
 $string['databasename'] = 'Andmebaasi nimi';
 $string['databasetypehead'] = 'Valige andmebaasi draiver';
-$string['dataroot'] = 'Andmete kataloog';
+$string['dataroot'] = 'Andmekataloog';
 $string['datarootpermission'] = 'Andmekataloogide õigus';
 $string['dbprefix'] = 'Tabeli eesliide';
-$string['dirroot'] = 'Moodle kataloog';
+$string['dirroot'] = 'Moodle’i kataloog';
 $string['environmenthead'] = 'Keskkonna kontrollimine...';
 $string['environmentsub2'] = 'Iga Moodle väljalaskel on oma minimaalne PHP versiooni nõue ja kohustuslikud PHP laiendused.
 Täielik keskkonna kontroll tehakse enne iga installeerimist ja uuendamist. Palun võta ühendust serveri administraatoriga, kui sa ei sa kuidas installeerida või võimaldada PHP laiendusi.';
@@ -62,13 +62,13 @@ See lubab Moodle\'il ise mälu limiiti määrata.</li>
 <p>Kuigi mõnedes serverites tõkestab see <b>kõigi</b> PHP lehekülgede tööd (sa näed veateateid, kui vaatad lehti), nii et pead eemaldama .htaccess faili.</p></li>
 </ol>';
 $string['paths'] = 'Teed';
-$string['pathserrcreatedataroot'] = 'Andmete kataloogi ({$a->dataroot}) ei saa installeerija luua.';
+$string['pathserrcreatedataroot'] = 'Installiprogramm ei saanud andmete kataloogi ({$a->dataroot}) luua.';
 $string['pathshead'] = 'Kinnita teed';
 $string['pathsrodataroot'] = 'Andmete juurkataloog ei võimalda kirjutust.';
 $string['pathsroparentdataroot'] = 'Ülemkataloog ({$a->parent}) ei võimalda kirjutust. Installiprogramm ei saanud andmete kataloogi ({$a->dataroot}) luua.';
 $string['pathssubadmindir'] = 'Väga vähesed veebihostid kasutavad /admin spetsiaalse URL-na, et pääseda ligi kontrollpaneelile või millegile sarnasele. Kahjuks on see konfliktis Moodle administreerimislehtedega. Sa saad olukorda parandada, kui nimetad kataloogi admin ümber oma üaigalduses ning kirjutad selle uue nime siia. Näiteks: <em>moodleadmin</em>. See parandab administreerimisliidese lingid Moodle\'s.';
 $string['pathssubdataroot'] = 'Sa pead näitama koha, kuhu Moodle saaks salvestada üles laetud failid. See kataloog peab olema loetav JA KIRJUTATAV veebiserveri kasutaja poolt (tavaliselt \'nobody\' or \'apache\'), samas see kataloog ei tohiks olla ligipääsetav otse veebi kaudu. Kui kataloogi ei eksisteeri, siis installeerija püüab selle ise luua.';
-$string['pathssubdirroot'] = 'Täistee Moodle paigalduse kataloogile.';
+$string['pathssubdirroot'] = '<p>Moodle’i koodi sisaldava kataloogi täielik tee.</p>';
 $string['pathssubwwwroot'] = 'Täielik veebiaadress, kust kaudu Moodle\'le ligi pääsetakse.
 Ei ole võimalik kasutada mitmest kohast kohast ligipääsu.
 Kui Su sait omab mitut avalikku aadress, siis pead seadistama ümbersuunamised kõikidelt teistest aadressidelt.
@@ -87,5 +87,5 @@ $string['welcomep30'] = 'See <strong>{$a->installername}</strong> väljalase rak
 $string['welcomep40'] = 'Pakett sisaldab ka järgmist: <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Kasutamaks kõiki selle rakendusi selles paketis on kaetud nende vastavad litsentsid. Täielik <strong>{$a->installername}</strong> pakett on <a href="http://www.opensource.org/docs/definition_plain.html">avatud lähtekoodil</a> ja jaotatud <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> litsentsi alusel.';
 $string['welcomep60'] = 'Järgnevatel lehtedel juhitakse sind läbi mõnede lihtsate sammude seadistamaks ja seadmaks üles <strong>Moodle</strong> oma arvutis. Sa võid nõustuda vaikeväärtustega või fakultatiivselt täiendada vastavalt oma vajadustele.';
-$string['welcomep70'] = '<strong>Moodle\\’i</strong> installi jätkamiseks klõpsake nuppu Edasi.';
+$string['welcomep70'] = '<strong>Moodle’i</strong> installi jätkamiseks klõpsake nuppu Edasi.';
 $string['wwwroot'] = 'Veebiaadress';
