@@ -705,7 +705,7 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_feedback_external::get_non_respondents_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['users']);
-        $this->assertEquals($anotherstudent->id, $result['users'][0]);
+        $this->assertEquals($anotherstudent->id, $result['users'][0]['userid']);
 
         // Create another student.
         $anotherstudent2 = self::getDataGenerator()->create_user();

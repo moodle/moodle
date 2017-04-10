@@ -971,13 +971,15 @@ function feedback_check_is_switchrole() {
  * @param string $sort
  * @param int $startpage
  * @param int $pagecount
- * @return object the userrecords
+ * @param bool $includestatus to return if the user started or not the feedback among the complete user record
+ * @return array array of user ids or user objects when $includestatus set to true
  */
 function feedback_get_incomplete_users(cm_info $cm,
                                        $group = false,
                                        $sort = '',
                                        $startpage = false,
-                                       $pagecount = false) {
+                                       $pagecount = false,
+                                       $includestatus = false) {
 
     global $DB;
 
@@ -985,7 +987,8 @@ function feedback_get_incomplete_users(cm_info $cm,
 
     //first get all user who can complete this feedback
     $cap = 'mod/feedback:complete';
-    $fields = 'u.id, u.username';
+    $allnames = get_all_user_name_fields(true, 'u');
+    $fields = 'u.id, ' . $allnames . ', u.picture, u.email, u.imagealt';
     if (!$allusers = get_users_by_capability($context,
                                             $cap,
                                             $fields,
@@ -999,25 +1002,35 @@ function feedback_get_incomplete_users(cm_info $cm,
     }
     // Filter users that are not in the correct group/grouping.
     $info = new \core_availability\info_module($cm);
-    $allusers = $info->filter_user_list($allusers);
+    $allusersrecords = $info->filter_user_list($allusers);
 
-    $allusers = array_keys($allusers);
+    $allusers = array_keys($allusersrecords);
 
     //now get all completeds
     $params = array('feedback'=>$cm->instance);
-    if (!$completedusers = $DB->get_records_menu('feedback_completed', $params, '', 'id, userid')) {
-        return $allusers;
+    if ($completedusers = $DB->get_records_menu('feedback_completed', $params, '', 'id, userid')) {
+        // Now strike all completedusers from allusers.
+        $allusers = array_diff($allusers, $completedusers);
     }
-
-    //now strike all completedusers from allusers
-    $allusers = array_diff($allusers, $completedusers);
 
     //for paging I use array_slice()
     if ($startpage !== false AND $pagecount !== false) {
         $allusers = array_slice($allusers, $startpage, $pagecount);
     }
 
-    return $allusers;
+    // Check if we should return the full users objects.
+    if ($includestatus) {
+        $userrecords = [];
+        $startedusers = $DB->get_records_menu('feedback_completedtmp', ['feedback' => $cm->instance], '', 'id, userid');
+        $startedusers = array_flip($startedusers);
+        foreach ($allusers as $userid) {
+            $allusersrecords[$userid]->feedbackstarted = isset($startedusers[$userid]);
+            $userrecords[] = $allusersrecords[$userid];
+        }
+        return $userrecords;
+    } else {    // Return just user ids.
+        return $allusers;
+    }
 }
 
 /**
