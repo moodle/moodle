@@ -106,7 +106,7 @@ class mod_chat_external extends external_api {
         // Get the unique chat session id.
         // Since we are going to use the chat via Web Service requests we set the ajax version (since it's the most similar).
         if (!$chatsid = chat_login_user($chat->id, 'ajax', $groupid, $course)) {
-            throw moodle_exception('cantlogin', 'chat');
+            throw new moodle_exception('cantlogin', 'chat');
         }
 
         $result = array();
