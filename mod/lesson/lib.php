@@ -532,7 +532,7 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
  * and it is available for taking.
  *
  * @deprecated since 3.3
- *
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
  * @global object
  * @global stdClass
  * @global object

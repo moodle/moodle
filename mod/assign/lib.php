@@ -491,7 +491,7 @@ function assign_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * for the courses.
  *
  * @deprecated since 3.3
- *
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
  * @param mixed $courses The list of courses to print the overview for
  * @param array $htmlarray The array of html to return
  * @return true
@@ -634,7 +634,7 @@ function assign_print_overview($courses, &$htmlarray) {
  * assignment.
  *
  * @deprecated since 3.3
- *
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
  * @param array $mysubmissions list of submissions of current user indexed by assignment id.
  * @param string $sqlassignmentids sql clause used to filter open assignments.
  * @param array $assignmentidparams sql params used to filter open assignments.
@@ -724,7 +724,7 @@ function assign_get_mysubmission_details_for_print_overview(&$mysubmissions, $sq
  * assignment's submissions.
  *
  * @deprecated since 3.3
- *
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
  * @param array $unmarkedsubmissions list of submissions of that are currently unmarked indexed by assignment id.
  * @param string $sqlassignmentids sql clause used to filter open assignments.
  * @param array $assignmentidparams sql params used to filter open assignments.

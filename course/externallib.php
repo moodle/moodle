@@ -2662,7 +2662,7 @@ class core_course_external extends external_api {
      * Returns description of method parameters
      *
      * @deprecated since 3.3
-     *
+     * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
      * @return external_function_parameters
      * @since Moodle 3.2
      */
@@ -2678,7 +2678,7 @@ class core_course_external extends external_api {
      * Return activities overview for the given courses.
      *
      * @deprecated since 3.3
-     *
+     * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
      * @param array $courseids a list of course ids
      * @return array of warnings and the activities overview
      * @since Moodle 3.2
@@ -2737,7 +2737,7 @@ class core_course_external extends external_api {
      * Returns description of method result value
      *
      * @deprecated since 3.3
-     *
+     * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
      * @return external_description
      * @since Moodle 3.2
      */

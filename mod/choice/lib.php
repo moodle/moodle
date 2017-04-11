@@ -923,7 +923,7 @@ function choice_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * and it is available for completing.
  *
  * @deprecated since 3.3
- *
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
  * @uses CONTEXT_MODULE
  * @param array $courses An array of course objects to get choice instances from.
  * @param array $htmlarray Store overview output array( course ID => 'choice' => HTML output )

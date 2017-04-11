@@ -1333,7 +1333,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
  * Filters the forum discussions according to groups membership and config.
  *
  * @deprecated since 3.3
- *
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
  * @since  Moodle 2.8, 2.7.1, 2.6.4
  * @param  array $discussions Discussions with new posts array
  * @return array Forums with the number of new posts
@@ -1398,7 +1398,7 @@ function forum_is_user_group_discussion(cm_info $cm, $discussiongroupid) {
 
 /**
  * @deprecated since 3.3
- *
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
  * @global object
  * @global object
  * @global object

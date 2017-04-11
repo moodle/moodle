@@ -1555,8 +1555,8 @@ function quiz_reset_userdata($data) {
  * Prints quiz summaries on MyMoodle Page
  *
  * @deprecated since 3.3
- *
- * @param arry $courses
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
+ * @param array $courses
  * @param array $htmlarray
  */
 function quiz_print_overview($courses, &$htmlarray) {
