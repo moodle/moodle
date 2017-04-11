@@ -33,6 +33,8 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    require_once($CFG->dirroot . '/filter/mathjaxloader/db/upgradelib.php');
+
     if ($oldversion < 2014081100) {
 
         $sslcdnurl = get_config('filter_mathjaxloader', 'httpsurl');
@@ -129,6 +131,26 @@ MathJax.Hub.Config({
         }
 
         upgrade_plugin_savepoint(true, 2016032200, 'filter', 'mathjaxloader');
+    }
+
+    if ($oldversion < 2016052301) {
+        $httpurl = get_config('filter_mathjaxloader', 'httpurl');
+        $newcdnurl = filter_mathjaxloader_upgrade_cdn_cloudflare($httpurl, true);
+        set_config('httpurl', $newcdnurl, 'filter_mathjaxloader');
+
+        $httpsurl = get_config('filter_mathjaxloader', 'httpsurl');
+        $newcdnurl = filter_mathjaxloader_upgrade_cdn_cloudflare($httpsurl, false);
+        set_config('httpsurl', $newcdnurl, 'filter_mathjaxloader');
+
+        $mathjaxconfig = get_config('filter_mathjaxloader', 'mathjaxconfig');
+        if (strpos($mathjaxconfig, 'MathJax.Ajax.config.path') === false) {
+            $newconfig = 'MathJax.Ajax.config.path["Contrib"] = "{wwwroot}/filter/mathjaxloader/contrib";' . "\n";
+            $newconfig .= $mathjaxconfig;
+
+            set_config('mathjaxconfig', $newconfig, 'filter_mathjaxloader');
+        }
+
+        upgrade_plugin_savepoint(true, 2016052301, 'filter', 'mathjaxloader');
     }
 
     return true;
