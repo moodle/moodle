@@ -58,6 +58,10 @@ form {
 }
 .mform .fdescription.required {
     margin-left: @horizontalComponentOffset;
+    & > .icon {
+        width: 8px;
+        height: 12px;
+    }
 }
 .mform .fpassword .unmask {
     display: inline-block;
@@ -87,6 +91,11 @@ form {
 .mform label .req,
 .mform label .adv {
     cursor: help;
+    & > .icon {
+        width: 8px;
+        height: 12px;
+        margin-left: 3px;
+    }
 }
 .mform .fcheckbox input {
     margin-left: 0;
