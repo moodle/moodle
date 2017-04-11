@@ -1443,7 +1443,7 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertCount(0, $members);
 
         // Test groups_get_members.
-        $members = groups_get_members($group2->id, 'u.*', 'id ASC');
+        $members = groups_get_members($group2->id, 'u.*', 'u.id ASC');
         $this->assertCount(2, $members);
         $this->assertEquals([$user1->id, $user2->id], array_keys($members));
     }
