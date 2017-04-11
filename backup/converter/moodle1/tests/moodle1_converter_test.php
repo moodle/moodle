@@ -64,7 +64,7 @@ class core_backup_moodle1_converter_testcase extends advanced_testcase {
             "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/icon.gif",
             "$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/icon.gif"
         );
-        $this->iconhash = sha1_file($CFG->tempdir.'/backup/'.$this->tempdir.'/moddata/unittest/4/icon.gif');
+        $this->iconhash = file_storage::hash_from_path($CFG->tempdir.'/backup/'.$this->tempdir.'/moddata/unittest/4/icon.gif');
         copy(
             "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/icon.gif",
             "$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/7/icon.gif"
@@ -351,8 +351,8 @@ class core_backup_moodle1_converter_testcase extends advanced_testcase {
         $this->assertEquals('array', gettype($files['/file1.gif']));
         $this->assertEquals('array', gettype($files['/sub1/.']));
         $this->assertEquals('array', gettype($files['/sub1/file2.gif']));
-        $this->assertEquals(sha1(''), $files['/.']['contenthash']);
-        $this->assertEquals(sha1(''), $files['/sub1/.']['contenthash']);
+        $this->assertEquals(file_storage::hash_from_string(''), $files['/.']['contenthash']);
+        $this->assertEquals(file_storage::hash_from_string(''), $files['/sub1/.']['contenthash']);
         $this->assertEquals($this->iconhash, $files['/file1.gif']['contenthash']);
         $this->assertEquals($this->iconhash, $files['/sub1/file2.gif']['contenthash']);
 

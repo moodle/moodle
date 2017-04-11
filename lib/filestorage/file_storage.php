@@ -982,7 +982,7 @@ class file_storage {
         static $contenthash = null;
         if (!$contenthash) {
             $this->add_string_to_pool('');
-            $contenthash = sha1('');
+            $contenthash = self::hash_from_string('');
         }
 
         $now = time();
@@ -2324,4 +2324,23 @@ class file_storage {
         $DB->update_record('files_reference', (object)$data);
     }
 
+    /**
+     * Calculate and return the contenthash of the supplied file.
+     *
+     * @param   string $filepath The path to the file on disk
+     * @return  string The file's content hash
+     */
+    public static function hash_from_path($filepath) {
+        return sha1_file($filepath);
+    }
+
+    /**
+     * Calculate and return the contenthash of the supplied content.
+     *
+     * @param   string $content The file content
+     * @return  string The file's content hash
+     */
+    public static function hash_from_string($content) {
+        return sha1($content);
+    }
 }

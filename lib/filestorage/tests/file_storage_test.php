@@ -59,7 +59,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $file = $fs->create_file_from_string($filerecord, $content);
 
         $this->assertInstanceOf('stored_file', $file);
-        $this->assertSame(sha1($content), $file->get_contenthash());
+        $this->assertTrue($file->compare_to_string($content));
         $this->assertSame($pathhash, $file->get_pathnamehash());
 
         $this->assertTrue($DB->record_exists('files', array('pathnamehash'=>$pathhash)));
@@ -132,7 +132,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $file = $fs->create_file_from_pathname($filerecord, $filepath);
 
         $this->assertInstanceOf('stored_file', $file);
-        $this->assertSame(sha1_file($filepath), $file->get_contenthash());
+        $this->assertTrue($file->compare_to_path($filepath));
 
         $this->assertTrue($DB->record_exists('files', array('pathnamehash'=>$pathhash)));
 
