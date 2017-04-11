@@ -1002,6 +1002,10 @@ class mod_feedback_external extends external_api {
 
         list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
 
+        if ($feedback->anonymous != FEEDBACK_ANONYMOUS_NO || $feedback->course == SITEID) {
+            throw new moodle_exception('anonymous', 'feedback');
+        }
+
         // Check permissions.
         require_capability('mod/feedback:viewreports', $context);
 

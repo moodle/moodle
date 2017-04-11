@@ -675,9 +675,24 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_non_respondents from an anonymous feedback.
+     */
+    public function test_get_non_respondents_from_anonymous_feedback() {
+        $this->setUser($this->student);
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
+        mod_feedback_external::get_non_respondents($this->feedback->id);
+    }
+
+    /**
      * Test get_non_respondents.
      */
     public function test_get_non_respondents() {
+        global $DB;
+
+        // Force non anonymous.
+        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->feedback->id));
+
         // Create another student.
         $anotherstudent = self::getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($anotherstudent->id, $this->course->id, $this->studentrole->id, 'manual');
