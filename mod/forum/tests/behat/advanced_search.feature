@@ -25,6 +25,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Latest announcements" block
     And I navigate to "Edit settings" node in "Course administration"
+    And I expand all fieldsets
     And I set the field "id_newsitems" to "1"
     And I press "Save and display"
     And I add a new topic to "Announcements" forum with:
@@ -116,7 +117,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
   @javascript
   Scenario: Perform an advanced search using tags
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Announcements"
     And I press "Search forums"
     And I should see "Advanced search"

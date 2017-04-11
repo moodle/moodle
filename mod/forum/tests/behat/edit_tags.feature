@@ -1,4 +1,4 @@
-@mod @mod_forum @core_tag @javascript
+@mod @mod_forum @core_tag
 Feature: Edited forum posts handle tags correctly
   In order to get forum posts properly labelled
   As a user
@@ -17,8 +17,7 @@ Feature: Edited forum posts handle tags correctly
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
@@ -27,9 +26,10 @@ Feature: Edited forum posts handle tags correctly
       | Message | Teacher post message |
     And I log out
 
+  @javascript
   Scenario: Forum post edition of custom tags works as expected
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I reply "Teacher post subject" post from "Test forum name" forum with:
       | Subject | Student post subject |
       | Message | Student post message |
@@ -48,7 +48,7 @@ Feature: Edited forum posts handle tags correctly
     And I press "Continue"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum"
     And I click on "Add a new discussion topic" "button"
     And I expand all fieldsets
