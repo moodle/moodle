@@ -220,6 +220,7 @@ class format_weeks extends format_base {
      * Weeks format uses the following options:
      * - coursedisplay
      * - hiddensections
+     * - automaticenddate
      *
      * @param bool $foreditform
      * @return array of options
@@ -236,6 +237,10 @@ class format_weeks extends format_base {
                 'coursedisplay' => array(
                     'default' => $courseconfig->coursedisplay,
                     'type' => PARAM_INT,
+                ),
+                'automaticenddate' => array(
+                    'default' => 1,
+                    'type' => PARAM_BOOL,
                 ),
             );
         }
@@ -264,6 +269,12 @@ class format_weeks extends format_base {
                     ),
                     'help' => 'coursedisplay',
                     'help_component' => 'moodle',
+                ),
+                'automaticenddate' => array(
+                    'label' => new lang_string('automaticenddate', 'format_weeks'),
+                    'help' => 'automaticenddate',
+                    'help_component' => 'format_weeks',
+                    'element_type' => 'advcheckbox',
                 )
             );
             $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
@@ -299,6 +310,15 @@ class format_weeks extends format_base {
             array_unshift($elements, $element);
         }
 
+        // Re-order things.
+        $mform->insertElementBefore($mform->removeElement('automaticenddate', false), 'idnumber');
+        $mform->disabledIf('enddate', 'automaticenddate', 'checked');
+        foreach ($elements as $key => $element) {
+            if ($element->getName() == 'automaticenddate') {
+                unset($elements[$key]);
+            }
+        }
+
         return $elements;
     }
 
@@ -328,6 +348,23 @@ class format_weeks extends format_base {
                     }
                 }
             }
+        }
+
+        if ($data['automaticenddate']) {
+            $startdate = $data['startdate'];
+            if (!empty($data['numsections'])) {
+                $numsections = $data['numsections'];
+            } else if ($this->get_courseid()) {
+                // For existing courses get the number of sections.
+                $numsections = $this->get_last_section_number();
+            } else {
+                // Fallback to the default value for new courses.
+                $numsections = get_config('moodlecourse', 'numsections');
+            }
+
+            // Final week's last day.
+            $dates = $this->get_section_dates(intval($numsections), $startdate);
+            $data['enddate'] = $dates->end;
         }
         return $this->update_format_options($data);
     }

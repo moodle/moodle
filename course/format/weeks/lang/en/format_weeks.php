@@ -36,3 +36,5 @@ $string['page-course-view-weeks'] = 'Any course main page in weeks format';
 $string['page-course-view-weeks-x'] = 'Any course page in weeks format';
 $string['hidefromothers'] = 'Hide week';
 $string['showfromothers'] = 'Show week';
+$string['automaticenddate'] = 'Calculate the end date from the number of sections';
+$string['automaticenddate_help'] = 'If enabled, the end date for the course will be automatically calculated from the number of sections and the course start date.';
