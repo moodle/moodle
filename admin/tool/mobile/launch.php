@@ -32,10 +32,21 @@ $serviceshortname  = required_param('service',  PARAM_ALPHANUMEXT);
 $passport          = required_param('passport',  PARAM_RAW);    // Passport send from the app to validate the response URL.
 $urlscheme         = optional_param('urlscheme', 'moodlemobile', PARAM_NOTAGS); // The URL scheme the app supports.
 $confirmed         = optional_param('confirmed', false, PARAM_BOOL);  // If we are being redirected after user confirmation.
+$oauthsso          = optional_param('oauthsso', 0, PARAM_INT); // Id of the OpenID issuer (for OAuth direct SSO).
 
 // Check web services enabled.
 if (!$CFG->enablewebservices) {
     throw new moodle_exception('enablewsdescription', 'webservice');
+}
+
+// We have been requested to start a SSO process via OpenID.
+if (!empty($oauthsso) && is_enabled_auth('oauth2')) {
+    $wantsurl = new moodle_url('/admin/tool/mobile/launch.php',
+        array('service' => $serviceshortname, 'passport' => $passport, 'urlscheme' => $urlscheme, 'confirmed' => $confirmed));
+    $oauthurl = new moodle_url('/auth/oauth2/login.php',
+        array('id' => $oauthsso, 'sesskey' => sesskey(), 'wantsurl' => $wantsurl));
+    header('Location: ' . $oauthurl->out(false));
+    die;
 }
 
 // Check if the plugin is properly configured.

@@ -76,6 +76,9 @@ information provided here is intended especially for developers.
 * Webservices core_course_search_courses and core_course_get_courses_by_field will always return the sortorder field.
 * core_course_external::get_activities_overview has been deprecated. Please do not call this function any more.
 * Changed the pix mustache template helper to accept context variables for the key, component and alt text.
+* New auth_plugin_base helper methods:
+  - get_identity_providers() - Retrieves available auth identity providers.
+  - prepare_identity_providers_for_output() - Prepares auth identity provider data for output (e.g. to templates, WS, etc.).
 
 === 3.2 ===
 
