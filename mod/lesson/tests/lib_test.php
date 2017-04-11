@@ -270,6 +270,56 @@ class mod_lesson_lib_testcase extends advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
+    public function test_lesson_core_calendar_provide_event_action_after_attempt() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create user.
+        $student = self::getDataGenerator()->create_user();
+
+        // Create a lesson activity.
+        $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id, 'manual');
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        $tfrecord = $generator->create_question_truefalse($lesson);
+
+        // Now, do something in the lesson.
+        $this->setUser($student);
+        mod_lesson_external::launch_attempt($lesson->id);
+        $data = array(
+            array(
+                'name' => 'answerid',
+                'value' => $DB->get_field('lesson_answers', 'id', array('pageid' => $tfrecord->id, 'jumpto' => -1)),
+            ),
+            array(
+                'name' => '_qf__lesson_display_answer_form_truefalse',
+                'value' => 1,
+            )
+        );
+        mod_lesson_external::process_page($lesson->id, $tfrecord->id, $data);
+        mod_lesson_external::finish_attempt($lesson->id);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $action = mod_lesson_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm there was no action for the user.
+        $this->assertNull($action);
+    }
+
     /**
      * Creates an action event.
      *
