@@ -34,13 +34,24 @@ $string['admindirname'] = 'دایرکتوری مدیر';
 $string['availablelangs'] = 'بسته‌های زبانی موجود';
 $string['chooselanguagehead'] = 'انتخاب زبان';
 $string['chooselanguagesub'] = 'لطفاً زبانی را به جهت استفاده در حین نصب انتخاب نمایید. زبانی که در این صفحه انتخاب می‌کنید به عنوان زبان پیش‌فرض سایت نیز مورد استفاده قرار خواهد گرفت. البته می‌توانید بعداً آن را تغییر دهید.<br />ترجمهٔ فارسی این نسخه با همکاری <a href="http://foodle.org" target="_blank">گروه فودل</a> آماده شده است.';
+$string['clialreadyconfigured'] = '.ﺩﺭﺍﺩ ﺩﻮﺟﻭ config.php ﯼﺪﻨﺑﺮﮑﯿﭘ ﻞﯾﺎﻓ
+ﺯﺍ ﺖﯾﺎﺳ ﻦﯾﺍ ﺭﺩ ﻝﺩﻮﻣ ﺐﺼﻧ ﯼﺍﺮﺑ ﺎﻔﻄﻟ
+.ﺪﯿﻨﮐ ﻩﺩﺎﻔﺘﺳﺍ admin/cli/database_install.php';
+$string['clialreadyinstalled'] = '.ﺩﺭﺍﺩ ﺩﻮﺟﻭ config.php ﯼﺪﻨﺑﺮﮑﯿﭘ ﻞﯾﺎﻓ
+ﺯﺍ ﺖﯾﺎﺳ ﻦﯾﺍ ﺭﺩ ﻝﺩﻮﻣ ﯼﺎﻘﺗﺭﺍ ﯼﺍﺮﺑ ﺎﻔﻄﻟ
+.ﺪﯿﻨﮐ ﻩﺩﺎﻔﺘﺳﺍ admin/cli/database_install.php';
+$string['cliinstallheader'] = 'ﻥﺎﻣﺮﻓ ﻂﺧ ﻖﯾﺮﻃ ﺯﺍ {$a} ﻝﺩﻮﻣ ﺐﺼﻧ ﻪﻣﺎﻧﺮﺑ';
 $string['databasehost'] = 'میزبان پایگاه داده';
 $string['databasename'] = 'نام پایگاه داده';
 $string['databasetypehead'] = 'راه‌انداز پایگاه داده را انتخاب کنید';
 $string['dataroot'] = 'دایرکتوری داده';
+$string['datarootpermission'] = 'ﺎﻫ‌ﻩﺩﺍﺩ ِﯼﺭﻮﺘﮐﺮﯾﺍﺩ ﺯﻮﺠﻣ';
 $string['dbprefix'] = 'پیشوند جدول‌ها';
 $string['dirroot'] = 'دایرکتوری مودل';
 $string['environmenthead'] = 'بررسی محیط شما ...';
+$string['environmentsub2'] = 'هر کدام از انتشارهای مودل حداقل نیازمندی مخصوص به خود را در مورد نسخهٔ PHP‌ و وجود داشتن برخی از افزونه‌های PHP دارد.
+پیش از هر نصب و ارتقا، بررسی کامل محیط انجام می‌شود. اگر نمی‌دانید چطور نسخهٔ جدید PHP را نصب کنید یا افزونه‌های PHP را فعال کنید، لطفا با مسئول کارگزار خود تماس بگیرید.';
+$string['errorsinenvironment'] = 'بررسی محیط ناموفق بود!';
 $string['installation'] = 'در حال نصب';
 $string['langdownloaderror'] = 'متأسفانه زبان «{$a}» نصب نشد. فرآیند نصب به زبان انگلیسی ادامه خواهد یافت.';
 $string['memorylimithelp'] = '<p>حد حافظهٔ PHP کارگزار شما هم‌اکنون {$a}  است.</p>
