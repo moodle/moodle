@@ -444,6 +444,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         return array(
             'server' => $data->server,
             'prefix' => $data->prefix,
+            'password' => $data->password,
             'serializer' => $data->serializer
         );
     }
@@ -459,6 +460,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         $data = array();
         $data['server'] = $config['server'];
         $data['prefix'] = !empty($config['prefix']) ? $config['prefix'] : '';
+        $data['password'] = !empty($config['password']) ? $config['password'] : '';
         if (!empty($config['serializer'])) {
             $data['serializer'] = $config['serializer'];
         }
@@ -483,6 +485,9 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         $configuration = array('server' => $config->test_server);
         if (!empty($config->test_serializer)) {
             $configuration['serializer'] = $config->test_serializer;
+        }
+        if (!empty($config->test_password)) {
+            $configuration['password'] = $config->test_password;
         }
         $cache = new cachestore_redis('Redis test', $configuration);
         $cache->initialise($definition);
