@@ -5441,13 +5441,6 @@ class restore_completion_defaults_structure_step extends restore_structure_step 
      * To conditionally decide if this step must be executed.
      */
     protected function execute_condition() {
-        global $CFG;
-
-        // Completion disabled in this site, don't execute.
-        if (empty($CFG->enablecompletion)) {
-            return false;
-        }
-
         // No completion on the front page.
         if ($this->get_courseid() == SITEID) {
             return false;

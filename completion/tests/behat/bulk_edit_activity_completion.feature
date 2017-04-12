@@ -58,4 +58,3 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     And I should see "Student must receive a grade to complete this activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
     And I should see "Student must submit to this activity to complete it" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
     And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
-

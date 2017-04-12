@@ -34,20 +34,20 @@
 }}
 {{#activities}}
 <div class="row m-b-1 row-fluid">
-    <div class="activityinstance col-sm-6 span6">
+    <div class="activityinstance col-xs-6 span6">
         <div class="mod-indent-outer"></div>
         <div>
-                {{#canmanage}}
-                <label class="accesshide" for="selectactivity_{{cmid}}">Select {{modname}}</label>
-                <input type="checkbox" id="selectactivity_{{cmid}}" class="m-r-1" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{modname}}{{/str}}">
-                {{/canmanage}}
-                <a href="{{url}}">
-                <img src="{{icon}}" class="iconlarge activityicon" alt=" " role="presentation" />
-                <span class="instancename">{{modname}}</span>
-                </a>
+            {{#canmanage}}
+            <label class="accesshide" for="selectactivity_{{cmid}}">{{#str}}select, completion{{/str}} {{modname}}</label>
+            <input type="checkbox" id="selectactivity_{{cmid}}" class="m-r-1" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{modname}}{{/str}}">
+            {{/canmanage}}
+            <a href="{{url}}">
+            <img src="{{icon}}" class="iconlarge activityicon" alt=" " role="presentation" />
+            <span class="instancename">{{modname}}</span>
+            </a>
         </div>
     </div>
-    <div class="activity-completionstatus col-sm-6 span6" id="completionstatus_{{cmid}}">
+    <div class="activity-completionstatus col-xs-6 span6" id="completionstatus_{{cmid}}">
         <div class="col-sm-1 span1  p-l-0">
             {{#completionstatus.icon}}
                 {{{completionstatus.icon}}}

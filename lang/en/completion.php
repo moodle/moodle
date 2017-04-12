@@ -190,6 +190,7 @@ $string['roleaggregation_any'] = 'ANY selected roles to mark when the condition 
 $string['roleidnotfound'] = 'Role ID {$a} not found';
 $string['saved'] = 'Saved';
 $string['seedetails'] = 'See details';
+$string['select'] = 'Select';
 $string['self'] = 'Self';
 $string['selfcompletion'] = 'Self completion';
 $string['showinguser'] = 'Showing user';

@@ -908,6 +908,7 @@ class moodle_page {
             throw new coding_exception('JavaScript collection has not been started.');
         }
         $this->_requires = $this->savedrequires;
+        $this->savedrequires = null;
     }
 
     /**

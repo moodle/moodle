@@ -83,13 +83,9 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
 
         // Initialise the form but discard all JS requirements it adds, our form has already added them.
         $mformclassname = 'mod_'.$modname.'_mod_form';
-        if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
-            $PAGE->start_collecting_javascript_requirements();
-        }
+        $PAGE->start_collecting_javascript_requirements();
         $this->_moduleform = new $mformclassname($data, 0, $cmrec, $course);
-        if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
-            $PAGE->end_collecting_javascript_requirements();
-        }
+        $PAGE->end_collecting_javascript_requirements();
 
         return $this->_moduleform;
     }

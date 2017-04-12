@@ -1078,7 +1078,7 @@ abstract class moodleform_mod extends moodleform {
      *
      * @param stdClass $data passed by reference
      */
-    public function data_postprocessing(&$data) {
+    public function data_postprocessing($data) {
     }
 
     /**

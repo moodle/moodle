@@ -110,8 +110,9 @@ class manager {
             } else {
                 $moduleobject->completionstatus = ['icon' => null, 'string' => null];
             }
-
-            $activities[] = $moduleobject;
+            if (self::can_edit_bulk_completion($this->courseid, $mod)) {
+                $activities[] = $moduleobject;
+            }
         }
         return $activities;
     }
@@ -216,7 +217,7 @@ class manager {
             $module->icon = $OUTPUT->image_url('icon', $module->name)->out();
             $module->formattedname = format_string(get_string('modulenameplural', 'mod_' . $module->name),
                 true, ['context' => $coursecontext]);
-            $module->canmanage = $canmanage && \course_allowed_module($course, $module->name);
+            $module->canmanage = $canmanage && course_allowed_module($course, $module->name);
             $defaults = self::get_default_completion($course, $module, false);
             $defaults->modname = $module->name;
             $module->completionstatus = $this->get_completion_detail($defaults);
@@ -390,8 +391,12 @@ class manager {
         if (!$modids = $data->modids) {
             return;
         }
-        $defaults = ['completion' => COMPLETION_DISABLED, 'completionview' => COMPLETION_VIEW_NOT_REQUIRED,
-            'completionexpected' => 0, 'completionusegrade' => 0];
+        $defaults = [
+            'completion' => COMPLETION_DISABLED,
+            'completionview' => COMPLETION_VIEW_NOT_REQUIRED,
+            'completionexpected' => 0,
+            'completionusegrade' => 0
+        ];
 
         $data = (array)$data;
 
@@ -407,22 +412,30 @@ class manager {
         $params[] = 1;
         $modules = $DB->get_records_select_menu('modules', 'id ' . $modidssql . ' and visible = ?', $params, '', 'id, name');
 
+        // Get an associative array of [module_id => course_completion_defaults_id].
+        list($in, $params) = $DB->get_in_or_equal($modids);
+        $params[] = $courseid;
+        $defaultsids = $DB->get_records_select_menu('course_completion_defaults', 'module ' . $in . ' and course = ?', $params, '',
+                                                      'module, id');
+
         foreach ($modids as $modid) {
             if (!array_key_exists($modid, $modules)) {
                 continue;
             }
-            if ($defaultsid = $DB->get_field('course_completion_defaults', 'id', ['course' => $courseid, 'module' => $modid])) {
-                $DB->update_record('course_completion_defaults', $data + ['id' => $defaultsid]);
+            if (isset($defaultsids[$modid])) {
+                $DB->update_record('course_completion_defaults', $data + ['id' => $defaultsids[$modid]]);
             } else {
-                $defaultsid = $DB->insert_record('course_completion_defaults', $data + ['course' => $courseid, 'module' => $modid]);
+                $defaultsids[$modid] = $DB->insert_record('course_completion_defaults', $data + ['course' => $courseid,
+                                                                                                 'module' => $modid]);
             }
             // Trigger event.
             \core\event\completion_defaults_updated::create([
-                'objectid' => $defaultsid,
+                'objectid' => $defaultsids[$modid],
                 'context' => $coursecontext,
                 'other' => ['modulename' => $modules[$modid]],
             ])->trigger();
         }
+
         // Add notification.
         \core\notification::add(get_string('defaultcompletionupdated', 'completion'), \core\notification::SUCCESS);
     }

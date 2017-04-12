@@ -45,28 +45,29 @@
             <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" aria-label="{{#str}}updateactivities, completion{{/str}}" disabled/>
         </div>
     </div>
-    <div class="top-section row m-b-1">
-        <div class="col-sm-6">
+    <div class="row m-b-1">
+        <div class="col-xs-6 span6">
             <input type="checkbox" class="mastercheck m-r-1" aria-label="{{#str}}checkall, completion{{/str}}">
             <label class="font-weight-bold">{{#str}}activitieslabel, core_completion{{/str}}</label>
         </div>
-        <div class="col-sm-6">
+        <div class="col-xs-6 span6">
             <label class="font-weight-bold">{{#str}}completion, core_completion{{/str}}</label>
             <span>{{{helpicon}}}</span>
         </div>
     </div>
+    <hr class="row">
     <div class="modules">
         {{#modules}}
             {{#canmanage}}
-             <div class="module-section m-b-1">
+             <div class="m-b-1">
                 <div class="row m-b-1 row-fluid">
-                    <div class="col-sm-6 span6">
-                        <label class="accesshide" for="modtype_{{id}}">Select {{formattedname}}</label>
+                    <div class="col-xs-6 span6">
+                        <label class="accesshide" for="modtype_{{id}}">{{#str}}select, core_completion{{/str}} {{formattedname}}</label>
                         <input id="modtype_{{id}}" type="checkbox" class="m-r-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{formattedname}}{{/str}}">
                         <img src="{{icon}}" alt=" " role="presentation" />
                         <span>{{formattedname}}</span>
                     </div>
-                    <div class="activity-completionstatus col-sm-6 span6">
+                    <div class="activity-completionstatus col-xs-6 span6">
                         <div class="col-sm-1 span1 p-l-0">
                             {{#completionstatus.icon}}
                                 {{{completionstatus.icon}}}
@@ -81,6 +82,7 @@
                     </div>
                 </div>
             </div>
+            <hr class="row">
             {{/canmanage}}
         {{/modules}}
     </div>
@@ -88,7 +90,7 @@
     <input type="hidden" name="sesskey" value="{{sesskey}}" />
     <div class="row">
         <div class="col">
-            <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" />
+            <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" disabled/>
         </div>
     </div>
 </form>

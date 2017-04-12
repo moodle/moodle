@@ -52,9 +52,9 @@ class mod_survey_mod_form extends moodleform_mod {
      *
      * Only available on moodleform_mod.
      *
-     * @param stdClass $data passed by reference
+     * @param stdClass $data the form data to be modified.
      */
-    public function data_postprocessing(&$data) {
+    public function data_postprocessing($data) {
         parent::data_postprocessing($data);
         if (!empty($data->completionunlocked)) {
             // Turn off completion settings if the checkboxes aren't ticked.

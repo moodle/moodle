@@ -166,9 +166,9 @@ class mod_feedback_mod_form extends moodleform_mod {
      *
      * Only available on moodleform_mod.
      *
-     * @param stdClass $data passed by reference
+     * @param stdClass $data the form data to be modified.
      */
-    public function data_postprocessing(&$data) {
+    public function data_postprocessing($data) {
         parent::data_postprocessing($data);
         if (isset($data->page_after_submit_editor)) {
             $data->page_after_submitformat = $data->page_after_submit_editor['format'];

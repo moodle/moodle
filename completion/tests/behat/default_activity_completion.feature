@@ -1,6 +1,6 @@
 @core @core_completion
-Feature: Allow teachers to bulk edit activity completion rules in a course.
-  In order to avoid editing single activities
+Feature: Allow teachers to edit the default activity completion rules in a course.
+  In order to set the activity completion defaults for new activities
   As a teacher
   I need to be able to edit the completion rules for a group of activities.
 
@@ -8,7 +8,7 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
   # When I edit activity completion defaults for activity types.
   # Then the completion rule defaults should apply only to activities created from that point onwards.
   @javascript
-  Scenario: Bulk edit activity completion rules
+  Scenario: Bulk edit activity completion default rules
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -50,4 +50,3 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     And I should see "Student must receive a grade to complete this activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
     And I should see "Student must submit to this activity to complete it" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
     And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
-

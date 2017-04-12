@@ -48,27 +48,29 @@
             <input type="submit" value="{{#str}}edit{{/str}}" class="btn btn-primary" name="submitbutton" aria-label="{{#str}}updateactivities, completion{{/str}}" disabled/>
         </div>
     </div>
-    <div class="top-section row m-b-1">
-        <div class="col-sm-6 span6">
+    <div class="row m-b-1">
+        <div class="col-xs-6 span6">
             <input type="checkbox" class="mastercheck m-r-1" aria-label="{{#str}}checkall, completion{{/str}}">
             <label class="font-weight-bold">{{#str}}activitieslabel, core_completion{{/str}}</label>
         </div>
-        <div class="col-sm-6">
+        <div class="col-xs-6 span6">
             <label class="font-weight-bold">{{#str}}completion, core_completion{{/str}}</label>
             <span>{{{helpicon}}}</span>
         </div>
     </div>
+    <hr class="row">
     <div class="topics">
         {{#sections}}
-                <div class="topic-section m-b-1">
-                    <div class="row m-b-1">
+                <div class="m-b-1">
+                    <div class="row m-b-1 row-fluid">
                         <div class="col-sm-12">
                             <input type="checkbox" data-section-master="{{sectionnumber}}" class="m-r-1" aria-label="{{#str}}checkallsection, completion, {{name}}{{/str}}">
-                            <h3>{{name}}</h3>
+                            <h3 class="d-inline-block">{{name}}</h3>
                         </div>
                     </div>
                     {{> core_course/activityinstance}}
                 </div>
+                <hr class="row">
         {{/sections}}
     </div>
     <input type="hidden" name="id" value="{{courseid}}" />
