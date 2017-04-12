@@ -68,10 +68,10 @@ $string['pathsunsecuredataroot'] = 'Az adatok gyökérkönyvtára nem biztonság
 $string['pathswrongadmindir'] = 'Nem létezik az admin könyvtár.';
 $string['phpextension'] = '{$a} PHP-bővítmény';
 $string['phpversion'] = 'PHP-verzió';
-$string['phpversionhelp'] = 'A Moodle használatához legalább a PHP 4.3.0 vagy 5.1.0 verziója szükséges
- (az 5.0.x több ismert gond miatt nem ajánlott). Az Ön által használt
-verzió {$a}. Frissítse a PHP-verziót, vagy térjen át újabb PHP-verziót
-működtető gazdagépre! (5.0.x esetén visszatérhet a 4.4.x verzióhoz is)';
+$string['phpversionhelp'] = 'A Moodle használatához legalább a PHP  5.4.4 verziója szükséges  (a (7.x több ismert gond miatt nem ajánlott). </p>
+<p>Az Ön által használt verzió: {$a}. </p>
+<p>Frissítse a PHP-verziót, vagy térjen át újabb PHP-verziót
+működtető gazdagépre!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Azért látja ezt az oldalt, mert sikeresen telepítette és futtatja az {$a->packname} {$a->packversion} csomagot számítógépén. Gratulálunk!';
 $string['welcomep30'] = 'A {$a->installername} tartalmazza azokat az alkalmazásokat, amelyekkel a Moodle számára kialakítható a működési környezet, azaz:';
