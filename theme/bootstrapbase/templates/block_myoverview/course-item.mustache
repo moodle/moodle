@@ -23,25 +23,23 @@
     {
         "shortname": "course 3",
         "viewurl": "https://www.google.com",
-        "startdate": "Nov 1th, 10am",
-        "enddate": "Nov 4th, 10am",
+        "startdate": 1490320388,
+        "enddate": 1490320388,
         "summary": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
     }
 }}
-<li class="list-group-item m-y-1">
+<li class="list-group-item well well-small">
 <div data-region="course-events-container" id="course-events-container-{{id}}" data-course-id="{{id}}">
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span3">
-                {{> block_myoverview/course-summary }}
-            </div>
-            <div class="span9">
-                {{< block_myoverview/course-event-list }}
-                    {{$limit}}10{{/limit}}
-                    {{$offset}}0{{/offset}}
-                    {{$courseid}}{{id}}{{/courseid}}
-                {{/ block_myoverview/course-event-list }}
-            </div>
+    <div class="row-fluid">
+        <div class="span3">
+            {{> block_myoverview/course-summary }}
+        </div>
+        <div class="span9">
+            {{< block_myoverview/course-event-list }}
+                {{$limit}}10{{/limit}}
+                {{$offset}}0{{/offset}}
+                {{$courseid}}{{id}}{{/courseid}}
+            {{/ block_myoverview/course-event-list }}
         </div>
     </div>
 </div>
