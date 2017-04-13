@@ -24,6 +24,7 @@
 
 $string['autologinkeygenerationlockout'] = 'Auto-login key generation is blocked because of too many requests within an hour.';
 $string['autologinnotallowedtoadmins'] = 'Auto-login is not allowed for site admins.';
+$string['cachedef_plugininfo'] = 'This stores the list of plugins with mobile addons';
 $string['clickheretolaunchtheapp'] = 'Click here if the app does not open automatically.';
 $string['configmobilecssurl'] = 'A CSS file to customise your mobile app interface.';
 $string['enablesmartappbanners'] = 'Enable Smart App Banners';
