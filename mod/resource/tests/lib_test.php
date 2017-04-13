@@ -143,13 +143,13 @@ class mod_resource_lib_testcase extends advanced_testcase {
         $info = resource_get_coursemodule_info(
                 $DB->get_record('course_modules', array('id' => $resource2->cmid)));
         $this->assertEquals('R2', $info->name);
-        $this->assertEquals('f/text', $info->icon);
+        $this->assertEquals('f/text-24', $info->icon);
 
         // For third one, it should use the highest sortorder icon.
         $info = resource_get_coursemodule_info(
                 $DB->get_record('course_modules', array('id' => $resource3->cmid)));
         $this->assertEquals('R3', $info->name);
-        $this->assertEquals('f/document', $info->icon);
+        $this->assertEquals('f/document-24', $info->icon);
     }
 
     public function test_resource_core_calendar_provide_event_action() {
