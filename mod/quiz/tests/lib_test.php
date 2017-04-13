@@ -489,13 +489,13 @@ class mod_quiz_lib_testcase extends advanced_testcase {
 
         $openpriorities = $priorities['open'];
         // Override 2's time open has higher priority since it is sooner than override 1's.
-        $this->assertEquals(1, $openpriorities[$override1->timeopen]);
-        $this->assertEquals(2, $openpriorities[$override2->timeopen]);
+        $this->assertEquals(2, $openpriorities[$override1->timeopen]);
+        $this->assertEquals(1, $openpriorities[$override2->timeopen]);
 
         $closepriorities = $priorities['close'];
         // Override 1's time close has higher priority since it is later than override 2's.
-        $this->assertEquals(2, $closepriorities[$override1->timeclose]);
-        $this->assertEquals(1, $closepriorities[$override2->timeclose]);
+        $this->assertEquals(1, $closepriorities[$override1->timeclose]);
+        $this->assertEquals(2, $closepriorities[$override2->timeclose]);
     }
 
     public function test_quiz_core_calendar_provide_event_action_open() {
