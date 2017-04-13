@@ -285,14 +285,18 @@ class core_calendar_renderer extends plugin_renderer_base {
             }
             $output .= html_writer::tag('div', $source, array('class' => 'subscription'));
         }
+        if (!empty($event->courselink)) {
+            $output .= html_writer::tag('div', $event->courselink, array('class' => 'course'));
+        }
         if (!empty($event->time)) {
             $output .= html_writer::tag('span', $event->time, array('class' => 'date pull-xs-right m-r-1'));
         } else {
             $attrs = array('class' => 'date pull-xs-right m-r-1');
             $output .= html_writer::tag('span', calendar_time_representation($event->timestart), $attrs);
         }
-        if (!empty($event->courselink)) {
-            $output .= html_writer::tag('div', $event->courselink, array('class' => 'course'));
+
+        if (!empty($event->actionurl)) {
+            $output .= html_writer::tag('div', html_writer::link(new moodle_url($event->actionurl), $event->actionname));
         }
 
         $output .= $this->output->box_end();
