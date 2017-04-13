@@ -1616,7 +1616,10 @@ function scorm_refresh_events($courseid = 0) {
 }
 
 /**
- * Handles creating actions for events.
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
  *
  * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
