@@ -1614,6 +1614,7 @@ class page_requirements_manager {
             'areyousure',
             'closebuttontitle',
             'unknownerror',
+            'changesmadereallygoaway',
         ), 'moodle');
         if (!empty($this->stringsforjs)) {
             $strings = array();
