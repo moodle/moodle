@@ -15,12 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'tool_mobile', language 'en'
+ * Mobile cache definitions.
  *
  * @package    tool_mobile
- * @copyright  2016 Juan Leyva
+ * @copyright  2017 Skylar Kelty <S.Kelty@kent.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Moodle Mobile tools';
-$string['cachedef_plugininfo'] = 'This stores the list of plugins with mobile addons';
+defined('MOODLE_INTERNAL') || die;
+
+$definitions = array(
+    'plugininfo' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1
+    )
+);
