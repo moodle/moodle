@@ -123,7 +123,7 @@ define('CALENDAR_SUBSCRIPTION_REMOVE', 2);
 /**
  * CALENDAR_EVENT_USER_OVERRIDE_PRIORITY - Constant for the user override priority.
  */
-define('CALENDAR_EVENT_USER_OVERRIDE_PRIORITY', 9999999);
+define('CALENDAR_EVENT_USER_OVERRIDE_PRIORITY', 0);
 
 /**
  * CALENDAR_EVENT_TYPE_STANDARD - Standard events.
@@ -1233,7 +1233,7 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
     $subquery = "SELECT ev.modulename,
                             ev.instance,
                             ev.eventtype,
-                            MAX(ev.priority) as priority
+                            MIN(ev.priority) as priority
                        FROM {event} ev
                       $subquerywhere
                    GROUP BY ev.modulename, ev.instance, ev.eventtype";

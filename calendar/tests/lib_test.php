@@ -223,7 +223,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $events = calendar_get_events($timestart, $timeend, $group12student->id, $groups, $course->id);
         $this->assertCount(1, $events);
         $event = reset($events);
-        $this->assertEquals('Assignment 1 due date - Group B override', $event->name);
+        $this->assertEquals('Assignment 1 due date - Group A override', $event->name);
         // Get events for user that belongs to group A and has no user override events.
         $this->setUser($group1student);
         $events = calendar_get_events($timestart, $timeend, $group1student->id, $groups, $course->id);
@@ -524,7 +524,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $events = calendar_get_legacy_events($timestart, $timeend, $group12student->id, $groups, $course->id);
         $this->assertCount(1, $events);
         $event = reset($events);
-        $this->assertEquals('Assignment 1 due date - Group B override', $event->name);
+        $this->assertEquals('Assignment 1 due date - Group A override', $event->name);
 
         // Get events for user that belongs to group A and has no user override events.
         $this->setUser($group1student);
