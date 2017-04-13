@@ -1890,6 +1890,7 @@ $string['today'] = 'Today';
 $string['todaylogs'] = 'Today\'s logs';
 $string['toeveryone'] = 'to everyone';
 $string['toomanybounces'] = 'That email address has had too many bounces. You <b>must</b> change it to continue.';
+$string['toomanytags'] = 'This search included too many tags, some will have been ignored.';
 $string['toomanytoshow'] = 'There are too many users to show.';
 $string['toomanyusersmatchsearch'] = 'Too many users ({$a->count}) match \'{$a->search}\'';
 $string['toomanyuserstoshow'] = 'Too many users ({$a}) to show';

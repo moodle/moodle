@@ -38,6 +38,7 @@ $phrase  = trim(optional_param('phrase', '', PARAM_NOTAGS));  // Phrase
 $words   = trim(optional_param('words', '', PARAM_NOTAGS));   // Words
 $fullwords = trim(optional_param('fullwords', '', PARAM_NOTAGS)); // Whole words
 $notwords = trim(optional_param('notwords', '', PARAM_NOTAGS));   // Words we don't want
+$tags = optional_param_array('tags', [], PARAM_TEXT);
 
 $timefromrestrict = optional_param('timefromrestrict', 0, PARAM_INT); // Use starting date
 $fromday = optional_param('fromday', 0, PARAM_INT);      // Starting date
@@ -100,6 +101,9 @@ if (empty($search)) {   // Check the other parameters instead
     }
     if (!empty($dateto)) {
         $search .= ' dateto:'.$dateto;
+    }
+    if (!empty($tags)) {
+        $search .= ' tags:' . implode(',', $tags);
     }
     $individualparams = true;
 } else {
@@ -186,19 +190,27 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_button($searchform);
 echo $OUTPUT->header();
 echo '<div class="reportlink">';
-echo '<a href="search.php?id='.$course->id.
-                         '&amp;user='.urlencode($user).
-                         '&amp;userid='.$userid.
-                         '&amp;forumid='.$forumid.
-                         '&amp;subject='.urlencode($subject).
-                         '&amp;phrase='.urlencode($phrase).
-                         '&amp;words='.urlencode($words).
-                         '&amp;fullwords='.urlencode($fullwords).
-                         '&amp;notwords='.urlencode($notwords).
-                         '&amp;dateto='.$dateto.
-                         '&amp;datefrom='.$datefrom.
-                         '&amp;showform=1'.
-                         '">'.get_string('advancedsearch','forum').'...</a>';
+
+$params = [
+    'id'        => $course->id,
+    'user'      => $user,
+    'userid'    => $userid,
+    'forumid'   => $forumid,
+    'subject'   => $subject,
+    'phrase'    => $phrase,
+    'words'     => $words,
+    'fullwords' => $fullwords,
+    'notwords'  => $notwords,
+    'dateto'    => $dateto,
+    'datefrom'  => $datefrom,
+    'showform'  => 1
+];
+$url    = new moodle_url("/mod/forum/search.php", $params);
+foreach ($tags as $tag) {
+    $url .= "&tags[]=$tag";
+}
+echo html_writer::link($url, get_string('advancedsearch', 'forum').'...');
+
 echo '</div>';
 
 echo $OUTPUT->heading($strforums, 2);
@@ -318,7 +330,7 @@ echo $OUTPUT->footer();
   * @return void The function prints the form.
   */
 function forum_print_big_search_form($course) {
-    global $PAGE, $words, $subject, $phrase, $user, $fullwords, $notwords, $datefrom, $dateto, $forumid;
+    global $PAGE, $words, $subject, $phrase, $user, $fullwords, $notwords, $datefrom, $dateto, $forumid, $tags;
 
     $renderable = new \mod_forum\output\big_search_form($course, $user);
     $renderable->set_words($words);
@@ -330,6 +342,7 @@ function forum_print_big_search_form($course) {
     $renderable->set_subject($subject);
     $renderable->set_user($user);
     $renderable->set_forumid($forumid);
+    $renderable->set_tags($tags);
 
     $output = $PAGE->get_renderer('mod_forum');
     echo $output->render($renderable);

@@ -38,6 +38,7 @@ define("TOKEN_USERID","5");
 define("TOKEN_DATEFROM","6");
 define("TOKEN_DATETO","7");
 define("TOKEN_INSTANCE","8");
+define("TOKEN_TAGS","9");
 
 /**
  * Class to hold token/value pairs after they're parsed.
@@ -109,6 +110,14 @@ class search_lexer extends Lexer{
     // back to the base accept state.
     $this->addExitPattern("\s","indatefrom");
 
+
+    // If we see the string tags: while in the base accept state, start
+    // parsing tags and go to the intags state.
+    $this->addEntryPattern("tags:\S+","accept","intags");
+
+    // Snarf everything into the tags until we see whitespace, then exit
+    // back to the base accept state.
+    $this->addExitPattern("\s","intags");
 
     // Patterns to handle strings  of the form dateto:foo
 
@@ -268,6 +277,17 @@ class search_parser {
         return true;
     }
 
+    // State for handling tags:tagname,tagname constructs. Potentially emits a token.
+    function intags($content){
+        if (strlen($content) < 5) { // State exit or missing parameter.
+            return true;
+        }
+        // Strip off the tags: part and add the reminder to the parsed token array
+        $param = trim(substr($content,5));
+        $this->tokens[] = new search_token(TOKEN_TAGS,$param);
+        return true;
+    }
+
     // State for handling instance:foo constructs. Potentially emits a token.
     function ininstance($content){
         if (strlen($content) < 10) { // State exit or missing parameter.
@@ -390,7 +410,8 @@ function search_generate_text_SQL($parsetree, $datafield, $metafield, $mainidfie
  * @global object
  */
 function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,
-                             $userfirstnamefield, $userlastnamefield, $timefield, $instancefield) {
+                             $userfirstnamefield, $userlastnamefield, $timefield, $instancefield,
+                             $tagfields = []) {
     global $CFG, $DB;
     static $p = 0;
 
@@ -407,7 +428,7 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
     }
 
     $SQLString = '';
-
+    $nexttagfield = 0;
     for ($i=0; $i<$ntokens; $i++){
         if ($i > 0) {// We have more than one clause, need to tack on AND
             $SQLString .= ' AND ';
@@ -464,6 +485,22 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
             case TOKEN_DATEFROM:
                 $SQLString .= "($timefield >= :$name1)";
                 $params[$name1] =  $value;
+                break;
+            case TOKEN_TAGS:
+                $sqlstrings = [];
+                foreach (explode(',', $value) as $tag) {
+                    $paramname = $name1 . '_' . $nexttagfield;
+                    if (isset($tagfields[$nexttagfield])) {
+                        $sqlstrings[]       = "($tagfields[$nexttagfield] = :$paramname)";
+                        $params[$paramname] = $tag;
+                    } else if (!isset($tagfields[$nexttagfield]) && !isset($stoppedprocessingtags)) {
+                        // Show a debugging message the first time we hit this.
+                        $stoppedprocessingtags = true;
+                        \core\notification::add(get_string('toomanytags'), \core\notification::WARNING);
+                    }
+                    $nexttagfield++;
+                }
+                $SQLString .= implode(' AND ', $sqlstrings);
                 break;
             case TOKEN_NEGATE:
                 $SQLString .= "(NOT ((".$DB->sql_like($datafield, ":$name1", false).") OR (".$DB->sql_like($metafield, ":$name2", false).")))";

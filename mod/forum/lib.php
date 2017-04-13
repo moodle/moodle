@@ -2095,15 +2095,37 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
 
     if ($lexer->parse($searchstring)) {
         $parsearray = $parser->get_parsed_array();
+
+        $tagjoins = '';
+        $tagfields = [];
+        $tagfieldcount = 0;
+        foreach ($parsearray as $token) {
+            if ($token->getType() == TOKEN_TAGS) {
+                for ($i = 0; $i <= substr_count($token->getValue(), ','); $i++) {
+                    // Queries can only have a limited number of joins so set a limit sensible users won't exceed.
+                    if ($tagfieldcount > 10) {
+                        continue;
+                    }
+                    $tagjoins .= " LEFT JOIN {tag_instance} ti_$tagfieldcount
+                                        ON p.id = ti_$tagfieldcount.itemid
+                                            AND ti_$tagfieldcount.component = 'mod_forum'
+                                            AND ti_$tagfieldcount.itemtype = 'forum_posts'";
+                    $tagjoins .= " LEFT JOIN {tag} t_$tagfieldcount ON t_$tagfieldcount.id = ti_$tagfieldcount.tagid";
+                    $tagfields[] = "t_$tagfieldcount.rawname";
+                    $tagfieldcount++;
+                }
+            }
+        }
         list($messagesearch, $msparams) = search_generate_SQL($parsearray, 'p.message', 'p.subject',
                                                               'p.userid', 'u.id', 'u.firstname',
-                                                              'u.lastname', 'p.modified', 'd.forum');
+                                                              'u.lastname', 'p.modified', 'd.forum',
+                                                              $tagfields);
         $params = array_merge($params, $msparams);
     }
 
-    $fromsql = "{forum_posts} p,
-                  {forum_discussions} d,
-                  {user} u";
+    $fromsql = "{forum_posts} p
+                  INNER JOIN {forum_discussions} d ON d.id = p.discussion
+                  INNER JOIN {user} u ON u.id = p.userid $tagjoins";
 
     $selectsql = " $messagesearch
                AND p.discussion = d.id
@@ -3446,6 +3468,10 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $postcontent .= html_writer::tag('div', $attachedimages, array('class'=>'attachedimages'));
     }
 
+    if (\core_tag_tag::is_enabled('mod_forum', 'forum_posts')) {
+        $postcontent .= $OUTPUT->tag_list(core_tag_tag::get_item_tags('mod_forum', 'forum_posts', $post->id), null, 'forum-tags');
+    }
+
     // Output the post content
     $output .= html_writer::tag('div', $postcontent, array('class'=>'posting '.$postclass));
     $output .= html_writer::end_tag('div'); // Content
@@ -4413,6 +4439,10 @@ function forum_add_new_post($post, $mform, $unused = null) {
         forum_tp_mark_post_read($post->userid, $post);
     }
 
+    if (isset($post->tags)) {
+        core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $post->id, $context, $post->tags);
+    }
+
     // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
     forum_trigger_content_uploaded_event($post, $cm, 'forum_add_new_post');
 
@@ -4473,6 +4503,10 @@ function forum_update_post($newpost, $mform, $unused = null) {
     $DB->update_record('forum_discussions', $discussion);
 
     forum_add_attachment($post, $forum, $cm, $mform);
+
+    if (isset($newpost->tags)) {
+        core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $post->id, $context, $newpost->tags);
+    }
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($USER->id, $post);
@@ -4550,6 +4584,10 @@ function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=nu
 
     if (!empty($cm->id)) {
         forum_add_attachment($post, $forum, $cm, $mform, $unused);
+    }
+
+    if (isset($discussion->tags)) {
+        core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $post->id, context_module::instance($cm->id), $discussion->tags);
     }
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
@@ -5262,7 +5300,8 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
         $user = $USER;
     }
 
-    $canviewdiscussion = !empty($cm->cache->caps['mod/forum:viewdiscussion']) || has_capability('mod/forum:viewdiscussion', $modcontext, $user->id);
+    $canviewdiscussion = (isset($cm->cache) && !empty($cm->cache->caps['mod/forum:viewdiscussion']))
+        || has_capability('mod/forum:viewdiscussion', $modcontext, $user->id);
     if (!$canviewdiscussion && !has_all_capabilities(array('moodle/user:viewdetails', 'moodle/user:readuserposts'), context_user::instance($post->userid))) {
         return false;
     }
@@ -5286,12 +5325,16 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
     }
 
     if ($forum->type == 'qanda') {
+        if (has_capability('mod/forum:viewqandawithoutposting', $modcontext, $user->id) || $post->userid == $user->id
+                || (isset($discussion->firstpost) && $discussion->firstpost == $post->id)) {
+            return true;
+        }
         $firstpost = forum_get_firstpost_from_discussion($discussion->id);
+        if ($firstpost->userid == $user->id) {
+            return true;
+        }
         $userfirstpost = forum_get_user_posted_time($discussion->id, $user->id);
-
-        return (($userfirstpost !== false && (time() - $userfirstpost >= $CFG->maxeditingtime)) ||
-                $firstpost->id == $post->id || $post->userid == $user->id || $firstpost->userid == $user->id ||
-                has_capability('mod/forum:viewqandawithoutposting', $modcontext, $user->id));
+        return (($userfirstpost !== false && (time() - $userfirstpost >= $CFG->maxeditingtime)));
     }
     return true;
 }

@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/forum/lib.php');
+require_once($CFG->dirroot . '/mod/forum/locallib.php');
 require_once($CFG->dirroot . '/rating/lib.php');
 
 class mod_forum_lib_testcase extends advanced_testcase {
@@ -3408,6 +3409,94 @@ class mod_forum_lib_testcase extends advanced_testcase {
 
         // Ensure result was null.
         $this->assertNull($actionevent);
+    }
+
+    public function test_mod_forum_get_tagged_posts() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Setup test data.
+        $forumgenerator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+        $course3 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course1 = $this->getDataGenerator()->create_course();
+        $forum1 = $this->getDataGenerator()->create_module('forum', array('course' => $course1->id));
+        $forum2 = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id));
+        $forum3 = $this->getDataGenerator()->create_module('forum', array('course' => $course3->id));
+        $post11 = $forumgenerator->create_content($forum1, array('tags' => array('Cats', 'Dogs')));
+        $post12 = $forumgenerator->create_content($forum1, array('tags' => array('Cats', 'mice')));
+        $post13 = $forumgenerator->create_content($forum1, array('tags' => array('Cats')));
+        $post14 = $forumgenerator->create_content($forum1);
+        $post15 = $forumgenerator->create_content($forum1, array('tags' => array('Cats')));
+        $post16 = $forumgenerator->create_content($forum1, array('tags' => array('Cats'), 'hidden' => true));
+        $post21 = $forumgenerator->create_content($forum2, array('tags' => array('Cats')));
+        $post22 = $forumgenerator->create_content($forum2, array('tags' => array('Cats', 'Dogs')));
+        $post23 = $forumgenerator->create_content($forum2, array('tags' => array('mice', 'Cats')));
+        $post31 = $forumgenerator->create_content($forum3, array('tags' => array('mice', 'Cats')));
+
+        $tag = core_tag_tag::get_by_name(0, 'Cats');
+
+        // Admin can see everything.
+        $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$post = */0);
+        $this->assertRegExp('/'.$post11->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post12->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post13->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post14->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post15->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post16->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post21->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post22->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post23->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post31->subject.'</', $res->content);
+        $this->assertEmpty($res->prevpageurl);
+        $this->assertNotEmpty($res->nextpageurl);
+        $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$post = */1);
+        $this->assertNotRegExp('/'.$post11->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post12->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post13->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post14->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post15->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post16->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post21->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post22->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post23->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post31->subject.'</', $res->content);
+        $this->assertNotEmpty($res->prevpageurl);
+        $this->assertEmpty($res->nextpageurl);
+
+        // Create and enrol a user.
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($student->id, $course2->id, $studentrole->id, 'manual');
+        $this->setUser($student);
+        core_tag_index_builder::reset_caches();
+
+        // User can not see posts in course 3 because he is not enrolled.
+        $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$post = */1);
+        $this->assertRegExp('/'.$post22->subject.'/', $res->content);
+        $this->assertRegExp('/'.$post23->subject.'/', $res->content);
+        $this->assertNotRegExp('/'.$post31->subject.'/', $res->content);
+
+        // User can search forum posts inside a course.
+        $coursecontext = context_course::instance($course1->id);
+        $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */$coursecontext->id, /*$rec = */1, /*$post = */0);
+        $this->assertRegExp('/'.$post11->subject.'/', $res->content);
+        $this->assertRegExp('/'.$post12->subject.'/', $res->content);
+        $this->assertRegExp('/'.$post13->subject.'/', $res->content);
+        $this->assertNotRegExp('/'.$post14->subject.'/', $res->content);
+        $this->assertRegExp('/'.$post15->subject.'/', $res->content);
+        $this->assertRegExp('/'.$post16->subject.'/', $res->content);
+        $this->assertNotRegExp('/'.$post21->subject.'/', $res->content);
+        $this->assertNotRegExp('/'.$post22->subject.'/', $res->content);
+        $this->assertNotRegExp('/'.$post23->subject.'/', $res->content);
+        $this->assertEmpty($res->nextpageurl);
     }
 
     /**

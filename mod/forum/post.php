@@ -1052,6 +1052,13 @@ if (!empty($parent)) {
 if (!empty($formheading)) {
     echo $OUTPUT->heading($formheading, 2, array('class' => 'accesshide'));
 }
+
+$data = new StdClass();
+if (isset($postid)) {
+    $data->tags = core_tag_tag::get_item_tags_array('mod_forum', 'forum_posts', $postid);
+    $mform_post->set_data($data);
+}
+
 $mform_post->display();
 
 echo $OUTPUT->footer();
