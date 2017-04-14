@@ -26,34 +26,37 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/local/iomad/classes/observer.php');
-
 // List of observers.
 $observers = array(
 
     array(
         'eventname'   => '\core\event\competency_framework_created',
         'callback'    => 'local_iomad_observer::competency_framework_created',
+        'includefile' => '/local/iomad/classes/observer.php'
     ),
 
     array(
         'eventname'   => '\core\event\competency_framework_deleted',
         'callback'    => 'local_iomad_observer::competency_framework_deleted',
+        'includefile' => '/local/iomad/classes/observer.php'
     ),
 
     array(
         'eventname'   => '\core\event\competency_template_created',
         'callback'    => 'local_iomad_observer::competency_template_created',
+        'includefile' => '/local/iomad/classes/observer.php'
     ),
 
     array(
         'eventname'   => '\core\event\competency_template_deleted',
         'callback'    => 'local_iomad_observer::competency_template_deleted',
+        'includefile' => '/local/iomad/classes/observer.php'
     ),
 
     array(
         'eventname'   => '\core\event\course_completed',
         'callback'    => 'local_iomad_observer::course_completed',
+        'includefile' => '/local/iomad/classes/observer.php'
     ),
 );
 

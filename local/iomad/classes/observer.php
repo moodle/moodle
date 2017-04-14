@@ -23,13 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_iomad;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/local/iomad/lib/company.php');
 
-class observer {
+class local_iomad_observer {
 
     /**
      * Triggered via competency_framework_created event.
@@ -82,7 +80,7 @@ class observer {
      * @return bool true on success.
      */
     public static function course_completed($event) {
-        \company::course_completed_supervisor($event);
+        company::course_completed_supervisor($event);
         return true;
     }
 }
