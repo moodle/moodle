@@ -1987,6 +1987,7 @@ class company {
                             $courseinfo->reporttext = fullname($userinfo) . ' has completed ' . $courseinfo->fullname . ' in ' . $company->name .
                                                        ' on ' . date($CFG->iomad_date_format, $timecompleted) . "\n";
                             EmailTemplate::send('course_completed_manager', array('course' => $courseinfo, 'user' => $managerinfo, 'company' => $company));
+                        }
                     }
                 }
             }
