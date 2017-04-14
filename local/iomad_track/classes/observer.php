@@ -183,33 +183,40 @@ class observer {
                                                                'course' => $courseid));
 
         // Get the final grade for the course.
-        $graderec = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
+        if ($graderec = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
                                          JOIN {grade_items} gi ON (gg.itemid = gi.id
                                                                    AND gi.itemtype = 'course'
                                                                    AND gi.courseid = :courseid)
                                          WHERE gg.userid = :userid", array('courseid' => $courseid,
-                                                                           'userid' => $userid)); 
+                                                                           'userid' => $userid))) {
+            $finalgrade = $graderec->finalgrade;
+        } else {
+            $finalgrade = 0;
+        }
 
         // Get the enrolment time for the user on the course.
         $enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
                                          JOIN {enrol} e ON (ue.enrolid = e.id)
                                          WHERE ue.userid = :userid
-                                         AND e.courseid = :courseid",
+                                         AND e.courseid = :courseid
+                                         AND e.status = 0",
                                          array('userid' => $userid,
                                                'courseid' => $courseid));
         // Record the completion event.
         $completion = new \StdClass();
         $completion->courseid = $courseid;
         $completion->userid = $userid;
-        $completion->timeenroled = $enrolrec->timestart;
+        $completion->timeenrolled = $enrolrec->timestart;
         $completion->timestarted = $comprec->timestarted;
         $completion->timecompleted = $timecompleted;
-        $completion->finalscore = $graderec->finalgrade;
+        $completion->finalscore = $finalgrade;
         $trackid = $DB->insert_record('local_iomad_track', $completion);
 
         // Debug
         mtrace('Iomad completion recorded for userid ' . $userid . ' in courseid ' . $courseid);
 
         self::record_certificates($courseid, $userid, $trackid);
+
+        return true;
     }
 }
