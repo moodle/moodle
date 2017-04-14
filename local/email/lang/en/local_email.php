@@ -105,6 +105,9 @@ You will be notified once your manager has approved or denied access.';
 
 $string['courseclassroom_approved_subject'] = 'You have been approved access to {Event_Name}';
 $string['courseclassroom_approved_body'] = 'You have been granted access to course {Event_Name}.  To access this, please click on {CourseURL}.';
+$string['course_completed_manager_subject'] = 'Student course completion report';
+$string['course_completed_manager_body'] = 'Dear {User_FirstName}
+{Course_ReportText}';
 
 $string['user_added_to_course_subject'] = 'Added to {Course_FullName}';
 $string['user_added_to_course_body'] = 'Dear {User_FirstName}

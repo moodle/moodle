@@ -27,6 +27,8 @@ function local_email_get_templates() {
                         'course_classroom_denied',
                         'course_classroom_manager_denied',
                         'course_classroom_approval_request',
+                        'course_completed_manager',
+                        'completion_course_supervisor',
                         'expire',
                         'expire_manager',
                         'user_added_to_course',
