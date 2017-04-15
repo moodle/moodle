@@ -317,5 +317,269 @@ class block_iomad_company_admin_external extends external_api {
     public static function edit_companies_returns() {
         return new external_value(PARAM_BOOL, 'Success or failure');
     }
-}
 
+    // Department Calls.
+
+    /**
+     * block_iomad_company_admin_get_departments
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function get_departments_parameters() {
+        return new external_function_parameters(new external_value(PARAM_INT, 'Company id'), 'Company ID', VALUE_DEFAULT, 0);
+    }
+
+    /**
+     * block_iomad_company_admin_get_departments
+     *
+     * Implement get_departments
+     * @param $comapnyid
+     * @return array of department records.
+     */
+    public static function get_departments($companyid) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::get_department_parameters(), $companyid);
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:edit_all_departments', $context);
+
+        return $DB->get_records('department', array('company' => $companyid));
+    }
+
+     /**
+     * block_iomad_company_admin_get_departments
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_departments_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                     'id' => new external_value(PARAM_INT, 'Companid ID'),
+                     'name' => new external_value(PARAM_TEXT, 'Company long name'),
+                     'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
+                     'company' => new external_value(PARAM_INT, 'Company ID'),
+                     'parent' => new external_value(PARAM_INT, 'Department parent id'),
+                )
+            )
+        );
+    }
+
+    // User handling
+
+    /**
+     * block_iomad_company_admin_assign_users
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function assign_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'users' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'userid' => new external_value(PARAM_INT, 'User ID', VALUE_DEFAULT, 0),
+                            'companyid' => new external_value(PARAM_INT, 'User company ID', VALUE_DEFAULT, 0),
+                            'departmentid' => new external_value(PARAM_INT, 'User company department ID', VALUE_DEFAULT, 0),
+                            'managertype' => new external_value(PARAM_INT, 'User manager type 0 => User, 1 => company manager 2 => department manager', VALUE_DEFAULT, 0),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_assign_users
+     *
+     * Implement get_departments
+     * @param $comapnyid
+     * @return array of department records.
+     */
+    public static function assign_users($users) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::assign_users_parameters(), $users);
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:assign_company_manager', $context);
+
+        $succeeded = true;
+
+        // Deal with the list of users.
+        foreach ($users as $userrecord) {
+            if (empty($userrecord->userid) || empty($userrecord->companyid)) {
+                $succeeded = false;
+                continue;
+            }
+            $company = new company($userrecord->companyid);
+            if (!$company->assign_user_to_company($userrecord->userid,
+                                                  $userrecord->departmentid,
+                                                  $userrecord->managertype,
+                                                  true)) {
+                $succeeded = false;
+            }
+            
+        }
+        return $succeeded;
+    }
+
+   /**
+     * block_iomad_company_admin_assign_users
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function assign_users_returns() {
+        return new external_value(PARAM_BOOL, 'Success or failure');
+    }
+
+    /**
+     * block_iomad_company_admin_move_users
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function move_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'users' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'userid' => new external_value(PARAM_INT, 'User ID', VALUE_DEFAULT, 0),
+                            'companyid' => new external_value(PARAM_INT, 'User company ID', VALUE_DEFAULT, 0),
+                            'departmentid' => new external_value(PARAM_INT, 'User company department ID', VALUE_DEFAULT, 0),
+                            'managertype' => new external_value(PARAM_INT, 'User manager type 0 => User, 1 => company manager 2 => department manager', VALUE_DEFAULT, 0),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_move_users
+     *
+     * Implement get_departments
+     * @param $comapnyid
+     * @return array of department records.
+     */
+    public static function move_users($users) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::assign_users_parameters(), $users);
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:assign_company_manager', $context);
+
+        $succeeded = true;
+
+        // Deal with the list of users.
+        foreach ($users as $userrecord) {
+            if (empty($userrecord->userid) || empty($userrecord->companyid)) {
+                $succeeded = false;
+                continue;
+            }
+            $company = new company($userrecord->companyid);
+            if (!$company->assign_user_to_department($userrecord->departmentid,
+                                                     $userrecord->userid,
+                                                     $userrecord->managertype,
+                                                     true)) {
+                $succeeded = false;
+            }
+            
+        }
+        return $succeeded;
+    }
+
+   /**
+     * block_iomad_company_admin_move_users
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function move_users_returns() {
+        return new external_value(PARAM_BOOL, 'Success or failure');
+    }
+
+    /**
+     * block_iomad_company_admin_unassign_users
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function unassign_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'users' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'userid' => new external_value(PARAM_INT, 'User ID', VALUE_DEFAULT, 0),
+                            'companyid' => new external_value(PARAM_INT, 'User company ID', VALUE_DEFAULT, 0),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_unassign_users
+     *
+     * Implement get_departments
+     * @param $comapnyid
+     * @return array of department records.
+     */
+    public static function unassign_users($users) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::assign_users_parameters(), $users);
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:assign_company_manager', $context);
+
+        $succeeded = true;
+
+        // Deal with the list of users.
+        foreach ($users as $userrecord) {
+            if (empty($userrecord->userid) || empty($userrecord->companyid)) {
+                $succeeded = false;
+                continue;
+            }
+            $company = new company($userrecord->companyid);
+            if (!$company->unassign_user_from_company($userrecord->userid, true)) {
+                $succeeded = false;
+            }
+            
+        }
+
+        return $succeeded;
+    }
+
+   /**
+     * block_iomad_company_admin_unassign_users
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function unassign_users_returns() {
+        return new external_value(PARAM_BOOL, 'Success or failure');
+    }
+
+}

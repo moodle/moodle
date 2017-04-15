@@ -438,26 +438,80 @@ class company {
      * Associates a user to a company
      *
      * Parameters -
-     *              $userid = stdclass();
+     *              $userid = int;
+     *              $departmentid = int;
+     *              $managertype = int;
      *
      **/
-    public function assign_user_to_company($userid) {
+    public function assign_user_to_company($userid, $departmentid = 0, $managertype = 0, $ws = false) {
         global $DB;
 
-        $defaultdepartment = self::get_company_parentnode($this->id);
+        // Were we passed a departmentid?
+        if (!empty($departmentid)) {
+            // Check its a department in this company.
+            if (!$DB->get_record('department', array('id' => $departmentid, 'company' => $this->id))) {
+                $defaultdepartment = self::get_company_parentnode($this->id);
+                $departmentid = $defaultdepartment->id;
+            }
+        } else {
+            // Make it the default department id.
+            $defaultdepartment = self::get_company_parentnode($this->id);
+            $departmentid = $defaultdepartment->id;
+        }
+
+        // Were we passed a manager type?  Check it.
+        if ($managertype > 2) {
+            // Default is standard user.
+            $managertype = 0;
+        }
+
+        // Create the record.
         $userrecord = array();
-        $userrecord['departmentid'] = $defaultdepartment->id;
+        $userrecord['departmentid'] = $departmentid;
         $userrecord['userid'] = $userid;
-        $userrecord['managertype'] = 0;
+        $userrecord['managertype'] = $managertype;
         $userrecord['companyid'] = $this->id;
 
         // Moving a user.
         if (!$DB->insert_record('company_users', $userrecord)) {
-            print_error(get_string('cantassignusersdb', 'block_iomad_company_admin'));
+            if ($ws) {
+                return false;
+            } else {
+                print_error(get_string('cantassignusersdb', 'block_iomad_company_admin'));
+            }
         }
 
         // Deal with the company theme.
         $DB->set_field('user', 'theme', $this->get_theme(), array('id' => $userid));
+
+        return true;
+    }
+
+    /**
+     * Removes a user from a company
+     *
+     * Parameters -
+     *              $userid = int;
+     *
+     **/
+    public function unassign_user_from_company($userid, $ws = false) {
+        global $DB;
+
+        // Moving a user.
+        if (!$userrecord = $DB->get_record('company_users', array('companyid' => $this->id,
+                                                                  'userid' => $userid))) {
+            if ($ws) {
+                return false;
+            } else {
+                print_error(get_string('cantassignusersdb', 'block_iomad_company_admin'));
+            }
+        }
+
+        // Delete the record.
+        $DB->delete_records('company_users', array('id' => $userrecord->id));
+
+        // Deal with the company theme.
+        $DB->set_field('user', 'theme', '', array('id' => $userid));
 
         return true;
     }
@@ -968,17 +1022,25 @@ class company {
      *              $userid = int;
      *
      **/
-    public static function assign_user_to_department($departmentid, $userid) {
+    public static function assign_user_to_department($departmentid, $userid, $managertype = 0, $ws = false) {
         global $DB;
 
         $userrecord = array();
         $userrecord['departmentid'] = $departmentid;
         $userrecord['userid'] = $userid;
+
         // Moving a user.
         if ($currentuser = $DB->get_record('company_users', array('userid' => $userid))) {
             $currentuser->departmentid = $departmentid;
+            if ($ws && !empty($managertype)) {
+                $currentuser->managertype = $managertype;
+            }
             if (!$DB->update_record('company_users', $currentuser)) {
-                print_error(get_string('cantupdatedepartmentusersdb', 'block_iomad_company_admin'));
+                if ($ws) {
+                    return false;
+                } else {
+                    print_error(get_string('cantupdatedepartmentusersdb', 'block_iomad_company_admin'));
+                }
             }
         }
         return true;
