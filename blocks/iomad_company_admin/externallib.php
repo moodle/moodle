@@ -361,9 +361,9 @@ class block_iomad_company_admin_external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                     'id' => new external_value(PARAM_INT, 'Companid ID'),
-                     'name' => new external_value(PARAM_TEXT, 'Company long name'),
-                     'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
+                     'id' => new external_value(PARAM_INT, 'Department ID'),
+                     'name' => new external_value(PARAM_TEXT, 'Department name'),
+                     'shortname' => new external_value(PARAM_TEXT, 'Department short name'),
                      'company' => new external_value(PARAM_INT, 'Company ID'),
                      'parent' => new external_value(PARAM_INT, 'Department parent id'),
                 )
@@ -582,4 +582,278 @@ class block_iomad_company_admin_external extends external_api {
         return new external_value(PARAM_BOOL, 'Success or failure');
     }
 
+    // Course functions.
+ 
+    /**
+     * block_iomad_company_admin_assign_courses
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function assign_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'courses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'Course ID', VALUE_DEFAULT, 0),
+                            'companyid' => new external_value(PARAM_INT, 'Course company ID', VALUE_DEFAULT, 0),
+                            'departmentid' => new external_value(PARAM_INT, 'Course department ID', VALUE_DEFAULT, 0),
+                            'owned' => new external_value(PARAM_BOOL, 'Does the company own the course', VALUE_DEFAULT, false),
+                            'licensed' => new external_value(PARAM_BOOL, 'Is the course licensed', VALUE_DEFAULT, false),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_assign_courses
+     *
+     * Implement get_departments
+     * @param $comapnyid
+     * @return array of department records.
+     */
+    public static function assign_courses($courses) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::assign_courses_parameters(), $courses);
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:managecourses', $context);
+
+        $succeeded = true;
+
+        // Deal with the list of users.
+        foreach ($courses as $courserecord) {
+            if (empty($courserecord->courseid) || empty($courserecord->companyid)) {
+                $succeeded = false;
+                continue;
+            }
+            if (!$course = $DB->get_record('course', array('id' => $courserecord->courseid))) {
+                $succeeded = false;
+            } else {
+                $company = new company($courserecord->companyid);
+                $company->add_course($course, $courserecord->departmentid, $courserecord->owned, $courserecord->licensed);
+            }
+        }
+
+        return $succeeded;
+    }
+
+   /**
+     * block_iomad_company_admin_assign_courses
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function assign_courses_returns() {
+        return new external_value(PARAM_BOOL, 'Success or failure');
+    }
+
+    /**
+     * block_iomad_company_admin_unassign_courses
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function unassign_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'courses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'Course ID', VALUE_DEFAULT, 0),
+                            'companyid' => new external_value(PARAM_INT, 'Course company ID', VALUE_DEFAULT, 0),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_unassign_courses
+     *
+     * Implement get_departments
+     * @param $comapnyid
+     * @return array of department records.
+     */
+    public static function unassign_courses($courses) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::assign_courses_parameters(), $courses);
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:managecourses', $context);
+
+        $succeeded = true;
+
+        // Deal with the list of users.
+        foreach ($courses as $courserecord) {
+            if (empty($courserecord->courseid) || empty($courserecord->companyid)) {
+                $succeeded = false;
+                continue;
+            }
+            if (!$course = $DB->get_record('course', array('id' => $courserecord->courseid))) {
+                $succeeded = false;
+            } else {
+                company::remove_course($course, $courserecord->companyid);
+            }
+            
+        }
+
+        return $succeeded;
+    }
+
+   /**
+     * block_iomad_company_admin_unassign_courses
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function unassign_courses_returns() {
+        return new external_value(PARAM_BOOL, 'Success or failure');
+    }
+
+    /**
+     * block_iomad_company_admin_update_courses
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function update_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'courses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'Course ID', VALUE_DEFAULT, 0),
+                            'licensed' => new external_value(PARAM_BOOL, 'Course licensed', VALUE_DEFAULT, false),
+                            'shared' => new external_value(PARAM_INT, 'Course shared value', VALUE_DEFAULT, 0),
+                            'validlength' => new external_value(PARAM_INT, 'Course training valid for in days', VALUE_DEFAULT, 0),
+                            'warnexpire' => new external_value(PARAM_INT, 'Course days to warn before training expires', VALUE_DEFAULT, 0),
+                            'warncompletion' => new external_value(PARAM_INT, 'Course days to warn if not completed in', VALUE_DEFAULT, 0),
+                            'notifyperiod' => new external_value(PARAM_INT, 'Course warning email notify period', VALUE_DEFAULT, 0),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_update_courses
+     *
+     * Implement get_departments
+     * @param $comapnyid
+     * @return array of department records.
+     */
+    public static function update_courses($courses) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::assign_courses_parameters(), $courses);
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:managecourses', $context);
+
+        $succeeded = true;
+
+        // Deal with the list of users.
+        foreach ($courses as $courserecord) {
+            if (empty($courserecord->courseid)) {
+                $succeeded = false;
+                continue;
+            }
+            if (!$currentrecord = $DB->get_record('iomad_courses', array('courseid' => $courserecord->courseid))) {
+                $succeeded = false;
+            } else {
+                // Replace the record with the new one.
+                $courserecord->id = $currentrecord->id;
+                if (!$DB->update_record('iomad_courses', $courserecord)) {
+                    $succeeded = false;
+                }
+            }
+        }
+
+        return $succeeded;
+    }
+
+   /**
+     * block_iomad_company_admin_update_courses
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function update_courses_returns() {
+        return new external_value(PARAM_BOOL, 'Success or failure');
+    }
+
+    /**
+     * block_iomad_company_admin_get_course_info
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function get_course_info_parameters() {
+        return new external_function_parameters(new external_value(PARAM_INT, 'Course id'), 'Course ID', VALUE_DEFAULT, 0);
+    }
+
+    /**
+     * block_iomad_company_admin_get_course_info
+     *
+     * Implement get_departments
+     * @param $comapnyid
+     * @return array of department records.
+     */
+    public static function get_course_info($courseid) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::assign_courses_parameters(), $courseid);
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:managecourses', $context);
+
+        if (!$currentrecord = $DB->get_record('iomad_courses', array('courseid' => $courserecord->courseid))) {
+            return new stdclass();
+        } else {
+            return $currentrecord; 
+        }
+    }
+
+   /**
+     * block_iomad_company_admin_get_course_info
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_course_info_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                     'id' => new external_value(PARAM_INT, 'Record ID'),
+                     'courseid' => new external_value(PARAM_INT, 'Course ID'),
+                     'licensed' => new external_value(PARAM_BOOL, 'Course licensed'),
+                     'shared' => new external_value(PARAM_INT, 'Course shared value'),
+                     'validlength' => new external_value(PARAM_INT, 'Course training valid for in days'),
+                     'warnexpire' => new external_value(PARAM_INT, 'Course days to warn before training expires'),
+                     'warncompletion' => new external_value(PARAM_INT, 'Course days to warn if not completed in'),
+                     'notifyperiod' => new external_value(PARAM_INT, 'Course warning email notify period'),
+                )
+            )
+        );
+    }
 }

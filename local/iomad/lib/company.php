@@ -329,6 +329,8 @@ class company {
                                                                     'courseid' => $course->id));
             }
         }
+
+        return true;
     }
 
     /**
@@ -362,6 +364,8 @@ class company {
             $companydepartment = self::get_company_parentnode($companyid);
             self::assign_course_to_department($companydepartment->id, $course->id, $companyid);
         }
+
+        return true;
     }
 
     /**
