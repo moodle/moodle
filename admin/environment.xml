@@ -1879,7 +1879,7 @@
     <DATABASE level="required">
       <VENDOR name="mariadb" version="5.5.31" />
       <VENDOR name="mysql" version="5.5.31" />
-      <VENDOR name="postgres" version="9.1" />
+      <VENDOR name="postgres" version="9.3" />
       <VENDOR name="mssql" version="10.0" />
       <VENDOR name="oracle" version="10.2" />
     </DATABASE>
@@ -1906,9 +1906,9 @@
           <ON_ERROR message="curlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
-      <PHP_EXTENSION name="openssl" level="optional">
+      <PHP_EXTENSION name="openssl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="opensslrecommended" />
+          <ON_ERROR message="opensslrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="tokenizer" level="optional">
@@ -2031,6 +2031,16 @@
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_mysql_large_prefix" level="required">
         <FEEDBACK>
           <ON_ERROR message="unsupporteddblargeprefix" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_is_https" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="ishttpswarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_mysql_incomplete_unicode_support" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="incompleteunicodesupport" />
         </FEEDBACK>
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
