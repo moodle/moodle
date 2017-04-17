@@ -1896,6 +1896,9 @@ function set_user_preference($name, $value, $user = null) {
 
     // Update value in cache.
     $user->preference[$name] = $value;
+    if ($user !== $USER && $user->id == $USER->id) {
+        $USER->preference[$name] = $value;
+    }
 
     // Set reload flag for other sessions.
     mark_user_preferences_changed($user->id);
@@ -1965,6 +1968,9 @@ function unset_user_preference($name, $user = null) {
 
     // Delete the preference from cache.
     unset($user->preference[$name]);
+    if ($user !== $USER && $user->id == $USER->id) {
+        unset($USER->preference[$name]);
+    }
 
     // Set reload flag for other sessions.
     mark_user_preferences_changed($user->id);

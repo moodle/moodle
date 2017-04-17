@@ -1170,6 +1170,26 @@ class core_moodlelib_testcase extends advanced_testcase {
         }
     }
 
+    public function test_set_user_preference_for_current_user() {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_user_preference('test_pref', 2);
+        set_user_preference('test_pref', 1, $USER->id);
+        $this->assertEquals(1, get_user_preferences('test_pref'));
+    }
+
+    public function test_unset_user_preference_for_current_user() {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_user_preference('test_pref', 1);
+        unset_user_preference('test_pref', $USER->id);
+        $this->assertNull(get_user_preferences('test_pref'));
+    }
+
     public function test_get_extra_user_fields() {
         global $CFG, $USER, $DB;
         $this->resetAfterTest();
