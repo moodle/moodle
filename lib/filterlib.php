@@ -957,7 +957,7 @@ function filter_preload_activities(course_modinfo $modinfo) {
 
     // Get all filter_active rows relating to all these contexts
     list ($sql, $params) = $DB->get_in_or_equal($allcontextids);
-    $filteractives = $DB->get_records_select('filter_active', "contextid $sql", $params);
+    $filteractives = $DB->get_records_select('filter_active', "contextid $sql", $params, 'sortorder');
 
     // Get all filter_config only for the cm contexts
     list ($sql, $params) = $DB->get_in_or_equal($cmcontextids);
