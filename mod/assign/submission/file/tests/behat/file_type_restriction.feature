@@ -47,7 +47,7 @@ Feature: In an assignment, limit submittable file types
     When I press "Add submission"
     And I should see "Files of these types may be added to the submission"
     And I should see "Image (PNG) — .png"
-    And I should see "Spreadsheet files — .csv .gsheet .ods .ots .xls .xlsx .xlsm"
+    And I should see "Spreadsheet files — .csv .ods .ots .xls .xlsx .xlsm"
     And I should see ".txt"
     And I upload "lib/tests/fixtures/gd-logo.png" file to "File submissions" filemanager
     And I upload "lib/tests/fixtures/tabfile.csv" file to "File submissions" filemanager
