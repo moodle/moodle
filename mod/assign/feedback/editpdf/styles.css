@@ -314,6 +314,12 @@ ul.assignfeedback_editpdf_menu {
     min-height: 1.2em;
 }
 
+.assignfeedback_editpdf_widget .commentdrawable textarea:focus {
+    outline: thin dotted #333;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+}
+
 .assignfeedback_editpdf_widget .commentdrawable {
     display: inline-block;
     z-index: 1;
