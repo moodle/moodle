@@ -1091,7 +1091,7 @@ function scorm_debug_log_remove($type, $scoid) {
  * writes overview info for course_overview block - displays upcoming scorm objects that have a due date
  *
  * @deprecated since 3.3
- *
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
  * @param object $type - type of log(aicc,scorm12,scorm13) used as prefix for filename
  * @param array $htmlarray
  * @return mixed

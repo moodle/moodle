@@ -6551,6 +6551,7 @@ function calendar_preferences_button(stdClass $course) {
  * Return the name of the weekday
  *
  * @deprecated since 3.3
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
  * @param string $englishname
  * @return string of the weekeday
  */
@@ -6563,6 +6564,7 @@ function calendar_wday_name($englishname) {
  * Get the upcoming event block.
  *
  * @deprecated since 3.3
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
  * @param array $events list of events
  * @param moodle_url|string $linkhref link to event referer
  * @param boolean $showcourselink whether links to courses should be shown
@@ -6583,6 +6585,7 @@ function calendar_get_block_upcoming($events, $linkhref = null, $showcourselink 
  * Display month selector options.
  *
  * @deprecated since 3.3
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
  * @param string $name for the select element
  * @param string|array $selected options for select elements
  */
@@ -6600,6 +6603,7 @@ function calendar_print_month_selector($name, $selected) {
  * Update calendar subscriptions.
  *
  * @deprecated since 3.3
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
  * @return bool
  */
 function calendar_cron() {

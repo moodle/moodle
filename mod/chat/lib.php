@@ -1130,7 +1130,7 @@ function chat_get_post_actions() {
 
 /**
  * @deprecated since 3.3
- *
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
  * @global object
  * @global object
  * @param array $courses
