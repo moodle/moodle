@@ -483,7 +483,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($courseinfo->numsections, $course3options['numsections']);
                 $this->assertEquals($courseinfo->coursedisplay, $course3options['coursedisplay']);
             } else {
-                throw moodle_exception('Unexpected shortname');
+                throw new moodle_exception('Unexpected shortname');
             }
         }
 
@@ -1163,7 +1163,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals(0, $courseinfo->newsitems);
                 $this->assertEquals(FORMAT_MOODLE, $courseinfo->summaryformat);
             } else {
-                throw moodle_exception('Unexpected shortname');
+                throw new moodle_exception('Unexpected shortname');
             }
         }
 
