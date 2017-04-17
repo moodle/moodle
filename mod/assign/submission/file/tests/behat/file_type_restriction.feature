@@ -25,7 +25,7 @@ Feature: In an assignment, limit submittable file types
       | activity | course | idnumber | name                 | intro                       | duedate    | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | assignsubmission_file_maxfiles | assignsubmission_file_maxsizebytes |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 1388534400 | 0                                   | 1                             | 1                              | 0                                  |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I follow "Course 1"
     And I follow "Test assignment name"
     And I navigate to "Edit settings" in current page administration
     When I set the field "Accepted file types" to "image/png;doesntexist;.anything;unreal/mimetype;nodot"
@@ -42,7 +42,7 @@ Feature: In an assignment, limit submittable file types
       | activity | course | idnumber | name                 | intro                       | duedate    | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | assignsubmission_file_maxfiles | assignsubmission_file_maxsizebytes | assignsubmission_file_filetypes |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 1388534400 | 0                                   | 1                             | 3                              | 0                                  | image/png;spreadsheet;.xml;.txt  |
     And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I follow "Course 1"
     And I follow "Test assignment name"
     When I press "Add submission"
     And I should see "Files of these types may be added to the submission"
@@ -63,7 +63,7 @@ Feature: In an assignment, limit submittable file types
       | activity | course | idnumber | name                 | intro                       | duedate    | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | assignsubmission_file_maxfiles | assignsubmission_file_maxsizebytes | assignsubmission_file_filetypes |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 1388534400 | 0                                   | 1                             | 2                              | 0                                  |                                 |
     And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I follow "Course 1"
     And I follow "Test assignment name"
     When I press "Add submission"
     And I should not see "Files of these types may be added to the submission"
