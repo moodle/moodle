@@ -599,6 +599,7 @@ $string['iplookupinfo'] = 'By default Moodle uses the free online NetGeo (The In
 It is recommended to install local copy of free GeoLite City database from MaxMind.<br />
 IP address location is displayed on simple map or using Google Maps. Please note that you need to have a Google account and apply for free Google Maps API key to enable interactive maps.';
 $string['iplookupmaxmindnote'] = 'This product includes GeoLite data created by MaxMind, available from <a href="http://www.maxmind.com/">http://www.maxmind.com/</a>.';
+$string['ishttpswarning'] = 'It has been detected that your site is not secured using HTTPS. For increased security and improved integrations with other systems is highly recommended to migrate your site to HTTPS.';
 $string['keeptagnamecase'] = 'Keep tag name casing';
 $string['lang'] = 'Default language';
 $string['langcache'] = 'Cache language menu';
@@ -769,6 +770,7 @@ $string['numberofmissingstrings'] = 'Number of missing strings: {$a}';
 $string['numberofstrings'] = 'Total number of strings: {$a->strings}<br />Missing: {$a->missing} ({$a->missingpercent}&nbsp;%)';
 $string['opcacherecommended'] = 'PHP opcode caching improves performance and lowers memory requirements, OPcache extension is recommended and fully supported.';
 $string['opensslrecommended'] = 'Installing the optional OpenSSL library is highly recommended -- it enables Moodle Networking functionality.';
+$string['opensslrequired'] = 'The OpenSSL PHP extension is now required by Moodle to provide stronger cryptographic services.';
 $string['opentogoogle'] = 'Open to Google';
 $string['optionalmaintenancemessage'] = 'Optional maintenance message';
 $string['order1'] = 'First';
