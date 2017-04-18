@@ -1398,7 +1398,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
     }
 
     // Get the events matching our criteria. Don't forget to offset the timestamps for the user's TZ.
-    $events = \core_calendar\local\api::get_legacy_events($display->tstart, $display->tend, $users, $groups, $courses);
+    $events = calendar_get_legacy_events($display->tstart, $display->tend, $users, $groups, $courses);
 
     // Set event course class for course events.
     if (!empty($events)) {
@@ -1715,7 +1715,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     $display->tend = usergetmidnight($display->tstart + DAYSECS * $display->range + 3 * HOURSECS) - 1;
 
     // Get the events matching our criteria.
-    $events = \core_calendar\local\api::get_legacy_events($display->tstart, $display->tend, $users, $groups, $courses);
+    $events = calendar_get_legacy_events($display->tstart, $display->tend, $users, $groups, $courses);
 
     // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
     // possibly removing SITEID from $courses, there is only one course left, then clicking on a day in the month
@@ -3373,4 +3373,63 @@ function core_calendar_user_preferences() {
     $preferences['calendar_persistflt'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 0,
         'choices' => array(0, 1));
     return $preferences;
+}
+
+/**
+ * Get legacy calendar events
+ *
+ * @param int $tstart Start time of time range for events
+ * @param int $tend End time of time range for events
+ * @param array|int|boolean $users array of users, user id or boolean for all/no user events
+ * @param array|int|boolean $groups array of groups, group id or boolean for all/no group events
+ * @param array|int|boolean $courses array of courses, course id or boolean for all/no course events
+ * @param boolean $withduration whether only events starting within time range selected
+ *                              or events in progress/already started selected as well
+ * @param boolean $ignorehidden whether to select only visible events or all events
+ * @return array $events of selected events or an empty array if there aren't any (or there was an error)
+ */
+function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses, $withduration = true, $ignorehidden = true) {
+    // Normalise the users, groups and courses parameters so that they are compliant with \core_calendar\local\api::get_events().
+    // Existing functions that were using the old calendar_get_events() were passing a mixture of array, int, boolean for these
+    // parameters, but with the new API method, only null and arrays are accepted.
+    list($userparam, $groupparam, $courseparam) = array_map(function($param) {
+        // If parameter is true, return null.
+        if ($param === true) {
+            return null;
+        }
+
+        // If parameter is false, return an empty array.
+        if ($param === false) {
+            return [];
+        }
+
+        // If the parameter is a scalar value, enclose it in an array.
+        if (!is_array($param)) {
+            return [$param];
+        }
+
+        // No normalisation required.
+        return $param;
+    }, [$users, $groups, $courses]);
+
+    $mapper = \core_calendar\local\event\container::get_event_mapper();
+    $events = \core_calendar\local\api::get_events(
+        $tstart,
+        $tend,
+        null,
+        null,
+        null,
+        null,
+        40,
+        null,
+        $userparam,
+        $groupparam,
+        $courseparam,
+        $withduration,
+        $ignorehidden
+    );
+
+    return array_reduce($events, function($carry, $event) use ($mapper) {
+        return $carry + [$event->get_id() => $mapper->from_event_to_stdclass($event)];
+    }, []);
 }

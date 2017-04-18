@@ -375,7 +375,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
 
         // Get events from database
-        $events = \core_calendar\local\api::get_legacy_events($display->tstart, $display->tend, $calendar->users, $calendar->groups,
+        $events = calendar_get_legacy_events($display->tstart, $display->tend, $calendar->users, $calendar->groups,
             $calendar->courses);
         if (!empty($events)) {
             foreach($events as $eventid => $event) {
