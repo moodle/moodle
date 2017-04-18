@@ -58,7 +58,7 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      */
     public function get_widget($userid, $grade, $readonly) {
         $attempt = -1;
-        if ($grade) {
+        if ($grade && isset($grade->attemptnumber)) {
             $attempt = $grade->attemptnumber;
         } else {
             $grade = $this->assignment->get_user_grade($userid, true);
