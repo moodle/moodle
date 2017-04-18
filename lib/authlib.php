@@ -642,7 +642,7 @@ class auth_plugin_base {
         $data = [];
         foreach ($identityproviders as $idp) {
             if (!empty($idp['icon'])) {
-                $idp['iconurl'] = $output->image_url($idp['icon']->key, $idp['icon']->component);
+                $idp['iconurl'] = $output->image_url($idp['icon']->pix, $idp['icon']->component);
             } else if ($idp['iconurl'] instanceof moodle_url) {
                 $idp['iconurl'] = $idp['iconurl']->out(false);
             }
