@@ -1308,6 +1308,11 @@ class mod_lesson_external extends external_api {
                         foreach ($extraproperties as $prop) {
                             $answer[$prop] = $a->{$prop};
                         }
+
+                        list($answer['answer'], $answer['answerformat']) =
+                            external_format_text($a->answer, $a->answerformat, $context->id, 'mod_lesson', 'page_answers', $a->id);
+                        list($answer['response'], $answer['responseformat']) =
+                            external_format_text($a->response, $a->responseformat, $context->id, 'mod_lesson', 'page_responses', $a->id);
                     }
                     $answers[] = $answer;
                 }
@@ -1375,6 +1380,10 @@ class mod_lesson_external extends external_api {
                             'flags' => new external_value(PARAM_INT, 'Used to store options for the answer', VALUE_OPTIONAL),
                             'timecreated' => new external_value(PARAM_INT, 'A timestamp of when the answer was created', VALUE_OPTIONAL),
                             'timemodified' => new external_value(PARAM_INT, 'A timestamp of when the answer was modified', VALUE_OPTIONAL),
+                            'answer' => new external_value(PARAM_RAW, 'Possible answer text', VALUE_OPTIONAL),
+                            'answerformat' => new external_format_value('answer', VALUE_OPTIONAL),
+                            'response' => new external_value(PARAM_RAW, 'Response text for the answer', VALUE_OPTIONAL),
+                            'responseformat' => new external_format_value('response', VALUE_OPTIONAL),
                         ), 'The page answers'
 
                     )
