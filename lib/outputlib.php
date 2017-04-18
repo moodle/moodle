@@ -1783,7 +1783,8 @@ class theme_config {
      *
      * @param string $image name of image, may contain relative path
      * @param string $component
-     * @param bool $svg If set to true SVG images will also be looked for.
+     * @param bool $svg|null Should SVG images also be looked for? If null, resorts to $CFG->svgicons if that is set; falls back to
+     * auto-detection of browser support otherwise
      * @return string full file path
      */
     public function resolve_image_location($image, $component, $svg = false) {
