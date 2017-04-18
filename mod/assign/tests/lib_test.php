@@ -340,31 +340,52 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
     public function test_assign_refresh_events() {
         global $DB;
         $duedate = time();
+        $newduedate = $duedate + DAYSECS;
         $this->setAdminUser();
 
-        $assign = $this->create_instance(array('duedate' => $duedate));
+        $assign = $this->create_instance(['duedate' => $duedate]);
 
-        // Normal case, with existing course.
+        // Make sure the calendar event for assignment 1 matches the initial due date.
+        $instance = $assign->get_instance();
+        $eventparams = ['modulename' => 'assign', 'instance' => $instance->id];
+        $eventtime = $DB->get_field('event', 'timestart', $eventparams, MUST_EXIST);
+        $this->assertEquals($eventtime, $duedate);
+
+        // Manually update assignment 1's due date.
+        $DB->update_record('assign', (object)['id' => $instance->id, 'duedate' => $newduedate]);
+
+        // Then refresh the assignment events of assignment 1's course.
         $this->assertTrue(assign_refresh_events($this->course->id));
 
-        $instance = $assign->get_instance();
-        $eventparams = array('modulename' => 'assign', 'instance' => $instance->id);
-        $event = $DB->get_record('event', $eventparams, '*', MUST_EXIST);
-        $this->assertEquals($event->timestart, $duedate);
+        // Confirm that the assignment 1's due date event now has the new due date after refresh.
+        $eventtime = $DB->get_field('event', 'timestart', $eventparams, MUST_EXIST);
+        $this->assertEquals($eventtime, $newduedate);
+
+        // Create a second course and assignment.
+        $generator = $this->getDataGenerator();
+        $course2 = $generator->create_course();
+        $assign2 = $this->create_instance(['duedate' => $duedate, 'course' => $course2->id]);
+        $instance2 = $assign2->get_instance();
+
+        // Manually update assignment 1 and 2's due dates.
+        $newduedate += DAYSECS;
+        $DB->update_record('assign', (object)['id' => $instance->id, 'duedate' => $newduedate]);
+        $DB->update_record('assign', (object)['id' => $instance2->id, 'duedate' => $newduedate]);
+
+        // Refresh events of all courses.
+        $this->assertTrue(assign_refresh_events());
+
+        // Check the due date calendar event for assignment 1.
+        $eventtime = $DB->get_field('event', 'timestart', $eventparams, MUST_EXIST);
+        $this->assertEquals($eventtime, $newduedate);
+
+        // Check the due date calendar event for assignment 2.
+        $eventparams['instance'] = $instance2->id;
+        $eventtime = $DB->get_field('event', 'timestart', $eventparams, MUST_EXIST);
+        $this->assertEquals($eventtime, $newduedate);
 
         // In case the course ID is passed as a numeric string.
         $this->assertTrue(assign_refresh_events('' . $this->course->id));
-
-        // Course ID not provided.
-        $this->assertTrue(assign_refresh_events());
-
-        $eventparams = array('modulename' => 'assign');
-        $events = $DB->get_records('event', $eventparams);
-        foreach ($events as $event) {
-            if ($event->modulename === 'assign' && $event->instance === $instance->id) {
-                $this->assertEquals($event->timestart, $duedate);
-            }
-        }
 
         // Non-existing course ID.
         $this->assertFalse(assign_refresh_events(-1));
