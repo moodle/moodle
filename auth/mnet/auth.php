@@ -1064,19 +1064,10 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     /**
-     * Returns a list of potential IdPs that this authentication plugin supports.
-     * This is used to provide links on the login page.
+     * Returns a list of MNet IdPs that the user can roam from.
      *
-     * @param string $wantsurl the relative url fragment the user wants to get to.  You can use this to compose a returnurl, for example
-     *
-     * @return array like:
-     *              array(
-     *                  array(
-     *                      'url' => 'http://someurl',
-     *                      'icon' => new pix_icon(...),
-     *                      'name' => get_string('somename', 'auth_yourplugin'),
-     *                 ),
-     *             )
+     * @param string $wantsurl The relative url fragment the user wants to get to.
+     * @return array List of arrays with keys url, icon and name.
      */
     function loginpage_idp_list($wantsurl) {
         global $DB, $CFG;
