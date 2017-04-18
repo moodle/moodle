@@ -57,14 +57,6 @@
                 <p class="text-muted m-t-1">{{#str}} nocoursesinprogress, block_myoverview {{/str}}</p>
             </div>
         {{/inprogress}}
-        {{^hascourses}}
-            <div class="text-xs-center text-center m-t-3">
-                <img class="empty-placeholder-image-lg"
-                     src="{{urls.noevents}}"
-                     alt="{{#str}} nocoursesinprogress, block_myoverview {{/str}}">
-                <p class="text-muted m-t-1">{{#str}} nocoursesinprogress, block_myoverview {{/str}}</p>
-            </div>
-        {{/hascourses}}
     {{/coursesview}}
 </div>
 {{#js}}
