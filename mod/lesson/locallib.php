@@ -752,7 +752,7 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
             $timestart = 0;
             $timeend = 0;
             $usergrade = null;
-            $eol = false;
+            $eol = 0;
 
             // search for the grade record for this try. if not there, the nulls defined above will be used.
             foreach($grades as $grade) {
@@ -805,7 +805,7 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
             $timestart = 0;
             $timeend = 0;
             $usergrade = null;
-            $eol = false;
+            $eol = 0;
             // Search for the time record for this try. if not there, the nulls defined above will be used.
             foreach ($times as $time) {
                 // Check to see if the grade matches the correct user.
