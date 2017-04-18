@@ -85,7 +85,18 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
         $userid = 0;
     }
 
-    $courses = $DB->get_recordset('course', null, 'shortname', 'id,shortname,visible');
+    $fields = 'c.id,c.shortname,c.visible';
+    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+    $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+    $sortstatement = 'ORDER BY c.shortname';
+
+    $sql = "SELECT $fields $ccselect FROM {course} c $ccjoin $sortstatement";
+
+    $params = array();
+    $params['contextlevel'] = CONTEXT_COURSE;
+
+    $courses = $DB->get_recordset_sql($sql, $params);
+
     $courseoptions = array();
 
     foreach ($courses as $c) {
