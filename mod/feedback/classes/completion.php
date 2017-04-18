@@ -654,31 +654,23 @@ class mod_feedback_completion extends mod_feedback_structure {
     /**
      * Trigger module viewed event.
      *
-     * @param  stdClass $course optional, course object from DB
      * @since Moodle 3.3
      */
-    public function trigger_module_viewed($course = null) {
-        if ($course == null) {
-            $course = get_course($this->courseid);
-        }
-        $event = \mod_feedback\event\course_module_viewed::create_from_record($this->feedback, $this->cm, $course);
+    public function trigger_module_viewed() {
+        $event = \mod_feedback\event\course_module_viewed::create_from_record($this->feedback, $this->cm, $this->cm->get_course());
         $event->trigger();
     }
 
     /**
      * Mark activity viewed for completion-tracking.
      *
-     * @param stdClass $course optional, course object from DB
      * @since Moodle 3.3
      */
-    public function set_module_viewed($course = null) {
+    public function set_module_viewed() {
         global $CFG;
         require_once($CFG->libdir . '/completionlib.php');
 
-        if ($course == null) {
-            $course = get_course($this->courseid);
-        }
-        $completion = new completion_info($course);
+        $completion = new completion_info($this->cm->get_course());
         $completion->set_module_viewed($this->cm);
     }
 
@@ -704,7 +696,7 @@ class mod_feedback_completion extends mod_feedback_structure {
 
         if ($this->form->is_cancelled()) {
             // Form was cancelled - return to the course page.
-            $urltogo = course_get_url($this->courseid);
+            $urltogo = course_get_url($this->courseid ?: $this->feedback->course);
         } else if ($this->form->is_submitted() &&
                 ($this->form->is_validated() || $gopreviouspage)) {
             // Form was submitted (skip validation for "Previous page" button).

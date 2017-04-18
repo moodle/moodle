@@ -307,13 +307,13 @@ class mod_feedback_external extends external_api {
         $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $course->id);
 
         // Trigger module viewed event.
-        $feedbackcompletion->trigger_module_viewed($course);
+        $feedbackcompletion->trigger_module_viewed();
         if ($params['moduleviewed']) {
             if (!$feedbackcompletion->is_open()) {
                 throw new moodle_exception('feedback_is_not_open', 'feedback');
             }
             // Mark activity viewed for completion-tracking.
-            $feedbackcompletion->set_module_viewed($course);
+            $feedbackcompletion->set_module_viewed();
         }
 
         $result = array(

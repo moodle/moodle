@@ -59,7 +59,7 @@ if (!has_capability('mod/feedback:edititems', $context) &&
 }
 
 // Trigger module viewed event.
-$feedbackcompletion->trigger_module_viewed($course);
+$feedbackcompletion->trigger_module_viewed();
 
 /// Print the page header
 echo $OUTPUT->header();
