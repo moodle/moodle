@@ -85,16 +85,36 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
         $userid = 0;
     }
 
-    $courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname');
+    $fields = 'c.id,c.shortname,c.visible';
+    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+    $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+    $sortstatement = 'ORDER BY c.shortname';
+
+    $sql = "SELECT $fields $ccselect FROM {course} c $ccjoin $sortstatement";
+
+    $params = array();
+    $params['contextlevel'] = CONTEXT_COURSE;
+
+    $courses = $DB->get_recordset_sql($sql, $params);
+
     $courseoptions = array();
 
     foreach ($courses as $c) {
+        context_helper::preload_from_record($c);
         $context = context_course::instance($c->id);
 
         if (has_capability('report/stats:view', $context)) {
+            if (isset($c->visible) && $c->visible <= 0) {
+                // For hidden courses, require visibility check.
+                if (!has_capability('moodle/course:viewhiddencourses', $context)) {
+                    continue;
+                }
+            }
             $courseoptions[$c->id] = format_string($c->shortname, true, array('context' => $context));
         }
     }
+
+    $courses->close();
 
     $reportoptions = stats_get_report_options($course->id, $mode);
     $timeoptions = report_stats_timeoptions($mode);
