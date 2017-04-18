@@ -371,6 +371,12 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.3.
+        '/badges/backpackconnect.php',
+        '/calendar/yui/src/info/assets/skins/sam/moodle-calendar-info.css',
+        '/competency/classes/external/exporter.php',
+        '/mod/forum/forum.js',
+        '/user/pixgroup.php',
         // Removed in 3.2.
         '/calendar/preferences.php',
         '/lib/alfresco/',
