@@ -79,7 +79,7 @@
         CustomEvents.define(root, [CustomEvents.events.activate]);
         // Show more courses and load their events when the user clicks the "more courses"
         // button.
-        root.on(CustomEvents.events.activate, '[data-action="more-courses"]', function(e) {
+        root.on(CustomEvents.events.activate, '[data-action="more-courses"]', function(e, data) {
             var button = $(e.target);
             var blocks = root.find('[data-region="course-block"].hidden');
 
