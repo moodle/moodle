@@ -280,6 +280,62 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertEquals($sharedcourse->id, $course1->id);
     }
 
+    public function test_enrol_get_shared_courses_different_methods() {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/enrol/self/externallib.php');
+
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+
+        // Enrol user1 and user2 in course1 with a different enrolment methode.
+        // Add self enrolment method for course1.
+        $selfplugin = enrol_get_plugin('self');
+        $this->assertNotEmpty($selfplugin);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->assertNotEmpty($studentrole);
+
+        $instance1id = $selfplugin->add_instance($course1, array('status' => ENROL_INSTANCE_ENABLED,
+                                                                 'name' => 'Test instance 1',
+                                                                 'customint6' => 1,
+                                                                 'roleid' => $studentrole->id));
+
+        $instance1 = $DB->get_record('enrol', array('id' => $instance1id), '*', MUST_EXIST);
+
+        self::setUser($user2);
+        // Self enrol me (user2).
+        $result = enrol_self_external::enrol_user($course1->id);
+
+        // Enrol user1 manually.
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, null, 'manual');
+
+        $course2 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id);
+
+        $course3 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user2->id, $course3->id);
+
+        // Test that user1 and user2 have courses in common.
+        $this->assertTrue(enrol_get_shared_courses($user1, $user2, false, true));
+        // Test that user1 and user3 have no courses in common.
+        $this->assertFalse(enrol_get_shared_courses($user1, $user3, false, true));
+
+        // Test retrieving the courses in common.
+        $sharedcourses = enrol_get_shared_courses($user1, $user2, true);
+
+        // Only should be one shared course.
+        $this->assertCount(1, $sharedcourses);
+        $sharedcourse = array_shift($sharedcourses);
+        // It should be course 1.
+        $this->assertEquals($sharedcourse->id, $course1->id);
+    }
+
     /**
      * Test user enrolment created event.
      */
