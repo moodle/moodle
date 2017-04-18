@@ -271,7 +271,7 @@ class core_files_externallib_testcase extends advanced_testcase {
                                         'itemid' => $itemid,
                                         'filepath' => '/',
                                         'filename' => 'Simple4.txt',
-                                        'url' => 'http://www.example.com/moodle/pluginfile.php/'.$context->id.'/mod_data/content/'.$itemid.'/Simple4.txt',
+                                        'url' => 'https://www.example.com/moodle/pluginfile.php/'.$context->id.'/mod_data/content/'.$itemid.'/Simple4.txt',
                                         'isdir' => false,
                                         'timemodified' => $timemodified,
                                         'timecreated' => $timecreated,

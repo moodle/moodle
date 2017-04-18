@@ -38,7 +38,7 @@ class core_weblib_format_text_testcase extends advanced_testcase {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertRegExp('~^<p><img class="icon emoticon" alt="smile" title="smile" ' .
-                'src="http://www.example.com/moodle/theme/image.php/_s/boost/core/1/s/smiley" /></p>$~',
+                'src="https://www.example.com/moodle/theme/image.php/_s/boost/core/1/s/smiley" /></p>$~',
                 format_text('<p>:-)</p>', FORMAT_HTML));
     }
 
@@ -68,7 +68,7 @@ class core_weblib_format_text_testcase extends advanced_testcase {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertRegExp('~^<p><em><img class="icon emoticon" alt="smile" title="smile" ' .
-                'src="http://www.example.com/moodle/theme/image.php/_s/boost/core/1/s/smiley" />' .
+                'src="https://www.example.com/moodle/theme/image.php/_s/boost/core/1/s/smiley" />' .
                 '</em></p>\n$~',
                 format_text('*:-)*', FORMAT_MARKDOWN));
     }
@@ -85,7 +85,7 @@ class core_weblib_format_text_testcase extends advanced_testcase {
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertRegExp('~^<div class="text_to_html"><p>' .
                 '<img class="icon emoticon" alt="smile" title="smile" ' .
-                'src="http://www.example.com/moodle/theme/image.php/_s/boost/core/1/s/smiley" /></p></div>$~',
+                'src="https://www.example.com/moodle/theme/image.php/_s/boost/core/1/s/smiley" /></p></div>$~',
                 format_text('<p>:-)</p>', FORMAT_MOODLE));
     }
 
