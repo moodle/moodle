@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
   Plugins should use a settings.php file to manage configurations rather than using the config.html files.
 * The function 'print_auth_lock_options' has been replaced by 'display_auth_lock_options' which uses the admin settings API.
   See auth_manual as an exmple of how it can be used.  More information can be found in MDL-12689.
+* The list of supported identity providers (SSO IdP) returned by the 'loginpage_idp_list' method (used to render the
+  login page and login block links) now supports a new key 'iconurl' which should be used instead of the legacy 'icon'.
 
 === 3.2 ===
 

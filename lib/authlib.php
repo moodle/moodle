@@ -561,18 +561,25 @@ class auth_plugin_base {
 
     /**
      * Returns a list of potential IdPs that this authentication plugin supports.
-     * This is used to provide links on the login page.
      *
-     * @param string $wantsurl the relative url fragment the user wants to get to.  You can use this to compose a returnurl, for example
+     * This is used to provide links on the login page and the login block.
      *
-     * @return array like:
-     *              array(
-     *                  array(
-     *                      'url' => 'http://someurl',
-     *                      'icon' => new pix_icon(...),
-     *                      'name' => get_string('somename', 'auth_yourplugin'),
-     *                 ),
-     *             )
+     * The parameter $wantsurl is typically used by the plugin to implement a
+     * return-url feature.
+     *
+     * The returned value is expected to be a list of associative arrays with
+     * string keys:
+     *
+     * - url => (moodle_url|string) URL of the page to send the user to for authentication
+     * - name => (string) Human readable name of the IdP
+     * - iconurl => (moodle_url|string) URL of the icon representing the IdP (since Moodle 3.3)
+     *
+     * For legacy reasons, pre-3.3 plugins can provide the icon via the key:
+     *
+     * - icon => (pix_icon) Icon representing the IdP
+     *
+     * @param string $wantsurl The relative url fragment the user wants to get to.
+     * @return array List of associative arrays with keys url, name, iconurl|icon
      */
     function loginpage_idp_list($wantsurl) {
         return array();
@@ -614,10 +621,12 @@ class auth_plugin_base {
     /**
      * Return the list of enabled identity providers.
      *
-     * Each identity provider data contains the keys 'url' (string), 'name' (string) and 'icon' (pix_icon).
+     * Each identity provider data contains the keys url, name and iconurl (or
+     * icon). See the documentation of {@link auth_plugin_base::loginpage_idp_list()}
+     * for detailed description of the returned structure.
      *
      * @param array $authsequence site's auth sequence (list of auth plugins ordered)
-     * @return array an array of enabled identity providers
+     * @return array List of arrays describing the identity providers
      */
     public static function get_identity_providers($authsequence) {
         global $SESSION;
@@ -634,7 +643,7 @@ class auth_plugin_base {
     /**
      * Prepare a list of identity providers for output.
      *
-     * @param array $identityproviders
+     * @param array $identityproviders as returned by {@link self::get_identity_providers()}
      * @param renderer_base $output
      * @return array the identity providers ready for output
      */
@@ -642,8 +651,10 @@ class auth_plugin_base {
         $data = [];
         foreach ($identityproviders as $idp) {
             if (!empty($idp['icon'])) {
+                // Pre-3.3 auth plugins provide icon as a pix_icon instance.
                 $idp['iconurl'] = $output->image_url($idp['icon']->key, $idp['icon']->component);
             } else if ($idp['iconurl'] instanceof moodle_url) {
+                // New auth plugins (since 3.3) provide iconurl.
                 $idp['iconurl'] = $idp['iconurl']->out(false);
             }
             unset($idp['icon']);

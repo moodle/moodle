@@ -179,7 +179,7 @@ class auth extends \auth_plugin_base {
      * Return a list of identity providers to display on the login page.
      *
      * @param string|moodle_url $wantsurl The requested URL.
-     * @return array (containing url, iconurl and name).
+     * @return array List of arrays with keys url, iconurl and name.
      */
     public function loginpage_idp_list($wantsurl) {
         $providers = \core\oauth2\api::get_all_issuers();
