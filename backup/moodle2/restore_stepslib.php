@@ -3272,14 +3272,14 @@ class restore_course_competencies_structure_step extends restore_structure_step 
             return;
         }
         $competency = \core_competency\competency::get_record(array('idnumber' => $data->idnumber,
-            'competencyframeworkid' => $framework->get_id()));
+            'competencyframeworkid' => $framework->get('id')));
         if (!$competency) {
             return;
         }
-        $this->set_mapping(\core_competency\competency::TABLE, $data->id, $competency->get_id());
+        $this->set_mapping(\core_competency\competency::TABLE, $data->id, $competency->get('id'));
 
         $params = array(
-            'competencyid' => $competency->get_id(),
+            'competencyid' => $competency->get('id'),
             'courseid' => $this->task->get_courseid()
         );
         $query = 'competencyid = :competencyid AND courseid = :courseid';
@@ -3383,13 +3383,13 @@ class restore_activity_competencies_structure_step extends restore_structure_ste
             return;
         }
         $competency = \core_competency\competency::get_record(array('idnumber' => $data->idnumber,
-            'competencyframeworkid' => $framework->get_id()));
+            'competencyframeworkid' => $framework->get('id')));
         if (!$competency) {
             return;
         }
 
         $params = array(
-            'competencyid' => $competency->get_id(),
+            'competencyid' => $competency->get('id'),
             'cmid' => $this->task->get_moduleid()
         );
         $query = 'competencyid = :competencyid AND cmid = :cmid';
