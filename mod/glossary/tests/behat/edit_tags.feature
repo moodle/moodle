@@ -43,7 +43,6 @@ Feature: Edited glossary entries handle tags correctly
     Then I should see "Entry" in the ".form-autocomplete-selection" "css_element"
     Then I should see "Cool" in the ".form-autocomplete-selection" "css_element"
 
-  @javascript
   Scenario: Glossary entry edition of standard tags works as expected
     Given I log in as "admin"
     And I navigate to "Appearance > Manage tags" in site administration
