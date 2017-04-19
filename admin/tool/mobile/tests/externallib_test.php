@@ -183,9 +183,6 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue(isset($token->privatetoken));
 
         // Enable requeriments.
-        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->httpswwwroot);    // Mock https.
-        $CFG->enablewebservices = 1;
-        $CFG->enablemobilewebservice = 1;
         $_GET['wstoken'] = $token->token;   // Mock parameters.
 
         // Even if we force the password change for the current user we should be able to retrieve the key.
@@ -212,7 +209,12 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
      * Test get_autologin_key missing ws.
      */
     public function test_get_autologin_key_missing_ws() {
+        global $CFG;
         $this->resetAfterTest(true);
+
+        // Need to disable webservices to verify that's checked.
+        $CFG->enablewebservices = 0;
+        $CFG->enablemobilewebservice = 0;
 
         $this->setAdminUser();
         $this->expectException('moodle_exception');
@@ -226,10 +228,12 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
     public function test_get_autologin_key_missing_https() {
         global $CFG;
 
+        // Need to simulate a non HTTPS site here.
+        $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
+        $CFG->httpswwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
+
         $this->resetAfterTest(true);
         $this->setAdminUser();
-        $CFG->enablewebservices = 1;
-        $CFG->enablemobilewebservice = 1;
 
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage(get_string('httpsrequired', 'tool_mobile'));
@@ -244,9 +248,6 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
-        $CFG->enablewebservices = 1;
-        $CFG->enablemobilewebservice = 1;
-        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->httpswwwroot);
 
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage(get_string('autologinnotallowedtoadmins', 'tool_mobile'));
@@ -262,9 +263,6 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
-        $CFG->enablewebservices = 1;
-        $CFG->enablemobilewebservice = 1;
-        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->httpswwwroot);
 
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
 

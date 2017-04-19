@@ -180,7 +180,7 @@ class page_requirements_manager {
         $this->yui3loader = new stdClass();
         $this->YUI_config = new YUI_config();
 
-        if (is_https()) {
+        if (is_https() && !empty($CFG->useexternalyui)) {
             // On HTTPS sites all JS must be loaded from https sites,
             // YUI CDN does not support https yet, sorry.
             $CFG->useexternalyui = 0;

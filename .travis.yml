@@ -16,6 +16,9 @@ php:
     - 7.1
     - 5.6
 
+addons:
+  postgresql: "9.3"
+
 services:
     - redis-server
 
@@ -114,7 +117,7 @@ before_script:
 
         # The wwwroot and dataroot.
         sed -i \
-          -e "s%http://example.com/moodle%http://localhost%" \
+          -e "s%http://example.com/moodle%https://localhost%" \
           -e "s%/home/example/moodledata%/home/travis/roots/base%" \
           config.php ;
 
