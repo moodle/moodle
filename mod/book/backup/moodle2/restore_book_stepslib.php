@@ -37,7 +37,7 @@ class restore_book_activity_structure_step extends restore_activity_structure_st
         $paths[] = new restore_path_element('book_chapter', '/activity/book/chapters/chapter');
 
         if ($userinfo) {
-            $paths[] = new restore_path_element('book_tag', '/activity/book/chapters/chapter/tags/tag');
+            $paths[] = new restore_path_element('book_chapter_tag', '/activity/book/chaptertags/tag');
         }
 
         // Return the paths wrapped into standard activity structure
@@ -76,7 +76,7 @@ class restore_book_activity_structure_step extends restore_activity_structure_st
         $this->set_mapping('book_chapter', $oldid, $newitemid, true);
     }
 
-    protected function process_book_tag($data) {
+    protected function process_book_chapter_tag($data) {
         $data = (object)$data;
 
         if (!core_tag_tag::is_enabled('mod_book', 'book_chapters')) { // Tags disabled in server, nothing to process.
@@ -84,7 +84,10 @@ class restore_book_activity_structure_step extends restore_activity_structure_st
         }
 
         $tag = $data->rawname;
-        $itemid = $this->get_new_parentid('book_chapter');
+
+        if (!$itemid = $this->get_mappingid('book_chapter', $data->itemid)) {
+            return;
+        }
 
         $context = context_module::instance($this->task->get_moduleid());
         core_tag_tag::add_item_tag('mod_book', 'book_chapters', $itemid, $context, $tag);
