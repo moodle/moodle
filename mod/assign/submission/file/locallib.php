@@ -678,15 +678,10 @@ class assign_submission_file extends assign_submission_plugin {
     private function get_nonexistent_file_types($types) {
         $nonexistent = [];
         foreach ($this->get_typesets($types) as $type) {
-            $coretypes = core_filetypes::get_types();
-            // We can allow any extension, but validate groups & mimetypes.
-            if (strpos($type, '.') === false) {
-                // If there's no dot, check if it's a group.
-                $extensions = file_get_typegroup('extension', [$type]);
-                if (empty($extensions)) {
-                    // If there's no extensions under that group, it doesn't exist.
-                    $nonexistent[$type] = true;
-                }
+            // If there's no extensions under that group, it doesn't exist.
+            $extensions = file_get_typegroup('extension', [$type]);
+            if (empty($extensions)) {
+                $nonexistent[$type] = true;
             }
         }
         return array_keys($nonexistent);

@@ -30,7 +30,7 @@ Feature: In an assignment, limit submittable file types
     And I navigate to "Edit settings" in current page administration
     When I set the field "Accepted file types" to "image/png;doesntexist;.anything;unreal/mimetype;nodot"
     And I press "Save and display"
-    And I should see "The following file types were not recognised: doesntexist unreal/mimetype nodot"
+    And I should see "The following file types were not recognised: doesntexist .anything unreal/mimetype nodot"
     And I set the field "Accepted file types" to "image/png;spreadsheet"
     And I press "Save and display"
     And I navigate to "Edit settings" in current page administration
