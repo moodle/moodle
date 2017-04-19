@@ -110,7 +110,11 @@ class mod_quiz_external extends external_api {
 
                     $quizdetails['introfiles'] = external_util::get_area_files($context->id, 'mod_quiz', 'intro', false, false);
                     $viewablefields = array('timeopen', 'timeclose', 'grademethod', 'section', 'visible', 'groupmode',
-                                            'groupingid');
+                                            'groupingid', 'attempts', 'timelimit', 'grademethod', 'decimalpoints',
+                                            'questiondecimalpoints', 'sumgrades', 'grade', 'preferredbehaviour');
+                    // Some times this function returns just empty.
+                    $hasfeedback = quiz_has_feedback($quiz);
+                    $quizdetails['hasfeedback'] = (!empty($hasfeedback)) ? 1 : 0;
 
                     $timenow = time();
                     $quizobj = quiz::create($quiz->id, $USER->id);
@@ -119,20 +123,15 @@ class mod_quiz_external extends external_api {
 
                     // Fields the user could see if have access to the quiz.
                     if (!$accessmanager->prevent_access()) {
-                        // Some times this function returns just empty.
-                        $hasfeedback = quiz_has_feedback($quiz);
-                        $quizdetails['hasfeedback'] = (!empty($hasfeedback)) ? 1 : 0;
                         $quizdetails['hasquestions'] = (int) $quizobj->has_questions();
                         $quizdetails['autosaveperiod'] = get_config('quiz', 'autosaveperiod');
 
-                        $additionalfields = array('timelimit', 'attempts', 'attemptonlast', 'grademethod', 'decimalpoints',
-                                                    'questiondecimalpoints', 'reviewattempt', 'reviewcorrectness', 'reviewmarks',
+                        $additionalfields = array('attemptonlast', 'reviewattempt', 'reviewcorrectness', 'reviewmarks',
                                                     'reviewspecificfeedback', 'reviewgeneralfeedback', 'reviewrightanswer',
-                                                    'reviewoverallfeedback', 'questionsperpage', 'navmethod', 'sumgrades', 'grade',
+                                                    'reviewoverallfeedback', 'questionsperpage', 'navmethod',
                                                     'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
                                                     'completionattemptsexhausted', 'completionpass', 'overduehandling',
-                                                    'graceperiod', 'preferredbehaviour', 'canredoquestions',
-                                                    'allowofflineattempts');
+                                                    'graceperiod', 'canredoquestions', 'allowofflineattempts');
                         $viewablefields = array_merge($viewablefields, $additionalfields);
                     }
 
