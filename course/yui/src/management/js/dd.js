@@ -69,6 +69,10 @@ DragDrop.prototype = {
             return false;
         }
 
+        while (contstraint.get('scrollHeight') === 0 && !contstraint.compareTo(window.document.body)) {
+            contstraint = contstraint.get('parentNode');
+        }
+
         courseul.all('> li').each(function(li) {
             this.initCourseListing(li, contstraint);
         }, this);
