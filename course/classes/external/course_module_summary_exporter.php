@@ -40,11 +40,10 @@ class course_module_summary_exporter extends \core\external\exporter {
 
     protected function get_other_values(renderer_base $output) {
         $cm = $this->related['cm'];
-        $context = $cm->context;
 
         $values = array(
             'id' => $cm->id,
-            'name' => external_format_string($cm->name, $context->id),
+            'name' => $cm->name,
             'iconurl' => $cm->get_icon_url()->out()
         );
         if ($cm->url) {
@@ -53,6 +52,18 @@ class course_module_summary_exporter extends \core\external\exporter {
         return $values;
     }
 
+    /**
+     * Get the format parameters for name.
+     *
+     * @return array
+     */
+    protected function get_format_parameters_for_name() {
+        $cm = $this->related['cm'];
+        $context = $cm->context;
+        return [
+            'context' => $context,
+        ];
+    }
 
     public static function define_other_properties() {
         return array(
