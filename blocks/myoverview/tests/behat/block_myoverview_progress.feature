@@ -1,5 +1,5 @@
 @block @block_myoverview @javascript
-Feature: My overview block show users their progress on courses
+Feature: Course overview block show users their progress on courses
   In order to enable the my overview block in a course
   As a student
   I can see the progress percentage of the courses I am enrolled in
@@ -22,14 +22,14 @@ Feature: My overview block show users their progress on courses
 
   Scenario: Course progress percentage should not be displayed if completion is not enabled
     Given I log in as "student1"
-    And I click on "Timeline" "link" in the "My overview" "block"
-    When I click on "Sort by courses" "link" in the "My overview" "block"
-    Then I should see "Choice Test choice 1 closes" in the "My overview" "block"
-    And I should not see "0%" in the "My overview" "block"
-    And I click on "Courses" "link" in the "My overview" "block"
-    And I click on "In progress" "link" in the "My overview" "block"
-    And I should see "Course 1" in the "My overview" "block"
-    And I should not see "0%" in the "My overview" "block"
+    And I click on "Timeline" "link" in the "Course overview" "block"
+    When I click on "Sort by courses" "link" in the "Course overview" "block"
+    Then I should see "Choice Test choice 1 closes" in the "Course overview" "block"
+    And I should not see "0%" in the "Course overview" "block"
+    And I click on "Courses" "link" in the "Course overview" "block"
+    And I click on "In progress" "link" in the "Course overview" "block"
+    And I should see "Course 1" in the "Course overview" "block"
+    And I should not see "0%" in the "Course overview" "block"
     And I log out
 
   Scenario: User complete activity and verify his progress
@@ -43,20 +43,20 @@ Feature: My overview block show users their progress on courses
     And I press "Save and return to course"
     And I log out
     And I log in as "student1"
-    And I click on "Sort by courses" "link" in the "My overview" "block"
-    And I should see "Choice Test choice 1 closes" in the "My overview" "block"
-    And I should see "0%" in the "My overview" "block"
-    And I click on "Courses" "link" in the "My overview" "block"
-    When I click on "In progress" "link" in the "My overview" "block"
-    Then I should see "Course 1" in the "My overview" "block"
-    And I should see "0%" in the "My overview" "block"
+    And I click on "Sort by courses" "link" in the "Course overview" "block"
+    And I should see "Choice Test choice 1 closes" in the "Course overview" "block"
+    And I should see "0%" in the "Course overview" "block"
+    And I click on "Courses" "link" in the "Course overview" "block"
+    When I click on "In progress" "link" in the "Course overview" "block"
+    Then I should see "Course 1" in the "Course overview" "block"
+    And I should see "0%" in the "Course overview" "block"
     And I am on "Course 1" course homepage
     And I follow "Test choice 1"
     And I follow "Dashboard" in the user menu
-    And I click on "Sort by courses" "link" in the "My overview" "block"
-    And I should see "100%" in the "My overview" "block"
-    And I click on "Courses" "link" in the "My overview" "block"
-    And I click on "In progress" "link" in the "My overview" "block"
-    And I should see "Course 1" in the "My overview" "block"
-    And I should see "100%" in the "My overview" "block"
+    And I click on "Sort by courses" "link" in the "Course overview" "block"
+    And I should see "100%" in the "Course overview" "block"
+    And I click on "Courses" "link" in the "Course overview" "block"
+    And I click on "In progress" "link" in the "Course overview" "block"
+    And I should see "Course 1" in the "Course overview" "block"
+    And I should see "100%" in the "Course overview" "block"
     And I log out

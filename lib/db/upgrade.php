@@ -2613,7 +2613,7 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2017040400.00) {
 
-        // If the 'Course overview' block is no longer present, replace with the 'My overview' block.
+        // If block_course_overview is no longer present, replace with block_myoverview.
         if (!file_exists($CFG->dirroot . '/blocks/course_overview/block_course_overview.php')) {
             $DB->set_field('block_instances', 'blockname', 'myoverview', array('blockname' => 'course_overview'));
         }
@@ -2623,10 +2623,10 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2017040401.00) {
 
-        // If the 'Course overview' block is no longer present, remove it.
+        // If block_course_overview is no longer present, remove it.
         // Note - we do not need to completely remove the block context etc because we
-        // have replaced all occurrences of the 'Course overview' block with the 'My overview'
-        // block in the upgrade step above.
+        // have replaced all occurrences of block_course_overview with block_myoverview
+        // in the upgrade step above.
         if (!file_exists($CFG->dirroot . '/blocks/course_overview/block_course_overview.php')) {
             // Delete the block from the block table.
             $DB->delete_records('block', array('name' => 'course_overview'));
