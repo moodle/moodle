@@ -53,11 +53,11 @@ $action = (empty($id)) ? 'add' : 'edit';
 
 $external = new stdClass();
 
-// Check that this id exists.
-if (!empty($id) && !$DB->record_exists('blog_external', array('id' => $id))) {
-    print_error('wrongexternalid', 'blog');
-} else if (!empty($id)) {
-    $external = $DB->get_record('blog_external', array('id' => $id));
+// Retrieve the external blog record.
+if (!empty($id)) {
+    if (!$external = $DB->get_record('blog_external', array('id' => $id, 'userid' => $USER->id))) {
+        print_error('wrongexternalid', 'blog');
+    }
 }
 
 $strformheading = ($action == 'edit') ? get_string('editexternalblog', 'blog') : get_string('addnewexternalblog', 'blog');
