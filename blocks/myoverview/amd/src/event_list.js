@@ -222,12 +222,13 @@ define(['jquery', 'core/notification', 'core/templates',
      *
      * @method eventBelongsInContainer
      * @private
+     * @param {object} root         The root element
      * @param {object} event        The calendar event
      * @param {object} container    The group event list container
      * @return {bool}
      */
-    var eventBelongsInContainer = function(event, container) {
-        var todayTime = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000),
+    var eventBelongsInContainer = function(root, event, container) {
+        var todayTime = root.attr('data-midnight'),
             timeUntilContainerStart = +container.attr('data-start-day') * SECONDS_IN_DAY,
             timeUntilContainerEnd = +container.attr('data-end-day') * SECONDS_IN_DAY,
             timeUntilEventNeedsAction = timeUntilEvent(todayTime, event);
@@ -246,12 +247,13 @@ define(['jquery', 'core/notification', 'core/templates',
      *
      * @method getFilterCallbackForContainer
      * @private
+     * @param {object} root      The root element
      * @param {object} container Event list group container
      * @return {function}
      */
-    var getFilterCallbackForContainer = function(container) {
+    var getFilterCallbackForContainer = function(root, container) {
         return function(event) {
-            return eventBelongsInContainer(event, $(container));
+            return eventBelongsInContainer(root, event, $(container));
         };
     };
 
@@ -278,7 +280,7 @@ define(['jquery', 'core/notification', 'core/templates',
         // that belong to that group (as defined by the group's day range). The matching
         // list of calendar events are rendered and added to the DOM within that group.
         return $.when.apply($, $.map(root.find(SELECTORS.EVENT_LIST_GROUP_CONTAINER), function(container) {
-            var events = calendarEvents.filter(getFilterCallbackForContainer(container));
+            var events = calendarEvents.filter(getFilterCallbackForContainer(root, container));
 
             if (events.length) {
                 renderCount += events.length;
@@ -314,12 +316,8 @@ define(['jquery', 'core/notification', 'core/templates',
         var limit = +root.attr('data-limit'),
             courseId = +root.attr('data-course-id'),
             lastId = root.attr('data-last-id'),
-            date = new Date(),
-            startTime;
-
-        date.setDate(date.getDate() - 14);
-        date.setHours(0, 0, 0, 0);
-        startTime = Math.floor(date / 1000);
+            midnight = root.attr('data-midnight'),
+            startTime = midnight - (14 * SECONDS_IN_DAY);
 
         // Don't load twice.
         if (isLoading(root)) {
