@@ -349,23 +349,6 @@ class format_weeks extends format_base {
                 }
             }
         }
-
-        if ($data['automaticenddate']) {
-            $startdate = $data['startdate'];
-            if (!empty($data['numsections'])) {
-                $numsections = $data['numsections'];
-            } else if ($this->get_courseid()) {
-                // For existing courses get the number of sections.
-                $numsections = $this->get_last_section_number();
-            } else {
-                // Fallback to the default value for new courses.
-                $numsections = get_config('moodlecourse', 'numsections');
-            }
-
-            // Final week's last day.
-            $dates = $this->get_section_dates(intval($numsections), $startdate);
-            $data['enddate'] = $dates->end;
-        }
         return $this->update_format_options($data);
     }
 
@@ -518,6 +501,29 @@ class format_weeks extends format_base {
         $renderer = $PAGE->get_renderer('format_weeks');
         $rv['section_availability'] = $renderer->section_availability($this->get_section($section));
         return $rv;
+    }
+
+    /**
+     * Updates the end date for a course.
+     */
+    public function update_end_date() {
+        global $DB;
+
+        $options = $this->get_format_options();
+        // Check that the course format for setting an automatic date is set.
+        if (!empty($options['automaticenddate'])) {
+            // Now, check how many sections for this course were created.
+            $numsections = $DB->count_records('course_sections', array('course' => $this->get_courseid()));
+
+            // The first section is not a week related section, it is the 'General' section which can not be deleted.
+            $numsections--;
+
+            // Get the final week's last day.
+            $dates = $this->get_section_dates($numsections);
+
+            // Set the course end date.
+            $DB->set_field('course', 'enddate', $dates->end, array('id' => $this->get_courseid()));
+        }
     }
 }
 
