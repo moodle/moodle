@@ -2247,6 +2247,27 @@ function check_mysql_incomplete_unicode_support(environment_results $result) {
 }
 
 /**
+ * Check if the site is being served using an ssl url.
+ *
+ * Note this does not really perform any request neither looks for proxies or
+ * other situations. Just looks to wwwroot and warn if it's not using https.
+ *
+ * @param  environment_results $result $result
+ * @return environment_results|null updated results object, or null if the site is https.
+ */
+function check_is_https(environment_results $result) {
+    global $CFG;
+
+    // Only if is defined, non-empty and whatever core tell us.
+    if (!empty($CFG->wwwroot) && !is_https()) {
+        $result->setInfo('site not https');
+        $result->setStatus(false);
+        return $result;
+    }
+    return null;
+}
+
+/**
  * Upgrade the minmaxgrade setting.
  *
  * This step should only be run for sites running 2.8 or later. Sites using 2.7 will be fine
