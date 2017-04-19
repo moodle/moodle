@@ -189,15 +189,16 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
-        $allusersfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'timeopen', 'timeclose',
-                                'grademethod', 'section', 'visible', 'groupmode', 'groupingid');
-        $userswithaccessfields = array('timelimit', 'attempts', 'attemptonlast', 'grademethod', 'decimalpoints',
-                                        'questiondecimalpoints', 'reviewattempt', 'reviewcorrectness', 'reviewmarks',
+        $allusersfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'timeopen',
+                                'timeclose', 'grademethod', 'section', 'visible', 'groupmode', 'groupingid',
+                                'attempts', 'timelimit', 'grademethod', 'decimalpoints', 'questiondecimalpoints', 'sumgrades',
+                                'grade', 'preferredbehaviour', 'hasfeedback');
+        $userswithaccessfields = array('attemptonlast', 'reviewattempt', 'reviewcorrectness', 'reviewmarks',
                                         'reviewspecificfeedback', 'reviewgeneralfeedback', 'reviewrightanswer',
-                                        'reviewoverallfeedback', 'questionsperpage', 'navmethod', 'sumgrades', 'grade',
+                                        'reviewoverallfeedback', 'questionsperpage', 'navmethod',
                                         'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
                                         'completionattemptsexhausted', 'completionpass', 'autosaveperiod', 'hasquestions',
-                                        'hasfeedback', 'overduehandling', 'graceperiod', 'preferredbehaviour', 'canredoquestions');
+                                        'overduehandling', 'graceperiod', 'canredoquestions');
         $managerfields = array('shuffleanswers', 'timecreated', 'timemodified', 'password', 'subnet');
 
         // Add expected coursemodule and other data.
