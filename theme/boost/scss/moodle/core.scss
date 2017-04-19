@@ -1720,6 +1720,7 @@ ul.badges {
     display: inline-block;
     vertical-align: top;
     margin-top: 17px;
+    margin-bottom: 20px;
 
     .expireimage {
         width: 100px;
@@ -1733,9 +1734,10 @@ ul.badges {
 
     .singlebutton {
         padding-top: 5px;
+        display: block;
 
-        input {
-            margin-left: 0;
+        button {
+            margin-left: 4px;
         }
     }
 }
