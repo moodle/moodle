@@ -328,7 +328,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_lesson_access_information.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_lesson_access_information_parameters() {
@@ -424,7 +424,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for view_lesson.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function view_lesson_parameters() {
@@ -440,7 +440,7 @@ class mod_lesson_external extends external_api {
      * Trigger the course module viewed event and update the module completion status.
      *
      * @param int $lessonid lesson instance id
-     * @param str $password optional password (the lesson may be protected)
+     * @param string $password optional password (the lesson may be protected)
      * @return array of warnings and status result
      * @since Moodle 3.3
      * @throws moodle_exception
@@ -501,7 +501,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_questions_attempts.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_questions_attempts_parameters() {
@@ -592,7 +592,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_user_grade.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_user_grade_parameters() {
@@ -700,7 +700,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_user_attempt_grade.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_user_attempt_grade_parameters() {
@@ -771,7 +771,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_content_pages_viewed.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_content_pages_viewed_parameters() {
@@ -857,7 +857,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_user_timers.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_user_timers_parameters() {
@@ -1003,7 +1003,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_pages.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_pages_parameters() {
@@ -1019,7 +1019,7 @@ class mod_lesson_external extends external_api {
      * Return the list of pages in a lesson (based on the user permissions).
      *
      * @param int $lessonid lesson instance id
-     * @param str $password optional password (the lesson may be protected)
+     * @param string $password optional password (the lesson may be protected)
      * @return array of warnings and status result
      * @since Moodle 3.3
      * @throws moodle_exception
@@ -1106,7 +1106,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for launch_attempt.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function launch_attempt_parameters() {
@@ -1160,7 +1160,7 @@ class mod_lesson_external extends external_api {
      * Starts a new attempt or continues an existing one.
      *
      * @param int $lessonid lesson instance id
-     * @param str $password optional password (the lesson may be protected)
+     * @param string $password optional password (the lesson may be protected)
      * @param int $pageid page id to continue from (only when continuing an attempt)
      * @param bool $review if we want to review just after finishing
      * @return array of warnings and status result
@@ -1229,7 +1229,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_page_data.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_page_data_parameters() {
@@ -1251,7 +1251,7 @@ class mod_lesson_external extends external_api {
      *
      * @param int $lessonid lesson instance id
      * @param int $pageid page id
-     * @param str $password optional password (the lesson may be protected)
+     * @param string $password optional password (the lesson may be protected)
      * @param bool $review if we want to review just after finishing (1 hour margin)
      * @param bool $returncontents if we must return the complete page contents once rendered
      * @return array of warnings and status result
@@ -1259,7 +1259,7 @@ class mod_lesson_external extends external_api {
      * @throws moodle_exception
      */
     public static function get_page_data($lessonid, $pageid,  $password = '', $review = false, $returncontents = false) {
-        global $PAGE;
+        global $PAGE, $USER;
 
         $params = array('lessonid' => $lessonid, 'password' => $password, 'pageid' => $pageid, 'review' => $review,
             'returncontents' => $returncontents);
@@ -1398,7 +1398,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for process_page.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function process_page_parameters() {
@@ -1427,7 +1427,7 @@ class mod_lesson_external extends external_api {
      * @param int $lessonid lesson instance id
      * @param int $pageid page id
      * @param array $data the data to be saved
-     * @param str $password optional password (the lesson may be protected)
+     * @param string $password optional password (the lesson may be protected)
      * @param bool $review if we want to review just after finishing (1 hour margin)
      * @return array of warnings and status result
      * @since Moodle 3.3
@@ -1540,7 +1540,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for finish_attempt.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function finish_attempt_parameters() {
@@ -1559,7 +1559,7 @@ class mod_lesson_external extends external_api {
      * Finishes the current attempt.
      *
      * @param int $lessonid lesson instance id
-     * @param str $password optional password (the lesson may be protected)
+     * @param string $password optional password (the lesson may be protected)
      * @param bool $outoftime optional if the user run out of time
      * @param bool $review if we want to review just after finishing (1 hour margin)
      * @return array of warnings and information about the finished attempt
@@ -1655,7 +1655,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_attempts_overview.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_attempts_overview_parameters() {
@@ -1766,7 +1766,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_user_attempt.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_user_attempt_parameters() {
@@ -1869,7 +1869,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_pages_possible_jumps.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_pages_possible_jumps_parameters() {
@@ -1964,7 +1964,7 @@ class mod_lesson_external extends external_api {
     /**
      * Describes the parameters for get_lesson.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.3
      */
     public static function get_lesson_parameters() {
@@ -1980,7 +1980,7 @@ class mod_lesson_external extends external_api {
      * Return information of a given lesson.
      *
      * @param int $lessonid lesson instance id
-     * @param str $password optional password (the lesson may be protected)
+     * @param string $password optional password (the lesson may be protected)
      * @return array of warnings and status result
      * @since Moodle 3.3
      * @throws moodle_exception

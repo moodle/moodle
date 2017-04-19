@@ -3305,7 +3305,7 @@ class lesson extends lesson_base {
             }
             // Inform teacher that s/he will not see the timer.
             if ($this->properties->timelimit) {
-                $lesson->add_message(get_string("teachertimerwarning", "lesson"));
+                $this->add_message(get_string("teachertimerwarning", "lesson"));
             }
         }
         // Report attempts remaining.
