@@ -81,8 +81,11 @@ if ($mform->is_cancelled()){
         redirect("view.php?id=$cm->id");
     }
 
-} else if ($entry = $mform->get_data()) {
-    $entry = glossary_edit_entry($entry, $course, $cm, $glossary, $context);
+} else if ($data = $mform->get_data()) {
+    $entry = glossary_edit_entry($data, $course, $cm, $glossary, $context);
+    if (core_tag_tag::is_enabled('mod_glossary', 'glossary_entries') && isset($data->tags)) {
+        core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $data->id, $context, $data->tags);
+    }
     redirect("view.php?id=$cm->id&mode=entry&hook=$entry->id");
 }
 
@@ -97,6 +100,10 @@ echo $OUTPUT->heading(format_string($glossary->name), 2);
 if ($glossary->intro) {
     echo $OUTPUT->box(format_module_intro('glossary', $glossary, $cm->id), 'generalbox', 'intro');
 }
+
+$data = new StdClass();
+$data->tags = core_tag_tag::get_item_tags_array('mod_glossary', 'glossary_entries', $id);
+$mform->set_data($data);
 
 $mform->display();
 

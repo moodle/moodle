@@ -15,16 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Glossary module version information
+ * Tag areas in component mod_glossary
  *
- * @package mod_glossary
- * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_glossary
+ * @copyright 2017 Andrew Hancox <andrewdchancox@googlemail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016120502;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016112900;    // Requires this Moodle version
-$plugin->component = 'mod_glossary';   // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+
+$tagareas = array(
+    array(
+        'itemtype' => 'glossary_entries',
+        'component' => 'mod_glossary',
+        'callback' => 'mod_glossary_get_tagged_entries',
+        'callbackfile' => '/mod/glossary/locallib.php',
+    ),
+);
