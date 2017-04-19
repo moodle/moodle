@@ -159,24 +159,21 @@ class mod_data_mod_form extends moodleform_mod {
     }
 
     /**
-     * Turn off this completion setting if the checkbox is not ticked
+     * Allows modules to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
      *
-     * @return boolean indicates if any data was submitted
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
      */
-    public function get_data() {
-        $data = parent::get_data();
-        if (!$data) {
-            return false;
-        }
-
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
         if (!empty($data->completionunlocked)) {
             $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
             if (empty($data->completionentriesenabled) || !$autocompletion) {
                 $data->completionentries = 0;
             }
         }
-
-        return $data;
     }
 
 }

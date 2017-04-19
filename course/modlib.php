@@ -760,6 +760,12 @@ function prepare_new_moduleinfo_data($course, $modulename, $section) {
     $data->instance         = '';
     $data->coursemodule     = '';
 
+    // Apply completion defaults.
+    $defaults = \core_completion\manager::get_default_completion($course, $module);
+    foreach ($defaults as $key => $value) {
+        $data->$key = $value;
+    }
+
     if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
         $draftid_editor = file_get_submitted_draft_itemid('introeditor');
         file_prepare_draft_area($draftid_editor, null, null, null, null, array('subdirs'=>true));

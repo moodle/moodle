@@ -105,6 +105,7 @@ $string['completethefollowingconditions'] = 'You must complete the following con
 $string['completionendreached'] = 'Require end reached';
 $string['completionendreached_desc'] = 'Student must reach the end of lesson page to complete this activity';
 $string['completiontimespent'] = 'Student must do this activity at least for';
+$string['completiontimespentdesc'] = 'Student must do this activity for at least {$a}';
 $string['completiontimespentgroup'] = 'Require time spent';
 $string['conditionsfordependency'] = 'Condition(s) for the dependency';
 $string['configintro'] = 'The values set here define the default values that are used in the settings form when creating a new lesson activity. Settings specified as advanced are only shown when the \'Show more...\' link is clicked.';

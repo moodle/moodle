@@ -1,6 +1,8 @@
 <?php
 require_once ($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/completionlib.php');
+require_once($CFG->libdir.'/gradelib.php');
+require_once($CFG->libdir.'/plagiarismlib.php');
 
 /**
  * This class adds extra methods to form wrapper specific to be used for module
@@ -181,6 +183,9 @@ abstract class moodleform_mod extends moodleform {
     }
 
     /**
+     * Allows module to modify data returned by get_moduleinfo_data() or prepare_new_moduleinfo_data() before calling set_data()
+     * This method is also called in the bulk activity completion form.
+     *
      * Only available on moodleform_mod.
      *
      * @param array $default_values passed by reference
@@ -926,7 +931,7 @@ abstract class moodleform_mod extends moodleform {
         // If the 'show description' feature is enabled, this checkbox appears below the intro.
         // We want to hide that when using the singleactivity course format because it is confusing.
         if ($this->_features->showdescription  && $this->courseformat->has_view_page()) {
-            $mform->addElement('checkbox', 'showdescription', get_string('showdescription'));
+            $mform->addElement('advcheckbox', 'showdescription', get_string('showdescription'));
             $mform->addHelpButton('showdescription', 'showdescription');
         }
     }
@@ -1063,6 +1068,40 @@ abstract class moodleform_mod extends moodleform {
                 }
             }
         }
+    }
+
+    /**
+     * Allows modules to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data passed by reference
+     */
+    public function data_postprocessing($data) {
+    }
+
+    /**
+     * Return submitted data if properly submitted or returns NULL if validation fails or
+     * if there is no submitted data.
+     *
+     * Do not override this method, override data_postprocessing() instead.
+     *
+     * @return object submitted data; NULL if not valid or not submitted or cancelled
+     */
+    public function get_data() {
+        $data = parent::get_data();
+        if ($data) {
+            // Convert the grade pass value - we may be using a language which uses commas,
+            // rather than decimal points, in numbers. These need to be converted so that
+            // they can be added to the DB.
+            if (isset($data->gradepass)) {
+                $data->gradepass = unformat_float($data->gradepass);
+            }
+
+            $this->data_postprocessing($data);
+        }
+        return $data;
     }
 }
 

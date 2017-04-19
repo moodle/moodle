@@ -8228,3 +8228,76 @@ function mod_forum_core_calendar_provide_event_action(calendar_event $event,
         true
     );
 }
+
+/**
+ * Add a get_coursemodule_info function in case any forum type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function forum_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $dbparams = ['id' => $coursemodule->instance];
+    $fields = 'id, completionposts, completiondiscussions, completionreplies';
+    if (!$forum = $DB->get_record('forum', $dbparams, $fields)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['completiondiscussions'] = $forum->completiondiscussions;
+        $result->customdata['customcompletionrules']['completionreplies'] = $forum->completionreplies;
+        $result->customdata['customcompletionrules']['completionposts'] = $forum->completionposts;
+    }
+
+    return $result;
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_forum_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completiondiscussions':
+                if (empty($val)) {
+                    continue;
+                }
+                $descriptions[] = get_string('completiondiscussionsdesc', 'forum', $val);
+                break;
+            case 'completionreplies':
+                if (empty($val)) {
+                    continue;
+                }
+                $descriptions[] = get_string('completionrepliesdesc', 'forum', $val);
+                break;
+            case 'completionposts':
+                if (empty($val)) {
+                    continue;
+                }
+                $descriptions[] = get_string('completionpostsdesc', 'forum', $val);
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
+}

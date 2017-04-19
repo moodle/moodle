@@ -4207,14 +4207,14 @@ class settings_navigation extends navigation_node {
             $coursenode->add($editstring, $editurl, self::TYPE_SETTING, null, 'turneditingonoff', new pix_icon('i/edit', ''));
         }
 
-        if ($adminoptions->update) {
-
+        if ($adminoptions->editcompletion) {
             // Add the course completion settings link
-            if ($CFG->enablecompletion && $course->enablecompletion) {
-                $url = new moodle_url('/course/completion.php', array('id'=>$course->id));
-                $coursenode->add(get_string('coursecompletion', 'completion'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
-            }
-        } else if ($adminoptions->tags) {
+            $url = new moodle_url('/course/completion.php', array('id' => $course->id));
+            $coursenode->add(get_string('coursecompletion', 'completion'), $url, self::TYPE_SETTING, null, null,
+                             new pix_icon('i/settings', ''));
+        }
+
+        if (!$adminoptions->update && $adminoptions->tags) {
             $url = new moodle_url('/course/tags.php', array('id' => $course->id));
             $coursenode->add(get_string('coursetags', 'tag'), $url, self::TYPE_SETTING, null, 'coursetags', new pix_icon('i/settings', ''));
         }

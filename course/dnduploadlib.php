@@ -559,34 +559,11 @@ class dndupload_ajax_processor {
      */
     protected function create_course_module() {
         global $CFG;
+        require_once($CFG->dirroot.'/course/modlib.php');
+        list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($this->course, $this->module->name, $this->section);
 
-        if (!course_allowed_module($this->course, $this->module->name)) {
-            throw new coding_exception("The module {$this->module->name} is not allowed to be added to this course");
-        }
-
-        $this->cm = new stdClass();
-        $this->cm->course = $this->course->id;
-        $this->cm->section = $this->section;
-        $this->cm->module = $this->module->id;
-        $this->cm->modulename = $this->module->name;
-        $this->cm->instance = 0; // This will be filled in after we create the instance.
-        $this->cm->visible = 1;
-        $this->cm->groupmode = $this->course->groupmode;
-        $this->cm->groupingid = $this->course->defaultgroupingid;
-
-        // Set the correct default for completion tracking.
-        $this->cm->completion = COMPLETION_TRACKING_NONE;
-        $completion = new completion_info($this->course);
-        if ($completion->is_enabled() && $CFG->completiondefault) {
-            if (plugin_supports('mod', $this->cm->modulename, FEATURE_MODEDIT_DEFAULT_COMPLETION, true)) {
-                $this->cm->completion = COMPLETION_TRACKING_MANUAL;
-            }
-        }
-
-        if (!$this->cm->id = add_course_module($this->cm)) {
-            throw new coding_exception("Unable to create the course module");
-        }
-        $this->cm->coursemodule = $this->cm->id;
+        $data->coursemodule = $data->id = add_course_module($data);
+        $this->cm = $data;
     }
 
     /**
