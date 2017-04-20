@@ -90,7 +90,8 @@
     .filler {
         width: 16px;
         height: 16px;
-        padding: 0.3em;
+        padding: 0;
+        padding-right: 6px;
         display: inline-block;
     }
 
@@ -353,11 +354,15 @@
     position: relative;
     padding: 0 16px 0 0; /* to accommodate the floated completion icon with highlighting */
 }
-.path-course-view li.activity span.autocompletion img {
+.path-course-view li.activity span.autocompletion img,
+.path-course-view li.activity form.togglecompletion .btn {
     vertical-align: text-bottom;
+    padding: 0 6px 0 0;
 }
 .path-course-view li.activity form.togglecompletion img {
     max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
+    margin: 0;
+    padding: 0;
 }
 .path-course-view li.activity form.togglecompletion .ajaxworking {
     width: 16px;
