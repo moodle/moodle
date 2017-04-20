@@ -23,8 +23,6 @@
     {
         "fullnamedisplay": "course 3",
         "viewurl": "https://www.google.com",
-        "startdate": 1490252232,
-        "enddate": 1490252232,
         "summary": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
     }
 }}
@@ -47,12 +45,6 @@
                     </div>
                 </div>
             </div>
-            <p class="text-muted">
-                {{#userdate}}{{startdate}}, {{#str}}strftimedate, langconfig{{/str}}{{/userdate}}
-                {{#enddate}}
-                - {{#userdate}}{{enddate}}, {{#str}}strftimedate, langconfig{{/str}}{{/userdate}}
-                {{/enddate}}
-            </p>
             <p class="text-muted">
                 {{#shortentext}} 140, {{summary}}{{/shortentext}}
             </p>
