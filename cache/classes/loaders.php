@@ -1018,7 +1018,7 @@ class cache implements cache_loader {
                 $result = $data;
             }
         }
-        if ($result) {
+        if ($result !== false) {
             if ($this->perfdebug) {
                 cache_helper::record_cache_hit('** static acceleration **', $this->definition);
             }
