@@ -2546,6 +2546,10 @@ img.icon {
   width: 16px;
   padding-right: 6px;
 }
+img.icon.iconsize-big {
+  width: 64px;
+  height: 64px;
+}
 img.iconsmall {
   height: 12px;
   margin-right: 3px;

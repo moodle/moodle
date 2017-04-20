@@ -16,6 +16,13 @@
     display: none;
 }
 
+// Size of default icons.
+@icon-width: 16px;
+@icon-height: 16px;
+// Size of big icons.
+@icon-big-width: 64px;
+@icon-big-height: 64px;
+
 /* Default Three Columns - All
 ------------------------------*/
 
@@ -233,10 +240,14 @@ img.resize {
 }
 /* Icon styles */
 img.icon {
-    height: 16px;
+    height: @icon-height;
     vertical-align: text-bottom;
-    width: 16px;
+    width: @icon-width;
     padding-right: 6px;
+    &.iconsize-big {
+        width: @icon-big-width;
+        height: @icon-big-height;
+    }
 }
 img.iconsmall {
     height: 12px;

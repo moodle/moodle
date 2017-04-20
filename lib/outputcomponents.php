@@ -662,6 +662,11 @@ class pix_icon implements renderable, templatable {
             $this->attributes['class'] = '';
         }
 
+        // Set an additional class for big icons so that they can be styled properly.
+        if (substr($pix, 0, 2) === 'b/') {
+            $this->attributes['class'] .= ' iconsize-big';
+        }
+
         // If the alt is empty, don't place it in the attributes, otherwise it will override parent alt text.
         if (!is_null($alt)) {
             $this->attributes['alt'] = $alt;
