@@ -17,7 +17,7 @@ Feature: Edited glossary entries handle tags correctly
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I turn editing mode on
     And I add a "Glossary" to section "1" and I fill the form with:
       | Name | Test glossary |
@@ -26,7 +26,7 @@ Feature: Edited glossary entries handle tags correctly
 
   Scenario: Glossary entry edition of custom tags works as expected
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test glossary"
     And I press "Add a new entry"
     And I set the following fields to these values:
@@ -52,7 +52,7 @@ Feature: Edited glossary entries handle tags correctly
     And I press "Continue"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test glossary"
     And I press "Add a new entry"
     And I expand all fieldsets
