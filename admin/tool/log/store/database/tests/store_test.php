@@ -83,6 +83,11 @@ class logstore_database_store_testcase extends advanced_testcase {
         } else {
             set_config('dbcollation', '', 'logstore_database');
         }
+        if (!empty($CFG->dboptions['dbhandlesoptions'])) {
+            set_config('dbhandlesoptions', $CFG->dboptions['dbhandlesoptions'], 'logstore_database');
+        } else {
+            set_config('dbhandlesoptions', false, 'logstore_database');
+        }
 
         // Enable logging plugin.
         set_config('enabled_stores', 'logstore_database', 'tool_log');
