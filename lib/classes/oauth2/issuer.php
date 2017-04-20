@@ -180,9 +180,25 @@ class issuer extends persistent {
             return false;
         }
         $sys = system_account::get_record(['issuerid' => $this->get('id')]);
-        if (!empty($sys) and !empty($sys->get('refreshtoken'))) {
-            return true;
+        if (empty($sys) || empty($sys->get('refreshtoken'))) {
+            return false;
         }
-        return false;
+
+        $scopes = api::get_system_scopes_for_issuer($this);
+
+        $grantedscopes = $sys->get('grantedscopes');
+
+        $scopes = explode(' ', $scopes);
+
+        foreach ($scopes as $scope) {
+            if (!empty($scope)) {
+                if (strpos(' ' . $grantedscopes . ' ', ' ' . $scope . ' ') === false) {
+                    // We have not been granted all the scopes that are required.
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

@@ -32,3 +32,7 @@ $string['test_converter'] = 'Test this converter is working properly.';
 $string['test_conversion'] = 'Test document conversion';
 $string['test_conversionready'] = 'This document converter is configured properly.';
 $string['test_conversionnotready'] = 'This document converter is not configured properly.';
+$string['test_issuerinvalid'] = 'The OAuth service in the document converter settings is set to an invalid value.';
+$string['test_issuernotenabled'] = 'The OAuth service set in the document converter settings is not enabled.';
+$string['test_issuernotconnected'] = 'The OAuth service set in the document converter settings does not have a system account connected.';
+$string['test_issuernotset'] = 'The OAuth service needs to be set in the document converter settings.';

@@ -234,6 +234,10 @@ class converter implements \core_files\converter_interface {
             return false;
         }
 
+        if (!$issuer->get('enabled')) {
+            return false;
+        }
+
         if (!$issuer->is_system_account_connected()) {
             return false;
         }

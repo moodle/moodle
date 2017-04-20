@@ -57,7 +57,36 @@ if ($result) {
     $msg .= html_writer::link($pdflink, get_string('test_conversion', 'fileconverter_googledrive'));
     $msg .= html_writer::empty_tag('br');
 } else {
-    $msg = $OUTPUT->notification(get_string('test_conversionnotready', 'fileconverter_googledrive'), 'warning');
+
+    // Diagnostics time.
+    $issuerid = get_config('fileconverter_googledrive', 'issuerid');
+    $msg = '';
+    if (empty($issuerid)) {
+        $msg = $OUTPUT->notification(get_string('test_issuernotset', 'fileconverter_googledrive'), 'warning');
+    }
+
+    if (empty($msg)) {
+        $issuer = \core\oauth2\api::get_issuer($issuerid);
+        if (empty($issuer)) {
+            $msg = $OUTPUT->notification(get_string('test_issuerinvalid', 'fileconverter_googledrive'), 'warning');
+        }
+    }
+
+    if (empty($msg)) {
+        if (!$issuer->get('enabled')) {
+            $msg = $OUTPUT->notification(get_string('test_issuernotenabled', 'fileconverter_googledrive'), 'warning');
+        }
+    }
+
+    if (empty($msg)) {
+        if (!$issuer->is_system_account_connected()) {
+            $msg = $OUTPUT->notification(get_string('test_issuernotconnected', 'fileconverter_googledrive'), 'warning');
+        }
+    }
+
+    if (empty($msg)) {
+        $msg = $OUTPUT->notification(get_string('test_conversionnotready', 'fileconverter_googledrive'), 'warning');
+    }
 }
 $returl = new moodle_url('/admin/settings.php', array('section' => 'fileconvertergoogledrive'));
 $msg .= $OUTPUT->continue_button($returl);
