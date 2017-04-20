@@ -1634,6 +1634,11 @@ function mod_lesson_core_calendar_provide_event_action(calendar_event $event,
     $cm = get_fast_modinfo($event->courseid)->instances['lesson'][$event->instance];
     $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
 
+    if ($lesson->count_user_retries($USER->id)) {
+        // If the user has attempted the lesson then there is no further action for the user.
+        return null;
+    }
+
     // Apply overrides.
     $lesson->update_effective_access($USER->id);
 
