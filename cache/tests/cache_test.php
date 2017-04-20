@@ -2173,6 +2173,39 @@ class core_cache_testcase extends advanced_testcase {
             $startstats[$requestid]['stores']['cachestore_static']['sets']);
     }
 
+    public function test_static_cache() {
+        global $CFG;
+        $this->resetAfterTest(true);
+        $CFG->perfdebug = 15;
+
+        // Create cache store with static acceleration.
+        $instance = cache_config_testing::instance();
+        $applicationid = 'phpunit/applicationperf';
+        $instance->phpunit_add_definition($applicationid, array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'applicationperf',
+            'simplekeys' => true,
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 3
+        ));
+
+        $application = cache::make('phpunit', 'applicationperf');
+
+        // Check that stores register sets.
+        $this->assertTrue($application->set('setMe1', 1));
+        $this->assertTrue($application->set('setMe2', 0));
+        $this->assertTrue($application->set('setMe3', array()));
+        $this->assertTrue($application->get('setMe1') !== false);
+        $this->assertTrue($application->get('setMe2') !== false);
+        $this->assertTrue($application->get('setMe3') !== false);
+
+        // Check that the static acceleration worked, even on empty arrays and the number 0.
+        $endstats = cache_helper::get_stats();
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['** static acceleration **']['misses']);
+        $this->assertEquals(3, $endstats[$applicationid]['stores']['** static acceleration **']['hits']);
+    }
+
     public function test_performance_debug_off() {
         global $CFG;
         $this->resetAfterTest(true);
