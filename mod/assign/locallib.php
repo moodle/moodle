@@ -7435,6 +7435,14 @@ class assign {
                 $feedbackmodified) {
             $this->update_grade($grade, !empty($formdata->addattempt));
         }
+
+        // We never send notifications if we have marking workflow and the grade is not released.
+        if ($this->get_instance()->markingworkflow &&
+                isset($formdata->workflowstate) &&
+                $formdata->workflowstate != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+            $formdata->sendstudentnotifications = false;
+        }
+
         // Note the default if not provided for this option is true (e.g. webservices).
         // This is for backwards compatibility.
         if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
