@@ -153,7 +153,6 @@
 }
 
 .assignfeedback_editpdf_commentsearch ul li {
-    line-height: 0;
     margin: 2px;
 }
 
@@ -243,6 +242,19 @@
     text-decoration: none;
     color: #555;
     margin: 10px;
+}
+
+ul.assignfeedback_editpdf_search {
+    margin: 0;
+}
+
+.assignfeedback_editpdf_search li {
+    list-style-type: none;
+}
+
+.assignfeedback_editpdf_search li a {
+    text-decoration: none;
+    color: #555;
 }
 
 .assignfeedback_editpdf_menu li:hover,

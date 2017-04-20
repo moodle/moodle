@@ -2247,7 +2247,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
         placeholder = M.util.get_string('filter', 'assignfeedback_editpdf');
         commentfilter = Y.Node.create('<input type="text" size="20" placeholder="' + placeholder + '"/>');
         container.append(commentfilter);
-        commentlist = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_menu"/>');
+        commentlist = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_search"/>');
         container.append(commentlist);
 
         commentfilter.on('keyup', this.filter_search_comments, this);
