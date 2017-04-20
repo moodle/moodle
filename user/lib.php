@@ -859,7 +859,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
     $myhome->url = new moodle_url('/my/');
     $myhome->title = get_string('mymoodle', 'admin');
     $myhome->titleidentifier = 'mymoodle,admin';
-    $myhome->pix = "i/course";
+    $myhome->pix = "i/dashboard";
     $returnobject->navitems[] = $myhome;
 
     // Links: My Profile.
