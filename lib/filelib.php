@@ -3603,20 +3603,31 @@ class curl {
      * @return bool
      */
     public function put($url, $params = array(), $options = array()) {
-        $file = $params['file'];
-        if (!is_file($file)) {
-            return null;
+        $file = '';
+        $fp = false;
+        if (isset($params['file'])) {
+            $file = $params['file'];
+            if (is_file($file)) {
+                $fp   = fopen($file, 'r');
+                $size = filesize($file);
+                $options['CURLOPT_PUT']        = 1;
+                $options['CURLOPT_INFILESIZE'] = $size;
+                $options['CURLOPT_INFILE']     = $fp;
+            } else {
+                return null;
+            }
+            if (!isset($this->options['CURLOPT_USERPWD'])) {
+                $this->setopt(array('CURLOPT_USERPWD' => 'anonymous: noreply@moodle.org'));
+            }
+        } else {
+            $options['CURLOPT_CUSTOMREQUEST'] = 'PUT';
+            $options['CURLOPT_POSTFIELDS'] = $params;
         }
-        $fp   = fopen($file, 'r');
-        $size = filesize($file);
-        $options['CURLOPT_PUT']        = 1;
-        $options['CURLOPT_INFILESIZE'] = $size;
-        $options['CURLOPT_INFILE']     = $fp;
-        if (!isset($this->options['CURLOPT_USERPWD'])) {
-            $this->setopt(array('CURLOPT_USERPWD'=>'anonymous: noreply@moodle.org'));
-        }
+
         $ret = $this->request($url, $options);
-        fclose($fp);
+        if ($fp !== false) {
+            fclose($fp);
+        }
         return $ret;
     }
 
