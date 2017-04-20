@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
 use mod_feedback\external\feedback_summary_exporter;
 
@@ -315,7 +316,7 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         global $DB;
 
         // Force non anonymous.
-        $DB->set_field('feedback', 'anonymous', 0, array('id' => $this->feedback->id));
+        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->feedback->id));
         // Add a completed_tmp record.
         $record = [
             'feedback' => $this->feedback->id,
@@ -323,7 +324,7 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
             'guestid' => '',
             'timemodified' => time() - DAYSECS,
             'random_response' => 0,
-            'anonymous_response' => 2,
+            'anonymous_response' => FEEDBACK_ANONYMOUS_NO,
             'courseid' => $this->course->id,
         ];
         $record['id'] = $DB->insert_record('feedback_completedtmp', (object) $record);
@@ -386,7 +387,7 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
 
         // Now, try a feedback that we attempted.
         // Force non anonymous.
-        $DB->set_field('feedback', 'anonymous', 0, array('id' => $this->feedback->id));
+        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->feedback->id));
         // Add a completed_tmp record.
         $record = [
             'feedback' => $this->feedback->id,
@@ -394,7 +395,7 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
             'guestid' => '',
             'timemodified' => time() - DAYSECS,
             'random_response' => 0,
-            'anonymous_response' => 2,
+            'anonymous_response' => FEEDBACK_ANONYMOUS_NO,
             'courseid' => $this->course->id,
         ];
         $record['id'] = $DB->insert_record('feedback_completedtmp', (object) $record);
