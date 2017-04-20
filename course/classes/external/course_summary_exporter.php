@@ -63,6 +63,7 @@ class course_summary_exporter extends \core\external\exporter {
             ),
             'summary' => array(
                 'type' => PARAM_RAW,
+                'null' => NULL_ALLOWED
             ),
             'startdate' => array(
                 'type' => PARAM_INT,
