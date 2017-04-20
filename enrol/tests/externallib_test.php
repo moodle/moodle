@@ -363,6 +363,7 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
+        $timenow = time();
         $coursedata1 = array(
             'fullname'         => '<b>Course 1</b>',                // Adding tags here to check that external_format_string works.
             'shortname'         => '<b>Course 1</b>',               // Adding tags here to check that external_format_string works.
@@ -370,7 +371,9 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
             'summaryformat'    => FORMAT_MOODLE,
             'lang'             => 'en',
             'enablecompletion' => true,
-            'showgrades'       => true
+            'showgrades'       => true,
+            'startdate'        => $timenow,
+            'enddate'          => $timenow + WEEKSECS
         );
 
         $course1 = self::getDataGenerator()->create_course($coursedata1);
