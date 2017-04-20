@@ -100,9 +100,11 @@ class core_completion_bulkedit_form extends core_completion_edit_base_form {
 
         $mform = $this->_form;
 
+        $idx = 0;
         foreach ($this->cms as $cm) {
-            $mform->addElement('hidden', 'cmid['.$cm->id.']', $cm->id);
-            $mform->setType('cmid['.$cm->id.']', PARAM_INT);
+            $mform->addElement('hidden', 'cmid['.$idx.']', $cm->id);
+            $mform->setType('cmid['.$idx.']', PARAM_INT);
+            $idx++;
         }
 
         parent::definition();
