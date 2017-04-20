@@ -880,7 +880,7 @@ function grade_format_gradevalue_letter($value, $grade_item) {
             // The boundary is a percentage out of 100 so use 0 as the min and 100 as the max.
             $boundary = grade_grade::standardise_score($boundary, 0, 100, 0, 100);
         }
-        if ($value >= $boundary) {
+        if (($value > $boundary) || (abs($value - $boundary) < 0.00001)) {
             return format_string($letter);
         }
     }
