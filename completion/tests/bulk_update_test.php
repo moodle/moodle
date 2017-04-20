@@ -254,11 +254,13 @@ class core_completion_bulk_update_testcase extends advanced_testcase {
             $cmrec = $DB->get_record('course_modules', ['id' => $cm->id]);
             $instancerec = $DB->get_record($cm->modname, ['id' => $cm->instance]);
             foreach ($cmdata as $key => $value) {
-                $this->assertEquals($value, $cmrec->$key);
+                $this->assertEquals($value, $cmrec->$key, 'Error asserting that value for the field ' . $key.' ' .
+                    $cmrec->$key . ' matches expected value ' . $value);
             }
             if ($instancedata) {
                 foreach ($instancedata[$cnt] as $key => $value) {
-                    $this->assertEquals($value, $instancerec->$key);
+                    $this->assertEquals($value, $instancerec->$key, 'Error asserting that value for the field ' . $key . ' '.
+                        $instancerec->$key . ' matches expected value ' . $value);
                 }
             }
             $cnt++;
