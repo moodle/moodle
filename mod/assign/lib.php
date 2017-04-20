@@ -127,7 +127,8 @@ function assign_refresh_events($courseid = 0) {
         $assignment->update_calendar($cm->id);
 
         // Refresh the calendar events also for the assignment overrides.
-        $overrides = $DB->get_records('assign_overrides', ['assignid' => $assign->id], '', 'id, groupid, userid');
+        $overrides = $DB->get_records('assign_overrides', ['assignid' => $assign->id], '',
+                                      'id, groupid, userid, duedate, sortorder');
         foreach ($overrides as $override) {
             if (empty($override->userid)) {
                 unset($override->userid);
