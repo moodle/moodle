@@ -840,7 +840,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
             'pageid' => $this->page2->id,
             'userid' => $this->student->id,
             'answerid' => 0,
-            'retry' => 1,
+            'retry' => 0,   // First attempt is always 0.
             'correct' => 1,
             'useranswer' => '1',
             'timeseen' => time(),
@@ -857,15 +857,9 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $DB->insert_record('lesson_grades', (object) $record);
 
         unset($SESSION->lesson_messages);
-        $this->setUser($this->teacher);
-        $result = mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
-        $result = external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
-        // Everything ok as teacher.
-        $this->assertCount(0, $result['warnings']);
-        $this->assertCount(0, $result['messages']);
 
         $this->setUser($this->student);
-        $result = mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
+        $result = mod_lesson_external::launch_attempt($this->lesson->id, '', $this->page2->id, true);
         $result = external_api::clean_returnvalue(mod_lesson_external::launch_attempt_returns(), $result);
         // Everything ok as student.
         $this->assertCount(0, $result['warnings']);
@@ -1310,7 +1304,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         // Lesson not using password.
         $result = mod_lesson_external::get_lesson($this->lesson->id);
         $result = external_api::clean_returnvalue(mod_lesson_external::get_lesson_returns(), $result);
-        $this->assertCount(5, $result['lesson']);   // Expect just this few fields.
+        $this->assertCount(6, $result['lesson']);   // Expect just this few fields.
         $this->assertFalse(isset($result['intro']));
     }
 

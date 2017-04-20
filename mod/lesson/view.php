@@ -212,7 +212,7 @@ if ($pageid != LESSON_EOL) {
         }
     }
 
-    list($page, $lessoncontent) = $lesson->prepare_page_and_contents($pageid, $lessonoutput, $reviewmode);
+    list($newpageid, $page, $lessoncontent) = $lesson->prepare_page_and_contents($pageid, $lessonoutput, $reviewmode);
 
     if (($edit != -1) && $PAGE->user_allowed_editing()) {
         $USER->editing = $edit;

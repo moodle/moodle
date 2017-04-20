@@ -466,6 +466,7 @@ $string['startlesson'] = 'Start lesson';
 $string['studentattemptlesson'] = '{$a->lastname}, {$a->firstname}\'s attempt number {$a->attempt}';
 $string['studentname'] = '{$a} Name';
 $string['studentoneminwarning'] = 'Warning: You have 1 minute or less to finish the lesson.';
+$string['studentoutoftimeforreview'] = 'Attention: You ran out of time for reviewing this lesson';
 $string['studentresponse'] = '{$a}\'s response';
 $string['submit'] = 'Submit';
 $string['submitname'] = 'Submit name';

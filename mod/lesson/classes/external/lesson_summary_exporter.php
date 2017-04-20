@@ -249,7 +249,6 @@ class lesson_summary_exporter extends exporter {
             'allowofflineattempts' => array(
                 'type' => PARAM_BOOL,
                 'description' => 'Whether to allow the lesson to be attempted offline in the mobile app',
-                'optional' => true,
             ),
         );
     }
