@@ -85,22 +85,13 @@ class courses_view implements renderable, templatable {
             $exportedcourse = $exporter->export($output);
 
             if (isset($this->coursesprogress[$courseid])) {
-                $courseprogress = $this->coursesprogress[$courseid];
+                $coursecompleted = $this->coursesprogress[$courseid]['completed'];
+                $courseprogress = $this->coursesprogress[$courseid]['progress'];
                 $exportedcourse->hasprogress = !is_null($courseprogress);
                 $exportedcourse->progress = $courseprogress;
             }
 
-            if ($startdate > $today) {
-                // Courses that have not started yet.
-                $futurepages = floor($coursesbystatus['future'] / $this::COURSES_PER_PAGE);
-
-                $coursesview['future']['pages'][$futurepages]['courses'][] = $exportedcourse;
-                $coursesview['future']['pages'][$futurepages]['active'] = ($futurepages == 0 ? true : false);
-                $coursesview['future']['pages'][$futurepages]['page'] = $futurepages + 1;
-                $coursesview['future']['haspages'] = true;
-                $coursesbystatus['future']++;
-
-            } else if (!empty($enddate) && $enddate < $today) {
+            if ((isset($coursecompleted) && $coursecompleted) || (!empty($enddate) && $enddate < $today)) {
                 // Courses that have already ended.
                 $pastpages = floor($coursesbystatus['past'] / $this::COURSES_PER_PAGE);
 
@@ -109,7 +100,15 @@ class courses_view implements renderable, templatable {
                 $coursesview['past']['pages'][$pastpages]['page'] = $pastpages + 1;
                 $coursesview['past']['haspages'] = true;
                 $coursesbystatus['past']++;
+            } else if ($startdate > $today) {
+                // Courses that have not started yet.
+                $futurepages = floor($coursesbystatus['future'] / $this::COURSES_PER_PAGE);
 
+                $coursesview['future']['pages'][$futurepages]['courses'][] = $exportedcourse;
+                $coursesview['future']['pages'][$futurepages]['active'] = ($futurepages == 0 ? true : false);
+                $coursesview['future']['pages'][$futurepages]['page'] = $futurepages + 1;
+                $coursesview['future']['haspages'] = true;
+                $coursesbystatus['future']++;
             } else {
                 // Courses still in progress. Either their end date is not set, or the end date is not yet past the current date.
                 $inprogresspages = floor($coursesbystatus['inprogress'] / $this::COURSES_PER_PAGE);

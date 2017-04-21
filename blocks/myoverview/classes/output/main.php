@@ -44,17 +44,27 @@ class main implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
+        global $USER;
+
         $courses = enrol_get_my_courses('*', 'fullname ASC');
         $coursesprogress = [];
 
         foreach ($courses as $course) {
-            $percentage = progress::get_course_progress_percentage($course);
 
+            $completion = new \completion_info($course);
+
+            // First, let's make sure completion is enabled.
+            if (!$completion->is_enabled()) {
+                continue;
+            }
+
+            $percentage = progress::get_course_progress_percentage($course);
             if (!is_null($percentage)) {
                 $percentage = floor($percentage);
             }
 
-            $coursesprogress[$course->id] = $percentage;
+            $coursesprogress[$course->id]['completed'] = $completion->is_course_complete($USER->id);
+            $coursesprogress[$course->id]['progress'] = $percentage;
         }
 
         $coursesview = new courses_view($courses, $coursesprogress);
