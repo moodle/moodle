@@ -141,20 +141,19 @@ class manager {
 
             case COMPLETION_TRACKING_AUTOMATIC:
                 $strings['string'] = get_string('withconditions', 'completion');
-
-                // Get the descriptions for all the active completion rules for the module.
-                if ($ruledescriptions = $this->get_completion_active_rule_descriptions($mod)) {
-                    foreach ($ruledescriptions as $ruledescription) {
-                        $strings['string'] .= \html_writer::empty_tag('br') . $ruledescription;
-                    }
-                }
-
                 $strings['icon'] = $OUTPUT->pix_icon('i/completion-auto-y', get_string('completion_automatic', 'completion'));
                 break;
 
             default:
                 $strings['string'] = get_string('none');
                 break;
+        }
+
+        // Get the descriptions for all the active completion rules for the module.
+        if ($ruledescriptions = $this->get_completion_active_rule_descriptions($mod)) {
+            foreach ($ruledescriptions as $ruledescription) {
+                $strings['string'] .= \html_writer::empty_tag('br') . $ruledescription;
+            }
         }
         return $strings;
     }
@@ -170,24 +169,28 @@ class manager {
     protected function get_completion_active_rule_descriptions($moduledata) {
         $activeruledescriptions = [];
 
-        // Generate the description strings for the core conditional completion rules (if set).
-        if (!empty($moduledata->completionview)) {
-            $activeruledescriptions[] = get_string('completionview_desc', 'completion');
-        }
-        if ($moduledata instanceof cm_info && !is_null($moduledata->completiongradeitemnumber) ||
-            ($moduledata instanceof stdClass && !empty($moduledata->completionusegrade))) {
-            $activeruledescriptions[] = get_string('completionusegrade_desc', 'completion');
-        }
+        if ($moduledata->completion == COMPLETION_TRACKING_AUTOMATIC) {
+            // Generate the description strings for the core conditional completion rules (if set).
+            if (!empty($moduledata->completionview)) {
+                $activeruledescriptions[] = get_string('completionview_desc', 'completion');
+            }
+            if ($moduledata instanceof cm_info && !is_null($moduledata->completiongradeitemnumber) ||
+                ($moduledata instanceof stdClass && !empty($moduledata->completionusegrade))) {
+                $activeruledescriptions[] = get_string('completionusegrade_desc', 'completion');
+            }
 
-        // Now, ask the module to provide descriptions for its custom conditional completion rules.
-        if ($customruledescriptions = component_callback($moduledata->modname,
+            // Now, ask the module to provide descriptions for its custom conditional completion rules.
+            if ($customruledescriptions = component_callback($moduledata->modname,
                 'get_completion_active_rule_descriptions', [$moduledata])) {
-            $activeruledescriptions = array_merge($activeruledescriptions, $customruledescriptions);
+                $activeruledescriptions = array_merge($activeruledescriptions, $customruledescriptions);
+            }
         }
 
-        if (!empty($moduledata->completionexpected)) {
-            $activeruledescriptions[] = get_string('completionexpecteddesc', 'completion',
-                userdate($moduledata->completionexpected));
+        if ($moduledata->completion != COMPLETION_TRACKING_NONE) {
+            if (!empty($moduledata->completionexpected)) {
+                $activeruledescriptions[] = get_string('completionexpecteddesc', 'completion',
+                    userdate($moduledata->completionexpected));
+            }
         }
 
         return $activeruledescriptions;
@@ -297,7 +300,8 @@ class manager {
      *      if no module-specific completion rules were added to the form, update of the module table is not needed.
      */
     public function apply_completion($data, $updateinstances) {
-        $updated = [];
+        $updated = false;
+        $needreset = [];
         $modinfo = get_fast_modinfo($this->courseid);
 
         $cmids = $data->cmid;
@@ -310,7 +314,11 @@ class manager {
         foreach ($cmids as $cmid) {
             $cm = $modinfo->get_cm($cmid);
             if (self::can_edit_bulk_completion($this->courseid, $cm) && $this->apply_completion_cm($cm, $data, $updateinstances)) {
-                $updated[] = $cm->id;
+                $updated = true;
+                if ($cm->completion != COMPLETION_TRACKING_MANUAL || $data['completion'] != COMPLETION_TRACKING_MANUAL) {
+                    // If completion was changed we will need to reset it's state. Exception is when completion was and remains as manual.
+                    $needreset[] = $cm->id;
+                }
             }
         }
         if ($updated) {
@@ -319,7 +327,7 @@ class manager {
             rebuild_course_cache($this->courseid, true);
             $modinfo = get_fast_modinfo($this->courseid);
             $completion = new \completion_info($modinfo->get_course());
-            foreach ($updated as $cmid) {
+            foreach ($needreset as $cmid) {
                 $completion->reset_all_state($modinfo->get_cm($cmid));
             }
 
@@ -343,14 +351,20 @@ class manager {
         $defaults = ['completion' => COMPLETION_DISABLED, 'completionview' => COMPLETION_VIEW_NOT_REQUIRED,
             'completionexpected' => 0, 'completiongradeitemnumber' => null];
 
-        if ($cm->completion == $data['completion'] && $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
-            // If old and new completion are either both "manual" or both "none" - no changes are needed.
-            return false;
-        }
-
         $data += ['completion' => $cm->completion,
             'completionexpected' => $cm->completionexpected,
             'completionview' => $cm->completionview];
+
+        if ($cm->completion == $data['completion'] && $cm->completion == COMPLETION_TRACKING_NONE) {
+            // If old and new completion are both "none" - no changes are needed.
+            return false;
+        }
+
+        if ($cm->completion == $data['completion'] && $cm->completion == COMPLETION_TRACKING_NONE &&
+                $cm->completionexpected == $data['completionexpected']) {
+            // If old and new completion are both "manual" and completion expected date is not changed - no changes are needed.
+            return false;
+        }
 
         if (array_key_exists('completionusegrade', $data)) {
             // Convert the 'use grade' checkbox into a grade-item number: 0 if checked, null if not.
@@ -372,6 +386,7 @@ class manager {
 
         \core\event\course_module_updated::create_from_cm($cm, $cm->context)->trigger();
 
+        // We need to reset completion data for this activity.
         return true;
     }
 
