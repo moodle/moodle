@@ -30,6 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>Andmebaasi ei saa luua.</p>
+<p>Määratud andmebaasi pole ja antud kasutajal puudub õigus andmebaasi loomiseks.</p>
+<p>Õpikeskkonna administraator peab kontrollima andmebaasi konfiguratsiooni</p>';
 $string['cannotcreatelangdir'] = 'Keelekataloogi ei saa luua';
 $string['cannotcreatetempdir'] = 'Ajutist kataloogi ei saa luua';
 $string['cannotdownloadcomponents'] = 'Komponente ei saa alla laadida';
@@ -43,7 +46,8 @@ $string['dmlexceptiononinstall'] = '<p>Ilmnes andmebaasitõrge [{$a->errorcode}]
 $string['downloadedfilecheckfailed'] = 'Allalaaditud faili kontroll nurjus';
 $string['invalidmd5'] = 'Kontrolli muutuja oli vale – proovige uuesti';
 $string['missingrequiredfield'] = 'Mõni nõutav väli on puudu';
-$string['remotedownloaderror'] = 'Komponendi alla tõmbamine serverisse ebaõnnestus, palun kontrolli proksi seadeid, PHP cURL laiendus on tungivalt soovitatav.<br /><br />Sa pead tõmbama <a href="{$a->url}">{$a->url}</a> faili käsitsi, kopeerima selle "{$a->dest}" oma serveris ja pakkima lahti sinna.';
+$string['remotedownloaderror'] = '<p>Komponendi teie serverisse allalaadimine nurjus. Kontrollige puhvri sätteid; PHP laiend cURL on tungivalt soovitatav.</p>
+<p>Peate faili <a href="{$a->url}">{$a->url}</a> käsitsi alla laadima, kopeerima selle oma serveris asukohta „{$a->dest}“ ja seal lahti pakkima.</p>';
 $string['wrongdestpath'] = 'Vale sihtkohatee';
 $string['wrongsourcebase'] = 'Vale allika URL-i baas';
 $string['wrongzipfilename'] = 'Vale ZIP-faili nimi';
