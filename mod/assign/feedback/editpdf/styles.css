@@ -146,6 +146,8 @@
 
 .assignfeedback_editpdf_commentsearch ul li pre {
     background-color: #efefef;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .assignfeedback_editpdf_commentsearch ul li pre:hover {
