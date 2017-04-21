@@ -60,10 +60,9 @@ class book_chapter_edit_form extends moodleform {
 
         if (core_tag_tag::is_enabled('mod_book', 'book_chapters')) {
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
-
-            $mform->addElement('tags', 'tags', get_string('tags'),
-                array('itemtype' => 'book_chapters', 'component' => 'mod_book'));
         }
+        $mform->addElement('tags', 'tags', get_string('tags'),
+            array('itemtype' => 'book_chapters', 'component' => 'mod_book'));
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

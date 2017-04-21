@@ -31,9 +31,6 @@ class backup_book_activity_structure_step extends backup_activity_structure_step
 
     protected function define_structure() {
 
-        // To know if we are including userinfo.
-        $userinfo = $this->get_setting_value('userinfo');
-
         // Define each element separated.
         $book = new backup_nested_element('book', array('id'), array(
             'name', 'intro', 'introformat', 'numbering', 'navstyle',
@@ -61,7 +58,7 @@ class backup_book_activity_structure_step extends backup_activity_structure_step
         $tags->add_child($tag);
 
         // All these source definitions only happen if we are including user info.
-        if ($userinfo && core_tag_tag::is_enabled('mod_book', 'book_chapters')) {
+        if (core_tag_tag::is_enabled('mod_book', 'book_chapters')) {
             $tag->set_source_sql('SELECT t.id, ti.itemid, t.rawname
                                     FROM {tag} t
                                     JOIN {tag_instance} ti ON ti.tagid = t.id

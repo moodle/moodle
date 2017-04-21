@@ -17,7 +17,7 @@ Feature: Edited book chapters handle tags correctly
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I turn editing mode on
     And I add a "Book" to section "1" and I fill the form with:
       | Name | Test book |
@@ -26,7 +26,7 @@ Feature: Edited book chapters handle tags correctly
 
   Scenario: Book chapter edition of custom tags works as expected
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test book"
     And I set the following fields to these values:
       | Chapter title | Dummy first chapter |
@@ -52,7 +52,7 @@ Feature: Edited book chapters handle tags correctly
     And I press "Continue"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test book"
     And I click on ".form-autocomplete-downarrow" "css_element"
     And I should see "OT1" in the ".form-autocomplete-suggestions" "css_element"

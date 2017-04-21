@@ -31,14 +31,10 @@ class restore_book_activity_structure_step extends restore_activity_structure_st
 
     protected function define_structure() {
         $paths = array();
-        $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('book', '/activity/book');
         $paths[] = new restore_path_element('book_chapter', '/activity/book/chapters/chapter');
-
-        if ($userinfo) {
-            $paths[] = new restore_path_element('book_chapter_tag', '/activity/book/chaptertags/tag');
-        }
+        $paths[] = new restore_path_element('book_chapter_tag', '/activity/book/chaptertags/tag');
 
         // Return the paths wrapped into standard activity structure
         return $this->prepare_activity_structure($paths);
