@@ -29,6 +29,8 @@ use renderer_base;
 use templatable;
 use core_completion\progress;
 
+require_once($CFG->libdir . '/completionlib.php');
+
 /**
  * Class containing data for my overview block.
  *
