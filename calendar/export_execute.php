@@ -60,7 +60,7 @@ if (!empty($generateurl)) {
 if(!empty($what) && !empty($time)) {
     if(in_array($what, $allowed_what) && in_array($time, $allowed_time)) {
         $courses = enrol_get_users_courses($user->id, true, 'id, visible, shortname');
-        // Array of courses that we will pass to \core_calendar\local\api::get_legacy_events() which
+        // Array of courses that we will pass to calendar_get_legacy_events() which
         // is initially set to the list of the user's courses.
         $paramcourses = $courses;
         if ($what == 'all' || $what == 'groups') {
