@@ -15,17 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info
+ * Mobile cache definitions.
  *
  * @package    tool_mobile
- * @copyright  2016 Juan Leyva
+ * @copyright  2017 Skylar Kelty <S.Kelty@kent.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-$plugin->version   = 2017041200; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2016112900; // Requires this Moodle version.
-$plugin->component = 'tool_mobile'; // Full name of the plugin (used for diagnostics).
-$plugin->dependencies = array(
-    'webservice_rest' => 2016120500
+defined('MOODLE_INTERNAL') || die;
+
+$definitions = array(
+    'plugininfo' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1
+    )
 );

@@ -58,6 +58,13 @@ class api {
         global $CFG;
         require_once($CFG->libdir . '/adminlib.php');
 
+        // Check if we can return this from cache.
+        $cache = \cache::make('tool_mobile', 'plugininfo');
+        $pluginsinfo = $cache->get('mobileplugins');
+        if ($pluginsinfo !== false) {
+            return (array)$pluginsinfo;
+        }
+
         $pluginsinfo = [];
         $plugintypes = core_component::get_plugin_types();
 
@@ -69,7 +76,7 @@ class api {
                 $component = $plugintype . '_' . $plugin;
                 $version = get_component_version($component);
 
-                require_once("$path/db/mobile.php");
+                require("$path/db/mobile.php");
                 foreach ($addons as $addonname => $addoninfo) {
                     $plugininfo = array(
                         'component' => $component,
@@ -92,6 +99,9 @@ class api {
                 }
             }
         }
+
+        $cache->set('mobileplugins', $pluginsinfo);
+
         return $pluginsinfo;
     }
 
