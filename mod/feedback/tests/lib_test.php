@@ -32,6 +32,39 @@ require_once($CFG->dirroot . '/mod/feedback/lib.php');
  */
 class mod_feedback_lib_testcase extends advanced_testcase {
 
+    public function test_feedback_initialise() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $params['course'] = $course->id;
+        $params['timeopen'] = time() - 5 * MINSECS;
+        $params['timeclose'] = time() + DAYSECS;
+        $params['anonymous'] = 1;
+        $params['intro'] = 'Some introduction text';
+        $feedback = $this->getDataGenerator()->create_module('feedback', $params);
+
+        // Test different ways to construct the structure object.
+        $pseudocm = get_coursemodule_from_instance('feedback', $feedback->id); // Object similar to cm_info.
+        $cm = get_fast_modinfo($course)->instances['feedback'][$feedback->id]; // Instance of cm_info.
+
+        $constructorparams = [
+            [$feedback, null],
+            [null, $pseudocm],
+            [null, $cm],
+            [$feedback, $pseudocm],
+            [$feedback, $cm],
+        ];
+
+        foreach ($constructorparams as $params) {
+            $structure = new mod_feedback_completion($params[0], $params[1], 0);
+            $this->assertTrue($structure->is_open());
+            $this->assertTrue($structure->get_cm() instanceof cm_info);
+            $this->assertEquals($feedback->cmid, $structure->get_cm()->id);
+            $this->assertEquals($feedback->intro, $structure->get_feedback()->intro);
+        }
+    }
+
     /**
      * Tests for mod_feedback_refresh_events.
      */
@@ -175,11 +208,8 @@ class mod_feedback_lib_testcase extends advanced_testcase {
         $factory = new \core_calendar\action_factory();
         $actionevent = mod_feedback_core_calendar_provide_event_action($event, $factory);
 
-        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
-        $this->assertEquals(get_string('answerquestions', 'feedback'), $actionevent->get_name());
-        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
-        $this->assertEquals(1, $actionevent->get_item_count());
-        $this->assertFalse($actionevent->is_actionable());
+        // No event on the dashboard if feedback is closed.
+        $this->assertNull($actionevent);
     }
 
     /**

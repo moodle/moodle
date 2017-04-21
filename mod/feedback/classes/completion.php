@@ -53,9 +53,9 @@ class mod_feedback_completion extends mod_feedback_structure {
     /**
      * Constructor
      *
-     * @param stdClass $feedback feedback object, in case of the template
-     *     this is the current feedback the template is accessed from
+     * @param stdClass $feedback feedback object
      * @param cm_info $cm course module object corresponding to the $feedback
+     *     (at least one of $feedback or $cm is required)
      * @param int $courseid current course (for site feedbacks only)
      * @param bool $iscompleted has feedback been already completed? If yes either completedid or userid must be specified.
      * @param int $completedid id in the table feedback_completed, may be omitted if userid is specified
@@ -66,17 +66,15 @@ class mod_feedback_completion extends mod_feedback_structure {
      */
     public function __construct($feedback, $cm, $courseid, $iscompleted = false, $completedid = null, $userid = null) {
         global $DB;
-        // Make sure courseid is always set for site feedback and never for course feedback.
-        if ($feedback->course == SITEID) {
-            $courseid = $courseid ?: SITEID;
-        } else {
-            $courseid = 0;
-        }
         parent::__construct($feedback, $cm, $courseid, 0);
+        // Make sure courseid is always set for site feedback.
+        if ($this->feedback->course == SITEID && !$this->courseid) {
+            $this->courseid = SITEID;
+        }
         if ($iscompleted) {
             // Retrieve information about the completion.
             $this->iscompleted = true;
-            $params = array('feedback' => $feedback->id);
+            $params = array('feedback' => $this->feedback->id);
             if (!$userid && !$completedid) {
                 throw new coding_exception('Either $completedid or $userid must be specified for completed feedbacks');
             }
@@ -713,7 +711,7 @@ class mod_feedback_completion extends mod_feedback_structure {
                     $this->jumpto = $nextpage;
                 } else {
                     $this->save_response();
-                    if (!$this->feedback->page_after_submit) {
+                    if (!$this->get_feedback()->page_after_submit) {
                         \core\notification::success(get_string('entries_saved', 'feedback'));
                     }
                     $this->justcompleted = true;

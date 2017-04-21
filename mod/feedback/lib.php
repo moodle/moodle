@@ -3428,8 +3428,7 @@ function mod_feedback_core_calendar_is_event_visible(calendar_event $event) {
     global $DB;
 
     $cm = get_fast_modinfo($event->courseid)->instances['feedback'][$event->instance];
-    $feedback = $DB->get_record('feedback', ['id' => $event->instance]);
-    $feedbackcompletion = new mod_feedback_completion($feedback, $cm, 0);
+    $feedbackcompletion = new mod_feedback_completion(null, $cm, 0);
 
     // The event is only visible if the user can submit it.
     return $feedbackcompletion->can_complete();
@@ -3447,26 +3446,21 @@ function mod_feedback_core_calendar_is_event_visible(calendar_event $event) {
  */
 function mod_feedback_core_calendar_provide_event_action(calendar_event $event,
                                                          \core_calendar\action_factory $factory) {
-    global $DB;
 
     $cm = get_fast_modinfo($event->courseid)->instances['feedback'][$event->instance];
-    $feedback = $DB->get_record('feedback', ['id' => $event->instance]);
-    $feedbackcompletion = new mod_feedback_completion($feedback, $cm, 0);
+    $feedbackcompletion = new mod_feedback_completion(null, $cm, 0);
 
-    if ($feedbackcompletion->is_already_submitted()) {
-        // There is no action if the user has already submitted the feedback.
+    if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < time()) {
+        // Feedback is already closed, do not display it even if it was never submitted.
         return null;
     }
 
-    $now = time();
-    if ($feedback->timeopen && $feedback->timeclose) {
-        $actionable = ($now >= $feedback->timeopen) && ($now <= $feedback->timeclose);
-    } else if ($feedback->timeclose) {
-        $actionable = $now < $feedback->timeclose;
-    } else if ($feedback->timeopen) {
-        $actionable = $now >= $feedback->timeopen;
-    } else {
-        $actionable = true;
+    // The feedback is actionable if it does not have timeopen or timeopen is in the past.
+    $actionable = $feedbackcompletion->is_open();
+
+    if ($actionable && $feedbackcompletion->is_already_submitted()) {
+        // There is no need to display anything if the user has already submitted the feedback.
+        return null;
     }
 
     return $factory->create_instance(
@@ -3492,7 +3486,7 @@ function feedback_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionsubmit';
+    $fields = 'id, name, intro, introformat, completionsubmit, timeopen, timeclose, anonymous';
     if (!$feedback = $DB->get_record('feedback', $dbparams, $fields)) {
         return false;
     }
@@ -3508,6 +3502,16 @@ function feedback_get_coursemodule_info($coursemodule) {
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
         $result->customdata['customcompletionrules']['completionsubmit'] = $feedback->completionsubmit;
+    }
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($feedback->timeopen) {
+        $result->customdata['timeopen'] = $feedback->timeopen;
+    }
+    if ($feedback->timeclose) {
+        $result->customdata['timeclose'] = $feedback->timeclose;
+    }
+    if ($feedback->anonymous) {
+        $result->customdata['anonymous'] = $feedback->anonymous;
     }
 
     return $result;
