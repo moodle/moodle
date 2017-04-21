@@ -75,6 +75,24 @@ class company_edit_form extends company_moodleform {
                             array('size' => 25));
         $mform->setType('shortname', PARAM_NOTAGS);
         $mform->addRule('shortname', $strrequired, 'required');
+        
+        if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+            // Add the parent company selector.
+            $companies = $DB->get_records_sql_menu("SELECT id,name FROM {company}
+                                            WHERE id != :companyid
+                                            ORDER by name", array('companyid' => $this->companyid));
+            $allcompanies = array('0' => get_string('none')) + $companies;
+            $mform->addElement('select', 'parentid', get_string('parentcompany', 'block_iomad_company_admin'), $allcompanies);
+
+            // Add the ecommerce selector.
+            $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
+        } else {
+            // Add it as a hidden field.
+            $mform->addElement('hidden', 'parentid');
+            $mform->addElement('hidden', 'ecommerce');
+        }
+        $mform->setDefault('parentid', 0);
+        $mform->setDefault('ecommerce', 0);
 
         $mform->addElement('text', 'city',
                             get_string('companycity', 'block_iomad_company_admin'),
