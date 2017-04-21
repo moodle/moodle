@@ -36,11 +36,9 @@ Feature: The my overview block allows users to easily access their courses and s
     And I should see "View choices" in the "Course overview" "block"
     And I should see "Feedback Test feedback 1 closes" in the "Course overview" "block"
     And I should see "Answer the questions" in the "Course overview" "block"
-    And I should see "##tomorrow##j M, H:i##" in the "Course overview" "block"
     And I should see "Future" in the "Course overview" "block"
     And I should see "Choice Test choice 3 closes" in the "Course overview" "block"
     And I should see "Feedback Test feedback 3 closes" in the "Course overview" "block"
-    And I should see "##last day of next month##j M, H:i##" in the "Course overview" "block"
     And I log out
 
   Scenario: Past activities should not be displayed on the timeline view
@@ -48,7 +46,6 @@ Feature: The my overview block allows users to easily access their courses and s
     And I click on "Timeline" "link" in the "Course overview" "block"
     When I click on "Sort by dates" "link" in the "Course overview" "block"
     And I should not see "Choice Test choice 2 closes" in the "Course overview" "block"
-    And I should not see "##1 month ago##j M, H:i##" in the "Course overview" "block"
     And I log out
 
   Scenario: See the courses I am enrolled by their status on courses view
@@ -56,20 +53,14 @@ Feature: The my overview block allows users to easily access their courses and s
     And I click on "Courses" "link" in the "Course overview" "block"
     And I click on "In progress" "link" in the "Course overview" "block"
     And I should see "Course 2" in the "Course overview" "block"
-    And I should see "##yesterday##j F Y##" in the "Course overview" "block"
-    And I should see "##tomorrow##j F Y##" in the "Course overview" "block"
     And I should not see "Course 1" in the "Course overview" "block"
     And I click on "Future" "link" in the "Course overview" "block"
     And I should see "Course 3" in the "Course overview" "block"
-    And I should see "##first day of next month##j F Y##" in the "Course overview" "block"
-    And I should see "##last day of next month##j F Y##" in the "Course overview" "block"
     And I should not see "Course 1" in the "Course overview" "block"
     When I click on "Past" "link" in the "Course overview" "block"
     Then I should see "Course 1" in the "Course overview" "block"
     And I should not see "Course 2" in the "Course overview" "block"
     And I should not see "Course 3" in the "Course overview" "block"
-    And I should see "##1 month ago##j F Y##" in the "Course overview" "block"
-    And I should see "##15 days ago##j F Y##" in the "Course overview" "block"
     And I log out
 
   Scenario: No activities should be displayed if the user is not enrolled
