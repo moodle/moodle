@@ -36,7 +36,7 @@ $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
-require_capability('moodle/course:update', context_course::instance($course->id));
+require_capability('moodle/course:manageactivities', context_course::instance($course->id));
 
 // Prepare list of selected modules.
 $manager = new \core_completion\manager($course->id);
