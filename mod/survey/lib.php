@@ -1161,12 +1161,13 @@ function survey_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, completionsubmit';
+    $fields = 'id, name, completionsubmit';
     if (!$survey = $DB->get_record('survey', $dbparams, $fields)) {
         return false;
     }
 
     $result = new cached_cm_info();
+    $result->name = $survey->name;
 
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
