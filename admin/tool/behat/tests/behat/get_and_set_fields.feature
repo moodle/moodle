@@ -58,30 +58,51 @@ Feature: Verify that all form fields values can be get and set
     # Select (multi-select) - Checking "I set the field".
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
-    # Checkbox - Checking "I set the field".
-    And I set the field "Display description on course page" to "1"
-    # Checkbox - Checking "I set the following fields to these values:".
-    And I set the following fields to these values:
-      | Force format | 1 |
-    # Checkbox - Checking "the field matches value" and "the field does not match value".
-    And the field "Display description on course page" matches value "1"
-    And the field "Display description on course page" does not match value ""
+    # Checkbox - Checking "I set the field" and "The field matches value" ticked.
+    And I set the field "Force format" to "1"
     And I press "Save and return to course"
     And I should see "Test this one"
     And I follow "Test this one"
     And I navigate to "Edit settings" in current page administration
-    # Checkbox - Checking "the field matches value" and "the following fields match these values".
-    And the following fields match these values:
-      | Display description on course page | 1 |
-      | Default format | HTML |
-      | Wiki name | Test this one |
+    And I expand all fieldsets
     And the field "Force format" matches value "1"
+    And the field "Force format" does not match value ""
+    # Checkbox - Checking "I set the field" and "The field matches value" unticked.
+    And I set the field "Force format" to ""
+    And I press "Save and return to course"
+    And I should see "Test this one"
+    And I follow "Test this one"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And the field "Force format" matches value ""
+    And the field "Force format" does not match value "1"
+    # Checkbox - Checking "I set the following fields to these values:" and "The following fields match these values" ticked.
+    And I set the following fields to these values:
+      | Force format | 1 |
+    And I press "Save and return to course"
+    And I should see "Test this one"
+    And I follow "Test this one"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And the following fields match these values:
+      | Force format | 1 |
+    And the following fields do not match these values:
+      | Force format | |
+    # Checkbox - Checking "I set the following fields to these values:" and "The following fields match these values" unticked.
+    And I set the following fields to these values:
+      | Force format | |
+    And I press "Save and return to course"
+    And I should see "Test this one"
+    And I follow "Test this one"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And the following fields match these values:
+      | Force format | |
+    And the following fields do not match these values:
+      | Force format | 1 |
     # Select (simple) - Checking "I set the following fields to these values:".
     And I set the following fields to these values:
       | Default format | NWiki |
-      | Display description on course page | |
-    # Checkbox - Checking "I set the field" to uncheck.
-    And I set the field "Force format" to ""
     # Select (simple) - Checking "I set the field".
     And I set the field "Group mode" to "Separate groups"
     And I press "Save and display"
@@ -89,13 +110,10 @@ Feature: Verify that all form fields values can be get and set
     And the following fields match these values:
       | Default format | NWiki |
       | Group mode | Separate groups |
-      | Display description on course page | |
-      | Force format | |
     # All fields - Checking "the following fields do not match these values".
     And the following fields do not match these values:
       | Wiki name | Test this one baby |
       | Default format | HTML |
-      | Force format | 1 |
     And I press "Cancel"
     And I am on "Course 1" course homepage
     # Radio - Checking "I set the field" and "the field matches value".
@@ -154,3 +172,45 @@ Feature: Verify that all form fields values can be get and set
     And the "available[day]" "field" should be enabled
     And the field "deadline[enabled]" matches value "1"
     And I press "Cancel"
+    # Advanced checkbox requires real browser to allow uncheck to work. MDL-58681. MDL-55386.
+    # Advanced checkbox - Checking "I set the field" and "The field matches value" ticked.
+    And I am on "Course 1" course homepage
+    And I follow "Test this one"
+    And I navigate to "Edit settings" in current page administration
+    And I set the field "Display description on course page" to "1"
+    And I press "Save and return to course"
+    And I should see "Test this one"
+    And I follow "Test this one"
+    And I navigate to "Edit settings" in current page administration
+    And the field "Display description on course page" matches value "1"
+    And the field "Display description on course page" does not match value ""
+    # Advanced checkbox - Checking "I set the field" and "The field matches value" unticked.
+    And I set the field "Display description on course page" to ""
+    And I press "Save and return to course"
+    And I should see "Test this one"
+    And I follow "Test this one"
+    And I navigate to "Edit settings" in current page administration
+    And the field "Display description on course page" matches value ""
+    And the field "Display description on course page" does not match value "1"
+    # Advanced checkbox - Checking "I set the following fields to these values:" and "The following fields match these values" ticked.
+    And I set the following fields to these values:
+      | Display description on course page | 1 |
+    And I press "Save and return to course"
+    And I should see "Test this one"
+    And I follow "Test this one"
+    And I navigate to "Edit settings" in current page administration
+    And the following fields match these values:
+      | Display description on course page | 1 |
+    And the following fields do not match these values:
+      | Display description on course page | |
+    # Advanced checkbox - Checking "I set the following fields to these values:" and "The following fields match these values" unticked.
+    And I set the following fields to these values:
+      | Display description on course page | |
+    And I press "Save and return to course"
+    And I should see "Test this one"
+    And I follow "Test this one"
+    And I navigate to "Edit settings" in current page administration
+    And the following fields match these values:
+      | Display description on course page | |
+    And the following fields do not match these values:
+      | Display description on course page | 1 |
