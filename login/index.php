@@ -216,10 +216,13 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
     /// Currently supported only for ldap-authentication module
         $userauth = get_auth_plugin($USER->auth);
         if (!isguestuser() and !empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
+            $externalchangepassword = false;
             if ($userauth->can_change_password()) {
                 $passwordchangeurl = $userauth->change_password_url();
                 if (!$passwordchangeurl) {
                     $passwordchangeurl = $CFG->httpswwwroot.'/login/change_password.php';
+                } else {
+                    $externalchangepassword = true;
                 }
             } else {
                 $passwordchangeurl = $CFG->httpswwwroot.'/login/change_password.php';
@@ -233,7 +236,15 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
                 echo $OUTPUT->footer();
                 exit;
             } elseif (intval($days2expire) < 0 ) {
-                set_user_preference('auth_forcepasswordchange', 1, $USER);
+                if ($externalchangepassword) {
+                    // We end the session if the change password form is external. This prevents access to the site
+                    // until the password is correctly changed.
+                    require_logout();
+                } else {
+                    // If we use the standard change password form, this user preference will be reset when the password
+                    // is changed. Until then it will prevent access to the site.
+                    set_user_preference('auth_forcepasswordchange', 1, $USER);
+                }
                 echo $OUTPUT->header();
                 echo $OUTPUT->confirm(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                 echo $OUTPUT->footer();
