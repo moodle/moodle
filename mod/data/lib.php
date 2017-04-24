@@ -4336,12 +4336,13 @@ function data_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, completionentries';
+    $fields = 'id, name, completionentries';
     if (!$data = $DB->get_record('data', $dbparams, $fields)) {
         return false;
     }
 
     $result = new cached_cm_info();
+    $result->name = $data->name;
 
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
