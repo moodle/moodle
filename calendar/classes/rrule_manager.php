@@ -722,6 +722,20 @@ class rrule_manager {
             unset($cloneevent->id);
             calendar_event::create($cloneevent, false);
         }
+
+        // If COUNT rule is defined and the number of the generated event times is less than the the COUNT rule,
+        // repeat the processing until the COUNT rule is satisfied.
+        if ($count !== false && $count > 0) {
+            // Set count to the remaining counts.
+            $this->count = $count;
+            // Clone the original event, but set the timestart to the last generated event time.
+            $tmpevent = clone($event);
+            $tmpevent->timestart = end($eventtimes);
+            // Generate the additional event times.
+            $additionaleventtimes = $this->generate_recurring_event_times($tmpevent);
+            // Create the additional events.
+            $this->create_recurring_events($event, $additionaleventtimes);
+        }
     }
 
     /**
