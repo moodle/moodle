@@ -118,7 +118,9 @@ if (!$result->correctanswer && !$result->noanswer && !$result->isessayquestion &
 
 $url = new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$result->newpageid));
 if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result->isessayquestion && !$result->maxattemptsreached) {
-    // Review button continue
+    // When the answer is wrong - the result->newpageid points back to the current question.
+    $newpageid = $lesson->calculate_new_page_on_jump($page, $page->nextpageid);
+    $url = new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$newpageid));
     echo $OUTPUT->single_button($url, get_string('reviewquestioncontinue', 'lesson'));
 } else {
     // Normal continue button
