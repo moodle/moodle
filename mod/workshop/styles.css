@@ -251,11 +251,14 @@
 .path-mod-workshop .userplan dt.active {
     vertical-align: top;
     color: black;
-    font-size: 140%;
     border: 1px solid #ddd;
     border-bottom: 0;
     border-top: 0;
     background: #e7f1c3;
+}
+
+.path-mod-workshop .userplan dt.active .phasetitle {
+    font-size: 140%;
 }
 
 .path-mod-workshop .userplan dl {
@@ -355,7 +358,7 @@
 }
 
 .path-mod-workshop .userplan dt .actions {
-    display: inline;
+    font-size: smaller;
 }
 
 .path-mod-workshop .userplan dd.phasetasks li {
