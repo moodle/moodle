@@ -2857,5 +2857,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017042600.01);
     }
 
+    if ($oldversion < 2017050300.01) {
+        // MDL-58684:
+        // Remove all portfolio_tempdata records as these may contain serialized \file_system type objects, which are now unable to
+        // be unserialized because of changes to the file storage API made in MDL-46375. Portfolio now stores an id reference to
+        // files instead of the object.
+        // These records are normally removed after a successful export, however, can be left behind if the user abandons the
+        // export attempt (a stale record). Additionally, each stale record cannot be reused and is normally cleaned up by the cron
+        // task core\task\portfolio_cron_task. Since the cron task tries to unserialize them, and generates a warning, we'll remove
+        // all records here.
+        $DB->delete_records_select('portfolio_tempdata', 'id > ?', [0]);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017050300.01);
+    }
+
     return true;
 }
