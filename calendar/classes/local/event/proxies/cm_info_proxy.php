@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course module stdClass proxy.
+ * Course module cm_info proxy.
  *
  * @package    core_calendar
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
@@ -38,27 +38,46 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class module_std_proxy extends std_proxy implements proxy_interface {
+class cm_info_proxy implements proxy_interface {
+    /** @var \stdClass */
+    protected $base;
+    /** @var  \cm_info */
+    protected $cm;
 
     /**
-     * module_std_proxy constructor.
+     * cm_info_proxy constructor.
      *
-     * @param int $modulename The module name.
-     * @param callable $instance The module instance.
-     * @param callable $callback Callback to load the class.
-     * @param \stdClass $base Class containing base values.
+     * @param string $modname The module name.
+     * @param int $instance The module instance.
+     * @param int $courseid course id this module belongs to
      */
-    public function __construct($modulename, $instance, callable $callback, \stdClass $base = null) {
-        $this->modulename = $modulename;
-        $this->instance = $instance;
-        $this->callbackargs = [$modulename, $instance];
-        $this->callback = $callback;
-        $this->base = $base = is_null($base) ? new \stdClass() : $base;
-        $this->base->modulename = $modulename;
-        $this->base->instance = $instance;
+    public function __construct($modname, $instance, $courseid) {
+        $this->base = (object)['course' => $courseid, 'modname' => $modname, 'instance' => $instance];
     }
 
-    public function get_id() {
-        return $this->get_proxied_instance()->id;
+    /**
+     * Retrieve a member of the proxied class.
+     *
+     * @param string $member The name of the member to retrieve
+     * @return mixed The member.
+     */
+    public function get($member) {
+        if ($this->base && property_exists($this->base, $member)) {
+            return $this->base->{$member};
+        }
+
+        return $this->get_proxied_instance()->{$member};
+    }
+
+    /**
+     * Get the full instance of the proxied class.
+     *
+     * @return \stdClass
+     */
+    public function get_proxied_instance() {
+        if (!$this->cm) {
+            $this->cm = get_fast_modinfo($this->base->course)->instances[$this->base->modname][$this->base->instance];
+        }
+        return $this->cm;
     }
 }

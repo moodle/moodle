@@ -252,7 +252,7 @@ class event_vault implements event_vault_interface {
                 true,
                 true,
                 function ($event) use ($course) {
-                    return $event instanceof action_event_interface && $event->get_course()->get_id() == $course->id;
+                    return $event instanceof action_event_interface && $event->get_course()->get('id') == $course->id;
                 }
             )
         );
@@ -348,11 +348,6 @@ class event_vault implements event_vault_interface {
      * @return event_interface|null
      */
     protected function transform_from_database_record(\stdClass $record) {
-        if ($record->courseid == 0 && $record->instance && $record->modulename) {
-            list($course, $cm) = get_course_and_cm_from_instance($record->instance, $record->modulename);
-            $record->courseid = $course->id;
-        }
-
         return $this->factory->create_instance($record);
     }
 

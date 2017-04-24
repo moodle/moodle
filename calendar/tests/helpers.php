@@ -32,6 +32,7 @@ use core_calendar\local\event\entities\action_event;
 use core_calendar\local\event\entities\event;
 use core_calendar\local\event\entities\repeat_event_collection;
 use core_calendar\local\event\proxies\std_proxy;
+use core_calendar\local\event\proxies\cm_info_proxy;
 use core_calendar\local\event\value_objects\action;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
@@ -94,14 +95,7 @@ class action_event_test_factory implements event_factory_interface {
         $subscription = null;
 
         if ($record->instance && $record->modulename) {
-            $modulename = $record->modulename;
-            $module = new std_proxy($record->instance, function($id) use ($modulename) {
-                return get_coursemodule_from_instance($modulename, $id);
-            },
-            (object)[
-                'modname' => $modulename,
-                'instance' => $record->instance
-            ]);
+            $module = new cm_info_proxy($record->instance, $record->modulename, $record->courseid);
         }
 
         if ($record->subscriptionid) {

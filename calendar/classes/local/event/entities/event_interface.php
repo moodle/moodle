@@ -24,6 +24,8 @@
 
 namespace core_calendar\local\event\entities;
 
+use core_calendar\local\event\proxies\proxy_interface;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**

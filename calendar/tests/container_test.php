@@ -99,15 +99,15 @@ class core_calendar_container_testcase extends advanced_testcase {
         $this->assertEquals($legacyevent->id, $event->get_id());
         $this->assertEquals($dbrow->description, $event->get_description()->get_value());
         $this->assertEquals($dbrow->format, $event->get_description()->get_format());
-        $this->assertEquals($dbrow->courseid, $event->get_course()->get_id());
+        $this->assertEquals($dbrow->courseid, $event->get_course()->get('id'));
 
         if ($dbrow->groupid == 0) {
             $this->assertNull($event->get_group());
         } else {
-            $this->assertEquals($dbrow->groupid, $event->get_group()->get_id());
+            $this->assertEquals($dbrow->groupid, $event->get_group()->get('id'));
         }
 
-        $this->assertEquals($dbrow->userid, $event->get_user()->get_id());
+        $this->assertEquals($dbrow->userid, $event->get_user()->get('id'));
         $this->assertEquals($legacyevent->id, $event->get_repeats()->get_id());
         $this->assertEquals($dbrow->modulename, $event->get_course_module()->get('modname'));
         $this->assertEquals($dbrow->instance, $event->get_course_module()->get('instance'));
@@ -124,7 +124,7 @@ class core_calendar_container_testcase extends advanced_testcase {
         if (!$dbrow->subscriptionid) {
             $this->assertNull($event->get_subscription());
         } else {
-            $this->assertEquals($event->get_subscription()->get_id());
+            $this->assertEquals($event->get_subscription()->get('id'));
         }
     }
 

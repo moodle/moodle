@@ -78,13 +78,9 @@ class std_proxy implements proxy_interface {
         $this->base = $base;
     }
 
-    public function get_id() {
-        return $this->id;
-    }
-
     public function get($member) {
         if ($member === 'id') {
-            return $this->get_id();
+            return $this->id;
         }
 
         if ($this->base && property_exists($this->base, $member)) {
@@ -96,14 +92,6 @@ class std_proxy implements proxy_interface {
         }
 
         return $this->get_proxied_instance()->{$member};
-    }
-
-    public function set($member, $value) {
-        if (!property_exists($this->get_proxied_instance(), $member)) {
-            throw new member_does_not_exist_exception(sprintf('Member %s does not exist', $member));
-        }
-
-        $this->get_proxied_instance()->{$member} = $value;
     }
 
     public function get_proxied_instance() {

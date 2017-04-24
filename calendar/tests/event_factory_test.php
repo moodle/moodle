@@ -312,7 +312,7 @@ class core_calendar_event_factory_testcase extends advanced_testcase {
                 'name' => 'test',
                 'description' => 'Test description',
                 'format' => 2,
-                'courseid' => $course->id,
+                'courseid' => 0,
                 'groupid' => 1,
                 'userid' => 1,
                 'repeatid' => 0,

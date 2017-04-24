@@ -1776,7 +1776,7 @@ function calendar_get_courselink($course) {
 /**
  * Get current module cache.
  *
- * It is not recommended to use this method. If course is known use:
+ * Only use this method if you do not know courseid. Otherwise use:
  * get_fast_modinfo($courseid)->instances[$modulename][$instance]
  *
  * @param array $modulecache in memory module cache
