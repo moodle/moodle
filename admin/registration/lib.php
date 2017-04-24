@@ -280,6 +280,21 @@ class registration_manager {
         $siteinfo['moodleversion'] = $CFG->version;
         $siteinfo['moodlerelease'] = $CFG->release;
         $siteinfo['url'] = $CFG->wwwroot;
+        // Mobile related information.
+        $siteinfo['mobileservicesenabled'] = 0;
+        $siteinfo['mobilenotificacionsenabled'] = 0;
+        $siteinfo['registereduserdevices'] = 0;
+        $siteinfo['registeredactiveuserdevices'] = 0;
+        if (!empty($CFG->enablewebservices) && !empty($CFG->enablemobilewebservice)) {
+            $siteinfo['mobileservicesenabled'] = 1;
+            $siteinfo['registereduserdevices'] = $DB->count_records('user_devices');
+            $airnotifierextpath = $CFG->dirroot . '/message/output/airnotifier/externallib.php';
+            if (file_exists($airnotifierextpath)) { // Maybe some one uninstalled the plugin.
+                require_once($airnotifierextpath);
+                $siteinfo['mobilenotificacionsenabled'] = message_airnotifier_external::is_system_configured();
+                $siteinfo['registeredactiveuserdevices'] = $DB->count_records('message_airnotifier_devices', array('enable' => 1));
+            }
+        }
 
         return $siteinfo;
     }

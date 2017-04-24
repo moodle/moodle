@@ -68,7 +68,8 @@ if (!empty($fromform) and confirm_sesskey()) {
     // Set to -1 all optional data marked as "don't send" by the admin.
     // The function get_site_info() will not calculate the optional data if config is set to -1.
     $inputnames = array('courses', 'users', 'roleassignments', 'posts', 'questions', 'resources',
-        'badges', 'issuedbadges', 'modulenumberaverage', 'participantnumberaverage');
+        'badges', 'issuedbadges', 'modulenumberaverage', 'participantnumberaverage',
+        'mobileservicesenabled', 'mobilenotificacionsenabled', 'registereduserdevices', 'registeredactiveuserdevices');
     foreach ($inputnames as $inputname) {
         if (empty($fromform->{$inputname})) {
             $fromform->{$inputname} = -1;
@@ -101,6 +102,10 @@ if (!empty($fromform) and confirm_sesskey()) {
     set_config('site_issuedbadges_' . $cleanhuburl, $fromform->issuedbadges, 'hub');
     set_config('site_modulenumberaverage_' . $cleanhuburl, $fromform->modulenumberaverage, 'hub');
     set_config('site_participantnumberaverage_' . $cleanhuburl, $fromform->participantnumberaverage, 'hub');
+    set_config('site_mobileservicesenabled_' . $cleanhuburl, $fromform->mobileservicesenabled, 'hub');
+    set_config('site_mobilenotificacionsenabled_' . $cleanhuburl, $fromform->mobilenotificacionsenabled, 'hub');
+    set_config('site_registereduserdevices_' . $cleanhuburl, $fromform->registereduserdevices, 'hub');
+    set_config('site_registeredactiveuserdevices_' . $cleanhuburl, $fromform->registeredactiveuserdevices, 'hub');
 }
 
 /////// UPDATE ACTION ////////
@@ -143,6 +148,10 @@ if (!empty($fromform) and empty($update) and confirm_sesskey()) {
         $fromform->modulenumberaverage = $siteinfo['modulenumberaverage'];
         $fromform->participantnumberaverage = $siteinfo['participantnumberaverage'];
         $fromform->street = $siteinfo['street'];
+        $fromform->mobileservicesenabled = $siteinfo['mobileservicesenabled'];
+        $fromform->mobilenotificacionsenabled = $siteinfo['mobilenotificacionsenabled'];
+        $fromform->registereduserdevices = $siteinfo['registereduserdevices'];
+        $fromform->registeredactiveuserdevices = $siteinfo['registeredactiveuserdevices'];
 
         $params = (array) $fromform; //we are using the form input as the redirection parameters (token, url and name)
 
