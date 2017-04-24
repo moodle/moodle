@@ -185,9 +185,9 @@ $events = calendar_get_legacy_events($timestart, $timeend, $users, $groups, arra
 $ical = new iCalendar;
 $ical->add_property('method', 'PUBLISH');
 foreach($events as $event) {
-   if (!empty($event->modulename)) {
-        $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
-        if (!\core_availability\info_module::is_user_visible($cm, $userid, false)) {
+    if (!empty($event->modulename)) {
+        $instances = get_fast_modinfo($event->courseid, $userid)->get_instances_of($event->modulename);
+        if (empty($instances[$event->instance]->uservisible)) {
             continue;
         }
     }

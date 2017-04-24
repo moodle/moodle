@@ -254,8 +254,15 @@ class core_calendar_external extends external_api {
                 // User can see everything, no further check is needed.
                 $events[$eventid] = $event;
             } else if (!empty($eventobj->modulename)) {
-                $cm = get_coursemodule_from_instance($eventobj->modulename, $eventobj->instance);
-                if (\core_availability\info_module::is_user_visible($cm, 0, false)) {
+                $courseid = $eventobj->courseid;
+                if (!$courseid) {
+                    if (!$calendareventobj->context || !($context = $calendareventobj->context->get_course_context(false))) {
+                        continue;
+                    }
+                    $courseid = $context->instanceid;
+                }
+                $instances = get_fast_modinfo($courseid)->get_instances_of($eventobj->modulename);
+                if (!empty($instances[$eventobj->instance]->uservisible)) {
                     $events[$eventid] = $event;
                 }
             } else {

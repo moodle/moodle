@@ -100,7 +100,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
             if (!empty($userid)) {
                 $prop->userid = $userid;
             } else {
-                return false;
+                $prop->userid = 0;
             }
         }
         if (!isset($prop->courseid)) {
@@ -667,6 +667,69 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEmpty($result['events']);
         $this->assertNull($result['firstid']);
         $this->assertNull($result['lastid']);
+    }
+
+    /**
+     * Test retrieving event that was overridden for a user
+     */
+    public function test_get_calendar_events_override() {
+        $user = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+        $anotheruser = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, 'editingteacher');
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $params = [
+            'type' => CALENDAR_EVENT_TYPE_ACTION,
+            'modulename' => 'assign',
+            'instance' => $moduleinstance->id,
+        ];
+
+        $now = time();
+        $event1 = $this->create_calendar_event('Base event', 0, 'due', 0, $now + DAYSECS, $params + ['courseid' => $course->id]);
+        $event2 = $this->create_calendar_event('User event', $user->id, 'due', 0, $now + 2*DAYSECS, $params + ['courseid' => 0]);
+
+        // Retrieve course events for teacher - only one "Base event" is returned.
+        $this->setUser($teacher);
+        $paramevents = array('courseids' => array($course->id));
+        $options = array ('siteevents' => true, 'userevents' => true);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(1, count($events['events']));
+        $this->assertEquals(0, count($events['warnings']));
+        $this->assertEquals('Base event', $events['events'][0]['name']);
+
+        // Retrieve events for user - both events are returned.
+        $this->setUser($user);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(2, count($events['events']));
+        $this->assertEquals(0, count($events['warnings']));
+        $this->assertEquals('Base event', $events['events'][0]['name']);
+        $this->assertEquals('User event', $events['events'][1]['name']);
+
+        // Retrieve events by id as a teacher, 'User event' should be returned since teacher has access to this course.
+        $this->setUser($teacher);
+        $paramevents = ['eventids' => [$event2->id]];
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(1, count($events['events']));
+        $this->assertEquals(0, count($events['warnings']));
+        $this->assertEquals('User event', $events['events'][0]['name']);
+
+        // Retrieve events by id as another user, nothing should be returned.
+        $this->setUser($anotheruser);
+        $paramevents = ['eventids' => [$event2->id, $event1->id]];
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(0, count($events['events']));
+        $this->assertEquals(0, count($events['warnings']));
     }
 
     /**
