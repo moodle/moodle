@@ -818,7 +818,7 @@ class mod_assign_external extends external_api {
                     new external_single_structure(
                         array(
                             'name' => new external_value(PARAM_TEXT, 'field name'),
-                            'description' => new external_value(PARAM_TEXT, 'field description'),
+                            'description' => new external_value(PARAM_RAW, 'field description'),
                             'text' => new external_value (PARAM_RAW, 'field value'),
                             'format' => new external_format_value ('text')
                         )
