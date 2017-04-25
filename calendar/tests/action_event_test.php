@@ -130,9 +130,9 @@ class core_calendar_action_event_test_event implements event_interface {
 
     public function get_times() {
         return new event_times(
-            (new \DateTimeImmutable())->setTimestamp('-2461276800'),
-            (new \DateTimeImmutable())->setTimestamp('115776000'),
-            (new \DateTimeImmutable())->setTimestamp('115776000'),
+            (new \DateTimeImmutable())->setTimestamp(-386380800),
+            (new \DateTimeImmutable())->setTimestamp(115776000),
+            (new \DateTimeImmutable())->setTimestamp(115776000),
             (new \DateTimeImmutable())->setTimestamp(time())
         );
     }
