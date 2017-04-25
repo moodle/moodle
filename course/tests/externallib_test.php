@@ -770,7 +770,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
      */
     private function prepare_get_course_contents_test() {
         global $DB;
-        $course  = self::getDataGenerator()->create_course(['numsections' => 2]);
+        $course  = self::getDataGenerator()->create_course(['numsections' => 3]);
         $forumdescription = 'This is the forum description';
         $forum = $this->getDataGenerator()->create_module('forum',
             array('course' => $course->id, 'intro' => $forumdescription),
@@ -785,9 +785,19 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id,
             'intro' => $labeldescription));
         $labelcm = get_coursemodule_from_instance('label', $label->id);
-        $url = $this->getDataGenerator()->create_module('url', array('course' => $course->id,
-            'name' => 'URL: % & $ ../', 'section' => 2));
+        // Module with availability restrictions not met.
+        $url = $this->getDataGenerator()->create_module('url',
+            array('course' => $course->id, 'name' => 'URL: % & $ ../', 'section' => 2),
+            array('availability' => '{"op":"&","c":[{"type":"date","d":">=","t":2502892800}],"showc":[true]}'));
         $urlcm = get_coursemodule_from_instance('url', $url->id);
+        // Module for the last section.
+        $this->getDataGenerator()->create_module('url',
+            array('course' => $course->id, 'name' => 'URL for last section', 'section' => 3));
+        // Module for section 1 with availability restrictions met.
+        $yesterday = time() - DAYSECS;
+        $this->getDataGenerator()->create_module('url',
+            array('course' => $course->id, 'name' => 'URL restrictions met', 'section' => 1),
+            array('availability' => '{"op":"&","c":[{"type":"date","d":">=","t":'. $yesterday .'}],"showc":[true]}'));
 
         // Set the required capabilities by the external function.
         $context = context_course::instance($course->id);
@@ -797,6 +807,11 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $conditions = array('course' => $course->id, 'section' => 2);
         $DB->set_field('course_sections', 'summary', 'Text with iframe <iframe src="https://moodle.org"></iframe>', $conditions);
+
+        // Add date availability condition not met for last section.
+        $availability = '{"op":"&","c":[{"type":"date","d":">=","t":2502892800}],"showc":[true]}';
+        $DB->set_field('course_sections', 'availability', $availability,
+                array('course' => $course->id, 'section' => 3));
         rebuild_course_cache($course->id, true);
 
         return array($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm);
@@ -814,13 +829,9 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
 
-        // Check that forum and label descriptions are correctly returned.
-        $firstsection = array_shift($sections);
-        $lastsection = array_pop($sections);
-
         $modinfo = get_fast_modinfo($course);
         $testexecuted = 0;
-        foreach ($firstsection['modules'] as $module) {
+        foreach ($sections[0]['modules'] as $module) {
             if ($module['id'] == $forumcm->id and $module['modname'] == 'forum') {
                 $cm = $modinfo->cms[$forumcm->id];
                 $formattedtext = format_text($cm->content, FORMAT_HTML,
@@ -838,15 +849,24 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             }
         }
         $this->assertEquals(2, $testexecuted);
-        $this->assertEquals(0, $firstsection['section']);
+        $this->assertEquals(0, $sections[0]['section']);
 
         // Check that the only return section has the 5 created modules.
-        $this->assertCount(4, $firstsection['modules']);
-        $this->assertCount(1, $lastsection['modules']);
-        $this->assertEquals(2, $lastsection['section']);
-        $this->assertContains('<iframe', $lastsection['summary']);
-        $this->assertContains('</iframe>', $lastsection['summary']);
-
+        $this->assertCount(4, $sections[0]['modules']);
+        $this->assertCount(1, $sections[1]['modules']);
+        $this->assertCount(1, $sections[2]['modules']);
+        $this->assertCount(0, $sections[3]['modules']); // No modules for the section with availability restrictions.
+        $this->assertNotEmpty($sections[3]['availabilityinfo']);
+        $this->assertEquals(1, $sections[1]['section']);
+        $this->assertEquals(2, $sections[2]['section']);
+        $this->assertEquals(3, $sections[3]['section']);
+        $this->assertContains('<iframe', $sections[2]['summary']);
+        $this->assertContains('</iframe>', $sections[2]['summary']);
+        // The module with the availability restriction met is returning contents.
+        $this->assertNotEmpty($sections[1]['modules'][0]['contents']);
+        // The module with the availability restriction not met is not returning contents.
+        $this->assertArrayNotHasKey('contents', $sections[2]['modules'][0]);
+        $this->assertNotEmpty($sections[2]['modules'][0]['availabilityinfo']);
         try {
             $sections = core_course_external::get_course_contents($course->id,
                                                                     array(array("name" => "invalid", "value" => 1)));
@@ -871,11 +891,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
 
-        $firstsection = array_shift($sections);
-        $lastsection = array_pop($sections);
-
-        $this->assertEmpty($firstsection['modules']);
-        $this->assertEmpty($lastsection['modules']);
+        $this->assertEmpty($sections[0]['modules']);
+        $this->assertEmpty($sections[1]['modules']);
     }
 
     /**
@@ -934,7 +951,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
 
-        $this->assertCount(3, $sections);
+        $this->assertCount(4, $sections);
         $this->assertCount(1, $sections[0]['modules']);
         $this->assertEquals($forumcm->id, $sections[0]['modules'][0]["id"]);
     }
@@ -976,7 +993,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
 
-        $this->assertCount(3, $sections);
+        $this->assertCount(4, $sections);
         $this->assertCount(1, $sections[0]['modules']);
         $this->assertEquals($forumcm->id, $sections[0]['modules'][0]["id"]);
     }
@@ -998,7 +1015,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
 
-        $this->assertCount(3, $sections);
+        $this->assertCount(4, $sections);
         $this->assertCount(1, $sections[0]['modules']);
         $this->assertEquals("page", $sections[0]['modules'][0]["modname"]);
         $this->assertEquals($pagecm->instance, $sections[0]['modules'][0]["instance"]);
