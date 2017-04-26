@@ -85,6 +85,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             'typeoflogin' => api::LOGIN_VIA_APP,
             'mobilecssurl' => '',
             'tool_mobile_disabledfeatures' => '',
+            'launchurl' => "$CFG->wwwroot/$CFG->admin/tool/mobile/launch.php",
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);
@@ -101,7 +102,6 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $expected['registerauth'] = 'email';
         $expected['authinstructions'] = $authinstructions;
         $expected['typeoflogin'] = api::LOGIN_VIA_BROWSER;
-        $expected['launchurl'] = "$CFG->wwwroot/$CFG->admin/tool/mobile/launch.php";
 
         if ($logourl = $OUTPUT->get_logo_url()) {
             $expected['logourl'] = $logourl->out(false);
