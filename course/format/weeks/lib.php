@@ -504,25 +504,60 @@ class format_weeks extends format_base {
     }
 
     /**
-     * Updates the end date for a course.
+     * Updates the end date for a course in weeks format if option automaticenddate is set.
+     *
+     * This method is called from event observers and it can not use any modinfo or format caches because
+     * events are triggered before the caches are reset.
+     *
+     * @param int $courseid
      */
-    public function update_end_date() {
-        global $DB;
+    public static function update_end_date($courseid) {
+        global $DB, $COURSE;
 
-        $options = $this->get_format_options();
+        // Use one DB query to retrieve necessary fields in course, value for automaticenddate and number of the last
+        // section. This query will also validate that the course is indeed in 'weeks' format.
+        $sql = "SELECT c.id, c.format, c.startdate, c.enddate, fo.value AS automaticenddate, MAX(s.section) AS lastsection
+                  FROM {course} c
+             LEFT JOIN {course_format_options} fo
+                    ON fo.courseid = c.id
+                   AND fo.format = c.format
+                   AND fo.name = :optionname
+                   AND fo.sectionid = 0
+             LEFT JOIN {course_sections} s
+                    ON s.course = c.id
+                 WHERE c.format = :format
+                   AND c.id = :courseid
+              GROUP BY c.id, c.format, c.startdate, c.enddate, fo.value";
+        $course = $DB->get_record_sql($sql,
+            ['optionname' => 'automaticenddate', 'format' => 'weeks', 'courseid' => $courseid]);
+
+        if (!$course) {
+            // Looks like it is a course in a different format, nothing to do here.
+            return;
+        }
+
+        // Create an instance of this class and mock the course object.
+        $format = new format_weeks('weeks', $courseid);
+        $format->course = $course;
+
+        // If automaticenddate is not specified take the default value.
+        if (!isset($course->automaticenddate)) {
+            $defaults = $format->course_format_options();
+            $course->automaticenddate = $defaults['automaticenddate'];
+        }
+
         // Check that the course format for setting an automatic date is set.
-        if (!empty($options['automaticenddate'])) {
-            // Now, check how many sections for this course were created.
-            $numsections = $DB->count_records('course_sections', array('course' => $this->get_courseid()));
-
-            // The first section is not a week related section, it is the 'General' section which can not be deleted.
-            $numsections--;
-
+        if (!empty($course->automaticenddate)) {
             // Get the final week's last day.
-            $dates = $this->get_section_dates($numsections);
+            $dates = $format->get_section_dates((int)$course->lastsection);
 
             // Set the course end date.
-            $DB->set_field('course', 'enddate', $dates->end, array('id' => $this->get_courseid()));
+            if ($course->enddate != $dates->end) {
+                $DB->set_field('course', 'enddate', $dates->end, array('id' => $course->id));
+                if (isset($COURSE->id) && $COURSE->id == $courseid) {
+                    $COURSE->enddate = $dates->end;
+                }
+            }
         }
     }
 }

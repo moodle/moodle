@@ -56,16 +56,16 @@ class format_weeks_observer_testcase extends advanced_testcase {
             'automaticenddate' => 1));
 
         // Ok, let's update the course start date.
-        $course->startdate = $startdate + WEEKSECS;
-        update_course($course);
+        $newstartdate = $startdate + WEEKSECS;
+        update_course((object)['id' => $course->id, 'startdate' => $newstartdate]);
 
         // Get the updated course end date.
         $enddate = $DB->get_field('course', 'enddate', array('id' => $course->id));
 
         $format = course_get_format($course->id);
-        $dates = $format->get_section_dates($numsections, $course->startdate);
-
-        // Confirm the end date is the number of weeks ahead of the start date.
+        $this->assertEquals($numsections, $format->get_last_section_number());
+        $this->assertEquals($newstartdate, $format->get_course()->startdate);
+        $dates = $format->get_section_dates($numsections);
         $this->assertEquals($dates->end, $enddate);
     }
 
@@ -86,7 +86,7 @@ class format_weeks_observer_testcase extends advanced_testcase {
         $createenddate = $DB->get_field('course', 'enddate', array('id' => $course->id));
 
         // Ok, let's update the course - but actually not change anything.
-        update_course($course);
+        update_course((object)['id' => $course->id]);
 
         // Get the updated course end date.
         $updateenddate = $DB->get_field('course', 'enddate', array('id' => $course->id));
@@ -112,8 +112,8 @@ class format_weeks_observer_testcase extends advanced_testcase {
             'automaticenddate' => 0));
 
         // Ok, let's update the course start date.
-        $course->startdate = $startdate + WEEKSECS;
-        update_course($course);
+        $newstartdate = $startdate + WEEKSECS;
+        update_course((object)['id' => $course->id, 'startdate' => $newstartdate]);
 
         // Get the updated course end date.
         $updateenddate = $DB->get_field('course', 'enddate', array('id' => $course->id));
@@ -142,7 +142,7 @@ class format_weeks_observer_testcase extends advanced_testcase {
         $enddate = $DB->get_field('course', 'enddate', array('id' => $course->id));
 
         $format = course_get_format($course->id);
-        $dates = $format->get_section_dates($numsections + 1, $course->startdate);
+        $dates = $format->get_section_dates($numsections + 1);
 
         // Confirm end date was updated.
         $this->assertEquals($enddate, $dates->end);
@@ -169,7 +169,7 @@ class format_weeks_observer_testcase extends advanced_testcase {
         $enddate = $DB->get_field('course', 'enddate', array('id' => $course->id));
 
         $format = course_get_format($course->id);
-        $dates = $format->get_section_dates($numsections - 1, $course->startdate);
+        $dates = $format->get_section_dates($numsections - 1);
 
         // Confirm end date was updated.
         $this->assertEquals($enddate, $dates->end);
