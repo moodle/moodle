@@ -23,6 +23,7 @@ $knownregionpost = $PAGE->blocks->is_known_region('side-post');
 
 $regions = iomadbootstrap_grid($hassidepre, $hassidepost);
 $PAGE->set_popup_notification_allowed(false);
+$html = theme_iomad_get_html_for_settings($OUTPUT, $PAGE);
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes(); ?>>
@@ -31,6 +32,7 @@ echo $OUTPUT->doctype() ?>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->favicon(); ?>" />
     <?php echo $OUTPUT->standard_head_html(); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimal-ui">
+    <style><?php echo $html->companycss ?></style>
 </head>
 
 <body <?php echo $OUTPUT->body_attributes(); ?>>
@@ -65,6 +67,8 @@ echo $OUTPUT->doctype() ?>
             <?php echo $OUTPUT->navbar(); ?>
             <div class="breadcrumb-button"><?php echo $OUTPUT->page_heading_button(); ?></div>
         </div>
+
+        <?php echo $html->heading; ?>
 
         <div id="course-header">
             <?php echo $OUTPUT->course_header(); ?>
