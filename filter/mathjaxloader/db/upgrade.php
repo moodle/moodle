@@ -152,6 +152,31 @@ MathJax.Hub.Config({
 
         upgrade_plugin_savepoint(true, 2016052301, 'filter', 'mathjaxloader');
     }
+    if ($oldversion < 2016052302) {
+
+        $httpurl = get_config('filter_mathjaxloader', 'httpurl');
+        if ($httpsurl === "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js") {
+            set_config('httpurl', 'http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js', 'filter_mathjaxloader');
+        }
+
+        $httpsurl = get_config('filter_mathjaxloader', 'httpsurl');
+        if ($httpsurl === "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js") {
+            set_config('httpsurl', 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js', 'filter_mathjaxloader');
+        }
+
+        $mathjaxconfig = get_config('filter_mathjaxloader', 'mathjaxconfig');
+
+        if (strpos($mathjaxconfig, 'MathJax.Ajax.config.path') !== false) {
+            // Now we need to remove this config again because mathjax 2.7.1 supports the extensions on the CDN.
+            $configtoremove = 'MathJax.Ajax.config.path["Contrib"] = "{wwwroot}/filter/mathjaxloader/contrib";';
+
+            $mathjaxconfig = str_replace($configtoremove, '', $mathjaxconfig);
+
+            set_config('mathjaxconfig', $mathjaxconfig, 'filter_mathjaxloader');
+        }
+
+        upgrade_plugin_savepoint(true, 2016052302, 'filter', 'mathjaxloader');
+    }
 
     return true;
 }

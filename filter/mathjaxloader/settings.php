@@ -51,7 +51,6 @@ if ($ADMIN->fulltree) {
     $settings->add($item);
 
     $default = '
-MathJax.Ajax.config.path["Contrib"] = "{wwwroot}/filter/mathjaxloader/contrib";
 MathJax.Hub.Config({
     config: ["Accessible.js", "Safe.js"],
     errorSettings: { message: ["!"] },
