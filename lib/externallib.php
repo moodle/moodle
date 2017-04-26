@@ -1001,7 +1001,7 @@ class external_settings {
     /**
      * Return only one instance
      *
-     * @return object
+     * @return \external_settings
      */
     public static function get_instance() {
         if (self::$instance === null) {
