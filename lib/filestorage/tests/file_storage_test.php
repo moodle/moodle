@@ -1867,7 +1867,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      * errors and behaves as expected.
      */
     public function test_mimetype_known() {
-        $filepath = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'testimage.jpg';
+        $filepath = __DIR__ . '/fixtures/testimage.jpg';
         $mimetype = file_storage::mimetype_from_file($filepath);
         $this->assertEquals('image/jpeg', $mimetype);
     }
@@ -1890,7 +1890,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      * errors and behaves as expected.
      */
     public function test_mimetype_from_file_known() {
-        $filepath = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'testimage.jpg';
+        $filepath = __DIR__ . '/fixtures/testimage.jpg';
         $mimetype = file_storage::mimetype_from_file($filepath);
         $this->assertEquals('image/jpeg', $mimetype);
     }

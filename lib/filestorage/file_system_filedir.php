@@ -109,7 +109,7 @@ class file_system_filedir extends file_system {
      * @return string The full path to the content file
      */
     protected function get_local_path_from_hash($contenthash, $fetchifnotfound = false) {
-        return $this->get_fulldir_from_hash($contenthash) . DIRECTORY_SEPARATOR . $contenthash;
+        return $this->get_fulldir_from_hash($contenthash) . '/' .$contenthash;
     }
 
     /**
@@ -171,7 +171,7 @@ class file_system_filedir extends file_system {
      * @return string The full path to the content directory
      */
     protected function get_fulldir_from_hash($contenthash) {
-        return $this->filedir . DIRECTORY_SEPARATOR . $this->get_contentdir_from_hash($contenthash);
+        return $this->filedir . '/' . $this->get_contentdir_from_hash($contenthash);
     }
 
     /**
@@ -198,7 +198,7 @@ class file_system_filedir extends file_system {
      * @return string The filepath within filedir
      */
     protected function get_contentpath_from_hash($contenthash) {
-        return $this->get_contentdir_from_hash($contenthash) . "/$contenthash";
+        return $this->get_contentdir_from_hash($contenthash) . '/' . $contenthash;
     }
 
     /**
@@ -209,7 +209,7 @@ class file_system_filedir extends file_system {
      * @return string The full path to the trash directory
      */
     protected function get_trash_fulldir_from_hash($contenthash) {
-        return $this->trashdir . DIRECTORY_SEPARATOR . $this->get_contentdir_from_hash($contenthash);
+        return $this->trashdir . '/' . $this->get_contentdir_from_hash($contenthash);
     }
 
     /**
@@ -219,7 +219,7 @@ class file_system_filedir extends file_system {
      * @return string The full path to the trash file
      */
     protected function get_trash_fullpath_from_hash($contenthash) {
-        return $this->trashdir . DIRECTORY_SEPARATOR . $this->get_contentpath_from_hash($contenthash);
+        return $this->trashdir . '/' . $this->get_contentpath_from_hash($contenthash);
     }
 
     /**
@@ -251,7 +251,7 @@ class file_system_filedir extends file_system {
         $contenthash = $file->get_contenthash();
         $contentdir = $this->get_fulldir_from_storedfile($file);
         $trashfile = $this->get_trash_fullpath_from_hash($contenthash);
-        $alttrashfile = $this->trashdir . DIRECTORY_SEPARATOR . $contenthash;
+        $alttrashfile = "{$this->trashdir}/{$contenthash}";
 
         if (!is_readable($trashfile)) {
             // The trash file was not found. Check the alternative trash file too just in case.
