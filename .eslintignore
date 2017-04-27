@@ -9,7 +9,6 @@ auth/cas/CAS/
 auth/fc/fcFPP.php
 enrol/lti/ims-blti/
 filter/algebra/AlgParser.pm
-filter/mathjaxloader/contrib/a11y/
 filter/tex/mimetex.*
 lib/editor/atto/yui/src/rangy/js/*.*
 lib/editor/tinymce/plugins/pdw/tinymce/
