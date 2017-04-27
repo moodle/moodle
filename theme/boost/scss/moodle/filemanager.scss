@@ -642,6 +642,7 @@ a.ygtvspacer:hover {
     */
     /*rtl:ignore*/
     background-position: bottom right;
+    background-size: 16px 16px;
 }
 
 .fp-iconview .fp-file.fp-isreference .fp-reficons2 {
@@ -651,6 +652,7 @@ a.ygtvspacer:hover {
     */
     /*rtl:ignore*/
     background-position: bottom left;
+    background-size: 16px 16px;
 }
 
 .filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail img {
@@ -700,6 +702,7 @@ a.ygtvspacer:hover {
     position: absolute;
     top: 8px;
     left: 17px;
+    background-size: 16px 16px;
 }
 
 .filemanager .fp-filename-icon.fp-isreference .fp-reficons2 {
@@ -712,6 +715,7 @@ a.ygtvspacer:hover {
     position: absolute;
     top: 9px;
     left: -6px;
+    background-size: 16px 16px;
 }
 // Folder Context Menu (File Manager only)
 .filemanager .fp-contextmenu {
