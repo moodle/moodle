@@ -1198,16 +1198,21 @@ function mod_choice_core_calendar_provide_event_action(calendar_event $event,
 
     $cm = get_fast_modinfo($event->courseid)->instances['choice'][$event->instance];
     $choice = $DB->get_record('choice', array('id' => $event->instance), 'id, timeopen, timeclose');
+    $now = time();
 
-    if ($choice->timeopen && $choice->timeclose) {
-        $actionable = (time() >= $choice->timeopen) && (time() <= $choice->timeclose);
-    } else if ($choice->timeclose) {
-        $actionable = time() < $choice->timeclose;
-    } else if ($choice->timeopen) {
-        $actionable = time() >= $choice->timeopen;
-    } else {
-        $actionable = true;
+    if ($choice->timeclose && $choice->timeclose < $now) {
+        // The choice has closed so the user can no longer submit anything.
+        return null;
     }
+
+    if (choice_get_my_response($choice)) {
+        // There is no action if the user has already submitted their choice.
+        return null;
+    }
+
+    // The choice is actionable if we don't have a start time or the start time is
+    // in the past.
+    $actionable = (!$choice->timeopen || $choice->timeopen <= $now);
 
     return $factory->create_instance(
         get_string('viewchoices', 'choice'),

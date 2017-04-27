@@ -293,6 +293,51 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
+    /**
+     * An event should not have an action if the user has already submitted a response
+     * to the choice activity.
+     */
+    public function test_choice_core_calendar_provide_event_action_already_submitted() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+        // Create user.
+        $student = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id, 'manual');
+
+        // Create a choice.
+        $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id,
+            'timeopen' => time() - DAYSECS, 'timeclose' => time() + DAYSECS));
+        $context = context_module::instance($choice->cmid);
+        $cm = get_coursemodule_from_instance('choice', $choice->id);
+
+        $choicewithoptions = choice_get_choice($choice->id);
+        $optionids = array_keys($choicewithoptions->option);
+
+        choice_user_submit_response($optionids[0], $choice, $student->id, $course, $cm);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $choice->id, CHOICE_EVENT_TYPE_OPEN);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        $this->setUser($student);
+
+        // Decorate action event.
+        $action = mod_choice_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm no action was returned if the user has already submitted the
+        // choice activity.
+        $this->assertNull($action);
+    }
+
     public function test_choice_core_calendar_provide_event_action_closed() {
         $this->resetAfterTest();
 
@@ -312,14 +357,10 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $factory = new \core_calendar\action_factory();
 
         // Decorate action event.
-        $actionevent = mod_choice_core_calendar_provide_event_action($event, $factory);
+        $action = mod_choice_core_calendar_provide_event_action($event, $factory);
 
-        // Confirm the event was decorated.
-        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
-        $this->assertEquals(get_string('viewchoices', 'choice'), $actionevent->get_name());
-        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
-        $this->assertEquals(1, $actionevent->get_item_count());
-        $this->assertFalse($actionevent->is_actionable());
+        // Confirm not action was provided for a closed activity.
+        $this->assertNull($action);
     }
 
     public function test_choice_core_calendar_provide_event_action_open_in_future() {
