@@ -105,7 +105,8 @@ class data_field_menu extends data_field_base {
 
         $return = html_writer::label(get_string('fieldtypelabel', "datafield_" . $this->type),
             'menuf_' . $this->field->id, false, array('class' => 'accesshide'));
-        $return .= html_writer::select($options, 'f_'.$this->field->id, $content, array('class' => 'custom-select'));
+        $return .= html_writer::select($options, 'f_'.$this->field->id, $content, array('' => get_string('menuchoose', 'data')),
+                array('class' => 'custom-select'));
         return $return;
     }
 
