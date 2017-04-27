@@ -149,12 +149,8 @@ class api {
         // Check if the user can sign-up to return the launch URL in that case.
         $cansignup = signup_is_enabled();
 
-        if ($typeoflogin == self::LOGIN_VIA_BROWSER or
-                $typeoflogin == self::LOGIN_VIA_EMBEDDED_BROWSER or
-                $cansignup) {
-            $url = new moodle_url("/$CFG->admin/tool/mobile/launch.php");
-            $settings['launchurl'] = $url->out(false);
-        }
+        $url = new moodle_url("/$CFG->admin/tool/mobile/launch.php");
+        $settings['launchurl'] = $url->out(false);
 
         if ($logourl = $OUTPUT->get_logo_url()) {
             $settings['logourl'] = $logourl->out(false);
