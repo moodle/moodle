@@ -65,6 +65,9 @@ class course_summary_exporter extends \core\external\exporter {
                 'type' => PARAM_RAW,
                 'null' => NULL_ALLOWED
             ),
+            'summaryformat' => array(
+                'type' => PARAM_INT,
+            ),
             'startdate' => array(
                 'type' => PARAM_INT,
             ),
@@ -72,6 +75,18 @@ class course_summary_exporter extends \core\external\exporter {
                 'type' => PARAM_INT,
             )
         );
+    }
+
+    /**
+     * Get the formatting parameters for the summary.
+     *
+     * @return array
+     */
+    protected function get_format_parameters_for_summary() {
+        return [
+            'component' => 'course',
+            'filearea' => 'summary',
+        ];
     }
 
     public static function define_other_properties() {
