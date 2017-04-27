@@ -1352,8 +1352,8 @@ function quiz_get_group_override_priorities($quizid) {
         }
     }
 
-    // Sort open times in descending manner. The earlier open time gets higher priority.
-    rsort($grouptimeopen);
+    // Sort open times in ascending manner. The earlier open time gets higher priority.
+    sort($grouptimeopen);
     // Set priorities.
     $opengrouppriorities = [];
     $openpriority = 1;
@@ -1361,8 +1361,8 @@ function quiz_get_group_override_priorities($quizid) {
         $opengrouppriorities[$timeopen] = $openpriority++;
     }
 
-    // Sort close times in ascending manner. The later close time gets higher priority.
-    sort($grouptimeclose);
+    // Sort close times in descending manner. The later close time gets higher priority.
+    rsort($grouptimeclose);
     // Set priorities.
     $closegrouppriorities = [];
     $closepriority = 1;

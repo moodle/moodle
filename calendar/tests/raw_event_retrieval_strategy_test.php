@@ -226,7 +226,7 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
         $events = $retrievalstrategy->get_raw_events([$group12student->id], $groups, [$course->id]);
         $this->assertCount(1, $events);
         $event = reset($events);
-        $this->assertEquals('Assignment 1 due date - Group B override', $event->name);
+        $this->assertEquals('Assignment 1 due date - Group A override', $event->name);
 
         // Get events for user that belongs to group A and has no user override events.
         $this->setUser($group1student);

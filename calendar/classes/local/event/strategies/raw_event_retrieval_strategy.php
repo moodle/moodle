@@ -228,7 +228,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
         $subquery = "SELECT ev.modulename,
                             ev.instance,
                             ev.eventtype,
-                            MAX(ev.priority) as priority
+                            MIN(ev.priority) as priority
                        FROM {event} ev
                       $subquerywhere
                    GROUP BY ev.modulename, ev.instance, ev.eventtype";

@@ -243,7 +243,7 @@ function lesson_update_events($lesson, $override = null) {
 /**
  * Calculates the priorities of timeopen and timeclose values for group overrides for a lesson.
  *
- * @param int $lessonid The quiz ID.
+ * @param int $lessonid The lesson ID.
  * @return array|null Array of group override priorities for open and close times. Null if there are no group overrides.
  */
 function lesson_get_group_override_priorities($lessonid) {
@@ -268,8 +268,8 @@ function lesson_get_group_override_priorities($lessonid) {
         }
     }
 
-    // Sort open times in descending manner. The earlier open time gets higher priority.
-    rsort($grouptimeopen);
+    // Sort open times in ascending manner. The earlier open time gets higher priority.
+    sort($grouptimeopen);
     // Set priorities.
     $opengrouppriorities = [];
     $openpriority = 1;
@@ -277,8 +277,8 @@ function lesson_get_group_override_priorities($lessonid) {
         $opengrouppriorities[$timeopen] = $openpriority++;
     }
 
-    // Sort close times in ascending manner. The later close time gets higher priority.
-    sort($grouptimeclose);
+    // Sort close times in descending manner. The later close time gets higher priority.
+    rsort($grouptimeclose);
     // Set priorities.
     $closegrouppriorities = [];
     $closepriority = 1;
