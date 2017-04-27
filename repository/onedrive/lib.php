@@ -879,7 +879,9 @@ class repository_onedrive extends repository {
         // Upload the file.
         $safefilename = clean_param($source->name, PARAM_PATH);
         $mimetype = $this->get_mimetype_from_filename($safefilename);
-        $fileid = $this->upload_file($systemservice, $systemauth, $temppath, $mimetype, $parentid, $safefilename);
+        // We cannot send authorization headers in the upload or personal microsoft accounts will fail (what a joke!).
+        $curl = new \curl();
+        $fileid = $this->upload_file($systemservice, $curl, $temppath, $mimetype, $parentid, $safefilename);
 
         // Read with link.
         $this->set_file_sharing_anyone_with_link_can_read($systemservice, $fileid);
