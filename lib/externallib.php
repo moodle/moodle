@@ -1139,6 +1139,8 @@ class external_settings {
         if ((AJAX_SCRIPT == false) && (CLI_SCRIPT == false) && (WS_SERVER == false)) {
             // For normal pages, the default should match the default for format_text.
             $this->filter = true;
+            // Use pluginfile.php for web requests.
+            $this->file = 'pluginfile.php';
         }
     }
 
@@ -1151,7 +1153,7 @@ class external_settings {
     /**
      * Return only one instance
      *
-     * @return object
+     * @return \external_settings
      */
     public static function get_instance() {
         if (self::$instance === null) {
