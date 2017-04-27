@@ -255,7 +255,7 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
 
         // Prepare files.
         $files = $this->prepare_file_list();
-        $archivefile = make_request_directory() . DIRECTORY_SEPARATOR . 'test.tgz';
+        $archivefile = make_request_directory() . '/test.tgz';
         $packer->archive_to_pathname($files, $archivefile);
 
         // Extract same files.
@@ -272,7 +272,7 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
         $packer = get_file_packer('application/x-gzip');
 
         // Create sample files.
-        $archivefile = make_request_directory() . DIRECTORY_SEPARATOR . 'test.tgz';
+        $archivefile = make_request_directory() . '/test.tgz';
         file_put_contents($archivefile, '');
 
         // Extract same files.

@@ -89,9 +89,9 @@ class core_calendar_event_testcase extends advanced_testcase {
                     'course_module' => new std_proxy(1, $lamecallable),
                     'type' => 'dunno what this actually is meant to be',
                     'times' => new event_times(
-                        (new \DateTimeImmutable())->setTimestamp('-2461276800'),
-                        (new \DateTimeImmutable())->setTimestamp('115776000'),
-                        (new \DateTimeImmutable())->setTimestamp('115776000'),
+                        (new \DateTimeImmutable())->setTimestamp(-386380800),
+                        (new \DateTimeImmutable())->setTimestamp(115776000),
+                        (new \DateTimeImmutable())->setTimestamp(115776000),
                         (new \DateTimeImmutable())->setTimestamp(time())
                     ),
                     'visible' => true,

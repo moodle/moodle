@@ -847,7 +847,7 @@ class core_files_file_system_testcase extends advanced_testcase {
      * for an image.
      */
     public function test_get_imageinfo_from_path() {
-        $filepath = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'testimage.jpg';
+        $filepath = __DIR__ . "/fixtures/testimage.jpg";
 
         // Get the filesystem mock.
         $fs = $this->get_testable_mock();
@@ -906,7 +906,7 @@ class core_files_file_system_testcase extends advanced_testcase {
 
         $fs = $this->get_testable_mock(['get_remote_path_from_storedfile']);
         $fs->method('get_remote_path_from_storedfile')
-            ->willReturn(__DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'test.tgz');
+            ->willReturn(__DIR__ . "/fixtures/test.tgz");
 
         // Note: We are unable to determine the mode in which the $fh was opened.
         $fh = $fs->get_content_file_handle($file, stored_file::FILE_HANDLE_GZOPEN);
@@ -956,7 +956,7 @@ class core_files_file_system_testcase extends advanced_testcase {
         $contenthash = file_storage::hash_from_string($filecontent);
         $filename = 'example';
 
-        $filepath = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'testimage.jpg';
+        $filepath = __DIR__ . "/fixtures/testimage.jpg";
         $fs = $this->get_testable_mock(['get_remote_path_from_hash']);
         $fs->method('get_remote_path_from_hash')->willReturn($filepath);
 
@@ -974,7 +974,7 @@ class core_files_file_system_testcase extends advanced_testcase {
         $contenthash = file_storage::hash_from_string($filecontent);
         $filename = 'example';
 
-        $filepath = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'testimage.jpg';
+        $filepath = __DIR__ . "/fixtures/testimage.jpg";
 
         $fs = $this->get_testable_mock([
             'get_remote_path_from_hash',
@@ -1022,7 +1022,7 @@ class core_files_file_system_testcase extends advanced_testcase {
      * a locally available file whose filename does not suggest mimetype.
      */
     public function test_mimetype_from_storedfile_using_file_content() {
-        $filepath = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'testimage.jpg';
+        $filepath = __DIR__ . "/fixtures/testimage.jpg";
         $fs = $this->get_testable_mock(['get_remote_path_from_storedfile']);
         $fs->method('get_remote_path_from_storedfile')->willReturn($filepath);
 
@@ -1037,7 +1037,7 @@ class core_files_file_system_testcase extends advanced_testcase {
      * a remotely available file whose filename does not suggest mimetype.
      */
     public function test_mimetype_from_storedfile_using_file_content_remote() {
-        $filepath = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'testimage.jpg';
+        $filepath = __DIR__ . "/fixtures/testimage.jpg";
 
         $fs = $this->get_testable_mock([
             'get_remote_path_from_storedfile',
