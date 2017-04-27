@@ -1205,14 +1205,14 @@ function mod_choice_core_calendar_provide_event_action(calendar_event $event,
         return null;
     }
 
-    if (choice_get_my_response($choice)) {
-        // There is no action if the user has already submitted their choice.
-        return null;
-    }
-
     // The choice is actionable if we don't have a start time or the start time is
     // in the past.
     $actionable = (!$choice->timeopen || $choice->timeopen <= $now);
+
+    if ($actionable && choice_get_my_response($choice)) {
+        // There is no action if the user has already submitted their choice.
+        return null;
+    }
 
     return $factory->create_instance(
         get_string('viewchoices', 'choice'),
