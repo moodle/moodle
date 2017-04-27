@@ -41,17 +41,23 @@ require_once($CFG->dirroot . '/webservice/lib.php');
 // Allow CORS requests.
 header('Access-Control-Allow-Origin: *');
 
-//authenticate the user
+// Authenticate the user.
 $token = required_param('token', PARAM_ALPHANUM);
+// Use preview in order to display the preview of the file (e.g. "thumb" for a thumbnail).
+$preview = optional_param('preview', null, PARAM_ALPHANUM);
+// Offline means download the file from the repository and serve it, even if it was an external link.
+// The repository may have to export the file to an offline format.
+$offline = optional_param('offline', 0, PARAM_BOOL);
+
 $webservicelib = new webservice();
 $authenticationinfo = $webservicelib->authenticate_user($token);
 
-//check the service allows file download
+// Check the service allows file download.
 $enabledfiledownload = (int) ($authenticationinfo['service']->downloadfiles);
 if (empty($enabledfiledownload)) {
     throw new webservice_access_exception('Web service file downloading must be enabled in external service settings');
 }
 
-//finally we can serve the file :)
+// Finally we can serve the file :).
 $relativepath = get_file_argument();
-file_pluginfile($relativepath, 0);
+file_pluginfile($relativepath, 0, $preview, $offline);
