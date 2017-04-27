@@ -1136,7 +1136,7 @@ class external_settings {
      * Constructor - protected - can not be instanciated
      */
     protected function __construct() {
-        if (!defined('AJAX_SCRIPT') && !defined('CLI_SCRIPT') && !defined('WS_SERVER')) {
+        if ((AJAX_SCRIPT == false) && (CLI_SCRIPT == false) && (WS_SERVER == false)) {
             // For normal pages, the default should match the default for format_text.
             $this->filter = true;
         }
