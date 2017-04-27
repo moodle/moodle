@@ -519,6 +519,9 @@ class mysqli_native_moodle_database extends moodle_database {
             throw new dml_connection_exception($dberr);
         }
 
+        // Disable logging until we are fully setup.
+        $this->query_log_prevent();
+
         if (isset($dboptions['dbcollation'])) {
             $collationinfo = explode('_', $dboptions['dbcollation']);
             $this->dboptions['dbcollation'] = $dboptions['dbcollation'];
@@ -526,9 +529,6 @@ class mysqli_native_moodle_database extends moodle_database {
             $collationinfo = explode('_', $this->get_dbcollation());
         }
         $charset = reset($collationinfo);
-
-        // Disable logging until we are fully setup.
-        $this->query_log_prevent();
 
         $this->query_start("--set_charset()", null, SQL_QUERY_AUX);
         $this->mysqli->set_charset($charset);
