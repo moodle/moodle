@@ -23,6 +23,7 @@ Scenario: Two entries required to complete the activity
       | Name | Test database name |
       | Description | Test database description |
       | Completion tracking | Show activity as complete when conditions are met |
+      | completionview | 0 |
       | completionentriesenabled | checked |
       | completionentries        | 2 |
     And I follow "Course 1"
