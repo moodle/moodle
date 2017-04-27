@@ -327,7 +327,13 @@ class block_iomad_company_admin_external extends external_api {
      * @return external_function_parameters
      */
     public static function get_departments_parameters() {
-        return new external_function_parameters(new external_value(PARAM_INT, 'Company id'), 'Company ID', VALUE_DEFAULT, 0);
+        return new external_function_parameters(
+            array(
+                'departmentids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'Company id'), 'List of company IDs', VALUE_DEFAULT, array()
+                )
+            )
+        );
     }
 
     /**
@@ -337,18 +343,31 @@ class block_iomad_company_admin_external extends external_api {
      * @param $comapnyid
      * @return array of department records.
      */
-    public static function get_departments($companyid) {
+    public static function get_departments($companyids = array()) {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::get_department_parameters(), $companyid);
+        $params = self::validate_parameters(self::get_department_parameters(), $companyids);
 
         // Get/check context/capability
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('block/iomad_company_admin:edit_all_departments', $context);
 
-        return $DB->get_records('department', array('company' => $companyid));
+        // Get course records
+        if (empty($companyids)) {
+            $departments = $DB->get_records('department');
+        } else {
+            $departments = $DB->get_records_list('department', 'company', $params['companyids']);
+        }
+
+        // convert to suitable format (I think)
+        $departmentinfo = array();
+        foreach ($departments as $department) {
+            $departmentinfo[] = (array) $department;
+        }
+
+        return $departmentinfo;
     }
 
      /**
@@ -399,7 +418,7 @@ class block_iomad_company_admin_external extends external_api {
     /**
      * block_iomad_company_admin_assign_users
      *
-     * Implement get_departments
+     * Implement assign_users
      * @param $comapnyid
      * @return array of department records.
      */
@@ -470,7 +489,7 @@ class block_iomad_company_admin_external extends external_api {
     /**
      * block_iomad_company_admin_move_users
      *
-     * Implement get_departments
+     * Implement move_users
      * @param $comapnyid
      * @return array of department records.
      */
@@ -539,7 +558,7 @@ class block_iomad_company_admin_external extends external_api {
     /**
      * block_iomad_company_admin_unassign_users
      *
-     * Implement get_departments
+     * Implement unassign_users
      * @param $comapnyid
      * @return array of department records.
      */
@@ -611,7 +630,7 @@ class block_iomad_company_admin_external extends external_api {
     /**
      * block_iomad_company_admin_assign_courses
      *
-     * Implement get_departments
+     * Implement assign_courses
      * @param $comapnyid
      * @return array of department records.
      */
@@ -679,7 +698,7 @@ class block_iomad_company_admin_external extends external_api {
     /**
      * block_iomad_company_admin_unassign_courses
      *
-     * Implement get_departments
+     * Implement unassign_courses
      * @param $comapnyid
      * @return array of department records.
      */
@@ -752,7 +771,7 @@ class block_iomad_company_admin_external extends external_api {
     /**
      * block_iomad_company_admin_update_courses
      *
-     * Implement get_departments
+     * Implement update_courses
      * @param $comapnyid
      * @return array of department records.
      */
@@ -806,7 +825,14 @@ class block_iomad_company_admin_external extends external_api {
      * @return external_function_parameters
      */
     public static function get_course_info_parameters() {
-        return new external_function_parameters(new external_value(PARAM_INT, 'Course id'), 'Course ID', VALUE_DEFAULT, 0);
+        return new external_function_parameters(
+            array(
+                'courrseids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'Course id'), 'List of course IDs', VALUE_DEFAULT, array()
+                )
+            )
+        );
+        //return new external_function_parameters(new external_value(PARAM_INT, 'Course id'), 'Course ID', VALUE_DEFAULT, 0);
     }
 
     /**
@@ -816,22 +842,31 @@ class block_iomad_company_admin_external extends external_api {
      * @param $comapnyid
      * @return array of department records.
      */
-    public static function get_course_info($courseid) {
+    public static function get_course_info($courseids = array()) {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::assign_courses_parameters(), $courseid);
+        $params = self::validate_parameters(self::assign_courses_parameters(), $courseids);
 
         // Get/check context/capability
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('block/iomad_company_admin:managecourses', $context);
 
-        if (!$currentrecord = $DB->get_record('iomad_courses', array('courseid' => $courserecord->courseid))) {
-            return new stdclass();
+        // Get course records
+        if (empty($courseids)) {
+            $courses = $DB->get_records('iomad_course');
         } else {
-            return $currentrecord; 
+            $courses = $DB->get_records_list('iomad_course', 'id', $params['courseids']);
         }
+
+        // convert to suitable format (I think)
+        $courseinfo = array();
+        foreach ($courses as $course) {
+            $courseinfo[] = (array) $course;
+        }
+
+        return $courseinfo;
     }
 
    /**

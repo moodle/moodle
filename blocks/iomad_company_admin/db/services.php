@@ -78,9 +78,9 @@ $functions = array(
         'description' => 'Move users between departments',
         'type' => 'write',
     ),
-    'block_iomad_company_admin_unasign_users' => array(
+    'block_iomad_company_admin_unassign_users' => array(
         'classname' => 'block_iomad_company_admin_external',
-        'methodname' => 'unasign_users',
+        'methodname' => 'unassign_users',
         'classpath' => 'blocks/iomad_company_admin/externallib.php',
         'description' => 'Unassign users from a company',
         'type' => 'write',
