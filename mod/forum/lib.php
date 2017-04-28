@@ -8211,9 +8211,7 @@ function mod_forum_core_calendar_provide_event_action(calendar_event $event,
         return null;
     }
 
-    $course = new stdClass();
-    $course->id = $event->courseid;
-    $completion = new \completion_info($course);
+    $completion = new \completion_info($cm->get_course());
 
     $completiondata = $completion->get_data($cm, false);
 

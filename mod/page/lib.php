@@ -551,9 +551,7 @@ function mod_page_core_calendar_provide_event_action(calendar_event $event,
                                                       \core_calendar\action_factory $factory) {
     $cm = get_fast_modinfo($event->courseid)->instances['page'][$event->instance];
 
-    $course = new stdClass();
-    $course->id = $event->courseid;
-    $completion = new \completion_info($course);
+    $completion = new \completion_info($cm->get_course());
 
     $completiondata = $completion->get_data($cm, false);
 
