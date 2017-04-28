@@ -242,12 +242,8 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
         // Decorate action event.
         $actionevent = mod_scorm_core_calendar_provide_event_action($event, $factory);
 
-        // Confirm the event was decorated.
-        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
-        $this->assertEquals(get_string('enter', 'scorm'), $actionevent->get_name());
-        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
-        $this->assertEquals(1, $actionevent->get_item_count());
-        $this->assertFalse($actionevent->is_actionable());
+        // No event on the dashboard if module is closed.
+        $this->assertNull($actionevent);
     }
 
     public function test_scorm_core_calendar_provide_event_action_open_in_future() {

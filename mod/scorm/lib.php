@@ -1627,12 +1627,21 @@ function scorm_refresh_events($courseid = 0) {
  */
 function mod_scorm_core_calendar_provide_event_action(calendar_event $event,
                                                       \core_calendar\action_factory $factory) {
-    global $CFG, $DB;
+    global $CFG;
 
     require_once($CFG->dirroot . '/mod/scorm/locallib.php');
 
     $cm = get_fast_modinfo($event->courseid)->instances['scorm'][$event->instance];
-    $scorm = $DB->get_record('scorm', array('id' => $event->instance));
+
+    if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < time()) {
+        // The scorm has closed so the user can no longer submit anything.
+        return null;
+    }
+
+    // Restore scorm object from cached values in $cm, we only need id, timeclose and timeopen.
+    $customdata = $cm->customdata ?: [];
+    $customdata['id'] = $cm->instance;
+    $scorm = (object)($customdata + ['timeclose' => 0, 'timeopen' => 0]);
 
     // Check that the SCORM activity is open.
     list($actionable, $warnings) = scorm_get_availability_status($scorm);
@@ -1660,7 +1669,8 @@ function scorm_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionstatusrequired, completionscorerequired, completionstatusallscos';
+    $fields = 'id, name, intro, introformat, completionstatusrequired, completionscorerequired, completionstatusallscos, '.
+        'timeopen, timeclose';
     if (!$scorm = $DB->get_record('scorm', $dbparams, $fields)) {
         return false;
     }
@@ -1678,6 +1688,13 @@ function scorm_get_coursemodule_info($coursemodule) {
         $result->customdata['customcompletionrules']['completionstatusrequired'] = $scorm->completionstatusrequired;
         $result->customdata['customcompletionrules']['completionscorerequired'] = $scorm->completionscorerequired;
         $result->customdata['customcompletionrules']['completionstatusallscos'] = $scorm->completionstatusallscos;
+    }
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($scorm->timeopen) {
+        $result->customdata['timeopen'] = $scorm->timeopen;
+    }
+    if ($scorm->timeclose) {
+        $result->customdata['timeclose'] = $scorm->timeclose;
     }
 
     return $result;
