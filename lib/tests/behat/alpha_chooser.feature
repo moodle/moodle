@@ -63,6 +63,12 @@ Feature: Initials bar
       | student22 | C1     | student        |
       | student23 | C1     | student        |
       | student24 | C1     | student        |
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I log out
+    And I log in as "student2"
+    And I am on "Course 1" course homepage
+    And I log out
 
   @javascript
   Scenario: Filter users on assignment submission page
@@ -321,8 +327,7 @@ Feature: Initials bar
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
-    And I navigate to "More..." in current page administration
-    And I follow "Activity completion"
+    And I navigate to "Activity completion" node in "Course administration > Reports"
     And ".initialbarall.letter.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.letter.active" "css_element" should exist in the ".initialbar.lastinitial" "css_element"
     And ".letter.active.B" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
@@ -347,8 +352,7 @@ Feature: Initials bar
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
     And I am on "Course 1" course homepage
-    And I navigate to "More..." in current page administration
-    And I follow "Activity completion"
+    And I navigate to "Activity completion" node in "Course administration > Reports"
     And ".initialbarall.letter.active" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.letter.active" "css_element" should not exist in the ".initialbar.lastinitial" "css_element"
     And ".letter.active.B" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
