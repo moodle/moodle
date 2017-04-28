@@ -117,7 +117,8 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
 
   Scenario: Check that we can move past a question we don't want to re-attempt
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on site homepage
+    And I follow "Course 1"
     And I follow "Test lesson name"
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
@@ -126,7 +127,8 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
     And I press "Save and display"
     And I log out
     And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on site homepage
+    And I follow "Course 1"
     And I follow "Test lesson name"
     And I should see "First page contents"
     And I press "Next page"
