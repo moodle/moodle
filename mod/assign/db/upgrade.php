@@ -296,5 +296,43 @@ function xmldb_assign_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2017031300, 'assign');
     }
 
+    if ($oldversion < 2017042800) {
+        // Update query to set the grading due date one week after the due date.
+        // Only assign instances with grading due date not set and with a due date of not older than 3 weeks will be updated.
+        $sql = "UPDATE {assign} 
+                   SET gradingduedate = duedate + :weeksecs 
+                 WHERE gradingduedate = 0 
+                       AND duedate > :timelimit";
+
+        // Calculate the time limit, which is 3 weeks before the current date.
+        $interval = new DateInterval('P3W');
+        $timelimit = new DateTime();
+        $timelimit->sub($interval);
+
+        // Update query params.
+        $params = [
+            'weeksecs' => WEEKSECS,
+            'timelimit' => $timelimit->getTimestamp()
+        ];
+
+        // Execute DB update for assign instances.
+        $DB->execute($sql, $params);
+
+        // Create adhoc task for upgrading of existing mod_assign calendar events.
+        $task = new \stdClass();
+        $task->classname = "\\core\\task\\refresh_mod_calendar_events_task";
+        $task->component = 'core';
+
+        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+        $nextruntime = time() - 1;
+        $task->nextruntime = $nextruntime;
+        // Indicate to the adhoc task that only the assignment module will be refreshed.
+        $task->customdata = json_encode(['plugins' => ['assign']]);
+        $DB->insert_record('task_adhoc', $task);
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2017042800, 'assign');
+    }
+
     return true;
 }
