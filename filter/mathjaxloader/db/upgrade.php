@@ -155,7 +155,7 @@ MathJax.Hub.Config({
     if ($oldversion < 2016052302) {
 
         $httpurl = get_config('filter_mathjaxloader', 'httpurl');
-        if ($httpsurl === "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js") {
+        if ($httpurl === "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js") {
             set_config('httpurl', 'http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js', 'filter_mathjaxloader');
         }
 
