@@ -299,9 +299,9 @@ function xmldb_assign_upgrade($oldversion) {
     if ($oldversion < 2017042800) {
         // Update query to set the grading due date one week after the due date.
         // Only assign instances with grading due date not set and with a due date of not older than 3 weeks will be updated.
-        $sql = "UPDATE {assign} 
-                   SET gradingduedate = duedate + :weeksecs 
-                 WHERE gradingduedate = 0 
+        $sql = "UPDATE {assign}
+                   SET gradingduedate = duedate + :weeksecs
+                 WHERE gradingduedate = 0
                        AND duedate > :timelimit";
 
         // Calculate the time limit, which is 3 weeks before the current date.
