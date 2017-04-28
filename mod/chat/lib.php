@@ -454,6 +454,7 @@ function chat_refresh_events($courseid = 0) {
         $event->type        = CALENDAR_EVENT_TYPE_ACTION;
         $event->description = format_module_intro('chat', $chat, $cm->id);
         $event->timestart   = $chat->chattime;
+        $event->timesort    = $chat->chattime;
 
         if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id))) {
             $calendarevent = calendar_event::load($event->id);
@@ -674,7 +675,8 @@ function chat_update_chat_times($chatid=0) {
         $params = array('chattime' => $chat->chattime, 'chatid' => $chat->id);
 
         if ($event->id = $DB->get_field_select('event', 'id', $cond, $params)) {
-            $event->timestart   = $chat->chattime;
+            $event->timestart = $chat->chattime;
+            $event->timesort = $chat->chattime;
             $calendarevent = calendar_event::load($event->id);
             $calendarevent->update($event, false);
         }
