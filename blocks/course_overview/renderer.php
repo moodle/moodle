@@ -213,7 +213,7 @@ class block_course_overview_renderer extends plugin_renderer_base {
         for ($i = 1; $i <= $max; $i++) {
             $options[$i] = $i;
         }
-        $url = new moodle_url('/my/index.php');
+        $url = new moodle_url('/my/index.php', ['sesskey' => sesskey()]);
         $select = new single_select($url, 'mynumber', $options, block_course_overview_get_max_user_courses(), array());
         $select->set_label(get_string('numtodisplay', 'block_course_overview'));
         $output .= $this->output->render($select);
