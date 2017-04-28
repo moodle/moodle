@@ -64,7 +64,7 @@ class block_course_overview extends block_base {
         $content = array();
 
         $updatemynumber = optional_param('mynumber', -1, PARAM_INT);
-        if ($updatemynumber >= 0) {
+        if ($updatemynumber >= 0 && optional_param('sesskey', '', PARAM_RAW) && confirm_sesskey()) {
             block_course_overview_update_mynumber($updatemynumber);
         }
 
