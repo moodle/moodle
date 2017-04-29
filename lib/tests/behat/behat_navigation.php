@@ -539,7 +539,7 @@ class behat_navigation extends behat_base {
         $bodynode = $this->find('xpath', 'body');
         $bodyclass = $bodynode->getAttribute('class');
         $matches = [];
-        if (preg_match('/(?<=^course-|\scourse-)\d/', $bodyclass, $matches) && !empty($matches)) {
+        if (preg_match('/(?<=^course-|\scourse-)\d+/', $bodyclass, $matches) && !empty($matches)) {
             $courseid = intval($matches[0]);
         } else {
             $courseid = SITEID;
