@@ -93,6 +93,8 @@ class company_edit_form extends company_moodleform {
         }
         $mform->setDefault('parentid', 0);
         $mform->setDefault('ecommerce', 0);
+        $mform->setType('parentid', PARAM_INT);
+        $mform->setType('ecommerce', PARAM_INT);
 
         $mform->addElement('text', 'city',
                             get_string('companycity', 'block_iomad_company_admin'),
@@ -470,6 +472,11 @@ if ($mform->is_cancelled()) {
         $companydetails = $DB->get_record('company', array('id' => $companyid));
         $companydetails->category = $coursecat->id;
         $DB->update_record('company', $companydetails);
+        // Deal with any parent company assignments.
+        if (!empty($companydetails->parentid)) {
+            $company = new company($companydetails->id);
+            $company->assign_parent_managers($companydetails->parentid);
+        }
 
     } else {
         $data->id = $companyid;
@@ -477,7 +484,6 @@ if ($mform->is_cancelled()) {
         $company = new company($companyid);
         $oldtheme = $company->get_theme();
         $themechanged = $oldtheme != $data->theme;
-        $DB->update_record('company', $data);
 
         if ($themechanged) {
             $company->update_theme($data->theme);
@@ -487,9 +493,26 @@ if ($mform->is_cancelled()) {
         $topdepartment = $company->get_company_parentnode($companyid);
         if ($topdepartment->name != $data->name) {
             $topdepartment->name = $data->name;
-            $topdepartment->shorname = $data->shortname;
+            $topdepartment->shortname = $data->shortname;
             $DB->update_record('department', $topdepartment);
         }
+
+        // Has the company parentid changed?
+        $companyparent = $company->get_parentid();
+        if ($companyparent != $data->parentid) {
+
+            // Clear the old ones.
+            $company->unassign_parent_managers($companyparent);
+
+            // Update the company record.
+            $DB->update_record('company', $data);
+            if (!empty($data->parentid)) {
+                // Assign the new ones.
+                $company->assign_parent_managers($data->parentid);
+            }
+        }
+
+        $DB->update_record('company', $data);
 
         if (company_user::is_company_user()) {
             company_user::reload_company();
@@ -514,7 +537,8 @@ if ($mform->is_cancelled()) {
             }
         }
     }
-    redirect($companylist);
+    die;
+    //redirect($companylist);
 }
 
 echo $OUTPUT->header();

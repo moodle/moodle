@@ -52,6 +52,8 @@ class block_iomad_company_admin_external extends external_api {
                             'timezone' => new external_value(PARAM_TEXT, 'User default timezone', VALUE_DEFAULT, '99'),
                             'lang' => new external_value(PARAM_TEXT, 'User default language', VALUE_DEFAULT, 'en'),
                             'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0', VALUE_DEFAULT, 0),
+                            'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
+                            'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
                         )
                     )
                 )
@@ -138,6 +140,8 @@ class block_iomad_company_admin_external extends external_api {
                      'timezone' => new external_value(PARAM_TEXT, 'User default timezone'),
                      'lang' => new external_value(PARAM_TEXT, 'User default language'),
                      'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0'),
+                     'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
+                     'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
                 )
             )
         );
@@ -218,6 +222,8 @@ class block_iomad_company_admin_external extends external_api {
                      'timezone' => new external_value(PARAM_TEXT, 'User default timezone'),
                      'lang' => new external_value(PARAM_TEXT, 'User default language'),
                      'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0'),
+                     'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
+                     'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
                 )
             )
         );
@@ -250,6 +256,8 @@ class block_iomad_company_admin_external extends external_api {
                             'timezone' => new external_value(PARAM_TEXT, 'User default timezone', VALUE_OPTIONAL),
                             'lang' => new external_value(PARAM_TEXT, 'User default language', VALUE_OPTIONAL),
                             'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0', VALUE_DEFAULT, 0),
+                            'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
+                            'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
                         )
                     )
                 )
@@ -448,7 +456,18 @@ class block_iomad_company_admin_external extends external_api {
                                                   true)) {
                 $succeeded = false;
             }
-            
+
+            // Create an event for this.
+            $managertypes = $company->get_managertypes();
+            $eventother = array('companyname' => $company->get_name(),
+                                'companyid' => $company->id,
+                                'usertype' => $userrecord->managertype,
+                                'usertypename' => $managertypes[$userrecord->managertype]);
+            $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => context_system::instance(),
+                                                                                            'objectid' => $company->id,
+                                                                                            'userid' => $adduser->id,
+                                                                                            'other' => $eventother));
+            $event->trigger();
         }
         return $succeeded;
     }
@@ -519,7 +538,18 @@ class block_iomad_company_admin_external extends external_api {
                                                      true)) {
                 $succeeded = false;
             }
-            
+
+            // Create an event for this.
+            $managertypes = $company->get_managertypes();
+            $eventother = array('companyname' => $company->get_name(),
+                                'companyid' => $company->id,
+                                'usertype' => $userrecord->managertype,
+                                'usertypename' => $managertypes[$userrecord->managertype]);
+            $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => context_system::instance(),
+                                                                                            'objectid' => $company->id,
+                                                                                            'userid' => $adduser->id,
+                                                                                            'other' => $eventother));
+            $event->trigger();
         }
         return $succeeded;
     }
@@ -548,6 +578,7 @@ class block_iomad_company_admin_external extends external_api {
                         array(
                             'userid' => new external_value(PARAM_INT, 'User ID', VALUE_DEFAULT, 0),
                             'companyid' => new external_value(PARAM_INT, 'User company ID', VALUE_DEFAULT, 0),
+                            'usertype' => new external_value(PARAM_INT, 'Old user manager type', VALUE_DEFAULT, 0),
                         )
                     )
                 )
@@ -585,7 +616,19 @@ class block_iomad_company_admin_external extends external_api {
             if (!$company->unassign_user_from_company($userrecord->userid, true)) {
                 $succeeded = false;
             }
-            
+
+            // Create an event for this.
+            $managertypes = $company->get_managertypes();
+            $eventother = array('companyname' => $company->get_name(),
+                                'companyid' => $company->id,
+                                'usertype' => $userrecord->usertype,
+                                'usertypename' => $managertypes[$roletype]);
+            $event = \block_iomad_company_admin\event\company_user_unassigned::create(array('context' => context_system::instance(),
+                                                                                            'objectid' => $company->id,
+                                                                                            'userid' => $adduser->id,
+                                                                                            'other' => $eventother));
+            $event->trigger();
+
         }
 
         return $succeeded;

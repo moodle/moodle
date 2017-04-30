@@ -1362,5 +1362,44 @@ function xmldb_local_iomad_upgrade($oldversion) {
         // Iomad savepoint reached.
         upgrade_plugin_savepoint(true, 2015040702, 'local', 'iomad');
     }
+
+    if ($oldversion < 2017041701) {
+
+        // Define field id to be added to company.cd
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+
+        // Conditionally launch add field id.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017041701, 'local', 'iomad');
+
+        // Define field ecommerce to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('ecommerce', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'parentid');
+
+        // Conditionally launch add field ecommerce.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    }
+
+    if ($oldversion < 2017041702) {
+
+        // Define field parentid to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('parentid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'managernotify');
+
+        // Conditionally launch add field parentid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017041702, 'local', 'iomad');
+    }
     return $result;
 }

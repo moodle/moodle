@@ -83,4 +83,36 @@ class local_iomad_observer {
         company::course_completed_supervisor($event);
         return true;
     }
+
+    /**
+     * Triggered via user_deleted event.
+     *
+     * @param \core\event\user_deleted $event
+     * @return bool true on success.
+     */
+    public static function user_deleted($event) {
+        company::user_deleted($event);
+        return true;
+    }
+    /**
+     * Triggered via block_iomad_company_admin::company_user_assigned event.
+     *
+     * @param \block_iomad_company_admin\event\course_completed $event
+     * @return bool true on success.
+     */
+    public static function company_user_assigned($event) {
+        company::company_user_assigned($event);
+        return true;
+    }
+
+    /**
+     * Triggered via block_iomad_company_admin::company_user_unassigned event.
+     *
+     * @param \block_iomad_company_admin\event\course_completed $event
+     * @return bool true on success.
+     */
+    public static function company_user_unassigned($event) {
+        company::company_user_unassigned($event);
+        return true;
+    }
 }

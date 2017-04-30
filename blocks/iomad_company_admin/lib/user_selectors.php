@@ -551,6 +551,7 @@ class current_department_user_selector extends user_selector_base {
         $this->companyid  = $options['companyid'];
         $this->departmentid = $options['departmentid'];
         $this->roletype = $options['roletype'];
+        $this->showothermanagers = $options['showothermanagers'];
         parent::__construct($name, $options);
     }
 
@@ -560,6 +561,7 @@ class current_department_user_selector extends user_selector_base {
         $options['departmentid'] = $this->departmentid;
         $options['roletype'] = $this->roletype;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
+        $options['showothermanagers'] = $this->showothermanagers;
         return $options;
     }
 
@@ -583,14 +585,24 @@ class current_department_user_selector extends user_selector_base {
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
+        $params['thiscompanyid'] = $this->companyid;
 
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
+        
+        if (empty($this->showothermanagers)) {
+            $othermanagersql = " AND cu.userid NOT IN (
+                                SELECT userid FROM {company_users}
+                                WHERE managertype = 1
+                                AND companyid != :thiscompanyid ) ";
+        } else {
+            $othermanagersql = "";
+        }
 
         $sql = " FROM
                     {user} u
                     INNER JOIN {company_users} cu ON cu.userid = u.id
-                WHERE $wherecondition AND u.suspended = 0 
+                WHERE $wherecondition $othermanagersql AND u.suspended = 0 
                     AND cu.managertype = ($this->roletype)
                     AND
                     u.id != ($USER->id)

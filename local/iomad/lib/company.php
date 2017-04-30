@@ -121,6 +121,20 @@ class company {
     }
 
     /**
+     * Gets the company parentid name for the current instance
+     *
+     * Returns text;
+     *
+     **/
+    public function get_parentid() {
+        if ($companyrecord = $this->get('parentid')) {
+            return $companyrecord->parentid;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Gets the file path for the company logo for the current instance
      *
      * Returns text;
@@ -518,6 +532,70 @@ class company {
         $DB->set_field('user', 'theme', '', array('id' => $userid));
 
         return true;
+    }
+
+    public function assign_parent_managers($parentid, $finalcompanyid = 0) {
+        global $DB;
+        
+        if (empty($finalcompanyid)) {
+            $finalcompanyid = $this->id;
+        }
+        $parentcompany = new company($parentid);
+        $parentmanagers = $parentcompany->get_company_managers();
+        $finalcompany = new company($finalcompanyid);
+        foreach ($parentmanagers as $managerid) {
+            
+            $finalcompany->assign_user_to_company($managerid->userid, 0, 1, true);
+        }
+        // Is there any more?
+        $grandparentid = $parentcompany->get_parentid();
+        if (!empty($grandparentid)) {
+            $parentcompany->assign_parent_managers($grandparentid, $finalcompanyid);
+        }
+    }
+
+    public function unassign_parent_managers($parentid, $finalcompanyid = 0) {
+        global $DB;
+        
+        if (empty($finalcompanyid)) {
+            $finalcompanyid = $this->id;
+        }
+        $parentcompany = new company($parentid);
+        $parentmanagers = $parentcompany->get_company_managers();
+
+        $finalcompany = new company($finalcompanyid);
+        foreach ($parentmanagers as $managerid) {
+            $finalcompany->unassign_user_from_company($managerid->userid, true);
+        }
+        // Is there any more?
+        $grandparentid = $parentcompany->get_parentid();
+        if (!empty($grandparentid)) {
+            $parentcompany->unassign_parent_managers($grandparentid, $finalcompanyid);
+        }
+    }
+
+    public function get_company_managers($managertype=1) {
+        global $DB;
+
+        return $DB->get_records('company_users', array('companyid' => $this->id, 'managertype' => $managertype), null, 'userid');
+    }
+
+
+    public function get_child_companies() {
+        global $DB;
+
+        $returnchildren = array();
+
+        // Do we have any child companies?
+        if ($children = $DB->get_records('company', array('parentid' => $this->id), null, 'id')) {
+            foreach ($children as $child) {
+                $returnchildren[$child->id] = $child->id;
+                $childcompany = new company($child->id);
+                $returnchildren = $returnchildren + $childcompany->get_child_companies();
+            }
+        }
+
+        return $returnchildren;
     }
 
     // Department functions.
@@ -1904,6 +1982,8 @@ class company {
                                                             'templateid' => $templateid));
     }
 
+    /***  Event Handlers  ***/
+
     /**
      * Triggered via competency_framework_created event.
      *
@@ -2058,6 +2138,88 @@ class company {
                 }
             }
         }
+        return true;
+    }
+
+    /**
+     * Triggered via user_deleted event.
+     *
+     * @param \core\event\user_deleted $event
+     * @return bool true on success.
+     */
+    public static function user_deleted(\core\event\user_deleted $event) {
+        global $DB;
+
+        $userid = $event->objectid;
+
+        // Does the user have any unused licenses?
+        if ($licenserecords = $DB->get_records('companylicense_users', array('userid' => $userid, 'isusing' => 0))) {
+            foreach ($licenserecords as $licenserecord) {
+                // Delete the record.
+                $DB->delete_records('companylicense_users', array('id' => $licenserecord->id));
+                // Update the license used count.
+                $DB->execute_sql("UPDATE {companylicense},
+                                  (
+                                   SELECT licenseid,count(*) AS licCount FROM {companylicense_users} GROUP BY licenseid
+                                  ) AS t2
+                                  SET {companylicense}.used = t2.licCount
+                                  WHERE mdl_companylicense.id = t2.licenseid;");
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Triggered via company_user_assigned event.
+     *
+     * @param \block_iomad_company_user\event\company_user_assigned $event
+     * @return bool true on success.
+     */
+    public static function company_user_assigned(\block_iomad_company_admin\event\company_user_assigned $event) {
+        global $DB;
+
+        // We only care if its a company manager.
+        if ($event->other['usertype'] != 1) {
+            return true;
+        }
+        $companyid = $event->objectid;
+        $userid = $event->userid;
+        
+        $company = new company($companyid);
+        $childcompanies = $company->get_child_companies();
+
+        foreach ($childcompanies as $childid) {
+            $childcompany = new company($childid);
+            $childcompany->assign_user_to_company($userid, 0, $event->other['usertype'], true);
+        }
+        
+        return true;
+    }
+
+    /**
+     * Triggered via company_user_unassigned event.
+     *
+     * @param \block_iomad_company_user\event\company_user_unassigned $event
+     * @return bool true on success.
+     */
+    public static function company_user_unassigned(\block_iomad_company_admin\event\company_user_unassigned $event) {
+        global $DB;
+
+        // We only care if its a company manager.
+        if ($event->other['usertype'] != 1) {
+            return true;
+        }
+        $companyid = $event->objectid;
+        $userid = $event->userid;
+        
+        $company = new company($companyid);
+        $childcompanies = $company->get_child_companies();
+
+        foreach ($childcompanies as $childid) {
+            $childcompany = new company($childid);
+            $childcompany->unassign_user_from_company($userid, 0, $event->other['usertype'], true);
+        }
+        
         return true;
     }
 

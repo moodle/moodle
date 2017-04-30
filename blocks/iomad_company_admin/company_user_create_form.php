@@ -452,6 +452,19 @@ if ($data = $mform->get_data()) {
             }
         }
     }
+
+    // Create an event for this.
+    $managertypes = $company->get_managertypes();
+    $eventother = array('companyname' => $company->get_name(),
+                        'companyid' => $company->id,
+                        'usertype' => $data->managertype,
+                        'usertypename' => $managertypes[$data->managertype]);
+    $event = \block_iomad_company_admin\event\company_user_unassigned::create(array('context' => context_system::instance(),
+                                                                                    'objectid' => $company->id,
+                                                                                    'userid' => $user->id,
+                                                                                    'other' => $eventother));
+    $event->trigger();
+
     // Assign the user to the default company department.
     $parentnode = company::get_company_parentnode($companyid);
     if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext)) {
