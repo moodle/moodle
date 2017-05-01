@@ -311,8 +311,8 @@ class repository_onedrive extends repository {
         } catch (Exception $e) {
             if ($e->getCode() == 403 && strpos($e->getMessage(), 'Access Not Configured') !== false) {
                 throw new repository_exception('servicenotenabled', 'repository_onedrive');
-            } else {
-                throw $e;
+            } else if (strpos($e->getMessage(), 'mysite not found') !== false) {
+                throw new repository_exception('mysitenotfound', 'repository_onedrive');
             }
         }
 
