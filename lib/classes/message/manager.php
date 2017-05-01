@@ -133,13 +133,14 @@ class manager {
             return $savemessage->id;
         }
 
-        $processors = get_message_processors(true);
-
         $failed = false;
         foreach ($processorlist as $procname) {
             // Let new messaging class add custom content based on the processor.
             $proceventdata = ($eventdata instanceof message) ? $eventdata->get_eventobject_for_processor($procname) : $eventdata;
-            if (!$processors[$procname]->object->send_message($proceventdata)) {
+            $stdproc = new \stdClass();
+            $stdproc->name = $procname;
+            $processor = \core_message\api::get_processed_processor_object($stdproc);
+            if (!$processor->object->send_message($proceventdata)) {
                 debugging('Error calling message processor ' . $procname);
                 $failed = true;
                 // Previously the $messageid = false here was overridden
