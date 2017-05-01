@@ -166,7 +166,13 @@ class core_course_external extends external_api {
             $modinfosections = $modinfo->get_sections();
             foreach ($sections as $key => $section) {
 
-                if (!$section->uservisible) {
+                // Show the section if the user is permitted to access it, OR if it's not available
+                // but there is some available info text which explains the reason & should display.
+                $showsection = $section->uservisible ||
+                    ($section->visible && !$section->available &&
+                    !empty($section->availableinfo));
+
+                if (!$showsection) {
                     continue;
                 }
 
@@ -203,15 +209,21 @@ class core_course_external extends external_api {
                                 $context->id, 'course', 'section', $section->id, $options);
                 $sectionvalues['section'] = $section->section;
                 $sectionvalues['hiddenbynumsections'] = $section->section > $coursenumsections ? 1 : 0;
+                $sectionvalues['uservisible'] = $section->uservisible;
+                if (!empty($section->availableinfo)) {
+                    $sectionvalues['availabilityinfo'] = \core_availability\info::format_info($section->availableinfo, $course);
+                }
+
                 $sectioncontents = array();
 
-                //for each module of the section
-                if (empty($filters['excludemodules']) and !empty($modinfosections[$section->section])) {
+                // For each module of the section (if it is visible).
+                if ($section->uservisible and empty($filters['excludemodules']) and !empty($modinfosections[$section->section])) {
                     foreach ($modinfosections[$section->section] as $cmid) {
                         $cm = $modinfo->cms[$cmid];
 
-                        // stop here if the module is not visible to the user
-                        if (!$cm->uservisible) {
+                        // Stop here if the module is not visible to the user on the course main page:
+                        // The user can't access the module and the user can't view the module on the course page.
+                        if (!$cm->uservisible && !$cm->is_visible_on_course_page()) {
                             continue;
                         }
 
@@ -271,24 +283,29 @@ class core_course_external extends external_api {
                         //user that can view hidden module should know about the visibility
                         $module['visible'] = $cm->visible;
                         $module['visibleoncoursepage'] = $cm->visibleoncoursepage;
+                        $module['uservisible'] = $cm->uservisible;
+                        if (!empty($cm->availableinfo)) {
+                            $module['availabilityinfo'] = \core_availability\info::format_info($cm->availableinfo, $course);
+                        }
 
                         // Availability date (also send to user who can see hidden module).
                         if ($CFG->enableavailability && ($canviewhidden || $canupdatecourse)) {
                             $module['availability'] = $cm->availability;
                         }
 
-                        $baseurl = 'webservice/pluginfile.php';
+                        // Return contents only if the user can access to the module.
+                        if ($cm->uservisible) {
+                            $baseurl = 'webservice/pluginfile.php';
 
-                        //call $modulename_export_contents
-                        //(each module callback take care about checking the capabilities)
-
-                        require_once($CFG->dirroot . '/mod/' . $cm->modname . '/lib.php');
-                        $getcontentfunction = $cm->modname.'_export_contents';
-                        if (function_exists($getcontentfunction)) {
-                            if (empty($filters['excludecontents']) and $contents = $getcontentfunction($cm, $baseurl)) {
-                                $module['contents'] = $contents;
-                            } else {
-                                $module['contents'] = array();
+                            // Call $modulename_export_contents (each module callback take care about checking the capabilities).
+                            require_once($CFG->dirroot . '/mod/' . $cm->modname . '/lib.php');
+                            $getcontentfunction = $cm->modname.'_export_contents';
+                            if (function_exists($getcontentfunction)) {
+                                if (empty($filters['excludecontents']) and $contents = $getcontentfunction($cm, $baseurl)) {
+                                    $module['contents'] = $contents;
+                                } else {
+                                    $module['contents'] = array();
+                                }
                             }
                         }
 
@@ -334,6 +351,8 @@ class core_course_external extends external_api {
                     'section' => new external_value(PARAM_INT, 'Section number inside the course', VALUE_OPTIONAL),
                     'hiddenbynumsections' => new external_value(PARAM_INT, 'Whether is a section hidden in the course format',
                                                                 VALUE_OPTIONAL),
+                    'uservisible' => new external_value(PARAM_BOOL, 'Is the section visible for the user?', VALUE_OPTIONAL),
+                    'availabilityinfo' => new external_value(PARAM_RAW, 'Availability information.', VALUE_OPTIONAL),
                     'modules' => new external_multiple_structure(
                             new external_single_structure(
                                 array(
@@ -343,6 +362,10 @@ class core_course_external extends external_api {
                                     'instance' => new external_value(PARAM_INT, 'instance id', VALUE_OPTIONAL),
                                     'description' => new external_value(PARAM_RAW, 'activity description', VALUE_OPTIONAL),
                                     'visible' => new external_value(PARAM_INT, 'is the module visible', VALUE_OPTIONAL),
+                                    'uservisible' => new external_value(PARAM_BOOL, 'Is the module visible for the user?',
+                                        VALUE_OPTIONAL),
+                                    'availabilityinfo' => new external_value(PARAM_RAW, 'Availability information.',
+                                        VALUE_OPTIONAL),
                                     'visibleoncoursepage' => new external_value(PARAM_INT, 'is the module visible on course page',
                                         VALUE_OPTIONAL),
                                     'modicon' => new external_value(PARAM_URL, 'activity icon url'),
