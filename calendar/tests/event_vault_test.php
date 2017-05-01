@@ -418,6 +418,146 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
     }
 
     /**
+     * There are subtle cases where the priority of an event override may be identical to another.
+     * For example, if you duplicate a group override, but make it apply to a different group. Now
+     * there are two overrides with exactly the same overridden dates. In this case the priority of
+     * both is 1.
+     *
+     * In this situation:
+     * - A user in group A should see only the A override
+     * - A user in group B should see only the B override
+     * - A user in both A and B should see both
+     */
+    public function test_get_action_events_by_timesort_with_identical_group_override_priorities() {
+        $this->resetAfterTest();
+        $this->setAdminuser();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create an assign instance.
+        $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assigninstance = $assigngenerator->create_instance(['course' => $course->id]);
+
+        // Create users.
+        $users = [
+            'Only in group A'  => $this->getDataGenerator()->create_user(),
+            'Only in group B'  => $this->getDataGenerator()->create_user(),
+            'In group A and B' => $this->getDataGenerator()->create_user(),
+            'In no groups'     => $this->getDataGenerator()->create_user()
+        ];
+
+        // Enrol users.
+        foreach ($users as $user) {
+            $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        }
+
+        // Create groups.
+        $groupa = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $groupb = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        // Add members to groups.
+        // Group A.
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupa->id, 'userid' => $users['Only in group A']->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupa->id, 'userid' => $users['In group A and B']->id]);
+
+        // Group B.
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupb->id, 'userid' => $users['Only in group B']->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupb->id, 'userid' => $users['In group A and B']->id]);
+
+        // Events with the same module name, instance and event type.
+        $events = [
+            [
+                'name' => 'Assignment 1 due date - Group A override',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => $groupa->id,
+                'userid' => 2,
+                'modulename' => 'assign',
+                'instance' => $assigninstance->id,
+                'eventtype' => 'due',
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'timestart' => 1,
+                'timeduration' => 0,
+                'visible' => 1,
+                'priority' => 1
+            ],
+            [
+                'name' => 'Assignment 1 due date - Group B override',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => $groupb->id,
+                'userid' => 2,
+                'modulename' => 'assign',
+                'instance' => $assigninstance->id,
+                'eventtype' => 'due',
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'timestart' => 1,
+                'timeduration' => 0,
+                'visible' => 1,
+                'priority' => 1
+            ],
+            [
+                'name' => 'Assignment 1 due date',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => 2,
+                'modulename' => 'assign',
+                'instance' => $assigninstance->id,
+                'eventtype' => 'due',
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'timestart' => 1,
+                'timeduration' => 0,
+                'visible' => 1,
+                'priority' => null,
+            ]
+        ];
+
+        foreach ($events as $event) {
+            calendar_event::create($event, false);
+        }
+
+        $factory = new action_event_test_factory();
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
+
+        $usersevents = array_reduce(array_keys($users), function($carry, $description) use ($users, $vault) {
+            // NB: This is currently needed to make get_action_events_by_timesort return the right thing.
+            // It needs to be fixed, see MDL-58736.
+            $this->setUser($users[$description]);
+            return $carry + ['For user ' . lcfirst($description) => $vault->get_action_events_by_timesort($users[$description])];
+        }, []);
+
+        foreach ($usersevents as $description => $userevents) {
+            if ($description == 'For user in group A and B') {
+                // User is in both A and B, so they should see the override for both
+                // given that the priority is the same.
+                $this->assertCount(2, $userevents);
+                continue;
+            }
+
+            // Otherwise there should be only one assign event for each user.
+            $this->assertCount(1, $userevents);
+        }
+
+        // User in only group A should see the group A override.
+        $this->assertEquals('Assignment 1 due date - Group A override', $usersevents['For user only in group A'][0]->get_name());
+
+        // User in only group B should see the group B override.
+        $this->assertEquals('Assignment 1 due date - Group B override', $usersevents['For user only in group B'][0]->get_name());
+
+        // User in group A and B should see see both overrides since the priorities are the same.
+        $this->assertEquals('Assignment 1 due date - Group A override', $usersevents['For user in group A and B'][0]->get_name());
+        $this->assertEquals('Assignment 1 due date - Group B override', $usersevents['For user in group A and B'][1]->get_name());
+
+        // User in no groups should see the plain assignment event.
+        $this->assertEquals('Assignment 1 due date', $usersevents['For user in no groups'][0]->get_name());
+    }
+
+    /**
      * Test that get_action_events_by_course returns events after the
      * provided timesort value.
      */
@@ -901,5 +1041,147 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         $events = $vault->get_action_events_by_course($user, $course1, 3, 8, $afterevent);
 
         $this->assertEmpty($events);
+    }
+
+    /**
+     * There are subtle cases where the priority of an event override may be identical to another.
+     * For example, if you duplicate a group override, but make it apply to a different group. Now
+     * there are two overrides with exactly the same overridden dates. In this case the priority of
+     * both is 1.
+     *
+     * In this situation:
+     * - A user in group A should see only the A override
+     * - A user in group B should see only the B override
+     * - A user in both A and B should see both
+     */
+    public function test_get_action_events_by_course_with_identical_group_override_priorities() {
+        $this->resetAfterTest();
+        $this->setAdminuser();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create an assign instance.
+        $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assigninstance = $assigngenerator->create_instance(['course' => $course->id]);
+
+        // Create users.
+        $users = [
+            'Only in group A'  => $this->getDataGenerator()->create_user(),
+            'Only in group B'  => $this->getDataGenerator()->create_user(),
+            'In group A and B' => $this->getDataGenerator()->create_user(),
+            'In no groups'     => $this->getDataGenerator()->create_user()
+        ];
+
+        // Enrol users.
+        foreach ($users as $user) {
+            $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        }
+
+        // Create groups.
+        $groupa = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $groupb = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        // Add members to groups.
+        // Group A.
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupa->id, 'userid' => $users['Only in group A']->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupa->id, 'userid' => $users['In group A and B']->id]);
+
+        // Group B.
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupb->id, 'userid' => $users['Only in group B']->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupb->id, 'userid' => $users['In group A and B']->id]);
+
+        // Events with the same module name, instance and event type.
+        $events = [
+            [
+                'name' => 'Assignment 1 due date - Group A override',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => $groupa->id,
+                'userid' => 2,
+                'modulename' => 'assign',
+                'instance' => $assigninstance->id,
+                'eventtype' => 'due',
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'timestart' => 1,
+                'timeduration' => 0,
+                'visible' => 1,
+                'priority' => 1
+            ],
+            [
+                'name' => 'Assignment 1 due date - Group B override',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => $groupb->id,
+                'userid' => 2,
+                'modulename' => 'assign',
+                'instance' => $assigninstance->id,
+                'eventtype' => 'due',
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'timestart' => 1,
+                'timeduration' => 0,
+                'visible' => 1,
+                'priority' => 1
+            ],
+            [
+                'name' => 'Assignment 1 due date',
+                'description' => '',
+                'format' => 1,
+                'courseid' => $course->id,
+                'groupid' => 0,
+                'userid' => 2,
+                'modulename' => 'assign',
+                'instance' => $assigninstance->id,
+                'eventtype' => 'due',
+                'type' => CALENDAR_EVENT_TYPE_ACTION,
+                'timestart' => 1,
+                'timeduration' => 0,
+                'visible' => 1,
+                'priority' => null,
+            ]
+        ];
+
+        foreach ($events as $event) {
+            calendar_event::create($event, false);
+        }
+
+        $factory = new action_event_test_factory();
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
+
+        $usersevents = array_reduce(array_keys($users), function($carry, $description) use ($users, $course, $vault) {
+            // NB: This is currently needed to make get_action_events_by_timesort return the right thing.
+            // It needs to be fixed, see MDL-58736.
+            $this->setUser($users[$description]);
+            return $carry + [
+                'For user ' . lcfirst($description) => $vault->get_action_events_by_course($users[$description], $course)
+            ];
+        }, []);
+
+        foreach ($usersevents as $description => $userevents) {
+            if ($description == 'For user in group A and B') {
+                // User is in both A and B, so they should see the override for both
+                // given that the priority is the same.
+                $this->assertCount(2, $userevents);
+                continue;
+            }
+
+            // Otherwise there should be only one assign event for each user.
+            $this->assertCount(1, $userevents);
+        }
+
+        // User in only group A should see the group A override.
+        $this->assertEquals('Assignment 1 due date - Group A override', $usersevents['For user only in group A'][0]->get_name());
+
+        // User in only group B should see the group B override.
+        $this->assertEquals('Assignment 1 due date - Group B override', $usersevents['For user only in group B'][0]->get_name());
+
+        // User in group A and B should see see both overrides since the priorities are the same.
+        $this->assertEquals('Assignment 1 due date - Group A override', $usersevents['For user in group A and B'][0]->get_name());
+        $this->assertEquals('Assignment 1 due date - Group B override', $usersevents['For user in group A and B'][1]->get_name());
+
+        // User in no groups should see the plain assignment event.
+        $this->assertEquals('Assignment 1 due date', $usersevents['For user in no groups'][0]->get_name());
     }
 }

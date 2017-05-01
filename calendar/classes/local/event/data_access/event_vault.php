@@ -197,6 +197,16 @@ class event_vault implements event_vault_interface {
         event_interface $afterevent = null,
         $limitnum = 20
     ) {
+        $courseids = array_map(function($course) {
+            return $course->id;
+        }, enrol_get_all_users_courses($user->id));
+
+        $groupids = array_reduce($courseids, function($carry, $courseid) use ($user) {
+            $groupings = groups_get_user_groups($courseid, $user->id);
+            // Grouping 0 is all groups.
+            return array_merge($carry, $groupings[0]);
+        }, []);
+
         return $this->get_events(
             null,
             null,
@@ -207,8 +217,8 @@ class event_vault implements event_vault_interface {
             $limitnum,
             CALENDAR_EVENT_TYPE_ACTION,
             [$user->id],
-            null,
-            null,
+            $groupids ? $groupids : null,
+            $courseids ? $courseids : null,
             true,
             true,
             function ($event) {
@@ -225,6 +235,7 @@ class event_vault implements event_vault_interface {
         event_interface $afterevent = null,
         $limitnum = 20
     ) {
+        $groupings = groups_get_user_groups($course->id, $user->id);
         return array_values(
             $this->get_events(
                 null,
@@ -236,7 +247,7 @@ class event_vault implements event_vault_interface {
                 $limitnum,
                 CALENDAR_EVENT_TYPE_ACTION,
                 [$user->id],
-                null,
+                $groupings[0] ? $groupings[0] : null,
                 [$course->id],
                 true,
                 true,
