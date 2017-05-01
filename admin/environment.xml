@@ -2043,6 +2043,11 @@
           <ON_CHECK message="incompleteunicodesupport" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_finfo" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="finforequired" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>
