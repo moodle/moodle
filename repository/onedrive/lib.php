@@ -706,7 +706,7 @@ class repository_onedrive extends repository {
             $details = 'Cannot update link sharing for the document: ' . $fileid;
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
-        return true;
+        return $response->link->webUrl;
     }
 
     /**
@@ -879,13 +879,13 @@ class repository_onedrive extends repository {
         $fileid = $this->upload_file($systemservice, $curl, $temppath, $mimetype, $parentid, $safefilename);
 
         // Read with link.
-        $this->set_file_sharing_anyone_with_link_can_read($systemservice, $fileid);
+        $link = $this->set_file_sharing_anyone_with_link_can_read($systemservice, $fileid);
 
         $summary = $this->get_file_summary($systemservice, $fileid);
 
         // Update the details in the file reference before it is saved.
         $source->id = $summary->id;
-        $source->link = $summary->webUrl;
+        $source->link = $link;
 
         $reference = json_encode($source);
 
