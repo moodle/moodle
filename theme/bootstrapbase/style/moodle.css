@@ -16406,12 +16406,10 @@ body {
   display: block;
 }
 .block_myoverview .empty-placeholder-image-sm {
-  height: 70px;
-  width: 85px;
+  height: 50px;
 }
 .block_myoverview .empty-placeholder-image-lg {
   height: 125px;
-  width: 145px;
 }
 .block_myoverview .courses-view-course-item {
   height: 220px;
