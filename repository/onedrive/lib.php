@@ -802,8 +802,6 @@ class repository_onedrive extends repository {
             $details = 'Cannot connect as system user';
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
-        $systemuserinfo = $systemauth->get_userinfo();
-        $systemuseremail = $systemuserinfo['email'];
 
         $source = json_decode($reference);
 
@@ -812,10 +810,7 @@ class repository_onedrive extends repository {
             $details = 'Cannot connect as current user';
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
-        $userinfo = $userauth->get_userinfo();
-        $useremail = $userinfo['email'];
 
-        $userservice = new repository_onedrive\rest($userauth);
         $systemservice = new repository_onedrive\rest($systemauth);
 
         // Download the file.
@@ -827,7 +822,7 @@ class repository_onedrive extends repository {
         $sourceurl = new moodle_url($base . 'me/drive/items/' . $source->id . '/content');
         $sourceurl = $sourceurl->out(false);
 
-        $result = $systemauth->download_one($sourceurl, null, $options);
+        $result = $userauth->download_one($sourceurl, null, $options);
 
         if (!$result) {
             throw new repository_exception('cannotdownload', 'repository');

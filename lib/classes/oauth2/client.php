@@ -29,6 +29,7 @@ require_once($CFG->libdir . '/oauthlib.php');
 require_once($CFG->libdir . '/filelib.php');
 
 use moodle_url;
+use moodle_exception;
 use curl;
 use stdClass;
 
