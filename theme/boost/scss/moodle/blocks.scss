@@ -179,6 +179,12 @@ $doughnut-fill-colour: $brand-warning;
         }
     }
 
+    .content-centred {
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
     .empty-placeholder-image-sm {
         height: 70px;
         width: 85px;
@@ -192,5 +198,13 @@ $doughnut-fill-colour: $brand-warning;
     .courses-view-course-item {
         height: 220px;
         overflow-y: hidden;
+    }
+}
+
+@media (min-width: 1600px) {
+    .block_myoverview {
+        .courses-view-course-item {
+            height: 190px;
+        }
     }
 }
