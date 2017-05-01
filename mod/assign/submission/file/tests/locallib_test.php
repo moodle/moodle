@@ -144,13 +144,13 @@ class assignsubmission_file_locallib_testcase extends advanced_testcase {
      */
     public function get_nonexistent_file_types_provider() {
         return [
-            'Nonexistent extensions are allowed' => [
+            'Nonexistent extensions are not allowed' => [
                 'filetypes' => '.rat',
-                'expected' => []
+                'expected' => ['.rat']
             ],
-            'Multiple nonexistent extensions are allowed' => [
+            'Multiple nonexistent extensions are not allowed' => [
                 'filetypes' => '.ricefield .rat',
-                'expected' => []
+                'expected' => ['.ricefield', '.rat']
             ],
             'Existent extension is allowed' => [
                 'filetypes' => '.xml',
