@@ -22,6 +22,8 @@ require_once('lib.php');
 $delete       = optional_param('delete', 0, PARAM_INT);
 $suspend      = optional_param('suspend', 0, PARAM_INT);
 $unsuspend      = optional_param('unsuspend', 0, PARAM_INT);
+$enableecommerce    = optional_param('enableecommerce', 0, PARAM_INT);
+$disableecommerce    = optional_param('disableecommerce', 0, PARAM_INT);
 $showsuspended  = optional_param('showsuspended', 0, PARAM_INT);
 $confirm      = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirmation hash.
 $confirmcompany  = optional_param('confirmcompany', 0, PARAM_INT);
@@ -121,6 +123,8 @@ $strsuspend = get_string('suspendcompany', 'block_iomad_company_admin');
 $strsuspendcheck = get_string('suspendcompanycheck', 'block_iomad_company_admin');
 $strunsuspend = get_string('unsuspendcompany', 'block_iomad_company_admin');
 $strunsuspendcheck = get_string('unsuspendcompanycheck', 'block_iomad_company_admin');
+$strenableecommerce = get_string('ecommerceenabled', 'block_iomad_company_admin');
+$strdisableecommerce = get_string('disableecommerce', 'block_iomad_company_admin');
 $strshowallusers = get_string('showallcompanies', 'block_iomad_company_admin');
 
 if (empty($CFG->loginhttps)) {
@@ -131,12 +135,7 @@ if (empty($CFG->loginhttps)) {
 
 $returnurl = "$CFG->wwwroot/blocks/iomad_company_admin/editcompanies.php";
 
-if ($confirmcompany and confirm_sesskey()) {
-    if (!$company = $DB->get_record('company', array('id' => $confirmcompany))) {
-        print_error('companynotfound', 'block_iomad_company_admin');
-    }
-
-} else if ($suspend and confirm_sesskey()) {              // Delete a selected user, after confirmation.
+if ($suspend and confirm_sesskey()) {              // Delete a selected user, after confirmation.
 
     /* if (!iomad::has_capability('block/iomad_company_admin:suspendcompany', $context)) {
         print_error('nopermissions', 'error', '', 'delete a user');
@@ -184,6 +183,27 @@ if ($confirmcompany and confirm_sesskey()) {
         $unsuspendcompany->suspend(0);
     }
 
+} else if ($enableecommerce and confirm_sesskey()) {
+
+    // Enables ecommerce for a selected company.
+    if (!$company = $DB->get_record('company', array('id' => $enableecommerce))) {
+        print_error('companynotfound', 'block_iomad_company_admin');
+    }
+
+    // Enable ecommerce for the company
+    $enableecommercecompany = new company($company->id);
+    $enableecommercecompany->ecommerce(1);
+
+} else if ($disableecommerce and confirm_sesskey()) {
+
+    // Disables ecommerce for a selected company.
+    if (!$company = $DB->get_record('company', array('id' => $disableecommerce))) {
+        print_error('companynotfound', 'block_iomad_company_admin');
+    }
+
+    // Disable ecommerce for the company
+    $enableecommercecompany = new company($company->id);
+    $enableecommercecompany->ecommerce(0);
 }
 
 // Display the user filter form.
@@ -286,15 +306,33 @@ if (!$companies) {
     $table->align = array ("left", "left", "left", "center");
     $table->width = "95%";
     foreach ($companies as $company) {
-      //  if ((iomad::has_capability('block/iomad_company_admin:suspendcompanies', $context))) {
-            if (!empty($company->suspended)) {
-                $suspendbutton = "<a href=\"editcompanies.php?unsuspend=$company->id&amp;sesskey=".sesskey()."\">$strunsuspend</a>";
+        if (!empty($company->suspended)) {
+            $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
+                                        array('unsuspend' => $company->id,
+                                              'sesskey' => sesskey()));
+            $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strunsuspend</a>";
+        } else {
+            $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
+                                        array('suspend' => $company->id,
+                                              'sesskey' => sesskey()));
+            $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strsuspend</a>";
+        }
+
+        if (empty($CFG->commerce_admin_enableall)) {
+            if (!empty($company->ecommerce)) {
+                $ecommerceurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
+                                            array('disableecommerce' => $company->id,
+                                                  'sesskey' => sesskey()));
+                $ecommercebutton = "<a class='btn btn-primary' href='$ecommerceurl'>$strdisableecommerce</a>";
             } else {
-                $suspendbutton = "<a href=\"editcompanies.php?suspend=$company->id&amp;sesskey=".sesskey()."\">$strsuspend</a>";
+                $ecommerceurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
+                                            array('enableecommerce' => $company->id,
+                                                  'sesskey' => sesskey()));
+                $ecommercebutton = "<a class='btn btn-primary' href='$ecommerceurl'>$strenableecommerce</a>";
             }
-       // } else {
-            //$suspendbutton = "";
-       // }
+        } else {
+            $ecommercebutton = '';
+        }
 
         // Is the company suspended?
         if (!empty($company->suspended)) {
@@ -305,6 +343,7 @@ if (!$companies) {
         $table->data[] = array ("$fullname",
                             "$company->city",
                             "$company->country",
+                            $ecommercebutton . ' ' .
                             $suspendbutton);
     }
 }

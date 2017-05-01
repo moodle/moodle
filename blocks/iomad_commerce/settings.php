@@ -63,6 +63,11 @@ if ($ADMIN->fulltree) {
     $paypalcurrencies = enrol_get_plugin('paypal')->get_currencies();
     $settings->add(new admin_setting_configselect('commerce_admin_currency', get_string('currency', 'enrol_paypal'), '', 'GBP', $paypalcurrencies));
 
+    $settings->add(new admin_setting_configcheckbox('commerce_admin_enableall',
+                                                    get_string('opentoallcompanies', 'block_iomad_commerce'),
+                                                    get_string('opentoallcompanies_help', 'block_iomad_commerce'),
+                                                    1));
+
     $pp = get_payment_providers();
     foreach ($pp as $p) {
 

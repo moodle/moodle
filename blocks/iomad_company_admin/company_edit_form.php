@@ -84,13 +84,18 @@ class company_edit_form extends company_moodleform {
             $allcompanies = array('0' => get_string('none')) + $companies;
             $mform->addElement('select', 'parentid', get_string('parentcompany', 'block_iomad_company_admin'), $allcompanies);
 
-            // Add the ecommerce selector.
-            $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
         } else {
             // Add it as a hidden field.
             $mform->addElement('hidden', 'parentid');
-            $mform->addElement('hidden', 'ecommerce');
         }
+
+        // Add the ecommerce selector.
+        if (empty($CFG->commerce_admin_enableall)) {
+            $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
+        } else {
+            $mform->addElement('hidden', 'ecommerce'));
+        }
+
         $mform->setDefault('parentid', 0);
         $mform->setDefault('ecommerce', 0);
         $mform->setType('parentid', PARAM_INT);
@@ -493,7 +498,7 @@ if ($mform->is_cancelled()) {
         $topdepartment = $company->get_company_parentnode($companyid);
         if ($topdepartment->name != $data->name) {
             $topdepartment->name = $data->name;
-            $topdepartment->shortname = $data->shortname;
+            $topdepartment->shorname = $data->shortname;
             $DB->update_record('department', $topdepartment);
         }
 

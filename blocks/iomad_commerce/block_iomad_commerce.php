@@ -23,15 +23,29 @@ require_once($CFG->dirroot.'/blocks/iomad_commerce/lib.php');
 
 class block_iomad_commerce extends block_base {
     public function init() {
-        $this->title = get_string('pluginname', 'block_iomad_commerce');
+        $this->title = get_string('buycourses', 'block_iomad_commerce');
     }
 
     public function hide_header() {
-        return true;
+        return false;
     }
 
     public function get_content() {
-        global $CFG;
+        global $CFG, $USER, $DB;
+
+        // Hide the shop content if the user's company doesn't support ecommerce
+        // Always show it if the user is a siteadmin
+        // PWG
+        $ecommerce = $DB->get_field_sql("SELECT c.ecommerce
+                                         FROM {user} u
+                                         JOIN {company_users} cu ON cu.userid = u.id
+                                         JOIN {company} c ON cu.companyid = c.id
+                                         WHERE u.id = :userid",
+                                         array('userid' => $USER->id));
+
+        if (!is_siteadmin() && !$ecommerce && !$CFG->commerce_admin_enableall) {
+            return null;
+        }
 
         if ($this->content !== null) {
             return $this->content;

@@ -1722,6 +1722,20 @@ class company {
     }
 
     /**
+     * Enables or disables ecommerce for a company.
+     *
+     * Parameters -
+     *              $ecommerce = booloean;
+     *
+     **/
+    public function ecommerce($ecommerce) {
+        global $DB;
+
+        // Set the ecommerce field for the company.
+        $DB->set_field('company', 'ecommerce', $ecommerce, array('id' => $this->id));
+    }
+
+    /**
      * Checks that a passed department id is valid for the companyid.
      *
      * Parameters -
