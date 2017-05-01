@@ -2516,3 +2516,20 @@ function check_libcurl_version(environment_results $result) {
 
     return null;
 }
+
+/**
+ * Check if the finfo class is present.
+ *
+ * @param environment_results $result object to update, if relevant.
+ * @return environment_results|null updated results or null.
+ */
+function check_finfo(environment_results $result) {
+    if (!class_exists('finfo')) {
+        $result->setInfo('finfo extension not enabled');
+        $result->setStatus(false);
+
+        return $result;
+    }
+
+    return null;
+}
