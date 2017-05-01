@@ -234,6 +234,58 @@ class core_calendar_container_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that the event factory only returns an event if the logged in user
+     * is enrolled in the course.
+     */
+    public function test_event_factory_unenrolled_user() {
+        $user = $this->getDataGenerator()->create_user();
+        // Create the course we will be using.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Add the assignment.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        $lesson = $generator->create_instance(array('course' => $course->id));
+
+        // Create a user override event for the lesson.
+        $event = new \stdClass();
+        $event->name = 'An event';
+        $event->description = 'Event description';
+        $event->format = FORMAT_HTML;
+        $event->eventtype = 'close';
+        $event->userid = $user->id;
+        $event->modulename = 'lesson';
+        $event->instance = $lesson->id;
+        $event->courseid = $course->id;
+        $event->groupid = 0;
+        $event->timestart = time();
+        $event->timesort = time();
+        $event->timemodified = time();
+        $event->timeduration = 0;
+        $event->subscriptionid = null;
+        $event->repeatid = 0;
+        $legacyevent = $this->create_event($event);
+
+        // Update the id of the event that was created.
+        $event->id = $legacyevent->id;
+
+        // Set the logged in user to the one we created.
+        $this->setUser($user);
+
+        // Create the factory we are going to be testing the behaviour of.
+        $factory = \core_calendar\local\event\container::get_event_factory();
+
+        // The result should be null since the user is not enrolled in the
+        // course the event is for.
+        $this->assertNull($factory->create_instance($event));
+
+        // Now enrol the user in the course.
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        // Check that we get the correct instance.
+        $this->assertInstanceOf(event_interface::class, $factory->create_instance($event));
+    }
+
+    /**
      * Test getting the event mapper.
      */
     public function test_get_event_mapper() {
