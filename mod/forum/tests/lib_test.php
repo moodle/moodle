@@ -3329,7 +3329,8 @@ class mod_forum_lib_testcase extends advanced_testcase {
 
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
-        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id,
+            'completionreplies' => 5, 'completiondiscussions' => 2));
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $forum->id,
@@ -3345,7 +3346,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
         $this->assertEquals(get_string('view'), $actionevent->get_name());
         $this->assertInstanceOf('moodle_url', $actionevent->get_url());
-        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertEquals(7, $actionevent->get_item_count());
         $this->assertTrue($actionevent->is_actionable());
     }
 
