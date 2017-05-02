@@ -410,11 +410,17 @@ class repository_onedrive extends repository {
         if ($this->disabled) {
             throw new repository_exception('cannotdownload', 'repository');
         }
+        $sourceinfo = json_decode($reference);
 
-        $client = $this->get_user_oauth_client();
+        $client = null;
+        if (!empty($sourceinfo->usesystem)) {
+            $client = \core\oauth2\api::get_system_oauth_client($this->issuer);
+        } else {
+            $client = $this->get_user_oauth_client();
+        }
+
         $base = 'https://graph.microsoft.com/v1.0/';
 
-        $sourceinfo = json_decode($reference);
         $sourceurl = new moodle_url($base . 'me/drive/items/' . $sourceinfo->id . '/content');
         $source = $sourceurl->out(false);
 
@@ -539,7 +545,7 @@ class repository_onedrive extends repository {
                                    $storedfile->get_filepath(),
                                    $storedfile->get_filename());
 
-        if (empty($options['offline']) && !empty($info) && $info->is_writable()) {
+        if (empty($options['offline']) && !empty($info) && $info->is_writable() && !empty($source->usesystem)) {
             // Add the current user as an OAuth writer.
             $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
 
@@ -886,6 +892,7 @@ class repository_onedrive extends repository {
         // Update the details in the file reference before it is saved.
         $source->id = $summary->id;
         $source->link = $link;
+        $source->usesystem = true;
 
         $reference = json_encode($source);
 
@@ -903,6 +910,9 @@ class repository_onedrive extends repository {
             return get_string('unknownsource', 'repository');
         }
         $source = json_decode($reference);
+        if (empty($source->usesystem)) {
+            return '';
+        }
         $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
 
         if ($systemauth === false) {
