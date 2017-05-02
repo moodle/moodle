@@ -240,6 +240,50 @@ class api {
     }
 
     /**
+     * Create an account with a linked login that is already confirmed.
+     *
+     * @param array $userinfo as returned from an oauth client.
+     * @param \core\oauth2\issuer $issuer
+     * @return bool
+     */
+    public static function create_new_confirmed_account($userinfo, $issuer) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+        require_once($CFG->dirroot.'/user/lib.php');
+
+        $user = new stdClass();
+        $user->username = $userinfo['username'];
+        $user->email = $userinfo['email'];
+        $user->auth = 'oauth2';
+        $user->mnethostid = $CFG->mnet_localhost_id;
+        $user->lastname = isset($userinfo['lastname']) ? $userinfo['lastname'] : '';
+        $user->firstname = isset($userinfo['firstname']) ? $userinfo['firstname'] : '';
+        $user->url = isset($userinfo['url']) ? $userinfo['url'] : '';
+        $user->alternatename = isset($userinfo['alternatename']) ? $userinfo['alternatename'] : '';
+        $user->secret = random_string(15);
+
+        $user->password = '';
+        // This user is confirmed.
+        $user->confirmed = 1;
+
+        $user->id = user_create_user($user, false, true);
+
+        // The linked account is pre-confirmed.
+        $record = new stdClass();
+        $record->issuerid = $issuer->get('id');
+        $record->username = $userinfo['username'];
+        $record->userid = $user->id;
+        $record->email = $userinfo['email'];
+        $record->confirmtoken = '';
+        $record->confirmtokenexpires = 0;
+
+        $linkedlogin = new linked_login(0, $record);
+        $linkedlogin->create();
+
+        return $user;
+    }
+
+    /**
      * Send an email with a link to confirm creating this account.
      *
      * @param array $userinfo as returned from an oauth client.

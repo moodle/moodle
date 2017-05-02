@@ -98,4 +98,46 @@ class auth_oauth2_external_testcase extends advanced_testcase {
         $this->assertCount(1, $linkedlogins);
     }
 
+    /**
+     * Test auto-confirming linked logins.
+     */
+    public function test_linked_logins() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $issuer = \core\oauth2\api::create_standard_issuer('google');
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $info = [];
+        $info['username'] = 'banana';
+        $info['email'] = 'banana@example.com';
+
+        \auth_oauth2\api::link_login($info, $issuer, $user->id, false);
+
+        // Try and match a user with a linked login.
+        $match = \auth_oauth2\api::match_username_to_user('banana', $issuer);
+
+        $this->assertEquals($user->id, $match->get('userid'));
+        $linkedlogins = \auth_oauth2\api::get_linked_logins($user->id, $issuer);
+        \auth_oauth2\api::delete_linked_login($linkedlogins[0]->get('id'));
+
+        $match = \auth_oauth2\api::match_username_to_user('banana', $issuer);
+        $this->assertFalse($match);
+
+        $info = [];
+        $info['username'] = 'apple';
+        $info['email'] = 'apple@example.com';
+        $info['firstname'] = 'Apple';
+        $info['lastname'] = 'Fruit';
+        $info['url'] = 'http://apple.com/';
+        $info['alternamename'] = 'Beatles';
+
+        $newuser = \auth_oauth2\api::create_new_confirmed_account($info, $issuer);
+
+        $match = \auth_oauth2\api::match_username_to_user('apple', $issuer);
+
+        $this->assertEquals($newuser->id, $match->get('userid'));
+    }
+
 }

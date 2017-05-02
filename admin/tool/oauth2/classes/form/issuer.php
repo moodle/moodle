@@ -119,6 +119,10 @@ class issuer extends persistent {
         $mform->addElement('checkbox', 'showonloginpage', get_string('issuershowonloginpage', 'tool_oauth2'));
         $mform->addHelpButton('showonloginpage', 'issuershowonloginpage', 'tool_oauth2');
 
+        // Require confirmation email for new accounts.
+        $mform->addElement('advcheckbox', 'requireconfirmation', get_string('issuerrequireconfirmation', 'tool_oauth2'));
+        $mform->addHelpButton('requireconfirmation', 'issuerrequireconfirmation', 'tool_oauth2');
+
         $mform->addElement('hidden', 'sortorder');
         $mform->setType('sortorder', PARAM_INT);
 
