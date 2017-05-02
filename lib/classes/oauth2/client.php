@@ -203,12 +203,6 @@ class client extends \oauth2_client {
             return false;
         }
 
-        if (isset($r->refresh_token)) {
-            $systemaccount->set('refreshtoken', $r->refresh_token);
-            $systemaccount->update();
-            $this->refreshtoken = $r->refresh_token;
-        }
-
         // Store the token an expiry time.
         $accesstoken = new stdClass;
         $accesstoken->token = $r->access_token;
@@ -216,13 +210,21 @@ class client extends \oauth2_client {
             // Expires 10 seconds before actual expiry.
             $accesstoken->expires = (time() + ($r->expires_in - 10));
         }
-        if (isset($r->scope)) {
-            $accesstoken->scope = $r->scope;
-        } else {
-            $accesstoken->scope = $this->scope;
-        }
+        $accesstoken->scope = $this->scope;
         // Also add the scopes.
         $this->store_token($accesstoken);
+
+        if (isset($r->refresh_token)) {
+            $userinfo = $this->get_userinfo();
+
+            if ($userinfo['email'] == $systemaccount->get('email')) {
+                $systemaccount->set('refreshtoken', $r->refresh_token);
+                $systemaccount->update();
+                $this->refreshtoken = $r->refresh_token;
+            } else {
+                throw new moodle_exception('Attempt to store refresh token for non-system user.');
+            }
+        }
 
         return true;
     }
