@@ -925,4 +925,55 @@ class core_upgradelib_testcase extends advanced_testcase {
         $this->assertEquals(count($blockinstances), $DB->count_records('block_positions', ['subpage' => $page1->id, 'pagetype' => 'my-index', 'contextid' => $context1->id]));
         $this->assertEquals(0, $DB->count_records('block_positions', ['subpage' => $page2->id, 'pagetype' => 'my-index']));
     }
+
+    /**
+     * Test the conversion of auth plugin settings names.
+     */
+    public function test_upgrade_fix_config_auth_plugin_names() {
+        $this->resetAfterTest();
+
+        // Let the plugin auth_foo use legacy format only.
+        set_config('name1', 'val1', 'auth/foo');
+        set_config('name2', 'val2', 'auth/foo');
+
+        // Let the plugin auth_bar use new format only.
+        set_config('name1', 'val1', 'auth_bar');
+        set_config('name2', 'val2', 'auth_bar');
+
+        // Let the plugin auth_baz use a mix of legacy and new format, with no conflicts.
+        set_config('name1', 'val1', 'auth_baz');
+        set_config('name1', 'val1', 'auth/baz');
+        set_config('name2', 'val2', 'auth/baz');
+        set_config('name3', 'val3', 'auth_baz');
+
+        // Let the plugin auth_qux use a mix of legacy and new format, with conflicts.
+        set_config('name1', 'val1', 'auth_qux');
+        set_config('name1', 'val2', 'auth/qux');
+
+        // Execute the migration.
+        upgrade_fix_config_auth_plugin_names('foo');
+        upgrade_fix_config_auth_plugin_names('bar');
+        upgrade_fix_config_auth_plugin_names('baz');
+        upgrade_fix_config_auth_plugin_names('qux');
+
+        // Assert that legacy settings are gone and no new were introduced.
+        $this->assertEmpty((array) get_config('auth/foo'));
+        $this->assertEmpty((array) get_config('auth/bar'));
+        $this->assertEmpty((array) get_config('auth/baz'));
+        $this->assertEmpty((array) get_config('auth/qux'));
+
+        // Assert values were simply kept where there was no conflict.
+        $this->assertSame('val1', get_config('auth_foo', 'name1'));
+        $this->assertSame('val2', get_config('auth_foo', 'name2'));
+
+        $this->assertSame('val1', get_config('auth_bar', 'name1'));
+        $this->assertSame('val2', get_config('auth_bar', 'name2'));
+
+        $this->assertSame('val1', get_config('auth_baz', 'name1'));
+        $this->assertSame('val2', get_config('auth_baz', 'name2'));
+        $this->assertSame('val3', get_config('auth_baz', 'name3'));
+
+        // Assert the new format took precedence in case of conflict.
+        $this->assertSame('val1', get_config('auth_qux', 'name1'));
+    }
 }

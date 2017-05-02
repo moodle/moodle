@@ -61,7 +61,7 @@ function xmldb_auth_cas_upgrade($oldversion) {
 
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/cas to auth_cas.
-        $DB->set_field('config_plugins', 'plugin', 'auth_cas', array('plugin' => 'auth/cas'));
+        upgrade_fix_config_auth_plugin_names('cas');
         upgrade_plugin_savepoint(true, 2017020700, 'auth', 'cas');
     }
 

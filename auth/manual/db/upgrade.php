@@ -49,7 +49,7 @@ function xmldb_auth_manual_upgrade($oldversion) {
 
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/manual to auth_manual.
-        $DB->set_field('config_plugins', 'plugin', 'auth_manual', array('plugin' => 'auth/manual'));
+        upgrade_fix_config_auth_plugin_names('manual');
         upgrade_plugin_savepoint(true, 2017020700, 'auth', 'manual');
     }
 

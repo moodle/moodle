@@ -37,10 +37,9 @@ function xmldb_auth_email_upgrade($oldversion) {
 
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/email to auth_email.
-        $DB->set_field('config_plugins', 'plugin', 'auth_email', array('plugin' => 'auth/email'));
+        upgrade_fix_config_auth_plugin_names('email');
         upgrade_plugin_savepoint(true, 2017020700, 'auth', 'email');
     }
 
     return true;
 }
-

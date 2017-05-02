@@ -37,7 +37,7 @@ function xmldb_auth_nntp_upgrade($oldversion) {
 
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/nntp to auth_nntp.
-        $DB->set_field('config_plugins', 'plugin', 'auth_nntp', array('plugin' => 'auth/nntp'));
+        upgrade_fix_config_auth_plugin_names('nntp');
         upgrade_plugin_savepoint(true, 2017020700, 'auth', 'nntp');
     }
 

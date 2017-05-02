@@ -37,10 +37,9 @@ function xmldb_auth_imap_upgrade($oldversion) {
 
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/imap to auth_imap.
-        $DB->set_field('config_plugins', 'plugin', 'auth_imap', array('plugin' => 'auth/imap'));
+        upgrade_fix_config_auth_plugin_names('imap');
         upgrade_plugin_savepoint(true, 2017020700, 'auth', 'imap');
     }
 
     return true;
 }
-

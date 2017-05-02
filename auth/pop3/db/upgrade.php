@@ -37,7 +37,7 @@ function xmldb_auth_pop3_upgrade($oldversion) {
 
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/pop3 to auth_pop3.
-        $DB->set_field('config_plugins', 'plugin', 'auth_pop3', array('plugin' => 'auth/pop3'));
+        upgrade_fix_config_auth_plugin_names('pop3');
         upgrade_plugin_savepoint(true, 2017020700, 'auth', 'pop3');
     }
 
