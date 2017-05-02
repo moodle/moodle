@@ -30,7 +30,13 @@ unzip 3.0.3.zip
 3) Move the source code directory into place
 mv LTI-Tool-Provider-Library-PHP-3.0.3/* lib/ltiprovider/
 
-4) Run unit tests on enrol_lti_testsuite
+4) Updates
+Check that the following pull request is included in the release.
+Then remove this step from this file.
+https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/pull/13
+If not, apply manually.
+
+5) Run unit tests on enrol_lti_testsuite
 
 Upgrading Notes
 ---------------
