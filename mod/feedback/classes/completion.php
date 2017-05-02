@@ -540,7 +540,7 @@ class mod_feedback_completion extends mod_feedback_structure {
             // Not possible to retrieve completed anonymous feedback.
             return false;
         }
-        $params = array('feedback' => $this->feedback->id, 'userid' => $USER->id);
+        $params = array('feedback' => $this->feedback->id, 'userid' => $USER->id, 'anonymous_response' => FEEDBACK_ANONYMOUS_NO);
         if ($this->get_courseid()) {
             $params['courseid'] = $this->get_courseid();
         }
