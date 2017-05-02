@@ -132,7 +132,6 @@ class HTTPMessage
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLINFO_HEADER_OUT, true);
             curl_setopt($ch, CURLOPT_HEADER, true);
-            curl_setopt($ch, CURLOPT_SSLVERSION,3);
             $chResp = curl_exec($ch);
             $this->ok = $chResp !== false;
             if ($this->ok) {
