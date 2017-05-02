@@ -2566,19 +2566,6 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Create adhoc task for upgrading of existing calendar events.
-        $record = new \stdClass();
-        $record->classname = "\\core\\task\\refresh_mod_calendar_events_task";
-        $record->component = 'core';
-        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
-        $nextruntime = time() - 1;
-        $record->nextruntime = $nextruntime;
-        $DB->insert_record('task_adhoc', $record);
-
-        // This same task is queued again in a later step, but if we already queue it here
-        // then there is no need to queue it again. We use this flag in the second step.
-        $refresheventsadhocadded = true;
-
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2017030700.00);
     }
@@ -2669,21 +2656,6 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         upgrade_main_savepoint(true, 2017040402.00);
-    }
-
-    if ($oldversion < 2017040403.00) {
-        // Create adhoc task for upgrading of existing calendar events.
-        $record = new \stdClass();
-        $record->classname = "\\core\\task\\refresh_mod_calendar_events_task";
-        $record->component = 'core';
-
-        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
-        $nextruntime = time() - 1;
-        $record->nextruntime = $nextruntime;
-        $DB->insert_record('task_adhoc', $record);
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017040403.00);
     }
 
     if ($oldversion < 2017040700.01) {
@@ -2838,25 +2810,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017041801.00);
     }
 
-    if ($oldversion < 2017042600.01) {
-        // If the previous step didn't execute and queue the task.
-        if (!isset($refresheventsadhocadded)) {
-            // Create adhoc task for upgrading of existing calendar events.
-            $record = new \stdClass();
-            $record->classname = "\\core\\task\\refresh_mod_calendar_events_task";
-            $record->component = 'core';
-
-            // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
-            $nextruntime = time() - 1;
-            $record->nextruntime = $nextruntime;
-            $DB->insert_record('task_adhoc', $record);
-
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017042600.01);
-    }
-
     if ($oldversion < 2017050500.01) {
         // Get the list of parent event IDs.
         $sql = "SELECT DISTINCT repeatid
@@ -2892,6 +2845,21 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2017050500.02);
+    }
+
+    if ($oldversion < 2017050900.01) {
+        // Create adhoc task for upgrading of existing calendar events.
+        $record = new \stdClass();
+        $record->classname = '\core\task\refresh_mod_calendar_events_task';
+        $record->component = 'core';
+
+        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+        $nextruntime = time() - 1;
+        $record->nextruntime = $nextruntime;
+        $DB->insert_record('task_adhoc', $record);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017050900.01);
     }
 
     return true;
