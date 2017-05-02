@@ -4298,20 +4298,18 @@ function data_check_updates_since(cm_info $cm, $from, $filter = array()) {
  */
 function mod_data_core_calendar_provide_event_action(calendar_event $event,
                                                        \core_calendar\action_factory $factory) {
-    global $DB;
 
     $cm = get_fast_modinfo($event->courseid)->instances['data'][$event->instance];
-    $data = $DB->get_record('data', array('id' => $event->instance), 'id, timeavailablefrom, timeavailableto');
+    $now = time();
 
-    if ($data->timeavailablefrom && $data->timeavailableto) {
-        $actionable = (time() >= $data->timeavailablefrom) && (time() <= $data->timeavailableto);
-    } else if ($data->timeavailableto) {
-        $actionable = time() < $data->timeavailableto;
-    } else if ($data->timeavailablefrom) {
-        $actionable = time() >= $data->timeavailablefrom;
-    } else {
-        $actionable = true;
+    if (!empty($cm->customdata['timeavailableto']) && $cm->customdata['timeavailableto'] < $now) {
+        // The module has closed so the user can no longer submit anything.
+        return null;
     }
+
+    // The module is actionable if we don't have a start time or the start time is
+    // in the past.
+    $actionable = (empty($cm->customdata['timeavailablefrom']) || $cm->customdata['timeavailablefrom'] <= $now);
 
     return $factory->create_instance(
         get_string('add', 'data'),
@@ -4336,7 +4334,7 @@ function data_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionentries';
+    $fields = 'id, name, intro, introformat, completionentries, timeavailablefrom, timeavailableto';
     if (!$data = $DB->get_record('data', $dbparams, $fields)) {
         return false;
     }
@@ -4352,6 +4350,13 @@ function data_get_coursemodule_info($coursemodule) {
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
         $result->customdata['customcompletionrules']['completionentries'] = $data->completionentries;
+    }
+    // Other properties that may be used in calendar or on dashboard.
+    if ($data->timeavailablefrom) {
+        $result->customdata['timeavailablefrom'] = $data->timeavailablefrom;
+    }
+    if ($data->timeavailableto) {
+        $result->customdata['timeavailableto'] = $data->timeavailableto;
     }
 
     return $result;

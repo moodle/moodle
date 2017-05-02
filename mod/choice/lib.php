@@ -1194,22 +1194,20 @@ function choice_check_updates_since(cm_info $cm, $from, $filter = array()) {
  */
 function mod_choice_core_calendar_provide_event_action(calendar_event $event,
                                                        \core_calendar\action_factory $factory) {
-    global $DB;
 
     $cm = get_fast_modinfo($event->courseid)->instances['choice'][$event->instance];
-    $choice = $DB->get_record('choice', array('id' => $event->instance), 'id, timeopen, timeclose');
     $now = time();
 
-    if ($choice->timeclose && $choice->timeclose < $now) {
+    if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < $now) {
         // The choice has closed so the user can no longer submit anything.
         return null;
     }
 
     // The choice is actionable if we don't have a start time or the start time is
     // in the past.
-    $actionable = (!$choice->timeopen || $choice->timeopen <= $now);
+    $actionable = (empty($cm->customdata['timeopen']) || $cm->customdata['timeopen'] <= $now);
 
-    if ($actionable && choice_get_my_response($choice)) {
+    if ($actionable && choice_get_my_response((object)['id' => $event->instance])) {
         // There is no action if the user has already submitted their choice.
         return null;
     }
@@ -1247,7 +1245,7 @@ function choice_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionsubmit';
+    $fields = 'id, name, intro, introformat, completionsubmit, timeopen, timeclose';
     if (!$choice = $DB->get_record('choice', $dbparams, $fields)) {
         return false;
     }
@@ -1263,6 +1261,13 @@ function choice_get_coursemodule_info($coursemodule) {
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
         $result->customdata['customcompletionrules']['completionsubmit'] = $choice->completionsubmit;
+    }
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($choice->timeopen) {
+        $result->customdata['timeopen'] = $choice->timeopen;
+    }
+    if ($choice->timeclose) {
+        $result->customdata['timeclose'] = $choice->timeclose;
     }
 
     return $result;
