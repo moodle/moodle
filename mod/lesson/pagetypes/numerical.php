@@ -215,8 +215,9 @@ class lesson_page_type_numerical extends lesson_page {
                     $answerdata->answers[] = array(get_string("nooneansweredthisquestion", "lesson"), " ");
                 }
                 $i++;
-            } else if ($useranswer != null && ($answer->id == $useranswer->answerid || ($answer == end($answers) && empty($answerdata)))) {
-                 // get in here when what the user entered is not one of the answers
+            } else if ($useranswer != null && ($answer->id == $useranswer->answerid || ($answer == end($answers) &&
+                    empty($answerdata->answers)))) {
+                // Get in here when the user answered or for the last answer.
                 $data = '<input class="form-control" type="text" size="50" ' .
                         'disabled="disabled" readonly="readonly" value="'.s($useranswer->useranswer).'">';
                 if (isset($pagestats[$this->properties->id][$useranswer->useranswer])) {
