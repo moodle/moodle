@@ -15,7 +15,7 @@ Feature: Backported behat step definitions
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C101 | student |
-      | teacher1 | C101 | teacher |
+      | teacher1 | C101 | editingteacher |
 
   Scenario: I am on the course homepage
     When I log in as "student1"
@@ -23,7 +23,20 @@ Feature: Backported behat step definitions
     Then I should see "Topic 1"
 
   @javascript
-  Scenario: I am on the course homepage
+  Scenario: I am on the course homepage with JS
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     Then I should see "Topic 1"
+
+  Scenario: I am on the course homepage with editing
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    Then I should see "Topic 1"
+    And I should see "Add an activity or resource"
+
+  @javascript
+  Scenario: I am on the course homepage with editing and JS
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    Then I should see "Topic 1"
+    And I should see "Add an activity or resource"
