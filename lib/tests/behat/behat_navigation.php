@@ -574,4 +574,18 @@ class behat_navigation extends behat_base {
         $USER = $globuser;
     }
 
+    /**
+     * Opens the course homepage.
+     *
+     * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage$/
+     * @throws coding_exception
+     * @param string $coursefullname The full name of the course.
+     * @return void
+     */
+    public function i_am_on_course_homepage($coursefullname) {
+        global $DB;
+        $course = $DB->get_record("course", array("fullname" => $coursefullname), 'id', MUST_EXIST);
+        $url = new moodle_url('/course/view.php', ['id' => $course->id]);
+        $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
+    }
 }
