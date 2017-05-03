@@ -1969,6 +1969,7 @@
       <PHP_EXTENSION name="json" level="required">
       </PHP_EXTENSION>
       <PHP_EXTENSION name="hash" level="required"/>
+      <PHP_EXTENSION name="fileinfo" level="required"/>
     </PHP_EXTENSIONS>
     <PHP_SETTINGS>
       <PHP_SETTING name="memory_limit" value="96M" level="required">
@@ -2041,11 +2042,6 @@
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_mysql_incomplete_unicode_support" level="optional">
         <FEEDBACK>
           <ON_CHECK message="incompleteunicodesupport" />
-        </FEEDBACK>
-      </CUSTOM_CHECK>
-      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_finfo" level="required">
-        <FEEDBACK>
-          <ON_ERROR message="finforequired" />
         </FEEDBACK>
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
