@@ -34,9 +34,9 @@ Feature: Test editing an Essay question
     Then I should see "You must supply a value here."
     When I set the following fields to these values:
       | Question name   | Edited essay-001 name |
-      | Response format | No inline text        |
+      | Response format | No online text        |
     And I press "id_submitbutton"
-    Then I should see "When \"no inline text\" is selected, or responses are optional, you must allow at least one attachment."
+    Then I should see "When \"No online text\" is selected, or responses are optional, you must allow at least one attachment."
     When I set the following fields to these values:
       | Response format | Plain text |
     And I press "id_submitbutton"
