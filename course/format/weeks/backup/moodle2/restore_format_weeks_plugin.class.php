@@ -46,10 +46,68 @@ class restore_format_weeks_plugin extends restore_format_plugin {
      *
      * @return bool
      */
-    protected function need_restore_numsections() {
+    protected function is_pre_33_backup() {
         $backupinfo = $this->step->get_task()->get_info();
         $backuprelease = $backupinfo->backup_release;
         return version_compare($backuprelease, '3.3', 'lt');
+    }
+
+    /**
+     * Handles setting the automatic end date for a restored course.
+     *
+     * @param int $enddate The end date in the backup file.
+     */
+    protected function update_automatic_end_date($enddate) {
+        global $DB;
+
+        // At this stage the 'course_format_options' table will already have a value set for this option as it is
+        // part of the course format and the default will have been set.
+        // Get the current course format option.
+        $params = array(
+            'courseid' => $this->step->get_task()->get_courseid(),
+            'format' => 'weeks',
+            'sectionid' => 0,
+            'name' => 'automaticenddate'
+        );
+        $cfoid = $DB->get_field('course_format_options', 'id', $params);
+
+        $update = new stdClass();
+        $update->id = $cfoid;
+        if (empty($enddate)) {
+            $update->value = 1;
+            $DB->update_record('course_format_options', $update);
+
+            // Now, let's update the course end date.
+            format_weeks::update_end_date($this->step->get_task()->get_courseid());
+        } else {
+            $update->value = 0;
+            $DB->update_record('course_format_options', $update);
+        }
+    }
+
+    /**
+     * Handles updating the visibility of sections in the restored course.
+     *
+     * @param int $numsections The number of sections in the restored course.
+     */
+    protected function update_course_sections_visibility($numsections) {
+        global $DB;
+
+        $backupinfo = $this->step->get_task()->get_info();
+        foreach ($backupinfo->sections as $key => $section) {
+            // For each section from the backup file check if it was restored and if was "orphaned" in the original
+            // course and mark it as hidden. This will leave all activities in it visible and available just as it was
+            // in the original course.
+            // Exception is when we restore with merging and the course already had a section with this section number,
+            // in this case we don't modify the visibility.
+            if ($this->step->get_task()->get_setting_value($key . '_included')) {
+                $sectionnum = (int)$section->title;
+                if ($sectionnum > $numsections && $sectionnum > $this->originalnumsections) {
+                    $DB->execute("UPDATE {course_sections} SET visible = 0 WHERE course = ? AND section = ?",
+                        [$this->step->get_task()->get_courseid(), $sectionnum]);
+                }
+            }
+        }
     }
 
     /**
@@ -64,7 +122,7 @@ class restore_format_weeks_plugin extends restore_format_plugin {
         // In case of merging backup into existing course find the current number of sections.
         $target = $this->step->get_task()->get_target();
         if (($target == backup::TARGET_CURRENT_ADDING || $target == backup::TARGET_EXISTING_ADDING) &&
-                $this->need_restore_numsections()) {
+                $this->is_pre_33_backup()) {
             $maxsection = $DB->get_field_sql(
                 'SELECT max(section) FROM {course_sections} WHERE course = ?',
                 [$this->step->get_task()->get_courseid()]);
@@ -88,34 +146,26 @@ class restore_format_weeks_plugin extends restore_format_plugin {
      * This method is only executed if course configuration was overridden
      */
     public function after_restore_course() {
-        global $DB;
+        if (!$this->is_pre_33_backup()) {
+            // Backup file was made in Moodle 3.3 or later, we don't need to process it.
+            return;
+        }
 
-        if (!$this->need_restore_numsections()) {
-            // Backup file was made in Moodle 3.3 or later, we don't need to process 'numsecitons'.
+        $backupinfo = $this->step->get_task()->get_info();
+        if ($backupinfo->original_course_format !== 'weeks') {
+            // Backup from another course format.
             return;
         }
 
         $data = $this->connectionpoint->get_data();
-        $backupinfo = $this->step->get_task()->get_info();
-        if ($backupinfo->original_course_format !== 'weeks' || !isset($data['tags']['numsections'])) {
-            // Backup from another course format or backup file does not even have 'numsections'.
-            return;
-        }
 
-        $numsections = (int)$data['tags']['numsections'];
-        foreach ($backupinfo->sections as $key => $section) {
-            // For each section from the backup file check if it was restored and if was "orphaned" in the original
-            // course and mark it as hidden. This will leave all activities in it visible and available just as it was
-            // in the original course.
-            // Exception is when we restore with merging and the course already had a section with this section number,
-            // in this case we don't modify the visibility.
-            if ($this->step->get_task()->get_setting_value($key . '_included')) {
-                $sectionnum = (int)$section->title;
-                if ($sectionnum > $numsections && $sectionnum > $this->originalnumsections) {
-                    $DB->execute("UPDATE {course_sections} SET visible = 0 WHERE course = ? AND section = ?",
-                        [$this->step->get_task()->get_courseid(), $sectionnum]);
-                }
-            }
+        // Set the automatic end date setting and the course end date (if applicable).
+        $this->update_automatic_end_date($data['tags']['enddate']);
+
+        if (isset($data['tags']['numsections'])) {
+            // Update course sections visibility.
+            $numsections = (int)$data['tags']['numsections'];
+            $this->update_course_sections_visibility($numsections);
         }
     }
 }
