@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['accountexists'] = 'A user already exists on this site with this username. If this is your account, login manually and link this link from your preferences page.';
+$string['accountexists'] = 'A user already exists on this site with this username. If this is your account, log in by entering your username and password and add it as a linked login via your preferences page.';
 $string['auth_oauth2description'] = 'OAuth 2 standards based authentication';
 $string['auth_oauth2settings'] = 'OAuth 2 authentication settings.';
 $string['confirmaccountemail'] = 'Hi {$a->fullname},
@@ -65,14 +65,14 @@ $string['createaccountswarning'] = 'This authentication plugin allows users to c
 $string['createnewlinkedlogin'] = 'Link a new account ({$a})';
 $string['emailconfirmlink'] = 'Link your accounts';
 $string['emailconfirmlinksent'] = '<p>An existing account was found with this email address but it is not linked yet.</p>
-   <p>The accounts must be linked before you can login.</p>
-   <p>An email should have been sent to your address at <b>{$a}</b></p>
+   <p>The accounts must be linked before you can log in.</p>
+   <p>An email should have been sent to your address at <b>{$a}</b>.</p>
    <p>It contains easy instructions to link your accounts.</p>
-   <p>If you continue to have difficulty, contact the site administrator.</p>';
+   <p>If you have any difficulty, contact the site administrator.</p>';
 $string['info'] = 'External account';
 $string['issuer'] = 'OAuth 2 Service';
 $string['linkedlogins'] = 'Linked logins';
-$string['linkedloginshelp'] = 'Help with linked logins.';
+$string['linkedloginshelp'] = 'Help with linked logins';
 $string['loginerror_userincomplete'] = 'The user information returned did not contain a username and email address. The OAuth 2 service may be configured incorrectly.';
 $string['loginerror_nouserinfo'] = 'No user information was returned. The OAuth 2 service may be configured incorrectly.';
 $string['loginerror_invaliddomain'] = 'The email address is not allowed at this site.';
@@ -81,5 +81,5 @@ $string['loginerror_cannotcreateaccounts'] = 'The account does not exist and thi
 $string['notloggedindebug'] = 'The login attempt failed. Reason: {$a}';
 $string['notwhileloggedinas'] = 'Linked logins cannot be managed while logged in as another user.';
 $string['oauth2:managelinkedlogins'] = 'Manage own linked login accounts';
-$string['plugindescription'] = 'This authentication plugin displays a list of the configured identity providers on the moodle login page. Selecting an identity provider allows users to login with their credentials from an OAuth 2 provider.';
+$string['plugindescription'] = 'This authentication plugin displays a list of the configured identity providers on the login page. Selecting an identity provider allows users to login with their credentials from an OAuth 2 provider.';
 $string['pluginname'] = 'OAuth 2';
