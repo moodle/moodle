@@ -85,9 +85,9 @@ $string['backpackconnection_help'] = 'This page allows you to set up connection 
 
 Currently, only <a href="http://backpack.openbadges.org">Mozilla OpenBadges Backpack</a> is supported. You need to sign up for a backpack service before trying to set up backpack connection on this page.';
 $string['backpackconnectioncancelattempt'] = 'Connect using a different email address';
-$string['backpackconnectionconnect'] = 'Connect to Backpack';
+$string['backpackconnectionconnect'] = 'Connect to backpack';
 $string['backpackconnectionresendemail'] = 'Resend verification email';
-$string['backpackconnectionunexpectedresult'] = 'There was a problem contacting the Backpack. Please try again.<br><br>If this problem persists, please contact your system administrator.';
+$string['backpackconnectionunexpectedresult'] = 'There was a problem connecting to your backpack. Please try again.<br><br>If the problem persists, contact your administrator.';
 $string['backpackdetails'] = 'Backpack settings';
 $string['backpackemail'] = 'Email address';
 $string['backpackemail_help'] = 'The email address associated with your backpack. While you are connected, any badges earned on this site will be associated with this email address.';
@@ -100,7 +100,7 @@ $string['backpackemailverifyemailbody'] = 'Hi,
 
 A new connection to your OpenBadges backpack has been requested from \'{$a->sitename}\' using your email address.
 
-To confirm and activate the connection to your backpack, please click the link below.
+To confirm and activate the connection to your backpack, please go to
 
 {$a->link}
 
@@ -110,7 +110,7 @@ If you need help, please contact the site administrator,
 {$a->admin}';
 $string['backpackemailverifyemailsubject'] = '{$a}: OpenBadges Backpack email verification';
 $string['backpackemailverifypending'] = 'A verification email has been sent to <strong>{$a}</strong>. Click on the verification link in the email to activate your Backpack connection.';
-$string['backpackemailverifysuccess'] = 'Thanks for verifying your email address. You are now connected to your Backpack.';
+$string['backpackemailverifysuccess'] = 'Thanks for verifying your email address. You are now connected to your backpack.';
 $string['backpackemailverifytokenmismatch'] = 'The token in the link you clicked does not match the stored token. Make sure you clicked the link in most recent email you received.';
 $string['backpackimport'] = 'Badge import settings';
 $string['backpackimport_help'] = 'After the backpack connection is successfully established, badges from your backpack can be displayed on your badges page and your profile page.
