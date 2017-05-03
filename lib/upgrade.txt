@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.2.3 ===
+
+* Behat compatibility changes are now being documented at
+  https://docs.moodle.org/dev/Acceptance_testing/Compatibility_changes
+
 === 3.2.2 ===
 
 * get_user_capability_course() now has an additional parameter 'limit'. This can be used to return a set number of records with
