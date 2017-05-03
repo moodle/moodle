@@ -542,8 +542,7 @@ if ($mform->is_cancelled()) {
             }
         }
     }
-    die;
-    //redirect($companylist);
+    redirect($companylist);
 }
 
 echo $OUTPUT->header();
