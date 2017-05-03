@@ -700,7 +700,7 @@ abstract class format_base {
             if (isset($option['type'])) {
                 $mform->setType($optionname, $option['type']);
             }
-            if (is_null($mform->getElementValue($optionname)) && isset($option['default'])) {
+            if (is_null($mform->getElementValue('id')) && isset($option['default'])) {
                 $mform->setDefault($optionname, $option['default']);
             }
         }
