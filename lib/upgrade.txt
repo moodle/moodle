@@ -3,6 +3,8 @@ information provided here is intended especially for developers.
 
 === 3.3 ===
 
+* Behat compatibility changes are now being documented at
+  https://docs.moodle.org/dev/Acceptance_testing/Compatibility_changes
 * PHPUnit's bootstrap has been changed to use HTTPS wwwroot (https://www.example.com/moodle) from previous HTTP version. Any
   existing test expecting the old HTTP URLs will need to be switched to the new HTTPS value (reference: MDL-54901).
 * The information returned by the idp list has changed. This is usually only rendered by the login page and login block.
