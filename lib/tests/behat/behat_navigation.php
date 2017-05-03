@@ -587,4 +587,20 @@ class behat_navigation extends behat_base {
         $url = new moodle_url('/course/view.php', ['id' => $course->id]);
         $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
     }
+
+    /**
+     * Opens the course homepage with editing mode on.
+     *
+     * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage with editing mode on$/
+     * @throws coding_exception
+     * @param string $coursefullname The course full name of the course.
+     * @return void
+     */
+    public function i_am_on_course_homepage_with_editing_mode_on($coursefullname) {
+        global $DB;
+        $course = $DB->get_record("course", array("fullname" => $coursefullname), 'id', MUST_EXIST);
+        $url = new moodle_url('/course/view.php', ['id' => $course->id]);
+        $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
+        $this->execute("behat_forms::press_button", get_string('turneditingon'));
+    }
 }
