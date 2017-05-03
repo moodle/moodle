@@ -144,6 +144,7 @@ $string['recaptcha_link'] = 'auth/email';
 $string['security_question'] = 'Security question';
 $string['selfregistration'] = 'Self registration';
 $string['selfregistration_help'] = 'If an authentication plugin, such as email-based self-registration, is selected, then it enables potential users to register themselves and create accounts. This results in the possibility of spammers creating accounts in order to use forum posts, blog entries etc. for spam. To avoid this risk, self-registration should be disabled or limited by <em>Allowed email domains</em> setting.';
+$string['settingmigrationmismatch'] = 'Values mismatch detected while correcting the plugin setting names! The authentication plugin \'{$a->plugin}\' had the setting \'{$a->setting}\' configured to \'{$a->legacy}\' under the legacy name and to \'{$a->current}\' under the current name. The latter value has been set as the valid one but you should check and confirm that it is expected.';
 $string['sha1'] = 'SHA-1 hash';
 $string['showguestlogin'] = 'You can hide or show the guest login button on the login page.';
 $string['stdchangepassword'] = 'Use standard page for changing password';

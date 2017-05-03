@@ -48,7 +48,7 @@ function xmldb_auth_mnet_upgrade($oldversion) {
     // Put any upgrade step following this.
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/mnet to auth_mnet.
-        $DB->set_field('config_plugins', 'plugin', 'auth_mnet', array('plugin' => 'auth/mnet'));
+        upgrade_fix_config_auth_plugin_names('mnet');
         upgrade_plugin_savepoint(true, 2017020700, 'auth', 'mnet');
     }
 

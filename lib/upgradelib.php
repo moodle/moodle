@@ -2516,3 +2516,56 @@ function check_libcurl_version(environment_results $result) {
 
     return null;
 }
+
+/**
+ * Fix how auth plugins are called in the 'config_plugins' table.
+ *
+ * For legacy reasons, the auth plugins did not always use their frankenstyle
+ * component name in the 'plugin' column of the 'config_plugins' table. This is
+ * a helper function to correctly migrate the legacy settings into the expected
+ * and consistent way.
+ *
+ * @param string $plugin the auth plugin name such as 'cas', 'manual' or 'mnet'
+ */
+function upgrade_fix_config_auth_plugin_names($plugin) {
+    global $CFG, $DB, $OUTPUT;
+
+    $legacy = (array) get_config('auth/'.$plugin);
+    $current = (array) get_config('auth_'.$plugin);
+
+    // I don't want to rely on array_merge() and friends here just in case
+    // there was some crazy setting with a numerical name.
+
+    if ($legacy) {
+        $new = $legacy;
+    } else {
+        $new = [];
+    }
+
+    if ($current) {
+        foreach ($current as $name => $value) {
+            if (isset($legacy[$name]) && ($legacy[$name] !== $value)) {
+                // No need to pollute the output during unit tests.
+                if (!empty($CFG->upgraderunning)) {
+                    $message = get_string('settingmigrationmismatch', 'core_auth', [
+                        'plugin' => 'auth_'.$plugin,
+                        'setting' => s($name),
+                        'legacy' => s($legacy[$name]),
+                        'current' => s($value),
+                    ]);
+                    echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_ERROR);
+
+                    upgrade_log(UPGRADE_LOG_NOTICE, 'auth_'.$plugin, 'Setting values mismatch detected',
+                        'SETTING: '.$name. ' LEGACY: '.$legacy[$name].' CURRENT: '.$value);
+                }
+            }
+
+            $new[$name] = $value;
+        }
+    }
+
+    foreach ($new as $name => $value) {
+        set_config($name, $value, 'auth_'.$plugin);
+        unset_config($name, 'auth/'.$plugin);
+    }
+}

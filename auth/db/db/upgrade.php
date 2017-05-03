@@ -37,7 +37,7 @@ function xmldb_auth_db_upgrade($oldversion) {
 
     if ($oldversion < 2017032800) {
         // Convert info in config plugins from auth/db to auth_db
-        $DB->set_field('config_plugins', 'plugin', 'auth_db', array('plugin' => 'auth/db'));
+        upgrade_fix_config_auth_plugin_names('db');
         upgrade_plugin_savepoint(true, 2017032800, 'auth', 'db');
     }
 

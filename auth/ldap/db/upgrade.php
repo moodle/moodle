@@ -61,7 +61,7 @@ function xmldb_auth_ldap_upgrade($oldversion) {
 
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/ldap to auth_ldap.
-        $DB->set_field('config_plugins', 'plugin', 'auth_ldap', array('plugin' => 'auth/ldap'));
+        upgrade_fix_config_auth_plugin_names('ldap');
         upgrade_plugin_savepoint(true, 2017020700, 'auth', 'ldap');
     }
 

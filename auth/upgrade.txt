@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 
 * Authentication plugins have been migrated to use the admin settings API.
   Plugins should use a settings.php file to manage configurations rather than using the config.html files.
+  See how the helper function upgrade_fix_config_auth_plugin_names() can be used to convert the legacy settings to the
+  new ones.
 * The function 'print_auth_lock_options' has been replaced by 'display_auth_lock_options' which uses the admin settings API.
   See auth_manual as an exmple of how it can be used.  More information can be found in MDL-12689.
 * The list of supported identity providers (SSO IdP) returned by the 'loginpage_idp_list' method (used to render the
