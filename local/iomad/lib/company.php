@@ -2172,7 +2172,7 @@ class company {
                 // Delete the record.
                 $DB->delete_records('companylicense_users', array('id' => $licenserecord->id));
                 // Update the license used count.
-                $DB->execute_sql("UPDATE {companylicense},
+                $DB->execute("UPDATE {companylicense},
                                   (
                                    SELECT licenseid,count(*) AS licCount FROM {companylicense_users} GROUP BY licenseid
                                   ) AS t2
