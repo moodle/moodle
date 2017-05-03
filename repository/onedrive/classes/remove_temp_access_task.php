@@ -25,8 +25,14 @@
 namespace repository_onedrive;
 
 use \core\task\scheduled_task;
+use DateTime;
+use DateInterval;
+use repository_exception;
+use \core\oauth2\rest_exception;
 
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/repository/lib.php');
 
 /**
  * Simple task to delete temporary permission records.
@@ -55,8 +61,8 @@ class remove_temp_access_task extends scheduled_task {
         $expires->sub(new DateInterval("P7D"));
         $timestamp = $expires->getTimestamp();
 
-        $issuerid = get_config('repository_onedrive', 'issuerid');
-        $issuer = \core\oauth2\api::get_issuer_by_id($issuerid);
+        $issuerid = get_config('onedrive', 'issuerid');
+        $issuer = \core\oauth2\api::get_issuer($issuerid);
 
         // Add the current user as an OAuth writer.
         $systemauth = \core\oauth2\api::get_system_oauth_client($issuer);
@@ -65,12 +71,17 @@ class remove_temp_access_task extends scheduled_task {
             $details = 'Cannot connect as system user';
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
-        $systemservice = new repository_onedrive\rest($systemauth);
+        $systemservice = new \repository_onedrive\rest($systemauth);
 
         foreach ($accessrecords as $access) {
             if ($access->get('timemodified') < $timestamp) {
                 $params = ['permissionid' => $access->get('permissionid'), 'itemid' => $access->get('itemid')];
-                $systemservice->call('delete_permission', $params);
+                try {
+                    $systemservice->call('delete_permission', $params);
+                } catch (rest_exception $re) {
+                    // We log and give up here or we will always fail for eternity.
+                    mtrace('Failed to remove access from file: ' . $access->get('itemid'));
+                }
                 $access->delete();
             }
         }

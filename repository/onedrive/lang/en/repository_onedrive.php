@@ -34,6 +34,7 @@ $string['importskydrivefiles'] = 'Import files from Microsoft SkyDrive repositor
 $string['internal'] = 'Internal (files stored in Moodle)';
 $string['issuer_help'] = 'Select the OAuth 2 service that is configured to talk to the OneDrive API. If the services does not exist yet, you might need to create it.';
 $string['issuer'] = 'OAuth 2 service';
+$string['mysitenotfound'] = 'You have never logged into OneDrive before. You must login to OneDrive at least once it before it can be used with Moodle.';
 $string['oauth2serviceslink'] = '<a href="{$a}" title="Link to OAuth Services configuration">OAuth 2 Services Configuration</a>';
 $string['owner'] = 'Owned by: {$a}';
 $string['pluginname'] = 'Microsoft OneDrive';

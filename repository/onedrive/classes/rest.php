@@ -77,24 +77,20 @@ class rest extends \core\oauth2\rest {
                 ],
                 'response' => 'json'
             ],
-            'list_permissions' => [
-                'endpoint' => 'https://graph.microsoft.com/v1.0/me/drive/items/{fileid}/permissions',
-                'method' => 'get',
-                'args' => [
-                    '$select' => PARAM_RAW,
-                    '$expand' => PARAM_RAW,
-                    'fileid' => PARAM_RAW,
-                    '$skip' => PARAM_INT,
-                    '$skipToken' => PARAM_RAW,
-                    '$count' => PARAM_INT
-                ],
-                'response' => 'json'
-            ],
             'create_permission' => [
                 'endpoint' => 'https://graph.microsoft.com/v1.0/me/drive/items/{fileid}/invite',
                 'method' => 'post',
                 'args' => [
                     'fileid' => PARAM_RAW
+                ],
+                'response' => 'json'
+            ],
+            'create_upload' => [
+                'endpoint' => 'https://graph.microsoft.com/v1.0/me/drive/items/{parentid}:/{filename}:/createUploadSession',
+                'method' => 'post',
+                'args' => [
+                    'parentid' => PARAM_RAW,
+                    'filename' => PARAM_RAW
                 ],
                 'response' => 'json'
             ],
@@ -123,25 +119,11 @@ class rest extends \core\oauth2\rest {
                 ],
                 'response' => 'json'
             ],
-            'get_drive' => [
-                'endpoint' => 'https://graph.microsoft.com/v1.0/me/drive',
-                'method' => 'get',
-                'args' => [],
-                'response' => 'json'
-            ],
             'delete_file_by_path' => [
                 'endpoint' => 'https://graph.microsoft.com/v1.0/me/drive/root:/{fullpath}',
                 'method' => 'delete',
                 'args' => [
                     'fullpath' => PARAM_RAW,
-                ],
-                'response' => 'json'
-            ],
-            'copy_share' => [
-                'endpoint' => 'https://graph.microsoft.com/v1.0/shares/{sharetoken}/root/copy',
-                'method' => 'post',
-                'args' => [
-                    'sharetoken' => PARAM_RAW,
                 ],
                 'response' => 'json'
             ],

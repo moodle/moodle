@@ -311,8 +311,8 @@ class repository_onedrive extends repository {
         } catch (Exception $e) {
             if ($e->getCode() == 403 && strpos($e->getMessage(), 'Access Not Configured') !== false) {
                 throw new repository_exception('servicenotenabled', 'repository_onedrive');
-            } else {
-                throw $e;
+            } else if (strpos($e->getMessage(), 'mysite not found') !== false) {
+                throw new repository_exception('mysitenotfound', 'repository_onedrive');
             }
         }
 
@@ -410,11 +410,17 @@ class repository_onedrive extends repository {
         if ($this->disabled) {
             throw new repository_exception('cannotdownload', 'repository');
         }
+        $sourceinfo = json_decode($reference);
 
-        $client = $this->get_user_oauth_client();
+        $client = null;
+        if (!empty($sourceinfo->usesystem)) {
+            $client = \core\oauth2\api::get_system_oauth_client($this->issuer);
+        } else {
+            $client = $this->get_user_oauth_client();
+        }
+
         $base = 'https://graph.microsoft.com/v1.0/';
 
-        $sourceinfo = json_decode($reference);
         $sourceurl = new moodle_url($base . 'me/drive/items/' . $sourceinfo->id . '/content');
         $source = $sourceurl->out(false);
 
@@ -539,7 +545,7 @@ class repository_onedrive extends repository {
                                    $storedfile->get_filepath(),
                                    $storedfile->get_filename());
 
-        if (empty($options['offline']) && !empty($info) && $info->is_writable()) {
+        if (empty($options['offline']) && !empty($info) && $info->is_writable() && !empty($source->usesystem)) {
             // Add the current user as an OAuth writer.
             $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
 
@@ -585,18 +591,6 @@ class repository_onedrive extends repository {
     }
 
     /**
-     * List the permissions on a file.
-     *
-     * @param \repository_onedrive\rest $client Authenticated client.
-     * @param string $fileid The id of the file.
-     * @return array
-     */
-    protected function list_file_permissions(\repository_onedrive\rest $client, $fileid) {
-        $fields = "id,roles,link,grantedTo";
-        return $client->call('list_permissions', ['fileid' => $fileid, '$select' => $fields]);
-    }
-
-    /**
      * See if a folder exists within a folder
      *
      * @param \repository_onedrive\rest $client Authenticated client.
@@ -627,24 +621,6 @@ class repository_onedrive extends repository {
             return false;
         }
         return true;
-    }
-
-
-    /**
-     * Get a file summary by full path.
-     *
-     * @param \repository_onedrive\rest $client Authenticated client.
-     * @param string $fullpath
-     * @return stdClass
-     */
-    protected function get_file_summary_by_path(\repository_onedrive\rest $client, $fullpath) {
-        $fields = "folder,id,lastModifiedDateTime,name,size,webUrl,createdByUser";
-        $response = $client->call('get_file_by_path', ['fullpath' => $fullpath, '$select' => $fields]);
-        if (empty($response->id)) {
-            $details = 'Cannot get file summary:' . $fullpath;
-            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
-        }
-        return $response;
     }
 
     /**
@@ -679,23 +655,6 @@ class repository_onedrive extends repository {
         $fields = "folder,id,lastModifiedDateTime,name,size,webUrl,createdByUser";
         $response = $client->call('get', ['fileid' => $fileid, '$select' => $fields]);
         return $response;
-    }
-
-    /**
-     * Get the id of this users root drive.
-     *
-     * @param \repository_onedrive\rest $client Authenticated client.
-     *
-     * @return string id
-     */
-    protected function get_root_drive_id(\repository_onedrive\rest $client) {
-        $response = $client->call('get_drive', []);
-
-        if (empty($response->id)) {
-            $details = 'Cannot get driveid';
-            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
-        }
-        return $response->id;
     }
 
     /**
@@ -736,30 +695,6 @@ class repository_onedrive extends repository {
     }
 
     /**
-     * Add a writer to the permissions on the file.
-     *
-     * @param \repository_onedrive\rest $client Authenticated client.
-     * @param string $fileid The file we are updating.
-     * @param string $useremail The user email of the writer account to add.
-     * @return boolean
-     */
-    protected function add_writer_to_file(\repository_onedrive\rest $client, $fileid, $useremail) {
-        $updateeditor = [
-            'recipients' => [ [ 'email' => $useremail ] ],
-            'roles' => ['write'],
-            'requireSignIn' => true,
-            'sendInvitation' => false
-        ];
-        $params = [ 'fileid' => $fileid ];
-        $response = $client->call('create_permission', $params, json_encode($updateeditor));
-        if (empty($response->value)) {
-            $details = 'Cannot add user ' . $useremail . ' as a writer for document: ' . $fileid;
-            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
-        }
-        return true;
-    }
-
-    /**
      * Allow anyone with the link to read the file.
      *
      * @param \repository_onedrive\rest $client Authenticated client.
@@ -777,44 +712,71 @@ class repository_onedrive extends repository {
             $details = 'Cannot update link sharing for the document: ' . $fileid;
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
-        return true;
+        return $response->link->webUrl;
     }
 
     /**
-     * Copy a shared file to a new folder.
+     * Given a filename, use the core_filetypes registered types to guess a mimetype.
      *
-     * @param \repository_onedrive\rest $client Authenticated client.
-     * @param string $sharetoken The share we are querying.
-     * @param string $newdrive Id of the drive to copy to.
-     * @param string $parentid Id of the folder to copy to.
-     * @return stdClass
+     * If no mimetype is known, return 'application/unknown';
+     *
+     * @param string $filename
+     * @return string $mimetype
      */
-    protected function copy_share(\repository_onedrive\rest $client, $sharetoken, $newdrive, $parentid) {
-        $folder = [
-            'parentReference' => ['id' => $parentid, 'driveId' => $newdrive]
-        ];
-        $params = ['sharetoken' => $sharetoken];
-        $response = $client->call('copy_share', $params, json_encode($folder));
-        return true;
+    protected function get_mimetype_from_filename($filename) {
+        $mimetype = 'application/unknown';
+        $types = core_filetypes::get_types();
+        $fileextension = '.bin';
+        if (strpos($filename, '.') !== false) {
+            $fileextension = substr($filename, strrpos($filename, '.') + 1);
+        }
+
+        if (isset($types[$fileextension])) {
+            $mimetype = $types[$fileextension]['type'];
+        }
+        return $mimetype;
     }
 
     /**
-     * From MS docs - to get a share token from a url, do this:
-     * Reference: https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/shares_get
-     * To access a sharing URL using the shares API, the URL needs to be transformed into a sharing token.
-     *   To transform a URL into a sharing token:
-     *   Base64 encode the sharing URL.
-     *   Convert the base64 encoded data to unpadded base64url format by:
-     *   Trim trailing = characeters from the string.
-     *   Replace unsafe URL characters with an equivelent character; replace / with _ and + with -.
-     *   Append u! to the beginning of the string.
+     * Upload a file to onedrive.
      *
-     * @param string $shareurl
-     * @return string The sharing token
+     * @param \repository_onedrive\rest $service Authenticated client.
+     * @param \curl $curl Curl client to perform the put operation.
+     * @param string $filepath The local path to the file to upload
+     * @param string $mimetype The new mimetype
+     * @param string $parentid The folder to put it.
+     * @param string $filename The name of the new file
+     * @return string $fileid
      */
-    protected function get_share_token($shareurl) {
-        return 'u!' . str_replace(['/', '+'], ['_', '-'], rtrim(base64_encode($shareurl), '='));
+    protected function upload_file(\repository_onedrive\rest $service, \curl $curl, $filepath, $mimetype, $parentid, $filename) {
+        // Start an upload session.
+        // Docs https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/item_createuploadsession link.
+
+        $params = ['parentid' => $parentid, 'filename' => urlencode($filename)];
+        $behaviour = [ 'item' => [ "@microsoft.graph.conflictBehavior" => "rename" ] ];
+        $created = $service->call('create_upload', $params, json_encode($behaviour));
+        if (empty($created->uploadUrl)) {
+            $details = 'Cannot begin upload session:' . $parentid;
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+
+        $options = ['file' => $filepath];
+        $curl->setHeader('Content-type: ' . $mimetype);
+        $size = filesize($filepath);
+        $curl->setHeader('Content-Range: bytes 0-' . ($size - 1) . '/' . $size);
+        $response = $curl->put($created->uploadUrl, $options);
+        if ($curl->errno == 0) {
+            $response = json_decode($response);
+        }
+
+        if (empty($response->id)) {
+            $details = 'File not created';
+            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
+        }
+
+        return $response->id;
     }
+
 
     /**
      * Called when a file is selected as a "link".
@@ -846,8 +808,6 @@ class repository_onedrive extends repository {
             $details = 'Cannot connect as system user';
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
-        $systemuserinfo = $systemauth->get_userinfo();
-        $systemuseremail = $systemuserinfo['email'];
 
         $source = json_decode($reference);
 
@@ -856,31 +816,23 @@ class repository_onedrive extends repository {
             $details = 'Cannot connect as current user';
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
-        $userinfo = $userauth->get_userinfo();
-        $useremail = $userinfo['email'];
 
-        $userservice = new repository_onedrive\rest($userauth);
         $systemservice = new repository_onedrive\rest($systemauth);
 
-        // Get the list of existing permissions so we can see if the owner is already the system account,
-        // and whether we need to update the link sharing options.
-        $permissions = $this->list_file_permissions($userservice, $source->id);
+        // Download the file.
+        $tmpfilename = clean_param($source->id, PARAM_PATH);
+        $temppath = make_request_directory() . $tmpfilename;
 
-        $readshareupdaterequired = true;
-        $ownerupdaterequired = true;
-        foreach ($permissions->value as $permission) {
-            if (!empty($permission->link)) {
-                if ($permission->link->scope == 'anonymous' &&
-                        $permission->link->type == 'view') {
-                    $shareurl = $permission->link->webUrl;
-                    $readshareupdaterequired = false;
-                    break;
-                }
-            }
+        $options = ['filepath' => $temppath, 'timeout' => 60, 'followlocation' => true, 'maxredirs' => 5];
+        $base = 'https://graph.microsoft.com/v1.0/';
+        $sourceurl = new moodle_url($base . 'me/drive/items/' . $source->id . '/content');
+        $sourceurl = $sourceurl->out(false);
+
+        $result = $userauth->download_one($sourceurl, null, $options);
+
+        if (!$result) {
+            throw new repository_exception('cannotdownload', 'repository');
         }
-
-        // Add Moodle as writer.
-        $this->add_writer_to_file($userservice, $source->id, $systemuseremail);
 
         // Now copy it to a sensible folder.
         $contextlist = array_reverse($context->get_parent_contexts(true));
@@ -921,31 +873,26 @@ class repository_onedrive extends repository {
             }
         }
 
-        // Get the users drive id.
-        $newdrive = $this->get_root_drive_id($systemservice);
-
-        if ($readshareupdaterequired) {
-            $response = $this->set_file_sharing_anyone_with_link_can_read($userservice, $source->id);
-            $shareurl = $response->value->webUrl;
-        }
-
-        // Turn the share url into a sharing token.
-        $sharetoken = $this->get_share_token($shareurl);
-
         // Delete any existing file at this path.
-        $path = $fullpath . '/' . $source->name;
+        $path = $fullpath . '/' . urlencode(clean_param($source->name, PARAM_PATH));
         $this->delete_file_by_path($systemservice, $path);
 
-        // Copy the file to the moodle account.
-        // Note this method (copying via a share link) is the only way to copy a file in
-        // office 365 from one user to another.
-        $this->copy_share($systemservice, $sharetoken, $newdrive, $parentid);
+        // Upload the file.
+        $safefilename = clean_param($source->name, PARAM_PATH);
+        $mimetype = $this->get_mimetype_from_filename($safefilename);
+        // We cannot send authorization headers in the upload or personal microsoft accounts will fail (what a joke!).
+        $curl = new \curl();
+        $fileid = $this->upload_file($systemservice, $curl, $temppath, $mimetype, $parentid, $safefilename);
 
-        $summary = $this->get_file_summary_by_path($systemservice, $path);
+        // Read with link.
+        $link = $this->set_file_sharing_anyone_with_link_can_read($systemservice, $fileid);
+
+        $summary = $this->get_file_summary($systemservice, $fileid);
 
         // Update the details in the file reference before it is saved.
         $source->id = $summary->id;
-        $source->link = $summary->webUrl;
+        $source->link = $link;
+        $source->usesystem = true;
 
         $reference = json_encode($source);
 
@@ -963,6 +910,9 @@ class repository_onedrive extends repository {
             return get_string('unknownsource', 'repository');
         }
         $source = json_decode($reference);
+        if (empty($source->usesystem)) {
+            return '';
+        }
         $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
 
         if ($systemauth === false) {

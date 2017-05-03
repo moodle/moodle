@@ -394,7 +394,7 @@ abstract class oauth2_client extends curl {
     /** @var stdClass $accesstoken access token object */
     private $accesstoken = null;
     /** @var string $refreshtoken refresh token string */
-    private $refreshtoken = '';
+    protected $refreshtoken = '';
     /** @var string $mocknextresponse string */
     private $mocknextresponse = '';
     /** @var array $upgradedcodes list of upgraded codes in this request */
