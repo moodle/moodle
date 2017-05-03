@@ -25,6 +25,7 @@ $icon-big-height: 64px;
     &.iconsize-big {
         width: $icon-big-width;
         height: $icon-big-height;
+        font-size: $icon-big-height;
     }
 }
 
