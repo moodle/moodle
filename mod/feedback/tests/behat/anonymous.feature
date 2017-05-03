@@ -237,3 +237,58 @@ Feature: Anonymous feedback
     And I should not see "Response number: 1"
     And I should see "Response number: 2"
     And I log out
+
+  Scenario: Collecting new non-anonymous feedback from a previously anonymous feedback activity
+    When I log in as "teacher"
+    And I follow "Course 1"
+    And I follow "Course feedback"
+    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I set the following fields to these values:
+      | Allow multiple submissions | Yes |
+    And I press "Save and display"
+    And I follow "Edit questions"
+    And I add a "Short text answer" question to the feedback with:
+      | Question               | this is a short text answer |
+      | Label                  | shorttext                   |
+      | Maximum characters accepted | 200                    |
+    And I log out
+    When I log in as "user1"
+    And I follow "Course 1"
+    And I follow "Course feedback"
+    And I follow "Answer the questions..."
+    And I set the following fields to these values:
+      | this is a short text answer  | anontext |
+    And I press "Submit your answers"
+    And I log out
+    # Switch to non-anon responses.
+    And I log in as "teacher"
+    And I follow "Course 1"
+    And I follow "Course feedback"
+    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I set the following fields to these values:
+        | Record user names | User's name will be logged and shown with answers |
+    And I press "Save and display"
+    And I log out
+    # Now leave a non-anon feedback as user1
+    When I log in as "user1"
+    And I follow "Course 1"
+    And I follow "Course feedback"
+    And I follow "Answer the questions..."
+    And I set the following fields to these values:
+      | this is a short text answer  | usertext |
+    And I press "Submit your answers"
+    And I log out
+    # Now check the responses are correct.
+    When I log in as "teacher"
+    And I follow "Course 1"
+    And I follow "Course feedback"
+    And I follow "Show responses"
+    And I should see "Anonymous entries (1)"
+    And I should see "Non anonymous entries (1)"
+    And I click on "," "link" in the "Username 1" "table_row"
+    And I should see "(Username 1)"
+    And I should see "usertext"
+    And I follow "Back"
+    And I follow "Response number: 1"
+    And I should see "Response number: 1 (Anonymous)"
+    Then I should see "anontext"
