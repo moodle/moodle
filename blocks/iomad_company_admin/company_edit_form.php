@@ -93,7 +93,7 @@ class company_edit_form extends company_moodleform {
         if (empty($CFG->commerce_admin_enableall)) {
             $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
         } else {
-            $mform->addElement('hidden', 'ecommerce'));
+            $mform->addElement('hidden', 'ecommerce');
         }
 
         $mform->setDefault('parentid', 0);
