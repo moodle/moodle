@@ -785,10 +785,11 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id,
             'intro' => $labeldescription));
         $labelcm = get_coursemodule_from_instance('label', $label->id);
+        $tomorrow = time() + DAYSECS;
         // Module with availability restrictions not met.
         $url = $this->getDataGenerator()->create_module('url',
             array('course' => $course->id, 'name' => 'URL: % & $ ../', 'section' => 2),
-            array('availability' => '{"op":"&","c":[{"type":"date","d":">=","t":2502892800}],"showc":[true]}'));
+            array('availability' => '{"op":"&","c":[{"type":"date","d":">=","t":' . $tomorrow . '}],"showc":[true]}'));
         $urlcm = get_coursemodule_from_instance('url', $url->id);
         // Module for the last section.
         $this->getDataGenerator()->create_module('url',
@@ -809,7 +810,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $DB->set_field('course_sections', 'summary', 'Text with iframe <iframe src="https://moodle.org"></iframe>', $conditions);
 
         // Add date availability condition not met for last section.
-        $availability = '{"op":"&","c":[{"type":"date","d":">=","t":2502892800}],"showc":[true]}';
+        $availability = '{"op":"&","c":[{"type":"date","d":">=","t":' . $tomorrow . '}],"showc":[true]}';
         $DB->set_field('course_sections', 'availability', $availability,
                 array('course' => $course->id, 'section' => 3));
         rebuild_course_cache($course->id, true);
