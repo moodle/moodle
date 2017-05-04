@@ -24,6 +24,7 @@
 
 namespace core_calendar;
 
+use calendar_event;
 use DateInterval;
 use DateTime;
 use moodle_exception;
@@ -223,7 +224,7 @@ class rrule_manager {
     /**
      * Create events for specified rrule.
      *
-     * @param \calendar_event $passedevent Properties of event to create.
+     * @param calendar_event $passedevent Properties of event to create.
      * @throws moodle_exception
      */
     public function create_events($passedevent) {
@@ -243,13 +244,16 @@ class rrule_manager {
         // Generate timestamps that obey the rrule.
         $eventtimes = $this->generate_recurring_event_times($eventrec);
 
-        // Adjust the parent event's timestart, if necessary.
+        // Update the parent event. Make sure that its repeat ID is the same as its ID.
+        $calevent = new calendar_event($eventrec);
+        $updatedata = new stdClass();
+        $updatedata->repeatid = $event->id;
+        // Also, adjust the parent event's timestart, if necessary.
         if (count($eventtimes) > 0 && !in_array($eventrec->timestart, $eventtimes)) {
-            $calevent = new \calendar_event($eventrec);
-            $updatedata = (object)['timestart' => $eventtimes[0], 'repeatid' => $eventrec->id];
-            $calevent->update($updatedata, false);
-            $eventrec->timestart = $calevent->timestart;
+            $updatedata->timestart = reset($eventtimes);
         }
+        $calevent->update($updatedata, false);
+        $eventrec->timestart = $calevent->timestart;
 
         // Create the recurring calendar events.
         $this->create_recurring_events($eventrec, $eventtimes);
@@ -719,7 +723,9 @@ class rrule_manager {
             $cloneevent->repeatid = $event->id;
             $cloneevent->timestart = $time;
             unset($cloneevent->id);
-            \calendar_event::create($cloneevent, false);
+            // UUID should only be set on the first instance of the recurring events.
+            unset($cloneevent->uuid);
+            calendar_event::create($cloneevent, false);
         }
 
         // If COUNT rule is defined and the number of the generated event times is less than the the COUNT rule,
