@@ -885,74 +885,47 @@ class assign {
      * Returns user override
      *
      * Algorithm:  For each assign setting, if there is a matching user-specific override,
-     *   then use that otherwise, if there are group-specific overrides, return the most
-     *   lenient combination of them.  If neither applies, leave the assign setting unchanged.
+     *   then use that otherwise, if there are group-specific overrides, use the one with the
+     *   lowest sort order. If neither applies, leave the assign setting unchanged.
      *
      * @param int $userid The userid.
-     * @return override  if exist
+     * @return stdClass The override
      */
     public function override_exists($userid) {
         global $DB;
 
-        // Check for user override.
-        $override = $DB->get_record('assign_overrides', array('assignid' => $this->get_instance()->id, 'userid' => $userid));
+        // Gets an assoc array containing the keys for defined user overrides only.
+        $getuseroverride = function($userid) use ($DB) {
+            $useroverride = $DB->get_record('assign_overrides', ['assignid' => $this->get_instance()->id, 'userid' => $userid]);
+            return $useroverride ? get_object_vars($useroverride) : [];
+        };
 
-        if (!$override) {
-            $override = new stdClass();
-            $override->duedate = null;
-            $override->cutoffdate = null;
-            $override->allowsubmissionsfromdate = null;
-        }
+        // Gets an assoc array containing the keys for defined group overrides only.
+        $getgroupoverride = function($userid) use ($DB) {
+            $groupings = groups_get_user_groups($this->get_instance()->course, $userid);
 
-        // Check for group overrides.
-        $groupings = groups_get_user_groups($this->get_instance()->course, $userid);
+            if (empty($groupings[0])) {
+                return [];
+            }
 
-        if (!empty($groupings[0])) {
             // Select all overrides that apply to the User's groups.
             list($extra, $params) = $DB->get_in_or_equal(array_values($groupings[0]));
             $sql = "SELECT * FROM {assign_overrides}
-                    WHERE groupid $extra AND assignid = ?";
+                    WHERE groupid $extra AND assignid = ? ORDER BY sortorder ASC";
             $params[] = $this->get_instance()->id;
-            $records = $DB->get_records_sql($sql, $params);
+            $groupoverride = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE);
 
-            // Combine the overrides.
-            $duedates = array();
-            $cutoffdates = array();
-            $allowsubmissionsfromdates = array();
+            return $groupoverride ? get_object_vars($groupoverride) : [];
+        };
 
-            foreach ($records as $gpoverride) {
-                if (isset($gpoverride->duedate)) {
-                    $duedates[] = $gpoverride->duedate;
-                }
-                if (isset($gpoverride->cutoffdate)) {
-                    $cutoffdates[] = $gpoverride->cutoffdate;
-                }
-                if (isset($gpoverride->allowsubmissionsfromdate)) {
-                    $allowsubmissionsfromdates[] = $gpoverride->allowsubmissionsfromdate;
-                }
-            }
-            // If there is a user override for a setting, ignore the group override.
-            if (is_null($override->allowsubmissionsfromdate) && count($allowsubmissionsfromdates)) {
-                $override->allowsubmissionsfromdate = min($allowsubmissionsfromdates);
-            }
-            if (is_null($override->cutoffdate) && count($cutoffdates)) {
-                if (in_array(0, $cutoffdates)) {
-                    $override->cutoffdate = 0;
-                } else {
-                    $override->cutoffdate = max($cutoffdates);
-                }
-            }
-            if (is_null($override->duedate) && count($duedates)) {
-                if (in_array(0, $duedates)) {
-                    $override->duedate = 0;
-                } else {
-                    $override->duedate = max($duedates);
-                }
-            }
-
-        }
-
-        return $override;
+        // Later arguments clobber earlier ones with array_merge. The two helper functions
+        // return arrays containing keys for only the defined overrides. So we get the
+        // desired behaviour as per the algorithm.
+        return (object)array_merge(
+            ['duedate' => null, 'cutoffdate' => null, 'allowsubmissionsfromdate' => null],
+            $getgroupoverride($userid),
+            $getuseroverride($userid)
+        );
     }
 
     /**

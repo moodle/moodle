@@ -2681,6 +2681,119 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
     }
 
     /**
+     * Test override exists
+     *
+     * This function needs to obey the group override logic as per the assign grading table and
+     * the overview block.
+     */
+    public function test_override_exists() {
+        global $DB;
+
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create an assign instance.
+        $assign = $this->create_instance(['course' => $course]);
+        $assigninstance = $assign->get_instance();
+
+        // Create users.
+        $users = [
+            'Only in group A'                     => $this->getDataGenerator()->create_user(),
+            'Only in group B'                     => $this->getDataGenerator()->create_user(),
+            'In group A and B (no user override)' => $this->getDataGenerator()->create_user(),
+            'In group A and B (user override)'    => $this->getDataGenerator()->create_user(),
+            'In no groups'                        => $this->getDataGenerator()->create_user()
+        ];
+
+        // Enrol users.
+        foreach ($users as $user) {
+            $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        }
+
+        // Create groups.
+        $groupa = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $groupb = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        // Add members to groups.
+        // Group A.
+        $this->getDataGenerator()->create_group_member(
+            ['groupid' => $groupa->id, 'userid' => $users['Only in group A']->id]);
+        $this->getDataGenerator()->create_group_member(
+            ['groupid' => $groupa->id, 'userid' => $users['In group A and B (no user override)']->id]);
+        $this->getDataGenerator()->create_group_member(
+            ['groupid' => $groupa->id, 'userid' => $users['In group A and B (user override)']->id]);
+
+        // Group B.
+        $this->getDataGenerator()->create_group_member(
+            ['groupid' => $groupb->id, 'userid' => $users['Only in group B']->id]);
+        $this->getDataGenerator()->create_group_member(
+            ['groupid' => $groupb->id, 'userid' => $users['In group A and B (no user override)']->id]);
+        $this->getDataGenerator()->create_group_member(
+            ['groupid' => $groupb->id, 'userid' => $users['In group A and B (user override)']->id]);
+
+        // Overrides for each of the groups, and a user override.
+        $overrides = [
+            // Override for group A, highest priority (numerically lowest sortorder).
+            [
+                'assignid' => $assigninstance->id,
+                'groupid' => $groupa->id,
+                'userid' => null,
+                'sortorder' => 1,
+                'allowsubmissionsfromdate' => 1,
+                'duedate' => 2,
+                'cutoffdate' => 3
+            ],
+            // Override for group B, lower priority (numerically higher sortorder).
+            [
+                'assignid' => $assigninstance->id,
+                'groupid' => $groupb->id,
+                'userid' => null,
+                'sortorder' => 2,
+                'allowsubmissionsfromdate' => 5,
+                'duedate' => 6,
+                'cutoffdate' => 6
+            ],
+            // User override.
+            [
+                'assignid' => $assigninstance->id,
+                'groupid' => null,
+                'userid' => $users['In group A and B (user override)']->id,
+                'sortorder' => null,
+                'allowsubmissionsfromdate' => 7,
+                'duedate' => 8,
+                'cutoffdate' => 9
+            ],
+        ];
+
+        // Kinda hacky, need to add the ID to the overrides in the above array
+        // for later.
+        foreach ($overrides as &$override) {
+            $override['id'] = $DB->insert_record('assign_overrides', $override);
+        }
+
+        $returnedoverrides = array_reduce(array_keys($users), function($carry, $description) use ($users, $assign) {
+            return $carry + ['For user ' . lcfirst($description) => $assign->override_exists($users[$description]->id)];
+        }, []);
+
+        // Test we get back the correct override from override_exists (== checks all object members match).
+        // User only in group A should see the group A override.
+        $this->assertTrue($returnedoverrides['For user only in group A'] == (object)$overrides[0]);
+        // User only in group B should see the group B override.
+        $this->assertTrue($returnedoverrides['For user only in group B'] == (object)$overrides[1]);
+        // User in group A and B, with no user override should see the group A override
+        // as it has higher priority (numerically lower sortorder).
+        $this->assertTrue($returnedoverrides['For user in group A and B (no user override)'] == (object)$overrides[0]);
+        // User in group A and B, with a user override should see the user override
+        // as it has higher priority (numerically lower sortorder).
+        $this->assertTrue($returnedoverrides['For user in group A and B (user override)'] == (object)$overrides[2]);
+        // User with no overrides should get nothing.
+        $this->assertNull($returnedoverrides['For user in no groups']->duedate);
+        $this->assertNull($returnedoverrides['For user in no groups']->cutoffdate);
+        $this->assertNull($returnedoverrides['For user in no groups']->allowsubmissionsfromdate);
+    }
+
+    /**
      * Test the quicksave grades processor
      */
     public function test_process_save_quick_grades() {
