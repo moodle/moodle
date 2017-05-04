@@ -183,7 +183,7 @@ class qtype_essay_test_helper extends question_test_helper {
     }
 
     /**
-     * Makes an essay question without an inline text editor.
+     * Makes an essay question without an online text editor.
      * @return qtype_essay_question
      */
     public function make_essay_question_noinline() {

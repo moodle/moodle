@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Google Drive';
 $string['disabled'] = 'Disabled';
-$string['issuer'] = 'OAuth 2 Service';
-$string['issuer_help'] = 'The OAuth 2 service used to access google drive.';
+$string['issuer'] = 'OAuth 2 service';
+$string['issuer_help'] = 'The OAuth 2 service used to access Google Drive.';
 $string['test_converter'] = 'Test this converter is working properly.';
 $string['test_conversion'] = 'Test document conversion';
 $string['test_conversionready'] = 'This document converter is configured properly.';
