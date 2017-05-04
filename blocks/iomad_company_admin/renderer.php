@@ -95,8 +95,8 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
      */
     private function department_leaf($leaf, $depth=0) {
         $haschildren = !empty($leaf->children);
-        $style = 'style="padding-left=' . $depth*
-        $html = '<div role="treeitem" aria-expanded="true">' . $leaf->name;
+        $style = 'style="padding-left: ' . $depth*20 . 'px;"';
+        $html = '<div role="treeitem" aria-expanded="true" ' . $style . '>' . $leaf->name;
         if ($haschildren) {
             $html .= '<div role="group">';
             foreach($leaf->children as $child) {
@@ -115,7 +115,6 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
      * @return string HTML markup
      */
     public function department_tree($tree) {
-//echo "<pre>"; var_dump($tree); die;
         $html = '';
         $html .= '<div role="tree" id="department_tree">';
         $html .= $this->department_leaf($tree);
