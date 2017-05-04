@@ -25,7 +25,7 @@ namespace core\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/cronlib.php');
+require_once($CFG->dirroot . '/calendar/lib.php');
 
 /**
  * Simple task to run the calendar cron.

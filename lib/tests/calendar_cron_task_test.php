@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/calendar/lib.php');
+
 /**
  * Class containing unit tests for the calendar cron task.
  *
