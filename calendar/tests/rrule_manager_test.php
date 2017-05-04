@@ -466,11 +466,21 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $records = $DB->get_records('event', array('repeatid' => $this->event->id), 'timestart ASC');
 
         $expecteddate = clone($startdatetime);
+        $first = true;
         foreach ($records as $record) {
             $this->assertLessThanOrEqual($until, $record->timestart);
             $this->assertEquals($expecteddate->format('Y-m-d H:i:s'), date('Y-m-d H:i:s', $record->timestart));
             // Go to next iteration.
             $expecteddate->add($interval);
+            // Check UUID.
+            if ($first) {
+                // The first instance of the event contains the UUID.
+                $this->assertEquals('uuid', $record->uuid);
+                $first = false;
+            } else {
+                // Succeeding instances will not contain the UUID.
+                $this->assertEmpty($record->uuid);
+            }
         }
     }
 
