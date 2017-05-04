@@ -2525,5 +2525,27 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016120501.06);
     }
 
+    if ($oldversion < 2016120503.01) {
+        // Get the list of parent event IDs.
+        $sql = "SELECT DISTINCT repeatid
+                           FROM {event}
+                          WHERE repeatid <> 0";
+        $parentids = array_keys($DB->get_records_sql($sql));
+        // Check if there are repeating events we need to process.
+        if (!empty($parentids)) {
+            // The repeat IDs of parent events should match their own ID.
+            // So we need to update parent events that have non-matching IDs and repeat IDs.
+            list($insql, $params) = $DB->get_in_or_equal($parentids);
+            $updatesql = "UPDATE {event}
+                             SET repeatid = id
+                           WHERE id <> repeatid
+                                 AND id $insql";
+            $DB->execute($updatesql, $params);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016120503.01);
+    }
+
     return true;
 }
