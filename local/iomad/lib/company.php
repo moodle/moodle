@@ -924,6 +924,20 @@ class company {
     }
 
     /**
+     * Get array of all departments given companyid
+     * Used to display select tree
+     * @param int companyid
+     * @return array
+     */
+    public static function get_all_departments_raw($companyid) {
+        $parentlist = array();
+        $parentnode = self::get_company_parentnode($companyid);
+        $departmenttree = self::get_subdepartments($parentnode);
+
+        return $departmenttree;
+    }
+
+    /**
      * function to flatten a multi-dimension array to a single dimension array.
      *
      * Parameters -

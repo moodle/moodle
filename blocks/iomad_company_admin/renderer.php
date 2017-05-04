@@ -87,4 +87,41 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
         return $out;
     }
 
+    /**
+     * Render one leaf of department select
+     * @param array $leaf
+     * @param int $depth - how far down the tree
+     * @return html
+     */
+    private function department_leaf($leaf, $depth=0) {
+        $haschildren = !empty($leaf->children);
+        $style = 'style="padding-left=' . $depth*
+        $html = '<div role="treeitem" aria-expanded="true">' . $leaf->name;
+        if ($haschildren) {
+            $html .= '<div role="group">';
+            foreach($leaf->children as $child) {
+                $html .= $this->department_leaf($child, $depth+1);
+            }
+            $html .= '</div>';
+        }
+        $html .= '</div>';
+   
+        return $html;
+    }
+
+    /**
+     * Create list markup for tree.js department select
+     * @param array tree structure
+     * @return string HTML markup
+     */
+    public function department_tree($tree) {
+//echo "<pre>"; var_dump($tree); die;
+        $html = '';
+        $html .= '<div role="tree" id="department_tree">';
+        $html .= $this->department_leaf($tree);
+        $html .= '</div>';
+
+        return $html;
+    }
+
 }

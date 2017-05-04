@@ -1,3 +1,8 @@
+[aria-expanded="false"] > [role="group"] {
+    display: none;
+}
+
+
 .iomad_company_admin_table {
    width: 95%;
    margin: auto;

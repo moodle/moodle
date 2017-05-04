@@ -117,13 +117,15 @@ class department_edit_form extends company_moodleform {
     protected $context = null;
     protected $company = null;
     protected $deptid = 0;
+    protected $output = null;
 
-    public function __construct($actionurl, $companyid, $departmentid, $chosenid=0, $action=0) {
+    public function __construct($actionurl, $companyid, $departmentid, $output, $chosenid=0, $action=0) {
         global $CFG;
 
         $this->selectedcompany = $companyid;
         $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
         $this->departmentid = $departmentid;
+        $this->output = $output;
         $this->chosenid = $chosenid;
         $this->action = $action;
         parent::__construct($actionurl);
@@ -135,6 +137,8 @@ class department_edit_form extends company_moodleform {
         $mform =& $this->_form;
         $company = new company($this->selectedcompany);
         $departmentslist = company::get_all_departments($company->id);
+        $departmenttree = company::get_all_departments_raw($company->id);
+        $treehtml = $this->output->department_tree($departmenttree);
         $department = company::get_departmentbyid($this->departmentid);
 
         // Then show the fields about where this block appears.
@@ -149,9 +153,12 @@ class department_edit_form extends company_moodleform {
         $mform->setType('departmentid', PARAM_INT);
         $mform->addElement('hidden', 'action', $this->action);
         $mform->setType('action', PARAM_INT);
+
+        $mform->addElement('html', $treehtml);
+
         $mform->addElement('select', 'deptid',
                             get_string('parentdepartment', 'block_iomad_company_admin'),
-                            $departmentslist);
+                            $departmentslist, array('class' => 'iomad_department_select'));
         $mform->disabledIf('deptid', 'action', 'eq', 1);
 
         $mform->addElement('text', 'fullname',
@@ -214,6 +221,10 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
+
+// get output renderer                                                                                                                                                                                         
+$output = $PAGE->get_renderer('block_iomad_company_admin');
+
 // Set the page heading.
 $PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
 
@@ -223,8 +234,12 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
+// Javascript for fancy select.
+$departmentslist = company::get_all_departments($companyid);
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', $departmentslist);
+
 $mform = new department_display_form($PAGE->url, $companyid, $departmentid);
-$editform = new department_edit_form($PAGE->url, $companyid, $departmentid);
+$editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output);
 
 if ($mform->is_cancelled()) {
     redirect($companylist);
@@ -236,7 +251,7 @@ if ($mform->is_cancelled()) {
         } else {
             $chosenid = 0;
         }
-        $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $chosenid);
+        $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output, $chosenid);
         $editform->set_data(array('deptid' => $chosenid));
         echo $OUTPUT->header();
         // Check the department is valid.
@@ -278,7 +293,7 @@ if ($mform->is_cancelled()) {
         if (!empty($deleteids)) {
             $department = array_shift($deleteids);
             $departmentrecord = $DB->get_record('department', array('id' => $department));
-            $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, 0, 1);
+            $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output, 0, 1);
             $editform->set_data(array('departmentid' => $departmentrecord->id,
                                       'fullname' => $departmentrecord->name,
                                       'shortname' => $departmentrecord->shortname,
