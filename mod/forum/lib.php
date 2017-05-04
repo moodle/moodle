@@ -8188,8 +8188,9 @@ function mod_forum_get_fontawesome_icon_map() {
  * @return bool
  */
 function mod_forum_core_calendar_event_action_shows_item_count(calendar_event $event, $itemcount = 0) {
-    // Always show item count for forums if item count is greater than 0.
-    return $itemcount > 0;
+    // Always show item count for forums if item count is greater than 1.
+    // If only one action is required than it is obvious and we don't show it for other modules.
+    return $itemcount > 1;
 }
 
 /**
@@ -8204,6 +8205,8 @@ function mod_forum_core_calendar_event_action_shows_item_count(calendar_event $e
  */
 function mod_forum_core_calendar_provide_event_action(calendar_event $event,
                                                        \core_calendar\action_factory $factory) {
+    global $DB, $USER;
+
     $cm = get_fast_modinfo($event->courseid)->instances['forum'][$event->instance];
     $context = context_module::instance($cm->id);
 
@@ -8219,10 +8222,41 @@ function mod_forum_core_calendar_provide_event_action(calendar_event $event,
         return null;
     }
 
+    // Get action itemcount.
+    $itemcount = 0;
+    $forum = $DB->get_record('forum', array('id' => $cm->instance));
+    $postcountsql = "
+                SELECT
+                    COUNT(1)
+                  FROM
+                    {forum_posts} fp
+                    INNER JOIN {forum_discussions} fd ON fp.discussion=fd.id
+                 WHERE
+                    fp.userid=:userid AND fd.forum=:forumid";
+    $postcountparams = array('userid' => $USER->id, 'forumid' => $forum->id);
+
+    if ($forum->completiondiscussions) {
+        $count = $DB->count_records('forum_discussions', array('forum' => $forum->id, 'userid' => $USER->id));
+        $itemcount += ($forum->completiondiscussions >= $count) ? ($forum->completiondiscussions - $count) : 0;
+    }
+
+    if ($forum->completionreplies) {
+        $count = $DB->get_field_sql( $postcountsql.' AND fp.parent<>0', $postcountparams);
+        $itemcount += ($forum->completionreplies >= $count) ? ($forum->completionreplies - $count) : 0;
+    }
+
+    if ($forum->completionposts) {
+        $count = $DB->get_field_sql($postcountsql, $postcountparams);
+        $itemcount += ($forum->completionposts >= $count) ? ($forum->completionposts - $count) : 0;
+    }
+
+    // Well there is always atleast one actionable item (view forum, etc).
+    $itemcount = $itemcount > 0 ? $itemcount : 1;
+
     return $factory->create_instance(
         get_string('view'),
         new \moodle_url('/mod/forum/view.php', ['id' => $cm->id]),
-        1,
+        $itemcount,
         true
     );
 }
