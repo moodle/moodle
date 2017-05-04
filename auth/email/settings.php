@@ -40,7 +40,7 @@ if ($ADMIN->fulltree) {
         new lang_string('auth_emailrecaptcha', 'auth_email'), 0, $options));
 
     // Display locking / mapping of profile fields.
-    $authplugin = get_auth_plugin($this->name);
+    $authplugin = get_auth_plugin('email');
     display_auth_lock_options($settings, $authplugin->authtype, $authplugin->userfields,
             get_string('auth_fieldlocks_help', 'auth'), false, false);
 }

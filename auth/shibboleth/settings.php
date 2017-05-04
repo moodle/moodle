@@ -75,7 +75,7 @@ if ($ADMIN->fulltree) {
             get_string('changepasswordhelp', 'auth'), '', PARAM_URL));
 
     // Display locking / mapping of profile fields.
-    $authplugin = get_auth_plugin($this->name);
+    $authplugin = get_auth_plugin('shibboleth');
     display_auth_lock_options($settings, $authplugin->authtype, $authplugin->userfields,
             '', true, false, $authplugin->get_custom_user_profile_fields());
 
