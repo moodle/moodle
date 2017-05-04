@@ -6612,6 +6612,7 @@ function calendar_cron() {
 
     global $CFG, $DB;
 
+    require_once($CFG->dirroot . '/calendar/lib.php');
     // In order to execute this we need bennu.
     require_once($CFG->libdir.'/bennu/bennu.inc.php');
 
