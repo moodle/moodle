@@ -202,6 +202,11 @@ class setting_dependency_disabledif_equals extends setting_dependency {
      * @return bool
      */
     protected function process_value_change($oldvalue) {
+        if ($this->dependentsetting->get_status() == base_setting::LOCKED_BY_PERMISSION ||
+                $this->dependentsetting->get_status() == base_setting::LOCKED_BY_CONFIG) {
+            // When setting is locked by permission or config do not apply dependencies.
+            return false;
+        }
         $prevalue = $this->dependentsetting->get_value();
         // If the setting is the desired value enact the dependency
         if ($this->setting->get_value() == $this->value) {
