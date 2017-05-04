@@ -249,7 +249,7 @@ Feature: Anonymous feedback
     When I log in as "teacher"
     And I follow "Course 1"
     And I follow "Course feedback"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Allow multiple submissions | Yes |
     And I press "Save and display"
@@ -271,7 +271,7 @@ Feature: Anonymous feedback
     And I log in as "teacher"
     And I follow "Course 1"
     And I follow "Course feedback"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
         | Record user names | User's name will be logged and shown with answers |
     And I press "Save and display"
