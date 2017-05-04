@@ -261,9 +261,13 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
                 $safecombination = true;
             }
 
-            if (!$safecombination && (version_compare($this->connection->getVersion(), '1.4.22') <= 0)) {
-                // This is memcached server version <= 1.4.22 which is a safe combination.
-                $safecombination = true;
+            if (!$safecombination) {
+                $allsafe = true;
+                foreach ($this->connection->getVersion() as $version) {
+                    $allsafe = $allsafe && (version_compare($version, '1.4.22') <= 0);
+                }
+                // All memcached servers connected are version <= 1.4.22 which is a safe combination.
+                $safecombination = $allsafe;
             }
 
             if (!$safecombination) {
