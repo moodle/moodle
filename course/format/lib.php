@@ -700,7 +700,9 @@ abstract class format_base {
             if (isset($option['type'])) {
                 $mform->setType($optionname, $option['type']);
             }
-            if (is_null($mform->getElementValue('id')) && isset($option['default'])) {
+            if (isset($option['default']) && !array_key_exists($optionname, $mform->_defaultValues)) {
+                // Set defaults for the elements in the form.
+                // Since we call this method after set_data() make sure that we don't override what was already set.
                 $mform->setDefault($optionname, $option['default']);
             }
         }
