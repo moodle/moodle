@@ -749,7 +749,7 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::assign_courses_parameters(), $courses);
+        $params = self::validate_parameters(self::unassign_courses_parameters(), $courses);
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -822,7 +822,7 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::assign_courses_parameters(), $courses);
+        $params = self::validate_parameters(self::update_courses_parameters(), $courses);
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -889,7 +889,7 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::assign_courses_parameters(), $courseids);
+        $params = self::validate_parameters(self::get_course_info_parameters(), $courseids);
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -934,4 +934,503 @@ class block_iomad_company_admin_external extends external_api {
             )
         );
     }
+
+    /*  License calls **/
+
+    /**
+     * block_iomad_company_admin_get_license_info
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function get_license_info_parameters() {
+        return new external_function_parameters(
+            array(
+                'licenseids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'License id'), 'List of license IDs', VALUE_DEFAULT, array()
+                )
+            )
+        );
+        //return new external_function_parameters(new external_value(PARAM_INT, 'Course id'), 'Course ID', VALUE_DEFAULT, 0);
+    }
+
+    /**
+     * block_iomad_company_admin_get_license_info
+     *
+     * Implement get_departments
+     * @param $comapnyid
+     * @return array of department records.
+     */
+    public static function get_license_info($licenseids = array()) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::get_license_info_parameters(), $licenseids);
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:view_licenses', $context);
+
+        // Get course records
+        if (empty($licenseids)) {
+            $licenses = $DB->get_records('company_license');
+        } else {
+            $licenses = $DB->get_records_list('company_license', 'id', $params['licenseids']);
+        }
+
+        // convert to suitable format (I think)
+        $licenseinfo = array();
+        foreach ($licenses as $license) {
+            $licenseinfo[] = (array) $license;
+        }
+
+        return $licenseinfo;
+    }
+
+   /**
+     * block_iomad_company_admin_get_license_info
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_license_info_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                     'id' => new external_value(PARAM_INT, 'license ID'),
+                     'name' => new external_value(PARAM_TEXT, 'License name'),
+                     'allocation' => new external_value(PARAM_INT, 'Number of license slots'),
+                     'validlength' => new external_value(PARAM_INT, 'Course access length (days)'),
+                     'expirydate' => new external_value(PARAM_INT, 'License expiry date'),
+                     'used' => new external_value(PARAM_INT, 'Number allocated'),
+                     'companyid' => new external_value(PARAM_INT, 'Company id'),
+                     'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_get_license_info
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function create_licenses_parameters() {
+        return new external_function_parameters(
+            array(
+                'licenses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                             'name' => new external_value(PARAM_TEXT, 'License name'),
+                             'allocation' => new external_value(PARAM_INT, 'Number of license slots'),
+                             'validlength' => new external_value(PARAM_INT, 'Course access length (days)'),
+                             'expirydate' => new external_value(PARAM_INT, 'License expiry date'),
+                             'used' => new external_value(PARAM_INT, 'Number allocated'),
+                             'companyid' => new external_value(PARAM_INT, 'Company id'),
+                             'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_create_license
+     *
+     * Implement get_departments
+     * @param $comapnyid
+     * @return array of department records.
+     */
+    public static function create_licenses($licenses = array()) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::create_licenses_parameters(), $licenses);
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:edit_licenses', $context);
+
+        // Array to return newly created records
+        $companyinfo = array();
+
+        foreach ($params['licenses'] as $license) {
+            // Create the License record
+            $licenseid = $DB->insert_record('companylicense', $license);
+            $newlicense = $DB->get_record('companylicense', array('id' => $licenseid));
+            $licenseinfo[] = (array)$newlicense;
+        }
+
+        return $licenseinfo;
+    }
+
+    /**
+     * block_iomad_company_admin_create_licenses
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function create_licenses_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                     'id' => new external_value(PARAM_INT, 'license ID'),
+                     'name' => new external_value(PARAM_TEXT, 'License name'),
+                     'allocation' => new external_value(PARAM_INT, 'Number of license slots'),
+                     'validlength' => new external_value(PARAM_INT, 'Course access length (days)'),
+                     'expirydate' => new external_value(PARAM_INT, 'License expiry date'),
+                     'used' => new external_value(PARAM_INT, 'Number allocated'),
+                     'companyid' => new external_value(PARAM_INT, 'Company id'),
+                     'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_edit_licenses
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function edit_licenses_parameters() {
+        return new external_function_parameters(
+            array(
+                'licenses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                             'id' => new external_value(PARAM_INT, 'license ID'),
+                             'name' => new external_value(PARAM_TEXT, 'License name'),
+                             'allocation' => new external_value(PARAM_INT, 'Number of license slots'),
+                             'validlength' => new external_value(PARAM_INT, 'Course access length (days)'),
+                             'expirydate' => new external_value(PARAM_INT, 'License expiry date'),
+                             'used' => new external_value(PARAM_INT, 'Number allocated'),
+                             'companyid' => new external_value(PARAM_INT, 'Company id'),
+                             'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_edit_licenses
+     *
+     * Implement create_company
+     * @param $company
+     * @return boolean success
+     */
+    public static function edit_licenses($licenses) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::edit_licenses_parameters(), array('licenses' => $licenses));
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:edit_licenses', $context);
+
+        foreach ($params['licenses'] as $license) {
+
+            $id = $license['id'];
+
+            // does this company exist
+            if (!$oldlicense = $DB->get_record('companylicense', array('id' => $id))) {
+                throw new invalid_parameter_exception("License id=$id does not exist");
+            }
+
+            // Copy whatever vars we have
+            foreach ($license as $key => $value) {
+                $oldlicense->$key = $value;
+            }
+
+            // Update the company record
+            $DB->update_record('companylicense', $oldlicense);
+        }
+
+        return true;
+    }
+
+    /**
+     * block_iomad_company_admin_edit_licenses
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function edit_licenses_returns() {
+        return new external_value(PARAM_BOOL, 'Success or failure');
+    }
+
+
+    /**
+     * block_iomad_company_admin_edit_licenses
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function delete_licenses_parameters() {
+        return new external_function_parameters(
+            array(
+                'licenses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                             'id' => new external_value(PARAM_INT, 'license ID'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_delete_licenses
+     *
+     * Implement create_company
+     * @param $company
+     * @return boolean success
+     */
+    public static function delete_licenses($licenses) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::delete_licenses_parameters(), array('licenses' => $licenses));
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:edit_licenses', $context);
+
+        foreach ($params['licenses'] as $license) {
+
+            $id = $license['id'];
+
+            // does this license exist
+            if (!$oldlicense = $DB->get_record('companylicense', array('id' => $id))) {
+                throw new invalid_parameter_exception("License id=$id does not exist");
+            }
+
+            $DB->delete_records('companylicense', array('id' => $id));
+        }
+
+        return true;
+    }
+
+    /**
+     * block_iomad_company_admin_create_companies
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function delete_licenses_returns() {
+        return new external_value(PARAM_BOOL, 'Success or failure');
+    }
+
+    /**
+     * block_iomad_company_admin_allocate_licenses
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function allocate_licenses_parameters() {
+        return new external_function_parameters(
+            array(
+                'licenses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                             'licenseid' => new external_value(PARAM_INT, 'License ID'),
+                             'userid' => new external_value(PARAM_INT, 'User ID'),
+                             'licensecourseid' => new external_value(PARAM_INT, 'Course ID'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_allocate_licenses
+     *
+     * Implement create_company
+     * @param $company
+     * @return boolean success
+     */
+    public static function allocate_licenses($licenses) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::allocate_licenses_parameters(), array('licenses' => $licenses));
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:allocate_licenses', $context);
+
+        // Get the time right now.
+        $timestamp = time();
+
+        foreach ($params['licenses'] as $license) {
+
+            $licenseid = $license['licenseid'];
+
+            // Does this license exist?
+            if (!$oldlicense = $DB->get_record('companylicense', array('id' => $licenseid))) {
+                throw new invalid_parameter_exception("License id=$id does not exist");
+            }
+
+            // What about the company?
+            if (!$companyrec = $DB->get_record('company', array('id' => $oldlicense->companyid))) {
+                throw new invalid_parameter_exception("Company does not exist for license id=$licenseid");
+            }
+
+            // The user?
+            if (!$user = $DB->get_record('user', array('id' => $oldlicense->userid))) {
+                throw new invalid_parameter_exception("User id=" . $user->id ." does not exist");
+            }
+
+            // The course?
+            if (!$course = $DB->get_record('course', array('id' => $params['licensecourseid']))) {
+                throw new invalid_parameter_exception("Course id=" . $params['licensecourseid'] ." does not exist");
+            }
+
+            // Has the license expired?
+            if ($oldlicense->expirydate < $timenow) {
+                throw new invalid_parameter_exception("License id=$licenseid has expired");
+            }
+
+            // Is there any space left?
+            if ($oldlicense->allocation <= $oldlicense->used) {
+                throw new invalid_parameter_exception("License id=$licenseid has no free slots");
+            }
+
+            // Are we double allocating?
+            $params['isusing'] = 0;
+            if ($DB->get_record('companylicense_users', $params)) {
+                throw new invalid_parameter_exception("User id=" . $user->id ." already has an unused license for that course.");
+            }
+
+            // Set up the rest of the record.
+            $params['issuedate'] = $timestamp;
+            $DB->insert_record('companylicense_users', $params);
+
+            // Send the email.
+            EmailTemplate::send('license_allocated', array('course' => $course,
+                                                           'user' => $user,
+                                                            'due' => 0,
+                                                            'license' => $oldlicense));
+        }
+
+        return true;
+    }
+
+    /**
+     * block_iomad_company_admin_allocate_licenses
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function allocate_licenses_returns() {
+        return new external_value(PARAM_BOOL, 'Success or failure');
+    }
+
+    /**
+     * block_iomad_company_admin_unallocate_licenses
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function unallocate_licenses_parameters() {
+        return new external_function_parameters(
+            array(
+                'licenses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                             'licenseid' => new external_value(PARAM_INT, 'License ID'),
+                             'userid' => new external_value(PARAM_INT, 'User ID'),
+                             'licensecourseid' => new external_value(PARAM_INT, 'Course ID'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_unallocate_licenses
+     *
+     * Implement create_company
+     * @param $company
+     * @return boolean success
+     */
+    public static function unallocate_licenses($licenses) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::unallocate_licenses_parameters(), array('licenses' => $licenses));
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:allocate_licenses', $context);
+
+        // Get the time right now.
+        $timestamp = time();
+
+        foreach ($params['licenses'] as $license) {
+
+            // Does this license exist?
+            if (!$oldlicense = $DB->get_record('companylicense', array('id' => $licenseid))) {
+                throw new invalid_parameter_exception("License id=$id does not exist");
+            }
+
+            // What about the company?
+            if (!$companyrec = $DB->get_record('company', array('id' => $oldlicense->companyid))) {
+                throw new invalid_parameter_exception("Company does not exist for license id=$licenseid");
+            }
+
+            // The user?
+            if (!$user = $DB->get_record('user', array('id' => $oldlicense->userid))) {
+                throw new invalid_parameter_exception("User id=" . $user->id ." does not exist");
+            }
+
+            // The course?
+            if (!$course = $DB->get_record('course', array('id' => $params['licensecourseid']))) {
+                throw new invalid_parameter_exception("Course id=" . $params['licensecourseid'] ." does not exist");
+            }
+
+            // Has this been allocated and we can?
+            $params['isusing'] = 0;
+            if (!$allocationrec = $DB->get_record('companylicense_users', $params)) {
+                throw new invalid_parameter_exception("User id=" . $user->id ." already has an unused license for that course.");
+            }
+
+            // Set up the rest of the record.
+            $params['issuedate'] = $timestamp;
+            $DB->insert_record('companylicense_users', $params);
+
+            // Send the email.
+            EmailTemplate::send('license_removed', array('course' => $course,
+                                                         'user' => $user,
+                                                         'due' => 0,
+                                                         'license' => $oldlicense));
+        }
+
+        return true;
+    }
+
+    /**
+     * block_iomad_company_admin_unallocate_licenses
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function unallocate_licenses_returns() {
+        return new external_value(PARAM_BOOL, 'Success or failure');
+    }
+
 }
