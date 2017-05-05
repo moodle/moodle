@@ -1365,11 +1365,11 @@ function xmldb_local_iomad_upgrade($oldversion) {
 
     if ($oldversion < 2017041701) {
 
-        // Define field id to be added to company.cd
+        // Define field parentid to be added to company.
         $table = new xmldb_table('company');
-        $field = new xmldb_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $field = new xmldb_field('parentid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'managernotify');
 
-        // Conditionally launch add field id.
+        // Conditionally launch add field parentid.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
