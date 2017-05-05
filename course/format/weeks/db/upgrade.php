@@ -33,6 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_format_weeks_upgrade($oldversion) {
     global $CFG, $DB;
 
+    require_once($CFG->dirroot . '/course/format/weeks/lib.php');
     require_once($CFG->dirroot . '/course/format/weeks/db/upgradelib.php');
 
     if ($oldversion < 2017020200) {
