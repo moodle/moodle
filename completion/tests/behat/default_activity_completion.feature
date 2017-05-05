@@ -36,7 +36,7 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And I click on "Assignments" "checkbox"
     And I click on "Edit" "button"
     And I should see "Completion tracking"
-    And I should see "The changes will affect the following 1 Activities/Resources"
+    And I should see "The changes will affect the following 1 activities or resources:"
     And I should see "Student must submit to this activity to complete it"
     And I set the following fields to these values:
       | completion | Show activity as complete when conditions are met|

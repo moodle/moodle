@@ -40,7 +40,7 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     And I click on "Test assignment two" "checkbox"
     And I click on "Edit" "button"
     And I should see "Completion tracking"
-    And I should see "The changes will affect the following 2 Activities/Resources"
+    And I should see "The changes will affect the following 2 activities or resources:"
     And I should see "Student must submit to this activity to complete it"
     And I select "Show activity as complete when conditions are met" from the "completion" singleselect
     And I click on "completionview" "checkbox"
