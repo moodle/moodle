@@ -2848,7 +2848,9 @@ class mod_assign_external extends external_api {
         // Skip the expensive lookup of user detail if we're blind marking or the caller
         // hasn't asked for user details to be embedded.
         if (!$assign->is_blind_marking() && $embeduser) {
-            $return['user'] = user_get_user_details($participant, $course);
+            if ($userdetails = user_get_user_details($participant, $course)) {
+                $return['user'] = $userdetails;
+            }
         }
 
         return $return;
