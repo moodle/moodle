@@ -43,5 +43,40 @@ function xmldb_format_weeks_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017020200, 'format', 'weeks');
     }
 
+    if ($oldversion < 2017050300) {
+        // Go through the existing courses using the weeks format with no value set for the 'automaticenddate'.
+        $sql = "SELECT c.id, c.enddate, cfo.id as cfoid
+                  FROM {course} c
+             LEFT JOIN {course_format_options} cfo
+                    ON cfo.courseid = c.id
+                   AND cfo.format = c.format
+                   AND cfo.name = :optionname
+                   AND cfo.sectionid = 0
+                 WHERE c.format = :format
+                   AND cfo.id IS NULL";
+        $params = ['optionname' => 'automaticenddate', 'format' => 'weeks'];
+        $courses = $DB->get_recordset_sql($sql, $params);
+        foreach ($courses as $course) {
+            $option = new stdClass();
+            $option->courseid = $course->id;
+            $option->format = 'weeks';
+            $option->sectionid = 0;
+            $option->name = 'automaticenddate';
+            if (empty($course->enddate)) {
+                $option->value = 1;
+                $DB->insert_record('course_format_options', $option);
+
+                // Now, let's update the course end date.
+                format_weeks::update_end_date($course->id);
+            } else {
+                $option->value = 0;
+                $DB->insert_record('course_format_options', $option);
+            }
+        }
+        $courses->close();
+
+        upgrade_plugin_savepoint(true, 2017050300, 'format', 'weeks');
+    }
+
     return true;
 }

@@ -15,16 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Format weeks event handler definition.
  *
- * @package    format
- * @subpackage weeks
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package format_weeks
+ * @copyright 2017 Mark Nelson <markn@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017050300;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2016112900;        // Requires this Moodle version.
-$plugin->component = 'format_weeks';    // Full name of the plugin (used for diagnostics).
+$observers = array(
+    array(
+        'eventname'   => '\core\event\course_updated',
+        'callback'    => 'format_weeks_observer::course_updated',
+    ),
+    array(
+        'eventname'   => '\core\event\course_section_created',
+        'callback'    => 'format_weeks_observer::course_section_created',
+    ),
+    array(
+        'eventname'   => '\core\event\course_section_deleted',
+        'callback'    => 'format_weeks_observer::course_section_deleted',
+    )
+);
