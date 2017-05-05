@@ -121,14 +121,17 @@ function lesson_update_events($lesson, $override = null) {
             $conds['groupid'] = $override->groupid;
         }
     }
-    $oldevents = $DB->get_records('event', $conds);
+    $oldevents = $DB->get_records('event', $conds, 'id ASC');
 
     // Now make a to-do list of all that needs to be updated.
     if (empty($override)) {
         // We are updating the primary settings for the lesson, so we need to add all the overrides.
-        $overrides = $DB->get_records('lesson_overrides', array('lessonid' => $lesson->id));
-        // As well as the original lesson (empty override).
-        $overrides[] = new stdClass();
+        $overrides = $DB->get_records('lesson_overrides', array('lessonid' => $lesson->id), 'id ASC');
+        // It is necessary to add an empty stdClass to the beginning of the array as the $oldevents
+        // list contains the original (non-override) event for the module. If this is not included
+        // the logic below will end up updating the wrong row when we try to reconcile this $overrides
+        // list against the $oldevents list.
+        array_unshift($overrides, new stdClass());
     } else {
         // Just do the one override.
         $overrides = array($override);
@@ -167,6 +170,7 @@ function lesson_update_events($lesson, $override = null) {
         $event->timesort    = $available;
         $event->visible     = instance_is_visible('lesson', $lesson);
         $event->eventtype   = LESSON_EVENT_TYPE_OPEN;
+        $event->priority    = null;
 
         // Determine the event name and priority.
         if ($groupid) {
