@@ -140,7 +140,9 @@ border-radius: 10px;
 
 .dep_tree {
     padding: 20px;
-    background-color: #ffeeee;
+    background-color: #fd8c4e;
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
 }
 
 .dep_tree .tree_item {

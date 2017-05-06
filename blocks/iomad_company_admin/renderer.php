@@ -100,12 +100,17 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
         $aria = '';
         if ($haschildren) {
             $class .= ' haschildren';
-            $aria = 'aria-expanded="true"';
+            if ($depth == 1) {
+                $aria = 'aria-expanded="true"';
+            } else {
+                $aria = 'aria-expanded="false"';
+            }
         } else {
             $class .= ' nochildren';
         }
-        
-        $html = '<div role="treeitem" ' . $aria . ' class="' . $class .'" ' . $style . '>' . $leaf->name;
+        $data = 'data-id="' . $leaf->id . '"'; 
+        $html = '<div role="treeitem" ' . $aria . ' class="' . $class .'" ' . $style . '>';
+        $html .= '<span class="tree_dept_name" ' . $data . '>' . $leaf->name . '</span>';
         if ($haschildren) {
             $html .= '<div role="group">';
             foreach($leaf->children as $child) {
@@ -125,9 +130,10 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
      */
     public function department_tree($tree) {
         $html = '';
-        $html .= '<div class="dep_tree" role="tree" id="department_tree">';
+        $html .= '<div class="dep_tree">';
+        $html .= '<div role="tree" id="department_tree">';
         $html .= $this->department_leaf($tree);
-        $html .= '</div>';
+        $html .= '</div></div>';
 
         return $html;
     }

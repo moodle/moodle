@@ -154,10 +154,12 @@ class department_edit_form extends company_moodleform {
         $mform->addElement('hidden', 'action', $this->action);
         $mform->setType('action', PARAM_INT);
 
+        // Display department select html
+        $mform->addElement('html', '<p>' . get_string('parentdepartment', 'block_iomad_company_admin') . '</p>');
         $mform->addElement('html', $treehtml);
 
-        $mform->addElement('select', 'deptid',
-                            get_string('parentdepartment', 'block_iomad_company_admin'),
+        // This is getting hidden anyway, so no need for label
+        $mform->addElement('select', 'deptid', ' ',
                             $departmentslist, array('class' => 'iomad_department_select'));
         $mform->disabledIf('deptid', 'action', 'eq', 1);
 
@@ -235,8 +237,8 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $companyid = iomad::get_my_companyid($context);
 
 // Javascript for fancy select.
-$departmentslist = company::get_all_departments($companyid);
-$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', $departmentslist);
+// Parameter is name of proper select form element. 
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid'));
 
 $mform = new department_display_form($PAGE->url, $companyid, $departmentid);
 $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output);
