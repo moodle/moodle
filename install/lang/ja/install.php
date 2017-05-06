@@ -84,7 +84,7 @@ $string['pathsunsecuredataroot'] = 'dataroot ロケーションが安全では�
 $string['pathswrongadmindir'] = 'adminディレクトリがありません。';
 $string['phpextension'] = '{$a} PHP拡張モジュール';
 $string['phpversion'] = 'PHPバージョン';
-$string['phpversionhelp'] = '<p>Moodleには少なくとも5.6.5のPHPバージョンが必要です (7.x にはエンジンの制限があります)。</p>
+$string['phpversionhelp'] = '<p>Moodleには少なくとも5.6.5または7.1のPHPバージョンが必要です (7.0.x にはエンジンの制限があります)。</p>
 <p>現在、あなたはバージョン {$a} を動作させています。</p>
 <p>PHPをアップグレードするか新しいバージョンのPHPがインストールされているホストに移動する必要があります。</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
