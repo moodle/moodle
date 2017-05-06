@@ -93,10 +93,19 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
      * @param int $depth - how far down the tree
      * @return html
      */
-    private function department_leaf($leaf, $depth=0) {
+    private function department_leaf($leaf, $depth=1) {
         $haschildren = !empty($leaf->children);
-        $style = 'style="padding-left: ' . $depth*20 . 'px;"';
-        $html = '<div role="treeitem" aria-expanded="true" ' . $style . '>' . $leaf->name;
+        $style = 'style="margin-left: ' . $depth * 5 . 'px;"';
+        $class = 'tree_item';
+        $aria = '';
+        if ($haschildren) {
+            $class .= ' haschildren';
+            $aria = 'aria-expanded="true"';
+        } else {
+            $class .= ' nochildren';
+        }
+        
+        $html = '<div role="treeitem" ' . $aria . ' class="' . $class .'" ' . $style . '>' . $leaf->name;
         if ($haschildren) {
             $html .= '<div role="group">';
             foreach($leaf->children as $child) {
@@ -116,7 +125,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
      */
     public function department_tree($tree) {
         $html = '';
-        $html .= '<div role="tree" id="department_tree">';
+        $html .= '<div class="dep_tree" role="tree" id="department_tree">';
         $html .= $this->department_leaf($tree);
         $html .= '</div>';
 
