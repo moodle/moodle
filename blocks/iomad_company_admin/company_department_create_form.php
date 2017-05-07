@@ -138,7 +138,7 @@ class department_edit_form extends company_moodleform {
         $company = new company($this->selectedcompany);
         $departmentslist = company::get_all_departments($company->id);
         $departmenttree = company::get_all_departments_raw($company->id);
-        $treehtml = $this->output->department_tree($departmenttree);
+        $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
         $department = company::get_departmentbyid($this->departmentid);
 
         // Then show the fields about where this block appears.
@@ -154,9 +154,11 @@ class department_edit_form extends company_moodleform {
         $mform->addElement('hidden', 'action', $this->action);
         $mform->setType('action', PARAM_INT);
 
-        // Display department select html
-        $mform->addElement('html', '<p>' . get_string('parentdepartment', 'block_iomad_company_admin') . '</p>');
-        $mform->addElement('html', $treehtml);
+        // Display department select html (create only)
+        if ($this->action == 0) {
+            $mform->addElement('html', '<p>' . get_string('parentdepartment', 'block_iomad_company_admin') . '</p>');
+            $mform->addElement('html', $treehtml);
+        }
 
         // This is getting hidden anyway, so no need for label
         $mform->addElement('select', 'deptid', ' ',
