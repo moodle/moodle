@@ -9,7 +9,7 @@ define(['jquery', 'core/tree'], function($, Tree) {
             // Hide the original select element
             $("#id_" + selectname).hide();
 
-            // get the data and set form 
+            // get the data and set form
             $(".tree_dept_name").click(function(e) {
                 if (e.which) {
                     var id = $(this).attr("data-id");
