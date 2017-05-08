@@ -335,9 +335,9 @@ function email_reports_cron() {
                     }
                     $foundusers = true;
                     if ($manageruser->timecompleted == 0) {
-                        $datestring = get_string('never') . "\n";;
+                        $datestring = get_string('never') . "\n";
                     } else {
-                        $datestring = date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n"
+                        $datestring = date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n";
                     }
 
                     $summary .= $manageruser->firstname . "," .
@@ -356,9 +356,9 @@ function email_reports_cron() {
                 }
                 $foundusers = true;
                 if ($manageruser->timecompleted == 0) {
-                    $datestring = get_string('never') . "\n";;
+                    $datestring = get_string('never') . "\n";
                 } else {
-                    $datestring = date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n"
+                    $datestring = date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n";
                 }
                 $summary .= $manageruser->firstname . "," .
                             $manageruser->lastname . "," .
