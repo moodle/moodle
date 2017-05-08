@@ -143,7 +143,7 @@ class login implements renderable, templatable {
         $data->error = $this->error;
         $data->forgotpasswordurl = $this->forgotpasswordurl->out(false);
         $data->hasidentityproviders = !empty($this->identityproviders);
-        $data->hasinstructions = !empty($this->instructions);
+        $data->hasinstructions = !empty($this->instructions) || $this->cansignup;
         $data->identityproviders = $identityproviders;
         list($data->instructions, $data->instructionsformat) = external_format_text($this->instructions, FORMAT_MOODLE,
             context_system::instance()->id);
