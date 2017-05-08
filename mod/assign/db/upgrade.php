@@ -253,35 +253,6 @@ function xmldb_assign_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2017021500, 'assign');
     }
 
-    if ($oldversion < 2017031000) {
-        // Set priority of assign user overrides.
-        $params = [
-            'modulename' => 'assign',
-            'courseid' => 0,
-            'groupid' => 0,
-            'repeatid' => 0
-        ];
-        // CALENDAR_EVENT_USER_OVERRIDE_PRIORITY has a value of 9999999.
-        $DB->set_field('event', 'priority', 9999999, $params);
-
-        // Set priority for group overrides for existing assign events.
-        $where = 'groupid IS NOT NULL';
-        $assignoverridesrs = $DB->get_recordset_select('assign_overrides', $where, null, '', 'id, assignid, groupid, sortorder');
-        foreach ($assignoverridesrs as $record) {
-            $params = [
-                'modulename' => 'assign',
-                'instance' => $record->assignid,
-                'groupid' => $record->groupid,
-                'repeatid' => 0
-            ];
-            $DB->set_field('event', 'priority', $record->sortorder, $params);
-        }
-        $assignoverridesrs->close();
-
-        // Assign savepoint reached.
-        upgrade_mod_savepoint(true, 2017031000, 'assign');
-    }
-
     if ($oldversion < 2017031300) {
         // Add a 'gradingduedate' field to the 'assign' table.
         $table = new xmldb_table('assign');
@@ -317,18 +288,6 @@ function xmldb_assign_upgrade($oldversion) {
 
         // Execute DB update for assign instances.
         $DB->execute($sql, $params);
-
-        // Create adhoc task for upgrading of existing mod_assign calendar events.
-        $task = new \stdClass();
-        $task->classname = "\\core\\task\\refresh_mod_calendar_events_task";
-        $task->component = 'core';
-
-        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
-        $nextruntime = time() - 1;
-        $task->nextruntime = $nextruntime;
-        // Indicate to the adhoc task that only the assignment module will be refreshed.
-        $task->customdata = json_encode(['plugins' => ['assign']]);
-        $DB->insert_record('task_adhoc', $task);
 
         // Assign savepoint reached.
         upgrade_mod_savepoint(true, 2017042800, 'assign');
