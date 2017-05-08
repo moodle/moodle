@@ -33,6 +33,7 @@ function($, EventList, EventsRepository) {
 
     var SELECTORS = {
         EVENTS_BY_COURSE_CONTAINER: '[data-region="course-events-container"]',
+        EVENT_LIST_CONTAINER: '[data-region="event-list-container"]',
     };
 
     /**
@@ -48,9 +49,10 @@ function($, EventList, EventsRepository) {
             return;
         }
 
-        var midnight = root.attr('data-midnight');
+        var eventList = courseBlocks.find(SELECTORS.EVENT_LIST_CONTAINER).first();
+        var midnight = eventList.attr('data-midnight');
         var startTime = midnight - (14 * SECONDS_IN_DAY);
-        var limit = courseBlocks.attr('data-limit');
+        var limit = eventList.attr('data-limit');
         var courseIds = courseBlocks.map(function() {
             return $(this).attr('data-course-id');
         }).get();

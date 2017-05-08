@@ -147,7 +147,16 @@ class container {
                     $cm = $instances[$dbrow->modulename][$dbrow->instance];
 
                     // If the module is not visible to the current user, we should ignore it.
-                    if (!$cm->uservisible) {
+                    // We have to check enrolment here as well because the uservisible check
+                    // looks for the "view" capability however some activities (such as Lesson)
+                    // have that capability set on the "Authenticated User" role rather than
+                    // on "Student" role, which means uservisible returns true even when the user
+                    // is no longer enrolled in the course.
+                    $modulecontext = \context_module::instance($cm->id);
+                    // A user with the 'moodle/course:view' capability is able to see courses
+                    // that they are not a participant in.
+                    $canseecourse = (has_capability('moodle/course:view', $modulecontext) || is_enrolled($modulecontext));
+                    if (!$cm->uservisible || !$canseecourse) {
                         return true;
                     }
 
