@@ -70,6 +70,9 @@ class api {
             // Look at all the templates dirs for subsystems.
             $subsystems = core_component::get_core_subsystems();
             foreach ($subsystems as $subsystem => $dir) {
+                if (empty($dir)) {
+                    continue;
+                }
                 $dir .= '/templates';
                 if (is_dir($dir)) {
                     $dirs = mustache_template_finder::get_template_directories_for_component('core_' . $subsystem, $themename);
