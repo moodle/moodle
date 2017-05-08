@@ -105,6 +105,10 @@ class api {
             $userid = $USER->id;
         }
 
+        if (linked_login::count_records(['username' => $userinfo['username']]) > 0) {
+            throw new moodle_exception('alreadylinked', 'auth_oauth2');
+        }
+
         if (\core\session\manager::is_loggedinas()) {
             throw new moodle_exception('notwhileloggedinas', 'auth_oauth2');
         }
@@ -144,9 +148,8 @@ class api {
         $record->issuerid = $issuer->get('id');
         $record->username = $userinfo['username'];
         $record->userid = $userid;
-        $existing = linked_login::get_record((array)$record);
-        if ($existing) {
-            return false;
+        if (linked_login::count_records(['username' => $userinfo['username']]) > 0) {
+            throw new moodle_exception('alreadylinked', 'auth_oauth2');
         }
         $record->email = $userinfo['email'];
         $record->confirmtoken = random_string(32);
@@ -238,6 +241,10 @@ class api {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
         require_once($CFG->dirroot.'/user/lib.php');
+
+        if (linked_login::count_records(['username' => $userinfo['username']]) > 0) {
+            throw new moodle_exception('alreadylinked', 'auth_oauth2');
+        }
 
         $user = new stdClass();
         $user->username = $userinfo['username'];

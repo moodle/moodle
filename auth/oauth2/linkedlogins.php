@@ -58,8 +58,12 @@ if ($action == 'new') {
     $userinfo = $client->get_userinfo();
 
     if (!empty($userinfo)) {
-        \auth_oauth2\api::link_login($userinfo, $issuer);
-        redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+        try {
+            \auth_oauth2\api::link_login($userinfo, $issuer);
+            redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+        } catch (Exception $e) {
+            redirect($PAGE->url, $e->getMessage(), null, \core\output\notification::NOTIFY_ERROR);
+        }
     } else {
         redirect($PAGE->url, get_string('notloggedin', 'auth_oauth2'), null, \core\output\notification::NOTIFY_ERROR);
     }
