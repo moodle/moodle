@@ -545,7 +545,7 @@ class format_weeks extends format_base {
         // If automaticenddate is not specified take the default value.
         if (!isset($course->automaticenddate)) {
             $defaults = $format->course_format_options();
-            $course->automaticenddate = $defaults['automaticenddate'];
+            $course->automaticenddate = $defaults['automaticenddate']['default'];
         }
 
         // Check that the course format for setting an automatic date is set.
