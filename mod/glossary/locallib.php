@@ -658,7 +658,7 @@ function mod_glossary_get_tagged_entries($tag, $exclusivemode = false, $fromctx 
 
     // Build the SQL query.
     $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
-    $query = "SELECT ge.id, ge.concept, ge.glossaryid, ge.approved,
+    $query = "SELECT ge.id, ge.concept, ge.glossaryid, ge.approved, ge.userid,
                     cm.id AS cmid, c.id AS courseid, c.shortname, c.fullname, $ctxselect
                 FROM {glossary_entries} ge
                 JOIN {glossary} g ON g.id = ge.glossaryid
@@ -705,10 +705,13 @@ function mod_glossary_get_tagged_entries($tag, $exclusivemode = false, $fromctx 
         $modinfo = get_fast_modinfo($builder->get_course($courseid));
         // Set accessibility of this item and all other items in the same course.
         $builder->walk(function ($taggeditem) use ($courseid, $modinfo, $builder) {
+            global $USER;
             if ($taggeditem->courseid == $courseid) {
                 $accessible = false;
                 if (($cm = $modinfo->get_cm($taggeditem->cmid)) && $cm->uservisible) {
                     if ($taggeditem->approved) {
+                        $accessible = true;
+                    } else if ($taggeditem->userid == $USER->id) {
                         $accessible = true;
                     } else {
                         $accessible = has_capability('mod/glossary:approve', context_module::instance($cm->id));

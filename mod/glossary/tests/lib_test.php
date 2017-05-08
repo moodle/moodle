@@ -245,6 +245,14 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $course3 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
         $course1 = $this->getDataGenerator()->create_course();
+
+        // Create and enrol a student.
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($student->id, $course2->id, $studentrole->id, 'manual');
+
+        // Create glossaries and entries.
         $glossary1 = $this->getDataGenerator()->create_module('glossary', array('course' => $course1->id));
         $glossary2 = $this->getDataGenerator()->create_module('glossary', array('course' => $course2->id));
         $glossary3 = $this->getDataGenerator()->create_module('glossary', array('course' => $course3->id));
@@ -254,6 +262,7 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $entry14 = $glossarygenerator->create_content($glossary1);
         $entry15 = $glossarygenerator->create_content($glossary1, array('tags' => array('Cats')));
         $entry16 = $glossarygenerator->create_content($glossary1, array('tags' => array('Cats'), 'approved' => false));
+        $entry17 = $glossarygenerator->create_content($glossary1, array('tags' => array('Cats'), 'approved' => false, 'userid' => $student->id));
         $entry21 = $glossarygenerator->create_content($glossary2, array('tags' => array('Cats')));
         $entry22 = $glossarygenerator->create_content($glossary2, array('tags' => array('Cats', 'Dogs')));
         $entry23 = $glossarygenerator->create_content($glossary2, array('tags' => array('mice', 'Cats')));
@@ -262,6 +271,7 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $tag = core_tag_tag::get_by_name(0, 'Cats');
 
         // Admin can see everything.
+        // Get first page of tagged entries (first 5 entries).
         $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$entry = */0);
         $this->assertRegExp('/'.$entry11->concept.'</', $res->content);
@@ -270,12 +280,14 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $this->assertNotRegExp('/'.$entry14->concept.'</', $res->content);
         $this->assertRegExp('/'.$entry15->concept.'</', $res->content);
         $this->assertRegExp('/'.$entry16->concept.'</', $res->content);
+        $this->assertNotRegExp('/'.$entry17->concept.'</', $res->content);
         $this->assertNotRegExp('/'.$entry21->concept.'</', $res->content);
         $this->assertNotRegExp('/'.$entry22->concept.'</', $res->content);
         $this->assertNotRegExp('/'.$entry23->concept.'</', $res->content);
         $this->assertNotRegExp('/'.$entry31->concept.'</', $res->content);
         $this->assertEmpty($res->prevpageurl);
         $this->assertNotEmpty($res->nextpageurl);
+        // Get second page of tagged entries (second 5 entries).
         $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$entry = */1);
         $this->assertNotRegExp('/'.$entry11->concept.'</', $res->content);
@@ -284,6 +296,7 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $this->assertNotRegExp('/'.$entry14->concept.'</', $res->content);
         $this->assertNotRegExp('/'.$entry15->concept.'</', $res->content);
         $this->assertNotRegExp('/'.$entry16->concept.'</', $res->content);
+        $this->assertRegExp('/'.$entry17->concept.'</', $res->content);
         $this->assertRegExp('/'.$entry21->concept.'</', $res->content);
         $this->assertRegExp('/'.$entry22->concept.'</', $res->content);
         $this->assertRegExp('/'.$entry23->concept.'</', $res->content);
@@ -291,11 +304,6 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $this->assertNotEmpty($res->prevpageurl);
         $this->assertEmpty($res->nextpageurl);
 
-        // Create and enrol a user.
-        $student = self::getDataGenerator()->create_user();
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id, 'manual');
-        $this->getDataGenerator()->enrol_user($student->id, $course2->id, $studentrole->id, 'manual');
         $this->setUser($student);
         core_tag_index_builder::reset_caches();
 
@@ -320,7 +328,8 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $this->assertNotRegExp('/'.$entry23->concept.'/', $res->content);
         $this->assertEmpty($res->nextpageurl);
 
-        // User cannot see hidden entries.
+        // User cannot see unapproved entries unless he is an author.
         $this->assertNotRegExp('/'.$entry16->concept.'/', $res->content);
+        $this->assertRegExp('/'.$entry17->concept.'/', $res->content);
     }
 }
