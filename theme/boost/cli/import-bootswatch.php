@@ -28,106 +28,77 @@ define('CLI_SCRIPT', true);
 require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/clilib.php');
 
+$usage = "
+Utility to convert a Bootswatch theme to a Moodle preset compatible with Bootstrap 4.
 
-// Now get cli options.
-list($options, $unrecognized) = cli_get_params(array('help' => false),
-    array('h' => 'help', 'v' => 'variables', 'b' => 'bootswatch', 'p' => 'preset'));
+Download _variables.scss and _bootswatch.scss files from https://bootswatch.com/
+Run this script. It will generate a new file 'preset.scss' which can be used as
+a Moodle preset.
 
-if ($unrecognized) {
-    $unrecognized = implode("\n  ", $unrecognized);
-    cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
-}
+Usage:
+    # php import-bootswatch.php [--help|-h]
+    # php import-bootswatch.php --variables=<path> --bootswatch=<path> --preset=<path>
 
-if (!isset($options['variables'])) {
-    $options['variables'] = '_variables.scss';
-}
-if (!isset($options['bootswatch'])) {
-    $options['bootswatch'] = '_bootswatch.scss';
-}
-if (!isset($options['preset'])) {
-    $options['preset'] = 'preset.scss';
+Options:
+    -h --help               Print this help.
+    --variables=<path>      Path to the input variables file, defaults to _variables.scss
+    --bootswatch=<path>     Path to the input bootswatch file, defauls to _bootswatch.scss
+    --preset=<path>         Path to the output preset file, defaults to preset.scss
+";
+
+list($options, $unrecognised) = cli_get_params([
+    'help' => false,
+    'variables' => '_variables.scss',
+    'bootswatch' => '_bootswatch.scss',
+    'preset' => 'preset.scss',
+], [
+    'h' => 'help',
+]);
+
+if ($unrecognised) {
+    $unrecognised = implode(PHP_EOL.'  ', $unrecognised);
+    cli_error(get_string('cliunknowoption', 'core_admin', $unrecognised));
 }
 
 if ($options['help']) {
-    $help = "Convert a Bootswatch file from Bootstrap 3 to a Moodle preset file compatible with bootstrap 4.
-
-        This scripts takes the scss files from a Bootstrap 3 Bootswatch and produces a Moodle compatible preset file.
-
-        Options:
-        -h, --help            Print out this help
-        -v, --variables=<variables file>
-        -b, --bootswatch=<bootswatch file>
-        -p, --preset=<preset file>
-
-        Example:
-        \$import-bootswatch.php -v=_variables.scss -b=_bootswatch.scss -p=preset-paper.scss
-        ";
-
-    echo $help;
-    die;
+    cli_writeln($usage);
+    exit(2);
 }
 
-cli_heading('Convert a Bootswatch file from Bootstrap 3 to a Moodle preset file compatible with bootstrap 4.');
-$variablesfile = $options['variables'];
-$bootswatchfile = $options['bootswatch'];
-$presetfile = $options['preset'];
-
-$sourcevariables = @file_get_contents($variablesfile);
-if (!$sourcevariables) {
-    die('Could not read variables file: ' . $variablesfile . "\n");
-}
-$sourcebootswatch = @file_get_contents($bootswatchfile);
-if (!$sourcebootswatch) {
-    die('Could not read bootswatch file: ' . $bootswatchfile . "\n");
+if (is_readable($options['variables'])) {
+    $sourcevariables = file_get_contents($options['variables']);
+} else {
+    cli_writeln($usage);
+    cli_error('Error reading the variables file: '.$options['variables']);
 }
 
+
+if (is_readable($options['bootswatch'])) {
+    $sourcebootswatch = file_get_contents($options['bootswatch']);
+} else {
+    cli_writeln($usage);
+    cli_error('Error reading the bootswatch file: '.$options['bootswatch']);
+}
+
+/**
+ * Local helper function replacing only the first occurrence of a substring.
+ *
+ * @param string $needle Substring to be searched for
+ * @param string $replace New text replacing the old substring
+ * @param string $haystack The text where the replacement happens
+ * @return string
+ */
 function str_replace_one($needle, $replace, $haystack) {
     $pos = strpos($haystack, $needle);
     if ($pos !== false) {
-        $newstring = substr_replace($haystack, $replace, $pos, strlen($needle));
+        return substr_replace($haystack, $replace, $pos, strlen($needle));
+    } else {
+        return $haystack;
     }
-    return $newstring;
 }
 
-$out = @fopen($presetfile, "w");
-
-if (!$out) {
-    die('Could not open preset file for writing: ' . $presetfile . "\n");
-}
-
-// Write the license (MIT).
-
-$license = <<<EOD
-//
-// The MIT License (MIT)
-//
-// Copyright (c) 2013 Thomas Park
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-
-EOD;
-
-fwrite($out, $license);
-
-$workingvariables = $sourcevariables;
 // Now start tweaking the variables strings.
+$workingvariables = $sourcevariables;
 
 // Insert a lightest grey colour.
 $newrule = '$gray-lightest:          lighten($gray-lighter, 13.5%);';
@@ -156,7 +127,6 @@ $workingvariables = str_replace('horizontal', 'x', $workingvariables);
 $workingvariables = str_replace('border-radius-base', 'border-radius', $workingvariables);
 // Replace all 'condensed-cell' with 'sm-cell'.
 $workingvariables = str_replace('condensed-cell', 'sm-cell', $workingvariables);
-
 
 // Add styles for btn-secondary.
 $newrule = '$btn-secondary-color: $btn-default-color;
@@ -190,6 +160,13 @@ $workingvariables = str_replace('label-', 'tag-', $workingvariables);
 
 // Replace all 'panel-' with 'card-'.
 $workingvariables = str_replace('panel-', 'card-', $workingvariables);
+
+// Write the preset file.
+$out = fopen($options['preset'], 'w');
+
+if (!$out) {
+    cli_error('Error writing to the preset file');
+}
 
 fwrite($out, $workingvariables);
 
@@ -262,4 +239,3 @@ $workingbootswatch = str_replace('panel-', 'card-', $workingbootswatch);
 fwrite($out, $workingbootswatch);
 
 fclose($out);
-
