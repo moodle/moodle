@@ -319,4 +319,18 @@ class api {
 
         $login->delete();
     }
+
+    /**
+     * Delete linked logins for a user.
+     *
+     * @param \core\event\user_deleted $event
+     * @return boolean
+     */
+    public static function user_deleted(\core\event\user_deleted $event) {
+        global $DB;
+
+        $userid = $event->objectid;
+
+        return $DB->delete_records(linked_login::TABLE, ['userid' => $userid]);
+    }
 }
