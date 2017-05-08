@@ -815,6 +815,11 @@ class repository_onedrive extends repository {
         // then set the permissions so anyone with the share link can view,
         // finally update the reference to contain the share link if it was not
         // already there (and point to new file id if we copied).
+        $source = json_decode($reference);
+        if (!empty($source->usesystem)) {
+            // If we already copied this file to the system account - we are done.
+            return $reference;
+        }
 
         // Get a system and a user oauth client.
         $systemauth = \core\oauth2\api::get_system_oauth_client($this->issuer);
@@ -823,8 +828,6 @@ class repository_onedrive extends repository {
             $details = 'Cannot connect as system user';
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
-
-        $source = json_decode($reference);
 
         $userauth = $this->get_user_oauth_client();
         if ($userauth === false) {

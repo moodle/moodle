@@ -872,6 +872,12 @@ class repository_googledocs extends repository {
         // finally update the reference to contain the share link if it was not
         // already there (and point to new file id if we copied).
 
+        // Get the details from the reference.
+        $source = json_decode($reference);
+        if (!empty($source->usesystem)) {
+            // If we already copied this file to the system account - we are done.
+            return $reference;
+        }
 
         // Check this issuer is enabled.
         if ($this->disabled) {
@@ -895,8 +901,6 @@ class repository_googledocs extends repository {
             throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
         }
 
-        // Get the details from the reference.
-        $source = json_decode($reference);
         $userservice = new repository_googledocs\rest($userauth);
         $systemservice = new repository_googledocs\rest($systemauth);
 
