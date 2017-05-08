@@ -94,6 +94,24 @@ class stored_file {
     }
 
     /**
+     * Magic method, called during serialization.
+     *
+     * @return array
+     */
+    public function __sleep() {
+        // We only ever want the file_record saved, not the file_storage object.
+        return ['file_record'];
+    }
+
+    /**
+     * Magic method, called during unserialization.
+     */
+    public function __wakeup() {
+        // Recreate our stored_file based on the file_record, and using file storage retrieved the correct way.
+        $this->__construct(get_file_storage(), $this->file_record);
+    }
+
+    /**
      * Whether or not this is a external resource
      *
      * @return bool
