@@ -1309,8 +1309,8 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
     if (!empty($events)) {
         foreach ($events as $eventid => $event) {
             if (!empty($event->modulename)) {
-                $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
-                if (!\core_availability\info_module::is_user_visible($cm, 0, false)) {
+                $instances = get_fast_modinfo($event->courseid)->get_instances_of($event->modulename);
+                if (empty($instances[$event->instance]->uservisible)) {
                     unset($events[$eventid]);
                 }
             }
@@ -1635,23 +1635,11 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     }
 
     if ($events !== false) {
-        $modinfo = get_fast_modinfo($COURSE);
         foreach ($events as $event) {
             if (!empty($event->modulename)) {
-                if ($event->courseid == $COURSE->id) {
-                    if (isset($modinfo->instances[$event->modulename][$event->instance])) {
-                        $cm = $modinfo->instances[$event->modulename][$event->instance];
-                        if (!$cm->uservisible) {
-                            continue;
-                        }
-                    }
-                } else {
-                    if (!$cm = get_coursemodule_from_instance($event->modulename, $event->instance)) {
-                        continue;
-                    }
-                    if (!\core_availability\info_module::is_user_visible($cm, 0, false)) {
-                        continue;
-                    }
+                $instances = get_fast_modinfo($event->courseid)->get_instances_of($event->modulename);
+                if (empty($instances[$event->instance]->uservisible)) {
+                    continue;
                 }
             }
 
@@ -1671,18 +1659,20 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 /**
  * Get a HTML link to a course.
  *
- * @param int $courseid the course id
+ * @param int|stdClass $course the course id or course object
  * @return string a link to the course (as HTML); empty if the course id is invalid
  */
-function calendar_get_courselink($courseid) {
-    if (!$courseid) {
+function calendar_get_courselink($course) {
+    if (!$course) {
         return '';
     }
 
-    calendar_get_course_cached($coursecache, $courseid);
-    $context = \context_course::instance($courseid);
-    $fullname = format_string($coursecache[$courseid]->fullname, true, array('context' => $context));
-    $url = new \moodle_url('/course/view.php', array('id' => $courseid));
+    if (!is_object($course)) {
+        $course = calendar_get_course_cached($coursecache, $course);
+    }
+    $context = \context_course::instance($course->id);
+    $fullname = format_string($course->fullname, true, array('context' => $context));
+    $url = new \moodle_url('/course/view.php', array('id' => $course->id));
     $link = \html_writer::link($url, $fullname);
 
     return $link;
@@ -1690,6 +1680,9 @@ function calendar_get_courselink($courseid) {
 
 /**
  * Get current module cache.
+ *
+ * Only use this method if you do not know courseid. Otherwise use:
+ * get_fast_modinfo($courseid)->instances[$modulename][$instance]
  *
  * @param array $modulecache in memory module cache
  * @param string $modulename name of the module
@@ -1747,26 +1740,25 @@ function calendar_add_event_metadata($event) {
     if (!empty($event->modulename)) { // Activity event.
         // The module name is set. I will assume that it has to be displayed, and
         // also that it is an automatically-generated event. And of course that the
-        // fields for get_coursemodule_from_instance are set correctly.
-        $module = calendar_get_module_cached($coursecache, $event->modulename, $event->instance);
-
-        if ($module === false) {
+        // instace id and modulename are set correctly.
+        $instances = get_fast_modinfo($event->courseid)->get_instances_of($event->modulename);
+        if (!array_key_exists($event->instance, $instances)) {
             return;
         }
+        $module = $instances[$event->instance];
 
-        $modulename = get_string('modulename', $event->modulename);
+        $modulename = $module->get_module_type_name(false);
         if (get_string_manager()->string_exists($event->eventtype, $event->modulename)) {
             // Will be used as alt text if the event icon.
             $eventtype = get_string($event->eventtype, $event->modulename);
         } else {
             $eventtype = '';
         }
-        $icon = $OUTPUT->image_url('icon', $event->modulename) . '';
 
-        $event->icon = '<img src="' . $icon . '" alt="' . $eventtype . '" title="' . $modulename . '" class="icon" />';
-        $event->referer = '<a href="' . $CFG->wwwroot . '/mod/' . $event->modulename . '/view.php?id=' .
-            $module->id . '">' . $event->name . '</a>';
-        $event->courselink = calendar_get_courselink($module->course);
+        $event->icon = '<img src="' . s($module->get_icon_url()) . '" alt="' . s($eventtype) .
+            '" title="' . s($modulename) . '" class="icon" />';
+        $event->referer = html_writer::link($module->url, $event->name);
+        $event->courselink = calendar_get_courselink($module->get_course());
         $event->cmid = $module->id;
     } else if ($event->courseid == SITEID) { // Site event.
         $event->icon = '<img src="' . $OUTPUT->image_url('i/siteevent') . '" alt="' .

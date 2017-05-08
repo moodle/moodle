@@ -381,8 +381,8 @@ class core_calendar_renderer extends plugin_renderer_base {
             foreach($events as $eventid => $event) {
                 $event = new calendar_event($event);
                 if (!empty($event->modulename)) {
-                    $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
-                    if (!\core_availability\info_module::is_user_visible($cm, 0, false)) {
+                    $instances = get_fast_modinfo($event->courseid)->get_instances_of($event->modulename);
+                    if (empty($instances[$event->instance]->uservisible)) {
                         unset($events[$eventid]);
                     }
                 }

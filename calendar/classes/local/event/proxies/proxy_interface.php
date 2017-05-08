@@ -44,23 +44,6 @@ interface proxy_interface {
     public function get($member);
 
     /**
-     * Retrieve the ID of the proxied class.
-     * @return int The proxied class' ID.
-     */
-    public function get_id();
-
-    /**
-     * Set a member of the proxied class.
-     *
-     * @param string $member The name of the member to set
-     * @param mixed  $value  The value to set the member to
-     * @throws \core_calendar\local\event\exceptions\member_does_not_exist_exception If the proxied class does not have the
-     *                                                                               requested member.
-     * @return void
-     */
-    public function set($member, $value);
-
-    /**
      * Get the full instance of the proxied class.
      *
      * @return \stdClass

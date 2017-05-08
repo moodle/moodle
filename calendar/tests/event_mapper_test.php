@@ -382,14 +382,10 @@ class event_mapper_test_proxy implements proxy_interface {
     }
 
     public function get($member) {
+        if ($member === 'id') {
+            return $this->id;
+        }
         return isset($params[$member]) ? $params[$member] : null;
-    }
-
-    public function get_id() {
-        return $this->id;
-    }
-
-    public function set($member, $value) {
     }
 
     public function get_proxied_instance() {
