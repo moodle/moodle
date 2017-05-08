@@ -174,12 +174,17 @@ function email_reports_cron() {
                     EmailTemplate::send('completion_warn_manager', array('user' => $user, 'course' => $course, 'company' => $companyrec));
                 }
                 $foundusers = true;
+                if ($manageruser->timeenrolled == 0 ) {
+                    $datestring = get_string('never') . "\n";
+                } else {
+                    $datestring = date($CFG->iomad_date_format, $manageruser->timeenrolled) . "\n";
+                }
                 $summary .= $manageruser->firstname . "," .
                             $manageruser->lastname . "," .
                             $manageruser->email . "," .
                             $manageruser->departmentname . "," .
                             $manageruser->coursename . "," .
-                            date($CFG->iomad_date_format, $manageruser->timeenrolled) . "\n";
+                            $datestring;
             }
             if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
                 $course = new stdclass();
@@ -329,12 +334,18 @@ function email_reports_cron() {
                         continue;
                     }
                     $foundusers = true;
+                    if ($manageruser->timecompleted == 0) {
+                        $datestring = get_string('never') . "\n";;
+                    } else {
+                        $datestring = date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n"
+                    }
+
                     $summary .= $manageruser->firstname . "," .
                                 $manageruser->lastname . "," .
                                 $manageruser->email . "," .
                                 $manageruser->departmentname . "," .
                                 $manageruser->coursename . "," .
-                                date('d-m-y', $manageruser->timecompleted) . "\n";
+                                $datestring;
                 }
                 if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
                     $course = new stdclass();
@@ -344,12 +355,17 @@ function email_reports_cron() {
                     EmailTemplate::send('expiry_warn_manager', array('user' => $user, 'course' => $course, 'company' => $companyrec));
                 }
                 $foundusers = true;
+                if ($manageruser->timecompleted == 0) {
+                    $datestring = get_string('never') . "\n";;
+                } else {
+                    $datestring = date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n"
+                }
                 $summary .= $manageruser->firstname . "," .
                             $manageruser->lastname . "," .
                             $manageruser->email . "," .
                             $manageruser->departmentname . "," .
                             $manageruser->coursename . "," .
-                            date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n";
+                            $datestring;
             }
             if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
                 $course = new stdclass();
