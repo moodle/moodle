@@ -2657,7 +2657,6 @@ class restore_calendarevents_structure_step extends restore_structure_step {
         // both a modulename and instance value set.
         $isuseroverride = !$data->courseid && $data->modulename && $data->instance;
 
-
         // If we don't want to include user data and this record is a user override event
         // for an activity then we should not create it.
         if (!$this->task->get_setting_value('userinfo') && $isuseroverride) {
@@ -2706,13 +2705,16 @@ class restore_calendarevents_structure_step extends restore_structure_step {
                 'userid'         => $data->userid,
                 'repeatid'       => $this->get_mappingid('event', $data->repeatid),
                 'modulename'     => $data->modulename,
+                'type'           => $data->type,
                 'eventtype'      => $data->eventtype,
                 'timestart'      => $this->apply_date_offset($data->timestart),
                 'timeduration'   => $data->timeduration,
+                'timesort'       => $this->apply_date_offset($data->timesort),
                 'visible'        => $data->visible,
                 'uuid'           => $data->uuid,
                 'sequence'       => $data->sequence,
-                'timemodified'    => $this->apply_date_offset($data->timemodified));
+                'timemodified'   => $this->apply_date_offset($data->timemodified),
+                'priority'       => $data->priority);
         if ($this->name == 'activity_calendar') {
             $params['instance'] = $this->task->get_activityid();
         } else {

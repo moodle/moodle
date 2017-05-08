@@ -863,8 +863,9 @@ class backup_calendarevents_structure_step extends backup_structure_step {
 
         $event = new backup_nested_element('event', array('id'), array(
                 'name', 'description', 'format', 'courseid', 'groupid', 'userid',
-                'repeatid', 'modulename', 'instance', 'eventtype', 'timestart',
-                'timeduration', 'visible', 'uuid', 'sequence', 'timemodified'));
+                'repeatid', 'modulename', 'instance', 'type', 'eventtype', 'timestart',
+                'timeduration', 'timesort', 'visible', 'uuid', 'sequence', 'timemodified',
+                'priority'));
 
         // Build the tree
         $events->add_child($event);
