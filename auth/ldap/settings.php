@@ -295,7 +295,7 @@ if ($ADMIN->fulltree) {
     }
 
     // Display locking / mapping of profile fields.
-    $authplugin = get_auth_plugin($this->name);
+    $authplugin = get_auth_plugin('ldap');
     $help  = get_string('auth_ldapextrafields', 'auth_ldap');
     $help .= get_string('auth_updatelocal_expl', 'auth');
     $help .= get_string('auth_fieldlock_expl', 'auth');

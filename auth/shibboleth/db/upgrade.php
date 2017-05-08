@@ -38,6 +38,7 @@ function xmldb_auth_shibboleth_upgrade($oldversion) {
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/shibboleth to auth_shibboleth.
         upgrade_fix_config_auth_plugin_names('shibboleth');
+        upgrade_fix_config_auth_plugin_defaults('shibboleth');
         upgrade_plugin_savepoint(true, 2017020700, 'auth', 'shibboleth');
     }
 

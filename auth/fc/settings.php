@@ -55,7 +55,7 @@ if ($ADMIN->fulltree) {
             get_string('changepasswordhelp', 'auth'), '', PARAM_URL));
 
     // Display locking / mapping of profile fields.
-    $authplugin = get_auth_plugin($this->name);
+    $authplugin = get_auth_plugin('fc');
     display_auth_lock_options($settings, $authplugin->authtype, $authplugin->userfields,
             get_string('auth_fieldlocks_help', 'auth'), false, false);
 }

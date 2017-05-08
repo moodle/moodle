@@ -38,6 +38,7 @@ function xmldb_auth_none_upgrade($oldversion) {
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/none to auth_none.
         upgrade_fix_config_auth_plugin_names('none');
+        upgrade_fix_config_auth_plugin_defaults('none');
         upgrade_plugin_savepoint(true, 2017020700, 'auth', 'none');
     }
 
