@@ -869,6 +869,14 @@ class backup_calendarevents_structure_step extends backup_structure_step {
                         AND (eventtype = 'course' OR eventtype = 'group')";
             $calendar_items_params = array('courseid'=>backup::VAR_COURSEID);
             $event->set_source_sql($calendar_items_sql, $calendar_items_params);
+        } else if ($this->name == 'activity_calendar') {
+            $params = array('instance' => backup::VAR_ACTIVITYID, 'modulename' => backup::VAR_MODNAME);
+            // If we don't want to include the userinfo in the backup then setting the courseid
+            // will filter out all of the user override events (which have a course id of zero).
+            if (!$this->get_setting_value('userinfo')) {
+                $params['courseid'] = backup::VAR_COURSEID;
+            }
+            $event->set_source_table('event', $params);
         } else {
             $event->set_source_table('event', array('courseid' => backup::VAR_COURSEID, 'instance' => backup::VAR_ACTIVITYID, 'modulename' => backup::VAR_MODNAME));
         }
