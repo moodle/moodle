@@ -845,7 +845,8 @@ function repository_filesystem_pluginfile($course, $cm, $context, $filearea, $ar
     // Find stored or generated thumbnail.
     if (!($file = $repo->get_thumbnail($filepath, $filearea))) {
         // Generation failed, redirect to default icon for file extension.
-        redirect($OUTPUT->image_url(file_extension_icon($file, 90)));
+        // Do not use redirect() here because is not compatible with webservice/pluginfile.php.
+        header('Location: ' . $OUTPUT->image_url(file_extension_icon($file, 90)));
     }
     // The thumbnails should not be changing much, but maybe the default lifetime is too long.
     $lifetime = $CFG->filelifetime;
