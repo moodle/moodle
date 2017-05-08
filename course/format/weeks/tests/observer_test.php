@@ -149,6 +149,38 @@ class format_weeks_observer_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests when we update a course without automatic end date set.
+     */
+    public function test_create_section_without_automatic_end_date() {
+        global $DB;
+
+        // Generate a course with some sections.
+        $startdate = time();
+        $enddate = $startdate + WEEKSECS;
+        $course = $this->getDataGenerator()->create_course(array(
+            'numsections' => 6,
+            'format' => 'weeks',
+            'startdate' => $startdate,
+            'enddate' => $enddate,
+            'automaticenddate' => 0));
+
+        // Delete automatic end date from the database.
+        $DB->delete_records('course_format_options', ['courseid' => $course->id, 'name' => 'automaticenddate']);
+
+        // Create a new section.
+        course_create_section($course->id, 0);
+
+        // Get the updated course end date.
+        $updateenddate = $DB->get_field('course', 'enddate', array('id' => $course->id));
+
+        // Confirm enddate is automatic now - since automatic end date is not set it is assumed default (which is '1').
+        $format = course_get_format($course->id);
+        $this->assertEquals(7, $format->get_last_section_number());
+        $dates = $format->get_section_dates(7);
+        $this->assertEquals($dates->end, $updateenddate);
+    }
+
+    /**
      * Tests when we deleting a course section with automatic end date set.
      */
     public function test_course_section_deleted_with_automatic_end_date() {

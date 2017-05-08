@@ -516,18 +516,20 @@ class format_weeks extends format_base {
 
         // Use one DB query to retrieve necessary fields in course, value for automaticenddate and number of the last
         // section. This query will also validate that the course is indeed in 'weeks' format.
-        $sql = "SELECT c.id, c.format, c.startdate, c.enddate, fo.value AS automaticenddate, MAX(s.section) AS lastsection
-                  FROM {course} c
+        $insql = "SELECT c.id, c.format, c.startdate, c.enddate, MAX(s.section) AS lastsection
+                    FROM {course} c
+                    JOIN {course_sections} s
+                      ON s.course = c.id
+                   WHERE c.format = :format
+                     AND c.id = :courseid
+                GROUP BY c.id, c.format, c.startdate, c.enddate";
+        $sql = "SELECT co.id, co.format, co.startdate, co.enddate, co.lastsection, fo.value AS automaticenddate
+                  FROM ($insql) co
              LEFT JOIN {course_format_options} fo
-                    ON fo.courseid = c.id
-                   AND fo.format = c.format
+                    ON fo.courseid = co.id
+                   AND fo.format = co.format
                    AND fo.name = :optionname
-                   AND fo.sectionid = 0
-             LEFT JOIN {course_sections} s
-                    ON s.course = c.id
-                 WHERE c.format = :format
-                   AND c.id = :courseid
-              GROUP BY c.id, c.format, c.startdate, c.enddate, fo.value";
+                   AND fo.sectionid = 0";
         $course = $DB->get_record_sql($sql,
             ['optionname' => 'automaticenddate', 'format' => 'weeks', 'courseid' => $courseid]);
 
@@ -543,7 +545,7 @@ class format_weeks extends format_base {
         // If automaticenddate is not specified take the default value.
         if (!isset($course->automaticenddate)) {
             $defaults = $format->course_format_options();
-            $course->automaticenddate = $defaults['automaticenddate'];
+            $course->automaticenddate = $defaults['automaticenddate']['default'];
         }
 
         // Check that the course format for setting an automatic date is set.
