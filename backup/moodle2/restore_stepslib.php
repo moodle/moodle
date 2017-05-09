@@ -2653,6 +2653,16 @@ class restore_calendarevents_structure_step extends restore_structure_step {
         $data = (object)$data;
         $oldid = $data->id;
         $restorefiles = true; // We'll restore the files
+        // User overrides for activities are identified by having a courseid of zero with
+        // both a modulename and instance value set.
+        $isuseroverride = !$data->courseid && $data->modulename && $data->instance;
+
+        // If we don't want to include user data and this record is a user override event
+        // for an activity then we should not create it.
+        if (!$this->task->get_setting_value('userinfo') && $isuseroverride) {
+            return;
+        }
+
         // Find the userid and the groupid associated with the event.
         $data->userid = $this->get_mappingid('user', $data->userid);
         if ($data->userid === false) {
@@ -2688,18 +2698,23 @@ class restore_calendarevents_structure_step extends restore_structure_step {
                 'name'           => $data->name,
                 'description'    => $data->description,
                 'format'         => $data->format,
-                'courseid'       => $this->get_courseid(),
+                // User overrides in activities use a course id of zero. All other event types
+                // must use the mapped course id.
+                'courseid'       => $data->courseid ? $this->get_courseid() : 0,
                 'groupid'        => $data->groupid,
                 'userid'         => $data->userid,
                 'repeatid'       => $this->get_mappingid('event', $data->repeatid),
                 'modulename'     => $data->modulename,
+                'type'           => $data->type,
                 'eventtype'      => $data->eventtype,
                 'timestart'      => $this->apply_date_offset($data->timestart),
                 'timeduration'   => $data->timeduration,
+                'timesort'       => $this->apply_date_offset($data->timesort),
                 'visible'        => $data->visible,
                 'uuid'           => $data->uuid,
                 'sequence'       => $data->sequence,
-                'timemodified'    => $this->apply_date_offset($data->timemodified));
+                'timemodified'   => $this->apply_date_offset($data->timemodified),
+                'priority'       => $data->priority);
         if ($this->name == 'activity_calendar') {
             $params['instance'] = $this->task->get_activityid();
         } else {
@@ -2710,10 +2725,11 @@ class restore_calendarevents_structure_step extends restore_structure_step {
                  WHERE " . $DB->sql_compare_text('name', 255) . " = " . $DB->sql_compare_text('?', 255) . "
                    AND courseid = ?
                    AND modulename = ?
+                   AND instance = ?
                    AND timestart = ?
                    AND timeduration = ?
                    AND " . $DB->sql_compare_text('description', 255) . " = " . $DB->sql_compare_text('?', 255);
-        $arg = array ($params['name'], $params['courseid'], $params['modulename'], $params['timestart'], $params['timeduration'], $params['description']);
+        $arg = array ($params['name'], $params['courseid'], $params['modulename'], $params['instance'], $params['timestart'], $params['timeduration'], $params['description']);
         $result = $DB->record_exists_sql($sql, $arg);
         if (empty($result)) {
             $newitemid = $DB->insert_record('event', $params);
