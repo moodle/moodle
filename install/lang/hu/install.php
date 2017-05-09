@@ -68,8 +68,8 @@ $string['pathsunsecuredataroot'] = 'Az adatok gyökérkönyvtára nem biztonság
 $string['pathswrongadmindir'] = 'Nem létezik az admin könyvtár.';
 $string['phpextension'] = '{$a} PHP-bővítmény';
 $string['phpversion'] = 'PHP-verzió';
-$string['phpversionhelp'] = 'A Moodle használatához legalább a PHP 5.6.5 verziója szükséges
- (a 7.x bizonyos korlátokkal rendelkezik).</p>
+$string['phpversionhelp'] = 'A Moodle használatához legalább a PHP 5.6.5 vagy 7.1 verziója szükséges
+ (a 7.0.x bizonyos korlátokkal rendelkezik).</p>
 <p> Az Ön által használt
 verzió {$a}. </p>
 <p>Frissítse a PHP-verziót, vagy térjen át újabb PHP-verziót
