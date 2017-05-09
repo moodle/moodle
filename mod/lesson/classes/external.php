@@ -1681,7 +1681,7 @@ class mod_lesson_external extends external_api {
 
         $params = array('lessonid' => $lessonid, 'groupid' => $groupid);
         $params = self::validate_parameters(self::get_attempts_overview_parameters(), $params);
-        $studentsdata = $warnings = array();
+        $warnings = array();
 
         list($lesson, $course, $cm, $context, $lessonrecord) = self::validate_lesson($params['lessonid']);
         require_capability('mod/lesson:viewreports', $context);
@@ -1705,15 +1705,15 @@ class mod_lesson_external extends external_api {
             }
         }
 
-        list($table, $data) = lesson_get_overview_report_table_and_data($lesson, $groupid);
-        if ($data !== false) {
-            $studentsdata = $data;
-        }
-
         $result = array(
-            'data' => $studentsdata,
             'warnings' => $warnings
         );
+
+        list($table, $data) = lesson_get_overview_report_table_and_data($lesson, $groupid);
+        if ($data !== false) {
+            $result['data'] = $data;
+        }
+
         return $result;
     }
 
@@ -1756,7 +1756,8 @@ class mod_lesson_external extends external_api {
                                 )
                             ), 'Students data, including attempts.', VALUE_OPTIONAL
                         ),
-                    )
+                    ),
+                    'Attempts overview data (empty for no attemps).', VALUE_OPTIONAL
                 ),
                 'warnings' => new external_warnings(),
             )
