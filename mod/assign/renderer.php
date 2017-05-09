@@ -339,7 +339,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o .= $this->output->container_start('submissionlinks');
         $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grading');
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
-        $o .= '<a href="' . $url . '" class="btn">' . get_string('viewgrading', 'mod_assign') . '</a> ';
+        $o .= '<a href="' . $url . '" class="btn btn-secondary">' . get_string('viewgrading', 'mod_assign') . '</a> ';
         $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grader');
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
         $o .= '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
