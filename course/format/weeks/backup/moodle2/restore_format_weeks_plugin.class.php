@@ -82,6 +82,9 @@ class restore_format_weeks_plugin extends restore_format_plugin {
         } else {
             $update->value = 0;
             $DB->update_record('course_format_options', $update);
+
+            // The end date may have been changed by observers during restore, ensure we set it back to what was in the backup.
+            $DB->set_field('course', 'enddate', $enddate, array('id' => $this->step->get_task()->get_courseid()));
         }
     }
 
