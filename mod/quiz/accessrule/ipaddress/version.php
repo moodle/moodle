@@ -27,6 +27,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2016120500;
-$plugin->requires  = 2016112900;
+$plugin->version   = 2017051500;
+$plugin->requires  = 2017050500;
 $plugin->component = 'quizaccess_ipaddress';

@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version    = 2017031900;
-$plugin->requires   = 2016112900; // Requires this Moodle version (3.0.4).
+$plugin->version    = 2017051500;
+$plugin->requires   = 2017050500; // Requires this Moodle version (3.0.4).
 $plugin->maturity   = MATURITY_STABLE;
 $plugin->component  = 'cachestore_redis';
 $plugin->release    = '3.0.4 (Build: 20160509)';
