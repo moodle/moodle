@@ -149,12 +149,12 @@ border-radius: 10px;
     padding-left: 20px;
 }
 
-.dep_tree .haschildren [aria-expanded="true"] {
+.dep_tree .haschildren[aria-expanded="true"] {
     background-image: url('[[pix:t/expanded]]');
     background-repeat: no-repeat;
 
 }
-.dep_tree .haschildren [aria-expanded="false"] {
+.dep_tree .haschildren[aria-expanded="false"] {
     background-image: url('[[pix:t/collapsed]]');
     background-repeat: no-repeat;
 }
