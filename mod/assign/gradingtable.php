@@ -209,14 +209,13 @@ class assign_grading_table extends table_sql implements renderable {
                       JOIN {groups_members} gm ON gm.groupid = g.id
                      WHERE go.assignid = :assignmentid6
                   )
-                ) AS merged
+                ) merged
                 GROUP BY merged.userid
               ) priority ON priority.userid = u.id
 
             JOIN (
               (SELECT 9999999 AS priority,
                       u.id AS userid,
-
                       a.allowsubmissionsfromdate,
                       a.duedate,
                       a.cutoffdate
@@ -226,7 +225,6 @@ class assign_grading_table extends table_sql implements renderable {
               UNION
               (SELECT 0 AS priority,
                       uo.userid,
-
                       uo.allowsubmissionsfromdate,
                       uo.duedate,
                       uo.cutoffdate
@@ -236,7 +234,6 @@ class assign_grading_table extends table_sql implements renderable {
               UNION
               (SELECT go.sortorder AS priority,
                       gm.userid,
-
                       go.allowsubmissionsfromdate,
                       go.duedate,
                       go.cutoffdate
@@ -246,7 +243,7 @@ class assign_grading_table extends table_sql implements renderable {
                 WHERE go.assignid = :assignmentid9
               )
 
-            ) AS effective ON effective.priority = priority.priority AND effective.userid = priority.userid ';
+            ) effective ON effective.priority = priority.priority AND effective.userid = priority.userid ';
         }
 
         if (!empty($this->assignment->get_instance()->blindmarking)) {
