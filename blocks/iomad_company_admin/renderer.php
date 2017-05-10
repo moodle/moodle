@@ -114,7 +114,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
      * @param int $selected - which node is selected (if any)
      * @return html
      */
-    private function department_leaf($leaf, $depth=1, $selected=null) {
+    private function department_leaf($leaf, $depth, $selected) {
         $haschildren = !empty($leaf->children);
         $expand = self::id_in_tree($leaf, $selected);
         $style = 'style="margin-left: ' . $depth * 5 . 'px;"';
@@ -131,17 +131,19 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
             $class .= ' nochildren';
         }
         if ($leaf->id == $selected) {
-            $name = '<b>' . $leaf->name . '</b>';
+            $aria_selected = 'aria-selected="true"';
+            $name = '<b>' . $leaf->name . ' ' . $leaf->id . ' ' . $selected . '</b>';
         } else {
-            $name = $leaf->name;
+            $aria_selected = 'aria-selected="false"';
+            $name = $leaf->name . ' ' . $leaf->id . ' ' . $selected;
         }
         $data = 'data-id="' . $leaf->id . '"'; 
-        $html = '<div role="treeitem" ' . $aria . ' class="' . $class .'" ' . $style . '>';
-        $html .= '<span class="tree_dept_name" ' . $data . '>' . $name . '</span>';
+        $html = '<div role="treeitem" ' . $aria . ' ' . $aria_selected . ' class="' . $class .'" ' . $style . '>';
+        $html .= '<span class="tree_dept_name" ' . $data . '>' . $leaf->name . '</span>';
         if ($haschildren) {
             $html .= '<div role="group">';
             foreach($leaf->children as $child) {
-                $html .= $this->department_leaf($child, $depth+1);
+                $html .= $this->department_leaf($child, $depth+1, $selected);
             }
             $html .= '</div>';
         }
@@ -156,7 +158,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
      * @param int $selected selected id (if any)
      * @return string HTML markup
      */
-    public function department_tree($tree, $selected = null) {
+    public function department_tree($tree, $selected) {
         $html = '';
         $html .= '<div class="dep_tree">';
         $html .= '<div role="tree" id="department_tree">';

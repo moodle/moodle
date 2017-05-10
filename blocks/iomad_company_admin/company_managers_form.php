@@ -442,6 +442,13 @@ $companyid = iomad::get_my_companyid($context);
 
 $PAGE->set_context($context);
 
+// get output renderer                                                                                                                                                                                         
+$output = $PAGE->get_renderer('block_iomad_company_admin');
+
+// Javascript for fancy select.
+// Parameter is name of proper select form element followed by 1=submit its form
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
+
 $urlparams = array('departmentid' => $departmentid,
                    'managertype' => $roleid,
                    'showothermanagers' => $showothermanagers);
@@ -463,6 +470,9 @@ $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
 if (empty($departmentid)) {
     $departmentid = $userhierarchylevel;
 }
+
+$departmenttree = company::get_all_departments_raw($company->id);
+$treehtml = $output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
 
 $departmentselect = new single_select(new moodle_url($linkurl, $urlparams), 'deptid', $subhierarchieslist, $departmentid);
 $departmentselect->label = get_string('department', 'block_iomad_company_admin') .
@@ -510,6 +520,7 @@ if ($managersform->is_cancelled()) {
     echo html_writer::tag('h3', get_string('company_managers_for', 'block_iomad_company_admin', $company->get_name()));
     echo html_writer::start_tag('div', array('class' => 'iomadclear'));
     echo html_writer::start_tag('div', array('class' => 'fitem'));
+    echo $treehtml;
     echo $OUTPUT->render($departmentselect);
     echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
