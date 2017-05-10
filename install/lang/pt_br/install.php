@@ -69,10 +69,10 @@ $string['pathshead'] = 'Confirme os caminhos';
 $string['pathsrodataroot'] = 'O diretório de dados raiz não pode ser acessado para escrita.';
 $string['pathsroparentdataroot'] = 'O diretório pai ({$a->parent}) não pode ser escrito. O diretório de dados ({$a->dataroot}) não pode ser criado pelo instalador.';
 $string['pathssubadmindir'] = 'Alguns poucos webhosts usam /admin como um URL especial para acesso ao painel de controle ou outras coisas. Infelizmente isto conflita com a localizaçao padrão das páginas do administrador Moodle. Você pode corrigir isso renomeando a pasta admin na sua instalação, e colocando esse novo nome aqui. Por exemplo: <em>moodleadmin</em>. Isto irá corrigir os links das páginas do administrador Moodle.';
-$string['pathssubdataroot'] = '<p>Um diretório em que Moodle pode armazenar todo o conteúdo de arquivos enviados pelos usuários. </p>
-<p>Este diretório deve ser legível e gravável tanto pelo usuário do servidor web (geralmente "www-data \',\' nobody \', ou\' apache\'). </p>
+$string['pathssubdataroot'] = '<p>Um diretório em que Moodle armazenará todo o conteúdo de arquivos enviados pelos usuários. </p>
+<p>Este diretório deve ser legível e gravável pelo usuário do servidor web (geralmente "www-data \',\' nobody \', ou\' apache\'). </p>
 <p>Não deve ser diretamente acessível através da web. </p>
-<p>Se o diretório não existir atualmente, o processo de instalação irá tentar criá-la. </p>';
+<p>Se o diretório não existir atualmente, o processo de instalação tentará criá-lo. </p>';
 $string['pathssubdirroot'] = '<p>Caminho completo do diretório para instalação do Moddle.</p>';
 $string['pathssubwwwroot'] = '<p>O endereço completo em que Moodle pode ser acessado ou seja, o endereço que os usuários vão digitar na barra de endereços do seu navegador para acessar Moodle. </p>
 <p>Não é possível acessar Moodle usando múltiplos endereços. Se o seu site é acessível através de múltiplos endereços, em seguida, escolher o mais fácil e configurar um redirecionamento permanente para cada um dos outros endereços. </p>
@@ -82,8 +82,8 @@ $string['pathsunsecuredataroot'] = 'A localização da pasta de dados não é se
 $string['pathswrongadmindir'] = 'Diretório Admin não existe';
 $string['phpextension'] = 'Extensão PHP {$a}';
 $string['phpversion'] = 'Versão do PHP';
-$string['phpversionhelp'] = '<p>O Moodle requer uma versão PHP de pelo menos 5.6.5 (o 7.x tem algumas limitações do motor). </p>
-<p>Atualmente, você está executando a versão {$ a}. </p>
+$string['phpversionhelp'] = '<p>O Moodle requer uma versão PHP de pelo menos 5.6.5 ou 7.1 (o 7.0.x tem algumas limitações do motor). </p>
+<p>Atualmente você está executando a versão {$a}. </p>
 <p>Você deve atualizar o PHP ou migrar para um host com uma versão mais recente do PHP. </p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Você está vendo esa página pois instalou com sucesso o pacote<strong>{$a->packname} {$a->packversion}</strong>. Parabéns!';
