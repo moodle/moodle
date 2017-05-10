@@ -161,11 +161,11 @@ class webservice_xmlrpc_server extends webservice_base_server {
     /**
      * Generate the XML-RPC fault response.
      *
-     * @param Exception $ex The exception.
+     * @param Exception|Throwable $ex The exception.
      * @param int $faultcode The faultCode to be included in the fault response
      * @return string The XML-RPC fault response xml containing the faultCode and faultString.
      */
-    protected function generate_error(Exception $ex, $faultcode = 404) {
+    protected function generate_error($ex, $faultcode = 404) {
         $error = $ex->getMessage();
 
         if (!empty($ex->errorcode)) {
