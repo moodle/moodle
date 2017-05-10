@@ -122,7 +122,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
         $aria = '';
         if ($haschildren) {
             $class .= ' haschildren';
-            if (($depth == 1) || $expand) {
+            if ($expand) {
                 $aria = 'aria-expanded="true"';
             } else {
                 $aria = 'aria-expanded="false"';
