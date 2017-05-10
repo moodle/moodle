@@ -334,7 +334,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/enrolusers' => 'fa-user-plus',
             'core:t/expanded' => 'fa-caret-down',
             'core:t/go' => 'fa-play',
-            'core:t/grades' => 'fa-graduation-cap',
+            'core:t/grades' => 'fa-table',
             'core:t/groupn' => 'fa-user',
             'core:t/groups' => 'fa-user-circle',
             'core:t/groupv' => 'fa-user-circle-o',
