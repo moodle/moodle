@@ -245,4 +245,45 @@ abstract class base_mod extends base {
             return \context::instance_by_id($id);
         });
     }
+
+    /**
+     * Indicates whether this search area may restrict access by group.
+     *
+     * This should return true if the search area (sometimes) sets the 'groupid' schema field, and
+     * false if it never sets that field.
+     *
+     * (If this function returns false, but the field is set, then results may be restricted
+     * unintentionally.)
+     *
+     * If this returns true, the search engine will automatically apply group restrictions in some
+     * cases (by default, where a module is configured to use separate groups). See function
+     * restrict_cm_access_by_group().
+     *
+     * @return bool
+     */
+    public function supports_group_restriction() {
+        return false;
+    }
+
+    /**
+     * Checks whether the content of this search area should be restricted by group for a
+     * specific module. Called at query time.
+     *
+     * The default behaviour simply checks if the effective group mode is SEPARATEGROUPS, which
+     * is probably correct for most cases.
+     *
+     * If restricted by group, the search query will (where supported by the engine) filter out
+     * results for groups the user does not belong to, unless the user has 'access all groups'
+     * for the activity. This affects only documents which set the 'groupid' field; results with no
+     * groupid will not be restricted.
+     *
+     * Even if you return true to this function, you may still need to do group access checks in
+     * check_access, because the search engine may not support group restrictions.
+     *
+     * @param \cm_info $cm
+     * @return bool True to restrict by group
+     */
+    public function restrict_cm_access_by_group(\cm_info $cm) {
+        return $cm->effectivegroupmode == SEPARATEGROUPS;
+    }
 }

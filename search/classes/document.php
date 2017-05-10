@@ -79,6 +79,14 @@ class document implements \renderable, \templatable {
     protected $files = array();
 
     /**
+     * Change list (for engine implementers):
+     * 2017091700 - add optional field groupid
+     *
+     * @var int Schema version number (update if any change)
+     */
+    const SCHEMA_VERSION = 2017091700;
+
+    /**
      * All required fields any doc should contain.
      *
      * We have to choose a format to specify field types, using solr format as we have to choose one and solr is the
@@ -155,6 +163,11 @@ class document implements \renderable, \templatable {
      */
     protected static $optionalfields = array(
         'userid' => array(
+            'type' => 'int',
+            'stored' => true,
+            'indexed' => true
+        ),
+        'groupid' => array(
             'type' => 'int',
             'stored' => true,
             'indexed' => true
