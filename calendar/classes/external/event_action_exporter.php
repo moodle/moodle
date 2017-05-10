@@ -90,6 +90,10 @@ class event_action_exporter extends exporter {
     protected function get_other_values(renderer_base $output) {
         $event = $this->related['event'];
 
+        if (!$event->get_course_module()) {
+            // TODO MDL-58866 Only activity modules currently support this callback.
+            return ['showitemcount' => false];
+        }
         $modulename = $event->get_course_module()->get('modname');
         $component = 'mod_' . $modulename;
         $showitemcountcallback = 'core_calendar_event_action_shows_item_count';

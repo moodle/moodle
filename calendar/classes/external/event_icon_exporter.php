@@ -54,7 +54,7 @@ class event_icon_exporter extends exporter {
         $userid = $user ? $user->get('id') : null;
         $isactivityevent = !empty($coursemodule);
         $isglobalevent = ($course && $courseid == SITEID);
-        $iscourseevent = ($course && !empty($courseid) && $courseid != SITEID && $group && empty($groupid));
+        $iscourseevent = ($course && !empty($courseid) && $courseid != SITEID && empty($groupid));
         $isgroupevent = ($group && !empty($groupid));
         $isuserevent = ($user && !empty($userid));
 

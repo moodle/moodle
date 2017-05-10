@@ -132,7 +132,7 @@ class container {
                 $getcallback('action'),
                 $getcallback('visibility'),
                 function ($dbrow) {
-                    // At present we only handle callbacks in course modules.
+                    // At present we only have a bail-out check for events in course modules.
                     if (empty($dbrow->modulename)) {
                         return false;
                     }
@@ -246,14 +246,19 @@ class container {
                     // Callbacks will get supplied a "legacy" version
                     // of the event class.
                     $mapper = self::$eventmapper;
-                    $action = component_callback(
-                        'mod_' . $event->get_course_module()->get('modname'),
-                        'core_calendar_provide_event_action',
-                        [
-                            $mapper->from_event_to_legacy_event($event),
-                            self::$actionfactory
-                        ]
-                    );
+                    $action = null;
+                    if ($event->get_course_module()) {
+                        // TODO MDL-58866 Only activity modules currently support this callback.
+                        // Any other event will not be displayed on the dashboard.
+                        $action = component_callback(
+                            'mod_' . $event->get_course_module()->get('modname'),
+                            'core_calendar_provide_event_action',
+                            [
+                                $mapper->from_event_to_legacy_event($event),
+                                self::$actionfactory
+                            ]
+                        );
+                    }
 
                     // If we get an action back, return an action event, otherwise
                     // continue piping through the original event.
@@ -266,13 +271,17 @@ class container {
                 // This is enforced by the event_factory.
                 'visibility' => function (event_interface $event) {
                     $mapper = self::$eventmapper;
-                    $eventvisible = component_callback(
-                        'mod_' . $event->get_course_module()->get('modname'),
-                        'core_calendar_is_event_visible',
-                        [
-                            $mapper->from_event_to_legacy_event($event)
-                        ]
-                    );
+                    $eventvisible = null;
+                    if ($event->get_course_module()) {
+                        // TODO MDL-58866 Only activity modules currently support this callback.
+                        $eventvisible = component_callback(
+                            'mod_' . $event->get_course_module()->get('modname'),
+                            'core_calendar_is_event_visible',
+                            [
+                                $mapper->from_event_to_legacy_event($event)
+                            ]
+                        );
+                    }
 
                     // Do not display the event if there is nothing to action.
                     if ($event instanceof action_event_interface && $event->get_action()->get_item_count() === 0) {
