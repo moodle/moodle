@@ -15,15 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * This file definies observers needed by the plugin.
  *
  * @package    auth_oauth2
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2017051501;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017050500;        // Requires this Moodle version.
-$plugin->component = 'auth_oauth2';       // Full name of the plugin (used for diagnostics).
+// List of observers.
+$observers = [
+    [
+        'eventname'   => '\core\event\user_deleted',
+        'callback'    => '\auth_oauth2\api::user_deleted',
+    ],
+];

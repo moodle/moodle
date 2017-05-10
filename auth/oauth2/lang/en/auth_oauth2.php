@@ -83,3 +83,4 @@ $string['notwhileloggedinas'] = 'Linked logins cannot be managed while logged in
 $string['oauth2:managelinkedlogins'] = 'Manage own linked login accounts';
 $string['plugindescription'] = 'This authentication plugin displays a list of the configured identity providers on the login page. Selecting an identity provider allows users to login with their credentials from an OAuth 2 provider.';
 $string['pluginname'] = 'OAuth 2';
+$string['alreadylinked'] = 'This external account is already linked to an account on this site';
