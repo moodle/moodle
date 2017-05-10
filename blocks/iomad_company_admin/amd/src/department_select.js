@@ -7,12 +7,12 @@ define(['jquery', 'core/tree'], function($, Tree) {
         init: function(selectname, submitform, selected) {
 
             // instantiate the tree container
-            tree = new Tree("#department_tree");
+            var tree = new Tree("#department_tree");
 
             // Hide the original select element
             //$("#id_" + selectname).hide();
             $("select[name=" + selectname + "]").parent().hide();
-            
+
             // set the initial selected
             tree.setActiveItem($("span[data-id="+selected+"]"));
 
