@@ -101,6 +101,12 @@ if (function_exists('opcache_invalidate')) {
 // indirectly calls the protected init() method is good here.
 core_component::get_core_subsystems();
 
+if (is_major_upgrade_required() && isloggedin()) {
+    // A major upgrade is required.
+    // Terminate the session and redirect back here before anything DB-related happens.
+    redirect_if_major_upgrade_required();
+}
+
 require_once($CFG->libdir.'/adminlib.php');    // various admin-only functions
 require_once($CFG->libdir.'/upgradelib.php');  // general upgrade/install related functions
 
