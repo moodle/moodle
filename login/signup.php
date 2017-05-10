@@ -97,5 +97,17 @@ $PAGE->set_heading($SITE->fullname);
 
 echo $OUTPUT->header();
 
-echo $OUTPUT->render($mform_signup);
+if ($mform_signup instanceof renderable) {
+    // Try and use the renderer from the auth plugin if it exists.
+    try {
+        $renderer = $PAGE->get_renderer('auth_' . $authplugin->authtype);
+    } catch (coding_exception $ce) {
+        // Fall back on the general renderer.
+        $renderer = $OUTPUT;
+    }
+    echo $renderer->render($mform_signup);
+} else {
+    // Fall back for auth plugins not using renderables.
+    $mform_signup->display();
+}
 echo $OUTPUT->footer();
