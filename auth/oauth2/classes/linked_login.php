@@ -65,4 +65,27 @@ class linked_login extends persistent {
         );
     }
 
+    /**
+     * Check whether there are any valid linked accounts for this issuer
+     * and username combination.
+     *
+     * @param \core\oauth2\issuer $issuer The issuer
+     * @param string $username The username to check
+     */
+    public static function has_existing_issuer_match(\core\oauth2\issuer $issuer, $username) {
+        global $DB;
+
+        $where = "issuerid = :issuerid
+              AND username = :username
+              AND (confirmtokenexpires = 0 OR confirmtokenexpires > :maxexpiry)";
+
+        $count = $DB->count_records_select(static::TABLE, $where, [
+            'issuerid' => $issuer->get('id'),
+            'username' => $username,
+            'maxexpiry' => (new \DateTime('NOW'))->getTimestamp(),
+        ]);
+
+        return $count > 0;
+    }
+
 }
