@@ -394,7 +394,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 $url = new moodle_url('/course/editsection.php', array(
                     'id' => $section->id,
                     'sr' => $sectionreturn,
-                    'delete' => 1));
+                    'delete' => 1,
+                    'sesskey' => sesskey()));
                 $controls['delete'] = array(
                     'url' => $url,
                     'icon' => 'i/delete',
@@ -991,18 +992,19 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             // capabilities 'moodle/course:update' and 'moodle/course:movesections'.
 
             echo html_writer::start_tag('div', array('id' => 'changenumsections', 'class' => 'mdl-right'));
-            if (get_string_manager()->string_exists('addsection', 'format_'.$course->format)) {
-                $straddsection = get_string('addsection', 'format_'.$course->format);
+            if (get_string_manager()->string_exists('addsections', 'format_'.$course->format)) {
+                $straddsections = get_string('addsections', 'format_'.$course->format);
             } else {
-                $straddsection = get_string('addsection');
+                $straddsections = get_string('addsections');
             }
             $url = new moodle_url('/course/changenumsections.php',
                 ['courseid' => $course->id, 'insertsection' => 0, 'sesskey' => sesskey()]);
             if ($sectionreturn !== null) {
                 $url->param('sectionreturn', $sectionreturn);
             }
-            $icon = $this->output->pix_icon('t/add', $straddsection);
-            echo html_writer::link($url, $icon . $straddsection, array('class' => 'add-section'));
+            $icon = $this->output->pix_icon('t/add', $straddsections);
+            echo html_writer::link($url, $icon . $straddsections,
+                array('class' => 'add-sections', 'data-add-sections' => $straddsections));
             echo html_writer::end_tag('div');
         }
     }

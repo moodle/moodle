@@ -31,6 +31,7 @@ require_once($CFG->dirroot.'/course/lib.php');
 $courseid = required_param('courseid', PARAM_INT);
 $increase = optional_param('increase', null, PARAM_BOOL);
 $insertsection = optional_param('insertsection', null, PARAM_INT); // Insert section at position; 0 means at the end.
+$numsections = optional_param('numsections', 1, PARAM_INT);        // Number of sections to insert.
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);    // Where to return to after the action.
 $sectionreturn = optional_param('sectionreturn', null, PARAM_INT); // Section to return to, ignored if $returnurl is specified.
 
@@ -70,9 +71,12 @@ if (isset($courseformatoptions['numsections']) && $increase !== null) {
         // Inserting sections at any position except in the very end requires capability to move sections.
         require_capability('moodle/course:movesections', context_course::instance($course->id));
     }
-    $section = course_create_section($course, $insertsection);
+    $sections = [];
+    for ($i = 0; $i < max($numsections, 1); $i ++) {
+        $sections[] = course_create_section($course, $insertsection);
+    }
     if (!$returnurl) {
-        $returnurl = course_get_url($course, $section->section,
+        $returnurl = course_get_url($course, $sections[0]->section,
             ($sectionreturn !== null) ? ['sr' => $sectionreturn] : []);
     }
 }

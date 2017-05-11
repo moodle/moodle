@@ -49,9 +49,14 @@ if ($deletesection) {
     $cancelurl = course_get_url($course, $sectioninfo, array('sr' => $sectionreturn));
     if (course_can_delete_section($course, $sectioninfo)) {
         $confirm = optional_param('confirm', false, PARAM_BOOL) && confirm_sesskey();
+        if (!$confirm && optional_param('sesskey', null, PARAM_RAW) !== null &&
+                empty($sectioninfo->summary) && empty($sectioninfo->sequence) && confirm_sesskey()) {
+            // Do not ask for confirmation if section is empty and sesskey is already provided.
+            $confirm = true;
+        }
         if ($confirm) {
             course_delete_section($course, $sectioninfo, true, true);
-            $courseurl = course_get_url($course, 0, array('sr' => $sectionreturn));
+            $courseurl = course_get_url($course, $sectioninfo->section - 1, array('sr' => $sectionreturn));
             redirect($courseurl);
         } else {
             if (get_string_manager()->string_exists('deletesection', 'format_' . $course->format)) {
