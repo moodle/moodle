@@ -302,7 +302,8 @@ abstract class base_moodleform extends moodleform {
                     $icon = '';
                     break;
             }
-            $label = $settingui->get_label($task);
+            $context = context_course::instance($task->get_courseid());
+            $label = format_string($settingui->get_label($task), true, array('context' => $context));
             $labelicon = $settingui->get_icon();
             if (!empty($labelicon)) {
                 $label .= '&nbsp;'.$OUTPUT->render($labelicon);

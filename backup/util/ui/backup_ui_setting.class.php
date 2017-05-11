@@ -355,7 +355,8 @@ class backup_setting_ui_text extends backup_setting_ui {
      */
     public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         $icon = $this->get_icon();
-        $label = $this->get_label($task);
+        $context = context_course::instance($task->get_courseid());
+        $label = format_string($this->get_label($task), true, array('context' => $context));
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
@@ -418,7 +419,8 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
     public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         // Name, label, text, attributes.
         $icon = $this->get_icon();
-        $label = $this->get_label($task);
+        $context = context_course::instance($task->get_courseid());
+        $label = format_string($this->get_label($task), true, array('context' => $context));
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
@@ -525,7 +527,8 @@ class backup_setting_ui_radio extends backup_setting_ui {
      */
     public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         $icon = $this->get_icon();
-        $label = $this->get_label($task);
+        $context = context_course::instance($task->get_courseid());
+        $label = format_string($this->get_label($task), true, array('context' => $context));
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
@@ -602,7 +605,8 @@ class backup_setting_ui_select extends backup_setting_ui {
      */
     public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         $icon = $this->get_icon();
-        $label = $this->get_label($task);
+        $context = context_course::instance($task->get_courseid());
+        $label = format_string($this->get_label($task), true, array('context' => $context));
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
