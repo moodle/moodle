@@ -394,7 +394,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 $url = new moodle_url('/course/editsection.php', array(
                     'id' => $section->id,
                     'sr' => $sectionreturn,
-                    'delete' => 1));
+                    'delete' => 1,
+                    'sesskey' => sesskey()));
                 $controls['delete'] = array(
                     'url' => $url,
                     'icon' => 'i/delete',
