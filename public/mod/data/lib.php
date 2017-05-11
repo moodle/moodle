@@ -1882,7 +1882,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         if ($searchfield->type === 'unknown') {
             continue;
         }
-        if (!empty($search_array[$field->field->id]->data)) {
+        if (isset($search_array[$field->field->id]->data)) {
             $searchinput = $searchfield->display_search_field($search_array[$field->field->id]->data);
         } else {
             $searchinput = $searchfield->display_search_field();
@@ -1912,8 +1912,8 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         $replacement[] = '';
     }
 
-    $fn = !empty($search_array[DATA_FIRSTNAME]->data) ? $search_array[DATA_FIRSTNAME]->data : '';
-    $ln = !empty($search_array[DATA_LASTNAME]->data) ? $search_array[DATA_LASTNAME]->data : '';
+    $fn = isset($search_array[DATA_FIRSTNAME]->data) ? $search_array[DATA_FIRSTNAME]->data : '';
+    $ln = isset($search_array[DATA_LASTNAME]->data) ? $search_array[DATA_LASTNAME]->data : '';
     $patterns[]    = '/##firstname##/';
     $replacement[] = '<label class="accesshide" for="u_fn">' . get_string('authorfirstname', 'data') . '</label>' .
                      '<input type="text" class="form-control" size="16" id="u_fn" name="u_fn" value="' . s($fn) . '" />';
