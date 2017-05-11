@@ -86,3 +86,18 @@ Feature: Sections can be edited and deleted in weeks format
     And I should not see "Test chat name"
     And I should see "Test choice name" in the "li#section-4" "css_element"
     And I should see "22 May - 28 May"
+
+  @javascript
+  Scenario: Adding sections in weeks format
+    When I follow "Add weeks"
+    Then the field "Number of sections" matches value "1"
+    And I press "Add weeks"
+    And I should see "5 June - 11 June" in the "li#section-6" "css_element"
+    And "li#section-7" "css_element" should not exist
+    And I follow "Add weeks"
+    And I set the field "Number of sections" to "3"
+    And I press "Add weeks"
+    And I should see "12 June - 18 June" in the "li#section-7" "css_element"
+    And I should see "19 June - 25 June" in the "li#section-8" "css_element"
+    And I should see "26 June - 2 July" in the "li#section-9" "css_element"
+    And "li#section-10" "css_element" should not exist
