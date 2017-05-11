@@ -1904,7 +1904,7 @@ class core_plugin_manager {
                 'dbtransfer', 'filetypes', 'generator', 'health', 'innodb', 'installaddon',
                 'langimport', 'log', 'lp', 'lpimportcsv', 'lpmigrate', 'messageinbound', 'mobile', 'multilangupgrade', 'monitor',
                 'oauth2', 'phpunit', 'profiling', 'recyclebin', 'replace', 'spamcleaner', 'task', 'templatelibrary',
-                'unittest', 'uploadcourse', 'uploaduser', 'unsuproles', 'usertours', 'xmldb'
+                'uploadcourse', 'uploaduser', 'unsuproles', 'usertours', 'xmldb'
             ),
 
             'webservice' => array(
