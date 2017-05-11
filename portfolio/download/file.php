@@ -31,7 +31,7 @@ echo $OUTPUT->notification('<a href="' . $returnurl . '">' . get_string('returnt
 echo '<div id="redirect">
     <form action="' . $exporter->get('instance')->get_base_file_url() . '" method="post" id="redirectform">
       <input type="submit" value="' . get_string('downloadfile', 'portfolio_download') . '" />
-    </form>
+    </form></div>
 ';
 
 $PAGE->requires->js_amd_inline("
