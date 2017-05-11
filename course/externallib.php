@@ -724,6 +724,11 @@ class core_course_external extends external_api {
             //Note: create_course() core function check shortname, idnumber, category
             $course['id'] = create_course((object) $course)->id;
 
+            // Create sections that aren't created by core create_course().
+            if (!empty($course['numsections']) && $course['numsections'] > 0) {
+                course_create_sections_if_missing((object)$course, range(0, $course['numsections']));
+            }
+
             $resultcourses[] = array('id' => $course['id'], 'shortname' => $course['shortname']);
         }
 
