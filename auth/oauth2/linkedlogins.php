@@ -79,6 +79,7 @@ $linkedlogin = null;
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('linkedlogins', 'auth_oauth2'));
 echo $OUTPUT->doc_link('Linked_Logins', get_string('linkedloginshelp', 'auth_oauth2'));
+auth_oauth2\api::clean_orphaned_linked_logins();
 $linkedlogins = auth_oauth2\api::get_linked_logins();
 
 echo $renderer->linked_logins_table($linkedlogins);

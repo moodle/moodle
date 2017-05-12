@@ -65,4 +65,26 @@ class linked_login extends persistent {
         );
     }
 
+    /**
+     * Remove all linked logins that are using issuers that have been deleted.
+     *
+     * @param int $issuerid The issuer id of the issuer to check, or false to check all (defaults to all)
+     * @return boolean
+     */
+    public static function delete_orphaned($issuerid = false) {
+        global $DB;
+        // Delete any linked_login entries with a issuerid
+        // which does not exist in the issuer table.
+        // In the left join, the issuer id will be null
+        // where a match linked_login.issuerid is not found.
+        $sql = "DELETE FROM {" . self::TABLE . "}
+                 WHERE issuerid NOT IN (SELECT id FROM {" . \core\oauth2\issuer::TABLE . "})";
+        $params = [];
+        if (!empty($issuerid)) {
+            $sql .= ' AND issuerid = ?';
+            $params['issuerid'] = $issuerid;
+        }
+        return $DB->execute($sql, $params);
+    }
+
 }
