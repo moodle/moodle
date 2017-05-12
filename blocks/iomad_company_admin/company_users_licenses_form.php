@@ -194,22 +194,27 @@ class company_users_course_form extends moodleform {
                             $duedate = 0;
                         }
                         foreach ($coursestoassign as $addcourse) {
-                            $DB->insert_record('companylicense_users',
-                                               array('userid' => $this->userid,
-                                                     'licenseid' => $licenserecord['id'],
-                                                     'issuedate' => time(),
-                                                     'licensecourseid' => $addcourse->id));
+                            $assignrecord = array('userid' => $this->userid,
+                                                  'licenseid' => $licenserecord['id'],
+                                                  'isusing' => 0,
+                                                  'licensecourseid' => $addcourse->id);
 
-                            // Create an email event.
-                            $license = new stdclass();
-                            $license->length = $licenserecord['validlength'];
-                            $license->valid = date($CFG->iomad_date_format, $licenserecord['expirydate']);
-                            EmailTemplate::send('license_allocated', array('course' => $addcourse,
-                                                                           'user' => $this->user,
-                                                                           'due' => $duedate,
-                                                                           'license' => $license));
-                            $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $licenserecord['id']));
-                            $DB->update_record('companylicense', $licenserecord);
+                            // Check we are not adding multiple times.
+                            if (!$DB->get_record('companylicense_users', $assignrecord)) {
+                                $assignrecord['issuedate'] = time();
+                                $DB->insert_record('companylicense_users', $assignrecord);
+
+                                // Create an email event.
+                                $license = new stdclass();
+                                $license->length = $licenserecord['validlength'];
+                                $license->valid = date($CFG->iomad_date_format, $licenserecord['expirydate']);
+                                EmailTemplate::send('license_allocated', array('course' => $addcourse,
+                                                                               'user' => $this->user,
+                                                                               'due' => $duedate,
+                                                                               'license' => $license));
+                                $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $licenserecord['id']));
+                                $DB->update_record('companylicense', $licenserecord);
+                            }
                         }
                     }
                 }
@@ -270,7 +275,8 @@ if ($userid) {
 // Set the name for the page.
 $linktext = get_string('edit_users_title', 'block_iomad_company_admin');
 // Set the url.
-$linkurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
+$returnurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
+$linkurl = new moodle_url('/blocks/iomad_company_admin/company_users_licenses_form.php');
 
 // Print the page header.
 $PAGE->set_context($context);
@@ -280,7 +286,7 @@ $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('company_users_course_title', 'block_iomad_company_admin'));
 
 // Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+company_admin_fix_breadcrumb($PAGE, $linktext, $returnurl);
 
 $coursesform = new company_users_course_form($PAGE->url, $context, $companyid, $departmentid, $userid, $licenseid);
 
@@ -361,6 +367,8 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
 
         }
     }
+
+    echo "<a class='btn btn-primary' href='$returnurl'>" . get_string('cancel') . "</a>";
 
     echo $OUTPUT->footer();
 }

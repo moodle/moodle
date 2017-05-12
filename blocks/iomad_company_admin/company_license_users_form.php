@@ -231,26 +231,29 @@ class company_license_users_form extends moodleform {
                             $recordarray = array('licensecourseid' => $course,
                                                  'userid' => $adduser->id,
                                                  'licenseid' => $this->licenseid,
-                                                 'issuedate' => time());
+                                                 'isusing' => 0);
+
+                            // Check if we are not assigning multiple times.
                             if (!$DB->get_record('companylicense_users', $recordarray)) {
+                                $recordarray['issuedate'] = time();
                                 $DB->insert_record('companylicense_users', $recordarray);
                                 $count++;
+                                $due = optional_param_array('due', array(), PARAM_INT);
+                                if (!empty($due)) {
+                                    $duedate = strtotime($due['year'] . '-' . $due['month'] . '-' . $due['day'] . ' ' . $due['hour'] . ':' . $due['minute']);
+                                } else {
+                                    $duedate = 0;
+                                }
+                                // Create an email event.
+                                $license = new stdclass();
+                                $license->length = $licenserecord['validlength'];
+                                $license->valid = date($CFG->iomad_date_format, $licenserecord['expirydate']);
+                                EmailTemplate::send('license_allocated', array('course' => $course,
+                                                                               'user' => $adduser,
+                                                                               'due' => $duedate,
+                                                                               'license' => $license));
                             }
                         }
-                        $due = optional_param_array('due', array(), PARAM_INT);
-                        if (!empty($due)) {
-                            $duedate = strtotime($due['year'] . '-' . $due['month'] . '-' . $due['day'] . ' ' . $due['hour'] . ':' . $due['minute']);
-                        } else {
-                            $duedate = 0;
-                        }
-                        // Create an email event.
-                        $license = new stdclass();
-                        $license->length = $licenserecord['validlength'];
-                        $license->valid = date($CFG->iomad_date_format, $licenserecord['expirydate']);
-                        EmailTemplate::send('license_allocated', array('course' => $course,
-                                                                       'user' => $adduser,
-                                                                       'due' => $duedate,
-                                                                       'license' => $license));
                     }
                 }
 
