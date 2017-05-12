@@ -66,9 +66,9 @@ $string['pathsunsecuredataroot'] = 'A localização da pasta de dados não é se
 $string['pathswrongadmindir'] = 'A pasta <b>admin</b> não existe';
 $string['phpextension'] = 'Extensão <b>{$a}</b> do PHP';
 $string['phpversion'] = 'Versão do PHP';
-$string['phpversionhelp'] = '<p>A instalação do Moodle só é possível se no servidor estiver instalada, pelo menos, a versão 5.6.5 do PHP (a versão 7.x tem algumas limitações).</p>
-<p>A versão atualmente instalada é <b>{$a}</b>.</p>
-<p>É necessário atualizar a versão do PHP ou mudar para um novo servidor que possua a referida versão!</p>';
+$string['phpversionhelp'] = '<p>A instalação do Moodle só é possível se no servidor estiver instalada, pelo menos, a versão 5.6.5 do PHP (a versão 7.0.x tem algumas limitações).</p>
+<p>A versão atualmente instalada é {$a}.</p>
+<p>É necessário atualizar a versão do PHP ou migrar para um servidor com a referida versão.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'A apresentação desta página confirma a correta instalação e ativação do pacote <strong>{$a->packname} {$a->packversion}</strong> no servidor.';
 $string['welcomep30'] = 'Esta versão do pacote <strong>{$a->installername}</strong> inclui as aplicações necessárias para o correto funcionamento do  <strong>Moodle</strong>, nomeadamente:';
