@@ -40,6 +40,16 @@ defined('MOODLE_INTERNAL') || die();
 class api {
 
     /**
+     * Remove all linked logins that are using issuers that have been deleted.
+     *
+     * @param int $issuerid The issuer id of the issuer to check, or false to check all (defaults to all)
+     * @return boolean
+     */
+    public static function clean_orphaned_linked_logins($issuerid = false) {
+        return linked_login::delete_orphaned($issuerid);
+    }
+
+    /**
      * List linked logins
      *
      * Requires auth/oauth2:managelinkedlogins capability at the user context.
