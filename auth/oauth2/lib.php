@@ -40,7 +40,7 @@ function auth_oauth2_extend_navigation_user_settings(navigation_node $useraccoun
                                                      context_course $coursecontext) {
     global $USER;
 
-    if (!\core\session\manager::is_loggedinas()) {
+    if (\auth_oauth2\api::is_enabled() && !\core\session\manager::is_loggedinas()) {
         if (has_capability('auth/oauth2:managelinkedlogins', $context) && $user->id == $USER->id) {
 
             $parent = $useraccount->parent->find('useraccount', navigation_node::TYPE_CONTAINER);

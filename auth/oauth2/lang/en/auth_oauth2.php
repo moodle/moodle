@@ -82,6 +82,7 @@ $string['loginerror_cannotcreateaccounts'] = 'An account with your email address
 $string['notloggedindebug'] = 'The login attempt failed. Reason: {$a}';
 $string['notwhileloggedinas'] = 'Linked logins cannot be managed while logged in as another user.';
 $string['oauth2:managelinkedlogins'] = 'Manage own linked login accounts';
+$string['notenabled'] = 'Sorry, OAuth 2 authentication plugin is not enabled';
 $string['plugindescription'] = 'This authentication plugin displays a list of the configured identity providers on the login page. Selecting an identity provider allows users to login with their credentials from an OAuth 2 provider.';
 $string['pluginname'] = 'OAuth 2';
 $string['alreadylinked'] = 'This external account is already linked to an account on this site';

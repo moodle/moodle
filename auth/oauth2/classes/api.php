@@ -350,4 +350,14 @@ class api {
 
         return $DB->delete_records(linked_login::TABLE, ['userid' => $userid]);
     }
+
+    /**
+     * Is the plugin enabled.
+     *
+     * @return bool
+     */
+    public static function is_enabled() {
+        $plugininfo = \core_plugin_manager::instance()->get_plugin_info('auth_oauth2');
+        return $plugininfo->is_enabled();
+    }
 }

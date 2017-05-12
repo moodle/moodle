@@ -35,6 +35,10 @@ $PAGE->set_heading($strheading);
 
 require_login();
 
+if (!\auth_oauth2\api::is_enabled()) {
+    throw new \moodle_exception('notenabled', 'auth_oauth2');
+}
+
 $action = optional_param('action', '', PARAM_ALPHAEXT);
 if ($action == 'new') {
     require_sesskey();
