@@ -105,7 +105,7 @@ class api {
             $userid = $USER->id;
         }
 
-        if (linked_login::count_records(['username' => $userinfo['username']]) > 0) {
+        if (linked_login::has_existing_issuer_match($issuer, $userinfo['username'])) {
             throw new moodle_exception('alreadylinked', 'auth_oauth2');
         }
 
@@ -148,7 +148,7 @@ class api {
         $record->issuerid = $issuer->get('id');
         $record->username = $userinfo['username'];
         $record->userid = $userid;
-        if (linked_login::count_records(['username' => $userinfo['username']]) > 0) {
+        if (linked_login::has_existing_issuer_match($issuer, $userinfo['username'])) {
             throw new moodle_exception('alreadylinked', 'auth_oauth2');
         }
         $record->email = $userinfo['email'];
@@ -242,7 +242,7 @@ class api {
         require_once($CFG->dirroot.'/user/profile/lib.php');
         require_once($CFG->dirroot.'/user/lib.php');
 
-        if (linked_login::count_records(['username' => $userinfo['username']]) > 0) {
+        if (linked_login::has_existing_issuer_match($issuer, $userinfo['username'])) {
             throw new moodle_exception('alreadylinked', 'auth_oauth2');
         }
 
