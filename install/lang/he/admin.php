@@ -42,4 +42,4 @@ $string['cliunknowoption'] = 'אפשרויות לא מוכרות :
 אנא השתמש באפשרות העזרה.';
 $string['cliyesnoprompt'] = 'רשום y (שפרושו כן) או n (שפרושו לא)';
 $string['environmentrequireinstall'] = 'נדרש להתקין ולאפשר הרחבה זו';
-$string['environmentrequireversion'] = 'גירסה {$a->needed} נדרשת אך הגירסה הנוכחית היא {$a->current}';
+$string['environmentrequireversion'] = 'גרסה {$a->needed} נדרשת אך הגרסה הנוכחית היא {$a->current}';
