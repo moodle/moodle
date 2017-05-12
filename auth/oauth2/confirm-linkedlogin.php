@@ -72,7 +72,7 @@ if ($confirmed) {
     echo $OUTPUT->footer();
     exit;
 } else {
-    print_error('invalidconfirmdata');
+    \core\notification::error(get_string('confirmationinvalid', 'auth_oauth2'));
 }
 
 redirect("$CFG->wwwroot/");
