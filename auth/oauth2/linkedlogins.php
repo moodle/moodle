@@ -45,6 +45,9 @@ if ($action == 'new') {
     $issuerid = required_param('issuerid', PARAM_INT);
     $issuer = \core\oauth2\api::get_issuer($issuerid);
 
+    if (!$issuer->is_authentication_supported() || !$issuer->get('showonloginpage') || !$issuer->get('enabled')) {
+        throw new \moodle_exception('issuernologin', 'auth_oauth2');
+    }
 
     // We do a login dance with this issuer.
     $addparams = ['action' => 'new', 'issuerid' => $issuerid, 'sesskey' => sesskey()];
@@ -84,25 +87,40 @@ $renderer = $PAGE->get_renderer('auth_oauth2');
 $linkedloginid = optional_param('id', '', PARAM_RAW);
 $linkedlogin = null;
 
+auth_oauth2\api::clean_orphaned_linked_logins();
+
+$issuers = \core\oauth2\api::get_all_issuers();
+
+$anyshowinloginpage = false;
+$issuerbuttons = array();
+foreach ($issuers as $issuer) {
+    if (!$issuer->is_authentication_supported() || !$issuer->get('showonloginpage') || !$issuer->get('enabled')) {
+        continue;
+    }
+    $anyshowinloginpage = true;
+
+    $addparams = ['action' => 'new', 'issuerid' => $issuer->get('id'), 'sesskey' => sesskey(), 'logout' => true];
+    $addurl = new moodle_url('/auth/oauth2/linkedlogins.php', $addparams);
+    $issuerbuttons[$issuer->get('id')] = $renderer->single_button($addurl, get_string('createnewlinkedlogin', 'auth_oauth2', s($issuer->get('name'))));
+}
+
+if (!$anyshowinloginpage) {
+    // Just a notification that we can't make it.
+    $preferencesurl = new moodle_url('/user/preferences.php');
+    redirect($preferencesurl, get_string('noissuersavailable', 'auth_oauth2'), null, \core\output\notification::NOTIFY_WARNING);
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('linkedlogins', 'auth_oauth2'));
 echo $OUTPUT->doc_link('Linked_Logins', get_string('linkedloginshelp', 'auth_oauth2'));
-auth_oauth2\api::clean_orphaned_linked_logins();
 $linkedlogins = auth_oauth2\api::get_linked_logins();
 
 echo $renderer->linked_logins_table($linkedlogins);
 
-$issuers = \core\oauth2\api::get_all_issuers();
-
-foreach ($issuers as $issuer) {
-    if (!$issuer->is_authentication_supported()) {
-        continue;
-    }
-
-    $addparams = ['action' => 'new', 'issuerid' => $issuer->get('id'), 'sesskey' => sesskey(), 'logout' => true];
-    $addurl = new moodle_url('/auth/oauth2/linkedlogins.php', $addparams);
-    echo $renderer->single_button($addurl, get_string('createnewlinkedlogin', 'auth_oauth2', s($issuer->get('name'))));
+foreach ($issuerbuttons as $issuerbutton) {
+    echo $issuerbutton;
 }
+
 echo $OUTPUT->footer();
 
 
