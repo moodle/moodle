@@ -2714,7 +2714,7 @@ class restore_calendarevents_structure_step extends restore_structure_step {
                 'uuid'           => $data->uuid,
                 'sequence'       => $data->sequence,
                 'timemodified'   => $this->apply_date_offset($data->timemodified),
-                'priority'       => $data->priority);
+                'priority'       => isset($data->priority) ? $data->priority : null);
         if ($this->name == 'activity_calendar') {
             $params['instance'] = $this->task->get_activityid();
         } else {
