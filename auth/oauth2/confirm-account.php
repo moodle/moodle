@@ -34,6 +34,10 @@ $PAGE->set_context(context_system::instance());
 
 $auth = get_auth_plugin('oauth2');
 
+if (!\auth_oauth2\api::is_enabled()) {
+    throw new \moodle_exception('notenabled', 'auth_oauth2');
+}
+
 $confirmed = $auth->user_confirm($username, $usersecret);
 
 if ($confirmed == AUTH_CONFIRM_ALREADY) {
