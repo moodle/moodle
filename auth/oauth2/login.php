@@ -29,6 +29,10 @@ $wantsurl = new moodle_url(optional_param('wantsurl', '', PARAM_URL));
 
 require_sesskey();
 
+if (!\auth_oauth2\api::is_enabled()) {
+    throw new \moodle_exception('notenabled', 'auth_oauth2');
+}
+
 $issuer = new \core\oauth2\issuer($issuerid);
 
 $returnparams = ['wantsurl' => $wantsurl, 'sesskey' => sesskey(), 'id' => $issuerid];

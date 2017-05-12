@@ -34,6 +34,10 @@ $redirect = optional_param('redirect', '', PARAM_LOCALURL);    // Where to redir
 $PAGE->set_url('/auth/oauth2/confirm-linkedlogin.php');
 $PAGE->set_context(context_system::instance());
 
+if (!\auth_oauth2\api::is_enabled()) {
+    throw new \moodle_exception('notenabled', 'auth_oauth2');
+}
+
 $confirmed = \auth_oauth2\api::confirm_link_login($userid, $username, $issuerid, $token);
 
 if ($confirmed) {
