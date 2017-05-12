@@ -2245,7 +2245,7 @@ class company {
 
         foreach ($childcompanies as $childid) {
             $childcompany = new company($childid);
-            $childcompany->unassign_user_from_company($userid, 0, $event->other['usertype'], true);
+            $childcompany->unassign_user_from_company($userid, true);
         }
         
         return true;
