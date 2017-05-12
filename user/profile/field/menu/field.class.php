@@ -59,7 +59,8 @@ class profile_field_menu extends profile_field_base {
             $this->options[''] = get_string('choose').'...';
         }
         foreach ($options as $key => $option) {
-            $this->options[$option] = format_string($option); // Multilang formatting with filters.
+            // Multilang formatting with filters.
+            $this->options[$option] = format_string($option, true, ['context' => context_system::instance()]);
         }
 
         // Set the data key.
