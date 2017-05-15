@@ -230,6 +230,8 @@ class all_department_course_selector extends company_course_selector_base {
         $this->companyid  = $options['companyid'];
         $this->departmentid = $options['departmentid'];
         $this->license = $options['license'];
+        $this->parentid = $options['parentid'];
+        $this->selected = array(2,3);
         parent::__construct($name, $options);
     }
 
@@ -239,6 +241,7 @@ class all_department_course_selector extends company_course_selector_base {
         $options['file']    = 'blocks/iomad_company_admin/lib/course_selectors.php';
         $options['departmentid'] = $this->departmentid;
         $options['license'] = $this->license;
+        $options['parentid'] = $this->parentid;
         return $options;
     }
 
@@ -257,6 +260,10 @@ class all_department_course_selector extends company_course_selector_base {
             $departmentsql = "";
         }
 
+        // Set up initial variables.
+        $licensesql = "";
+        $parentsql = "";
+
         // Check if its a licensed course.
         if ($this->license) {
             if ($licensecourses = $DB->get_records('iomad_courses', array('licensed' => 1), null, 'courseid')) {
@@ -264,8 +271,22 @@ class all_department_course_selector extends company_course_selector_base {
             } else {
                 $licensesql = "";
             }
+            // Are wew splitting an existing license?
+            if (!empty($this->parentid)) {
+                if ($parentcourses = $DB->get_records('companylicense_courses', array('licenseid' => $this->parentid), null, 'courseid')) {
+                    $parentsql = " AND c.id IN (".implode(',', array_keys($parentcourses)).")";
+                } else {
+                    $parentsql = "";
+                }
+            }
         } else {
+            if (empty($this->parentid)) {
                 $licensesql = "";
+                $parentsql = "";
+            } else {
+                $licensesql = "";
+                $parentsql = " 1 = 2 ";
+            }
         }
         $fields      = 'SELECT ' . $this->required_fields_sql('c');
         $countfields = 'SELECT COUNT(1)';
@@ -286,6 +307,8 @@ class all_department_course_selector extends company_course_selector_base {
             }
         }
 
+        $sql .= $parentsql;
+
         $order = ' ORDER BY c.fullname ASC';
 
         if (!$this->is_validating()) {
@@ -294,7 +317,6 @@ class all_department_course_selector extends company_course_selector_base {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
-
         $availablecourses = $DB->get_records_sql($fields . $sql . $order, $params);
 
         // Find global courses.

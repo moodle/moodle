@@ -218,7 +218,7 @@ class company_license_users_form extends moodleform {
                         print_error('invaliduserdepartment', 'block_iomad_company_management');
                     }
 
-                    foreach ($courses as $course) {
+                    foreach ($courses as $courseid) {
                         if ($count >= $numberoflicenses) {
                             // Set the used amount.
                             $licenserecord['used'] = $count;
@@ -228,7 +228,7 @@ class company_license_users_form extends moodleform {
                         }
                         $allow = true;
                         if ($allow) {
-                            $recordarray = array('licensecourseid' => $course,
+                            $recordarray = array('licensecourseid' => $courseid,
                                                  'userid' => $adduser->id,
                                                  'licenseid' => $this->licenseid,
                                                  'isusing' => 0);
@@ -244,24 +244,20 @@ class company_license_users_form extends moodleform {
                                 } else {
                                     $duedate = 0;
                                 }
-                                // Create an email event.
-                                $license = new stdclass();
-                                $license->length = $licenserecord['validlength'];
-                                $license->valid = date($CFG->iomad_date_format, $licenserecord['expirydate']);
-                                EmailTemplate::send('license_allocated', array('course' => $course,
-                                                                               'user' => $adduser,
-                                                                               'due' => $duedate,
-                                                                               'license' => $license));
+
+                                // Create an event.
+                                $eventother = array('licenseid' => $this->license->id,
+                                                    'duedate' => $duedate);
+                                $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
+                                                                                                              'objectid' => $this->license->id,
+                                                                                                              'courseid' => $courseid,
+                                                                                                              'userid' => $adduser->id,
+                                                                                                              'other' => $eventother));
+                                $event->trigger();
                             }
                         }
                     }
                 }
-
-                // Set the used amount for the license.
-                $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $this->licenseid));
-                $DB->update_record('companylicense', $licenserecord);
-                $this->license->used = $licenserecord['used'];
-
 
                 $this->potentialusers->invalidate_selected_users();
                 $this->currentusers->invalidate_selected_users();
@@ -271,34 +267,34 @@ class company_license_users_form extends moodleform {
         // Process incoming unallocations.
         if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
             $licensestounassign = optional_param_array('currentlyenrolledusers', null, PARAM_INT);
-            $count = $this->license->used;
             $licenserecord = (array) $this->license;
 
             if (!empty($licensestounassign)) {
                 foreach ($licensestounassign as $unassignid) {
-                    $licensedata = $DB->get_record('companylicense_users',array('id' => $unassignid, 'licenseid' => $this->licenseid), 'userid,isusing', MUST_EXIST);
-
-                    // Check the userid is valid.
-                    if (!company::check_valid_user($this->selectedcompany, $licensedata->userid, $this->departmentid)) {
-                        print_error('invaliduserdepartment', 'block_iomad_company_management');
-                    }
-
-                    if (!$licensedata->isusing) {
-                        $DB->delete_records('companylicense_users', array('id' => $unassignid));
-                        $count--;
-                        // Create an email event.
-                        EmailTemplate::send('license_removed', array('course' => $licensedata->licensecourseid, 'user' => $licensedata->userid));
+                    foreach($courses as $courseid) {
+                        $licensedata = $DB->get_record('companylicense_users',array('id' => $unassignid,
+                                                                                    'licenseid' => $this->license->id,
+                                                                                    'licensecourseid' => $courseid), 'userid,isusing', MUST_EXIST);
+    
+                        // Check the userid is valid.
+                        if (!company::check_valid_user($this->selectedcompany, $licensedata->userid, $this->departmentid)) {
+                            print_error('invaliduserdepartment', 'block_iomad_company_management');
+                        }
+    
+                        if (!$licensedata->isusing) {
+                            $DB->delete_records('companylicense_users', array('id' => $unassignid));
+    
+                            // Create an event.
+                            $eventother = array('licenseid' => $this->license->id);
+                            $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($courseid),
+                                                                                                            'objectid' => $this->license->id,
+                                                                                                            'courseid' => $courseid,
+                                                                                                            'userid' => $licensedata->userid,
+                                                                                                            'other' => $eventother));
+                            $event->trigger();
+                        }
                     }
                 }
-
-                // Update the number of allocated records..
-                if ($count < 0) {
-                    // Cant have less than 0 licenses.
-                    $count = 0;
-                }
-                $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $this->licenseid));
-                $DB->update_record('companylicense', $licenserecord);
-                $this->license->used = $licenserecord['used'];
 
                 $this->potentialusers->invalidate_selected_users();
                 $this->currentusers->invalidate_selected_users();

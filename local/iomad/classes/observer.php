@@ -115,4 +115,59 @@ class local_iomad_observer {
         company::company_user_unassigned($event);
         return true;
     }
+
+    /**
+     * Triggered via block_iomad_company_admin::user_license_assigned event.
+     *
+     * @param \block_iomad_company_admin\event\user_license_assigned $event
+     * @return bool true on success.
+     */
+    public static function user_license_assigned($event) {
+        company::user_license_assigned($event);
+        return true;
+    }
+
+    /**
+     * Triggered via block_iomad_company_admin::user_license_unassigned event.
+     *
+     * @param \block_iomad_company_admin\event\user_license_unassigned $event
+     * @return bool true on success.
+     */
+    public static function user_license_unassigned($event) {
+        company::user_license_unassigned($event);
+        return true;
+    }
+
+    /**
+     * Triggered via block_iomad_company_admin::company_license_created event.
+     *
+     * @param \block_iomad_company_admin\event\company_license_created $event
+     * @return bool true on success.
+     */
+    public static function company_license_created($event) {
+        company::company_license_created($event);
+        return true;
+    }
+
+    /**
+     * Triggered via block_iomad_company_admin::company_license_deleted event.
+     *
+     * @param \block_iomad_company_admin\event\company_license_deleted $event
+     * @return bool true on success.
+     */
+    public static function company_license_deleted($event) {
+        company::company_license_deleted($event);
+        return true;
+    }
+
+    /**
+     * Triggered via block_iomad_company_admin::company_license_updated event.
+     *
+     * @param \block_iomad_company_admin\event\company_license_updated $event
+     * @return bool true on success.
+     */
+    public static function company_license_updated($event) {
+        company::company_license_updated($event);
+        return true;
+    }
 }

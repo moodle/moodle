@@ -1045,7 +1045,7 @@ class block_iomad_company_admin_external extends external_api {
      * @return array of department records.
      */
     public static function create_licenses($licenses = array()) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
 
         // Validate parameters
         $params = self::validate_parameters(self::create_licenses_parameters(), $licenses);
@@ -1062,6 +1062,17 @@ class block_iomad_company_admin_external extends external_api {
             // Create the License record
             $licenseid = $DB->insert_record('companylicense', $license);
             $newlicense = $DB->get_record('companylicense', array('id' => $licenseid));
+
+            // Create an event to deal with an parent license allocations.
+            $eventother = array('licenseid' => $licenseid,
+                                'parentid' => $newlicense->parentid);
+
+            $event = \block_iomad_company_admin\event\company_license_created::create(array('context' => context_system::instance(),
+                                                                                            'userid' => $USER->id,
+                                                                                            'objectid' => $licenseid,
+                                                                                            'other' => $eventother));
+
+            $event->trigger();
             $licenseinfo[] = (array)$newlicense;
         }
 
@@ -1126,7 +1137,7 @@ class block_iomad_company_admin_external extends external_api {
      * @return boolean success
      */
     public static function edit_licenses($licenses) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
 
         // Validate parameters
         $params = self::validate_parameters(self::edit_licenses_parameters(), array('licenses' => $licenses));
@@ -1152,6 +1163,16 @@ class block_iomad_company_admin_external extends external_api {
 
             // Update the company record
             $DB->update_record('companylicense', $oldlicense);
+
+            // Create an event to deal with an parent license allocations.
+            $eventother = array('licenseid' => $oldlicense->id,
+                                'parentid' => $oldlicense->parentid);
+
+            $event = \block_iomad_company_admin\event\company_license_created::create(array('context' => context_system::instance(),
+                                                                                            'userid' => $USER->id,
+                                                                                            'objectid' => $oldlicense->id,
+                                                                                            'other' => $eventother));
+            $event->trigger();
         }
 
         return true;
@@ -1196,7 +1217,7 @@ class block_iomad_company_admin_external extends external_api {
      * @return boolean success
      */
     public static function delete_licenses($licenses) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
 
         // Validate parameters
         $params = self::validate_parameters(self::delete_licenses_parameters(), array('licenses' => $licenses));
@@ -1216,6 +1237,16 @@ class block_iomad_company_admin_external extends external_api {
             }
 
             $DB->delete_records('companylicense', array('id' => $id));
+
+            // Create an event to deal with parent license allocations.
+            $eventother = array('licenseid' => $oldlicense->id,
+                                'parentid' => $oldlicense->parentid);
+    
+            $event = \block_iomad_company_admin\event\company_license_deleted::create(array('context' => context_system::instance(),
+                                                                                            'userid' => $USER->id,
+                                                                                            'objectid' => $oldlicense->parentid,
+                                                                                            'other' => $eventother));
+            $event->trigger();
         }
 
         return true;
@@ -1318,11 +1349,15 @@ class block_iomad_company_admin_external extends external_api {
             $params['issuedate'] = $timestamp;
             $DB->insert_record('companylicense_users', $params);
 
-            // Send the email.
-            EmailTemplate::send('license_allocated', array('course' => $course,
-                                                           'user' => $user,
-                                                            'due' => 0,
-                                                            'license' => $oldlicense));
+            // Create an event.
+            $eventother = array('licenseid' => $licenseid,
+                                'duedate' => 0);
+            $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_system::instance(),
+                                                                                          'objectid' => $licenseid,
+                                                                                          'courseid' => $course->id,
+                                                                                          'userid' => $user->id,
+                                                                                          'other' => $eventother));
+            $event->trigger();
         }
 
         return true;
@@ -1383,6 +1418,8 @@ class block_iomad_company_admin_external extends external_api {
 
         foreach ($params['licenses'] as $license) {
 
+            $licenseid = $license['licenseid'];
+
             // Does this license exist?
             if (!$oldlicense = $DB->get_record('companylicense', array('id' => $licenseid))) {
                 throw new invalid_parameter_exception("License id=$id does not exist");
@@ -1413,11 +1450,14 @@ class block_iomad_company_admin_external extends external_api {
             $params['issuedate'] = $timestamp;
             $DB->insert_record('companylicense_users', $params);
 
-            // Send the email.
-            EmailTemplate::send('license_removed', array('course' => $course,
-                                                         'user' => $user,
-                                                         'due' => 0,
-                                                         'license' => $oldlicense));
+            // Create an event.
+            $eventother = array('licenseid' => $licenseid);
+            $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_system::instance(),
+                                                                                            'objectid' => $licenseid,
+                                                                                            'courseid' => $course->id,
+                                                                                            'userid' => $user->id,
+                                                                                            'other' => $eventother));
+            $event->trigger();
         }
 
         return true;

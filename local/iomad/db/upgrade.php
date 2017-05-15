@@ -1401,5 +1401,39 @@ function xmldb_local_iomad_upgrade($oldversion) {
         // Iomad savepoint reached.
         upgrade_plugin_savepoint(true, 2017041702, 'local', 'iomad');
     }
+
+    if ($oldversion < 2017041705) {
+
+        // Define field parentid to be added to companylicense.
+        $table = new xmldb_table('companylicense');
+        $field = new xmldb_field('parentid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'companyid');
+
+        // Conditionally launch add field parentid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017041705, 'local', 'iomad');
+    }
+
+    if ($oldversion < 2017041707) {
+
+        $systemcontext = context_system::instance();
+
+        // Add the edit my licenses capability.
+        $companymanagercaps = array(
+            'block/iomad_company_admin:edit_my_licenses',
+        );
+
+        if ($companymanager = $DB->get_record('role', array('shortname' => 'companymanager'))) {
+            foreach ($companymanagercaps as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $companymanager->id, $systemcontext->id );
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2017041707, 'local', 'iomad');
+    }
+
     return $result;
 }

@@ -67,25 +67,43 @@ if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_sys
 
 if ($delete and confirm_sesskey()) {              // Delete a selected company, after confirmation.
 
-    iomad::require_capability('block/iomad_company_admin:edit_licenses', $context);
+    if ($company->is_child_license($delete)) {
+        iomad::require_capability('block/iomad_company_admin:edit_my_licenses', $context);
+    } else {
+        iomad::require_capability('block/iomad_company_admin:edit_licenses', $context);
+    }
 
     $license = $DB->get_record('companylicense', array('id' => $delete), '*', MUST_EXIST);
-
     if ($confirm != md5($delete)) {
         echo $OUTPUT->header();
         // TODO SET THE LICENSE NAME.
         $name = $license->name;
-        echo $OUTPUT->heading(get_string('deletelicense', 'block_iomad_company_admin'), 2, 'headingblock header');
-        $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('companydeletelicensecheckfull', 'block_iomad_company_admin', "'$name'"),
-                              new moodle_url('company_license_list.php', $optionsyes), 'company_license_list.php');
-        echo $OUTPUT->footer();
-        die;
+        if ($license->used > 0) {
+            notice(get_string('licenseinuse', 'block_iomad_company_admin'), $linkurl);
+        } else {
+            echo $OUTPUT->heading(get_string('deletelicense', 'block_iomad_company_admin'), 2, 'headingblock header');
+            $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
+    
+            echo $OUTPUT->confirm(get_string('companydeletelicensecheckfull', 'block_iomad_company_admin', "'$name'"),
+                                  new moodle_url('company_license_list.php', $optionsyes), 'company_license_list.php');
+            echo $OUTPUT->footer();
+            die;
+        }
     } else if (data_submitted()) {
         // Actually delete license.
         if (!$DB->delete_records('companylicense', array('id' => $delete))) {
             print_error('error while deleting license');
         }
+
+        // Create an event to deal with an parent license allocations.
+        $eventother = array('licenseid' => $license->id,
+                            'parentid' => $license->parentid);
+
+        $event = \block_iomad_company_admin\event\company_license_deleted::create(array('context' => context_system::instance(),
+                                                                                        'userid' => $USER->id,
+                                                                                        'objectid' => $license->parentid,
+                                                                                        'other' => $eventother));
+        $event->trigger();
     }
 }
 
@@ -105,6 +123,7 @@ flush();
 
 $stredit   = get_string('edit');
 $strdelete = get_string('delete');
+$strsplit = get_string('split', 'block_iomad_company_admin');
 $straddlicense = get_string('licenseaddnew', 'block_iomad_company_admin');
 $strlicensename = get_string('licensename', 'block_iomad_company_admin');
 $strcoursesname = get_string('allocatedcourses', 'block_iomad_company_admin');
@@ -126,18 +145,36 @@ $table->align = array ("left", "left", "left", "left", "center", "center", "cent
 $table->width = "95%";
 
 if ($departmentid == $companydepartment->id) {
-    $licenses = $DB->get_records('companylicense', array('companyid' => $companyid));
+    $licenses = $DB->get_records_sql("SELECT * FROM {companylicense}
+                                      WHERE companyid = :companyid
+                                      OR parentid IN (
+                                        SELECT id FROM {companylicense}
+                                        WHERE companyid = :parentid)",
+                                       array('companyid' => $companyid,
+                                             'parentid' => $companyid));
 
     // Cycle through the results.
     foreach ($licenses as $license) {
         // Set up the edit buttons.
-        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context)) {
-            $deletebutton = "<a href=\"company_license_list.php?delete=$license->id&amp;sesskey=".sesskey()."\">$strdelete</a>";
-            $editbutton = "<a href='" . new moodle_url('company_license_edit_form.php',
+        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
+            (iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context) && !empty($license->parentid))) {
+            $deletebutton = "<a class='btn btn-primary' href='". 
+                             new moodle_url('company_license_list.php', array('delete' => $license->id,
+                                                                              'sesskey' => sesskey())) ."'>$strdelete</a>";
+            $editbutton = "<a class='btn btn-primary' href='" . new moodle_url('company_license_edit_form.php',
                            array("licenseid" => $license->id, 'departmentid' => $departmentid)) . "'>$stredit</a>";
         } else {
             $deletebutton = "";
             $editbutton = "";
+        }
+        // Set up the edit buttons.
+        if ((iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
+            iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context)) &&
+            $license->used < $license->allocation) {
+            $splitbutton = "<a class='btn btn-primary' href='" . new moodle_url('company_license_edit_form.php',
+                           array("parentid" => $license->id)) . "'>$strsplit</a>";
+        } else {
+            $splitbutton = "";
         }
         $licensecourses = $DB->get_records('companylicense_courses', array('licenseid' => $license->id));
         $coursestring = "";
@@ -160,6 +197,7 @@ if ($departmentid == $companydepartment->id) {
                            "$license->allocation",
                            "$license->used",
                            $editbutton,
+                           $splitbutton,
                            $deletebutton);
     }
 } else if ($licenses = company::get_recursive_departments_licenses($companydepartment->id)) {

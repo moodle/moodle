@@ -204,16 +204,15 @@ class company_users_course_form extends moodleform {
                                 $assignrecord['issuedate'] = time();
                                 $DB->insert_record('companylicense_users', $assignrecord);
 
-                                // Create an email event.
-                                $license = new stdclass();
-                                $license->length = $licenserecord['validlength'];
-                                $license->valid = date($CFG->iomad_date_format, $licenserecord['expirydate']);
-                                EmailTemplate::send('license_allocated', array('course' => $addcourse,
-                                                                               'user' => $this->user,
-                                                                               'due' => $duedate,
-                                                                               'license' => $license));
-                                $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $licenserecord['id']));
-                                $DB->update_record('companylicense', $licenserecord);
+                                // Create an event.
+                                $eventother = array('licenseid' => $licenserecord['id'],
+                                                    'duedate' => $duedate);
+                                $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($addcourse->id),
+                                                                                                              'objectid' => $licenserecord['id'],
+                                                                                                              'courseid' => $addcourse->id,
+                                                                                                              'userid' => $this->userid,
+                                                                                                              'other' => $eventother));
+                                $event->trigger();
                             }
                         }
                     }
@@ -236,8 +235,16 @@ class company_users_course_form extends moodleform {
                                                                    'isusing' => 0))) {
                         $licenserecord = (array) $DB->get_record('companylicense', array('id' => $userlicenserecord->licenseid));
                         $DB->delete_records('companylicense_users', array('id' => $userlicenserecord->id));
-                        $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $licenserecord['id']));
-                        $DB->update_record('companylicense', $licenserecord);
+
+                        // Create an event.
+                        $eventother = array('licenseid' => $licenserecord['id'],
+                                            'duedate' => 0);
+                        $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($removecourse->id),
+                                                                                                        'objectid' => $licenserecord['id'],
+                                                                                                        'courseid' => $removecourse->id,
+                                                                                                        'userid' => $this->userid,
+                                                                                                        'other' => $eventother));
+                        $event->trigger();
                     }
                 }
 

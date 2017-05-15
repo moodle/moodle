@@ -213,6 +213,63 @@ class company {
     }
 
     /**
+     * Creates an array of child companies to be used in a Select menu
+     *
+     * Returns array;
+     *
+     **/
+    public function get_child_companies() {
+        global $DB;
+
+        $childcompanies = $DB->get_records('company', array('parentid' => $this->id));
+
+        return $childcompanies;
+    }
+    
+    /**
+     * Creates a recursive array of child companies to be used in a Select menu
+     *
+     * Returns array;
+     *
+     **/
+    public function get_child_companies_recursive() {
+        global $DB;
+
+        $returnarray = array();
+
+        $childcompanies = $this->get_child_companies();
+        foreach ($childcompanies as $child) {
+            $returnarray[$child->id] = $child;
+            $childcompany = new company($child->id);
+            $returnarray = $returnarray + $childcompany->get_child_companies_recursive();
+        }
+        return $returnarray;
+    }
+    
+    /**
+     * Creates an array of child companies to be used in a Select menu
+     *
+     * Returns array;
+     *
+     **/
+    public function get_child_companies_select() {
+        global $DB, $USER;
+
+        $companyselect = array();
+
+        // Get all of the child companies.
+        $companies = $this->get_child_companies_recursive();
+
+        foreach ($companies as $company) {
+            if (empty($company->suspended)) {
+                $companyselect[$company->id] = $company->name;
+            }
+        }
+
+        return $companyselect;
+    }
+
+    /**
      * Gets the name of a company given its ID
      *
      * Parameters -
@@ -578,24 +635,6 @@ class company {
         global $DB;
 
         return $DB->get_records('company_users', array('companyid' => $this->id, 'managertype' => $managertype), null, 'userid');
-    }
-
-
-    public function get_child_companies() {
-        global $DB;
-
-        $returnchildren = array();
-
-        // Do we have any child companies?
-        if ($children = $DB->get_records('company', array('parentid' => $this->id), null, 'id')) {
-            foreach ($children as $child) {
-                $returnchildren[$child->id] = $child->id;
-                $childcompany = new company($child->id);
-                $returnchildren = $returnchildren + $childcompany->get_child_companies();
-            }
-        }
-
-        return $returnchildren;
     }
 
     // Department functions.
@@ -1447,6 +1486,76 @@ class company {
         }
     }
 
+    /** Update license usage.
+     *
+     * Parameters -
+     *              $licenseid = int;
+     *
+     **/
+    public static function update_license_usage($licenseid) {
+        global $DB;
+
+        // Get the allocation from any child licenses.
+        if ($childusage = $DB->get_records_sql("SELECT sum(allocation) AS total
+                                                FROM {companylicense}
+                                                WHERE parentid = :parentid",
+                                                array('parentid' => $licenseid))) {
+            $child = array_pop($childusage);
+            $childtotal = $child->total;
+        } else {
+            $childtotal = 0;
+        }
+
+        // Get the number of user assigned licenses for this license.
+        if ($userusage = $DB->get_records_sql("SELECT count(id) AS total
+                                               FROM {companylicense_users}
+                                               WHERE licenseid = :licenseid",
+                                               array('licenseid' => $licenseid))) {
+
+            $user = array_pop($userusage);
+            $usertotal = $user->total;
+        } else {
+            $usertotal = 0;
+        }
+
+        // If we have a license, update it.
+        if ($license = $DB->get_record('companylicense', array('id' => $licenseid))) {
+            $license->used = $childtotal + $usertotal;
+            $DB->update_record('companylicense', $license);
+        }
+    }
+
+
+    /** Check if a license is in a child company.
+     *
+     * Parameters -
+     *              $licenseid = int;
+     *
+     * Returns Boolean
+     *
+     **/
+    public function is_child_license($licenseid) {
+        global $DB;
+
+        if (!$licenseinfo = $DB->get_record('companylicense', array('id' => $licenseid))) {
+echo "A</br>";
+            return false;
+        }
+        // Get the child companies.
+        $childcompanies = $this->get_child_companies_recursive();
+
+        // Check if they match the license company?
+        foreach ($childcompanies as $childcompany) {
+            if ($licenseinfo->companyid == $childcompany->id) {
+                // If so then it is.
+                return true;
+            }
+        }
+
+        // Default return false.
+        return false;
+    }
+
     // Shared course stuff.
 
     /**
@@ -1875,8 +1984,11 @@ class company {
             return true;
         }
 
+        // Is it a child license?
+        $company = new company($companyid);
+        
         // Return a false by default.
-        return false;
+        return $company->is_child_license($licenseid);
     }
 
     /**
@@ -2248,6 +2360,158 @@ class company {
             $childcompany->unassign_user_from_company($userid, true);
         }
         
+        return true;
+    }
+
+    /**
+     * Triggered via user_license_assigned event.
+     *
+     * @param \block_iomad_company_user\event\user_license_assigned $event
+     * @return bool true on success.
+     */
+    public static function user_license_assigned(\block_iomad_company_admin\event\user_license_assigned $event) {
+        global $DB, $CFG;
+
+        $userid = $event->userid;
+        $licenseid = $event->other['licenseid'];
+        $courseid = $event->courseid;
+        $duedate = $event->other['duedate'];
+
+        if (!$licenserecord = $DB->get_record('companylicense', array('id'=>$licenseid))) {
+            return;
+        }
+
+        if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+            return;
+        }
+
+        if (!$user = $DB->get_record('user', array('id' => $userid))) {
+            return;
+        }
+
+        $license = new stdclass();
+        $license->length = $licenserecord->validlength;
+        $license->valid = date($CFG->iomad_date_format, $licenserecord->expirydate);
+                                
+        // Send out the email.
+        EmailTemplate::send('license_allocated', array('course' => $course,
+                                                       'user' => $user,
+                                                       'due' => $duedate,
+                                                       'license' => $license));
+
+        // Update the license usage.
+        self::update_license_usage($licenseid);
+
+        return true;
+    }
+
+    /**
+     * Triggered via user_license_unassigned event.
+     *
+     * @param \block_iomad_company_user\event\user_license_unassigned $event
+     * @return bool true on success.
+     */
+    public static function user_license_unassigned(\block_iomad_company_admin\event\user_license_unassigned $event) {
+        global $DB, $CFG;
+
+        $userid = $event->userid;
+        $licenseid = $event->other['licenseid'];
+        $courseid = $event->courseid;
+
+        if (!$licenserecord = $DB->get_record('companylicense', array('id' => $licenseid))) {
+            return;
+        }
+
+        if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+            return;
+        }
+
+        if (!$user = $DB->get_record('user', array('id' => $userid))) {
+            return;
+        }
+
+        $license = new stdclass();
+        $license->length = $licenserecord->validlength;
+        $license->valid = date($CFG->iomad_date_format, $licenserecord->expirydate);
+                                
+        // Send out the email.
+        EmailTemplate::send('license_removed', array('course' => $course,
+                                                     'user' => $user,
+                                                     'license' => $license));
+
+        // Update the license usage.
+        self::update_license_usage($licenseid);
+
+        return true;
+    }
+
+    /**
+     * Triggered via company_license_created event.
+     *
+     * @param \block_iomad_company_user\event\company_license_created $event
+     * @return bool true on success.
+     */
+    public static function company_license_created(\block_iomad_company_admin\event\company_license_created $event) {
+        global $DB, $CFG;
+
+        $licenseid = $event->other['licenseid'];
+        $parentid = $event->other['parentid'];
+        
+        if (!$licenserecord = $DB->get_record('companylicense', array('id' => $licenseid))) {
+            return;
+        }
+
+        // Update the license usage.
+        if (!empty($parentid)) {
+            self::update_license_usage($parentid);
+        }
+
+        return true;
+    }
+
+    /**
+     * Triggered via company_license_updated event.
+     *
+     * @param \block_iomad_company_user\event\company_license_updated $event
+     * @return bool true on success.
+     */
+    public static function company_license_updated(\block_iomad_company_admin\event\company_license_updated $event) {
+        global $DB, $CFG;
+
+        $licenseid = $event->other['licenseid'];
+        $parentid = $event->other['parentid'];
+        
+        if (!$licenserecord = $DB->get_record('companylicense', array('id' => $licenseid))) {
+            return;
+        }
+
+        // Update the license usage.
+        if (!empty($parentid)) {
+            self::update_license_usage($parentid);
+        }
+
+        return true;
+    }
+
+    /**
+     * Triggered via company_license_deleted event.
+     *
+     * @param \block_iomad_company_user\event\company_license_deleted $event
+     * @return bool true on success.
+     */
+    public static function company_license_deleted(\block_iomad_company_admin\event\company_license_deleted $event) {
+        global $DB, $CFG;
+
+        $parentid = $event->other['parentid'];
+        
+        if (empty($parentid) || !$licenserecord = $DB->get_record('companylicense', array('id' => $parentid))) {
+            return;
+        }
+        $DB->delete_records('companylicense_courses', array('licenseid' => $event->other['licenseid']));
+
+        // Update the license usage.
+        self::update_license_usage($parentid);
+
         return true;
     }
 

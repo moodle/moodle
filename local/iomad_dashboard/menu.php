@@ -246,7 +246,7 @@ class iomad_admin_menu {
                 'tab' => 4,
                 'name' => get_string('managelicenses', 'block_iomad_company_admin'),
                 'url' => 'company_license_list.php',
-                'cap' => 'block/iomad_company_admin:edit_licenses',
+                'cap' => 'block/iomad_company_admin:edit_my_licenses',
                 'icondefault' => 'licensemanagement',
                 'icon' => 'fa-legal',
                 'iconsmall' => 'fa-gear',
