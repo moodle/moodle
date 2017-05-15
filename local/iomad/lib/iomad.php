@@ -160,7 +160,58 @@ class iomad {
              return '';
          }
      }
-         
+
+     /**
+      * Get the company main colour given an ID.
+      *
+      * Parameters = $companyid = int;
+      * 
+      * Returns text;
+      **/
+     public static function get_company_maincolor($companyid) {
+         global $DB;
+
+         if ($companyothercss = $DB->get_field('company', 'maincolor', array('id' => $companyid))) {
+             return 'body {color: '.$companyothercss. ' !important}';
+         } else {
+             return '';
+         }
+     }
+
+     /**
+      * Get the company heading colour given an ID.
+      *
+      * Parameters = $companyid = int;
+      * 
+      * Returns text;
+      **/
+     public static function get_company_headingcolor($companyid) {
+         global $DB;
+
+         if ($companyothercss = $DB->get_field('company', 'headingcolor', array('id' => $companyid))) {
+             return '.block .header .title h2, .block .content h3 {color: '.$companyothercss.' !important}';
+         } else {
+             return '';
+         }
+     }
+
+     /**
+      * Get the company link colour given an ID.
+      *
+      * Parameters = $companyid = int;
+      * 
+      * Returns text;
+      **/
+     public static function get_company_linkcolor($companyid) {
+         global $DB;
+
+         if ($companyothercss = $DB->get_field('company', 'linkcolor', array('id' => $companyid))) {
+             return 'a {color: '.$companyothercss.' !important}';
+         } else {
+             return '';
+         }
+     }
+
     /**
      * SQL text processing to add a company course table join
      *

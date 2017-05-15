@@ -289,6 +289,12 @@ class company_edit_form extends company_moodleform {
                                     get_string('customcss', 'block_iomad_company_admin'),
                                     'wrap="virtual" rows="20" cols="75"');
                 $mform->setType('customcss', PARAM_CLEAN);
+                $mform->addElement('text', 'headingcolor', get_string('headingcolor', 'block_iomad_company_admin'), 'size="20"');
+                $mform->setType('headingcolor', PARAM_CLEAN);
+                $mform->addElement('text', 'maincolor', get_string('maincolor', 'block_iomad_company_admin'), 'size="20"');
+                $mform->setType('maincolor', PARAM_CLEAN);
+                $mform->addElement('text', 'linkcolor', get_string('linkcolor', 'block_iomad_company_admin'), 'size="20"');
+                $mform->setType('linkcolor', PARAM_CLEAN);
             } else {
                 $mform->addElement('hidden', 'id_companylogo', $this->companyrecord->companylogo);
                 $mform->addElement('hidden', 'companylogo', $this->companyrecord->companylogo);
@@ -296,6 +302,12 @@ class company_edit_form extends company_moodleform {
                 $mform->setType('id_companylogo', PARAM_CLEAN);
                 $mform->addElement('hidden', 'customcss');
                 $mform->setType('customcss', PARAM_CLEAN);
+                $mform->addElement('hidden', 'headingcolor');
+                $mform->setType('headingcolor', PARAM_CLEAN);
+                $mform->addElement('hidden', 'maincolor');
+                $mform->setType('maincolor', PARAM_CLEAN);
+                $mform->addElement('hidden', 'linkcolor');
+                $mform->setType('linkcolor', PARAM_CLEAN);
             }
         } else {
                 $mform->addElement('hidden', 'theme', $this->companyrecord->theme);

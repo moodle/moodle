@@ -145,12 +145,15 @@ function theme_iomad_get_html_for_settings(renderer_base $output, moodle_page $p
             }
         }
         $companycss .= iomad::get_company_customcss($companyid);
+        $companycss .= iomad::get_company_maincolor($companyid);
+        $companycss .= iomad::get_company_headingcolor($companyid);
+        $companycss .= iomad::get_company_linkcolor($companyid);
     }
 
     $return->heading = '<div id="sitelogo">' . 
         '<a href="' . $CFG->wwwroot . '" ><img src="' . $logo . '" /></a></div>';
     $return->heading .= '<div id="siteheading">' . $output->page_heading() . '</div>';
-    if ($clientlogo) {
+    if (!empty($companyid) && $clientlogo) {
         $return->heading .= '<div id="clientlogo">' . 
             '<a href="' . $CFG->wwwroot . '" ><img src="' . $clientlogo . '" /></a></div>';
     }

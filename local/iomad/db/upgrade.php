@@ -1435,5 +1435,38 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017041707, 'local', 'iomad');
     }
 
+    if ($oldversion < 2017041708) {
+
+        // Define field maincolor to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('maincolor', XMLDB_TYPE_CHAR, '20', null, null, null, 'null', 'customcss');
+
+        // Conditionally launch add field maincolor.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field headingcolor to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('headingcolor', XMLDB_TYPE_CHAR, '20', null, null, null, 'null', 'maincolor');
+
+        // Conditionally launch add field headingcolor.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field linkcolor to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('linkcolor', XMLDB_TYPE_CHAR, '20', null, null, null, 'null', 'headingcolor');
+
+        // Conditionally launch add field linkcolor.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017041708, 'local', 'iomad');
+    }
+
     return $result;
 }
