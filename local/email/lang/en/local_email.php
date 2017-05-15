@@ -241,3 +241,11 @@ For technical queries, please contact your IT Support team/Helpdesk
 Best Regards,
 
 {Sender_FirstName} {Sender_LastName}';
+$string['completion_course_supervisor_subject'] = 'Notice: Course {Course_FullName} has been completed';
+$string['completion_course_supervisor_body'] = '{User_FirstName} {User_LastName} has completed the training course {Course_FullName}. Please find attached a copy of their certificate for your records.
+
+The certificate is also available from the User Report section on our system should you need a copy in the future.';
+$string['completion_warn_supervisor_subject'] = 'Notice: Course {Course_FullName} has not been completed';
+$string['completion_warn_supervisor_body'] = '{User_FirstName} {User_LastName} has not completed their training in course {Course_FullName} within the normal timeframe';
+$string['completion_expiry_warn_supervisor_subject'] = 'Notice: Course {Course_FullName} training expiry';
+$string['completion_expiry_warn_supervisor_body'] = 'The training for {User_FirstName} {User_LastName} in course {Course_FullName} will expiry shortly.  Please arrange for them to retake this training if appropriate.';
