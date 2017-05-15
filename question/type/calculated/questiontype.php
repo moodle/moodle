@@ -1623,13 +1623,8 @@ class qtype_calculated extends question_type {
                         <td align=\"left\">";
                 foreach ($datasetdef->questions as $qu) {
                     // Limit the name length displayed.
-                    if (!empty($qu->name)) {
-                        $qu->name = (strlen($qu->name) > $lnamemax) ?
-                            substr($qu->name, 0, $lnamemax).'...' : $qu->name;
-                    } else {
-                        $qu->name = '';
-                    }
-                    $text .= " &nbsp;&nbsp; {$qu->name} <br/>";
+                    $questionname = $this->get_short_question_name($qu->name, $lnamemax);
+                    $text .= " &nbsp;&nbsp; {$questionname} <br/>";
                 }
                 $text .= "</td></tr>";
             }
@@ -1638,6 +1633,26 @@ class qtype_calculated extends question_type {
             $text .= get_string('nosharedwildcard', 'qtype_calculated');
         }
         return $text;
+    }
+
+    /**
+     * This function shortens a question name if it exceeds the character limit.
+     *
+     * @param string $stringtoshorten the string to be shortened.
+     * @param int $characterlimit the character limit.
+     * @return string
+     */
+    public function get_short_question_name($stringtoshorten, $characterlimit)
+    {
+        if (!empty($stringtoshorten)) {
+            $returnstring = format_string($stringtoshorten);
+            if (strlen($returnstring) > $characterlimit) {
+                $returnstring = shorten_text($returnstring, $characterlimit, true);
+            }
+            return $returnstring;
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -1705,17 +1720,12 @@ class qtype_calculated extends question_type {
                 $line = 0;
                 foreach ($datasetdef->questions as $qu) {
                     // Limit the name length displayed.
-                    if (!empty($qu->name)) {
-                        $qu->name = (strlen($qu->name) > $lnamemax) ?
-                            substr($qu->name, 0, $lnamemax).'...' : $qu->name;
-                    } else {
-                        $qu->name = '';
-                    }
+                    $questionname = $this->get_short_question_name($qu->name, $lnamemax);
                     if ($line) {
                         $text .= "<tr>";
                     }
                     $line++;
-                    $text .= "<td align=\"left\" style=\"white-space:nowrap;\">{$qu->name}</td>";
+                    $text .= "<td align=\"left\" style=\"white-space:nowrap;\">{$questionname}</td>";
                     // TODO MDL-43779 should not have quiz-specific code here.
                     $nbofquiz = $DB->count_records('quiz_slots', array('questionid' => $qu->id));
                     $nbofattempts = $DB->count_records_sql("
