@@ -106,4 +106,25 @@ class qtype_calculated_test extends advanced_testcase {
             ),
         ), $this->qtype->get_possible_responses($q));
     }
+
+    public function test_get_short_question_name() {
+        $this->resetAfterTest();
+
+        // Enable multilang filter to on content and heading.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', 1);
+        $filtermanager = filter_manager::instance();
+        $filtermanager->reset_caches();
+
+        $context = context_system::instance();
+
+        $longmultilangquestionname = "<span lang=\"en\" class=\"multilang\">Lorem ipsum dolor sit amet, consetetur sadipscing elitr</span><span lang=\"fr\" class=\"multilang\">Lorem ipsum dolor sit amet, consetetur sadipscing elitr</span>";
+        $shortmultilangquestionname = "<span lang=\"en\" class=\"multilang\">Lorem ipsum</span><span lang=\"fr\" class=\"multilang\">Lorem ipsum</span>";
+        $longquestionname = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
+        $shortquestionname = "Lorem ipsum";
+        $this->assertEquals("Lorem ipsum dolor...", $this->qtype->get_short_question_name($longmultilangquestionname, 20));
+        $this->assertEquals("Lorem ipsum", $this->qtype->get_short_question_name($shortmultilangquestionname, 20));
+        $this->assertEquals("Lorem ipsum dolor...", $this->qtype->get_short_question_name($longquestionname, 20));
+        $this->assertEquals("Lorem ipsum", $this->qtype->get_short_question_name($shortquestionname, 20));
+    }
 }
