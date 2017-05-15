@@ -232,7 +232,7 @@ if ($hassiteconfig) {
 
     // Convert plugins.
     $ADMIN->add('modules', new admin_category('fileconverterplugins', new lang_string('type_fileconverter_plural', 'plugin')));
-    $temp = new admin_settingpage('managefileconverterplugins', new lang_string('type_fileconverter', 'plugin'));
+    $temp = new admin_settingpage('managefileconverterplugins', new lang_string('type_fileconvertermanage', 'plugin'));
     $temp->add(new admin_setting_manage_fileconverter_plugins());
     $ADMIN->add('fileconverterplugins', $temp);
 
