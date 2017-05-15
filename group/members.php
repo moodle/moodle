@@ -152,8 +152,12 @@ if (!empty($groupinforow)) {
           </td>
       <td id='buttonscell'>
         <p class="arrow_button">
-            <input name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
-            <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>" title="<?php print_string('remove'); ?>" />
+            <input class="btn btn-secondary" name="add" id="add"
+                   type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>"
+                   title="<?php print_string('add'); ?>" /><br />
+            <input class="btn btn-secondary" name="remove" id="remove"
+                   type="submit" value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>"
+                   title="<?php print_string('remove'); ?>" />
         </p>
       </td>
       <td id='potentialcell'>
@@ -168,7 +172,8 @@ if (!empty($groupinforow)) {
       </td>
     </tr>
     <tr><td colspan="3" id='backcell'>
-        <input type="submit" name="cancel" value="<?php print_string('backtogroups', 'group'); ?>" />
+        <input class="btn btn-secondary" type="submit" name="cancel"
+               value="<?php print_string('backtogroups', 'group'); ?>" />
     </td></tr>
     </table>
     </div>
