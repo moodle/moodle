@@ -33,7 +33,7 @@ $PAGE->requires->js_function_call('submit_download_form', null, true);
 echo '<div id="redirect">
     <form action="' . $exporter->get('instance')->get_base_file_url() . '" method="post" id="redirectform">
       <input type="submit" value="' . get_string('downloadfile', 'portfolio_download') . '" />
-    </form>
+    </form></div>
 ';
 echo $OUTPUT->footer();
 
