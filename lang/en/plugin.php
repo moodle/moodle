@@ -130,6 +130,7 @@ $string['type_editor_plural'] = 'Editors';
 $string['type_enrol'] = 'Enrolment method';
 $string['type_enrol_plural'] = 'Enrolment methods';
 $string['type_fileconverter'] = 'Document converter';
+$string['type_fileconvertermanage'] = 'Manage document converters';
 $string['type_fileconverter_plural'] = 'Document converters';
 $string['type_filter'] = 'Text filter';
 $string['type_filter_plural'] = 'Text filters';
