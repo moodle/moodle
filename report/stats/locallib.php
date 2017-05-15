@@ -127,7 +127,7 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
     $table->width = 'auto';
 
     if ($mode == STATS_MODE_DETAILED) {
-        $param = stats_get_parameters($time, null, $course->id, $mode); // we only care about the table and the time string (if we have time)
+        $param = stats_get_parameters($time, null, $course->id, $mode, $roleid); // We only care about the table and the time string (if we have time).
 
         list($sort, $moreparams) = users_order_by_sql('u');
         $moreparams['courseid'] = $course->id;
@@ -190,7 +190,7 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
             print_error('reportnotavailable');
         }
 
-        $param = stats_get_parameters($time,$report,$course->id,$mode);
+        $param = stats_get_parameters($time, $report, $course->id, $mode, $roleid);
 
         if ($mode == STATS_MODE_DETAILED) {
             $param->table = 'user_'.$param->table;
@@ -220,10 +220,23 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
 
             $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)));
 
-            echo $OUTPUT->heading(format_string($course->shortname).' - '.get_string('statsreport'.$report)
-                    .((!empty($user)) ? ' '.get_string('statsreportforuser').' ' .fullname($user,true) : '')
-                    .((!empty($roleid)) ? ' '.$DB->get_field('role','name', array('id'=>$roleid)) : ''));
+            $rolename = '';
+            $userdisplayname = '';
+            $coursecontext = context_course::instance($course->id);
 
+            if (!empty($roleid) && $role = $DB->get_record('role', ['id' => $roleid])) {
+                $rolename = ' ' . role_get_name($role, $coursecontext);
+            }
+            if (!empty($user)) {
+                $userdisplayname = ' ' . fullname($user, true);
+            }
+            echo $OUTPUT->heading(
+                format_string($course->shortname) .
+                ' - ' .
+                get_string('statsreport' . $report) .
+                $rolename .
+                $userdisplayname
+            );
 
             if ($mode == STATS_MODE_DETAILED) {
                 report_stats_print_chart($course->id, $report, $time, $mode, $userid);
@@ -354,7 +367,7 @@ function report_stats_print_chart($courseid, $report, $time, $mode, $userid = 0,
 
     stats_check_uptodate($course->id);
 
-    $param = stats_get_parameters($time, $report, $course->id, $mode);
+    $param = stats_get_parameters($time, $report, $course->id, $mode, $roleid);
 
     if (!empty($userid)) {
         $param->table = 'user_' . $param->table;
