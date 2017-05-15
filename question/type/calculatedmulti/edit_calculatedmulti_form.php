@@ -128,7 +128,7 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         if (isset($this->question->id)) {
             $mform->insertElementBefore($mform->createElement('static', 'initialname',
                     get_string('questionstoredname', 'qtype_calculated'),
-                    $this->initialname), 'name');
+                    format_string($this->initialname, true, array('context' => $this->context))), 'name');
         };
         $addfieldsname = 'updatecategory';
         $addstring = get_string('updatecategory', 'qtype_calculated');
