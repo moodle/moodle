@@ -315,6 +315,12 @@ class page_requirements_manager {
 
             $iconsystem = \core\output\icon_system::instance();
 
+            // It is possible that the $page->context is null, so we can't use $page->context->id.
+            $contextid = null;
+            if (!is_null($page->context)) {
+                $contextid = $page->context->id;
+            }
+
             $this->M_cfg = array(
                 'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
                 'sesskey'             => sesskey(),
@@ -326,7 +332,7 @@ class page_requirements_manager {
                 'admin'               => $CFG->admin,
                 'svgicons'            => $page->theme->use_svg_icons(),
                 'usertimezone'        => usertimezone(),
-                'contextid'           => $page->context->id,
+                'contextid'           => $contextid,
             );
             if ($CFG->debugdeveloper) {
                 $this->M_cfg['developerdebug'] = true;
