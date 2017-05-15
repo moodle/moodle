@@ -119,13 +119,13 @@ class report implements renderable, templatable {
             if ($scaleid === null) {
                 $scaleid = $framework->get_scaleid();
                 if (!isset($scalecache[$scaleid])) {
-                    $scalecache[$competency->get_scaleid()] = $framework->get_scale();
+                    $scalecache[$scaleid] = $framework->get_scale();
                 }
 
             } else if (!isset($scalecache[$scaleid])) {
-                $scalecache[$competency->get_scaleid()] = $competency->get_scale();
+                $scalecache[$scaleid] = $competency->get_scale();
             }
-            $scale = $scalecache[$competency->get_scaleid()];
+            $scale = $scalecache[$scaleid];
 
             $exporter = new user_competency_course_exporter($usercompetencycourse, array('scale' => $scale));
             $record = $exporter->export($output);
