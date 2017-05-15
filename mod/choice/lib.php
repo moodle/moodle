@@ -527,7 +527,8 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses) {
     $allusers = [];
     foreach ($choice->option as $optionid => $optiontext) {
         $display->options[$optionid] = new stdClass;
-        $display->options[$optionid]->text = $optiontext;
+        $display->options[$optionid]->text = format_string($optiontext, true,
+            ['context' => context_module::instance($cm->id)]);
         $display->options[$optionid]->maxanswer = $choice->maxanswers[$optionid];
 
         if (array_key_exists($optionid, $allresponses)) {
