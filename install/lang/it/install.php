@@ -83,7 +83,7 @@ $string['pathsunsecuredataroot'] = 'La posizione della Cartella dati non è sicu
 $string['pathswrongadmindir'] = 'La cartella Admin non esiste';
 $string['phpextension'] = '{$a} estensioni PHP';
 $string['phpversion'] = 'Versione PHP';
-$string['phpversionhelp'] = '<p>Moodle necessita come minimo della versione 5.6.5 del PHP. (La versione 7.x ha alcuni limiti nell\'engine)</p>
+$string['phpversionhelp'] = '<p>Moodle necessita come minimo della versione 5.6.5 del PHP. (La versione 7.0.x ha alcuni limiti nell\'engine)</p>
 <p>La versione installata nel sistema è la {$a}</p>
 <p>E\' necessario aggiornare la versione del PHP oppure spostarsi su un host che abbia una versione più aggiornata del PHP.<br>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
