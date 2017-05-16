@@ -1,6 +1,12 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+
+* The block_instances table now contains fields timecreated and timemodified. If third-party code
+  creates or updates these rows (without using the standard API), it should be modified to set
+  these fields as appropriate.
+
 === 3.3 ===
 
 * block_manager::get_required_by_theme_block_types() is no longer static.

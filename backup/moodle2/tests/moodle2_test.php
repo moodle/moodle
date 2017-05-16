@@ -464,9 +464,10 @@ class core_backup_moodle2_testcase extends advanced_testcase {
      *
      * @param stdClass $course Course object to backup
      * @param int $newdate If non-zero, specifies custom date for new course
+     * @param callable|null $inbetween If specified, function that is called before restore
      * @return int ID of newly restored course
      */
-    protected function backup_and_restore($course, $newdate = 0) {
+    protected function backup_and_restore($course, $newdate = 0, $inbetween = null) {
         global $USER, $CFG;
 
         // Turn off file logging, otherwise it can't delete the file (Windows).
@@ -480,6 +481,10 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $backupid = $bc->get_backupid();
         $bc->execute_plan();
         $bc->destroy();
+
+        if ($inbetween) {
+            $inbetween($backupid);
+        }
 
         // Do restore to new course with default settings.
         $newcourseid = restore_dbops::create_new_course(
@@ -801,5 +806,65 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $this->assertEquals(1, count($enrolments));
         $enrolment = reset($enrolments);
         $this->assertEquals('self', $enrolment->enrol);
+    }
+
+    /**
+     * Test the block instance time fields (timecreated, timemodified) through a backup and restore.
+     */
+    public function test_block_instance_times_backup() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+
+        // Create course and add HTML block.
+        $course = $generator->create_course();
+        $context = context_course::instance($course->id);
+        $page = new moodle_page();
+        $page->set_context($context);
+        $page->set_course($course);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('course-view');
+        $page->blocks->load_blocks();
+        $page->blocks->add_block_at_end_of_default_region('html');
+
+        // Update (hack in database) timemodified and timecreated to specific values for testing.
+        $blockdata = $DB->get_record('block_instances',
+                ['blockname' => 'html', 'parentcontextid' => $context->id]);
+        $originalblockid = $blockdata->id;
+        $blockdata->timecreated = 12345;
+        $blockdata->timemodified = 67890;
+        $DB->update_record('block_instances', $blockdata);
+
+        // Do backup and restore.
+        $newcourseid = $this->backup_and_restore($course);
+
+        // Confirm that values were transferred correctly into HTML block on new course.
+        $newcontext = context_course::instance($newcourseid);
+        $blockdata = $DB->get_record('block_instances',
+                ['blockname' => 'html', 'parentcontextid' => $newcontext->id]);
+        $this->assertEquals(12345, $blockdata->timecreated);
+        $this->assertEquals(67890, $blockdata->timemodified);
+
+        // Simulate what happens with an older backup that doesn't have those fields, by removing
+        // them from the backup before doing a restore.
+        $before = time();
+        $newcourseid = $this->backup_and_restore($course, 0, function($backupid) use($originalblockid) {
+            global $CFG;
+            $path = $CFG->dataroot . '/temp/backup/' . $backupid . '/course/blocks/html_' .
+                    $originalblockid . '/block.xml';
+            $xml = file_get_contents($path);
+            $xml = preg_replace('~<timecreated>.*?</timemodified>~s', '', $xml);
+            file_put_contents($path, $xml);
+        });
+        $after = time();
+
+        // The fields not specified should default to current time.
+        $newcontext = context_course::instance($newcourseid);
+        $blockdata = $DB->get_record('block_instances',
+                ['blockname' => 'html', 'parentcontextid' => $newcontext->id]);
+        $this->assertTrue($before <= $blockdata->timecreated && $after >= $blockdata->timecreated);
+        $this->assertTrue($before <= $blockdata->timemodified && $after >= $blockdata->timemodified);
     }
 }

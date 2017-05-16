@@ -474,8 +474,8 @@ class block_base {
      */
     function instance_config_save($data, $nolongerused = false) {
         global $DB;
-        $DB->set_field('block_instances', 'configdata', base64_encode(serialize($data)),
-                array('id' => $this->instance->id));
+        $DB->update_record('block_instances', ['id' => $this->instance->id,
+                'configdata' => base64_encode(serialize($data)), 'timemodified' => time()]);
     }
 
     /**

@@ -122,6 +122,13 @@ abstract class testing_block_generator extends component_generator_base {
         $this->preprocess_record($record, $options);
         $record = $this->prepare_record($record);
 
+        if (empty($record->timecreated)) {
+            $record->timecreated = time();
+        }
+        if (empty($record->timemodified)) {
+            $record->timemodified = time();
+        }
+
         $id = $DB->insert_record('block_instances', $record);
         context_block::instance($id);
 

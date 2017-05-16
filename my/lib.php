@@ -86,6 +86,8 @@ function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
         unset($instance->id);
         $instance->parentcontextid = $usercontext->id;
         $instance->subpagepattern = $page->id;
+        $instance->timecreated = time();
+        $instance->timemodified = $instance->timecreated;
         $instance->id = $DB->insert_record('block_instances', $instance);
         $newblockinstanceids[$originalid] = $instance->id;
         $blockcontext = context_block::instance($instance->id);  // Just creates the context record

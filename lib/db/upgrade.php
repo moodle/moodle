@@ -2887,5 +2887,58 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017061301.00);
     }
 
+    if ($oldversion < 2017062900.01) {
+
+        // Define field timemodified to be added to block_instances.
+        $table = new xmldb_table('block_instances');
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null,
+                null, null, 'configdata');
+
+        // Conditionally launch add field timemodified.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            // Set field to current time.
+            $DB->set_field('block_instances', 'timemodified', time());
+
+            // Changing nullability of field timemodified on table block_instances to not null.
+            $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL,
+                    null, null, 'configdata');
+
+            // Launch change of nullability for field timemodified.
+            $dbman->change_field_notnull($table, $field);
+
+            // Define index timemodified (not unique) to be added to block_instances.
+            $index = new xmldb_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+            // Conditionally launch add index timemodified.
+            if (!$dbman->index_exists($table, $index)) {
+                $dbman->add_index($table, $index);
+            }
+        }
+
+        // Define field timecreated to be added to block_instances.
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, null,
+                null, null, 'configdata');
+
+        // Conditionally launch add field timecreated.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            // Set field to current time.
+            $DB->set_field('block_instances', 'timecreated', time());
+
+            // Changing nullability of field timecreated on table block_instances to not null.
+            $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL,
+                    null, null, 'configdata');
+
+            // Launch change of nullability for field timecreated.
+            $dbman->change_field_notnull($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017062900.01);
+    }
+
     return true;
 }
