@@ -751,92 +751,25 @@ function mygroupid($courseid) {
     throw new coding_exception('mygroupid() can not be used any more, please use groups_get_all_groups() instead.');
 }
 
-
 /**
- * Returns the current group mode for a given course or activity module
- *
- * Could be false, SEPARATEGROUPS or VISIBLEGROUPS    (<-- Martin)
- *
  * @deprecated since Moodle 2.0 MDL-14617 - please do not use this function any more.
- * @todo MDL-50273 This will be deleted in Moodle 3.2.
- *
- * @param object $course Course Object
- * @param object $cm Course Manager Object
- * @return mixed $course->groupmode
  */
 function groupmode($course, $cm=null) {
-
-    debugging('groupmode() is deprecated, please use groups_get_* instead', DEBUG_DEVELOPER);
-    if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
-        return $cm->groupmode;
-    }
-    return $course->groupmode;
+    throw new coding_exception('groupmode() can not be used any more, please use groups_get_* instead.');
 }
 
 /**
- * Sets the current group in the session variable
- * When $SESSION->currentgroup[$courseid] is set to 0 it means, show all groups.
- * Sets currentgroup[$courseid] in the session variable appropriately.
- * Does not do any permission checking.
- *
  * @deprecated Since year 2006 - please do not use this function any more.
- * @todo MDL-50273 This will be deleted in Moodle 3.2.
- *
- * @global object
- * @global object
- * @param int $courseid The course being examined - relates to id field in
- * 'course' table.
- * @param int $groupid The group being examined.
- * @return int Current group id which was set by this function
  */
 function set_current_group($courseid, $groupid) {
-    global $SESSION;
-
-    debugging('set_current_group() is deprecated, please use $SESSION->currentgroup[$courseid] instead', DEBUG_DEVELOPER);
-    return $SESSION->currentgroup[$courseid] = $groupid;
+    throw new coding_exception('set_current_group() can not be used anymore, please use $SESSION->currentgroup[$courseid] instead');
 }
 
 /**
- * Gets the current group - either from the session variable or from the database.
- *
  * @deprecated Since year 2006 - please do not use this function any more.
- * @todo MDL-50273 This will be deleted in Moodle 3.2.
- *
- * @global object
- * @param int $courseid The course being examined - relates to id field in
- * 'course' table.
- * @param bool $full If true, the return value is a full record object.
- * If false, just the id of the record.
- * @return int|bool
  */
 function get_current_group($courseid, $full = false) {
-    global $SESSION;
-
-    debugging('get_current_group() is deprecated, please use groups_get_* instead', DEBUG_DEVELOPER);
-    if (isset($SESSION->currentgroup[$courseid])) {
-        if ($full) {
-            return groups_get_group($SESSION->currentgroup[$courseid]);
-        } else {
-            return $SESSION->currentgroup[$courseid];
-        }
-    }
-
-    $mygroupid = mygroupid($courseid);
-    if (is_array($mygroupid)) {
-        $mygroupid = array_shift($mygroupid);
-        set_current_group($courseid, $mygroupid);
-        if ($full) {
-            return groups_get_group($mygroupid);
-        } else {
-            return $mygroupid;
-        }
-    }
-
-    if ($full) {
-        return false;
-    } else {
-        return 0;
-    }
+    throw new coding_exception('get_current_group() can not be used any more, please use groups_get_* instead');
 }
 
 /**
