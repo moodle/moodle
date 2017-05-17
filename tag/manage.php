@@ -239,7 +239,7 @@ if ($table->rawdata) {
             array('id' => 'tag-management-delete', 'type' => 'submit',
                   'class' => 'tagdeleteselected btn btn-secondary', 'name' => 'bulkdelete'));
     echo html_writer::tag('button', get_string('combineselected', 'tag'),
-        array('id' => 'tag-management-combine ', 'type' => 'submit',
+        array('id' => 'tag-management-combine', 'type' => 'submit',
               'class' => 'tagcombineselected btn btn-secondary', 'name' => 'bulkcombine'));
     echo html_writer::end_tag('p');
 }
