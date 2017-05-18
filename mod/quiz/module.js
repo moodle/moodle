@@ -37,7 +37,7 @@ M.mod_quiz.init_review_form = function(Y) {
 
 M.mod_quiz.init_comment_popup = function(Y) {
     // Add a close button to the window.
-    var closebutton = Y.Node.create('<input type="button" />');
+    var closebutton = Y.Node.create('<input type="button" class="btn btn-secondary" />');
     closebutton.set('value', M.util.get_string('cancel', 'moodle'));
     Y.one('#id_submitbutton').ancestor().append(closebutton);
     Y.on('click', function() { window.close() }, closebutton);
