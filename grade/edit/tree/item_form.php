@@ -264,142 +264,143 @@ class edit_item_form extends moodleform {
         $mform =& $this->_form;
 
         if ($id = $mform->getElementValue('id')) {
-            $grade_item = grade_item::fetch(array('id'=>$id));
+            $gradeitem = grade_item::fetch(array('id' => $id));
+            $parentcategory = $gradeitem->get_parent_category();
+        } else {
+            // If we do not have an id, we are creating a new grade item.
+            $gradeitem = new grade_item(array('courseid' => $COURSE->id, 'itemtype' => 'manual'), false);
 
-            if (!$grade_item->is_raw_used()) {
-                $mform->removeElement('plusfactor');
-                $mform->removeElement('multfactor');
+            // Assign the course category to this grade item.
+            $parentcategory = grade_category::fetch_course_category($COURSE->id);
+            $gradeitem->parent_category = $parentcategory;
+        }
+
+        if (!$gradeitem->is_raw_used()) {
+            $mform->removeElement('plusfactor');
+            $mform->removeElement('multfactor');
+        }
+
+        if ($gradeitem->is_outcome_item()) {
+            // We have to prevent incompatible modifications of outcomes if outcomes disabled.
+            $mform->removeElement('grademax');
+            if ($mform->elementExists('grademin')) {
+                $mform->removeElement('grademin');
             }
+            $mform->removeElement('gradetype');
+            $mform->removeElement('display');
+            $mform->removeElement('decimals');
+            $mform->hardFreeze('scaleid');
 
-            if ($grade_item->is_outcome_item()) {
-                // we have to prevent incompatible modifications of outcomes if outcomes disabled
-                $mform->removeElement('grademax');
+        } else {
+            if ($gradeitem->is_external_item()) {
+                // Following items are set up from modules and should not be overrided by user.
                 if ($mform->elementExists('grademin')) {
-                    $mform->removeElement('grademin');
+                    // The site setting grade_report_showmin may have prevented grademin being added to the form.
+                    $mform->hardFreeze('grademin');
                 }
-                $mform->removeElement('gradetype');
-                $mform->removeElement('display');
-                $mform->removeElement('decimals');
-                $mform->hardFreeze('scaleid');
+                $mform->hardFreeze('itemname,gradetype,grademax,scaleid');
+                if ($gradeitem->itemnumber == 0) {
+                    // The idnumber of grade itemnumber 0 is synced with course_modules.
+                    $mform->hardFreeze('idnumber');
+                }
 
-            } else {
-                if ($grade_item->is_external_item()) {
-                    // following items are set up from modules and should not be overrided by user
+                // For external items we can not change the grade type, even if no grades exist, so if it is set to
+                // scale, then remove the grademax and grademin fields from the form - no point displaying them.
+                if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
+                    $mform->removeElement('grademax');
                     if ($mform->elementExists('grademin')) {
-                        // The site setting grade_report_showmin may have prevented grademin being added to the form.
-                        $mform->hardFreeze('grademin');
+                        $mform->removeElement('grademin');
                     }
-                    $mform->hardFreeze('itemname,gradetype,grademax,scaleid');
-                    if ($grade_item->itemnumber == 0) {
-                        // the idnumber of grade itemnumber 0 is synced with course_modules
-                        $mform->hardFreeze('idnumber');
-                    }
+                } else { // Not using scale, so remove it.
+                    $mform->removeElement('scaleid');
+                }
 
-                    // For external items we can not change the grade type, even if no grades exist, so if it is set to
-                    // scale, then remove the grademax and grademin fields from the form - no point displaying them.
-                    if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
-                        $mform->removeElement('grademax');
-                        if ($mform->elementExists('grademin')) {
-                            $mform->removeElement('grademin');
-                        }
-                    } else { // Not using scale, so remove it.
-                        $mform->removeElement('scaleid');
-                    }
+                // Always remove the rescale grades element if it's an external item.
+                $mform->removeElement('rescalegrades');
+            } else if ($gradeitem->has_grades()) {
+                // Can't change the grade type or the scale if there are grades.
+                $mform->hardFreeze('gradetype, scaleid');
 
-                    // Always remove the rescale grades element if it's an external item.
+                // If we are using scales then remove the unnecessary rescale and grade fields.
+                if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
                     $mform->removeElement('rescalegrades');
-                } else if ($grade_item->has_grades()) {
-                    // Can't change the grade type or the scale if there are grades.
-                    $mform->hardFreeze('gradetype, scaleid');
-
-                    // If we are using scales then remove the unnecessary rescale and grade fields.
-                    if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
-                        $mform->removeElement('rescalegrades');
-                        $mform->removeElement('grademax');
-                        if ($mform->elementExists('grademin')) {
-                            $mform->removeElement('grademin');
-                        }
-                    } else { // Remove the scale field.
-                        $mform->removeElement('scaleid');
-                        // Set the maximum grade to disabled unless a grade is chosen.
-                        $mform->disabledIf('grademax', 'rescalegrades', 'eq', '');
-                    }
-                } else {
-                    // Remove the rescale element if there are no grades.
-                    $mform->removeElement('rescalegrades');
-                }
-            }
-
-            // if we wanted to change parent of existing item - we would have to verify there are no circular references in parents!!!
-            if ($mform->elementExists('parentcategory')) {
-                $mform->hardFreeze('parentcategory');
-            }
-
-            $parent_category = $grade_item->get_parent_category();
-            $parent_category->apply_forced_settings();
-
-            if (!$parent_category->is_aggregationcoef_used()) {
-                if ($mform->elementExists('aggregationcoef')) {
-                    $mform->removeElement('aggregationcoef');
-                }
-
-            } else {
-                $coefstring = $grade_item->get_coefstring();
-
-                if ($coefstring !== '') {
-                    if ($coefstring == 'aggregationcoefextrasum' || $coefstring == 'aggregationcoefextraweightsum') {
-                        // advcheckbox is not compatible with disabledIf!
-                        $coefstring = 'aggregationcoefextrasum';
-                        $element =& $mform->createElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
-                    } else {
-                        $element =& $mform->createElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
-                    }
-                    if ($mform->elementExists('parentcategory')) {
-                        $mform->insertElementBefore($element, 'parentcategory');
-                    } else {
-                        $mform->insertElementBefore($element, 'id');
-                    }
-                    $mform->addHelpButton('aggregationcoef', $coefstring, 'grades');
-                }
-                $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_NONE);
-                $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-                $mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $parent_category->id);
-            }
-
-            // Remove fields used by natural weighting if the parent category is not using natural weighting.
-            // Or if the item is a scale and scales are not used in aggregation.
-            if ($parent_category->aggregation != GRADE_AGGREGATE_SUM
-                    || (empty($CFG->grade_includescalesinaggregation) && $grade_item->gradetype == GRADE_TYPE_SCALE)) {
-                if ($mform->elementExists('weightoverride')) {
-                    $mform->removeElement('weightoverride');
-                }
-                if ($mform->elementExists('aggregationcoef2')) {
-                    $mform->removeElement('aggregationcoef2');
-                }
-            }
-
-            if ($category = $grade_item->get_item_category()) {
-                if ($category->aggregation == GRADE_AGGREGATE_SUM) {
-                    if ($mform->elementExists('gradetype')) {
-                        $mform->hardFreeze('gradetype');
-                    }
+                    $mform->removeElement('grademax');
                     if ($mform->elementExists('grademin')) {
-                        $mform->hardFreeze('grademin');
+                        $mform->removeElement('grademin');
                     }
-                    if ($mform->elementExists('grademax')) {
-                        $mform->hardFreeze('grademax');
-                    }
-                    if ($mform->elementExists('scaleid')) {
-                        $mform->removeElement('scaleid');
-                    }
+                } else { // Remove the scale field.
+                    $mform->removeElement('scaleid');
+                    // Set the maximum grade to disabled unless a grade is chosen.
+                    $mform->disabledIf('grademax', 'rescalegrades', 'eq', '');
                 }
+            } else {
+                // Remove the rescale element if there are no grades.
+                $mform->removeElement('rescalegrades');
+            }
+        }
+
+        // If we wanted to change parent of existing item - we would have to verify there are no circular references in parents!!!
+        if ($id && $mform->elementExists('parentcategory')) {
+            $mform->hardFreeze('parentcategory');
+        }
+
+        $parentcategory->apply_forced_settings();
+
+        if (!$parentcategory->is_aggregationcoef_used()) {
+            if ($mform->elementExists('aggregationcoef')) {
+                $mform->removeElement('aggregationcoef');
             }
 
         } else {
-            // all new items are manual, children of course category
-            $mform->removeElement('plusfactor');
-            $mform->removeElement('multfactor');
-            $mform->removeElement('rescalegrades');
+            $coefstring = $gradeitem->get_coefstring();
+
+            if ($coefstring !== '') {
+                if ($coefstring == 'aggregationcoefextrasum' || $coefstring == 'aggregationcoefextraweightsum') {
+                    // The advcheckbox is not compatible with disabledIf!
+                    $coefstring = 'aggregationcoefextrasum';
+                    $element =& $mform->createElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
+                } else {
+                    $element =& $mform->createElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
+                }
+                if ($mform->elementExists('parentcategory')) {
+                    $mform->insertElementBefore($element, 'parentcategory');
+                } else {
+                    $mform->insertElementBefore($element, 'id');
+                }
+                $mform->addHelpButton('aggregationcoef', $coefstring, 'grades');
+            }
+            $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_NONE);
+            $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+            $mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $parentcategory->id);
+        }
+
+        // Remove fields used by natural weighting if the parent category is not using natural weighting.
+        // Or if the item is a scale and scales are not used in aggregation.
+        if ($parentcategory->aggregation != GRADE_AGGREGATE_SUM
+                || (empty($CFG->grade_includescalesinaggregation) && $gradeitem->gradetype == GRADE_TYPE_SCALE)) {
+            if ($mform->elementExists('weightoverride')) {
+                $mform->removeElement('weightoverride');
+            }
+            if ($mform->elementExists('aggregationcoef2')) {
+                $mform->removeElement('aggregationcoef2');
+            }
+        }
+
+        if ($category = $gradeitem->get_item_category()) {
+            if ($category->aggregation == GRADE_AGGREGATE_SUM) {
+                if ($mform->elementExists('gradetype')) {
+                    $mform->hardFreeze('gradetype');
+                }
+                if ($mform->elementExists('grademin')) {
+                    $mform->hardFreeze('grademin');
+                }
+                if ($mform->elementExists('grademax')) {
+                    $mform->hardFreeze('grademax');
+                }
+                if ($mform->elementExists('scaleid')) {
+                    $mform->removeElement('scaleid');
+                }
+            }
         }
 
         // no parent header for course category
