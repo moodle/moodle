@@ -36,16 +36,15 @@ require_once($CFG->dirroot . '/course/lib.php');
  * @copyright  2017 Andrés Melo <andres.torres@blackboard.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class mod_assign_markerallocation_testcase extends advanced_testcase {
 
     /**
      * Create all the needed elements to test the difference between both functions.
      */
-
     public function test_markerusers() {
         $this->resetAfterTest();
         global $DB;
+
         // Create a course, by default it is created with 5 sections.
         $this->course = $this->getDataGenerator()->create_course();
 
