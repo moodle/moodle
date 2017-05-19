@@ -264,7 +264,8 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                 // bad luck, we can not link other report
             } else if (empty($param->crosstab)) {
                 foreach  ($stats as $stat) {
-                    $a = array(userdate($stat->timeend-(60*60*24),get_string('strftimedate'),$CFG->timezone),$stat->line1);
+                    $a = array(userdate($stat->timeend - DAYSECS, get_string('strftimedate'), $CFG->timezone),
+                            $stat->line1);
                     if (isset($stat->line2)) {
                         $a[] = $stat->line2;
                     }
@@ -302,7 +303,8 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                         }
                     }
                     if (!array_key_exists($stat->timeend,$times)) {
-                        $times[$stat->timeend] = userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone);
+                        $times[$stat->timeend] = userdate($stat->timeend - DAYSECS, get_string('strftimedate'),
+                                $CFG->timezone);
                     }
                 }
 
@@ -395,7 +397,7 @@ function report_stats_print_chart($courseid, $report, $time, $mode, $userid = 0,
         foreach ($stats as $stat) {
             // Build the array of formatted times indexed by timestamp used as labels.
             if (!array_key_exists($stat->timeend, $times)) {
-                $times[$stat->timeend] = userdate($stat->timeend, get_string('strftimedate'), $CFG->timezone);
+                $times[$stat->timeend] = userdate($stat->timeend - DAYSECS, get_string('strftimedate'), $CFG->timezone);
 
                 // Just add the data if the time hasn't been added yet.
                 // The number of lines of data must match the number of labels.
@@ -436,7 +438,7 @@ function report_stats_print_chart($courseid, $report, $time, $mode, $userid = 0,
 
             // Build the array of formatted times indexed by timestamp used as labels.
             if (!array_key_exists($stat->timeend, $times)) {
-                $times[$stat->timeend] = userdate($stat->timeend, get_string('strftimedate'), $CFG->timezone);
+                $times[$stat->timeend] = userdate($stat->timeend - DAYSECS, get_string('strftimedate'), $CFG->timezone);
             }
         }
         // Fill empty days with zero to avoid chart errors.
