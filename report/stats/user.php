@@ -156,7 +156,7 @@ foreach ($stats as $stat) {
     if (!empty($stat->zerofixed)) {  // Don't know why this is necessary, see stats_fix_zeros above - MD
         continue;
     }
-    $a = array(userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone),$stat->line1);
+    $a = array(userdate($stat->timeend - DAYSECS, get_string('strftimedate'), $CFG->timezone), $stat->line1);
     $a[] = $stat->line2;
     $a[] = $stat->line3;
     $table->data[] = $a;
