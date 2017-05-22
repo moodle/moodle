@@ -5532,3 +5532,22 @@ class restore_completion_defaults_structure_step extends restore_structure_step 
         $this->set_mapping('course_completion_defaults', $oldid, $newid);
     }
 }
+/**
+ * Restore action events.
+ *
+ * @package     core_backup
+ * @copyright   2017 onwards Ankit Agarwal
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class restore_calendar_action_events extends restore_execution_step {
+    /**
+     * What to do when this step is executed.
+     */
+    protected function define_execution() {
+        // We just queue the task here rather trying to recreate everything manually.
+        // The task will automatically populate all data.
+        $task = new \core\task\refresh_mod_calendar_events_task();
+        $task->set_custom_data(array('courseid' => $this->get_courseid()));
+        \core\task\manager::queue_adhoc_task($task);
+    }
+}
