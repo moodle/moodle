@@ -122,7 +122,7 @@ echo $attemptobj->render_question_for_commenting($slot);
     <div>
         <div class="fitem fitem_actionbuttons fitem_fsubmit">
             <fieldset class="felement fsubmit">
-                <input id="id_submitbutton" type="submit" name="submit" value="<?php
+                <input id="id_submitbutton" type="submit" name="submit" class="btn btn-primary" value="<?php
                         print_string('save', 'quiz'); ?>"/>
             </fieldset>
         </div>
