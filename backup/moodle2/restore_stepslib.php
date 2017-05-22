@@ -2659,6 +2659,13 @@ class restore_calendarevents_structure_step extends restore_structure_step {
         $data = (object)$data;
         $oldid = $data->id;
         $restorefiles = true; // We'll restore the files
+
+        // If this is a new action event, it will automatically be populated by the adhoc task.
+        // Nothing to do here.
+        if (isset($data->type) && $data->type == CALENDAR_EVENT_TYPE_ACTION) {
+            return;
+        }
+
         // User overrides for activities are identified by having a courseid of zero with
         // both a modulename and instance value set.
         $isuseroverride = !$data->courseid && $data->modulename && $data->instance;
