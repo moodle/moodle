@@ -97,5 +97,8 @@ function xmldb_tool_monitor_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017021300, 'tool', 'monitor');
     }
 
+    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
