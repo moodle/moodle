@@ -115,5 +115,8 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2017032800, 'data');
     }
 
+    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

@@ -87,5 +87,8 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017022700, 'assignfeedback', 'editpdf');
     }
 
+    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

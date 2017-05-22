@@ -43,5 +43,8 @@ function xmldb_format_topics_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017020200, 'format', 'topics');
     }
 
+    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
