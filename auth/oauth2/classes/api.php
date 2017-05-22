@@ -192,10 +192,10 @@ class api {
         ];
         $confirmationurl = new moodle_url('/auth/oauth2/confirm-linkedlogin.php', $params);
 
-        // Remove data parameter just in case it was included in the confirmation so we can add it manually later.
-        $data->link = $confirmationurl->out();
+        $data->link = $confirmationurl->out(false);
+        $message = get_string('confirmlinkedloginemail', 'auth_oauth2', $data);
 
-        $message     = get_string('confirmlinkedloginemail', 'auth_oauth2', $data);
+        $data->link = $confirmationurl->out();
         $messagehtml = text_to_html(get_string('confirmlinkedloginemail', 'auth_oauth2', $data), false, false, true);
 
         $user->mailformat = 1;  // Always send HTML version as well.
@@ -303,9 +303,10 @@ class api {
         ];
         $confirmationurl = new moodle_url('/auth/oauth2/confirm-account.php', $params);
 
-        $data->link = $confirmationurl->out();
+        $data->link = $confirmationurl->out(false);
+        $message = get_string('confirmaccountemail', 'auth_oauth2', $data);
 
-        $message     = get_string('confirmaccountemail', 'auth_oauth2', $data);
+        $data->link = $confirmationurl->out();
         $messagehtml = text_to_html(get_string('confirmaccountemail', 'auth_oauth2', $data), false, false, true);
 
         $user->mailformat = 1;  // Always send HTML version as well.
