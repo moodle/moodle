@@ -1402,7 +1402,7 @@ function stats_get_report_options($courseid,$mode) {
         $reportoptions[STATS_REPORT_ACTIVITY] = get_string('statsreport'.STATS_REPORT_ACTIVITY);
         if ($courseid != SITEID && $context = context_course::instance($courseid)) {
             $sql = 'SELECT r.id, r.name, r.shortname FROM {role} r JOIN {stats_daily} s ON s.roleid = r.id
-                 WHERE s.courseid = :courseid GROUP BY r.id, r.name';
+                 WHERE s.courseid = :courseid GROUP BY r.id, r.name, r.shortname';
             if ($roles = $DB->get_records_sql($sql, array('courseid' => $courseid))) {
                 foreach ($roles as $role) {
                     $reportoptions[STATS_REPORT_ACTIVITYBYROLE.$role->id] = get_string('statsreport'.STATS_REPORT_ACTIVITYBYROLE).
