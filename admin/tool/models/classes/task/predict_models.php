@@ -1,0 +1,62 @@
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Predict system models with new data available.
+ *
+ * @package    tool_models
+ * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace tool_models\task;
+
+/**
+ * Predict system models with new data available.
+ *
+ * @package    tool_models
+ * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class predict_models extends \core\task\scheduled_task {
+
+    public function get_name() {
+        return get_string('predictmodels', 'tool_models');
+    }
+
+    public function execute() {
+        global $DB, $OUTPUT, $PAGE;
+
+        $models = $DB->get_records_select('analytics_models', 'enabled = 1 AND trained = 1 AND timesplitting IS NOT NULL');
+        if (!$models) {
+            mtrace(get_string('errornoenabledandtrainedmodels', 'tool_models'));
+            return;
+        }
+
+        foreach ($models as $modelobj) {
+            $model = new \core_analytics\model($modelobj);
+
+            $result = $model->predict();
+            if ($result) {
+                echo $OUTPUT->heading(get_string('modelresults', 'tool_models', $model->get_target()->get_name()));
+                $renderer = $PAGE->get_renderer('tool_models');
+                echo $renderer->render_execute_results(false, array(), $result, $model->get_analyser()->get_logs());
+            }
+        }
+
+    }
+}
