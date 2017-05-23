@@ -1807,6 +1807,10 @@ class core_plugin_manager {
                 'memberships', 'profile', 'toolproxy', 'toolsettings'
             ),
 
+            'mlbackend' => array(
+                'php', 'python'
+            ),
+
             'media' => array(
                 'html5audio', 'html5video', 'swf', 'videojs', 'vimeo', 'youtube'
             ),
@@ -1868,7 +1872,7 @@ class core_plugin_manager {
 
             'report' => array(
                 'backups', 'competency', 'completion', 'configlog', 'courseoverview', 'eventlist',
-                'log', 'loglive', 'outline', 'participation', 'progress', 'questioninstances',
+                'insights', 'log', 'loglive', 'outline', 'participation', 'progress', 'questioninstances',
                 'security', 'stats', 'performance', 'usersessions'
             ),
 
@@ -1902,8 +1906,8 @@ class core_plugin_manager {
             'tool' => array(
                 'assignmentupgrade', 'availabilityconditions', 'behat', 'capability', 'cohortroles', 'customlang',
                 'dbtransfer', 'filetypes', 'generator', 'health', 'innodb', 'installaddon',
-                'langimport', 'log', 'lp', 'lpimportcsv', 'lpmigrate', 'messageinbound', 'mobile', 'multilangupgrade', 'monitor',
-                'oauth2', 'phpunit', 'profiling', 'recyclebin', 'replace', 'spamcleaner', 'task', 'templatelibrary',
+                'langimport', 'log', 'lp', 'lpimportcsv', 'lpmigrate', 'messageinbound', 'mobile', 'models', 'multilangupgrade',
+                'monitor', 'oauth2', 'phpunit', 'profiling', 'recyclebin', 'replace', 'spamcleaner', 'task', 'templatelibrary',
                 'unittest', 'uploadcourse', 'uploaduser', 'unsuproles', 'usertours', 'xmldb'
             ),
 

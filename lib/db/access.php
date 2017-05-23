@@ -2305,6 +2305,24 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         ),
     ),
+    'moodle/analytics:listinsights' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+    'moodle/analytics:managemodels' => array(
+        'riskbitmask' => RISK_CONFIG,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
+    ),
     'moodle/competency:templateview' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSECAT,

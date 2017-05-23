@@ -101,4 +101,9 @@ $messageproviders = array (
 
     // A comment was left on a user competency.
     'competencyusercompcomment' => array(),
+
+    // User insights.
+    'insights' => array (
+         'capability'  => 'moodle/analytics:listinsights'
+    )
 );
