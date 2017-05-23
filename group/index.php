@@ -202,20 +202,22 @@ if ($groups) {
 }
 
 echo '</select>'."\n";
-echo '<p><input type="submit" name="act_updatemembers" id="updatemembers" value="'
+echo '<p><input class="btn btn-secondary" type="submit" name="act_updatemembers" id="updatemembers" value="'
         . get_string('showmembersforgroup', 'group') . '" /></p>'."\n";
-echo '<p><input type="submit" '. $showeditgroupsettingsform_disabled . ' name="act_showgroupsettingsform" id="showeditgroupsettingsform" value="'
+echo '<p><input class="btn btn-secondary" type="submit" '. $showeditgroupsettingsform_disabled .
+        ' name="act_showgroupsettingsform" id="showeditgroupsettingsform" value="'
         . get_string('editgroupsettings', 'group') . '" /></p>'."\n";
-echo '<p><input type="submit" '. $deletegroup_disabled . ' name="act_deletegroup" id="deletegroup" value="'
+echo '<p><input class="btn btn-secondary" type="submit" '. $deletegroup_disabled .
+        ' name="act_deletegroup" id="deletegroup" value="'
         . get_string('deleteselectedgroup', 'group') . '" /></p>'."\n";
 
-echo '<p><input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="'
+echo '<p><input class="btn btn-secondary" type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="'
         . get_string('creategroup', 'group') . '" /></p>'."\n";
 
-echo '<p><input type="submit" name="act_showautocreategroupsform" id="showautocreategroupsform" value="'
+echo '<p><input class="btn btn-secondary" type="submit" name="act_showautocreategroupsform" id="showautocreategroupsform" value="'
         . get_string('autocreategroups', 'group') . '" /></p>'."\n";
 
-echo '<p><input type="submit" name="act_showimportgroups" id="showimportgroups" value="'
+echo '<p><input class="btn btn-secondary" type="submit" name="act_showimportgroups" id="showimportgroups" value="'
         . get_string('importgroups', 'core_group') . '" /></p>'."\n";
 
 echo html_writer::end_tag('div');
@@ -251,7 +253,7 @@ if (!$atleastonemember) {
 
 echo '</select>'."\n";
 
-echo '<p><input type="submit" ' . $showaddmembersform_disabled . ' name="act_showaddmembersform" '
+echo '<p><input class="btn btn-secondary" type="submit" ' . $showaddmembersform_disabled . ' name="act_showaddmembersform" '
         . 'id="showaddmembersform" value="' . get_string('adduserstogroup', 'group'). '" /></p>'."\n";
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
