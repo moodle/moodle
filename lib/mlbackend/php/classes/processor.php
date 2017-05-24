@@ -33,8 +33,7 @@ spl_autoload_register(function($class) {
     }
 });
 
-use Phpml\NeuralNetwork\Network\MultilayerPerceptron;
-use Phpml\NeuralNetwork\Training\Backpropagation;
+use Phpml\Preprocessing\Normalizer;
 use Phpml\CrossValidation\RandomSplit;
 use Phpml\Dataset\ArrayDataset;
 
@@ -49,8 +48,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class processor implements \core_analytics\predictor {
 
-    const BATCH_SIZE = 1000;
-    const TRAIN_ITERATIONS = 20;
+    const BATCH_SIZE = 5000;
+    const TRAIN_ITERATIONS = 500;
     const MODEL_FILENAME = 'model.ser';
 
     protected $limitedsize = false;
@@ -69,7 +68,7 @@ class processor implements \core_analytics\predictor {
         if (file_exists($modelfilepath)) {
             $classifier = $modelmanager->restoreFromFile($modelfilepath);
         } else {
-            $classifier = new \Phpml\Classification\Linear\Perceptron(0.001, self::TRAIN_ITERATIONS, false);
+            $classifier = new \Phpml\Classification\Linear\LogisticRegression(self::TRAIN_ITERATIONS, Normalizer::NORM_L2);
         }
 
         $fh = $dataset->get_content_file_handle();
@@ -212,7 +211,7 @@ class processor implements \core_analytics\predictor {
             $sampledata = array_map('floatval', $data);
 
             $samples[] = array_slice($sampledata, 0, $metadata['nfeatures']);
-            $targets[] = array(intval($data[$metadata['nfeatures']]));
+            $targets[] = intval($data[$metadata['nfeatures']]);
 
             if (empty($CFG->mlbackend_php_no_evaluation_limits)) {
                 // We allow admins to disable evaluation memory usage limits by modifying config.php.
@@ -234,20 +233,14 @@ class processor implements \core_analytics\predictor {
         // Evaluate the model multiple times to confirm the results are not significantly random due to a short amount of data.
         for ($i = 0; $i < $niterations; $i++) {
 
-            //$classifier = new \Phpml\Classification\Linear\Perceptron(0.001, self::TRAIN_ITERATIONS, false);
-            $network = new MultilayerPerceptron([intval($metadata['nfeatures']), 2, 1]);
-            $training = new Backpropagation($network);
+            $classifier = new \Phpml\Classification\Linear\LogisticRegression(self::TRAIN_ITERATIONS, Normalizer::NORM_L2);
 
             // Split up the dataset in classifier and testing.
             $data = new RandomSplit(new ArrayDataset($samples, $targets), 0.2);
 
-            $training->train($data->getTrainSamples(), $data->getTrainLabels(), 0, 1);
+            $classifier->train($data->getTrainSamples(), $data->getTrainLabels());
 
-            $predictedlabels = array();
-            foreach ($data->getTestSamples() as $input) {
-                $output = $network->setInput($input)->getOutput();
-                $predictedlabels[] = reset($output);
-            }
+            $predictedlabels = $classifier->predict($data->getTestSamples());
             $phis[] = $this->get_phi($data->getTestLabels(), $predictedlabels);
         }
 
@@ -305,15 +298,6 @@ class processor implements \core_analytics\predictor {
     }
 
     protected function get_phi($testlabels, $predictedlabels) {
-
-        foreach ($testlabels as $key => $element) {
-            $value = reset($element);
-            $testlabels[$key] = $value;
-        }
-
-        foreach ($predictedlabels as $key => $element) {
-            $predictedlabels[$key] = ($element > 0.5) ? 1 : 0;
-        }
 
         // Binary here only as well.
         $matrix = \Phpml\Metric\ConfusionMatrix::compute($testlabels, $predictedlabels, array(0, 1));
