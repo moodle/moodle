@@ -33,6 +33,14 @@ abstract class LayeredNetwork implements Network
     }
 
     /**
+     * @return void
+     */
+    public function removeLayers()
+    {
+        unset($this->layers);
+    }
+
+    /**
      * @return Layer
      */
     public function getOutputLayer(): Layer
@@ -71,7 +79,7 @@ abstract class LayeredNetwork implements Network
         foreach ($this->getLayers() as $layer) {
             foreach ($layer->getNodes() as $node) {
                 if ($node instanceof Neuron) {
-                    $node->refresh();
+                    $node->reset();
                 }
             }
         }

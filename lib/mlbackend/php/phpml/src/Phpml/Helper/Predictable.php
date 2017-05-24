@@ -14,12 +14,12 @@ trait Predictable
     public function predict(array $samples)
     {
         if (!is_array($samples[0])) {
-            $predicted = $this->predictSample($samples);
-        } else {
-            $predicted = [];
-            foreach ($samples as $index => $sample) {
-                $predicted[$index] = $this->predictSample($sample);
-            }
+            return $this->predictSample($samples);
+        }
+
+        $predicted = [];
+        foreach ($samples as $index => $sample) {
+            $predicted[$index] = $this->predictSample($sample);
         }
 
         return $predicted;

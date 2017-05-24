@@ -4,47 +4,17 @@ declare(strict_types=1);
 
 namespace Phpml\DimensionReduction;
 
-use Phpml\Math\LinearAlgebra\EigenvalueDecomposition;
 use Phpml\Math\Statistic\Covariance;
 use Phpml\Math\Statistic\Mean;
-use Phpml\Math\Matrix;
 
-class PCA
+class PCA extends EigenTransformerBase
 {
-    /**
-     * Total variance to be conserved after the reduction
-     *
-     * @var float
-     */
-    public $totalVariance = 0.9;
-
-    /**
-     * Number of features to be preserved after the reduction
-     *
-     * @var int
-     */
-    public $numFeatures = null;
-
     /**
      * Temporary storage for mean values for each dimension in given data
      *
      * @var array
      */
     protected $means = [];
-
-    /**
-     * Eigenvectors of the covariance matrix
-     *
-     * @var array
-     */
-    protected $eigVectors = [];
-
-    /**
-     * Top eigenValues of the covariance matrix
-     *
-     * @var type
-     */
-    protected $eigValues = [];
 
     /**
      * @var bool
@@ -100,7 +70,7 @@ class PCA
 
         $covMatrix = Covariance::covarianceMatrix($data, array_fill(0, $n, 0));
 
-        list($this->eigValues, $this->eigVectors) = $this->eigenDecomposition($covMatrix, $n);
+        $this->eigenDecomposition($covMatrix);
 
         $this->fit = true;
 
@@ -115,7 +85,7 @@ class PCA
     {
         // Calculate means for each dimension
         $this->means = [];
-        for ($i=0; $i < $n; $i++) {
+        for ($i = 0; $i < $n; ++$i) {
             $column = array_column($data, $i);
             $this->means[] = Mean::arithmetic($column);
         }
@@ -126,7 +96,7 @@ class PCA
      * each dimension therefore dimensions will be centered to zero
      *
      * @param array $data
-     * @param int $n
+     * @param int   $n
      *
      * @return array
      */
@@ -138,69 +108,12 @@ class PCA
 
         // Normalize data
         foreach ($data as $i => $row) {
-            for ($k=0; $k < $n; $k++) {
+            for ($k = 0; $k < $n; ++$k) {
                 $data[$i][$k] -= $this->means[$k];
             }
         }
 
         return $data;
-    }
-
-    /**
-     * Calculates eigenValues and eigenVectors of the given matrix. Returns
-     * top eigenVectors along with the largest eigenValues. The total explained variance
-     * of these eigenVectors will be no less than desired $totalVariance value
-     *
-     * @param array $matrix
-     * @param int $n
-     *
-     * @return array
-     */
-    protected function eigenDecomposition(array $matrix, int $n)
-    {
-        $eig = new EigenvalueDecomposition($matrix);
-        $eigVals = $eig->getRealEigenvalues();
-        $eigVects= $eig->getEigenvectors();
-
-        $totalEigVal = array_sum($eigVals);
-        // Sort eigenvalues in descending order
-        arsort($eigVals);
-
-        $explainedVar = 0.0;
-        $vectors = [];
-        $values = [];
-        foreach ($eigVals as $i => $eigVal) {
-            $explainedVar += $eigVal / $totalEigVal;
-            $vectors[] = $eigVects[$i];
-            $values[] = $eigVal;
-
-            if ($this->numFeatures !== null) {
-                if (count($vectors) == $this->numFeatures) {
-                    break;
-                }
-            } else {
-                if ($explainedVar >= $this->totalVariance) {
-                    break;
-                }
-            }
-        }
-
-        return [$values, $vectors];
-    }
-
-    /**
-     * Returns the reduced data
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function reduce(array $data)
-    {
-        $m1 = new Matrix($data);
-        $m2 = new Matrix($this->eigVectors);
-
-        return $m1->multiply($m2->transpose())->toArray();
     }
 
     /**
@@ -210,6 +123,8 @@ class PCA
      * @param array $sample
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function transform(array $sample)
     {
@@ -217,7 +132,7 @@ class PCA
             throw new \Exception("PCA has not been fitted with respect to original dataset, please run PCA::fit() first");
         }
 
-        if (! is_array($sample[0])) {
+        if (!is_array($sample[0])) {
             $sample = [$sample];
         }
 

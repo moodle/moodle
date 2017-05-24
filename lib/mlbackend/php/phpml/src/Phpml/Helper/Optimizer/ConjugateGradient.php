@@ -18,8 +18,8 @@ namespace Phpml\Helper\Optimizer;
 class ConjugateGradient extends GD
 {
     /**
-     * @param array $samples
-     * @param array $targets
+     * @param array    $samples
+     * @param array    $targets
      * @param \Closure $gradientCb
      *
      * @return array
@@ -34,7 +34,7 @@ class ConjugateGradient extends GD
 
         $d = mp::muls($this->gradient($this->theta), -1);
 
-        for ($i=0; $i < $this->maxIterations; $i++) {
+        for ($i = 0; $i < $this->maxIterations; ++$i) {
             // Obtain α that minimizes f(θ + α.d)
             $alpha = $this->getAlpha(array_sum($d));
 
@@ -68,11 +68,11 @@ class ConjugateGradient extends GD
      *
      * @param array $theta
      *
-     * @return float
+     * @return array
      */
     protected function gradient(array $theta)
     {
-        list($_, $gradient, $_) = parent::gradient($theta);
+        list(, $gradient) = parent::gradient($theta);
 
         return $gradient;
     }
@@ -86,7 +86,7 @@ class ConjugateGradient extends GD
      */
     protected function cost(array $theta)
     {
-        list($cost, $_, $_) = parent::gradient($theta);
+        list($cost) = parent::gradient($theta);
 
         return array_sum($cost) / $this->sampleCount;
     }
@@ -107,7 +107,7 @@ class ConjugateGradient extends GD
      *
      * @param float $d
      *
-     * @return array
+     * @return float
      */
     protected function getAlpha(float $d)
     {
@@ -157,14 +157,14 @@ class ConjugateGradient extends GD
      * @param float $alpha
      * @param array $d
      *
-     * return array
+     * @return array
      */
     protected function getNewTheta(float $alpha, array $d)
     {
         $theta = $this->theta;
 
-        for ($i=0; $i < $this->dimensions + 1; $i++) {
-            if ($i == 0) {
+        for ($i = 0; $i < $this->dimensions + 1; ++$i) {
+            if ($i === 0) {
                 $theta[$i] += $alpha * array_sum($d);
             } else {
                 $sum = 0.0;
@@ -266,10 +266,11 @@ class mp
      *
      * @param array $m1
      * @param array $m2
+     * @param int   $mag
      *
      * @return array
      */
-    public static function add(array $m1, array $m2, $mag = 1)
+    public static function add(array $m1, array $m2, int $mag = 1)
     {
         $res = [];
         foreach ($m1 as $i => $val) {
@@ -333,10 +334,11 @@ class mp
      *
      * @param array $m1
      * @param float $m2
+     * @param int   $mag
      *
      * @return array
      */
-    public static function adds(array $m1, float $m2, $mag = 1)
+    public static function adds(array $m1, float $m2, int $mag = 1)
     {
         $res = [];
         foreach ($m1 as $val) {
@@ -350,7 +352,7 @@ class mp
      * Element-wise <b>subtraction</b> of a vector with a scalar
      *
      * @param array $m1
-     * @param float $m2
+     * @param array $m2
      *
      * @return array
      */

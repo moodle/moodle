@@ -68,7 +68,7 @@ class Neuron implements Node
         return $this->output;
     }
 
-    public function refresh()
+    public function reset()
     {
         $this->output = 0;
     }

@@ -18,8 +18,8 @@ class GD extends StochasticGD
     protected $sampleCount = null;
 
     /**
-     * @param array $samples
-     * @param array $targets
+     * @param array    $samples
+     * @param array    $targets
      * @param \Closure $gradientCb
      *
      * @return array
@@ -75,7 +75,7 @@ class GD extends StochasticGD
             list($cost, $grad, $penalty) = array_pad($result, 3, 0);
 
             $costs[] = $cost;
-            $gradient[]= $grad;
+            $gradient[] = $grad;
             $totalPenalty += $penalty;
         }
 
@@ -91,8 +91,8 @@ class GD extends StochasticGD
     protected function updateWeightsWithUpdates(array $updates, float $penalty)
     {
         // Updates all weights at once
-        for ($i=0; $i <= $this->dimensions; $i++) {
-            if ($i == 0) {
+        for ($i = 0; $i <= $this->dimensions; ++$i) {
+            if ($i === 0) {
                 $this->theta[0] -= $this->learningRate * array_sum($updates);
             } else {
                 $col = array_column($this->samples, $i - 1);

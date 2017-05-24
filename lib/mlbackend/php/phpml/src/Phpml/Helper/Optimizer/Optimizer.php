@@ -31,7 +31,7 @@ abstract class Optimizer
 
         // Inits the weights randomly
         $this->theta = [];
-        for ($i=0; $i < $this->dimensions; $i++) {
+        for ($i = 0; $i < $this->dimensions; ++$i) {
             $this->theta[] = rand() / (float) getrandmax();
         }
     }
@@ -40,6 +40,10 @@ abstract class Optimizer
      * Sets the weights manually
      *
      * @param array $theta
+     *
+     * @return $this
+     *
+     * @throws \Exception
      */
     public function setInitialTheta(array $theta)
     {
@@ -56,6 +60,9 @@ abstract class Optimizer
      * Executes the optimization with the given samples & targets
      * and returns the weights
      *
+     * @param array    $samples
+     * @param array    $targets
+     * @param \Closure $gradientCb
      */
     abstract protected function runOptimization(array $samples, array $targets, \Closure $gradientCb);
 }

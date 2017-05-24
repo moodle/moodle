@@ -89,7 +89,7 @@ class NaiveBayes implements Classifier
         $this->mean[$label]= array_fill(0, $this->featureCount, 0);
         $this->dataType[$label] = array_fill(0, $this->featureCount, self::CONTINUOS);
         $this->discreteProb[$label] = array_fill(0, $this->featureCount, self::CONTINUOS);
-        for ($i=0; $i<$this->featureCount; $i++) {
+        for ($i = 0; $i < $this->featureCount; ++$i) {
             // Get the values of nth column in the samples array
             // Mean::arithmetic is called twice, can be optimized
             $values = array_column($samples, $i);
@@ -114,16 +114,17 @@ class NaiveBayes implements Classifier
     /**
      * Calculates the probability P(label|sample_n)
      *
-     * @param array $sample
-     * @param int $feature
+     * @param array  $sample
+     * @param int    $feature
      * @param string $label
+     *
      * @return float
      */
     private function sampleProbability($sample, $feature, $label)
     {
         $value = $sample[$feature];
         if ($this->dataType[$label][$feature] == self::NOMINAL) {
-            if (! isset($this->discreteProb[$label][$feature][$value]) ||
+            if (!isset($this->discreteProb[$label][$feature][$value]) ||
                 $this->discreteProb[$label][$feature][$value] == 0) {
                 return self::EPSILON;
             }
@@ -145,13 +146,15 @@ class NaiveBayes implements Classifier
 
     /**
      * Return samples belonging to specific label
+     *
      * @param string $label
+     *
      * @return array
      */
     private function getSamplesByLabel($label)
     {
         $samples = [];
-        for ($i=0; $i<$this->sampleCount; $i++) {
+        for ($i = 0; $i < $this->sampleCount; ++$i) {
             if ($this->targets[$i] == $label) {
                 $samples[] = $this->samples[$i];
             }
@@ -171,12 +174,13 @@ class NaiveBayes implements Classifier
         $predictions = [];
         foreach ($this->labels as $label) {
             $p = $this->p[$label];
-            for ($i=0; $i<$this->featureCount; $i++) {
+            for ($i = 0; $i<$this->featureCount; ++$i) {
                 $Plf = $this->sampleProbability($sample, $i, $label);
                 $p += $Plf;
             }
             $predictions[$label] = $p;
         }
+
         arsort($predictions, SORT_NUMERIC);
         reset($predictions);
         return key($predictions);

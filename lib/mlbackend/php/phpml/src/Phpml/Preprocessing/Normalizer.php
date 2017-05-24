@@ -84,7 +84,7 @@ class Normalizer implements Preprocessor
         $this->fit($samples);
 
         foreach ($samples as &$sample) {
-            $this->$method($sample);
+            $this->{$method}($sample);
         }
     }
 

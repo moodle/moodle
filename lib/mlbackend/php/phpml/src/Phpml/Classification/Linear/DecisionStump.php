@@ -87,6 +87,8 @@ class DecisionStump extends WeightedClassifier
     /**
      * @param array $samples
      * @param array $targets
+     * @param array $labels
+     *
      * @throws \Exception
      */
     protected function trainBinary(array $samples, array $targets, array $labels)
@@ -237,13 +239,13 @@ class DecisionStump extends WeightedClassifier
 
     /**
      *
-     * @param type $leftValue
-     * @param type $operator
-     * @param type $rightValue
+     * @param mixed  $leftValue
+     * @param string $operator
+     * @param mixed  $rightValue
      *
      * @return boolean
      */
-    protected function evaluate($leftValue, $operator, $rightValue)
+    protected function evaluate($leftValue, string $operator, $rightValue)
     {
         switch ($operator) {
             case '>': return $leftValue > $rightValue;
@@ -288,10 +290,10 @@ class DecisionStump extends WeightedClassifier
                 $wrong += $this->weights[$index];
             }
 
-            if (! isset($prob[$predicted][$target])) {
+            if (!isset($prob[$predicted][$target])) {
                 $prob[$predicted][$target] = 0;
             }
-            $prob[$predicted][$target]++;
+            ++$prob[$predicted][$target];
         }
 
         // Calculate probabilities: Proportion of labels in each leaf

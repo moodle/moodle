@@ -6,7 +6,6 @@ namespace Phpml\Exception;
 
 class DatasetException extends \Exception
 {
-
     /**
      * @param string $path
      *

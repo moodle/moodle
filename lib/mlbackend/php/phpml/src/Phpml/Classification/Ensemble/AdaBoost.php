@@ -75,6 +75,7 @@ class AdaBoost implements Classifier
      * improve classification performance of 'weak' classifiers such as
      * DecisionStump (default base classifier of AdaBoost).
      *
+     * @param int $maxIterations
      */
     public function __construct(int $maxIterations = 50)
     {
@@ -96,6 +97,8 @@ class AdaBoost implements Classifier
     /**
      * @param array $samples
      * @param array $targets
+     *
+     * @throws \Exception
      */
     public function train(array $samples, array $targets)
     {
@@ -123,7 +126,6 @@ class AdaBoost implements Classifier
         // Execute the algorithm for a maximum number of iterations
         $currIter = 0;
         while ($this->maxIterations > $currIter++) {
-
             // Determine the best 'weak' classifier based on current weights
             $classifier = $this->getBestClassifier();
             $errorRate = $this->evaluateClassifier($classifier);
@@ -181,7 +183,7 @@ class AdaBoost implements Classifier
         $targets = [];
         foreach ($weights as $index => $weight) {
             $z = (int)round(($weight - $mean) / $std) - $minZ + 1;
-            for ($i=0; $i < $z; $i++) {
+            for ($i = 0; $i < $z; ++$i) {
                 if (rand(0, 1) == 0) {
                     continue;
                 }
@@ -197,6 +199,8 @@ class AdaBoost implements Classifier
      * Evaluates the classifier and returns the classification error rate
      *
      * @param Classifier $classifier
+     *
+     * @return float
      */
     protected function evaluateClassifier(Classifier $classifier)
     {

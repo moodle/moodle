@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Phpml\Classification\Ensemble;
 
 use Phpml\Classification\DecisionTree;
-use Phpml\Classification\Classifier;
 
 class RandomForest extends Bagging
 {
@@ -24,9 +23,9 @@ class RandomForest extends Bagging
      * may increase the prediction performance while it will also substantially
      * increase the processing time and the required memory
      *
-     * @param type $numClassifier
+     * @param int $numClassifier
      */
-    public function __construct($numClassifier = 50)
+    public function __construct(int $numClassifier = 50)
     {
         parent::__construct($numClassifier);
 
@@ -43,17 +42,21 @@ class RandomForest extends Bagging
      * features to be taken into consideration while selecting subspace of features
      *
      * @param mixed $ratio string or float should be given
+     *
      * @return $this
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function setFeatureSubsetRatio($ratio)
     {
         if (is_float($ratio) && ($ratio < 0.1 || $ratio > 1.0)) {
             throw new \Exception("When a float given, feature subset ratio should be between 0.1 and 1.0");
         }
+
         if (is_string($ratio) && $ratio != 'sqrt' && $ratio != 'log') {
             throw new \Exception("When a string given, feature subset ratio can only be 'sqrt' or 'log' ");
         }
+
         $this->featureSubsetRatio = $ratio;
         return $this;
     }
@@ -62,8 +65,11 @@ class RandomForest extends Bagging
      * RandomForest algorithm is usable *only* with DecisionTree
      *
      * @param string $classifier
-     * @param array $classifierOptions
+     * @param array  $classifierOptions
+     *
      * @return $this
+     *
+     * @throws \Exception
      */
     public function setClassifer(string $classifier, array $classifierOptions = [])
     {
@@ -125,10 +131,10 @@ class RandomForest extends Bagging
 
     /**
      * @param DecisionTree $classifier
-     * @param int $index
+     *
      * @return DecisionTree
      */
-    protected function initSingleClassifier($classifier, $index)
+    protected function initSingleClassifier($classifier)
     {
         if (is_float($this->featureSubsetRatio)) {
             $featureCount = (int)($this->featureSubsetRatio * $this->featureCount);

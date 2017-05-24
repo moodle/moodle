@@ -112,8 +112,8 @@ class ClassificationReport
     private function computeAverage()
     {
         foreach (['precision', 'recall', 'f1score'] as $metric) {
-            $values = array_filter($this->$metric);
-            if (0 == count($values)) {
+            $values = array_filter($this->{$metric});
+            if (empty($values)) {
                 $this->average[$metric] = 0.0;
                 continue;
             }

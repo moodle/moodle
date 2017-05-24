@@ -59,13 +59,13 @@ class Bagging implements Classifier
     private $samples = [];
 
     /**
-     * Creates an ensemble classifier with given number of base classifiers<br>
-     * Default number of base classifiers is 100.
+     * Creates an ensemble classifier with given number of base classifiers
+     * Default number of base classifiers is 50.
      * The more number of base classifiers, the better performance but at the cost of procesing time
      *
      * @param int $numClassifier
      */
-    public function __construct($numClassifier = 50)
+    public function __construct(int $numClassifier = 50)
     {
         $this->numClassifier = $numClassifier;
     }
@@ -76,14 +76,17 @@ class Bagging implements Classifier
      * to train each base classifier.
      *
      * @param float $ratio
+     *
      * @return $this
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function setSubsetRatio(float $ratio)
     {
         if ($ratio < 0.1 || $ratio > 1.0) {
             throw new \Exception("Subset ratio should be between 0.1 and 1.0");
         }
+
         $this->subsetRatio = $ratio;
         return $this;
     }
@@ -98,12 +101,14 @@ class Bagging implements Classifier
      *
      * @param string $classifier
      * @param array $classifierOptions
+     *
      * @return $this
      */
     public function setClassifer(string $classifier, array $classifierOptions = [])
     {
         $this->classifier = $classifier;
         $this->classifierOptions = $classifierOptions;
+
         return $this;
     }
 
@@ -138,11 +143,12 @@ class Bagging implements Classifier
         $targets = [];
         srand($index);
         $bootstrapSize = $this->subsetRatio * $this->numSamples;
-        for ($i=0; $i < $bootstrapSize; $i++) {
+        for ($i = 0; $i < $bootstrapSize; ++$i) {
             $rand = rand(0, $this->numSamples - 1);
             $samples[] = $this->samples[$rand];
             $targets[] = $this->targets[$rand];
         }
+
         return [$samples, $targets];
     }
 
@@ -152,24 +158,25 @@ class Bagging implements Classifier
     protected function initClassifiers()
     {
         $classifiers = [];
-        for ($i=0; $i<$this->numClassifier; $i++) {
+        for ($i = 0; $i < $this->numClassifier; ++$i) {
             $ref = new \ReflectionClass($this->classifier);
             if ($this->classifierOptions) {
                 $obj = $ref->newInstanceArgs($this->classifierOptions);
             } else {
                 $obj = $ref->newInstance();
             }
-            $classifiers[] = $this->initSingleClassifier($obj, $i);
+
+            $classifiers[] = $this->initSingleClassifier($obj);
         }
         return $classifiers;
     }
 
     /**
      * @param Classifier $classifier
-     * @param int $index
+     *
      * @return Classifier
      */
-    protected function initSingleClassifier($classifier, $index)
+    protected function initSingleClassifier($classifier)
     {
         return $classifier;
     }

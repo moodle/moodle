@@ -68,7 +68,7 @@ class Mean
      */
     private static function checkArrayLength(array $array)
     {
-        if (0 == count($array)) {
+        if (empty($array)) {
             throw InvalidArgumentException::arrayCantBeEmpty();
         }
     }

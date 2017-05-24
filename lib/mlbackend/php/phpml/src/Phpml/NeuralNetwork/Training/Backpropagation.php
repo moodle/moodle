@@ -4,18 +4,11 @@ declare(strict_types=1);
 
 namespace Phpml\NeuralNetwork\Training;
 
-use Phpml\NeuralNetwork\Network;
 use Phpml\NeuralNetwork\Node\Neuron;
-use Phpml\NeuralNetwork\Training;
 use Phpml\NeuralNetwork\Training\Backpropagation\Sigma;
 
-class Backpropagation implements Training
+class Backpropagation
 {
-    /**
-     * @var Network
-     */
-    private $network;
-
     /**
      * @var int
      */
@@ -24,97 +17,67 @@ class Backpropagation implements Training
     /**
      * @var array
      */
-    private $sigmas;
+    private $sigmas = null;
 
     /**
-     * @param Network $network
-     * @param int     $theta
+     * @var array
      */
-    public function __construct(Network $network, int $theta = 1)
+    private $prevSigmas = null;
+
+    /**
+     * @param int $theta
+     */
+    public function __construct(int $theta)
     {
-        $this->network = $network;
         $this->theta = $theta;
     }
 
     /**
-     * @param array $samples
-     * @param array $targets
-     * @param float $desiredError
-     * @param int   $maxIterations
+     * @param array $layers
+     * @param mixed $targetClass
      */
-    public function train(array $samples, array $targets, float $desiredError = 0.001, int $maxIterations = 10000)
+    public function backpropagate(array $layers, $targetClass)
     {
-        for ($i = 0; $i < $maxIterations; ++$i) {
-            $resultsWithinError = $this->trainSamples($samples, $targets, $desiredError);
-
-            if ($resultsWithinError == count($samples)) {
-                break;
-            }
-        }
-    }
-
-    /**
-     * @param array $samples
-     * @param array $targets
-     * @param float $desiredError
-     *
-     * @return int
-     */
-    private function trainSamples(array $samples, array $targets, float $desiredError): int
-    {
-        $resultsWithinError = 0;
-        foreach ($targets as $key => $target) {
-            $result = $this->network->setInput($samples[$key])->getOutput();
-
-            if ($this->isResultWithinError($result, $target, $desiredError)) {
-                ++$resultsWithinError;
-            } else {
-                $this->trainSample($samples[$key], $target);
-            }
-        }
-
-        return $resultsWithinError;
-    }
-
-    /**
-     * @param array $sample
-     * @param array $target
-     */
-    private function trainSample(array $sample, array $target)
-    {
-        $this->network->setInput($sample)->getOutput();
-        $this->sigmas = [];
-
-        $layers = $this->network->getLayers();
         $layersNumber = count($layers);
 
+        // Backpropagation.
         for ($i = $layersNumber; $i > 1; --$i) {
+            $this->sigmas = [];
             foreach ($layers[$i - 1]->getNodes() as $key => $neuron) {
                 if ($neuron instanceof Neuron) {
-                    $sigma = $this->getSigma($neuron, $target, $key, $i == $layersNumber);
+                    $sigma = $this->getSigma($neuron, $targetClass, $key, $i == $layersNumber);
                     foreach ($neuron->getSynapses() as $synapse) {
                         $synapse->changeWeight($this->theta * $sigma * $synapse->getNode()->getOutput());
                     }
                 }
             }
+            $this->prevSigmas = $this->sigmas;
         }
+
+        // Clean some memory (also it helps make MLP persistency & children more maintainable).
+        $this->sigmas = null;
+        $this->prevSigmas = null;
     }
 
     /**
      * @param Neuron $neuron
-     * @param array  $target
+     * @param int    $targetClass
      * @param int    $key
      * @param bool   $lastLayer
      *
      * @return float
      */
-    private function getSigma(Neuron $neuron, array $target, int $key, bool $lastLayer): float
+    private function getSigma(Neuron $neuron, int $targetClass, int $key, bool $lastLayer): float
     {
         $neuronOutput = $neuron->getOutput();
         $sigma = $neuronOutput * (1 - $neuronOutput);
 
         if ($lastLayer) {
-            $sigma *= ($target[$key] - $neuronOutput);
+            $value = 0;
+            if ($targetClass === $key) {
+                $value = 1;
+            }
+            $sigma *= ($value - $neuronOutput);
         } else {
             $sigma *= $this->getPrevSigma($neuron);
         }
@@ -133,28 +96,10 @@ class Backpropagation implements Training
     {
         $sigma = 0.0;
 
-        foreach ($this->sigmas as $neuronSigma) {
+        foreach ($this->prevSigmas as $neuronSigma) {
             $sigma += $neuronSigma->getSigmaForNeuron($neuron);
         }
 
         return $sigma;
-    }
-
-    /**
-     * @param array $result
-     * @param array $target
-     * @param float $desiredError
-     *
-     * @return bool
-     */
-    private function isResultWithinError(array $result, array $target, float $desiredError)
-    {
-        foreach ($target as $key => $value) {
-            if ($result[$key] > $value + $desiredError || $result[$key] < $value - $desiredError) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

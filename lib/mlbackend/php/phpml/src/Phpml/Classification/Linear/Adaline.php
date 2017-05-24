@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Phpml\Classification\Linear;
 
-use Phpml\Classification\Classifier;
-
 class Adaline extends Perceptron
 {
-
     /**
      * Batch training is the default Adaline training algorithm
      */
@@ -35,13 +32,17 @@ class Adaline extends Perceptron
      * If normalizeInputs is set to true, then every input given to the algorithm will be standardized
      * by use of standard deviation and mean calculation
      *
-     * @param int $learningRate
-     * @param int $maxIterations
+     * @param float $learningRate
+     * @param int   $maxIterations
+     * @param bool  $normalizeInputs
+     * @param int   $trainingType
+     *
+     * @throws \Exception
      */
     public function __construct(float $learningRate = 0.001, int $maxIterations = 1000,
         bool $normalizeInputs = true, int $trainingType = self::BATCH_TRAINING)
     {
-        if (! in_array($trainingType, [self::BATCH_TRAINING, self::ONLINE_TRAINING])) {
+        if (!in_array($trainingType, [self::BATCH_TRAINING, self::ONLINE_TRAINING])) {
             throw new \Exception("Adaline can only be trained with batch and online/stochastic gradient descent algorithm");
         }
 

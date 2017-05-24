@@ -166,7 +166,6 @@ class StochasticGD extends Optimizer
         $currIter = 0;
         $bestTheta = null;
         $bestScore = 0.0;
-        $bestWeightIter = 0;
         $this->costValues = [];
 
         while ($this->maxIterations > $currIter++) {
@@ -180,7 +179,6 @@ class StochasticGD extends Optimizer
             if ($bestTheta == null || $cost <= $bestScore) {
                 $bestTheta = $theta;
                 $bestScore = $cost;
-                $bestWeightIter = $currIter;
             }
 
             // Add the cost value for this iteration to the list
@@ -218,7 +216,7 @@ class StochasticGD extends Optimizer
             $this->theta[0] -= $this->learningRate * $gradient;
 
             // Update other values
-            for ($i=1; $i <= $this->dimensions; $i++) {
+            for ($i = 1; $i <= $this->dimensions; ++$i) {
                 $this->theta[$i] -= $this->learningRate *
                     ($gradient * $sample[$i - 1] + $penalty * $this->theta[$i]);
             }

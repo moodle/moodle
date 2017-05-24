@@ -23,8 +23,8 @@ class RBF implements Kernel
     }
 
     /**
-     * @param float $a
-     * @param float $b
+     * @param array $a
+     * @param array $b
      *
      * @return float
      */

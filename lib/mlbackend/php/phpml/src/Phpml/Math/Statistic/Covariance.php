@@ -13,7 +13,7 @@ class Covariance
      *
      * @param array $x
      * @param array $y
-     * @param bool $sample
+     * @param bool  $sample
      * @param float $meanX
      * @param float $meanY
      *
@@ -57,14 +57,18 @@ class Covariance
      * Calculates covariance of two dimensions, i and k in the given data.
      *
      * @param array $data
-     * @param int $i
-     * @param int $k
-     * @param type $sample
-     * @param int $n
+     * @param int   $i
+     * @param int   $k
+     * @param bool  $sample
      * @param float $meanX
      * @param float $meanY
+     *
+     * @return float
+     *
+     * @throws InvalidArgumentException
+     * @throws \Exception
      */
-    public static function fromDataset(array $data, int $i, int $k, $sample = true, float $meanX = null, float $meanY = null)
+    public static function fromDataset(array $data, int $i, int $k, bool $sample = true, float $meanX = null, float $meanY = null)
     {
         if (empty($data)) {
             throw InvalidArgumentException::arrayCantBeEmpty();
@@ -123,7 +127,8 @@ class Covariance
     /**
      * Returns the covariance matrix of n-dimensional data
      *
-     * @param array $data
+     * @param array      $data
+     * @param array|null $means
      *
      * @return array
      */
@@ -133,19 +138,20 @@ class Covariance
 
         if ($means === null) {
             $means = [];
-            for ($i=0; $i < $n; $i++) {
+            for ($i = 0; $i < $n; ++$i) {
                 $means[] = Mean::arithmetic(array_column($data, $i));
             }
         }
 
         $cov = [];
-        for ($i=0; $i < $n; $i++) {
-            for ($k=0; $k < $n; $k++) {
+        for ($i = 0; $i < $n; ++$i) {
+            for ($k = 0; $k < $n; ++$k) {
                 if ($i > $k) {
                     $cov[$i][$k] = $cov[$k][$i];
                 } else {
-                    $cov[$i][$k] = Covariance::fromDataset(
-                        $data, $i, $k, true, $means[$i], $means[$k]);
+                    $cov[$i][$k] = self::fromDataset(
+                        $data, $i, $k, true, $means[$i], $means[$k]
+                    );
                 }
             }
         }

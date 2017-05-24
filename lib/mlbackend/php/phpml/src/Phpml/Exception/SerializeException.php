@@ -6,7 +6,6 @@ namespace Phpml\Exception;
 
 class SerializeException extends \Exception
 {
-
     /**
      * @param string $filepath
      *

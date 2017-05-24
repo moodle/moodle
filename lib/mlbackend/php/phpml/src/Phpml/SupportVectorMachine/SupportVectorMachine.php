@@ -9,8 +9,8 @@ use Phpml\Helper\Trainable;
 class SupportVectorMachine
 {
     use Trainable;
-     
-     /**
+
+    /**
      * @var int
      */
     private $type;
@@ -129,6 +129,30 @@ class SupportVectorMachine
     }
 
     /**
+     * @param string $binPath
+     *
+     * @return $this
+     */
+    public function setBinPath(string $binPath)
+    {
+        $this->binPath = $binPath;
+
+        return $this;
+    }
+
+    /**
+     * @param string $varPath
+     *
+     * @return $this
+     */
+    public function setVarPath(string $varPath)
+    {
+        $this->varPath = $varPath;
+
+        return $this;
+    }
+
+    /**
      * @param array $samples
      * @param array $targets
      */
@@ -210,8 +234,8 @@ class SupportVectorMachine
     }
 
     /**
-     * @param $trainingSetFileName
-     * @param $modelFileName
+     * @param string $trainingSetFileName
+     * @param string $modelFileName
      *
      * @return string
      */

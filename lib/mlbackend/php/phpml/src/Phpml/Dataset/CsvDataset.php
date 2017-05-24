@@ -17,6 +17,7 @@ class CsvDataset extends ArrayDataset
      * @param string $filepath
      * @param int    $features
      * @param bool   $headingRow
+     * @param string $delimiter
      *
      * @throws FileException
      */
@@ -37,11 +38,15 @@ class CsvDataset extends ArrayDataset
             $this->columnNames = range(0, $features - 1);
         }
 
+        $samples = $targets = [];
         while (($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
-            $this->samples[] = array_slice($data, 0, $features);
-            $this->targets[] = $data[$features];
+            $samples[] = array_slice($data, 0, $features);
+            $targets[] = $data[$features];
         }
+
         fclose($handle);
+
+        parent::__construct($samples, $targets);
     }
 
     /**

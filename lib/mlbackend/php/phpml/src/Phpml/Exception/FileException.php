@@ -6,7 +6,6 @@ namespace Phpml\Exception;
 
 class FileException extends \Exception
 {
-
     /**
      * @param string $filepath
      *

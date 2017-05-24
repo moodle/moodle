@@ -92,6 +92,8 @@ class DecisionTreeLeaf
      * Returns Mean Decrease Impurity (MDI) in the node.
      * For terminal nodes, this value is equal to 0
      *
+     * @param int $parentRecordCount
+     *
      * @return float
      */
     public function getNodeImpurityDecrease(int $parentRecordCount)
@@ -133,7 +135,7 @@ class DecisionTreeLeaf
             } else {
                 $col = "col_$this->columnIndex";
             }
-            if (! preg_match("/^[<>=]{1,2}/", $value)) {
+            if (!preg_match("/^[<>=]{1,2}/", $value)) {
                 $value = "=$value";
             }
             $value = "<b>$col $value</b><br>Gini: ". number_format($this->giniIndex, 2);

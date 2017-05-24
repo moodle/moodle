@@ -63,22 +63,22 @@ class Perceptron implements Classifier, IncrementalEstimator
 
     /**
      * Initalize a perceptron classifier with given learning rate and maximum
-     * number of iterations used while training the perceptron <br>
+     * number of iterations used while training the perceptron
      *
-     * Learning rate should be a float value between 0.0(exclusive) and 1.0(inclusive) <br>
-     * Maximum number of iterations can be an integer value greater than 0
-     * @param int $learningRate
-     * @param int $maxIterations
+     * @param float $learningRate    Value between 0.0(exclusive) and 1.0(inclusive)
+     * @param int   $maxIterations   Must be at least 1
+     * @param bool  $normalizeInputs
+     *
+     * @throws \Exception
      */
-    public function __construct(float $learningRate = 0.001, int $maxIterations = 1000,
-        bool $normalizeInputs = true)
+    public function __construct(float $learningRate = 0.001, int $maxIterations = 1000, bool $normalizeInputs = true)
     {
         if ($learningRate <= 0.0 || $learningRate > 1.0) {
             throw new \Exception("Learning rate should be a float value between 0.0(exclusive) and 1.0(inclusive)");
         }
 
         if ($maxIterations <= 0) {
-            throw new \Exception("Maximum number of iterations should be an integer greater than 0");
+            throw new \Exception("Maximum number of iterations must be an integer greater than 0");
         }
 
         if ($normalizeInputs) {
@@ -96,7 +96,7 @@ class Perceptron implements Classifier, IncrementalEstimator
      */
     public function partialTrain(array $samples, array $targets, array $labels = [])
     {
-        return $this->trainByLabel($samples, $targets, $labels);
+        $this->trainByLabel($samples, $targets, $labels);
     }
 
    /**
@@ -140,6 +140,8 @@ class Perceptron implements Classifier, IncrementalEstimator
      * for $maxIterations times
      *
      * @param bool $enable
+     *
+     * @return $this
      */
     public function setEarlyStop(bool $enable = true)
     {
@@ -185,12 +187,14 @@ class Perceptron implements Classifier, IncrementalEstimator
      * Executes a Gradient Descent algorithm for
      * the given cost function
      *
-     * @param array $samples
-     * @param array $targets
+     * @param array    $samples
+     * @param array    $targets
+     * @param \Closure $gradientFunc
+     * @param bool     $isBatch
      */
     protected function runGradientDescent(array $samples, array $targets, \Closure $gradientFunc, bool $isBatch = false)
     {
-        $class = $isBatch ? GD::class :  StochasticGD::class;
+        $class = $isBatch ? GD::class : StochasticGD::class;
 
         if (empty($this->optimizer)) {
             $this->optimizer = (new $class($this->featureCount))
@@ -262,6 +266,8 @@ class Perceptron implements Classifier, IncrementalEstimator
      *
      * @param array $sample
      * @param mixed $label
+     *
+     * @return float
      */
     protected function predictProbability(array $sample, $label)
     {
@@ -277,6 +283,7 @@ class Perceptron implements Classifier, IncrementalEstimator
 
     /**
      * @param array $sample
+     *
      * @return mixed
      */
     protected function predictSampleBinary(array $sample)
@@ -285,6 +292,6 @@ class Perceptron implements Classifier, IncrementalEstimator
 
         $predictedClass = $this->outputClass($sample);
 
-        return $this->labels[ $predictedClass ];
+        return $this->labels[$predictedClass];
     }
 }

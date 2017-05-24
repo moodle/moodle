@@ -6,7 +6,6 @@ namespace Phpml\Helper;
 
 trait OneVsRest
 {
-
     /**
      * @var array
      */
@@ -35,18 +34,18 @@ trait OneVsRest
         // Clears previous stuff.
         $this->reset();
 
-        return $this->trainBylabel($samples, $targets);
+        $this->trainBylabel($samples, $targets);
     }
 
     /**
      * @param array $samples
      * @param array $targets
      * @param array $allLabels All training set labels
+     *
      * @return void
      */
     protected function trainByLabel(array $samples, array $targets, array $allLabels = [])
     {
-
         // Overwrites the current value if it exist. $allLabels must be provided for each partialTrain run.
         if (!empty($allLabels)) {
             $this->allLabels = $allLabels;
@@ -57,7 +56,6 @@ trait OneVsRest
 
         // If there are only two targets, then there is no need to perform OvR
         if (count($this->allLabels) == 2) {
-
             // Init classifier if required.
             if (empty($this->classifiers)) {
                 $this->classifiers[0] = $this->getClassifierCopy();
@@ -68,7 +66,6 @@ trait OneVsRest
             // Train a separate classifier for each label and memorize them
 
             foreach ($this->allLabels as $label) {
-
                 // Init classifier if required.
                 if (empty($this->classifiers[$label])) {
                     $this->classifiers[$label] = $this->getClassifierCopy();
@@ -107,7 +104,6 @@ trait OneVsRest
      */
     protected function getClassifierCopy()
     {
-
         // Clone the current classifier, so that
         // we don't mess up its variables while training
         // multiple instances of this classifier
@@ -180,7 +176,8 @@ trait OneVsRest
      * Each classifier that make use of OvR approach should be able to
      * return a probability for a sample to belong to the given label.
      *
-     * @param array $sample
+     * @param array  $sample
+     * @param string $label
      *
      * @return mixed
      */

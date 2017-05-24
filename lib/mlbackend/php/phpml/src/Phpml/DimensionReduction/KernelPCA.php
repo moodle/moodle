@@ -54,7 +54,7 @@ class KernelPCA extends PCA
     public function __construct(int $kernel = self::KERNEL_RBF, $totalVariance = null, $numFeatures = null, $gamma = null)
     {
         $availableKernels = [self::KERNEL_RBF, self::KERNEL_SIGMOID, self::KERNEL_LAPLACIAN, self::KERNEL_LINEAR];
-        if (! in_array($kernel, $availableKernels)) {
+        if (!in_array($kernel, $availableKernels)) {
             throw new \Exception("KernelPCA can be initialized with the following kernels only: Linear, RBF, Sigmoid and Laplacian");
         }
 
@@ -86,7 +86,7 @@ class KernelPCA extends PCA
         $matrix = $this->calculateKernelMatrix($this->data, $numRows);
         $matrix = $this->centerMatrix($matrix, $numRows);
 
-        list($this->eigValues, $this->eigVectors) = $this->eigenDecomposition($matrix, $numRows);
+        $this->eigenDecomposition($matrix);
 
         $this->fit = true;
 
@@ -98,7 +98,7 @@ class KernelPCA extends PCA
      * An n-by-m matrix is given and an n-by-n matrix is returned
      *
      * @param array $data
-     * @param int $numRows
+     * @param int   $numRows
      *
      * @return array
      */
@@ -107,8 +107,8 @@ class KernelPCA extends PCA
         $kernelFunc = $this->getKernel();
 
         $matrix = [];
-        for ($i=0; $i < $numRows; $i++) {
-            for ($k=0; $k < $numRows; $k++) {
+        for ($i = 0; $i < $numRows; ++$i) {
+            for ($k = 0; $k < $numRows; ++$k) {
                 if ($i <= $k) {
                     $matrix[$i][$k] = $kernelFunc($data[$i], $data[$k]);
                 } else {
@@ -127,7 +127,9 @@ class KernelPCA extends PCA
      * K′ = K − N.K −  K.N + N.K.N where N is n-by-n matrix filled with 1/n
      *
      * @param array $matrix
-     * @param int $n
+     * @param int   $n
+     *
+     * @return array
      */
     protected function centerMatrix(array $matrix, int $n)
     {
@@ -152,6 +154,8 @@ class KernelPCA extends PCA
      * Returns the callable kernel function
      *
      * @return \Closure
+     *
+     * @throws \Exception
      */
     protected function getKernel()
     {
@@ -181,6 +185,9 @@ class KernelPCA extends PCA
                 return function ($x, $y) use ($dist) {
                     return exp(-$this->gamma * $dist->distance($x, $y));
                 };
+
+            default:
+                throw new \Exception(sprintf('KernelPCA initialized with invalid kernel: %d', $this->kernel));
         }
     }
 
@@ -228,6 +235,8 @@ class KernelPCA extends PCA
      * @param array $sample
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function transform(array $sample)
     {
