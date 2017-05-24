@@ -75,11 +75,11 @@ abstract class spout_base extends \core\dataformat\base {
     }
 
     /**
-     * Write the start of the format
+     * Write the start of the sheet we will be adding data to.
      *
      * @param array $columns
      */
-    public function write_header($columns) {
+    public function start_sheet($columns) {
         $this->writer->addRow(array_values((array)$columns));
     }
 
@@ -94,13 +94,10 @@ abstract class spout_base extends \core\dataformat\base {
     }
 
     /**
-     * Write the end of the format
-     *
-     * @param array $columns
+     * Write the end of the file.
      */
-    public function write_footer($columns) {
+    public function close_output() {
         $this->writer->close();
         $this->writer = null;
     }
-
 }
