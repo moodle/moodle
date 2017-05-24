@@ -183,7 +183,7 @@ if ($mform->is_cancelled()) {
         unset($fromform->id);
         $fromform->id = $DB->insert_record('assign_overrides', $fromform);
         if ($groupmode) {
-            $fromform->sortorder = $fromform->id;
+            $fromform->sortorder = 1;
 
             $overridecountgroup = $DB->count_records('assign_overrides',
                 array('userid' => null, 'assignid' => $assigninstance->id));
@@ -196,7 +196,7 @@ if ($mform->is_cancelled()) {
             }
 
             $DB->update_record('assign_overrides', $fromform);
-
+            reorder_group_overrides($assigninstance->id);
         }
 
         // Determine which override created event to fire.
