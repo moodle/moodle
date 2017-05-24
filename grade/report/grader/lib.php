@@ -461,6 +461,9 @@ class grade_report_grader extends grade_report {
                 case 'email':
                     $sort = "u.email $this->sortorder, u.firstname, u.lastname, u.idnumber";
                     break;
+                case 'email':
+                    $sort = "u.email $this->sortorder";
+                    break;
                 case 'idnumber':
                 default:
                     $sort = "u.idnumber $this->sortorder, u.firstname, u.lastname, u.email";
