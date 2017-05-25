@@ -521,11 +521,19 @@ class manager {
      * Index all documents.
      *
      * @param bool $fullindex Whether we should reindex everything or not.
+     * @param float $timelimit Time limit in seconds (0 = no time limit)
+     * @param \progress_trace $progress Optional class for tracking progress
      * @throws \moodle_exception
      * @return bool Whether there was any updated document or not.
      */
-    public function index($fullindex = false) {
-        global $CFG;
+    public function index($fullindex = false, $timelimit = 0, \progress_trace $progress = null) {
+        // Cannot combine time limit with reindex.
+        if ($timelimit && $fullindex) {
+            throw new \coding_exception('Cannot apply time limit when reindexing');
+        }
+        if (!$progress) {
+            $progress = new \null_progress_trace();
+        }
 
         // Unlimited time.
         \core_php_time_limit::raise();
@@ -536,11 +544,25 @@ class manager {
         $sumdocs = 0;
 
         $searchareas = $this->get_search_areas_list(true);
+
+        if ($timelimit) {
+            // If time is limited (and therefore we're not just indexing everything anyway), select
+            // an order for search areas. The intention here is to avoid a situation where a new
+            // large search area is enabled, and this means all our other search areas go out of
+            // date while that one is being indexed. To do this, we order by the time we spent
+            // indexing them last time we ran, meaning anything that took a very long time will be
+            // done last.
+            uasort($searchareas, function(\core_search\base $area1, \core_search\base $area2) {
+                return (int)$area1->get_last_indexing_duration() - (int)$area2->get_last_indexing_duration();
+            });
+
+            // Decide time to stop.
+            $stopat = microtime(true) + $timelimit;
+        }
+
         foreach ($searchareas as $areaid => $searcharea) {
 
-            if (CLI_SCRIPT && !PHPUNIT_TEST) {
-                mtrace('Processing ' . $searcharea->get_visible_name() . ' area');
-            }
+            $progress->output('Processing area: ' . $searcharea->get_visible_name());
 
             // Notify the engine that an area is starting.
             $this->engine->area_index_starting($searcharea, $fullindex);
@@ -556,7 +578,16 @@ class manager {
             if ($fullindex === true) {
                 $referencestarttime = 0;
             } else {
-                $referencestarttime = $prevtimestart;
+                $partial = get_config($componentconfigname, $varname . '_partial');
+                if ($partial) {
+                    // When the previous index did not complete all data, we start from the time of the
+                    // last document that was successfully indexed. (Note this will result in
+                    // re-indexing that one document, but we can't avoid that because there may be
+                    // other documents in the same second.)
+                    $referencestarttime = intval(get_config($componentconfigname, $varname . '_lastindexrun'));
+                } else {
+                    $referencestarttime = $prevtimestart;
+                }
             }
 
             // Getting the recordset from the area.
@@ -565,27 +596,35 @@ class manager {
             // Pass get_document as callback.
             $fileindexing = $this->engine->file_indexing_enabled() && $searcharea->uses_file_indexing();
             $options = array('indexfiles' => $fileindexing, 'lastindexedtime' => $prevtimestart);
+            if ($timelimit) {
+                $options['stopat'] = $stopat;
+            }
             $iterator = new \core\dml\recordset_walk($recordset, array($searcharea, 'get_document'), $options);
-            list($numrecords,
-                 $numdocs,
-                 $numdocsignored,
-                 $lastindexeddoc) = $this->engine->add_documents($iterator, $searcharea, $options);
+            $result = $this->engine->add_documents($iterator, $searcharea, $options);
+            if (count($result) === 5) {
+                list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial) = $result;
+            } else {
+                // Backward compatibility for engines that don't support partial adding.
+                list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc) = $result;
+                debugging('engine::add_documents() should return $partial (4-value return is deprecated)',
+                        DEBUG_DEVELOPER);
+                $partial = false;
+            }
 
-            if (CLI_SCRIPT && !PHPUNIT_TEST) {
-                if ($numdocs > 0) {
-                    $elapsed = round((microtime(true) - $elapsed), 3);
-                    mtrace('Processed ' . $numrecords . ' records containing ' . $numdocs . ' documents for ' .
-                            $searcharea->get_visible_name() . ' area, in ' . $elapsed . ' seconds.');
-                } else {
-                    mtrace('No new documents to index for ' . $searcharea->get_visible_name() . ' area.');
-                }
+            if ($numdocs > 0) {
+                $elapsed = round((microtime(true) - $elapsed), 3);
+                $progress->output('Processed ' . $numrecords . ' records containing ' . $numdocs .
+                        ' documents, in ' . $elapsed . ' seconds' .
+                        ($partial ? ' (not complete)' : '') . '.', 1);
+            } else {
+                $progress->output('No new documents to index.', 1);
             }
 
             // Notify the engine this area is complete, and only mark times if true.
             if ($this->engine->area_index_complete($searcharea, $numdocs, $fullindex)) {
                 $sumdocs += $numdocs;
 
-                // Store last index run once documents have been commited to the search engine.
+                // Store last index run once documents have been committed to the search engine.
                 set_config($varname . '_indexingstart', $indexingstart, $componentconfigname);
                 set_config($varname . '_indexingend', time(), $componentconfigname);
                 set_config($varname . '_docsignored', $numdocsignored, $componentconfigname);
@@ -594,6 +633,18 @@ class manager {
                 if ($lastindexeddoc > 0) {
                     set_config($varname . '_lastindexrun', $lastindexeddoc, $componentconfigname);
                 }
+                if ($partial) {
+                    set_config($varname . '_partial', 1, $componentconfigname);
+                } else {
+                    unset_config($varname . '_partial', $componentconfigname);
+                }
+            } else {
+                $progress->output('Engine reported error.');
+            }
+
+            if ($timelimit && (microtime(true) >= $stopat)) {
+                $progress->output('Stopping indexing due to time limit.');
+                break;
             }
         }
 
@@ -673,7 +724,8 @@ class manager {
      */
     public function get_areas_config($searchareas) {
 
-        $vars = array('indexingstart', 'indexingend', 'lastindexrun', 'docsignored', 'docsprocessed', 'recordsprocessed');
+        $vars = array('indexingstart', 'indexingend', 'lastindexrun', 'docsignored',
+                'docsprocessed', 'recordsprocessed', 'partial');
 
         $configsettings = [];
         foreach ($searchareas as $searcharea) {

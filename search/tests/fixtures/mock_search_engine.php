@@ -29,6 +29,12 @@ defined('MOODLE_INTERNAL') || die;
 
 class engine extends \core_search\engine {
 
+    /** @var int If set, waits when adding each document (microseconds) */
+    protected $adddelay = 0;
+
+    /** @var \core_search\document[] Documents added */
+    protected $added = [];
+
     public function is_installed() {
         return true;
     }
@@ -38,7 +44,11 @@ class engine extends \core_search\engine {
     }
 
     public function add_document($document, $fileindexing = false) {
-        // No need to implement.
+        if ($this->adddelay) {
+            usleep($this->adddelay);
+        }
+        $this->added[] = $document;
+        return true;
     }
 
     public function execute_query($data, $usercontexts, $limit = 0) {
@@ -63,5 +73,26 @@ class engine extends \core_search\engine {
 
     public function get_query_total_count() {
         return 0;
+    }
+
+    /**
+     * Sets an add delay to simulate time taken indexing.
+     *
+     * @param float $seconds Delay in seconds for each document
+     */
+    public function set_add_delay($seconds) {
+        $this->adddelay = (int)($seconds * 1000000);
+    }
+
+    /**
+     * Gets the list of indexed (added) documents since last time this function
+     * was called.
+     *
+     * @return \core_search\document[] List of documents, in order added.
+     */
+    public function get_and_clear_added_documents() {
+        $added = $this->added;
+        $this->added = [];
+        return $added;
     }
 }

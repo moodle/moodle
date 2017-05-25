@@ -125,6 +125,9 @@ foreach ($searchareas as $area) {
                     $areasconfig[$areaid]->docsprocessed . ' , ' .
                     $areasconfig[$areaid]->recordsprocessed . ' , ' .
                     $areasconfig[$areaid]->docsignored;
+                if ($areasconfig[$areaid]->partial) {
+                    $laststatus .= ' ' . get_string('searchpartial', 'admin');
+                }
             } else {
                 $laststatus = '';
             }
