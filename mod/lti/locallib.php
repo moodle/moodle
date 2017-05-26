@@ -386,15 +386,15 @@ function lti_build_request($instance, $typeconfig, $course, $typeid = null, $isl
         'lis_person_sourcedid' => $USER->idnumber,
         'roles' => $role,
         'context_id' => $course->id,
-        'context_label' => $course->shortname,
-        'context_title' => $course->fullname,
+        'context_label' => trim(html_to_text($course->shortname)),
+        'context_title' => trim(html_to_text($course->fullname)),
     );
     if (!empty($instance->name)) {
-        $requestparams['resource_link_title'] = $instance->name;
+        $requestparams['resource_link_title'] = trim(html_to_text($instance->name));
     }
     if (!empty($instance->cmid)) {
         $intro = format_module_intro('lti', $instance, $instance->cmid);
-        $intro = html_to_text($intro, 0, false);
+        $intro = trim(html_to_text($intro, 0, false));
 
         // This may look weird, but this is required for new lines
         // so we generate the same OAuth signature as the tool provider.
@@ -531,11 +531,11 @@ function lti_build_standard_request($instance, $orgid, $islti2, $messagetype = '
         $requestparams["tool_consumer_instance_guid"] = $orgid;
     }
     if (!empty($CFG->mod_lti_institution_name)) {
-        $requestparams['tool_consumer_instance_name'] = $CFG->mod_lti_institution_name;
+        $requestparams['tool_consumer_instance_name'] = trim(html_to_text($CFG->mod_lti_institution_name));
     } else {
         $requestparams['tool_consumer_instance_name'] = get_site()->shortname;
     }
-    $requestparams['tool_consumer_instance_description'] = get_site()->fullname;
+    $requestparams['tool_consumer_instance_description'] = trim(html_to_text(get_site()->fullname));
 
     return $requestparams;
 }

@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.3.1 ===
+
+* ldap_get_entries_moodle() now always returns lower-cased attribute names in the returned entries.
+  It was suppposed to do so before, but it actually didn't.
+
 === 3.3 ===
 
 * Behat compatibility changes are now being documented at

@@ -276,7 +276,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
             $ldapval = NULL;
             foreach ($values as $value) {
-                $entry = array_change_key_case($user_entry[0], CASE_LOWER);
+                $entry = $user_entry[0];
                 if (($value == 'dn') || ($value == 'distinguishedname')) {
                     $result[$key] = $user_dn;
                     continue;
@@ -634,7 +634,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         if ($sr)  {
             $info = ldap_get_entries_moodle($ldapconnection, $sr);
             if (!empty ($info)) {
-                $info = array_change_key_case($info[0], CASE_LOWER);
+                $info = $info[0];
                 if (isset($info[$this->config->expireattr][0])) {
                     $expiretime = $this->ldap_expirationtime2unix($info[$this->config->expireattr][0], $ldapconnection, $user_dn);
                     if ($expiretime != 0) {
@@ -1201,7 +1201,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 return false;
             }
 
-            $user_entry = array_change_key_case($user_entry[0], CASE_LOWER);
+            $user_entry = $user_entry[0];
 
             foreach ($attrmap as $key => $ldapkeys) {
                 $profilefield = '';
@@ -1369,7 +1369,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $sr = ldap_read($ldapconnection, $user_dn, '(objectClass=*)', $search_attribs);
                 if ($sr) {
                     $entry = ldap_get_entries_moodle($ldapconnection, $sr);
-                    $info = array_change_key_case($entry[0], CASE_LOWER);
+                    $info = $entry[0];
                     $newattrs = array();
                     if (!empty($info[$this->config->expireattr][0])) {
                         // Set expiration time only if passwordExpirationInterval is defined
@@ -1844,7 +1844,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         }
 
         $entry = ldap_get_entries_moodle($ldapconn, $sr);
-        $info = array_change_key_case($entry[0], CASE_LOWER);
+        $info = $entry[0];
         $useraccountcontrol = $info['useraccountcontrol'][0];
         if ($useraccountcontrol & UF_DONT_EXPIRE_PASSWD) {
             // Password doesn't expire.
@@ -1889,17 +1889,17 @@ class auth_plugin_ldap extends auth_plugin_base {
         }
 
         $entry = ldap_get_entries_moodle($ldapconn, $sr);
-        $info = array_change_key_case($entry[0], CASE_LOWER);
+        $info = $entry[0];
         $domaindn = $info['defaultnamingcontext'][0];
 
         $sr = ldap_read ($ldapconn, $domaindn, '(objectClass=*)',
                          array('maxPwdAge'));
         $entry = ldap_get_entries_moodle($ldapconn, $sr);
-        $info = array_change_key_case($entry[0], CASE_LOWER);
+        $info = $entry[0];
         $maxpwdage = $info['maxpwdage'][0];
         if ($sr = ldap_read($ldapconn, $user_dn, '(objectClass=*)', array('msDS-ResultantPSO'))) {
             if ($entry = ldap_get_entries_moodle($ldapconn, $sr)) {
-                $info = array_change_key_case($entry[0], CASE_LOWER);
+                $info = $entry[0];
                 $userpso = $info['msds-resultantpso'][0];
 
                 // If a PSO exists, FGPP is being utilized.
@@ -1907,7 +1907,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 if (!empty($userpso)) {
                     $sr = ldap_read($ldapconn, $userpso, '(objectClass=*)', array('msDS-MaximumPasswordAge'));
                     if ($entry = ldap_get_entries_moodle($ldapconn, $sr)) {
-                        $info = array_change_key_case($entry[0], CASE_LOWER);
+                        $info = $entry[0];
                         // Default value of msds-maximumpasswordage is 42 and is always set.
                         $maxpwdage = $info['msds-maximumpasswordage'][0];
                     }

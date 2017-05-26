@@ -60,17 +60,26 @@ class restore_structure_parser_processor extends grouped_parser_processor {
         } else if (strpos($cdata, '$@FILEPHP@$') === false) { // No $@FILEPHP@$, nothing to convert
             return $cdata;
         }
+
+        if ($CFG->slasharguments) {
+            $slash = '/';
+            $forcedownload = '?forcedownload=1';
+        } else {
+            $slash = '%2F';
+            $forcedownload = '&amp;forcedownload=1';
+        }
+
+        // We have to remove trailing slashes, otherwise file URLs will be restored with an extra slash.
+        $basefileurl = rtrim(moodle_url::make_legacyfile_url($this->courseid, null)->out(true), $slash);
         // Decode file.php calls
         $search = array ("$@FILEPHP@$");
-        $replace = array(moodle_url::make_legacyfile_url($this->courseid, null));
+        $replace = array($basefileurl);
         $result = str_replace($search, $replace, $cdata);
+
         // Now $@SLASH@$ and $@FORCEDOWNLOAD@$ MDL-18799
         $search = array('$@SLASH@$', '$@FORCEDOWNLOAD@$');
-        if ($CFG->slasharguments) {
-            $replace = array('/', '?forcedownload=1');
-        } else {
-            $replace = array('%2F', '&amp;forcedownload=1');
-        }
+        $replace = array($slash, $forcedownload);
+
         return str_replace($search, $replace, $result);
     }
 

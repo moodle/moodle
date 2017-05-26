@@ -596,6 +596,10 @@ class mod_quiz_mod_form extends moodleform_mod {
             }
         }
 
+        // If CBM is involved, don't show the warning for grade to pass being larger than the maximum grade.
+        if (($data['preferredbehaviour'] == 'deferredcbm') OR ($data['preferredbehaviour'] == 'immediatecbm')) {
+            unset($errors['gradepass']);
+        }
         // Any other rule plugins.
         $errors = quiz_access_manager::validate_settings_form_fields($errors, $data, $files, $this);
 

@@ -2658,8 +2658,9 @@ class restore_calendarevents_structure_step extends restore_structure_step {
         $isuseroverride = !$data->courseid && $data->modulename && $data->instance;
 
         // If we don't want to include user data and this record is a user override event
-        // for an activity then we should not create it.
-        if (!$this->task->get_setting_value('userinfo') && $isuseroverride) {
+        // for an activity then we should not create it. (Only activity events can be user override events - which must have this
+        // setting).
+        if ($isuseroverride && $this->task->setting_exists('userinfo') && !$this->task->get_setting_value('userinfo')) {
             return;
         }
 
