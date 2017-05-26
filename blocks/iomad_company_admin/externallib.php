@@ -94,6 +94,10 @@ class block_iomad_company_admin_external extends external_api {
 
             // Create the company record
             $companyid = $DB->insert_record('company', $company);
+
+            // Set up default department.
+            company::initialise_departments($companyid);
+
             $newcompany = $DB->get_record('company', array('id' => $companyid));
             $companyinfo[] = (array)$newcompany;
 
