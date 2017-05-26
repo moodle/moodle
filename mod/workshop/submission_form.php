@@ -88,6 +88,12 @@ class workshop_submission_form extends moodleform {
             }
         }
 
+        $getfiles = file_get_drafarea_files($data['attachment_filemanager']);
+        if (empty($getfiles->list) and html_is_blank($data['content_editor']['text'])) {
+            $errors['content_editor'] = get_string('submissionrequiredcontent', 'mod_workshop');
+            $errors['attachment_filemanager'] = get_string('submissionrequiredfile', 'mod_workshop');
+        }
+
         if (isset($data['attachment_filemanager']) and isset($this->_customdata['workshop']->submissionfiletypes)) {
             $whitelist = workshop::normalize_file_extensions($this->_customdata['workshop']->submissionfiletypes);
             if ($whitelist) {
