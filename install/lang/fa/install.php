@@ -96,7 +96,7 @@ $string['pathsunsecuredataroot'] = 'محل دایرکتوری داده امن ن
 $string['pathswrongadmindir'] = 'دایرکتوری مدیر وجود ندارد';
 $string['phpextension'] = 'افزونهٔ {$a} در PHP';
 $string['phpversion'] = 'نسخهٔ PHP';
-$string['phpversionhelp'] = '<p>مودل نیاز به PHP نسخهٔ حداقل 5.6.5 دارد (<span dir="ltr" style="direction: ltr; display: inline-block">7.x</span> محدودیت‌هایی در engine اش دارد).</p>
+$string['phpversionhelp'] = '<p>مودل نیاز به PHP نسخهٔ حداقل 5.6.5 یا 7.1 دارد (<span dir="ltr" style="direction: ltr; display: inline-block">7.0.x</span> محدودیت‌هایی در engine اش دارد).</p>
 <p>شما در حال حاضر از نسخهٔ {$a} استفاده می‌کنید</p>
 <p>باید PHP را ارتقاء دهید یا از کارگزاری دارای نسخهٔ جدیدتر PHP استفاده نمائید.</p>';
 $string['welcomep10'] = '{$a->installername} (<span dir="ltr">{$a->installerversion}</span>)';
