@@ -80,7 +80,7 @@ $string['pathsunsecuredataroot'] = 'De plaats van de datamap is niet veilig.';
 $string['pathswrongadmindir'] = 'De adminmap bestaat niet';
 $string['phpextension'] = '{$a} PHP-extentie';
 $string['phpversion'] = 'PHP-versie';
-$string['phpversionhelp'] = '<p>Moodle vereist minstens PHP-versie 5.6.5 (7.x kent enige beperkingen).</p>
+$string['phpversionhelp'] = '<p>Moodle vereist minstens PHP-versie 5.6.5 of 7.1 (7.0.x kent enige beperkingen).</p>
 <p>De huidige versie op je server is {$a}.</p>
 <p>Je moet PHP upgraden of verhuizen naar een host met een nieuwere versie van PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
