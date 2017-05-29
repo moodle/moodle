@@ -1468,5 +1468,21 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017041708, 'local', 'iomad');
     }
 
+    if ($oldversion < 2017041711) {
+
+        // Define field type to be added to companylicense.
+        $table = new xmldb_table('companylicense');
+        $field = new xmldb_field('type', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'parentid');
+
+        // Conditionally launch add field type.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017041711, 'local', 'iomad');
+    }
+
+
     return $result;
 }
