@@ -1,10 +1,10 @@
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 $fixed-header-y: $navbar-height;
 
-$drawer-width: 285px;
-$drawer-padding-x: 20px;
-$drawer-padding-y: 20px;
-$drawer-offscreen-gutter: 20px;
+$drawer-width: 285px !default;
+$drawer-padding-x: 20px !default;
+$drawer-padding-y: 20px !default;
+$drawer-offscreen-gutter: 20px !default;
 
 :target {
     padding-top: ($fixed-header-y + 30px) !important; /* stylelint-disable declaration-no-important */
