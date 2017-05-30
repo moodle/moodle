@@ -49,6 +49,16 @@ abstract class community_of_inquiry_activity extends linear {
     protected $grades = null;
 
     /**
+     * @const Constant cognitive indicator type.
+     */
+    const INDICATOR_COGNITIVE = "cognitve";
+
+    /**
+     * @const Constant social indicator type.
+     */
+    const INDICATOR_SOCIAL = "social";
+
+    /**
      * TODO Automate this when merging into core.
      * @var string The activity name (e.g. assign or quiz)
      */
@@ -331,4 +341,158 @@ abstract class community_of_inquiry_activity extends linear {
     protected function feedback_check_grades() {
         return true;
     }
+
+    /**
+     * cognitive_calculate_sample
+     *
+     * @param $sampleid
+     * @param $tablename
+     * @param bool $starttime
+     * @param bool $endtime
+     * @return float|int|null
+     * @throws \coding_exception
+     */
+    protected function cognitive_calculate_sample($sampleid, $tablename, $starttime = false, $endtime = false) {
+
+        // May not be available.
+        $user = $this->retrieve('user', $sampleid);
+
+        if (!$useractivities = $this->get_student_activities($sampleid, $tablename, $starttime, $endtime)) {
+            // Null if no activities.
+            return null;
+        }
+
+        $scoreperactivity = (self::get_max_value() - self::get_min_value()) / count($useractivities);
+
+        $score = self::get_min_value();
+
+        // Iterate through the module activities/resources which due date is part of this time range.
+        foreach ($useractivities as $contextid => $cm) {
+
+            $potentiallevel = $this->get_cognitive_depth_level($cm);
+            if (!is_int($potentiallevel) || $potentiallevel > 5 || $potentiallevel < 1) {
+                throw new \coding_exception('Activities\' potential level of engagement possible values go from 1 to 5.');
+            }
+            $scoreperlevel = $scoreperactivity / $potentiallevel;
+
+            switch ($potentiallevel) {
+                case 5:
+                    // Cognitive level 4 is to comment on feedback.
+                    if ($this->any_feedback('submitted', $cm, $contextid, $user)) {
+                        $score += $scoreperlevel * 5;
+                        break;
+                    }
+                // The user didn't reach the activity max cognitive depth, continue with level 2.
+
+                case 4:
+                    // Cognitive level 4 is to comment on feedback.
+                    if ($this->any_feedback('replied', $cm, $contextid, $user)) {
+                        $score += $scoreperlevel * 4;
+                        break;
+                    }
+                // The user didn't reach the activity max cognitive depth, continue with level 2.
+
+                case 3:
+                    // Cognitive level 3 is to view feedback.
+
+                    if ($this->any_feedback('viewed', $cm, $contextid, $user)) {
+                        // Max score for level 3.
+                        $score += $scoreperlevel * 3;
+                        break;
+                    }
+                // The user didn't reach the activity max cognitive depth, continue with level 2.
+
+                case 2:
+                    // Cognitive depth level 2 is to submit content.
+
+                    if ($this->any_write_log($contextid, $user)) {
+                        $score += $scoreperlevel * 2;
+                        break;
+                    }
+                // The user didn't reach the activity max cognitive depth, continue with level 1.
+
+                case 1:
+                    // Cognitive depth level 1 is just accessing the activity.
+
+                    if ($this->any_log($contextid, $user)) {
+                        $score += $scoreperlevel;
+                    }
+
+                default:
+            }
+        }
+
+        // To avoid decimal problems.
+        if ($score > self::MAX_VALUE) {
+            return self::MAX_VALUE;
+        } else if ($score < self::MIN_VALUE) {
+            return self::MIN_VALUE;
+        }
+        return $score;
+    }
+
+    /**
+     * social_calculate_sample
+     *
+     * @param $sampleid
+     * @param $tablename
+     * @param bool $starttime
+     * @param bool $endtime
+     * @return float|int|null
+     */
+    protected function social_calculate_sample($sampleid, $tablename, $starttime = false, $endtime = false) {
+
+        // May not be available.
+        $user = $this->retrieve('user', $sampleid);
+
+        if (!$useractivities = $this->get_student_activities($sampleid, $tablename, $starttime, $endtime)) {
+            // Null if no activities.
+            return null;
+        }
+
+        $scoreperactivity = (self::get_max_value() - self::get_min_value()) / count($useractivities);
+
+        $score = self::get_min_value();
+
+        foreach ($useractivities as $contextid => $cm) {
+            // TODO Add support for other levels than 1.
+            if ($this->any_log($contextid, $user)) {
+                $score += $scoreperactivity;
+            }
+        }
+
+        // To avoid decimal problems.
+        if ($score > self::MAX_VALUE) {
+            return self::MAX_VALUE;
+        } else if ($score < self::MIN_VALUE) {
+            return self::MIN_VALUE;
+        }
+        return $score;
+    }
+
+    /**
+     * calculate_sample
+     *
+     * @param int $sampleid
+     * @param string $tablename
+     * @param bool $starttime
+     * @param bool $endtime
+     * @return float|int|null
+     * @throws \coding_exception
+     */
+    public function calculate_sample($sampleid, $tablename, $starttime = false, $endtime = false) {
+        if ($this->get_indicator_type() == self::INDICATOR_COGNITIVE) {
+            return $this->cognitive_calculate_sample($sampleid, $tablename, $starttime, $endtime);
+        } else if ($this->get_indicator_type() == self::INDICATOR_SOCIAL) {
+            return $this->social_calculate_sample($sampleid, $tablename, $starttime, $endtime);
+        }
+        throw new \coding_exception("Indicator type is invalid.");
+    }
+
+    /**
+     * Defines indicator type.
+     *
+     * @return mixed
+     */
+    abstract protected function get_indicator_type();
 }

@@ -33,14 +33,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cognitive_depth extends \core_analytics\local\indicator\activity_cognitive_depth {
+class cognitive_depth extends activity_base {
 
-    public static function get_name() {
-        return get_string('indicator:cognitivedepthsurvey', 'analytics');
-    }
-
-    protected function get_activity_type() {
-        return 'survey';
+    protected function get_indicator_type() {
+        return self::INDICATOR_COGNITIVE;
     }
 
     protected function get_cognitive_depth_level(\cm_info $cm) {

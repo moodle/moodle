@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Social breadth indicator - resource.
+ * Activity base class.
  *
  * @package   core_analytics
- * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
+ * @copyright 2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,15 +27,19 @@ namespace core_analytics\local\indicator\resource;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Social breadth indicator - resource.
+ * Activity base class.
  *
  * @package   core_analytics
- * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
+ * @copyright 2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class social_breadth extends activity_base {
+abstract class activity_base extends \core_analytics\local\indicator\community_of_inquiry_activity {
 
-    protected function get_indicator_type() {
-        return self::INDICATOR_SOCIAL;
+    public static function get_name() {
+        return get_string('indicator:cognitivedepthresource', 'analytics');
+    }
+
+    protected function get_activity_type() {
+        return 'resource';
     }
 }

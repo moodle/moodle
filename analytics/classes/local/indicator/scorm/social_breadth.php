@@ -33,13 +33,9 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class social_breadth extends \core_analytics\local\indicator\activity_social_breadth {
+class social_breadth extends activity_base {
 
-    public static function get_name() {
-        return get_string('indicator:socialbreadthscorm', 'analytics');
-    }
-
-    protected function get_activity_type() {
-        return 'scorm';
+    protected function get_indicator_type() {
+        return self::INDICATOR_SOCIAL;
     }
 }
