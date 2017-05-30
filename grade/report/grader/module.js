@@ -444,6 +444,7 @@ M.gradereport_grader.classes.ajax.prototype.submit = function(properties, values
     }
     // If feedback is editable and has changed add to the IO queue for it
     if (values.editablefeedback && values.feedback !== values.oldfeedback) {
+        values.feedback = encodeURIComponent(values.feedback);
         this.pendingsubmissions.push({transaction:this.report.Y.io.queue(M.cfg.wwwroot+'/grade/report/grader/ajax_callbacks.php', {
             method : 'POST',
             data : 'id='+this.courseid+'&userid='+properties.userid+'&itemid='+properties.itemid+'&action=update&newvalue='+values.feedback+'&type=feedback&sesskey='+M.cfg.sesskey,
