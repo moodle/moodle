@@ -137,6 +137,11 @@ class manager {
         $params = [$record->classname, $record->component, $record->customdata];
         $sql = 'classname = ? AND component = ? AND ' .
             $DB->sql_compare_text('customdata', \core_text::strlen($record->customdata) + 1) . ' = ?';
+
+        if ($record->userid) {
+            $params[] = $record->userid;
+            $sql .= " AND userid = ? ";
+        }
         return $DB->record_exists_select('task_adhoc', $sql, $params);
     }
 
@@ -150,6 +155,11 @@ class manager {
      */
     public static function queue_adhoc_task(adhoc_task $task, $checkforexisting = false) {
         global $DB;
+
+        if ($userid = $task->get_userid()) {
+            // User found. Check that they are suitable.
+            \core_user::require_active_user(\core_user::get_user($userid, '*', MUST_EXIST), true, true);
+        }
 
         $record = self::record_from_adhoc_task($task);
         // Schedule it immediately if nextruntime not explicitly set.
@@ -239,6 +249,7 @@ class manager {
         $record->nextruntime = $task->get_next_run_time();
         $record->faildelay = $task->get_fail_delay();
         $record->customdata = $task->get_custom_data_as_string();
+        $record->userid = $task->get_userid();
 
         return $record;
     }
@@ -274,6 +285,10 @@ class manager {
         }
         if (isset($record->customdata)) {
             $task->set_custom_data_as_string($record->customdata);
+        }
+
+        if (isset($record->userid)) {
+            $task->set_userid($record->userid);
         }
 
         return $task;
