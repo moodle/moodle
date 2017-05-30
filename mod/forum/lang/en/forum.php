@@ -554,9 +554,6 @@ $string['yournewquestion'] = 'Your new question';
 $string['yournewtopic'] = 'Your new discussion topic';
 $string['yourreply'] = 'Your reply';
 
-// Deprecated since Moodle 3.0.
-$string['subscribersto'] = 'Subscribers to "{$a->name}"';
-
 // Deprecated since Moodle 3.1.
 $string['postmailinfo'] = 'This is a copy of a message posted on the {$a} website.
 

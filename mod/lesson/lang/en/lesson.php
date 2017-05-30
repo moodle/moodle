@@ -518,19 +518,5 @@ $string['yourcurrentgradeis'] = 'Your current grade is {$a}';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is {$a->grade} out of {$a->total}';
 $string['youshouldview'] = 'You should answer at least: {$a}';
 
-// Deprecated since Moodle 3.0.
-$string['clicktopost'] = 'Click here to post your grade on the High Scores list.';
-$string['configmaxhighscores'] = 'Number of high scores displayed';
-$string['displayhighscores'] = 'Display high scores';
-$string['entername'] = 'Enter a nickname for the high scores list';
-$string['eventhighscoreadded'] = 'Highscore added';
-$string['eventhighscoresviewed'] = 'Highscores viewed';
-$string['highscores'] = 'High scores';
-$string['maxhighscores'] = 'Number of high scores displayed';
-$string['nothighscore'] = 'You did not make the top {$a} high scores list.';
-$string['topscorestitle'] = 'Top {$a} high scores';
-$string['viewhighscores'] = 'View high scores list';
-$string['youmadehighscore'] = 'You made it on the top {$a} high scores list.';
-
 // Deprecated since Moodle 3.1.
 $string['configactionaftercorrectanswer'] = 'The default action to take after a correct answer';

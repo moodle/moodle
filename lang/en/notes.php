@@ -66,5 +66,3 @@ $string['site'] = 'site';
 $string['sitenotes'] = 'Site notes';
 $string['unknown'] = 'unknown';
 
-// Deprecated since Moodle 3.0.
-$string['cannotdeletepost'] = 'Error occurred while deleting post';

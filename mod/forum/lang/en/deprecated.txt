@@ -1,4 +1,3 @@
-subscribersto,mod_forum
 postmailinfo,mod_forum
 emaildigestupdated,mod_forum
 emaildigestupdated_default,mod_forum
