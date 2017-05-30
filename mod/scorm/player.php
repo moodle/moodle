@@ -160,8 +160,14 @@ $completion->set_module_viewed($cm);
 
 // Print the page header.
 if (empty($scorm->popup) || $displaymode == 'popup') {
-    // Redirect back to the correct section if one section per page is being used.
-    $exiturl = course_get_url($course, $cm->sectionnum);
+    if ($course->format == 'singleactivity' && $scorm->skipview == SCORM_SKIPVIEW_ALWAYS
+        && !has_capability('mod/scorm:viewreport', context_module::instance($cm->id))) {
+        // Redirect students back to site home to avoid redirect loop.
+        $exiturl = $CFG->wwwroot;
+    } else {
+        // Redirect back to the correct section if one section per page is being used.
+        $exiturl = course_get_url($course, $cm->sectionnum);
+    }
 
     $exitlink = html_writer::link($exiturl, $strexit, array('title' => $strexit));
     $PAGE->set_button($exitlink);

@@ -137,12 +137,6 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         // Skip view page.
         $skipviewoptions = scorm_get_skip_view_array();
-        if ($COURSE->format == 'singleactivity') { // Remove option that would cause a constant redirect.
-            unset($skipviewoptions[SCORM_SKIPVIEW_ALWAYS]);
-            if ($cfgscorm->skipview == SCORM_SKIPVIEW_ALWAYS) {
-                $cfgscorm->skipview = SCORM_SKIPVIEW_FIRST;
-            }
-        }
         $mform->addElement('select', 'skipview', get_string('skipview', 'scorm'), $skipviewoptions);
         $mform->addHelpButton('skipview', 'skipview', 'scorm');
         $mform->setDefault('skipview', $cfgscorm->skipview);
