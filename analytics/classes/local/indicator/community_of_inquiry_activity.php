@@ -69,6 +69,11 @@ abstract class community_of_inquiry_activity extends linear {
             'depth level');
     }
 
+    protected function get_social_breadth_level(\cm_info $cm) {
+        throw new \coding_exception('Overwrite get_social_breadth_level method to set your activity potential social ' .
+            'breadth level');
+    }
+
     public static function required_sample_data() {
         // Only course because the indicator is valid even without students.
         return array('course');
@@ -455,10 +460,30 @@ abstract class community_of_inquiry_activity extends linear {
         $score = self::get_min_value();
 
         foreach ($useractivities as $contextid => $cm) {
-            // TODO Add support for other levels than 1.
-            if ($this->any_log($contextid, $user)) {
-                $score += $scoreperactivity;
+
+            $potentiallevel = $this->get_social_breadth_level($cm);
+            if (!is_int($potentiallevel) || $potentiallevel > 2 || $potentiallevel < 1) {
+                throw new \coding_exception('Activities\' potential level of engagement possible values go from 1 to 2.');
             }
+            $scoreperlevel = $scoreperactivity / $potentiallevel;
+            // TODO Add support for other levels than 2.
+            switch ($potentiallevel) {
+                case 2:
+                    // Social breadth level 2 is to view feedback. (Same as cognitive level 3)
+
+                    if ($this->any_feedback('viewed', $cm, $contextid, $user)) {
+                        // Max score for level 2.
+                        $score += $scoreperlevel * 2;
+                        break;
+                    }
+                // The user didn't reach the activity max social breadth, continue with level 1.
+                case 1:
+                    // Social breadth level 1 is just accessing the activity.
+                    if ($this->any_log($contextid, $user)) {
+                        $score += $scoreperlevel;
+                    }
+            }
+
         }
 
         // To avoid decimal problems.
