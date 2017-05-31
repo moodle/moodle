@@ -203,7 +203,7 @@ function cron_run_single_task(\core\task\scheduled_task $task) {
     }
     $component = $task->get_component();
     if ($plugininfo = core_plugin_manager::instance()->get_plugin_info($component)) {
-        if (!$plugininfo->is_enabled() && !$task->get_run_if_component_disabled()) {
+        if ($plugininfo->is_enabled() === false && !$task->get_run_if_component_disabled()) {
             echo "Component is not enabled ($component).\n";
             return false;
         }
