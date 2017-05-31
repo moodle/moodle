@@ -546,14 +546,10 @@ class manager {
             $this->engine->area_index_starting($searcharea, $fullindex);
 
             $indexingstart = time();
+            $elapsed = microtime(true);
 
             // This is used to store this component config.
             list($componentconfigname, $varname) = $searcharea->get_config_var_name();
-
-            $numrecords = 0;
-            $numdocs = 0;
-            $numdocsignored = 0;
-            $lastindexeddoc = 0;
 
             $prevtimestart = intval(get_config($componentconfigname, $varname . '_indexingstart'));
 
@@ -570,36 +566,17 @@ class manager {
             $fileindexing = $this->engine->file_indexing_enabled() && $searcharea->uses_file_indexing();
             $options = array('indexfiles' => $fileindexing, 'lastindexedtime' => $prevtimestart);
             $iterator = new \core\dml\recordset_walk($recordset, array($searcharea, 'get_document'), $options);
-            foreach ($iterator as $document) {
-                if (!$document instanceof \core_search\document) {
-                    continue;
-                }
-
-                if ($prevtimestart == 0) {
-                    // If we have never indexed this area before, it must be new.
-                    $document->set_is_new(true);
-                }
-
-                if ($fileindexing) {
-                    // Attach files if we are indexing.
-                    $searcharea->attach_files($document);
-                }
-
-                if ($this->engine->add_document($document, $fileindexing)) {
-                    $numdocs++;
-                } else {
-                    $numdocsignored++;
-                }
-
-                $lastindexeddoc = $document->get('modified');
-                $numrecords++;
-            }
+            list($numrecords,
+                 $numdocs,
+                 $numdocsignored,
+                 $lastindexeddoc) = $this->engine->add_documents($iterator, $searcharea, $options);
 
             if (CLI_SCRIPT && !PHPUNIT_TEST) {
                 if ($numdocs > 0) {
+                    $elapsed = round((microtime(true) - $elapsed), 3);
                     mtrace('Processed ' . $numrecords . ' records containing ' . $numdocs . ' documents for ' .
-                            $searcharea->get_visible_name() . ' area.');
-                } else  {
+                            $searcharea->get_visible_name() . ' area, in ' . $elapsed . ' seconds.');
+                } else {
                     mtrace('No new documents to index for ' . $searcharea->get_visible_name() . ' area.');
                 }
             }
@@ -698,7 +675,7 @@ class manager {
 
         $vars = array('indexingstart', 'indexingend', 'lastindexrun', 'docsignored', 'docsprocessed', 'recordsprocessed');
 
-        $configsettings =  array();
+        $configsettings = [];
         foreach ($searchareas as $searcharea) {
 
             $areaid = $searcharea->get_area_id();
