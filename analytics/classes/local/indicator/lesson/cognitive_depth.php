@@ -43,10 +43,6 @@ class cognitive_depth extends activity_base {
         return 5;
     }
 
-    protected function feedback_viewed_events() {
-        return array('\mod_lesson\event\lesson_ended');
-    }
-
     protected function feedback_submitted(\cm_info $cm, $contextid, $userid, $after = false) {
         if (empty($this->activitylogs[$contextid][$userid]) ||
                 empty($this->activitylogs[$contextid][$userid]['\mod_lesson\event\lesson_ended'])) {
@@ -55,11 +51,6 @@ class cognitive_depth extends activity_base {
 
         // Multiple lesson attempts completed counts as submitted after feedback.
         return (2 >= count($this->activitylogs[$contextid][$userid]['\mod_lesson\event\lesson_ended']));
-    }
-
-    protected function feedback_check_grades() {
-        // We don't need to check grades as we get the feedback while completing the activity.
-        return false;
     }
 
     protected function feedback_replied(\cm_info $cm, $contextid, $userid, $after = false) {

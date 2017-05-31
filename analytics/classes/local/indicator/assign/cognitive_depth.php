@@ -43,10 +43,6 @@ class cognitive_depth extends activity_base {
         return 5;
     }
 
-    protected function feedback_viewed_events() {
-        return array('\mod_assign\event\feedback_viewed');
-    }
-
     protected function feedback_submitted_events() {
         return array('\mod_assign\event\assessable_submitted');
     }
@@ -56,8 +52,4 @@ class cognitive_depth extends activity_base {
         return false;
     }
 
-    protected function feedback_check_grades() {
-        // We need the grade to be released to the student to consider that feedback has been provided.
-        return true;
-    }
 }

@@ -42,4 +42,13 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
     protected function get_activity_type() {
         return 'quiz';
     }
+
+    protected function feedback_check_grades() {
+        // We need the grade to be released to the student to consider that feedback has been provided.
+        return true;
+    }
+
+    protected function feedback_viewed_events() {
+        return array('\mod_quiz\event\course_module_viewed');
+    }
 }

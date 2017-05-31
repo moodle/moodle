@@ -43,9 +43,4 @@ class cognitive_depth extends activity_base {
         return 3;
     }
 
-    protected function feedback_viewed_events() {
-        // Any view after the data graded counts as feedback viewed.
-        return array('\mod_lti\event\course_module_viewed');
-    }
-
 }

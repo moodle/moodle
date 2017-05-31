@@ -42,4 +42,13 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
     protected function get_activity_type() {
         return 'lesson';
     }
+
+    protected function feedback_viewed_events() {
+        return array('\mod_lesson\event\lesson_ended');
+    }
+
+    protected function feedback_check_grades() {
+        // We don't need to check grades as we get the feedback while completing the activity.
+        return false;
+    }
 }

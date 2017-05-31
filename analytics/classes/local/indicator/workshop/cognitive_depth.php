@@ -43,14 +43,6 @@ class cognitive_depth extends activity_base {
         return 5;
     }
 
-    protected function feedback_check_grades() {
-        return true;
-    }
-
-    protected function feedback_viewed_events() {
-        return array('\mod_workshop\event\course_module_viewed', '\mod_workshop\event\submission_viewed');
-    }
-
     protected function feedback_replied_events() {
         return array('\mod_workshop\event\submission_assessed', '\mod_workshop\event\submission_reassessed');
     }

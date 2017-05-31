@@ -43,15 +43,6 @@ class cognitive_depth extends activity_base {
         return 5;
     }
 
-    protected function feedback_check_grades() {
-        // We need the grade to be released to the student to consider that feedback has been provided.
-        return true;
-    }
-
-    protected function feedback_viewed_events() {
-        return array('\mod_quiz\event\course_module_viewed');
-    }
-
     protected function feedback_submitted_events() {
         return array('\mod_quiz\event\attempt_submitted');
     }

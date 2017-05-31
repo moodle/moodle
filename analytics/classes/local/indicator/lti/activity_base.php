@@ -42,4 +42,9 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
     protected function get_activity_type() {
         return 'lti';
     }
+
+    protected function feedback_viewed_events() {
+        // Any view after the data graded counts as feedback viewed.
+        return array('\mod_lti\event\course_module_viewed');
+    }
 }

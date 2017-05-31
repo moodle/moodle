@@ -42,9 +42,4 @@ class cognitive_depth extends activity_base {
     public function get_cognitive_depth_level(\cm_info $cm) {
         return 3;
     }
-
-    protected function feedback_viewed_events() {
-        // Any view after the data graded counts as feedback viewed.
-        return array('\mod_scorm\event\course_module_viewed');
-    }
 }
