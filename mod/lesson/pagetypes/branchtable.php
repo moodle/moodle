@@ -319,7 +319,11 @@ class lesson_add_page_form_branchtable extends lesson_add_page_form_base {
 
         $jumptooptions = lesson_page_type_branchtable::get_jumptooptions($firstpage, $lesson);
 
-        $mform->setDefault('qtypeheading', get_string('addabranchtable', 'lesson'));
+        if ($this->_customdata['edit']) {
+            $mform->setDefault('qtypeheading', get_string('editbranchtable', 'lesson'));
+        } else {
+            $mform->setDefault('qtypeheading', get_string('addabranchtable', 'lesson'));
+        }
 
         $mform->addElement('hidden', 'firstpage');
         $mform->setType('firstpage', PARAM_BOOL);
