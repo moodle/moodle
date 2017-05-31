@@ -38,4 +38,8 @@ class social_breadth extends activity_base {
     protected function get_indicator_type() {
         return self::INDICATOR_SOCIAL;
     }
+
+    protected function get_social_breadth_level(\cm_info $cm) {
+        return 2;
+    }
 }
