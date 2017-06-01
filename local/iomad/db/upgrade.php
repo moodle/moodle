@@ -1339,7 +1339,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016090503, 'local', 'iomad');
     }
 
-    if ($oldversion < 2015040702) {
+    if ($oldversion < 2017041700) {
 
         // Define field emailprofileid to be added to company.
         $table = new xmldb_table('company');
@@ -1360,7 +1360,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
         }
 
         // Iomad savepoint reached.
-        upgrade_plugin_savepoint(true, 2015040702, 'local', 'iomad');
+        upgrade_plugin_savepoint(true, 2017041700, 'local', 'iomad');
     }
 
     if ($oldversion < 2017041701) {
