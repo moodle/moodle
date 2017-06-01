@@ -859,14 +859,19 @@ class current_license_user_selector extends user_selector_base {
     protected $subdepartments;
     protected $parentdepartmentid;
     protected $selectedcourses;
+    protected $license;
 
     public function __construct($name, $options) {
+        global $DB;
+
         $this->companyid  = $options['companyid'];
         $this->licenseid = $options['licenseid'];
         $this->departmentid = $options['departmentid'];
         $this->subdepartments = $options['subdepartments'];
         $this->parentdepartmentid = $options['parentdepartmentid'];
         $this->selectedcourses = $options['selectedcourses'];
+        $this->license = $DB->get_record('companylicense', array('id' => $this->licenseid));
+
         parent::__construct($name, $options);
     }
 
@@ -980,7 +985,7 @@ class current_license_user_selector extends user_selector_base {
 
         foreach ($availableusers as $id => $rawuser) {
             $availableusers[$id]->email .= ' (' . $rawuser->fullname . ')';
-            if (!empty($rawuser->isusing)) {
+            if (!empty($rawuser->isusing) && $this->license->type == 0) {
                 $availableusers[$id]->firstname = ' *' . $availableusers[$id]->email;
             }
         }

@@ -2544,7 +2544,7 @@ class company {
      * @return bool true on success.
      */
     public static function user_license_unassigned(\block_iomad_company_admin\event\user_license_unassigned $event) {
-        global $DB, $CFG;
+        global $DB, $CFG, $PAGE;
 
         $userid = $event->userid;
         $licenseid = $event->other['licenseid'];
@@ -2560,6 +2560,14 @@ class company {
 
         if (!$user = $DB->get_record('user', array('id' => $userid))) {
             return;
+        }
+
+        // Check if there is an enrolment in the course for this user/license.
+        $manager = new course_enrolment_manager($PAGE, $course);
+        if ($enrolments = $manager->get_user_enrolments($userid)) {
+            foreach ($enrolments as $ue) {
+                $manager->unenrol_user($ue);
+            }
         }
 
         $license = new stdclass();

@@ -231,20 +231,21 @@ class company_users_course_form extends moodleform {
                 foreach ($coursestounassign as $removecourse) {
                     if ($userlicenserecord = $DB->get_record('companylicense_users',
                                                              array('userid' => $this->userid,
-                                                                   'licensecourseid' => $removecourse->id,
-                                                                   'isusing' => 0))) {
+                                                                   'licensecourseid' => $removecourse->id))) {
                         $licenserecord = (array) $DB->get_record('companylicense', array('id' => $userlicenserecord->licenseid));
-                        $DB->delete_records('companylicense_users', array('id' => $userlicenserecord->id));
-
-                        // Create an event.
-                        $eventother = array('licenseid' => $licenserecord['id'],
-                                            'duedate' => 0);
-                        $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($removecourse->id),
-                                                                                                        'objectid' => $licenserecord['id'],
-                                                                                                        'courseid' => $removecourse->id,
-                                                                                                        'userid' => $this->userid,
-                                                                                                        'other' => $eventother));
-                        $event->trigger();
+                        if ($userlicenserecord->isusing == 0 || $licenserecord['type'] != 0) {
+                            $DB->delete_records('companylicense_users', array('id' => $userlicenserecord->id));
+    
+                            // Create an event.
+                            $eventother = array('licenseid' => $licenserecord['id'],
+                                                'duedate' => 0);
+                            $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($removecourse->id),
+                                                                                                            'objectid' => $licenserecord['id'],
+                                                                                                            'courseid' => $removecourse->id,
+                                                                                                            'userid' => $this->userid,
+                                                                                                            'other' => $eventother));
+                            $event->trigger();
+                        }
                     }
                 }
 

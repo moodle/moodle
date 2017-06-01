@@ -352,7 +352,7 @@ class company_license_users_form extends moodleform {
                             print_error('invaliduserdepartment', 'block_iomad_company_management');
                         }
     
-                        if (!$licensedata->isusing) {
+                        if (!$licensedata->isusing || $this->license->type != 0) {
                             $DB->delete_records('companylicense_users', array('id' => $unassignid));
     
                             // Create an event.

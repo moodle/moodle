@@ -134,6 +134,10 @@ class company_license_form extends company_moodleform {
         $mform->setType('name', PARAM_MULTILANG);
 
         if (empty($this->parentid)) {
+            $licensetypes = array(get_string('standard', 'block_iomad_company_admin'),
+                                  get_string('reusable', 'block_iomad_company_admin'));
+            $mform->addElement('select', 'type', get_string('licensetype', 'block_iomad_company_admin'), $licensetypes);
+            $mform->addHelpButton('type', 'licensetype', 'block_iomad_company_admin');
             $mform->addElement('date_selector', 'expirydate', get_string('licenseexpires', 'block_iomad_company_admin'));
             $mform->addHelpButton('expirydate', 'licenseexpires', 'block_iomad_company_admin');
             $mform->addRule('expirydate', get_string('missinglicenseexpires', 'block_iomad_company_admin'),
@@ -146,6 +150,8 @@ class company_license_form extends company_moodleform {
                             'required', null, 'client');
             $mform->setType('validlength', PARAM_INTEGER);
         } else {
+            $mform->addElement('hidden', 'type');
+            $mform->setType('type', PARAM_INT);
             $mform->addElement('hidden', 'expirydate', $licenseinfo->expirydate);
             $mform->setType('expirydate', PARAM_INT);
             $mform->addElement('hidden', 'validlength', $licenseinfo->validlength);
