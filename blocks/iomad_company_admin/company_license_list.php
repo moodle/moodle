@@ -145,13 +145,22 @@ $table->align = array ("left", "left", "left", "left", "center", "center", "cent
 $table->width = "95%";
 
 if ($departmentid == $companydepartment->id) {
+
+    // Do we have any child companies?
+    if ($childcompanies = $company->get_child_companies_recursive()) {
+        $gotchildren = true;
+        array_unshift($table->head, get_string('company', 'block_iomad_company_admin'));
+        $childsql = "OR companyid IN (" . join(',', array_keys($childcompanies)) . ")";
+    } else {
+        $gotchildren = false;
+        $childsql = "";
+    }
+
+    // Get the licenses.
     $licenses = $DB->get_records_sql("SELECT * FROM {companylicense}
                                       WHERE companyid = :companyid
-                                      OR parentid IN (
-                                        SELECT id FROM {companylicense}
-                                        WHERE companyid = :parentid)",
-                                       array('companyid' => $companyid,
-                                             'parentid' => $companyid));
+                                      $childsql",
+                                      array('companyid' => $companyid));
 
     // Cycle through the results.
     foreach ($licenses as $license) {
@@ -190,7 +199,7 @@ if ($departmentid == $companydepartment->id) {
         }
 
         // Create the table data.
-        $table->data[] = array ("$license->name",
+        $dataarray = array ("$license->name",
                            $coursestring,
                            date($CFG->iomad_date_format, $license->expirydate),
                            "$license->validlength",
@@ -199,6 +208,12 @@ if ($departmentid == $companydepartment->id) {
                            $editbutton,
                            $splitbutton,
                            $deletebutton);
+        // Add in the company name if we have any.
+        if ($gotchildren) {
+            $liccompany = new company($license->companyid);
+            array_unshift($dataarray, $liccompany->get_name());
+        }
+        $table->data[] = $dataarray;
     }
 } else if ($licenses = company::get_recursive_departments_licenses($companydepartment->id)) {
     foreach ($licenses as $licenseid) {
