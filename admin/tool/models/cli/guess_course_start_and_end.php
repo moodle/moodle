@@ -77,7 +77,7 @@ if ($options['filter'] !== false) {
 // We need admin permissions.
 \core\session\manager::set_user(get_admin());
 
-$conditions = array();
+$conditions = array('id != 1');
 if (!$options['guessall']) {
     if ($options['guessstart']) {
         $conditions[] = '(startdate is null or startdate = 0)';
@@ -174,10 +174,17 @@ function tool_models_calculate_course_dates($course, $options) {
                 // Update it to something we guess.
 
                 $course->enddate = $guessedenddate;
-                $notification .= PHP_EOL . '  ' . get_string('enddate') . ': ' . userdate($guessedenddate);
+
+                if ($course->enddate > $course->startdate) {
+                    $notification .= PHP_EOL . '  ' . get_string('enddate') . ': ' . userdate($course->enddate);
+                } else {
+                    $notification .= PHP_EOL . '  ' . get_string('errorendbeforestart', 'analytics', userdate($course->enddate));
+                }
 
                 if ($options['update']) {
-                    update_course($course);
+                    if ($course->enddate > $course->startdate) {
+                        update_course($course);
+                    }
                 }
             }
         }

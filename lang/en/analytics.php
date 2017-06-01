@@ -28,6 +28,7 @@ $string['analyticssettings'] = 'Analytics settings';
 $string['enabledtimesplittings'] = 'Time splitting methods';
 $string['enabledtimesplittings_help'] = 'The time splitting method divides the course duration in parts, the predictions engine will run at the end of these parts. It is recommended that you only enable the time splitting methods you could be interested on using; the evaluation process will iterate through all of them so the more time splitting methods to go through the slower the evaluation process will be.';
 $string['erroralreadypredict'] = '{$a} file has already been used to predict';
+$string['errorendbeforestart'] = 'The guessed end date ({$a}) is before the course start date.';
 $string['errorinvalidindicator'] = 'Invalid {$a} indicator';
 $string['errorinvalidtimesplitting'] = 'Invalid time splitting, please ensure you added the class fully qualified class name';
 $string['errornoindicators'] = 'This model does not have any indicator';
