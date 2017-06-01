@@ -354,27 +354,32 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @param {String} titlestr string for "title" attribute (if different from stringname)
          * @param {String} titlecomponent
          * @param {String} newaction new value for data-action attribute of the link
+         * @return {Promise} promise which is resolved when the replacement has completed
          */
         var replaceActionItem = function(actionitem, image, stringname,
                                            stringcomponent, titlestr, titlecomponent, newaction) {
 
-            str.get_string(stringname, stringcomponent).done(function(newstring) {
-                actionitem.find('span.menu-action-text').html(newstring);
-                actionitem.attr('title', newstring);
-            });
+
+            var stringRequests = [{key: stringname, component: stringcomponent}];
             if (titlestr) {
-                str.get_string(titlestr, titlecomponent).then(function(newtitle) {
-                    templates.renderPix(image, 'core', newtitle).then(function(html) {
-                        actionitem.find('.icon').replaceWith(html);
-                    });
-                    actionitem.attr('title', newtitle);
-                });
-            } else {
-                templates.renderPix(image, 'core', '').then(function(html) {
-                    actionitem.find('.icon').replaceWith(html);
-                });
+                stringRequests.push({key: titlestr, component: titlecomponent});
             }
-            actionitem.attr('data-action', newaction);
+
+            return str.get_strings(stringRequests).then(function(strings) {
+                actionitem.find('span.menu-action-text').html(strings[0]);
+                actionitem.attr('title', strings[0]);
+
+                var title = '';
+                if (titlestr) {
+                    title = strings[1];
+                    actionitem.attr('title', title);
+                }
+                return templates.renderPix(image, 'core', title);
+            }).then(function(pixhtml) {
+                actionitem.find('.icon').replaceWith(pixhtml);
+                actionitem.attr('data-action', newaction);
+                return;
+            }).catch(notification.exception);
         };
 
         /**
