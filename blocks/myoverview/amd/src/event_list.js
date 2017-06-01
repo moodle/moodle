@@ -350,34 +350,37 @@ define(['jquery', 'core/notification', 'core/templates',
 
         // Request data from the server.
         return promise.then(function(result) {
-            return result.events;
-        }).then(function(calendarEvents) {
-            if (!calendarEvents.length || (calendarEvents.length < limit)) {
-                // We have no more events so mark the list as done.
+            if (!result.events.length) {
+                // No events, nothing to do.
+                setLoadedAll(root);
+                return 0;
+            }
+
+            var calendarEvents = result.events;
+
+            // Remember the last id we've seen.
+            root.attr('data-last-id', calendarEvents[calendarEvents.length - 1].id);
+
+            if (calendarEvents.length <= limit) {
+                // No more events to load, disable loading button.
                 setLoadedAll(root);
             }
 
-            if (calendarEvents.length) {
-                // Remember the last id we've seen.
-                root.attr('data-last-id', calendarEvents[calendarEvents.length - 1].id);
-
-                // Render the events.
-                return render(root, calendarEvents).then(function(renderCount) {
-                    updateContentVisibility(root, calendarEvents.length);
-
-                    if (renderCount < calendarEvents.length) {
-                        // if the number of events that was rendered is less than
-                        // the number we sent for rendering we can assume that there
-                        // are no groups to add them in. Since the ordering of the
-                        // events is guaranteed it means that any future requests will
-                        // also yield events that can't be rendered, so let's not bother
-                        // sending any more requests.
-                        setLoadedAll(root);
-                    }
-                });
-            } else {
-                updateContentVisibility(root, calendarEvents.length);
-            }
+            // Render the events.
+            return render(root, calendarEvents).then(function(renderCount) {
+                if (renderCount < calendarEvents.length) {
+                    // if the number of events that was rendered is less than
+                    // the number we sent for rendering we can assume that there
+                    // are no groups to add them in. Since the ordering of the
+                    // events is guaranteed it means that any future requests will
+                    // also yield events that can't be rendered, so let's not bother
+                    // sending any more requests.
+                    setLoadedAll(root);
+                }
+                return calendarEvents.length;
+            });
+        }).then(function(eventCount) {
+            return updateContentVisibility(root, eventCount);
         }).fail(
             Notification.exception
         ).always(function() {
