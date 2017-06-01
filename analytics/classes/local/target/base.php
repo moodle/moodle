@@ -133,7 +133,7 @@ abstract class base extends \core_analytics\calculable {
             foreach ($users as $user) {
 
                 $message = new \core\message\message();
-                $message->component = 'analytics';
+                $message->component = 'moodle';
                 $message->name = 'insights';
 
                 $message->userfrom = get_admin();

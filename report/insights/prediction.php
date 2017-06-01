@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../../config.php');
+require_once(__DIR__ . '/../../config.php');
 
 $predictionid = required_param('id', PARAM_INT);
 
@@ -46,7 +46,7 @@ if ($context->contextlevel === CONTEXT_MODULE) {
 require_capability('moodle/analytics:listinsights', $context);
 
 $params = array('id' => $predictionobj->id);
-$url = new \moodle_url('/reports/insights/prediction.php', $params);
+$url = new \moodle_url('/report/insights/prediction.php', $params);
 
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
@@ -60,9 +60,9 @@ $prediction = new \core_analytics\prediction($predictionobj, $sampledata);
 $insightinfo = new stdClass();
 $insightinfo->contextname = $context->get_context_name();
 $insightinfo->insightname = $model->get_target()->get_name();
-$title = get_string('insightinfo', 'report_insights', $insightinfo);
+$title = get_string('insightinfo', 'analytics', $insightinfo);
 
-$modelready = $model->$model->is_enabled() && $model->is_trained() && $model->predictions_exist($context);
+$modelready = $model->is_enabled() && $model->is_trained() && $model->predictions_exist($context);
 if (!$modelready && !has_capability('moodle/analytics:managemodels', $context)) {
     echo $renderer->render_model_disabled($insightinfo);
     exit(0);
@@ -73,7 +73,7 @@ $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
 
-$renderable = new \core_analytics\output\prediction($prediction, $model);
+$renderable = new \report_insights\output\prediction($prediction, $model);
 echo $renderer->render($renderable);
 
 echo $OUTPUT->footer();

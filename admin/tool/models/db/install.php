@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_tool_models_install() {
 
     // TODO All of them for the moment, we will define a limited set of them once in core.
-    $target = \core_analytics\manager::get_target('\tool_models\local\target\course_dropout');
+    $target = \core_analytics\manager::get_target('\tool_models\analytics\target\course_dropout');
     $indicators = \core_analytics\manager::get_all_indicators();
 
     // We need the model to be created in order to know all its potential indicators and set them.

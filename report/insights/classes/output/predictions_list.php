@@ -71,7 +71,7 @@ class predictions_list implements \renderable, \templatable {
 
         $data->predictions = array();
         foreach ($predictions as $prediction) {
-            $predictionrenderable = new \core_analytics\output\prediction($prediction, $this->model);
+            $predictionrenderable = new \report_insights\output\prediction($prediction, $this->model);
             $data->predictions[] = $predictionrenderable->export_for_template($output);
         }
 

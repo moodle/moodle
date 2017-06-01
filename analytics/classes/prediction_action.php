@@ -53,7 +53,7 @@ class prediction_action {
 
         // We want to track how effective are our suggested actions, we pass users through a script that will log these actions.
         $params = array('action' => $actionname, 'predictionid' => $prediction->get_prediction_data()->id, 'forwardurl' => $actionurl->out(false));
-        $url = new \moodle_url('/reports/insights/action.php', $params);
+        $url = new \moodle_url('/report/insights/action.php', $params);
 
         if ($primary === false) {
             $this->actionlink = new \action_menu_link_secondary($url, $icon, $text);

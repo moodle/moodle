@@ -37,8 +37,8 @@ function report_insights_extend_navigation_course($navigation, $course, $context
     if (has_capability('moodle/analytics:listinsights', $context)) {
 
         $cache = \cache::make('core', 'modelswithpredictions');
-        $models = $cache->get($context->id);
-        if ($models === false) {
+        $modelids = $cache->get($context->id);
+        if ($modelids === false) {
             // Fill the cache.
             $models = \core_analytics\manager::get_all_models(true, true, $context);
             $modelids = array_keys($models);
@@ -49,10 +49,7 @@ function report_insights_extend_navigation_course($navigation, $course, $context
             $url = new moodle_url('/report/insights/insights.php', array('contextid' => $context->id));
             $settingsnode = navigation_node::create(get_string('insights', 'report_insights'), $url, navigation_node::TYPE_SETTING,
                 null, null, new pix_icon('i/settings', ''));
-            $reportnode = $navigation->get('coursereports');
-            if (isset($settingsnode) && !empty($reportnode)) {
-                $reportnode->add_node($settingsnode);
-            }
+            $navigation->add_node($settingsnode);
         }
     }
 }

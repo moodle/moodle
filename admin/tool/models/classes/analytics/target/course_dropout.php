@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_models\local\target;
+namespace tool_models\analytics\target;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -106,12 +106,13 @@ class course_dropout extends \core_analytics\local\target\binary {
             return get_string('nocoursesections', 'tool_models');
         }
 
+        if ($course->get_end() == 0) {
+            // We require time end to be set.
+            return get_string('nocourseendtime', 'tool_models');
+        }
+
         // Ongoing courses data can not be used to train.
         if ($fortraining && !$course->is_finished()) {
-            if ($course->get_end() === 0) {
-                // More specific error.
-                return get_string('nocourseendtime', 'tool_models');
-            }
             return get_string('coursenotyetfinished', 'tool_models');
         }
 

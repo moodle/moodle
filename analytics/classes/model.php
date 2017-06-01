@@ -673,7 +673,7 @@ class model {
 
         // Filters out previous predictions keeping only the last time range one.
         $select = "modelid = :modelid AND contextid = :contextid";
-        $params = array($this->model->id, $context->id);
+        $params = array('modelid' => $this->model->id, 'contextid' => $context->id);
         return $DB->record_exists_select('analytics_predictions', $select, $params);
     }
 

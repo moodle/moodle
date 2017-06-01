@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../../config.php');
+require_once(__DIR__ . '/../../config.php');
 
 $contextid = required_param('contextid', PARAM_INT);
 $modelid = optional_param('modelid', false, PARAM_INT);
@@ -75,7 +75,7 @@ $model = new \core_analytics\model($modelid);
 $insightinfo = new stdClass();
 $insightinfo->contextname = $context->get_context_name();
 $insightinfo->insightname = $model->get_target()->get_name();
-$title = get_string('insightinfo', 'report_insights', $insightinfo);
+$title = get_string('insightinfo', 'analytics', $insightinfo);
 
 
 if (!$model->is_enabled() && !has_capability('moodle/analytics:managemodels', $context)) {
@@ -88,7 +88,7 @@ $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
 
-$renderable = new \core_analytics\output\predictions_list($model, $context, $othermodels);
+$renderable = new \report_insights\output\predictions_list($model, $context, $othermodels);
 echo $renderer->render($renderable);
 
 echo $OUTPUT->footer();

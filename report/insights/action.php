@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../../config.php');
+require_once(__DIR__ . '/../../config.php');
 
 $predictionid = required_param('predictionid', PARAM_INT);
 $actionname = required_param('action', PARAM_ALPHANUMEXT);
@@ -62,7 +62,7 @@ if (!isset($actions[$actionname])) {
     throw new \moodle_exception('errorunknownaction', 'report_insights');
 }
 
-$modelready = $model->$model->is_enabled() && $model->is_trained() && $model->predictions_exist($context);
+$modelready = $model->is_enabled() && $model->is_trained() && $model->predictions_exist($context);
 if (!$modelready && !has_capability('moodle/analytics:managemodels', $context)) {
 
     $PAGE->set_pagelayout('report');
