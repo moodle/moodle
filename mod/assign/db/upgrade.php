@@ -79,6 +79,29 @@ function xmldb_assign_upgrade($oldversion) {
 
         $count = $DB->count_records_sql($countsql, array(1));
         if ($count == 0) {
+            // Look for grade records with no submission record.
+            // This is when a teacher has marked a student before they submitted anything.
+            $records = $DB->get_records_sql('SELECT g.id, g.assignment, g.userid, g.attemptnumber
+                                               FROM {assign_grades} g
+                                          LEFT JOIN {assign_submission} s
+                                                 ON s.assignment = g.assignment
+                                                AND s.userid = g.userid
+                                              WHERE s.id IS NULL');
+            $submissions = array();
+            foreach ($records as $record) {
+                $submission = new stdClass();
+                $submission->assignment = $record->assignment;
+                $submission->userid = $record->userid;
+                $submission->attemptnumber = $record->attemptnumber;
+                $submission->status = 'new';
+                $submission->groupid = 0;
+                $submission->latest = 0;
+                $submission->timecreated = time();
+                $submission->timemodified = time();
+                array_push($submissions, $submission);
+            }
+
+            $DB->insert_records('assign_submission', $submissions);
 
             // Mark the latest attempt for every submission in mod_assign.
             $maxattemptsql = 'SELECT assignment, userid, groupid, max(attemptnumber) AS maxattempt
@@ -105,29 +128,6 @@ function xmldb_assign_upgrade($oldversion) {
                 $select = 'id IN(' . $maxattemptidssql . ')';
                 $DB->set_field_select('assign_submission', 'latest', 1, $select);
             }
-
-            // Look for grade records with no submission record.
-            // This is when a teacher has marked a student before they submitted anything.
-            $records = $DB->get_records_sql('SELECT g.id, g.assignment, g.userid
-                                               FROM {assign_grades} g
-                                          LEFT JOIN {assign_submission} s
-                                                 ON s.assignment = g.assignment
-                                                AND s.userid = g.userid
-                                              WHERE s.id IS NULL');
-            $submissions = array();
-            foreach ($records as $record) {
-                $submission = new stdClass();
-                $submission->assignment = $record->assignment;
-                $submission->userid = $record->userid;
-                $submission->status = 'new';
-                $submission->groupid = 0;
-                $submission->latest = 1;
-                $submission->timecreated = time();
-                $submission->timemodified = time();
-                array_push($submissions, $submission);
-            }
-
-            $DB->insert_records('assign_submission', $submissions);
         }
 
         // Assign savepoint reached.
