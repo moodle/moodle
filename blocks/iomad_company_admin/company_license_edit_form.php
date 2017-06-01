@@ -105,10 +105,10 @@ class company_license_form extends company_moodleform {
             $mform->addElement('hidden', 'designatedcompany', 0);
             $mform->setType('designatedcompany', PARAM_INT);
         } else {
-            $company = new company($this->selectedcompany);
+            $licenseinfo = $DB->get_record('companylicense', array('id' => $this->parentid));
+            $company = new company($licenseinfo->companyid);
             $companylist = $company->get_child_companies_select(false);
             $mform->addElement('header', 'header', get_string('split_licenses', 'block_iomad_company_admin'));
-            $licenseinfo = $DB->get_record('companylicense', array('id' => $this->parentid));
             $this->free = $licenseinfo->allocation - $licenseinfo->used;
             $mform->addElement('static', 'parentlicensename', get_string('parentlicensename', 'block_iomad_company_admin') . ': ' . $licenseinfo->name);
             $mform->addElement('static', 'parentlicenseused', get_string('parentlicenseused', 'block_iomad_company_admin') . ': ' . $licenseinfo->used);
