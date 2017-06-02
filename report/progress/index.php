@@ -196,7 +196,7 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     $PAGE->set_title($strcompletion);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
-    $PAGE->requires->js_call_amd('report_progress/completion_override', 'update');
+    $PAGE->requires->js_call_amd('report_progress/completion_override', 'init');
 
     // Handle groups (if enabled)
     groups_print_course_menu($course,$CFG->wwwroot.'/report/progress/?course='.$course->id);
@@ -438,7 +438,8 @@ foreach($progress as $user) {
                 $changecompl = $user->id . '-' . $activity->id . '-' . $newstate;
                 $url = new moodle_url($PAGE->url, array('sesskey' => sesskey(),
                     'changecompl' => $changecompl));
-                $celltext = html_writer::link($url, $celltext, array('class' => 'changecompl', 'data-changecompl' => $changecompl));
+                $celltext = html_writer::link($url, $celltext, array('class' => 'changecompl', 'data-changecompl' => $changecompl,
+                                                                     'aria-role' => 'button'));
             }
             print '<td class="completion-progresscell '.$formattedactivities[$activity->id]->datepassedclass.'">'.
                 $celltext . '</td>';

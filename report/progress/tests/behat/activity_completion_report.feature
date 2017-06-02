@@ -45,10 +45,10 @@ Feature: Teacher can view and override users' activity completion data via the p
     And "Student One, my assignment: Completed" "icon" should exist in the "Student One" "table_row"
     And "Student One, my assignment 2: Completed" "icon" should exist in the "Student One" "table_row"
     And I click on "my assignment" "link" in the "Student One" "table_row"
-    And I click on "Yes" "button"
+    And I click on "Save changes" "button"
     And "Student One, my assignment: Not completed (set by Teacher One)" "icon" should exist in the "Student One" "table_row"
     And I click on "my assignment 2" "link" in the "Student One" "table_row"
-    And I click on "Yes" "button"
+    And I click on "Save changes" "button"
     And "Student One, my assignment 2: Not completed (set by Teacher One)" "icon" should exist in the "Student One" "table_row"
     And I log out
     # Student can now complete the activities again, via normal means.
@@ -81,10 +81,10 @@ Feature: Teacher can view and override users' activity completion data via the p
     And "Student One, my assignment: Not completed" "icon" should exist in the "Student One" "table_row"
     And "Student One, my assignment 3: Not completed" "icon" should exist in the "Student One" "table_row"
     And I click on "my assignment" "link" in the "Student One" "table_row"
-    And I click on "Yes" "button"
+    And I click on "Save changes" "button"
     And "Student One, my assignment: Completed (set by Teacher One)" "icon" should exist in the "Student One" "table_row"
     And I click on "my assignment 3" "link" in the "Student One" "table_row"
-    And I click on "Yes" "button"
+    And I click on "Save changes" "button"
     And "Student One, my assignment 3: Completed (set by Teacher One)" "icon" should exist in the "Student One" "table_row"
     And I log out
     # Then as a student, confirm that automatic completion checks are no longer triggered (such as after an assign submission).

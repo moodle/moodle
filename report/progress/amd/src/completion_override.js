@@ -22,64 +22,116 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
  */
-define(['jquery', 'core/ajax', 'core/str', 'core/notification'],
-        function($, ajax, str, notification) {
-    return /** @alias module:report_progress/completion_override */ {
+define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/notification',
+        'core/custom_interaction_events', 'core/templates'],
+    function($, Ajax, Str, ModalFactory, ModalEvents, Notification, CustomEvents, Templates) {
 
         /**
-         * Change the activity completion state.
-         *
-         * @method change
+         * @type {JQuery} JQuery object containing the element (completion link) that was most recently activated.
+         * @private
          */
-        update: function() {
+        var triggerElement;
 
-            $('#completion-progress a.changecompl').on('click', function(e) {
-                e.preventDefault();
+        /**
+         * Handles the confirmation of an override change, calling the web service to update it.
+         * @method setOverride
+         * @param {Object} override the override data
+         * @private
+         */
+        var setOverride = function(override) {
+            // Generate a loading spinner while we're working.
+            Templates.render('core/loading', {}).then(function(html) {
+                // Append the loading spinner to the trigger element.
+                triggerElement.append(html);
 
-                var el = $(this);
-                var changecompl = el.data('changecompl');
-                var changecomplfields = changecompl.split('-');
-                var userid = changecomplfields[0];
-                var cmid = changecomplfields[1];
-                var newstate = changecomplfields[2];
-                var newstatestr = (newstate == 1) ? 'completion-y' : 'completion-n';
+                // Update the completion status override.
+                return Ajax.call([{
+                    methodname: 'core_completion_override_activity_completion_status',
+                    args: override
+                }])[0];
+            }).then(function(results) {
+                // Update the DOM accordingly.
+                triggerElement.find('.loading-icon').remove();
+                triggerElement.data('changecompl', results.changecompl);
+                triggerElement.attr('data-changecompl', results.changecompl);
+                triggerElement.children("img").replaceWith(results.img);
+                return;
+            }).catch(Notification.exception);
+        };
 
-                str.get_strings([
-                    {key: newstatestr, component: 'completion'}
-                ]).done(function(strings) {
-                    str.get_strings([
-                        {key: 'confirm', component: 'moodle'},
-                        {key: 'areyousureoverridecompletion', component: 'completion', param: strings[0]},
-                        {key: 'yes', component: 'moodle'},
-                        {key: 'cancel', component: 'moodle'}
-                    ]).done(function(strings) {
-                        notification.confirm(
-                            strings[0], // Confirm.
-                            strings[1], // Message.
-                            strings[2], // Yes.
-                            strings[3], // Cancel.
-                            function() {
-                                el.append('<div class="ajaxworking" />');
+        /**
+         * Handler for activation of a completion status button element.
+         * @method userConfirm
+         * @param {Event} e the CustomEvents event (CustomEvents.events.activate in this case)
+         * @param {Object} data an object containing the original event (click, keydown, etc.).
+         * @private
+         */
+        var userConfirm = function(e, data) {
+            data.originalEvent.preventDefault();
+            e.preventDefault();
 
-                                var promise = ajax.call([{
-                                    methodname: 'core_completion_override_activity_completion_status',
-                                    args: {
-                                        userid: userid, cmid: cmid, newstate: newstate
-                                    }
-                                }]);
+            triggerElement = $(e.currentTarget);
+            var elemData = triggerElement.data('changecompl').split('-');
+            var override = {
+                userid: elemData[0],
+                cmid: elemData[1],
+                newstate: elemData[2]
+            };
+            var newStateStr = (override.newstate == 1) ? 'completion-y' : 'completion-n';
 
-                                promise[0].then(function(results) {
-                                    el.data('changecompl', results.changecompl);
-                                    el.attr('data-changecompl', results.changecompl);
-                                    el.children("img").replaceWith(results.img);
-                                    $('.ajaxworking').remove();
-                                }).fail(notification.exception);
-                            }
-                        );
-                    }).fail(notification.exception);
-                }).fail(notification.exception);
+            Str.get_strings([
+                {key: newStateStr, component: 'completion'}
+            ]).then(function(strings) {
+                return Str.get_strings([
+                    {key: 'confirm', component: 'moodle'},
+                    {key: 'areyousureoverridecompletion', component: 'completion', param: strings[0]}
+                ]);
+            }).then(function(strings) {
+                // Create a yes/no modal.
+                return ModalFactory.create({
+                    type: ModalFactory.types.CONFIRM,
+                    title: strings[0],
+                    body: strings[1],
+                });
+            }).then(function(modal) {
+                // Now set up the handlers for the confirmation or cancellation of the modal, and show it.
 
+                // Confirmation only.
+                modal.getRoot().on(ModalEvents.yes, function() {
+                    setOverride(override);
+                });
+
+                // Confirming, closing, or cancelling will destroy the modal and return focus to the trigger element.
+                modal.getRoot().on(ModalEvents.hidden, function() {
+                    triggerElement.focus();
+                    modal.destroy();
+                });
+
+                // Display.
+                modal.show();
+                return;
+            }).catch(Notification.exception);
+        };
+
+        /**
+         * Init this module which allows activity completion state to be changed via ajax.
+         * @method init
+         * @private
+         */
+        var init = function() {
+            // Register the click, space and enter events as activators for the trigger element.
+            $('#completion-progress a.changecompl').each(function(index, element) {
+                CustomEvents.define(element, [CustomEvents.events.activate]);
             });
-        }
-    };
-});
+
+            // Set the handler on the parent element (the table), but filter so the callback is only called for <a> type children
+            // having the '.changecompl' class. The <a> element can then be accessed in the callback via e.currentTarget.
+            $('#completion-progress').on(CustomEvents.events.activate, "a.changecompl", function(e, data) {
+                userConfirm(e, data);
+            });
+        };
+
+        return /** @alias module:report_progress/completion_override */ {
+            init: init
+        };
+    });
