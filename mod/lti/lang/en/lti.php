@@ -214,6 +214,8 @@ $string['icon_url'] = 'Icon URL';
 $string['icon_url_help'] = 'The icon URL allows the icon that shows up in the course listing for this activity to be modified. Instead of using the default
 LTI icon, an icon which conveys the type of activity may be specified.';
 $string['id'] = 'id';
+$string['indicator:socialbreadthlti'] = 'LTI social';
+$string['indicator:cognitivedepthlti'] = 'LTI cognitive';
 $string['invalidid'] = 'LTI ID was incorrect';
 $string['launch_in_moodle'] = 'Launch tool in moodle';
 $string['launch_in_popup'] = 'Launch tool in a pop-up';

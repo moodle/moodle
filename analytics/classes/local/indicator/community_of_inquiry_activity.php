@@ -59,10 +59,19 @@ abstract class community_of_inquiry_activity extends linear {
     const INDICATOR_SOCIAL = "social";
 
     /**
-     * TODO Automate this when merging into core.
+     * Returns the activity type. No point in changing this class in children classes.
+     *
      * @var string The activity name (e.g. assign or quiz)
      */
-    abstract protected function get_activity_type();
+    final protected function get_activity_type() {
+        $class = get_class($this);
+        $package = stristr($class, "\\", true);
+        $type = str_replace("mod_", "", $package);
+        if ($type === $package) {
+            throw new \coding_exception("$class does not belong to any module specific namespace");
+        }
+        return $type;
+    }
 
     protected function get_cognitive_depth_level(\cm_info $cm) {
         throw new \coding_exception('Overwrite get_cognitive_depth_level method to set your activity potential cognitive ' .
