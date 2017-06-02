@@ -4,7 +4,7 @@ Feature: Set entries required as a completion condition for a data item
   As a teacher
   I need to set entries required to mark the database activity as completed
 
-Scenario: Two entries required to complete the activity
+  Scenario: Two entries required to complete the activity
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@example.com |
