@@ -272,9 +272,7 @@ class company_license_users_form extends moodleform {
             if (!empty($licensestounassign)) {
                 foreach ($licensestounassign as $unassignid) {
                     foreach($courses as $courseid) {
-                        $licensedata = $DB->get_record('companylicense_users',array('id' => $unassignid,
-                                                                                    'licenseid' => $this->license->id,
-                                                                                    'licensecourseid' => $courseid), 'userid,isusing', MUST_EXIST);
+                        $licensedata = $DB->get_record('companylicense_users',array('id' => $unassignid), '*', MUST_EXIST);
     
                         // Check the userid is valid.
                         if (!company::check_valid_user($this->selectedcompany, $licensedata->userid, $this->departmentid)) {
@@ -285,10 +283,11 @@ class company_license_users_form extends moodleform {
                             $DB->delete_records('companylicense_users', array('id' => $unassignid));
     
                             // Create an event.
-                            $eventother = array('licenseid' => $this->license->id);
-                            $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($courseid),
+                            $eventother = array('licenseid' => $this->license->id,
+                                                'duedate' => 0);
+                            $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($licensedata->licensecourseid),
                                                                                                             'objectid' => $this->license->id,
-                                                                                                            'courseid' => $courseid,
+                                                                                                            'courseid' => $licensedata->licensecourseid,
                                                                                                             'userid' => $licensedata->userid,
                                                                                                             'other' => $eventother));
                             $event->trigger();
