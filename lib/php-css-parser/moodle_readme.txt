@@ -1,7 +1,7 @@
 PHP CSS Parser
 --------------
 
-Import git ref: 50a802f562e71236140e2a8903b097c28d6101de
+Import git ref: c3b01ef0a85824e86fd86a74a8154d8d5c34b0ff
                 (master)
 
 Downloaded from: https://github.com/sabberworm/PHP-CSS-Parser
