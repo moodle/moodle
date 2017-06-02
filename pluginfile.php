@@ -36,5 +36,5 @@ $preview = optional_param('preview', null, PARAM_ALPHANUM);
 // Offline means download the file from the repository and serve it, even if it was an external link.
 // The repository may have to export the file to an offline format.
 $offline = optional_param('offline', 0, PARAM_BOOL);
-
-file_pluginfile($relativepath, $forcedownload, $preview, $offline);
+$embed = optional_param('embed', 0, PARAM_BOOL);
+file_pluginfile($relativepath, $forcedownload, $preview, $offline, $embed);
