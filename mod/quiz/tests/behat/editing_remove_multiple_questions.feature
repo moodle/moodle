@@ -167,4 +167,3 @@ Feature: Edit quiz page - remove multiple questions
 
     When I click on "Deselect all" "link"
     Then the field "selectquestion-3" matches value "0"
-
