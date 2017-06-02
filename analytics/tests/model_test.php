@@ -66,7 +66,7 @@ class analytics_model_testcase extends advanced_testcase {
     public function test_create() {
         $this->resetAfterTest(true);
 
-        $target = \core_analytics\manager::get_target('\tool_models\local\target\course_dropout');
+        $target = \core_analytics\manager::get_target('\tool_models\analytics\target\course_dropout');
         $indicators = array(
             \core_analytics\manager::get_indicator('\core_analytics\local\indicator\any_write_action'),
             \core_analytics\manager::get_indicator('\core_analytics\local\indicator\read_actions')
