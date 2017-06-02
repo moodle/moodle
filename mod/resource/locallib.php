@@ -93,8 +93,11 @@ function resource_display_embed($resource, $cm, $course, $file) {
         $code = $mediamanager->embed_url($moodleurl, $title, 0, 0, $embedoptions);
 
     } else {
+        // We need a way to discover if we are loading remote docs inside an iframe.
+        $moodleurl->param('embed', 1);
+
         // anything else - just try object tag enlarged as much as possible
-        $code = resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype);
+        $code = resourcelib_embed_general($moodleurl, $title, $clicktoopen, $mimetype);
     }
 
     resource_print_header($resource, $cm, $course);
@@ -525,7 +528,11 @@ function resource_set_mainfile($data) {
 
     $context = context_module::instance($cmid);
     if ($draftitemid) {
-        file_save_draft_area_files($draftitemid, $context->id, 'mod_resource', 'content', 0, array('subdirs'=>true));
+        $options = array('subdirs' => true, 'embed' => false);
+        if ($data->display == RESOURCELIB_DISPLAY_EMBED) {
+            $options['embed'] = true;
+        }
+        file_save_draft_area_files($draftitemid, $context->id, 'mod_resource', 'content', 0, $options);
     }
     $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder', false);
     if (count($files) == 1) {
