@@ -132,6 +132,33 @@ class repository_googledocs extends repository {
     }
 
     /**
+     * Print the login in a popup.
+     *
+     * @param array|null $attr Custom attributes to be applied to popup div.
+     */
+    public function print_login_popup($attr = null) {
+        global $OUTPUT, $PAGE;
+
+        $client = $this->get_user_oauth_client(false);
+        $url = new moodle_url($client->get_login_url());
+        $state = $url->get_param('state') . '&reloadparent=true';
+        $url->param('state', $state);
+
+        $PAGE->set_pagelayout('embedded');
+        echo $OUTPUT->header();
+
+        $repositoryname = get_string('pluginname', 'repository_googledocs');
+
+        $button = new single_button($url, get_string('logintoaccount', 'repository', $repositoryname), 'post', true);
+        $button->add_action(new popup_action('click', $url, 'Login'));
+        $button->class = 'mdl-align';
+        $button = $OUTPUT->render($button);
+        echo html_writer::div($button, '', $attr);
+
+        echo $OUTPUT->footer();
+    }
+
+    /**
      * Build the breadcrumb from a path.
      *
      * @param string $path to create a breadcrumb from.
@@ -613,8 +640,15 @@ class repository_googledocs extends repository {
                                                    $storedfile->get_filename(),
                                                    $forcedownload);
             $url->param('sesskey', sesskey());
-            $userauth = $this->get_user_oauth_client($url);
+            $param = ($options['embed'] == true) ? false : $url;
+            $userauth = $this->get_user_oauth_client($param);
             if (!$userauth->is_logged_in()) {
+                if ($options['embed'] == true) {
+                    // Due to Same-origin policy, we cannot redirect to googledocs login page.
+                    // If the requested file is embed and the user is not logged in, add option to log in using a popup.
+                    $this->print_login_popup(['style' => 'margin-top: 250px']);
+                    exit;
+                }
                 redirect($userauth->get_login_url());
             }
             if ($userauth === false) {
