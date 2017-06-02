@@ -69,6 +69,23 @@ $repo->callback();
 // manually.
 $strhttpsbug = json_encode(get_string('cannotaccessparentwin', 'repository'));
 $strrefreshnonjs = get_string('refreshnonjsfilepicker', 'repository');
+$reloadparent = optional_param('reloadparent', false, PARAM_BOOL);
+// If this request is coming from a popup, close window and reload parent window.
+if ($reloadparent == true) {
+    $js = <<<EOD
+<html>
+<head>
+    <script type="text/javascript">
+        window.opener.location.reload();
+        window.close();
+    </script>
+</head>
+<body></body>
+</html>
+EOD;
+    die($js);
+}
+
 $js =<<<EOD
 <html>
 <head>
