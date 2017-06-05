@@ -26,6 +26,7 @@ namespace core_form;
 
 use core_collator;
 use core_filetypes;
+use core_text;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -73,7 +74,7 @@ class filetypes_util {
         // Fix whitespace and normalize the syntax a bit.
         foreach ($types as $i => $type) {
             $type = str_replace('*.', '.', $type);
-            $type = strtolower($type);
+            $type = core_text::strtolower($type);
             $type = trim($type);
 
             if ($type === '*') {
@@ -470,7 +471,7 @@ class filetypes_util {
             return true;
         }
 
-        $haystack = strrev(trim(strtolower($filename)));
+        $haystack = strrev(trim(core_text::strtolower($filename)));
 
         foreach ($allowedextensions as $extension) {
             if (strpos($haystack, strrev($extension)) === 0) {
