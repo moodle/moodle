@@ -7,6 +7,10 @@ information provided here is intended especially for theme designer.
   setup for this module have been moved from core standard_head_html to the bootstrapbase
   renderer. If your theme needs this javascript you will need to ensure the bootstrap renderer
   is called, or require the JS yourself
+* There was a mustache template login.mustache in /lib/templates/ rendering the login form
+  and a template with the same name in /theme/boost/templates/ rendering the pagelayout "login".
+  To prevent misunderstanding when overriding one of these templates in a Boost child theme,
+  the first one was renamed to loginform.mustache - see MDL-58970.
 
 === 3.2 ===
 

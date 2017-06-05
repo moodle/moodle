@@ -4294,7 +4294,7 @@ EOD;
         $context->cookieshelpiconformatted = $this->help_icon('cookiesenabled');
         $context->errorformatted = $this->error_text($context->error);
 
-        return $this->render_from_template('core/login', $context);
+        return $this->render_from_template('core/loginform', $context);
     }
 
     /**
