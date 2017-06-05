@@ -16969,6 +16969,11 @@ div[data-passwordunmask="wrapper"] {
   line-height: 30px;
   margin-bottom: 10px;
 }
+[data-filetypesbrowserbody] [aria-expanded="false"] > [role="group"],
+[data-filetypesbrowserbody] [aria-expanded="false"] [data-filetypesbrowserfeature="hideifcollapsed"],
+[data-filetypesbrowserbody] [aria-expanded="true"] [data-filetypesbrowserfeature="hideifexpanded"] {
+  display: none;
+}
 body.modal-open {
   overflow: hidden;
 }
