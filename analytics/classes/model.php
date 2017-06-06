@@ -317,6 +317,17 @@ class model {
     }
 
     /**
+     * Removes the model.
+     *
+     * @return void
+     */
+    public static function delete() {
+        global $DB;
+        $this->clear_model();
+        $DB->delete_record('analytics_models', array('id' => $this->model->id));
+    }
+
+    /**
      * Evaluates the model datasets.
      *
      * Model datasets should already be available in Moodle's filesystem.
