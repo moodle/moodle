@@ -2567,7 +2567,16 @@ class global_navigation extends navigation_node {
         }
 
         $coursenode = $parent->add($coursename, $url, self::TYPE_COURSE, $shortname, $course->id);
-        $coursenode->showinflatnavigation = $coursetype == self::COURSE_MY;
+
+        // Do some calculation to see if the course is past, current or future.
+        if ($coursetype == self::COURSE_MY) {
+            $classify = course_classify_for_timeline($course);
+
+            if ($classify == COURSE_TIMELINE_INPROGRESS) {
+                $coursenode->showinflatnavigation = true;
+            }
+        }
+
         $coursenode->hidden = (!$course->visible);
         $coursenode->title(format_string($course->fullname, true, array('context' => $coursecontext, 'escape' => false)));
         if ($canexpandcourse) {
