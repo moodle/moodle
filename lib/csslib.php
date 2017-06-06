@@ -330,6 +330,26 @@ function css_send_cached_css_content($csscontent, $etag) {
 }
 
 /**
+ * Sends CSS directly and disables all caching.
+ * The Content-Length of the body is also included, but the script is not ended.
+ *
+ * @param string $css The CSS content to send
+ * @param int $expiry The anticipated expiry of the file
+ */
+function css_send_temporary_css($css) {
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+    header('Content-Disposition: inline; filename="styles_debug.php"');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    header('Accept-Ranges: none');
+    header('Content-Type: text/css; charset=utf-8');
+    header('Content-Length: ' . strlen($css));
+
+    echo $css;
+}
+
+/**
  * Sends CSS directly without caching it.
  *
  * This function takes a raw CSS string, optimises it if required, and then
