@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Inspire models list page.
+ * Prediction models list page.
  *
  * @package    tool_models
  * @copyright  2016 David Monllao {@link http://www.davidmonllao.com}

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Inspire predictions list page.
+ * Predictions list page.
  *
  * @package    report_insights
  * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}

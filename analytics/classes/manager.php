@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Inspire tool manager.
+ * Analytics basic actions manager.
  *
  * @package   core_analytics
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
@@ -27,7 +27,7 @@ namespace core_analytics;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Inspire tool manager.
+ * Analytics basic actions manager.
  *
  * @package   core_analytics
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}

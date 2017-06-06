@@ -27,7 +27,7 @@ namespace core_analytics;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Inspire tool predictors interface.
+ * Predictors interface.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
