@@ -29,6 +29,7 @@ use renderer_base;
 use templatable;
 use core_completion\progress;
 
+require_once($CFG->dirroot . '/blocks/myoverview/lib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 /**

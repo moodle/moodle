@@ -15,25 +15,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings for the overview block.
+ * Contains functions called by core.
  *
  * @package    block_myoverview
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/blocks/myoverview/lib.php');
+/**
+ * The timeline view.
+ */
+define('BLOCK_MYOVERVIEW_TIMELINE_VIEW', 'timeline');
 
-if ($ADMIN->fulltree) {
+/**
+ * The courses view.
+ */
+define('BLOCK_MYOVERVIEW_COURSES_VIEW', 'courses');
 
-    $options = [
-        BLOCK_MYOVERVIEW_TIMELINE_VIEW => get_string('timeline', 'block_myoverview'),
-        BLOCK_MYOVERVIEW_COURSES_VIEW => get_string('courses')
-    ];
+/**
+ * Returns the name of the user preferences as well as the details this plugin uses.
+ *
+ * @return array
+ */
+function block_myoverview_user_preferences() {
+    $preferences = array();
+    $preferences['block_myoverview_last_tab'] = array(
+        'type' => PARAM_ALPHA,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => BLOCK_MYOVERVIEW_TIMELINE_VIEW,
+        'choices' => array(BLOCK_MYOVERVIEW_TIMELINE_VIEW, BLOCK_MYOVERVIEW_COURSES_VIEW)
+    );
 
-    $settings->add(new admin_setting_configselect('block_myoverview/defaulttab',
-        get_string('defaulttab', 'block_myoverview'),
-        get_string('defaulttab_desc', 'block_myoverview'), 'timeline', $options));
+    return $preferences;
 }

@@ -25,16 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The timeline view.
- */
-define('BLOCK_MYOVERVIEW_TIMELINE_VIEW', 'timeline');
-
-/**
- * The courses view.
- */
-define('BLOCK_MYOVERVIEW_COURSES_VIEW', 'courses');
-
-/**
  * My overview block class.
  *
  * @package    block_myoverview
@@ -60,9 +50,13 @@ class block_myoverview extends block_base {
             return $this->content;
         }
 
-        $config = get_config('block_myoverview');
+        // Wasn't set as a user preference so get the site setting.
+        if (!$tab = get_user_preferences('block_myoverview_last_tab')) {
+            $config = get_config('block_myoverview');
+            $tab = $config->defaulttab;
+        }
 
-        $renderable = new \block_myoverview\output\main($config->defaulttab);
+        $renderable = new \block_myoverview\output\main($tab);
         $renderer = $this->page->get_renderer('block_myoverview');
 
         $this->content = new stdClass();
