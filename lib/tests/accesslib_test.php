@@ -57,12 +57,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->setAdminUser();
         load_all_capabilities();
 
-        $this->assertNotEmpty($ACCESSLIB_PRIVATE->rolepermissions);
-        $this->assertNotEmpty($ACCESSLIB_PRIVATE->rolepermissions);
         $this->assertNotEmpty($ACCESSLIB_PRIVATE->accessdatabyuser);
         accesslib_clear_all_caches_for_unit_testing();
-        $this->assertEmpty($ACCESSLIB_PRIVATE->rolepermissions);
-        $this->assertEmpty($ACCESSLIB_PRIVATE->rolepermissions);
         $this->assertEmpty($ACCESSLIB_PRIVATE->dirtycontexts);
         $this->assertEmpty($ACCESSLIB_PRIVATE->accessdatabyuser);
     }
@@ -93,9 +89,9 @@ class core_accesslib_testcase extends advanced_testcase {
 
             $this->assertTrue(is_array($access));
             $this->assertTrue(is_array($access['ra']));
-            $this->assertTrue(is_array($access['rdef']));
-            $this->assertTrue(isset($access['rdef_count']));
-            $this->assertTrue(is_array($access['loaded']));
+            $this->assertFalse(isset($access['rdef']));
+            $this->assertFalse(isset($access['rdef_count']));
+            $this->assertFalse(isset($access['loaded']));
             $this->assertTrue(isset($access['time']));
             $this->assertTrue(is_array($access['rsw']));
         }

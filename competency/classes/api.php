@@ -5154,9 +5154,12 @@ class api {
         $syscontext = context_system::instance();
         $hassystem = has_capability($capability, $syscontext, $userid);
 
-        $access = get_user_access_sitewide($userid);
+        $access = get_user_roles_sitewide_accessdata($userid);
         // Build up a list of level 2 contexts (candidates to be user context).
         $filtercontexts = array();
+        // Build list of roles to check overrides.
+        $roles = array();
+
         foreach ($access['ra'] as $path => $role) {
             $parts = explode('/', $path);
             if (count($parts) == 3) {
@@ -5165,24 +5168,23 @@ class api {
                 // We know this is not a user context because there is another path with more than 2 levels.
                 unset($filtercontexts[$parts[2]]);
             }
+            $roles = array_merge($roles, $role);
         }
 
         // Add all contexts in which a role may be overidden.
-        foreach ($access['rdef'] as $pathandroleid => $def) {
-            $matches = array();
-            if (!isset($def[$capability])) {
-                // The capability is not mentioned, we can ignore.
-                continue;
+        $rdefs = get_role_definitions($roles);
+        foreach ($rdefs as $roledef) {
+            foreach ($roledef as $path => $caps) {
+                if (!isset($caps[$capability])) {
+                    // The capability is not mentioned, we can ignore.
+                    continue;
+                }
+                $parts = explode('/', $path);
+                if (count($parts) === 3) {
+                    // Only get potential user contexts, they only ever have 2 slashes /parentId/Id.
+                    $filtercontexts[$parts[2]] = $parts[2];
+                }
             }
-
-            list($contextpath, $roleid) = explode(':', $pathandroleid, 2);
-            $parts = explode('/', $contextpath);
-            if (count($parts) != 3) {
-                // Only get potential user contexts, they only ever have 2 slashes /parentId/Id.
-                continue;
-            }
-
-            $filtercontexts[$parts[2]] = $parts[2];
         }
 
         // No interesting contexts - return all or no results.

@@ -7,6 +7,9 @@ information provided here is intended especially for developers.
   allow users to define a list of file types; either by typing them manually or selecting them from a list. The widgets
   directly support the syntax used to feed the 'accepted_types' option of the filemanager and filepicker elements. File
   types can be specified as extensions (.jpg or just jpg), mime types (text/plain) or groups (image).
+* Removed accesslib private functions: load_course_context(), load_role_access_by_context(), dedupe_user_access() (MDL-49398).
+* Internal "accessdata" structure format has changed to improve ability to perform role definition caching (MDL-49398).
+* Role definitions are no longer cached in user session (MDL-49398).
 
 === 3.3.1 ===
 
