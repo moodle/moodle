@@ -25,6 +25,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * The timeline view.
+ */
+define('BLOCK_MYOVERVIEW_TIMELINE_VIEW', 'timeline');
+
+/**
+ * The courses view.
+ */
+define('BLOCK_MYOVERVIEW_COURSES_VIEW', 'courses');
+
+/**
  * My overview block class.
  *
  * @package    block_myoverview
@@ -50,7 +60,9 @@ class block_myoverview extends block_base {
             return $this->content;
         }
 
-        $renderable = new \block_myoverview\output\main();
+        $config = get_config('block_myoverview');
+
+        $renderable = new \block_myoverview\output\main($config->defaulttab);
         $renderer = $this->page->get_renderer('block_myoverview');
 
         $this->content = new stdClass();
@@ -67,5 +79,14 @@ class block_myoverview extends block_base {
      */
     public function applicable_formats() {
         return array('my' => true);
+    }
+
+    /**
+     * This block does contain a configuration settings.
+     *
+     * @return boolean
+     */
+    public function has_config() {
+        return true;
     }
 }
