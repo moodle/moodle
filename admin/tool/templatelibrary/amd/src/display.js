@@ -126,7 +126,8 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
             args: {
                     component: component,
                     template: name,
-                    themename: config.theme
+                    themename: config.theme,
+                    includecomments: true
             }
         }, {
             methodname: 'tool_templatelibrary_load_canonical_template',

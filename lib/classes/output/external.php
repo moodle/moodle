@@ -53,8 +53,18 @@ class external extends external_api {
                 array('component' => new external_value(PARAM_COMPONENT, 'component containing the template'),
                       'template' => new external_value(PARAM_ALPHANUMEXT, 'name of the template'),
                       'themename' => new external_value(PARAM_ALPHANUMEXT, 'The current theme.'),
+                      'includecomments' => new external_value(PARAM_BOOL, 'Include comments or not', VALUE_DEFAULT, false)
                          )
             );
+    }
+
+    /**
+     * Remove comments from mustache template.
+     * @param string $templatestr
+     * @return mixed
+     */
+    protected static function strip_template_comments($templatestr) {
+        return preg_replace('/(?={{!)(.*)(}})/sU', '', $templatestr);
     }
 
     /**
@@ -65,23 +75,30 @@ class external extends external_api {
      * @param string $themename The name of the current theme.
      * @return string the template
      */
-    public static function load_template($component, $template, $themename) {
+    public static function load_template($component, $template, $themename, $includecomments = false) {
         global $DB, $CFG, $PAGE;
 
         $params = self::validate_parameters(self::load_template_parameters(),
                                             array('component' => $component,
                                                   'template' => $template,
-                                                  'themename' => $themename));
+                                                  'themename' => $themename,
+                                                  'includecomments' => $includecomments));
 
         $component = $params['component'];
         $template = $params['template'];
         $themename = $params['themename'];
+        $includecomments = $params['includecomments'];
 
         $templatename = $component . '/' . $template;
 
         // Will throw exceptions if the template does not exist.
         $filename = mustache_template_finder::get_template_filepath($templatename, $themename);
         $templatestr = file_get_contents($filename);
+
+        // Remove comments from template.
+        if (!$includecomments) {
+            $templatestr = self::strip_template_comments($templatestr);
+        }
 
         return $templatestr;
     }
