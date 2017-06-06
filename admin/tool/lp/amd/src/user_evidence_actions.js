@@ -98,14 +98,15 @@ define(['jquery',
      * Callback to render the region template.
      *
      * @param {Object} context The context for the template.
+     * @return {Promise}
      */
     UserEvidenceActions.prototype._renderView = function(context) {
         var self = this;
-        templates.render(self._template, context)
-            .done(function(newhtml, newjs) {
+        return templates.render(self._template, context)
+            .then(function(newhtml, newjs) {
                 templates.replaceNode($(self._region), newhtml, newjs);
-            })
-            .fail(notification.exception);
+                return;
+            });
     };
 
     /**
@@ -117,7 +118,6 @@ define(['jquery',
      */
     UserEvidenceActions.prototype._callAndRefresh = function(calls, evidenceData) {
         var self = this;
-
         calls.push({
             methodname: self._contextMethod,
             args: self._getContextArgs(evidenceData)
@@ -126,7 +126,7 @@ define(['jquery',
         // Apply all the promises, and refresh when the last one is resolved.
         return $.when.apply($.when, ajax.call(calls))
             .then(function() {
-                self._renderView(arguments[arguments.length - 1]);
+                return self._renderView(arguments[arguments.length - 1]);
             })
             .fail(notification.exception);
     };

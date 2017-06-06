@@ -46,42 +46,41 @@ define(
              * @param {object} postData The data to be sent for the content item selection request.
              */
             init: function(url, postData) {
-                var dialogueTitle = '';
+                var context = {
+                    url: url,
+                    postData: postData
+                };
+                var bodyPromise = templates.render('mod_lti/contentitem', context);
+
+                if (dialogue) {
+                    // Set dialogue body.
+                    dialogue.setBody(bodyPromise);
+                    // Display the dialogue.
+                    dialogue.show();
+                    return;
+                }
+
                 str.get_string('selectcontent', 'lti').then(function(title) {
-                    dialogueTitle = title;
-                    var context = {
-                        url: url,
-                        postData: postData
-                    };
+                    return ModalFactory.create({
+                        title: title,
+                        body: bodyPromise,
+                        large: true
+                    });
+                }).then(function(modal) {
+                    dialogue = modal;
+                    // On hide handler.
+                    modal.getRoot().on(ModalEvents.hidden, function() {
+                        // Empty modal contents when it's hidden.
+                        modal.setBody('');
 
-                    var body = templates.render('mod_lti/contentitem', context);
-                    if (dialogue) {
-                        // Set dialogue body.
-                        dialogue.setBody(body);
-                        // Display the dialogue.
-                        dialogue.show();
-                    } else {
-                        ModalFactory.create({
-                            title: dialogueTitle,
-                            body: body,
-                            large: true
-                        }).done(function(modal) {
-                            dialogue = modal;
+                        // Fetch notifications.
+                        notification.fetchNotifications();
+                    });
 
-                            // Display the dialogue.
-                            dialogue.show();
-
-                            // On hide handler.
-                            modal.getRoot().on(ModalEvents.hidden, function() {
-                                // Empty modal contents when it's hidden.
-                                modal.setBody('');
-
-                                // Fetch notifications.
-                                notification.fetchNotifications();
-                            });
-                        });
-                    }
-                });
+                    // Display the dialogue.
+                    modal.show();
+                    return;
+                }).catch(notification.exception);
             }
         };
 

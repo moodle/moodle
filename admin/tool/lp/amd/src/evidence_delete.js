@@ -76,6 +76,7 @@ define(['jquery',
                         }]);
                         promise[0].then(function() {
                             parent.remove();
+                            return;
                         }).fail(Notification.exception);
                     }
                 );

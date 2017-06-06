@@ -110,15 +110,16 @@ define(['jquery',
      * Callback to render the region template.
      *
      * @param {Object} context The context for the template.
+     * @return {Promise}
      */
     PlanActions.prototype._renderView = function(context) {
         var self = this;
-        templates.render(self._template, context)
-            .done(function(newhtml, newjs) {
+        return templates.render(self._template, context)
+            .then(function(newhtml, newjs) {
                 $(self._region).replaceWith(newhtml);
                 templates.runTemplateJS(newjs);
-            })
-            .fail(notification.exception);
+                return;
+            });
     };
 
     /**
@@ -130,16 +131,15 @@ define(['jquery',
      */
     PlanActions.prototype._callAndRefresh = function(calls, planData) {
         var self = this;
-
         calls.push({
             methodname: self._contextMethod,
             args: self._getContextArgs(planData)
         });
 
         // Apply all the promises, and refresh when the last one is resolved.
-        return $.when.apply($.when, ajax.call(calls))
+        return $.when.apply($, ajax.call(calls))
             .then(function() {
-                self._renderView(arguments[arguments.length - 1]);
+                return self._renderView(arguments[arguments.length - 1]);
             })
             .fail(notification.exception);
     };

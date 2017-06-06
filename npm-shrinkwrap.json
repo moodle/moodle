@@ -821,6 +821,12 @@
       "integrity": "sha1-f6qEWZ4P6kIvBLwy20kFQFGj8Ro=",
       "dev": true
     },
+    "eslint-plugin-promise": {
+      "version": "3.5.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-promise/-/eslint-plugin-promise-3.5.0.tgz",
+      "integrity": "sha1-ePu2/+BHIBYnVp6FpsU3OvKmj8o=",
+      "dev": true
+    },
     "espree": {
       "version": "3.4.3",
       "resolved": "https://registry.npmjs.org/espree/-/espree-3.4.3.tgz",
