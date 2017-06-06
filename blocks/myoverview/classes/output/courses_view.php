@@ -63,8 +63,6 @@ class courses_view implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
-        $today = time();
-
         // Build courses view data structure.
         $coursesview = [
             'hascourses' => !empty($this->courses)
@@ -73,8 +71,6 @@ class courses_view implements renderable, templatable {
         // How many courses we have per status?
         $coursesbystatus = ['past' => 0, 'inprogress' => 0, 'future' => 0];
         foreach ($this->courses as $course) {
-            $startdate = $course->startdate;
-            $enddate = $course->enddate;
             $courseid = $course->id;
             $context = \context_course::instance($courseid);
             $exporter = new course_summary_exporter($course, [
@@ -84,14 +80,17 @@ class courses_view implements renderable, templatable {
             // Convert summary to plain text.
             $exportedcourse->summary = content_to_text($exportedcourse->summary, $exportedcourse->summaryformat);
 
+            $courseprogress = null;
+
+            $classified = course_classify_for_timeline($course);
+
             if (isset($this->coursesprogress[$courseid])) {
-                $coursecompleted = $this->coursesprogress[$courseid]['completed'];
                 $courseprogress = $this->coursesprogress[$courseid]['progress'];
                 $exportedcourse->hasprogress = !is_null($courseprogress);
                 $exportedcourse->progress = $courseprogress;
             }
 
-            if ((isset($coursecompleted) && $coursecompleted) || (!empty($enddate) && $enddate < $today)) {
+            if ($classified == COURSE_TIMELINE_PAST) {
                 // Courses that have already ended.
                 $pastpages = floor($coursesbystatus['past'] / $this::COURSES_PER_PAGE);
 
@@ -100,7 +99,7 @@ class courses_view implements renderable, templatable {
                 $coursesview['past']['pages'][$pastpages]['page'] = $pastpages + 1;
                 $coursesview['past']['haspages'] = true;
                 $coursesbystatus['past']++;
-            } else if ($startdate > $today) {
+            } else if ($classified == COURSE_TIMELINE_FUTURE) {
                 // Courses that have not started yet.
                 $futurepages = floor($coursesbystatus['future'] / $this::COURSES_PER_PAGE);
 
