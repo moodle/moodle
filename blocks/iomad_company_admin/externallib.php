@@ -438,7 +438,7 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::assign_users_parameters(), $users);
+        $params = self::validate_parameters(self::assign_users_parameters(), array('users' => $users));
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -448,15 +448,15 @@ class block_iomad_company_admin_external extends external_api {
         $succeeded = true;
 
         // Deal with the list of users.
-        foreach ($users as $userrecord) {
-            if (empty($userrecord->userid) || empty($userrecord->companyid)) {
+        foreach ($params['users'] as $userrecord) {
+            if (empty($userrecord['userid']) || empty($userrecord['companyid'])) {
                 $succeeded = false;
                 continue;
             }
-            $company = new company($userrecord->companyid);
-            if (!$company->assign_user_to_company($userrecord->userid,
-                                                  $userrecord->departmentid,
-                                                  $userrecord->managertype,
+            $company = new company($userrecord['companyid']);
+            if (!$company->assign_user_to_company($userrecord['userid'],
+                                                  $userrecord['departmentid'],
+                                                  $userrecord['managertype'],
                                                   true)) {
                 $succeeded = false;
             }
@@ -465,8 +465,8 @@ class block_iomad_company_admin_external extends external_api {
             $managertypes = $company->get_managertypes();
             $eventother = array('companyname' => $company->get_name(),
                                 'companyid' => $company->id,
-                                'usertype' => $userrecord->managertype,
-                                'usertypename' => $managertypes[$userrecord->managertype]);
+                                'usertype' => $userrecord['managertype'],
+                                'usertypename' => $managertypes[$userrecord['managertype']]);
             $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => context_system::instance(),
                                                                                             'objectid' => $company->id,
                                                                                             'userid' => $adduser->id,
@@ -520,7 +520,7 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::assign_users_parameters(), $users);
+        $params = self::validate_parameters(self::assign_users_parameters(), array('users' => $users));
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -530,15 +530,15 @@ class block_iomad_company_admin_external extends external_api {
         $succeeded = true;
 
         // Deal with the list of users.
-        foreach ($users as $userrecord) {
-            if (empty($userrecord->userid) || empty($userrecord->companyid)) {
+        foreach ($params['users'] as $userrecord) {
+            if (empty($userrecord['userid']) || empty($userrecord['companyid'])) {
                 $succeeded = false;
                 continue;
             }
-            $company = new company($userrecord->companyid);
-            if (!$company->assign_user_to_department($userrecord->departmentid,
-                                                     $userrecord->userid,
-                                                     $userrecord->managertype,
+            $company = new company($userrecord['companyid']);
+            if (!$company->assign_user_to_department($userrecord['departmentid'],
+                                                     $userrecord['userid'],
+                                                     $userrecord['managertype'],
                                                      true)) {
                 $succeeded = false;
             }
@@ -547,8 +547,8 @@ class block_iomad_company_admin_external extends external_api {
             $managertypes = $company->get_managertypes();
             $eventother = array('companyname' => $company->get_name(),
                                 'companyid' => $company->id,
-                                'usertype' => $userrecord->managertype,
-                                'usertypename' => $managertypes[$userrecord->managertype]);
+                                'usertype' => $userrecord['managertype'],
+                                'usertypename' => $managertypes[$userrecord['managertype']]);
             $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => context_system::instance(),
                                                                                             'objectid' => $company->id,
                                                                                             'userid' => $adduser->id,
@@ -601,7 +601,7 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::assign_users_parameters(), $users);
+        $params = self::validate_parameters(self::assign_users_parameters(), array('users' => $users));
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -611,13 +611,13 @@ class block_iomad_company_admin_external extends external_api {
         $succeeded = true;
 
         // Deal with the list of users.
-        foreach ($users as $userrecord) {
-            if (empty($userrecord->userid) || empty($userrecord->companyid)) {
+        foreach ($params['users'] as $userrecord) {
+            if (empty($userrecord['userid']) || empty($userrecord['companyid'])) {
                 $succeeded = false;
                 continue;
             }
-            $company = new company($userrecord->companyid);
-            if (!$company->unassign_user_from_company($userrecord->userid, true)) {
+            $company = new company($userrecord['companyid']);
+            if (!$company->unassign_user_from_company($userrecord['userid'], true)) {
                 $succeeded = false;
             }
 
@@ -625,7 +625,7 @@ class block_iomad_company_admin_external extends external_api {
             $managertypes = $company->get_managertypes();
             $eventother = array('companyname' => $company->get_name(),
                                 'companyid' => $company->id,
-                                'usertype' => $userrecord->usertype,
+                                'usertype' => $userrecord['usertype'],
                                 'usertypename' => $managertypes[$roletype]);
             $event = \block_iomad_company_admin\event\company_user_unassigned::create(array('context' => context_system::instance(),
                                                                                             'objectid' => $company->id,
@@ -685,7 +685,7 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::assign_courses_parameters(), $courses);
+        $params = self::validate_parameters(self::assign_courses_parameters(), array('courses' => $courses));
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -695,16 +695,16 @@ class block_iomad_company_admin_external extends external_api {
         $succeeded = true;
 
         // Deal with the list of users.
-        foreach ($courses as $courserecord) {
-            if (empty($courserecord->courseid) || empty($courserecord->companyid)) {
+        foreach ($params['courses'] as $courserecord) {
+            if (empty($courserecord['courseid']) || empty($courserecord['companyid'])) {
                 $succeeded = false;
                 continue;
             }
-            if (!$course = $DB->get_record('course', array('id' => $courserecord->courseid))) {
+            if (!$course = $DB->get_record('course', array('id' => $courserecord['courseid']))) {
                 $succeeded = false;
             } else {
-                $company = new company($courserecord->companyid);
-                $company->add_course($course, $courserecord->departmentid, $courserecord->owned, $courserecord->licensed);
+                $company = new company($courserecord['companyid']);
+                $company->add_course($course, $courserecord['departmentid'], $courserecord['owned'], $courserecord['licensed']);
             }
         }
 
@@ -753,7 +753,7 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::unassign_courses_parameters(), $courses);
+        $params = self::validate_parameters(self::unassign_courses_parameters(), array('courses' => $courses));
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -763,15 +763,15 @@ class block_iomad_company_admin_external extends external_api {
         $succeeded = true;
 
         // Deal with the list of users.
-        foreach ($courses as $courserecord) {
-            if (empty($courserecord->courseid) || empty($courserecord->companyid)) {
+        foreach ($params['courses'] as $courserecord) {
+            if (empty($courserecord['courseid']) || empty($courserecord['companyid'])) {
                 $succeeded = false;
                 continue;
             }
-            if (!$course = $DB->get_record('course', array('id' => $courserecord->courseid))) {
+            if (!$course = $DB->get_record('course', array('id' => $courserecord['courseid']))) {
                 $succeeded = false;
             } else {
-                company::remove_course($course, $courserecord->companyid);
+                company::remove_course($course, $courserecord['companyid']);
             }
             
         }
@@ -826,7 +826,7 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::update_courses_parameters(), $courses);
+        $params = self::validate_parameters(self::update_courses_parameters(), array('courses' => $courses));
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -836,16 +836,16 @@ class block_iomad_company_admin_external extends external_api {
         $succeeded = true;
 
         // Deal with the list of users.
-        foreach ($courses as $courserecord) {
-            if (empty($courserecord->courseid)) {
+        foreach ($params['courses'] as $courserecord) {
+            if (empty($courserecord['courseid'])) {
                 $succeeded = false;
                 continue;
             }
-            if (!$currentrecord = $DB->get_record('iomad_courses', array('courseid' => $courserecord->courseid))) {
+            if (!$currentrecord = $DB->get_record('iomad_courses', array('courseid' => $courserecord['courseid']))) {
                 $succeeded = false;
             } else {
                 // Replace the record with the new one.
-                $courserecord->id = $currentrecord->id;
+                $courserecord['id'] = $currentrecord->id;
                 if (!$DB->update_record('iomad_courses', $courserecord)) {
                     $succeeded = false;
                 }
