@@ -164,7 +164,7 @@ class event_vault implements event_vault_interface {
             $coursesfilter,
             $where,
             $params,
-            "e.timesort ASC, e.id ASC",
+            "COALESCE(e.timesort, e.timestart) ASC, e.id ASC",
             $offset,
             $limitnum,
             $ignorehidden

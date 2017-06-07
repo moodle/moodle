@@ -1481,7 +1481,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
                 $class .= ' duration_finish';
             }
             $data = array(
-                'url' => $dayhref,
+                'url' => $dayhref->out(false),
                 'day' => $day,
                 'content' => $popupdata['data-core_calendar-popupcontent'],
                 'title' => $popupdata['data-core_calendar-title']

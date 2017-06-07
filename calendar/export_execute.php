@@ -194,10 +194,20 @@ foreach($events as $event) {
     $hostaddress = str_replace('http://', '', $CFG->wwwroot);
     $hostaddress = str_replace('https://', '', $hostaddress);
 
-    $ev = new iCalendar_event;
+    $me = new calendar_event($event); // To use moodle calendar event services.
+    $ev = new iCalendar_event; // To export in ical format.
     $ev->add_property('uid', $event->id.'@'.$hostaddress);
-    $ev->add_property('summary', $event->name);
-    $ev->add_property('description', clean_param($event->description, PARAM_NOTAGS));
+
+    // Set iCal event summary from event name.
+    $ev->add_property('summary', format_string($event->name, true, ['context' => $me->context]));
+
+    // Format the description text.
+    $description = format_text($me->description, $me->format, ['context' => $me->context]);
+    // Then convert it to plain text, since it's the only format allowed for the event description property.
+    // We use html_to_text in order to convert <br> and <p> tags to new line characters for descriptions in HTML format.
+    $description = html_to_text($description, 0);
+    $ev->add_property('description', $description);
+
     $ev->add_property('class', 'PUBLIC'); // PUBLIC / PRIVATE / CONFIDENTIAL
     $ev->add_property('last-modified', Bennu::timestamp_to_datetime($event->timemodified));
     $ev->add_property('dtstamp', Bennu::timestamp_to_datetime()); // now
