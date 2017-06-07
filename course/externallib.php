@@ -2606,7 +2606,7 @@ class core_course_external extends external_api {
                         'completionexpected' => new external_value(PARAM_INT, 'Completion time expected', VALUE_OPTIONAL),
                         'showdescription' => new external_value(PARAM_INT, 'If the description is showed', VALUE_OPTIONAL),
                         'availability' => new external_value(PARAM_RAW, 'Availability settings', VALUE_OPTIONAL),
-                        'grade' => new external_value(PARAM_INT, 'Grade (max value or scale id)', VALUE_OPTIONAL),
+                        'grade' => new external_value(PARAM_FLOAT, 'Grade (max value or scale id)', VALUE_OPTIONAL),
                         'scale' => new external_value(PARAM_TEXT, 'Scale items (if used)', VALUE_OPTIONAL),
                         'gradepass' => new external_value(PARAM_RAW, 'Grade to pass (float)', VALUE_OPTIONAL),
                         'gradecat' => new external_value(PARAM_INT, 'Grade category', VALUE_OPTIONAL),
