@@ -50,10 +50,13 @@ class block_myoverview extends block_base {
             return $this->content;
         }
 
-        // Wasn't set as a user preference so get the site setting.
-        if (!$tab = get_user_preferences('block_myoverview_last_tab')) {
-            $config = get_config('block_myoverview');
-            $tab = $config->defaulttab;
+        // Check if the tab to select wasn't passed in the URL, if so see if the user has any preference.
+        if (!$tab = optional_param('myoverviewtab', null, PARAM_ALPHA)) {
+            // Check if the user has no preference, if so get the site setting.
+            if (!$tab = get_user_preferences('block_myoverview_last_tab')) {
+                $config = get_config('block_myoverview');
+                $tab = $config->defaulttab;
+            }
         }
 
         $renderable = new \block_myoverview\output\main($tab);
