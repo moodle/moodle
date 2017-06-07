@@ -361,7 +361,7 @@ define(['jquery', 'core/notification', 'core/templates',
             // Remember the last id we've seen.
             root.attr('data-last-id', calendarEvents[calendarEvents.length - 1].id);
 
-            if (calendarEvents.length <= limit) {
+            if (calendarEvents.length < limit) {
                 // No more events to load, disable loading button.
                 setLoadedAll(root);
             }
