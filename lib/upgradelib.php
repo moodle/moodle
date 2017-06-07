@@ -145,6 +145,8 @@ class core_upgrade_time {
     protected static $before;
     /** @var float Time at end of last savepoint */
     protected static $lastsavepoint;
+    /** @var bool Flag to indicate whether we are recording timestamps or not. */
+    protected static $isrecording = false;
 
     /**
      * Records current time at the start of the current upgrade item, e.g. plugin.
@@ -152,6 +154,7 @@ class core_upgrade_time {
     public static function record_start() {
         self::$before = microtime(true);
         self::$lastsavepoint = self::$before;
+        self::$isrecording = true;
     }
 
     /**
@@ -163,7 +166,7 @@ class core_upgrade_time {
         global $CFG, $OUTPUT;
 
         // In developer debug mode we show a notification after each individual save point.
-        if ($CFG->debugdeveloper) {
+        if ($CFG->debugdeveloper && self::$isrecording) {
             $time = microtime(true);
 
             $notification = new \core\output\notification($version . ': ' .
@@ -1557,7 +1560,6 @@ function print_upgrade_part_start($plugin, $installation, $verbose) {
             echo $OUTPUT->heading($plugin);
         }
     }
-    core_upgrade_time::record_start();
     if ($installation) {
         if (empty($plugin) or $plugin == 'moodle') {
             // no need to log - log table not yet there ;-)
@@ -1565,6 +1567,7 @@ function print_upgrade_part_start($plugin, $installation, $verbose) {
             upgrade_log(UPGRADE_LOG_NORMAL, $plugin, 'Starting plugin installation');
         }
     } else {
+        core_upgrade_time::record_start();
         if (empty($plugin) or $plugin == 'moodle') {
             upgrade_log(UPGRADE_LOG_NORMAL, $plugin, 'Starting core upgrade');
         } else {
@@ -1595,10 +1598,13 @@ function print_upgrade_part_end($plugin, $installation, $verbose) {
         }
     }
     if ($verbose) {
-        $duration = core_upgrade_time::get_elapsed();
-        $notification = new \core\output\notification(
-                get_string('successduration', '', format_float($duration, 2)),
-                \core\output\notification::NOTIFY_SUCCESS);
+        if ($installation) {
+            $message = get_string('success');
+        } else {
+            $duration = core_upgrade_time::get_elapsed();
+            $message = get_string('successduration', '', format_float($duration, 2));
+        }
+        $notification = new \core\output\notification($message, \core\output\notification::NOTIFY_SUCCESS);
         $notification->set_show_closebutton(false);
         echo $OUTPUT->render($notification);
         print_upgrade_separator();
