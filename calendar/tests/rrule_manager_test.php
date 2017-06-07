@@ -705,7 +705,9 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $rrule = "FREQ=MONTHLY;INTERVAL=12;BYMONTHDAY=2";
 
         $mang = new rrule_manager($rrule);
-        $until = time() + (YEARSECS * $mang::TIME_UNLIMITED_YEARS);
+        $untildate = new DateTime();
+        $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
+        $until = $untildate->getTimestamp();
 
         $mang->parse_rrule();
         $mang->create_events($this->event);
@@ -860,7 +862,9 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $rrule = "FREQ=MONTHLY;INTERVAL=12;BYDAY=1MO";
 
         $mang = new rrule_manager($rrule);
-        $until = time() + (YEARSECS * $mang::TIME_UNLIMITED_YEARS);
+        $untildate = new DateTime();
+        $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
+        $until = $untildate->getTimestamp();
 
         $mang->parse_rrule();
         $mang->create_events($this->event);
