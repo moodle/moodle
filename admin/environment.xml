@@ -2094,7 +2094,7 @@
       <VENDOR name="mssql" version="10.0" />
       <VENDOR name="oracle" version="10.2" />
     </DATABASE>
-    <PHP version="5.6.5" level="required">
+    <PHP version="7.0.0" level="required">
     </PHP>
     <PCREUNICODE level="optional">
       <FEEDBACK>
@@ -2172,9 +2172,9 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="xmlreader" level="required">
       </PHP_EXTENSION>
-      <PHP_EXTENSION name="intl" level="optional">
+      <PHP_EXTENSION name="intl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="intlrecommended" />
+          <ON_ERROR message="intlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="json" level="required">
