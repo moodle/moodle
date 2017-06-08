@@ -147,9 +147,6 @@ class filter_kaltura extends moodle_text_filter {
  * @return string Kaltura embed video markup.
  */
 function filter_kaltura_callback($link) {
-    global $CFG;
-    $newtext = $link[0];
-
     $newurl = $link[1];
     if (!empty($newurl)) {
         // Check to see if token is being used in url and replace with kaf_uri.
