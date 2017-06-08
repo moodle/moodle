@@ -48,8 +48,8 @@ function moodle_minimum_php_version_is_met($haltexecution = false) {
     // PLEASE NOTE THIS FUNCTION MUST BE COMPATIBLE WITH OLD UNSUPPORTED VERSIONS OF PHP.
     // Do not use modern php features or Moodle convenience functions (e.g. localised strings).
 
-    $minimumversion = '5.6.5';
-    $moodlerequirementchanged = '3.2';
+    $minimumversion = '7.0.0';
+    $moodlerequirementchanged = '3.4';
 
     if (version_compare(PHP_VERSION, $minimumversion) < 0) {
         if ($haltexecution) {
