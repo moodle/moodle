@@ -212,7 +212,7 @@ $functions = array(
         'classname' => 'core_course_external',
         'methodname' => 'duplicate_course',
         'classpath' => 'course/externallib.php',
-        'description' => 'Duplicate an existing course (creating a new one), without user data',
+        'description' => 'Duplicate an existing course (creating a new one).',
         'type' => 'write',
         'capabilities' => 'moodle/backup:backupcourse, moodle/restore:restorecourse, moodle/course:create'
     ),
