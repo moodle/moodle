@@ -100,9 +100,10 @@ class EvalMath {
     var $suppress_errors = false;
     var $last_error = null;
 
-    var $v = array(); // variables (and constants)
+    var $v = array('e'=>2.71,'pi'=>3.1416);
     var $f = array(); // user-defined functions
     var $vb = array(); // constants
+    
     var $fb = array(  // built-in functions
         'sin','sinh','arcsin','asin','arcsinh','asinh',
         'cos','cosh','arccos','acos','arccosh','acosh',
@@ -208,14 +209,14 @@ class EvalMath {
         $output = array(); // postfix form of expression, to be passed to pfx()
         $expr = trim(strtolower($expr));
 
-        $ops   = array('+', '-', '*', '/', '^', '_');
-        $ops_r = array('+'=>0,'-'=>0,'*'=>0,'/'=>0,'^'=>1); // right-associative operator?
-        $ops_p = array('+'=>0,'-'=>0,'*'=>1,'/'=>1,'_'=>1,'^'=>2); // operator precedence
+        $ops   = array('+', '-', '*', '/', '%', '^', '_');
+        $ops_r = array('+'=>0,'-'=>0,'*'=>0,'/'=>0,'%'=>0,'^'=>1); // right-associative operator?
+        $ops_p = array('+'=>0,'-'=>0,'*'=>1,'/'=>1,'%'=>1,'_'=>1,'^'=>2); // operator precedence
 
         $expecting_op = false; // we use this in syntax-checking the expression
                                // and determining when a - is a negation
 
-        if (preg_match("/[^\w\s+*^\/()\.,-]/", $expr, $matches)) { // make sure the characters are all good
+        if (preg_match("/[^\w\s+*^\/%()\.,-]/", $expr, $matches)) { // make sure the characters are all good
             return $this->trigger(get_string('illegalcharactergeneral', 'mathslib', $matches[0]));
         }
 
@@ -407,7 +408,7 @@ class EvalMath {
                     $stack->push($this->pfx($this->f[$fnn]['func'], $args)); // yay... recursion!!!!
                 }
             // if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on
-            } elseif (in_array($token, array('+', '-', '*', '/', '^'), true)) {
+            } elseif (in_array($token, array('+', '-', '*', '/','%', '^'), true)) {
                 if (is_null($op2 = $stack->pop())) return $this->trigger(get_string('internalerror', 'mathslib'));
                 if (is_null($op1 = $stack->pop())) return $this->trigger(get_string('internalerror', 'mathslib'));
                 switch ($token) {
@@ -420,6 +421,9 @@ class EvalMath {
                     case '/':
                         if ($op2 == 0) return $this->trigger(get_string('divisionbyzero', 'mathslib'));
                         $stack->push($op1/$op2); break;
+                    case '%':
+                        if ($op2 == 0) return $this->trigger(get_string('divisionbyzero', 'mathslib'));
+                        $stack->push($op1 % $op2); break;
                     case '^':
                         $stack->push(pow($op1, $op2)); break;
                 }
