@@ -29,14 +29,9 @@ if (!file_exists('../config.php')) {
     die();
 }
 
-// Check that PHP is of a sufficient version as soon as possible
-if (version_compare(phpversion(), '5.6.5') < 0) {
-    $phpversion = phpversion();
-    // do NOT localise - lang strings would not work here and we CAN NOT move it to later place
-    echo "Moodle 3.2 or later requires at least PHP 5.6.5 (currently using version $phpversion).<br />";
-    echo "Please upgrade your server software or install older Moodle version.";
-    die();
-}
+// Check that PHP is of a sufficient version as soon as possible.
+require_once(__DIR__.'/../lib/phpminimumversionlib.php');
+moodle_require_minimum_php_version();
 
 // make sure iconv is available and actually works
 if (!function_exists('iconv')) {
