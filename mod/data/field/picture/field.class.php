@@ -32,7 +32,6 @@ class data_field_picture extends data_field_base {
 
         $file        = false;
         $content     = false;
-        $displayname = '';
         $alttext     = '';
         $itemid = null;
         $fs = get_file_storage();
@@ -57,19 +56,9 @@ class data_field_picture extends data_field_base {
             if (!empty($content->content)) {
                 if ($file = $fs->get_file($this->context->id, 'mod_data', 'content', $content->id, '/', $content->content)) {
                     $usercontext = context_user::instance($USER->id);
-                    if (!$files = $fs->get_area_files($usercontext->id, 'user', 'draft', $itemid, 'id DESC', false)) {
-                        return false;
-                    }
+
                     if ($thumbfile = $fs->get_file($usercontext->id, 'user', 'draft', $itemid, '/', 'thumb_'.$content->content)) {
                         $thumbfile->delete();
-                    }
-                    if (empty($content->content1)) {
-                        // Print icon if file already exists
-                        $src = moodle_url::make_draftfile_url($itemid, '/', $file->get_filename());
-                        $displayname = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file), 'moodle', array('class' => 'icon')). '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
-
-                    } else {
-                        $displayname = get_string('nofilesattached', 'repository');
                     }
                 }
             }
