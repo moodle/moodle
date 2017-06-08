@@ -26,13 +26,8 @@ class data_field_file extends data_field_base {
     var $type = 'file';
 
     function display_add_field($recordid = 0, $formdata = null) {
-        global $CFG, $DB, $OUTPUT, $PAGE, $USER;
+        global $DB, $OUTPUT, $PAGE;
 
-        $file        = false;
-        $content     = false;
-        $displayname = '';
-        $fs = get_file_storage();
-        $context = $PAGE->context;
         $itemid = null;
 
         // editing an existing database entry
@@ -50,22 +45,6 @@ class data_field_file extends data_field_base {
             }
             file_prepare_draft_area($itemid, $this->context->id, 'mod_data', 'content', $content->id);
 
-            if (!empty($content->content)) {
-                if ($file = $fs->get_file($this->context->id, 'mod_data', 'content', $content->id, '/', $content->content)) {
-                    $usercontext = context_user::instance($USER->id);
-                    if (!$files = $fs->get_area_files($usercontext->id, 'user', 'draft', $itemid, 'id DESC', false)) {
-                        return false;
-                    }
-                    if (empty($content->content1)) {
-                        // Print icon if file already exists
-                        $src = moodle_url::make_draftfile_url($itemid, '/', $file->get_filename());
-                        $displayname = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file), 'moodle', array('class' => 'icon')). '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
-
-                    } else {
-                        $displayname = 'no file added';
-                    }
-                }
-            }
         } else {
             $itemid = file_get_unused_draft_itemid();
         }
