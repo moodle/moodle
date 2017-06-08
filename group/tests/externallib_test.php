@@ -523,6 +523,7 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $groups = core_group_external::get_activity_allowed_groups($cm1->id);
         $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
         $this->assertCount(2, $groups['groups']);
+        $this->assertFalse($groups['canaccessallgroups']);
 
         foreach ($groups['groups'] as $group) {
             if ($group['name'] == $group1data['name']) {
@@ -539,12 +540,21 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $groups = core_group_external::get_activity_allowed_groups($cm1->id, $student->id);
         $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
         $this->assertCount(2, $groups['groups']);
+        // We are checking the $student passed as parameter so this will return false.
+        $this->assertFalse($groups['canaccessallgroups']);
 
         // Check warnings. Trying to get groups for a user not enrolled in course.
         $groups = core_group_external::get_activity_allowed_groups($cm1->id, $otherstudent->id);
         $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
         $this->assertCount(1, $groups['warnings']);
+        $this->assertFalse($groups['canaccessallgroups']);
 
+        // Checking teacher groups.
+        $groups = core_group_external::get_activity_allowed_groups($cm1->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $this->assertCount(2, $groups['groups']);
+        // Teachers by default can access all groups.
+        $this->assertTrue($groups['canaccessallgroups']);
     }
 
     /**
