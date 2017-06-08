@@ -32,3 +32,4 @@ $string['pluginname'] = 'Cohort sync';
 $string['pluginname_desc'] = 'Cohort enrolment plugin synchronises cohort members with course participants.';
 $string['status'] = 'Active';
 $string['creategroup'] = 'Create new group';
+$string['enrol_cohort_cron_name'] = 'Enrol Cohort Cron Scheduled Task';
