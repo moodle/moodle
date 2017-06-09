@@ -84,6 +84,17 @@ abstract class base extends \core_analytics\calculable {
     abstract protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false);
 
     /**
+     * Is this target generating insights?
+     *
+     * Defaults to true.
+     *
+     * @return bool
+     */
+    public static function uses_insights() {
+        return true;
+    }
+
+    /**
      * Based on facts (processed by machine learning backends) by default.
      *
      * @return bool

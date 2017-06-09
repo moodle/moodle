@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Predictions list page.
+ * Insights list page.
  *
  * @package    report_insights
  * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
@@ -27,13 +27,13 @@ namespace report_insights\output;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Shows report_insights predictions list.
+ * Shows report_insights insights list.
  *
  * @package    report_insights
  * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class predictions_list implements \renderable, \templatable {
+class insights_list implements \renderable, \templatable {
 
     /**
      * @var \core_analytics\model
@@ -67,17 +67,29 @@ class predictions_list implements \renderable, \templatable {
 
         $data = new \stdClass();
 
-        $predictions = $this->model->get_predictions($this->context);
+        if ($this->model->uses_insights()) {
+            $predictions = $this->model->get_predictions($this->context);
 
-        $data->predictions = array();
-        foreach ($predictions as $prediction) {
-            $predictionrenderable = new \report_insights\output\prediction($prediction, $this->model);
-            $data->predictions[] = $predictionrenderable->export_for_template($output);
+            $data->insights = array();
+            foreach ($predictions as $prediction) {
+                $insightrenderable = new \report_insights\output\insight($prediction, $this->model);
+                $data->insights[] = $insightrenderable->export_for_template($output);
+            }
+
+            if (empty($data->insights)) {
+                if ($this->model->any_prediction_obtained()) {
+                    $data->noinsights = get_string('noinsights', 'analytics');
+                } else {
+                    $data->noinsights = get_string('nopredictionsyet', 'analytics');
+                }
+            }
+        } else {
+            $data->noinsights = get_string('noinsights', 'analytics');
         }
 
-        if (empty($data->predictions)) {
-            $notification = new \core\output\notification(get_string('nopredictionsyet', 'analytics'));
-            $data->nopredictions = $notification->export_for_template($output);
+        if (!empty($data->noinsights)) {
+            $notification = new \core\output\notification($data->noinsights);
+            $data->noinsights = $notification->export_for_template($output);
         }
 
         if ($this->othermodels) {

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * View model predictions.
+ * View model insights.
  *
  * @package    report_insights
  * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
@@ -64,9 +64,9 @@ $PAGE->set_pagelayout('report');
 
 $renderer = $PAGE->get_renderer('report_insights');
 
-// No models with predictions available at this context level.
+// No models with insights available at this context level.
 if (!$modelid) {
-    echo $renderer->render_no_predictions($context);
+    echo $renderer->render_no_insights($context);
     exit(0);
 }
 
@@ -77,9 +77,13 @@ $insightinfo->contextname = $context->get_context_name();
 $insightinfo->insightname = $model->get_target()->get_name();
 $title = get_string('insightinfo', 'analytics', $insightinfo);
 
-
 if (!$model->is_enabled() && !has_capability('moodle/analytics:managemodels', $context)) {
     echo $renderer->render_model_disabled($insightinfo);
+    exit(0);
+}
+
+if (!$model->uses_insights()) {
+    echo $renderer->render_no_insights_model($context);
     exit(0);
 }
 
@@ -88,7 +92,7 @@ $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
 
-$renderable = new \report_insights\output\predictions_list($model, $context, $othermodels);
+$renderable = new \report_insights\output\insights_list($model, $context, $othermodels);
 echo $renderer->render($renderable);
 
 echo $OUTPUT->footer();

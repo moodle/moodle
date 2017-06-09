@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template report_insights/prediction
+    @template report_insights/insights_list
 
-    Template for a prediction.
+    Template for the insights list.
 
     Classes required for JS:
     * none
@@ -32,28 +32,21 @@
     {
     }
 }}
-<div class="card">
-    <div class="row m-a-1">
-        {{#samplelink}}
-            <div class="col-sm-1 span1 m-b-1">
-                {{{samplelink}}}
-            </div>
-            <div class="col-sm-3 span3 m-b-1">
-                {{{sampledescription}}}
-            </div>
-        {{/samplelink}}
-        {{^samplelink}}
-            <div class="col-sm-4 span4 m-b-1">
-                {{{sampledescription}}}
-            </div>
-        {{/samplelink}}
-        <div class="col-sm-4 span4">
-            <div class="{{predictionstyle}}">{{predictiondisplayvalue}}</div>
-        </div>
-        <div class="col-sm-4 span4">
-            {{#actions}}
-                    {{> core/action_menu}}
-            {{/actions}}
-        </div>
+
+{{#modelselector}}
+    <div class="m-b-2">
+        {{> core/single_select}}
     </div>
+{{/modelselector}}
+
+<h3>{{#str}} insights, report_insights {{/str}}</h3>
+<div class="insights-list">
+    {{#insights}}
+        {{> report_insights/insight}}
+    {{/insights}}
 </div>
+{{#noinsights}}
+    <div class="m-t-2">
+        {{> core/notification_info}}
+    </div>
+{{/noinsights}}

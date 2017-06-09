@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template report_insights/predictions_list
+    @template report_insights/insight_details
 
-    Template for the predictions list.
+    Actions panel at the bottom of the assignment grading UI.
 
     Classes required for JS:
     * none
@@ -27,26 +27,14 @@
 
     Context variables required for this template:
     * none
-
-    Example context (json):
-    {
-    }
 }}
 
-{{#modelselector}}
-    <div class="m-b-2">
-        {{> core/single_select}}
-    </div>
-{{/modelselector}}
+<h2>{{#str}}prediction, report_insights{{/str}}</h2>
+{{> report_insights/insight}}
 
-<h3>{{#str}} predictions, report_insights {{/str}}</h3>
-<div class="predictions-list">
-    {{#predictions}}
-        {{> report_insights/prediction}}
-    {{/predictions}}
+<h3>{{#str}} predictiondetails, report_insights {{/str}}</h3>
+<div class="container prediction-calculations m-t-2">
+    {{#calculations}}
+        <div class="{{style}}">{{name}} - {{displayvalue}}</div>
+    {{/calculations}}
 </div>
-{{#nopredictions}}
-    <div class="m-t-2">
-        {{> core/notification_info}}
-    </div>
-{{/nopredictions}}

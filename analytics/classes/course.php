@@ -36,8 +36,6 @@ require_once($CFG->dirroot . '/lib/gradelib.php');
  */
 class course implements \core_analytics\analysable {
 
-    const MIN_STUDENT_LOGS_PERCENT = 90;
-
     protected static $instances = array();
 
     protected $studentroles = [];

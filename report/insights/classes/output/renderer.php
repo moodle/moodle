@@ -40,25 +40,25 @@ use renderable;
 class renderer extends plugin_renderer_base {
 
     /**
-     * Renders the list of predictions
+     * Renders the list of insights
      *
      * @param renderable $renderable
      * @return string HTML
      */
-    protected function render_predictions_list(renderable $renderable) {
+    protected function render_insights_list(renderable $renderable) {
         $data = $renderable->export_for_template($this);
-        return parent::render_from_template('report_insights/predictions_list', $data);
+        return parent::render_from_template('report_insights/insights_list', $data);
     }
 
     /**
-     * Renders a prediction
+     * Renders an insight
      *
      * @param renderable $renderable
      * @return string HTML
      */
-    protected function render_prediction(renderable $renderable) {
+    protected function render_insight(renderable $renderable) {
         $data = $renderable->export_for_template($this);
-        return parent::render_from_template('report_insights/prediction_details', $data);
+        return parent::render_from_template('report_insights/insight_details', $data);
     }
 
     /**
@@ -82,12 +82,12 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
-     * Model without predictions info.
+     * Model without insights info.
      *
      * @param \context $context
      * @return string HTML
      */
-    public function render_no_predictions(\context $context) {
+    public function render_no_insights(\context $context) {
         global $OUTPUT, $PAGE;
 
         // We don't want to disclose the name of the model if it has not been enabled.
@@ -95,7 +95,27 @@ class renderer extends plugin_renderer_base {
         $PAGE->set_heading($context->get_context_name());
 
         $output = $OUTPUT->header();
-        $output .= $OUTPUT->notification(get_string('nopredictionsyet', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= $OUTPUT->notification(get_string('noinsights', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= $OUTPUT->footer();
+
+        return $output;
+    }
+
+    /**
+     * Model which target does not generate insights.
+     *
+     * @param \context $context
+     * @return string HTML
+     */
+    public function render_no_insights_model(\context $context) {
+        global $OUTPUT, $PAGE;
+
+        // We don't want to disclose the name of the model if it has not been enabled.
+        $PAGE->set_title($context->get_context_name());
+        $PAGE->set_heading($context->get_context_name());
+
+        $output = $OUTPUT->header();
+        $output .= $OUTPUT->notification(get_string('noinsightsmodel', 'analytics'), \core\output\notification::NOTIFY_INFO);
         $output .= $OUTPUT->footer();
 
         return $output;

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Prediction view page.
+ * Single insight view page.
  *
  * @package    report_insights
  * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
@@ -27,13 +27,13 @@ namespace report_insights\output;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Prediction view page.
+ * Single insight view page.
  *
  * @package    report_insights
  * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class prediction implements \renderable, \templatable {
+class insight implements \renderable, \templatable {
 
     /**
      * @var \core_analytics\model

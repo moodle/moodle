@@ -24,6 +24,7 @@
 
 $string['accuracy'] = 'Accuracy';
 $string['allindicators'] = 'All indicators';
+$string['allpredictions'] = 'All predictions';
 $string['analysingsitedata'] = 'Analysing the site';
 $string['analyticmodels'] = 'Analytic models';
 $string['bettercli'] = 'To evaluate models and to get predictions are heavy processes, it is better to run them through command line interface';
@@ -53,6 +54,7 @@ $string['getpredictions'] = 'Get predictions';
 $string['goodmodel'] = 'This is a good model and it can be used to predict, enable it to start getting predictions.';
 $string['indicators'] = 'Indicators';
 $string['info'] = 'Info';
+$string['insights'] = 'Insights';
 $string['labelstudentdropoutyes'] = 'Student at risk of dropping out';
 $string['labelstudentdropoutno'] = 'Not at risk';
 $string['labelteachingyes'] = 'Users with teaching capabilities have access to the course';
@@ -88,6 +90,5 @@ $string['trainingprocessfinished'] = 'Training process finished';
 $string['trainingresults'] = 'Training results';
 $string['trainmodels'] = 'Train models';
 $string['viewlog'] = 'Log';
-$string['viewpredictions'] = 'View model predictions';
 $string['weeksenddateautomaticallyset'] = 'End date automatically set based on start date and the number of sections';
 $string['weeksenddatedefault'] = 'End date would be automatically calculated from the course start date';

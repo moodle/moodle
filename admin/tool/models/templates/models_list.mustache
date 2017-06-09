@@ -45,7 +45,7 @@
                 <th scope="col">{{#str}}enabled, tool_models{{/str}}</th>
                 <th scope="col">{{#str}}indicators, tool_models{{/str}}</th>
                 <th scope="col">{{#str}}modeltimesplitting, tool_models{{/str}}</th>
-                <th scope="col">{{#str}}viewpredictions, tool_models{{/str}}</th>
+                <th scope="col">{{#str}}insights, tool_models{{/str}}</th>
                 <th scope="col">{{#str}}actions{{/str}}</th>
             </tr>
         </thead>
@@ -72,12 +72,13 @@
                     {{#timesplitting}}{{timesplitting}}{{/timesplitting}}{{^timesplitting}}{{#str}}notdefined, tool_models{{/str}}{{/timesplitting}}
                 </td>
                 <td>
-                    {{#predictions}}
+                    {{! models_list renderer is responsible of sending one or the other}}
+                    {{#insights}}
                         {{> core/single_select }}
-                    {{/predictions}}
-                    {{^predictions}}
-                        {{#str}}nopredictionsyet, analytics{{/str}}
-                    {{/predictions}}
+                    {{/insights}}
+                    {{#noinsights}}
+                        {{.}}
+                    {{/noinsights}}
                 </td>
                 <td>
                     {{#actions}}

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * View a prediction.
+ * View an insight.
  *
  * @package    report_insights
  * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
@@ -68,12 +68,17 @@ if (!$modelready && !has_capability('moodle/analytics:managemodels', $context)) 
     exit(0);
 }
 
+if (!$model->uses_insights()) {
+    echo $renderer->render_no_insights_model($context);
+    exit(0);
+}
+
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
 
-$renderable = new \report_insights\output\prediction($prediction, $model);
+$renderable = new \report_insights\output\insight($prediction, $model);
 echo $renderer->render($renderable);
 
 echo $OUTPUT->footer();

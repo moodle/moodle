@@ -56,26 +56,46 @@ class models_list implements \renderable, \templatable {
             $modeldata = $model->export();
 
             // Model predictions list.
-            $predictioncontexts = $model->get_predictions_contexts();
-            if ($predictioncontexts) {
+            if ($model->uses_insights()) {
+                $predictioncontexts = $model->get_predictions_contexts();
+                if ($predictioncontexts) {
 
-                foreach ($predictioncontexts as $contextid => $unused) {
-                    // We prepare this to be used as single_select template options.
-                    $context = \context::instance_by_id($contextid);
-                    if (empty($context)) {
-                        // The context may have been deleted.
-                        unset($predictioncontexts[$contextid]);
-                        continue;
+                    foreach ($predictioncontexts as $contextid => $unused) {
+                        // We prepare this to be used as single_select template options.
+                        $context = \context::instance_by_id($contextid);
+                        if (empty($context)) {
+                            // The context may have been deleted.
+                            unset($predictioncontexts[$contextid]);
+                            continue;
+                        }
+
+                        // Special name for system level predictions as showing "System is not visually nice".
+                        if ($contextid == SYSCONTEXTID) {
+                            $contextname = get_string('allpredictions', 'tool_models');
+                        } else {
+                            $contextname = shorten_text($context->get_context_name(true, true), 90);
+                        }
+                        $predictioncontexts[$contextid] = $contextname;
                     }
-                    $predictioncontexts[$contextid] = shorten_text($context->get_context_name(true, true), 90);
-                }
-                \core_collator::asort($predictioncontexts);
+                    \core_collator::asort($predictioncontexts);
 
-                if (!empty($predictioncontexts)) {
-                    $url = new \moodle_url('/report/insights/insights.php', array('modelid' => $model->get_id()));
-                    $singleselect = new \single_select($url, 'contextid', $predictioncontexts);
-                    $modeldata->predictions = $singleselect->export_for_template($output);
+                    if (!empty($predictioncontexts)) {
+                        $url = new \moodle_url('/report/insights/insights.php', array('modelid' => $model->get_id()));
+                        $singleselect = new \single_select($url, 'contextid', $predictioncontexts);
+                        $modeldata->insights = $singleselect->export_for_template($output);
+                    }
                 }
+
+                if (empty($modeldata->insights)) {
+                    if ($model->any_prediction_obtained()) {
+                        $modeldata->noinsights = get_string('noinsights', 'analytics');
+                    } else {
+                        $modeldata->noinsights = get_string('nopredictionsyet', 'analytics');
+                    }
+                }
+
+            } else {
+                $modeldata->noinsights = get_string('noinsightsmodel', 'analytics');
             }
 
             // Actions.

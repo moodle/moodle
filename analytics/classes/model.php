@@ -89,6 +89,9 @@ class model {
 
         if (is_scalar($model)) {
             $model = $DB->get_record('analytics_models', array('id' => $model));
+            if (!$model) {
+                throw new \moodle_exception('errorunexistingmodel', 'analytics', '', $model);
+            }
         }
         $this->model = $model;
     }
@@ -819,6 +822,31 @@ class model {
 
         $sql = "SELECT DISTINCT contextid FROM {analytics_predictions} WHERE modelid = ?";
         return $DB->get_records_sql($sql, array($this->model->id));
+    }
+
+    /**
+     * Has this model generated predictions?
+     *
+     * We don't check analytics_predictions table because targets have the ability to
+     * ignore some predicted values, if that is the case predictions are not even stored
+     * in db.
+     *
+     * @return bool
+     */
+    public function any_prediction_obtained() {
+        global $DB;
+        return $DB->record_exists('analytics_predict_ranges',
+            array('modelid' => $this->model->id, 'timesplitting' => $this->model->timesplitting));
+    }
+
+    /**
+     * Whether this model generates insights or not (defined by the model's target).
+     *
+     * @return bool
+     */
+    public function uses_insights() {
+        $target = $this->get_target();
+        return $target::uses_insights();
     }
 
     /**
