@@ -2081,7 +2081,7 @@
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
-  <MOODLE version="3.4" requires="2.7">
+  <MOODLE version="3.4" requires="3.0">
     <UNICODE level="required">
       <FEEDBACK>
         <ON_ERROR message="unicoderequired" />
