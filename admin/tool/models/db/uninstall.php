@@ -33,7 +33,7 @@ function xmldb_tool_models_uninstall() {
     $options = array();
     foreach ($targets as $classname => $unused) {
         $target = \core_analytics\manager::get_target($classname);
-        $options[] = '\\' . get_class($target);
+        $options[] = $target->get_id();
     }
     list($sql, $params) = $DB->get_in_or_equal($options);
     $models = $DB->get_records_select('analytics_models', "target $sql", $params);

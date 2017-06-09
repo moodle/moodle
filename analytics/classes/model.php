@@ -268,7 +268,7 @@ class model {
         $now = time();
 
         $modelobj = new \stdClass();
-        $modelobj->target = '\\' . get_class($target);
+        $modelobj->target = $target->get_id();
         $modelobj->indicators = json_encode($indicatorclasses);
         $modelobj->version = $now;
         $modelobj->timecreated = $now;
@@ -1057,7 +1057,7 @@ class model {
                 }
                 throw new \moodle_exception('errorinvalidindicator', 'analytics', '', $indicator);
             }
-            $indicatorclasses[] = '\\' . get_class($indicator);
+            $indicatorclasses[] = $indicator->get_id();
         }
 
         return $indicatorclasses;

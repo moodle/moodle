@@ -206,7 +206,7 @@ class manager {
             $instance = self::get_indicator($fullclassname);
             if ($instance) {
                 // Using get_class as get_component_classes_in_namespace returns double escaped fully qualified class names.
-                self::$allindicators['\\' . get_class($instance)] = $instance;
+                self::$allindicators[$instance->get_id()] = $instance;
             }
         }
 

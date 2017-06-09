@@ -54,6 +54,15 @@ abstract class calculable {
     }
 
     /**
+     * The class id is the calculable class full qualified class name.
+     *
+     * @return string
+     */
+    public function get_id() {
+        return '\\' . get_class($this);
+    }
+
+    /**
      * add_sample_data
      *
      * @param array $data
