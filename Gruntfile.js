@@ -338,7 +338,7 @@ module.exports = function(grunt) {
             opts: {stdio: 'inherit', env: process.env}
         }, function(error, result, code) {
             // Propagate the exit code.
-            done(code);
+            done(code === 0);
         });
     };
 

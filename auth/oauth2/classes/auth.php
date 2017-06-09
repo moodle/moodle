@@ -247,6 +247,10 @@ class auth extends \auth_plugin_base {
         if (!empty($user->picture)) {
             return false;
         }
+        if (!empty($CFG->enablegravatar)) {
+            return false;
+        }
+
         $picture = $this->get_static_user_picture();
         if (empty($picture)) {
             return false;
