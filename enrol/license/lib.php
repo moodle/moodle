@@ -227,8 +227,14 @@ class enrol_license_plugin extends enrol_plugin {
 
                 // Enrol the user in the course.
                 $timestart = time();
-                // Set the timeend to be time start + the valid length for the license in days.
-                $timeend = $timestart + ($license->validlength * 24 * 60 * 60 );
+
+                if (empty($license->type)) {
+                    // Set the timeend to be time start + the valid length for the license in days.
+                    $timeend = $timestart + ($license->validlength * 24 * 60 * 60 );
+                } else {
+                    // Set the timeend to be when the license runs out.
+                    $timeend = $license->expirydate;
+                }
 
                 $this->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $timeend);
 
