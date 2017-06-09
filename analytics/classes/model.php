@@ -343,10 +343,10 @@ class model {
      *
      * @return void
      */
-    public static function delete() {
+    public function delete() {
         global $DB;
         $this->clear_model();
-        $DB->delete_record('analytics_models', array('id' => $this->model->id));
+        $DB->delete_records('analytics_models', array('id' => $this->model->id));
     }
 
     /**
