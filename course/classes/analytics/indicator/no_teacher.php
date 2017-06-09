@@ -45,6 +45,15 @@ class no_teacher extends \core_analytics\local\indicator\binary {
         return array('context', 'course');
     }
 
+    /**
+     * calculate_sample
+     *
+     * @param int $sampleid
+     * @param string $sampleorigin
+     * @param int $notusedstarttime
+     * @param int $notusedendtime
+     * @return float
+     */
     public function calculate_sample($sampleid, $sampleorigin, $notusedstarttime = false, $notusedendtime = false) {
 
         $context = $this->retrieve('context', $sampleid);
@@ -52,7 +61,10 @@ class no_teacher extends \core_analytics\local\indicator\binary {
         $teacherroles = get_config('analytics', 'teacherroles');
         $teacherroleids = explode(',', $teacherroles);
         foreach ($teacherroleids as $role) {
-            if (get_role_users($role, $context)) {
+            // We look for roles, not enrolments as a teacher assigned at category level is supposed to be a
+            // course teacher.
+            $teachers = get_role_users($role, $context, false, 'u.id', 'u.id');
+            if ($teachers) {
                 return self::get_max_value();
             }
         }

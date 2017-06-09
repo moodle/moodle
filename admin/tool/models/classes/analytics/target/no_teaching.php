@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class no_teaching_activity extends \core_analytics\local\target\binary {
+class no_teaching extends \core_analytics\local\target\binary {
 
     /**
      * Machine learning backends are not required to predict.
@@ -76,8 +76,8 @@ class no_teaching_activity extends \core_analytics\local\target\binary {
 
     protected static function classes_description() {
         return array(
-            get_string('labelteachingactivityyes', 'tool_models'),
-            get_string('labelteachingactivityno', 'tool_models'),
+            get_string('labelteachingyes', 'tool_models'),
+            get_string('labelteachingno', 'tool_models'),
         );
     }
 
@@ -119,8 +119,8 @@ class no_teaching_activity extends \core_analytics\local\target\binary {
     protected function calculate_sample($sampleid, \core_analytics\analysable $site, $starttime = false, $endtime = false) {
 
         $noteachersindicator = $this->retrieve('\core_course\analytics\indicator\no_teacher', $sampleid);
-        if ($noteachersindicator != \core_course\analytics\indicator\no_teacher::get_min_value()) {
-            // No teachers flagged as 1.
+        if ($noteachersindicator == \core_course\analytics\indicator\no_teacher::get_min_value()) {
+            // No teachers :( we flag this as 1.
             return 1;
         }
         return 0;
