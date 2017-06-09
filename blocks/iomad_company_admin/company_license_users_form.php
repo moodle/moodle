@@ -31,7 +31,7 @@ class company_license_users_form extends moodleform {
     protected $parentlevel = null;
     protected $license = array();
     protected $selectedcourses = array();
-    protected $courseselct = array();
+    protected $courseselect = array();
     protected $firstcourseid = 0;
 
     public function __construct($actionurl, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output, $chosenid=0) {
@@ -100,6 +100,7 @@ class company_license_users_form extends moodleform {
                              'departmentid' => $this->departmentid,
                              'subdepartments' => $this->subhierarchieslist,
                              'parentdepartmentid' => $this->parentlevel,
+                             'program' => $this->license->program,
                              'selectedcourses' => $this->selectedcourses,
                              'multiple' => $multiple);
             if (empty($this->potentialusers)) {
@@ -158,15 +159,29 @@ class company_license_users_form extends moodleform {
 
         if ($this->license->expirydate > time()) {
             // Add in the courses selector.
-            $courseselector = $mform->addElement('select', 'courses', get_string('courses', 'block_iomad_company_admin'), $this->courseselect, array('id' => 'courseselector'));
-            $courseselector->setMultiple(true);
-            $courseselector->setSelected($this->firstcourseid);
+            if (empty($this->license->program)) {
+                $courseselector = $mform->addElement('select',
+                                                     'courses',
+                                                     get_string('courses', 'block_iomad_company_admin'),
+                                                     $this->courseselect,
+                                                     array('id' => 'courseselector'));
+                $courseselector->setMultiple(true);
+                $courseselector->setSelected($this->firstcourseid);
+            } else {
+                $mform->addElement('hidden', 'courses');
+                $mform->setType('courses', PARAM_INT);
+            }
 
             $mform->addElement('header', 'header', get_string('license_users_for',
                                                               'block_iomad_company_admin',
                                                               $this->license->name));
-            $mform->addElement('html', '('.($this->license->used).' / '.
-            $this->license->allocation.get_string('licensetotal', 'block_iomad_company_admin').')');
+            if (!$this->license->program) {
+                $mform->addElement('html', '('.($this->license->allocation - $this->license->used).' / '.
+                $this->license->allocation.get_string('licensetotal', 'block_iomad_company_admin').')');
+            } else {
+                $mform->addElement('html', '('.($this->license->allocation - $this->license->used) / count($this->courseselect) .' / '.
+                $this->license->allocation / count($this->courseselect) . get_string('licensetotal', 'block_iomad_company_admin').')');
+            }
         } else {
             $mform->addElement('header', 'header', get_string('license_users_for',
                                                               'block_iomad_company_admin',
@@ -237,6 +252,9 @@ class company_license_users_form extends moodleform {
 
         $this->create_user_selectors();
         $courses = array();
+        if (empty($this->selectedcourses)) {
+            $this->selectedcourses = array_keys($this->courseselect);
+        }
         if (!is_array($this->selectedcourses)) {
             $courses[] = $this->selectedcourses;
         } else {
@@ -273,7 +291,6 @@ class company_license_users_form extends moodleform {
                     if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
                         print_error('invaliduserdepartment', 'block_iomad_company_management');
                     }
-
                     foreach ($courses as $courseid) {
                         if ($count >= $numberoflicenses) {
                             // Set the used amount.
@@ -342,9 +359,29 @@ class company_license_users_form extends moodleform {
         if ($remove || $removeall) {
             $licenserecord = (array) $this->license;
 
+
+            if (!empty($licenserecord['program'])) {
+                // Get the user from the initial license ID passed.
+                $userlic = $DB->get_record('companylicense_users',array('id' => $licensestounassign[0]), '*', MUST_EXIST);
+                $licensestounassign = array_keys($DB->get_records('companylicense_users', array('userid' => $userlic->userid, 'licenseid' => $userlic->licenseid), 'id'));
+                if ($licenserecord['type']) {
+                    $canremove = true;
+                } else {
+                    $canremove = true;
+                    foreach ($licensestounassign as $unassignid) {
+                        if ($DB->get_record('companylicense_users' ,array('id' => $unassignid, 'isusing' => 1))) {
+                            $canremove = false;
+                        }
+                    }
+                }
+                if (!$canremove) {
+                    $licensestounassign = array();
+                }
+            }
             if (!empty($licensestounassign)) {
                 foreach ($licensestounassign as $unassignid) {
-                    foreach($courses as $courseid) {
+
+                   // foreach($courses as $courseid) {
                         $licensedata = $DB->get_record('companylicense_users' ,array('id' => $unassignid), '*', MUST_EXIST);
     
                         // Check the userid is valid.
@@ -365,7 +402,7 @@ class company_license_users_form extends moodleform {
                                                                                                             'other' => $eventother));
                             $event->trigger();
                         }
-                    }
+                   // }
                 }
 
                 $this->potentialusers->invalidate_selected_users();

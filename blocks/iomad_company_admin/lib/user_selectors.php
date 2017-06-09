@@ -658,6 +658,7 @@ class potential_license_user_selector extends user_selector_base {
     protected $departmentid;
     protected $subdepartments;
     protected $parentdepartmentid;
+    protected $program;
     protected $multiple;
 
     public function __construct($name, $options) {
@@ -666,6 +667,7 @@ class potential_license_user_selector extends user_selector_base {
         $this->departmentid = $options['departmentid'];
         $this->subdepartments = $options['subdepartments'];
         $this->parentdepartmentid = $options['parentdepartmentid'];
+        $this->program = $options['program'];
         $this->multiple = $options['multiple'];
         parent::__construct($name, $options);
     }
@@ -676,7 +678,8 @@ class potential_license_user_selector extends user_selector_base {
         $options['licenseid'] = $this->licenseid;
         $options['departmentid'] = $this->departmentid;
         $options['subdepartments'] = $this->subdepartments;
-        $options['parentdepartmentid'] = $this->parentdepartmentid;
+        $options['parentdepartmentid'] = $this->program;
+        $options['program'] = $this->parentdepartmentid;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
         $options['multiple']    = $this->multiple;
         return $options;
@@ -687,16 +690,14 @@ class potential_license_user_selector extends user_selector_base {
         if (!isset( $this->licenseid) ) {
             return array();
         } else {
-            if (!$this->multiple) {
-                $usersql = "select DISTINCT userid from {companylicense_users} where licenseid=".$this->licenseid." and id not in
-                            (SELECT id from {companylicense_users}
-                            WHERE licenseid = ".$this->licenseid."
-                            AND timecompleted IS NOT NULL)";;
+            if (!$this->multiple || $this->program) {
+                $usersql = "select DISTINCT userid from {companylicense_users} where licenseid=".$this->licenseid."
+                            AND timecompleted IS NULL";
             } else {
                 $usersql = "select DISTINCT userid from {companylicense_users} where licenseid=".$this->licenseid." and id not in
                             (SELECT id from {companylicense_users}
                             WHERE licenseid = ".$this->licenseid."
-                            AND timecompleted IS NOT NULL)";;
+                            AND timecompleted IS NOT NULL)";
             }
             if ($users = $DB->get_records_sql($usersql)) {
                 // Only return the keys (user ids).
@@ -786,13 +787,8 @@ class potential_license_user_selector extends user_selector_base {
         $myusers = company::get_my_users($this->companyid);
 
         $licenseusers = $this->get_license_user_ids();
-        if (count($licenseusers) > 0 && !$this->multiple) {
-            $licenseuserids = implode(',', $licenseusers);
-            if ($licenseuserids != ',') {
-                $userfilter = " AND NOT u.id in ($licenseuserids) ";
-            } else {
-                $userfilter = "";
-            }
+        if (count($licenseusers) > 0 && (!$this->multiple || $this->program)) {
+            $userfilter = " AND NOT u.id in (" . implode(',', $licenseusers) . ") ";
         } else {
             $userfilter = "";
         }
@@ -859,6 +855,7 @@ class current_license_user_selector extends user_selector_base {
     protected $subdepartments;
     protected $parentdepartmentid;
     protected $selectedcourses;
+    protected $program;
     protected $license;
 
     public function __construct($name, $options) {
@@ -869,6 +866,7 @@ class current_license_user_selector extends user_selector_base {
         $this->departmentid = $options['departmentid'];
         $this->subdepartments = $options['subdepartments'];
         $this->parentdepartmentid = $options['parentdepartmentid'];
+        $this->program = $options['program'];
         $this->selectedcourses = $options['selectedcourses'];
         $this->license = $DB->get_record('companylicense', array('id' => $this->licenseid));
 
@@ -882,6 +880,7 @@ class current_license_user_selector extends user_selector_base {
         $options['departmentid'] = $this->departmentid;
         $options['subdepartments'] = $this->subdepartments;
         $options['parentdepartmentid'] = $this->parentdepartmentid;
+        $options['program'] = $this->program;
         $options['selectedcourses'] = $this->selectedcourses;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
         return $options;
@@ -952,17 +951,29 @@ class current_license_user_selector extends user_selector_base {
             $userfilter = "";
         }
 
-        $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, c.fullname, clu.isusing ';
-        $countfields = 'SELECT COUNT(1)';
-
-        $sql = " FROM
-                 {companylicense_users} clu LEFT JOIN {user} u ON (clu.userid = u.id), {course} c
-                 WHERE $wherecondition AND u.suspended = 0
-                 AND clu.licensecourseid = c.id 
-                 AND clu.licenseid = :licenseid
-                 AND timecompleted IS NULL ";
-
-        $order = ' ORDER BY lastname ASC, firstname ASC';
+        // Are we dealing with a program?
+        if (empty($this->program)) {
+            $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, c.fullname, clu.isusing ';
+            $countfields = 'SELECT COUNT(1)';
+    
+            $sql = " FROM
+                     {companylicense_users} clu LEFT JOIN {user} u ON (clu.userid = u.id), {course} c
+                     WHERE $wherecondition AND u.suspended = 0
+                     AND clu.licensecourseid = c.id 
+                     AND clu.licenseid = :licenseid
+                     AND timecompleted IS NULL ";
+            $order = ' ORDER BY lastname ASC, firstname ASC';
+        } else {
+            $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, clu.isusing ';
+            $countfields = 'SELECT COUNT(1)';
+    
+            $sql = " FROM
+                     {companylicense_users} clu LEFT JOIN {user} u ON (clu.userid = u.id)
+                     WHERE $wherecondition AND u.suspended = 0
+                     AND clu.licenseid = :licenseid
+                     AND timecompleted IS NULL ";
+            $order = ' ORDER BY lastname ASC, firstname ASC LIMIT 1';
+        }
 
         if (!$this->is_validating() && !$all) {
             if (!empty($userfilter)) {
@@ -984,7 +995,10 @@ class current_license_user_selector extends user_selector_base {
         }
 
         foreach ($availableusers as $id => $rawuser) {
-            $availableusers[$id]->email .= ' (' . $rawuser->fullname . ')';
+            if (empty($this->program)) {
+                $availableusers[$id]->email .= ' (' . $rawuser->fullname . ')';
+            }
+
             if (!empty($rawuser->isusing) && $this->license->type == 0) {
                 $availableusers[$id]->firstname = ' *' . $availableusers[$id]->email;
             }

@@ -138,6 +138,8 @@ class company_license_form extends company_moodleform {
                                   get_string('reusable', 'block_iomad_company_admin'));
             $mform->addElement('select', 'type', get_string('licensetype', 'block_iomad_company_admin'), $licensetypes);
             $mform->addHelpButton('type', 'licensetype', 'block_iomad_company_admin');
+            $mform->addElement('selectyesno', 'program', get_string('licenseprogram', 'block_iomad_company_admin'));
+            $mform->addHelpButton('program', 'licenseprogram', 'block_iomad_company_admin');
             $mform->addElement('date_selector', 'expirydate', get_string('licenseexpires', 'block_iomad_company_admin'));
             $mform->addHelpButton('expirydate', 'licenseexpires', 'block_iomad_company_admin');
             $mform->addRule('expirydate', get_string('missinglicenseexpires', 'block_iomad_company_admin'),
@@ -285,9 +287,15 @@ $mform = new company_license_form($PAGE->url, $context, $companyid, $departmenti
 if ($licenseinfo = $DB->get_record('companylicense', array('id' => $licenseid))) {
     if ($currentcourses = $DB->get_records('companylicense_courses', array('licenseid' => $licenseid), null, 'courseid')) {
         foreach ($currentcourses as $currentcourse) {
-            $licenseinfo->licensecourses[] = $currentcourse->courseid;
+            $licenseinfo->selectedcourses[] = $currentcourse->courseid;
         }
     }
+
+    // Deal with the amount for program courses.
+    if (!empty($licenseinfo->program)) {
+        $licenseinfo->allocation = $licenseinfo->allocation / count($currentcourses);
+    }
+
     $mform->set_data($licenseinfo);
 }
 
@@ -304,8 +312,16 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
         $new = false;
         $licensedata = array();
         $licensedata['name'] = $data->name;
-        $licensedata['allocation'] = $data->allocation;
+        if (empty($data->program)) {
+            $licensedata['allocation'] = $data->allocation;
+        } else {
+            $licensedata['allocation'] = $data->allocation * count($data->selectedcourses);
+        }
         $licensedata['expirydate'] = $data->expirydate;
+        $licensedata['program']  = $data->program;
+        if (empty($data->languages)) {
+            $data->languages = array();
+        }
         if (empty($data->parentid)) { 
             $licensedata['companyid'] = $data->companyid;
         } else {

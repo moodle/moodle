@@ -31,6 +31,7 @@ class company_users_course_form extends moodleform {
     protected $userid = null;
     protected $user = null;
     protected $licenseid = 0;
+    protected $liccourses = array();
 
     public function __construct($actionurl, $context, $companyid, $departmentid, $userid, $licenseid) {
         global $USER, $DB;
@@ -40,6 +41,11 @@ class company_users_course_form extends moodleform {
         $this->parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $this->parentlevel->id;
         $this->licenseid = $licenseid;
+        $this->liccourses = $DB->get_records_sql("SELECT c.* FROM {course} c
+                                                  JOIN {companylicense_courses} clc
+                                                  ON (c.id = clc.courseid)
+                                                  WHERE clc.licenseid = :licenseid",
+                                                  array('licenseid' => $this->licenseid));
 
         if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
             $userhierarchylevel = $this->parentlevel->id;
@@ -111,9 +117,33 @@ class company_users_course_form extends moodleform {
         }
 
         $company = new company($this->selectedcompany);
+        $programstr = "";
         if (!empty($this->licenseid)) {
 
             $license = $DB->get_record('companylicense', array('id' => $this->licenseid));
+
+            // is this a program?
+            if ($license->program) {
+                // Get the courses.
+                if (!empty($this->liccourses)) {
+                    $coursecount = count($this->liccourses);
+                    $programstr = get_string('licenseassignedto', 'block_iomad_company_admin');
+                    $count = 1;
+                    foreach ($this->liccourses as $course) {
+                        if ($count > 1) {
+                            $programstr .= ", ".$course->fullname;
+                        } else {
+                            $programstr .= $course->fullname;
+                        }
+                        $count++;
+                    }
+                    $license->allocation = $license->allocation / $coursecount;
+                    $license->used = $license->used / $coursecount; 
+                }
+                $licenseleft2 = get_string('programleft2', 'block_iomad_company_admin');
+            } else {
+                $licenseleft2 = get_string('licenseleft2', 'block_iomad_company_admin');
+            }
             $licensestring = get_string('licensedetails', 'block_iomad_company_admin', $license);
             $licensestring2 = get_string('licensedetails2', 'block_iomad_company_admin', $license);
             $licensestring3 = get_string('licensedetails3', 'block_iomad_company_admin', $license);
@@ -124,51 +154,67 @@ class company_users_course_form extends moodleform {
         }
 
         if (!empty($this->licenseid)) {
-        $mform->addElement('html', '<br /><p align="center"><b>' . get_string('licenseleft1', 'block_iomad_company_admin') .
-                                    ((intval($licensestring3, 0)) - (intval($licensestring2, 0))) .
-                                    get_string('licenseleft2', 'block_iomad_company_admin') . '</b>');
-
-        $mform->addElement('html', '<h4>' . get_string('user_courses_for', 'block_iomad_company_admin', fullname($this->user)) . '</h4>');
-
-        $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
-        $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
-
-        $mform->addElement('html', '<table summary=""
-                                    class="companycourseuserstable addremovetable generaltable generalbox boxaligncenter"
-                                    cellspacing="0"
-                                    border="0">
-            <tr>
-              <td id="existingcell" style="text-align:center;">'); //maybe put this in the block CSS?
-
-        $mform->addElement('html', $this->currentcourses->display(true));
-
-        $mform->addElement('html', '
-              </td>
-              <td id="buttonscell" valign="middle">
-                  <div id="addcontrols">
-                      <input name="add" id="add" type="submit" value="&nbsp;' .
-                      get_string('enrol', 'block_iomad_company_admin') .
-                      '" title="Enrol" /><br />
-
-                  </div>
-
-                  <div id="removecontrols">
-                      <input name="remove" id="remove" type="submit" value="' .
-                      get_string('unenrol', 'block_iomad_company_admin') .
-                      '&nbsp;" title="Unenrol" />
-                  </div>
-              </td>
-              <td id="potentialcell" style="text-align:center;">'); //maybe put this in the block CSS?
-
-        $mform->addElement('html', $this->potentialcourses->display(true));
-
-        $mform->addElement('html', '
-              </td>
-            </tr>
-          </table>');
-
+            $mform->addElement('html', '<br /><p align="center"><b>' . get_string('licenseleft1', 'block_iomad_company_admin') .
+                                        ((intval($licensestring3, 0)) - (intval($licensestring2, 0))) .
+                                        "$licenseleft2</br>$programstr</b></p>");
+    
+            $mform->addElement('html', '<h4>' . get_string('user_courses_for', 'block_iomad_company_admin', fullname($this->user)) . '</h4>');
+    
+            $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
+            $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
+    
+            // Is this a license program?
+            if ($license->program) {
+                $programselect = $mform->addElement('selectyesno', 'allocate', get_string('programallocate', 'block_iomad_company_admin'));
+                $mform->addHelpButton('allocate', 'programallocate', 'block_iomad_company_admin');
+                // do we have any of these courses /license combo yet?
+                if ($DB->get_records('companylicense_users', array('userid' => $this->userid, 'licenseid' => $this->licenseid))) {
+                    $mform->addElement('hidden', 'inuse', true);
+                    $mform->setType('inuse', PARAM_INT);
+                    $programselect->setSelected(true);
+                } else {
+                    $mform->addElement('hidden', 'inuse', false);
+                    $mform->setType('inuse', PARAM_INT);
+                    $programselect->setSelected(false);
+                }
+                $this->add_action_buttons(true, get_string('updatelicense', 'block_iomad_company_admin'));
+            } else {
+                $mform->addElement('html', '<table summary=""
+                                            class="companycourseuserstable addremovetable generaltable generalbox boxaligncenter"
+                                            cellspacing="0"
+                                            border="0">
+                    <tr>
+                      <td id="existingcell" style="text-align:center;">'); //maybe put this in the block CSS?
+        
+                $mform->addElement('html', $this->currentcourses->display(true));
+        
+                $mform->addElement('html', '
+                      </td>
+                      <td id="buttonscell" valign="middle">
+                          <div id="addcontrols">
+                              <input name="add" id="add" type="submit" value="&nbsp;' .
+                              get_string('enrol', 'block_iomad_company_admin') .
+                              '" title="Enrol" /><br />
+        
+                          </div>
+        
+                          <div id="removecontrols">
+                              <input name="remove" id="remove" type="submit" value="' .
+                              get_string('unenrol', 'block_iomad_company_admin') .
+                              '&nbsp;" title="Unenrol" />
+                          </div>
+                      </td>
+                      <td id="potentialcell" style="text-align:center;">'); //maybe put this in the block CSS?
+        
+                $mform->addElement('html', $this->potentialcourses->display(true));
+        
+                $mform->addElement('html', '
+                      </td>
+                    </tr>
+                  </table>');
+            }  
         } else {
-        $mform->addElement('html', '<br /><p align="center"><b>' . get_string('selectlicenseblurb', 'block_iomad_company_admin') . '</b></p>');
+            $mform->addElement('html', '<br /><p align="center"><b>' . get_string('selectlicenseblurb', 'block_iomad_company_admin') . '</b></p>');
         }
     }
 
@@ -176,6 +222,77 @@ class company_users_course_form extends moodleform {
         global $DB, $CFG;
 
         $this->create_course_selectors();
+
+        // Process program changes.
+        if (optional_param('submitbutton', false, PARAM_BOOL) && confirm_sesskey()) {
+            $inuse = optional_param('inuse', false, PARAM_BOOL);
+            $allocate = optional_param('allocate', false, PARAM_BOOL);
+            if ($inuse == $allocate && $allocate == 1) {
+                return;
+            }
+            if ($licenserecord = (array) $DB->get_record('companylicense', array('id' => $this->licenseid))) {
+                if ($allocate && ($licenserecord['used'] + count($this->liccourses) > $licenserecord['allocation'])) {
+                    echo "<div class='mform'><span class='error'>" . get_string('triedtoallocatetoomanylicenses', 'block_iomad_company_admin') . "</span></div>";
+                    return;
+                } else {
+                    $due = optional_param_array('due', array(), PARAM_INT);
+                    if (!empty($due)) {
+                        $duedate = strtotime($due['year'] . '-' . $due['month'] . '-' . $due['day'] . ' ' . $due['hour'] . ':' . $due['minute']);
+                    } else {
+                        $duedate = 0;
+                    }
+                    // Is the user using any of the licenses and it's not a subscription?
+                    if (!$allocate && $licenserecord['type'] == 0 && $DB->get_records('companylicense_users', array('userid' => $this->userid,
+                                                                                                                    'licenseid' => $licenserecord['id'],
+                                                                                                                    'isusing' => 1))) {
+                        return;
+                    }
+                    // Deal with the course allocations/removals.
+                    foreach ($this->liccourses as $course) {
+                        if ($allocate) {
+                            $assignrecord = array('userid' => $this->userid,
+                                                  'licenseid' => $licenserecord['id'],
+                                                  'isusing' => 0,
+                                                  'licensecourseid' => $course->id);
+
+                            // Check we are not adding multiple times.
+                            if (!$DB->get_record('companylicense_users', $assignrecord)) {
+                                $assignrecord['issuedate'] = time();
+                                $DB->insert_record('companylicense_users', $assignrecord);
+    
+                                // Create an event.
+                                $eventother = array('licenseid' => $licenserecord['id'],
+                                                    'duedate' => $duedate);
+                                $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($course->id),
+                                                                                                              'objectid' => $licenserecord['id'],
+                                                                                                              'courseid' => $course->id,
+                                                                                                              'userid' => $this->userid,
+                                                                                                              'other' => $eventother));
+                                $event->trigger();
+                            }
+                        } else {
+                            $userlicenserecord = $DB->get_record('companylicense_users', array('userid' => $this->userid, 
+                                                                                               'licensecourseid' => $course->id,
+                                                                                               'licenseid' => $licenserecord['id']));
+                            if (!empty($userlicenserecord->id)) {
+                                $DB->delete_records('companylicense_users', array('id' => $userlicenserecord->id));
+        
+                                // Create an event.
+                                $eventother = array('licenseid' => $licenserecord['id'],
+                                                    'duedate' => 0);
+                                $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($course->id),
+                                                                                                                'objectid' => $licenserecord['id'],
+                                                                                                                'courseid' => $course->id,
+                                                                                                                'userid' => $this->userid,
+                                                                                                                'other' => $eventother));
+                                $event->trigger();
+                            }
+                        }
+                    }
+                }
+                return;
+            }
+        }
 
 
         // Process incoming enrolments.
