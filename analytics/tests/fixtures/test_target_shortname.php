@@ -36,18 +36,21 @@ class test_target_shortname extends \core_analytics\local\target\binary {
         return true;
     }
 
-    protected function calculate_sample($sampleid, \core_analytics\analysable $analysable) {
-        global $DB;
+    public function is_valid_sample($sampleid, \core_analytics\analysable $analysable) {
 
-        $sample = $DB->get_record('course', array('id' => $sampleid));
-
+        $sample = $this->retrieve('course', $sampleid);
         if ($sample->visible == 0) {
             // We skip not-visible courses as a way to emulate the training data / prediction data difference.
-            // In normal circumstances targets will return null when they receive a sample that can not be
-            // processed, that same sample may be used for prediction.
-            // We can not do this in is_valid_analysable because the analysable there is the site not the course.
-            return null;
+            // In normal circumstances is_valid_sample will return false when they receive a sample that can not be
+            // processed.
+            return false;
         }
+        return true;
+    }
+
+    protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false) {
+
+        $sample = $this->retrieve('course', $sampleid);
 
         $firstchar = substr($sample->shortname, 0, 1);
         if ($firstchar === 'a') {

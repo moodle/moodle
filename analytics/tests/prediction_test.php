@@ -40,12 +40,12 @@ require_once(__DIR__ . '/fixtures/test_target_shortname.php');
 class core_analytics_prediction_testcase extends advanced_testcase {
 
     /**
-     * @dataProvider provider_training_and_prediction
+     * @dataProvider provider_ml_training_and_prediction
      * @param string $timesplittingid
      * @param int $npredictedranges
      * @return void
      */
-    public function test_training_and_prediction($timesplittingid, $npredictedranges, $predictionsprocessorclass) {
+    public function test_ml_training_and_prediction($timesplittingid, $npredictedranges, $predictionsprocessorclass) {
         global $DB;
 
         $ncourses = 10;
@@ -112,12 +112,11 @@ class core_analytics_prediction_testcase extends advanced_testcase {
 
         // $course1 predictions should be 1 == 'a', $course2 predictions should be 0 == 'b'.
         $correct = array($course1->id => 1, $course2->id => 0);
-        foreach ($result->predictions as $sampleprediction) {
-            list($uniquesampleid, $prediction) = $sampleprediction;
-            list($uniquesampleid, $rangeindex) = $model->get_time_splitting()->infer_sample_info($uniquesampleid);
+        foreach ($result->predictions as $uniquesampleid => $predictiondata) {
+            list($sampleid, $rangeindex) = $model->get_time_splitting()->infer_sample_info($uniquesampleid);
 
             // The range index is not important here, both ranges prediction will be the same.
-            $this->assertEquals($correct[$uniquesampleid], $prediction);
+            $this->assertEquals($correct[$sampleid], $predictiondata->prediction);
         }
 
         // 2 ranges will be predicted.
@@ -137,7 +136,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->assertEquals(2 * $npredictedranges, $DB->count_records('analytics_predictions', array('modelid' => $model->get_id())));
     }
 
-    public function provider_training_and_prediction() {
+    public function provider_ml_training_and_prediction() {
         $cases = array(
             'no_splitting' => array('\core_analytics\local\time_splitting\no_splitting', 1),
             'quarters' => array('\core_analytics\local\time_splitting\quarters', 4)
@@ -151,9 +150,9 @@ class core_analytics_prediction_testcase extends advanced_testcase {
     /**
      * Basic test to check that prediction processors work as expected.
      *
-     * @dataProvider provider_test_evaluation
+     * @dataProvider provider_ml_test_evaluation
      */
-    public function test_evaluation($modelquality, $ncourses, $expected, $predictionsprocessorclass) {
+    public function test_ml_evaluation($modelquality, $ncourses, $expected, $predictionsprocessorclass) {
         $this->resetAfterTest(true);
 
         $sometimesplittings = '\core_analytics\local\time_splitting\weekly,' .
@@ -203,7 +202,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         }
     }
 
-    public function provider_test_evaluation() {
+    public function provider_ml_test_evaluation() {
 
         $cases = array(
             'bad-and-no-enough-data' => array(
