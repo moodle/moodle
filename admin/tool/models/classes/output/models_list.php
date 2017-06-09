@@ -80,17 +80,19 @@ class models_list implements \renderable, \templatable {
 
             // Actions.
             $actionsmenu = new \action_menu();
-            $actionsmenu->set_menu_trigger(get_string('edit'));
+            $actionsmenu->set_menu_trigger(get_string('actions'));
             $actionsmenu->set_owner_selector('model-actions-' . $model->get_id());
             $actionsmenu->set_alignment(\action_menu::TL, \action_menu::BL);
 
             // Edit model.
-            $url = new \moodle_url('model.php', array('action' => 'edit', 'id' => $model->get_id()));
-            $icon = new \action_menu_link_secondary($url, new \pix_icon('t/edit', get_string('edit')), get_string('edit'));
-            $actionsmenu->add($icon);
+            if (!$model->is_static()) {
+                $url = new \moodle_url('model.php', array('action' => 'edit', 'id' => $model->get_id()));
+                $icon = new \action_menu_link_secondary($url, new \pix_icon('t/edit', get_string('edit')), get_string('edit'));
+                $actionsmenu->add($icon);
+            }
 
-            // Evaluate model.
-            if ($model->get_indicators()) {
+            // Evaluate machine-learning-based models.
+            if ($model->get_indicators() && !$model->is_static()) {
                 $url = new \moodle_url('model.php', array('action' => 'evaluate', 'id' => $model->get_id()));
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/calc', get_string('evaluate', 'tool_models')),
                     get_string('evaluate', 'tool_models'));
@@ -98,16 +100,19 @@ class models_list implements \renderable, \templatable {
             }
 
             if ($modeldata->enabled && !empty($modeldata->timesplitting)) {
-                $url = new \moodle_url('model.php', array('action' => 'execute', 'id' => $model->get_id()));
+                $url = new \moodle_url('model.php', array('action' => 'getpredictions', 'id' => $model->get_id()));
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/notifications',
-                    get_string('executemodel', 'tool_models')), get_string('executemodel', 'tool_models'));
+                    get_string('getpredictions', 'tool_models')), get_string('getpredictions', 'tool_models'));
                 $actionsmenu->add($icon);
             }
 
-            $url = new \moodle_url('model.php', array('action' => 'log', 'id' => $model->get_id()));
-            $icon = new \action_menu_link_secondary($url, new \pix_icon('i/report', get_string('viewlog', 'tool_models')),
-                get_string('viewlog', 'tool_models'));
-            $actionsmenu->add($icon);
+            // Machine-learning-based models evaluation log.
+            if (!$model->is_static()) {
+                $url = new \moodle_url('model.php', array('action' => 'log', 'id' => $model->get_id()));
+                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/report', get_string('viewlog', 'tool_models')),
+                    get_string('viewlog', 'tool_models'));
+                $actionsmenu->add($icon);
+            }
 
             $modeldata->actions = $actionsmenu->export_for_template($output);
 

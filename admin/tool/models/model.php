@@ -45,8 +45,8 @@ switch ($action) {
     case 'evaluate':
         $title = get_string('evaluatemodel', 'tool_models');
         break;
-    case 'execute':
-        $title = get_string('executemodel', 'tool_models');
+    case 'getpredictions':
+        $title = get_string('getpredictions', 'tool_models');
         break;
     case 'log':
         $title = get_string('viewlog', 'tool_models');
@@ -64,6 +64,11 @@ $PAGE->set_heading($title);
 switch ($action) {
 
     case 'edit':
+
+        if ($model->is_static()) {
+            echo $OUTPUT->header();
+            throw new moodle_exception('errornostaticedit', 'tool_models');
+        }
 
         $customdata = array(
             'id' => $model->get_id(),
@@ -103,6 +108,11 @@ switch ($action) {
 
     case 'evaluate':
         echo $OUTPUT->header();
+
+        if ($model->is_static()) {
+            throw new moodle_exception('errornostaticevaluate', 'tool_models');
+        }
+
         // Web interface is used by people who can not use CLI nor code stuff, always use
         // cached stuff as they will change the model through the web interface as well
         // which invalidates the previously analysed stuff.
@@ -111,7 +121,7 @@ switch ($action) {
         echo $renderer->render_evaluate_results($results, $model->get_analyser()->get_logs());
         break;
 
-    case 'execute':
+    case 'getpredictions':
         echo $OUTPUT->header();
 
         $trainresults = $model->train();
@@ -123,11 +133,16 @@ switch ($action) {
         $predictlogs = $model->get_analyser()->get_logs();
 
         $renderer = $PAGE->get_renderer('tool_models');
-        echo $renderer->render_execute_results($trainresults, $trainlogs, $predictresults, $predictlogs);
+        echo $renderer->render_getpredictions_results($trainresults, $trainlogs, $predictresults, $predictlogs);
         break;
 
     case 'log':
         echo $OUTPUT->header();
+
+        if ($model->is_static()) {
+            throw new moodle_exception('errornostaticlog', 'tool_models');
+        }
+
         $renderer = $PAGE->get_renderer('tool_models');
         $modellogstable = new \tool_models\output\model_logs('model-' . $model->get_id(), $model->get_id());
         echo $renderer->render_table($modellogstable);

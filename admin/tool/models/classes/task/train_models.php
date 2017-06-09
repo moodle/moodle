@@ -49,12 +49,17 @@ class train_models extends \core\task\scheduled_task {
         foreach ($models as $modelobj) {
             $model = new \core_analytics\model($modelobj);
 
+            if ($model->is_static()) {
+                // Skip models based on assumptions.
+                continue;
+            }
+
             $result = $model->train();
             if ($result) {
                 echo $OUTPUT->heading(get_string('modelresults', 'tool_models', $model->get_target()->get_name()));
 
                 $renderer = $PAGE->get_renderer('tool_models');
-                echo $renderer->render_execute_results($result, $model->get_analyser()->get_logs());
+                echo $renderer->render_getpredictions_results($result, $model->get_analyser()->get_logs());
             }
         }
     }

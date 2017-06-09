@@ -54,7 +54,7 @@ class predict_models extends \core\task\scheduled_task {
             if ($result) {
                 echo $OUTPUT->heading(get_string('modelresults', 'tool_models', $model->get_target()->get_name()));
                 $renderer = $PAGE->get_renderer('tool_models');
-                echo $renderer->render_execute_results(false, array(), $result, $model->get_analyser()->get_logs());
+                echo $renderer->render_getpredictions_results(false, array(), $result, $model->get_analyser()->get_logs());
             }
         }
 

@@ -138,6 +138,17 @@ class course_dropout extends \core_analytics\local\target\binary {
     }
 
     /**
+     * is_valid_sample
+     *
+     * @param int $sampleid
+     * @param \core_analytics\analysable $course
+     * @return bool
+     */
+    public function is_valid_sample($sampleid, \core_analytics\analysable $course) {
+        return true;
+    }
+
+    /**
      * calculate_sample
      *
      * The meaning of a drop out changes depending on the settings enabled in the course. Following these priorities order:
@@ -148,11 +159,9 @@ class course_dropout extends \core_analytics\local\target\binary {
      * @param \core_analytics\analysable $course
      * @return void
      */
-    public function calculate_sample($sampleid, \core_analytics\analysable $course) {
+    protected function calculate_sample($sampleid, \core_analytics\analysable $course, $starttime = false, $endtime = false) {
         global $DB;
 
-        // TODO Even if targets are aware of the data the analyser returns, we can probably still feed samples
-        // data with cached data.
         $sql = "SELECT ue.* FROM {user_enrolments} ue JOIN {user} u ON u.id = ue.userid WHERE ue.id = :ueid";
         $userenrol = $DB->get_record_sql($sql, array('ueid' => $sampleid));
 

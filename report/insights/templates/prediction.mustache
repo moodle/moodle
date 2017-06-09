@@ -34,19 +34,19 @@
 }}
 <div class="card">
     <div class="row m-a-1">
-        {{#sampleimage}}
+        {{#samplelink}}
             <div class="col-sm-1 span1 m-b-1">
-                {{{sampleimage}}}
+                {{{samplelink}}}
             </div>
             <div class="col-sm-3 span3 m-b-1">
                 {{{sampledescription}}}
             </div>
-        {{/sampleimage}}
-        {{^sampleimage}}
+        {{/samplelink}}
+        {{^samplelink}}
             <div class="col-sm-4 span4 m-b-1">
                 {{{sampledescription}}}
             </div>
-        {{/sampleimage}}
+        {{/samplelink}}
         <div class="col-sm-4 span4">
             <div class="{{predictionstyle}}">{{predictiondisplayvalue}}</div>
         </div>

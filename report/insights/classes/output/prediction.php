@@ -61,11 +61,11 @@ class prediction implements \renderable, \templatable {
         $data = new \stdClass();
 
         // Sample info (determined by the analyser).
-        list($data->sampledescription, $sampleimage) = $this->model->prediction_sample_description($this->prediction);
+        list($data->sampledescription, $samplerenderable) = $this->model->prediction_sample_description($this->prediction);
 
         // Sampleimage is a renderable we should pass it to HTML.
-        if ($sampleimage) {
-            $data->sampleimage = $output->render($sampleimage);
+        if ($samplerenderable) {
+            $data->samplelink = $output->render($samplerenderable);
         }
 
         // Prediction info.

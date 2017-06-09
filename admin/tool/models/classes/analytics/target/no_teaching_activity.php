@@ -1,0 +1,128 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * No teaching target.
+ *
+ * @package   tool_models
+ * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace tool_models\analytics\target;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * No teaching target.
+ *
+ * @package   tool_models
+ * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class no_teaching_activity extends \core_analytics\local\target\binary {
+
+    /**
+     * Machine learning backends are not required to predict.
+     *
+     * @return bool
+     */
+    public static function based_on_assumptions() {
+        return true;
+    }
+
+    public static function get_name() {
+        return get_string('target:noteachingactivity', 'tool_models');
+    }
+
+    public function prediction_actions(\core_analytics\prediction $prediction) {
+        global $USER;
+
+        // No need to call the parent as the only default action is view details and this target only have 1 feature.
+        $actions = array();
+
+        $sampledata = $prediction->get_sample_data();
+        $course = $sampledata['course'];
+
+        if (has_capability('moodle/course:enrolreview', $sampledata['context'])) {
+            $url = new \moodle_url('/enrol/users.php', array('id' => $course->id));
+            $pix = new \pix_icon('i/enrolusers', get_string('enrolledusers', 'enrol'));
+            $actions['enrolusers'] = new \core_analytics\prediction_action('enrolusers', $prediction,
+                $url, $pix, get_string('enrolledusers', 'enrol'));
+        }
+
+        if (has_capability('moodle/course:viewparticipants', $sampledata['context'])) {
+            $url = new \moodle_url('/user/index.php', array('id' => $course->id));
+            $pix = new \pix_icon('i/cohort', get_string('participants'));
+            $actions['viewparticipants'] = new \core_analytics\prediction_action('viewparticipants', $prediction,
+                $url, $pix, get_string('participants'));
+        }
+
+        return $actions;
+    }
+
+    protected static function classes_description() {
+        return array(
+            get_string('labelteachingactivityyes', 'tool_models'),
+            get_string('labelteachingactivityno', 'tool_models'),
+        );
+    }
+
+    /**
+     * Returns the predicted classes that will be ignored.
+     *
+     * @return array
+     */
+    protected function ignored_predicted_classes() {
+        // No need to list the course if there is teaching activity.
+        return array(0);
+    }
+
+    public function get_analyser_class() {
+        return '\\core_analytics\\local\\analyser\\courses';
+    }
+
+    public function is_valid_analysable(\core_analytics\analysable $site, $fortraining = true) {
+        // The analysable is the site, so yes, it is always valid.
+        return true;
+    }
+
+    public function is_valid_sample($sampleid, \core_analytics\analysable $site) {
+
+        $course = $this->retrieve('course', $sampleid);
+        if (!$course->startdate || $course->startdate - WEEKSECS > time()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * calculate_sample
+     *
+     * @param int $sampleid
+     * @param \core_analytics\analysable $site
+     * @return void
+     */
+    protected function calculate_sample($sampleid, \core_analytics\analysable $site, $starttime = false, $endtime = false) {
+
+        $noteachersindicator = $this->retrieve('\core_course\analytics\indicator\no_teacher', $sampleid);
+        if ($noteachersindicator != \core_course\analytics\indicator\no_teacher::get_min_value()) {
+            // No teachers flagged as 1.
+            return 1;
+        }
+        return 0;
+    }
+}

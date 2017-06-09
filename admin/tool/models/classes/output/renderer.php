@@ -70,10 +70,10 @@ class renderer extends plugin_renderer_base {
      * Web interface evaluate results.
      *
      * @param \stdClass[] $results
-     * @param string[] $executionlog
+     * @param string[] $logs
      * @return string HTML
      */
-    public function render_evaluate_results($results, $executionlog = array()) {
+    public function render_evaluate_results($results, $logs = array()) {
         global $OUTPUT;
 
         $output = '';
@@ -90,9 +90,9 @@ class renderer extends plugin_renderer_base {
                 $langstrdata = (object)array('name' => $timesplitting->get_name(), 'id' => $timesplittingid);
 
                 if (CLI_SCRIPT) {
-                    $output .= $OUTPUT->heading(get_string('executionresultscli', 'tool_models', $langstrdata), 3);
+                    $output .= $OUTPUT->heading(get_string('getpredictionsresultscli', 'tool_models', $langstrdata), 3);
                 } else {
-                    $output .= $OUTPUT->heading(get_string('executionresults', 'tool_models', $langstrdata), 3);
+                    $output .= $OUTPUT->heading(get_string('getpredictionsresults', 'tool_models', $langstrdata), 3);
                 }
             }
 
@@ -120,10 +120,10 @@ class renderer extends plugin_renderer_base {
             }
         }
 
-        // Info logged during execution.
-        if (!empty($executionlog) && debugging()) {
+        // Info logged during evaluation.
+        if (!empty($logs) && debugging()) {
             $output .= $OUTPUT->heading(get_string('extrainfo', 'tool_models'), 3);
-            foreach ($executionlog as $log) {
+            foreach ($logs as $log) {
                 $output .= $OUTPUT->notification($log, \core\output\notification::NOTIFY_WARNING);
             }
         }
@@ -137,7 +137,7 @@ class renderer extends plugin_renderer_base {
 
 
     /**
-     * Web interface execution results.
+     * Web interface training & prediction results.
      *
      * @param array $trainresults
      * @param string[] $trainlogs
@@ -145,7 +145,7 @@ class renderer extends plugin_renderer_base {
      * @param string[] $predictlogs
      * @return string HTML
      */
-    public function render_execute_results($trainresults = false, $trainlogs = array(), $predictresults = false, $predictlogs = array()) {
+    public function render_getpredictions_results($trainresults = false, $trainlogs = array(), $predictresults = false, $predictlogs = array()) {
         global $OUTPUT;
 
         $output = '';
@@ -159,7 +159,7 @@ class renderer extends plugin_renderer_base {
                 $output .= $OUTPUT->notification(get_string('trainingprocessfinished', 'tool_models'),
                     \core\output\notification::NOTIFY_SUCCESS);
             } else if ($trainresults->status === \core_analytics\model::NO_DATASET) {
-                $output .= $OUTPUT->notification(get_string('nodatatotrain', 'analytics'),
+                $output .= $OUTPUT->notification(get_string('nodatatotrain', 'tool_models'),
                     \core\output\notification::NOTIFY_WARNING);
             } else {
                 $output .= $OUTPUT->notification(get_string('generalerror', 'analytics', $result->status),
@@ -175,7 +175,7 @@ class renderer extends plugin_renderer_base {
         }
 
         if ($predictresults || (!empty($predictlogs) && debugging())) {
-            $output .= $OUTPUT->heading(get_string('predictionresults', 'tool_models'), 3);
+            $output .= $OUTPUT->heading(get_string('predictionresults', 'tool_models'), 3, 'main m-t-3');
         }
 
         if ($predictresults) {
@@ -183,7 +183,7 @@ class renderer extends plugin_renderer_base {
                 $output .= $OUTPUT->notification(get_string('predictionprocessfinished', 'tool_models'),
                     \core\output\notification::NOTIFY_SUCCESS);
             } else if ($predictresults->status === \core_analytics\model::NO_DATASET) {
-                $output .= $OUTPUT->notification(get_string('nodatatopredict', 'analytics'),
+                $output .= $OUTPUT->notification(get_string('nodatatopredict', 'tool_models'),
                     \core\output\notification::NOTIFY_WARNING);
             } else {
                 $output .= $OUTPUT->notification(get_string('generalerror', 'analytics', $result->status),

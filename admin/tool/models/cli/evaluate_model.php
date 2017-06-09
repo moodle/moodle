@@ -122,7 +122,7 @@ if (!empty($validdatasets) && !$model->is_enabled() && $options['non-interactive
     // Set the time splitting method file and enable it.
     $model->enable($input);
 
-    mtrace(get_string('executingmodel', 'tool_models'));
+    mtrace(get_string('trainandpredictmodel', 'tool_models'));
 
     // Train the model with the selected time splitting method and start predicting.
     $model->train();
