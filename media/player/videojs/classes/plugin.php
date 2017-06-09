@@ -129,8 +129,13 @@ class media_videojs_plugin extends core_media_player_native {
         }
 
         // Attributes for the video/audio tag.
+        // We use data-setup-lazy as the attribute name for the config instead of
+        // data-setup because data-setup will cause video.js to load the player as soon as the library is loaded,
+        // which is BEFORE we have a chance to load any additional libraries (youtube).
+        // The data-setup-lazy is just a tag name that video.js does not recognise so we can manually initialise
+        // it when we are sure the dependencies are loaded.
         $attributes = [
-            'data-setup' => '{' . join(', ', $datasetup) . '}',
+            'data-setup-lazy' => '{' . join(', ', $datasetup) . '}',
             'id' => 'id_videojs_' . uniqid(),
             'class' => get_config('media_videojs', $isaudio ? 'audiocssclass' : 'videocssclass')
         ];
