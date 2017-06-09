@@ -1415,6 +1415,21 @@ function enrol_send_welcome_email_options() {
 }
 
 /**
+ * Returns the course where a user enrolment belong to.
+ *
+ * @param int $ueid user_enrolments id
+ * @return stdClass
+ */
+function enrol_get_course_by_user_enrolment_id($ueid) {
+    global $DB;
+    $sql = "SELECT c.* FROM {user_enrolments} ue
+              JOIN {enrol} e ON e.id = ue.enrolid
+              JOIN {course} c ON c.id = e.courseid
+             WHERE ue.id = :ueid";
+    return $DB->get_record_sql($sql, array('ueid' => $ueid));
+}
+
+/**
  * All enrol plugins should be based on this class,
  * this is also the main source of documentation.
  */
