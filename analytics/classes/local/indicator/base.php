@@ -40,11 +40,6 @@ abstract class base extends \core_analytics\calculable {
     const MAX_VALUE = 1;
 
     /**
-     * @var array[]
-     */
-    protected $sampledata = array();
-
-    /**
      * Converts the calculated indicators to feature/s.
      *
      * @param float|int[] $calculatedvalues
@@ -122,19 +117,6 @@ abstract class base extends \core_analytics\calculable {
         $calculations = $this->to_features($calculations);
 
         return $calculations;
-    }
-
-    public function set_sample_data($data) {
-        $this->sampledata = $data;
-    }
-
-    protected function retrieve($tablename, $sampleid) {
-        if (empty($this->sampledata[$sampleid]) || empty($this->sampledata[$sampleid][$tablename])) {
-            // We don't throw an exception because indicators should be able to
-            // try multiple tables until they find something they can use.
-            return false;
-        }
-        return $this->sampledata[$sampleid][$tablename];
     }
 
     protected static function add_samples_averages() {

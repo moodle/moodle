@@ -43,7 +43,7 @@ class user_track_forums extends binary {
         return array('user');
     }
 
-    public function calculate_sample($sampleid, $samplesorigin, $starttime = false, $endtime = false) {
+    protected function calculate_sample($sampleid, $samplesorigin, $starttime = false, $endtime = false) {
 
         $user = $this->retrieve('user', $sampleid);
 

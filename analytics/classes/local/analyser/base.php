@@ -64,12 +64,31 @@ abstract class base {
      * This function returns the list of samples that can be calculated.
      *
      * @param \core_analytics\analysable $analysable
-     * @return array array[0] = int[], array[1] = array
+     * @return array array[0] = int[] (sampleids) and array[1] = array (samplesdata)
      */
     abstract protected function get_all_samples(\core_analytics\analysable $analysable);
 
+    /**
+     * get_samples
+     *
+     * @param int[] $sampleids
+     * @return array array[0] = int[] (sampleids) and array[1] = array (samplesdata)
+     */
     abstract public function get_samples($sampleids);
 
+    /**
+     * get_sample_analysable
+     *
+     * @param int $sampleid
+     * @return \core_analytics\analysable
+     */
+    abstract public function get_sample_analysable($sampleid);
+
+    /**
+     * get_samples_origin
+     *
+     * @return string
+     */
     abstract protected function get_samples_origin();
 
     /**
@@ -80,6 +99,14 @@ abstract class base {
      */
     abstract public function sample_access_context($sampleid);
 
+    /**
+     * sample_description
+     *
+     * @param int $sampleid
+     * @param int $contextid
+     * @param array $sampledata
+     * @return array array(string, \renderable)
+     */
     abstract public function sample_description($sampleid, $contextid, $sampledata);
 
     protected function provided_sample_data() {
@@ -174,7 +201,7 @@ abstract class base {
             $a = new \stdClass();
             $a->analysableid = $analysable->get_id();
             $a->result = $result;
-            $this->log[] = get_string('analysablenotvalidfortarget', 'analytics', $a);
+            $this->add_log(get_string('analysablenotvalidfortarget', 'analytics', $a));
             return array();
         }
 
@@ -221,12 +248,27 @@ abstract class base {
             $a = new \stdClass();
             $a->analysableid = $analysable->get_id();
             $a->errors =  implode(', ', $errors);
-            $this->log[] = get_string('analysablenotused', 'analytics', $a);
+            $this->add_log(get_string('analysablenotused', 'analytics', $a));
         }
 
         return $files;
     }
 
+    /**
+     * add_log
+     *
+     * @param string $string
+     * @return void
+     */
+    public function add_log($string) {
+        $this->log[] = $string;
+    }
+
+    /**
+     * get_logs
+     *
+     * @return string[]
+     */
     public function get_logs() {
         return $this->log;
     }
@@ -307,7 +349,11 @@ abstract class base {
         foreach ($this->indicators as $key => $indicator) {
             // The analyser attaches the main entities the sample depends on and are provided to the
             // indicator to calculate the sample.
-            $this->indicators[$key]->set_sample_data($samplesdata);
+            $this->indicators[$key]->add_sample_data($samplesdata);
+        }
+        if ($target) {
+            // Also provided to the target.
+            $target->add_sample_data($samplesdata);
         }
 
         // Here we start the memory intensive process that will last until $data var is

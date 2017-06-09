@@ -48,6 +48,11 @@ class student_enrolments extends by_course {
         return \context_course::instance($this->get_sample_course($sampleid));
     }
 
+    public function get_sample_analysable($sampleid) {
+        $course = enrol_get_course_by_user_enrolment_id($ueid);
+        return \core_analytics\course($course);
+    }
+
     protected function provided_sample_data() {
         return array('user_enrolments', 'context', 'course', 'user');
     }

@@ -36,7 +36,9 @@ defined('MOODLE_INTERNAL') || die();
 abstract class binary extends discrete {
 
     public static final function get_classes() {
-        return array(0, 1);
+        // It does not really matter, all \core_analytics\local\indicator\discrete get_classes calls have been overwriten as we
+        // only need 1 column here.
+        return array(0);
     }
 
     public function get_display_value($value, $subtype = false) {

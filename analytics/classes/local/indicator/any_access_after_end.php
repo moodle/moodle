@@ -43,7 +43,7 @@ class any_access_after_end extends binary {
         return array('user', 'course', 'context');
     }
 
-    public function calculate_sample($sampleid, $samplesorigin, $starttime = false, $endtime = false) {
+    protected function calculate_sample($sampleid, $samplesorigin, $starttime = false, $endtime = false) {
         global $DB;
 
         $user = $this->retrieve('user', $sampleid);

@@ -44,9 +44,11 @@ class deciles_accum extends base {
 
         $ranges = array();
         for ($i = 0; $i < 10; $i++) {
+            $end = $this->analysable->get_start() + ($rangeduration * ($i + 1));
             $ranges[] = array(
                 'start' => $this->analysable->get_start(),
-                'end' => $this->analysable->get_start() + ($rangeduration * ($i + 1))
+                'end' => $end,
+                'time' => $end
             );
         }
 

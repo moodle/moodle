@@ -62,15 +62,35 @@ abstract class base extends \core_analytics\calculable {
     abstract public function is_valid_analysable(\core_analytics\analysable $analysable, $fortraining = true);
 
     /**
+     * is_valid_sample
+     *
+     * @param int $sampleid
+     * @param \core_analytics\analysable $analysable
+     * @return void
+     */
+    abstract public function is_valid_sample($sampleid, \core_analytics\analysable $analysable);
+
+    /**
      * Calculates this target for the provided samples.
      *
      * In case there are no values to return or the provided sample is not applicable just return null.
      *
      * @param int $sample
      * @param \core_analytics\analysable $analysable
+     * @param int|false $starttime Limit calculations to start time
+     * @param int|false $endtime Limit calculations to end time
      * @return float|null
      */
-    abstract protected function calculate_sample($sampleid, \core_analytics\analysable $analysable);
+    abstract protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false);
+
+    /**
+     * Based on facts (processed by machine learning backends) by default.
+     *
+     * @return bool
+     */
+    public static function based_on_assumptions() {
+        return false;
+    }
 
     public function prediction_actions(\core_analytics\prediction $prediction) {
         global $PAGE;
@@ -216,7 +236,7 @@ abstract class base extends \core_analytics\calculable {
      * @param integer $endtime endtime is not necessary when calculating targets
      * @return array The format to follow is [userid] = scalar|null
      */
-    public function calculate($sampleids, \core_analytics\analysable $analysable) {
+    public function calculate(&$sampleids, \core_analytics\analysable $analysable) {
 
         if (!PHPUNIT_TEST && CLI_SCRIPT) {
             echo '.';
@@ -224,7 +244,15 @@ abstract class base extends \core_analytics\calculable {
 
         $calculations = [];
         foreach ($sampleids as $sampleid => $unusedsampleid) {
-            $calculatedvalue = $this->calculate_sample($sampleid, $analysable);
+
+            if (!$this->is_valid_sample($sampleid, $analysable)) {
+                // Skip it and remove the sample from the list of calculated samples.
+                unset($sampleids[$sampleid]);
+                continue;
+            }
+
+            // No time limits when calculating the target to train models.
+            $calculatedvalue = $this->calculate_sample($sampleid, $analysable, false, false);
 
             if (!is_null($calculatedvalue)) {
                 if ($this->is_linear() && ($calculatedvalue > static::get_max_value() || $calculatedvalue < static::get_min_value())) {

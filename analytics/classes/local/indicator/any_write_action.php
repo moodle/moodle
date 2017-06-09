@@ -44,7 +44,7 @@ class any_write_action extends binary {
         return array('context');
     }
 
-    public function calculate_sample($sampleid, $sampleorigin, $starttime = false, $endtime = false) {
+    protected function calculate_sample($sampleid, $sampleorigin, $starttime = false, $endtime = false) {
         global $DB;
 
         $select = '';

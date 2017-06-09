@@ -15,9 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * No time splitting method.
- *
- * Used when time is not a factor to consider into the equation.
+ * One week before the course start.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -28,13 +26,22 @@ namespace core_analytics\local\time_splitting;
 
 defined('MOODLE_INTERNAL') || die();
 
-class no_splitting extends base {
+class week_before_course_start extends base {
 
     public function get_name() {
-        return get_string('timesplitting:nosplitting', 'analytics');
+        return get_string('timesplitting:weekbeforecoursestart', 'analytics');
     }
 
-    public function ready_to_predict($range) {
+    public function is_valid_analysable(\core_analytics\analysable $analysable) {
+        if ($analysable instanceof \core_analytics\site) {
+            // Defer checking to is_valid_sample.
+            return true;
+        }
+        if ($analysable instanceof \core_analytics\course && !$analysable->get_start()) {
+            return get_string('nocoursestart', 'analytics');
+        }
+
+        // Default to true.
         return true;
     }
 
@@ -43,8 +50,7 @@ class no_splitting extends base {
             [
                 'start' => 0,
                 'end' => \core_analytics\analysable::MAX_TIME,
-                // Time is ignored as we overwrite ready_to_predict.
-                'time' => 0
+                'time' => $this->analysable->get_start() - WEEKSECS
             ]
         ];
     }

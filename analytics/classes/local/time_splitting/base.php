@@ -100,7 +100,7 @@ abstract class base {
     }
 
     public function ready_to_predict($range) {
-        if ($range['end'] <= time()) {
+        if ($range['time'] <= time()) {
             return true;
         }
         return false;
@@ -109,13 +109,19 @@ abstract class base {
     /**
      * Calculates the course students indicators and targets.
      *
-     * @return void
+     * @param array $sampleids
+     * @param string $samplesorigin
+     * @param \core_analytics\local\indicator\base $indicators
+     * @param array $ranges
+     * @param \core_analytics\local\target\base $target
+     * @return array
      */
-    public function calculate($sampleids, $samplesorigin, $indicators, $ranges, $target = false) {
+    public function calculate(&$sampleids, $samplesorigin, $indicators, $ranges, $target = false) {
 
         $calculatedtarget = false;
         if ($target) {
-            // We first calculate the target because analysable data may still be invalid, we need to stop if it is not.
+            // We first calculate the target because analysable data may still be invalid or none
+            // of the analysable samples may be valid ($sampleids is also passed by reference).
             $calculatedtarget = $target->calculate($sampleids, $this->analysable);
 
             // We remove samples we can not calculate their target.
@@ -275,6 +281,18 @@ abstract class base {
         return $this->ranges;
     }
 
+    /**
+     * get_range_by_index
+     *
+     * @return array
+     */
+    public function get_range_by_index($rangeindex) {
+        if (!isset($this->ranges[$rangeindex])) {
+            return false;
+        }
+        return $this->ranges[$rangeindex];
+    }
+
     public function append_rangeindex($sampleid, $rangeindex) {
         return $sampleid . '-' . $rangeindex;
     }
@@ -322,7 +340,8 @@ abstract class base {
      */
     protected function validate_ranges() {
         foreach ($this->ranges as $key => $range) {
-            if (!isset($this->ranges[$key]['start']) || !isset($this->ranges[$key]['end'])) {
+            if (!isset($this->ranges[$key]['start']) || !isset($this->ranges[$key]['end']) ||
+                    !isset($this->ranges[$key]['time'])) {
                 throw new \coding_exception($this->get_id() . ' time splitting method "' . $key .
                     '" range is not fully defined. We need a start timestamp and an end timestamp.');
             }

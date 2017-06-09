@@ -62,7 +62,8 @@ abstract class weekly_accum extends base {
             // Accumulative, always from the course start.
             $ranges[] = array(
                 'start' => $this->analysable->get_start(),
-                'end' => $rangeend
+                'end' => $rangeend,
+                'time' => $rangeend
             );
 
             $i++;

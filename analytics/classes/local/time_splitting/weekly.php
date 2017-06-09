@@ -37,7 +37,7 @@ abstract class weekly extends base {
         $nweeks = round($diff / WEEKSECS);
         if ($nweeks > 520) {
             // More than 10 years...
-            return false;
+            return get_string('coursetoolong', 'analytics');
         }
         return parent::is_valid_analysable($analysable);
     }
@@ -60,7 +60,8 @@ abstract class weekly extends base {
 
             $ranges[] = array(
                 'start' => $rangestart,
-                'end' => $rangeend
+                'end' => $rangeend,
+                'time' => $rangeend
             );
 
             $i++;

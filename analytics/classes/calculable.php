@@ -36,6 +36,11 @@ defined('MOODLE_INTERNAL') || die();
 abstract class calculable {
 
     /**
+     * @var array[]
+     */
+    protected $sampledata = array();
+
+    /**
      * Returns a visible name for the indicator.
      *
      * Used as column identificator.
@@ -46,6 +51,41 @@ abstract class calculable {
      */
     public static function get_name() {
         return get_called_class();
+    }
+
+    /**
+     * add_sample_data
+     *
+     * @param array $data
+     * @return void
+     */
+    public function add_sample_data($data) {
+        $this->sampledata = $this->array_merge_recursive_keep_keys($this->sampledata, $data);
+    }
+
+    /**
+     * clear_sample_data
+     *
+     * @return void
+     */
+    public function clear_sample_data() {
+        $this->sampledata = array();
+    }
+
+    /**
+     * Retrieve the specified element associated to $sampleid.
+     *
+     * @param string $elementname
+     * @param int $sampleid
+     * @return \stdClass
+     */
+    protected function retrieve($elementname, $sampleid) {
+        if (empty($this->sampledata[$sampleid]) || empty($this->sampledata[$sampleid][$elementname])) {
+            // We don't throw an exception because indicators should be able to
+            // try multiple tables until they find something they can use.
+            return false;
+        }
+        return $this->sampledata[$sampleid][$elementname];
     }
 
     /**
@@ -152,5 +192,33 @@ abstract class calculable {
 
         throw new \coding_exception('The provided value "' . $value . '" can not be fit into any of the provided ranges, you ' .
             'should provide ranges for all possible values.');
+    }
+
+    /**
+     * Merges arrays recursively keeping the same keys the original arrays have.
+     *
+     * @link http://php.net/manual/es/function.array-merge-recursive.php#114818
+     * @param array
+     * @return array
+     */
+    private function array_merge_recursive_keep_keys() {
+        $arrays = func_get_args();
+        $base = array_shift($arrays);
+
+        foreach ($arrays as $array) {
+            reset($base);
+            while (list($key, $value) = each($array)) {
+                if (is_array($value) && !empty($base[$key]) && is_array($base[$key])) {
+                    $base[$key] = $this->array_merge_recursive_keep_keys($base[$key], $value);
+                } else {
+                    if(isset($base[$key]) && is_int($key)) {
+                      $key++;
+                    }
+                    $base[$key] = $value;
+                }
+            }
+        }
+
+        return $base;
     }
 }

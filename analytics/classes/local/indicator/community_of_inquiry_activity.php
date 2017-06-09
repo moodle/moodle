@@ -514,7 +514,7 @@ abstract class community_of_inquiry_activity extends linear {
      * @return float|int|null
      * @throws \coding_exception
      */
-    public function calculate_sample($sampleid, $tablename, $starttime = false, $endtime = false) {
+    protected function calculate_sample($sampleid, $tablename, $starttime = false, $endtime = false) {
         if ($this->get_indicator_type() == self::INDICATOR_COGNITIVE) {
             return $this->cognitive_calculate_sample($sampleid, $tablename, $starttime, $endtime);
         } else if ($this->get_indicator_type() == self::INDICATOR_SOCIAL) {

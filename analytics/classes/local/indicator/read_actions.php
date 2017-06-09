@@ -44,7 +44,7 @@ class read_actions extends linear {
         return array('context');
     }
 
-    public function calculate_sample($sampleid, $sampleorigin, $starttime = false, $endtime = false) {
+    protected function calculate_sample($sampleid, $sampleorigin, $starttime = false, $endtime = false) {
         global $DB;
 
         $select = '';

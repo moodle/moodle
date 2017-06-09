@@ -37,6 +37,16 @@ class courses extends sitewide {
         return 'course';
     }
 
+    /**
+     * get_sample_analysable
+     *
+     * @param int $sampleid
+     * @return \core_analytics\analysable
+     */
+    public function get_sample_analysable($sampleid) {
+        return new \core_analytics\site();
+    }
+
     protected function provided_sample_data() {
         return array('course', 'context');
     }
@@ -81,8 +91,17 @@ class courses extends sitewide {
         return array($sampleids, $courses);
     }
 
+    /**
+     * sample_description
+     *
+     * @param int $sampleid
+     * @param int $contextid
+     * @param array $sampledata
+     * @return void
+     */
     public function sample_description($sampleid, $contextid, $sampledata) {
-        $description = format_string($sampledata['course'], true, array('context' => $contextid));
-        return array($description, false);
+        $description = format_string($sampledata['course']->fullname, true, array('context' => $sampledata['context']));
+        $courseimage = new \pix_icon('i/course', get_string('course'));
+        return array($description, $courseimage);
     }
 }

@@ -44,16 +44,20 @@ class quarters_accum extends base {
         return [
             [
                 'start' => $this->analysable->get_start(),
-                'end' => $this->analysable->get_start() + $duration
+                'end' => $this->analysable->get_start() + $duration,
+                'time' => $this->analysable->get_start() + $duration
             ], [
                 'start' => $this->analysable->get_start(),
-                'end' => $this->analysable->get_start() + ($duration * 2)
+                'end' => $this->analysable->get_start() + ($duration * 2),
+                'time' => $this->analysable->get_start() + ($duration * 2)
             ], [
                 'start' => $this->analysable->get_start(),
-                'end' => $this->analysable->get_start() + ($duration * 3)
+                'end' => $this->analysable->get_start() + ($duration * 3),
+                'time' => $this->analysable->get_start() + ($duration * 3)
             ], [
                 'start' => $this->analysable->get_start(),
-                'end' => $this->analysable->get_start() + ($duration * 4)
+                'end' => $this->analysable->get_start() + ($duration * 4),
+                'time' => $this->analysable->get_start() + ($duration * 4)
             ]
         ];
     }

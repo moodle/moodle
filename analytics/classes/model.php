@@ -160,7 +160,7 @@ class model {
      *
      * It includes the indicators that are part of the model.
      *
-     * @return \core_analytics\local\indicator\base
+     * @return \core_analytics\local\indicator\base[]
      */
     public function get_potential_indicators() {
 
@@ -253,13 +253,14 @@ class model {
     }
 
     /**
-     * create
+     * Creates a new model. Enables it if $timesplittingid is specified.
      *
      * @param \core_analytics\local\target\base $target
      * @param \core_analytics\local\indicator\base[] $indicators
+     * @param string $timesplittingid The time splitting method id (its fully qualified class name)
      * @return \core_analytics\model
      */
-    public static function create(\core_analytics\local\target\base $target, array $indicators) {
+    public static function create(\core_analytics\local\target\base $target, array $indicators, $timesplittingid = false) {
         global $USER, $DB;
 
         $indicatorclasses = self::indicator_classes($indicators);
@@ -279,10 +280,28 @@ class model {
         // Get db defaults.
         $modelobj = $DB->get_record('analytics_models', array('id' => $id), '*', MUST_EXIST);
 
-        return new static($modelobj);
+        $model = new static($modelobj);
+
+        if ($timesplittingid) {
+            $model->enable($timesplittingid);
+        }
+
+        if ($model->is_static()) {
+            $model->mark_as_trained();
+        }
+
+        return $model;
     }
 
-    public function update($enabled, $indicators, $timesplitting = '') {
+    /**
+     * update
+     *
+     * @param int|bool $enabled
+     * @param \core_analytics\local\indicator\base[] $indicators
+     * @param string $timesplittingid
+     * @return void
+     */
+    public function update($enabled, $indicators, $timesplittingid = '') {
         global $USER, $DB;
 
         $now = time();
@@ -290,7 +309,7 @@ class model {
         $indicatorclasses = self::indicator_classes($indicators);
 
         $indicatorsstr = json_encode($indicatorclasses);
-        if ($this->model->timesplitting !== $timesplitting ||
+        if ($this->model->timesplitting !== $timesplittingid ||
                 $this->model->indicators !== $indicatorsstr) {
             // We update the version of the model so different time splittings are not mixed up.
             $this->model->version = $now;
@@ -304,9 +323,9 @@ class model {
             // Reset trained flag.
             $this->model->trained = 0;
         }
-        $this->model->enabled = $enabled;
+        $this->model->enabled = intval($enabled);
         $this->model->indicators = $indicatorsstr;
-        $this->model->timesplitting = $timesplitting;
+        $this->model->timesplitting = $timesplittingid;
         $this->model->timemodified = $now;
         $this->model->usermodified = $USER->id;
 
@@ -336,6 +355,13 @@ class model {
      * @return \stdClass[]
      */
     public function evaluate($options = array()) {
+
+        if ($this->is_static()) {
+            $this->get_analyser()->add_log(get_string('noevaluationbasedassumptions', 'analytics'));
+            $result = new \stdClass();
+            $result->status = self::OK;
+            return $result;
+        }
 
         // Increase memory limit.
         $this->increase_memory();
@@ -409,10 +435,17 @@ class model {
     public function train() {
         global $DB;
 
+        if ($this->is_static()) {
+            $this->get_analyser()->add_log(get_string('notrainingbasedassumptions', 'analytics'));
+            $result = new \stdClass();
+            $result->status = self::OK;
+            return $result;
+        }
+
         // Increase memory limit.
         $this->increase_memory();
 
-        if ($this->model->enabled == false || empty($this->model->timesplitting)) {
+        if (!$this->is_enabled() || empty($this->model->timesplitting)) {
             throw new \moodle_exception('invalidtimesplitting', 'analytics', '', $this->model->id);
         }
 
@@ -466,7 +499,7 @@ class model {
         // Increase memory limit.
         $this->increase_memory();
 
-        if ($this->model->enabled == false || empty($this->model->timesplitting)) {
+        if (!$this->is_enabled() || empty($this->model->timesplitting)) {
             throw new \moodle_exception('invalidtimesplitting', 'analytics', '', $this->model->id);
         }
 
@@ -478,7 +511,9 @@ class model {
         $outputdir = $this->get_output_dir(array('execution'));
 
         // Before get_unlabelled_data call so we get an early exception if it is not ready.
-        $predictor = \core_analytics\manager::get_predictions_processor();
+        if (!$this->is_static()) {
+            $predictor = \core_analytics\manager::get_predictions_processor();
+        }
 
         $samplesdata = $this->get_analyser()->get_unlabelled_data();
 
@@ -498,56 +533,73 @@ class model {
             throw new \moodle_exception('erroralreadypredict', 'analytics', '', $samplesfile->get_id());
         }
 
-        $predictorresult = $predictor->predict($this->get_unique_id(), $samplesfile, $outputdir);
+        $indicatorcalculations = \core_analytics\dataset_manager::get_structured_data($samplesfile);
 
+        // Prepare the results object.
         $result = new \stdClass();
-        $result->status = $predictorresult->status;
-        $result->info = $predictorresult->info;
 
-        $calculations = \core_analytics\dataset_manager::get_structured_data($samplesfile);
+        if ($this->is_static()) {
+            // Prediction based on assumptions.
+            $result->status = \core_analytics\model::OK;
+            $result->info = [];
+            $result->predictions = $this->get_static_predictions($indicatorcalculations);
+
+        } else {
+            // Defer the prediction to the machine learning backend.
+            $predictorresult = $predictor->predict($this->get_unique_id(), $samplesfile, $outputdir);
+
+            $result->status = $predictorresult->status;
+            $result->info = $predictorresult->info;
+            $result->predictions = array();
+            if ($predictorresult->predictions) {
+                foreach ($predictorresult->predictions as $sampleinfo) {
+
+                    // We parse each prediction
+                    switch (count($sampleinfo)) {
+                        case 1:
+                            // For whatever reason the predictions processor could not process this sample, we
+                            // skip it and do nothing with it.
+                            debugging($this->model->id . ' model predictions processor could not process the sample with id ' .
+                                $sampleinfo[0], DEBUG_DEVELOPER);
+                            continue;
+                        case 2:
+                            // Prediction processors that do not return a prediction score will have the maximum prediction
+                            // score.
+                            list($uniquesampleid, $prediction) = $sampleinfo;
+                            $predictionscore = 1;
+                            break;
+                        case 3:
+                            list($uniquesampleid, $prediction, $predictionscore) = $sampleinfo;
+                            break;
+                        default:
+                            break;
+                    }
+                    $predictiondata = (object)['prediction' => $prediction, 'predictionscore' => $predictionscore];
+                    $result->predictions[$uniquesampleid] = $predictiondata;
+                }
+            }
+        }
 
         // Here we will store all predictions' contexts, this will be used to limit which users will see those predictions.
         $samplecontexts = array();
 
-        if ($predictorresult) {
-            $result->predictions = $predictorresult->predictions;
-            foreach ($result->predictions as $sampleinfo) {
+        if ($result->predictions) {
+            foreach ($result->predictions as $uniquesampleid => $prediction) {
 
-                // We parse each prediction
-                switch (count($sampleinfo)) {
-                    case 1:
-                        // For whatever reason the predictions processor could not process this sample, we
-                        // skip it and do nothing with it.
-                        debugging($this->model->id . ' model predictions processor could not process the sample with id ' .
-                            $sampleinfo[0], DEBUG_DEVELOPER);
-                        continue;
-                    case 2:
-                        // Prediction processors that do not return a prediction score will have the maximum prediction
-                        // score.
-                        list($uniquesampleid, $prediction) = $sampleinfo;
-                        $predictionscore = 1;
-                        break;
-                    case 3:
-                        list($uniquesampleid, $prediction, $predictionscore) = $sampleinfo;
-                        break;
-                    default:
-                        break;
-                }
-
-                if ($this->get_target()->triggers_callback($prediction, $predictionscore)) {
+                if ($this->get_target()->triggers_callback($prediction->prediction, $prediction->predictionscore)) {
 
                     // The unique sample id contains both the sampleid and the rangeindex.
                     list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
 
                     // Store the predicted values.
-                    $samplecontext = $this->save_prediction($sampleid, $rangeindex, $prediction, $predictionscore,
-                        json_encode($calculations[$uniquesampleid]));
+                    $samplecontext = $this->save_prediction($sampleid, $rangeindex, $prediction->prediction, $prediction->predictionscore,
+                        json_encode($indicatorcalculations[$uniquesampleid]));
 
                     // Also store all samples context to later generate insights or whatever action the target wants to perform.
                     $samplecontexts[$samplecontext->id] = $samplecontext;
 
                     $this->get_target()->prediction_callback($this->model->id, $sampleid, $rangeindex, $samplecontext,
-                        $prediction, $predictionscore);
+                        $prediction->prediction, $prediction->predictionscore);
                 }
             }
         }
@@ -566,6 +618,92 @@ class model {
         $this->flag_file_as_used($samplesfile, 'predicted');
 
         return $result;
+    }
+
+    /**
+     * get_static_predictions
+     *
+     * @param array $indicatorcalculations
+     * @return \stdClass[]
+     */
+    protected function get_static_predictions(&$indicatorcalculations) {
+
+        // Group samples by analysable for \core_analytics\local\target::calculate.
+        $analysables = array();
+        // List all sampleids together.
+        $sampleids = array();
+
+        foreach ($indicatorcalculations as $uniquesampleid => $indicators) {
+            list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
+
+            $analysable = $this->get_analyser()->get_sample_analysable($sampleid);
+            $analysableclass = get_class($analysable);
+            if (empty($analysables[$analysableclass])) {
+                $analysables[$analysableclass] = array();
+            }
+            if (empty($analysables[$analysableclass][$rangeindex])) {
+                $analysables[$analysableclass][$rangeindex] = (object)[
+                    'analysable' => $analysable,
+                    'indicatorsdata' => array(),
+                    'sampleids' => array()
+                ];
+            }
+            // Using the sampleid as a key so we can easily merge indicators data later.
+            $analysables[$analysableclass][$rangeindex]->indicatorsdata[$sampleid] = $indicators;
+            // We could use indicatorsdata keys but the amount of redundant data is not that big and leaves code below cleaner.
+            $analysables[$analysableclass][$rangeindex]->sampleids[$sampleid] = $sampleid;
+
+            // Accumulate sample ids to get all their associated data in 1 single db query (analyser::get_samples).
+            $sampleids[$sampleid] = $sampleid;
+        }
+
+        // Get all samples data.
+        list($sampleids, $samplesdata) = $this->get_analyser()->get_samples($sampleids);
+
+        // Calculate the targets.
+        $calculations = array();
+        foreach ($analysables as $analysableclass => $rangedata) {
+            foreach ($rangedata as $rangeindex => $data) {
+
+                // Attach samples data and calculated indicators data.
+                $this->get_target()->clear_sample_data();
+                $this->get_target()->add_sample_data($samplesdata);
+                $this->get_target()->add_sample_data($data->indicatorsdata);
+
+                // Append new elements (we can not get duplicated because sample-analysable relation is N-1).
+                $range = $this->get_time_splitting()->get_range_by_index($rangeindex);
+                $calculations = $this->get_target()->calculate($data->sampleids, $data->analysable, $range['start'], $range['end']);
+
+                // Missing $indicatorcalculations values in $calculations are caused by is_valid_sample. We need to remove
+                // these $uniquesampleid from $indicatorcalculations because otherwise they will be stored as calculated
+                // by self::save_prediction.
+                $indicatorcalculations = array_filter($indicatorcalculations, function($indicators, $uniquesampleid) use ($calculations) {
+                    list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
+                    if (!isset($calculations[$sampleid])) {
+                        debugging($uniquesampleid . ' discarded by is_valid_sample');
+                        return false;
+                    }
+                    return true;
+                }, ARRAY_FILTER_USE_BOTH);
+
+                foreach ($calculations as $sampleid => $value) {
+
+                    $uniquesampleid = $this->get_time_splitting()->append_rangeindex($sampleid, $rangeindex);
+
+                    // Null means that the target couldn't calculate the sample, we also remove them from $indicatorcalculations.
+                    if (is_null($calculations[$sampleid])) {
+                        debugging($uniquesampleid . ' discarded by is_valid_sample');
+                        unset($indicatorcalculations[$uniquesampleid]);
+                        continue;
+                    }
+
+                    // Even if static predictions are based on assumptions we flag them as 100% because they are 100%
+                    // true according to what the developer defined.
+                    $predictions[$uniquesampleid] = (object)['prediction' => $value, 'predictionscore' => 1];
+                }
+            }
+        }
+        return $predictions;
     }
 
     /**
@@ -632,6 +770,15 @@ class model {
     }
 
     /**
+     * is_static
+     *
+     * @return bool
+     */
+    public function is_static() {
+        return (bool)$this->get_target()->based_on_assumptions();
+    }
+
+    /**
      * is_enabled
      *
      * @return bool
@@ -646,7 +793,8 @@ class model {
      * @return bool
      */
     public function is_trained() {
-        return (bool)$this->model->trained;
+        // Models which targets are based on assumptions do not need training.
+        return (bool)$this->model->trained || $this->is_static();
     }
 
     /**

@@ -36,7 +36,8 @@ class single_range extends base {
         return [
             [
                 'start' => $this->analysable->get_start(),
-                'end' => $this->analysable->get_end()
+                'end' => $this->analysable->get_end(),
+                'time' => $this->analysable->get_end()
             ]
         ];
     }

@@ -106,7 +106,7 @@ abstract class discrete extends base {
      * a target with classes 'grade 0-3', 'grade 3-6', 'grade 6-8' and 'grade 8-10' is interested in flagging both 'grade 0-3'
      * and 'grade 3-6'. On the other hand, a target like dropout risk with classes 'yes', 'no' may just be interested in 'yes'.
      *
-     * @return array
+     * @return array List of values that will be ignored (array keys are ignored).
      */
     protected function ignored_predicted_classes() {
         // Coding exception as this will only be called if this target have non-linear values.
