@@ -2630,6 +2630,20 @@ class company {
             self::update_license_usage($parentid);
         }
 
+        // Update the timeend for any users using this license.
+        if (!empty($licenserecord->type)) {
+            if ($enrolments = $DB->get_records_sql("SELECT e.id FROM {enrol} e
+                                                    JOIN {companylicense_courses} clc ON (e.courseid = clc.courseid AND e.status = 0)
+                                                    WHERE clc.licenseid = :licenseid",
+                                                    array('licenseid' => $licenseid))) {
+                foreach ($enrolments as $enrolid) {
+                    $DB->execute("UPDATE {user_enrolments} SET timeend = :timeend
+                                  WHERE enrolid = :enrolid",
+                                  array('timeend' => $licenswerecord->expirydate, 'enrolid' => $enrolid->id));
+                }
+            }
+        }
+
         return true;
     }
 
