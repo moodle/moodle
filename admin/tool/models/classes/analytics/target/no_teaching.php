@@ -58,7 +58,7 @@ class no_teaching extends \core_analytics\local\target\binary {
         $course = $sampledata['course'];
 
         $url = new \moodle_url('/course/view.php', array('id' => $course->id));
-        $pix = new \pix_icon('i/course', get_string('enrolledusers', 'enrol'));
+        $pix = new \pix_icon('i/course', get_string('course'));
         $actions['viewcourse'] = new \core_analytics\prediction_action('viewcourse', $prediction,
             $url, $pix, get_string('view'));
 
@@ -97,18 +97,30 @@ class no_teaching extends \core_analytics\local\target\binary {
     }
 
     public function get_analyser_class() {
-        return '\\core_analytics\\local\\analyser\\courses';
+        return '\\core_analytics\\local\\analyser\\site_courses';
     }
 
-    public function is_valid_analysable(\core_analytics\analysable $site, $fortraining = true) {
+    public function is_valid_analysable(\core_analytics\analysable $analysable, $fortraining = true) {
         // The analysable is the site, so yes, it is always valid.
         return true;
     }
 
-    public function is_valid_sample($sampleid, \core_analytics\analysable $site) {
+    /**
+     * Only process samples which start date is getting close.
+     *
+     * @param mixed $sampleid
+     * @param \core_analytics\analysable $analysable
+     * @return void
+     */
+    public function is_valid_sample($sampleid, \core_analytics\analysable $analysable) {
 
         $course = $this->retrieve('course', $sampleid);
-        if (!$course->startdate || $course->startdate - WEEKSECS > time()) {
+
+        $now = time();
+
+        // No courses without start date, no finished courses nor predictions before start - 1 week.
+        if (!$course->startdate || (!empty($course->enddate) && $course->enddate < $now) ||
+                $course->startdate - WEEKSECS > $now) {
             return false;
         }
         return true;
@@ -118,10 +130,10 @@ class no_teaching extends \core_analytics\local\target\binary {
      * calculate_sample
      *
      * @param int $sampleid
-     * @param \core_analytics\analysable $site
+     * @param \core_analytics\analysable $analysable
      * @return void
      */
-    protected function calculate_sample($sampleid, \core_analytics\analysable $site, $starttime = false, $endtime = false) {
+    protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false) {
 
         $noteachersindicator = $this->retrieve('\core_course\analytics\indicator\no_teacher', $sampleid);
         if ($noteachersindicator == \core_course\analytics\indicator\no_teacher::get_min_value()) {

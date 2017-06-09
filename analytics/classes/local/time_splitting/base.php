@@ -107,7 +107,7 @@ abstract class base {
     }
 
     /**
-     * Calculates the course students indicators and targets.
+     * Calculates indicators and targets.
      *
      * @param array $sampleids
      * @param string $samplesorigin
@@ -153,7 +153,7 @@ abstract class base {
     }
 
     /**
-     * Calculates indicators for all course students.
+     * Calculates indicators.
      *
      * @return array
      */

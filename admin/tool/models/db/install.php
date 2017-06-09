@@ -40,7 +40,7 @@ function xmldb_tool_models_install() {
 
     // Course without teachers.
     $target = \core_analytics\manager::get_target('\tool_models\analytics\target\no_teaching');
-    $weekbeforestart = '\core_analytics\local\time_splitting\week_before_course_start';
+    $weekbeforestart = '\core_analytics\local\time_splitting\single_range';
     $noteacher = \core_analytics\manager::get_indicator('\core_course\analytics\indicator\no_teacher');
     \core_analytics\model::create($target, array($noteacher->get_id() => $noteacher), $weekbeforestart);
 }

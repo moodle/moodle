@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Courses analyser working at course level (insights for the course teachers).
+ * Site courses analyser working at system level (insights for the site admin).
  *
  * @package   core_analytics
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
@@ -27,13 +27,13 @@ namespace core_analytics\local\analyser;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Courses analyser working at course level (insights for the course teachers).
+ * Site courses analyser working at system level (insights for the site admin).
  *
  * @package   core_analytics
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class courses extends by_course {
+class site_courses extends sitewide {
 
     public function get_samples_origin() {
         return 'course';
@@ -46,7 +46,7 @@ class courses extends by_course {
      * @return \core_analytics\analysable
      */
     public function get_sample_analysable($sampleid) {
-        return new \core_analytics\course($sampleid);
+        return new \core_analytics\site();
     }
 
     protected function provided_sample_data() {
@@ -54,34 +54,28 @@ class courses extends by_course {
     }
 
     public function sample_access_context($sampleid) {
-        return \context_course::instance($sampleid);
+        return \context_system::instance();
     }
 
-    /**
-     * get_all_samples
-     *
-     * @param \core_analytics\analysable $course
-     * @return array
-     */
-    protected function get_all_samples(\core_analytics\analysable $course) {
+    protected function get_all_samples(\core_analytics\analysable $site) {
         global $DB;
 
-        $coursedata = $course->get_course_data();
-        $context = \context_course::instance($course->get_id());
+        // Getting courses from DB instead of from the site as these samples
+        // will be stored in memory and we just want the id.
+        $select = 'id != 1';
+        $courses = $DB->get_records_select('course', $select, null, '', '*');
 
-        // Just 1 sample per analysable.
-        return array(
-            array($course->get_id() => $course->get_id()),
-            array($course->get_id() => array('course' => $course, 'context' => $context))
-        );
+        $courseids = array_keys($courses);
+        $sampleids = array_combine($courseids, $courseids);
+
+        $courses = array_map(function($course) {
+            return array('course' => $course, 'context' => \context_course::instance($course->id));
+        }, $courses);
+
+        // No related data attached.
+        return array($sampleids, $courses);
     }
 
-    /**
-     * get_samples
-     *
-     * @param int[] $sampleids
-     * @return array
-     */
     public function get_samples($sampleids) {
         global $DB;
 
@@ -105,7 +99,7 @@ class courses extends by_course {
      * @param int $sampleid
      * @param int $contextid
      * @param array $sampledata
-     * @return array
+     * @return void
      */
     public function sample_description($sampleid, $contextid, $sampledata) {
         $description = format_string($sampledata['course']->fullname, true, array('context' => $sampledata['context']));
