@@ -559,7 +559,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 // so there is definitely something to print.
                 $formattedinfo = \core_availability\info::format_info(
                         $section->availableinfo, $section->course);
-                $o .= $this->courserenderer->availability_info($formattedinfo);
+                $o .= $this->courserenderer->availability_info($formattedinfo, 'isrestricted');
             }
         } else if ($canviewhidden && !empty($CFG->enableavailability)) {
             // Check if there is an availability restriction.
@@ -568,7 +568,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             if ($fullinfo) {
                 $formattedinfo = \core_availability\info::format_info(
                         $fullinfo, $section->course);
-                $o .= $this->courserenderer->availability_info($formattedinfo);
+                $o .= $this->courserenderer->availability_info($formattedinfo, 'isrestricted isfullinfo');
             }
         }
         return $o;
