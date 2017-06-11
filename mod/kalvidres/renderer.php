@@ -68,8 +68,6 @@ class mod_kalvidres_renderer extends plugin_renderer_base {
             'width' => $kalvidres->width,
             'src' => $url->out(false),
             'allowfullscreen' => 'true',
-            'webkitallowfullscreen' => 'true',
-            'mozallowfullscreen' => 'true'
         );
 
         $iframe = html_writer::tag('iframe', '', $attr);

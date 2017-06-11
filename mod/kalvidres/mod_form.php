@@ -207,12 +207,10 @@ class mod_kalvidres_mod_form extends moodleform_mod {
             'height' => $height,
             'width' => $width,
             'allowfullscreen' => 'true',
-            'webkitallowfullscreen' => 'true',
-            'mozallowfullscreen' => 'true'
         );
 
         if ($hide) {
-            $params['style'] = 'display:none';
+            $params['style'] = 'display: none';
         }
 
         // If the source attribute is not empty, initiate an LTI launch to avoid having ACL issues when another user with permissions edits the module.
