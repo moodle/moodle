@@ -54,8 +54,6 @@ $attr = array(
     'height' => '600px',
     'width' => '100%',
     'allowfullscreen' => 'true',
-    'webkitallowfullscreen' => 'true',
-    'mozallowfullscreen' => 'true',
     'src' => 'lti_launch.php'
 );
 echo html_writer::tag('iframe', '', $attr);

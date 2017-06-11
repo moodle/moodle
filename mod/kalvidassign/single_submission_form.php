@@ -70,8 +70,6 @@ class kalvidassign_singlesubmission_form extends moodleform {
                 'height' => $submission->height,
                 'width' => $submission->width,
                 'allowfullscreen' => "true",
-                'webkitallowfullscreen' => "true",
-                'mozallowfullscreen' => "true"
             );
             $mform->addElement('html', html_writer::tag('iframe', '', $attr));
         }
