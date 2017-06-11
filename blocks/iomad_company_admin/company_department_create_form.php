@@ -24,11 +24,11 @@ require_once('lib.php');
 require_once(dirname(__FILE__) . '/../../course/lib.php');
 
 class department_display_form extends company_moodleform {
-    protected $selectedcompany = 0;
+    protected $selectedepartmentdcompany = 0;
     protected $context = null;
     protected $company = null;
 
-    public function __construct($actionurl, $companyid, $departmentid) {
+    public function __construct($actionurl, $companyid, $departmentid, $output, $chosenid=0, $action=0) {
         global $CFG, $USER;
 
         $this->selectedcompany = $companyid;
@@ -46,6 +46,9 @@ class department_display_form extends company_moodleform {
         }
 
         $this->departmentid = $userhierarchylevel;
+        $this->output = $output;
+        $this->chosenid = $chosenid;
+        $this->action = $action;
         parent::__construct($actionurl);
     }
 
@@ -74,6 +77,8 @@ class department_display_form extends company_moodleform {
 
         // Create the sub department checkboxes html.
         $subdepartmenthtml = "";
+        $departmenttree = company::get_all_departments_raw($company->id);
+        $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
 
         if (!empty($subdepartmentslist)) {
             $subdepartmenthtml = "<p>".get_string('subdepartments', 'block_iomad_company_admin').
@@ -92,7 +97,15 @@ class department_display_form extends company_moodleform {
         if (count($departmentslist) == 1) {
             $mform->addElement('html', "<h3>" . get_string('nodepartments', 'block_iomad_company_admin') . "</h3></br>");
         }
-        $mform->addElement('html', $subdepartmenthtml);
+        $mform->addElement('html', '<p>' . get_string('parentdepartment', 'block_iomad_company_admin') . '</p>');
+        $mform->addElement('html', $treehtml);
+        //$mform->addElement('html', $subdepartmenthtml);
+
+        // This is getting hidden anyway, so no need for label
+        $mform->addElement('select', 'deptid', ' ',
+                            $departmentslist, array('class' => 'iomad_department_select'));
+        $mform->disabledIf('deptid', 'action', 'eq', 1);
+
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'create',
                                 get_string('createdepartment', 'block_iomad_company_admin'));
@@ -241,7 +254,7 @@ $companyid = iomad::get_my_companyid($context);
 // Parameter is name of proper select form element. 
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid'));
 
-$mform = new department_display_form($PAGE->url, $companyid, $departmentid);
+$mform = new department_display_form($PAGE->url, $companyid, $departmentid, $output);
 $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output);
 
 if ($mform->is_cancelled()) {
@@ -256,52 +269,49 @@ if ($mform->is_cancelled()) {
         }
         $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output, $chosenid);
         $editform->set_data(array('deptid' => $chosenid));
-        echo $OUTPUT->header();
+        echo $output->header();
         // Check the department is valid.
         if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
             print_error('invaliddepartment', 'block_iomad_company_admin');
         }   
 
         $editform->display();
-        echo $OUTPUT->footer();
+        echo $output->footer();
     } else if (isset($data->delete)) {
-        // Get the list of department ids which are to be removed..
-        if (!empty($deleteids)) {
-            foreach ($deleteids as $deletedept) {
-                // Check if department has already been removed.
-                if (company::check_valid_department($companyid, $deletedept)) {
-                    // If not delete it and its sub departments moving users to
-                    // $departmentid or the company parent id if not set (==0).
-                    company::delete_department_recursive($deletedept, $departmentid);
-                }
-            }
-        }
-        $mform = new department_display_form($PAGE->url, $companyid, $departmentid);
-        // Redisplay the form.
-        echo $OUTPUT->header();
         // Check the department is valid.
         if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
             print_error('invaliddepartment', 'block_iomad_company_admin');
         }   
 
-        if (empty($deleteids)) {
+        if (empty($departmentid)) {
             echo get_string('departmentnoselect', 'block_iomad_company_admin');
         }
+        // Get the list of department ids which are to be removed..
+        if (!empty($departmentid)) {
+            // Check if department has already been removed.
+            if (company::check_valid_department($companyid, $departmentid)) {
+                // If not delete it and its sub departments moving users to
+                // $departmentid or the company parent id if not set (==0).
+                company::delete_department_recursive($departmentid, $departmentid);
+            }
+        }
+        $mform = new department_display_form($PAGE->url, $companyid, $departmentid, $output);
+        // Redisplay the form.
+        echo $output->header();
         $mform->display();
-        echo $OUTPUT->footer();
+        echo $output->footer();
         die;
 
     } else if (isset($data->edit)) {
         // Editing an existing department.
-        if (!empty($deleteids)) {
-            $department = array_shift($deleteids);
-            $departmentrecord = $DB->get_record('department', array('id' => $department));
+        if (!empty($departmentid)) {
+            $departmentrecord = $DB->get_record('department', array('id' => $departmentid));
             $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output, 0, 1);
             $editform->set_data(array('departmentid' => $departmentrecord->id,
                                       'fullname' => $departmentrecord->name,
                                       'shortname' => $departmentrecord->shortname,
                                       'chosenid' => $departmentid));
-            echo $OUTPUT->header();
+            echo $output->header();
 
             // Check the department is valid.
             if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -310,9 +320,9 @@ if ($mform->is_cancelled()) {
 
             $editform->display();
 
-            echo $OUTPUT->footer();
+            echo $output->footer();
         } else {
-            echo $OUTPUT->header();
+            echo $output->header();
             // Check the department is valid.
             if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
                 print_error('invaliddepartment', 'block_iomad_company_admin');
@@ -320,7 +330,7 @@ if ($mform->is_cancelled()) {
 
             echo get_string('departmentnoselect', 'block_iomad_company_admin');
             $mform->display();
-            echo $OUTPUT->footer();
+            echo $output->footer();
             die;
         }
 
@@ -344,9 +354,9 @@ if ($mform->is_cancelled()) {
                                    $departmentid);
     }
 
-    $mform = new department_display_form($PAGE->url, $companyid, $departmentid);
+    $mform = new department_display_form($PAGE->url, $companyid, $departmentid, $output);
     // Redisplay the form.
-    echo $OUTPUT->header();
+    echo $output->header();
 
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -355,11 +365,11 @@ if ($mform->is_cancelled()) {
 
     $mform->display();
 
-    echo $OUTPUT->footer();
+    echo $output->footer();
 
 } else {
 
-    echo $OUTPUT->header();
+    echo $output->header();
 
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -368,6 +378,6 @@ if ($mform->is_cancelled()) {
 
     $mform->display();
 
-    echo $OUTPUT->footer();
+    echo $output->footer();
 }
 
