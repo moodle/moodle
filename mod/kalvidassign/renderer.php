@@ -1001,7 +1001,6 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         $source = new moodle_url('/local/kaltura/pix/vidThumb.png');
         $alt    = get_string('video_thumbnail', 'mod_kalvidassign');
         $title  = get_string('video_thumbnail', 'mod_kalvidassign');
-        $iframe = '';
         $url = null;
 
         $attr = array(
@@ -1030,6 +1029,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
 
         $params = array(
             'id' => 'contentframe',
+            'class' => 'kaltura-player-iframe',
             'src' => ($url instanceof moodle_url) ? $url->out(false) : '',
             'allowfullscreen' => "true",
             'webkitallowfullscreen' => "true",
@@ -1043,8 +1043,11 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         }
 
         $iframe = html_writer::tag('iframe', '', $params);
+        $iframeContainer = html_writer::tag('div', $iframe, array(
+            'class' => 'kaltura-player-container'
+        ));
 
-        $output .= html_writer::tag('center', $iframe);
+        $output .= $iframeContainer;
 
         return $output;
     }

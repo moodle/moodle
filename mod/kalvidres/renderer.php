@@ -63,6 +63,7 @@ class mod_kalvidres_renderer extends plugin_renderer_base {
 
         $attr = array(
             'id' => 'contentframe',
+            'class' => 'kaltura-player-iframe',
             'height' => '100%',
             'width' => $kalvidres->width,
             'src' => $url->out(false),
@@ -71,8 +72,11 @@ class mod_kalvidres_renderer extends plugin_renderer_base {
             'mozallowfullscreen' => 'true'
         );
 
-        $output = html_writer::tag('iframe', '', $attr);
-        $output = html_writer::tag('center', $output);
-        return $output;
+        $iframe = html_writer::tag('iframe', '', $attr);
+        $iframeContainer = html_writer::tag('div', $iframe, array(
+            'class' => 'kaltura-player-container'
+        ));
+
+        return $iframeContainer;
     }
 }

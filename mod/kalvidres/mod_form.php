@@ -150,7 +150,7 @@ class mod_kalvidres_mod_form extends moodleform_mod {
         $videopreview = $this->get_iframe_video_preview_markup($addinstance);
 
         $mform->addElement('static', 'add_video_thumb', '&nbsp;', $thumbnail);
-        $mform->addElement('static', 'add_video_preview', '&nbsp;', $videopreview);
+        $mform->addElement('html', $videopreview);
 
         $videogroup = array();
         if ($addinstance) {
@@ -202,6 +202,7 @@ class mod_kalvidres_mod_form extends moodleform_mod {
 
         $params = array(
             'id' => 'contentframe',
+            'class' => 'kaltura-player-iframe',
             'src' => $source,
             'height' => $height,
             'width' => $width,
@@ -229,7 +230,13 @@ class mod_kalvidres_mod_form extends moodleform_mod {
             $params['src'] = $url->out(false);
         }
 
-        return html_writer::tag('iframe', '', $params);
+        $iframe = html_writer::tag('iframe', '', $params);
+
+        $iframeContainer = html_writer::tag('div', $iframe, array(
+            'class' => 'kaltura-player-container'
+        ));
+
+        return $iframeContainer;
     }
 
     /**
