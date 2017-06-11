@@ -1538,7 +1538,6 @@ class company {
         global $DB;
 
         if (!$licenseinfo = $DB->get_record('companylicense', array('id' => $licenseid))) {
-echo "A</br>";
             return false;
         }
         // Get the child companies.
