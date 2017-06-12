@@ -1,5 +1,3 @@
-YUI.add('moodle-local_kaltura-ltiservice', function (Y, NAME) {
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -120,6 +118,3 @@ M.local_kaltura = M.local_kaltura || {};
 M.local_kaltura.init = function(params) {
     return new LTISERVICE(params);
 };
-
-
-}, '@VERSION@', {"requires": ["base", "node", "node-event-simulate"]});

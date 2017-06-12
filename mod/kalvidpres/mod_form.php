@@ -214,8 +214,6 @@ class mod_kalvidpres_mod_form extends moodleform_mod {
             'height' => $height,
             'width' => $width,
             'allowfullscreen' => 'true',
-            'webkitallowfullscreen' => 'true',
-            'mozallowfullscreen' => 'true'
         );
 
         if ($hide) {

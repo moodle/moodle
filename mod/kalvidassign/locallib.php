@@ -219,7 +219,7 @@ function kalvidassign_email_teachers($cm, $name, $submission, $context) {
             $posttext = kalvidassign_email_teachers_text($info);
             $posthtml = ($teacher->mailformat == 1) ? kalvidassign_email_teachers_html($info) : '';
 
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
             $eventdata->modulename       = 'kalvidassign';
             $eventdata->userfrom         = $user;
             $eventdata->userto           = $teacher;
