@@ -1078,6 +1078,8 @@ function lesson_get_user_detailed_report_data(lesson $lesson, $userid, $attempt)
     while ($pageid != 0) { // EOL
         $page = $lessonpages[$pageid];
         $answerpage = new stdClass;
+        // Keep the original page object.
+        $answerpage->page = $page;
         $data ='';
 
         $answerdata = new stdClass;
