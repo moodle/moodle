@@ -147,9 +147,6 @@ class filter_kaltura extends moodle_text_filter {
  * @return string Kaltura embed video markup.
  */
 function filter_kaltura_callback($link) {
-    global $CFG;
-    $newtext = $link[0];
-
     $newurl = $link[1];
     if (!empty($newurl)) {
         // Check to see if token is being used in url and replace with kaf_uri.
@@ -161,11 +158,16 @@ function filter_kaltura_callback($link) {
 
     $newurl = preg_replace('#https?://#','',$newurl);
     $kafuri = preg_replace('#https?://#', '', filter_kaltura::$kafuri);
+
+    $width = filter_kaltura::$defaultwidth;
+    $height = filter_kaltura::$defaultheight;
+    $source = '';
+
     // Convert KAF URI anchor tags into iframe markup.
     if (14 == count($link) && $newurl == $kafuri) {
         // Get the height and width of the iframe.
         $properties = explode('||', $link[13]);
-        
+
         $width = $properties[2];
         $height = $properties[3];
 
@@ -176,61 +178,37 @@ function filter_kaltura_callback($link) {
         $source = filter_kaltura::$kafuri.'/browseandembed/index/media/entryid/'.$link[2].'/showDescription/'.$link[4].'/showTitle/'.$link[5];
         $source .= '/showTags/'.$link[6].'/showDuration/'.$link[7].'/showOwner/'.$link[8].'/showUploadDate/'.$link[9];
         $source .= '/playerSize/'.$width.'x'.$height.'/playerSkin/'.$link[12];
-
-        // Iniitate an LTI launch.
-        $params = array(
-            'courseid' => filter_kaltura::$pagecontext->instanceid,
-            'height' => $height,
-            'width' => $width,
-            'withblocks' => 0,
-            'source' => $source
-        );
-        $url = new moodle_url('/filter/kaltura/lti_launch.php', $params);
-
-        $attr = array(
-            'id' => 'contentframe',
-            'height' => $height,
-            'width' => $width,
-            'allowfullscreen' => 'true',
-            'webkitallowfullscreen' => 'true',
-            'mozallowfullscreen' => 'true',
-            'src' => $url->out(false),
-            'frameborder' => '0'
-        );
-
-        $newtext = html_writer::tag('iframe', '', $attr);
     }
 
     // Convert v3 anchor tags into iframe markup.
     if (7 == count($link) && $link[1] == filter_kaltura::$apiurl) {
         $source = filter_kaltura::$kafuri.'/browseandembed/index/media/entryid/'.$link[4].'/playerSize/';
         $source .= filter_kaltura::$defaultwidth.'x'.filter_kaltura::$defaultheight.'/playerSkin/'.$link[3];
-
-        // Iniitate an LTI launch.
-        $params = array(
-            'courseid' => filter_kaltura::$pagecontext->instanceid,
-            'height' => filter_kaltura::$defaultheight,
-            'width' => filter_kaltura::$defaultwidth,
-            'withblocks' => 0,
-            'source' => $source
-        );
-
-        $url = new moodle_url('/filter/kaltura/lti_launch.php', $params);
-
-        $attr = array(
-            'id' => 'contentframe',
-            'height' => filter_kaltura::$defaultheight,
-            'width' => filter_kaltura::$defaultwidth,
-            'allowfullscreen' => 'true',
-            'webkitallowfullscreen' => 'true',
-            'mozallowfullscreen' => 'true',
-            'src' => $url->out(false),
-            'frameborder' => '0'
-        );
-
-        $newtext = html_writer::tag('iframe', '', $attr);
-
     }
 
-    return $newtext;
+    $params = array(
+        'courseid' => filter_kaltura::$pagecontext->instanceid,
+        'height' => $height,
+        'width' => $width,
+        'withblocks' => 0,
+        'source' => $source
+
+    );
+
+    $url = new moodle_url('/filter/kaltura/lti_launch.php', $params);
+
+    $iframe = html_writer::tag('iframe', '', array(
+        'width' => $width,
+        'height' => $height,
+        'class' => 'kaltura-player-iframe',
+        'allowfullscreen' => 'true',
+        'src' => $url->out(false),
+        'frameborder' => '0'
+    ));
+
+    $iframeContainer = html_writer::tag('div', $iframe, array(
+        'class' => 'kaltura-player-container'
+    ));
+
+    return $iframeContainer;
 }

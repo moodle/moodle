@@ -266,6 +266,7 @@ function local_kaltura_format_lti_instance_object($ltirequest) {
     $lti->instructorchoiceallowroster = LTI_SETTING_NEVER;
     $lti->resourcekey  = $configsettings->partner_id;
     $lti->password = $configsettings->adminsecret;
+    $lti->introformat = FORMAT_MOODLE;
     // The Kaltura tool URL includes the account partner id.
     $newuri = $configsettings->kaf_uri;
     $lti->toolurl = $newuri;
