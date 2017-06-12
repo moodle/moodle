@@ -295,6 +295,28 @@ function xmldb_assign_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
+    if ($oldversion < 2017061200) {
+        // Data fix any assign group override event priorities which may have been accidentally nulled due to a bug on the group
+        // overrides edit form.
+
+        // First, find all assign group override events having null priority (and join their corresponding assign_overrides entry).
+        $sql = "SELECT e.id AS id, o.sortorder AS priority
+                  FROM {assign_overrides} o
+                  JOIN {event} e ON (e.modulename = 'assign' AND o.assignid = e.instance AND e.groupid = o.groupid)
+                 WHERE o.groupid IS NOT NULL AND e.priority IS NULL
+              ORDER BY o.id";
+        $affectedrs = $DB->get_recordset_sql($sql);
+
+        // Now update the event's priority based on the assign_overrides sortorder we found. This uses similar logic to
+        // assign_refresh_events(), except we've restricted the set of assignments and overrides we're dealing with here.
+        foreach ($affectedrs as $record) {
+            $DB->set_field('event', 'priority', $record->priority, ['id' => $record->id]);
+        }
+        $affectedrs->close();
+
+        // Main savepoint reached.
+        upgrade_mod_savepoint(true, 2017061200, 'assign');
+    }
 
     return true;
 }
