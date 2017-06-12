@@ -692,7 +692,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $oldtimemodified = $section->timemodified;
 
         // Update the section.
-        sleep(1); // Ensuring that the section update occurs at a different timestamp.
+        $this->waitForSecond(); // Ensuring that the section update occurs at a different timestamp.
         course_update_section($course, $section, array());
 
         // Check that the time has changed.
