@@ -795,7 +795,8 @@ class restore_rebuild_course_cache extends restore_execution_step {
             if (!$DB->record_exists('course_sections', array('course' => $this->get_courseid(), 'section' => $i))) {
                 $sectionrec = array(
                     'course' => $this->get_courseid(),
-                    'section' => $i);
+                    'section' => $i,
+                    'timemodified' => time());
                 $DB->insert_record('course_sections', $sectionrec); // missing section created
             }
         }
@@ -1575,8 +1576,9 @@ class restore_section_structure_step extends restore_structure_step {
         $section = new stdclass();
         $section->course  = $this->get_courseid();
         $section->section = $data->number;
+        $section->timemodified = isset($data->timemodified) ? $this->apply_date_offset($data->timemodified) : 0;
         // Section doesn't exist, create it with all the info from backup
-        if (!$secrec = $DB->get_record('course_sections', (array)$section)) {
+        if (!$secrec = $DB->get_record('course_sections', ['course' => $this->get_courseid(), 'section' => $data->number])) {
             $section->name = $data->name;
             $section->summary = $data->summary;
             $section->summaryformat = $data->summaryformat;
@@ -1721,8 +1723,12 @@ class restore_section_structure_step extends restore_structure_step {
                     array('id' => $availfield->coursesectionid), MUST_EXIST);
             $newvalue = \core_availability\info::add_legacy_availability_field_condition(
                     $currentvalue, $availfield, $show);
-            $DB->set_field('course_sections', 'availability', $newvalue,
-                    array('id' => $availfield->coursesectionid));
+
+            $section = new stdClass();
+            $section->id = $availfield->coursesectionid;
+            $section->availability = $newvalue;
+            $section->timemodified = time();
+            $DB->update_record('course_sections', $section);
         }
     }
 
@@ -4032,11 +4038,13 @@ class restore_module_structure_step extends restore_structure_step {
         if (!$data->section) { // no sections in course, create section 0 and 1 and assign module to 1
             $sectionrec = array(
                 'course' => $this->get_courseid(),
-                'section' => 0);
+                'section' => 0,
+                'timemodified' => time());
             $DB->insert_record('course_sections', $sectionrec); // section 0
             $sectionrec = array(
                 'course' => $this->get_courseid(),
-                'section' => 1);
+                'section' => 1,
+                'timemodified' => time());
             $data->section = $DB->insert_record('course_sections', $sectionrec); // section 1
         }
         $data->groupingid= $this->get_mappingid('grouping', $data->groupingid);      // grouping
@@ -4090,7 +4098,12 @@ class restore_module_structure_step extends restore_structure_step {
         } else {
             $sequence = $newitemid;
         }
-        $DB->set_field('course_sections', 'sequence', $sequence, array('id' => $data->section));
+
+        $updatesection = new \stdClass();
+        $updatesection->id = $data->section;
+        $updatesection->sequence = $sequence;
+        $updatesection->timemodified = time();
+        $DB->update_record('course_sections', $updatesection);
 
         // If there is the legacy showavailability data, store this for later use.
         // (This data is not present when restoring 'new' backups.)
