@@ -2877,5 +2877,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017061201.00);
     }
 
+    if ($oldversion < 2017061300.01) {
+        // Check if the value of 'navcourselimit' is set to the old default value, if so, change it to the new default.
+        if ($CFG->navcourselimit == 20) {
+            set_config('navcourselimit', 10);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017061300.01);
+    }
+
     return true;
 }
