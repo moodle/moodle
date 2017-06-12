@@ -22,7 +22,7 @@
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/ajax', 'core/notification', 'core/log'], function(Ajax, Notification, Log) {
+define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
     /**
      * Retrieve a list of notifications from the server.
      *
@@ -64,9 +64,7 @@ define(['core/ajax', 'core/notification', 'core/log'], function(Ajax, Notificati
 
         var promise = Ajax.call([request])[0];
 
-        promise.fail(function(e) {
-            Log.error('Could not retrieve notifications count: ' + e.message);
-        });
+        promise.fail(Notification.exception);
 
         return promise;
     };
