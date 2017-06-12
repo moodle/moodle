@@ -66,13 +66,12 @@ class courses extends by_course {
     protected function get_all_samples(\core_analytics\analysable $course) {
         global $DB;
 
-        $coursedata = $course->get_course_data();
         $context = \context_course::instance($course->get_id());
 
         // Just 1 sample per analysable.
         return array(
             array($course->get_id() => $course->get_id()),
-            array($course->get_id() => array('course' => $course, 'context' => $context))
+            array($course->get_id() => array('course' => $course->get_course_data(), 'context' => $context))
         );
     }
 

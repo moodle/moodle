@@ -86,7 +86,7 @@ class analytics_model_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core_analytics\local\analyser\base', $this->model->get_analyser());
 
         $this->model->enable('\core_analytics\local\time_splitting\quarters');
-        $this->assertInstanceOf('\core_analytics\local\analyser\courses', $this->model->get_analyser());
+        $this->assertInstanceOf('\core_analytics\local\analyser\site_courses', $this->model->get_analyser());
     }
 
     public function test_output_dir() {

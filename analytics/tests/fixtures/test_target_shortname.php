@@ -5,7 +5,7 @@ class test_target_shortname extends \core_analytics\local\target\binary {
     protected $predictions = array();
 
     public function get_analyser_class() {
-        return '\core_analytics\local\analyser\courses';
+        return '\core_analytics\local\analyser\site_courses';
     }
 
     public static function classes_description() {
