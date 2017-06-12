@@ -168,7 +168,10 @@ if ($type === 'editor') {
     }
 
     // Older IEs require smaller chunks.
-    $csscontent = $theme->get_css_content();
+    if (!$csscontent = $theme->get_css_cached_content()) {
+        $csscontent = $theme->get_css_content();
+        $theme->set_css_content_cache($csscontent);
+    }
 
     $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
     if (!empty($slashargument)) {
