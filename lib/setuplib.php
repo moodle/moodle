@@ -384,7 +384,14 @@ function default_exception_handler($ex) {
                 // If you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
                 $DB->set_debug(0);
             }
-            echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo,
+            if (AJAX_SCRIPT) {
+                // If we are in an AJAX script we don't want to use PREFERRED_RENDERER_TARGET.
+                // Because we know we will want to use ajax format.
+                $renderer = $PAGE->get_renderer('core', null, 'ajax');
+            } else {
+                $renderer = $OUTPUT;
+            }
+            echo $renderer->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo,
                 $info->errorcode);
         } catch (Exception $e) {
             $out_ex = $e;
