@@ -1,5 +1,10 @@
 This files describes API changes in the auth_ldap code.
 
+=== 3.4 ===
+
+* The "auth_ldap/coursecreators" setting was replaced with dynamically generated "auth_ldap/<role>context" settings,
+  migrating any existing value to a new setting in this style.
+
 === 3.3 ===
 
 * The config.html file was migrated to use the admin settings API.
