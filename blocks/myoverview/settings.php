@@ -15,15 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for the My overview block.
+ * Settings for the overview block.
  *
  * @package    block_myoverview
- * @copyright  Mark Nelson <markn@moodle.com>
+ * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2017051502;         // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017050500;         // Requires this Moodle version.
-$plugin->component = 'block_myoverview'; // Full name of the plugin (used for diagnostics).
+require_once($CFG->dirroot . '/blocks/myoverview/lib.php');
+
+if ($ADMIN->fulltree) {
+
+    $options = [
+        BLOCK_MYOVERVIEW_TIMELINE_VIEW => get_string('timeline', 'block_myoverview'),
+        BLOCK_MYOVERVIEW_COURSES_VIEW => get_string('courses')
+    ];
+
+    $settings->add(new admin_setting_configselect('block_myoverview/defaulttab',
+        get_string('defaulttab', 'block_myoverview'),
+        get_string('defaulttab_desc', 'block_myoverview'), 'timeline', $options));
+}
