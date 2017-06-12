@@ -45,7 +45,7 @@ class student_enrolments extends by_course {
     }
 
     public function sample_access_context($sampleid) {
-        return \context_course::instance($this->get_sample_course($sampleid));
+        return \context_course::instance($this->get_sample_courseid($sampleid));
     }
 
     public function get_sample_analysable($sampleid) {
@@ -64,17 +64,8 @@ class student_enrolments extends by_course {
      * @return void
      */
     protected function get_all_samples(\core_analytics\analysable $course) {
-        global $DB;
 
-        // Using a custom SQL query because we want to include all course enrolments.
-        // TODO Review this is future as does not look ideal
-        // Although we load all the course users data in memory anyway, using recordsets we will
-        // not use the double of the memory required by the end of the iteration.
-        $sql = "SELECT ue.id AS enrolmentid, u.* FROM {user_enrolments} ue
-                  JOIN {enrol} e ON e.id = ue.enrolid
-                  JOIN {user} u ON ue.userid = u.id
-                  WHERE e.courseid = :courseid";
-        $enrolments = $DB->get_recordset_sql($sql, array('courseid' => $course->get_id()));
+        $enrolments = enrol_get_course_users($course->get_id());
 
         // We fetch all enrolments, but we are only interested in students.
         $studentids = $course->get_students();
@@ -97,7 +88,6 @@ class student_enrolments extends by_course {
             // Fill the cache.
             $this->samplecourses[$sampleid] = $course->get_id();
         }
-        $enrolments->close();
 
         $enrolids = array_keys($samplesdata);
         return array(array_combine($enrolids, $enrolids), $samplesdata);
@@ -124,7 +114,7 @@ class student_enrolments extends by_course {
 
             // Enrolment samples are grouped by the course they belong to, so all $sampleids belong to the same
             // course, $courseid and $coursemodinfo will only query the DB once and cache the course data in memory.
-            $courseid = $this->get_sample_course($sampleid);
+            $courseid = $this->get_sample_courseid($sampleid);
             $coursemodinfo = get_fast_modinfo($courseid);
             $coursecontext = \context_course::instance($courseid);
 
@@ -141,22 +131,31 @@ class student_enrolments extends by_course {
         return array(array_combine($enrolids, $enrolids), $samplesdata);
     }
 
-    protected function get_sample_course($sampleid) {
+    /**
+     * Returns the student enrolment course id.
+     *
+     * @param int $sampleid
+     * @return int
+     */
+    protected function get_sample_courseid($sampleid) {
         global $DB;
 
         if (empty($this->samplecourses[$sampleid])) {
-            // TODO New function in enrollib.php.
-            $sql = "SELECT e.courseid
-                      FROM {enrol} e
-                      JOIN {user_enrolments} ue ON ue.enrolid = e.id
-                     WHERE ue.id = :userenrolmentid";
-
-            $this->samplecourses[$sampleid] = $DB->get_field_sql($sql, array('userenrolmentid' => $sampleid));
+            $course = enrol_get_course_by_user_enrolment_id($sampleid);
+            $this->samplecourses[$sampleid] = $course->id;
         }
 
         return $this->samplecourses[$sampleid];
     }
 
+    /**
+     * Returns the visible name of a sample + a renderable to display as sample picture.
+     *
+     * @param int $sampleid
+     * @param int $contextid
+     * @param array $sampledata
+     * @return array
+     */
     public function sample_description($sampleid, $contextid, $sampledata) {
         $description = fullname($sampledata['user'], true, array('context' => $contextid));
         return array($description, new \user_picture($sampledata['user']));

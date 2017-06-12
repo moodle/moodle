@@ -1430,6 +1430,35 @@ function enrol_get_course_by_user_enrolment_id($ueid) {
 }
 
 /**
+ * Return all users enrolled in a course.
+ *
+ * @param int $courseid
+ * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @return stdClass
+ */
+function enrol_get_course_users($courseid, $onlyactive = false) {
+    global $DB;
+
+    $sql = "SELECT ue.id AS enrolmentid, u.* FROM {user_enrolments} ue
+              JOIN {enrol} e ON e.id = ue.enrolid
+              JOIN {user} u ON ue.userid = u.id
+              WHERE e.courseid = :courseid";
+    $params = array('courseid' => $courseid);
+
+    if ($onlyactive) {
+        $subwhere = "AND ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
+        $params['now1']    = round(time(), -2); // improves db caching
+        $params['now2']    = $params['now1'];
+        $params['active']  = ENROL_USER_ACTIVE;
+        $params['enabled'] = ENROL_INSTANCE_ENABLED;
+    } else {
+        $subwhere = "";
+    }
+    $sql = $sql . $subwhere;
+    return $DB->get_records_sql($sql, $params);
+}
+
+/**
  * All enrol plugins should be based on this class,
  * this is also the main source of documentation.
  */
