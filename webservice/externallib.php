@@ -197,6 +197,14 @@ class core_webservice_external extends external_api {
         // User home page.
         $siteinfo['userhomepage'] = get_home_page();
 
+        // Calendar.
+        $siteinfo['sitecalendartype'] = $CFG->calendartype;
+        if (empty($USER->calendartype)) {
+            $siteinfo['usercalendartype'] = $CFG->calendartype;
+        } else {
+            $siteinfo['usercalendartype'] = $USER->calendartype;
+        }
+
         return $siteinfo;
     }
 
@@ -259,7 +267,9 @@ class core_webservice_external extends external_api {
                 'userhomepage' => new external_value(PARAM_INT,
                                                         'the default home page for the user: 0 for the site home, 1 for dashboard',
                                                         VALUE_OPTIONAL),
-                'siteid'  => new external_value(PARAM_INT, 'Site course ID', VALUE_OPTIONAL)
+                'siteid'  => new external_value(PARAM_INT, 'Site course ID', VALUE_OPTIONAL),
+                'sitecalendartype'  => new external_value(PARAM_PLUGIN, 'Calendar type set in the site.', VALUE_OPTIONAL),
+                'usercalendartype'  => new external_value(PARAM_PLUGIN, 'Calendar typed used by the user.', VALUE_OPTIONAL),
             )
         );
     }
