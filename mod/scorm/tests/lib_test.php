@@ -207,6 +207,9 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $scorm->id, SCORM_EVENT_TYPE_OPEN);
 
+        // Only students see scorm events.
+        $this->setUser($this->student);
+
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
 
@@ -261,6 +264,9 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $scorm->id, SCORM_EVENT_TYPE_OPEN);
 
+        // Only students see scorm events.
+        $this->setUser($this->student);
+
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
 
@@ -288,6 +294,9 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $scorm->id, SCORM_EVENT_TYPE_OPEN);
+
+        // Only students see scorm events.
+        $this->setUser($this->student);
 
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
