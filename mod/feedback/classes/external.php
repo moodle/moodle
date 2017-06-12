@@ -1149,6 +1149,8 @@ class mod_feedback_external extends external_api {
 
         $feedbackstructure = new mod_feedback_structure($feedback, $cm, $course->id);
         $responsestable = new mod_feedback_responses_table($feedbackstructure, $groupid);
+        // Ensure responses number is correct prior returning them.
+        $feedbackstructure->shuffle_anonym_responses();
         $anonresponsestable = new mod_feedback_responses_anon_table($feedbackstructure, $groupid);
 
         $result = array(
