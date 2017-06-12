@@ -53,6 +53,7 @@ Feature: Course overview block show users their progress on courses
     And I am on "Course 1" course homepage
     And I follow "Test choice 1"
     And I follow "Dashboard" in the user menu
+    And I click on "Timeline" "link" in the "Course overview" "block"
     And I click on "Sort by courses" "link" in the "Course overview" "block"
     And I should see "100%" in the "Course overview" "block"
     And I click on "Courses" "link" in the "Course overview" "block"

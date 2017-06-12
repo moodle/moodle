@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['defaulttab'] = 'Default tab';
+$string['defaulttab_desc'] = 'This is the default tab that will be shown to a user.';
 $string['future'] = 'Future';
 $string['inprogress'] = 'In progress';
 $string['morecourses'] = 'More courses';

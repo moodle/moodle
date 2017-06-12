@@ -50,7 +50,16 @@ class block_myoverview extends block_base {
             return $this->content;
         }
 
-        $renderable = new \block_myoverview\output\main();
+        // Check if the tab to select wasn't passed in the URL, if so see if the user has any preference.
+        if (!$tab = optional_param('myoverviewtab', null, PARAM_ALPHA)) {
+            // Check if the user has no preference, if so get the site setting.
+            if (!$tab = get_user_preferences('block_myoverview_last_tab')) {
+                $config = get_config('block_myoverview');
+                $tab = $config->defaulttab;
+            }
+        }
+
+        $renderable = new \block_myoverview\output\main($tab);
         $renderer = $this->page->get_renderer('block_myoverview');
 
         $this->content = new stdClass();
@@ -67,5 +76,14 @@ class block_myoverview extends block_base {
      */
     public function applicable_formats() {
         return array('my' => true);
+    }
+
+    /**
+     * This block does contain a configuration settings.
+     *
+     * @return boolean
+     */
+    public function has_config() {
+        return true;
     }
 }
