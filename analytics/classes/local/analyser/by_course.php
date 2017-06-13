@@ -51,7 +51,7 @@ abstract class by_course extends base {
         }
 
         if (empty($analysables)) {
-            $this->logs[] = get_string('nocourses', 'analytics');
+            $this->log[] = get_string('nocourses', 'analytics');
         }
 
         return $analysables;
