@@ -3690,11 +3690,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals(2, $count);
     }
 
-    function test_classify_course_for_timeline() {
+    public function test_classify_course_for_timeline() {
         global $DB, $CFG;
 
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_self.php');
-        require_once($CFG->dirroot.'/completion/cron.php');
 
         set_config('enablecompletion', COMPLETION_ENABLED);
 
@@ -3711,26 +3710,14 @@ class core_course_courselib_testcase extends advanced_testcase {
         $inprogresscourse = $generator->create_course();
 
         // Set completion rules.
-        $completion = new completion_info($completedcourse);
-
         $criteriadata = new stdClass();
         $criteriadata->id = $completedcourse->id;
-        $criteriadata->criteria_activity = array();
 
         // Self completion.
         $criteriadata->criteria_self = COMPLETION_CRITERIA_TYPE_SELF;
         $class = 'completion_criteria_self';
         $criterion = new $class();
         $criterion->update_config($criteriadata);
-
-        // Handle overall aggregation.
-        $aggdata = array(
-            'course'        => $completedcourse->id,
-            'criteriatype'  => null
-        );
-        $aggregation = new completion_aggregation($aggdata);
-        $aggregation->setMethod(COMPLETION_AGGREGATION_ALL);
-        $aggregation->save();
 
         $user = $this->getDataGenerator()->create_user();
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
