@@ -219,6 +219,8 @@ if (empty($result->posts)) {
         $PAGE->set_heading($pageheading);
     } else if ($canviewuser) {
         $PAGE->set_heading(fullname($user));
+    } else {
+        $PAGE->set_heading($SITE->fullname);
     }
     echo $OUTPUT->header();
     if (!$isspecificcourse) {
