@@ -93,11 +93,11 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             }
             $radiobuttons[] = $hidden . html_writer::empty_tag('input', $inputattributes) .
                     html_writer::tag('label',
-                        $this->number_in_style($value, $question->answernumbering) .
+                        html_writer::span($this->number_in_style($value, $question->answernumbering), 'answernumber') .
                         $question->make_html_inline($question->format_text(
                                 $ans->answer, $ans->answerformat,
                                 $qa, 'question', 'answer', $ansid)),
-                    array('for' => $inputattributes['id'], 'class' => 'm-l-1'));
+                        array('for' => $inputattributes['id'], 'class' => 'm-l-1'));
 
             // Param $options->suppresschoicefeedback is a hack specific to the
             // oumultiresponse question type. It would be good to refactor to
