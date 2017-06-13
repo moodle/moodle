@@ -2567,7 +2567,16 @@ class global_navigation extends navigation_node {
         }
 
         $coursenode = $parent->add($coursename, $url, self::TYPE_COURSE, $shortname, $course->id);
-        $coursenode->showinflatnavigation = $coursetype == self::COURSE_MY;
+
+        // Do some calculation to see if the course is past, current or future.
+        if ($coursetype == self::COURSE_MY) {
+            $classify = course_classify_for_timeline($course);
+
+            if ($classify == COURSE_TIMELINE_INPROGRESS) {
+                $coursenode->showinflatnavigation = true;
+            }
+        }
+
         $coursenode->hidden = (!$course->visible);
         $coursenode->title(format_string($course->fullname, true, array('context' => $coursecontext, 'escape' => false)));
         if ($canexpandcourse) {
@@ -2890,7 +2899,7 @@ class global_navigation extends navigation_node {
         }
         // Append the chosen sortorder.
         $sortorder = $sortorder . ',' . $CFG->navsortmycoursessort . ' ASC';
-        $courses = enrol_get_my_courses(null, $sortorder);
+        $courses = enrol_get_my_courses('*', $sortorder);
         if (count($courses) && $this->show_my_categories()) {
             // Generate an array containing unique values of all the courses' categories.
             $categoryids = array();
@@ -3140,7 +3149,7 @@ class global_navigation_for_ajax extends global_navigation {
         // If category is shown in MyHome then only show enrolled courses and hide empty subcategories,
         // else show all courses.
         if ($nodetype === self::TYPE_MY_CATEGORY) {
-            $courses = enrol_get_my_courses();
+            $courses = enrol_get_my_courses('*');
             $categoryids = array();
 
             // Only search for categories if basecategory was found.
