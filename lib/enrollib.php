@@ -1432,30 +1432,54 @@ function enrol_get_course_by_user_enrolment_id($ueid) {
 /**
  * Return all users enrolled in a course.
  *
- * @param int $courseid
+ * @param int $courseid Course id or false if using $uefilter (user enrolment ids may belong to different courses)
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @param array usersfilter Limit the results obtained to this list of user ids. $uefilter compatibility not guaranteed.
+ * @param array uefilter Limit the results obtained to this list of user enrolment ids. $usersfilter compatibility not guaranteed.
  * @return stdClass
  */
-function enrol_get_course_users($courseid, $onlyactive = false) {
+function enrol_get_course_users($courseid = false, $onlyactive = false, $usersfilter = array(), $uefilter = array()) {
     global $DB;
 
-    $sql = "SELECT ue.id AS enrolmentid, u.* FROM {user_enrolments} ue
+    if (!$courseid && !$usersfilter && !$uefilter) {
+        throw new \coding_exception('You should specify at least 1 filter: courseid, users or user enrolments');
+    }
+
+    $sql = "SELECT ue.id AS ueid, ue.status AS uestatus, ue.enrolid AS ueenrolid, ue.timestart AS uetimestart,
+             ue.timeend AS uetimeend, ue.modifierid AS uemodifierid, ue.timecreated AS uetimecreated,
+             ue.timemodified AS uetimemodified,
+             u.* FROM {user_enrolments} ue
               JOIN {enrol} e ON e.id = ue.enrolid
               JOIN {user} u ON ue.userid = u.id
-              WHERE e.courseid = :courseid";
-    $params = array('courseid' => $courseid);
+             WHERE ";
+    $params = array();
+
+    if ($courseid) {
+        $conditions[] = "e.courseid = :courseid";
+        $params['courseid'] = $courseid;
+    }
 
     if ($onlyactive) {
-        $subwhere = "AND ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
+        $conditions[] = "ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
         $params['now1']    = round(time(), -2); // improves db caching
         $params['now2']    = $params['now1'];
         $params['active']  = ENROL_USER_ACTIVE;
         $params['enabled'] = ENROL_INSTANCE_ENABLED;
-    } else {
-        $subwhere = "";
     }
-    $sql = $sql . $subwhere;
-    return $DB->get_records_sql($sql, $params);
+
+    if ($usersfilter) {
+        list($usersql, $userparams) = $DB->get_in_or_equal($usersfilter, SQL_PARAMS_NAMED);
+        $conditions[] = "ue.userid $usersql";
+        $params = $params + $userparams;
+    }
+
+    if ($uefilter) {
+        list($uesql, $ueparams) = $DB->get_in_or_equal($usersfilter, SQL_PARAMS_NAMED);
+        $conditions[] = "ue.id $uesql";
+        $params = $params + $ueparams;
+    }
+
+    return $DB->get_records_sql($sql . ' ' . implode(' AND ', $conditions), $params);
 }
 
 /**

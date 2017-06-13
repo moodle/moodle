@@ -593,10 +593,14 @@ class core_enrollib_testcase extends advanced_testcase {
 
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
         $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
-        $this->getDataGenerator()->enrol_user($user2->id, $course2->id);
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id);
 
         $this->assertCount(2, enrol_get_course_users($course1->id));
         $this->assertCount(2, enrol_get_course_users($course1->id, true));
+
+        $this->assertCount(1, enrol_get_course_users($course1->id, true, array($user1->id)));
+
+        $this->assertCount(2, enrol_get_course_users(false, false, array($user1->id)));
 
         $instances = enrol_get_instances($course1->id, true);
         $manualinstance = reset($instances);
