@@ -142,10 +142,14 @@ class qtype_ordering_edit_form extends question_edit_form {
         $this->adjust_html_editors($mform, $name, $repeats);
 
         // Adding feedback fields (=Combined feedback).
-        $this->add_combined_feedback_fields(false);
+        if (method_exists($this, 'add_combined_feedback_fields')) {
+            $this->add_combined_feedback_fields(false);
+        }
 
         // Adding interactive settings (=Multiple tries).
-        $this->add_interactive_settings(false, false);
+        if (method_exists($this, 'add_interactive_settings')) {
+            $this->add_interactive_settings(false, false);
+        }
     }
 
     /**
@@ -282,11 +286,17 @@ class qtype_ordering_edit_form extends question_edit_form {
     public function data_preprocessing($question) {
 
         $question = parent::data_preprocessing($question);
-        $question = $this->data_preprocessing_answers($question, true);
+        if (method_exists($this, 'data_preprocessing_answers')) {
+            $question = $this->data_preprocessing_answers($question, true);
+        }
 
         // Preprocess feedback.
-        $question = $this->data_preprocessing_combined_feedback($question);
-        $question = $this->data_preprocessing_hints($question, false, false);
+        if (method_exists($this, 'data_preprocessing_combined_feedback')) {
+            $question = $this->data_preprocessing_combined_feedback($question);
+        }
+        if (method_exists($this, 'data_preprocessing_hints')) {
+            $question = $this->data_preprocessing_hints($question, false, false);
+        }
 
         // Preprocess answers and fractions.
         $question->answer     = array();

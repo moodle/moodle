@@ -24,6 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+if (class_exists('default_questiontype')) { // Moodle 2.0
+    require_once($CFG->dirroot.'/question/type/ordering/legacy/20.php');
+}
+
 /**
  * The ordering question type.
  *
@@ -806,4 +810,13 @@ class qtype_ordering extends question_type {
         $question->gradingtype = $gradingtype;
         $question->showgrading = $showgrading;
     }
+}
+
+if (function_exists('question_register_questiontype')) { // Moodle 2.0
+    class qtype_ordering_options_qtype extends qtype_ordering {
+        function name() {
+            return 'ordering';
+        }
+    }
+    question_register_questiontype(new qtype_ordering_options_qtype());
 }
