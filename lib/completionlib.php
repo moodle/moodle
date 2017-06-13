@@ -769,6 +769,7 @@ class completion_info {
 
         // Difficult to find affected users, just purge all completion cache.
         cache::make('core', 'completion')->purge();
+        cache::make('core', 'coursecompletion')->purge();
     }
 
     /**
@@ -820,6 +821,7 @@ class completion_info {
 
         // Difficult to find affected users, just purge all completion cache.
         cache::make('core', 'completion')->purge();
+        cache::make('core', 'coursecompletion')->purge();
     }
 
     /**
