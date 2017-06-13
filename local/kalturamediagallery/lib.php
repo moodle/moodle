@@ -82,20 +82,14 @@ function local_kalturamediagallery_extend_navigation($navigation) {
 function local_kalturamediagallery_extend_navigation_course(navigation_node $parent, stdClass $course, context_course $context) {
     global $USER;
 
-    if (get_config('local_kalturamediagallery', 'link_location') != LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_COURSE_SETTINGS)
-    {
-        return;
-    }
-
-    if (empty($USER->id)) {
-        return;
-    }
-
-    if (!has_capability('local/kalturamediagallery:view', $context, $USER)) {
+    if (get_config('local_kalturamediagallery', 'link_location') != LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_COURSE_SETTINGS
+        || empty($USER->id)
+        || !has_capability('local/kalturamediagallery:view', $context, $USER)) {
         return;
     }
 
     $name = get_string('nav_mediagallery', 'local_kalturamediagallery');
     $url = new moodle_url('/local/kalturamediagallery/index.php', array('courseid' => $course->id));
-    $kalmedgalnode = $parent->add($name, $url, navigation_node::NODETYPE_LEAF, $name, 'kalcrsgal');
+    $icon = new image_icon('kaltura_icon', $name);
+    $parent->add($name, $url, navigation_node::NODETYPE_LEAF, $name, 'kalturamediagallery-settings', $icon);
 }
