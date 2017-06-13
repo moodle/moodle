@@ -45,7 +45,6 @@ class read_actions extends linear {
     }
 
     protected function calculate_sample($sampleid, $sampleorigin, $starttime = false, $endtime = false) {
-        global $DB;
 
         $select = '';
         $params = array();
@@ -61,7 +60,8 @@ class read_actions extends linear {
             "crud = 'r' AND timecreated > :starttime AND timecreated <= :endtime";
         $params = $params + array('contextlevel' => $context->contextlevel,
             'contextinstanceid' => $context->instanceid, 'starttime' => $starttime, 'endtime' => $endtime);
-        $nrecords = $DB->count_records_select('logstore_standard_log', $select, $params);
+        $logstore = \core_analytics\manager::get_analytics_logstore();
+        $nrecords = $logstore->get_events_select_count($select, $params);
 
         // We define a list of ranges to fit $nrecords into it
         // # Done absolutely nothing

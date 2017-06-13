@@ -55,6 +55,13 @@ class any_access_before_start extends binary {
             "timecreated < :start";
         $params = array('userid' => $user->id, 'contextlevel' => $context->contextlevel,
             'contextinstanceid' => $context->instanceid, 'start' => $course->get_start());
-        return $DB->record_exists_select('logstore_standard_log', $select, $params) ? self::get_max_value() : self::get_min_value();
+
+        $logstore = \core_analytics\manager::get_analytics_logstore();
+        $nlogs = $logstore->get_events_select_count($select, $params);
+        if ($nlogs) {
+            return self::get_max_value();
+        } else {
+            return self::get_min_value();
+        }
     }
 }

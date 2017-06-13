@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/lib/gradelib.php');
+require_once($CFG->dirroot . '/lib/enrollib.php');
 
 /**
  *
@@ -162,34 +163,38 @@ class course implements \core_analytics\analysable {
             return 0;
         }
 
+        $logstore = \core_analytics\manager::get_analytics_logstore();
+
         // We first try to find current course student logs.
-        list($filterselect, $filterparams) = $this->course_students_query_filter();
-        $sql = "SELECT MIN(timecreated) FROM {logstore_standard_log}
-                  WHERE $filterselect
-                 GROUP BY userid";
-        $firstlogs = $DB->get_fieldset_sql($sql, $filterparams);
+        $firstlogs = array();
+        foreach ($this->studentids as $studentid) {
+            // Grrr, we are limited by logging API, we could do this easily with a
+            // select min(timecreated) from xx where courseid = yy group by userid.
+
+            // Filters based on the premise that more than 90% of people will be using
+            // standard logstore, which contains a userid, contextlevel, contextinstanceid index.
+            $select = "userid = :userid AND contextlevel = :contextlevel AND contextinstanceid = :contextinstanceid";
+            $params = array('userid' => $studentid, 'contextlevel' => CONTEXT_COURSE, 'contextinstanceid' => $this->get_id());
+            $events = $logstore->get_events_select($select, $params, 'timecreated ASC', 0, 1);
+            $event = reset($events);
+            $firstlogs = $event->timecreated;
+        }
         if (empty($firstlogs)) {
+            // Can't guess if no student accesses.
             return 0;
         }
+
         sort($firstlogs);
         $firstlogsmedian = $this->median($firstlogs);
 
-        // Not using enrol API because we may be dealing with databases that used
-        // 3rd party enrolment plugins that are not available in the database.
-        // TODO We will need to switch to enrol API once we have enough data.
-        list($studentssql, $studentparams) = $DB->get_in_or_equal($this->studentids, SQL_PARAMS_NAMED);
-        $sql = "SELECT ue.* FROM {user_enrolments} ue
-                  JOIN {enrol} e ON e.id = ue.enrolid
-                 WHERE e.courseid = :courseid AND ue.userid $studentssql";
-        $studentenrolments = $DB->get_records_sql($sql, array('courseid' => $this->course->id) + $studentparams);
+        $studentenrolments = enrol_get_course_users($this->get_id(), $this->studentids);
         if (empty($studentenrolments)) {
             return 0;
         }
 
         $enrolstart = array();
         foreach ($studentenrolments as $studentenrolment) {
-            // I don't like CASE WHEN :P
-            $enrolstart[] = ($studentenrolment->timestart) ? $studentenrolment->timestart : $studentenrolment->timecreated;
+            $enrolstart[] = ($studentenrolment->uetimestart) ? $studentenrolment->uetimestart : $studentenrolment->uetimecreated;
         }
         sort($enrolstart);
         $enrolstartmedian = $this->median($enrolstart);
@@ -358,7 +363,8 @@ class course implements \core_analytics\analysable {
 
         if ($this->ntotallogs === null) {
             list($filterselect, $filterparams) = $this->course_students_query_filter();
-            $this->ntotallogs = $DB->count_records_select('logstore_standard_log', $filterselect, $filterparams);
+            $logstore = \core_analytics\manager::get_analytics_logstore();
+            $this->ntotallogs = $logstore->get_events_select_count($filterselect, $filterparams);
         }
 
         return $this->ntotallogs;
@@ -582,7 +588,7 @@ class course implements \core_analytics\analysable {
     }
 
     /**
-     * Returns the query and params used to filter {logstore_standard_log} table by this course students.
+     * Returns the query and params used to filter the logstore by this course students.
      *
      * @return array
      */

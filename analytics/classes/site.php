@@ -33,29 +33,79 @@ defined('MOODLE_INTERNAL') || die();
  */
 class site implements \core_analytics\analysable {
 
+    /**
+     * @var int
+     */
+    protected $start;
+
+    /**
+     * @var int
+     */
+    protected $end;
+
+    /**
+     * Analysable id
+     *
+     * @return int
+     */
     public function get_id() {
         return SYSCONTEXTID;
     }
 
+    /**
+     * Analysable context.
+     *
+     * @return \context
+     */
     public function get_context() {
         return \context_system::instance();
     }
 
+    /**
+     * Analysable start timestamp.
+     *
+     * @return int
+     */
     public function get_start() {
-        global $DB;
-        $start = $DB->get_record_sql("SELECT MIN(timecreated) AS time FROM {logstore_standard_log}");
-        if (!empty($start) && !empty($start->time)) {
-            return $start->time;
+        if (!empty($this->start)) {
+            return $this->start;
         }
-        return 0;
+
+        $logstore = \core_analytics\manager::get_analytics_logstore();
+        // Basically a SELECT MIN(timecreated) FROM ...
+        $events = $logstore->get_events_select("", array(), "timecreated ASC", 0, 1);
+        if ($events) {
+            // There should be just 1 event.
+            $event = reset($events);
+            $this->start = $event->timecreated;
+        } else {
+            $this->start = 0;
+        }
+
+        return $this->start;
     }
 
+    /**
+     * Analysable end timestamp.
+     *
+     * @return int
+     */
     public function get_end() {
-        global $DB;
-        $end = $DB->get_record_sql("SELECT MAX(timecreated) AS time FROM {logstore_standard_log}");
-        if (!empty($end) && !empty($end->time)) {
-            return $end->time;
+        if (!empty($this->end)) {
+            return $this->end;
         }
-        return time();
+
+        $logstore = \core_analytics\manager::get_analytics_logstore();
+        // Basically a SELECT MAX(timecreated) FROM ...
+        $events = $logstore->get_events_select("", array(), "timecreated DESC", 0, 1);
+        if ($events) {
+            // There should be just 1 event.
+            $event = reset($events);
+            $this->end = $event->timecreated;
+        } else {
+            $this->end = time();
+        }
+
+        return $this->end;
     }
 }

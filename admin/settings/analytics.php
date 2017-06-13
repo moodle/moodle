@@ -41,6 +41,25 @@ if ($hassiteconfig) {
             '\mlbackend_php\processor', $predictors)
         );
 
+        // Log store.
+        $logmanager = get_log_manager();
+        $readers = $logmanager->get_readers('core\log\sql_reader');
+        $options = array();
+        $defaultreader = false;
+        foreach ($readers as $plugin => $reader) {
+            if (!$reader->is_logging()) {
+                continue;
+            }
+            if (!isset($defaultreader)) {
+                // The top one as default reader.
+                $defaultreader = $plugin;
+            }
+            $options[$plugin] = $reader->get_name();
+        }
+        $settings->add(new admin_setting_configselect('analytics/logstore',
+            new lang_string('analyticslogstore', 'analytics'), new lang_string('analyticslogstore_help', 'analytics'),
+            $defaultreader, $options));
+
         // Enable/disable time splitting methods.
         $alltimesplittings = \core_analytics\manager::get_all_time_splittings();
 

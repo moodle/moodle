@@ -61,6 +61,12 @@ class any_write_action extends binary {
             "(crud = 'c' OR crud = 'u') AND timecreated > :starttime AND timecreated <= :endtime";
         $params = $params + array('contextlevel' => $context->contextlevel,
             'contextinstanceid' => $context->instanceid, 'starttime' => $starttime, 'endtime' => $endtime);
-        return $DB->record_exists_select('logstore_standard_log', $select, $params) ? self::get_max_value() : self::get_min_value();
+        $logstore = \core_analytics\manager::get_analytics_logstore();
+        $nlogs = $logstore->get_events_select_count($select, $params);
+        if ($nlogs) {
+            return self::get_max_value();
+        } else {
+            return self::get_min_value();
+        }
     }
 }

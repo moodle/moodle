@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Community of inquire abstract indicator.
+ * Community of inquiry abstract indicator.
  *
  * @package   core_analytics
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
@@ -116,8 +116,8 @@ abstract class community_of_inquiry_activity extends linear {
             }
             $it = array($user->id => $this->activitylogs[$contextid][$user->id]);
         }
-        foreach ($it as $logs) {
-            foreach ($logs as $log) {
+        foreach ($it as $events) {
+            foreach ($events as $log) {
                 if ($log->crud === 'c' || $log->crud === 'u') {
                     return true;
                 }
@@ -145,7 +145,7 @@ abstract class community_of_inquiry_activity extends linear {
             $it = array($user->id => $this->activitylogs[$contextid][$user->id]);
         }
 
-        foreach ($this->activitylogs[$contextid] as $userid => $logs) {
+        foreach ($this->activitylogs[$contextid] as $userid => $events) {
             $methodname = 'feedback_' . $action;
             if ($this->{$methodname}($cm, $contextid, $userid)) {
                 return true;
@@ -179,18 +179,18 @@ abstract class community_of_inquiry_activity extends linear {
     }
 
     protected function feedback_viewed_events() {
-        throw new \coding_exception('Activities with a potential cognitive level that include viewing feedback should define ' .
-            '"feedback_viewed_events" method or should override feedback_viewed method.');
+        throw new \coding_exception('Activities with a potential cognitive or social level that include viewing feedback ' .
+            'should define "feedback_viewed_events" method or should override feedback_viewed method.');
     }
 
     protected function feedback_replied_events() {
-        throw new \coding_exception('Activities with a potential cognitive level that include replying to feedback should define ' .
-            '"feedback_replied_events" method or should override feedback_replied method.');
+        throw new \coding_exception('Activities with a potential cognitive or social level that include replying to feedback ' .
+            'should define "feedback_replied_events" method or should override feedback_replied method.');
     }
 
     protected function feedback_submitted_events() {
-        throw new \coding_exception('Activities with a potential cognitive level that include viewing feedback should define ' .
-            '"feedback_submitted_events" method or should override feedback_submitted method.');
+        throw new \coding_exception('Activities with a potential cognitive or social level that include viewing feedback ' .
+            'should define "feedback_submitted_events" method or should override feedback_submitted method.');
     }
 
     protected function feedback_post_action(\cm_info $cm, $contextid, $userid, $eventnames, $after = null) {
@@ -307,44 +307,47 @@ abstract class community_of_inquiry_activity extends linear {
 
         // Filter by context to use the db table index.
         list($contextsql, $contextparams) = $DB->get_in_or_equal(array_keys($activities), SQL_PARAMS_NAMED);
-
-        // Keeping memory usage as low as possible by using recordsets and storing only 1 log
-        // per contextid-userid-eventname + 1 timestamp for each of this combination records.
-        $fields = 'eventname, crud, contextid, contextlevel, contextinstanceid, userid, courseid';
         $select = "contextid $contextsql AND timecreated > :starttime AND timecreated <= :endtime";
-        $sql = "SELECT $fields, timecreated " .
-            "FROM {logstore_standard_log} " .
-            "WHERE $select " .
-            "ORDER BY timecreated ASC";
         $params = $contextparams + array('starttime' => $starttime, 'endtime' => $endtime);
-        $logs = $DB->get_recordset_sql($sql, $params);
+
+        // Pity that we need to pass through logging readers API when most of the people just uses the standard one.
+        $logstore = \core_analytics\manager::get_analytics_logstore();
+        $events = $logstore->get_events_select_iterator($select, $params, 'timecreated ASC', 0, 0);
 
         // Returs the logs organised by contextid, userid and eventname so it is easier to calculate activities data later.
         // At the same time we want to keep this array reasonably "not-massive".
-        $processedlogs = array();
-        foreach ($logs as $log) {
-            if (!isset($processedlogs[$log->contextid])) {
-                $processedlogs[$log->contextid] = array();
+        $processedevents = array();
+        foreach ($events as $event) {
+            if (!isset($processedevents[$event->contextid])) {
+                $processedevents[$event->contextid] = array();
             }
-            if (!isset($processedlogs[$log->contextid][$log->userid])) {
-                $processedlogs[$log->contextid][$log->userid] = array();
+            if (!isset($processedevents[$event->contextid][$event->userid])) {
+                $processedevents[$event->contextid][$event->userid] = array();
             }
 
-            // contextid and userid have already been used to index the logs, the next field to index by is eventname:
+            // contextid and userid have already been used to index the events, the next field to index by is eventname:
             // crud is unique per eventname, courseid is the same for all records and we append timecreated.
-            if (!isset($processedlogs[$log->contextid][$log->userid][$log->eventname])) {
-                $processedlogs[$log->contextid][$log->userid][$log->eventname] = $log;
+            if (!isset($processedevents[$event->contextid][$event->userid][$event->eventname])) {
 
+                // Remove all data that can change between events of the same type.
+                $data = (object)$event->get_data();
+                unset($data->id);
+                unset($data->anonymous);
+                unset($data->relateduserid);
+                unset($data->other);
+                unset($data->origin);
+                unset($data->ip);
+                $processedevents[$event->contextid][$event->userid][$event->eventname] = $data;
                 // We want timecreated attribute to be an array containing all user access times.
-                $processedlogs[$log->contextid][$log->userid][$log->eventname]->timecreated = array(intval($log->timecreated));
-            } else {
-                // Add the event timecreated.
-                $processedlogs[$log->contextid][$log->userid][$log->eventname]->timecreated[] = intval($log->timecreated);
+                $processedevents[$event->contextid][$event->userid][$event->eventname]->timecreated = array();
             }
-        }
-        $logs->close();
 
-        return $processedlogs;
+            // Add the event timecreated.
+            $processedevents[$event->contextid][$event->userid][$event->eventname]->timecreated[] = intval($event->timecreated);
+        }
+        $events->close();
+
+        return $processedevents;
     }
 
     /**
@@ -385,7 +388,7 @@ abstract class community_of_inquiry_activity extends linear {
 
             $potentiallevel = $this->get_cognitive_depth_level($cm);
             if (!is_int($potentiallevel) || $potentiallevel > 5 || $potentiallevel < 1) {
-                throw new \coding_exception('Activities\' potential level of engagement possible values go from 1 to 5.');
+                throw new \coding_exception('Activities\' potential cognitive depth go from 1 to 5.');
             }
             $scoreperlevel = $scoreperactivity / $potentiallevel;
 
@@ -472,7 +475,7 @@ abstract class community_of_inquiry_activity extends linear {
 
             $potentiallevel = $this->get_social_breadth_level($cm);
             if (!is_int($potentiallevel) || $potentiallevel > 2 || $potentiallevel < 1) {
-                throw new \coding_exception('Activities\' potential level of engagement possible values go from 1 to 2.');
+                throw new \coding_exception('Activities\' potential social breadth go from 1 to 2.');
             }
             $scoreperlevel = $scoreperactivity / $potentiallevel;
             // TODO Add support for other levels than 2.

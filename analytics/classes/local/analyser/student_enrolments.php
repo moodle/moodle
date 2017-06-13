@@ -71,15 +71,33 @@ class student_enrolments extends by_course {
         $studentids = $course->get_students();
 
         $samplesdata = array();
-        foreach ($enrolments as $user) {
+        foreach ($enrolments as $userenrolmentid => $user) {
 
             if (empty($studentids[$user->id])) {
                 // Not a student.
                 continue;
             }
 
-            $sampleid = $user->enrolmentid;
-            unset($user->enrolmentid);
+            $sampleid = $userenrolmentid;
+            $samplesdata[$sampleid]['user_enrolments'] = (object)array(
+                'id' => $user->ueid,
+                'status' => $user->uestatus,
+                'enrolid' => $user->ueenrolid,
+                'userid' => $user->id,
+                'timestart' => $user->uetimestart,
+                'timeend' => $user->uetimeend,
+                'modifierid' => $user->uemodifierid,
+                'timecreated' => $user->uetimecreated,
+                'timemodified' => $user->uetimemodified
+            );
+            unset($user->ueid);
+            unset($user->uestatus);
+            unset($user->ueenrolid);
+            unset($user->uetimestart);
+            unset($user->uetimeend);
+            unset($user->uemodifierid);
+            unset($user->uetimecreated);
+            unset($user->uetimemodified);
 
             $samplesdata[$sampleid]['course'] = $course->get_course_data();
             $samplesdata[$sampleid]['context'] = $course->get_context();
@@ -96,21 +114,39 @@ class student_enrolments extends by_course {
     public function get_samples($sampleids) {
         global $DB;
 
+        $enrolments = enrol_get_course_users(false, false, array(), $sampleids);
+
         // Some course enrolments.
         list($enrolsql, $params) = $DB->get_in_or_equal($sampleids, SQL_PARAMS_NAMED);
 
-        // Although we load all the course users data in memory anyway, using recordsets we will
-        // not use the double of the memory required by the end of the iteration.
         $sql = "SELECT ue.id AS enrolmentid, u.* FROM {user_enrolments} ue
                   JOIN {user} u on ue.userid = u.id
                   WHERE ue.id $enrolsql";
         $enrolments = $DB->get_recordset_sql($sql, $params);
 
         $samplesdata = array();
-        foreach ($enrolments as $user) {
+        foreach ($enrolments as $userenrolmentid => $user) {
 
-            $sampleid = $user->enrolmentid;
-            unset($user->enrolmentid);
+            $sampleid = $userenrolmentid;
+            $samplesdata[$sampleid]['user_enrolments'] = (object)array(
+                'id' => $user->ueid,
+                'status' => $user->uestatus,
+                'enrolid' => $user->ueenrolid,
+                'userid' => $user->id,
+                'timestart' => $user->uetimestart,
+                'timeend' => $user->uetimeend,
+                'modifierid' => $user->uemodifierid,
+                'timecreated' => $user->uetimecreated,
+                'timemodified' => $user->uetimemodified
+            );
+            unset($user->ueid);
+            unset($user->uestatus);
+            unset($user->ueenrolid);
+            unset($user->uetimestart);
+            unset($user->uetimeend);
+            unset($user->uemodifierid);
+            unset($user->uetimecreated);
+            unset($user->uetimemodified);
 
             // Enrolment samples are grouped by the course they belong to, so all $sampleids belong to the same
             // course, $courseid and $coursemodinfo will only query the DB once and cache the course data in memory.
@@ -125,7 +161,6 @@ class student_enrolments extends by_course {
             // Fill the cache.
             $this->samplecourses[$sampleid] = $coursemodinfo->get_course()->id;
         }
-        $enrolments->close();
 
         $enrolids = array_keys($samplesdata);
         return array(array_combine($enrolids, $enrolids), $samplesdata);

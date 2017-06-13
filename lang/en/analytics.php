@@ -24,6 +24,8 @@
 
 $string['analysablenotused'] = 'Analysable {$a->analysableid} not used: {$a->errors}';
 $string['analysablenotvalidfortarget'] = 'Analysable {$a->analysableid} is not valid for this target: {$a->result}';
+$string['analyticslogstore'] = 'Log store used for analytics';
+$string['analyticslogstore_help'] = 'The log store that will be used by the analytics API to read users\' activity';
 $string['analyticssettings'] = 'Analytics settings';
 $string['enabledtimesplittings'] = 'Time splitting methods';
 $string['enabledtimesplittings_help'] = 'The time splitting method divides the course duration in parts, the predictions engine will run at the end of these parts. It is recommended that you only enable the time splitting methods you could be interested on using; the evaluation process will iterate through all of them so the more time splitting methods to go through the slower the evaluation process will be.';

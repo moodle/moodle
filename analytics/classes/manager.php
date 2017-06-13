@@ -249,6 +249,32 @@ class manager {
     }
 
     /**
+     * get_analytics_logstore
+     *
+     * @return \core\log\reader
+     */
+    public static function get_analytics_logstore() {
+        $readers = get_log_manager()->get_readers('core\log\sql_reader');
+        $analyticsstore = get_config('analytics', 'logstore');
+        if (empty($analyticsstore)) {
+            $logstore = reset($readers);
+        } else if (!empty($readers[$analyticsstore])) {
+            $logstore = $readers[$analyticsstore];
+        } else {
+            $logstore = reset($readers);
+            debugging('The selected log store for analytics is not available anymore. Using "' .
+                $logstore->get_name() . '"', DEBUG_DEVELOPER);
+        }
+
+        if (!$logstore->is_logging()) {
+            debugging('The selected log store for analytics "' . $logstore->get_name() .
+                '" is not logging activity logs', DEBUG_DEVELOPER);
+        }
+
+        return $logstore;
+    }
+
+    /**
      * Returns the provided element classes in the site.
      *
      * @param string $element

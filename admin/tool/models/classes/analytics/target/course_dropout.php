@@ -117,15 +117,17 @@ class course_dropout extends \core_analytics\local\target\binary {
         }
 
         if ($fortraining) {
-
             // Not a valid target for training if there are not enough course accesses.
+
             $params = array('courseid' => $course->get_id(), 'anonymous' => 0, 'start' => $course->get_start(),
                 'end' => $course->get_end());
             list($studentssql, $studentparams) = $DB->get_in_or_equal($students, SQL_PARAMS_NAMED);
+            // Using anonymous to use the db index, not filtering by timecreated to speed it up.
             $select = 'courseid = :courseid AND anonymous = :anonymous AND timecreated > :start AND timecreated < :end ' .
                 'AND userid ' . $studentssql;
-            // Using anonymous to use the db index, not filtering by timecreated to speed it up.
-            $nlogs = $DB->count_records_select('logstore_standard_log', $select, array_merge($params, $studentparams));
+
+            $logstore = \core_analytics\manager::get_analytics_logstore();
+            $nlogs = $logstore->get_events_select_count($select, array_merge($params, $studentparams));
 
             // At least a minimum of students activity.
             $nstudents = count($students);
@@ -179,9 +181,11 @@ class course_dropout extends \core_analytics\local\target\binary {
         // No logs during the last quarter of the course.
         $courseduration = $course->get_end() - $course->get_start();
         $limit = intval($course->get_end() - ($courseduration / 4));
+        $select = "courseid = :courseid AND userid = :userid AND timecreated > :limit";
         $params = array('userid' => $userenrol->userid, 'courseid' => $course->get_id(), 'limit' => $limit);
-        $sql = "SELECT id FROM {logstore_standard_log} WHERE courseid = :courseid AND userid = :userid AND timecreated > :limit";
-        if ($DB->record_exists_sql($sql, $params)) {
+        $logstore = \core_analytics\manager::get_analytics_logstore();
+        $nlogs = $logstore->get_events_select_count($select, $params);
+        if ($nlogs == 0) {
             return 0;
         }
         return 1;
