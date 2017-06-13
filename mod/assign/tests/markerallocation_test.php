@@ -119,7 +119,7 @@ class mod_assign_markerallocation_testcase extends advanced_testcase {
         $oldusers = array($user1, $user2, $user4);
         $newusers = array($user1, $user2);
 
-        list($sort, $params) = users_order_by_sql();
+        list($sort, $params) = users_order_by_sql('u');
 
         // Old code, it must return 3 users: teacher1, teacher2 and Manger.
         $oldmarkers = get_users_by_capability(context_course::instance($this->course->id), 'mod/assign:grade', '', $sort);

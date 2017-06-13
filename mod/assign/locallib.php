@@ -4017,7 +4017,7 @@ class assign {
         // Get markers to use in drop lists.
         $markingallocationoptions = array();
         if ($markingallocation) {
-            list($sort, $params) = users_order_by_sql();
+            list($sort, $params) = users_order_by_sql('u');
             // Only enrolled users could be assigned as potential markers.
             $markers = get_enrolled_users($this->context, 'mod/assign:grade', 0, 'u.*', $sort);
             $markingallocationoptions[''] = get_string('filternone', 'assign');
@@ -4645,7 +4645,7 @@ class assign {
             'usershtml' => $usershtml,
         );
 
-        list($sort, $params) = users_order_by_sql();
+        list($sort, $params) = users_order_by_sql('u');
         // Only enrolled users could be assigned as potential markers.
         $markers = get_enrolled_users($this->get_context(), 'mod/assign:grade', 0, 'u.*', $sort);
         $markerlist = array();
@@ -6534,7 +6534,7 @@ class assign {
         if ($markingallocation) {
             $markingallocationoptions[''] = get_string('filternone', 'assign');
             $markingallocationoptions[ASSIGN_MARKER_FILTER_NO_MARKER] = get_string('markerfilternomarker', 'assign');
-            list($sort, $params) = users_order_by_sql();
+            list($sort, $params) = users_order_by_sql('u');
             // Only enrolled users could be assigned as potential markers.
             $markers = get_enrolled_users($this->context, 'mod/assign:grade', 0, 'u.*', $sort);
             foreach ($markers as $marker) {
@@ -7170,7 +7170,7 @@ class assign {
             $this->get_instance()->markingallocation &&
             has_capability('mod/assign:manageallocations', $this->context)) {
 
-            list($sort, $params) = users_order_by_sql();
+            list($sort, $params) = users_order_by_sql('u');
             // Only enrolled users could be assigned as potential markers.
             $markers = get_enrolled_users($this->context, 'mod/assign:grade', 0, 'u.*', $sort);
             $markerlist = array('' =>  get_string('choosemarker', 'assign'));
@@ -7591,7 +7591,7 @@ class assign {
             'usershtml' => ''   // initialise these parameters with real information.
         );
 
-        list($sort, $params) = users_order_by_sql();
+        list($sort, $params) = users_order_by_sql('u');
         // Only enrolled users could be assigned as potential markers.
         $markers = get_enrolled_users($this->get_context(), 'mod/assign:grade', 0, 'u.*', $sort);
         $markerlist = array();
