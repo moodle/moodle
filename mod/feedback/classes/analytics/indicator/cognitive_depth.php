@@ -35,11 +35,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class cognitive_depth extends activity_base {
 
-    /**
-     * @var int[] Tiny cache to hold feedback instance - publish_stats field relation.
-     */
-    protected $publishstats = array();
-
     public static function get_name() {
         return get_string('indicator:cognitivedepthfeedback', 'mod_feedback');
     }
@@ -49,21 +44,12 @@ class cognitive_depth extends activity_base {
     }
 
     protected function get_cognitive_depth_level(\cm_info $cm) {
-        global $DB;
-
-        if (!isset($this->publishstats[$cm->instance])) {
-            $this->publishstats[$cm->instance] = $DB->get_field('feedback', 'publish_stats', array('id' => $cm->instance));
-        }
+        $this->fill_publishstats($cm);
 
         if (!empty($this->publishstats[$cm->instance])) {
             // If stats are published we count that the user viewed feedback.
             return 3;
         }
         return 2;
-    }
-
-    protected function any_feedback_view(\cm_info $cm, $contextid, $user) {
-        // If stats are published any write action counts as viewed feedback.
-        return $this->any_write_log($contextid, $user);
     }
 }

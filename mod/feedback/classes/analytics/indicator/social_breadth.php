@@ -44,6 +44,8 @@ class social_breadth extends activity_base {
     }
 
     protected function get_social_breadth_level(\cm_info $cm) {
+        $this->fill_publishstats($cm);
+
         return 2;
     }
 }
