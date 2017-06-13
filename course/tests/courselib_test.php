@@ -3689,4 +3689,52 @@ class core_course_courselib_testcase extends advanced_testcase {
         }
         $this->assertEquals(2, $count);
     }
+
+    public function test_classify_course_for_timeline() {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_self.php');
+
+        set_config('enablecompletion', COMPLETION_ENABLED);
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Create courses for testing.
+        $generator = $this->getDataGenerator();
+        $future = time() + 3600;
+        $past = time() - 3600;
+        $futurecourse = $generator->create_course(['startdate' => $future]);
+        $pastcourse = $generator->create_course(['startdate' => $past - 60, 'enddate' => $past]);
+        $completedcourse = $generator->create_course(['enablecompletion' => COMPLETION_ENABLED]);
+        $inprogresscourse = $generator->create_course();
+
+        // Set completion rules.
+        $criteriadata = new stdClass();
+        $criteriadata->id = $completedcourse->id;
+
+        // Self completion.
+        $criteriadata->criteria_self = COMPLETION_CRITERIA_TYPE_SELF;
+        $class = 'completion_criteria_self';
+        $criterion = new $class();
+        $criterion->update_config($criteriadata);
+
+        $user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $futurecourse->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user->id, $pastcourse->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user->id, $completedcourse->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user->id, $inprogresscourse->id, $studentrole->id);
+
+        $this->setUser($user);
+        core_completion_external::mark_course_self_completed($completedcourse->id);
+        $ccompletion = new completion_completion(array('course' => $completedcourse->id, 'userid' => $user->id));
+        $ccompletion->mark_complete();
+
+        // Aggregate the completions.
+        $this->assertEquals(COURSE_TIMELINE_PAST, course_classify_for_timeline($pastcourse));
+        $this->assertEquals(COURSE_TIMELINE_FUTURE, course_classify_for_timeline($futurecourse));
+        $this->assertEquals(COURSE_TIMELINE_PAST, course_classify_for_timeline($completedcourse));
+        $this->assertEquals(COURSE_TIMELINE_INPROGRESS, course_classify_for_timeline($inprogresscourse));
+    }
 }
