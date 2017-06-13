@@ -84,6 +84,8 @@ class navigation_node implements renderable {
     const COURSE_MY = 1;
     /** var int Course the current user is currently viewing */
     const COURSE_CURRENT = 2;
+    /** var string The course index page navigation node */
+    const COURSE_INDEX_PAGE = 'courseindexpage';
 
     /** @var int Parameter to aid the coder in tracking [optional] */
     public $id = null;
@@ -430,7 +432,7 @@ class navigation_node implements renderable {
     public function build_flat_navigation_list(flat_navigation $nodes, $showdivider = false) {
         if ($this->showinflatnavigation) {
             $indent = 0;
-            if ($this->type == self::TYPE_COURSE) {
+            if ($this->type == self::TYPE_COURSE || $this->key == self::COURSE_INDEX_PAGE) {
                 $indent = 1;
             }
             $flat = new flat_navigation_node($this, $indent);
@@ -2892,6 +2894,9 @@ class global_navigation extends navigation_node {
      */
     protected function load_courses_enrolled() {
         global $CFG;
+
+        $limit = (int) $CFG->navcourselimit;
+
         $sortorder = 'visible DESC';
         // Prevent undefined $CFG->navsortmycoursessort errors.
         if (empty($CFG->navsortmycoursessort)) {
@@ -2900,7 +2905,9 @@ class global_navigation extends navigation_node {
         // Append the chosen sortorder.
         $sortorder = $sortorder . ',' . $CFG->navsortmycoursessort . ' ASC';
         $courses = enrol_get_my_courses('*', $sortorder);
-        if (count($courses) && $this->show_my_categories()) {
+        $numcourses = count($courses);
+        $courses = array_slice($courses, 0, $limit);
+        if ($numcourses && $this->show_my_categories()) {
             // Generate an array containing unique values of all the courses' categories.
             $categoryids = array();
             foreach ($courses as $course) {
@@ -2955,6 +2962,14 @@ class global_navigation extends navigation_node {
         }
         foreach ($courses as $course) {
             $this->add_course($course, false, self::COURSE_MY);
+        }
+        // Show a link to the course page if there are more courses the user is enrolled in.
+        if ($numcourses > $limit) {
+            // Adding hash to URL so the link is not highlighted in the navigation when clicked.
+            $url = new moodle_url('/course/index.php#');
+            $parent = $this->rootnodes['mycourses'];
+            $coursenode = $parent->add(get_string('morenavigationlinks'), $url, self::TYPE_CUSTOM, null, self::COURSE_INDEX_PAGE);
+            $coursenode->showinflatnavigation = true;
         }
     }
 }
