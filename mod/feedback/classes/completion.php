@@ -507,7 +507,8 @@ class mod_feedback_completion extends mod_feedback_structure {
 
         // Update completion state.
         $completion = new completion_info($this->cm->get_course());
-        if (isloggedin() && !isguestuser() && $completion->is_enabled($this->cm) && $this->feedback->completionsubmit) {
+        if (isloggedin() && !isguestuser() && $completion->is_enabled($this->cm) &&
+                $this->cm->completion == COMPLETION_TRACKING_AUTOMATIC && $this->feedback->completionsubmit) {
             $completion->update_state($this->cm, COMPLETION_COMPLETE);
         }
     }
