@@ -251,7 +251,7 @@ class manager {
     /**
      * get_analytics_logstore
      *
-     * @return \core\log\reader
+     * @return \core\log\sql_reader
      */
     public static function get_analytics_logstore() {
         $readers = get_log_manager()->get_readers('core\log\sql_reader');

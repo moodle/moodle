@@ -153,48 +153,4 @@ class core_analytics_course_testcase extends advanced_testcase {
     protected function time_less_than($time) {
         return $time + (WEEKSECS * 2);
     }
-
-    /**
-     * Generate a log.
-     *
-     * @param int $time
-     * @param int $userid
-     * @param int $courseid
-     * @return void
-     */
-    protected function generate_log($time, $userid = false, $courseid = false) {
-        global $DB;
-
-        if (empty($userid)) {
-            $userid = $this->stu1->id;
-        }
-        if (empty($courseid)) {
-            $courseid = $this->course->id;
-        }
-
-        $context = context_course::instance($courseid);
-        $obj = (object)[
-            'eventname' => '\\core\\event\\course_viewed',
-            'component' => 'core',
-            'action' => 'viewed',
-            'target' => 'course',
-            'objecttable' => 'course',
-            'objectid' => $courseid,
-            'crud' => 'r',
-            'edulevel' => \core\event\base::LEVEL_PARTICIPATING,
-            'contextid' => $context->id,
-            'contextlevel' => $context->contextlevel,
-            'contextinstanceid' => $context->instanceid,
-            'userid' => $userid,
-            'courseid' => $courseid,
-            'relateduserid' => null,
-            'anonymous' => 0,
-            'other' => null,
-            'timecreated' => $time,
-            'origin' => 'web',
-        ];
-        $DB->insert_record('logstore_standard_log', $obj);
-    }
-
 }
-

@@ -48,6 +48,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
     public function test_ml_training_and_prediction($timesplittingid, $npredictedranges, $predictionsprocessorclass) {
         global $DB;
 
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+
         $ncourses = 10;
 
         $this->resetAfterTest(true);
@@ -154,6 +156,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      */
     public function test_ml_evaluation($modelquality, $ncourses, $expected, $predictionsprocessorclass) {
         $this->resetAfterTest(true);
+
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
 
         $sometimesplittings = '\core_analytics\local\time_splitting\weekly,' .
             '\core_analytics\local\time_splitting\single_range,' .
