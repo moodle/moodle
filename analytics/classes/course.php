@@ -39,8 +39,8 @@ class course implements \core_analytics\analysable {
 
     protected static $instances = array();
 
-    protected $studentroles = [];
-    protected $teacherroles = [];
+    protected static $studentroles = [];
+    protected static $teacherroles = [];
 
     protected $course = null;
     protected $coursecontext = null;
@@ -61,15 +61,11 @@ class course implements \core_analytics\analysable {
      * Course manager constructor.
      *
      * Use self::instance() instead to get cached copies of the course. Instances obtained
-     * through this constructor will not be cached either.
+     * through this constructor will not be cached.
      *
      * Loads course students and teachers.
      *
-     * Let's try to keep this computationally inexpensive.
-     *
      * @param int|stdClass $course Course id
-     * @param array $studentroles
-     * @param array $teacherroles
      * @return void
      */
     public function __construct($course) {
@@ -82,29 +78,25 @@ class course implements \core_analytics\analysable {
 
         $this->coursecontext = \context_course::instance($this->course->id);
 
-        $studentroles = get_config('analytics', 'studentroles');
-        $teacherroles = get_config('analytics', 'teacherroles');
-
-        if (empty($studentroles) || empty($teacherroles)) {
-            // Unexpected, site settings should be set with default values.
-            throw new \moodle_exception('errornoroles', 'analytics');
+        if (empty(self::$studentroles)) {
+            self::$studentroles = array_keys(get_archetype_roles('student'));
         }
-
-        $this->studentroles = explode(',', $studentroles);
-        $this->teacherroles = explode(',', $teacherroles);
+        if (empty(self::$teacherroles)) {
+            self::$teacherroles = array_keys(get_archetype_roles('editingteacher') + get_archetype_roles('teacher'));
+        }
 
         $this->now = time();
 
         // Get the course users, including users assigned to student and teacher roles at an higher context.
-        $this->studentids = $this->get_user_ids($this->studentroles);
-        $this->teacherids = $this->get_user_ids($this->teacherroles);
+        $this->studentids = $this->get_user_ids(self::$studentroles);
+        $this->teacherids = $this->get_user_ids(self::$teacherroles);
     }
 
     /**
-     * instance
+     * Returns an analytics course instance.
      *
      * @param int|stdClass $course Course id
-     * @return void
+     * @return \core_analytics\course
      */
     public static function instance($course) {
 

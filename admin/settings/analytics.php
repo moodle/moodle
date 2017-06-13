@@ -78,29 +78,5 @@ if ($hassiteconfig) {
         $defaultmodeloutputdir = rtrim($CFG->dataroot, '/') . DIRECTORY_SEPARATOR . 'models';
         $settings->add(new admin_setting_configdirectory('analytics/modeloutputdir', new lang_string('modeloutputdir', 'analytics'),
             new lang_string('modeloutputdirinfo', 'analytics'), $defaultmodeloutputdir));
-        $studentdefaultroles = [];
-        $teacherdefaultroles = [];
-
-        // Student and teacher roles.
-        $allroles = role_fix_names(get_all_roles());
-        $rolechoices = [];
-        foreach ($allroles as $role) {
-            $rolechoices[$role->id] = $role->localname;
-
-            if ($role->shortname == 'student') {
-                $studentdefaultroles[] = $role->id;
-            } else if ($role->shortname == 'teacher') {
-                $teacherdefaultroles[] = $role->id;
-            } else if ($role->shortname == 'editingteacher') {
-                $teacherdefaultroles[] = $role->id;
-            }
-        }
-
-        $settings->add(new admin_setting_configmultiselect('analytics/teacherroles', new lang_string('teacherroles', 'analytics'),
-           '', $teacherdefaultroles, $rolechoices));
-
-        $settings->add(new admin_setting_configmultiselect('analytics/studentroles', new lang_string('studentroles', 'analytics'),
-           '', $studentdefaultroles, $rolechoices));
-
     }
 }

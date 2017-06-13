@@ -49,8 +49,8 @@ class student_enrolments extends by_course {
     }
 
     public function get_sample_analysable($sampleid) {
-        $course = enrol_get_course_by_user_enrolment_id($ueid);
-        return \core_analytics\course($course);
+        $course = enrol_get_course_by_user_enrolment_id($sampleid);
+        return \core_analytics\course::instance($course);
     }
 
     protected function provided_sample_data() {

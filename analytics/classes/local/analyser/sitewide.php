@@ -47,7 +47,6 @@ abstract class sitewide extends base {
         $files = $this->process_analysable($analysable, $includetarget);
 
         // Copy to range files as there is just one analysable.
-        // TODO Not abstracted as we should ideally directly store it as range-scope file.
         foreach ($files as $timesplittingid => $file) {
 
             if ($this->options['evaluation'] === true) {
@@ -56,7 +55,6 @@ abstract class sitewide extends base {
             }
 
             // We use merge but it is just a copy
-            // TODO use copy or move if there are performance issues.
             $files[$timesplittingid] = \core_analytics\dataset_manager::merge_datasets(array($file), $this->modelid,
                 $timesplittingid, $this->options['evaluation'], $includetarget);
         }

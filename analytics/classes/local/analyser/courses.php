@@ -46,7 +46,7 @@ class courses extends by_course {
      * @return \core_analytics\analysable
      */
     public function get_sample_analysable($sampleid) {
-        return new \core_analytics\course($sampleid);
+        return \core_analytics\course::instance($sampleid);
     }
 
     protected function provided_sample_data() {

@@ -54,10 +54,6 @@ class core_analytics_course_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($this->both->id, $this->course->id, $this->editingteacherroleid);
         $this->getDataGenerator()->enrol_user($this->editingteacher->id, $this->course->id, $this->editingteacherroleid);
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherroleid);
-
-
-        set_config('studentroles', $this->studentroleid, 'analytics');
-        set_config('teacherroles', $this->editingteacherroleid . ',' . $this->teacherroleid, 'analytics');
     }
 
     /**

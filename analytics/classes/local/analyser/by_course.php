@@ -38,15 +38,15 @@ abstract class by_course extends base {
 
         // Default to all system courses.
         if (!empty($this->options['filter'])) {
-            $courseids = $this->options['filter'];
+            $it = $this->options['filter'];
         } else {
             // Iterate through all potentially valid courses.
-            $courseids = $DB->get_fieldset_select('course', 'id', 'id != :frontpage', array('frontpage' => SITEID), 'sortorder ASC');
+            $it = $DB->get_recordset_select('course', 'id != :frontpage', array('frontpage' => SITEID), 'sortorder ASC');
         }
 
         $analysables = array();
-        foreach ($courseids as $courseid) {
-            $analysable = new \core_analytics\course($courseid);
+        foreach ($it as $course) {
+            $analysable = \core_analytics\course::instance($course);
             $analysables[$analysable->get_id()] = $analysable;
         }
 
