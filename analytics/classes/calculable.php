@@ -35,6 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class calculable {
 
+    const OUTCOME_NEUTRAL = 0;
+    const OUTCOME_VERY_POSITIVE = 1;
+    const OUTCOME_OK = 2;
+    const OUTCOME_NEGATIVE = 3;
+    const OUTCOME_VERY_NEGATIVE = 4;
+
     /**
      * @var array[]
      */
@@ -79,6 +85,30 @@ abstract class calculable {
      */
     public function clear_sample_data() {
         $this->sampledata = array();
+    }
+
+    /**
+     * Returns the visible value of the calculated value.
+     *
+     * @param float $value
+     * @param string|false $subtype
+     * @return string
+     */
+    public function get_display_value($value, $subtype = false) {
+        return $value;
+    }
+
+    /**
+     * Returns how good the calculated value is.
+     *
+     * Use one of \core_analytics\calculable::OUTCOME_* values.
+     *
+     * @param float $value
+     * @param string|false $subtype
+     * @return int
+     */
+    public function get_calculation_outcome($value, $subtype = false) {
+        throw new \coding_exception('Please overwrite get_calculation_outcome method');
     }
 
     /**

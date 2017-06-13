@@ -72,7 +72,7 @@ class insight implements \renderable, \templatable {
         $predictedvalue = $this->prediction->get_prediction_data()->prediction;
         $predictionid = $this->prediction->get_prediction_data()->id;
         $data->predictiondisplayvalue = $this->model->get_target()->get_display_value($predictedvalue);
-        $data->predictionstyle = $this->model->get_target()->get_value_style($predictedvalue);
+        $data->predictionstyle = $this->get_calculation_style($this->model->get_target(), $predictedvalue);
 
         $actions = $this->model->get_target()->prediction_actions($this->prediction);
         if ($actions) {
@@ -108,11 +108,46 @@ class insight implements \renderable, \templatable {
             $obj = new \stdClass();
             $obj->name = forward_static_call(array($calculation->indicator, 'get_name'), $calculation->subtype);
             $obj->displayvalue = $calculation->indicator->get_display_value($calculation->value, $calculation->subtype);
-            $obj->style = $calculation->indicator->get_value_style($calculation->value, $calculation->subtype);
+            $obj->style = $this->get_calculation_style($calculation->indicator, $calculation->value, $calculation->subtype);
 
             $data->calculations[] = $obj;
         }
 
         return $data;
+    }
+
+    /**
+     * Returns a CSS class from the calculated value outcome.
+     *
+     * @param \core_analytics\calculable $calculable
+     * @param mixed $value
+     * @param string|false $subtype
+     * @return string
+     */
+    protected function get_calculation_style(\core_analytics\calculable $calculable, $value, $subtype = false) {
+        $outcome = $calculable->get_calculation_outcome($value, $subtype);
+        switch ($outcome) {
+            case \core_analytics\calculable::OUTCOME_NEUTRAL:
+                $style = '';
+                break;
+            case \core_analytics\calculable::OUTCOME_VERY_POSITIVE:
+                $style = 'alert alert-success';
+                break;
+            case \core_analytics\calculable::OUTCOME_OK:
+                $style = 'alert alert-info';
+                break;
+            case \core_analytics\calculable::OUTCOME_NEGATIVE:
+                $style = 'alert alert-warning';
+                break;
+            case \core_analytics\calculable::OUTCOME_VERY_NEGATIVE:
+                $style = 'alert alert-danger';
+                break;
+            default:
+                throw new \coding_exception('The outcome returned by ' . get_class($calculable) . '::get_calculation_outcome is ' .
+                    'not one of the accepted values. Please use \core_analytics\calculable::OUTCOME_VERY_POSITIVE, ' .
+                    '\core_analytics\calculable::OUTCOME_OK, \core_analytics\calculable::OUTCOME_NEGATIVE or ' .
+                    '\core_analytics\calculable::OUTCOME_VERY_NEGATIVE');
+        }
+        return $style;
     }
 }

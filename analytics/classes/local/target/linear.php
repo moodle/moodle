@@ -40,14 +40,14 @@ abstract class linear extends base {
         throw new \coding_exception('Sorry, this version\'s prediction processors only support targets with binary values.');
     }
 
-    public function get_value_style($value) {
+    public function get_calculated_outcome($value, $ignoredsubtype = false) {
 
         // This is very generic, targets will probably be interested in overwriting this.
         $diff = static::get_max_value() - static::get_min_value();
         if (($value - static::get_min_value()) / $diff >= 0.5) {
-            return 'alert alert-success';
+            return self::OUTCOME_VERY_POSITIVE;
         }
-        return 'alert alert-danger';
+        return self::OUTCOME_VERY_NEGATIVE;
     }
 
     /**

@@ -41,6 +41,13 @@ abstract class binary extends discrete {
         return array(0);
     }
 
+    /**
+     * get_display_value
+     *
+     * @param float $value
+     * @param string $subtype
+     * @return string
+     */
     public function get_display_value($value, $subtype = false) {
 
         // No subtypes for binary values by default.
@@ -53,13 +60,20 @@ abstract class binary extends discrete {
         }
     }
 
-    public function get_value_style($value, $subtype = false) {
+    /**
+     * get_calculation_outcome
+     *
+     * @param float $value
+     * @param string $subtype
+     * @return int
+     */
+    public function get_calculation_outcome($value, $subtype = false) {
 
         // No subtypes for binary values by default.
         if ($value == -1) {
-            return 'alert alert-warning';
+            return self::OUTCOME_NEGATIVE;
         } else if ($value == 1) {
-            return 'alert alert-info';
+            return self::OUTCOME_OK;
         } else {
             throw new \moodle_exception('errorpredictionformat', 'analytics');
         }

@@ -44,7 +44,14 @@ abstract class discrete extends base {
         return (in_array($class, static::get_classes()));
     }
 
-    public function get_display_value($value) {
+    /**
+     * get_display_value
+     *
+     * @param float $value
+     * @param string $subtype
+     * @return string
+     */
+    public function get_display_value($value, $ignoredsubtype = false) {
 
         if (!self::is_a_class($value)) {
             throw new \moodle_exception('errorpredictionformat', 'analytics');
@@ -66,7 +73,14 @@ abstract class discrete extends base {
         return $descriptions[$key];
     }
 
-    public function get_value_style($value) {
+    /**
+     * get_calculation_outcome
+     *
+     * @param float $value
+     * @param string $ignoredsubtype
+     * @return int
+     */
+    public function get_calculation_outcome($value, $ignoredsubtype = false) {
 
         if (!self::is_a_class($value)) {
             throw new \moodle_exception('errorpredictionformat', 'analytics');
@@ -74,16 +88,16 @@ abstract class discrete extends base {
 
         if (in_array($value, $this->ignored_predicted_classes())) {
             // Just in case, if it is ignored the prediction should not even be recorded.
-            return '';
+            return self::OUTCOME_OK;
         }
 
-        debugging('Please overwrite \core_analytics\local\target\discrete::get_value_style, all your target classes are styled ' .
+        debugging('Please overwrite \core_analytics\local\target\discrete::get_calculation_outcome, all your target classes are styled ' .
             'the same way otherwise', DEBUG_DEVELOPER);
-        return 'alert alert-danger';
+        return self::OUTCOME_OK;
     }
 
     /**
-     * Returns the target discrete values.
+     * Returns all the possible values the target calculation can return.
      *
      * Only useful for targets using discrete values, must be overwriten if it is the case.
      *
@@ -91,12 +105,20 @@ abstract class discrete extends base {
      */
     public static function get_classes() {
         // Coding exception as this will only be called if this target have non-linear values.
-        throw new \coding_exception('Overwrite get_classes() and return an array with the different target classes');
+        throw new \coding_exception('Overwrite get_classes() and return an array with the different values the ' .
+            'target calculation can return');
     }
 
+    /**
+     * Returns descriptions for each of the values the target calculation can return.
+     *
+     * The array indexes should match self::get_classes indexes.
+     *
+     * @return array
+     */
     protected static function classes_description() {
-        throw new \coding_exception('Overwrite classes_description() and return an array with the target classes description and ' .
-            'indexes matching self::get_classes');
+        throw new \coding_exception('Overwrite classes_description() and return an array with a description for each of the ' .
+            'different values the target calculation can return. Indexes should match self::get_classes indexes');
     }
 
     /**

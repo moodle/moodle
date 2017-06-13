@@ -64,16 +64,30 @@ abstract class linear extends base {
         return true;
     }
 
+    /**
+     * get_display_value
+     *
+     * @param float $value
+     * @param string $subtype
+     * @return string
+     */
     public function get_display_value($value, $subtype = false) {
         $diff = static::get_max_value() - static::get_min_value();
         return round(100 * ($value - static::get_min_value()) / $diff) . '%';
     }
 
-    public function get_value_style($value, $subtype = false) {
+    /**
+     * get_calculation_outcome
+     *
+     * @param float $value
+     * @param string $subtype
+     * @return int
+     */
+    public function get_calculation_outcome($value, $subtype = false) {
         if ($value < 0) {
-            return 'alert alert-warning';
+            return self::OUTCOME_NEGATIVE;
         } else {
-            return 'alert alert-info';
+            return self::OUTCOME_OK;
         }
     }
 

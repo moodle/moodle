@@ -67,11 +67,11 @@ abstract class discrete extends base {
     /**
      * Returns the value to display when the prediction is $value.
      *
-     * @param mixed $value
+     * @param float $value
      * @param string $subtype
-     * @return void
+     * @return string
      */
-    public function get_display_value($value, $subtype) {
+    public function get_display_value($value, $subtype = false) {
 
         $displayvalue = array_search($subtype, static::get_classes());
 
@@ -81,10 +81,17 @@ abstract class discrete extends base {
         return $displayvalue;
     }
 
-    public function get_display_style($value, $subtype) {
+    /**
+     * get_display_style
+     *
+     * @param float $ignoredvalue
+     * @param string $ignoredsubtype
+     * @return int
+     */
+    public function get_display_style($ignoredvalue, $ignoredsubtype) {
         // No style attached to indicators classes, they are what they are, a cat,
         // a horse or a sandwich, they are not good or bad.
-        return '';
+        return \core_analytics\calculable::OUTCOME_NEUTRAL;
     }
 
     protected function to_features($calculatedvalues) {

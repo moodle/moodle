@@ -62,7 +62,7 @@ abstract class binary extends discrete {
         return array(0);
     }
 
-    public function get_value_style($value) {
+    public function get_calculation_outcome($value, $ignoredsubtype = false) {
 
         if (!self::is_a_class($value)) {
             throw new \moodle_exception('errorpredictionformat', 'analytics');
@@ -71,14 +71,14 @@ abstract class binary extends discrete {
         if (in_array($value, $this->ignored_predicted_classes())) {
             // Just in case, if it is ignored the prediction should not even be recorded but if it would, it is ignored now,
             // which should mean that is it nothing serious.
-            return 'alert alert-success';
+            return self::OUTCOME_VERY_POSITIVE;
         }
 
-        // Default binaries are danger when prediction = 1.
+        // By default binaries are danger when prediction = 1.
         if ($value) {
-            return 'alert alert-danger';
+            return self::OUTCOME_VERY_NEGATIVE;
         }
-        return 'alert alert-success';
+        return self::OUTCOME_VERY_POSITIVE;
     }
 
     protected static function classes_description() {

@@ -120,14 +120,6 @@ abstract class base extends \core_analytics\calculable {
         );
     }
 
-    public function get_display_value($value) {
-        return $value;
-    }
-
-    public function get_value_style($value) {
-        throw new \coding_exception('Please overwrite \core_analytics\local\target\base::get_value_style');
-    }
-
     /**
      * Callback to execute once a prediction has been returned from the predictions processor.
      *
