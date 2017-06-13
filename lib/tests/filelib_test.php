@@ -1287,7 +1287,7 @@ EOF;
         $this->assertEquals($size, $fileinfo['filesize_without_references']);
     }
 
-        /**
+    /**
      * Test file_get_file_area_info.
      */
     public function test_file_get_file_area_info() {
