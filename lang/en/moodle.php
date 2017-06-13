@@ -1505,6 +1505,7 @@ $string['publicsitefileswarning3'] = 'Note: Files placed here can be accessed by
 $string['publish'] = 'Publish';
 $string['question'] = 'Question';
 $string['questionsinthequestionbank'] = 'Questions in the question bank';
+$string['quotausage'] = 'You have currently used {$a->used} of your {$a->total} limit.';
 $string['readinginfofrombackup'] = 'Reading info from backup';
 $string['readme'] = 'README';
 $string['recentactivity'] = 'Recent activity';
