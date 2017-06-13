@@ -1741,6 +1741,7 @@ $string['showsettings'] = 'Show settings';
 $string['showtheselogs'] = 'Show these logs';
 $string['showthishelpinlanguage'] = 'Show this help in language: {$a}';
 $string['schedule'] = 'Schedule';
+$string['sidepanel'] = 'Side panel';
 $string['signoutofotherservices'] = 'Sign out everywhere';
 $string['signoutofotherservices_help'] = 'If ticked, the account will be signed out of all devices and systems which use web services, such as the mobile app.';
 $string['since'] = 'Since';
