@@ -60,6 +60,9 @@ function theme_reset_all_caches() {
         $cache->purge();
     }
 
+    // Purge compiled post processed css.
+    cache::make('core', 'postprocessedcss')->purge();
+
     if ($PAGE) {
         $PAGE->reload_theme();
     }
@@ -906,6 +909,44 @@ class theme_config {
         $csscontent = core_minify::css($csscontent);
 
         return $csscontent;
+    }
+    /**
+     * Set post processed CSS content cache.
+     *
+     * @param string $csscontent The post processed CSS content.
+     * @return bool True if the content was successfully cached.
+     */
+    public function set_css_content_cache($csscontent) {
+
+        $cache = cache::make('core', 'postprocessedcss');
+        $key = $this->get_css_cache_key();
+
+        return $cache->set($key, $csscontent);
+    }
+
+    /**
+     * Return cached post processed CSS content.
+     *
+     * @return bool|string The cached css content or false if not found.
+     */
+    public function get_css_cached_content() {
+
+        $key = $this->get_css_cache_key();
+        $cache = cache::make('core', 'postprocessedcss');
+
+        return $cache->get($key);
+    }
+
+    /**
+     * Generate the css content cache key.
+     *
+     * @return string The post processed css cache key.
+     */
+    public function get_css_cache_key() {
+        $nosvg = (!$this->use_svg_icons()) ? 'nosvg_' : '';
+        $rtlmode = ($this->rtlmode == true) ? 'rtl' : 'ltr';
+
+        return $nosvg . $this->name . '_' . $rtlmode;
     }
 
     /**
