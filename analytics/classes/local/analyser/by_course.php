@@ -34,18 +34,19 @@ defined('MOODLE_INTERNAL') || die();
 abstract class by_course extends base {
 
     public function get_courses() {
-        global $DB;
 
         // Default to all system courses.
         if (!empty($this->options['filter'])) {
-            $it = $this->options['filter'];
+            $courses = $this->options['filter'];
         } else {
             // Iterate through all potentially valid courses.
-            $it = $DB->get_recordset_select('course', 'id != :frontpage', array('frontpage' => SITEID), 'sortorder ASC');
+            $courses = get_courses();
         }
+        unset($courses[SITEID]);
 
         $analysables = array();
-        foreach ($it as $course) {
+        foreach ($courses as $course) {
+            // Skip the frontpage course.
             $analysable = \core_analytics\course::instance($course);
             $analysables[$analysable->get_id()] = $analysable;
         }
@@ -64,7 +65,7 @@ abstract class by_course extends base {
         $filesbytimesplitting = array();
 
         // This class and all children will iterate through a list of courses (\core_analytics\course).
-        $analysables = $this->get_courses();
+        $analysables = $this->get_courses('all', 'c.sortorder ASC');
         foreach ($analysables as $analysableid => $analysable) {
 
             $files = $this->process_analysable($analysable, $includetarget);

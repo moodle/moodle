@@ -1019,6 +1019,19 @@ class model {
     }
 
     /**
+     * Returns the model logs data.
+     *
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return \stdClass[]
+     */
+    public function get_logs($limitfrom = 0, $limitnum = 0) {
+        global $DB;
+        return $DB->get_records('analytics_models_log', array('modelid' => $this->get_id()), 'timecreated DESC', '*',
+            $limitfrom, $limitnum);
+    }
+
+    /**
      * flag_file_as_used
      *
      * @param \stored_file $file

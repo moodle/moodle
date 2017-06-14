@@ -41,16 +41,21 @@ class train_models extends \core\task\scheduled_task {
     public function execute() {
         global $DB, $OUTPUT, $PAGE;
 
-        $models = $DB->get_records_select('analytics_models', 'enabled = 1 AND timesplitting IS NOT NULL');
+        $models = \core_analytics\manager::get_all_models(true);
         if (!$models) {
             mtrace(get_string('errornoenabledmodels', 'tool_models'));
             return;
         }
-        foreach ($models as $modelobj) {
-            $model = new \core_analytics\model($modelobj);
+
+        foreach ($models as $model) {
 
             if ($model->is_static()) {
                 // Skip models based on assumptions.
+                continue;
+            }
+
+            if (!$model->get_time_splitting()) {
+                // Can not train if there is no time splitting method selected.
                 continue;
             }
 

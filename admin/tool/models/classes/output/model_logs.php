@@ -37,22 +37,22 @@ require_once($CFG->libdir . '/tablelib.php');
 class model_logs extends \table_sql {
 
     /**
-     * @var int
+     * @var \core_analytics\model
      */
-    protected $modelid = null;
+    protected $model = null;
 
     /**
      * Sets up the table_log parameters.
      *
      * @param string $uniqueid unique id of form.
-     * @param int $modelid model id
+     * @param \core_analytics\model $model
      */
-    public function __construct($uniqueid, $modelid) {
+    public function __construct($uniqueid, $model) {
         global $PAGE;
 
         parent::__construct($uniqueid);
 
-        $this->modelid = $modelid;
+        $this->model = $model;
 
         $this->set_attribute('class', 'modellog generaltable generalbox');
         $this->set_attribute('aria-live', 'polite');
@@ -182,11 +182,9 @@ class model_logs extends \table_sql {
     public function query_db($pagesize, $useinitialsbar = true) {
         global $DB;
 
-        $total = $DB->count_records('analytics_models_log', array('modelid' => $this->modelid));
+        $total = count($this->model->get_logs());
         $this->pagesize($pagesize, $total);
-
-        $this->rawdata = $DB->get_records('analytics_models_log', array('modelid' => $this->modelid), 'timecreated DESC', '*',
-            $this->get_page_start(), $this->get_page_size());
+        $this->rawdata = $this->model->get_logs($this->get_page_start(), $this->get_page_size());
 
         // Set initial bars.
         if ($useinitialsbar) {

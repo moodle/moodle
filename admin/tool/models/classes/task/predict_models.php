@@ -41,15 +41,13 @@ class predict_models extends \core\task\scheduled_task {
     public function execute() {
         global $DB, $OUTPUT, $PAGE;
 
-        $models = $DB->get_records_select('analytics_models', 'enabled = 1 AND trained = 1 AND timesplitting IS NOT NULL');
+        $models = \core_analytics\manager::get_all_models(true, true);
         if (!$models) {
             mtrace(get_string('errornoenabledandtrainedmodels', 'tool_models'));
             return;
         }
 
-        foreach ($models as $modelobj) {
-            $model = new \core_analytics\model($modelobj);
-
+        foreach ($models as $model) {
             $result = $model->predict();
             if ($result) {
                 echo $OUTPUT->heading(get_string('modelresults', 'tool_models', $model->get_target()->get_name()));

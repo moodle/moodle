@@ -162,10 +162,8 @@ class course_dropout extends \core_analytics\local\target\binary {
      * @return void
      */
     protected function calculate_sample($sampleid, \core_analytics\analysable $course, $starttime = false, $endtime = false) {
-        global $DB;
 
-        $sql = "SELECT ue.* FROM {user_enrolments} ue JOIN {user} u ON u.id = ue.userid WHERE ue.id = :ueid";
-        $userenrol = $DB->get_record_sql($sql, array('ueid' => $sampleid));
+        $userenrol = $this->retrieve('user_enrolments', $sampleid);
 
         // We use completion as a success metric only when it is enabled.
         $completion = new \completion_info($course->get_course_data());

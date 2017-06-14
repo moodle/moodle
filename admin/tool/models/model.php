@@ -144,7 +144,7 @@ switch ($action) {
         }
 
         $renderer = $PAGE->get_renderer('tool_models');
-        $modellogstable = new \tool_models\output\model_logs('model-' . $model->get_id(), $model->get_id());
+        $modellogstable = new \tool_models\output\model_logs('model-' . $model->get_id(), $model);
         echo $renderer->render_table($modellogstable);
         break;
 }

@@ -50,6 +50,14 @@ class manager {
      */
     protected static $alltimesplittings = null;
 
+    /**
+     * Returns all system models that match the provided filters.
+     *
+     * @param bool $enabled
+     * @param bool $trained
+     * @param \context $predictioncontext
+     * @return \core_analytics\model[]
+     */
     public static function get_all_models($enabled = false, $trained = false, $predictioncontext = false) {
         global $DB;
 
