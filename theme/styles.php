@@ -52,15 +52,29 @@ if ($slashargument = min_get_slash_argument()) {
 
     list($themename, $rev, $type) = explode('/', $slashargument, 3);
     $themename = min_clean_param($themename, 'SAFEDIR');
-    $rev       = min_clean_param($rev, 'INT');
+    $rev       = min_clean_param($rev, 'RAW');
     $type      = min_clean_param($type, 'SAFEDIR');
 
 } else {
     $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
-    $rev       = min_optional_param('rev', 0, 'INT');
+    $rev       = min_optional_param('rev', 0, 'RAW');
     $type      = min_optional_param('type', 'all', 'SAFEDIR');
     $chunk     = min_optional_param('chunk', null, 'INT');
     $usesvg    = (bool)min_optional_param('svg', '1', 'INT');
+}
+
+// Check if we received a theme sub revision which allows us
+// to handle local caching on a per theme basis.
+$values = explode('_', $rev);
+$rev = min_clean_param(array_shift($values), 'INT');
+$themesubrev = array_shift($values);
+
+if (is_null($themesubrev)) {
+    // Default to the current theme subrevision if one isn't
+    // provided in the URL.
+    $themesubrev = theme_get_sub_revision_for_theme($themename);
+} else {
+    $themesubrev = min_clean_param($themesubrev, 'INT');
 }
 
 if ($type === 'editor') {
@@ -82,8 +96,8 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
 }
 
 $candidatedir = "$CFG->localcachedir/theme/$rev/$themename/css";
-$etag = "$rev/$themename/$type";
-$candidatename = $type;
+$etag = "$rev/$themename/$type/$themesubrev";
+$candidatename = ($themesubrev > 0) ? "{$type}_{$themesubrev}" : $type;
 if (!$usesvg) {
     // Add to the sheet name, one day we'll be able to just drop this.
     $candidatedir .= '/nosvg';
@@ -119,15 +133,20 @@ $theme->force_svg_use($usesvg);
 $theme->set_rtl_mode($type === 'all-rtl' ? true : false);
 
 $themerev = theme_get_revision();
+$currentthemesubrev = theme_get_sub_revision_for_theme($themename);
 
 $cache = true;
-if ($themerev <= 0 or $themerev != $rev) {
+// If the client is requesting a revision that doesn't match both
+// the global theme revision and the theme specific revision then
+// tell the browser not to cache this style sheet because it's
+// likely being regnerated.
+if ($themerev <= 0 or $themerev != $rev or $themesubrev != $currentthemesubrev) {
     $rev = $themerev;
     $cache = false;
 
     $candidatedir = "$CFG->localcachedir/theme/$rev/$themename/css";
-    $etag = "$rev/$themename/$type";
-    $candidatename = $type;
+    $etag = "$rev/$themename/$type/$themesubrev";
+    $candidatename = ($themesubrev > 0) ? "{$type}_{$themesubrev}" : $type;
     if (!$usesvg) {
         // Add to the sheet name, one day we'll be able to just drop this.
         $candidatedir .= '/nosvg';
@@ -189,7 +208,7 @@ if ($type === 'editor') {
         }
     }
 
-    css_store_css($theme, "$candidatedir/$type.css", $csscontent, true, $chunkurl);
+    css_store_css($theme, "$candidatedir/$candidatename.css", $csscontent, true, $chunkurl);
 
     if ($lock) {
         // Now that the CSS has been generated and/or stored, release the lock.
