@@ -1914,5 +1914,11 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017061301.00);
     }
 
+    if ($oldversion < 2017071000.00 ) {
+        // Clean old upgrade setting not used anymore.
+        unset_config('upgrade_minmaxgradestepignored');
+        upgrade_main_savepoint(true, 2017071000.00);
+    }
+
     return true;
 }

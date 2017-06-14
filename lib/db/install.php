@@ -132,7 +132,6 @@ function xmldb_main_install() {
         'texteditors'           => 'atto,tinymce,textarea',
         'antiviruses'           => '',
         'media_plugins_sortorder' => 'videojs,youtube,swf',
-        'upgrade_minmaxgradestepignored' => 1, // New installs should not run this upgrade step.
         'upgrade_extracreditweightsstepignored' => 1, // New installs should not run this upgrade step.
         'upgrade_calculatedgradeitemsignored' => 1, // New installs should not run this upgrade step.
         'upgrade_letterboundarycourses' => 1, // New installs should not run this upgrade step.

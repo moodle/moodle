@@ -61,8 +61,6 @@
 function xmldb_lti_upgrade($oldversion) {
     global $CFG, $DB;
 
-    require_once(__DIR__ . '/upgradelib.php');
-
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2016041800) {

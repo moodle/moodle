@@ -1,5 +1,13 @@
 This files describes API changes in the editor_atto code.
+
+=== 3.4 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-57432 for more info:
+    - atto_equation_update_librarygroup4_setting()
+
 === 3.0 ===
+
 * Rangy updated to 1.3.0.
   Rangy has deprecated the createCssClassApplier function in this version (it is now createClassApplier).
 

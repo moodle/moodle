@@ -3,6 +3,13 @@ information provided here is intended especially for developers.
 
 === 3.4 ===
 
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-57432 for more info:
+    - upgrade_mimetypes()
+    - upgrade_fix_missing_root_folders_draft()
+    - upgrade_minmaxgrade()
+    - upgrade_course_tags()
+
 * Added new moodleform element 'filetypes' and new admin setting widget 'admin_setting_filetypes'. These new widgets
   allow users to define a list of file types; either by typing them manually or selecting them from a list. The widgets
   directly support the syntax used to feed the 'accepted_types' option of the filemanager and filepicker elements. File
