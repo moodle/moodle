@@ -21,7 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/ajax', 'core/custom_interaction_events'], function($, Ajax, CustomEvents) {
+define(['jquery', 'core/ajax', 'core/custom_interaction_events',
+    'core/notification'], function($, Ajax, CustomEvents, Notification) {
 
     /**
      * Registers an event that saves the user's tab preference when switching between them.
