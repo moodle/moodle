@@ -319,4 +319,12 @@ $definitions = array(
         'simplevalues' => true,
         'datasource' => '\core_message\time_last_message_between_users',
     ),
+
+    // Caches processed CSS.
+    'postprocessedcss' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => false,
+    ),
 );
