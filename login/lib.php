@@ -35,125 +35,26 @@ define('PWRESET_STATUS_ALREADYSENT', 4);
  *  Where they have supplied identifier, the function will check their status, and send email as appropriate.
  */
 function core_login_process_password_reset_request() {
-    global $DB, $OUTPUT, $CFG, $PAGE;
-    $systemcontext = context_system::instance();
+    global $OUTPUT, $PAGE;
     $mform = new login_forgot_password_form();
 
     if ($mform->is_cancelled()) {
         redirect(get_login_url());
 
     } else if ($data = $mform->get_data()) {
-        // Requesting user has submitted form data.
-        // Next find the user account in the database which the requesting user claims to own.
+
+        $username = $email = '';
         if (!empty($data->username)) {
-            // Username has been specified - load the user record based on that.
-            $username = core_text::strtolower($data->username); // Mimic the login page process.
-            $userparams = array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 0, 'suspended' => 0);
-            $user = $DB->get_record('user', $userparams);
+            $username = $data->username;
         } else {
-            // Try to load the user record based on email address.
-            // this is tricky because
-            // 1/ the email is not guaranteed to be unique - TODO: send email with all usernames to select the account for pw reset
-            // 2/ mailbox may be case sensitive, the email domain is case insensitive - let's pretend it is all case-insensitive.
-
-            $select = $DB->sql_like('email', ':email', false, true, false, '|') .
-                    " AND mnethostid = :mnethostid AND deleted=0 AND suspended=0";
-            $params = array('email' => $DB->sql_like_escape($data->email, '|'), 'mnethostid' => $CFG->mnet_localhost_id);
-            $user = $DB->get_record_select('user', $select, $params, '*', IGNORE_MULTIPLE);
+            $email = $data->email;
         }
-
-        // Target user details have now been identified, or we know that there is no such account.
-        // Send email address to account's email address if appropriate.
-        $pwresetstatus = PWRESET_STATUS_NOEMAILSENT;
-        if ($user and !empty($user->confirmed)) {
-            $userauth = get_auth_plugin($user->auth);
-            if (!$userauth->can_reset_password() or !is_enabled_auth($user->auth)
-              or !has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
-                if (send_password_change_info($user)) {
-                    $pwresetstatus = PWRESET_STATUS_OTHEREMAILSENT;
-                } else {
-                    print_error('cannotmailconfirm');
-                }
-            } else {
-                // The account the requesting user claims to be is entitled to change their password.
-                // Next, check if they have an existing password reset in progress.
-                $resetinprogress = $DB->get_record('user_password_resets', array('userid' => $user->id));
-                if (empty($resetinprogress)) {
-                    // Completely new reset request - common case.
-                    $resetrecord = core_login_generate_password_reset($user);
-                    $sendemail = true;
-                } else if ($resetinprogress->timerequested < (time() - $CFG->pwresettime)) {
-                    // Preexisting, but expired request - delete old record & create new one.
-                    // Uncommon case - expired requests are cleaned up by cron.
-                    $DB->delete_records('user_password_resets', array('id' => $resetinprogress->id));
-                    $resetrecord = core_login_generate_password_reset($user);
-                    $sendemail = true;
-                } else if (empty($resetinprogress->timererequested)) {
-                    // Preexisting, valid request. This is the first time user has re-requested the reset.
-                    // Re-sending the same email once can actually help in certain circumstances
-                    // eg by reducing the delay caused by greylisting.
-                    $resetinprogress->timererequested = time();
-                    $DB->update_record('user_password_resets', $resetinprogress);
-                    $resetrecord = $resetinprogress;
-                    $sendemail = true;
-                } else {
-                    // Preexisting, valid request. User has already re-requested email.
-                    $pwresetstatus = PWRESET_STATUS_ALREADYSENT;
-                    $sendemail = false;
-                }
-
-                if ($sendemail) {
-                    $sendresult = send_password_change_confirmation_email($user, $resetrecord);
-                    if ($sendresult) {
-                        $pwresetstatus = PWRESET_STATUS_TOKENSENT;
-                    } else {
-                        print_error('cannotmailconfirm');
-                    }
-                }
-            }
-        }
+        list($status, $notice, $url) = core_login_process_password_reset($username, $email);
 
         // Any email has now been sent.
         // Next display results to requesting user if settings permit.
         echo $OUTPUT->header();
-
-        if (!empty($CFG->protectusernames)) {
-            // Neither confirm, nor deny existance of any username or email address in database.
-            // Print general (non-commital) message.
-            notice(get_string('emailpasswordconfirmmaybesent'), $CFG->wwwroot.'/index.php');
-            die; // Never reached.
-        } else if (empty($user)) {
-            // Protect usernames is off, and we couldn't find the user with details specified.
-            // Print failure advice.
-            notice(get_string('emailpasswordconfirmnotsent'), $CFG->wwwroot.'/forgot_password.php');
-            die; // Never reached.
-        } else if (empty($user->email)) {
-            // User doesn't have an email set - can't send a password change confimation email.
-            notice(get_string('emailpasswordconfirmnoemail'), $CFG->wwwroot.'/index.php');
-            die; // Never reached.
-        } else if ($pwresetstatus == PWRESET_STATUS_ALREADYSENT) {
-            // User found, protectusernames is off, but user has already (re) requested a reset.
-            // Don't send a 3rd reset email.
-            $stremailalreadysent = get_string('emailalreadysent');
-            notice($stremailalreadysent, $CFG->wwwroot.'/index.php');
-            die; // Never reached.
-        } else if ($pwresetstatus == PWRESET_STATUS_NOEMAILSENT) {
-            // User found, protectusernames is off, but user is not confirmed.
-            // Pretend we sent them an email.
-            // This is a big usability problem - need to tell users why we didn't send them an email.
-            // Obfuscate email address to protect privacy.
-            $protectedemail = preg_replace('/([^@]*)@(.*)/', '******@$2', $user->email);
-            $stremailpasswordconfirmsent = get_string('emailpasswordconfirmsent', '', $protectedemail);
-            notice($stremailpasswordconfirmsent, $CFG->wwwroot.'/index.php');
-            die; // Never reached.
-        } else {
-            // Confirm email sent. (Obfuscate email address to protect privacy).
-            $protectedemail = preg_replace('/([^@]*)@(.*)/', '******@$2', $user->email);
-            // This is a small usability problem - may be obfuscating the email address which the user has just supplied.
-            $stremailresetconfirmsent = get_string('emailresetconfirmsent', '', $protectedemail);
-            notice($stremailresetconfirmsent, $CFG->wwwroot.'/index.php');
-            die; // Never reached.
-        }
+        notice($notice, $url);
         die; // Never reached.
     }
 
@@ -167,6 +68,131 @@ function core_login_process_password_reset_request() {
     $mform->display();
 
     echo $OUTPUT->footer();
+}
+
+/**
+ * Process the password reset for the given user (via username or email).
+ *
+ * @param  string $username the user name
+ * @param  string $email    the user email
+ * @return array an array containing fields indicating the reset status, a info notice and redirect URL.
+ * @since  Moodle 3.4
+ */
+function core_login_process_password_reset($username, $email) {
+    global $CFG, $DB;
+
+    if (empty($username) && empty($email)) {
+        print_error('cannotmailconfirm');
+    }
+
+    // Next find the user account in the database which the requesting user claims to own.
+    if (!empty($username)) {
+        // Username has been specified - load the user record based on that.
+        $username = core_text::strtolower($username); // Mimic the login page process.
+        $userparams = array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 0, 'suspended' => 0);
+        $user = $DB->get_record('user', $userparams);
+    } else {
+        // Try to load the user record based on email address.
+        // this is tricky because
+        // 1/ the email is not guaranteed to be unique - TODO: send email with all usernames to select the account for pw reset
+        // 2/ mailbox may be case sensitive, the email domain is case insensitive - let's pretend it is all case-insensitive.
+
+        $select = $DB->sql_like('email', ':email', false, true, false, '|') .
+                " AND mnethostid = :mnethostid AND deleted=0 AND suspended=0";
+        $params = array('email' => $DB->sql_like_escape($email, '|'), 'mnethostid' => $CFG->mnet_localhost_id);
+        $user = $DB->get_record_select('user', $select, $params, '*', IGNORE_MULTIPLE);
+    }
+
+    // Target user details have now been identified, or we know that there is no such account.
+    // Send email address to account's email address if appropriate.
+    $pwresetstatus = PWRESET_STATUS_NOEMAILSENT;
+    if ($user and !empty($user->confirmed)) {
+        $systemcontext = context_system::instance();
+
+        $userauth = get_auth_plugin($user->auth);
+        if (!$userauth->can_reset_password() or !is_enabled_auth($user->auth)
+          or !has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
+            if (send_password_change_info($user)) {
+                $pwresetstatus = PWRESET_STATUS_OTHEREMAILSENT;
+            } else {
+                print_error('cannotmailconfirm');
+            }
+        } else {
+            // The account the requesting user claims to be is entitled to change their password.
+            // Next, check if they have an existing password reset in progress.
+            $resetinprogress = $DB->get_record('user_password_resets', array('userid' => $user->id));
+            if (empty($resetinprogress)) {
+                // Completely new reset request - common case.
+                $resetrecord = core_login_generate_password_reset($user);
+                $sendemail = true;
+            } else if ($resetinprogress->timerequested < (time() - $CFG->pwresettime)) {
+                // Preexisting, but expired request - delete old record & create new one.
+                // Uncommon case - expired requests are cleaned up by cron.
+                $DB->delete_records('user_password_resets', array('id' => $resetinprogress->id));
+                $resetrecord = core_login_generate_password_reset($user);
+                $sendemail = true;
+            } else if (empty($resetinprogress->timererequested)) {
+                // Preexisting, valid request. This is the first time user has re-requested the reset.
+                // Re-sending the same email once can actually help in certain circumstances
+                // eg by reducing the delay caused by greylisting.
+                $resetinprogress->timererequested = time();
+                $DB->update_record('user_password_resets', $resetinprogress);
+                $resetrecord = $resetinprogress;
+                $sendemail = true;
+            } else {
+                // Preexisting, valid request. User has already re-requested email.
+                $pwresetstatus = PWRESET_STATUS_ALREADYSENT;
+                $sendemail = false;
+            }
+
+            if ($sendemail) {
+                $sendresult = send_password_change_confirmation_email($user, $resetrecord);
+                if ($sendresult) {
+                    $pwresetstatus = PWRESET_STATUS_TOKENSENT;
+                } else {
+                    print_error('cannotmailconfirm');
+                }
+            }
+        }
+    }
+
+    $url = $CFG->wwwroot.'/index.php';
+    if (!empty($CFG->protectusernames)) {
+        // Neither confirm, nor deny existance of any username or email address in database.
+        // Print general (non-commital) message.
+        $status = 'emailpasswordconfirmmaybesent';
+        $notice = get_string($status);
+    } else if (empty($user)) {
+        // Protect usernames is off, and we couldn't find the user with details specified.
+        // Print failure advice.
+        $status = 'emailpasswordconfirmnotsent';
+        $notice = get_string($status);
+        $url = $CFG->wwwroot.'/forgot_password.php';
+    } else if (empty($user->email)) {
+        // User doesn't have an email set - can't send a password change confimation email.
+        $status = 'emailpasswordconfirmnoemail';
+        $notice = get_string($status);
+    } else if ($pwresetstatus == PWRESET_STATUS_ALREADYSENT) {
+        // User found, protectusernames is off, but user has already (re) requested a reset.
+        // Don't send a 3rd reset email.
+        $status = 'emailalreadysent';
+        $notice = get_string($status);
+    } else if ($pwresetstatus == PWRESET_STATUS_NOEMAILSENT) {
+        // User found, protectusernames is off, but user is not confirmed.
+        // Pretend we sent them an email.
+        // This is a big usability problem - need to tell users why we didn't send them an email.
+        // Obfuscate email address to protect privacy.
+        $protectedemail = preg_replace('/([^@]*)@(.*)/', '******@$2', $user->email);
+        $status = 'emailpasswordconfirmsent';
+        $notice = get_string($status, '', $protectedemail);
+    } else {
+        // Confirm email sent. (Obfuscate email address to protect privacy).
+        $protectedemail = preg_replace('/([^@]*)@(.*)/', '******@$2', $user->email);
+        // This is a small usability problem - may be obfuscating the email address which the user has just supplied.
+        $status = 'emailresetconfirmsent';
+        $notice = get_string($status, '', $protectedemail);
+    }
+    return array($status, $notice, $url);
 }
 
 /**
@@ -310,4 +336,53 @@ function core_login_get_return_url() {
         }
     }
     return $urltogo;
+}
+
+/**
+ * Validates the forgot password form data.
+ *
+ * This is used by the forgot_password_form and by the core_auth_request_password_rest WS.
+ * @param  array $data array containing the data to be validated (email and username)
+ * @return array array of errors compatible with mform
+ * @since  Moodle 3.4
+ */
+function core_login_validate_forgot_password_data($data) {
+    global $CFG, $DB;
+
+    $errors = array();
+
+    if ((!empty($data['username']) and !empty($data['email'])) or (empty($data['username']) and empty($data['email']))) {
+        $errors['username'] = get_string('usernameoremail');
+        $errors['email']    = get_string('usernameoremail');
+
+    } else if (!empty($data['email'])) {
+        if (!validate_email($data['email'])) {
+            $errors['email'] = get_string('invalidemail');
+
+        } else if ($DB->count_records('user', array('email' => $data['email'])) > 1) {
+            $errors['email'] = get_string('forgottenduplicate');
+
+        } else {
+            if ($user = get_complete_user_data('email', $data['email'])) {
+                if (empty($user->confirmed)) {
+                    $errors['email'] = get_string('confirmednot');
+                }
+            }
+            if (!$user and empty($CFG->protectusernames)) {
+                $errors['email'] = get_string('emailnotfound');
+            }
+        }
+
+    } else {
+        if ($user = get_complete_user_data('username', $data['username'])) {
+            if (empty($user->confirmed)) {
+                $errors['email'] = get_string('confirmednot');
+            }
+        }
+        if (!$user and empty($CFG->protectusernames)) {
+            $errors['username'] = get_string('usernamenotfound');
+        }
+    }
+
+    return $errors;
 }
