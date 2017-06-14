@@ -27,6 +27,25 @@
 
     Context variables required for this template:
     * none
+
+    Example context (json):
+    {
+        "samplelink": "<a href=\"#\">Link</a>",
+        "sampledescription": "Sample description",
+        "predictionstyle": "alert alert-success",
+        "predictiondisplayvalue": "This dev will success",
+        "calculations": [
+            {
+                "style": "alert alert-success",
+                "name": "Indicator 1",
+                "displayvalue": "yes"
+            }, {
+                "style": "alert alert-warning",
+                "name": "Indicator 2",
+                "displayvalue": "20%"
+            }
+        ]
+    }
 }}
 
 <h2>{{#str}}prediction, report_insights{{/str}}</h2>
