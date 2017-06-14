@@ -26,7 +26,7 @@ require_once(dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__F
 require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 
 
-$string['pluginname'] = 'Kaltura Media';
+$string['pluginname'] = 'Embed Kaltura Media';
 $string['popuptitle'] = 'Select Media';
 $string['embedbuttontext'] = 'Embed';
 $string['browse_and_embed'] = 'Browse and Embed';
