@@ -2569,15 +2569,7 @@ class global_navigation extends navigation_node {
         }
 
         $coursenode = $parent->add($coursename, $url, self::TYPE_COURSE, $shortname, $course->id);
-
-        // Do some calculation to see if the course is past, current or future.
-        if ($coursetype == self::COURSE_MY) {
-            $classify = course_classify_for_timeline($course);
-
-            if ($classify == COURSE_TIMELINE_INPROGRESS) {
-                $coursenode->showinflatnavigation = true;
-            }
-        }
+        $coursenode->showinflatnavigation = $coursetype == self::COURSE_MY;
 
         $coursenode->hidden = (!$course->visible);
         $coursenode->title(format_string($course->fullname, true, array('context' => $coursecontext, 'escape' => false)));
@@ -2905,9 +2897,29 @@ class global_navigation extends navigation_node {
         // Append the chosen sortorder.
         $sortorder = $sortorder . ',' . $CFG->navsortmycoursessort . ' ASC';
         $courses = enrol_get_my_courses('*', $sortorder);
-        $numcourses = count($courses);
-        $courses = array_slice($courses, 0, $limit);
-        if ($numcourses && $this->show_my_categories()) {
+        $flatnavcourses = [];
+
+        // Go through the courses and see which ones we want to display in the flatnav.
+        foreach ($courses as $course) {
+            $classify = course_classify_for_timeline($course);
+
+            if ($classify == COURSE_TIMELINE_INPROGRESS) {
+                $flatnavcourses[$course->id] = $course;
+            }
+        }
+
+        // Get the number of courses that can be displayed in the nav block and in the flatnav.
+        $numtotalcourses = count($courses);
+        $numtotalflatnavcourses = count($flatnavcourses);
+
+        // Reduce the size of the arrays to abide by the 'navcourselimit' setting.
+        $courses = array_slice($courses, 0, $limit, true);
+        $flatnavcourses = array_slice($flatnavcourses, 0, $limit, true);
+
+        // Get the number of courses we are going to show for each.
+        $numshowncourses = count($courses);
+        $numshownflatnavcourses = count($flatnavcourses);
+        if ($numshowncourses && $this->show_my_categories()) {
             // Generate an array containing unique values of all the courses' categories.
             $categoryids = array();
             foreach ($courses as $course) {
@@ -2960,16 +2972,46 @@ class global_navigation extends navigation_node {
                 $this->add_category($mycategory, $parent, self::TYPE_MY_CATEGORY);
             }
         }
+
+        // Go through each course now and add it to the nav block, and the flatnav if applicable.
         foreach ($courses as $course) {
-            $this->add_course($course, false, self::COURSE_MY);
+            $node = $this->add_course($course, false, self::COURSE_MY);
+            if ($node) {
+                $node->showinflatnavigation = false;
+                // Check if we should also add this to the flat nav as well.
+                if (isset($flatnavcourses[$course->id])) {
+                    $node->showinflatnavigation = true;
+                }
+            }
         }
+
+        // Go through each course in the flatnav now.
+        foreach ($flatnavcourses as $course) {
+            // Check if we haven't already added it.
+            if (!isset($courses[$course->id])) {
+                // Ok, add it to the flatnav only.
+                $node = $this->add_course($course, false, self::COURSE_MY);
+                $node->display = false;
+                $node->showinflatnavigation = true;
+            }
+        }
+
+        $showmorelinkinnav = $numtotalcourses > $numshowncourses;
+        $showmorelinkinflatnav = $numtotalflatnavcourses > $numshownflatnavcourses;
         // Show a link to the course page if there are more courses the user is enrolled in.
-        if ($numcourses > $limit) {
+        if ($showmorelinkinnav || $showmorelinkinflatnav) {
             // Adding hash to URL so the link is not highlighted in the navigation when clicked.
             $url = new moodle_url('/course/index.php#');
             $parent = $this->rootnodes['mycourses'];
             $coursenode = $parent->add(get_string('morenavigationlinks'), $url, self::TYPE_CUSTOM, null, self::COURSE_INDEX_PAGE);
-            $coursenode->showinflatnavigation = true;
+
+            if ($showmorelinkinnav) {
+                $coursenode->display = true;
+            }
+
+            if ($showmorelinkinflatnav) {
+                $coursenode->showinflatnavigation = true;
+            }
         }
     }
 }
