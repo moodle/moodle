@@ -243,6 +243,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/marker' => 'fa-circle-o',
             'core:i/mean' => 'fa-calculator',
             'core:i/menu' => 'fa-ellipsis-v',
+            'core:i/menubars' => 'fa-bars',
             'core:i/mnethost' => 'fa-external-link',
             'core:i/moodle_host' => 'fa-graduation-cap',
             'core:i/move_2d' => 'fa-arrows',
