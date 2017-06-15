@@ -46,10 +46,10 @@ class course_dropout extends \core_analytics\local\target\binary {
         return get_string('target:coursedropout', 'tool_models');
     }
 
-    public function prediction_actions(\core_analytics\prediction $prediction) {
+    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
         global $USER;
 
-        $actions = parent::prediction_actions($prediction);
+        $actions = parent::prediction_actions($prediction, $includedetailsaction);
 
         $sampledata = $prediction->get_sample_data();
         $studentid = $sampledata['user']->id;
@@ -140,13 +140,14 @@ class course_dropout extends \core_analytics\local\target\binary {
     }
 
     /**
-     * is_valid_sample
+     * All student enrolments are valid.
      *
      * @param int $sampleid
      * @param \core_analytics\analysable $course
+     * @param bool $fortraining
      * @return bool
      */
-    public function is_valid_sample($sampleid, \core_analytics\analysable $course) {
+    public function is_valid_sample($sampleid, \core_analytics\analysable $course, $fortraining = true) {
         return true;
     }
 

@@ -44,10 +44,7 @@ class user_track_forums extends binary {
     }
 
     protected function calculate_sample($sampleid, $samplesorigin, $starttime = false, $endtime = false) {
-
         $user = $this->retrieve('user', $sampleid);
-
-        // TODO Return null if forums tracking is the default.
         return ($user->trackforums) ? self::get_max_value() : self::get_min_value();
     }
 }

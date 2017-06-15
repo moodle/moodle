@@ -51,6 +51,27 @@ class manager {
     protected static $alltimesplittings = null;
 
     /**
+     * Checks that the user can manage models
+     *
+     * @throws \required_capability_exception
+     * @return void
+     */
+    public static function check_can_manage_models() {
+        require_capability('moodle/analytics:managemodels', \context_system::instance());
+    }
+
+    /**
+     * Checks that the user can list that context insights
+     *
+     * @throws \required_capability_exception
+     * @param \context $context
+     * @return void
+     */
+    public static function check_can_list_insights(\context $context) {
+        require_capability('moodle/analytics:listinsights', $context);
+    }
+
+    /**
      * Returns all system models that match the provided filters.
      *
      * @param bool $enabled
@@ -61,21 +82,31 @@ class manager {
     public static function get_all_models($enabled = false, $trained = false, $predictioncontext = false) {
         global $DB;
 
-        $filters = array();
-        if ($enabled) {
-            $filters['enabled'] = 1;
+        $params = array();
+
+        $sql = "SELECT DISTINCT am.* FROM {analytics_models} am";
+        if ($predictioncontext) {
+            $sql .= " JOIN {analytics_predictions} ap ON ap.modelid = am.id AND ap.contextid = :contextid";
+            $params['contextid'] = $predictioncontext->id;
         }
-        if ($trained) {
-            $filters['trained'] = 1;
+
+        if ($enabled || $trained) {
+            $conditions = [];
+            if ($enabled) {
+                $conditions[] = 'am.enabled = :enabled';
+                $params['enabled'] = 1;
+            }
+            if ($trained) {
+                $conditions[] = 'am.trained = :trained';
+                $params['trained'] = 1;
+            }
+            $sql .= ' WHERE ' . implode(' AND ', $conditions);
         }
-        $modelobjs = $DB->get_records('analytics_models', $filters);
+        $modelobjs = $DB->get_records_sql($sql, $params);
 
         $models = array();
         foreach ($modelobjs as $modelobj) {
-            $model = new \core_analytics\model($modelobj);
-            if (!$predictioncontext || $model->predictions_exist($predictioncontext)) {
-                $models[$modelobj->id] = $model;
-            }
+            $models[$modelobj->id] = new \core_analytics\model($modelobj);
         }
         return $models;
     }
@@ -126,6 +157,11 @@ class manager {
         return self::$predictionprocessors[$checkisready][$predictionclass];
     }
 
+    /**
+     * Return all system predictions processors.
+     *
+     * @return \core_analytics\predictor
+     */
     public static function get_all_prediction_processors() {
 
         $mlbackends = \core_component::get_plugin_list('mlbackend');
@@ -221,6 +257,12 @@ class manager {
         return self::$allindicators;
     }
 
+    /**
+     * Returns the specified target
+     *
+     * @param mixed $fullclassname
+     * @return \core_analytics\local\target\base|false False if it is not valid
+     */
     public static function get_target($fullclassname) {
         if (!self::is_valid($fullclassname, 'core_analytics\local\target\base')) {
             return false;
@@ -245,6 +287,7 @@ class manager {
      * Returns whether a time splitting method is valid or not.
      *
      * @param string $fullclassname
+     * @param string $baseclass
      * @return bool
      */
     public static function is_valid($fullclassname, $baseclass) {
@@ -257,7 +300,7 @@ class manager {
     }
 
     /**
-     * get_analytics_logstore
+     * Returns the logstore used for analytics.
      *
      * @return \core\log\sql_reader
      */
@@ -283,6 +326,56 @@ class manager {
     }
 
     /**
+     * Returns the models with insights at the provided context.
+     *
+     * @param \context $context
+     * @return \core_analytics\model[]
+     */
+    public static function get_models_with_insights(\context $context) {
+
+        self::check_can_list_insights($context);
+
+        $models = \core_analytics\manager::get_all_models(true, true, $context);
+        foreach ($models as $key => $model) {
+            // Check that it not only have predictions but also generates insights from them.
+            if (!$model->uses_insights()) {
+                unset($models[$key]);
+            }
+        }
+        return $models;
+    }
+
+    /**
+     * Returns a prediction
+     *
+     * @param int $predictionid
+     * @param bool $requirelogin
+     * @return array array($model, $prediction, $context)
+     */
+    public static function get_prediction($predictionid, $requirelogin = false) {
+        global $DB;
+
+        if (!$predictionobj = $DB->get_record('analytics_predictions', array('id' => $predictionid))) {
+            throw new \moodle_exception('errorpredictionnotfound', 'report_insights');
+        }
+
+        if ($requirelogin) {
+            list($context, $course, $cm) = get_context_info_array($predictionobj->contextid);
+            require_login($course, false, $cm);
+        } else {
+            $context = \context::instance_by_id($predictionobj->contextid);
+        }
+
+        \core_analytics\manager::check_can_list_insights($context);
+
+        $model = new \core_analytics\model($predictionobj->modelid);
+        $sampledata = $model->prediction_sample_data($predictionobj);
+        $prediction = new \core_analytics\prediction($predictionobj, $sampledata);
+
+        return array($model, $prediction, $context);
+    }
+
+    /**
      * Returns the provided element classes in the site.
      *
      * @param string $element
@@ -291,7 +384,7 @@ class manager {
     private static function get_analytics_classes($element) {
 
         // Just in case...
-        $element = clean_param($element, PARAM_ALPHAEXT);
+        $element = clean_param($element, PARAM_ALPHANUMEXT);
 
         $classes = \core_component::get_component_classes_in_namespace('core_analytics', 'local\\' . $element);
         foreach (\core_component::get_plugin_types() as $type => $unusedplugintypepath) {

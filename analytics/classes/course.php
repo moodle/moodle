@@ -443,9 +443,6 @@ class course implements \core_analytics\analysable {
             return false;
         }
 
-        // TODO Use course_modules_completion's timemodified + COMPLETION_COMPLETE* to discard
-        // activities that have already been completed.
-
         // We skip activities that were not yet visible or their 'until' was not in this $starttime - $endtime range.
         if ($activity->availability) {
             $info = new \core_availability\info_module($activity);
@@ -485,7 +482,6 @@ class course implements \core_analytics\analysable {
             }
         }
 
-        // TODO Think about activities in sectionnum 0.
         if ($activity->sectionnum == 0) {
             return false;
         }
@@ -533,8 +529,6 @@ class course implements \core_analytics\analysable {
         $dateconditions = $info->get_availability_tree()->get_all_children('\availability_date\condition');
         foreach ($dateconditions as $condition) {
             // Availability API does not allow us to check from / to dates nicely, we need to be naughty.
-            // TODO Would be nice to expand \availability_date\condition API for this calling a save that
-            // does not save is weird.
             $conditiondata = $condition->save();
 
             if ($conditiondata->d === \availability_date\condition::DIRECTION_FROM &&

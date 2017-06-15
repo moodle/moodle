@@ -39,7 +39,7 @@ class train_models extends \core\task\scheduled_task {
     }
 
     public function execute() {
-        global $DB, $OUTPUT, $PAGE;
+        global $OUTPUT, $PAGE;
 
         $models = \core_analytics\manager::get_all_models(true);
         if (!$models) {

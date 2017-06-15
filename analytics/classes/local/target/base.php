@@ -45,7 +45,7 @@ abstract class base extends \core_analytics\calculable {
     /**
      * Returns the analyser class that should be used along with this target.
      *
-     * @return string
+     * @return string The full class name as a string
      */
     abstract public function get_analyser_class();
 
@@ -62,20 +62,21 @@ abstract class base extends \core_analytics\calculable {
     abstract public function is_valid_analysable(\core_analytics\analysable $analysable, $fortraining = true);
 
     /**
-     * is_valid_sample
+     * Is this sample from the $analysable valid?
      *
      * @param int $sampleid
      * @param \core_analytics\analysable $analysable
-     * @return void
+     * @param bool $fortraining
+     * @return bool
      */
-    abstract public function is_valid_sample($sampleid, \core_analytics\analysable $analysable);
+    abstract public function is_valid_sample($sampleid, \core_analytics\analysable $analysable, $fortraining = true);
 
     /**
      * Calculates this target for the provided samples.
      *
      * In case there are no values to return or the provided sample is not applicable just return null.
      *
-     * @param int $sample
+     * @param int $sampleid
      * @param \core_analytics\analysable $analysable
      * @param int|false $starttime Limit calculations to start time
      * @param int|false $endtime Limit calculations to end time
@@ -103,36 +104,52 @@ abstract class base extends \core_analytics\calculable {
         return false;
     }
 
-    public function prediction_actions(\core_analytics\prediction $prediction) {
-        global $PAGE;
+    /**
+     * Suggested actions for a user.
+     *
+     * @param \core_analytics\prediction $prediction
+     * @param bool $includedetailsaction
+     * @return \core_analytics\prediction_action[]
+     */
+    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
+        $actions = array();
 
-        $predictionurl = new \moodle_url('/report/insights/prediction.php',
-            array('id' => $prediction->get_prediction_data()->id));
-        if ($predictionurl->compare($PAGE->url)) {
-            // We don't show the link to prediction.php if we are already in prediction.php
-            // prediction.php's $PAGE->set_url call is prior to any core_analytics namespace method call.
-            return array();
+        if ($includedetailsaction) {
+
+            $predictionurl = new \moodle_url('/report/insights/prediction.php',
+                array('id' => $prediction->get_prediction_data()->id));
+
+            $actions['predictiondetails'] = new \core_analytics\prediction_action('predictiondetails', $prediction,
+                $predictionurl, new \pix_icon('t/preview', get_string('viewprediction', 'analytics')),
+                get_string('viewprediction', 'analytics'));
         }
 
-        return array('predictiondetails' => new \core_analytics\prediction_action('predictiondetails', $prediction, $predictionurl,
-            new \pix_icon('t/preview', get_string('viewprediction', 'analytics')),
-            get_string('viewprediction', 'analytics'))
-        );
+        return $actions;
     }
 
     /**
      * Callback to execute once a prediction has been returned from the predictions processor.
      *
+     * @param int $modelid
      * @param int $sampleid
+     * @param int $rangeindex
+     * @param \context $samplecontext
      * @param float|int $prediction
      * @param float $predictionscore
      * @return void
      */
-    public function prediction_callback($modelid, $sampleid, $samplecontext, $prediction, $predictionscore) {
+    public function prediction_callback($modelid, $sampleid, $rangeindex, \context $samplecontext, $prediction, $predictionscore) {
         return;
     }
 
-    public function generate_insights($modelid, $samplecontexts) {
+    /**
+     * Generates insights notifications
+     *
+     * @param int $modelid
+     * @param \context[] $samplecontexts
+     * @return void
+     */
+    public function generate_insight_notifications($modelid, $samplecontexts) {
         global $CFG;
 
         foreach ($samplecontexts as $context) {
@@ -142,12 +159,7 @@ abstract class base extends \core_analytics\calculable {
             $insightinfo->contextname = $context->get_context_name();
             $subject = get_string('insightmessagesubject', 'analytics', $insightinfo);
 
-            if ($context->contextlevel >= CONTEXT_COURSE) {
-                // Course level notification.
-                $users = get_enrolled_users($context, 'moodle/analytics:listinsights');
-            } else {
-                $users = get_users_by_capability($context, 'moodle/analytics:listinsights');
-            }
+            $users = $this->get_insights_users($context);
 
             if (!$coursecontext = $context->get_course_context(false)) {
                 $coursecontext = \context_course::instance(SITEID);
@@ -181,6 +193,33 @@ abstract class base extends \core_analytics\calculable {
 
     }
 
+    /**
+     * Returns the list of users that will receive insights notifications.
+     *
+     * Feel free to overwrite if you need to but keep in mind that moodle/analytics:listinsights
+     * capability is required to access the list of insights.
+     *
+     * @param \context $context
+     * @return array
+     */
+    protected function get_insights_users(\context $context) {
+        if ($context->contextlevel >= CONTEXT_COURSE) {
+            // At course level or below only enrolled users although this is not ideal for
+            // teachers assigned at category level.
+            $users = get_enrolled_users($context, 'moodle/analytics:listinsights');
+        } else {
+            $users = get_users_by_capability($context, 'moodle/analytics:listinsights');
+        }
+        return $users;
+    }
+
+    /**
+     * Returns an instance of the child class.
+     *
+     * Useful to reset cached data.
+     *
+     * @return \core_analytics\base\target
+     */
     public static function instance() {
         return new static();
     }
@@ -200,7 +239,8 @@ abstract class base extends \core_analytics\calculable {
     /**
      * Should the model callback be triggered?
      *
-     * @param mixed $class
+     * @param mixed $predictedvalue
+     * @param float $predictedscore
      * @return bool
      */
     public function triggers_callback($predictedvalue, $predictionscore) {
@@ -235,11 +275,11 @@ abstract class base extends \core_analytics\calculable {
      *
      * @param array $sampleids
      * @param \core_analytics\analysable $analysable
-     * @param integer $starttime startime is not necessary when calculating targets
-     * @param integer $endtime endtime is not necessary when calculating targets
+     * @param int $starttime
+     * @param int $endtime
      * @return array The format to follow is [userid] = scalar|null
      */
-    public function calculate(&$sampleids, \core_analytics\analysable $analysable) {
+    public function calculate($sampleids, \core_analytics\analysable $analysable, $starttime = false, $endtime = false) {
 
         if (!PHPUNIT_TEST && CLI_SCRIPT) {
             echo '.';
@@ -248,14 +288,8 @@ abstract class base extends \core_analytics\calculable {
         $calculations = [];
         foreach ($sampleids as $sampleid => $unusedsampleid) {
 
-            if (!$this->is_valid_sample($sampleid, $analysable)) {
-                // Skip it and remove the sample from the list of calculated samples.
-                unset($sampleids[$sampleid]);
-                continue;
-            }
-
             // No time limits when calculating the target to train models.
-            $calculatedvalue = $this->calculate_sample($sampleid, $analysable, false, false);
+            $calculatedvalue = $this->calculate_sample($sampleid, $analysable, $starttime, $endtime);
 
             if (!is_null($calculatedvalue)) {
                 if ($this->is_linear() && ($calculatedvalue > static::get_max_value() || $calculatedvalue < static::get_min_value())) {
@@ -269,5 +303,21 @@ abstract class base extends \core_analytics\calculable {
             $calculations[$sampleid] = $calculatedvalue;
         }
         return $calculations;
+    }
+
+    /**
+     * Filters out invalid samples for training.
+     *
+     * @param int[] $sampleids
+     * @param \core_analytics\analysable $analysable
+     * @return void
+     */
+    public function filter_out_invalid_samples(&$sampleids, \core_analytics\analysable $analysable, $fortraining = true) {
+        foreach ($sampleids as $sampleid => $unusedsampleid) {
+            if (!$this->is_valid_sample($sampleid, $analysable, $fortraining)) {
+                // Skip it and remove the sample from the list of calculated samples.
+                unset($sampleids[$sampleid]);
+            }
+        }
     }
 }

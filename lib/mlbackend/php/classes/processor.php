@@ -176,7 +176,7 @@ class processor implements \core_analytics\predictor {
      *
      * During evaluation we need to shuffle the evaluation dataset samples to detect deviated results,
      * if the dataset is massive we can not load everything into memory. We know that 2GB is the
-     * minimum memory limit we should have (\core_analytics\model::increase_memory), if we substract the memory
+     * minimum memory limit we should have (\core_analytics\model::heavy_duty_mode), if we substract the memory
      * that we already consumed and the memory that Phpml algorithms will need we should still have at
      * least 500MB of memory, which should be enough to evaluate a model. In any case this is a robust
      * solution that will work for all sites but it should minimize memory limit problems. Site admins

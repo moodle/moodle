@@ -180,8 +180,6 @@ class model_logs extends \table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-        global $DB;
-
         $total = count($this->model->get_logs());
         $this->pagesize($pagesize, $total);
         $this->rawdata = $this->model->get_logs($this->get_page_start(), $this->get_page_size());

@@ -26,36 +26,18 @@ require_once(__DIR__ . '/../../config.php');
 
 $predictionid = required_param('id', PARAM_INT);
 
-if (!$predictionobj = $DB->get_record('analytics_predictions', array('id' => $predictionid))) {
-    throw new \moodle_exception('errorpredictionnotfound', 'report_insights');
-}
-
-$context = context::instance_by_id($predictionobj->contextid);
-
-if ($context->contextlevel === CONTEXT_MODULE) {
-    list($course, $cm) = get_module_from_cmid($context->instanceid);
-    require_login($course, true, $cm);
-} else if ($context->contextlevel >= CONTEXT_COURSE) {
-    $coursecontext = $context->get_course_context(true);
-    require_login($coursecontext->instanceid);
-} else {
-    require_login();
+list($model, $prediction, $context) = \core_analytics\manager::get_prediction($predictionid, true);
+if ($context->contextlevel < CONTEXT_COURSE) {
+    // Only for higher levels than course.
     $PAGE->set_context($context);
 }
 
-require_capability('moodle/analytics:listinsights', $context);
-
-$params = array('id' => $predictionobj->id);
+$params = array('id' => $prediction->get_prediction_data()->id);
 $url = new \moodle_url('/report/insights/prediction.php', $params);
-
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
 $renderer = $PAGE->get_renderer('report_insights');
-
-$model = new \core_analytics\model($predictionobj->modelid);
-$sampledata = $model->prediction_sample_data($predictionobj);
-$prediction = new \core_analytics\prediction($predictionobj, $sampledata);
 
 $insightinfo = new stdClass();
 $insightinfo->contextname = $context->get_context_name();
@@ -78,7 +60,7 @@ $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
 
-$renderable = new \report_insights\output\insight($prediction, $model);
+$renderable = new \report_insights\output\insight($prediction, $model, false);
 echo $renderer->render($renderable);
 
 echo $OUTPUT->footer();

@@ -56,8 +56,8 @@ class quarters extends base {
                 'time' => $this->analysable->get_start() + ($duration * 3)
             ], [
                 'start' => $this->analysable->get_start() + ($duration * 3),
-                'end' => $this->analysable->get_start() + ($duration * 4),
-                'time' => $this->analysable->get_start() + ($duration * 4)
+                'end' => $this->analysable->get_end(),
+                'time' => $this->analysable->get_end()
             ]
         ];
     }

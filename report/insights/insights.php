@@ -27,20 +27,13 @@ require_once(__DIR__ . '/../../config.php');
 $contextid = required_param('contextid', PARAM_INT);
 $modelid = optional_param('modelid', false, PARAM_INT);
 
-$context = context::instance_by_id($contextid);
-
-if ($context->contextlevel === CONTEXT_MODULE) {
-    list($course, $cm) = get_module_from_cmid($context->instanceid);
-    require_login($course, true, $cm);
-} else if ($context->contextlevel >= CONTEXT_COURSE) {
-    $coursecontext = $context->get_course_context(true);
-    require_login($coursecontext->instanceid);
-} else {
-    require_login();
+list($context, $course, $cm) = get_context_info_array($contextid);
+require_login($course, false, $cm);
+if ($context->contextlevel < CONTEXT_COURSE) {
+    // Only for higher levels than course.
     $PAGE->set_context($context);
 }
-
-require_capability('moodle/analytics:listinsights', $context);
+\core_analytics\manager::check_can_list_insights($context);
 
 // Get all models that are enabled, trained and have predictions at this context.
 $othermodels = \core_analytics\manager::get_all_models(true, true, $context);

@@ -46,6 +46,9 @@ class deciles extends base {
         for ($i = 0; $i < 10; $i++) {
             $start = $this->analysable->get_start() + ($rangeduration * $i);
             $end = $this->analysable->get_start() + ($rangeduration * ($i + 1));
+            if ($i === 9) {
+                $end = $this->analysable->get_end();
+            }
             $ranges[] = array(
                 'start' => $start,
                 'end' => $end,

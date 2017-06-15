@@ -30,9 +30,9 @@ $action = required_param('action', PARAM_ALPHANUMEXT);
 $context = context_system::instance();
 
 require_login();
-require_capability('moodle/analytics:managemodels', $context);
 
 $model = new \core_analytics\model($id);
+\core_analytics\manager::check_can_manage_models();
 
 $params = array('id' => $id, 'action' => $action);
 $url = new \moodle_url('/admin/tool/models/model.php', $params);

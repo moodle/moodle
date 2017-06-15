@@ -36,11 +36,11 @@ function report_insights_extend_navigation_course($navigation, $course, $context
 
     if (has_capability('moodle/analytics:listinsights', $context)) {
 
-        $cache = \cache::make('core', 'modelswithpredictions');
+        $cache = \cache::make('core', 'contextwithinsights');
         $modelids = $cache->get($context->id);
         if ($modelids === false) {
-            // Fill the cache.
-            $models = \core_analytics\manager::get_all_models(true, true, $context);
+            // They will be full unless a model has been cleared.
+            $models = \core_analytics\manager::get_models_with_insights($context);
             $modelids = array_keys($models);
             $cache->set($context->id, $modelids);
         }

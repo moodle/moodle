@@ -36,13 +36,16 @@ class test_target_shortname extends \core_analytics\local\target\binary {
         return true;
     }
 
-    public function is_valid_sample($sampleid, \core_analytics\analysable $analysable) {
+    public function is_valid_sample($sampleid, \core_analytics\analysable $analysable, $fortraining = true) {
+        // We skip not-visible courses during training as a way to emulate the training data / prediction data difference.
+        // In normal circumstances is_valid_sample will return false when they receive a sample that can not be
+        // processed.
+        if (!$fortraining) {
+            return true;
+        }
 
         $sample = $this->retrieve('course', $sampleid);
         if ($sample->visible == 0) {
-            // We skip not-visible courses as a way to emulate the training data / prediction data difference.
-            // In normal circumstances is_valid_sample will return false when they receive a sample that can not be
-            // processed.
             return false;
         }
         return true;

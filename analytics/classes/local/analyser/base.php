@@ -192,11 +192,11 @@ abstract class base {
 
         // Target instances scope is per-analysable (it can't be lower as calculations run once per
         // analysable, not time splitting method nor time range).
-        $target = forward_static_call(array($this->target, 'instance'));
+        $target = call_user_func(array($this->target, 'instance'));
 
         // We need to check that the analysable is valid for the target even if we don't include targets
         // as we still need to discard invalid analysables for the target.
-        $result = $target->is_valid_analysable($analysable, $includetarget);
+        $result = $target->is_valid_analysable($analysable, $includetarget, true);
         if ($result !== true) {
             $a = new \stdClass();
             $a->analysableid = $analysable->get_id();
@@ -217,6 +217,7 @@ abstract class base {
 
                 $previousanalysis = \core_analytics\dataset_manager::get_evaluation_analysable_file($this->modelid,
                     $analysable->get_id(), $timesplitting->get_id());
+                // 1 week is a partly random time interval, no need to worry about DST.
                 $boundary = time() - WEEKSECS;
                 if ($previousanalysis && $previousanalysis->get_timecreated() > $boundary) {
                     // Recover the previous analysed file and avoid generating a new one.
@@ -344,17 +345,36 @@ abstract class base {
             $this->options['evaluation'], !empty($target));
 
         // Flag the model + analysable + timesplitting as being analysed (prevent concurrent executions).
-        $dataset->init_process();
+        if (!$dataset->init_process()) {
+            // If this model + analysable + timesplitting combination is being analysed we skip this process.
+            $result->status = \core_analytics\model::NO_DATASET;
+            $result->message = get_string('analysisinprogress', 'analytics');
+            return $result;
+        }
+
+        // Remove samples the target consider invalid. Note that we use $this->target, $target will be false
+        // during prediction, but we still need to discard samples the target considers invalid.
+        $this->target->add_sample_data($samplesdata);
+        $this->target->filter_out_invalid_samples($sampleids, $analysable, $target);
+
+        if (!$sampleids) {
+            $result->status = \core_analytics\model::NO_DATASET;
+            $result->message = get_string('novalidsamples', 'analytics');
+            $dataset->close_process();
+            return $result;
+        }
 
         foreach ($this->indicators as $key => $indicator) {
             // The analyser attaches the main entities the sample depends on and are provided to the
             // indicator to calculate the sample.
             $this->indicators[$key]->add_sample_data($samplesdata);
         }
+        // Provide samples to the target instance (different than $this->target) $target is the new instance we get
+        // for each analysis in progress.
         if ($target) {
-            // Also provided to the target.
             $target->add_sample_data($samplesdata);
         }
+
 
         // Here we start the memory intensive process that will last until $data var is
         // unset (until the method is finished basically).
@@ -363,6 +383,7 @@ abstract class base {
         if (!$data) {
             $result->status = \core_analytics\model::ANALYSE_REJECTED_RANGE_PROCESSOR;
             $result->message = get_string('novaliddata', 'analytics');
+            $dataset->close_process();
             return $result;
         }
 

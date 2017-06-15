@@ -45,7 +45,7 @@ if ($hassiteconfig) {
         $logmanager = get_log_manager();
         $readers = $logmanager->get_readers('core\log\sql_reader');
         $options = array();
-        $defaultreader = false;
+        $defaultreader = null;
         foreach ($readers as $plugin => $reader) {
             if (!$reader->is_logging()) {
                 continue;

@@ -28,36 +28,18 @@ $predictionid = required_param('predictionid', PARAM_INT);
 $actionname = required_param('action', PARAM_ALPHANUMEXT);
 $forwardurl = required_param('forwardurl', PARAM_LOCALURL);
 
-if (!$predictionobj = $DB->get_record('analytics_predictions', array('id' => $predictionid))) {
-    throw new \moodle_exception('errorpredictionnotfound', 'report_insights');
-}
-
-$context = context::instance_by_id($predictionobj->contextid);
-
-if ($context->contextlevel === CONTEXT_MODULE) {
-    list($course, $cm) = get_module_from_cmid($context->instanceid);
-    require_login($course, true, $cm);
-} else if ($context->contextlevel >= CONTEXT_COURSE) {
-    $coursecontext = $context->get_course_context(true);
-    require_login($coursecontext->instanceid);
-} else {
-    require_login();
+list($model, $prediction, $context) = \core_analytics\manager::get_prediction($predictionid, true);
+if ($context->contextlevel < CONTEXT_COURSE) {
+    // Only for higher levels than course.
     $PAGE->set_context($context);
 }
 
-require_capability('moodle/analytics:listinsights', $context);
-
-$params = array('predictionid' => $predictionobj->id, 'action' => $actionname, 'forwardurl' => $forwardurl);
+$params = array('predictionid' => $prediction->get_prediction_data()->id, 'action' => $actionname, 'forwardurl' => $forwardurl);
 $url = new \moodle_url('/report/insights/action.php', $params);
-
-$model = new \core_analytics\model($predictionobj->modelid);
-$sampledata = $model->prediction_sample_data($predictionobj);
-$prediction = new \core_analytics\prediction($predictionobj, $sampledata);
-
 $PAGE->set_url($url);
 
 // Check that the provided action exists.
-$actions = $model->get_target()->prediction_actions($prediction);
+$actions = $model->get_target()->prediction_actions($prediction, true);
 if (!isset($actions[$actionname])) {
     throw new \moodle_exception('errorunknownaction', 'report_insights');
 }
@@ -81,6 +63,6 @@ $eventdata = array (
     'objectid' => $predictionid,
     'other' => array('actionname' => $actionname)
 );
-\core_analytics\event\action_clicked::create($eventdata)->trigger();
+\core\event\prediction_action_started::create($eventdata)->trigger();
 
 redirect($forwardurl);

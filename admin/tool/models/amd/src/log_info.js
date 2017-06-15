@@ -7,7 +7,7 @@
  /**
   * @module tool_models/log_info
   */
-define(['jquery', 'core/str', 'core/modal_factory'], function($, str, ModalFactory) {
+define(['jquery', 'core/str', 'core/modal_factory', 'core/notification'], function($, str, ModalFactory, Notification) {
 
     return {
 
@@ -20,19 +20,21 @@ define(['jquery', 'core/str', 'core/modal_factory'], function($, str, ModalFacto
         loadInfo : function(id, info) {
 
             var link = $('[data-model-log-id="' + id + '"]');
-            str.get_string('loginfo', 'tool_models').done(function(langString) {
+            str.get_string('loginfo', 'tool_models').then(function(langString) {
 
                 var bodyInfo = $("<ul>");
                 for (var i in info) {
                     bodyInfo.append("<li>" + info[i] + "</li>");
                 }
                 bodyInfo.append("</ul>");
-                ModalFactory.create({
+
+                return ModalFactory.create({
                     title: langString,
                     body: bodyInfo.html(),
                     large: true,
                 }, link);
-            });
+
+            }).catch(Notification.exception);
         }
     };
 });

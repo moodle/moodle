@@ -28,7 +28,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_analytics\event;
+namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -38,15 +38,21 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_clicked extends \core\event\base {
+class prediction_action_started extends \core\event\base {
 
     /**
      * Set basic properties for the event.
      */
     protected function init() {
         $this->data['objecttable'] = 'analytics_predictions';
-        $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
+
+        // Marked as create because even if the action is something like viewing a course
+        // they are starting an action from a prediction, which is kind-of creating an outcome.
+        $this->data['crud'] = 'c';
+        // It will depend on the action, we have no idea really but we need to chose one and
+        // the user is learning from the prediction so LEVEL_PARTICIPATING seems more appropriate
+        // than LEVEL_OTHER.
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -55,7 +61,7 @@ class action_clicked extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventactionclicked', 'analytics');
+        return get_string('eventpredictionactionstarted', 'analytics');
     }
 
     /**
@@ -64,7 +70,7 @@ class action_clicked extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' has clicked '{$this->other['actionname']}' action for the prediction with id '".$this->objectid."'.";
+        return "The user with id '$this->userid' has started '{$this->other['actionname']}' action for the prediction with id '".$this->objectid."'.";
     }
 
     /**

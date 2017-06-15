@@ -130,7 +130,8 @@ abstract class calculable {
     /**
      * Returns the number of weeks a time range contains.
      *
-     * Useful for calculations that depend on the time range duration.
+     * Useful for calculations that depend on the time range duration. Note that it returns
+     * a float, rounding the float may lead to inaccurate results.
      *
      * @param int $starttime
      * @param int $endtime
@@ -141,9 +142,14 @@ abstract class calculable {
             throw new \coding_exception('End time timestamp should be greater than start time.');
         }
 
-        $diff = $endtime - $starttime;
+        $starttimedt = new \DateTime();
+        $starttimedt->setTimestamp($starttime);
+        $starttimedt->setTimezone(\DateTimeZone::UTC);
+        $endtimedt = new \DateTime();
+        $endtimedt->setTimestamp($endtime);
+        $endtimedt->setTimezone(\DateTimeZone::UTC);
 
-        // No need to be strict about DST here.
+        $diff = $endtimedt->getTimestamp() - $starttimedt->getTimestamp();
         return $diff / WEEKSECS;
     }
 

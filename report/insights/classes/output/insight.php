@@ -45,9 +45,15 @@ class insight implements \renderable, \templatable {
      */
     protected $prediction;
 
-    public function __construct(\core_analytics\prediction $prediction, \core_analytics\model $model) {
+    /**
+     * @var bool
+     */
+    protected $includedetailsaction = false;
+
+    public function __construct(\core_analytics\prediction $prediction, \core_analytics\model $model, $includedetailsaction = false) {
         $this->prediction = $prediction;
         $this->model = $model;
+        $this->includedetailsaction = $includedetailsaction;
     }
 
     /**
@@ -74,7 +80,7 @@ class insight implements \renderable, \templatable {
         $data->predictiondisplayvalue = $this->model->get_target()->get_display_value($predictedvalue);
         $data->predictionstyle = $this->get_calculation_style($this->model->get_target(), $predictedvalue);
 
-        $actions = $this->model->get_target()->prediction_actions($this->prediction);
+        $actions = $this->model->get_target()->prediction_actions($this->prediction, $this->includedetailsaction);
         if ($actions) {
             $actionsmenu = new \action_menu();
             $actionsmenu->set_menu_trigger(get_string('actions'));
@@ -106,7 +112,7 @@ class insight implements \renderable, \templatable {
             }
 
             $obj = new \stdClass();
-            $obj->name = forward_static_call(array($calculation->indicator, 'get_name'), $calculation->subtype);
+            $obj->name = call_user_func(array($calculation->indicator, 'get_name'));
             $obj->displayvalue = $calculation->indicator->get_display_value($calculation->value, $calculation->subtype);
             $obj->style = $this->get_calculation_style($calculation->indicator, $calculation->value, $calculation->subtype);
 

@@ -302,7 +302,7 @@ abstract class base {
     }
 
     protected function get_headers($indicators, $target = false) {
-        // 3th column will contain the indicator ids.
+        // 3rd column will contain the indicator ids.
         $headers = array();
 
         if (!$target) {

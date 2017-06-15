@@ -42,7 +42,6 @@ class model {
     const EVALUATE_LOW_SCORE = 4;
     const EVALUATE_NOT_ENOUGH_DATA = 8;
 
-    const ANALYSE_INPROGRESS = 2;
     const ANALYSE_REJECTED_RANGE_PROCESSOR = 4;
     const ANALYSABLE_STATUS_INVALID_FOR_RANGEPROCESSORS = 8;
     const ANALYSABLE_STATUS_INVALID_FOR_TARGET = 16;
@@ -88,7 +87,7 @@ class model {
         global $DB;
 
         if (is_scalar($model)) {
-            $model = $DB->get_record('analytics_models', array('id' => $model));
+            $model = $DB->get_record('analytics_models', array('id' => $model), '*', MUST_EXIST);
             if (!$model) {
                 throw new \moodle_exception('errorunexistingmodel', 'analytics', '', $model);
             }
@@ -266,6 +265,8 @@ class model {
     public static function create(\core_analytics\local\target\base $target, array $indicators, $timesplittingid = false) {
         global $USER, $DB;
 
+        \core_analytics\manager::check_can_manage_models();
+
         $indicatorclasses = self::indicator_classes($indicators);
 
         $now = time();
@@ -307,6 +308,8 @@ class model {
     public function update($enabled, $indicators, $timesplittingid = '') {
         global $USER, $DB;
 
+        \core_analytics\manager::check_can_manage_models();
+
         $now = time();
 
         $indicatorclasses = self::indicator_classes($indicators);
@@ -345,6 +348,9 @@ class model {
      */
     public function delete() {
         global $DB;
+
+        \core_analytics\manager::check_can_manage_models();
+
         $this->clear_model();
         $DB->delete_records('analytics_models', array('id' => $this->model->id));
     }
@@ -359,6 +365,8 @@ class model {
      */
     public function evaluate($options = array()) {
 
+        \core_analytics\manager::check_can_manage_models();
+
         if ($this->is_static()) {
             $this->get_analyser()->add_log(get_string('noevaluationbasedassumptions', 'analytics'));
             $result = new \stdClass();
@@ -366,15 +374,14 @@ class model {
             return $result;
         }
 
-        // Increase memory limit.
-        $this->increase_memory();
-
         $options['evaluation'] = true;
         $this->init_analyser($options);
 
         if (empty($this->get_indicators())) {
             throw new \moodle_exception('errornoindicators', 'analytics');
         }
+
+        $this->heavy_duty_mode();
 
         // Before get_labelled_data call so we get an early exception if it is not ready.
         $predictor = \core_analytics\manager::get_predictions_processor();
@@ -438,15 +445,14 @@ class model {
     public function train() {
         global $DB;
 
+        \core_analytics\manager::check_can_manage_models();
+
         if ($this->is_static()) {
             $this->get_analyser()->add_log(get_string('notrainingbasedassumptions', 'analytics'));
             $result = new \stdClass();
             $result->status = self::OK;
             return $result;
         }
-
-        // Increase memory limit.
-        $this->increase_memory();
 
         if (!$this->is_enabled() || empty($this->model->timesplitting)) {
             throw new \moodle_exception('invalidtimesplitting', 'analytics', '', $this->model->id);
@@ -455,6 +461,8 @@ class model {
         if (empty($this->get_indicators())) {
             throw new \moodle_exception('errornoindicators', 'analytics');
         }
+
+        $this->heavy_duty_mode();
 
         // Before get_labelled_data call so we get an early exception if it is not writable.
         $outputdir = $this->get_output_dir(array('execution'));
@@ -499,8 +507,7 @@ class model {
     public function predict() {
         global $DB;
 
-        // Increase memory limit.
-        $this->increase_memory();
+        \core_analytics\manager::check_can_manage_models();
 
         if (!$this->is_enabled() || empty($this->model->timesplitting)) {
             throw new \moodle_exception('invalidtimesplitting', 'analytics', '', $this->model->id);
@@ -509,6 +516,8 @@ class model {
         if (empty($this->get_indicators())) {
             throw new \moodle_exception('errornoindicators', 'analytics');
         }
+
+        $this->heavy_duty_mode();
 
         // Before get_unlabelled_data call so we get an early exception if it is not writable.
         $outputdir = $this->get_output_dir(array('execution'));
@@ -548,74 +557,19 @@ class model {
             $result->predictions = $this->get_static_predictions($indicatorcalculations);
 
         } else {
-            // Defer the prediction to the machine learning backend.
+            // Prediction process runs on the machine learning backend.
             $predictorresult = $predictor->predict($this->get_unique_id(), $samplesfile, $outputdir);
-
             $result->status = $predictorresult->status;
             $result->info = $predictorresult->info;
-            $result->predictions = array();
-            if ($predictorresult->predictions) {
-                foreach ($predictorresult->predictions as $sampleinfo) {
-
-                    // We parse each prediction
-                    switch (count($sampleinfo)) {
-                        case 1:
-                            // For whatever reason the predictions processor could not process this sample, we
-                            // skip it and do nothing with it.
-                            debugging($this->model->id . ' model predictions processor could not process the sample with id ' .
-                                $sampleinfo[0], DEBUG_DEVELOPER);
-                            continue;
-                        case 2:
-                            // Prediction processors that do not return a prediction score will have the maximum prediction
-                            // score.
-                            list($uniquesampleid, $prediction) = $sampleinfo;
-                            $predictionscore = 1;
-                            break;
-                        case 3:
-                            list($uniquesampleid, $prediction, $predictionscore) = $sampleinfo;
-                            break;
-                        default:
-                            break;
-                    }
-                    $predictiondata = (object)['prediction' => $prediction, 'predictionscore' => $predictionscore];
-                    $result->predictions[$uniquesampleid] = $predictiondata;
-                }
-            }
+            $result->predictions = $this->format_predictor_predictions($predictorresult);
         }
-
-        // Here we will store all predictions' contexts, this will be used to limit which users will see those predictions.
-        $samplecontexts = array();
 
         if ($result->predictions) {
-            foreach ($result->predictions as $uniquesampleid => $prediction) {
-
-                if ($this->get_target()->triggers_callback($prediction->prediction, $prediction->predictionscore)) {
-
-                    // The unique sample id contains both the sampleid and the rangeindex.
-                    list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
-
-                    // Store the predicted values.
-                    $samplecontext = $this->save_prediction($sampleid, $rangeindex, $prediction->prediction, $prediction->predictionscore,
-                        json_encode($indicatorcalculations[$uniquesampleid]));
-
-                    // Also store all samples context to later generate insights or whatever action the target wants to perform.
-                    $samplecontexts[$samplecontext->id] = $samplecontext;
-
-                    $this->get_target()->prediction_callback($this->model->id, $sampleid, $rangeindex, $samplecontext,
-                        $prediction->prediction, $prediction->predictionscore);
-                }
-            }
+            $samplecontexts = $this->execute_prediction_callbacks($result->predictions, $indicatorcalculations);
         }
 
-        if (!empty($samplecontexts)) {
-            // Notify the target that all predictions have been processed.
-            $this->get_target()->generate_insights($this->model->id, $samplecontexts);
-
-            // Aggressive invalidation, the cost of filling up the cache is not high.
-            $cache = \cache::make('core', 'modelswithpredictions');
-            foreach ($samplecontexts as $context) {
-                $cache->delete($context->id);
-            }
+        if (!empty($samplecontexts) && $this->uses_insights()) {
+            $this->trigger_insights($samplecontexts);
         }
 
         $this->flag_file_as_used($samplesfile, 'predicted');
@@ -624,7 +578,108 @@ class model {
     }
 
     /**
-     * get_static_predictions
+     * Formats the predictor results.
+     *
+     * @param array $predictorresult
+     * @return array
+     */
+    private function format_predictor_predictions($predictorresult) {
+
+        $predictions = array();
+        if ($predictorresult->predictions) {
+            foreach ($predictorresult->predictions as $sampleinfo) {
+
+                // We parse each prediction
+                switch (count($sampleinfo)) {
+                    case 1:
+                        // For whatever reason the predictions processor could not process this sample, we
+                        // skip it and do nothing with it.
+                        debugging($this->model->id . ' model predictions processor could not process the sample with id ' .
+                            $sampleinfo[0], DEBUG_DEVELOPER);
+                        continue;
+                    case 2:
+                        // Prediction processors that do not return a prediction score will have the maximum prediction
+                        // score.
+                        list($uniquesampleid, $prediction) = $sampleinfo;
+                        $predictionscore = 1;
+                        break;
+                    case 3:
+                        list($uniquesampleid, $prediction, $predictionscore) = $sampleinfo;
+                        break;
+                    default:
+                        break;
+                }
+                $predictiondata = (object)['prediction' => $prediction, 'predictionscore' => $predictionscore];
+                $predictions[$uniquesampleid] = $predictiondata;
+            }
+        }
+        return $predictions;
+    }
+
+    /**
+     * Execute the prediction callbacks defined by the target.
+     *
+     * @param \stdClass[] $predictions
+     * @param array $predictions
+     * @return array
+     */
+    protected function execute_prediction_callbacks($predictions, $indicatorcalculations) {
+
+        // Here we will store all predictions' contexts, this will be used to limit which users will see those predictions.
+        $samplecontexts = array();
+
+        foreach ($predictions as $uniquesampleid => $prediction) {
+
+            if ($this->get_target()->triggers_callback($prediction->prediction, $prediction->predictionscore)) {
+
+                // The unique sample id contains both the sampleid and the rangeindex.
+                list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
+
+                // Store the predicted values.
+                $samplecontext = $this->save_prediction($sampleid, $rangeindex, $prediction->prediction, $prediction->predictionscore,
+                    json_encode($indicatorcalculations[$uniquesampleid]));
+
+                // Also store all samples context to later generate insights or whatever action the target wants to perform.
+                $samplecontexts[$samplecontext->id] = $samplecontext;
+
+                $this->get_target()->prediction_callback($this->model->id, $sampleid, $rangeindex, $samplecontext,
+                    $prediction->prediction, $prediction->predictionscore);
+            }
+        }
+
+        return $samplecontexts;
+    }
+
+    /**
+     * Generates insights and updates the cache.
+     *
+     * @param \context[] $samplecontexts
+     * @return void
+     */
+    protected function trigger_insights($samplecontexts) {
+
+        // Notify the target that all predictions have been processed.
+        $this->get_target()->generate_insight_notifications($this->model->id, $samplecontexts);
+
+        // Update cache.
+        $cache = \cache::make('core', 'contextwithinsights');
+        foreach ($samplecontexts as $context) {
+            $modelids = $cache->get($context->id);
+            if (!$modelids) {
+                // The cache is empty, but we don't know if it is empty because there are no insights
+                // in this context or because cache/s have been purged, we need to be conservative and
+                // "pay" 1 db read to fill up the cache.
+                $models = \core_analytics\manager::get_models_with_insights($context);
+                $cache->set($context->id, array_keys($models));
+            } else if (!in_array($this->get_id(), $modelids)) {
+                array_push($modelids, $this->get_id());
+                $cache->set($context->id, $modelids);
+            }
+        }
+    }
+
+    /**
+     * Get predictions from a static model.
      *
      * @param array $indicatorcalculations
      * @return \stdClass[]
@@ -673,8 +728,9 @@ class model {
                 $this->get_target()->add_sample_data($samplesdata);
                 $this->get_target()->add_sample_data($data->indicatorsdata);
 
-                // Append new elements (we can not get duplicated because sample-analysable relation is N-1).
+                // Append new elements (we can not get duplicates because sample-analysable relation is N-1).
                 $range = $this->get_time_splitting()->get_range_by_index($rangeindex);
+                $this->get_target()->filter_out_invalid_samples($data->sampleids, $data->analysable, false);
                 $calculations = $this->get_target()->calculate($data->sampleids, $data->analysable, $range['start'], $range['end']);
 
                 // Missing $indicatorcalculations values in $calculations are caused by is_valid_sample. We need to remove
@@ -683,7 +739,6 @@ class model {
                 $indicatorcalculations = array_filter($indicatorcalculations, function($indicators, $uniquesampleid) use ($calculations) {
                     list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
                     if (!isset($calculations[$sampleid])) {
-                        debugging($uniquesampleid . ' discarded by is_valid_sample');
                         return false;
                     }
                     return true;
@@ -695,7 +750,6 @@ class model {
 
                     // Null means that the target couldn't calculate the sample, we also remove them from $indicatorcalculations.
                     if (is_null($calculations[$sampleid])) {
-                        debugging($uniquesampleid . ' discarded by is_valid_sample');
                         unset($indicatorcalculations[$uniquesampleid]);
                         continue;
                     }
@@ -746,6 +800,8 @@ class model {
      */
     public function enable($timesplittingid = false) {
         global $DB;
+
+        \core_analytics\manager::check_can_manage_models();
 
         $now = time();
 
@@ -807,6 +863,8 @@ class model {
      */
     public function mark_as_trained() {
         global $DB;
+
+        \core_analytics\manager::check_can_manage_models();
 
         $this->model->trained = 1;
         $DB->update_record('analytics_models', $this->model);
@@ -873,6 +931,8 @@ class model {
     public function get_predictions(\context $context) {
         global $DB;
 
+        \core_analytics\manager::check_can_list_insights($context);
+
         // Filters out previous predictions keeping only the last time range one.
         $sql = "SELECT tip.*
                   FROM {analytics_predictions} tip
@@ -917,7 +977,7 @@ class model {
     }
 
     /**
-     * prediction_sample_data
+     * Returns the sample data of a prediction.
      *
      * @param \stdClass $predictionobj
      * @return array
@@ -934,7 +994,7 @@ class model {
     }
 
     /**
-     * prediction_sample_description
+     * Returns the description of a sample
      *
      * @param \core_analytics\prediction $prediction
      * @return array 2 elements: list(string, \renderable)
@@ -1004,6 +1064,9 @@ class model {
      * @return \stdClass
      */
     public function export() {
+
+        \core_analytics\manager::check_can_manage_models();
+
         $data = clone $this->model;
         $data->target = $this->get_target()->get_name();
 
@@ -1027,6 +1090,9 @@ class model {
      */
     public function get_logs($limitfrom = 0, $limitnum = 0) {
         global $DB;
+
+        \core_analytics\manager::check_can_manage_models();
+
         return $DB->get_records('analytics_models_log', array('modelid' => $this->get_id()), 'timecreated DESC', '*',
             $limitfrom, $limitnum);
     }
@@ -1120,14 +1186,21 @@ class model {
         $DB->delete_records('analytics_train_samples', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_used_files', array('modelid' => $this->model->id));
 
-        $cache = \cache::make('core', 'modelswithpredictions');
+        // We don't expect people to clear models regularly and the cost of filling the cache is
+        // 1 db read per context.
+        $cache = \cache::make('core', 'contextwithinsights');
         $result = $cache->purge();
     }
 
-    private function increase_memory() {
+    /**
+     * Increases system memory and time limits.
+     *
+     * @return void
+     */
+    private function heavy_duty_mode() {
         if (ini_get('memory_limit') != -1) {
             raise_memory_limit(MEMORY_HUGE);
         }
+        \core_php_time_limit::raise();
     }
-
 }

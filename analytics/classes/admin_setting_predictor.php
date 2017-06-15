@@ -30,28 +30,26 @@ require_once(__DIR__ . '/../../lib/adminlib.php');
 class admin_setting_predictor extends \admin_setting_configselect {
 
     /**
-     * Builds HTML to display the control.
+     * Save a setting
      *
-     * The main purpose of this is to display a warning if the selected predictions processor is not ready.
-
-     * @param string $data Unused
-     * @param string $query
-     * @return string HTML
+     * @param string $data
+     * @return string empty of error string
      */
-    public function output_html($data, $query='') {
-        global $CFG, $OUTPUT;
-
-        $html = '';
+    public function write_setting($data) {
+        if (!$this->load_choices() or empty($this->choices)) {
+            return '';
+        }
+        if (!array_key_exists($data, $this->choices)) {
+            return ''; // ignore it
+        }
 
         // Calling it here without checking if it is ready because we check it below and show it as a controlled case.
         $selectedprocessor = \core_analytics\manager::get_predictions_processor($data, false);
-
         $isready = $selectedprocessor->is_ready();
         if ($isready !== true) {
-            $html .= $OUTPUT->notification(get_string('errorprocessornotready', 'analytics', $isready));
+            return get_string('errorprocessornotready', 'analytics', $isready);
         }
 
-        $html .= parent::output_html($data, $query);
-        return $html;
+        return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
     }
 }

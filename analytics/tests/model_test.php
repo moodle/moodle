@@ -40,6 +40,8 @@ class analytics_model_testcase extends advanced_testcase {
 
     public function setUp() {
 
+        $this->setAdminUser();
+
         $target = \core_analytics\manager::get_target('test_target_shortname');
         $indicators = array('test_indicator_max', 'test_indicator_min', 'test_indicator_fullname');
         foreach ($indicators as $key => $indicator) {

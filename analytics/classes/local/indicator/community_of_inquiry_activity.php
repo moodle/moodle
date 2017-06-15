@@ -128,6 +128,11 @@ abstract class community_of_inquiry_activity extends linear {
     }
 
     protected function any_feedback($action, \cm_info $cm, $contextid, $user) {
+
+        if (!in_array($action, 'submitted', 'replied', 'viewed')) {
+            throw new \coding_exception('Provided action "' . $action . '" is not valid.');
+        }
+
         if (empty($this->activitylogs[$contextid])) {
             return false;
         }

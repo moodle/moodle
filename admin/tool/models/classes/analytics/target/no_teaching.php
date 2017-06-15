@@ -48,10 +48,10 @@ class no_teaching extends \core_analytics\local\target\binary {
         return get_string('target:noteachingactivity', 'tool_models');
     }
 
-    public function prediction_actions(\core_analytics\prediction $prediction) {
+    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
         global $USER;
 
-        // No need to call the parent as the only default action is view details and this target only have 1 feature.
+        // No need to call the parent as the parent's action is view details and this target only have 1 feature.
         $actions = array();
 
         $sampledata = $prediction->get_sample_data();
@@ -110,9 +110,10 @@ class no_teaching extends \core_analytics\local\target\binary {
      *
      * @param mixed $sampleid
      * @param \core_analytics\analysable $analysable
+     * @param bool $fortraining
      * @return void
      */
-    public function is_valid_sample($sampleid, \core_analytics\analysable $analysable) {
+    public function is_valid_sample($sampleid, \core_analytics\analysable $analysable, $fortraining = true) {
 
         $course = $this->retrieve('course', $sampleid);
 

@@ -72,7 +72,7 @@ class insights_list implements \renderable, \templatable {
 
             $data->insights = array();
             foreach ($predictions as $prediction) {
-                $insightrenderable = new \report_insights\output\insight($prediction, $this->model);
+                $insightrenderable = new \report_insights\output\insight($prediction, $this->model, true);
                 $data->insights[] = $insightrenderable->export_for_template($output);
             }
 

@@ -75,8 +75,7 @@ if ($options['filter'] !== false) {
 // We need admin permissions.
 \core\session\manager::set_user(get_admin());
 
-$modelobj = $DB->get_record('analytics_models', array('id' => $options['modelid']), '*', MUST_EXIST);
-$model = new \core_analytics\model($modelobj);
+$model = new \core_analytics\model($options['modelid']);
 
 mtrace(get_string('analysingsitedata', 'tool_models'));
 

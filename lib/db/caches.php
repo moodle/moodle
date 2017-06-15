@@ -312,8 +312,8 @@ $definitions = array(
         ),
     ),
 
-    // Caches analytic models that have already predicted stuff.
-    'modelswithpredictions' => array(
+    // Caches contexts with insights.
+    'contextwithinsights' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,

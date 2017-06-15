@@ -86,18 +86,21 @@ class dataset_manager {
     /**
      * Mark the analysable as being analysed.
      *
-     * @return void
+     * @return bool Could we get the lock or not.
      */
     public function init_process() {
         $lockkey = 'modelid:' . $this->modelid . '-analysableid:' . $this->analysableid .
-            '-timesplitting:' . self::convert_to_int($this->timesplittingid) . '-includetarget:' . (int)$this->includetarget;
+            '-timesplitting:' . self::clean_time_splitting_id($this->timesplittingid) . '-includetarget:' . (int)$this->includetarget;
 
         // Large timeout as processes may be quite long.
         $lockfactory = \core\lock\lock_config::get_lock_factory('core_analytics');
-        $this->lock = $lockfactory->get_lock($lockkey, WEEKSECS);
 
-        // We release the lock if there is an error during the process.
-        \core_shutdown_manager::register_function(array($this, 'release_lock'), array($this->lock));
+        // If it is not ready in 10 secs skip this model + analysable + timesplittingmethod combination
+        // it will attempt it again during next cron run.
+        if (!$this->lock = $lockfactory->get_lock($lockkey, 10)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -115,7 +118,7 @@ class dataset_manager {
             'filearea' => self::get_filearea($this->includetarget),
             'itemid' => $this->modelid,
             'contextid' => \context_system::instance()->id,
-            'filepath' => '/analysable/' . $this->analysableid . '/' . self::convert_to_int($this->timesplittingid) . '/',
+            'filepath' => '/analysable/' . $this->analysableid . '/' . self::clean_time_splitting_id($this->timesplittingid) . '/',
             'filename' => self::get_filename($this->evaluation)
         ];
 
@@ -127,6 +130,10 @@ class dataset_manager {
         // Write all this stuff to a tmp file.
         $filepath = make_request_directory() . DIRECTORY_SEPARATOR . $filerecord['filename'];
         $fh = fopen($filepath, 'w+');
+        if (!$fh) {
+            $this->close_process();
+            throw new \moodle_exception('errorcannotwritedataset', 'analytics', '', $tmpfilepath);
+        }
         foreach ($data as $line) {
             fputcsv($fh, $line);
         }
@@ -144,10 +151,6 @@ class dataset_manager {
         $this->lock->release();
     }
 
-    public function release_lock(\core\lock\lock $lock) {
-        $lock->release();
-    }
-
     /**
      * Returns the previous evaluation file.
      *
@@ -162,7 +165,7 @@ class dataset_manager {
         $fs = get_file_storage();
         // Evaluation data is always labelled.
         return $fs->get_file(\context_system::instance()->id, 'analytics', self::LABELLED_FILEAREA, $modelid,
-            '/timesplitting/' . self::convert_to_int($timesplittingid) . '/', self::EVALUATION_FILENAME);
+            '/timesplitting/' . self::clean_time_splitting_id($timesplittingid) . '/', self::EVALUATION_FILENAME);
     }
 
     public static function delete_previous_evaluation_file($modelid, $timesplittingid) {
@@ -183,7 +186,7 @@ class dataset_manager {
         // Always evaluation.csv and labelled as it is an evaluation file.
         $filearea = self::get_filearea(true);
         $filename = self::get_filename(true);
-        $filepath = '/analysable/' . $analysableid . '/' . self::convert_to_int($timesplittingid) . '/';
+        $filepath = '/analysable/' . $analysableid . '/' . self::clean_time_splitting_id($timesplittingid) . '/';
         return $fs->get_file(\context_system::instance()->id, 'analytics', $filearea, $modelid, $filepath, $filename);
     }
 
@@ -235,6 +238,9 @@ class dataset_manager {
 
         // Start writing to the merge file.
         $wh = fopen($tmpfilepath, 'w');
+        if (!$wh) {
+            throw new \moodle_exception('errorcannotwritedataset', 'analytics', '', $tmpfilepath);
+        }
 
         fputcsv($wh, $varnames);
         fputcsv($wh, $values);
@@ -262,7 +268,7 @@ class dataset_manager {
             'filearea' => self::get_filearea($includetarget),
             'itemid' => $modelid,
             'contextid' => \context_system::instance()->id,
-            'filepath' => '/timesplitting/' . self::convert_to_int($timesplittingid) . '/',
+            'filepath' => '/timesplitting/' . self::clean_time_splitting_id($timesplittingid) . '/',
             'filename' => self::get_filename($evaluation)
         ];
 
@@ -315,17 +321,14 @@ class dataset_manager {
     }
 
     /**
-     * I know it is not very orthodox...
+     * Remove all possibly problematic chars from the time splitting method id (id = its full class name).
      *
-     * @param string $string
-     * @return int
+     * @param string $timesplittingid
+     * @return string
      */
-    protected static function convert_to_int($string) {
-        $sum = 0;
-        for ($i = 0; $i < strlen($string); $i++) {
-            $sum += ord($string[$i]);
-        }
-        return $sum;
+    protected static function clean_time_splitting_id($timesplittingid) {
+        $timesplittingid = str_replace('\\', '-', $timesplittingid);
+        return clean_param($timesplittingid, PARAM_ALPHANUMEXT);
     }
 
     protected static function get_filename($evaluation) {
