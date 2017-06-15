@@ -37,4 +37,12 @@ $functions = array(
         'capabilities'  => 'mod/workshop:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'mod_workshop_get_workshop_access_information' => array(
+        'classname'     => 'mod_workshop_external',
+        'methodname'    => 'get_workshop_access_information',
+        'description'   => 'Return access information for a given workshop.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/workshop:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );

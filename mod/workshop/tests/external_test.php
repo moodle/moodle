@@ -180,4 +180,104 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('1', $result['warnings'][0]['warningcode']);
         $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
     }
+
+    /**
+     * Test mod_workshop_get_workshop_access_information for students.
+     */
+    public function test_mod_workshop_get_workshop_access_information_student() {
+
+        self::setUser($this->student);
+        $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
+        // Check default values for capabilities.
+        $enabledcaps = array('canpeerassess', 'cansubmit', 'canview', 'canviewauthornames', 'canviewauthorpublished',
+            'canviewpublishedsubmissions', 'canexportsubmissions');
+
+        foreach ($result as $capname => $capvalue) {
+            if (strpos($capname, 'can') !== 0) {
+                continue;
+            }
+            if (in_array($capname, $enabledcaps)) {
+                $this->assertTrue($capvalue);
+            } else {
+                $this->assertFalse($capvalue);
+            }
+        }
+        // Now, unassign some capabilities.
+        unassign_capability('mod/workshop:peerassess', $this->studentrole->id);
+        unassign_capability('mod/workshop:submit', $this->studentrole->id);
+        unset($enabledcaps[0]);
+        unset($enabledcaps[1]);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
+        foreach ($result as $capname => $capvalue) {
+            if (strpos($capname, 'can') !== 0) {
+                continue;
+            }
+            if (in_array($capname, $enabledcaps)) {
+                $this->assertTrue($capvalue);
+            } else {
+                $this->assertFalse($capvalue);
+            }
+        }
+
+        // Now, specific functionalities.
+        $this->assertFalse($result['creatingsubmissionallowed']);
+        $this->assertFalse($result['modifyingsubmissionallowed']);
+        $this->assertFalse($result['assessingallowed']);
+        $this->assertFalse($result['assessingexamplesallowed']);
+
+        // Switch phase.
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $workshop->switch_phase(workshop::PHASE_SUBMISSION);
+        $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
+
+        $this->assertTrue($result['creatingsubmissionallowed']);
+        $this->assertTrue($result['modifyingsubmissionallowed']);
+        $this->assertFalse($result['assessingallowed']);
+        $this->assertFalse($result['assessingexamplesallowed']);
+
+        // Switch to next (to assessment).
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
+        $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
+
+        $this->assertFalse($result['creatingsubmissionallowed']);
+        $this->assertFalse($result['modifyingsubmissionallowed']);
+        $this->assertTrue($result['assessingallowed']);
+        $this->assertFalse($result['assessingexamplesallowed']);
+    }
+
+    /**
+     * Test mod_workshop_get_workshop_access_information for teachers.
+     */
+    public function test_mod_workshop_get_workshop_access_information_teacher() {
+
+        self::setUser($this->teacher);
+        $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
+        // Check default values.
+        $disabledcaps = array('canpeerassess', 'cansubmit');
+
+        foreach ($result as $capname => $capvalue) {
+            if (strpos($capname, 'can') !== 0) {
+                continue;
+            }
+            if (in_array($capname, $disabledcaps)) {
+                $this->assertFalse($capvalue);
+            } else {
+                $this->assertTrue($capvalue);
+            }
+        }
+
+        // Now, specific functionalities.
+        $this->assertFalse($result['creatingsubmissionallowed']);
+        $this->assertFalse($result['modifyingsubmissionallowed']);
+        $this->assertFalse($result['assessingallowed']);
+        $this->assertFalse($result['assessingexamplesallowed']);
+    }
 }
