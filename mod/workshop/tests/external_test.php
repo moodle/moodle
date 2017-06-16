@@ -280,4 +280,74 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse($result['assessingallowed']);
         $this->assertFalse($result['assessingexamplesallowed']);
     }
+
+    /**
+     * Test mod_workshop_get_user_plan for students.
+     */
+    public function test_mod_workshop_get_user_plan_student() {
+
+        self::setUser($this->student);
+        $result = mod_workshop_external::get_user_plan($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
+
+        $this->assertCount(0, $result['userplan']['examples']);  // No examples given.
+        $this->assertCount(5, $result['userplan']['phases']);  // Always 5 phases.
+        $this->assertEquals(workshop::PHASE_SETUP, $result['userplan']['phases'][0]['code']);  // First phase always setup.
+        $this->assertTrue($result['userplan']['phases'][0]['active']); // First phase "Setup" active in new workshops.
+
+        // Switch phase.
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $workshop->switch_phase(workshop::PHASE_SUBMISSION);
+
+        $result = mod_workshop_external::get_user_plan($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
+
+        $this->assertEquals(workshop::PHASE_SUBMISSION, $result['userplan']['phases'][1]['code']);
+        $this->assertTrue($result['userplan']['phases'][1]['active']); // We are now in submission phase.
+    }
+
+    /**
+     * Test mod_workshop_get_user_plan for teachers.
+     */
+    public function test_mod_workshop_get_user_plan_teacher() {
+        global $DB;
+
+        self::setUser($this->teacher);
+        $result = mod_workshop_external::get_user_plan($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
+
+        $this->assertCount(0, $result['userplan']['examples']);  // No examples given.
+        $this->assertCount(5, $result['userplan']['phases']);  // Always 5 phases.
+        $this->assertEquals(workshop::PHASE_SETUP, $result['userplan']['phases'][0]['code']);  // First phase always setup.
+        $this->assertTrue($result['userplan']['phases'][0]['active']); // First phase "Setup" active in new workshops.
+        $this->assertCount(4, $result['userplan']['phases'][0]['tasks']);  // For new empty workshops, always 4 tasks.
+
+        foreach ($result['userplan']['phases'][0]['tasks'] as $task) {
+            if ($task['code'] == 'intro' || $task['code'] == 'instructauthors') {
+                $this->assertEquals(1, $task['completed']);
+            } else {
+                $this->assertEmpty($task['completed']);
+            }
+        }
+
+        // Do some of the tasks asked - switch phase.
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $workshop->switch_phase(workshop::PHASE_SUBMISSION);
+
+        $result = mod_workshop_external::get_user_plan($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
+        foreach ($result['userplan']['phases'][0]['tasks'] as $task) {
+            if ($task['code'] == 'intro' || $task['code'] == 'instructauthors' || $task['code'] == 'switchtonextphase') {
+                $this->assertEquals(1, $task['completed']);
+            } else {
+                $this->assertEmpty($task['completed']);
+            }
+        }
+
+        $result = mod_workshop_external::get_user_plan($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
+
+        $this->assertEquals(workshop::PHASE_SUBMISSION, $result['userplan']['phases'][1]['code']);
+        $this->assertTrue($result['userplan']['phases'][1]['active']); // We are now in submission phase.
+    }
 }

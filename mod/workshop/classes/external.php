@@ -231,4 +231,138 @@ class mod_workshop_external extends external_api {
 
         return new external_single_structure($structure);
     }
+
+    /**
+     * Describes the parameters for get_user_plan.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function get_user_plan_parameters() {
+        return new external_function_parameters (
+            array(
+                'workshopid' => new external_value(PARAM_INT, 'Workshop instance id.'),
+                'userid' => new external_value(PARAM_INT, 'User id (empty or 0 for current user).', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Return the planner information for the given user.
+     *
+     * @param int $workshopid workshop instance id
+     * @param int $userid user id
+     * @return array of warnings and the user plan
+     * @since Moodle 3.4
+     * @throws  moodle_exception
+     */
+    public static function get_user_plan($workshopid, $userid = 0) {
+        global $USER;
+
+        $params = array(
+            'workshopid' => $workshopid,
+            'userid' => $userid,
+        );
+        $params = self::validate_parameters(self::get_user_plan_parameters(), $params);
+
+        list($workshop, $course, $cm, $context) = self::validate_workshop($params['workshopid']);
+
+        // Extra checks so only users with permissions can view other users plans.
+        if (empty($params['userid']) || $params['userid'] == $USER->id) {
+            $userid = $USER->id;
+        } else {
+            require_capability('moodle/course:manageactivities', $context);
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
+            if (!$workshop->check_group_membership($user->id)) {
+                throw new moodle_exception('notingroup');
+            }
+            $userid = $user->id;
+        }
+
+        // Get the user plan information ready for external functions.
+        $userplan = new workshop_user_plan($workshop, $userid);
+        $userplan = array('phases' => $userplan->phases, 'examples' => $userplan->get_examples());
+        foreach ($userplan['phases'] as $phasecode => $phase) {
+            $phase->code = $phasecode;
+            $userplan['phases'][$phasecode] = (array) $phase;
+            foreach ($userplan['phases'][$phasecode]['tasks'] as $taskcode => $task) {
+                $task->code = $taskcode;
+                if ($task->link instanceof moodle_url) {
+                    $task->link = $task->link->out(false);
+                }
+                $userplan['phases'][$phasecode]['tasks'][$taskcode] = (array) $task;
+            }
+            foreach ($userplan['phases'][$phasecode]['actions'] as $actioncode => $action) {
+                if ($action->url instanceof moodle_url) {
+                    $action->url = $action->url->out(false);
+                }
+                $userplan['phases'][$phasecode]['actions'][$actioncode] = (array) $action;
+            }
+        }
+
+        $result['userplan'] = $userplan;
+        $result['warnings'] = array();
+        return $result;
+    }
+
+    /**
+     * Describes the get_user_plan return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.4
+     */
+    public static function get_user_plan_returns() {
+        return new external_single_structure(
+            array(
+                'userplan' => new external_single_structure(
+                    array(
+                        'phases' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'code' => new external_value(PARAM_INT, 'Phase code.'),
+                                    'title' => new external_value(PARAM_NOTAGS, 'Phase title.'),
+                                    'active' => new external_value(PARAM_BOOL, 'Whether is the active task.'),
+                                    'tasks' => new external_multiple_structure(
+                                        new external_single_structure(
+                                            array(
+                                                'code' => new external_value(PARAM_ALPHA, 'Task code.'),
+                                                'title' => new external_value(PARAM_RAW, 'Task title.'),
+                                                'link' => new external_value(PARAM_URL, 'Link to task.'),
+                                                'details' => new external_value(PARAM_RAW, 'Task details.', VALUE_OPTIONAL),
+                                                'completed' => new external_value(PARAM_NOTAGS,
+                                                    'Completion information (maybe empty, maybe a boolean or generic info.'),
+                                            )
+                                        )
+                                    ),
+                                    'actions' => new external_multiple_structure(
+                                        new external_single_structure(
+                                            array(
+                                                'type' => new external_value(PARAM_ALPHA, 'Action type.', VALUE_OPTIONAL),
+                                                'label' => new external_value(PARAM_RAW, 'Action label.', VALUE_OPTIONAL),
+                                                'url' => new external_value(PARAM_URL, 'Link to action.'),
+                                                'method' => new external_value(PARAM_ALPHA, 'Get or post.', VALUE_OPTIONAL),
+                                            )
+                                        )
+                                    ),
+                                )
+                            )
+                        ),
+                        'examples' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'id' => new external_value(PARAM_INT, 'Example submission id.'),
+                                    'title' => new external_value(PARAM_RAW, 'Example submission title.'),
+                                    'assessmentid' => new external_value(PARAM_INT, 'Example submission assessment id.'),
+                                    'grade' => new external_value(PARAM_FLOAT, 'The submission grade.'),
+                                    'gradinggrade' => new external_value(PARAM_FLOAT, 'The assessment grade.'),
+                                )
+                            )
+                        ),
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
