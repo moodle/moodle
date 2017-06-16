@@ -313,12 +313,13 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
         $licensedata = array();
         $licensedata['name'] = $data->name;
         if (empty($data->program)) {
+            $licensedata['program'] = 0;
             $licensedata['allocation'] = $data->allocation;
         } else {
+            $licensedata['program'] = $data->program;
             $licensedata['allocation'] = $data->allocation * count($data->selectedcourses);
         }
         $licensedata['expirydate'] = $data->expirydate;
-        $licensedata['program']  = $data->program;
         if (empty($data->languages)) {
             $data->languages = array();
         }
