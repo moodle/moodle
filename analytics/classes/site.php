@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Moodle site analysable.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -26,6 +27,7 @@ namespace core_analytics;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Moodle site analysable.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}

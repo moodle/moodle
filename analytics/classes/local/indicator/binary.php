@@ -35,6 +35,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class binary extends discrete {
 
+    /**
+     * get_classes
+     *
+     * @return array
+     */
     public static final function get_classes() {
         // It does not really matter, all \core_analytics\local\indicator\discrete get_classes calls have been overwriten as we
         // only need 1 column here.
@@ -79,11 +84,22 @@ abstract class binary extends discrete {
         }
     }
 
+    /**
+     * get_feature_headers
+     *
+     * @return array
+     */
     public static function get_feature_headers() {
         // Just 1 single feature obtained from the calculated value.
         return array(get_called_class());
     }
 
+    /**
+     * to_features
+     *
+     * @param array $calculatedvalues
+     * @return array
+     */
     protected function to_features($calculatedvalues) {
         // Indicators with binary values have only 1 feature for indicator, here we do nothing else
         // than converting each sample scalar value to an array of scalars with 1 element.

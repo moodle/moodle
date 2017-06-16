@@ -35,22 +35,52 @@ defined('MOODLE_INTERNAL') || die();
  */
 class cognitive_depth extends activity_base {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('indicator:cognitivedepthquiz', 'mod_quiz');
     }
 
+    /**
+     * get_indicator_type
+     *
+     * @return string
+     */
     protected function get_indicator_type() {
         return self::INDICATOR_COGNITIVE;
     }
 
+    /**
+     * get_cognitive_depth_level
+     *
+     * @param \cm_info $cm
+     * @return int
+     */
     public function get_cognitive_depth_level(\cm_info $cm) {
         return 5;
     }
 
+    /**
+     * feedback_submitted_events
+     *
+     * @return string[]
+     */
     protected function feedback_submitted_events() {
         return array('\mod_quiz\event\attempt_submitted');
     }
 
+    /**
+     * feedback_replied
+     *
+     * @param \cm_info $cm
+     * @param int $contextid
+     * @param int $userid
+     * @param int $after
+     * @return bool
+     */
     protected function feedback_replied(\cm_info $cm, $contextid, $userid, $after = false) {
         // No level 4.
         return false;

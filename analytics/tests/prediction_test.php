@@ -40,9 +40,12 @@ require_once(__DIR__ . '/fixtures/test_target_shortname.php');
 class core_analytics_prediction_testcase extends advanced_testcase {
 
     /**
+     * test_ml_training_and_prediction
+     *
      * @dataProvider provider_ml_training_and_prediction
      * @param string $timesplittingid
      * @param int $npredictedranges
+     * @param string $predictionsprocessorclass
      * @return void
      */
     public function test_ml_training_and_prediction($timesplittingid, $npredictedranges, $predictionsprocessorclass) {
@@ -112,7 +115,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         // They will not be skipped for prediction though.
         $result = $model->predict();
 
-        // $course1 predictions should be 1 == 'a', $course2 predictions should be 0 == 'b'.
+        // Var $course1 predictions should be 1 == 'a', $course2 predictions should be 0 == 'b'.
         $correct = array($course1->id => 1, $course2->id => 0);
         foreach ($result->predictions as $uniquesampleid => $predictiondata) {
             list($sampleid, $rangeindex) = $model->get_time_splitting()->infer_sample_info($uniquesampleid);
@@ -127,7 +130,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'predicted')));
         // 2 predictions for each range.
-        $this->assertEquals(2 * $npredictedranges, $DB->count_records('analytics_predictions', array('modelid' => $model->get_id())));
+        $this->assertEquals(2 * $npredictedranges, $DB->count_records('analytics_predictions',
+            array('modelid' => $model->get_id())));
 
         // No new generated files nor records as there are no new courses available.
         $model->predict();
@@ -135,9 +139,15 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->assertEquals($npredictedranges, count($trainedsamples));
         $this->assertEquals(1, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'predicted')));
-        $this->assertEquals(2 * $npredictedranges, $DB->count_records('analytics_predictions', array('modelid' => $model->get_id())));
+        $this->assertEquals(2 * $npredictedranges, $DB->count_records('analytics_predictions',
+            array('modelid' => $model->get_id())));
     }
 
+    /**
+     * provider_ml_training_and_prediction
+     *
+     * @return array
+     */
     public function provider_ml_training_and_prediction() {
         $cases = array(
             'no_splitting' => array('\core_analytics\local\time_splitting\no_splitting', 1),
@@ -153,6 +163,11 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      * Basic test to check that prediction processors work as expected.
      *
      * @dataProvider provider_ml_test_evaluation
+     * @param string $modelquality
+     * @param int $ncourses
+     * @param array $expected
+     * @param string $predictionsprocessorclass
+     * @return void
      */
     public function test_ml_evaluation($modelquality, $ncourses, $expected, $predictionsprocessorclass) {
         $this->resetAfterTest(true);
@@ -171,7 +186,6 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         } else {
             throw new \coding_exception('Only perfect and random accepted as $modelquality values');
         }
-
 
         // Generate training data.
         $params = array(
@@ -202,12 +216,19 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         // We check that the returned status includes at least $expectedcode code.
         foreach ($results as $timesplitting => $result) {
             $message = 'The returned status code ' . $result->status . ' should include ' . $expected[$timesplitting];
-            $this->assertEquals($expected[$timesplitting], $result->status & $expected[$timesplitting], $message);
+            $filtered = $result->status & $expected[$timesplitting];
+            $this->assertEquals($expected[$timesplitting], $filtered, $message);
         }
     }
 
+    /**
+     * provider_ml_test_evaluation
+     *
+     * @return array
+     */
     public function provider_ml_test_evaluation() {
 
+        $notenoughandlowscore = \core_analytics\model::EVALUATE_NOT_ENOUGH_DATA + \core_analytics\model::EVALUATE_LOW_SCORE;
         $cases = array(
             'bad-and-no-enough-data' => array(
                 'modelquality' => 'random',
@@ -216,8 +237,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
                     // The course duration is too much to be processed by in weekly basis.
                     '\core_analytics\local\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
                     // 10 samples is not enough to process anything.
-                    '\core_analytics\local\time_splitting\single_range' => \core_analytics\model::EVALUATE_NOT_ENOUGH_DATA + \core_analytics\model::EVALUATE_LOW_SCORE,
-                    '\core_analytics\local\time_splitting\quarters' => \core_analytics\model::EVALUATE_NOT_ENOUGH_DATA + \core_analytics\model::EVALUATE_LOW_SCORE,
+                    '\core_analytics\local\time_splitting\single_range' => $notenoughandlowscore,
+                    '\core_analytics\local\time_splitting\quarters' => $notenoughandlowscore,
                 )
             ),
             'bad' => array(
@@ -244,6 +265,11 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         return $this->add_prediction_processors($cases);
     }
 
+    /**
+     * add_random_model
+     *
+     * @return \core_analytics\model
+     */
     protected function add_random_model() {
 
         $target = \core_analytics\manager::get_target('test_target_shortname');
@@ -258,6 +284,11 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         return new \core_analytics\model($model->get_id());
     }
 
+    /**
+     * add_perfect_model
+     *
+     * @return \core_analytics\model
+     */
     protected function add_perfect_model() {
 
         $target = \core_analytics\manager::get_target('test_target_shortname');
@@ -272,6 +303,12 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         return new \core_analytics\model($model->get_id());
     }
 
+    /**
+     * add_prediction_processors
+     *
+     * @param array $cases
+     * @return array
+     */
     protected function add_prediction_processors($cases) {
 
         $return = array();

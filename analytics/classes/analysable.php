@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Any element analysers can analyse.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -26,6 +27,7 @@ namespace core_analytics;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Any element analysers can analyse.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -33,13 +35,36 @@ defined('MOODLE_INTERNAL') || die();
  */
 interface analysable {
 
+    /**
+     * Max timestamp.
+     */
     const MAX_TIME = 9999999999;
 
+    /**
+     * The analysable unique identifier in the site.
+     *
+     * @return int.
+     */
     public function get_id();
 
+    /**
+     * The analysable context.
+     *
+     * @return \context
+     */
     public function get_context();
 
+    /**
+     * The start of the analysable if there is one.
+     *
+     * @return int|false
+     */
     public function get_start();
 
+    /**
+     * The end of the analysable if there is one.
+     *
+     * @return int|false
+     */
     public function get_end();
 }

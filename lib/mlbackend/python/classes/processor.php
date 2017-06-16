@@ -35,11 +35,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 class processor implements \core_analytics\predictor {
 
+    /**
+     * The required version of the python package that performs all calculations.
+     */
     const REQUIRED_PIP_PACKAGE_VERSION = '0.0.9';
 
+    /**
+     * Is the plugin ready to be used?.
+     *
+     * @return bool
+     */
     public function is_ready() {
 
-        # Check the installed pip package version.
+        // Check the installed pip package version.
         $cmd = 'python -m moodleinspire.version';
 
         $output = null;
@@ -63,8 +71,17 @@ class processor implements \core_analytics\predictor {
         return get_string('pythonpackagenotinstalled', 'mlbackend_python', $cmd);
     }
 
+    /**
+     * Trains a machine learning algorithm with the provided dataset.
+     *
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
     public function train($uniqueid, \stored_file $dataset, $outputdir) {
 
+        // Obtain the physical route to the file.
         $datasetpath = $this->get_file_path($dataset);
 
         $cmd = 'python -m moodleinspire.training ' .
@@ -95,8 +112,17 @@ class processor implements \core_analytics\predictor {
         return $resultobj;
     }
 
+    /**
+     * Returns predictions for the provided dataset samples.
+     *
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
     public function predict($uniqueid, \stored_file $dataset, $outputdir) {
 
+        // Obtain the physical route to the file.
         $datasetpath = $this->get_file_path($dataset);
 
         $cmd = 'python -m moodleinspire.prediction ' .
@@ -127,8 +153,19 @@ class processor implements \core_analytics\predictor {
         return $resultobj;
     }
 
+    /**
+     * Evaluates the provided dataset.
+     *
+     * @param string $uniqueid
+     * @param float $maxdeviation
+     * @param int $niterations
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
     public function evaluate($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
 
+        // Obtain the physical route to the file.
         $datasetpath = $this->get_file_path($dataset);
 
         $cmd = 'python -m moodleinspire.evaluation ' .
@@ -158,6 +195,12 @@ class processor implements \core_analytics\predictor {
         return $resultobj;
     }
 
+    /**
+     * Returns the path to the dataset file.
+     *
+     * @param \stored_file $file
+     * @return string
+     */
     protected function get_file_path(\stored_file $file) {
         // From moodle filesystem to the local file system.
         // This is not ideal, but there is no read access to moodle filesystem files.

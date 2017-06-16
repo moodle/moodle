@@ -35,11 +35,35 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class activity_base extends \core_analytics\local\indicator\community_of_inquiry_activity {
 
+    /**
+     * feedback_viewed_events
+     *
+     * @return string[]
+     */
     protected function feedback_viewed_events() {
         return array('\mod_chat\event\course_module_viewed', '\mod_chat\event\message_sent',
             '\mod_chat\event\sessions_viewed');
     }
 
+    /**
+     * feedback_replied_events
+     *
+     * @return string[]
+     */
+    protected function feedback_replied_events() {
+        return array('\mod_chat\event\message_sent');
+    }
+
+    /**
+     * feedback_post_action
+     *
+     * @param \cm_info $cm
+     * @param int $contextid
+     * @param int $userid
+     * @param string[] $eventnames
+     * @param int $after
+     * @return bool
+     */
     protected function feedback_post_action(\cm_info $cm, $contextid, $userid, $eventnames, $after = false) {
 
         if (empty($this->activitylogs[$contextid][$userid])) {
@@ -75,6 +99,11 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
         return false;
     }
 
+    /**
+     * feedback_check_grades
+     *
+     * @return bool
+     */
     protected function feedback_check_grades() {
         // Chat's feedback is not contained in grades.
         return false;

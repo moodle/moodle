@@ -24,20 +24,12 @@
 
 namespace mlbackend_php;
 
-// TODO No support for 3rd party plugins psr4??
-spl_autoload_register(function($class) {
-    // Autoload Phpml classes.
-    $path = __DIR__ . '/../phpml/src/' . str_replace('\\', '/', $class) . '.php';
-    if (file_exists($path)) {
-        require_once($path);
-    }
-});
+defined('MOODLE_INTERNAL') || die();
 
 use Phpml\Preprocessing\Normalizer;
 use Phpml\CrossValidation\RandomSplit;
 use Phpml\Dataset\ArrayDataset;
-
-defined('MOODLE_INTERNAL') || die();
+use Phpml\ModelManager;
 
 /**
  * PHP predictions processor.
@@ -48,12 +40,31 @@ defined('MOODLE_INTERNAL') || die();
  */
 class processor implements \core_analytics\predictor {
 
+    /**
+     * Size of training / prediction batches.
+     */
     const BATCH_SIZE = 5000;
+
+    /**
+     * Number of train iterations.
+     */
     const TRAIN_ITERATIONS = 500;
+
+    /**
+     * File name of the serialised model.
+     */
     const MODEL_FILENAME = 'model.ser';
 
+    /**
+     * @var bool
+     */
     protected $limitedsize = false;
 
+    /**
+     * Checks if the processor is ready to use.
+     *
+     * @return bool
+     */
     public function is_ready() {
         if (version_compare(phpversion(), '7.0.0') < 0) {
             return get_string('errorphp7required', 'mlbackend_php');
@@ -61,12 +72,20 @@ class processor implements \core_analytics\predictor {
         return true;
     }
 
+    /**
+     * Trains a machine learning algorithm with the provided training set.
+     *
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
     public function train($uniqueid, \stored_file $dataset, $outputdir) {
 
         // Output directory is already unique to the model.
         $modelfilepath = $outputdir . DIRECTORY_SEPARATOR . self::MODEL_FILENAME;
 
-        $modelmanager = new \Phpml\ModelManager();
+        $modelmanager = new ModelManager();
 
         if (file_exists($modelfilepath)) {
             $classifier = $modelmanager->restoreFromFile($modelfilepath);
@@ -114,6 +133,14 @@ class processor implements \core_analytics\predictor {
         return $resultobj;
     }
 
+    /**
+     * Predicts the provided samples
+     *
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
     public function predict($uniqueid, \stored_file $dataset, $outputdir) {
 
         // Output directory is already unique to the model.
@@ -123,7 +150,7 @@ class processor implements \core_analytics\predictor {
             throw new \moodle_exception('errorcantloadmodel', 'analytics', '', $modelfilepath);
         }
 
-        $modelmanager = new \Phpml\ModelManager();
+        $modelmanager = new ModelManager();
         $classifier = $modelmanager->restoreFromFile($modelfilepath);
 
         $fh = $dataset->get_content_file_handle();
@@ -204,7 +231,7 @@ class processor implements \core_analytics\predictor {
 
             // Just an approximation, will depend on PHP version, compile options...
             // Double size + zval struct (6 bytes + 8 bytes + 16 bytes) + array bucket (96 bytes)
-            // https://nikic.github.io/2011/12/12/How-big-are-PHP-arrays-really-Hint-BIG.html
+            // https://nikic.github.io/2011/12/12/How-big-are-PHP-arrays-really-Hint-BIG.html.
             $floatsize = (PHP_INT_SIZE * 2) + 6 + 8 + 16 + 96;
         }
 
@@ -219,7 +246,7 @@ class processor implements \core_analytics\predictor {
             if (empty($CFG->mlbackend_php_no_evaluation_limits)) {
                 // We allow admins to disable evaluation memory usage limits by modifying config.php.
 
-                // We will have plenty of missing values in the dataset so it should be a conservative approximation:
+                // We will have plenty of missing values in the dataset so it should be a conservative approximation.
                 $samplessize = $samplessize + (count($sampledata) * $floatsize);
 
                 // Stop fetching more samples.
@@ -251,8 +278,17 @@ class processor implements \core_analytics\predictor {
         return $this->get_evaluation_result_object($dataset, $phis, $maxdeviation);
     }
 
+    /**
+     * Returns the results objects from all evaluations.
+     *
+     * @param \stored_file $dataset
+     * @param array $phis
+     * @param float $maxdeviation
+     * @return \stdClass
+     */
     protected function get_evaluation_result_object(\stored_file $dataset, $phis, $maxdeviation) {
 
+        // Average phi of all evaluations as final score.
         if (count($phis) === 1) {
             $avgphi = reset($phis);
         } else {
@@ -300,6 +336,13 @@ class processor implements \core_analytics\predictor {
         return $resultobj;
     }
 
+    /**
+     * Returns the Phi correlation coefficient.
+     *
+     * @param array $testlabels
+     * @param array $predictedlabels
+     * @return float
+     */
     protected function get_phi($testlabels, $predictedlabels) {
 
         // Binary here only as well.
@@ -320,6 +363,14 @@ class processor implements \core_analytics\predictor {
         return $phi;
     }
 
+    /**
+     * Extracts metadata from the dataset file.
+     *
+     * The file poiter should be located at the top of the file.
+     *
+     * @param resource $fh
+     * @return array
+     */
     protected function extract_metadata($fh) {
         $metadata = fgetcsv($fh);
         return array_combine($metadata, fgetcsv($fh));

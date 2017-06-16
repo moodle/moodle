@@ -35,11 +35,22 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class discrete extends base {
 
+    /**
+     * Are this target calculations linear values?
+     *
+     * @return bool
+     */
     public function is_linear() {
         // Not supported yet.
         throw new \coding_exception('Sorry, this version\'s prediction processors only support targets with binary values.');
     }
 
+    /**
+     * Is the provided class one of this target valid classes?
+     *
+     * @param string $class
+     * @return bool
+     */
     protected static function is_a_class($class) {
         return (in_array($class, static::get_classes()));
     }
@@ -48,7 +59,7 @@ abstract class discrete extends base {
      * get_display_value
      *
      * @param float $value
-     * @param string $subtype
+     * @param string $ignoredsubtype
      * @return string
      */
     public function get_display_value($value, $ignoredsubtype = false) {
@@ -57,17 +68,19 @@ abstract class discrete extends base {
             throw new \moodle_exception('errorpredictionformat', 'analytics');
         }
 
-        // array_values to discard any possible weird keys devs used.
+        // To discard any possible weird keys devs used.
         $classes = array_values(static::get_classes());
         $descriptions = array_values(static::classes_description());
 
         if (count($classes) !== count($descriptions)) {
-            throw new \coding_exception('You need to describe all your classes (' . json_encode($classes) . ') in self::classes_description');
+            throw new \coding_exception('You need to describe all your classes (' . json_encode($classes) .
+                ') in self::classes_description');
         }
 
         $key = array_search($value, $classes);
         if ($key === false) {
-            throw new \coding_exception('You need to describe all your classes (' . json_encode($classes) . ') in self::classes_description');
+            throw new \coding_exception('You need to describe all your classes (' . json_encode($classes) .
+                ') in self::classes_description');
         }
 
         return $descriptions[$key];
@@ -91,8 +104,8 @@ abstract class discrete extends base {
             return self::OUTCOME_OK;
         }
 
-        debugging('Please overwrite \core_analytics\local\target\discrete::get_calculation_outcome, all your target classes are styled ' .
-            'the same way otherwise', DEBUG_DEVELOPER);
+        debugging('Please overwrite \core_analytics\local\target\discrete::get_calculation_outcome, all your target ' .
+            'classes are styled the same way otherwise', DEBUG_DEVELOPER);
         return self::OUTCOME_OK;
     }
 

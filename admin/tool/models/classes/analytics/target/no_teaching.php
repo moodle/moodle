@@ -44,10 +44,22 @@ class no_teaching extends \core_analytics\local\target\binary {
         return true;
     }
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('target:noteachingactivity', 'tool_models');
     }
 
+    /**
+     * prediction_actions
+     *
+     * @param \core_analytics\prediction $prediction
+     * @param mixed $includedetailsaction
+     * @return \core_analytics\prediction_action[]
+     */
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
         global $USER;
 
@@ -79,6 +91,11 @@ class no_teaching extends \core_analytics\local\target\binary {
         return $actions;
     }
 
+    /**
+     * classes_description
+     *
+     * @return string[]
+     */
     protected static function classes_description() {
         return array(
             get_string('labelteachingyes', 'tool_models'),
@@ -96,10 +113,22 @@ class no_teaching extends \core_analytics\local\target\binary {
         return array(0);
     }
 
+    /**
+     * get_analyser_class
+     *
+     * @return string
+     */
     public function get_analyser_class() {
         return '\\core_analytics\\local\\analyser\\site_courses';
     }
 
+    /**
+     * is_valid_analysable
+     *
+     * @param \core_analytics\analysable $analysable
+     * @param mixed $fortraining
+     * @return true|string
+     */
     public function is_valid_analysable(\core_analytics\analysable $analysable, $fortraining = true) {
         // The analysable is the site, so yes, it is always valid.
         return true;
@@ -108,10 +137,10 @@ class no_teaching extends \core_analytics\local\target\binary {
     /**
      * Only process samples which start date is getting close.
      *
-     * @param mixed $sampleid
+     * @param int $sampleid
      * @param \core_analytics\analysable $analysable
      * @param bool $fortraining
-     * @return void
+     * @return true|string
      */
     public function is_valid_sample($sampleid, \core_analytics\analysable $analysable, $fortraining = true) {
 
@@ -132,7 +161,9 @@ class no_teaching extends \core_analytics\local\target\binary {
      *
      * @param int $sampleid
      * @param \core_analytics\analysable $analysable
-     * @return void
+     * @param int $starttime
+     * @param int $endtime
+     * @return float
      */
     protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false) {
 

@@ -35,11 +35,23 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class linear extends base {
 
+    /**
+     * Are the calculated values this target returns linear values?
+     *
+     * @return bool
+     */
     public function is_linear() {
         // Not supported yet.
         throw new \coding_exception('Sorry, this version\'s prediction processors only support targets with binary values.');
     }
 
+    /**
+     * How positive is this calculated value?
+     *
+     * @param float $value
+     * @param string $ignoredsubtype
+     * @return int
+     */
     public function get_calculated_outcome($value, $ignoredsubtype = false) {
 
         // This is very generic, targets will probably be interested in overwriting this.

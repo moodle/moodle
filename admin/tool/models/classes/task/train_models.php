@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,6 +24,8 @@
 
 namespace tool_models\task;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Train system models with new data available.
  *
@@ -34,10 +35,20 @@ namespace tool_models\task;
  */
 class train_models extends \core\task\scheduled_task {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public function get_name() {
         return get_string('trainmodels', 'tool_models');
     }
 
+    /**
+     * Executes the prediction task.
+     *
+     * @return void
+     */
     public function execute() {
         global $OUTPUT, $PAGE;
 

@@ -46,10 +46,18 @@ class insights_list implements \renderable, \templatable {
     protected $context;
 
     /**
-     * @var \core_analytics\model
+     * @var \core_analytics\model[]
      */
     protected $othermodels;
 
+    /**
+     * Constructor
+     *
+     * @param \core_analytics\model $model
+     * @param \context $context
+     * @param \core_analytics\model[] $othermodels
+     * @return void
+     */
     public function __construct(\core_analytics\model $model, \context $context, $othermodels) {
         $this->model = $model;
         $this->context = $context;

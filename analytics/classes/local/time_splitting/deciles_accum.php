@@ -35,10 +35,20 @@ defined('MOODLE_INTERNAL') || die();
  */
 class deciles_accum extends base {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public function get_name() {
         return get_string('timesplitting:decilesaccum', 'analytics');
     }
 
+    /**
+     * define_ranges
+     *
+     * @return array
+     */
     protected function define_ranges() {
         $rangeduration = floor(($this->analysable->get_end() - $this->analysable->get_start()) / 10);
 

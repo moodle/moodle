@@ -35,10 +35,20 @@ defined('MOODLE_INTERNAL') || die();
  */
 class quarters_accum extends base {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public function get_name() {
         return get_string('timesplitting:quartersaccum', 'analytics');
     }
 
+    /**
+     * define_ranges
+     *
+     * @return array
+     */
     protected function define_ranges() {
         $duration = floor(($this->analysable->get_end() - $this->analysable->get_start()) / 4);
         return [

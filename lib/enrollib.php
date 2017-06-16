@@ -1434,9 +1434,9 @@ function enrol_get_course_by_user_enrolment_id($ueid) {
  *
  * @param int $courseid Course id or false if using $uefilter (user enrolment ids may belong to different courses)
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
- * @param array usersfilter Limit the results obtained to this list of user ids. $uefilter compatibility not guaranteed.
- * @param array uefilter Limit the results obtained to this list of user enrolment ids. $usersfilter compatibility not guaranteed.
- * @return stdClass
+ * @param array $usersfilter Limit the results obtained to this list of user ids. $uefilter compatibility not guaranteed.
+ * @param array $uefilter Limit the results obtained to this list of user enrolment ids. $usersfilter compatibility not guaranteed.
+ * @return stdClass[]
  */
 function enrol_get_course_users($courseid = false, $onlyactive = false, $usersfilter = array(), $uefilter = array()) {
     global $DB;
@@ -1460,8 +1460,10 @@ function enrol_get_course_users($courseid = false, $onlyactive = false, $usersfi
     }
 
     if ($onlyactive) {
-        $conditions[] = "ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
-        $params['now1']    = round(time(), -2); // improves db caching
+        $conditions[] = "ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND " .
+            "(ue.timeend = 0 OR ue.timeend > :now2)";
+        // Improves db caching.
+        $params['now1']    = round(time(), -2);
         $params['now2']    = $params['now1'];
         $params['active']  = ENROL_USER_ACTIVE;
         $params['enabled'] = ENROL_INSTANCE_ENABLED;
@@ -1483,8 +1485,13 @@ function enrol_get_course_users($courseid = false, $onlyactive = false, $usersfi
 }
 
 /**
+ * Enrolment plugins abstract class.
+ *
  * All enrol plugins should be based on this class,
  * this is also the main source of documentation.
+ *
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class enrol_plugin {
     protected $config = null;

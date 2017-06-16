@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Abstract analyser in course basis.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -26,6 +27,7 @@ namespace core_analytics\local\analyser;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Abstract analyser in course basis.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -33,6 +35,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class by_course extends base {
 
+    /**
+     * Return the list of courses to analyse.
+     *
+     * @return \core_analytics\course[]
+     */
     public function get_courses() {
 
         // Default to all system courses.
@@ -58,6 +65,12 @@ abstract class by_course extends base {
         return $analysables;
     }
 
+    /**
+     * Returns the analysed data
+     *
+     * @param bool $includetarget
+     * @return \stored_file[]
+     */
     public function get_analysable_data($includetarget) {
 
         $status = array();
@@ -82,6 +95,13 @@ abstract class by_course extends base {
         return $timesplittingfiles;
     }
 
+    /**
+     * Merges analysable dataset files into 1.
+     *
+     * @param array $filesbytimesplitting
+     * @param bool $includetarget
+     * @return \stored_file[]
+     */
     protected function merge_analysable_files($filesbytimesplitting, $includetarget) {
 
         $timesplittingfiles = array();

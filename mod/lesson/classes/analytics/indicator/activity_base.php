@@ -35,10 +35,20 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class activity_base extends \core_analytics\local\indicator\community_of_inquiry_activity {
 
+    /**
+     * feedback_viewed_events
+     *
+     * @return string
+     */
     protected function feedback_viewed_events() {
         return array('\mod_lesson\event\lesson_ended');
     }
 
+    /**
+     * feedback_check_grades
+     *
+     * @return bool
+     */
     protected function feedback_check_grades() {
         // We don't need to check grades as we get the feedback while completing the activity.
         return false;

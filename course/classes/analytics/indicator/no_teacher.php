@@ -35,10 +35,20 @@ defined('MOODLE_INTERNAL') || die();
  */
 class no_teacher extends \core_analytics\local\indicator\binary {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('indicator:noteacher', 'moodle');
     }
 
+    /**
+     * required_sample_data
+     *
+     * @return string[]
+     */
     public static function required_sample_data() {
         // We require course because, although calculate_sample only reads context, we need the context to be course
         // or below.

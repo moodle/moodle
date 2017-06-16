@@ -1,13 +1,59 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Test static target.
+ *
+ * @package   core_analytics
+ * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Test static target.
+ *
+ * @package   core_analytics
+ * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class test_static_target_shortname extends \core_analytics\local\target\binary {
 
+    /**
+     * predictions
+     *
+     * @var array
+     */
     protected $predictions = array();
 
+    /**
+     * get_analyser_class
+     *
+     * @return string
+     */
     public function get_analyser_class() {
         return '\core_analytics\local\analyser\site_courses';
     }
 
+    /**
+     * classes_description
+     *
+     * @return string[]
+     */
     public static function classes_description() {
         return array(
             'Course fullname first char is A',
@@ -17,7 +63,7 @@ class test_static_target_shortname extends \core_analytics\local\target\binary {
 
     /**
      * We don't want to discard results.
-     * @return float
+     * @return null
      */
     protected function min_prediction_score() {
         return null;
@@ -31,23 +77,52 @@ class test_static_target_shortname extends \core_analytics\local\target\binary {
         return array();
     }
 
+    /**
+     * is_valid_analysable
+     *
+     * @param \core_analytics\analysable $analysable
+     * @param bool $fortraining
+     * @return bool
+     */
     public function is_valid_analysable(\core_analytics\analysable $analysable, $fortraining = true) {
         // This is testing, let's make things easy.
         return true;
     }
 
-    protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false) {
-        global $DB;
-
-        $sample = $DB->get_record('course', array('id' => $sampleid));
-
-        if ($sample->visible == 0) {
-            // We skip not-visible courses as a way to emulate the training data / prediction data difference.
-            // In normal circumstances targets will return null when they receive a sample that can not be
-            // processed, that same sample may be used for prediction.
-            // We can not do this in is_valid_analysable because the analysable there is the site not the course.
-            return null;
+    /**
+     * is_valid_sample
+     *
+     * @param int $sampleid
+     * @param \core_analytics\analysable $analysable
+     * @param bool $fortraining
+     * @return bool
+     */
+    public function is_valid_sample($sampleid, \core_analytics\analysable $analysable, $fortraining = true) {
+        // We skip not-visible courses during training as a way to emulate the training data / prediction data difference.
+        // In normal circumstances is_valid_sample will return false when they receive a sample that can not be
+        // processed.
+        if (!$fortraining) {
+            return true;
         }
+
+        $sample = $this->retrieve('course', $sampleid);
+        if ($sample->visible == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * calculate_sample
+     *
+     * @param int $sampleid
+     * @param \core_analytics\analysable $analysable
+     * @param int $starttime
+     * @param int $endtime
+     * @return float
+     */
+    protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false) {
+        $sample = $this->retrieve('course', $sampleid);
 
         $firstchar = substr($sample->shortname, 0, 1);
         if ($firstchar === 'a') {

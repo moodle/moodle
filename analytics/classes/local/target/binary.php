@@ -35,9 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class binary extends discrete {
 
+    /**
+     * is_linear
+     *
+     * @return bool
+     */
     public function is_linear() {
-        // TODO Remove this discrete override once prediction processors support
-        // multiclass classifiers; this method will be moved to discrete.
         return false;
     }
 
@@ -62,6 +65,13 @@ abstract class binary extends discrete {
         return array(0);
     }
 
+    /**
+     * Is the calculated value a positive outcome of this target?
+     *
+     * @param string $value
+     * @param string $ignoredsubtype
+     * @return int
+     */
     public function get_calculation_outcome($value, $ignoredsubtype = false) {
 
         if (!self::is_a_class($value)) {
@@ -81,6 +91,11 @@ abstract class binary extends discrete {
         return self::OUTCOME_VERY_POSITIVE;
     }
 
+    /**
+     * classes_description
+     *
+     * @return string[]
+     */
     protected static function classes_description() {
         return array(
             get_string('yes'),

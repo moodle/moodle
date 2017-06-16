@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Datasets manager.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -26,6 +27,7 @@ namespace core_analytics;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Datasets manager.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -33,8 +35,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 class dataset_manager {
 
+    /**
+     * File area for labelled datasets.
+     */
     const LABELLED_FILEAREA = 'labelled';
+
+    /**
+     * File area for unlabelled datasets.
+     */
     const UNLABELLED_FILEAREA = 'unlabelled';
+
+    /**
+     * Evaluation file file name.
+     */
     const EVALUATION_FILENAME = 'evaluation.csv';
 
     /**
@@ -71,8 +84,13 @@ class dataset_manager {
     protected $includetarget;
 
     /**
-     * Simple constructor.
+     * Constructor method.
      *
+     * @param int $modelid
+     * @param int $analysableid
+     * @param string $timesplittingid
+     * @param bool $evaluation
+     * @param bool $includetarget
      * @return void
      */
     public function __construct($modelid, $analysableid, $timesplittingid, $evaluation = false, $includetarget = false) {
@@ -90,7 +108,8 @@ class dataset_manager {
      */
     public function init_process() {
         $lockkey = 'modelid:' . $this->modelid . '-analysableid:' . $this->analysableid .
-            '-timesplitting:' . self::clean_time_splitting_id($this->timesplittingid) . '-includetarget:' . (int)$this->includetarget;
+            '-timesplitting:' . self::clean_time_splitting_id($this->timesplittingid) .
+            '-includetarget:' . (int)$this->includetarget;
 
         // Large timeout as processes may be quite long.
         $lockfactory = \core\lock\lock_config::get_lock_factory('core_analytics');
@@ -168,6 +187,13 @@ class dataset_manager {
             '/timesplitting/' . self::clean_time_splitting_id($timesplittingid) . '/', self::EVALUATION_FILENAME);
     }
 
+    /**
+     * Deletes previous evaluation files of this model.
+     *
+     * @param int $modelid
+     * @param string $timesplittingid
+     * @return bool
+     */
     public static function delete_previous_evaluation_file($modelid, $timesplittingid) {
         $fs = get_file_storage();
         if ($file = self::get_previous_evaluation_file($modelid, $timesplittingid)) {
@@ -178,6 +204,14 @@ class dataset_manager {
         return false;
     }
 
+    /**
+     * Returns this (model + analysable + time splitting) file.
+     *
+     * @param int $modelid
+     * @param int $analysableid
+     * @param string $timesplittingid
+     * @return \stored_file
+     */
     public static function get_evaluation_analysable_file($modelid, $analysableid, $timesplittingid) {
 
         // Delete previous file if it exists.
@@ -196,7 +230,6 @@ class dataset_manager {
      * Important! It is the caller responsability to ensure that the datasets are compatible.
      *
      * @param array  $files
-     * @param string $filename
      * @param int    $modelid
      * @param string $timesplittingid
      * @param bool   $evaluation
@@ -277,6 +310,12 @@ class dataset_manager {
         return $fs->create_file_from_pathname($filerecord, $tmpfilepath);
     }
 
+    /**
+     * Returns the dataset file data structured by sampleids using the indicators and target column names.
+     *
+     * @param \stored_file $dataset
+     * @return array
+     */
     public static function get_structured_data(\stored_file $dataset) {
 
         if ($dataset->get_filearea() !== 'unlabelled') {
@@ -315,6 +354,12 @@ class dataset_manager {
         return $calculations;
     }
 
+    /**
+     * Delete all files of a model.
+     *
+     * @param int $modelid
+     * @return bool
+     */
     public static function clear_model_files($modelid) {
         $fs = get_file_storage();
         return $fs->delete_area_files(\context_system::instance()->id, 'analytics', false, $modelid);
@@ -331,6 +376,12 @@ class dataset_manager {
         return clean_param($timesplittingid, PARAM_ALPHANUMEXT);
     }
 
+    /**
+     * Returns the file name to be used.
+     *
+     * @param strinbool $evaluation
+     * @return string
+     */
     protected static function get_filename($evaluation) {
 
         if ($evaluation === true) {
@@ -343,6 +394,12 @@ class dataset_manager {
         return $filename;
     }
 
+    /**
+     * Returns the file area to be used.
+     *
+     * @param bool $includetarget
+     * @return string
+     */
     protected static function get_filearea($includetarget) {
 
         if ($includetarget === true) {

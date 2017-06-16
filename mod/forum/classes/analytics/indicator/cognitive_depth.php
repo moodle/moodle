@@ -35,22 +35,48 @@ defined('MOODLE_INTERNAL') || die();
  */
 class cognitive_depth extends activity_base {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('indicator:cognitivedepthforum', 'mod_forum');
     }
 
+    /**
+     * get_indicator_type
+     *
+     * @return string
+     */
     protected function get_indicator_type() {
         return self::INDICATOR_COGNITIVE;
     }
 
+    /**
+     * get_cognitive_depth_level
+     *
+     * @param \cm_info $cm
+     * @return int
+     */
     public function get_cognitive_depth_level(\cm_info $cm) {
         return 4;
     }
 
+    /**
+     * feedback_check_grades
+     *
+     * @return bool
+     */
     protected function feedback_check_grades() {
         return false;
     }
 
+    /**
+     * feedback_replied_events
+     *
+     * @return string[]
+     */
     protected function feedback_replied_events() {
         return array('\mod_forum\event\assessable_uploaded');
     }

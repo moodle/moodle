@@ -47,7 +47,6 @@ class core_analytics_course_testcase extends advanced_testcase {
         $this->editingteacherroleid = $DB->get_field('role', 'id', array('shortname' => 'editingteacher'));
         $this->teacherroleid = $DB->get_field('role', 'id', array('shortname' => 'teacher'));
 
-
         $this->getDataGenerator()->enrol_user($this->stu1->id, $this->course->id, $this->studentroleid);
         $this->getDataGenerator()->enrol_user($this->stu2->id, $this->course->id, $this->studentroleid);
         $this->getDataGenerator()->enrol_user($this->both->id, $this->course->id, $this->studentroleid);
@@ -69,7 +68,7 @@ class core_analytics_course_testcase extends advanced_testcase {
         $this->assertCount(2, $courseman->get_user_ids(array($this->editingteacherroleid)));
         $this->assertCount(1, $courseman->get_user_ids(array($this->teacherroleid)));
 
-        // Distinct is applied
+        // Distinct is applied.
         $this->assertCount(3, $courseman->get_user_ids(array($this->editingteacherroleid, $this->teacherroleid)));
         $this->assertCount(4, $courseman->get_user_ids(array($this->editingteacherroleid, $this->studentroleid)));
     }

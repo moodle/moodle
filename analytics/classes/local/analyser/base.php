@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Analysers base class.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -26,6 +27,7 @@ namespace core_analytics\local\analyser;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Analysers base class.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -33,16 +35,59 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class base {
 
+    /**
+     * @var int
+     */
     protected $modelid;
 
+    /**
+     * The model target.
+     *
+     * @var \core_analytics\local\target\base
+     */
     protected $target;
+
+    /**
+     * The model indicators.
+     *
+     * @var \core_analytics\local\indicator\base[]
+     */
     protected $indicators;
+
+    /**
+     * Time splitting methods to use.
+     *
+     * Multiple time splitting methods during evaluation and 1 single
+     * time splitting method once the model is enabled.
+     *
+     * @var \core_analytics\local\time_splitting\base[]
+     */
     protected $timesplittings;
 
+    /**
+     * Execution options.
+     *
+     * @var array
+     */
     protected $options;
 
+    /**
+     * Simple log array.
+     *
+     * @var string[]
+     */
     protected $log;
 
+    /**
+     * Constructor method.
+     *
+     * @param int $modelid
+     * @param \core_analytics\local\target\base $target
+     * @param \core_analytics\local\indicator\base[] $indicators
+     * @param \core_analytics\local\time_splitting\base[] $timesplittings
+     * @param array $options
+     * @return void
+     */
     public function __construct($modelid, \core_analytics\local\target\base $target, $indicators, $timesplittings, $options) {
         $this->modelid = $modelid;
         $this->target = $target;
@@ -61,7 +106,7 @@ abstract class base {
     }
 
     /**
-     * This function returns the list of samples that can be calculated.
+     * This function returns this analysable list of samples.
      *
      * @param \core_analytics\analysable $analysable
      * @return array array[0] = int[] (sampleids) and array[1] = array (samplesdata)
@@ -69,7 +114,7 @@ abstract class base {
     abstract protected function get_all_samples(\core_analytics\analysable $analysable);
 
     /**
-     * get_samples
+     * This function returns the samples data from a list of sample ids.
      *
      * @param int[] $sampleids
      * @return array array[0] = int[] (sampleids) and array[1] = array (samplesdata)
@@ -77,7 +122,7 @@ abstract class base {
     abstract public function get_samples($sampleids);
 
     /**
-     * get_sample_analysable
+     * Returns the analysable of a sample.
      *
      * @param int $sampleid
      * @return \core_analytics\analysable
@@ -85,13 +130,15 @@ abstract class base {
     abstract public function get_sample_analysable($sampleid);
 
     /**
-     * get_samples_origin
+     * Returns the sample's origin in moodle database.
      *
      * @return string
      */
     abstract protected function get_samples_origin();
 
     /**
+     * Returns the context of a sample.
+     *
      * moodle/analytics:listinsights will be required at this level to access the sample predictions.
      *
      * @param int $sampleid
@@ -100,7 +147,7 @@ abstract class base {
     abstract public function sample_access_context($sampleid);
 
     /**
-     * sample_description
+     * Describes a sample with a description summary and a \renderable (an image for example)
      *
      * @param int $sampleid
      * @param int $contextid
@@ -108,10 +155,6 @@ abstract class base {
      * @return array array(string, \renderable)
      */
     abstract public function sample_description($sampleid, $contextid, $sampledata);
-
-    protected function provided_sample_data() {
-        return array($this->get_samples_origin());
-    }
 
     /**
      * Main analyser method which processes the site analysables.
@@ -121,14 +164,34 @@ abstract class base {
      * In most of the cases you should have enough extending from one of these classes so you don't need
      * to reimplement this method.
      *
+     * @param bool $includetarget
      * @return \stored_file[]
      */
     abstract public function get_analysable_data($includetarget);
 
+    /**
+     * Samples data this analyser provides.
+     *
+     * @return string[]
+     */
+    protected function provided_sample_data() {
+        return array($this->get_samples_origin());
+    }
+
+    /**
+     * Returns labelled data (training and evaluation).
+     *
+     * @return array
+     */
     public function get_labelled_data() {
         return $this->get_analysable_data(true);
     }
 
+    /**
+     * Returns unlabelled data (prediction).
+     *
+     * @return array
+     */
     public function get_unlabelled_data() {
         return $this->get_analysable_data(false);
     }
@@ -151,7 +214,7 @@ abstract class base {
     }
 
     /**
-     * check_indicator_requirements
+     * Checks that this analyser satisfies the provided indicator requirements.
      *
      * @param \core_analytics\local\indicator\base $indicator
      * @return true|string[] True if all good, missing requirements list otherwise
@@ -248,7 +311,7 @@ abstract class base {
 
             $a = new \stdClass();
             $a->analysableid = $analysable->get_id();
-            $a->errors =  implode(', ', $errors);
+            $a->errors = implode(', ', $errors);
             $this->add_log(get_string('analysablenotused', 'analytics', $a));
         }
 
@@ -256,7 +319,7 @@ abstract class base {
     }
 
     /**
-     * add_log
+     * Adds a register to the analysis log.
      *
      * @param string $string
      * @return void
@@ -266,7 +329,7 @@ abstract class base {
     }
 
     /**
-     * get_logs
+     * Returns the analysis logs.
      *
      * @return string[]
      */
@@ -274,12 +337,20 @@ abstract class base {
         return $this->log;
     }
 
+    /**
+     * Processes the analysable samples using the provided time splitting method.
+     *
+     * @param \core_analytics\local\time_splitting\base $timesplitting
+     * @param \core_analytics\analysable $analysable
+     * @param \core_analytics\local\target\base|false $target
+     * @return \stdClass Results object.
+     */
     protected function process_time_splitting($timesplitting, $analysable, $target = false) {
 
         $result = new \stdClass();
 
         if (!$timesplitting->is_valid_analysable($analysable)) {
-            $result->status = \core_analytics\model::ANALYSE_REJECTED_RANGE_PROCESSOR;
+            $result->status = \core_analytics\model::ANALYSABLE_REJECTED_TIME_SPLITTING_METHOD;
             $result->message = get_string('invalidanalysablefortimesplitting', 'analytics',
                 $timesplitting->get_name());
             return $result;
@@ -287,7 +358,8 @@ abstract class base {
         $timesplitting->set_analysable($analysable);
 
         if (CLI_SCRIPT && !PHPUNIT_TEST) {
-            mtrace('Analysing id "' . $analysable->get_id() . '" with "' . $timesplitting->get_name() . '" time splitting method...');
+            mtrace('Analysing id "' . $analysable->get_id() . '" with "' . $timesplitting->get_name() .
+                '" time splitting method...');
         }
 
         // What is a sample is defined by the analyser, it can be an enrolment, a course, a user, a question
@@ -295,7 +367,7 @@ abstract class base {
         list($sampleids, $samplesdata) = $this->get_all_samples($analysable);
 
         if (count($sampleids) === 0) {
-            $result->status = \core_analytics\model::ANALYSE_REJECTED_RANGE_PROCESSOR;
+            $result->status = \core_analytics\model::ANALYSABLE_REJECTED_TIME_SPLITTING_METHOD;
             $result->message = get_string('nodata', 'analytics');
             return $result;
         }
@@ -312,7 +384,7 @@ abstract class base {
         if ($this->options['evaluation'] === false) {
 
             if (empty($ranges)) {
-                $result->status = \core_analytics\model::ANALYSE_REJECTED_RANGE_PROCESSOR;
+                $result->status = \core_analytics\model::ANALYSABLE_REJECTED_TIME_SPLITTING_METHOD;
                 $result->message = get_string('nonewdata', 'analytics');
                 return $result;
             }
@@ -321,7 +393,7 @@ abstract class base {
             $sampleids = $this->filter_out_train_samples($sampleids, $timesplitting);
 
             if (count($sampleids) === 0) {
-                $result->status = \core_analytics\model::ANALYSE_REJECTED_RANGE_PROCESSOR;
+                $result->status = \core_analytics\model::ANALYSABLE_REJECTED_TIME_SPLITTING_METHOD;
                 $result->message = get_string('nonewdata', 'analytics');
                 return $result;
             }
@@ -335,7 +407,7 @@ abstract class base {
             }
 
             if (count($ranges) === 0) {
-                $result->status = \core_analytics\model::ANALYSE_REJECTED_RANGE_PROCESSOR;
+                $result->status = \core_analytics\model::ANALYSABLE_REJECTED_TIME_SPLITTING_METHOD;
                 $result->message = get_string('nonewtimeranges', 'analytics');
                 return $result;
             }
@@ -375,13 +447,12 @@ abstract class base {
             $target->add_sample_data($samplesdata);
         }
 
-
         // Here we start the memory intensive process that will last until $data var is
         // unset (until the method is finished basically).
         $data = $timesplitting->calculate($sampleids, $this->get_samples_origin(), $this->indicators, $ranges, $target);
 
         if (!$data) {
-            $result->status = \core_analytics\model::ANALYSE_REJECTED_RANGE_PROCESSOR;
+            $result->status = \core_analytics\model::ANALYSABLE_REJECTED_TIME_SPLITTING_METHOD;
             $result->message = get_string('novaliddata', 'analytics');
             $dataset->close_process();
             return $result;
@@ -410,6 +481,12 @@ abstract class base {
         return $result;
     }
 
+    /**
+     * Returns the ranges of a time splitting that can be used to predict.
+     *
+     * @param \core_analytics\local\time_splitting\base $timesplitting
+     * @return array
+     */
     protected function get_prediction_ranges($timesplitting) {
 
         $now = time();
@@ -426,6 +503,13 @@ abstract class base {
         return $predictionranges;
     }
 
+    /**
+     * Filters out samples that have already been used for training.
+     *
+     * @param int[] $sampleids
+     * @param \core_analytics\local\time_splitting\base $timesplitting
+     * @return int[]
+     */
     protected function filter_out_train_samples($sampleids, $timesplitting) {
         global $DB;
 
@@ -448,6 +532,13 @@ abstract class base {
         return $sampleids;
     }
 
+    /**
+     * Filters out samples that have already been used for prediction.
+     *
+     * @param array $ranges
+     * @param \core_analytics\local\time_splitting\base $timesplitting
+     * @return int[]
+     */
     protected function filter_out_prediction_ranges($ranges, $timesplitting) {
         global $DB;
 
@@ -465,6 +556,14 @@ abstract class base {
 
     }
 
+    /**
+     * Saves samples that have just been used for training.
+     *
+     * @param int[] $sampleids
+     * @param \core_analytics\local\time_splitting\base $timesplitting
+     * @param \stored_file $file
+     * @return bool
+     */
     protected function save_train_samples($sampleids, $timesplitting, $file) {
         global $DB;
 
@@ -481,6 +580,13 @@ abstract class base {
         return $DB->insert_record('analytics_train_samples', $trainingsamples);
     }
 
+    /**
+     * Saves samples that have just been used for prediction.
+     *
+     * @param array $ranges
+     * @param \core_analytics\local\time_splitting\base $timesplitting
+     * @return void
+     */
     protected function save_prediction_ranges($ranges, $timesplitting) {
         global $DB;
 

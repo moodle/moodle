@@ -101,6 +101,13 @@ foreach ($courses as $course) {
 $courses->close();
 
 
+/**
+ * tool_models_calculate_course_dates
+ *
+ * @param stdClass $course
+ * @param array $options CLI options
+ * @return void
+ */
 function tool_models_calculate_course_dates($course, $options) {
     global $DB, $OUTPUT;
 
@@ -153,7 +160,8 @@ function tool_models_calculate_course_dates($course, $options) {
             if ($options['update']) {
                 format_weeks::update_end_date($course->id);
                 $course->enddate = $DB->get_field('course', 'enddate', array('id' => $course->id));
-                $notification .= PHP_EOL . '  ' . get_string('weeksenddateautomaticallyset', 'tool_models') . ': ' . userdate($course->enddate);
+                $notification .= PHP_EOL . '  ' . get_string('weeksenddateautomaticallyset', 'tool_models') . ': ' .
+                    userdate($course->enddate);
             } else {
                 // We can't provide more info without actually updating it in db.
                 $notification .= PHP_EOL . '  ' . get_string('weeksenddatedefault', 'tool_models');
@@ -193,5 +201,7 @@ function tool_models_calculate_course_dates($course, $options) {
 
     echo mtrace($notification);
 }
+
+echo mtrace(get_string('success'));
 
 exit(0);

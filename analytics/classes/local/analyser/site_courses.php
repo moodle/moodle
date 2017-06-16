@@ -35,12 +35,17 @@ defined('MOODLE_INTERNAL') || die();
  */
 class site_courses extends sitewide {
 
+    /**
+     * Samples origin is course table.
+     *
+     * @return string
+     */
     public function get_samples_origin() {
         return 'course';
     }
 
     /**
-     * get_sample_analysable
+     * Returns the sample analysable
      *
      * @param int $sampleid
      * @return \core_analytics\analysable
@@ -49,14 +54,31 @@ class site_courses extends sitewide {
         return new \core_analytics\site();
     }
 
+    /**
+     * Data this analyer samples provide.
+     *
+     * @return string[]
+     */
     protected function provided_sample_data() {
         return array('course', 'context');
     }
 
+    /**
+     * Returns the sample context.
+     *
+     * @param int $sampleid
+     * @return \context
+     */
     public function sample_access_context($sampleid) {
         return \context_system::instance();
     }
 
+    /**
+     * Returns all site courses.
+     *
+     * @param \core_analytics\analysable $site
+     * @return array
+     */
     protected function get_all_samples(\core_analytics\analysable $site) {
         global $DB;
 
@@ -77,6 +99,12 @@ class site_courses extends sitewide {
         return array($sampleids, $courses);
     }
 
+    /**
+     * Return all complete samples data from sample ids.
+     *
+     * @param int[] $sampleids
+     * @return array
+     */
     public function get_samples($sampleids) {
         global $DB;
 
@@ -95,12 +123,12 @@ class site_courses extends sitewide {
     }
 
     /**
-     * sample_description
+     * Returns the description of a sample.
      *
      * @param int $sampleid
      * @param int $contextid
      * @param array $sampledata
-     * @return void
+     * @return array array(string, \renderable)
      */
     public function sample_description($sampleid, $contextid, $sampledata) {
         $description = format_string($sampledata['course']->fullname, true, array('context' => $sampledata['context']));

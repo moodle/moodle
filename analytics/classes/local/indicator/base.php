@@ -35,12 +35,18 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class base extends \core_analytics\calculable {
 
+    /**
+     * Min value an indicator can return.
+     */
     const MIN_VALUE = -1;
 
+    /**
+     * Max value an indicator can return.
+     */
     const MAX_VALUE = 1;
 
     /**
-     * Converts the calculated indicators to feature/s.
+     * Converts the calculated indicators to dataset feature/s.
      *
      * @param float|int[] $calculatedvalues
      * @return array
@@ -60,26 +66,57 @@ abstract class base extends \core_analytics\calculable {
      */
     abstract protected function calculate_sample($sampleid, $sampleorigin, $starttime, $endtime);
 
+    /**
+     * Should this value be displayed?
+     *
+     * Indicators providing multiple features can be used this method to discard some of them.
+     *
+     * @param float $value
+     * @param string $subtype
+     * @return bool
+     */
     public function should_be_displayed($value, $subtype) {
         // We should everything by default.
         return true;
     }
 
     /**
-     * @return null|string
+     * Allows indicators to specify data they need.
+     *
+     * e.g. A model using courses as samples will not provide users data, but an indicator like
+     * "user is hungry" needs user data.
+     *
+     * @return null|string[] Name of the required elements (use the database tablename)
      */
     public static function required_sample_data() {
         return null;
     }
 
+    /**
+     * Returns an instance of the indicator.
+     *
+     * Useful to reset cached data.
+     *
+     * @return \core_analytics\local\indicator\base
+     */
     public static function instance() {
         return new static();
     }
 
+    /**
+     * Returns the maximum value an indicator calculation can return.
+     *
+     * @return float
+     */
     public static function get_max_value() {
         return self::MAX_VALUE;
     }
 
+    /**
+     * Returns the minimum value an indicator calculation can return.
+     *
+     * @return float
+     */
     public static function get_min_value() {
         return self::MIN_VALUE;
     }
@@ -89,7 +126,7 @@ abstract class base extends \core_analytics\calculable {
      *
      * Returns an array of values which size matches $sampleids size.
      *
-     * @param array $sampleids
+     * @param int[] $sampleids
      * @param string $samplesorigin
      * @param integer $starttime Limit the calculation to this timestart
      * @param integer $endtime Limit the calculation to this timeend
@@ -117,18 +154,5 @@ abstract class base extends \core_analytics\calculable {
         $calculations = $this->to_features($calculations);
 
         return $calculations;
-    }
-
-    protected static function add_samples_averages() {
-        return false;
-    }
-
-    protected static function get_average_columns() {
-        return array('mean');
-    }
-
-    protected function calculate_averages($values) {
-        $mean = array_sum($values) / count($values);
-        return array($mean);
     }
 }

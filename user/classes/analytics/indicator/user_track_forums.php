@@ -15,62 +15,55 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * No time splitting method.
+ * User tracks forums indicator.
  *
- * Used when time is not a factor to consider into the equation.
- *
- * @package   core_analytics
+ * @package   core_user
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_analytics\local\time_splitting;
+namespace core_user\analytics\indicator;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * No time splitting method.
+ * User tracks forums indicator.
  *
- * Used when time is not a factor to consider into the equation.
- *
- * @package   core_analytics
+ * @package   core_user
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class no_splitting extends base {
+class user_track_forums extends \core_analytics\local\indicator\binary {
 
     /**
      * get_name
      *
      * @return string
      */
-    public function get_name() {
-        return get_string('timesplitting:nosplitting', 'analytics');
+    public static function get_name() {
+        return get_string('indicator:userforumstracking');
     }
 
     /**
-     * ready_to_predict
+     * required_sample_data
      *
-     * @param array $range
-     * @return true
+     * @return string[]
      */
-    public function ready_to_predict($range) {
-        return true;
+    public static function required_sample_data() {
+        return array('user');
     }
 
     /**
-     * define_ranges
+     * calculate_sample
      *
-     * @return array
+     * @param int $sampleid
+     * @param string $samplesorigin
+     * @param int $starttime
+     * @param int $endtime
+     * @return float
      */
-    protected function define_ranges() {
-        return [
-            [
-                'start' => 0,
-                'end' => \core_analytics\analysable::MAX_TIME,
-                // Time is ignored as we overwrite ready_to_predict.
-                'time' => 0
-            ]
-        ];
+    protected function calculate_sample($sampleid, $samplesorigin, $starttime = false, $endtime = false) {
+        $user = $this->retrieve('user', $sampleid);
+        return ($user->trackforums) ? self::get_max_value() : self::get_min_value();
     }
 }

@@ -35,14 +35,33 @@ defined('MOODLE_INTERNAL') || die();
  */
 class any_access_before_start extends binary {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('indicator:accessesbeforestart', 'analytics');
     }
 
+    /**
+     * required_sample_data
+     *
+     * @return string[]
+     */
     public static function required_sample_data() {
         return array('user', 'course', 'context');
     }
 
+    /**
+     * calculate_sample
+     *
+     * @param int $sampleid
+     * @param string $samplesorigin
+     * @param int $starttime
+     * @param int $endtime
+     * @return float
+     */
     protected function calculate_sample($sampleid, $samplesorigin, $starttime = false, $endtime = false) {
         global $DB;
 

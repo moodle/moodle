@@ -35,8 +35,18 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class activity_base extends \core_analytics\local\indicator\community_of_inquiry_activity {
 
+    /**
+     * choicedata
+     *
+     * @var array
+     */
     protected $choicedata = array();
 
+    /**
+     * feedback_viewed_events
+     *
+     * @return string[]
+     */
     protected function feedback_viewed_events() {
         return array('\mod_choice\event\course_module_viewed', '\mod_choice\event\answer_updated');
     }
@@ -51,10 +61,20 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
         global $DB;
 
         if (!isset($this->choicedata[$cm->instance])) {
-            $this->choicedata[$cm->instance] = $DB->get_record('choice', array('id' => $cm->instance), 'id, showresults, timeclose', MUST_EXIST);
+            $this->choicedata[$cm->instance] = $DB->get_record('choice', array('id' => $cm->instance),
+                'id, showresults, timeclose', MUST_EXIST);
         }
     }
 
+    /**
+     * feedback_viewed
+     *
+     * @param \cm_info $cm
+     * @param int $contextid
+     * @param int $userid
+     * @param int $after
+     * @return bool
+     */
     protected function feedback_viewed(\cm_info $cm, $contextid, $userid, $after = null) {
 
         // If results are shown after they answer a write action counts as feedback viewed.

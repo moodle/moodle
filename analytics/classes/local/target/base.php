@@ -186,7 +186,6 @@ abstract class base extends \core_analytics\calculable {
                 $message->smallmessage = get_string('insightinfomessage', 'analytics', $insighturl->out());
                 $message->contexturl = $insighturl->out(false);
 
-
                 message_send($message);
             }
         }
@@ -240,7 +239,7 @@ abstract class base extends \core_analytics\calculable {
      * Should the model callback be triggered?
      *
      * @param mixed $predictedvalue
-     * @param float $predictedscore
+     * @param float $predictionscore
      * @return bool
      */
     public function triggers_callback($predictedvalue, $predictionscore) {
@@ -292,7 +291,8 @@ abstract class base extends \core_analytics\calculable {
             $calculatedvalue = $this->calculate_sample($sampleid, $analysable, $starttime, $endtime);
 
             if (!is_null($calculatedvalue)) {
-                if ($this->is_linear() && ($calculatedvalue > static::get_max_value() || $calculatedvalue < static::get_min_value())) {
+                if ($this->is_linear() &&
+                        ($calculatedvalue > static::get_max_value() || $calculatedvalue < static::get_min_value())) {
                     throw new \coding_exception('Calculated values should be higher than ' . static::get_min_value() .
                         ' and lower than ' . static::get_max_value() . '. ' . $calculatedvalue . ' received');
                 } else if (!$this->is_linear() && static::is_a_class($calculatedvalue) === false) {
@@ -310,6 +310,7 @@ abstract class base extends \core_analytics\calculable {
      *
      * @param int[] $sampleids
      * @param \core_analytics\analysable $analysable
+     * @param bool $fortraining
      * @return void
      */
     public function filter_out_invalid_samples(&$sampleids, \core_analytics\analysable $analysable, $fortraining = true) {

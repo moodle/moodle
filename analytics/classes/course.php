@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Moodle course analysable
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -30,6 +31,7 @@ require_once($CFG->dirroot . '/lib/gradelib.php');
 require_once($CFG->dirroot . '/lib/enrollib.php');
 
 /**
+ * Moodle course analysable
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -37,24 +39,81 @@ require_once($CFG->dirroot . '/lib/enrollib.php');
  */
 class course implements \core_analytics\analysable {
 
+    /**
+     * @var \core_analytics\course[] $instances
+     */
     protected static $instances = array();
 
-    protected static $studentroles = [];
-    protected static $teacherroles = [];
-
+    /**
+     * Course object
+     *
+     * @var \stdClass
+     */
     protected $course = null;
+
+    /**
+     * The course context.
+     *
+     * @var \context_course
+     */
     protected $coursecontext = null;
 
+    /**
+     * The course activities organized by activity type.
+     *
+     * @var array
+     */
     protected $courseactivities = array();
 
+    /**
+     * Course start time.
+     *
+     * @var int
+     */
     protected $starttime = null;
+
+
+    /**
+     * Has the course already started?
+     *
+     * @var bool
+     */
     protected $started = null;
+
+    /**
+     * Course end time.
+     *
+     * @var int
+     */
     protected $endtime = null;
+
+    /**
+     * Is the course finished?
+     *
+     * @var bool
+     */
     protected $finished = null;
 
+    /**
+     * Course students ids.
+     *
+     * @var int[]
+     */
     protected $studentids = [];
+
+
+    /**
+     * Course teachers ids
+     *
+     * @var int[]
+     */
     protected $teacherids = [];
 
+    /**
+     * Cached copy of the total number of logs in the course.
+     *
+     * @var int
+     */
     protected $ntotallogs = null;
 
     /**
@@ -78,18 +137,14 @@ class course implements \core_analytics\analysable {
 
         $this->coursecontext = \context_course::instance($this->course->id);
 
-        if (empty(self::$studentroles)) {
-            self::$studentroles = array_keys(get_archetype_roles('student'));
-        }
-        if (empty(self::$teacherroles)) {
-            self::$teacherroles = array_keys(get_archetype_roles('editingteacher') + get_archetype_roles('teacher'));
-        }
-
         $this->now = time();
 
         // Get the course users, including users assigned to student and teacher roles at an higher context.
-        $this->studentids = $this->get_user_ids(self::$studentroles);
-        $this->teacherids = $this->get_user_ids(self::$teacherroles);
+        $studentroles = array_keys(get_archetype_roles('student'));
+        $this->studentids = $this->get_user_ids($studentroles);
+
+        $teacherroles = array_keys(get_archetype_roles('editingteacher') + get_archetype_roles('teacher'));
+        $this->teacherids = $this->get_user_ids($teacherroles);
     }
 
     /**
@@ -114,10 +169,20 @@ class course implements \core_analytics\analysable {
         return self::$instances[$courseid];
     }
 
+    /**
+     * get_id
+     *
+     * @return int
+     */
     public function get_id() {
         return $this->course->id;
     }
 
+    /**
+     * get_context
+     *
+     * @return \context
+     */
     public function get_context() {
         if ($this->coursecontext === null) {
             $this->coursecontext = \context_course::instance($this->course->id);
@@ -147,6 +212,11 @@ class course implements \core_analytics\analysable {
         return $this->starttime;
     }
 
+    /**
+     * Guesses the start of the course based on students' activity and enrolment start dates.
+     *
+     * @return int
+     */
     public function guess_start() {
         global $DB;
 
@@ -168,8 +238,10 @@ class course implements \core_analytics\analysable {
             $select = "userid = :userid AND contextlevel = :contextlevel AND contextinstanceid = :contextinstanceid";
             $params = array('userid' => $studentid, 'contextlevel' => CONTEXT_COURSE, 'contextinstanceid' => $this->get_id());
             $events = $logstore->get_events_select($select, $params, 'timecreated ASC', 0, 1);
-            $event = reset($events);
-            $firstlogs = $event->timecreated;
+            if ($events) {
+                $event = reset($events);
+                $firstlogs[] = $event->timecreated;
+            }
         }
         if (empty($firstlogs)) {
             // Can't guess if no student accesses.
@@ -257,6 +329,11 @@ class course implements \core_analytics\analysable {
         return $this->median($studentlastaccesses);
     }
 
+    /**
+     * Returns a course plain object.
+     *
+     * @return \stdClass
+     */
     public function get_course_data() {
         return $this->course;
     }
@@ -362,6 +439,12 @@ class course implements \core_analytics\analysable {
         return $this->ntotallogs;
     }
 
+    /**
+     * Returns all the activities of the provided type the course has.
+     *
+     * @param string $activitytype
+     * @return array
+     */
     public function get_all_activities($activitytype) {
 
         // Using is set because we set it to false if there are no activities.
@@ -383,6 +466,12 @@ class course implements \core_analytics\analysable {
         return $this->courseactivities[$activitytype];
     }
 
+    /**
+     * Returns the course students grades.
+     *
+     * @param array $courseactivities
+     * @return array
+     */
     public function get_student_grades($courseactivities) {
 
         if (empty($courseactivities)) {
@@ -410,9 +499,18 @@ class course implements \core_analytics\analysable {
         return $grades;
     }
 
+    /**
+     * Guesses all activities that were available during a period of time.
+     *
+     * @param string $activitytype
+     * @param int $starttime
+     * @param int $endtime
+     * @param \stdClass $student
+     * @return array
+     */
     public function get_activities($activitytype, $starttime, $endtime, $student = false) {
 
-        // $student may not be available, default to not calculating dynamic data.
+        // Var $student may not be available, default to not calculating dynamic data.
         $studentid = -1;
         if ($student) {
             $studentid = $student->id;
@@ -432,6 +530,14 @@ class course implements \core_analytics\analysable {
         return $timerangeactivities;
     }
 
+    /**
+     * Was the activity supposed to be completed during the provided time range?.
+     *
+     * @param \cm_info $activity
+     * @param int $starttime
+     * @param int $endtime
+     * @return bool
+     */
     protected function completed_by(\cm_info $activity, $starttime, $endtime) {
 
         // We can't check uservisible because:
@@ -455,7 +561,7 @@ class course implements \core_analytics\analysable {
             }
         }
 
-        //// We skip activities in sections that were not yet visible or their 'until' was not in this $starttime - $endtime range.
+        // We skip activities in sections that were not yet visible or their 'until' was not in this $starttime - $endtime range.
         $section = $activity->get_modinfo()->get_section_info($activity->sectionnum);
         if ($section->availability) {
             $info = new \core_availability\info_section($section);
@@ -524,6 +630,14 @@ class course implements \core_analytics\analysable {
         return false;
     }
 
+    /**
+     * Check if the activity/section should have been completed during the provided period according to its availability rules.
+     *
+     * @param \core_availability\info $info
+     * @param int $starttime
+     * @param int $endtime
+     * @return bool|null
+     */
     protected function availability_completed_by(\core_availability\info $info, $starttime, $endtime) {
 
         $dateconditions = $info->get_availability_tree()->get_all_children('\availability_date\condition');
@@ -576,6 +690,7 @@ class course implements \core_analytics\analysable {
     /**
      * Returns the query and params used to filter the logstore by this course students.
      *
+     * @param string $prefix
      * @return array
      */
     protected function course_students_query_filter($prefix = false) {

@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Site-level contents abstract analysable.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -26,6 +27,7 @@ namespace core_analytics\local\analyser;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Site-level contents abstract analysable.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -33,14 +35,16 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class sitewide extends base {
 
-    protected function get_site() {
-        return new \core_analytics\site();
-    }
-
+    /**
+     * Returns the analysable data.
+     *
+     * @param bool $includetarget
+     * @return \stored_file[] One file for each time splitting method.
+     */
     public function get_analysable_data($includetarget) {
 
         // Here there is a single analysable and it is the system.
-        $analysable = $this->get_site();
+        $analysable = new \core_analytics\site();
 
         $return = array();
 
@@ -54,7 +58,7 @@ abstract class sitewide extends base {
                 \core_analytics\dataset_manager::delete_previous_evaluation_file($this->modelid, $timesplittingid);
             }
 
-            // We use merge but it is just a copy
+            // We use merge but it is just a copy.
             $files[$timesplittingid] = \core_analytics\dataset_manager::merge_datasets(array($file), $this->modelid,
                 $timesplittingid, $this->options['evaluation'], $includetarget);
         }

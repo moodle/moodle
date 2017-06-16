@@ -335,7 +335,7 @@ class manager {
 
         self::check_can_list_insights($context);
 
-        $models = \core_analytics\manager::get_all_models(true, true, $context);
+        $models = self::get_all_models(true, true, $context);
         foreach ($models as $key => $model) {
             // Check that it not only have predictions but also generates insights from them.
             if (!$model->uses_insights()) {
@@ -366,7 +366,7 @@ class manager {
             $context = \context::instance_by_id($predictionobj->contextid);
         }
 
-        \core_analytics\manager::check_can_list_insights($context);
+        self::check_can_list_insights($context);
 
         $model = new \core_analytics\model($predictionobj->modelid);
         $sampledata = $model->prediction_sample_data($predictionobj);

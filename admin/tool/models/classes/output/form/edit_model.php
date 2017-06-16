@@ -24,6 +24,8 @@
 
 namespace tool_models\output\form;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/lib/formslib.php');
 
 /**

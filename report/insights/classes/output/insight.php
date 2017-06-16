@@ -50,6 +50,14 @@ class insight implements \renderable, \templatable {
      */
     protected $includedetailsaction = false;
 
+    /**
+     * Constructor
+     *
+     * @param \core_analytics\prediction $prediction
+     * @param \core_analytics\model $model
+     * @param bool $includedetailsaction
+     * @return void
+     */
     public function __construct(\core_analytics\prediction $prediction, \core_analytics\model $model, $includedetailsaction = false) {
         $this->prediction = $prediction;
         $this->model = $model;

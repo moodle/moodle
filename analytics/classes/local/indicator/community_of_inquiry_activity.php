@@ -35,10 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class community_of_inquiry_activity extends linear {
 
-    protected $course = null;
     /**
-     * TODO This should ideally be reused by cognitive depth and social breadth.
-     *
+     * @var \core_analytics\course
+     */
+    protected $course = null;
+
+    /**
      * @var array Array of logs by [contextid][userid]
      */
     protected $activitylogs = null;
@@ -49,12 +51,12 @@ abstract class community_of_inquiry_activity extends linear {
     protected $grades = null;
 
     /**
-     * @const Constant cognitive indicator type.
+     * Constant cognitive indicator type.
      */
     const INDICATOR_COGNITIVE = "cognitve";
 
     /**
-     * @const Constant social indicator type.
+     * Constant social indicator type.
      */
     const INDICATOR_SOCIAL = "social";
 
@@ -63,7 +65,7 @@ abstract class community_of_inquiry_activity extends linear {
      *
      * @var string The activity name (e.g. assign or quiz)
      */
-    final protected function get_activity_type() {
+    protected final function get_activity_type() {
         $class = get_class($this);
         $package = stristr($class, "\\", true);
         $type = str_replace("mod_", "", $package);
@@ -73,21 +75,47 @@ abstract class community_of_inquiry_activity extends linear {
         return $type;
     }
 
+    /**
+     * Returns the potential level of cognitive depth.
+     *
+     * @param \cm_info $cm
+     * @return int
+     */
     protected function get_cognitive_depth_level(\cm_info $cm) {
         throw new \coding_exception('Overwrite get_cognitive_depth_level method to set your activity potential cognitive ' .
             'depth level');
     }
 
+    /**
+     * Returns the potential level of social breadth.
+     *
+     * @param \cm_info $cm
+     * @return int
+     */
     protected function get_social_breadth_level(\cm_info $cm) {
         throw new \coding_exception('Overwrite get_social_breadth_level method to set your activity potential social ' .
             'breadth level');
     }
 
+    /**
+     * required_sample_data
+     *
+     * @return string[]
+     */
     public static function required_sample_data() {
         // Only course because the indicator is valid even without students.
         return array('course');
     }
 
+    /**
+     * Do activity logs contain any log of user in this context?
+     *
+     * If user is empty we look for any log in this context.
+     *
+     * @param int $contextid
+     * @param \stdClass|false $user
+     * @return bool
+     */
     protected final function any_log($contextid, $user) {
         if (empty($this->activitylogs[$contextid])) {
             return false;
@@ -103,6 +131,15 @@ abstract class community_of_inquiry_activity extends linear {
         return false;
     }
 
+    /**
+     * Do activity logs contain any write log of user in this context?
+     *
+     * If user is empty we look for any write log in this context.
+     *
+     * @param int $contextid
+     * @param \stdClass|false $user
+     * @return bool
+     */
     protected final function any_write_log($contextid, $user) {
         if (empty($this->activitylogs[$contextid])) {
             return false;
@@ -127,6 +164,17 @@ abstract class community_of_inquiry_activity extends linear {
         return false;
     }
 
+    /**
+     * Is there any feedback activity log for this user in this context?
+     *
+     * This method returns true if $user is empty and there is any feedback activity logs.
+     *
+     * @param string $action
+     * @param \cm_info $cm
+     * @param int $contextid
+     * @param \stdClass|false $user
+     * @return bool
+     */
     protected function any_feedback($action, \cm_info $cm, $contextid, $user) {
 
         if (!in_array($action, 'submitted', 'replied', 'viewed')) {
@@ -175,29 +223,76 @@ abstract class community_of_inquiry_activity extends linear {
         return $this->feedback_post_action($cm, $contextid, $userid, $this->feedback_viewed_events(), $after);
     }
 
+    /**
+     * $cm is used for this method overrides.
+     *
+     * This function must be fast.
+     *
+     * @param \cm_info $cm
+     * @param mixed $contextid
+     * @param mixed $userid
+     * @param int $after Timestamp, defaults to the graded date or false if we don't check the date.
+     * @return bool
+     */
     protected function feedback_replied(\cm_info $cm, $contextid, $userid, $after = null) {
         return $this->feedback_post_action($cm, $contextid, $userid, $this->feedback_replied_events(), $after);
     }
 
+    /**
+     * $cm is used for this method overrides.
+     *
+     * This function must be fast.
+     *
+     * @param \cm_info $cm
+     * @param mixed $contextid
+     * @param mixed $userid
+     * @param int $after Timestamp, defaults to the graded date or false if we don't check the date.
+     * @return bool
+     */
     protected function feedback_submitted(\cm_info $cm, $contextid, $userid, $after = null) {
         return $this->feedback_post_action($cm, $contextid, $userid, $this->feedback_submitted_events(), $after);
     }
 
+    /**
+     * Returns the list of events that involve viewing feedback from other users.
+     *
+     * @return string[]
+     */
     protected function feedback_viewed_events() {
         throw new \coding_exception('Activities with a potential cognitive or social level that include viewing feedback ' .
             'should define "feedback_viewed_events" method or should override feedback_viewed method.');
     }
 
+    /**
+     * Returns the list of events that involve replying to feedback from other users.
+     *
+     * @return string[]
+     */
     protected function feedback_replied_events() {
         throw new \coding_exception('Activities with a potential cognitive or social level that include replying to feedback ' .
             'should define "feedback_replied_events" method or should override feedback_replied method.');
     }
 
+    /**
+     * Returns the list of events that involve submitting something after receiving feedback from other users.
+     *
+     * @return string[]
+     */
     protected function feedback_submitted_events() {
         throw new \coding_exception('Activities with a potential cognitive or social level that include viewing feedback ' .
             'should define "feedback_submitted_events" method or should override feedback_submitted method.');
     }
 
+    /**
+     * Whether this user in this context did any of the provided actions (events)
+     *
+     * @param \cm_info $cm
+     * @param int $contextid
+     * @param int $userid
+     * @param string[] $eventnames
+     * @param int|false $after
+     * @return bool
+     */
     protected function feedback_post_action(\cm_info $cm, $contextid, $userid, $eventnames, $after = null) {
         if ($after === null) {
             if ($this->feedback_check_grades()) {
@@ -237,7 +332,7 @@ abstract class community_of_inquiry_activity extends linear {
     }
 
     /**
-     * get_graded_date
+     * Returns the date a user was graded.
      *
      * @param int $contextid
      * @param int $userid
@@ -268,6 +363,15 @@ abstract class community_of_inquiry_activity extends linear {
         return $after;
     }
 
+    /**
+     * Returns the activities the user had access to between a time period.
+     *
+     * @param int $sampleid
+     * @param string $tablename
+     * @param int $starttime
+     * @param int $endtime
+     * @return array
+     */
     protected function get_student_activities($sampleid, $tablename, $starttime, $endtime) {
 
         // May not be available.
@@ -307,6 +411,14 @@ abstract class community_of_inquiry_activity extends linear {
         return $useractivities;
     }
 
+    /**
+     * Fetch acitivity logs from database
+     *
+     * @param array $activities
+     * @param int $starttime
+     * @param int $endtime
+     * @return array
+     */
     protected function fetch_activity_logs($activities, $starttime = false, $endtime = false) {
         global $DB;
 
@@ -330,7 +442,7 @@ abstract class community_of_inquiry_activity extends linear {
                 $processedevents[$event->contextid][$event->userid] = array();
             }
 
-            // contextid and userid have already been used to index the events, the next field to index by is eventname:
+            // Contextid and userid have already been used to index the events, the next field to index by is eventname:
             // crud is unique per eventname, courseid is the same for all records and we append timecreated.
             if (!isset($processedevents[$event->contextid][$event->userid][$event->eventname])) {
 
@@ -358,7 +470,7 @@ abstract class community_of_inquiry_activity extends linear {
     /**
      * Whether grades should be checked or not when looking for feedback.
      *
-     * @return void
+     * @return bool
      */
     protected function feedback_check_grades() {
         return true;
@@ -367,10 +479,10 @@ abstract class community_of_inquiry_activity extends linear {
     /**
      * cognitive_calculate_sample
      *
-     * @param $sampleid
-     * @param $tablename
-     * @param bool $starttime
-     * @param bool $endtime
+     * @param int $sampleid
+     * @param string $tablename
+     * @param int $starttime
+     * @param int $endtime
      * @return float|int|null
      * @throws \coding_exception
      */
@@ -404,7 +516,7 @@ abstract class community_of_inquiry_activity extends linear {
                         $score += $scoreperlevel * 5;
                         break;
                     }
-                // The user didn't reach the activity max cognitive depth, continue with level 2.
+                    // The user didn't reach the activity max cognitive depth, continue with level 2.
 
                 case 4:
                     // Cognitive level 4 is to comment on feedback.
@@ -412,7 +524,7 @@ abstract class community_of_inquiry_activity extends linear {
                         $score += $scoreperlevel * 4;
                         break;
                     }
-                // The user didn't reach the activity max cognitive depth, continue with level 2.
+                    // The user didn't reach the activity max cognitive depth, continue with level 2.
 
                 case 3:
                     // Cognitive level 3 is to view feedback.
@@ -422,7 +534,7 @@ abstract class community_of_inquiry_activity extends linear {
                         $score += $scoreperlevel * 3;
                         break;
                     }
-                // The user didn't reach the activity max cognitive depth, continue with level 2.
+                    // The user didn't reach the activity max cognitive depth, continue with level 2.
 
                 case 2:
                     // Cognitive depth level 2 is to submit content.
@@ -431,7 +543,7 @@ abstract class community_of_inquiry_activity extends linear {
                         $score += $scoreperlevel * 2;
                         break;
                     }
-                // The user didn't reach the activity max cognitive depth, continue with level 1.
+                    // The user didn't reach the activity max cognitive depth, continue with level 1.
 
                 case 1:
                     // Cognitive depth level 1 is just accessing the activity.
@@ -456,10 +568,10 @@ abstract class community_of_inquiry_activity extends linear {
     /**
      * social_calculate_sample
      *
-     * @param $sampleid
-     * @param $tablename
-     * @param bool $starttime
-     * @param bool $endtime
+     * @param int $sampleid
+     * @param string $tablename
+     * @param int $starttime
+     * @param int $endtime
      * @return float|int|null
      */
     protected function social_calculate_sample($sampleid, $tablename, $starttime = false, $endtime = false) {
@@ -486,14 +598,15 @@ abstract class community_of_inquiry_activity extends linear {
             // TODO Add support for other levels than 2.
             switch ($potentiallevel) {
                 case 2:
-                    // Social breadth level 2 is to view feedback. (Same as cognitive level 3)
+                    // Social breadth level 2 is to view feedback. (Same as cognitive level 3).
 
                     if ($this->any_feedback('viewed', $cm, $contextid, $user)) {
                         // Max score for level 2.
                         $score += $scoreperlevel * 2;
                         break;
                     }
-                // The user didn't reach the activity max social breadth, continue with level 1.
+                    // The user didn't reach the activity max social breadth, continue with level 1.
+
                 case 1:
                     // Social breadth level 1 is just accessing the activity.
                     if ($this->any_log($contextid, $user)) {
@@ -515,12 +628,12 @@ abstract class community_of_inquiry_activity extends linear {
     /**
      * calculate_sample
      *
+     * @throws \coding_exception
      * @param int $sampleid
      * @param string $tablename
-     * @param bool $starttime
-     * @param bool $endtime
+     * @param int $starttime
+     * @param int $endtime
      * @return float|int|null
-     * @throws \coding_exception
      */
     protected function calculate_sample($sampleid, $tablename, $starttime = false, $endtime = false) {
         if ($this->get_indicator_type() == self::INDICATOR_COGNITIVE) {
@@ -534,7 +647,7 @@ abstract class community_of_inquiry_activity extends linear {
     /**
      * Defines indicator type.
      *
-     * @return mixed
+     * @return string
      */
     abstract protected function get_indicator_type();
 }

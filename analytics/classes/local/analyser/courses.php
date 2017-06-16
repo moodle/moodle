@@ -35,12 +35,17 @@ defined('MOODLE_INTERNAL') || die();
  */
 class courses extends by_course {
 
+    /**
+     * Samples origin is course table.
+     *
+     * @return string
+     */
     public function get_samples_origin() {
         return 'course';
     }
 
     /**
-     * get_sample_analysable
+     * Returns the analysable of a sample
      *
      * @param int $sampleid
      * @return \core_analytics\analysable
@@ -49,16 +54,27 @@ class courses extends by_course {
         return \core_analytics\course::instance($sampleid);
     }
 
+    /**
+     * This provides samples' course and context.
+     *
+     * @return string[]
+     */
     protected function provided_sample_data() {
         return array('course', 'context');
     }
 
+    /**
+     * Returns the context of a sample.
+     *
+     * @param int $sampleid
+     * @return \context
+     */
     public function sample_access_context($sampleid) {
         return \context_course::instance($sampleid);
     }
 
     /**
-     * get_all_samples
+     * This will return just one course as we analyse 'by_course'.
      *
      * @param \core_analytics\analysable $course
      * @return array
@@ -76,7 +92,7 @@ class courses extends by_course {
     }
 
     /**
-     * get_samples
+     * Returns samples data from sample ids.
      *
      * @param int[] $sampleids
      * @return array
@@ -99,12 +115,12 @@ class courses extends by_course {
     }
 
     /**
-     * sample_description
+     * Returns the sample description
      *
      * @param int $sampleid
      * @param int $contextid
      * @param array $sampledata
-     * @return array
+     * @return array array(string, \renderable)
      */
     public function sample_description($sampleid, $contextid, $sampledata) {
         $description = format_string($sampledata['course']->fullname, true, array('context' => $sampledata['context']));

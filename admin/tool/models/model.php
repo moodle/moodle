@@ -17,7 +17,7 @@
 /**
  * Model-related actions.
  *
- * @package    tool_model
+ * @package    tool_models
  * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

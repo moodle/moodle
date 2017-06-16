@@ -40,6 +40,12 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
      */
     protected $publishstats = array();
 
+    /**
+     * fill_publishstats
+     *
+     * @param \cm_info $cm
+     * @return void
+     */
     protected function fill_publishstats(\cm_info $cm) {
         global $DB;
 
@@ -55,7 +61,7 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
      * @param int $contextid
      * @param int $userid
      * @param int $after
-     * @return int
+     * @return bool
      */
     protected function feedback_viewed(\cm_info $cm, $contextid, $userid, $after = null) {
         // If stats are published any write action counts as viewed feedback.

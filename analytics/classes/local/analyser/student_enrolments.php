@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Student enrolments analyser.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -28,6 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/lib/enrollib.php');
 
 /**
+ * Student enrolments analyser.
+ *
+ * It does return all student enrolments including the suspended ones.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
@@ -40,28 +44,52 @@ class student_enrolments extends by_course {
      */
     protected $samplecourses = array();
 
+    /**
+     * Defines the origin of the samples in the database.
+     *
+     * @return string
+     */
     protected function get_samples_origin() {
         return 'user_enrolments';
     }
 
+    /**
+     * Returns the student enrolment course context.
+     *
+     * @param int $sampleid
+     * @return \context
+     */
     public function sample_access_context($sampleid) {
         return \context_course::instance($this->get_sample_courseid($sampleid));
     }
 
+    /**
+     * Returns the student enrolment course.
+     *
+     * @param int $sampleid
+     * @return \core_analytics\analysable
+     */
     public function get_sample_analysable($sampleid) {
         $course = enrol_get_course_by_user_enrolment_id($sampleid);
         return \core_analytics\course::instance($course);
     }
 
+    /**
+     * Data provided by get_all_samples & get_samples.
+     *
+     * @return string[]
+     */
     protected function provided_sample_data() {
         return array('user_enrolments', 'context', 'course', 'user');
     }
 
     /**
-     * All course enrolments.
+     * All course student enrolments.
+     *
+     * It does return all student enrolments including the suspended ones.
      *
      * @param \core_analytics\analysable $course
-     * @return void
+     * @return array
      */
     protected function get_all_samples(\core_analytics\analysable $course) {
 
@@ -111,6 +139,12 @@ class student_enrolments extends by_course {
         return array(array_combine($enrolids, $enrolids), $samplesdata);
     }
 
+    /**
+     * Returns all samples from the samples ids.
+     *
+     * @param int[] $sampleids
+     * @return array
+     */
     public function get_samples($sampleids) {
         global $DB;
 
@@ -189,7 +223,7 @@ class student_enrolments extends by_course {
      * @param int $sampleid
      * @param int $contextid
      * @param array $sampledata
-     * @return array
+     * @return array array(string, \renderable)
      */
     public function sample_description($sampleid, $contextid, $sampledata) {
         $description = fullname($sampledata['user'], true, array('context' => $contextid));

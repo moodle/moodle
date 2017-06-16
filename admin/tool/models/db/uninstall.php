@@ -24,6 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Deletes models created by tool_models
+ *
+ * @package    tool_models
+ * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 function xmldb_tool_models_uninstall() {
     global $DB;
 

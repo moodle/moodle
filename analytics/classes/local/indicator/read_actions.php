@@ -35,15 +35,34 @@ defined('MOODLE_INTERNAL') || die();
  */
 class read_actions extends linear {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('indicator:readactions', 'analytics');
     }
 
+    /**
+     * required_sample_data
+     *
+     * @return string[]
+     */
     public static function required_sample_data() {
         // User is not required, calculate_sample can handle its absence.
         return array('context');
     }
 
+    /**
+     * calculate_sample
+     *
+     * @param int $sampleid
+     * @param string $sampleorigin
+     * @param int $starttime
+     * @param int $endtime
+     * @return float
+     */
     protected function calculate_sample($sampleid, $sampleorigin, $starttime = false, $endtime = false) {
 
         $select = '';
@@ -67,7 +86,7 @@ class read_actions extends linear {
         // # Done absolutely nothing
         // # Not much really, just accessing the course once a week
         // # More than just accessing the course, some interaction
-        // # Significant contribution, will depend on the course anyway
+        // # Significant contribution, will depend on the course anyway.
 
         // We need to adapt the limits to the time range duration.
         $nweeks = $this->get_time_range_weeks_number($starttime, $endtime);

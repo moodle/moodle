@@ -35,11 +35,42 @@ defined('MOODLE_INTERNAL') || die();
  */
 interface predictor {
 
+    /**
+     * Is it ready to predict?
+     *
+     * @return bool
+     */
     public function is_ready();
 
+    /**
+     * Train the provided dataset.
+     *
+     * @param int $modelid
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
     public function train($modelid, \stored_file $dataset, $outputdir);
 
+    /**
+     * Predict the provided dataset samples.
+     *
+     * @param int $modelid
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
     public function predict($modelid, \stored_file $dataset, $outputdir);
 
+    /**
+     * evaluate
+     *
+     * @param int $modelid
+     * @param float $maxdeviation
+     * @param int $niterations
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
     public function evaluate($modelid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir);
 }

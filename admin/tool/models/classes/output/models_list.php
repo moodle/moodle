@@ -35,8 +35,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 class models_list implements \renderable, \templatable {
 
+    /**
+     * models
+     *
+     * @var \core_analytics\model[]
+     */
     protected $models = array();
 
+    /**
+     * __construct
+     *
+     * @param \core_analytics\model[] $models
+     * @return void
+     */
     public function __construct($models) {
         $this->models = $models;
     }

@@ -35,6 +35,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class activity_base extends \core_analytics\local\indicator\community_of_inquiry_activity {
 
+    /**
+     * feedback_viewed_events
+     *
+     * @return string[]
+     */
     protected function feedback_viewed_events() {
         // Any view after the data graded counts as feedback viewed.
         return array('\mod_scorm\event\course_module_viewed');

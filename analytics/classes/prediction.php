@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Representation of a prediction.
  *
  * @package   core_analytics
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
@@ -26,6 +27,7 @@ namespace core_analytics;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Representation of a prediction.
  *
  * @package   core_analytics
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
@@ -33,12 +35,28 @@ defined('MOODLE_INTERNAL') || die();
  */
 class prediction {
 
+    /**
+     * @var \stdClass
+     */
     private $prediction;
 
+    /**
+     * @var array
+     */
     private $sampledata;
 
+    /**
+     * @var array
+     */
     private $calculations = array();
 
+    /**
+     * Constructor
+     *
+     * @param \stdClass $prediction
+     * @param array $sampledata
+     * @return void
+     */
     public function __construct($prediction, $sampledata) {
         global $DB;
 
@@ -52,18 +70,38 @@ class prediction {
         $this->format_calculations();
     }
 
+    /**
+     * Get prediction object data.
+     *
+     * @return \stdClass
+     */
     public function get_prediction_data() {
         return $this->prediction;
     }
 
+    /**
+     * Get prediction sample data.
+     *
+     * @return array
+     */
     public function get_sample_data() {
         return $this->sampledata;
     }
 
+    /**
+     * Gets the prediction calculations
+     *
+     * @return array
+     */
     public function get_calculations() {
         return $this->calculations;
     }
 
+    /**
+     * format_calculations
+     *
+     * @return \stdClass[]
+     */
     private function format_calculations() {
 
         $calculations = json_decode($this->prediction->calculations, true);
@@ -86,6 +124,12 @@ class prediction {
         }
     }
 
+    /**
+     * parse_feature_name
+     *
+     * @param string $featurename
+     * @return string[]
+     */
     private function parse_feature_name($featurename) {
 
         $indicatorclass = $featurename;
@@ -100,5 +144,4 @@ class prediction {
 
         return array($indicatorclass, $subtype);
     }
-
 }

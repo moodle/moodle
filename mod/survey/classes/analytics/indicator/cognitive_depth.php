@@ -35,14 +35,30 @@ defined('MOODLE_INTERNAL') || die();
  */
 class cognitive_depth extends activity_base {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('indicator:cognitivedepthsurvey', 'mod_survey');
     }
 
+    /**
+     * get_indicator_type
+     *
+     * @return string
+     */
     protected function get_indicator_type() {
         return self::INDICATOR_COGNITIVE;
     }
 
+    /**
+     * get_cognitive_depth_level
+     *
+     * @param \cm_info $cm
+     * @return int
+     */
     protected function get_cognitive_depth_level(\cm_info $cm) {
         return 2;
     }

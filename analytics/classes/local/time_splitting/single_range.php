@@ -26,14 +26,31 @@ namespace core_analytics\local\time_splitting;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Single time splitting method.
+ *
+ * @package   core_analytics
+ * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class single_range extends base {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public function get_name() {
         return get_string('timesplitting:singlerange', 'analytics');
     }
 
+    /**
+     * One single range covering all analysable duration.
+     *
+     * @return array
+     */
     protected function define_ranges() {
-        // time == 0 because we want it to start predicting from the beginning.
+        // Key 'time' == 0 because we want it to start predicting from the beginning.
         return [
             [
                 'start' => $this->analysable->get_start(),

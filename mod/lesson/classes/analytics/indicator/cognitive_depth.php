@@ -35,18 +35,43 @@ defined('MOODLE_INTERNAL') || die();
  */
 class cognitive_depth extends activity_base {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('indicator:cognitivedepthlesson', 'mod_lesson');
     }
 
+    /**
+     * get_indicator_type
+     *
+     * @return string
+     */
     protected function get_indicator_type() {
         return self::INDICATOR_COGNITIVE;
     }
 
+    /**
+     * get_cognitive_depth_level
+     *
+     * @param \cm_info $cm
+     * @return int
+     */
     protected function get_cognitive_depth_level(\cm_info $cm) {
         return 5;
     }
 
+    /**
+     * feedback_submitted
+     *
+     * @param \cm_info $cm
+     * @param int $contextid
+     * @param int $userid
+     * @param int $after
+     * @return bool
+     */
     protected function feedback_submitted(\cm_info $cm, $contextid, $userid, $after = false) {
         if (empty($this->activitylogs[$contextid][$userid]) ||
                 empty($this->activitylogs[$contextid][$userid]['\mod_lesson\event\lesson_ended'])) {
@@ -57,6 +82,15 @@ class cognitive_depth extends activity_base {
         return (2 >= count($this->activitylogs[$contextid][$userid]['\mod_lesson\event\lesson_ended']));
     }
 
+    /**
+     * feedback_replied
+     *
+     * @param \cm_info $cm
+     * @param int $contextid
+     * @param int $userid
+     * @param int $after
+     * @return bool
+     */
     protected function feedback_replied(\cm_info $cm, $contextid, $userid, $after = false) {
         // No level 4.
         return false;

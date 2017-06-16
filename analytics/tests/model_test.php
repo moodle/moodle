@@ -17,7 +17,7 @@
 /**
  * Unit tests for the model.
  *
- * @package   analytics
+ * @package   core_analytics
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,7 +32,7 @@ require_once(__DIR__ . '/fixtures/test_target_shortname.php');
 /**
  * Unit tests for the model.
  *
- * @package   analytics
+ * @package   core_analytics
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -142,12 +142,32 @@ class analytics_model_testcase extends advanced_testcase {
     }
 }
 
+/**
+ * Testable version to change methods' visibility.
+ *
+ * @package   core_analytics
+ * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class testable_model extends \core_analytics\model {
+
+    /**
+     * get_output_dir
+     *
+     * @param array $subdirs
+     * @return string
+     */
     public function get_output_dir($subdirs = array()) {
         return parent::get_output_dir($subdirs);
     }
 
+    /**
+     * init_analyser
+     *
+     * @param array $options
+     * @return void
+     */
     public function init_analyser($options = array()) {
-        return parent::init_analyser($options);
+        parent::init_analyser($options);
     }
 }

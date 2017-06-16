@@ -70,7 +70,8 @@ class prediction_action_started extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' has started '{$this->other['actionname']}' action for the prediction with id '".$this->objectid."'.";
+        return "The user with id '$this->userid' has started '{$this->other['actionname']}' action for the prediction with id '" .
+            $this->objectid . "'.";
     }
 
     /**
@@ -95,6 +96,11 @@ class prediction_action_started extends \core\event\base {
         }
     }
 
+    /**
+     * get_objectid_mapping
+     *
+     * @return array
+     */
     public static function get_objectid_mapping() {
         return array('db' => 'analytics_predictions');
     }

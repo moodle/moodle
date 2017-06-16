@@ -26,6 +26,13 @@ namespace core_analytics\local\time_splitting;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Base time splitting method.
+ *
+ * @package   core_analytics
+ * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class base {
 
     /**
@@ -59,8 +66,22 @@ abstract class base {
      */
     protected static $indicators = [];
 
+    /**
+     * Define the time splitting methods ranges.
+     *
+     * 'time' value defines when predictions are executed, their values will be compared with
+     * the current time in ready_to_predict
+     *
+     * @return array('start' => time(), 'end' => time(), 'time' => time())
+     */
     abstract protected function define_ranges();
 
+    /**
+     * The time splitting method name.
+     *
+     * It is very recommendable to overwrite this method as this name appears in the UI.
+     * @return string
+     */
     public function get_name() {
         return $this->get_id();
     }
@@ -86,6 +107,11 @@ abstract class base {
         $this->validate_ranges();
     }
 
+    /**
+     * get_analysable
+     *
+     * @return \core_analytics\analysable
+     */
     public function get_analysable() {
         return $this->analysable;
     }
@@ -93,12 +119,19 @@ abstract class base {
     /**
      * Returns whether the course can be processed by this time splitting method or not.
      *
+     * @param \core_analytics\analysable $analysable
      * @return bool
      */
     public function is_valid_analysable(\core_analytics\analysable $analysable) {
         return true;
     }
 
+    /**
+     * Should we predict this time range now?
+     *
+     * @param array $range
+     * @return bool
+     */
     public function ready_to_predict($range) {
         if ($range['time'] <= time()) {
             return true;
@@ -111,7 +144,7 @@ abstract class base {
      *
      * @param array $sampleids
      * @param string $samplesorigin
-     * @param \core_analytics\local\indicator\base $indicators
+     * @param \core_analytics\local\indicator\base[] $indicators
      * @param array $ranges
      * @param \core_analytics\local\target\base $target
      * @return array
@@ -155,6 +188,10 @@ abstract class base {
     /**
      * Calculates indicators.
      *
+     * @param array $sampleids
+     * @param string $samplesorigin
+     * @param \core_analytics\local\indicator\base[] $indicators
+     * @param array $ranges
      * @return array
      */
     protected function calculate_indicators($sampleids, $samplesorigin, $indicators, $ranges) {
@@ -197,6 +234,8 @@ abstract class base {
      *
      * This will identify the sample as belonging to a specific range.
      *
+     * @param array $dataset
+     * @param array $calculatedtarget
      * @return void
      */
     protected function fill_dataset(&$dataset, $calculatedtarget = false) {
@@ -244,6 +283,9 @@ abstract class base {
      * .....
      * ----------------------------------------------------
      *
+     * @param array $dataset
+     * @param \core_analytics\local\indicator\base[] $indicators
+     * @param \core_analytics\local\target\base|false $target
      * @return void
      */
     protected function add_metadata(&$dataset, $indicators, $target = false) {
@@ -284,6 +326,7 @@ abstract class base {
     /**
      * get_range_by_index
      *
+     * @param int $rangeindex
      * @return array
      */
     public function get_range_by_index($rangeindex) {
@@ -293,14 +336,34 @@ abstract class base {
         return $this->ranges[$rangeindex];
     }
 
+    /**
+     * Generates a unique sample id (sample in a range index).
+     *
+     * @param int $sampleid
+     * @param int $rangeindex
+     * @return string
+     */
     public function append_rangeindex($sampleid, $rangeindex) {
         return $sampleid . '-' . $rangeindex;
     }
 
-    public function infer_sample_info($sampleid) {
-        return explode('-', $sampleid);
+    /**
+     * Returns the sample id and the range index from a uniquesampleid.
+     *
+     * @param string $uniquesampleid
+     * @return array array($sampleid, $rangeindex)
+     */
+    public function infer_sample_info($uniquesampleid) {
+        return explode('-', $uniquesampleid);
     }
 
+    /**
+     * Returns the headers for the csv file based on the indicators and the target.
+     *
+     * @param \core_analytics\local\indicator\base[] $indicators
+     * @param \core_analytics\local\target\base|false $target
+     * @return string[]
+     */
     protected function get_headers($indicators, $target = false) {
         // 3rd column will contain the indicator ids.
         $headers = array();
@@ -335,7 +398,7 @@ abstract class base {
     /**
      * Validates the time splitting method ranges.
      *
-     * @throw \coding_exception
+     * @throws \coding_exception
      * @return void
      */
     protected function validate_ranges() {

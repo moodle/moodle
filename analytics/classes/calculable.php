@@ -35,10 +35,29 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class calculable {
 
+    /**
+     * Neutral calculation outcome.
+     */
     const OUTCOME_NEUTRAL = 0;
+
+    /**
+     * Very positive calculation outcome.
+     */
     const OUTCOME_VERY_POSITIVE = 1;
+
+    /**
+     * Positive calculation outcome.
+     */
     const OUTCOME_OK = 2;
+
+    /**
+     * Negative calculation outcome.
+     */
     const OUTCOME_NEGATIVE = 3;
+
+    /**
+     * Very negative calculation outcome.
+     */
     const OUTCOME_VERY_NEGATIVE = 4;
 
     /**
@@ -243,7 +262,6 @@ abstract class calculable {
      * Merges arrays recursively keeping the same keys the original arrays have.
      *
      * @link http://php.net/manual/es/function.array-merge-recursive.php#114818
-     * @param array
      * @return array
      */
     private function array_merge_recursive_keep_keys() {
@@ -256,8 +274,8 @@ abstract class calculable {
                 if (is_array($value) && !empty($base[$key]) && is_array($base[$key])) {
                     $base[$key] = $this->array_merge_recursive_keep_keys($base[$key], $value);
                 } else {
-                    if(isset($base[$key]) && is_int($key)) {
-                      $key++;
+                    if (isset($base[$key]) && is_int($key)) {
+                        $key++;
                     }
                     $base[$key] = $value;
                 }

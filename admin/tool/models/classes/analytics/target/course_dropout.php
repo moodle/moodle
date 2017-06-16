@@ -40,12 +40,22 @@ require_once($CFG->dirroot . '/completion/completion_completion.php');
  */
 class course_dropout extends \core_analytics\local\target\binary {
 
-    protected $coursegradeitem = null;
-
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('target:coursedropout', 'tool_models');
     }
 
+    /**
+     * prediction_actions
+     *
+     * @param \core_analytics\prediction $prediction
+     * @param bool $includedetailsaction
+     * @return \core_analytics\prediction_action[]
+     */
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
         global $USER;
 
@@ -57,17 +67,24 @@ class course_dropout extends \core_analytics\local\target\binary {
         // Send a message.
         $url = new \moodle_url('/message/index.php', array('user' => $USER->id, 'id' => $studentid));
         $pix = new \pix_icon('t/message', get_string('sendmessage', 'message'));
-        $actions['studentmessage'] = new \core_analytics\prediction_action('studentmessage', $prediction, $url, $pix, get_string('sendmessage', 'message'));
+        $actions['studentmessage'] = new \core_analytics\prediction_action('studentmessage', $prediction, $url, $pix,
+            get_string('sendmessage', 'message'));
 
         // View outline report.
         $url = new \moodle_url('/report/outline/user.php', array('id' => $studentid, 'course' => $sampledata['course']->id,
             'mode' => 'outline'));
         $pix = new \pix_icon('i/report', get_string('outlinereport'));
-        $actions['viewoutlinereport'] = new \core_analytics\prediction_action('viewoutlinereport', $prediction, $url, $pix, get_string('outlinereport'));
+        $actions['viewoutlinereport'] = new \core_analytics\prediction_action('viewoutlinereport', $prediction, $url, $pix,
+            get_string('outlinereport'));
 
         return $actions;
     }
 
+    /**
+     * classes_description
+     *
+     * @return string[]
+     */
     protected static function classes_description() {
         return array(
             get_string('labelstudentdropoutno', 'tool_models'),
@@ -86,10 +103,22 @@ class course_dropout extends \core_analytics\local\target\binary {
         return array();
     }
 
+    /**
+     * get_analyser_class
+     *
+     * @return string
+     */
     public function get_analyser_class() {
         return '\\core_analytics\\local\\analyser\\student_enrolments';
     }
 
+    /**
+     * is_valid_analysable
+     *
+     * @param \core_analytics\analysable $course
+     * @param bool $fortraining
+     * @return true|string
+     */
     public function is_valid_analysable(\core_analytics\analysable $course, $fortraining = true) {
         global $DB;
 
@@ -145,7 +174,7 @@ class course_dropout extends \core_analytics\local\target\binary {
      * @param int $sampleid
      * @param \core_analytics\analysable $course
      * @param bool $fortraining
-     * @return bool
+     * @return true|string
      */
     public function is_valid_sample($sampleid, \core_analytics\analysable $course, $fortraining = true) {
         return true;
@@ -160,7 +189,9 @@ class course_dropout extends \core_analytics\local\target\binary {
      *
      * @param int $sampleid
      * @param \core_analytics\analysable $course
-     * @return void
+     * @param int $starttime
+     * @param int $endtime
+     * @return float
      */
     protected function calculate_sample($sampleid, \core_analytics\analysable $course, $starttime = false, $endtime = false) {
 

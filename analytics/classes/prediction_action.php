@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Representation of a suggested action associated with a prediction.
  *
  * @package   core_analytics
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
@@ -26,6 +27,7 @@ namespace core_analytics;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Representation of a suggested action associated with a prediction.
  *
  * @package   core_analytics
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
@@ -52,7 +54,8 @@ class prediction_action {
     public function __construct($actionname, \core_analytics\prediction $prediction, \moodle_url $actionurl, \pix_icon $icon, $text, $primary = false) {
 
         // We want to track how effective are our suggested actions, we pass users through a script that will log these actions.
-        $params = array('action' => $actionname, 'predictionid' => $prediction->get_prediction_data()->id, 'forwardurl' => $actionurl->out(false));
+        $params = array('action' => $actionname, 'predictionid' => $prediction->get_prediction_data()->id,
+            'forwardurl' => $actionurl->out(false));
         $url = new \moodle_url('/report/insights/action.php', $params);
 
         if ($primary === false) {
@@ -63,6 +66,8 @@ class prediction_action {
     }
 
     /**
+     * Returns the link to the action.
+     *
      * @return \action_menu_link
      */
     public function get_action_link() {

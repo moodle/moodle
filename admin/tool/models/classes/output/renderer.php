@@ -106,7 +106,8 @@ class renderer extends plugin_renderer_base {
 
             if (isset($result->score)) {
                 // Score.
-                $output .= $OUTPUT->heading(get_string('accuracy', 'tool_models') . ': ' . round(floatval($result->score), 4) * 100  . '%', 4);
+                $output .= $OUTPUT->heading(get_string('accuracy', 'tool_models') . ': ' .
+                    round(floatval($result->score), 4) * 100  . '%', 4);
             }
 
             if (!empty($result->info)) {

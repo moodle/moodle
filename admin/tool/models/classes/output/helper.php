@@ -24,8 +24,10 @@
 
 namespace tool_models\output;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Typical crappy helper class with tiny functions.
+ * Helper class with general purpose tiny functions.
  *
  * @package   tool_models
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
@@ -33,6 +35,12 @@ namespace tool_models\output;
  */
 class helper {
 
+    /**
+     * Converts a class full name to a select option key
+     *
+     * @param string $class
+     * @return string
+     */
     public static function class_to_option($class) {
         // Form field is PARAM_ALPHANUMEXT and we are sending fully qualified class names
         // as option names, but replacing the backslash for a string that is really unlikely
@@ -40,6 +48,12 @@ class helper {
         return str_replace('\\', '2015102400ouuu', $class);
     }
 
+    /**
+     * option_to_class
+     *
+     * @param string $option
+     * @return string
+     */
     public static function option_to_class($option) {
         // Really unlikely but yeah, I'm a bad booyyy.
         return str_replace('2015102400ouuu', '\\', $option);

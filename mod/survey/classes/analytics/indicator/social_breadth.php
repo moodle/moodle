@@ -35,14 +35,30 @@ defined('MOODLE_INTERNAL') || die();
  */
 class social_breadth extends activity_base {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('indicator:socialbreadthsurvey', 'mod_survey');
     }
 
+    /**
+     * get_indicator_type
+     *
+     * @return string
+     */
     protected function get_indicator_type() {
         return self::INDICATOR_SOCIAL;
     }
 
+    /**
+     * get_social_breadth_level
+     *
+     * @param \cm_info $cm
+     * @return int
+     */
     protected function get_social_breadth_level(\cm_info $cm) {
         return 1;
     }

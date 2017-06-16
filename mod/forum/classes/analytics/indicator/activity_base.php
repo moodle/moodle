@@ -35,11 +35,27 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class activity_base extends \core_analytics\local\indicator\community_of_inquiry_activity {
 
+    /**
+     * feedback_viewed_events
+     *
+     * @return string[]
+     */
     protected function feedback_viewed_events() {
-        // We could add any forum event, but it will make feedback_post_action slower
-        return array('\mod_forum\event\assessable_uploaded', '\mod_forum\event\course_module_viewed', '\mod_forum\event\discussion_viewed');
+        // We could add any forum event, but it will make feedback_post_action slower.
+        return array('\mod_forum\event\assessable_uploaded', '\mod_forum\event\course_module_viewed',
+            '\mod_forum\event\discussion_viewed');
     }
 
+    /**
+     * feedback_post_action
+     *
+     * @param \cm_info $cm
+     * @param int $contextid
+     * @param int $userid
+     * @param string[] $eventnames
+     * @param int $after
+     * @return bool
+     */
     protected function feedback_post_action(\cm_info $cm, $contextid, $userid, $eventnames, $after = false) {
 
         if (empty($this->activitylogs[$contextid][$userid])) {

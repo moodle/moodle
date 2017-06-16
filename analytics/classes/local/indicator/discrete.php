@@ -44,6 +44,11 @@ abstract class discrete extends base {
         throw new \coding_exception('Please overwrite get_classes() specifying your discrete-values\' indicator classes');
     }
 
+    /**
+     * Returns 1 feature header for each of the classes.
+     *
+     * @return string[]
+     */
     public static function get_feature_headers() {
         $fullclassname = get_called_class();
 
@@ -55,6 +60,13 @@ abstract class discrete extends base {
         return $headers;
     }
 
+    /**
+     * Whether the value should be displayed or not.
+     *
+     * @param float $value
+     * @param string $subtype
+     * @return bool
+     */
     public function should_be_displayed($value, $subtype) {
         if ($value != static::get_max_value()) {
             // Discrete values indicators are converted internally to 1 feature per indicator, we are only interested
@@ -94,6 +106,14 @@ abstract class discrete extends base {
         return \core_analytics\calculable::OUTCOME_NEUTRAL;
     }
 
+    /**
+     * From calculated values to dataset features.
+     *
+     * One column for each class.
+     *
+     * @param float[] $calculatedvalues
+     * @return float[]
+     */
     protected function to_features($calculatedvalues) {
 
         $classes = self::get_classes();

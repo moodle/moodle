@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Extension to show an error message if the selected predictor is not available.
  *
  * @package   core_analytics
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
@@ -27,6 +28,13 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../lib/adminlib.php');
 
+/**
+ * Extension to show an error message if the selected predictor is not available.
+ *
+ * @package   core_analytics
+ * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class admin_setting_predictor extends \admin_setting_configselect {
 
     /**
@@ -40,7 +48,7 @@ class admin_setting_predictor extends \admin_setting_configselect {
             return '';
         }
         if (!array_key_exists($data, $this->choices)) {
-            return ''; // ignore it
+            return '';
         }
 
         // Calling it here without checking if it is ready because we check it below and show it as a controlled case.

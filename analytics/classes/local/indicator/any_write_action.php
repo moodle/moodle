@@ -35,15 +35,34 @@ defined('MOODLE_INTERNAL') || die();
  */
 class any_write_action extends binary {
 
+    /**
+     * get_name
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('indicator:anywrite', 'analytics');
     }
 
+    /**
+     * required_sample_data
+     *
+     * @return string[]
+     */
     public static function required_sample_data() {
         // User is not required, calculate_sample can handle its absence.
         return array('context');
     }
 
+    /**
+     * calculate_sample
+     *
+     * @param int $sampleid
+     * @param string $sampleorigin
+     * @param int $starttime
+     * @param int $endtime
+     * @return float
+     */
     protected function calculate_sample($sampleid, $sampleorigin, $starttime = false, $endtime = false) {
         global $DB;
 

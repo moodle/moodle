@@ -44,6 +44,11 @@ abstract class linear extends base {
         return true;
     }
 
+    /**
+     * get_feature_headers
+     *
+     * @return array
+     */
     public static function get_feature_headers() {
 
         $fullclassname = get_called_class();
@@ -57,6 +62,13 @@ abstract class linear extends base {
         return $headers;
     }
 
+    /**
+     * should_be_displayed
+     *
+     * @param float $value
+     * @param string $subtype
+     * @return bool
+     */
     public function should_be_displayed($value, $subtype) {
         if ($subtype != false) {
             return false;
@@ -91,6 +103,12 @@ abstract class linear extends base {
         }
     }
 
+    /**
+     * Converts the calculated values to a list of features for the dataset.
+     *
+     * @param array $calculatedvalues
+     * @return array
+     */
     protected function to_features($calculatedvalues) {
 
         // Null mean if all calculated values are null.

@@ -13,11 +13,12 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/notification'], functi
 
         /**
          * Prepares a modal info for a log's results.
+         *
          * @access public
          * @param {int} id
-         * @return {String} HTML info
+         * @param {string[]} info
          */
-        loadInfo : function(id, info) {
+        loadInfo: function(id, info) {
 
             var link = $('[data-model-log-id="' + id + '"]');
             str.get_string('loginfo', 'tool_models').then(function(langString) {

@@ -35,19 +35,59 @@ defined('MOODLE_INTERNAL') || die();
  */
 class model {
 
+    /**
+     * All as expected.
+     */
     const OK = 0;
+
+    /**
+     * There was a problem.
+     */
     const GENERAL_ERROR = 1;
+
+    /**
+     * No dataset to analyse.
+     */
     const NO_DATASET = 2;
 
+    /**
+     * Model with low prediction accuracy.
+     */
     const EVALUATE_LOW_SCORE = 4;
+
+    /**
+     * Not enough data to evaluate the model properly.
+     */
     const EVALUATE_NOT_ENOUGH_DATA = 8;
 
-    const ANALYSE_REJECTED_RANGE_PROCESSOR = 4;
+    /**
+     * Invalid analysable for the time splitting method.
+     */
+    const ANALYSABLE_REJECTED_TIME_SPLITTING_METHOD = 4;
+
+    /**
+     * Invalid analysable for all time splitting methods.
+     */
     const ANALYSABLE_STATUS_INVALID_FOR_RANGEPROCESSORS = 8;
+
+    /**
+     * Invalid analysable for the target
+     */
     const ANALYSABLE_STATUS_INVALID_FOR_TARGET = 16;
 
+    /**
+     * Minimum score to consider a non-static prediction model as good.
+     */
     const MIN_SCORE = 0.7;
+
+    /**
+     * Maximum standard deviation between different evaluation repetitions to consider that evaluation results are stable.
+     */
     const ACCEPTED_DEVIATION = 0.05;
+
+    /**
+     * Number of evaluation repetitions.
+     */
     const EVALUATION_ITERATIONS = 10;
 
     /**
@@ -552,7 +592,7 @@ class model {
 
         if ($this->is_static()) {
             // Prediction based on assumptions.
-            $result->status = \core_analytics\model::OK;
+            $result->status = self::OK;
             $result->info = [];
             $result->predictions = $this->get_static_predictions($indicatorcalculations);
 
@@ -589,7 +629,7 @@ class model {
         if ($predictorresult->predictions) {
             foreach ($predictorresult->predictions as $sampleinfo) {
 
-                // We parse each prediction
+                // We parse each prediction.
                 switch (count($sampleinfo)) {
                     case 1:
                         // For whatever reason the predictions processor could not process this sample, we
@@ -620,7 +660,7 @@ class model {
      * Execute the prediction callbacks defined by the target.
      *
      * @param \stdClass[] $predictions
-     * @param array $predictions
+     * @param array $indicatorcalculations
      * @return array
      */
     protected function execute_prediction_callbacks($predictions, $indicatorcalculations) {
@@ -636,8 +676,8 @@ class model {
                 list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
 
                 // Store the predicted values.
-                $samplecontext = $this->save_prediction($sampleid, $rangeindex, $prediction->prediction, $prediction->predictionscore,
-                    json_encode($indicatorcalculations[$uniquesampleid]));
+                $samplecontext = $this->save_prediction($sampleid, $rangeindex, $prediction->prediction,
+                    $prediction->predictionscore, json_encode($indicatorcalculations[$uniquesampleid]));
 
                 // Also store all samples context to later generate insights or whatever action the target wants to perform.
                 $samplecontexts[$samplecontext->id] = $samplecontext;

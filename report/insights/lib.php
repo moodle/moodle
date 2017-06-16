@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die;
  * @param navigation_node $navigation The navigation node to extend
  * @param stdClass        $course     The course to object for the tool
  * @param context         $context    The context of the course
+ * @return void
  */
 function report_insights_extend_navigation_course($navigation, $course, $context) {
     global $DB;

@@ -33,6 +33,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core_analytics_course_activities_testcase extends advanced_testcase {
 
+    /**
+     * availability_levels
+     *
+     * @return array
+     */
     public function availability_levels() {
         return array(
             'activity' => array('activity'),
@@ -51,7 +56,7 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
 
         list($course, $stu1) = $this->setup_course();
 
-        // forum1 is ignored as section 0 does not count.
+        // Forum1 is ignored as section 0 does not count.
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
         $courseman = new \core_analytics\course($course);
@@ -89,18 +94,27 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
         $cm = $modinfo->get_cm($forum->cmid);
 
         // Condition from after provided end time.
-        $this->assertCount(0, $courseman->get_activities('forum', strtotime('2015-10-20 00:00:00 GMT'), strtotime('2015-10-21 00:00:00 GMT'), $stu1));
+        $this->assertCount(0, $courseman->get_activities('forum', strtotime('2015-10-20 00:00:00 GMT'),
+            strtotime('2015-10-21 00:00:00 GMT'), $stu1));
 
         // Condition until before provided start time
-        $this->assertCount(0, $courseman->get_activities('forum', strtotime('2015-10-25 00:00:00 GMT'), strtotime('2015-10-26 00:00:00 GMT'), $stu1));
+        $this->assertCount(0, $courseman->get_activities('forum', strtotime('2015-10-25 00:00:00 GMT'),
+            strtotime('2015-10-26 00:00:00 GMT'), $stu1));
 
         // Condition until after provided end time.
-        $this->assertCount(0, $courseman->get_activities('forum', strtotime('2015-10-22 00:00:00 GMT'), strtotime('2015-10-23 00:00:00 GMT'), $stu1));
+        $this->assertCount(0, $courseman->get_activities('forum', strtotime('2015-10-22 00:00:00 GMT'),
+            strtotime('2015-10-23 00:00:00 GMT'), $stu1));
 
         // Condition until after provided start time and before provided end time.
-        $this->assertCount(1, $courseman->get_activities('forum', strtotime('2015-10-22 00:00:00 GMT'), strtotime('2015-10-25 00:00:00 GMT'), $stu1));
+        $this->assertCount(1, $courseman->get_activities('forum', strtotime('2015-10-22 00:00:00 GMT'),
+            strtotime('2015-10-25 00:00:00 GMT'), $stu1));
     }
 
+    /**
+     * test_get_activities_with_weeks
+     *
+     * @return void
+     */
     public function test_get_activities_with_weeks() {
 
         $startdate = gmmktime('0', '0', '0', 10, 24, 2015);
@@ -112,7 +126,7 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
 
         list($course, $stu1) = $this->setup_course($record);
 
-        // forum1 is ignored as section 0 does not count.
+        // Forum1 is ignored as section 0 does not count.
         $forum1 = $this->getDataGenerator()->create_module('forum', array('course' => $course->id),
             array('section' => 0));
         $forum2 = $this->getDataGenerator()->create_module('forum', array('course' => $course->id),
@@ -138,9 +152,14 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
         $this->assertCount(2, $courseman->get_activities('forum', $forth, $forth + WEEKSECS, $stu1));
     }
 
+    /**
+     * test_get_activities_by_section
+     *
+     * @return void
+     */
     public function test_get_activities_by_section() {
 
-        // This makes debugging easier, sorry WA's +8 :)
+        // This makes debugging easier, sorry WA's +8 :).
         $this->setTimezone('UTC');
 
         // 1 year.
@@ -156,7 +175,7 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
 
         list($course, $stu1) = $this->setup_course($record);
 
-        // forum1 is ignored as section 0 does not count.
+        // Forum1 is ignored as section 0 does not count.
         $forum1 = $this->getDataGenerator()->create_module('forum', array('course' => $course->id),
             array('section' => 0));
         $forum2 = $this->getDataGenerator()->create_module('forum', array('course' => $course->id),
@@ -187,8 +206,8 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
 
         // Split the course in as many parts as sections.
         $duration = ($enddate - $startdate) / $numsections;
-        for($i = 1; $i <= $numsections; $i++) {
-            // -1 because section 1 start represents the course start.
+        for ($i = 1; $i <= $numsections; $i++) {
+            // The -1 because section 1 start represents the course start.
             $timeranges[$i] = $startdate + ($duration * ($i - 1));
         }
         $this->assertCount(1, $courseman->get_activities('forum', $timeranges[1], $timeranges[1] + $duration, $stu1));
@@ -202,6 +221,12 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
         $this->assertCount(0, $courseman->get_activities('forum', $timeranges[3], $timeranges[3] + $duration, $stu1));
     }
 
+    /**
+     * setup_course
+     *
+     * @param stdClass $courserecord
+     * @return array
+     */
     protected function setup_course($courserecord = null) {
         global $CFG;
 
