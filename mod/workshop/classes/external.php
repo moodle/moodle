@@ -365,4 +365,58 @@ class mod_workshop_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for view_workshop.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function view_workshop_parameters() {
+        return new external_function_parameters (
+            array(
+                'workshopid' => new external_value(PARAM_INT, 'Workshop instance id'),
+            )
+        );
+    }
+
+    /**
+     * Trigger the course module viewed event and update the module completion status.
+     *
+     * @param int $workshopid workshop instance id
+     * @return array of warnings and status result
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function view_workshop($workshopid) {
+
+        $params = array('workshopid' => $workshopid);
+        $params = self::validate_parameters(self::view_workshop_parameters(), $params);
+        $warnings = array();
+
+        list($workshop, $course, $cm, $context) = self::validate_workshop($params['workshopid']);
+
+        $workshop->set_module_viewed();
+
+        $result = array(
+            'status' => true,
+            'warnings' => $warnings,
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the view_workshop return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.4
+     */
+    public static function view_workshop_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

@@ -350,4 +350,66 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(workshop::PHASE_SUBMISSION, $result['userplan']['phases'][1]['code']);
         $this->assertTrue($result['userplan']['phases'][1]['active']); // We are now in submission phase.
     }
+
+    /**
+     * Test test_view_workshop invalid id.
+     */
+    public function test_view_workshop_invalid_id() {
+        $this->expectException('moodle_exception');
+        mod_workshop_external::view_workshop(0);
+    }
+
+    /**
+     * Test test_view_workshop user not enrolled.
+     */
+    public function test_view_workshop_user_not_enrolled() {
+        // Test not-enrolled user.
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+        $this->expectException('moodle_exception');
+        mod_workshop_external::view_workshop($this->workshop->id);
+    }
+
+    /**
+     * Test test_view_workshop user student.
+     */
+    public function test_view_workshop_user_student() {
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $result = mod_workshop_external::view_workshop($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::view_workshop_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_workshop\event\course_module_viewed', $event);
+        $this->assertEquals($this->context, $event->get_context());
+        $moodleworkshop = new \moodle_url('/mod/workshop/view.php', array('id' => $this->cm->id));
+        $this->assertEquals($moodleworkshop, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+    }
+
+    /**
+     * Test test_view_workshop user missing capabilities.
+     */
+    public function test_view_workshop_user_missing_capabilities() {
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
+        assign_capability('mod/workshop:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        // Empty all the caches that may be affected  by this change.
+        accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
+
+        $this->setUser($this->student);
+        $this->expectException('moodle_exception');
+        mod_workshop_external::view_workshop($this->workshop->id);
+    }
 }

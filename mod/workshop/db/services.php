@@ -53,4 +53,12 @@ $functions = array(
         'capabilities'  => 'mod/workshop:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'mod_workshop_view_workshop' => array(
+        'classname'     => 'mod_workshop_external',
+        'methodname'    => 'view_workshop',
+        'description'   => 'Trigger the course module viewed event and update the module completion status.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/workshop:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
