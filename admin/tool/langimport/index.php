@@ -40,7 +40,7 @@ if (empty($CFG->langotherroot)) {
 $mode               = optional_param('mode', 0, PARAM_INT);              // action
 $pack               = optional_param_array('pack', array(), PARAM_SAFEDIR);    // pack to install
 $uninstalllang      = optional_param_array('uninstalllang', array(), PARAM_LANG);// installed pack to uninstall
-$confirmtounistall  = optional_param('confirmtouninstall', '', PARAM_ALPHAEXT);  // uninstallation confirmation
+$confirmtounistall  = optional_param('confirmtouninstall', '', PARAM_SAFEPATH);  // uninstallation confirmation
 $purgecaches        = optional_param('purgecaches', false, PARAM_BOOL);  // explicit caches reset
 
 if ($purgecaches) {
@@ -74,7 +74,7 @@ if ($mode == DELETION_OF_SELECTED_LANG and (!empty($uninstalllang) or !empty($co
     // Actually deleting languages, languages to delete are passed as GET parameter as string
     // ...need to populate them to array.
     if (empty($uninstalllang)) {
-        $uninstalllang = explode('-', $confirmtounistall);
+        $uninstalllang = explode('/', $confirmtounistall);
     }
 
     if (in_array('en', $uninstalllang)) {
@@ -84,8 +84,10 @@ if ($mode == DELETION_OF_SELECTED_LANG and (!empty($uninstalllang) or !empty($co
     } else if (empty($confirmtounistall) and confirm_sesskey()) { // User chose langs to be deleted, show confirmation.
         echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('uninstallconfirm', 'tool_langimport', implode(', ', $uninstalllang)),
-                     'index.php?mode='.DELETION_OF_SELECTED_LANG.'&confirmtouninstall='.implode('-', $uninstalllang),
-                     'index.php');
+            new moodle_url($PAGE->url, array(
+                'mode' => DELETION_OF_SELECTED_LANG,
+                'confirmtouninstall' => implode('/', $uninstalllang),
+            )), $PAGE->url);
         echo $OUTPUT->footer();
         die;
 
