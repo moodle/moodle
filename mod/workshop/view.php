@@ -28,7 +28,6 @@
 
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/locallib.php');
-require_once($CFG->libdir.'/completionlib.php');
 
 $id         = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $w          = optional_param('w', 0, PARAM_INT);  // workshop instance ID
@@ -54,20 +53,10 @@ require_capability('mod/workshop:view', $PAGE->context);
 
 $workshop = new workshop($workshoprecord, $cm, $course);
 
-// Mark viewed
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
-
-$eventdata = array();
-$eventdata['objectid']         = $workshop->id;
-$eventdata['context']          = $workshop->context;
-
 $PAGE->set_url($workshop->view_url());
-$event = \mod_workshop\event\course_module_viewed::create($eventdata);
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('workshop', $workshoprecord);
-$event->add_record_snapshot('course_modules', $cm);
-$event->trigger();
+
+// Mark viewed.
+$workshop->set_module_viewed();
 
 // If the phase is to be switched, do it asap. This just has to happen after triggering
 // the event so that the scheduled allocator had a chance to allocate submissions.
