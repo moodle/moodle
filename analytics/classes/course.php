@@ -196,7 +196,6 @@ class course implements \core_analytics\analysable {
      * @return int Timestamp or 0 if has not started yet.
      */
     public function get_start() {
-        global $DB;
 
         if ($this->starttime !== null) {
             return $this->starttime;

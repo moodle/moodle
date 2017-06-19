@@ -31,7 +31,7 @@ $models = \core_analytics\manager::get_all_models();
 
 echo $OUTPUT->header();
 
-$renderable = new \tool_models\output\models_list($models);
-echo $PAGE->get_renderer('tool_models')->render($renderable);
+$templatable = new \tool_models\output\models_list($models);
+echo $PAGE->get_renderer('tool_models')->render($templatable);
 
 echo $OUTPUT->footer();

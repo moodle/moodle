@@ -195,7 +195,6 @@ class dataset_manager {
      * @return bool
      */
     public static function delete_previous_evaluation_file($modelid, $timesplittingid) {
-        $fs = get_file_storage();
         if ($file = self::get_previous_evaluation_file($modelid, $timesplittingid)) {
             $file->delete();
             return true;

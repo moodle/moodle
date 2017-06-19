@@ -177,7 +177,7 @@ class manager {
     /**
      * Get all available time splitting methods.
      *
-     * @return \core_analytics\time_splitting\base[]
+     * @return \core_analytics\local\time_splitting\base[]
      */
     public static function get_all_time_splittings() {
         if (self::$alltimesplittings !== null) {
@@ -393,6 +393,12 @@ class manager {
                 $classes += \core_component::get_component_classes_in_namespace($frankenstyle, 'analytics\\' . $element);
             }
         }
+
+        foreach (\core_component::get_core_subsystems() as $subsystemname => $unusedsubsystempath) {
+            $componentname = 'core_' . $subsystemname;
+            $classes += \core_component::get_component_classes_in_namespace($componentname, 'analytics\\' . $element);
+        }
+
         return $classes;
     }
 }

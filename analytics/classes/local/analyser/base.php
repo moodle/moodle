@@ -398,8 +398,6 @@ abstract class base {
                 return $result;
             }
 
-            // TODO We may be interested in limiting $samplesdata contents to $sampleids after filtering out some sampleids.
-
             // Only when processing data for predictions.
             if ($target === false) {
                 // We also filter out ranges that have already been used for predictions.
@@ -573,7 +571,6 @@ abstract class base {
         $trainingsamples->timesplitting = $timesplitting->get_id();
         $trainingsamples->fileid = $file->get_id();
 
-        // TODO We just need the keys, we can save some space by removing the values.
         $trainingsamples->sampleids = json_encode($sampleids);
         $trainingsamples->timecreated = time();
 

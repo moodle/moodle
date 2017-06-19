@@ -23,7 +23,6 @@
  */
 
 $string['accuracy'] = 'Accuracy';
-$string['allindicators'] = 'All indicators';
 $string['allpredictions'] = 'All predictions';
 $string['analysingsitedata'] = 'Analysing the site';
 $string['analyticmodels'] = 'Analytic models';
@@ -60,11 +59,9 @@ $string['labelstudentdropoutno'] = 'Not at risk';
 $string['labelteachingyes'] = 'Users with teaching capabilities have access to the course';
 $string['labelteachingno'] = 'No teaching';
 $string['loginfo'] = 'Log extra info';
-$string['lowaccuracy'] = 'The model accuracy is low';
 $string['modelresults'] = '{$a} results';
 $string['modelslist'] = 'Models list';
 $string['modeltimesplitting'] = 'Time splitting';
-$string['nocompletiondetection'] = 'No method available to detect course completion (no completion nor competencies nor course grade pass)';
 $string['nocourseactivity'] = 'Not enough course activity between the start and the end of the course';
 $string['nocourseendtime'] = 'The course does not have an end time';
 $string['nocoursesections'] = 'No course sections';
@@ -84,8 +81,6 @@ $string['sameenddate'] = 'Current end date is good';
 $string['target'] = 'Target';
 $string['target:coursedropout'] = 'Students at risk of dropping out';
 $string['target:noteachingactivity'] = 'No teaching';
-$string['target:coursedropoutinfo'] = 'Here you can find a list of students at risk of dropping out.';
-$string['timemodified'] = 'Last modification';
 $string['trainingprocessfinished'] = 'Training process finished';
 $string['trainingresults'] = 'Training results';
 $string['trainmodels'] = 'Train models';

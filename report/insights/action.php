@@ -41,7 +41,7 @@ $PAGE->set_url($url);
 // Check that the provided action exists.
 $actions = $model->get_target()->prediction_actions($prediction, true);
 if (!isset($actions[$actionname])) {
-    throw new \moodle_exception('errorunknownaction', 'report_insights');
+    throw new \moodle_exception('errorunknownaction', 'analytics');
 }
 
 $modelready = $model->is_enabled() && $model->is_trained() && $model->predictions_exist($context);

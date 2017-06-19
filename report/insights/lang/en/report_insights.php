@@ -25,7 +25,6 @@
 
 $string['disabledmodel'] = 'Sorry, this model has been disabled by the administrator';
 $string['errorpredictionnotfound'] = 'Prediction not found';
-$string['insight'] = 'Insight';
 $string['insights'] = 'Insights';
 $string['pluginname'] = 'Insights';
 $string['prediction'] = 'Prediction';

@@ -62,7 +62,7 @@ abstract class base {
     protected $ranges = [];
 
     /**
-     * @var \core_analytics\indicator\base
+     * @var \core_analytics\local\indicator\base
      */
     protected static $indicators = [];
 
@@ -147,7 +147,7 @@ abstract class base {
      * @param \core_analytics\local\indicator\base[] $indicators
      * @param array $ranges
      * @param \core_analytics\local\target\base $target
-     * @return array
+     * @return array|bool
      */
     public function calculate(&$sampleids, $samplesorigin, $indicators, $ranges, $target = false) {
 
@@ -324,10 +324,10 @@ abstract class base {
     }
 
     /**
-     * get_range_by_index
+     * Returns range data by its index.
      *
      * @param int $rangeindex
-     * @return array
+     * @return array|false Range data or false if the index is not part of the existing ranges.
      */
     public function get_range_by_index($rangeindex) {
         if (!isset($this->ranges[$rangeindex])) {

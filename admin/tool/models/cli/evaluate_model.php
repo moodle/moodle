@@ -107,7 +107,7 @@ if (!empty($validdatasets) && !$model->is_enabled() && $options['non-interactive
     // Select a dataset, train and enable the model.
     $input = cli_input(get_string('clienablemodel', 'tool_models'));
     while (!\core_analytics\manager::is_valid($input, '\core_analytics\local\time_splitting\base') && $input !== 'none') {
-        mtrace(get_string('errorunexistingtimesplitting', 'tool_models'));
+        mtrace(get_string('errorunexistingtimesplitting', 'analytics'));
         $input = cli_input(get_string('clienablemodel', 'tool_models'));
     }
 

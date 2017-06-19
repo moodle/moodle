@@ -135,7 +135,7 @@ abstract class calculable {
      *
      * @param string $elementname
      * @param int $sampleid
-     * @return \stdClass
+     * @return \stdClass|false An \stdClass object or false if it can not be found.
      */
     protected function retrieve($elementname, $sampleid) {
         if (empty($this->sampledata[$sampleid]) || empty($this->sampledata[$sampleid][$elementname])) {
@@ -193,9 +193,10 @@ abstract class calculable {
      * - gt as 'greater than'
      * - ge as 'greater or equal than'
      *
+     * @throws \coding_exception
      * @param int|float $value
      * @param array $ranges e.g. [ ['lt', 20], ['ge', 20] ]
-     * @return void
+     * @return float
      */
     protected function classify_value($value, $ranges) {
 

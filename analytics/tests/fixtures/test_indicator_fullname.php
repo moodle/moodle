@@ -61,7 +61,6 @@ class test_indicator_fullname extends \core_analytics\local\indicator\linear {
      * @return float
      */
     protected function calculate_sample($sampleid, $samplesorigin, $starttime, $endtime) {
-        global $DB;
 
         $course = $this->retrieve('course', $sampleid);
 

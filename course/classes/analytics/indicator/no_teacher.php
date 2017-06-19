@@ -60,8 +60,8 @@ class no_teacher extends \core_analytics\local\indicator\binary {
      *
      * @param int $sampleid
      * @param string $sampleorigin
-     * @param int $notusedstarttime
-     * @param int $notusedendtime
+     * @param int|false $notusedstarttime
+     * @param int|false $notusedendtime
      * @return float
      */
     public function calculate_sample($sampleid, $sampleorigin, $notusedstarttime = false, $notusedendtime = false) {

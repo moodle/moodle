@@ -46,8 +46,6 @@ abstract class sitewide extends base {
         // Here there is a single analysable and it is the system.
         $analysable = new \core_analytics\site();
 
-        $return = array();
-
         $files = $this->process_analysable($analysable, $includetarget);
 
         // Copy to range files as there is just one analysable.

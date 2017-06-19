@@ -42,11 +42,11 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
-     * @param templatable $renderable
+     * @param templatable $templatable
      * @return string HTML
      */
-    protected function render_models_list(templatable $renderable) {
-        $data = $renderable->export_for_template($this);
+    protected function render_models_list(templatable $templatable) {
+        $data = $templatable->export_for_template($this);
         return parent::render_from_template('tool_models/models_list', $data);
     }
 
@@ -140,13 +140,13 @@ class renderer extends plugin_renderer_base {
     /**
      * Web interface training & prediction results.
      *
-     * @param array $trainresults
+     * @param \stdClass|false $trainresults
      * @param string[] $trainlogs
-     * @param array $predictresults
+     * @param \stdClass|false $predictresults
      * @param string[] $predictlogs
      * @return string HTML
      */
-    public function render_getpredictions_results($trainresults = false, $trainlogs = array(), $predictresults = false, $predictlogs = array()) {
+    public function render_get_predictions_results($trainresults = false, $trainlogs = array(), $predictresults = false, $predictlogs = array()) {
         global $OUTPUT;
 
         $output = '';
@@ -163,7 +163,7 @@ class renderer extends plugin_renderer_base {
                 $output .= $OUTPUT->notification(get_string('nodatatotrain', 'tool_models'),
                     \core\output\notification::NOTIFY_WARNING);
             } else {
-                $output .= $OUTPUT->notification(get_string('generalerror', 'analytics', $result->status),
+                $output .= $OUTPUT->notification(get_string('generalerror', 'analytics', $trainresults->status),
                     \core\output\notification::NOTIFY_ERROR);
             }
         }
@@ -187,7 +187,7 @@ class renderer extends plugin_renderer_base {
                 $output .= $OUTPUT->notification(get_string('nodatatopredict', 'tool_models'),
                     \core\output\notification::NOTIFY_WARNING);
             } else {
-                $output .= $OUTPUT->notification(get_string('generalerror', 'analytics', $result->status),
+                $output .= $OUTPUT->notification(get_string('generalerror', 'analytics', $predictresults->status),
                     \core\output\notification::NOTIFY_ERROR);
             }
         }

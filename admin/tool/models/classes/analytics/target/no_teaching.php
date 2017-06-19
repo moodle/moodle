@@ -61,7 +61,6 @@ class no_teaching extends \core_analytics\local\target\binary {
      * @return \core_analytics\prediction_action[]
      */
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
-        global $USER;
 
         // No need to call the parent as the parent's action is view details and this target only have 1 feature.
         $actions = array();

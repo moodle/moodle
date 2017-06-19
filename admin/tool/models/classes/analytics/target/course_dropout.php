@@ -135,6 +135,11 @@ class course_dropout extends \core_analytics\local\target\binary {
             return get_string('nocoursesections', 'tool_models');
         }
 
+        if ($course->get_start() == 0) {
+            // We require time start to be set.
+            return get_string('nocoursestarttime', 'tool_models');
+        }
+
         if ($course->get_end() == 0) {
             // We require time end to be set.
             return get_string('nocourseendtime', 'tool_models');

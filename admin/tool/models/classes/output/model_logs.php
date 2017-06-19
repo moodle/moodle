@@ -78,7 +78,7 @@ class model_logs extends \table_sql {
     /**
      * Generate the version column.
      *
-     * @param stdClass $log log data.
+     * @param \stdClass $log log data.
      * @return string HTML for the version column
      */
     public function col_version($log) {
@@ -89,7 +89,7 @@ class model_logs extends \table_sql {
     /**
      * Generate the time column.
      *
-     * @param stdClass $log log data.
+     * @param \stdClass $log log data.
      * @return string HTML for the time column
      */
     public function col_time($log) {
@@ -100,7 +100,7 @@ class model_logs extends \table_sql {
     /**
      * Generate the indicators column.
      *
-     * @param stdClass $log log data.
+     * @param \stdClass $log log data.
      * @return string HTML for the indicators column
      */
     public function col_indicators($log) {
@@ -120,7 +120,7 @@ class model_logs extends \table_sql {
     /**
      * Generate the context column.
      *
-     * @param stdClass $log log data.
+     * @param \stdClass $log log data.
      * @return string HTML for the context column
      */
     public function col_timesplitting($log) {
@@ -131,7 +131,7 @@ class model_logs extends \table_sql {
     /**
      * Generate the accuracy column.
      *
-     * @param stdClass $log log data.
+     * @param \stdClass $log log data.
      * @return string HTML for the accuracy column
      */
     public function col_accuracy($log) {
@@ -141,7 +141,7 @@ class model_logs extends \table_sql {
     /**
      * Generate the info column.
      *
-     * @param stdClass $log log data.
+     * @param \stdClass $log log data.
      * @return string HTML for the score column
      */
     public function col_info($log) {
@@ -165,7 +165,7 @@ class model_logs extends \table_sql {
     /**
      * Generate the usermodified column.
      *
-     * @param stdClass $log log data.
+     * @param \stdClass $log log data.
      * @return string HTML for the usermodified column
      */
     public function col_usermodified($log) {

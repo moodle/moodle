@@ -33,7 +33,6 @@ defined('MOODLE_INTERNAL') || die;
  * @return void
  */
 function report_insights_extend_navigation_course($navigation, $course, $context) {
-    global $DB;
 
     if (has_capability('moodle/analytics:listinsights', $context)) {
 

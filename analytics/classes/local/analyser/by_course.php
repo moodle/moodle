@@ -73,8 +73,6 @@ abstract class by_course extends base {
      */
     public function get_analysable_data($includetarget) {
 
-        $status = array();
-        $messages = array();
         $filesbytimesplitting = array();
 
         // This class and all children will iterate through a list of courses (\core_analytics\course).

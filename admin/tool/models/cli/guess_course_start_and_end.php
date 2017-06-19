@@ -199,9 +199,9 @@ function tool_models_calculate_course_dates($course, $options) {
 
     }
 
-    echo mtrace($notification);
+    mtrace($notification);
 }
 
-echo mtrace(get_string('success'));
+mtrace(get_string('success'));
 
 exit(0);

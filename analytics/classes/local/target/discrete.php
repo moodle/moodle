@@ -148,4 +148,26 @@ abstract class discrete extends base {
         throw new \coding_exception('Overwrite ignored_predicted_classes() and return an array with the classes that triggers ' .
             'the callback');
     }
+
+    /**
+     * Should the model callback be triggered?
+     *
+     * @param mixed $predictedvalue
+     * @param float $predictionscore
+     * @return bool
+     */
+    public function triggers_callback($predictedvalue, $predictionscore) {
+
+        if (!parent::triggers_callback($predictedvalue, $predictionscore)) {
+            return false;
+        }
+
+        if (!$this->is_linear()) {
+            if (in_array($predictedvalue, $this->ignored_predicted_classes())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

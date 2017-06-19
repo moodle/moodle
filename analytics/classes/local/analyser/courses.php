@@ -80,7 +80,6 @@ class courses extends by_course {
      * @return array
      */
     protected function get_all_samples(\core_analytics\analysable $course) {
-        global $DB;
 
         $context = \context_course::instance($course->get_id());
 

@@ -118,9 +118,9 @@ class model {
     protected $uniqueid = null;
 
     /**
-     * __construct
+     * Constructor.
      *
-     * @param int|stdClass $model
+     * @param int|\stdClass $model
      * @return void
      */
     public function __construct($model) {
@@ -136,7 +136,7 @@ class model {
     }
 
     /**
-     * get_id
+     * Returns the model id.
      *
      * @return int
      */
@@ -145,7 +145,7 @@ class model {
     }
 
     /**
-     * get_model_obj
+     * Returns a plain \stdClass with the model data.
      *
      * @return \stdClass
      */
@@ -154,7 +154,7 @@ class model {
     }
 
     /**
-     * get_target
+     * Returns the model target.
      *
      * @return \core_analytics\local\target\base
      */
@@ -169,7 +169,7 @@ class model {
     }
 
     /**
-     * get_indicators
+     * Returns the model indicators.
      *
      * @return \core_analytics\local\indicator\base[]
      */
@@ -221,7 +221,7 @@ class model {
     }
 
     /**
-     * get_analyser
+     * Returns the model analyser (defined by the model target).
      *
      * @return \core_analytics\local\analyser\base
      */
@@ -237,8 +237,9 @@ class model {
     }
 
     /**
-     * init_analyser
+     * Initialises the model analyser.
      *
+     * @throws \coding_exception
      * @param array $options
      * @return void
      */
@@ -283,9 +284,9 @@ class model {
     }
 
     /**
-     * get_time_splitting
+     * Returns the model time splitting method.
      *
-     * @return \core_analytics\local\time_splitting\base
+     * @return \core_analytics\local\time_splitting\base|false Returns false if no time splitting.
      */
     public function get_time_splitting() {
         if (empty($this->model->timesplitting)) {
@@ -338,7 +339,7 @@ class model {
     }
 
     /**
-     * update
+     * Updates the model.
      *
      * @param int|bool $enabled
      * @param \core_analytics\local\indicator\base[] $indicators
@@ -396,9 +397,12 @@ class model {
     }
 
     /**
-     * Evaluates the model datasets.
+     * Evaluates the model.
      *
-     * Model datasets should already be available in Moodle's filesystem.
+     * This method gets the site contents (through the analyser) creates a .csv dataset
+     * with them and evaluates the model prediction accuracy multiple times using the
+     * machine learning backend. It returns an object where the model score is the average
+     * prediction accuracy of all executed evaluations.
      *
      * @param array $options
      * @return \stdClass[]
@@ -478,12 +482,15 @@ class model {
     }
 
     /**
-     * train
+     * Trains the model using the site contents.
+     *
+     * This method prepares a dataset from the site contents (through the analyser)
+     * and passes it to the machine learning backends. Static models are skipped as
+     * they do not require training.
      *
      * @return \stdClass
      */
     public function train() {
-        global $DB;
 
         \core_analytics\manager::check_can_manage_models();
 
@@ -540,7 +547,12 @@ class model {
     }
 
     /**
-     * predict
+     * Get predictions from the site contents.
+     *
+     * It analyses the site contents (through analyser classes) looking for samples
+     * ready to receive predictions. It generates a dataset with all samples ready to
+     * get predictions and it passes it to the machine learning backends or to the
+     * targets based on assumptions to get the predictions.
      *
      * @return \stdClass
      */
@@ -759,7 +771,7 @@ class model {
         list($sampleids, $samplesdata) = $this->get_analyser()->get_samples($sampleids);
 
         // Calculate the targets.
-        $calculations = array();
+        $predictions = array();
         foreach ($analysables as $analysableclass => $rangedata) {
             foreach ($rangedata as $rangeindex => $data) {
 
@@ -804,7 +816,7 @@ class model {
     }
 
     /**
-     * save_prediction
+     * Stores the prediction in the database.
      *
      * @param int $sampleid
      * @param int $rangeindex
@@ -833,7 +845,7 @@ class model {
     }
 
     /**
-     * enable
+     * Enabled the model using the provided time splitting method.
      *
      * @param string $timesplittingid
      * @return void
@@ -869,7 +881,10 @@ class model {
     }
 
     /**
-     * is_static
+     * Is this a static model (as defined by the target)?.
+     *
+     * Static models are based on assumptions instead of in machine learning
+     * backends results.
      *
      * @return bool
      */
@@ -878,7 +893,7 @@ class model {
     }
 
     /**
-     * is_enabled
+     * Is this model enabled?
      *
      * @return bool
      */
@@ -887,7 +902,7 @@ class model {
     }
 
     /**
-     * is_trained
+     * Is this model already trained?
      *
      * @return bool
      */
@@ -897,7 +912,7 @@ class model {
     }
 
     /**
-     * mark_as_trained
+     * Marks the model as trained
      *
      * @return void
      */
@@ -911,7 +926,7 @@ class model {
     }
 
     /**
-     * get_predictions_contexts
+     * Get the contexts with predictions.
      *
      * @return \stdClass[]
      */
@@ -1007,7 +1022,7 @@ class model {
                 continue;
             }
 
-            // Replace stdClass object by \core_analytics\prediction objects.
+            // Replace \stdClass object by \core_analytics\prediction objects.
             $prediction = new \core_analytics\prediction($predictiondata, $samplesdata[$sampleid]);
 
             $predictions[$predictionid] = $prediction;
@@ -1079,7 +1094,9 @@ class model {
     }
 
     /**
-     * get_unique_id
+     * Returns a unique id for this model.
+     *
+     * This id should be unique for this site.
      *
      * @return string
      */
@@ -1138,7 +1155,7 @@ class model {
     }
 
     /**
-     * flag_file_as_used
+     * Flag the provided file as used for training or prediction.
      *
      * @param \stored_file $file
      * @param string $action
@@ -1156,7 +1173,7 @@ class model {
     }
 
     /**
-     * log_result
+     * Log the evaluation results in the database.
      *
      * @param string $timesplittingid
      * @param float $score
@@ -1229,7 +1246,7 @@ class model {
         // We don't expect people to clear models regularly and the cost of filling the cache is
         // 1 db read per context.
         $cache = \cache::make('core', 'contextwithinsights');
-        $result = $cache->purge();
+        $cache->purge();
     }
 
     /**

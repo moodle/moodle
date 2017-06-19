@@ -150,7 +150,6 @@ abstract class base extends \core_analytics\calculable {
      * @return void
      */
     public function generate_insight_notifications($modelid, $samplecontexts) {
-        global $CFG;
 
         foreach ($samplecontexts as $context) {
 
@@ -254,12 +253,6 @@ abstract class base extends \core_analytics\calculable {
         // We need to consider that targets may not have a min score.
         if (!empty($minscore) && floatval($predictionscore) < $minscore) {
             return false;
-        }
-
-        if (!$this->is_linear()) {
-            if (in_array($predictedvalue, $this->ignored_predicted_classes())) {
-                return false;
-            }
         }
 
         return true;

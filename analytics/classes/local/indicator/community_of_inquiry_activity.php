@@ -477,7 +477,7 @@ abstract class community_of_inquiry_activity extends linear {
     }
 
     /**
-     * cognitive_calculate_sample
+     * Calculates the cognitive depth of a sample.
      *
      * @param int $sampleid
      * @param string $tablename
@@ -566,7 +566,7 @@ abstract class community_of_inquiry_activity extends linear {
     }
 
     /**
-     * social_calculate_sample
+     * Calculates the social breadth of a sample.
      *
      * @param int $sampleid
      * @param string $tablename
@@ -595,7 +595,6 @@ abstract class community_of_inquiry_activity extends linear {
                 throw new \coding_exception('Activities\' potential social breadth go from 1 to 2.');
             }
             $scoreperlevel = $scoreperactivity / $potentiallevel;
-            // TODO Add support for other levels than 2.
             switch ($potentiallevel) {
                 case 2:
                     // Social breadth level 2 is to view feedback. (Same as cognitive level 3).

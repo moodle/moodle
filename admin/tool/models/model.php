@@ -52,7 +52,7 @@ switch ($action) {
         $title = get_string('viewlog', 'tool_models');
         break;
     default:
-        throw new moodle_exception('errorunknownaction', 'tool_models');
+        throw new moodle_exception('errorunknownaction', 'analytics');
 }
 
 $PAGE->set_context($context);
@@ -133,7 +133,7 @@ switch ($action) {
         $predictlogs = $model->get_analyser()->get_logs();
 
         $renderer = $PAGE->get_renderer('tool_models');
-        echo $renderer->render_getpredictions_results($trainresults, $trainlogs, $predictresults, $predictlogs);
+        echo $renderer->render_get_predictions_results($trainresults, $trainlogs, $predictresults, $predictlogs);
         break;
 
     case 'log':
