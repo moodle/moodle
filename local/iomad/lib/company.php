@@ -1555,6 +1555,72 @@ class company {
         return false;
     }
 
+    public function get_menu_courses($shared = false, $licensed = false, $groups = false) {
+        global $DB;
+        
+        // Deal with license option.
+        if ($licensed) {
+            $licensesql = "c.id NOT IN (
+                             SELECT courseid FROM {iomad_courses}
+                             WHERE licensed = 1
+                           )
+                           AND"; 
+        } else {
+            $licensesql = "";
+        }
+
+        // Deal with shared option.
+        if ($shared) {
+            $sharedsql = "OR
+                          c.id IN (
+                              SELECT courseid FROM {iomad_courses}
+                              WHERE shared = 1
+                              AND courseid NOT IN (
+                                  SELECT courseid FROM {company_course}
+                                  WHERE companyid = :companyid2
+                              )
+                          )";
+        } else {
+            $sharedsql = "";
+        }
+
+        // Deal with groups option.
+        if ($groups) {
+            $groupsql = "c.groupmode != 0 AND";
+        } else {
+            $groupsql = "";
+        }
+        $retcourses = $DB->get_records_sql_menu("SELECT c.id, c.fullname
+                                                 FROM {course} c
+                                                 WHERE
+                                                 $groupsql
+                                                 $licensesql
+                                                 c.id IN (
+                                                     SELECT courseid FROM {company_course}
+                                                     WHERE companyid = :companyid
+                                                 )
+                                                 $sharedsql",
+                                                 array('companyid' => $this->id,
+                                                       'companyid2' => $this->id));
+        return array('0' => get_string('noselection', 'form')) + $retcourses;
+    }
+
+    public function get_course_groups_menu($courseid) {
+        global $DB;
+
+        $retgroups =  $DB->get_records_sql_menu("SELECT g.id, g.description
+                                                 FROM {groups} g
+                                                 JOIN {company_course_groups} ccg
+                                                 ON (g.id = ccg.groupid)
+                                                 WHERE ccg.companyid = :companyid
+                                                 AND ccg.courseid = :courseid",
+                                                 array('companyid' => $this->id,
+                                                       'courseid' => $courseid));
+
+        return array('0' => get_string('noselection', 'form')) + $retgroups;
+    }
+
+
     // Shared course stuff.
 
     /**
@@ -1567,18 +1633,33 @@ class company {
      * Returns int;
      *
      **/
-    public static function create_company_course_group($companyid, $courseid) {
+    public static function create_company_course_group($companyid, $courseid, $groupdata = null) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/group/lib.php');
 
+
         // Creates a company group within a shared course.
         $company = $DB->get_record('company', array('id' => $companyid));
-        $data = new stdclass();
-        $data->timecreated  = time();
-        $data->timemodified = $data->timecreated;
-        $data->name = $company->shortname;
-        $data->description = "Course group for ".$company->name;
-        $data->courseid = $courseid;
+        if (empty($groupdata)) {
+            $data = new stdclass();
+            $data->timecreated  = time();
+            $data->timemodified = $data->timecreated;
+            $data->name = $company->shortname;
+            $data->description = "Course group for ".$company->name;
+            $data->courseid = $courseid;
+        } else if (!empty($groupdata->groupid)) {
+            // Already exists so we are updating it.
+            $grouprecord = $DB->get_record('groups', array('id' => $groupdata->groupid), '*', MUST_EXIST);
+            $DB->set_field('groups', 'description', $groupdata->description, array('id' => $grouprecord->id));
+            return $grouprecord->id;
+        } else {
+            $data = new stdclass();
+            $data->timecreated  = time();
+            $data->timemodified = $data->timecreated;
+            $data->name = $company->shortname . ' - ' . $groupdata->description;
+            $data->description = $groupdata->description;
+            $data->courseid = $courseid;
+        }
 
         // Create the group record.
         $groupid = groups_create_group($data);
@@ -1609,8 +1690,10 @@ class company {
     public static function get_company_groupname($companyid, $courseid) {
         global $DB;
         // Gets the company course groupname.
+        $company = $DB->get_record('company', array('id' => $companyid));
         if (!$companygroup = $DB->get_record('company_course_groups', array('companyid' => $companyid,
-                                                                          'courseid' => $courseid))) {
+                                                                          'courseid' => $courseid,
+                                                                          'name' => $company->shortname))) {
             // Not got one, create a default.
             $companygroup->groupid = self::create_company_course_group($companyid, $courseid);
         }
@@ -1631,9 +1714,20 @@ class company {
      **/
     public static function get_company_group($companyid, $courseid) {
         global $DB;
+
+        $company = $DB->get_record('company', array('id' => $companyid));
+
         // Gets the company course groupname.
-        if (!$companygroup = $DB->get_record('company_course_groups', array('companyid' => $companyid,
-                                                                          'courseid' => $courseid))) {
+        if (!$companygroup = $DB->get_record_sql("SELECT ccg.*
+                                                  FROM {company_course_groups} ccg
+                                                  JOIN {groups} g
+                                                  ON (ccg.groupid = g.id)
+                                                  WHERE ccg.companyid = :companyid
+                                                  AND ccg.courseid = :courseid
+                                                  AND g.name = :name",
+                                                  array('companyid' => $companyid,
+                                                        'courseid' => $courseid,
+                                                        'name' => $company->shortname))) {
             // Not got one, create a default.
             $companygroup = new stdclass();
             $companygroup->id = self::create_company_course_group($companyid, $courseid);
@@ -1652,17 +1746,28 @@ class company {
      *              $companyid = int;
      *
      **/
-    public static function add_user_to_shared_course($courseid, $userid, $companyid) {
+    public static function add_user_to_shared_course($courseid, $userid, $companyid, $groupid = 0) {
         global $DB, $CFG;
         require_once($CFG->dirroot.'/group/lib.php');
 
         // Adds a user to a shared course.
-        // Get the group id.
-        if (!$groupinfo = $DB->get_record('company_course_groups', array('companyid' => $companyid,
-                                                                         'courseid' => $courseid))) {
-            $groupid = self::create_company_course_group($companyid, $courseid);
-        } else {
-            $groupid = $groupinfo->groupid;
+        if (empty($groupid)) {
+            $company = $DB->get_record('company', array('id' => $companyid));
+            // Get the group id.
+            if (!$groupinfo = $DB->get_record_sql("SELECT ccg.*
+                                                  FROM {company_course_groups} ccg
+                                                  JOIN {groups} g
+                                                  ON (ccg.groupid = g.id)
+                                                  WHERE ccg.companyid = :companyid
+                                                  AND ccg.courseid = :courseid
+                                                  AND g.name = :name",
+                                                  array('companyid' => $companyid,
+                                                        'courseid' => $courseid,
+                                                        'name' => $company->shortname))) {
+                $groupid = self::create_company_course_group($companyid, $courseid);
+            } else {
+                $groupid = $groupinfo->groupid;
+            }
         }
 
         // Add the user to the group.
@@ -1684,15 +1789,21 @@ class company {
 
         // Removes a user from a shared course.
         // Get the group id.
-        if (!$groupinfo = $DB->get_record('company_course_groups', array('companyid' => $companyid,
-                                                                         'courseid' => $courseid))) {
+        if (!$groups = $DB->get_records_sql("SELECT gm.groupid
+                                                FROM {groups_members} gm
+                                                JOIN {groups} g
+                                                ON (gm.groupid = g.id)
+                                                WHERE g.courseid = :courseid
+                                                AND gm.userid = :userid",
+                                                array('userid' => $userid,
+                                                      'courseid' => $courseid))) {
             return;  // Dont need to remove them.
         } else {
-            $groupid = $groupinfo->groupid;
+            foreach ($groups as $group)
+            // Remove the user from the group.
+            groups_remove_member($group->groupid, $userid);
         }
 
-        // Add the user to the group.
-        groups_remove_member($groupid, $userid);
     }
 
     /**
@@ -1704,23 +1815,35 @@ class company {
      *              $oktounenroll = boolean;
      *
      **/
-    public static function delete_company_course_group($companyid, $course, $oktounenroll=false) {
+    public static function delete_company_course_group($companyid, $course, $oktounenroll=false, $groupid = 0) {
         global $DB;
         // Removes a company group within a shared course.
         // Get the group.
         if ($group = self::get_company_group($companyid, $course->id)) {
-            // Check there are no members of the group unless oktounenroll.
-            if (!$DB->get_records('company_course_groups', array('groupid' => $group->id)) ||
-                $oktounenroll) {
-                // Delete the group.
-                $DB->delete_records('groups', array('id' => $group->id));
-                $DB->delete_records('company_course_groups', array('companyid' => $companyid,
-                                                                   'groupid' => $group->id,
-                                                                   'courseid' => $course->id));
-                self::remove_course($course, $companyid);
-                return true;
+            if (empty($groupid) || $groupid == $group->id) {
+                // Check there are no members of the group unless oktounenroll.
+                if (!$DB->get_records('company_course_groups', array('groupid' => $group->id)) ||
+                    $oktounenroll) {
+                    // Delete the group.
+                    $DB->delete_records('groups', array('id' => $group->id));
+                    $DB->delete_records('company_course_groups', array('companyid' => $companyid,
+                                                                       'groupid' => $group->id,
+                                                                       'courseid' => $course->id));
+                    self::remove_course($course, $companyid);
+                    return true;
+                } else {
+                    return "usersingroup";
+                }
             } else {
-                return "usersingroup";
+                // Move everyone to the default company group.
+                if ($groupusers = $DB->get_records('groups_members', array('groupid' => $groupid))) {
+                    foreach($groupusers as $user) {
+                        groups_add_member($group->id, $user->userid);
+                        group_remove_member($groupid, $user->userid);
+                    }
+                }
+                $DB->delete_records('groups', array('id' => $groupid));
+                $DB->delete_records('company_course_groups', array('groupid' => $groupid));
             }
         }
     }

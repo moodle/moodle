@@ -223,6 +223,18 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK,
     ),
 
+    'block/iomad_company_admin:assign_groups' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+
+    'block/iomad_company_admin:edit_groups' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+
     'block/iomad_company_admin:edit_licenses' => array(
 
         'captype' => 'write',

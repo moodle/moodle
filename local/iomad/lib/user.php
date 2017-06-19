@@ -23,6 +23,7 @@ require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once($CFG->dirroot.'/local/email/lib.php');
 require_once($CFG->dirroot.'/user/filters/lib.php');
 require_once($CFG->dirroot.'/lib/formslib.php');
+require_once($CFG->dirroot.'/group/lib.php');
 
 
 class company_user {
@@ -247,7 +248,7 @@ class company_user {
      * @param array $courseids
      * @return void
      */
-    public static function enrol($user, $courseids, $companyid=null, $rid = 0) {
+    public static function enrol($user, $courseids, $companyid=null, $rid = 0, $groupid = 0) {
         global $DB;
         // This function consists of code copied from uploaduser.php.
 
@@ -275,6 +276,14 @@ class company_user {
                     $shared = false;
                 }
             }
+
+            // Do we have course groups?
+            if ($DB->get_record('course', array('id' => $courseid, 'groupmode' => 0))) {
+                $grouped = false;
+            } else {
+                $grouped = true;
+            }
+
             if (!isset($manualcache[$courseid])) {
                 if ($instances = enrol_get_instances($courseid, false)) {
                     $manualcache[$courseid] = reset($instances);
@@ -296,9 +305,9 @@ class company_user {
                 }
                 $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today,
                                     $timeend, ENROL_USER_ACTIVE);
-                if ($shared) {
+                if ($shared || $grouped) {
                     if (!empty($companyid)) {
-                        company::add_user_to_shared_course($courseid, $user->id, $companyid);
+                        company::add_user_to_shared_course($courseid, $user->id, $companyid, $groupid);
                     }
                 }
 
@@ -346,9 +355,6 @@ class company_user {
      * Generate a username based on the email address of the user.
      * @param text $email
      * @return textDear nick@connectedshopping.com,
-
-Thank you for your request.
-
      */
     public static function generate_username( $email, $useemail=false ) {
         global $DB;
@@ -594,6 +600,55 @@ Thank you for your request.
             $userdepartment = "";
         }
         return $userdepartment;
+    }
+
+    /**
+     * Assign a user to a course group.
+     * @param object $user
+     * @param id $courseid
+     * @param id $groupid
+     * @return void
+     */
+    public static function assign_group($user, $courseid, $groupid) {
+        global $DB;
+
+        // Deal with any licenses.
+        if ($licenseinfo = $DB->get_record('companylicense_users', array('licensecourseid' => $courseid, 'userid' => $user->id))) {
+            $DB->set_field('companylicense_users', 'groupid', $groupid, array('id' => $licenseinfo->id));
+        }
+
+        // Clear down the user from all of the other course groups.
+        $currentgroups = groups_get_all_groups($courseid);
+        foreach ($currentgroups as $group) {
+            groups_remove_member($group->id, $user->id);
+        }
+
+        // Add them to the selected group.
+        groups_add_member($groupid, $user->id);
+    }
+
+    /**
+     * Un assign a user from a course group.
+     * @param object $user
+     * @param id $courseid
+     * @param id $groupid
+     * @return void
+     */
+    public static function unassign_group($companyid, $user, $courseid, $groupid) {
+        global $DB;
+
+        groups_remove_member($groupid, $user->id);
+
+        // Get the company group.
+        $companygroup = company::get_company_group($companyid, $courseid);
+
+        // Add them to the selected group.
+        groups_add_member($companygroup->id, $user->id);
+
+        // Deal with any licenses.
+        if ($licenseinfo = $DB->get_record('companylicense_users', array('licensecourseid' => $courseid, 'userid' => $user->id))) {
+            $DB->set_field('companylicense_users', 'groupid', $companygroup->id, array('id' => $licenseinfo->id));
+        }
     }
 }
 

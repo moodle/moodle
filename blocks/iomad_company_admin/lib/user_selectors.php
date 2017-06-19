@@ -1070,3 +1070,169 @@ class current_license_user_selector extends user_selector_base {
         return $users;
     }
 }
+
+class current_company_group_user_selector extends company_user_selector_base {
+
+    public function __construct($name, $options) {
+        $this->companyid  = $options['companyid'];
+        $this->courseid = $options['courseid'];
+        $this->departmentid = $options['departmentid'];
+        $this->groupid = $options['groupid'];
+
+        parent::__construct($name, $options);
+    }
+
+    /**
+     * Company users enrolled into the selected company course
+     * @param <type> $search
+     * @return array
+     */
+    public function find_users($search) {
+        global $DB;
+        // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
+        $params['companyid'] = $this->companyid;
+        $params['courseid'] = $this->courseid;
+        $params['groupid'] = $this->groupid;
+        $params['liccourseid'] = $this->courseid;
+        $params['licgroupid'] = $this->groupid;
+
+        // Deal with departments.
+        $departmentlist = company::get_all_subdepartments($this->departmentid);
+        $departmentsql = "";
+        if (!empty($departmentlist)) {
+            $departmentsql = " AND cu.departmentid in (".implode(',', array_keys($departmentlist)).")";
+        }
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $countfields = 'SELECT COUNT(1)';
+
+        $sql = " FROM
+	                {user} u INNER JOIN {company_users} cu
+	                ON cu.userid = u.id AND managertype = 0 $departmentsql
+                WHERE $wherecondition AND u.suspended = 0 
+                    AND cu.companyid = :companyid
+                    AND cu.userid IN (
+                      SELECT userid
+                      FROM {groups_members}
+                      WHERE groupid=:groupid
+                    )
+                    OR cu.userid IN (
+                      SELECT userid
+                      FROM {companylicense_users}
+                      WHERE isusing = 0
+                      AND licensecourseid = :liccourseid
+                      AND groupid = :licgroupid
+                    )";
+
+        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+
+        if (!$this->is_validating()) {
+            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
+            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+                return $this->too_many_results($search, $potentialmemberscount);
+            }
+        }
+
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+
+        if (empty($availableusers)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('currentgroupusersmatching', 'block_iomad_company_admin', $search);
+        } else {
+            $groupname = get_string('currentgroupusers', 'block_iomad_company_admin');
+        }
+
+        return array($groupname => $availableusers);
+    }
+}
+
+class potential_company_group_user_selector extends company_user_selector_base {
+
+    public function __construct($name, $options) {
+        $this->companyid  = $options['companyid'];
+        $this->courseid = $options['courseid'];
+        $this->departmentid = $options['departmentid'];
+        $this->groupid = $options['groupid'];
+
+        parent::__construct($name, $options);
+    }
+
+    /**
+     * Company users enrolled into the selected company course
+     * @param <type> $search
+     * @return array
+     */
+    public function find_users($search) {
+        global $DB;
+        // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
+        $params['companyid'] = $this->companyid;
+        $params['courseid'] = $this->courseid;
+        $params['groupid'] = $this->groupid;
+        $params['liccourseid'] = $this->courseid;
+        $params['licgroupid'] = $this->groupid;
+
+        // Deal with departments.
+        $departmentlist = company::get_all_subdepartments($this->departmentid);
+        $departmentsql = "";
+        if (!empty($departmentlist)) {
+            $departmentsql = " AND cu.departmentid IN (".implode(',', array_keys($departmentlist)).")";
+        } else {
+            $departmentsql = "";
+        }
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $countfields = 'SELECT COUNT(1)';
+
+        $sql = " FROM
+	                {user} u INNER JOIN {company_users} cu ON (cu.userid = u.id)
+                WHERE $wherecondition  AND u.suspended = 0 $departmentsql
+                    AND
+                    cu.companyid = :companyid
+                    AND u.id NOT IN (
+                       SELECT userid from {groups_members}
+                       WHERE groupid = :groupid
+                    )
+                    AND (
+                      u.id IN (
+                        SELECT DISTINCT(ue.userid)
+                        FROM {user_enrolments} ue
+                        INNER JOIN {enrol} e
+                        ON ue.enrolid=e.id
+                        WHERE e.courseid=:courseid
+                      )
+                      OR u.id IN (
+                        SELECT userid
+                        FROM {companylicense_users}
+                        WHERE licensecourseid = :liccourseid
+                        AND groupid != :licgroupid
+                      )
+                    )";
+
+        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+
+        if (!$this->is_validating()) {
+            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
+            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+                return $this->too_many_results($search, $potentialmemberscount);
+            }
+        }
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+
+        if (empty($availableusers)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('potentialgroupusersmatching', 'block_iomad_company_admin', $search);
+        } else {
+            $groupname = get_string('potentialgroupusers', 'block_iomad_company_admin');
+        }
+
+        return array($groupname => $availableusers);
+    }
+}
