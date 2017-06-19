@@ -55,6 +55,9 @@ class assign_override_form extends moodleform {
     /** @var int userid, if provided. */
     protected $userid;
 
+    /** @var int sortorder, if provided. */
+    protected $sortorder;
+
     /**
      * Constructor.
      * @param moodle_url $submiturl the form action URL.
@@ -72,6 +75,7 @@ class assign_override_form extends moodleform {
         $this->groupmode = $groupmode;
         $this->groupid = empty($override->groupid) ? 0 : $override->groupid;
         $this->userid = empty($override->userid) ? 0 : $override->userid;
+        $this->sortorder = empty($override->sortorder) ? null : $override->sortorder;
 
         parent::__construct($submiturl, null, 'post');
 
@@ -97,6 +101,10 @@ class assign_override_form extends moodleform {
                 $mform->addElement('select', 'groupid',
                         get_string('overridegroup', 'assign'), $groupchoices);
                 $mform->freeze('groupid');
+                // Add a sortorder element.
+                $mform->addElement('hidden', 'sortorder', $this->sortorder);
+                $mform->setType('sortorder', PARAM_INT);
+                $mform->freeze('sortorder');
             } else {
                 // Prepare the list of groups.
                 $groups = groups_get_all_groups($cm->course);

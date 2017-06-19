@@ -149,26 +149,30 @@ if ($type === 'editor') {
     css_store_css($theme, "$candidatedir/editor.css", $csscontent, false);
 
 } else {
+    // Fetch a lock whilst the CSS is fetched as this can be slow and CPU intensive.
+    // Each client should wait for one to finish the compilation before starting the compiler.
+    $lockfactory = \core\lock\lock_config::get_lock_factory('core_theme_get_css_content');
+    $lock = $lockfactory->get_lock($themename, rand(90, 120));
 
-    $lock = null;
-    // Lock system to prevent concurrent requests to compile LESS/SCSS, which is really slow and CPU intensive.
-    // Each client should wait for one to finish the compilation before starting a new compiling process.
-    // We only do this when the file will be cached...
-    if (in_array($type, ['less', 'scss']) && $cache) {
-        $lockfactory = \core\lock\lock_config::get_lock_factory('core_theme_get_css_content');
-        // We wait for the lock to be acquired, the timeout does not need to be strict here.
-        $lock = $lockfactory->get_lock($themename, rand(15, 30));
-        if (file_exists($candidatesheet)) {
-            // The file was built while we waited for the lock, we release the lock and serve the file.
-            if ($lock) {
-                $lock->release();
-            }
+    if (file_exists($candidatesheet)) {
+        // The file was built while we waited for the lock, we release the lock and serve the file.
+        if ($lock) {
+            $lock->release();
+        }
+
+        if ($cache) {
             css_send_cached_css($candidatesheet, $etag);
+        } else {
+            css_send_uncached_css(file_get_contents($candidatesheet));
         }
     }
 
-    // Older IEs require smaller chunks.
-    $csscontent = $theme->get_css_content();
+    // The lock is still held, and the sheet still does not exist.
+    // Compile the CSS content.
+    if (!$csscontent = $theme->get_css_cached_content()) {
+        $csscontent = $theme->get_css_content();
+        $theme->set_css_content_cache($csscontent);
+    }
 
     $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
     if (!empty($slashargument)) {
@@ -187,8 +191,9 @@ if ($type === 'editor') {
 
     css_store_css($theme, "$candidatedir/$type.css", $csscontent, true, $chunkurl);
 
-    // Release the lock.
     if ($lock) {
+        // Now that the CSS has been generated and/or stored, release the lock.
+        // This will allow waiting clients to use the newly generated and stored CSS.
         $lock->release();
     }
 }

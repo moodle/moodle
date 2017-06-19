@@ -1372,11 +1372,12 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
             if ($completeds = $DB->get_records('feedback_completed', $params)) {
                 $completion = new completion_info($course);
                 foreach ($completeds as $completed) {
+                    $DB->delete_records('feedback_completed', array('id' => $completed->id));
                     // Update completion state
-                    if ($completion->is_enabled($cm) && $feedback->completionsubmit) {
+                    if ($completion->is_enabled($cm) && $cm->completion == COMPLETION_TRACKING_AUTOMATIC &&
+                            $feedback->completionsubmit) {
                         $completion->update_state($cm, COMPLETION_INCOMPLETE, $completed->userid);
                     }
-                    $DB->delete_records('feedback_completed', array('id'=>$completed->id));
                 }
             }
             $DB->delete_records('feedback_completedtmp', array('feedback'=>$feedback->id));
@@ -1730,11 +1731,12 @@ function feedback_delete_all_items($feedbackid) {
     if ($completeds = $DB->get_records('feedback_completed', array('feedback'=>$feedback->id))) {
         $completion = new completion_info($course);
         foreach ($completeds as $completed) {
+            $DB->delete_records('feedback_completed', array('id' => $completed->id));
             // Update completion state
-            if ($completion->is_enabled($cm) && $feedback->completionsubmit) {
+            if ($completion->is_enabled($cm) && $cm->completion == COMPLETION_TRACKING_AUTOMATIC &&
+                    $feedback->completionsubmit) {
                 $completion->update_state($cm, COMPLETION_INCOMPLETE, $completed->userid);
             }
-            $DB->delete_records('feedback_completed', array('id'=>$completed->id));
         }
     }
 
@@ -2759,14 +2761,14 @@ function feedback_delete_completed($completed, $feedback = null, $cm = null, $co
     //first we delete all related values
     $DB->delete_records('feedback_value', array('completed' => $completed->id));
 
-    // Update completion state
-    $completion = new completion_info($course);
-    if ($completion->is_enabled($cm) && $feedback->completionsubmit) {
-        $completion->update_state($cm, COMPLETION_INCOMPLETE, $completed->userid);
-    }
-    // Last we delete the completed-record.
+    // Delete the completed record.
     $return = $DB->delete_records('feedback_completed', array('id' => $completed->id));
 
+    // Update completion state
+    $completion = new completion_info($course);
+    if ($completion->is_enabled($cm) && $cm->completion == COMPLETION_TRACKING_AUTOMATIC && $feedback->completionsubmit) {
+        $completion->update_state($cm, COMPLETION_INCOMPLETE, $completed->userid);
+    }
     // Trigger event for the delete action we performed.
     $event = \mod_feedback\event\response_deleted::create_from_record($completed, $cm, $feedback);
     $event->trigger();

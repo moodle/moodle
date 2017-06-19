@@ -1633,6 +1633,11 @@ function mod_scorm_core_calendar_provide_event_action(calendar_event $event,
 
     $cm = get_fast_modinfo($event->courseid)->instances['scorm'][$event->instance];
 
+    if (has_capability('mod/scorm:viewreport', $cm->context)) {
+        // Teachers do not need to be reminded to complete a scorm.
+        return null;
+    }
+
     if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < time()) {
         // The scorm has closed so the user can no longer submit anything.
         return null;

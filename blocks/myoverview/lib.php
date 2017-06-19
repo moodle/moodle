@@ -15,16 +15,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Contains functions called by core.
  *
- * @package    mod_assign
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @package    block_myoverview
+ * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_assign'; // Full name of the plugin (used for diagnostics).
-$plugin->version  = 2017051501;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2017050500;    // Requires this Moodle version.
-$plugin->cron     = 60;
+/**
+ * The timeline view.
+ */
+define('BLOCK_MYOVERVIEW_TIMELINE_VIEW', 'timeline');
+
+/**
+ * The courses view.
+ */
+define('BLOCK_MYOVERVIEW_COURSES_VIEW', 'courses');
+
+/**
+ * Returns the name of the user preferences as well as the details this plugin uses.
+ *
+ * @return array
+ */
+function block_myoverview_user_preferences() {
+    $preferences = array();
+    $preferences['block_myoverview_last_tab'] = array(
+        'type' => PARAM_ALPHA,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => BLOCK_MYOVERVIEW_TIMELINE_VIEW,
+        'choices' => array(BLOCK_MYOVERVIEW_TIMELINE_VIEW, BLOCK_MYOVERVIEW_COURSES_VIEW)
+    );
+
+    return $preferences;
+}
