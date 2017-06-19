@@ -503,9 +503,29 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $fil
  * (more information will be added as needed).
  */
 function file_get_draft_area_info($draftitemid, $filepath = '/') {
-    global $CFG, $USER;
+    global $USER;
 
     $usercontext = context_user::instance($USER->id);
+    return file_get_file_area_info($usercontext->id, 'user', 'draft', $draftitemid, $filepath);
+}
+
+/**
+ * Returns information about files in an area.
+ *
+ * @param int $contextid context id
+ * @param string $component component
+ * @param string $filearea file area name
+ * @param int $itemid item id or all files if not specified
+ * @param string $filepath path to the directory from which the information have to be retrieved.
+ * @return array with the following entries:
+ *      'filecount' => number of files in the area.
+ *      'filesize' => total size of the files in the area.
+ *      'foldercount' => number of folders in the area.
+ *      'filesize_without_references' => total size of the area excluding file references.
+ * @since Moodle 3.4
+ */
+function file_get_file_area_info($contextid, $component, $filearea, $itemid = false, $filepath = '/') {
+
     $fs = get_file_storage();
 
     $results = array(
@@ -516,9 +536,9 @@ function file_get_draft_area_info($draftitemid, $filepath = '/') {
     );
 
     if ($filepath != '/') {
-        $draftfiles = $fs->get_directory_files($usercontext->id, 'user', 'draft', $draftitemid, $filepath, true, true);
+        $draftfiles = $fs->get_directory_files($contextid, $component, $filearea, $itemid, $filepath, true, true);
     } else {
-        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id', true);
+        $draftfiles = $fs->get_area_files($contextid, $component, $filearea, $itemid, 'id', true);
     }
     foreach ($draftfiles as $file) {
         if ($file->is_directory()) {
