@@ -56,6 +56,7 @@ class core_navigationlib_testcase extends advanced_testcase {
         $demo4 = $demo3->add('demo4', $inactiveurl, navigation_node::TYPE_COURSE,  null, 'demo4', new pix_icon('i/course', ''));
         $demo5 = $demo3->add('demo5', $activeurl, navigation_node::TYPE_COURSE, null, 'demo5', new pix_icon('i/course', ''));
         $demo5->add('activity1', null, navigation_node::TYPE_ACTIVITY, null, 'activity1')->make_active();
+        $demo6 = $demo3->add('demo6', null, navigation_node::TYPE_CONTAINER, 'container node test', 'demo6');
         $hiddendemo1 = $this->node->add('hiddendemo1', $inactiveurl, navigation_node::TYPE_CATEGORY, null, 'hiddendemo1', new pix_icon('i/course', ''));
         $hiddendemo1->hidden = true;
         $hiddendemo1->add('hiddendemo2', $inactiveurl, navigation_node::TYPE_COURSE, null, 'hiddendemo2', new pix_icon('i/course', ''))->helpbutton = 'Here is a help button';
@@ -239,9 +240,11 @@ class core_navigationlib_testcase extends advanced_testcase {
         $csstype2 = $this->node->get('demo3')->get('demo5')->get_css_type();
         $this->node->get('demo3')->get('demo5')->type = 1000;
         $csstype3 = $this->node->get('demo3')->get('demo5')->get_css_type();
+        $csstype4 = $this->node->get('demo3')->get('demo6')->get_css_type();
         $this->assertSame('type_category', $csstype1);
         $this->assertSame('type_course', $csstype2);
         $this->assertSame('type_unknown', $csstype3);
+        $this->assertSame('type_container', $csstype4);
     }
 
     public function test_node_make_active() {
