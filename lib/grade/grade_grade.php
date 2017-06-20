@@ -795,10 +795,10 @@ class grade_grade extends grade_object {
         for($i=0; $i<$max; $i++) {
             $found = false;
             foreach($todo as $key=>$do) {
-                $hidden_precursors = array_intersect($dependson[$do], $unknown);
+                $hidden_precursors = array_intersect($dependson[$do], array_keys($unknown));
                 if ($hidden_precursors) {
                     // this item depends on hidden grade indirectly
-                    $unknown[$do] = $do;
+                    $unknown[$do] = $grade_grades[$do]->finalgrade;
                     unset($todo[$key]);
                     $found = true;
                     continue;
@@ -828,7 +828,7 @@ class grade_grade extends grade_object {
                         ) {
                             // This is a grade item that is not a category or course and has been affected by grade hiding.
                             // I guess this means it is a calculation that needs to be recalculated.
-                            $unknown[$do] = $do;
+                            $unknown[$do] = $grade_grades[$do]->finalgrade;
                             unset($todo[$key]);
                             $found = true;
                             continue;
