@@ -42,7 +42,8 @@
                 "predictionstyle": "alert alert-danger",
                 "predictiondisplayvalue": "This dev will not understand it"
             }
-        ]
+        ],
+        "noinsights": false
     }
 }}
 
@@ -53,11 +54,15 @@
 {{/modelselector}}
 
 <h3>{{#str}} insights, report_insights {{/str}}</h3>
+{{^noinsights}}
+{{{ pagingbar }}}
 <div class="insights-list">
     {{#insights}}
         {{> report_insights/insight}}
     {{/insights}}
 </div>
+{{{ pagingbar }}}
+{{/noinsights}}
 {{#noinsights}}
     <div class="m-t-2">
         {{> core/notification_info}}

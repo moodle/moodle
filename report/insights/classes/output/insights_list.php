@@ -51,17 +51,31 @@ class insights_list implements \renderable, \templatable {
     protected $othermodels;
 
     /**
+     * @var int
+     */
+    protected $page;
+
+    /**
+     * @var int
+     */
+    protected $perpage;
+
+    /**
      * Constructor
      *
      * @param \core_analytics\model $model
      * @param \context $context
      * @param \core_analytics\model[] $othermodels
+     * @param int $page
+     * @param int $perpage The max number of results to fetch
      * @return void
      */
-    public function __construct(\core_analytics\model $model, \context $context, $othermodels) {
+    public function __construct(\core_analytics\model $model, \context $context, $othermodels, $page = 0, $perpage = 100) {
         $this->model = $model;
         $this->context = $context;
         $this->othermodels = $othermodels;
+        $this->page = $page;
+        $this->perpage = $perpage;
     }
 
     /**
@@ -74,9 +88,10 @@ class insights_list implements \renderable, \templatable {
         global $PAGE;
 
         $data = new \stdClass();
+        $total = 0;
 
         if ($this->model->uses_insights()) {
-            $predictions = $this->model->get_predictions($this->context);
+            list($total, $predictions) = $this->model->get_predictions($this->context, $this->page, $this->perpage);
 
             $data->insights = array();
             foreach ($predictions as $prediction) {
@@ -84,7 +99,7 @@ class insights_list implements \renderable, \templatable {
                 $data->insights[] = $insightrenderable->export_for_template($output);
             }
 
-            if (empty($data->insights)) {
+            if (empty($data->insights) && $this->page == 0) {
                 if ($this->model->any_prediction_obtained()) {
                     $data->noinsights = get_string('noinsights', 'analytics');
                 } else {
@@ -114,6 +129,8 @@ class insights_list implements \renderable, \templatable {
                 array('' => get_string('selectotherinsights', 'report_insights')));
             $data->modelselector = $modelselector->export_for_template($output);
         }
+
+        $data->pagingbar = $output->render(new \paging_bar($total, $this->page, $this->perpage, $PAGE->url));
 
         return $data;
     }

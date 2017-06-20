@@ -26,6 +26,12 @@ require_once(__DIR__ . '/../../config.php');
 
 $contextid = required_param('contextid', PARAM_INT);
 $modelid = optional_param('modelid', false, PARAM_INT);
+$page = optional_param('page', 0, PARAM_INT);
+$perpage = optional_param('perpage', 100, PARAM_INT);
+
+if ($perpage > 1000) {
+    $perpage = 1000;
+}
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
@@ -85,7 +91,7 @@ $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
 
-$renderable = new \report_insights\output\insights_list($model, $context, $othermodels);
+$renderable = new \report_insights\output\insights_list($model, $context, $othermodels, $page, $perpage);
 echo $renderer->render($renderable);
 
 echo $OUTPUT->footer();
