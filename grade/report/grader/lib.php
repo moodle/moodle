@@ -996,7 +996,7 @@ class grade_report_grader extends grade_report {
                 // Get the decimal points preference for this item
                 $decimalpoints = $item->get_decimals();
 
-                if (in_array($itemid, $unknown)) {
+                if (array_key_exists($itemid, $unknown)) {
                     $gradeval = null;
                 } else if (array_key_exists($itemid, $altered)) {
                     $gradeval = $altered[$itemid];

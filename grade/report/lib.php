@@ -525,7 +525,7 @@ abstract class grade_report {
                     $aggregationweight = null;
                 }
             }
-        } else if (!empty($hiding_affected['unknown'][$course_item->id])) {
+        } else if (array_key_exists($course_item->id, $hiding_affected['unknown'])) {
             //not sure whether or not this item depends on a hidden item
             if (!$this->showtotalsifcontainhidden[$courseid]) {
                 //hide the grade
