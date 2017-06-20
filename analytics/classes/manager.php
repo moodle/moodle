@@ -106,7 +106,10 @@ class manager {
 
         $models = array();
         foreach ($modelobjs as $modelobj) {
-            $models[$modelobj->id] = new \core_analytics\model($modelobj);
+            $model = new \core_analytics\model($modelobj);
+            if ($model->is_available()) {
+                $models[$modelobj->id] = $model;
+            }
         }
         return $models;
     }

@@ -136,6 +136,26 @@ class model {
     }
 
     /**
+     * Quick safety check to discard site models which required components are not available anymore.
+     *
+     * @return bool
+     */
+    public function is_available() {
+        $target = $this->get_target();
+        if (!$target) {
+            return false;
+        }
+        $analyser = $this->get_target();
+
+        $classname = $target->get_analyser_class();
+        if (!class_exists($classname)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Returns the model id.
      *
      * @return int
@@ -1217,7 +1237,7 @@ class model {
                 if (!is_object($indicator) && !is_scalar($indicator)) {
                     $indicator = strval($indicator);
                 } else if (is_object($indicator)) {
-                    $indicator = get_class($indicator);
+                    $indicator = '\\' . get_class($indicator);
                 }
                 throw new \moodle_exception('errorinvalidindicator', 'analytics', '', $indicator);
             }

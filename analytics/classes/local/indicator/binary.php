@@ -91,7 +91,7 @@ abstract class binary extends discrete {
      */
     public static function get_feature_headers() {
         // Just 1 single feature obtained from the calculated value.
-        return array(get_called_class());
+        return array('\\' . get_called_class());
     }
 
     /**

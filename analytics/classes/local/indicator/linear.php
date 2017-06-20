@@ -51,7 +51,7 @@ abstract class linear extends base {
      */
     public static function get_feature_headers() {
 
-        $fullclassname = get_called_class();
+        $fullclassname = '\\' . get_called_class();
 
         if (static::include_averages()) {
             // The calculated value + context indicators.

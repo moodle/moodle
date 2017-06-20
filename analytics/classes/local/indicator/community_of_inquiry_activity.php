@@ -511,7 +511,7 @@ abstract class community_of_inquiry_activity extends linear {
 
             switch ($potentiallevel) {
                 case 5:
-                    // Cognitive level 4 is to comment on feedback.
+                    // Cognitive level 5 is to submit after feedback.
                     if ($this->any_feedback('submitted', $cm, $contextid, $user)) {
                         $score += $scoreperlevel * 5;
                         break;

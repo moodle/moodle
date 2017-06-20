@@ -42,11 +42,11 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
-     * @param templatable $templatable
+     * @param \tool_models\output\models_list $templatable
      * @return string HTML
      */
-    protected function render_models_list(templatable $templatable) {
-        $data = $templatable->export_for_template($this);
+    protected function render_models_list(\tool_models\output\models_list $modelslist) {
+        $data = $modelslist->export_for_template($this);
         return parent::render_from_template('tool_models/models_list', $data);
     }
 

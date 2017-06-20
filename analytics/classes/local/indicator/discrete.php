@@ -50,7 +50,7 @@ abstract class discrete extends base {
      * @return string[]
      */
     public static function get_feature_headers() {
-        $fullclassname = get_called_class();
+        $fullclassname = '\\' . get_called_class();
 
         $headers = array($fullclassname);
         foreach (self::get_classes() as $class) {

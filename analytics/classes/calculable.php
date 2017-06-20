@@ -75,7 +75,7 @@ abstract class calculable {
      * @return string
      */
     public static function get_name() {
-        return get_called_class();
+        return '\\' . get_called_class();
     }
 
     /**

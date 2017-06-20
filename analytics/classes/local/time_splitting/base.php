@@ -389,7 +389,7 @@ abstract class base {
 
         // The target as well.
         if ($target) {
-            $headers[] = get_class($target);
+            $headers[] = $target->get_id();
         }
 
         return $headers;
