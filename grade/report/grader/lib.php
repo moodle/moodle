@@ -974,7 +974,7 @@ class grade_report_grader extends grade_report {
                 $usergrades = $this->allgrades[$userid];
                 $hidingaffected = grade_grade::get_hiding_affected($usergrades, $allgradeitems);
                 $altered = $hidingaffected['altered'];
-                $unknown = $hidingaffected['unknown'];
+                $unknown = $hidingaffected['unknowngrades'];
                 unset($hidingaffected);
             }
 
