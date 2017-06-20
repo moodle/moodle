@@ -103,17 +103,7 @@ if ($submission->id and !$workshop->modifying_submission_allowed($USER->id)) {
 
 $canviewall = $canviewall && $workshop->check_group_membership($submission->authorid);
 
-if ($editable and $workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_SUBMISSION
-        and !has_capability('mod/workshop:manageexamples', $workshop->context)) {
-    // check that all required examples have been assessed by the user
-    $examples = $workshop->get_examples_for_reviewer($USER->id);
-    foreach ($examples as $exampleid => $example) {
-        if (is_null($example->grade)) {
-            $editable = false;
-            break;
-        }
-    }
-}
+$editable = $editable && $workshop->check_examples_assessed($USER->id);
 $edit = ($editable and $edit);
 
 if (!$candeleteall and $ownsubmission and $editable) {
@@ -181,83 +171,12 @@ if ($edit) {
         redirect($workshop->view_url());
 
     } elseif ($cansubmit and $formdata = $mform->get_data()) {
-        if ($formdata->example == 0) {
-            // this was used just for validation, it must be set to zero when dealing with normal submissions
-            unset($formdata->example);
-        } else {
-            throw new coding_exception('Invalid submission form data value: example');
-        }
-        $timenow = time();
-        if (is_null($submission->id)) {
-            $formdata->workshopid     = $workshop->id;
-            $formdata->example        = 0;
-            $formdata->authorid       = $USER->id;
-            $formdata->timecreated    = $timenow;
-            $formdata->feedbackauthorformat = editors_get_preferred_format();
-        }
-        $formdata->timemodified       = $timenow;
-        $formdata->title              = trim($formdata->title);
-        $formdata->content            = '';          // updated later
-        $formdata->contentformat      = FORMAT_HTML; // updated later
-        $formdata->contenttrust       = 0;           // updated later
-        $formdata->late               = 0x0;         // bit mask
-        if (!empty($workshop->submissionend) and ($workshop->submissionend < time())) {
-            $formdata->late = $formdata->late | 0x1;
-        }
-        if ($workshop->phase == workshop::PHASE_ASSESSMENT) {
-            $formdata->late = $formdata->late | 0x2;
-        }
 
-        // Event information.
-        $params = array(
-            'context' => $workshop->context,
-            'courseid' => $workshop->course->id,
-            'other' => array(
-                'submissiontitle' => $formdata->title
-            )
-        );
-        $logdata = null;
-        if (is_null($submission->id)) {
-            $submission->id = $formdata->id = $DB->insert_record('workshop_submissions', $formdata);
-            $params['objectid'] = $submission->id;
-            $event = \mod_workshop\event\submission_created::create($params);
-            $event->trigger();
-        } else {
-            if (empty($formdata->id) or empty($submission->id) or ($formdata->id != $submission->id)) {
-                throw new moodle_exception('err_submissionid', 'workshop');
-            }
-        }
-        $params['objectid'] = $submission->id;
+        $formdata->id = $submission->id;
+        // Creates or updates submission.
+        $submission->id = $workshop->edit_submission($formdata);
 
-        // Save and relink embedded images and save attachments.
-        $formdata = file_postupdate_standard_editor($formdata, 'content', $workshop->submission_content_options(),
-            $workshop->context, 'mod_workshop', 'submission_content', $submission->id);
-
-        $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $workshop->submission_attachment_options(),
-            $workshop->context, 'mod_workshop', 'submission_attachment', $submission->id);
-
-        if (empty($formdata->attachment)) {
-            // explicit cast to zero integer
-            $formdata->attachment = 0;
-        }
-        // store the updated values or re-save the new submission (re-saving needed because URLs are now rewritten)
-        $DB->update_record('workshop_submissions', $formdata);
-        $event = \mod_workshop\event\submission_updated::create($params);
-        $event->add_record_snapshot('workshop', $workshoprecord);
-        $event->trigger();
-
-        // send submitted content for plagiarism detection
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($workshop->context->id, 'mod_workshop', 'submission_attachment', $submission->id);
-
-        $params['other']['content'] = $formdata->content;
-        $params['other']['pathnamehashes'] = array_keys($files);
-
-        $event = \mod_workshop\event\assessable_uploaded::create($params);
-        $event->set_legacy_logdata($logdata);
-        $event->trigger();
-
-        redirect($workshop->submission_url($formdata->id));
+        redirect($workshop->submission_url($submission->id));
     }
 }
 
