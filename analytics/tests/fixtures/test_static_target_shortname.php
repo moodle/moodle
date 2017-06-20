@@ -22,113 +22,37 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once(__DIR__ . '/test_target_shortname.php');
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Test static target.
  *
+ * Testing target extension to make it static and to use a different analyser
+ * just to try a different one. Method calculate_sample is exactly the same.
+ *
  * @package   core_analytics
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_static_target_shortname extends \core_analytics\local\target\binary {
+class test_static_target_shortname extends test_target_shortname {
 
     /**
-     * predictions
+     * based_on_assumptions
      *
-     * @var array
+     * @return bool
      */
-    protected $predictions = array();
+    public static function based_on_assumptions() {
+        return true;
+    }
 
     /**
-     * get_analyser_class
+     * Different analyser just to test a different one.
      *
      * @return string
      */
     public function get_analyser_class() {
-        return '\core_analytics\local\analyser\site_courses';
-    }
-
-    /**
-     * classes_description
-     *
-     * @return string[]
-     */
-    public static function classes_description() {
-        return array(
-            'Course fullname first char is A',
-            'Course fullname first char is not A'
-        );
-    }
-
-    /**
-     * We don't want to discard results.
-     * @return null
-     */
-    protected function min_prediction_score() {
-        return null;
-    }
-
-    /**
-     * We don't want to discard results.
-     * @return array
-     */
-    protected function ignored_predicted_classes() {
-        return array();
-    }
-
-    /**
-     * is_valid_analysable
-     *
-     * @param \core_analytics\analysable $analysable
-     * @param bool $fortraining
-     * @return bool
-     */
-    public function is_valid_analysable(\core_analytics\analysable $analysable, $fortraining = true) {
-        // This is testing, let's make things easy.
-        return true;
-    }
-
-    /**
-     * is_valid_sample
-     *
-     * @param int $sampleid
-     * @param \core_analytics\analysable $analysable
-     * @param bool $fortraining
-     * @return bool
-     */
-    public function is_valid_sample($sampleid, \core_analytics\analysable $analysable, $fortraining = true) {
-        // We skip not-visible courses during training as a way to emulate the training data / prediction data difference.
-        // In normal circumstances is_valid_sample will return false when they receive a sample that can not be
-        // processed.
-        if (!$fortraining) {
-            return true;
-        }
-
-        $sample = $this->retrieve('course', $sampleid);
-        if ($sample->visible == 0) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * calculate_sample
-     *
-     * @param int $sampleid
-     * @param \core_analytics\analysable $analysable
-     * @param int $starttime
-     * @param int $endtime
-     * @return float
-     */
-    protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false) {
-        $sample = $this->retrieve('course', $sampleid);
-
-        $firstchar = substr($sample->shortname, 0, 1);
-        if ($firstchar === 'a') {
-            return 1;
-        } else {
-            return 0;
-        }
+        return '\core_analytics\local\analyser\courses';
     }
 }

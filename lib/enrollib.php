@@ -1476,7 +1476,7 @@ function enrol_get_course_users($courseid = false, $onlyactive = false, $usersfi
     }
 
     if ($uefilter) {
-        list($uesql, $ueparams) = $DB->get_in_or_equal($usersfilter, SQL_PARAMS_NAMED);
+        list($uesql, $ueparams) = $DB->get_in_or_equal($uefilter, SQL_PARAMS_NAMED);
         $conditions[] = "ue.id $uesql";
         $params = $params + $ueparams;
     }

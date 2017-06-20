@@ -153,11 +153,6 @@ class student_enrolments extends by_course {
         // Some course enrolments.
         list($enrolsql, $params) = $DB->get_in_or_equal($sampleids, SQL_PARAMS_NAMED);
 
-        $sql = "SELECT ue.id AS enrolmentid, u.* FROM {user_enrolments} ue
-                  JOIN {user} u on ue.userid = u.id
-                  WHERE ue.id $enrolsql";
-        $enrolments = $DB->get_recordset_sql($sql, $params);
-
         $samplesdata = array();
         foreach ($enrolments as $userenrolmentid => $user) {
 
