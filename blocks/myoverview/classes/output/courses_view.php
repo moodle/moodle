@@ -63,6 +63,9 @@ class courses_view implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
+        global $CFG;
+        require_once($CFG->dirroot.'/course/lib.php');
+
         // Build courses view data structure.
         $coursesview = [
             'hascourses' => !empty($this->courses)
