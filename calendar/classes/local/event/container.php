@@ -72,11 +72,6 @@ class container {
     protected static $eventretrievalstrategy;
 
     /**
-     * @var array A list of callbacks to use.
-     */
-    protected static $callbacks = array();
-
-    /**
      * @var \stdClass[] An array of cached courses to use with the event factory.
      */
     protected static $coursecache = array();
@@ -91,16 +86,6 @@ class container {
      */
     private static function init() {
         if (empty(self::$eventfactory)) {
-            // When testing the container's components, we need to make sure
-            // the callback implementations in modules are not executed, since
-            // we cannot control their output from PHPUnit. To do this we have
-            // a set of 'testing' callbacks that the factory can use. This way
-            // we know exactly how the factory behaves when being tested.
-            $getcallback = function($which) {
-                return self::$callbacks[PHPUNIT_TEST ? 'testing' : 'production'][$which];
-            };
-
-            self::initcallbacks();
             self::$actionfactory = new action_factory();
             self::$eventmapper = new event_mapper(
                 // The event mapper we return from here needs to know how to
@@ -129,8 +114,8 @@ class container {
             );
 
             self::$eventfactory = new event_factory(
-                $getcallback('action'),
-                $getcallback('visibility'),
+                [self::class, 'apply_component_provide_event_action'],
+                [self::class, 'apply_component_is_event_visible'],
                 function ($dbrow) {
                     // At present we only have a bail-out check for events in course modules.
                     if (empty($dbrow->modulename)) {
@@ -184,6 +169,19 @@ class container {
     }
 
     /**
+     * Reset all static caches, called between tests.
+     */
+    public static function reset_caches() {
+        self::$eventfactory = null;
+        self::$eventmapper = null;
+        self::$eventvault = null;
+        self::$actionfactory = null;
+        self::$eventretrievalstrategy = null;
+        self::$coursecache = [];
+        self::$modulecache = [];
+    }
+
+    /**
      * Gets the event factory.
      *
      * @return event_factory
@@ -214,88 +212,74 @@ class container {
     }
 
     /**
-     * Initialises the callbacks.
+     * Calls callback 'core_calendar_provide_event_action' from the component responsible for the event
      *
-     * There are two sets here, one is used during PHPUnit runs.
-     * See the comment at the start of the init method for more
-     * detail.
+     * If no callback is present or callback returns null, there is no action on the event
+     * and it will not be displayed on the dashboard.
+     *
+     * @param event_interface $event
+     * @return action_event|event_interface
      */
-    private static function initcallbacks() {
-        self::$callbacks = array(
-            'testing' => array(
-                // Always return an action event.
-                'action' => function (event_interface $event) {
-                    return new action_event(
-                        $event,
-                        new \core_calendar\local\event\value_objects\action(
-                            'test',
-                            new \moodle_url('http://example.com'),
-                            420,
-                            true
-                        ));
-                },
-                // Always be visible.
-                'visibility' => function (event_interface $event) {
-                    return true;
-                }
-            ),
-            'production' => array(
-                // This function has type event_interface -> event_interface.
-                // This is enforced by the event_factory.
-                'action' => function (event_interface $event) {
-                    // Callbacks will get supplied a "legacy" version
-                    // of the event class.
-                    $mapper = self::$eventmapper;
-                    $action = null;
-                    if ($event->get_course_module()) {
-                        // TODO MDL-58866 Only activity modules currently support this callback.
-                        // Any other event will not be displayed on the dashboard.
-                        $action = component_callback(
-                            'mod_' . $event->get_course_module()->get('modname'),
-                            'core_calendar_provide_event_action',
-                            [
-                                $mapper->from_event_to_legacy_event($event),
-                                self::$actionfactory
-                            ]
-                        );
-                    }
+    public static function apply_component_provide_event_action(event_interface $event) {
+        // Callbacks will get supplied a "legacy" version
+        // of the event class.
+        $mapper = self::$eventmapper;
+        $action = null;
+        if ($event->get_course_module()) {
+            // TODO MDL-58866 Only activity modules currently support this callback.
+            // Any other event will not be displayed on the dashboard.
+            $action = component_callback(
+                'mod_' . $event->get_course_module()->get('modname'),
+                'core_calendar_provide_event_action',
+                [
+                    $mapper->from_event_to_legacy_event($event),
+                    self::$actionfactory
+                ]
+            );
+        }
 
-                    // If we get an action back, return an action event, otherwise
-                    // continue piping through the original event.
-                    //
-                    // If a module does not implement the callback, component_callback
-                    // returns null.
-                    return $action ? new action_event($event, $action) : $event;
-                },
-                // This function has type event_interface -> bool.
-                // This is enforced by the event_factory.
-                'visibility' => function (event_interface $event) {
-                    $mapper = self::$eventmapper;
-                    $eventvisible = null;
-                    if ($event->get_course_module()) {
-                        // TODO MDL-58866 Only activity modules currently support this callback.
-                        $eventvisible = component_callback(
-                            'mod_' . $event->get_course_module()->get('modname'),
-                            'core_calendar_is_event_visible',
-                            [
-                                $mapper->from_event_to_legacy_event($event)
-                            ]
-                        );
-                    }
+        // If we get an action back, return an action event, otherwise
+        // continue piping through the original event.
+        //
+        // If a module does not implement the callback, component_callback
+        // returns null.
+        return $action ? new action_event($event, $action) : $event;
+    }
 
-                    // Do not display the event if there is nothing to action.
-                    if ($event instanceof action_event_interface && $event->get_action()->get_item_count() === 0) {
-                        return false;
-                    }
+    /**
+     * Calls callback 'core_calendar_is_event_visible' from the component responsible for the event
+     *
+     * The visibility callback is optional, if not present it is assumed as visible.
+     * If it is an actionable event but the get_item_count() returns 0 the visibility
+     * is set to false.
+     *
+     * @param event_interface $event
+     * @return bool
+     */
+    public static function apply_component_is_event_visible(event_interface $event) {
+        $mapper = self::$eventmapper;
+        $eventvisible = null;
+        if ($event->get_course_module()) {
+            // TODO MDL-58866 Only activity modules currently support this callback.
+            $eventvisible = component_callback(
+                'mod_' . $event->get_course_module()->get('modname'),
+                'core_calendar_is_event_visible',
+                [
+                    $mapper->from_event_to_legacy_event($event)
+                ]
+            );
+        }
 
-                    // Module does not implement the callback, event should be visible.
-                    if (is_null($eventvisible)) {
-                        return true;
-                    }
+        // Do not display the event if there is nothing to action.
+        if ($event instanceof action_event_interface && $event->get_action()->get_item_count() === 0) {
+            return false;
+        }
 
-                    return $eventvisible ? true : false;
-                }
-            ),
-        );
+        // Module does not implement the callback, event should be visible.
+        if (is_null($eventvisible)) {
+            return true;
+        }
+
+        return $eventvisible ? true : false;
     }
 }

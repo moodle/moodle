@@ -674,13 +674,15 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
      */
     public function test_get_calendar_events_override() {
         $user = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
         $teacher = $this->getDataGenerator()->create_user();
         $anotheruser = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $moduleinstance = $generator->create_instance(['course' => $course->id]);
 
-        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student');
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, 'editingteacher');
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -692,11 +694,12 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         ];
 
         $now = time();
+        // Create two events - one for everybody in the course and one only for the first student.
         $event1 = $this->create_calendar_event('Base event', 0, 'due', 0, $now + DAYSECS, $params + ['courseid' => $course->id]);
         $event2 = $this->create_calendar_event('User event', $user->id, 'due', 0, $now + 2*DAYSECS, $params + ['courseid' => 0]);
 
-        // Retrieve course events for teacher - only one "Base event" is returned.
-        $this->setUser($teacher);
+        // Retrieve course events for the second student - only one "Base event" is returned.
+        $this->setUser($user2);
         $paramevents = array('courseids' => array($course->id));
         $options = array ('siteevents' => true, 'userevents' => true);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
@@ -705,7 +708,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, count($events['warnings']));
         $this->assertEquals('Base event', $events['events'][0]['name']);
 
-        // Retrieve events for user - both events are returned.
+        // Retrieve events for the first student - both events are returned.
         $this->setUser($user);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
