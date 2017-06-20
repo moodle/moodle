@@ -461,7 +461,7 @@ class core_user {
                 'choices' => array_merge(array('' => ''), get_string_manager()->get_list_of_countries(true, true)));
         $fields['lang'] = array('type' => PARAM_LANG, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->lang,
                 'choices' => array_merge(array('' => ''), get_string_manager()->get_list_of_translations(false)));
-        $fields['calendartype'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->calendartype,
+        $fields['calendartype'] = array('type' => PARAM_PLUGIN, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->calendartype,
                 'choices' => array_merge(array('' => ''), \core_calendar\type_factory::get_list_of_calendar_types()));
         $fields['theme'] = array('type' => PARAM_THEME, 'null' => NULL_NOT_ALLOWED,
                 'default' => theme_config::DEFAULT_THEME, 'choices' => array_merge(array('' => ''), get_list_of_themes()));
