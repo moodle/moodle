@@ -373,7 +373,7 @@ function lti_build_sourcedid($instanceid, $userid, $servicesalt, $typeid = null,
  * @return array                    Request details
  */
 function lti_build_request($instance, $typeconfig, $course, $typeid = null, $islti2 = false) {
-    global $USER, $CFG;
+    global $USER, $COURSE, $CFG;
 
     if (empty($instance->cmid)) {
         $instance->cmid = 0;
@@ -385,6 +385,7 @@ function lti_build_request($instance, $typeconfig, $course, $typeid = null, $isl
         'user_id' => $USER->id,
         'lis_person_sourcedid' => $USER->idnumber,
         'roles' => $role,
+        'groups' => implode(",", groups_get_user_groups($COURSE->id, $USER->id)[0]),
         'context_id' => $course->id,
         'context_label' => trim(html_to_text($course->shortname, 0)),
         'context_title' => trim(html_to_text($course->fullname, 0)),
@@ -2554,7 +2555,8 @@ function lti_get_capabilities() {
        'Person.webaddress' => '$USER->url',
        'Membership.role' => 'roles',
        'Result.sourcedId' => 'lis_result_sourcedid',
-       'Result.autocreate' => 'lis_outcome_service_url');
+       'Result.autocreate' => 'lis_outcome_service_url',
+       'Group.sourceId' => 'groups');
 
     return $capabilities;
 
