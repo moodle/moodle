@@ -278,13 +278,14 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param array $eventshandlers Events 1 API handlers.
      * @param bool $themedesignermode Warn about the theme designer mode.
      * @param bool $devlibdir Warn about development libs directory presence.
+     * @param bool $mobileconfigured Whether the mobile web services have been enabled
      *
      * @return string HTML to output.
      */
     public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
             $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch,
             $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0,
-            $themedesignermode = false, $devlibdir = false) {
+            $themedesignermode = false, $devlibdir = false, $mobileconfigured = false) {
         global $CFG;
         $output = '';
 
@@ -303,6 +304,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->cache_warnings($cachewarnings);
         $output .= $this->events_handlers($eventshandlers);
         $output .= $this->registration_warning($registered);
+        $output .= $this->mobile_configuration_warning($mobileconfigured);
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
@@ -828,6 +830,23 @@ class core_admin_renderer extends plugin_renderer_base {
      */
     public function warn_if_not_registered() {
         return $this->registration_warning(\core\hub\registration::is_registered());
+    }
+
+    /**
+     * Display a warning about the Mobile Web Services being disabled.
+     *
+     * @param boolean $mobileconfigured true if mobile web services are enabled
+     * @return string HTML to output.
+     */
+    protected function mobile_configuration_warning($mobileconfigured) {
+        $output = '';
+        if (!$mobileconfigured) {
+            $settingslink = new moodle_url('/admin/settings.php', ['section' => 'mobilesettings']);
+            $configurebutton = $this->single_button($settingslink, get_string('enablemobilewebservice', 'admin'));
+            $output .= $this->warning(get_string('mobilenotconfiguredwarning', 'admin') . '&nbsp;' . $configurebutton);
+        }
+
+        return $output;
     }
 
     /**
