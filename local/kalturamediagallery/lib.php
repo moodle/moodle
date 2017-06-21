@@ -101,7 +101,7 @@ function local_kalturamediagallery_extend_navigation_course(navigation_node $par
 
     $name = get_string('nav_mediagallery', 'local_kalturamediagallery');
     $url = new moodle_url('/local/kalturamediagallery/index.php', array('courseid' => $course->id));
-    $icon = new image_icon('kaltura_icon', $name);
+    $icon = new pix_icon('kaltura_icon', $name);
     $parent->add($name, $url, navigation_node::NODETYPE_LEAF, $name, 'kalturamediagallery-settings', $icon);
 }
 
