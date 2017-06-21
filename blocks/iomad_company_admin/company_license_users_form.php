@@ -118,6 +118,8 @@ class company_license_users_form extends moodleform {
     }
 
     public function definition_after_data() {
+        global $OUTPUT;
+
         $mform =& $this->_form;
 
         if (!empty($this->course->id)) {
@@ -144,14 +146,14 @@ class company_license_users_form extends moodleform {
             $mform->addElement('header', 'header', get_string('license_users_for',
                                                               'block_iomad_company_admin',
                                                               $this->license->name));
-            $mform->addElement('html', '('.($this->license->allocation - $this->license->used).' / '.
+            $mform->addElement('html', '('.($this->license->used).' / '.
             $this->license->allocation.get_string('licensetotal', 'block_iomad_company_admin').')');
         } else {
             $mform->addElement('header', 'header', get_string('license_users_for',
                                                               'block_iomad_company_admin',
                                                               $this->license->name).' *Expired* ');
-            $mform->addElement('html', '('.($this->license->allocation - $this->license->used).' / '.
-            $this->license->allocation.get_string('licensetotal', 'block_iomad_company_admin').')');
+            $mform->addElement('html', '('.($this->license->used).' / '.
+            $this->license->allocation . get_string('licensetotal', 'block_iomad_company_admin').')');
         }
 
         $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
@@ -171,14 +173,14 @@ class company_license_users_form extends moodleform {
                   <td id="buttonscell">
                       <div id="addcontrols">
                           <input name="add" id="add" type="submit" value="&nbsp;' .
-                          get_string('licenseallocate', 'block_iomad_company_admin') .
+                       $OUTPUT->larrow().'&nbsp;'. get_string('licenseallocate', 'block_iomad_company_admin') .
                           '" title="Enrol" /><br />
 
                       </div>
 
                       <div id="removecontrols"><input name="remove" id="remove" type="submit" value="' .
-                          get_string('licenseremove', 'block_iomad_company_admin') .
-                          '&nbsp;" title="Unenrol" />
+                       $OUTPUT->rarrow().'&nbsp;'. get_string('licenseremove', 'block_iomad_company_admin') .
+                          '" title="Unenrol" />
                       </div>
                   </td>
                   <td id="potentialcell">');
@@ -211,6 +213,12 @@ class company_license_users_form extends moodleform {
             $licenserecord = (array) $this->license;
 
             if (!empty($userstoassign) && !empty($courses)) {
+                $required = count($userstoassign) * count($courses);
+                if ($count + $required > $numberoflicenses) {
+                    redirect(new moodle_url("/blocks/iomad_company_admin/company_license_users_form.php",
+                                             array('licenseid' => $this->licenseid, 'error' => 1)));
+
+                }
                 foreach ($userstoassign as $adduser) {
 
                     // Check the userid is valid.
@@ -223,8 +231,6 @@ class company_license_users_form extends moodleform {
                             // Set the used amount.
                             $licenserecord['used'] = $count;
                             $DB->update_record('companylicense', $licenserecord);
-                            redirect(new moodle_url("/blocks/iomad_company_admin/company_license_users_form.php",
-                                                     array('licenseid' => $this->licenseid, 'error' => 1)));
                         }
                         $allow = true;
                         if ($allow) {
@@ -454,12 +460,5 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
         echo $usersform->display();
     }
 }
-/*<script type="text/javascript">
-Y.on('change', submit_form, '#courseselector');
- function submit_form() {
-var form = Y.one('#mform1'); // The id for the moodle form is automatically set.
-    form.submit();
- }
-</script>
-*/
+
 echo $OUTPUT->footer();
