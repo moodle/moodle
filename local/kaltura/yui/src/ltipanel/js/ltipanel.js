@@ -204,7 +204,7 @@ Y.extend(LTIPANELMEDIAASSIGNMENT, Y.Base, {
 
         var left = ((width / 2) - (w / 2)) + dualScreenLeft;
         var top = ((height / 2) - (h / 2)) + dualScreenTop;
-        var bsePopup = window.open(url, M.util.get_string("browse_and_embed", "local_kaltura"), 'scrollbars=no, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+        var bsePopup = window.open(url, M.util.get_string("browse_and_embed", "local_kaltura"), 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
 
         if (window.focus) {
             bsePopup.focus();
