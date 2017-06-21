@@ -2723,9 +2723,6 @@ a.skip:active {
 .blog_entry .content {
   margin-left: 43px;
 }
-#page-group-index #groupeditform {
-  text-align: center;
-}
 #doc-contents h1 {
   margin: 1em 0 0 0;
 }
@@ -9890,18 +9887,6 @@ body.path-question-type .mform fieldset.hidden {
 .profileeditor > .singlebutton div,
 .profileeditor > .singlebutton input {
   margin: 0;
-}
-#groupeditform .groups,
-#groupeditform .members {
-  min-width: 175px;
-  width: 49%;
-  float: left;
-  text-align: left;
-}
-#groupeditform .groups select,
-#groupeditform .members select {
-  min-width: 175px;
-  max-width: 90%;
 }
 /** Preferences page */
 .preferences-group ul {

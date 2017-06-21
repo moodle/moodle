@@ -78,8 +78,8 @@
 <form id="groupeditform" action="index.php" method="post">
     <div class="container-fluid groupmanagementtable">
         <div class="row row-fluid rtl-compatible">
-            <input type="hidden" name="id" value="{{courseid}}">
-            <div class="col-md-6 span6 m-b-1 groups">
+            <div class="col-md-6 span6 m-b-1">
+                <input type="hidden" name="id" value="{{courseid}}">
                 <div class="form-group">
                     <label for="groups">
                         <span id="groupslabel">{{#str}}groups{{/str}}</span>
@@ -110,7 +110,7 @@
                     <input type="submit" name="act_showimportgroups" id="showimportgroups" value="{{#str}}importgroups, group{{/str}}" class="btn btn-default" />
                 </div>
             </div>
-            <div class="col-md-6 span6 m-b-1 members">
+            <div class="col-md-6 span6 m-b-1">
                 <div class="form-group">
                     <label for="members">
                         <span id="memberslabel">{{#str}}membersofselectedgroup, group{{/str}}</span>
