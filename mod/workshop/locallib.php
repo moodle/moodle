@@ -1204,6 +1204,20 @@ class workshop {
         $fs->delete_area_files($this->context->id, 'mod_workshop', 'submission_attachment', $submission->id);
 
         $DB->delete_records('workshop_submissions', array('id' => $submission->id));
+
+        // Event information.
+        $params = array(
+            'context' => $this->context,
+            'courseid' => $this->course->id,
+            'relateduserid' => $submission->authorid,
+            'other' => array(
+                'submissiontitle' => $submission->title
+            )
+        );
+        $params['objectid'] = $submission->id;
+        $event = \mod_workshop\event\submission_deleted::create($params);
+        $event->add_record_snapshot('workshop', $this->dbrecord);
+        $event->trigger();
     }
 
     /**
