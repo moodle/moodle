@@ -713,7 +713,7 @@ class potential_license_user_selector extends user_selector_base {
         if (!isset( $this->licenseid) ) {
             return array();
         } else {
-            if (!$DB->get_record_sql("SELECT pc.id
+            if (!$DB->get_records_sql("SELECT pc.id
                                       FROM {iomad_courses} pc
                                       INNER JOIN {companylicense_courses} clc
                                       ON clc.courseid = pc.courseid
@@ -972,7 +972,7 @@ class current_license_user_selector extends user_selector_base {
                      WHERE $wherecondition AND u.suspended = 0
                      AND clu.licenseid = :licenseid
                      AND timecompleted IS NULL ";
-            $order = ' ORDER BY lastname ASC, firstname ASC LIMIT 1';
+            $order = ' ORDER BY lastname ASC, firstname ASC';
         }
 
         if (!$this->is_validating() && !$all) {
@@ -994,9 +994,19 @@ class current_license_user_selector extends user_selector_base {
             return array();
         }
 
+        // If we are a program then we only want one entry per user.
+        if (!empty($this->program)) {
+            $userlist = array();
+            foreach ($availableusers as $id => $rawuser) {
+                $userlist[$rawuser->id] = $rawuser;
+            }
+            $availableusers = $userlist;
+        }
+
         foreach ($availableusers as $id => $rawuser) {
             if (empty($this->program)) {
                 $availableusers[$id]->email .= ' (' . $rawuser->fullname . ')';
+            } else {
             }
 
             if (!empty($rawuser->isusing) && $this->license->type == 0) {
