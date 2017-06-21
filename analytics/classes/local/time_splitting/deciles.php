@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class deciles extends base {
+class deciles extends equal_parts {
 
     /**
      * get_name
@@ -45,27 +45,11 @@ class deciles extends base {
     }
 
     /**
-     * define_ranges
+     * 10 parts.
      *
-     * @return array
+     * @return int
      */
-    protected function define_ranges() {
-        $rangeduration = floor(($this->analysable->get_end() - $this->analysable->get_start()) / 10);
-
-        $ranges = array();
-        for ($i = 0; $i < 10; $i++) {
-            $start = $this->analysable->get_start() + ($rangeduration * $i);
-            $end = $this->analysable->get_start() + ($rangeduration * ($i + 1));
-            if ($i === 9) {
-                $end = $this->analysable->get_end();
-            }
-            $ranges[] = array(
-                'start' => $start,
-                'end' => $end,
-                'time' => $end
-            );
-        }
-
-        return $ranges;
+    protected function get_number_parts() {
+        return 10;
     }
 }
