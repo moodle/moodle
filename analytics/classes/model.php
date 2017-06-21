@@ -1001,11 +1001,11 @@ class model {
      * Gets the predictions for this context.
      *
      * @param \context $context
-     * @param int $page The page of results to fetch
-     * @param int $perpage The max number of results to fetch
+     * @param int $page The page of results to fetch. False for all results.
+     * @param int $perpage The max number of results to fetch. Ignored if $page is false.
      * @return array($total, \core_analytics\prediction[])
      */
-    public function get_predictions(\context $context, $page = 0, $perpage = 100) {
+    public function get_predictions(\context $context, $page = false, $perpage = 100) {
         global $DB;
 
         \core_analytics\manager::check_can_list_insights($context);
@@ -1033,12 +1033,13 @@ class model {
 
         list($unused, $samplesdata) = $this->get_analyser()->get_samples($sampleids);
 
-        // Add samples data as part of each prediction.
-        $paginated = [];
 
         $current = 0;
-        $offset = $page * $perpage;
-        $limit = $offset + $perpage;
+
+        if ($page !== false) {
+            $offset = $page * $perpage;
+            $limit = $offset + $perpage;
+        }
 
         foreach ($predictions as $predictionid => $predictiondata) {
 
@@ -1051,7 +1052,7 @@ class model {
             }
 
             // Return paginated dataset - we cannot paginate in the DB because we post filter the list.
-            if ($current >= $offset && $current < $limit) {
+            if ($page === false || ($current >= $offset && $current < $limit)) {
                 // Replace \stdClass object by \core_analytics\prediction objects.
                 $prediction = new \core_analytics\prediction($predictiondata, $samplesdata[$sampleid]);
                 $predictions[$predictionid] = $prediction;
