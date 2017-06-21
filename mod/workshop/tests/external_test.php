@@ -692,4 +692,100 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         mod_workshop_external::update_submission($submissionid, '');
     }
+
+    /**
+     * Test test_delete_submission.
+     */
+    public function test_delete_submission() {
+
+        // Create the submission that will be deleted.
+        $submissionid = $this->create_test_submission($this->student);
+
+        $this->setUser($this->student);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $result = mod_workshop_external::delete_submission($submissionid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::delete_submission_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertTrue($result['status']);
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $submission = $workshop->get_submission_by_author($this->student->id);
+        $this->assertFalse($submission);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking event.
+        $this->assertInstanceOf('\mod_workshop\event\submission_deleted', $event);
+        $this->assertEquals($this->context, $event->get_context());
+    }
+
+    /**
+     * Test test_delete_submission_with_assessments.
+     */
+    public function test_delete_submission_with_assessments() {
+
+        // Create the submission that will be deleted.
+        $submissionid = $this->create_test_submission($this->student);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $workshopgenerator->create_assessment($submissionid, $this->teacher->id, array(
+            'weight' => 3,
+            'grade' => 95.00000,
+        ));
+
+        $this->setUser($this->student);
+        $this->expectException('moodle_exception');
+        mod_workshop_external::delete_submission($submissionid);
+    }
+
+    /**
+     * Test test_delete_submission_invalid_phase.
+     */
+    public function test_delete_submission_invalid_phase() {
+
+        // Create the submission that will be deleted.
+        $submissionid = $this->create_test_submission($this->student);
+
+        // Switch to assessment phase.
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
+
+        $this->setUser($this->student);
+        $this->expectException('moodle_exception');
+        mod_workshop_external::delete_submission($submissionid);
+    }
+
+    /**
+     * Test test_delete_submission_as_teacher.
+     */
+    public function test_delete_submission_as_teacher() {
+
+        // Create the submission that will be deleted.
+        $submissionid = $this->create_test_submission($this->student);
+
+        $this->setUser($this->teacher);
+        $result = mod_workshop_external::delete_submission($submissionid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::delete_submission_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertTrue($result['status']);
+    }
+
+    /**
+     * Test test_delete_submission_other_user.
+     */
+    public function test_delete_submission_other_user() {
+
+        $anotheruser = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($anotheruser->id, $this->course->id, $this->studentrole->id, 'manual');
+        // Create the submission that will be deleted.
+        $submissionid = $this->create_test_submission($this->student);
+
+        $this->setUser($anotheruser);
+        $this->expectException('moodle_exception');
+        mod_workshop_external::delete_submission($submissionid);
+    }
 }

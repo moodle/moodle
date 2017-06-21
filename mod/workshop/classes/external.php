@@ -637,4 +637,70 @@ class mod_workshop_external extends external_api {
             'warnings' => new external_warnings()
         ));
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function delete_submission_parameters() {
+        return new external_function_parameters(
+            array(
+                'submissionid' => new external_value(PARAM_INT, 'Submission id'),
+            )
+        );
+    }
+
+
+    /**
+     * Deletes the given submission.
+     *
+     * @param int $submissionid the submission id.
+     * @return array containing the result status and warnings.
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function delete_submission($submissionid) {
+        global $USER, $DB;
+
+        $params = self::validate_parameters(self::delete_submission_parameters(), array('submissionid' => $submissionid));
+        $warnings = array();
+
+        // Get and validate the submission and workshop.
+        $submission = $DB->get_record('workshop_submissions', array('id' => $params['submissionid']), '*', MUST_EXIST);
+        list($workshop, $course, $cm, $context) = self::validate_workshop($submission->workshopid);
+
+        // Check if we can delete the submission.
+        if (!has_capability('mod/workshop:deletesubmissions', $context)) {
+            require_capability('mod/workshop:submit', $context);
+            // We can delete our own submission, on time and not yet assessed.
+            $candeletesubmission = $submission->authorid == $USER->id;
+            $candeletesubmission = $candeletesubmission && $workshop->modifying_submission_allowed($USER->id);
+            $candeletesubmission = $candeletesubmission && count($workshop->get_assessments_of_submission($submission->id)) == 0;
+            if (!$candeletesubmission) {
+                throw new moodle_exception('nopermissions', 'error', '', 'delete submission');
+            }
+        }
+
+        $workshop->delete_submission($submission);
+
+        return array(
+            'status' => true,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function delete_submission_returns() {
+        return new external_single_structure(array(
+            'status' => new external_value(PARAM_BOOL, 'True if the submission was deleted.'),
+            'warnings' => new external_warnings()
+        ));
+    }
 }
