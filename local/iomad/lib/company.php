@@ -299,7 +299,9 @@ class company {
                                         FROM
                                             {company_users} cu
                                             INNER JOIN {company} c ON cu.companyid = c.id
-                                        WHERE cu.userid = :userid",
+                                        WHERE cu.userid = :userid
+                                        ORDER BY cu.id
+                                        LIMIT 1",
                                        array('userid' => $userid));
         return $company;
     }
