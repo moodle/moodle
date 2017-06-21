@@ -4177,34 +4177,16 @@ EOD;
 
                 // Check to see if we should be displaying a message button.
                 if (!empty($CFG->messaging) && $USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
-                    $iscontact = !empty(message_get_contact($user->id));
-                    $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
-                    $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
-                    $contactimage = $iscontact ? 'removecontact' : 'addcontact';
                     $userbuttons = array(
                         'messages' => array(
                             'buttontype' => 'message',
                             'title' => get_string('message', 'message'),
                             'url' => new moodle_url('/message/index.php', array('id' => $user->id)),
                             'image' => 'message',
-                            'linkattributes' => array('role' => 'button'),
+                            'linkattributes' => message_messenger_sendmessage_link_params($user),
                             'page' => $this->page
-                        ),
-                        'togglecontact' => array(
-                            'buttontype' => 'togglecontact',
-                            'title' => get_string($contacttitle, 'message'),
-                            'url' => new moodle_url('/message/index.php', array(
-                                    'user1' => $USER->id,
-                                    'user2' => $user->id,
-                                    $contacturlaction => $user->id,
-                                    'sesskey' => sesskey())
-                            ),
-                            'image' => $contactimage,
-                            'linkattributes' => \core_message\helper::togglecontact_link_params($user, $iscontact),
-                            'page' => $this->page
-                        ),
+                        )
                     );
-
                     $this->page->requires->string_for_js('changesmadereallygoaway', 'moodle');
                 }
             } else {
