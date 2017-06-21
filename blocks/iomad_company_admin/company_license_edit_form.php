@@ -330,6 +330,13 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             $licensedata['parentid'] = $data->parentid;
         }
         $licensedata['validlength'] = $data->validlength;
+        $licensedata['releaseday'] = $data->releaseday;
+        $licensedata['releasefrequency'] = $data->releasefrequency;
+        $licensedata['releaseperiod'] = $data->releaseperiod;
+        $licensedata['languages'] = serialize($data->languages);
+        $licensedata['passmark'] = $data->passmark;
+        $licensedata['type'] = $data->type;
+
         if ( !empty($licenseid) && $currlicensedata = $DB->get_record('companylicense', array('id' => $licenseid))) {
             $new = false;
             // Already in the table update it.
