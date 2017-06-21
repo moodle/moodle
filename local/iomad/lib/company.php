@@ -2639,7 +2639,7 @@ class company {
                 foreach ($enrolments as $enrolid) {
                     $DB->execute("UPDATE {user_enrolments} SET timeend = :timeend
                                   WHERE enrolid = :enrolid",
-                                  array('timeend' => $licenswerecord->expirydate, 'enrolid' => $enrolid->id));
+                                  array('timeend' => $licenserecord->expirydate, 'enrolid' => $enrolid->id));
                 }
             }
         }
