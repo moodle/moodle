@@ -69,4 +69,12 @@ $functions = array(
         'capabilities'  => 'mod/workshop:submit',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_workshop_update_submission' => array(
+        'classname'     => 'mod_workshop_external',
+        'methodname'    => 'update_submission',
+        'description'   => 'Update the given submission.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/workshop:submit',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

@@ -534,4 +534,162 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('fielderror', $result['warnings'][1]['warningcode']);
         $this->assertEquals('attachment_filemanager', $result['warnings'][1]['item']);
     }
+
+    /**
+     * Helper method to create a submission for testing for the given user.
+     *
+     * @param int $user the submission will be created by this student.
+     * @return int the submission id
+     */
+    protected function create_test_submission($user) {
+        // Test user with full capabilities.
+        $this->setUser($user);
+
+        $title = 'Submission title';
+        $content = 'Submission contents';
+
+        // Create a file in a draft area for inline attachments.
+        $fs = get_file_storage();
+        $draftidinlineattach = file_get_unused_draft_itemid();
+        $usercontext = context_user::instance($this->student->id);
+        $filenameimg = 'shouldbeanimage.txt';
+        $filerecordinline = array(
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $draftidinlineattach,
+            'filepath'  => '/',
+            'filename'  => $filenameimg,
+        );
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
+        // Create a file in a draft area for regular attachments.
+        $draftidattach = file_get_unused_draft_itemid();
+        $filerecordattach = $filerecordinline;
+        $attachfilename = 'attachment.txt';
+        $filerecordattach['filename'] = $attachfilename;
+        $filerecordattach['itemid'] = $draftidattach;
+        $fs->create_file_from_string($filerecordattach, 'simple text attachment');
+
+        // Switch to submission phase.
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $workshop->switch_phase(workshop::PHASE_SUBMISSION);
+
+        $result = mod_workshop_external::add_submission($this->workshop->id, $title, $content, FORMAT_MOODLE, $draftidinlineattach,
+            $draftidattach);
+        return $result['submissionid'];
+    }
+
+    /**
+     * Test test_update_submission.
+     */
+    public function test_update_submission() {
+
+        // Create the submission that will be updated.
+        $submissionid = $this->create_test_submission($this->student);
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        $title = 'Submission new title';
+        $content = 'Submission new contents';
+
+        // Create a different file in a draft area for inline attachments.
+        $fs = get_file_storage();
+        $draftidinlineattach = file_get_unused_draft_itemid();
+        $usercontext = context_user::instance($this->student->id);
+        $filenameimg = 'shouldbeanimage_new.txt';
+        $filerecordinline = array(
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $draftidinlineattach,
+            'filepath'  => '/',
+            'filename'  => $filenameimg,
+        );
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
+        // Create a different file in a draft area for regular attachments.
+        $draftidattach = file_get_unused_draft_itemid();
+        $filerecordattach = $filerecordinline;
+        $attachfilename = 'attachment_new.txt';
+        $filerecordattach['filename'] = $attachfilename;
+        $filerecordattach['itemid'] = $draftidattach;
+        $fs->create_file_from_string($filerecordattach, 'simple text attachment');
+
+        $result = mod_workshop_external::update_submission($submissionid, $title, $content, FORMAT_MOODLE, $draftidinlineattach,
+            $draftidattach);
+        $result = external_api::clean_returnvalue(mod_workshop_external::update_submission_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+
+        // Check submission updated.
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $submission = $workshop->get_submission_by_id($submissionid);
+        $this->assertTrue($result['status']);
+        $this->assertEquals($title, $submission->title);
+        $this->assertEquals($content, $submission->content);
+
+        // Check files.
+        $contentfiles = $fs->get_area_files($this->context->id, 'mod_workshop', 'submission_content', $submission->id);
+        $this->assertCount(2, $contentfiles);
+        foreach ($contentfiles as $file) {
+            if ($file->is_directory()) {
+                continue;
+            } else {
+                $this->assertEquals($filenameimg, $file->get_filename());
+            }
+        }
+        $contentfiles = $fs->get_area_files($this->context->id, 'mod_workshop', 'submission_attachment', $submission->id);
+        $this->assertCount(2, $contentfiles);
+        foreach ($contentfiles as $file) {
+            if ($file->is_directory()) {
+                continue;
+            } else {
+                $this->assertEquals($attachfilename, $file->get_filename());
+            }
+        }
+    }
+
+    /**
+     * Test test_update_submission belonging to other user.
+     */
+    public function test_update_submission_of_other_user() {
+        // Create the submission that will be updated.
+        $submissionid = $this->create_test_submission($this->student);
+
+        $this->setUser($this->teacher);
+
+        $this->expectException('moodle_exception');
+        mod_workshop_external::update_submission($submissionid, 'Test');
+    }
+
+    /**
+     * Test test_update_submission invalid phase.
+     */
+    public function test_update_submission_invalid_phase() {
+        // Create the submission that will be updated.
+        $submissionid = $this->create_test_submission($this->student);
+
+        $this->setUser($this->student);
+
+        // Switch to assessment phase.
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
+
+        $this->expectException('moodle_exception');
+        mod_workshop_external::update_submission($submissionid, 'Test');
+    }
+
+    /**
+     * Test test_update_submission empty title.
+     */
+    public function test_update_submission_empty_title() {
+        // Create the submission that will be updated.
+        $submissionid = $this->create_test_submission($this->student);
+
+        $this->setUser($this->student);
+
+        $this->expectException('moodle_exception');
+        mod_workshop_external::update_submission($submissionid, '');
+    }
 }
