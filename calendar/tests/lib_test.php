@@ -171,4 +171,55 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $event = reset($events);
         $this->assertEquals('assign', $event->modulename);
     }
+
+    /**
+     * Helper function to create calendar events using the old code.
+     *
+     * @param array $properties A list of calendar event properties to set
+     * @return calendar_event|bool
+     */
+    protected function create_event($properties = []) {
+        $record = new \stdClass();
+        $record->name = 'event name';
+        $record->eventtype = 'global';
+        $record->timestart = time();
+        $record->timeduration = 0;
+        $record->timesort = 0;
+        $record->type = 1;
+        $record->courseid = 0;
+
+        foreach ($properties as $name => $value) {
+            $record->$name = $value;
+        }
+
+        $event = new calendar_event($record);
+        return $event->create($record, false);
+    }
+
+    /**
+     * Test that when course module is deleted all events are also deleted.
+     */
+    public function test_delete_module_delete_events() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $user = $this->getDataGenerator()->create_user();
+        // Create the course we will be using.
+        $course = $this->getDataGenerator()->create_course();
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        foreach (core_component::get_plugin_list('mod') as $modname => $unused) {
+            $module = $this->getDataGenerator()->create_module($modname, ['course' => $course->id]);
+
+            // Create bunch of events of different type (user override, group override, module event).
+            $this->create_event(['userid' => $user->id, 'modulename' => $modname, 'instance' => $module->id]);
+            $this->create_event(['groupid' => $group->id, 'modulename' => $modname, 'instance' => $module->id]);
+            $this->create_event(['modulename' => $modname, 'instance' => $module->id]);
+            $this->create_event(['modulename' => $modname, 'instance' => $module->id, 'courseid' => $course->id]);
+
+            // Delete module and make sure all events are deleted.
+            course_delete_module($module->cmid);
+            $this->assertEmpty($DB->get_record('event', ['modulename' => $modname, 'instance' => $module->id]));
+        }
+    }
 }
