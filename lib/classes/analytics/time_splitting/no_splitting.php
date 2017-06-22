@@ -19,12 +19,12 @@
  *
  * Used when time is not a factor to consider into the equation.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_analytics\local\time_splitting;
+namespace core\analytics\time_splitting;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,11 +33,11 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Used when time is not a factor to consider into the equation.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class no_splitting extends base {
+class no_splitting extends \core_analytics\local\time_splitting\base {
 
     /**
      * get_name
@@ -45,7 +45,7 @@ class no_splitting extends base {
      * @return string
      */
     public function get_name() {
-        return get_string('timesplitting:nosplitting', 'analytics');
+        return get_string('timesplitting:nosplitting');
     }
 
     /**

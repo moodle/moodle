@@ -52,7 +52,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->setAdminuser();
 
         $model = $this->add_perfect_model('test_static_target_shortname');
-        $model->enable('\\core_analytics\\local\\time_splitting\\no_splitting');
+        $model->enable('\core\analytics\time_splitting\no_splitting');
         $this->assertEquals(1, $model->is_enabled());
         $this->assertEquals(1, $model->is_trained());
 
@@ -202,8 +202,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      */
     public function provider_ml_training_and_prediction() {
         $cases = array(
-            'no_splitting' => array('\core_analytics\local\time_splitting\no_splitting', 1),
-            'quarters' => array('\core_analytics\local\time_splitting\quarters', 4)
+            'no_splitting' => array('\core\analytics\time_splitting\no_splitting', 1),
+            'quarters' => array('\core\analytics\time_splitting\quarters', 4)
         );
 
         // We need to test all system prediction processors.
@@ -226,9 +226,9 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->setAdminuser();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
 
-        $sometimesplittings = '\core_analytics\local\time_splitting\weekly,' .
-            '\core_analytics\local\time_splitting\single_range,' .
-            '\core_analytics\local\time_splitting\quarters';
+        $sometimesplittings = '\core\analytics\time_splitting\weekly,' .
+            '\core\analytics\time_splitting\single_range,' .
+            '\core\analytics\time_splitting\quarters';
         set_config('timesplittings', $sometimesplittings, 'analytics');
 
         if ($modelquality === 'perfect') {
@@ -287,10 +287,10 @@ class core_analytics_prediction_testcase extends advanced_testcase {
                 'ncourses' => 5,
                 'expectedresults' => array(
                     // The course duration is too much to be processed by in weekly basis.
-                    '\core_analytics\local\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
+                    '\core\analytics\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
                     // 10 samples is not enough to process anything.
-                    '\core_analytics\local\time_splitting\single_range' => $notenoughandlowscore,
-                    '\core_analytics\local\time_splitting\quarters' => $notenoughandlowscore,
+                    '\core\analytics\time_splitting\single_range' => $notenoughandlowscore,
+                    '\core\analytics\time_splitting\quarters' => $notenoughandlowscore,
                 )
             ),
             'bad' => array(
@@ -298,9 +298,9 @@ class core_analytics_prediction_testcase extends advanced_testcase {
                 'ncourses' => 50,
                 'expectedresults' => array(
                     // The course duration is too much to be processed by in weekly basis.
-                    '\core_analytics\local\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
-                    '\core_analytics\local\time_splitting\single_range' => \core_analytics\model::EVALUATE_LOW_SCORE,
-                    '\core_analytics\local\time_splitting\quarters' => \core_analytics\model::EVALUATE_LOW_SCORE,
+                    '\core\analytics\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
+                    '\core\analytics\time_splitting\single_range' => \core_analytics\model::EVALUATE_LOW_SCORE,
+                    '\core\analytics\time_splitting\quarters' => \core_analytics\model::EVALUATE_LOW_SCORE,
                 )
             ),
             'good' => array(
@@ -308,9 +308,9 @@ class core_analytics_prediction_testcase extends advanced_testcase {
                 'ncourses' => 50,
                 'expectedresults' => array(
                     // The course duration is too much to be processed by in weekly basis.
-                    '\core_analytics\local\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
-                    '\core_analytics\local\time_splitting\single_range' => \core_analytics\model::OK,
-                    '\core_analytics\local\time_splitting\quarters' => \core_analytics\model::OK,
+                    '\core\analytics\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
+                    '\core\analytics\time_splitting\single_range' => \core_analytics\model::OK,
+                    '\core\analytics\time_splitting\quarters' => \core_analytics\model::OK,
                 )
             )
         );

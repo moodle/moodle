@@ -171,7 +171,7 @@ class manager {
 
         $predictionprocessors = array();
         foreach ($mlbackends as $mlbackend => $unused) {
-            $classfullpath = '\\mlbackend_' . $mlbackend . '\\processor';
+            $classfullpath = '\mlbackend_' . $mlbackend . '\processor';
             $predictionprocessors[$classfullpath] = self::get_predictions_processor($classfullpath, false);
         }
         return $predictionprocessors;
@@ -389,7 +389,10 @@ class manager {
         // Just in case...
         $element = clean_param($element, PARAM_ALPHANUMEXT);
 
-        $classes = \core_component::get_component_classes_in_namespace('core_analytics', 'local\\' . $element);
+        // Core analytics classes (analytics subsystem should not contain uses of the analytics API).
+        $classes = \core_component::get_component_classes_in_namespace('core', 'analytics\\' . $element);
+
+        // Plugins.
         foreach (\core_component::get_plugin_types() as $type => $unusedplugintypepath) {
             foreach (\core_component::get_plugin_list($type) as $pluginname => $unusedpluginpath) {
                 $frankenstyle = $type . '_' . $pluginname;
@@ -397,6 +400,7 @@ class manager {
             }
         }
 
+        // Core subsystems.
         foreach (\core_component::get_core_subsystems() as $subsystemname => $unusedsubsystempath) {
             $componentname = 'core_' . $subsystemname;
             $classes += \core_component::get_component_classes_in_namespace($componentname, 'analytics\\' . $element);

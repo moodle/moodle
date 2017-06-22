@@ -17,19 +17,19 @@
 /**
  * No teaching target.
  *
- * @package   tool_models
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_models\analytics\target;
+namespace core\analytics\target;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * No teaching target.
  *
- * @package   tool_models
+ * @package   core
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -50,7 +50,7 @@ class no_teaching extends \core_analytics\local\target\binary {
      * @return string
      */
     public static function get_name() {
-        return get_string('target:noteachingactivity', 'tool_models');
+        return get_string('target:noteachingactivity');
     }
 
     /**
@@ -97,8 +97,8 @@ class no_teaching extends \core_analytics\local\target\binary {
      */
     protected static function classes_description() {
         return array(
-            get_string('labelteachingyes', 'tool_models'),
-            get_string('labelteachingno', 'tool_models'),
+            get_string('targetlabelteachingyes'),
+            get_string('targetlabelteachingno'),
         );
     }
 
@@ -118,7 +118,7 @@ class no_teaching extends \core_analytics\local\target\binary {
      * @return string
      */
     public function get_analyser_class() {
-        return '\\core_analytics\\local\\analyser\\site_courses';
+        return '\core\analytics\analyser\site_courses';
     }
 
     /**

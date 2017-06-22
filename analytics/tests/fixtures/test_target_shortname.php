@@ -46,7 +46,7 @@ class test_target_shortname extends \core_analytics\local\target\binary {
      * @return string
      */
     public function get_analyser_class() {
-        return '\core_analytics\local\analyser\site_courses';
+        return '\core\analytics\analyser\site_courses';
     }
 
     /**

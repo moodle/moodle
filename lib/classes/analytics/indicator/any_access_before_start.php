@@ -15,25 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Write actions indicator.
+ * Any access before the official start of the course.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_analytics\local\indicator;
+namespace core\analytics\indicator;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Write actions indicator.
+ * Any access before the official start of the course.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class any_write_action extends binary {
+class any_access_before_start extends \core_analytics\local\indicator\binary {
 
     /**
      * get_name
@@ -41,7 +41,7 @@ class any_write_action extends binary {
      * @return string
      */
     public static function get_name() {
-        return get_string('indicator:anywrite', 'analytics');
+        return get_string('indicator:accessesbeforestart');
     }
 
     /**
@@ -50,36 +50,31 @@ class any_write_action extends binary {
      * @return string[]
      */
     public static function required_sample_data() {
-        // User is not required, calculate_sample can handle its absence.
-        return array('context');
+        return array('user', 'course', 'context');
     }
 
     /**
      * calculate_sample
      *
      * @param int $sampleid
-     * @param string $sampleorigin
+     * @param string $samplesorigin
      * @param int $starttime
      * @param int $endtime
      * @return float
      */
-    protected function calculate_sample($sampleid, $sampleorigin, $starttime = false, $endtime = false) {
+    protected function calculate_sample($sampleid, $samplesorigin, $starttime = false, $endtime = false) {
         global $DB;
 
-        $select = '';
-        $params = array();
-
-        if ($user = $this->retrieve('user', $sampleid)) {
-            $select .= "userid = :userid AND ";
-            $params = $params + array('userid' => $user->id);
-        }
+        $user = $this->retrieve('user', $sampleid);
+        $course = \core_analytics\course::instance($this->retrieve('course', $sampleid));
 
         // Filter by context to use the db table index.
         $context = $this->retrieve('context', $sampleid);
-        $select .= "contextlevel = :contextlevel AND contextinstanceid = :contextinstanceid AND " .
-            "(crud = 'c' OR crud = 'u') AND timecreated > :starttime AND timecreated <= :endtime";
-        $params = $params + array('contextlevel' => $context->contextlevel,
-            'contextinstanceid' => $context->instanceid, 'starttime' => $starttime, 'endtime' => $endtime);
+        $select = "userid = :userid AND contextlevel = :contextlevel AND contextinstanceid = :contextinstanceid AND " .
+            "timecreated < :start";
+        $params = array('userid' => $user->id, 'contextlevel' => $context->contextlevel,
+            'contextinstanceid' => $context->instanceid, 'start' => $course->get_start());
+
         $logstore = \core_analytics\manager::get_analytics_logstore();
         $nlogs = $logstore->get_events_select_count($select, $params);
         if ($nlogs) {

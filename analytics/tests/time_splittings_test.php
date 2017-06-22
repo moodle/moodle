@@ -63,12 +63,12 @@ class analytics_time_splittings_testcase extends advanced_testcase {
 
         // All core_analytics time splitting methods.
         $timesplittings = array(
-            '\\core_analytics\\local\\time_splitting\\deciles',
-            '\\core_analytics\\local\\time_splitting\\deciles_accum',
-            '\\core_analytics\\local\\time_splitting\\no_splitting',
-            '\\core_analytics\\local\\time_splitting\\quarters',
-            '\\core_analytics\\local\\time_splitting\\quarters_accum',
-            '\\core_analytics\\local\\time_splitting\\single_range'
+            '\core\analytics\time_splitting\deciles',
+            '\core\analytics\time_splitting\deciles_accum',
+            '\core\analytics\time_splitting\no_splitting',
+            '\core\analytics\time_splitting\quarters',
+            '\core\analytics\time_splitting\quarters_accum',
+            '\core\analytics\time_splitting\single_range'
         );
 
         // Check that defined ranges are valid (tested through validate_ranges).
@@ -89,7 +89,7 @@ class analytics_time_splittings_testcase extends advanced_testcase {
         $aug2016 = mktime(0, 0, 0, 8, 29, 2016);
 
         // Equal parts.
-        $quarters = new \core_analytics\local\time_splitting\quarters();
+        $quarters = new \core\analytics\time_splitting\quarters();
         $quarters->set_analysable($this->analysable);
         $ranges = $quarters->get_all_ranges();
         $this->assertCount(4, $ranges);
@@ -115,7 +115,7 @@ class analytics_time_splittings_testcase extends advanced_testcase {
         $this->assertGreaterThan($aug2016, $ranges[3]['end']);
 
         // Accumulative.
-        $accum = new \core_analytics\local\time_splitting\quarters_accum();
+        $accum = new \core\analytics\time_splitting\quarters_accum();
         $accum->set_analysable($this->analysable);
         $ranges = $accum->get_all_ranges();
         $this->assertCount(4, $ranges);
@@ -150,9 +150,9 @@ class analytics_time_splittings_testcase extends advanced_testcase {
      */
     public function test_ready_predict() {
 
-        $quarters = new \core_analytics\local\time_splitting\quarters();
-        $nosplitting = new \core_analytics\local\time_splitting\no_splitting();
-        $singlerange = new \core_analytics\local\time_splitting\single_range();
+        $quarters = new \core\analytics\time_splitting\quarters();
+        $nosplitting = new \core\analytics\time_splitting\no_splitting();
+        $singlerange = new \core\analytics\time_splitting\single_range();
 
         $range = array(
             'start' => time() - 100,

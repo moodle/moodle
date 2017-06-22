@@ -39,7 +39,7 @@ Options:
 -h, --help             Print out this help
 
 Example:
-\$ php admin/tool/models/cli/evaluate_model.php --modelid=1 --timesplitting='\\core_analytics\\local\\time_splitting\\quarters' --filter=123,321
+\$ php admin/tool/models/cli/evaluate_model.php --modelid=1 --timesplitting='\\core\\analytics\\time_splitting\\quarters' --filter=123,321
 ";
 
 // Now get cli options.

@@ -15,25 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * 10 parts time splitting method.
+ * Quarters time splitting method.
  *
- * @package   core_analytics
- * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
+ * @package   core
+ * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_analytics\local\time_splitting;
+namespace core\analytics\time_splitting;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * 10 parts time splitting method.
+ * Quarters time splitting method.
  *
- * @package   core_analytics
- * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
+ * @package   core
+ * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class deciles extends equal_parts {
+class quarters extends \core_analytics\local\time_splitting\equal_parts {
 
     /**
      * get_name
@@ -41,15 +41,15 @@ class deciles extends equal_parts {
      * @return string
      */
     public function get_name() {
-        return get_string('timesplitting:deciles', 'analytics');
+        return get_string('timesplitting:quarters');
     }
 
     /**
-     * 10 parts.
+     * 4 parts
      *
      * @return int
      */
     protected function get_number_parts() {
-        return 10;
+        return 4;
     }
 }

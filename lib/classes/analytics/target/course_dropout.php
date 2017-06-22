@@ -17,12 +17,12 @@
 /**
  * Drop out course target.
  *
- * @package   tool_models
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_models\analytics\target;
+namespace core\analytics\target;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/completion/completion_completion.php');
 /**
  * Drop out course target.
  *
- * @package   tool_models
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +46,7 @@ class course_dropout extends \core_analytics\local\target\binary {
      * @return string
      */
     public static function get_name() {
-        return get_string('target:coursedropout', 'tool_models');
+        return get_string('target:coursedropout');
     }
 
     /**
@@ -87,8 +87,8 @@ class course_dropout extends \core_analytics\local\target\binary {
      */
     protected static function classes_description() {
         return array(
-            get_string('labelstudentdropoutno', 'tool_models'),
-            get_string('labelstudentdropoutyes', 'tool_models')
+            get_string('targetlabelstudentdropoutno'),
+            get_string('targetlabelstudentdropoutyes')
         );
     }
 
@@ -109,7 +109,7 @@ class course_dropout extends \core_analytics\local\target\binary {
      * @return string
      */
     public function get_analyser_class() {
-        return '\\core_analytics\\local\\analyser\\student_enrolments';
+        return '\core\analytics\analyser\student_enrolments';
     }
 
     /**
@@ -123,31 +123,31 @@ class course_dropout extends \core_analytics\local\target\binary {
         global $DB;
 
         if (!$course->was_started()) {
-            return get_string('coursenotyetstarted', 'tool_models');
+            return get_string('coursenotyetstarted');
         }
 
         if (!$students = $course->get_students()) {
-            return get_string('nocoursestudents', 'tool_models');
+            return get_string('nocoursestudents');
         }
 
         if (!course_format_uses_sections($course->get_course_data()->format)) {
             // We can not split activities in time ranges.
-            return get_string('nocoursesections', 'tool_models');
+            return get_string('nocoursesections');
         }
 
         if ($course->get_start() == 0) {
             // We require time start to be set.
-            return get_string('nocoursestarttime', 'tool_models');
+            return get_string('nocoursestarttime');
         }
 
         if ($course->get_end() == 0) {
             // We require time end to be set.
-            return get_string('nocourseendtime', 'tool_models');
+            return get_string('nocourseendtime');
         }
 
         // Ongoing courses data can not be used to train.
         if ($fortraining && !$course->is_finished()) {
-            return get_string('coursenotyetfinished', 'tool_models');
+            return get_string('coursenotyetfinished');
         }
 
         if ($fortraining) {
@@ -166,7 +166,7 @@ class course_dropout extends \core_analytics\local\target\binary {
             // At least a minimum of students activity.
             $nstudents = count($students);
             if ($nlogs / $nstudents < 10) {
-                return get_string('nocourseactivity', 'tool_models');
+                return get_string('nocourseactivity');
             }
         }
 

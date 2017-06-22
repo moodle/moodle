@@ -15,25 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Site courses analyser working at system level (insights for the site admin).
+ * Courses analyser working at course level (insights for the course teachers).
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_analytics\local\analyser;
+namespace core\analytics\analyser;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Site courses analyser working at system level (insights for the site admin).
+ * Courses analyser working at course level (insights for the course teachers).
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class site_courses extends sitewide {
+class courses extends \core_analytics\local\analyser\by_course {
 
     /**
      * Samples origin is course table.
@@ -45,17 +45,17 @@ class site_courses extends sitewide {
     }
 
     /**
-     * Returns the sample analysable
+     * Returns the analysable of a sample
      *
      * @param int $sampleid
      * @return \core_analytics\analysable
      */
     public function get_sample_analysable($sampleid) {
-        return new \core_analytics\site();
+        return \core_analytics\course::instance($sampleid);
     }
 
     /**
-     * Data this analyer samples provide.
+     * This provides samples' course and context.
      *
      * @return string[]
      */
@@ -64,43 +64,34 @@ class site_courses extends sitewide {
     }
 
     /**
-     * Returns the sample context.
+     * Returns the context of a sample.
      *
      * @param int $sampleid
      * @return \context
      */
     public function sample_access_context($sampleid) {
-        return \context_system::instance();
+        return \context_course::instance($sampleid);
     }
 
     /**
-     * Returns all site courses.
+     * This will return just one course as we analyse 'by_course'.
      *
-     * @param \core_analytics\analysable $site
+     * @param \core_analytics\analysable $course
      * @return array
      */
-    protected function get_all_samples(\core_analytics\analysable $site) {
-        global $DB;
+    protected function get_all_samples(\core_analytics\analysable $course) {
 
-        // Getting courses from DB instead of from the site as these samples
-        // will be stored in memory and we just want the id.
-        $select = 'id != 1';
-        $courses = get_courses('all', 'c.sortorder ASC');
-        unset($courses[SITEID]);
+        $context = \context_course::instance($course->get_id());
 
-        $courseids = array_keys($courses);
-        $sampleids = array_combine($courseids, $courseids);
-
-        $courses = array_map(function($course) {
-            return array('course' => $course, 'context' => \context_course::instance($course->id));
-        }, $courses);
-
-        // No related data attached.
-        return array($sampleids, $courses);
+        // Just 1 sample per analysable.
+        return array(
+            array($course->get_id() => $course->get_id()),
+            array($course->get_id() => array('course' => $course->get_course_data(), 'context' => $context))
+        );
     }
 
     /**
-     * Return all complete samples data from sample ids.
+     * Returns samples data from sample ids.
      *
      * @param int[] $sampleids
      * @return array
@@ -123,7 +114,7 @@ class site_courses extends sitewide {
     }
 
     /**
-     * Returns the description of a sample.
+     * Returns the sample description
      *
      * @param int $sampleid
      * @param int $contextid

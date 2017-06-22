@@ -17,23 +17,23 @@
 /**
  * Read actions indicator.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_analytics\local\indicator;
+namespace core\analytics\indicator;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Read actions indicator.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class read_actions extends linear {
+class read_actions extends \core_analytics\local\indicator\linear {
 
     /**
      * get_name
@@ -41,7 +41,7 @@ class read_actions extends linear {
      * @return string
      */
     public static function get_name() {
-        return get_string('indicator:readactions', 'analytics');
+        return get_string('indicator:readactions');
     }
 
     /**

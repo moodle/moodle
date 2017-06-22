@@ -53,6 +53,6 @@ class test_static_target_shortname extends test_target_shortname {
      * @return string
      */
     public function get_analyser_class() {
-        return '\core_analytics\local\analyser\courses';
+        return '\core\analytics\analyser\courses';
     }
 }

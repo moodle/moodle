@@ -64,8 +64,8 @@ if ($hassiteconfig) {
         $alltimesplittings = \core_analytics\manager::get_all_time_splittings();
 
         $timesplittingoptions = array();
-        $timesplittingdefaults = array('\\core_analytics\\local\\time_splitting\\quarters_accum',
-            '\\core_analytics\\local\\time_splitting\\quarters', '\\core_analytics\\local\\time_splitting\\no_splitting');
+        $timesplittingdefaults = array('\core\analytics\time_splitting\quarters_accum',
+            '\core\analytics\time_splitting\quarters', '\core\analytics\time_splitting\no_splitting');
         foreach ($alltimesplittings as $key => $timesplitting) {
             $timesplittingoptions[$key] = $timesplitting->get_name();
         }

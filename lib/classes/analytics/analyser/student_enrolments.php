@@ -17,12 +17,12 @@
 /**
  * Student enrolments analyser.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_analytics\local\analyser;
+namespace core\analytics\analyser;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,11 +33,11 @@ require_once($CFG->dirroot . '/lib/enrollib.php');
  *
  * It does return all student enrolments including the suspended ones.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class student_enrolments extends by_course {
+class student_enrolments extends \core_analytics\local\analyser\by_course {
 
     /**
      * @var array Cache for user_enrolment id - course id relation.

@@ -59,19 +59,19 @@ class analytics_model_testcase extends advanced_testcase {
         $this->assertEquals(0, $this->model->get_model_obj()->trained);
         $this->assertEquals('', $this->model->get_model_obj()->timesplitting);
 
-        $this->model->enable('\\core_analytics\\local\\time_splitting\\quarters');
+        $this->model->enable('\core\analytics\time_splitting\quarters');
         $this->assertEquals(1, $this->model->get_model_obj()->enabled);
         $this->assertEquals(0, $this->model->get_model_obj()->trained);
-        $this->assertEquals('\\core_analytics\\local\\time_splitting\\quarters', $this->model->get_model_obj()->timesplitting);
+        $this->assertEquals('\core\analytics\time_splitting\quarters', $this->model->get_model_obj()->timesplitting);
     }
 
     public function test_create() {
         $this->resetAfterTest(true);
 
-        $target = \core_analytics\manager::get_target('\tool_models\analytics\target\course_dropout');
+        $target = \core_analytics\manager::get_target('\core\analytics\target\course_dropout');
         $indicators = array(
-            \core_analytics\manager::get_indicator('\core_analytics\local\indicator\any_write_action'),
-            \core_analytics\manager::get_indicator('\core_analytics\local\indicator\read_actions')
+            \core_analytics\manager::get_indicator('\core\analytics\indicator\any_write_action'),
+            \core_analytics\manager::get_indicator('\core\analytics\indicator\read_actions')
         );
         $model = \core_analytics\model::create($target, $indicators);
         $this->assertInstanceOf('\core_analytics\model', $model);
@@ -87,8 +87,8 @@ class analytics_model_testcase extends advanced_testcase {
         $this->model->init_analyser(array('evaluation' => true));
         $this->assertInstanceOf('\core_analytics\local\analyser\base', $this->model->get_analyser());
 
-        $this->model->enable('\core_analytics\local\time_splitting\quarters');
-        $this->assertInstanceOf('\core_analytics\local\analyser\site_courses', $this->model->get_analyser());
+        $this->model->enable('\core\analytics\time_splitting\quarters');
+        $this->assertInstanceOf('\core\analytics\analyser\site_courses', $this->model->get_analyser());
     }
 
     public function test_output_dir() {
@@ -136,7 +136,7 @@ class analytics_model_testcase extends advanced_testcase {
 
         // Wait 1 sec so the timestamp changes.
         sleep(1);
-        $this->model->enable('\core_analytics\local\time_splitting\quarters');
+        $this->model->enable('\core\analytics\time_splitting\quarters');
         $this->assertNotEquals($originaluniqueid, $this->model->get_unique_id());
 
     }

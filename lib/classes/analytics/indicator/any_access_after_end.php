@@ -17,23 +17,23 @@
 /**
  * Any access after the official end of the course.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_analytics\local\indicator;
+namespace core\analytics\indicator;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Any access after the official end of the course.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class any_access_after_end extends binary {
+class any_access_after_end extends \core_analytics\local\indicator\binary {
 
     /**
      * get_name
@@ -41,7 +41,7 @@ class any_access_after_end extends binary {
      * @return string
      */
     public static function get_name() {
-        return get_string('indicator:accessesafterend', 'analytics');
+        return get_string('indicator:accessesafterend');
     }
 
     /**

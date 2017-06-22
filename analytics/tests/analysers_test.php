@@ -48,7 +48,7 @@ class analytics_analysers_testcase extends advanced_testcase {
         $coursecontext = \context_course::instance($course->id);
 
         $target = new test_target_shortname();
-        $analyser = new \core_analytics\local\analyser\courses(1, $target, [], [], []);
+        $analyser = new \core\analytics\analyser\courses(1, $target, [], [], []);
         $analysable = new \core_analytics\course($course);
 
         $this->assertInstanceOf('\core_analytics\course', $analyser->get_sample_analysable($course->id));
@@ -56,7 +56,7 @@ class analytics_analysers_testcase extends advanced_testcase {
         $this->assertInstanceOf('\context_course', $analyser->sample_access_context($course->id));
 
         // Just 1 sample per course.
-        $class = new ReflectionClass('\core_analytics\local\analyser\courses');
+        $class = new ReflectionClass('\core\analytics\analyser\courses');
         $method = $class->getMethod('get_all_samples');
         $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
@@ -87,7 +87,7 @@ class analytics_analysers_testcase extends advanced_testcase {
         $course1context = \context_course::instance($course1->id);
 
         $target = new test_target_shortname();
-        $analyser = new \core_analytics\local\analyser\site_courses(1, $target, [], [], []);
+        $analyser = new \core\analytics\analyser\site_courses(1, $target, [], [], []);
         $analysable = new \core_analytics\site();
 
         $this->assertInstanceOf('\core_analytics\site', $analyser->get_sample_analysable($course1->id));
@@ -96,7 +96,7 @@ class analytics_analysers_testcase extends advanced_testcase {
         $this->assertInstanceOf('\context_system', $analyser->sample_access_context($course1->id));
         $this->assertInstanceOf('\context_system', $analyser->sample_access_context($course3->id));
 
-        $class = new ReflectionClass('\core_analytics\local\analyser\site_courses');
+        $class = new ReflectionClass('\core\analytics\analyser\site_courses');
         $method = $class->getMethod('get_all_samples');
         $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
@@ -142,13 +142,13 @@ class analytics_analysers_testcase extends advanced_testcase {
         $ue2 = $DB->get_record('user_enrolments', array('userid' => $user2->id, 'enrolid' => $enrol->id));
 
         $target = new test_target_shortname();
-        $analyser = new \core_analytics\local\analyser\student_enrolments(1, $target, [], [], []);
+        $analyser = new \core\analytics\analyser\student_enrolments(1, $target, [], [], []);
         $analysable = new \core_analytics\course($course);
 
         $this->assertInstanceOf('\core_analytics\course', $analyser->get_sample_analysable($ue1->id));
         $this->assertInstanceOf('\context_course', $analyser->sample_access_context($ue1->id));
 
-        $class = new ReflectionClass('\core_analytics\local\analyser\student_enrolments');
+        $class = new ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
         $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);

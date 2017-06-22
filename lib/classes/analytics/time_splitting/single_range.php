@@ -17,23 +17,23 @@
 /**
  * Single time splitting method.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_analytics\local\time_splitting;
+namespace core\analytics\time_splitting;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Single time splitting method.
  *
- * @package   core_analytics
+ * @package   core
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class single_range extends base {
+class single_range extends \core_analytics\local\time_splitting\base {
 
     /**
      * get_name
@@ -41,7 +41,7 @@ class single_range extends base {
      * @return string
      */
     public function get_name() {
-        return get_string('timesplitting:singlerange', 'analytics');
+        return get_string('timesplitting:singlerange');
     }
 
     /**
