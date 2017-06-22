@@ -930,4 +930,139 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, $result['totalcount']);
         $this->assertEquals($submissionid2, $result['submissions'][0]['id']);
     }
+
+    /**
+     * Test test_get_submission_student.
+     */
+    public function test_get_submission_student() {
+
+        // Create a couple of submissions with files.
+        $firstsubmissionid = $this->create_test_submission($this->student);  // Create submission with files.
+
+        $this->setUser($this->student);
+        $result = mod_workshop_external::get_submission($firstsubmissionid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $this->assertEquals($firstsubmissionid, $result['submission']['id']);
+        $this->assertCount(1, $result['submission']['contentfiles']); // Check we retrieve submission text files.
+        $this->assertCount(1, $result['submission']['attachmentfiles']); // Check we retrieve attachment files.
+    }
+
+    /**
+     * Test test_get_submission_i_reviewed.
+     */
+    public function test_get_submission_i_reviewed() {
+
+        // Create a couple of submissions with files.
+        $firstsubmissionid = $this->create_test_submission($this->student);  // Create submission with files.
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $workshopgenerator->create_assessment($firstsubmissionid, $this->anotherstudentg1->id, array(
+            'weight' => 3,
+            'grade' => 95,
+        ));
+        // Now try to get the submission I just reviewed.
+        $this->setUser($this->anotherstudentg1);
+        $result = mod_workshop_external::get_submission($firstsubmissionid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $this->assertEquals($firstsubmissionid, $result['submission']['id']);
+        $this->assertCount(1, $result['submission']['contentfiles']); // Check we retrieve submission text files.
+        $this->assertCount(1, $result['submission']['attachmentfiles']); // Check we retrieve attachment files.
+    }
+
+    /**
+     * Test test_get_submission_other_student.
+     */
+    public function test_get_submission_other_student() {
+
+        // Create a couple of submissions with files.
+        $firstsubmissionid = $this->create_test_submission($this->student);  // Create submission with files.
+        // Expect failure.
+        $this->setUser($this->anotherstudentg1);
+        $this->expectException('moodle_exception');
+        $result = mod_workshop_external::get_submission($firstsubmissionid);
+    }
+
+    /**
+     * Test test_get_submission_published_student.
+     */
+    public function test_get_submission_published_student() {
+        global $DB;
+
+        $DB->set_field('workshop', 'phase', workshop::PHASE_CLOSED, array('id' => $this->workshop->id));
+        // Create a couple of submissions with files.
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $submission = array('published' => 1);
+        $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->anotherstudentg1->id, $submission);
+
+        $this->setUser($this->student);
+        $result = mod_workshop_external::get_submission($submissionid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $this->assertEquals($submissionid, $result['submission']['id']);
+        // Check that the student don't see the other student grade/feedback data even if is published.
+        // We shoul not see the grade or feedback information.
+        $properties = submission_exporter::properties_definition();
+        foreach ($properties as $attribute => $settings) {
+            if (!empty($settings['optional'])) {
+                if (isset($result['submission'][$attribute])) {
+                    echo "error $attribute";
+                }
+                $this->assertFalse(isset($result['submission'][$attribute]));
+            }
+        }
+
+        // Check with group restrictions.
+        $this->setUser($this->anotherstudentg2);
+        $this->expectException('moodle_exception');
+        mod_workshop_external::get_submission($submissionid);
+    }
+
+    /**
+     * Test test_get_submission_from_student_with_feedback_from_teacher.
+     */
+    public function test_get_submission_from_student_with_feedback_from_teacher() {
+        global $DB;
+
+        // Create a couple of submissions with files.
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
+        // Create teacher feedback for submission.
+        $record = new stdclass();
+        $record->id = $submissionid;
+        $record->gradeover = 9;
+        $record->gradeoverby = $this->teacher->id;
+        $record->feedbackauthor = 'Hey';
+        $record->feedbackauthorformat = FORMAT_MOODLE;
+        $record->published = 1;
+        $DB->update_record('workshop_submissions', $record);
+
+        // Remove teacher caps.
+        assign_capability('mod/workshop:viewallsubmissions', CAP_PROHIBIT, $this->teacher->id, $this->context->id);
+        // Empty all the caches that may be affected  by this change.
+        accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
+
+        $this->setUser($this->teacher);
+        $result = mod_workshop_external::get_submission($submissionid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $this->assertEquals($submissionid, $result['submission']['id']);
+    }
+
+    /**
+     * Test test_get_submission_from_students_as_teacher.
+     */
+    public function test_get_submission_from_students_as_teacher() {
+        // Create a couple of submissions with files.
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $submissionid1 = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
+        $submissionid2 = $workshopgenerator->create_submission($this->workshop->id, $this->anotherstudentg1->id);
+        $submissionid3 = $workshopgenerator->create_submission($this->workshop->id, $this->anotherstudentg2->id);
+
+        $this->setUser($this->teacher);
+        $result = mod_workshop_external::get_submission($submissionid1); // Get all.
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $this->assertEquals($submissionid1, $result['submission']['id']);
+
+        $result = mod_workshop_external::get_submission($submissionid3); // Get group 2.
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $this->assertEquals($submissionid3, $result['submission']['id']);
+    }
 }
