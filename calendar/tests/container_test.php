@@ -184,6 +184,63 @@ class core_calendar_container_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that the event factory deals with invisible courses as an admin.
+     *
+     * @dataProvider get_event_factory_testcases()
+     * @param \stdClass $dbrow Row from the "database".
+     */
+    public function test_event_factory_when_course_visibility_is_toggled_as_admin($dbrow) {
+        $legacyevent = $this->create_event($dbrow);
+        $factory = \core_calendar\local\event\container::get_event_factory();
+
+        // Create a hidden course with an assignment.
+        $course = $this->getDataGenerator()->create_course(['visible' => 0]);
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        $dbrow->id = $legacyevent->id;
+        $dbrow->courseid = $course->id;
+        $dbrow->instance = $moduleinstance->id;
+        $dbrow->modulename = 'assign';
+        $event = $factory->create_instance($dbrow);
+
+        // Module is still visible to admins even if the course is invisible.
+        $this->assertInstanceOf(event_interface::class, $event);
+    }
+
+    /**
+     * Test that the event factory deals with invisible courses as a student.
+     *
+     * @dataProvider get_event_factory_testcases()
+     * @param \stdClass $dbrow Row from the "database".
+     */
+    public function test_event_factory_when_course_visibility_is_toggled_as_student($dbrow) {
+        $legacyevent = $this->create_event($dbrow);
+        $factory = \core_calendar\local\event\container::get_event_factory();
+
+        // Create a hidden course with an assignment.
+        $course = $this->getDataGenerator()->create_course(['visible' => 0]);
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        // Enrol a student into this course.
+        $student = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student->id, $course->id);
+
+        // Set the user to the student.
+        $this->setUser($student);
+
+        $dbrow->id = $legacyevent->id;
+        $dbrow->courseid = $course->id;
+        $dbrow->instance = $moduleinstance->id;
+        $dbrow->modulename = 'assign';
+        $event = $factory->create_instance($dbrow);
+
+        // Module is invisible to students if the course is invisible.
+        $this->assertNull($event);
+    }
+
+    /**
      * Test that the event factory deals with completion related events properly.
      */
     public function test_event_factory_with_completion_related_event() {
