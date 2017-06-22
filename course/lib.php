@@ -1204,8 +1204,10 @@ function course_delete_module($cmid, $async = false) {
 
     // Delete events from calendar.
     if ($events = $DB->get_records('event', array('instance' => $cm->instance, 'modulename' => $modulename))) {
+        $coursecontext = context_course::instance($cm->course);
         foreach($events as $event) {
-            $calendarevent = calendar_event::load($event->id);
+            $event->context = $coursecontext;
+            $calendarevent = calendar_event::load($event);
             $calendarevent->delete();
         }
     }
