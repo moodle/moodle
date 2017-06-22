@@ -113,16 +113,15 @@ class assign_submission_file extends assign_submission_plugin {
                            'notchecked');
 
         $name = get_string('acceptedfiletypes', 'assignsubmission_file');
-        $mform->addElement('text', 'assignsubmission_file_filetypes', $name, array('size' => '60'));
+        $mform->addElement('filetypes', 'assignsubmission_file_filetypes', $name);
         $mform->addHelpButton('assignsubmission_file_filetypes', 'acceptedfiletypes', 'assignsubmission_file');
-        $mform->setType('assignsubmission_file_filetypes', PARAM_RAW);
         $mform->setDefault('assignsubmission_file_filetypes', $defaultfiletypes);
         $mform->disabledIf('assignsubmission_file_filetypes', 'assignsubmission_file_enabled', 'notchecked');
         $mform->addFormRule(function ($values, $files) {
             if (empty($values['assignsubmission_file_filetypes'])) {
                 return true;
             }
-            $nonexistent = $this->get_nonexistent_file_types($values['assignsubmission_file_filetypes']);
+            $nonexistent = $this->get_nonexistent_file_types($values['assignsubmission_file_filetypes']['filetypes']);
             if (empty($nonexistent)) {
                 return true;
             } else {
