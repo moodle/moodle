@@ -286,6 +286,31 @@ class core_calendar_container_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that when course module is deleted all events are also deleted.
+     */
+    public function test_delete_module_delete_events() {
+        global $DB;
+        $user = $this->getDataGenerator()->create_user();
+        // Create the course we will be using.
+        $course = $this->getDataGenerator()->create_course();
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        foreach (core_component::get_plugin_list('mod') as $modname => $unused) {
+            $module = $this->getDataGenerator()->create_module($modname, ['course' => $course->id]);
+
+            // Create bunch of events of different type (user override, group override, module event).
+            $this->create_event(['userid' => $user->id, 'modulename' => $modname, 'instance' => $module->id]);
+            $this->create_event(['groupid' => $group->id, 'modulename' => $modname, 'instance' => $module->id]);
+            $this->create_event(['modulename' => $modname, 'instance' => $module->id]);
+            $this->create_event(['modulename' => $modname, 'instance' => $module->id, 'courseid' => $course->id]);
+
+            // Delete module and make sure all events are deleted.
+            course_delete_module($module->cmid);
+            $this->assertEmpty($DB->get_record('event', ['modulename' => $modname, 'instance' => $module->id]));
+        }
+    }
+
+    /**
      * Test getting the event mapper.
      */
     public function test_get_event_mapper() {
