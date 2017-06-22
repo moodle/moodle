@@ -66,13 +66,13 @@ class company_edit_form extends company_moodleform {
 
         $mform->addElement('text', 'name',
                             get_string('companyname', 'block_iomad_company_admin'),
-                            array('size' => 50));
+                            'maxlength="50" size="50"');
         $mform->setType('name', PARAM_NOTAGS);
         $mform->addRule('name', $strrequired, 'required');
 
         $mform->addElement('text', 'shortname',
                             get_string('companyshortname', 'block_iomad_company_admin'),
-                            array('size' => 25));
+                            'maxlength="25" size="25"');
         $mform->setType('shortname', PARAM_NOTAGS);
         $mform->addRule('shortname', $strrequired, 'required');
         
@@ -103,7 +103,7 @@ class company_edit_form extends company_moodleform {
 
         $mform->addElement('text', 'city',
                             get_string('companycity', 'block_iomad_company_admin'),
-                            array('size' => 50));
+                            'maxlength="50" size="50"');
         $mform->setType('city', PARAM_NOTAGS);
         $mform->addRule('city', $strrequired, 'required');
 
