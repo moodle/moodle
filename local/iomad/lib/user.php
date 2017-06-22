@@ -92,7 +92,7 @@ class company_user {
         }
 
         $user->confirmed = 1;
-        $user->mnethostid = 1;
+         $user->mnethostid = $DB->get_field('mnet_application','id',['name'=>'moodle']);
         $user->maildisplay = 0; // Hide email addresses by default.
 
         // Create user record and return id.
