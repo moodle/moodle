@@ -160,7 +160,9 @@ class course_dropout extends \core_analytics\local\target\binary {
             $select = 'courseid = :courseid AND anonymous = :anonymous AND timecreated > :start AND timecreated < :end ' .
                 'AND userid ' . $studentssql;
 
-            $logstore = \core_analytics\manager::get_analytics_logstore();
+            if (!$logstore = \core_analytics\manager::get_analytics_logstore()) {
+                throw new \coding_exception('No available log stores');
+            }
             $nlogs = $logstore->get_events_select_count($select, array_merge($params, $studentparams));
 
             // At least a minimum of students activity.
@@ -213,12 +215,15 @@ class course_dropout extends \core_analytics\local\target\binary {
             }
         }
 
+        if (!$logstore = \core_analytics\manager::get_analytics_logstore()) {
+            throw new \coding_exception('No available log stores');
+        }
+
         // No logs during the last quarter of the course.
         $courseduration = $course->get_end() - $course->get_start();
         $limit = intval($course->get_end() - ($courseduration / 4));
         $select = "courseid = :courseid AND userid = :userid AND timecreated > :limit";
         $params = array('userid' => $userenrol->userid, 'courseid' => $course->get_id(), 'limit' => $limit);
-        $logstore = \core_analytics\manager::get_analytics_logstore();
         $nlogs = $logstore->get_events_select_count($select, $params);
         if ($nlogs == 0) {
             return 0;

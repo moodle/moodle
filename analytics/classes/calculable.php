@@ -163,10 +163,10 @@ abstract class calculable {
 
         $starttimedt = new \DateTime();
         $starttimedt->setTimestamp($starttime);
-        $starttimedt->setTimezone(\DateTimeZone::UTC);
+        $starttimedt->setTimezone(new \DateTimeZone('UTC'));
         $endtimedt = new \DateTime();
         $endtimedt->setTimestamp($endtime);
-        $endtimedt->setTimezone(\DateTimeZone::UTC);
+        $endtimedt->setTimezone(new \DateTimeZone('UTC'));
 
         $diff = $endtimedt->getTimestamp() - $starttimedt->getTimestamp();
         return $diff / WEEKSECS;

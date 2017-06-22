@@ -428,7 +428,9 @@ abstract class community_of_inquiry_activity extends linear {
         $params = $contextparams + array('starttime' => $starttime, 'endtime' => $endtime);
 
         // Pity that we need to pass through logging readers API when most of the people just uses the standard one.
-        $logstore = \core_analytics\manager::get_analytics_logstore();
+        if (!$logstore = \core_analytics\manager::get_analytics_logstore()) {
+            throw new \coding_exception('No log store available');
+        }
         $events = $logstore->get_events_select_iterator($select, $params, 'timecreated ASC', 0, 0);
 
         // Returs the logs organised by contextid, userid and eventname so it is easier to calculate activities data later.

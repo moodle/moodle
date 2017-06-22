@@ -17,24 +17,26 @@
 /**
  * Unit tests for core time splitting methods.
  *
- * @package   core_analytics
+ * @package   core
+ * @category  phpunit
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/fixtures/test_target_shortname.php');
+require_once(__DIR__ . '/../../analytics/tests/fixtures/test_target_shortname.php');
 require_once(__DIR__ . '/../../lib/enrollib.php');
 
 /**
  * Unit tests for core time splitting methods.
  *
- * @package   core_analytics
+ * @package   core
+ * @category  phpunit
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class analytics_time_splittings_testcase extends advanced_testcase {
+class core_analytics_time_splittings_testcase extends advanced_testcase {
 
     /**
      * setUp
@@ -61,7 +63,7 @@ class analytics_time_splittings_testcase extends advanced_testcase {
      */
     public function test_valid_ranges() {
 
-        // All core_analytics time splitting methods.
+        // All core time splitting methods.
         $timesplittings = array(
             '\core\analytics\time_splitting\deciles',
             '\core\analytics\time_splitting\deciles_accum',

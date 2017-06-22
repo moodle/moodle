@@ -65,6 +65,10 @@ class read_actions extends \core_analytics\local\indicator\linear {
      */
     protected function calculate_sample($sampleid, $sampleorigin, $starttime = false, $endtime = false) {
 
+        if (!$starttime || !$endtime) {
+            return null;
+        }
+
         $select = '';
         $params = array();
 
@@ -73,15 +77,17 @@ class read_actions extends \core_analytics\local\indicator\linear {
             $params = $params + array('userid' => $user->id);
         }
 
-        // Filter by context to use the db table index.
+        if (!$logstore = \core_analytics\manager::get_analytics_logstore()) {
+            throw new \coding_exception('No available log stores');
+        }
+
+        // Filter by context to use the logstore_standard_log db table index.
         $context = $this->retrieve('context', $sampleid);
         $select .= "contextlevel = :contextlevel AND contextinstanceid = :contextinstanceid AND " .
             "crud = 'r' AND timecreated > :starttime AND timecreated <= :endtime";
         $params = $params + array('contextlevel' => $context->contextlevel,
             'contextinstanceid' => $context->instanceid, 'starttime' => $starttime, 'endtime' => $endtime);
-        $logstore = \core_analytics\manager::get_analytics_logstore();
         $nrecords = $logstore->get_events_select_count($select, $params);
-
         // We define a list of ranges to fit $nrecords into it
         // # Done absolutely nothing
         // # Not much really, just accessing the course once a week

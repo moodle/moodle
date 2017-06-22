@@ -170,6 +170,15 @@ class course implements \core_analytics\analysable {
     }
 
     /**
+     * Clears all statically cached instances.
+     *
+     * @return void
+     */
+    public static function reset_caches() {
+        self::$instances = array();
+    }
+
+    /**
      * get_id
      *
      * @return int
@@ -224,7 +233,9 @@ class course implements \core_analytics\analysable {
             return 0;
         }
 
-        $logstore = \core_analytics\manager::get_analytics_logstore();
+        if (!$logstore = \core_analytics\manager::get_analytics_logstore()) {
+            return 0;
+        }
 
         // We first try to find current course student logs.
         $firstlogs = array();
@@ -431,8 +442,11 @@ class course implements \core_analytics\analysable {
 
         if ($this->ntotallogs === null) {
             list($filterselect, $filterparams) = $this->course_students_query_filter();
-            $logstore = \core_analytics\manager::get_analytics_logstore();
-            $this->ntotallogs = $logstore->get_events_select_count($filterselect, $filterparams);
+            if (!$logstore = \core_analytics\manager::get_analytics_logstore()) {
+                $this->ntotallogs = 0;
+            } else {
+                $this->ntotallogs = $logstore->get_events_select_count($filterselect, $filterparams);
+            }
         }
 
         return $this->ntotallogs;

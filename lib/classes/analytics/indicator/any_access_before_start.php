@@ -68,14 +68,17 @@ class any_access_before_start extends \core_analytics\local\indicator\binary {
         $user = $this->retrieve('user', $sampleid);
         $course = \core_analytics\course::instance($this->retrieve('course', $sampleid));
 
-        // Filter by context to use the db table index.
+        if (!$logstore = \core_analytics\manager::get_analytics_logstore()) {
+            throw new \coding_exception('No available log stores');
+        }
+
+        // Filter by context to use the logstore_standard_log db table index.
         $context = $this->retrieve('context', $sampleid);
         $select = "userid = :userid AND contextlevel = :contextlevel AND contextinstanceid = :contextinstanceid AND " .
             "timecreated < :start";
         $params = array('userid' => $user->id, 'contextlevel' => $context->contextlevel,
             'contextinstanceid' => $context->instanceid, 'start' => $course->get_start());
 
-        $logstore = \core_analytics\manager::get_analytics_logstore();
         $nlogs = $logstore->get_events_select_count($select, $params);
         if ($nlogs) {
             return self::get_max_value();

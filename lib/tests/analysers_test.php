@@ -17,24 +17,26 @@
 /**
  * Unit tests for core analysers.
  *
- * @package   core_analytics
+ * @package   core
+ * @category  test
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/fixtures/test_target_shortname.php');
+require_once(__DIR__ . '/../../analytics/tests/fixtures/test_target_shortname.php');
 require_once(__DIR__ . '/../../lib/enrollib.php');
 
 /**
  * Unit tests for core analysers.
  *
- * @package   core_analytics
+ * @package   core
+ * @category  test
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class analytics_analysers_testcase extends advanced_testcase {
+class core_analytics_analysers_testcase extends advanced_testcase {
 
     /**
      * test_courses_analyser

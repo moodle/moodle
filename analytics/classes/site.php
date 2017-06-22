@@ -73,7 +73,11 @@ class site implements \core_analytics\analysable {
             return $this->start;
         }
 
-        $logstore = \core_analytics\manager::get_analytics_logstore();
+        if (!$logstore = \core_analytics\manager::get_analytics_logstore()) {
+            $this->start = 0;
+            return $this->start;
+        }
+
         // Basically a SELECT MIN(timecreated) FROM ...
         $events = $logstore->get_events_select("", array(), "timecreated ASC", 0, 1);
         if ($events) {
@@ -97,7 +101,11 @@ class site implements \core_analytics\analysable {
             return $this->end;
         }
 
-        $logstore = \core_analytics\manager::get_analytics_logstore();
+        if (!$logstore = \core_analytics\manager::get_analytics_logstore()) {
+            $this->end = time();
+            return $this->end;
+        }
+
         // Basically a SELECT MAX(timecreated) FROM ...
         $events = $logstore->get_events_select("", array(), "timecreated DESC", 0, 1);
         if ($events) {

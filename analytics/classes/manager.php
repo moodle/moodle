@@ -305,7 +305,7 @@ class manager {
     /**
      * Returns the logstore used for analytics.
      *
-     * @return \core\log\sql_reader
+     * @return \core\log\sql_reader|false False if no log stores are enabled.
      */
     public static function get_analytics_logstore() {
         $readers = get_log_manager()->get_readers('core\log\sql_reader');
@@ -314,10 +314,15 @@ class manager {
             $logstore = reset($readers);
         } else if (!empty($readers[$analyticsstore])) {
             $logstore = $readers[$analyticsstore];
-        } else {
+        } else if (!empty($readers)) {
             $logstore = reset($readers);
             debugging('The selected log store for analytics is not available anymore. Using "' .
                 $logstore->get_name() . '"', DEBUG_DEVELOPER);
+        }
+
+        if (empty($logstore)) {
+            debugging('No system log stores available to use for analytics', DEBUG_DEVELOPER);
+            return false;
         }
 
         if (!$logstore->is_logging()) {
