@@ -350,24 +350,9 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             $licenseid = $DB->insert_record('companylicense', $licensedata);
         }
 
-        // Create an event to deal with an parent license allocations.
-        $eventother = array('licenseid' => $licenseid,
-                            'parentid' => $data->parentid);
-
-        if ($new) {
-            $event = \block_iomad_company_admin\event\company_license_created::create(array('context' => context_system::instance(),
-                                                                                            'userid' => $USER->id,
-                                                                                            'objectid' => $licenseid,
-                                                                                            'other' => $eventother));
-        } else {
-            $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => context_system::instance(),
-                                                                                            'userid' => $USER->id,
-                                                                                            'objectid' => $licenseid,
-                                                                                            'other' => $eventother));
-        }
-        $event->trigger();
-
         // Deal with course allocations if there are any.
+        // Capture them for checking.
+        $oldcourses = $DB->get_records('companylicense_courses', array('licenseid' => $licenseid), null, 'courseid');
         // Clear down all of them initially.
         $DB->delete_records('companylicense_courses', array('licenseid' => $licenseid));
         if (!empty($data->licensecourses)) {
@@ -384,6 +369,24 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
                 $DB->insert_record('companylicense_courses', $courserec);
             }
         }
+
+        // Create an event to deal with an parent license allocations.
+        $eventother = array('licenseid' => $licenseid,
+                            'parentid' => $data->parentid);
+
+        if ($new) {
+            $event = \block_iomad_company_admin\event\company_license_created::create(array('context' => context_system::instance(),
+                                                                                            'userid' => $USER->id,
+                                                                                            'objectid' => $licenseid,
+                                                                                            'other' => $eventother));
+        } else {
+            $eventother['oldcourses'] = json_encode($oldcourses);
+            $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => context_system::instance(),
+                                                                                            'userid' => $USER->id,
+                                                                                            'objectid' => $licenseid,
+                                                                                            'other' => $eventother));
+        }
+        $event->trigger();
         redirect(new moodle_url('/blocks/iomad_company_admin/company_license_list.php'));
     }
 
