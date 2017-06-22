@@ -1269,7 +1269,7 @@ EOF;
         $fileinfo = file_get_draft_area_info($draftitemid);
         $this->assertEquals(3, $fileinfo['filecount']);
         $this->assertEquals($size, $fileinfo['filesize']);
-        $this->assertEquals(2, $fileinfo['foldercount']);   // Base and directory created.
+        $this->assertEquals(1, $fileinfo['foldercount']);   // Directory created.
         $this->assertEquals($size, $fileinfo['filesize_without_references']);
 
         // Now get files from just one folder.
@@ -1283,7 +1283,7 @@ EOF;
         $fileinfo = file_get_file_area_info($usercontext->id, 'user', 'draft', $draftitemid);
         $this->assertEquals(3, $fileinfo['filecount']);
         $this->assertEquals($size, $fileinfo['filesize']);
-        $this->assertEquals(2, $fileinfo['foldercount']);   // Base and directory created.
+        $this->assertEquals(1, $fileinfo['foldercount']);   // Directory created.
         $this->assertEquals($size, $fileinfo['filesize_without_references']);
     }
 
@@ -1330,7 +1330,7 @@ EOF;
         $fileinfo = file_get_file_area_info($usercontext->id, 'user', 'private');
         $this->assertEquals(3, $fileinfo['filecount']);
         $this->assertEquals($size, $fileinfo['filesize']);
-        $this->assertEquals(2, $fileinfo['foldercount']);   // Base and directory created.
+        $this->assertEquals(1, $fileinfo['foldercount']);   // Directory created.
         $this->assertEquals($size, $fileinfo['filesize_without_references']);
 
         // Now get files from just one folder.

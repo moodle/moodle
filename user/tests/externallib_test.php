@@ -1177,7 +1177,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_user_external::get_private_files_info_returns(), $result);
         $this->assertEquals(1, $result['filecount']);
         $this->assertEquals($file->get_filesize(), $result['filesize']);
-        $this->assertEquals(1, $result['foldercount']);   // Base directory.
+        $this->assertEquals(0, $result['foldercount']);
         $this->assertEquals($file->get_filesize(), $result['filesizewithoutreferences']);
 
         // As admin, get user information.
@@ -1186,7 +1186,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_user_external::get_private_files_info_returns(), $result);
         $this->assertEquals(1, $result['filecount']);
         $this->assertEquals($file->get_filesize(), $result['filesize']);
-        $this->assertEquals(1, $result['foldercount']);   // Base directory.
+        $this->assertEquals(0, $result['foldercount']);
         $this->assertEquals($file->get_filesize(), $result['filesizewithoutreferences']);
     }
 

@@ -524,7 +524,7 @@ function file_get_draft_area_info($draftitemid, $filepath = '/') {
  *      'filesize_without_references' => total size of the area excluding file references.
  * @since Moodle 3.4
  */
-function file_get_file_area_info($contextid, $component, $filearea, $itemid = false, $filepath = '/') {
+function file_get_file_area_info($contextid, $component, $filearea, $itemid = 0, $filepath = '/') {
 
     $fs = get_file_storage();
 
@@ -535,11 +535,8 @@ function file_get_file_area_info($contextid, $component, $filearea, $itemid = fa
         'filesize_without_references' => 0
     );
 
-    if ($filepath != '/') {
-        $draftfiles = $fs->get_directory_files($contextid, $component, $filearea, $itemid, $filepath, true, true);
-    } else {
-        $draftfiles = $fs->get_area_files($contextid, $component, $filearea, $itemid, 'id', true);
-    }
+    $draftfiles = $fs->get_directory_files($contextid, $component, $filearea, $itemid, $filepath, true, true);
+
     foreach ($draftfiles as $file) {
         if ($file->is_directory()) {
             $results['foldercount'] += 1;

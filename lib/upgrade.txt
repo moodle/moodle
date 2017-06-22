@@ -12,6 +12,7 @@ information provided here is intended especially for developers.
 * Role definitions are no longer cached in user session (MDL-49398).
 * External function core_group_external::get_activity_allowed_groups now returns an additional field: canaccessallgroups.
   It indicates whether the user will be able to access all the activity groups.
+* file_get_draft_area_info does not sum the root folder anymore when calculating the foldercount.
 
 === 3.3.1 ===
 
