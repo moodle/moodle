@@ -34,7 +34,7 @@ class company_license_users_form extends moodleform {
     protected $courseselct = array();
     protected $firstcourseid = 0;
 
-    public function __construct($actionurl, $context, $companyid, $licenseid, $departmentid, $selectedcourses) {
+    public function __construct($actionurl, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error) {
         global $USER, $DB;
         $this->selectedcompany = $companyid;
         $this->context = $context;
@@ -44,6 +44,7 @@ class company_license_users_form extends moodleform {
         $this->licenseid = $licenseid;
         $this->license = $DB->get_record('companylicense', array('id' => $licenseid));
         $this->selectedcourses = $selectedcourses;
+        $this->error = $error;
 
         // Get the courses to send to if emails are configured.
         if (!empty($this->license)) {
@@ -159,6 +160,14 @@ class company_license_users_form extends moodleform {
         $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
         $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
 
+        if ($this->error == 1) {
+            $mform->addElement('html', "<div class='form-group row has-danger fitem'>
+                                        <div class='form-inline felement' data-fieldtype='text'>
+                                        <div class='form-control-feedback'>".
+                                        get_string('licensetoomanyusers', 'block_iomad_company_admin').
+                                        "</div></div>");
+        }
+
         $mform->addElement('html', '<table summary=""
                                      class="companycourseuserstable addremovetable generaltable generalbox boxaligncenter"
                                      cellspacing="0">
@@ -192,6 +201,9 @@ class company_license_users_form extends moodleform {
               </td>
             </tr>
           </table>');
+        if ($this->error == 1) {
+            $mform->addElement('html', '</div>');
+        }
         $mform->addElement('html', get_string('licenseusedwarning', 'block_iomad_company_admin'));
     }
 
@@ -400,7 +412,7 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
     }
 }
 
-$usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $userhierarchylevel, $selectedcourses);
+$usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $userhierarchylevel, $selectedcourses, $error);
 
 echo $OUTPUT->header();
 
@@ -454,9 +466,6 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
         }
         echo $outputstring."</br>";
         $usersform->process();
-        if ($error == 1) {
-            echo "<h3>".get_string('licensetoomanyusers', 'block_iomad_company_admin')."</h3>";
-        }
         echo $usersform->display();
     }
 }
