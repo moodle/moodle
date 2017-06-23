@@ -502,7 +502,22 @@ class core_calendar_renderer extends plugin_renderer_base {
                         $attributes['class'] = $events[$eventindex]->class;
                     }
                     $dayhref->set_anchor('event_'.$events[$eventindex]->id);
-                    $link = html_writer::link($dayhref, format_string($events[$eventindex]->name, true));
+
+                    $eventcontext = $events[$eventindex]->context;
+                    $eventformatopts = array('context' => $eventcontext);
+                    // Get event name.
+                    $eventname = format_string($events[$eventindex]->name, true, $eventformatopts);
+                    // Include course's shortname into the event name, if applicable.
+                    $courseid = $events[$eventindex]->courseid;
+                    if (!empty($courseid) && $courseid !== SITEID) {
+                        $course = get_course($courseid);
+                        $eventnameparams = (object)[
+                            'name' => $eventname,
+                            'course' => format_string($course->shortname, true, $eventformatopts)
+                        ];
+                        $eventname = get_string('eventnameandcourse', 'calendar', $eventnameparams);
+                    }
+                    $link = html_writer::link($dayhref, $eventname);
                     $cell->text .= html_writer::tag('li', $link, $attributes);
                 }
                 $cell->text .= html_writer::end_tag('ul');
