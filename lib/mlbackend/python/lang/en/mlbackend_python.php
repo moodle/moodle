@@ -22,6 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['packageinstalledshouldbe'] = '"moodleinspire" python package should be updated. The required version is "{$a->required}" and the installed version is "{$a->installed}"';
+$string['packageinstalledshouldbe'] = '"moodlemlbackend" python package should be updated. The required version is "{$a->required}" and the installed version is "{$a->installed}"';
 $string['pluginname'] = 'Python machine learning backend';
-$string['pythonpackagenotinstalled'] = 'moodleinspire python package is not installed or there is a problem with it. Please execute "{$a}" from command line interface for more info';
+$string['pythonpackagenotinstalled'] = '"moodlemlbackend" python package is not installed or there is a problem with it. Please execute "{$a}" from command line interface for more info';

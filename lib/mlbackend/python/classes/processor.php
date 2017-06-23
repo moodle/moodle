@@ -38,7 +38,7 @@ class processor implements \core_analytics\predictor {
     /**
      * The required version of the python package that performs all calculations.
      */
-    const REQUIRED_PIP_PACKAGE_VERSION = '0.0.9';
+    const REQUIRED_PIP_PACKAGE_VERSION = '0.0.2';
 
     /**
      * Is the plugin ready to be used?.
@@ -48,7 +48,7 @@ class processor implements \core_analytics\predictor {
     public function is_ready() {
 
         // Check the installed pip package version.
-        $cmd = 'python -m moodleinspire.version';
+        $cmd = 'python -m moodlemlbackend.version';
 
         $output = null;
         $exitcode = null;
@@ -84,7 +84,7 @@ class processor implements \core_analytics\predictor {
         // Obtain the physical route to the file.
         $datasetpath = $this->get_file_path($dataset);
 
-        $cmd = 'python -m moodleinspire.training ' .
+        $cmd = 'python -m moodlemlbackend.training ' .
             escapeshellarg($uniqueid) . ' ' .
             escapeshellarg($outputdir) . ' ' .
             escapeshellarg($datasetpath);
@@ -125,7 +125,7 @@ class processor implements \core_analytics\predictor {
         // Obtain the physical route to the file.
         $datasetpath = $this->get_file_path($dataset);
 
-        $cmd = 'python -m moodleinspire.prediction ' .
+        $cmd = 'python -m moodlemlbackend.prediction ' .
             escapeshellarg($uniqueid) . ' ' .
             escapeshellarg($outputdir) . ' ' .
             escapeshellarg($datasetpath);
@@ -168,7 +168,7 @@ class processor implements \core_analytics\predictor {
         // Obtain the physical route to the file.
         $datasetpath = $this->get_file_path($dataset);
 
-        $cmd = 'python -m moodleinspire.evaluation ' .
+        $cmd = 'python -m moodlemlbackend.evaluation ' .
             escapeshellarg($uniqueid) . ' ' .
             escapeshellarg($outputdir) . ' ' .
             escapeshellarg($datasetpath) . ' ' .
