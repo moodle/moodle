@@ -258,6 +258,21 @@ class processor implements \core_analytics\predictor {
         }
         fclose($fh);
 
+        // We need at least 2 samples belonging to each target.
+        $counts = array_count_values($targets);
+        foreach ($counts as $count) {
+            if ($count < 2) {
+                $notenoughdata = true;
+            }
+        }
+        if (!empty($notenoughdata)) {
+            $resultobj = new \stdClass();
+            $resultobj->status = \core_analytics\model::EVALUATE_NOT_ENOUGH_DATA;
+            $resultobj->score = 0;
+            $resultobj->info = array(get_string('errornotenoughdata', 'mlbackend_php'));
+            return $resultobj;
+        }
+
         $phis = array();
 
         // Evaluate the model multiple times to confirm the results are not significantly random due to a short amount of data.
@@ -318,7 +333,7 @@ class processor implements \core_analytics\predictor {
             $a = new \stdClass();
             $a->deviation = $modeldev;
             $a->accepteddeviation = $maxdeviation;
-            $resultobj->info[] = get_string('errornotenoughdata', 'mlbackend_php', $a);
+            $resultobj->info[] = get_string('errornotenoughdatadev', 'mlbackend_php', $a);
         }
 
         if ($resultobj->score < \core_analytics\model::MIN_SCORE) {
