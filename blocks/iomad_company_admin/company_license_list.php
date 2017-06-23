@@ -178,7 +178,8 @@ if ($departmentid == $companydepartment->id) {
         }
         // Set up the edit buttons.
         if ((iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
-            iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context)) &&
+            iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context) ||
+            (iomad::has_capability('block/iomad_company_admin:split_my_licenses', $context)) &&
             $license->used < $license->allocation) {
             $splitbutton = "<a class='btn btn-primary' href='" . new moodle_url('company_license_edit_form.php',
                            array("parentid" => $license->id)) . "'>$strsplit</a>";
@@ -250,8 +251,10 @@ if (!empty($table)) {
 
 echo '<div class="buttons">';
 
-echo $OUTPUT->single_button(new moodle_url('company_license_edit_form.php'),
-                                            get_string('licenseaddnew', 'block_iomad_company_admin'), 'get');
+if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context)) {
+    echo $OUTPUT->single_button(new moodle_url('company_license_edit_form.php'),
+                                                get_string('licenseaddnew', 'block_iomad_company_admin'), 'get');
+}
 echo $OUTPUT->single_button(new moodle_url('/local/iomad_dashboard/index.php'), get_string('cancel'), 'get');
 
 echo '</div>';
