@@ -1229,6 +1229,117 @@ EOF;
         $file = array_shift($files);
         $this->assertTrue($file->is_directory());
     }
+
+    /**
+     * Test file_get_draft_area_info.
+     */
+    public function test_file_get_draft_area_info() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $fs = get_file_storage();
+
+        $filerecord = array(
+            'filename'  => 'one.txt',
+        );
+        $file = self::create_draft_file($filerecord);
+        $size = $file->get_filesize();
+        $draftitemid = $file->get_itemid();
+        // Add another file.
+        $filerecord = array(
+            'itemid'  => $draftitemid,
+            'filename'  => 'second.txt',
+        );
+        $file = self::create_draft_file($filerecord);
+        $size += $file->get_filesize();
+
+        // Create directory.
+        $usercontext = context_user::instance($USER->id);
+        $dir = $fs->create_directory($usercontext->id, 'user', 'draft', $draftitemid, '/testsubdir/');
+        // Add file to directory.
+        $filerecord = array(
+            'itemid'  => $draftitemid,
+            'filename' => 'third.txt',
+            'filepath' => '/testsubdir/',
+        );
+        $file = self::create_draft_file($filerecord);
+        $size += $file->get_filesize();
+
+        $fileinfo = file_get_draft_area_info($draftitemid);
+        $this->assertEquals(3, $fileinfo['filecount']);
+        $this->assertEquals($size, $fileinfo['filesize']);
+        $this->assertEquals(1, $fileinfo['foldercount']);   // Directory created.
+        $this->assertEquals($size, $fileinfo['filesize_without_references']);
+
+        // Now get files from just one folder.
+        $fileinfo = file_get_draft_area_info($draftitemid, '/testsubdir/');
+        $this->assertEquals(1, $fileinfo['filecount']);
+        $this->assertEquals($file->get_filesize(), $fileinfo['filesize']);
+        $this->assertEquals(0, $fileinfo['foldercount']);   // No subdirectories inside the directory.
+        $this->assertEquals($file->get_filesize(), $fileinfo['filesize_without_references']);
+
+        // Check we get the same results if we call file_get_file_area_info.
+        $fileinfo = file_get_file_area_info($usercontext->id, 'user', 'draft', $draftitemid);
+        $this->assertEquals(3, $fileinfo['filecount']);
+        $this->assertEquals($size, $fileinfo['filesize']);
+        $this->assertEquals(1, $fileinfo['foldercount']);   // Directory created.
+        $this->assertEquals($size, $fileinfo['filesize_without_references']);
+    }
+
+    /**
+     * Test file_get_file_area_info.
+     */
+    public function test_file_get_file_area_info() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $fs = get_file_storage();
+
+        $filerecord = array(
+            'filename'  => 'one.txt',
+        );
+        $file = self::create_draft_file($filerecord);
+        $size = $file->get_filesize();
+        $draftitemid = $file->get_itemid();
+        // Add another file.
+        $filerecord = array(
+            'itemid'  => $draftitemid,
+            'filename'  => 'second.txt',
+        );
+        $file = self::create_draft_file($filerecord);
+        $size += $file->get_filesize();
+
+        // Create directory.
+        $usercontext = context_user::instance($USER->id);
+        $dir = $fs->create_directory($usercontext->id, 'user', 'draft', $draftitemid, '/testsubdir/');
+        // Add file to directory.
+        $filerecord = array(
+            'itemid'  => $draftitemid,
+            'filename' => 'third.txt',
+            'filepath' => '/testsubdir/',
+        );
+        $file = self::create_draft_file($filerecord);
+        $size += $file->get_filesize();
+
+        // Add files to user private file area.
+        $options = array('subdirs' => 1, 'maxfiles' => 3);
+        file_merge_files_from_draft_area_into_filearea($draftitemid, $file->get_contextid(), 'user', 'private', 0, $options);
+
+        $fileinfo = file_get_file_area_info($usercontext->id, 'user', 'private');
+        $this->assertEquals(3, $fileinfo['filecount']);
+        $this->assertEquals($size, $fileinfo['filesize']);
+        $this->assertEquals(1, $fileinfo['foldercount']);   // Directory created.
+        $this->assertEquals($size, $fileinfo['filesize_without_references']);
+
+        // Now get files from just one folder.
+        $fileinfo = file_get_file_area_info($usercontext->id, 'user', 'private', 0, '/testsubdir/');
+        $this->assertEquals(1, $fileinfo['filecount']);
+        $this->assertEquals($file->get_filesize(), $fileinfo['filesize']);
+        $this->assertEquals(0, $fileinfo['foldercount']);   // No subdirectories inside the directory.
+        $this->assertEquals($file->get_filesize(), $fileinfo['filesize_without_references']);
+    }
 }
 
 /**

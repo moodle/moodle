@@ -1206,6 +1206,15 @@ $functions = array(
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_user_get_private_files_info' => array(
+        'classname' => 'core_user_external',
+        'methodname' => 'get_private_files_info',
+        'classpath' => 'user/externallib.php',
+        'description' => 'Returns general information about files in the user private files area.',
+        'type' => 'read',
+        'capabilities' => 'moodle/user:manageownfiles',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 
     // Competencies functions.
     'core_competency_create_competency_framework' => array(

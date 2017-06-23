@@ -232,7 +232,7 @@ class site_registration_form extends moodleform {
         }
         $language = get_config('hub', 'site_language_' . $cleanhuburl);
         if ($language === false) {
-            $language = current_language();
+            $language = explode('_', current_language())[0];
         }
         $geolocation = get_config('hub', 'site_geolocation_' . $cleanhuburl);
         $contactable = get_config('hub', 'site_contactable_' . $cleanhuburl);

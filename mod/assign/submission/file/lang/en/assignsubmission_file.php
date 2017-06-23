@@ -29,6 +29,7 @@ $string['configmaxbytes'] = 'Maximum file size';
 $string['countfiles'] = '{$a} files';
 $string['default'] = 'Enabled by default';
 $string['default_help'] = 'If set, this submission method will be enabled by default for all new assignments.';
+$string['defaultacceptedfiletypes'] = 'Default accepted file types';
 $string['enabled'] = 'File submissions';
 $string['enabled_help'] = 'If enabled, students are able to upload one or more files as their submission.';
 $string['eventassessableuploaded'] = 'A file has been uploaded.';

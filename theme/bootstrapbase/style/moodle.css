@@ -2723,9 +2723,6 @@ a.skip:active {
 .blog_entry .content {
   margin-left: 43px;
 }
-#page-group-index #groupeditform {
-  text-align: center;
-}
 #doc-contents h1 {
   margin: 1em 0 0 0;
 }
@@ -9891,18 +9888,6 @@ body.path-question-type .mform fieldset.hidden {
 .profileeditor > .singlebutton input {
   margin: 0;
 }
-#groupeditform .groups,
-#groupeditform .members {
-  min-width: 175px;
-  width: 49%;
-  float: left;
-  text-align: left;
-}
-#groupeditform .groups select,
-#groupeditform .members select {
-  min-width: 175px;
-  max-width: 90%;
-}
 /** Preferences page */
 .preferences-group ul {
   list-style: none;
@@ -15873,6 +15858,9 @@ body {
   margin-left: 5px;
   display: inline;
 }
+.block .content p.hasicon img.icon {
+  padding-right: 0;
+}
 .block .footer {
   margin-bottom: 4px;
   display: block;
@@ -19339,6 +19327,7 @@ div[data-flexitour="step-background-fader"],
 }
 span[data-flexitour="container"] div[data-role="flexitour-step"] {
   background-color: #fff;
+  color: #333;
   border-radius: 6px;
   border: 1px solid rgba(0, 0, 0, 0.2);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);

@@ -1860,4 +1860,76 @@ class core_user_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function get_private_files_info_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'Id of the user, default to current user.', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Returns general information about files in the user private files area.
+     *
+     * @param int $userid Id of the user, default to current user.
+     * @return array of warnings and file area information
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function get_private_files_info($userid = 0) {
+        global $CFG, $USER;
+        require_once($CFG->libdir . '/filelib.php');
+
+        $params = self::validate_parameters(self::get_private_files_info_parameters(), array('userid' => $userid));
+        $warnings = array();
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        if (empty($params['userid']) || $params['userid'] == $USER->id) {
+            $usercontext = context_user::instance($USER->id);
+            require_capability('moodle/user:manageownfiles', $usercontext);
+        } else {
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
+            // Only admins can retrieve other users information.
+            require_capability('moodle/site:config', $context);
+            $usercontext = context_user::instance($user->id);
+        }
+
+        $fileareainfo = file_get_file_area_info($usercontext->id, 'user', 'private');
+
+        $result = array();
+        $result['filecount'] = $fileareainfo['filecount'];
+        $result['foldercount'] = $fileareainfo['foldercount'];
+        $result['filesize'] = $fileareainfo['filesize'];
+        $result['filesizewithoutreferences'] = $fileareainfo['filesize_without_references'];
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function get_private_files_info_returns() {
+        return new external_single_structure(
+            array(
+                'filecount' => new external_value(PARAM_INT, 'Number of files in the area.'),
+                'foldercount' => new external_value(PARAM_INT, 'Number of folders in the area.'),
+                'filesize' => new external_value(PARAM_INT, 'Total size of the files in the area.'),
+                'filesizewithoutreferences' => new external_value(PARAM_INT, 'Total size of the area excluding file references'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

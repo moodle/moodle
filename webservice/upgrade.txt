@@ -3,6 +3,11 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 3.4 ===
+
+* External function core_webservice_external::get_site_info() now returns the calendar type used in the site and
+  by the user in the sitecalendartype and usercalendartype fields.
+
 === 3.2 ===
 
 * webservice->get_external_functions now returns the external function list ordered by name ASC.
