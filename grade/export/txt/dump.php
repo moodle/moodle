@@ -29,7 +29,7 @@ $decimalpoints      = optional_param('decimalpoints', $CFG->grade_export_decimal
 $onlyactive         = optional_param('export_onlyactive', 0, PARAM_BOOL);
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 
 require_user_key_login('grade/export', $id); // we want different keys for each course
