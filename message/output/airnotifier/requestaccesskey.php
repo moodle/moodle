@@ -23,7 +23,6 @@
  */
 
 require('../../../config.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
 
 define('AIRNOTIFIER_PUBLICURL', 'https://messages.moodle.net');
 
@@ -50,10 +49,10 @@ $msg = "";
 // If we are requesting a key to the official message system, verify first that this site is registered.
 // This check is also done in Airnotifier.
 if (strpos($CFG->airnotifierurl, AIRNOTIFIER_PUBLICURL) !== false ) {
-    $registrationmanager = new registration_manager();
-    if (!$registrationmanager->get_registeredhub(HUB_MOODLEORGHUBURL)) {
-        $msg = get_string('sitemustberegistered', 'message_airnotifier');
-        $msg .= $OUTPUT->continue_button($returl);
+    $adminrenderer = $PAGE->get_renderer('core', 'admin');
+    $msg = $adminrenderer->warn_if_not_registered();
+    if ($msg) {
+        $msg .= html_writer::div(get_string('sitemustberegistered', 'message_airnotifier'));
 
         echo $OUTPUT->header();
         echo $OUTPUT->box($msg, 'generalbox');

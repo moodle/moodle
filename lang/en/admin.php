@@ -944,6 +944,7 @@ $string['registerwithmoodleorg'] = 'Register your site';
 $string['registration'] = 'Registration';
 $string['registration_help'] = 'It is recommended that you register your site in order to receive security alerts and access to Moodle.net, our course sharing platform.';
 $string['registrationwarning'] = 'Your site is not yet registered.';
+$string['registrationwarningcontactadmin'] = 'Your site is not yet registered. Please notify your administrator.';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target="_blank" href="{$a}">Release Notes</a>';
 $string['rememberusername'] = 'Remember username';
 $string['rememberusername_desc'] = 'Enable if you want to store permanent cookies with usernames during user login. Permanent cookies may be considered a privacy issue if used without consent.';
