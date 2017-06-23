@@ -292,11 +292,6 @@ class company_license_users_form extends moodleform {
                         print_error('invaliduserdepartment', 'block_iomad_company_management');
                     }
                     foreach ($courses as $courseid) {
-                        if ($count >= $numberoflicenses) {
-                            // Set the used amount.
-                            $licenserecord['used'] = $count;
-                            $DB->update_record('companylicense', $licenserecord);
-                        }
                         $allow = true;
                         if ($allow) {
                             $recordarray = array('licensecourseid' => $courseid,
@@ -359,11 +354,18 @@ class company_license_users_form extends moodleform {
         if ($remove || $removeall) {
             $licenserecord = (array) $this->license;
 
-
             if (!empty($licenserecord['program'])) {
                 // Get the user from the initial license ID passed.
                 $userlic = $DB->get_record('companylicense_users',array('id' => $licensestounassign[0]), '*', MUST_EXIST);
-                $licensestounassign = array_keys($DB->get_records('companylicense_users', array('userid' => $userlic->userid, 'licenseid' => $userlic->licenseid), 'id'));
+                if (!empty($licensestounassign)) {
+                    $licensestounassign = array_keys($DB->get_records_sql("SELECT id FROM {companylicense_users}
+                                                                           WHERE licenseid = :licenseid
+                                                                           AND userid IN (
+                                                                               SELECT userid FROM {companylicense_users}
+                                                                               WHERE id IN 
+                                                                           (" . implode(',', $licensestounassign) . "))",
+                                                                           array('licenseid' => $this->license->id)));
+                }
                 if ($licenserecord['type']) {
                     $canremove = true;
                 } else {
@@ -378,6 +380,7 @@ class company_license_users_form extends moodleform {
                     $licensestounassign = array();
                 }
             }
+
             if (!empty($licensestounassign)) {
                 foreach ($licensestounassign as $unassignid) {
 
