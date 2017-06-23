@@ -76,7 +76,7 @@ class manager {
      *
      * @param bool $enabled
      * @param bool $trained
-     * @param \context $predictioncontext
+     * @param \context|false $predictioncontext
      * @return \core_analytics\model[]
      */
     public static function get_all_models($enabled = false, $trained = false, $predictioncontext = false) {
@@ -163,7 +163,7 @@ class manager {
     /**
      * Return all system predictions processors.
      *
-     * @return \core_analytics\predictor
+     * @return \core_analytics\predictor[]
      */
     public static function get_all_prediction_processors() {
 

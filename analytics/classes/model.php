@@ -145,7 +145,6 @@ class model {
         if (!$target) {
             return false;
         }
-        $analyser = $this->get_target();
 
         $classname = $target->get_analyser_class();
         if (!class_exists($classname)) {
@@ -296,7 +295,7 @@ class model {
 
         $classname = $target->get_analyser_class();
         if (!class_exists($classname)) {
-            throw \coding_exception($classname . ' class does not exists');
+            throw new \coding_exception($classname . ' class does not exists');
         }
 
         // Returns a \core_analytics\local\analyser\base class.

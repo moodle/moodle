@@ -208,7 +208,7 @@ abstract class calculable {
             $match = false;
 
             if (count($range) != 2) {
-                throw \coding_exception('classify_value() $ranges array param should contain 2 items, the predicate ' .
+                throw new \coding_exception('classify_value() $ranges array param should contain 2 items, the predicate ' .
                     'e.g. greater (gt), lower or equal (le)... and the value.');
             }
 
