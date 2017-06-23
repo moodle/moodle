@@ -138,7 +138,27 @@ class analytics_model_testcase extends advanced_testcase {
         sleep(1);
         $this->model->enable('\core\analytics\time_splitting\quarters');
         $this->assertNotEquals($originaluniqueid, $this->model->get_unique_id());
+    }
 
+    /**
+     * test_exists
+     *
+     * @return void
+     */
+    public function test_exists() {
+        $this->resetAfterTest(true);
+
+        global $DB;
+
+        // 2 built-in models + the testing one.
+        $this->assertCount(3, $DB->get_records('analytics_models'));
+
+        // No new models added if the builtin ones already exist.
+        \core_analytics\manager::add_builtin_models();
+        $this->assertCount(3, $DB->get_records('analytics_models'));
+
+        $target = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
+        $this->assertTrue(\core_analytics\model::exists($target));
     }
 }
 

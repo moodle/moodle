@@ -358,6 +358,40 @@ class model {
     }
 
     /**
+     * Does this model exist?
+     *
+     * If no indicators are provided it considers any model with the provided
+     * target a match.
+     *
+     * @param \core_analytics\local\target\base $target
+     * @param \core_analytics\local\indicator\base[]|false $indicators
+     * @return bool
+     */
+    public static function exists(\core_analytics\local\target\base $target, $indicators = false) {
+        global $DB;
+
+        $existingmodels = $DB->get_records('analytics_models', array('target' => $target->get_id()));
+
+        if (!$indicators && $existingmodels) {
+            return true;
+        }
+
+        $indicatorids = array_keys($indicators);
+        sort($indicatorids);
+
+        foreach ($existingmodels as $modelobj) {
+            $model = new \core_analytics\model($modelobj);
+            $modelindicatorids = array_keys($model->get_indicators());
+            sort($modelindicatorids);
+
+            if ($indicatorids === $modelindicatorids) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Updates the model.
      *
      * @param int|bool $enabled

@@ -384,6 +384,79 @@ class manager {
     }
 
     /**
+     * Adds the models included with moodle core to the system.
+     *
+     * @return void
+     */
+    public static function add_builtin_models() {
+
+        $target = \core_analytics\manager::get_target('\core\analytics\target\course_dropout');
+
+        // Community of inquiry indicators.
+        $coiindicators = array(
+            '\mod_assign\analytics\indicator\cognitive_depth',
+            '\mod_assign\analytics\indicator\social_breadth',
+            '\mod_book\analytics\indicator\cognitive_depth',
+            '\mod_book\analytics\indicator\social_breadth',
+            '\mod_chat\analytics\indicator\cognitive_depth',
+            '\mod_chat\analytics\indicator\social_breadth',
+            '\mod_choice\analytics\indicator\cognitive_depth',
+            '\mod_choice\analytics\indicator\social_breadth',
+            '\mod_data\analytics\indicator\cognitive_depth',
+            '\mod_data\analytics\indicator\social_breadth',
+            '\mod_feedback\analytics\indicator\cognitive_depth',
+            '\mod_feedback\analytics\indicator\social_breadth',
+            '\mod_folder\analytics\indicator\cognitive_depth',
+            '\mod_folder\analytics\indicator\social_breadth',
+            '\mod_forum\analytics\indicator\cognitive_depth',
+            '\mod_forum\analytics\indicator\social_breadth',
+            '\mod_glossary\analytics\indicator\cognitive_depth',
+            '\mod_glossary\analytics\indicator\social_breadth',
+            '\mod_imscp\analytics\indicator\cognitive_depth',
+            '\mod_imscp\analytics\indicator\social_breadth',
+            '\mod_label\analytics\indicator\cognitive_depth',
+            '\mod_label\analytics\indicator\social_breadth',
+            '\mod_lesson\analytics\indicator\cognitive_depth',
+            '\mod_lesson\analytics\indicator\social_breadth',
+            '\mod_lti\analytics\indicator\cognitive_depth',
+            '\mod_lti\analytics\indicator\social_breadth',
+            '\mod_page\analytics\indicator\cognitive_depth',
+            '\mod_page\analytics\indicator\social_breadth',
+            '\mod_quiz\analytics\indicator\cognitive_depth',
+            '\mod_quiz\analytics\indicator\social_breadth',
+            '\mod_resource\analytics\indicator\cognitive_depth',
+            '\mod_resource\analytics\indicator\social_breadth',
+            '\mod_scorm\analytics\indicator\cognitive_depth',
+            '\mod_scorm\analytics\indicator\social_breadth',
+            '\mod_survey\analytics\indicator\cognitive_depth',
+            '\mod_survey\analytics\indicator\social_breadth',
+            '\mod_url\analytics\indicator\cognitive_depth',
+            '\mod_url\analytics\indicator\social_breadth',
+            '\mod_wiki\analytics\indicator\cognitive_depth',
+            '\mod_wiki\analytics\indicator\social_breadth',
+            '\mod_workshop\analytics\indicator\cognitive_depth',
+            '\mod_workshop\analytics\indicator\social_breadth',
+        );
+        $indicators = array();
+        foreach ($coiindicators as $coiindicator) {
+            $indicator = \core_analytics\manager::get_indicator($coiindicator);
+            $indicators[$indicator->get_id()] = $indicator;
+        }
+        if (!\core_analytics\model::exists($target, $indicators)) {
+            $model = \core_analytics\model::create($target, $indicators);
+        }
+
+        // No teaching model.
+        $target = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
+        $timesplittingmethod = '\core\analytics\time_splitting\single_range';
+        $noteacher = \core_analytics\manager::get_indicator('\core_course\analytics\indicator\no_teacher');
+        $indicators = array($noteacher->get_id() => $noteacher);
+        if (!\core_analytics\model::exists($target, $indicators)) {
+            \core_analytics\model::create($target, $indicators, $timesplittingmethod);
+        }
+    }
+
+    /**
      * Returns the provided element classes in the site.
      *
      * @param string $element
