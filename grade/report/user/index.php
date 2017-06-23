@@ -41,7 +41,7 @@ if ($userview == 0) {
 
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 require_login($course);
 $PAGE->set_pagelayout('report');
