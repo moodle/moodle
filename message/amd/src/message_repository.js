@@ -22,7 +22,7 @@
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/notification', 'core/log'], function($, Ajax, Notification, Log) {
+define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
     /**
      * Retrieve a list of messages from the server.
      *
@@ -72,9 +72,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/log'], function($, Aja
 
         var promise = Ajax.call([request])[0];
 
-        promise.fail(function(e) {
-            Log.error('Could not retrieve unread message count: ' + e.message);
-        });
+        promise.fail(Notification.exception);
 
         return promise;
     };

@@ -2637,8 +2637,9 @@ class restore_calendarevents_structure_step extends restore_structure_step {
         $isuseroverride = !$data->courseid && $data->modulename && $data->instance;
 
         // If we don't want to include user data and this record is a user override event
-        // for an activity then we should not create it.
-        if (!$this->task->get_setting_value('userinfo') && $isuseroverride) {
+        // for an activity then we should not create it. (Only activity events can be user override events - which must have this
+        // setting).
+        if ($isuseroverride && $this->task->setting_exists('userinfo') && !$this->task->get_setting_value('userinfo')) {
             return;
         }
 
@@ -3058,7 +3059,8 @@ class restore_course_logs_structure_step extends restore_structure_step {
 
         $data = (object)($data);
 
-        $data->time = $this->apply_date_offset($data->time);
+        // There is no need to roll dates. Logs are supposed to be immutable. See MDL-44961.
+
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->course = $this->get_courseid();
         $data->cmid = 0;
@@ -3105,7 +3107,8 @@ class restore_activity_logs_structure_step extends restore_course_logs_structure
 
         $data = (object)($data);
 
-        $data->time = $this->apply_date_offset($data->time);
+        // There is no need to roll dates. Logs are supposed to be immutable. See MDL-44961.
+
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->course = $this->get_courseid();
         $data->cmid = $this->task->get_moduleid();

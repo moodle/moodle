@@ -1535,7 +1535,7 @@ class table_sql extends flexible_table {
      * Of course you can use sub-queries, JOINS etc. by putting them in the
      * appropriate clause of the query.
      */
-    function set_sql($fields, $from, $where, array $params = NULL) {
+    function set_sql($fields, $from, $where, array $params = array()) {
         $this->sql = new stdClass();
         $this->sql->fields = $fields;
         $this->sql->from = $from;
