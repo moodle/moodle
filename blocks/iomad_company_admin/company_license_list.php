@@ -181,8 +181,9 @@ if ($departmentid == $companydepartment->id) {
             iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context) ||
             (iomad::has_capability('block/iomad_company_admin:split_my_licenses', $context)) &&
             $license->used < $license->allocation) {
-            $splitbutton = "<a class='btn btn-primary' href='" . new moodle_url('company_license_edit_form.php',
-                           array("parentid" => $license->id) . "'>$strsplit</a>";
+                $splitbutton = "<a class='btn btn-primary' href='" . new moodle_url('company_license_edit_form.php',
+                               array("parentid" => $license->id)) . "'>$strsplit</a>";
+            }
         } else {
             $splitbutton = "";
         }
