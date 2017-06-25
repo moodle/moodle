@@ -1567,16 +1567,19 @@ class company {
                              WHERE licensed = 1
                            )
                            AND"; 
+            $sharedlicsql = " AND licensed != 1 ";
         } else {
             $licensesql = "";
+            $sharedlicsql = "";
         }
 
         // Deal with shared option.
         if ($shared) {
-            $sharedsql = "OR
-                          c.id IN (
+            $sharedsql = " OR
+                           c.id IN (
                               SELECT courseid FROM {iomad_courses}
                               WHERE shared = 1
+                              $sharedlicsql
                               AND courseid NOT IN (
                                   SELECT courseid FROM {company_course}
                                   WHERE companyid = :companyid2
@@ -1592,6 +1595,8 @@ class company {
         } else {
             $groupsql = "";
         }
+
+        // Get the courses.
         $retcourses = $DB->get_records_sql_menu("SELECT c.id, c.fullname
                                                  FROM {course} c
                                                  WHERE
@@ -1601,9 +1606,12 @@ class company {
                                                      SELECT courseid FROM {company_course}
                                                      WHERE companyid = :companyid
                                                  )
-                                                 $sharedsql",
+                                                 $sharedsql
+                                                 ORDER BY c.fullname",
                                                  array('companyid' => $this->id,
                                                        'companyid2' => $this->id));
+
+        // Add a default entry and return the courses.
         return array('0' => get_string('noselection', 'form')) + $retcourses;
     }
 
