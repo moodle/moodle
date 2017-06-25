@@ -44,6 +44,11 @@ class company_license_form extends company_moodleform {
         $this->licenseid = $licenseid;
         $this->parentid = $parentid;
         $this->selectedcourses = $courses;
+        if (!empty($this->parentid)) {
+            $this->parentlicense = $DB->get_record('companylicense', array('id' => $parentid));
+        } else {
+            $this->parentlicense = null;
+        }
 
         $company = new company($this->selectedcompany);
         $parentlevel = company::get_company_parentnode($company->id);
@@ -158,6 +163,10 @@ class company_license_form extends company_moodleform {
             $mform->setType('expirydate', PARAM_INT);
             $mform->addElement('hidden', 'validlength', $licenseinfo->validlength);
             $mform->setType('validlength', PARAM_INTEGER);
+            $mform->addElement('hidden', 'program', $this->parentlicense->program);
+            $mform->setType('program', PARAM_INTEGER);
+            $mform->addElement('hidden', 'parentid', $this->parentlicense->id);
+            $mform->setType('parentid', PARAM_INTEGER);
         }
 
         $mform->addElement('text', 'allocation', get_string('licenseallocation', 'block_iomad_company_admin'),
@@ -170,9 +179,16 @@ class company_license_form extends company_moodleform {
         $mform->addElement('hidden', 'courseselector', 0);
         $mform->setType('expirydate', PARAM_INT);
 
+        if (!empty($this->parentlicense->program)) {
+            $mform->addElement('html', "<div style='display:none'>");
+        }
         $autooptions = array('multiple' => true);
         $mform->addElement('autocomplete', 'licensecourses', get_string('selectlicensecourse', 'block_iomad_company_admin'), $this->courses, $autooptions);
-        
+
+        // If we are not a child of a program license then show all of the courses.
+        if (!empty($this->parentlicense->program)) {
+            $mform->addElement('html', "</div>");
+        }
         if ( $this->courses ) {
             $this->add_action_buttons(true, get_string('updatelicense', 'block_iomad_company_admin'));
         } else {
@@ -297,6 +313,15 @@ if ($licenseinfo = $DB->get_record('companylicense', array('id' => $licenseid)))
     }
 
     $mform->set_data($licenseinfo);
+} else if (!empty($parentid)) {
+    $licenseinfo = new stdclass();
+    if ($currentcourses = $DB->get_records('companylicense_courses', array('licenseid' => $parentid), null, 'courseid')) {
+        foreach ($currentcourses as $currentcourse) {
+            $licenseinfo->licensecourses[] = $currentcourse->courseid;
+        }
+    }
+
+    $mform->set_data($licenseinfo);
 }
 
 if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
@@ -317,7 +342,7 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             $licensedata['allocation'] = $data->allocation;
         } else {
             $licensedata['program'] = $data->program;
-            $licensedata['allocation'] = $data->allocation * count($data->selectedcourses);
+            $licensedata['allocation'] = $data->allocation * count($data->licensecourses);
         }
         $licensedata['expirydate'] = $data->expirydate;
         if (empty($data->languages)) {
@@ -359,14 +384,6 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             // Add the course license allocations.
             foreach ($data->licensecourses as $selectedcourse) {
                 $DB->insert_record('companylicense_courses', array('licenseid' => $licenseid, 'courseid' => $selectedcourse));
-            }
-        }
-        if (empty($data->selectedcourses) && !empty($data->parentid)) {
-            // Allocate all of the parent courses to this license by default.
-            $parentcourses = $DB->get_records('companylicense_courses', array('licenseid' => $data->parentid));
-            foreach ($parentcourses as $parentcourse) {
-                $courserec = array('licenseid' => $licenseid, 'courseid' => $parentcourse->courseid);
-                $DB->insert_record('companylicense_courses', $courserec);
             }
         }
 
