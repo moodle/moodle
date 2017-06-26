@@ -1247,7 +1247,13 @@ abstract class lesson_add_page_form_base extends moodleform {
         $mform = $this->_form;
         $editoroptions = $this->_customdata['editoroptions'];
 
-        $mform->addElement('header', 'qtypeheading', get_string('createaquestionpage', 'lesson', get_string($this->qtypestring, 'lesson')));
+        if ($this->qtypestring != 'selectaqtype') {
+            if ($this->_customdata['edit']) {
+                $mform->addElement('header', 'qtypeheading', get_string('edit'. $this->qtypestring, 'lesson'));
+            } else {
+                $mform->addElement('header', 'qtypeheading', get_string('add'. $this->qtypestring, 'lesson'));
+            }
+        }
 
         if (!empty($this->_customdata['returnto'])) {
             $mform->addElement('hidden', 'returnto', $this->_customdata['returnto']);
