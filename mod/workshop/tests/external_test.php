@@ -1142,4 +1142,125 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(50, $result['assessments'][0]['grade']);
         $this->assertEquals($assessmentid, $result['assessments'][0]['id']);
     }
+
+    /**
+     * Test get_assessment_author.
+     */
+    public function test_get_assessment_author() {
+        global $DB;
+
+        // Create the submission.
+        $submissionid = $this->create_test_submission($this->anotherstudentg1);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $assessmentid = $workshopgenerator->create_assessment($submissionid, $this->student->id, array(
+            'weight' => 2,
+            'grade' => 90,
+        ));
+
+        // Switch to closed phase.
+        $DB->set_field('workshop', 'phase', workshop::PHASE_CLOSED, array('id' => $this->workshop->id));
+        $this->setUser($this->anotherstudentg1);
+        $result = mod_workshop_external::get_assessment($assessmentid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
+        $this->assertEquals($assessmentid, $result['assessment']['id']);
+        $this->assertEquals(90, $result['assessment']['grade']);
+        // I can't see the reviewer review.
+        $this->assertFalse(isset($result['assessment']['feedbackreviewer']));
+    }
+
+    /**
+     * Test get_assessment_reviewer.
+     */
+    public function test_get_assessment_reviewer() {
+        global $DB;
+
+        // Create the submission.
+        $submissionid = $this->create_test_submission($this->anotherstudentg1);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $assessmentid = $workshopgenerator->create_assessment($submissionid, $this->student->id, array(
+            'weight' => 2,
+            'grade' => 90,
+        ));
+
+        // Switch to closed phase.
+        $DB->set_field('workshop', 'phase', workshop::PHASE_CLOSED, array('id' => $this->workshop->id));
+        $this->setUser($this->student);
+        $result = mod_workshop_external::get_assessment($assessmentid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
+        $this->assertEquals($assessmentid, $result['assessment']['id']);
+        $this->assertEquals(90, $result['assessment']['grade']);
+        // I can see the reviewer review.
+        $this->assertTrue(isset($result['assessment']['feedbackreviewer']));
+    }
+
+    /**
+     * Test get_assessment_teacher.
+     */
+    public function test_get_assessment_teacher() {
+        global $DB;
+
+        // Create the submission.
+        $submissionid = $this->create_test_submission($this->anotherstudentg1);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $assessmentid = $workshopgenerator->create_assessment($submissionid, $this->student->id, array(
+            'weight' => 2,
+            'grade' => 90,
+        ));
+
+        // Switch to closed phase.
+        $DB->set_field('workshop', 'phase', workshop::PHASE_CLOSED, array('id' => $this->workshop->id));
+        $this->setUser($this->teacher);
+        $result = mod_workshop_external::get_assessment($assessmentid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
+        $this->assertEquals($assessmentid, $result['assessment']['id']);
+        $this->assertEquals(90, $result['assessment']['grade']);
+    }
+
+    /**
+     * Test get_assessment_student_invalid_phase.
+     */
+    public function test_get_assessment_student_invalid_phase() {
+        global $DB;
+
+        // Create the submission.
+        $submissionid = $this->create_test_submission($this->anotherstudentg1);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $assessmentid = $workshopgenerator->create_assessment($submissionid, $this->student->id, array(
+            'weight' => 2,
+            'grade' => 90,
+        ));
+
+        // Switch to closed phase.
+        $this->setUser($this->anotherstudentg1);
+
+        $this->setExpectedException('moodle_exception');
+        mod_workshop_external::get_assessment($assessmentid);
+    }
+
+    /**
+     * Test get_assessment_student_invalid_user.
+     */
+    public function test_get_assessment_student_invalid_user() {
+        global $DB;
+
+        // Create the submission.
+        $submissionid = $this->create_test_submission($this->anotherstudentg1);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $assessmentid = $workshopgenerator->create_assessment($submissionid, $this->student->id, array(
+            'weight' => 2,
+            'grade' => 90,
+        ));
+
+        // Switch to closed phase.
+        $DB->set_field('workshop', 'phase', workshop::PHASE_CLOSED, array('id' => $this->workshop->id));
+        $this->setUser($this->anotherstudentg2);
+
+        $this->setExpectedException('moodle_exception');
+        mod_workshop_external::get_assessment($assessmentid);
+    }
 }

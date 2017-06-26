@@ -2940,6 +2940,35 @@ class workshop {
         return $submission->id;
     }
 
+    /**
+     * Helper method for validating if the current user can view the given assessment.
+     *
+     * @param  stdClass   $assessment assessment object
+     * @param  stdClass   $submission submission object
+     * @return void
+     * @throws moodle_exception
+     * @since  Moodle 3.4
+     */
+    public function check_view_assessment($assessment, $submission) {
+        global $USER;
+
+        $isauthor = $submission->authorid == $USER->id;
+        $isreviewer = $assessment->reviewerid == $USER->id;
+        $canviewallassessments  = has_capability('mod/workshop:viewallassessments', $this->context);
+        $canviewallsubmissions  = has_capability('mod/workshop:viewallsubmissions', $this->context);
+
+        $canviewallsubmissions = $canviewallsubmissions && $this->check_group_membership($submission->authorid);
+
+        if (!$isreviewer and !$isauthor and !($canviewallassessments and $canviewallsubmissions)) {
+            print_error('nopermissions', 'error', $this->view_url(), 'view this assessment');
+        }
+
+        if ($isauthor and !$isreviewer and !$canviewallassessments and $this->phase != self::PHASE_CLOSED) {
+            // Authors can see assessments of their work at the end of workshop only.
+            print_error('nopermissions', 'error', $this->view_url(), 'view assessment of own work before workshop is closed');
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
     ////////////////////////////////////////////////////////////////////////////////
