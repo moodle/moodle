@@ -132,9 +132,10 @@
 }
 
 .fp-pathbar .fp-path-folder {
-    background: url('[[pix:theme|fp/path_folder]]') 0 3px no-repeat;
+    background: url('[[pix:theme|fp/path_folder]]') left 3px no-repeat;
+    background-size: 12px 12px;
     height: 12px;
-    margin-left: 4px;
+    margin-left: 12px;
 }
 
 /*rtl:raw:
@@ -144,7 +145,7 @@
 */
 
 .fp-pathbar .fp-path-folder-name {
-    margin-left: 32px;
+    margin-left: 24px;
 }
 // Icon view (File Picker and File Manager)
 .fp-iconview .fp-file {
@@ -641,6 +642,7 @@ a.ygtvspacer:hover {
     */
     /*rtl:ignore*/
     background-position: bottom right;
+    background-size: 16px 16px;
 }
 
 .fp-iconview .fp-file.fp-isreference .fp-reficons2 {
@@ -650,6 +652,7 @@ a.ygtvspacer:hover {
     */
     /*rtl:ignore*/
     background-position: bottom left;
+    background-size: 16px 16px;
 }
 
 .filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail img {
@@ -699,6 +702,7 @@ a.ygtvspacer:hover {
     position: absolute;
     top: 8px;
     left: 17px;
+    background-size: 16px 16px;
 }
 
 .filemanager .fp-filename-icon.fp-isreference .fp-reficons2 {
@@ -711,6 +715,7 @@ a.ygtvspacer:hover {
     position: absolute;
     top: 9px;
     left: -6px;
+    background-size: 16px 16px;
 }
 // Folder Context Menu (File Manager only)
 .filemanager .fp-contextmenu {

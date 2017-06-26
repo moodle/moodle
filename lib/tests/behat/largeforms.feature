@@ -13,8 +13,7 @@ Feature: Forms with a large number of fields
       | activity   | name | intro                                                                   | course | idnumber |
       | label      | L1   | <a href="../lib/tests/fixtures/max_input_vars.php">FixtureLink</a> | C1     | label1   |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "FixtureLink"
 
   # Note: These tests do not actually use JavaScript but they don't work with

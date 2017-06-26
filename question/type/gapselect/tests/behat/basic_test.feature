@@ -17,7 +17,7 @@ Feature: Test all the basic functionality of this question type
   @javascript
   Scenario: Create, edit then preview a gapselect question.
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Question bank" node in "Course administration"
 
     # Create a new question.

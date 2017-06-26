@@ -1,6 +1,18 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.3 ===
+
+* Authentication plugins have been migrated to use the admin settings API.  Plugins should use a settings.php file to
+  manage configurations rather than using the old config.html files. See how the helper function
+  upgrade_fix_config_auth_plugin_names() can be used to convert the legacy settings to the new ones. Another helper
+  function upgrade_fix_config_auth_plugin_defaults() can be used to populate the settings with default values so that
+  they are not falsely reported as newly added ones.
+* The function 'print_auth_lock_options' has been replaced by 'display_auth_lock_options' which uses the admin settings API.
+  See auth_manual as an exmple of how it can be used.  More information can be found in MDL-12689.
+* The list of supported identity providers (SSO IdP) returned by the 'loginpage_idp_list' method (used to render the
+  login page and login block links) now supports a new key 'iconurl' which should be used instead of the legacy 'icon'.
+
 === 3.2 ===
 
 * New auth hook - pre_user_login_hook() - available, triggered right after the user object is created.

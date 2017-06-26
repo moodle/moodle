@@ -102,6 +102,9 @@ function lti_add_instance($lti, $mform) {
     $lti->timecreated = time();
     $lti->timemodified = $lti->timecreated;
     $lti->servicesalt = uniqid('', true);
+    if (!isset($lti->typeid)) {
+        $lti->typeid = null;
+    }
 
     lti_force_type_config_settings($lti, lti_get_type_config_by_instance($lti));
 
@@ -123,6 +126,9 @@ function lti_add_instance($lti, $mform) {
 
         lti_grade_item_update($lti);
     }
+
+    $completiontimeexpected = !empty($lti->completionexpected) ? $lti->completionexpected : null;
+    \core_completion\api::update_completion_date_event($lti->coursemodule, 'lti', $lti->id, $completiontimeexpected);
 
     return $lti->id;
 }
@@ -168,6 +174,9 @@ function lti_update_instance($lti, $mform) {
         $lti->typeid = $lti->urlmatchedtypeid;
     }
 
+    $completiontimeexpected = !empty($lti->completionexpected) ? $lti->completionexpected : null;
+    \core_completion\api::update_completion_date_event($lti->coursemodule, 'lti', $lti->id, $completiontimeexpected);
+
     return $DB->update_record('lti', $lti);
 }
 
@@ -196,6 +205,9 @@ function lti_delete_instance($id) {
         $DB->delete_records('lti_tool_settings',
             array('toolproxyid' => $ltitype->toolproxyid, 'course' => $basiclti->course, 'coursemoduleid' => $id));
     }
+
+    $cm = get_coursemodule_from_instance('lti', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'lti', $id, null);
 
     return $DB->delete_records("lti", array("id" => $basiclti->id));
 }
@@ -502,6 +514,22 @@ function lti_grade_item_update($basiclti, $grades = null) {
 }
 
 /**
+ * Update activity grades
+ *
+ * @param stdClass $basiclti The LTI instance
+ * @param int      $userid Specific user only, 0 means all.
+ * @param bool     $nullifnone Not used
+ */
+function lti_update_grades($basiclti, $userid=0, $nullifnone=true) {
+    global $CFG;
+    require_once($CFG->dirroot.'/mod/lti/servicelib.php');
+    // LTI doesn't have its own grade table so the only thing to do is update the grade item.
+    if (lti_accepts_grades($basiclti)) {
+        lti_grade_item_update($basiclti);
+    }
+}
+
+/**
  * Delete grade item for given basiclti
  *
  * @category grade
@@ -585,5 +613,67 @@ function lti_check_updates_since(cm_info $cm, $from, $filter = array()) {
         $updates->submissions->itemids = array_keys($submissions);
     }
 
+    // Now, teachers should see other students updates.
+    if (has_capability('mod/lti:manage', $cm->context)) {
+        $select = 'ltiid = :id AND (datesubmitted > :since1 OR dateupdated > :since2)';
+        $params = array('id' => $cm->instance, 'since1' => $from, 'since2' => $from);
+
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+            $groupusers = array_keys(groups_get_activity_shared_group_members($cm));
+            if (empty($groupusers)) {
+                return $updates;
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($groupusers, SQL_PARAMS_NAMED);
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
+
+        $updates->usersubmissions = (object) array('updated' => false);
+        $submissions = $DB->get_records_select('lti_submission', $select, $params, '', 'id');
+        if (!empty($submissions)) {
+            $updates->usersubmissions->updated = true;
+            $updates->usersubmissions->itemids = array_keys($submissions);
+        }
+    }
+
     return $updates;
+}
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_lti_get_fontawesome_icon_map() {
+    return [
+        'mod_lti:warning' => 'fa-exclamation text-warning',
+    ];
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_lti_core_calendar_provide_event_action(calendar_event $event,
+                                                      \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['lti'][$event->instance];
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/lti/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }

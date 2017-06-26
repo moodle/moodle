@@ -51,6 +51,9 @@ define('LASTATTEMPT', '3');
 define('TOCJSLINK', 1);
 define('TOCFULLURL', 2);
 
+define('SCORM_EVENT_TYPE_OPEN', 'open');
+define('SCORM_EVENT_TYPE_CLOSE', 'close');
+
 // Local Library of functions for module scorm.
 
 /**
@@ -1546,11 +1549,9 @@ function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='n
                         $strstatus = get_string($usertrack->status, 'scorm');
 
                         if ($sco->scormtype == 'sco') {
-                            $statusicon = html_writer::img($OUTPUT->pix_url($usertrack->status, 'scorm'), $strstatus,
-                                                            array('title' => $strstatus));
+                            $statusicon = $OUTPUT->pix_icon($usertrack->status, $strstatus, 'scorm');
                         } else {
-                            $statusicon = html_writer::img($OUTPUT->pix_url('asset', 'scorm'), get_string('assetlaunched', 'scorm'),
-                                                            array('title' => get_string('assetlaunched', 'scorm')));
+                            $statusicon = $OUTPUT->pix_icon('asset', get_string('assetlaunched', 'scorm'), 'scorm');
                         }
 
                         if (($usertrack->status == 'notattempted') ||
@@ -1571,8 +1572,7 @@ function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='n
                         }
 
                         if ($incomplete && isset($usertrack->{$exitvar}) && ($usertrack->{$exitvar} == 'suspend')) {
-                            $statusicon = html_writer::img($OUTPUT->pix_url('suspend', 'scorm'), $strstatus.' - '.$strsuspended,
-                                                            array('title' => $strstatus.' - '.$strsuspended));
+                            $statusicon = $OUTPUT->pix_icon('suspend', $strstatus.' - '.$strsuspended, 'scorm');
                         }
 
                     } else {
@@ -1583,20 +1583,16 @@ function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='n
                         $incomplete = true;
 
                         if ($sco->scormtype == 'sco') {
-                            $statusicon = html_writer::img($OUTPUT->pix_url('notattempted', 'scorm'),
-                                                            get_string('notattempted', 'scorm'),
-                                                            array('title' => get_string('notattempted', 'scorm')));
+                            $statusicon = $OUTPUT->pix_icon('notattempted', get_string('notattempted', 'scorm'), 'scorm');
                         } else {
-                            $statusicon = html_writer::img($OUTPUT->pix_url('asset', 'scorm'), get_string('asset', 'scorm'),
-                                                            array('title' => get_string('asset', 'scorm')));
+                            $statusicon = $OUTPUT->pix_icon('asset', get_string('asset', 'scorm'), 'scorm');
                         }
                     }
                 }
             }
 
             if (empty($statusicon)) {
-                $sco->statusicon = html_writer::img($OUTPUT->pix_url('notattempted', 'scorm'), get_string('notattempted', 'scorm'),
-                                                    array('title' => get_string('notattempted', 'scorm')));
+                $sco->statusicon = $OUTPUT->pix_icon('notattempted', get_string('notattempted', 'scorm'), 'scorm');
             } else {
                 $sco->statusicon = $statusicon;
             }
@@ -2358,4 +2354,102 @@ function scorm_eval_prerequisites($prerequisites, $usertracks) {
         $stack[] = ' '.$element.' ';
     }
     return eval('return '.implode($stack).';');
+}
+
+/**
+ * Update the calendar entries for this scorm activity.
+ *
+ * @param stdClass $scorm the row from the database table scorm.
+ * @param int $cmid The coursemodule id
+ * @return bool
+ */
+function scorm_update_calendar(stdClass $scorm, $cmid) {
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot.'/calendar/lib.php');
+
+    // Scorm start calendar events.
+    $event = new stdClass();
+    $event->eventtype = SCORM_EVENT_TYPE_OPEN;
+    // The SCORM_EVENT_TYPE_OPEN event should only be an action event if no close time is specified.
+    $event->type = empty($scorm->timeclose) ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
+    if ($event->id = $DB->get_field('event', 'id',
+        array('modulename' => 'scorm', 'instance' => $scorm->id, 'eventtype' => $event->eventtype))) {
+        if ((!empty($scorm->timeopen)) && ($scorm->timeopen > 0)) {
+            // Calendar event exists so update it.
+            $event->name = get_string('calendarstart', 'scorm', $scorm->name);
+            $event->description = format_module_intro('scorm', $scorm, $cmid);
+            $event->timestart = $scorm->timeopen;
+            $event->timesort = $scorm->timeopen;
+            $event->visible = instance_is_visible('scorm', $scorm);
+            $event->timeduration = 0;
+
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->update($event);
+        } else {
+            // Calendar event is on longer needed.
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->delete();
+        }
+    } else {
+        // Event doesn't exist so create one.
+        if ((!empty($scorm->timeopen)) && ($scorm->timeopen > 0)) {
+            $event->name = get_string('calendarstart', 'scorm', $scorm->name);
+            $event->description = format_module_intro('scorm', $scorm, $cmid);
+            $event->courseid = $scorm->course;
+            $event->groupid = 0;
+            $event->userid = 0;
+            $event->modulename = 'scorm';
+            $event->instance = $scorm->id;
+            $event->timestart = $scorm->timeopen;
+            $event->timesort = $scorm->timeopen;
+            $event->visible = instance_is_visible('scorm', $scorm);
+            $event->timeduration = 0;
+
+            calendar_event::create($event);
+        }
+    }
+
+    // Scorm end calendar events.
+    $event = new stdClass();
+    $event->type = CALENDAR_EVENT_TYPE_ACTION;
+    $event->eventtype = SCORM_EVENT_TYPE_CLOSE;
+    if ($event->id = $DB->get_field('event', 'id',
+        array('modulename' => 'scorm', 'instance' => $scorm->id, 'eventtype' => $event->eventtype))) {
+        if ((!empty($scorm->timeclose)) && ($scorm->timeclose > 0)) {
+            // Calendar event exists so update it.
+            $event->name = get_string('calendarend', 'scorm', $scorm->name);
+            $event->description = format_module_intro('scorm', $scorm, $cmid);
+            $event->timestart = $scorm->timeclose;
+            $event->timesort = $scorm->timeclose;
+            $event->visible = instance_is_visible('scorm', $scorm);
+            $event->timeduration = 0;
+
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->update($event);
+        } else {
+            // Calendar event is on longer needed.
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->delete();
+        }
+    } else {
+        // Event doesn't exist so create one.
+        if ((!empty($scorm->timeclose)) && ($scorm->timeclose > 0)) {
+            $event->name = get_string('calendarend', 'scorm', $scorm->name);
+            $event->description = format_module_intro('scorm', $scorm, $cmid);
+            $event->courseid = $scorm->course;
+            $event->groupid = 0;
+            $event->userid = 0;
+            $event->modulename = 'scorm';
+            $event->instance = $scorm->id;
+            $event->timestart = $scorm->timeclose;
+            $event->timesort = $scorm->timeclose;
+            $event->visible = instance_is_visible('scorm', $scorm);
+            $event->timeduration = 0;
+
+            calendar_event::create($event);
+        }
+    }
+
+    return true;
 }

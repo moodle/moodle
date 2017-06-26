@@ -55,7 +55,7 @@ class auth_plugin_pam extends auth_plugin_base {
      */
     public function __construct() {
         $this->authtype = 'pam';
-        $this->config = get_config('auth/pam');
+        $this->config = get_config('auth_pam');
         $this->errormessage = '';
     }
 
@@ -116,25 +116,6 @@ class auth_plugin_pam extends auth_plugin_base {
      */
     function can_change_password() {
         return false;
-    }
-
-    /**
-     * Prints a form for configuring this authentication plugin.
-     *
-     * This function is called from admin/auth.php, and outputs a full page with
-     * a form for configuring this plugin.
-     *
-     * @param array $page An object containing all the data for this page.
-     */
-    function config_form($config, $err, $user_fields) {
-        include "config.html";
-    }
-
-    /**
-     * Processes and stores configuration data for this authentication plugin.
-     */
-    function process_config($config) {
-        return true;
     }
 
 }

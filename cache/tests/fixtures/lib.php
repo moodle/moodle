@@ -288,23 +288,22 @@ class cache_config_testing extends cache_config_writer {
         global $CFG;
         return $CFG->wwwroot.'phpunit';
     }
+
+    /**
+     * Checks if the configuration file exists.
+     *
+     * @return bool True if it exists
+     */
+    public static function config_file_exists() {
+        // Allow for late static binding by using static.
+        $configfilepath = static::get_config_file_path();
+
+        // Invalidate opcode php cache, so we get correct status of file.
+        core_component::invalidate_opcode_php_cache($configfilepath);
+        return file_exists($configfilepath);
+    }
 }
 
-/**
- * This is a deprecated class. It has been renamed to cache_config_testing.
- *
- * This was deprecated in Moodle 2.9 but will be removed at the next major release
- * as it is only used during testing and its highly unlikely anyone has used this.
- *
- * @deprecated since 2.9
- * @todo MDL-55267 This will be deleted in Moodle 3.3.
- * @copyright  2014 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class cache_config_phpunittest extends cache_config_testing {
-    // We can't do anything here to warn the user.
-    // The cache can be utilised before sessions have even been started.
-}
 
 /**
  * Dummy object for testing cacheable object interface and interaction

@@ -204,30 +204,32 @@ class core_files_renderer extends plugin_renderer_base {
             <div class="fp-toolbar">
                 <div class="fp-btn-add">
                     <a role="button" title="' . $straddfile . '" href="#">
-                        <img src="' . $this->pix_url('a/add_file') . '" alt="' . $straddfiletext . '" />
+                        ' . $this->pix_icon('a/add_file', $straddfiletext) . '
                     </a>
                 </div>
                 <div class="fp-btn-mkdir">
                     <a role="button" title="' . $strmakedir . '" href="#">
-                        <img src="' . $this->pix_url('a/create_folder') . '" alt="' . $strcreatefolder . '" />
+                        ' . $this->pix_icon('a/create_folder', $strcreatefolder) . '
                     </a>
                 </div>
                 <div class="fp-btn-download">
                     <a role="button" title="' . $strdownload . '" href="#">
-                        <img src="' . $this->pix_url('a/download_all').'" alt="' . $strdownloadallfiles . '" />
+                        ' . $this->pix_icon('a/download_all', $strdownloadallfiles) . '
                     </a>
                 </div>
-                <img class="fp-img-downloading" src="'.$this->pix_url('i/loading_small').'" alt="" />
+                <span class="fp-img-downloading">
+                    ' . $this->pix_icon('i/loading_small', '') . '
+                </span>
             </div>
             <div class="fp-viewbar">
                 <a title="'. get_string('displayicons', 'repository') .'" class="fp-vb-icons" href="#">
-                    <img alt="'. get_string('displayasicons', 'repository') .'" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" />
+                    ' . $this->pix_icon('fp/view_icon_active', get_string('displayasicons', 'repository'), 'theme') . '
                 </a>
                 <a title="'. get_string('displaydetails', 'repository') .'" class="fp-vb-details" href="#">
-                    <img alt="'. get_string('displayasdetails', 'repository') .'" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" />
+                    ' . $this->pix_icon('fp/view_list_active', get_string('displayasdetails', 'repository'), 'theme') . '
                 </a>
                 <a title="'. get_string('displaytree', 'repository') .'" class="fp-vb-tree" href="#">
-                    <img alt="'. get_string('displayastree', 'repository') .'" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" />
+                    ' . $this->pix_icon('fp/view_tree_active', get_string('displayastree', 'repository'), 'theme') . '
                 </a>
             </div>
         </div>
@@ -393,7 +395,7 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="filemanager fp-select">
     <div class="fp-select-loading">
-        <img src="'.$this->pix_url('i/loading_small').'" />
+        ' . $this->pix_icon('i/loading_small', '') . '
     </div>
     <form class="form-horizontal">
         <button class="fp-file-download">'.get_string('download').'</button>
@@ -590,35 +592,35 @@ class core_files_renderer extends plugin_renderer_base {
                     </div>
                     <div class="fp-tb-refresh">
                         <a title="'. get_string('refresh', 'repository') .'" href="#">
-                            <img alt=""  src="'.$this->pix_url('a/refresh').'" />
+                            ' . $this->pix_icon('a/refresh', '') . '
                         </a>
                     </div>
                     <div class="fp-tb-logout">
                         <a title="'. get_string('logout', 'repository') .'" href="#">
-                            <img alt="" src="'.$this->pix_url('a/logout').'" />
+                            ' . $this->pix_icon('a/logout', '') . '
                         </a>
                     </div>
                     <div class="fp-tb-manage">
-                        <a title="'. get_string('settings', 'repository') .'" href="#">
-                            <img alt="" src="'.$this->pix_url('a/setting').'" />
+                        <a title="'. get_string('manageurl', 'repository') .'" href="#">
+                            ' . $this->pix_icon('a/setting', '') . '
                         </a>
                     </div>
                     <div class="fp-tb-help">
                         <a title="'. get_string('help', 'repository') .'" href="#">
-                            <img alt="" src="'.$this->pix_url('a/help').'" />
+                            ' . $this->pix_icon('a/help', '') . '
                         </a>
                     </div>
                     <div class="fp-tb-message"></div>
                 </div>
                 <div class="fp-viewbar">
                     <a role="button" title="'. get_string('displayicons', 'repository') .'" class="fp-vb-icons" href="#">
-                        <img alt="" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" />
+                        ' . $this->pix_icon('fp/view_icon_active', '', 'theme') . '
                     </a>
                     <a role="button" title="'. get_string('displaydetails', 'repository') .'" class="fp-vb-details" href="#">
-                        <img alt="" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" />
+                        ' . $this->pix_icon('fp/view_list_active', '', 'theme') . '
                     </a>
                     <a role="button" title="'. get_string('displaytree', 'repository') .'" class="fp-vb-tree" href="#">
-                        <img alt="" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" />
+                        ' . $this->pix_icon('fp/view_tree_active', '', 'theme') . '
                     </a>
                 </div>
                 <div class="fp-clear-left"></div>
@@ -710,7 +712,7 @@ class core_files_renderer extends plugin_renderer_base {
 <div class="fp-nextpage">
     <div class="fp-nextpage-link"><a href="#">'.get_string('more').'</a></div>
     <div class="fp-nextpage-loading">
-        <img src="'.$this->pix_url('i/loading_small').'" />
+        ' . $this->pix_icon('i/loading_small', '') . '
     </div>
 </div>';
         return $rv;
@@ -748,7 +750,7 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="file-picker fp-select">
     <div class="fp-select-loading">
-        <img src="'.$this->pix_url('i/loading_small').'" />
+        ' . $this->pix_icon('i/loading_small', '') . '
     </div>
     <form class="form-horizontal">
         <div class="fp-forminset">
@@ -766,6 +768,12 @@ class core_files_renderer extends plugin_renderer_base {
                 </div>
                 <div class="fp-linktype-4 control-group control-radio clearfix">
                     <label class="control-label control-radio">'.get_string('makefilereference', 'repository').'</label>
+                    <div class="controls control-radio">
+                        <input type="radio"/>
+                    </div>
+                </div>
+                <div class="fp-linktype-8 control-group control-radio clearfix">
+                    <label class="control-label control-radio">'.get_string('makefilecontrolledlink', 'repository').'</label>
                     <div class="controls control-radio">
                         <input type="radio"/>
                     </div>
@@ -877,7 +885,7 @@ class core_files_renderer extends plugin_renderer_base {
         return '
 <div class="fp-content-loading">
     <div class="fp-content-center">
-        <img src="'.$this->pix_url('i/loading_small').'" />
+        ' . $this->pix_icon('i/loading_small', '') . '
     </div>
 </div>';
     }

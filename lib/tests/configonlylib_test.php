@@ -93,7 +93,7 @@ class core_configonlylib_testcase extends advanced_testcase {
         global $CFG;
 
         $this->resetAfterTest();
-        $this->assertEquals('http://www.example.com/moodle', $CFG->wwwroot);
+        $this->assertEquals('https://www.example.com/moodle', $CFG->wwwroot);
 
         $_SERVER = array();
         $_SERVER['SERVER_SOFTWARE'] = 'Apache/2.2.22 (Unix)';

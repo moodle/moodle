@@ -743,13 +743,13 @@ abstract class question_flags {
         );
         $flagattributes = array(
             0 => array(
-                'src' => $OUTPUT->pix_url('i/unflagged') . '',
+                'src' => $OUTPUT->image_url('i/unflagged') . '',
                 'title' => get_string('clicktoflag', 'question'),
                 'alt' => get_string('notflagged', 'question'),
               //  'text' => get_string('clickflag', 'question'),
             ),
             1 => array(
-                'src' => $OUTPUT->pix_url('i/flagged') . '',
+                'src' => $OUTPUT->image_url('i/flagged') . '',
                 'title' => get_string('clicktounflag', 'question'),
                 'alt' => get_string('flagged', 'question'),
                // 'text' => get_string('clickunflag', 'question'),

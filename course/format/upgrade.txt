@@ -10,6 +10,14 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
   must check $cm->is_visible_on_course_page() when displaying activities list on the course page instead of $cm->uservisible.
   For all other plugins except course formats the same property $cm->uservisible indicates if the activity contents
   is actually available to student.
+* Option "Number of sections" (numsections) was removed from topics and weeks formats, instead the actual number of records
+  in the course_sections table is treated as a number of sections (excluding section 0 that should always be present).
+* Method create_course() will populate the new course with empty sections if $data->numsections is provided even if
+  "numsections" is not an option defined by the course format.
+* course/changenumsections.php can now be used to insert sections at any positions.
+* The variable SECTIONLEFTSIDE was changed from '.left .section-handle img' to '.left .section-handle .icon' in
+  course/format/topics/format.js and course/format/weeks/format.js due to the introduction of Font Awesome (see MDL-40759)
+  which altered the HTML. Please check if your course format relies on this selector, and if so, update it.
 
 === 3.2 ===
 * Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted

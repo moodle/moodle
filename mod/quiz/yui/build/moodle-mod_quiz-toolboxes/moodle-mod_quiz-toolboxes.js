@@ -28,6 +28,7 @@ var CSS = {
         PAGE: 'page',
         SECTIONHIDDENCLASS: 'hidden',
         SECTIONIDPREFIX: 'section-',
+        SELECTMULTIPLE: 'select-multiple',
         SLOT: 'slot',
         SHOW: 'editing_show',
         TITLEEDITOR: 'titleeditor'
@@ -45,10 +46,11 @@ var CSS = {
         COMMANDSPAN: '.commands',
         CONTENTAFTERLINK: 'div.contentafterlink',
         CONTENTWITHOUTLINK: 'div.contentwithoutlink',
-        DELETESECTIONICON: 'a.editing_delete img',
+        DELETESECTIONICON: 'a.editing_delete .icon',
+        DESELECTALL: '#questiondeselectall',
         EDITMAXMARK: 'a.editing_maxmark',
         EDITSECTION: 'a.editing_section',
-        EDITSECTIONICON: 'a.editing_section img',
+        EDITSECTIONICON: 'a.editing_section .icon',
         EDITSHUFFLEQUESTIONSACTION: 'input.cm-edit-action[data-action]',
         EDITSHUFFLEAREA: '.instanceshufflequestions .shuffle-progress',
         HIDE: 'a.editing_hide',
@@ -65,6 +67,11 @@ var CSS = {
         SECTIONUL: 'ul.section',
         SECTIONFORM: '.instancesectioncontainer form',
         SECTIONINPUT: 'input[name=section]',
+        SELECTMULTIPLEBUTTON: '#selectmultiplecommand',
+        SELECTMULTIPLECANCELBUTTON: '#selectmultiplecancelcommand',
+        SELECTMULTIPLECHECKBOX: '.select-multiple-checkbox',
+        SELECTMULTIPLEDELETEBUTTON: '#selectmultipledeletecommand',
+        SELECTALL: '#questionselectall',
         SHOW: 'a.' + CSS.SHOW,
         SLOTLI: 'li.slot',
         SUMMARKS: '.mod_quiz_summarks'
@@ -103,6 +110,7 @@ Y.extend(TOOLBOX, Y.Base, {
         if (!data) {
             data = {};
         }
+
         // Handle any variables which we must pass back through to
         var pageparams = this.get('config').pageparams,
             varname;
@@ -289,6 +297,52 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         M.mod_quiz.quizbase.register_module(this);
         Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
         Y.delegate('click', this.handle_data_action, BODY, SELECTOR.DEPENDENCY_LINK, this);
+        this.initialise_select_multiple();
+    },
+
+    /**
+     * Initialize the select multiple options
+     *
+     * Add actions to the buttons that enable multiple slots to be selected and managed at once.
+     *
+     * @method initialise_select_multiple
+     * @protected
+     */
+    initialise_select_multiple: function() {
+        // Click select multiple button to show the select all options.
+        Y.one(SELECTOR.SELECTMULTIPLEBUTTON).on('click', function(e) {
+            e.preventDefault();
+            Y.one('body').addClass(CSS.SELECTMULTIPLE);
+        });
+
+        // Click cancel button to show the select all options.
+        Y.one(SELECTOR.SELECTMULTIPLECANCELBUTTON).on('click', function(e) {
+            e.preventDefault();
+            Y.one('body').removeClass(CSS.SELECTMULTIPLE);
+        });
+
+        // Click select all link to check all the checkboxes.
+        Y.one(SELECTOR.SELECTALL).on('click', function(e) {
+            e.preventDefault();
+            Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
+        });
+
+        // Click deselect all link to show the select all checkboxes.
+        Y.one(SELECTOR.DESELECTALL).on('click', function(e) {
+            e.preventDefault();
+            Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
+        });
+
+        // Disable delete multiple button by default.
+        Y.one(SELECTOR.SELECTMULTIPLEDELETEBUTTON).setAttribute('disabled', 'disabled');
+
+        // Assign the delete method to the delete multiple button.
+        Y.delegate('click', this.delete_multiple_with_confirmation, BODY, SELECTOR.SELECTMULTIPLEDELETEBUTTON, this);
+
+        // Enable the delete all button only when at least one slot is selected.
+        Y.delegate('click', this.toggle_select_all_buttons_enabled, BODY, SELECTOR.SELECTMULTIPLECHECKBOX, this);
+        Y.delegate('click', this.toggle_select_all_buttons_enabled, BODY, SELECTOR.SELECTALL, this);
+        Y.delegate('click', this.toggle_select_all_buttons_enabled, BODY, SELECTOR.DESELECTALL, this);
     },
 
     /**
@@ -362,6 +416,22 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
     },
 
     /**
+     * If a select multiple checkbox is checked enable the buttons in the select multiple
+     * toolbar otherwise disable it.
+     *
+     * @method toggle_select_all_buttons_enabled
+     */
+    toggle_select_all_buttons_enabled: function() {
+        var checked = Y.all(SELECTOR.SELECTMULTIPLECHECKBOX + ':checked');
+        var deletebutton = Y.one(SELECTOR.SELECTMULTIPLEDELETEBUTTON);
+        if (checked && !checked.isEmpty()) {
+            deletebutton.removeAttribute('disabled');
+        } else {
+            deletebutton.setAttribute('disabled', 'disabled');
+        }
+    },
+
+    /**
      * Deletes the given activity or resource after confirmation.
      *
      * @protected
@@ -391,7 +461,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
 
         // If it is confirmed.
         confirm.on('complete-yes', function() {
-
             var spinner = this.add_spinner(element);
             var data = {
                 'class': 'resource',
@@ -410,10 +479,66 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             });
 
         }, this);
-
-        return this;
     },
 
+    /**
+     * Deletes the given activities or resources after confirmation.
+     *
+     * @protected
+     * @method delete_multiple_with_confirmation
+     * @param {EventFacade} ev The event that was fired.
+     * @chainable
+     */
+    delete_multiple_with_confirmation: function(ev) {
+        ev.preventDefault();
+
+        var ids = '';
+        var slots = [];
+        Y.all(SELECTOR.SELECTMULTIPLECHECKBOX + ':checked').each(function(node) {
+            var slot = Y.Moodle.mod_quiz.util.slot.getSlotFromComponent(node);
+            ids += ids === '' ? '' : ',';
+            ids += Y.Moodle.mod_quiz.util.slot.getId(slot);
+            slots.push(slot);
+        });
+        var element = Y.one('div.mod-quiz-edit-content');
+
+        // Do nothing if no slots are selected.
+        if (!slots || !slots.length) {
+            return;
+        }
+
+        // Create the confirmation dialogue.
+        var confirm = new M.core.confirm({
+            question: M.util.get_string('areyousureremoveselected', 'quiz'),
+            modal: true
+        });
+
+        // If it is confirmed.
+        confirm.on('complete-yes', function() {
+            var spinner = this.add_spinner(element);
+            var data = {
+                'class': 'resource',
+                field: 'deletemultiple',
+                ids: ids
+            };
+            // Delete items on server.
+            this.send_request(data, spinner, function(response) {
+                // Delete locally if deleted on server.
+                if (response.deleted) {
+                    // Actually remove the element.
+                    Y.all(SELECTOR.SELECTMULTIPLECHECKBOX + ':checked').each(function(node) {
+                        Y.Moodle.mod_quiz.util.slot.remove(node.ancestor('li.activity'));
+                    });
+                    // Update the page numbers and sections.
+                    this.reorganise_edit_page();
+
+                    // Remove the select multiple options.
+                    Y.one('body').removeClass(CSS.SELECTMULTIPLE);
+                }
+            });
+
+        }, this);
+    },
 
     /**
      * Edit the maxmark for the resource
@@ -671,6 +796,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             'value': 0
         }
     }
+
 });
 
 M.mod_quiz.resource_toolbox = null;

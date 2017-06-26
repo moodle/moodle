@@ -369,6 +369,7 @@ class mod_assign_external extends external_api {
                      'm.timemodified, '.
                      'm.completionsubmit, ' .
                      'm.cutoffdate, ' .
+                     'm.gradingduedate, ' .
                      'm.teamsubmission, ' .
                      'm.requireallteammemberssubmit, '.
                      'm.teamsubmissiongroupingid, ' .
@@ -441,6 +442,7 @@ class mod_assign_external extends external_api {
                         'timemodified' => $module->timemodified,
                         'completionsubmit' => $module->completionsubmit,
                         'cutoffdate' => $assign->get_instance()->cutoffdate,
+                        'gradingduedate' => $assign->get_instance()->gradingduedate,
                         'teamsubmission' => $module->teamsubmission,
                         'requireallteammemberssubmit' => $module->requireallteammemberssubmit,
                         'teamsubmissiongroupingid' => $module->teamsubmissiongroupingid,
@@ -517,6 +519,7 @@ class mod_assign_external extends external_api {
                 'timemodified' => new external_value(PARAM_INT, 'last time assignment was modified'),
                 'completionsubmit' => new external_value(PARAM_INT, 'if enabled, set activity as complete following submission'),
                 'cutoffdate' => new external_value(PARAM_INT, 'date after which submission is not accepted without an extension'),
+                'gradingduedate' => new external_value(PARAM_INT, 'the expected date for marking the submissions'),
                 'teamsubmission' => new external_value(PARAM_INT, 'if enabled, students submit as a team'),
                 'requireallteammemberssubmit' => new external_value(PARAM_INT, 'if enabled, all team members must submit'),
                 'teamsubmissiongroupingid' => new external_value(PARAM_INT, 'the grouping id for the team submission groups'),
@@ -815,7 +818,7 @@ class mod_assign_external extends external_api {
                     new external_single_structure(
                         array(
                             'name' => new external_value(PARAM_TEXT, 'field name'),
-                            'description' => new external_value(PARAM_TEXT, 'field description'),
+                            'description' => new external_value(PARAM_RAW, 'field description'),
                             'text' => new external_value (PARAM_RAW, 'field value'),
                             'format' => new external_format_value ('text')
                         )
@@ -2772,7 +2775,9 @@ class mod_assign_external extends external_api {
         // Skip the expensive lookup of user detail if we're blind marking or the caller
         // hasn't asked for user details to be embedded.
         if (!$assign->is_blind_marking() && $embeduser) {
-            $return['user'] = user_get_user_details($participant, $course);
+            if ($userdetails = user_get_user_details($participant, $course)) {
+                $return['user'] = $userdetails;
+            }
         }
 
         return $return;

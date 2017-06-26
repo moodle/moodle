@@ -83,7 +83,7 @@ $table->head = array(
     get_string('action')
 );
 $table->attributes['class'] = 'generaltable remotecourses';
-$icon = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/course'), 'alt' => get_string('category')));
+$icon = $OUTPUT->pix_icon('i/course', get_string('category'));
 $prevcat = null;
 foreach ($courses as $course) {
     $course = (object)$course;

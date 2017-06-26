@@ -126,6 +126,7 @@ $string['spaceleft'] = 'space available';
 $string['spacesleft'] = 'spaces available';
 $string['taken'] = 'Taken';
 $string['viewallresponses'] = 'View {$a} responses';
+$string['viewchoices'] = 'View choices';
 $string['withselected'] = 'With selected';
 $string['userchoosethisoption'] = 'Users who chose this option';
 $string['yourselection'] = 'Your selection';

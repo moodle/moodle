@@ -17,8 +17,7 @@ Feature: Set a certain number of discussions as a completion condition for a for
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
@@ -27,11 +26,13 @@ Feature: Set a certain number of discussions as a completion condition for a for
       | Forum name | Test forum name |
       | Description | Test forum description |
       | Completion tracking | Show activity as complete when conditions are met |
+      | completionview               | 0 |
+      | completionpostsenabled       | 0 |
       | completiondiscussionsenabled | 1 |
-      | completiondiscussions | 2 |
+      | completiondiscussions        | 2 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     Then the "Test forum name" "forum" activity with "auto" completion should be marked as not complete
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Post 1 subject |
@@ -39,9 +40,9 @@ Feature: Set a certain number of discussions as a completion condition for a for
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Post 2 subject |
       | Message | Body 2 content |
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     Then the "Test forum name" "forum" activity with "auto" completion should be marked as complete
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And "Student 1" user has completed "Test forum name" activity

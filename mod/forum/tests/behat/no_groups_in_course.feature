@@ -21,7 +21,7 @@ Feature: Posting to forums in a course with no groups behaves correctly
 
   Scenario: Teachers can post in standard forum
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Standard forum"
     When I click on "Add a new discussion topic" "button"
     Then I should not see "Post a copy to all groups"
@@ -34,7 +34,7 @@ Feature: Posting to forums in a course with no groups behaves correctly
 
   Scenario: Teachers can post in forum with separate groups
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Separate forum"
     When I click on "Add a new discussion topic" "button"
     Then I should not see "Post a copy to all groups"
@@ -47,7 +47,7 @@ Feature: Posting to forums in a course with no groups behaves correctly
 
   Scenario: Teachers can post in forum with visible groups
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Visible forum"
     When I click on "Add a new discussion topic" "button"
     Then I should not see "Post a copy to all groups"
@@ -60,7 +60,7 @@ Feature: Posting to forums in a course with no groups behaves correctly
 
   Scenario: Students can post in standard forum
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Standard forum"
     When I click on "Add a new discussion topic" "button"
     Then I should not see "Post a copy to all groups"
@@ -73,14 +73,14 @@ Feature: Posting to forums in a course with no groups behaves correctly
 
   Scenario: Students cannot post in forum with separate groups
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "Separate forum"
     Then I should see "You do not have permission to add a new discussion topic for all participants."
     And I should not see "Add a new discussion topic"
 
   Scenario: Teachers can post in forum with visible groups
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "Visible forum"
     Then I should see "You do not have permission to add a new discussion topic for all participants."
     And I should not see "Add a new discussion topic"

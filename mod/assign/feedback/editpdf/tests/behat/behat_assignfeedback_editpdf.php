@@ -78,4 +78,28 @@ class behat_assignfeedback_editpdf extends behat_base {
         $this->getSession()->executeScript($js);
         sleep(1);
     }
+
+    /**
+     * I wait for all pages in the PDF document to be converted to images and loaded.
+     *
+     * @Given /^I wait for the complete PDF to load$/
+     */
+    public function i_wait_for_all_editpdf_pages_to_load() {
+        // No need to wait if not running JS.
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        // Ensure that the document is ready, and all pages are loaded.
+        $conditions = [
+            'typeof M !== "undefined"',
+            'typeof M.assignfeedback_editpdf !== "undefined"',
+            'typeof M.assignfeedback_editpdf.instance !== "undefined"',
+            'M.assignfeedback_editpdf.instance.documentstatus === 2',
+            'M.assignfeedback_editpdf.instance.pagecount === M.assignfeedback_editpdf.instance.pages.length',
+        ];
+        $js = implode(' && ', $conditions);
+
+        $this->getSession()->wait(self::TIMEOUT * 1000, "({$js})");
+    }
 }

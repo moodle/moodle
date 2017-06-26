@@ -51,6 +51,7 @@ $saveas_path   = optional_param('savepath', '/', PARAM_PATH);   // save as file 
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
 $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
 $usefilereference  = optional_param('usefilereference', false, PARAM_BOOL);
+$usecontrolledlink  = optional_param('usecontrolledlink', false, PARAM_BOOL);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm, false, true);
@@ -220,12 +221,13 @@ switch ($action) {
                 }
             }
 
-            if ($usefilereference) {
+            if ($usefilereference || $usecontrolledlink) {
                 if ($repo->has_moodle_files()) {
                     $sourcefile = repository::get_moodle_file($reference);
                     $record->contenthash = $sourcefile->get_contenthash();
                     $record->filesize = $sourcefile->get_filesize();
                 }
+
                 // Check if file exists.
                 if (repository::draftfile_exists($itemid, $saveas_path, $saveas_filename)) {
                     // File name being used, rename it.
@@ -252,7 +254,7 @@ switch ($action) {
                         'url'=>moodle_url::make_draftfile_url($storedfile->get_itemid(), $storedfile->get_filepath(), $storedfile->get_filename())->out(),
                         'id'=>$storedfile->get_itemid(),
                         'file'=>$storedfile->get_filename(),
-                        'icon' => $OUTPUT->pix_url(file_file_icon($storedfile, 32))->out(),
+                        'icon' => $OUTPUT->image_url(file_file_icon($storedfile, 32))->out(),
                     );
                 }
                 // Repository plugin callback
@@ -276,6 +278,10 @@ switch ($action) {
             } else {
                 // Download file to moodle.
                 $downloadedfile = $repo->get_file($reference, $saveas_filename);
+
+                if (!empty($downloadedfile['newfilename'])) {
+                    $record->filename = $downloadedfile['newfilename'];
+                }
                 if (empty($downloadedfile['path'])) {
                     $err->error = get_string('cannotdownload', 'repository');
                     die(json_encode($err));

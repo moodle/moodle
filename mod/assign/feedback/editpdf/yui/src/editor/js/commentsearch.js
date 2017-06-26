@@ -51,7 +51,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
         placeholder = M.util.get_string('filter', 'assignfeedback_editpdf');
         commentfilter = Y.Node.create('<input type="text" size="20" placeholder="' + placeholder + '"/>');
         container.append(commentfilter);
-        commentlist = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_menu"/>');
+        commentlist = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_search"/>');
         container.append(commentlist);
 
         commentfilter.on('keyup', this.filter_search_comments, this);
@@ -102,18 +102,20 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
         e.preventDefault();
         var target = e.target.ancestor('li'),
             comment = target.getData('comment'),
-            editor = this.get('editor'),
-            pageselect = editor.get_dialogue_element(SELECTOR.PAGESELECT);
+            editor = this.get('editor');
 
         this.hide();
 
-        editor.currentpage = parseInt(pageselect.get('value'), 10);
+        comment.pageno = comment.clean().pageno;
         if (comment.pageno !== editor.currentpage) {
             // Comment is on a different page.
             editor.currentpage = comment.pageno;
             editor.change_page();
         }
-        comment.drawable.nodes[0].one('textarea').focus();
+
+        comment.node = comment.drawable.nodes[0].one('textarea');
+        comment.node.ancestor('div').removeClass('commentcollapsed');
+        comment.node.focus();
     },
 
     /**

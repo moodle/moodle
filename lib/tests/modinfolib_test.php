@@ -470,9 +470,10 @@ class core_modinfolib_testcase extends advanced_testcase {
      * Tests for function cm_info::get_course_module_record()
      */
     public function test_cm_info_get_course_module_record() {
-        global $DB, $CFG;
+        global $DB;
 
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         set_config('enableavailability', 1);
         set_config('enablecompletion', 1);

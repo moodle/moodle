@@ -15,8 +15,7 @@ Feature: Sections can be moved
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Move up and down a section with Javascript disabled in a single page course
     Given I add a "Forum" to section "1" and I fill the form with:

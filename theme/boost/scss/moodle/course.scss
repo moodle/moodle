@@ -336,6 +336,11 @@
         .content > .availabilityinfo {
             margin-left: 25px;
         }
+
+        .left {
+            padding-top: 0;
+            text-align: right;
+        }
     }
 }
 
@@ -444,9 +449,12 @@
 
 .path-course-view li.activity span.autocompletion img {
     vertical-align: text-bottom;
-    margin-right: 0;
+    margin-left: 0;
 }
 
+.path-course-view li.activity form.togglecompletion .btn {
+    padding: 0;
+}
 .path-course-view li.activity form.togglecompletion img {
     max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
 }
@@ -1188,4 +1196,5 @@ span.editinstructions {
 .page-settings-menu .menubar > a > .icon {
     width: auto;
     height: 32px;
+    font-size: 32px;
 }

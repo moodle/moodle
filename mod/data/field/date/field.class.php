@@ -93,11 +93,20 @@ class data_field_date extends data_field_base {
         return array(" ({$tablealias}.fieldid = {$this->field->id} AND $varcharcontent = :$name) ", array($name => $value['timestamp']));
     }
 
-    function parse_search_field() {
-        $day   = optional_param('f_'.$this->field->id.'_d', 0, PARAM_INT);
-        $month = optional_param('f_'.$this->field->id.'_m', 0, PARAM_INT);
-        $year  = optional_param('f_'.$this->field->id.'_y', 0, PARAM_INT);
-        $usedate = optional_param('f_'.$this->field->id.'_z', 0, PARAM_INT);
+    public function parse_search_field($defaults = null) {
+        $paramday = 'f_'.$this->field->id.'_d';
+        $parammonth = 'f_'.$this->field->id.'_m';
+        $paramyear = 'f_'.$this->field->id.'_y';
+        $paramusedate = 'f_'.$this->field->id.'_z';
+        if (empty($defaults[$paramday])) {  // One empty means the other ones are empty too.
+            $defaults = array($paramday => 0, $parammonth => 0, $paramyear => 0, $paramusedate => 0);
+        }
+
+        $day   = optional_param($paramday, $defaults[$paramday], PARAM_INT);
+        $month = optional_param($parammonth, $defaults[$parammonth], PARAM_INT);
+        $year  = optional_param($paramyear, $defaults[$paramyear], PARAM_INT);
+        $usedate = optional_param($paramusedate, $defaults[$paramusedate], PARAM_INT);
+
         $data = array();
         if (!empty($day) && !empty($month) && !empty($year) && $usedate == 1) {
             $calendartype = \core_calendar\type_factory::get_calendar_instance();
@@ -167,5 +176,18 @@ class data_field_date extends data_field_base {
         return $DB->sql_cast_char2int($fieldname, true);
     }
 
-
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of config parameters
+     * @since Moodle 3.3
+     */
+    public function get_config_for_external() {
+        // Return all the config parameters.
+        $configs = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $configs["param$i"] = $this->field->{"param$i"};
+        }
+        return $configs;
+    }
 }

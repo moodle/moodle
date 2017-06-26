@@ -17,8 +17,7 @@ Feature: A teacher can choose whether to provide a printer-friendly glossary ent
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   @javascript
   Scenario: Printer-friendly glossary view enabled
@@ -28,7 +27,7 @@ Feature: A teacher can choose whether to provide a printer-friendly glossary ent
       | Allow print view | Yes |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test glossary name"
     When I add a glossary entry with the following data:
       | Concept | Just a test concept |
@@ -46,7 +45,7 @@ Feature: A teacher can choose whether to provide a printer-friendly glossary ent
       | Allow print view | No |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test glossary name"
     When I add a glossary entry with the following data:
       | Concept | Just a test concept |

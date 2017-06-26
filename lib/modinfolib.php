@@ -1381,18 +1381,18 @@ class cm_info implements IteratorAggregate {
         } else if (!empty($this->icon)) {
             if (substr($this->icon, 0, 4) === 'mod/') {
                 list($modname, $iconname) = explode('/', substr($this->icon, 4), 2);
-                $icon = $output->pix_url($iconname, $modname);
+                $icon = $output->image_url($iconname, $modname);
             } else {
                 if (!empty($this->iconcomponent)) {
                     // Icon  has specified component
-                    $icon = $output->pix_url($this->icon, $this->iconcomponent);
+                    $icon = $output->image_url($this->icon, $this->iconcomponent);
                 } else {
                     // Icon does not have specified component, use default
-                    $icon = $output->pix_url($this->icon);
+                    $icon = $output->image_url($this->icon);
                 }
             }
         } else {
-            $icon = $output->pix_url('icon', $this->modname);
+            $icon = $output->image_url('icon', $this->modname);
         }
         return $icon;
     }
@@ -1930,8 +1930,9 @@ class cm_info implements IteratorAggregate {
 
         // If the user cannot access the activity set the uservisible flag to false.
         // Additional checks are required to determine whether the activity is entirely hidden or just greyed out.
-        if ((!$this->visible or !$this->get_available()) and
-                !has_capability('moodle/course:viewhiddenactivities', $this->get_context(), $userid)) {
+        if ((!$this->visible && !has_capability('moodle/course:viewhiddenactivities', $this->get_context(), $userid)) ||
+                (!$this->get_available() &&
+                !has_capability('moodle/course:ignoreavailabilityrestrictions', $this->get_context(), $userid))) {
 
             $this->uservisible = false;
         }
@@ -2356,19 +2357,19 @@ class cached_cm_info {
 
     /**
      * Name of icon for this activity. Normally, this should be used together with $iconcomponent
-     * to define the icon, as per pix_url function.
+     * to define the icon, as per image_url function.
      * For backward compatibility, if this value is of the form 'mod/forum/icon' then an icon
      * within that module will be used.
      * @see cm_info::get_icon_url()
-     * @see renderer_base::pix_url()
+     * @see renderer_base::image_url()
      * @var string
      */
     public $icon;
 
     /**
-     * Component for icon for this activity, as per pix_url; leave blank to use default 'moodle'
+     * Component for icon for this activity, as per image_url; leave blank to use default 'moodle'
      * component
-     * @see renderer_base::pix_url()
+     * @see renderer_base::image_url()
      * @var string
      */
     public $iconcomponent;
@@ -2760,7 +2761,10 @@ class section_info implements IteratorAggregate {
         $this->_uservisible = true;
         if (!$this->_visible || !$this->get_available()) {
             $coursecontext = context_course::instance($this->get_course());
-            if (!has_capability('moodle/course:viewhiddensections', $coursecontext, $userid)) {
+            if (!$this->_visible && !has_capability('moodle/course:viewhiddensections', $coursecontext, $userid) ||
+                    (!$this->get_available() &&
+                    !has_capability('moodle/course:ignoreavailabilityrestrictions', $coursecontext, $userid))) {
+
                 $this->_uservisible = false;
             }
         }

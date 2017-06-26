@@ -19,8 +19,7 @@ Feature: Settings form fields disabled if not required
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And I log in as "teacher"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   @javascript
   Scenario: Depending on the number of attempts, different form fields are disabled.

@@ -112,6 +112,15 @@ abstract class message_output {
     public function has_message_preferences() {
         return true;
     }
+
+    /**
+     * Determines if this processor should process a message regardless of user preferences or site settings.
+     *
+     * @return bool
+     */
+    public function force_process_messages() {
+        return false;
+    }
 }
 
 

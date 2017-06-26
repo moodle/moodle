@@ -37,7 +37,7 @@ Feature: Automatic creation of groups
       | student10 | C1 | student | 0 |
       | suspendedstudent11 | C1 | student | 1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration
     When I press "Auto-create groups"
     And I expand all fieldsets
@@ -163,7 +163,7 @@ Feature: Automatic creation of groups
       | moodle/course:viewsuspendedusers | Prevent |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration
     When I press "Auto-create groups"
     Then I should not see "Include only active enrolments"

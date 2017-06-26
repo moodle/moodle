@@ -49,13 +49,12 @@ class behat_completion extends behat_base {
     public function user_has_completed_activity($userfullname, $activityname) {
 
         // Will throw an exception if the element can not be hovered.
-        $titleliteral = behat_context_helper::escape($userfullname . ", " . $activityname . ": Completed");
-        $xpath = "//table[@id='completion-progress']" .
-            "/descendant::img[contains(@title, $titleliteral)]";
+        $titleliteral = $userfullname . ", " . $activityname . ": Completed";
+        $xpath = "//table[@id='completion-progress']";
 
         $this->execute("behat_completion::go_to_the_current_course_activity_completion_report");
-        $this->execute("behat_general::should_exist",
-            array($this->escape($xpath), "xpath_element")
+        $this->execute("behat_general::should_exist_in_the",
+            array($titleliteral, "icon", $xpath, "xpath_element")
         );
     }
 
@@ -69,12 +68,13 @@ class behat_completion extends behat_base {
     public function user_has_not_completed_activity($userfullname, $activityname) {
 
         // Will throw an exception if the element can not be hovered.
-        $titleliteral = behat_context_helper::escape($userfullname . ", " . $activityname . ": Not completed");
-        $xpath = "//table[@id='completion-progress']" .
-            "/descendant::img[contains(@title, $titleliteral)]";
+        $titleliteral = $userfullname . ", " . $activityname . ": Not completed";
+        $xpath = "//table[@id='completion-progress']";
 
         $this->execute("behat_completion::go_to_the_current_course_activity_completion_report");
-        $this->execute("behat_general::should_exist", array($this->escape($xpath), "xpath_element"));
+        $this->execute("behat_general::should_exist_in_the",
+            array($titleliteral, "icon", $xpath, "xpath_element")
+        );
     }
 
     /**
@@ -121,16 +121,14 @@ class behat_completion extends behat_base {
     public function activity_marked_as_complete($activityname, $activitytype, $completiontype) {
         if ($completiontype == "manual") {
             $imgalttext = get_string("completion-alt-manual-y", 'core_completion', $activityname);
-            $xpathtocheck = "//input[@type='image'][contains(@alt, '$imgalttext')]";
         } else {
             $imgalttext = get_string("completion-alt-auto-y", 'core_completion', $activityname);
-            $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
         }
         $activityxpath = "//li[contains(concat(' ', @class, ' '), ' modtype_" . strtolower($activitytype) . " ')]";
         $activityxpath .= "[descendant::*[contains(text(), '" . $activityname . "')]]";
 
         $this->execute("behat_general::should_exist_in_the",
-            array($xpathtocheck, "xpath_element", $activityxpath, "xpath_element")
+            array($imgalttext, "icon", $activityxpath, "xpath_element")
         );
 
     }
@@ -143,16 +141,14 @@ class behat_completion extends behat_base {
     public function activity_marked_as_not_complete($activityname, $activitytype, $completiontype) {
         if ($completiontype == "manual") {
             $imgalttext = get_string("completion-alt-manual-n", 'core_completion', $activityname);
-            $xpathtocheck = "//input[@type='image'][contains(@alt, '$imgalttext')]";
         } else {
             $imgalttext = get_string("completion-alt-auto-n", 'core_completion', $activityname);
-            $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
         }
         $activityxpath = "//li[contains(concat(' ', @class, ' '), ' modtype_" . strtolower($activitytype) . " ')]";
         $activityxpath .= "[descendant::*[contains(text(), '" . $activityname . "')]]";
 
         $this->execute("behat_general::should_exist_in_the",
-            array($xpathtocheck, "xpath_element", $activityxpath, "xpath_element")
+            array($imgalttext, "icon", $activityxpath, "xpath_element")
         );
     }
 }

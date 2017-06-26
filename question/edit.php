@@ -47,6 +47,10 @@ $PAGE->set_title($streditingquestions);
 $PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();
 
+// Print horizontal nav if needed.
+$renderer = $PAGE->get_renderer('core_question', 'bank');
+echo $renderer->extra_horizontal_navigation();
+
 echo '<div class="questionbankwindow boxwidthwide boxaligncenter">';
 $questionbank->display('questions', $pagevars['qpage'], $pagevars['qperpage'],
         $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'],

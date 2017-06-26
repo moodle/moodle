@@ -15,7 +15,7 @@ Feature: Grade letters can be overridden
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Letters > Edit" in the course gradebook
 
   Scenario Outline: Grade letters can be completely overridden

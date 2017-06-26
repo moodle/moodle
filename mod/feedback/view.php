@@ -59,8 +59,7 @@ if (!has_capability('mod/feedback:edititems', $context) &&
 }
 
 // Trigger module viewed event.
-$event = \mod_feedback\event\course_module_viewed::create_from_record($feedback, $cm, $course);
-$event->trigger();
+$feedbackcompletion->trigger_module_viewed();
 
 /// Print the page header
 echo $OUTPUT->header();

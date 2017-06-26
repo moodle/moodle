@@ -253,33 +253,69 @@ function xmldb_assign_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2017021500, 'assign');
     }
 
-    if ($oldversion < 2017031000) {
-        // Set priority of assign user overrides.
-        $params = [
-            'modulename' => 'assign',
-            'courseid' => 0,
-            'groupid' => 0,
-            'repeatid' => 0
-        ];
-        // CALENDAR_EVENT_USER_OVERRIDE_PRIORITY has a value of 9999999.
-        $DB->set_field('event', 'priority', 9999999, $params);
+    if ($oldversion < 2017031300) {
+        // Add a 'gradingduedate' field to the 'assign' table.
+        $table = new xmldb_table('assign');
+        $field = new xmldb_field('gradingduedate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'cutoffdate');
 
-        // Set priority for group overrides for existing assign events.
-        $where = 'groupid IS NOT NULL';
-        $assignoverridesrs = $DB->get_recordset_select('assign_overrides', $where, null, '', 'id, assignid, groupid, sortorder');
-        foreach ($assignoverridesrs as $record) {
-            $params = [
-                'modulename' => 'assign',
-                'instance' => $record->assignid,
-                'groupid' => $record->groupid,
-                'repeatid' => 0
-            ];
-            $DB->set_field('event', 'priority', $record->sortorder, $params);
+        // Conditionally launch add field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
         }
-        $assignoverridesrs->close();
 
         // Assign savepoint reached.
-        upgrade_mod_savepoint(true, 2017031000, 'assign');
+        upgrade_mod_savepoint(true, 2017031300, 'assign');
+    }
+
+    if ($oldversion < 2017042800) {
+        // Update query to set the grading due date one week after the due date.
+        // Only assign instances with grading due date not set and with a due date of not older than 3 weeks will be updated.
+        $sql = "UPDATE {assign}
+                   SET gradingduedate = duedate + :weeksecs
+                 WHERE gradingduedate = 0
+                       AND duedate > :timelimit";
+
+        // Calculate the time limit, which is 3 weeks before the current date.
+        $interval = new DateInterval('P3W');
+        $timelimit = new DateTime();
+        $timelimit->sub($interval);
+
+        // Update query params.
+        $params = [
+            'weeksecs' => WEEKSECS,
+            'timelimit' => $timelimit->getTimestamp()
+        ];
+
+        // Execute DB update for assign instances.
+        $DB->execute($sql, $params);
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2017042800, 'assign');
+    }
+
+    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Put any upgrade step following this.
+    if ($oldversion < 2017061200) {
+        // Data fix any assign group override event priorities which may have been accidentally nulled due to a bug on the group
+        // overrides edit form.
+
+        // First, find all assign group override events having null priority (and join their corresponding assign_overrides entry).
+        $sql = "SELECT e.id AS id, o.sortorder AS priority
+                  FROM {assign_overrides} o
+                  JOIN {event} e ON (e.modulename = 'assign' AND o.assignid = e.instance AND e.groupid = o.groupid)
+                 WHERE o.groupid IS NOT NULL AND e.priority IS NULL
+              ORDER BY o.id";
+        $affectedrs = $DB->get_recordset_sql($sql);
+
+        // Now update the event's priority based on the assign_overrides sortorder we found. This uses similar logic to
+        // assign_refresh_events(), except we've restricted the set of assignments and overrides we're dealing with here.
+        foreach ($affectedrs as $record) {
+            $DB->set_field('event', 'priority', $record->priority, ['id' => $record->id]);
+        }
+        $affectedrs->close();
+
+        // Main savepoint reached.
+        upgrade_mod_savepoint(true, 2017061200, 'assign');
     }
 
     return true;

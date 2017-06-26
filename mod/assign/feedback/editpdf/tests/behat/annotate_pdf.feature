@@ -29,8 +29,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I am on site homepage
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your PDF file |
@@ -38,7 +37,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | Maximum number of uploaded files | 2 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I upload "mod/assign/feedback/editpdf/tests/fixtures/submission.pdf" file to "File submissions" filemanager
@@ -49,7 +48,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I should see "Not graded"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Edit" "link" in the "Submitted for grading" "table_row"
@@ -104,8 +103,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | G1       | G1    |
       | G1       | G2    |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your PDF file |
@@ -115,7 +113,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | Grouping for student groups | G1 |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I upload "mod/assign/feedback/editpdf/tests/fixtures/submission.pdf" file to "File submissions" filemanager
@@ -125,12 +123,12 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I should see "Not graded"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Edit" "link" in the "Student 2" "table_row"
     And I click on "Grade" "link" in the "Student 2" "table_row"
-    And I wait until the page is ready
+    And I wait for the complete PDF to load
     And I click on ".linebutton" "css_element"
     And I draw on the pdf
     And I press "Save changes"

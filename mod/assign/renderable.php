@@ -911,6 +911,7 @@ class assign_files implements renderable {
      */
     public function preprocess($dir, $filearea, $component) {
         global $CFG;
+
         foreach ($dir['subdirs'] as $subdir) {
             $this->preprocess($subdir, $filearea, $component);
         }

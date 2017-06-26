@@ -35,7 +35,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 
@@ -44,7 +44,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
     And I should not see "Second question"
     And I log out
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I follow "Attempts: 1"
     And I follow "Review attempt"
@@ -69,7 +69,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "True" "radio" in the "First question" "question"
@@ -96,7 +96,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I press "Finish attempt ..."
@@ -121,7 +121,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 
@@ -147,7 +147,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | Section 1 | 1         | 1       |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 
@@ -174,7 +174,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | Section 2 | 2         | 0       |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I press "Next page"
@@ -197,7 +197,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 
@@ -220,7 +220,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 
@@ -243,7 +243,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF1      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 

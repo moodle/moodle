@@ -1133,3 +1133,50 @@ function groups_user_groups_visible($course, $userid, $cm = null) {
     }
     return false;
 }
+
+/**
+ * Returns the users in the specified groups.
+ *
+ * This function does not return complete user objects by default. It returns the user_picture basic fields.
+ *
+ * @param array $groupsids The list of groups ids to check
+ * @param array $extrafields extra fields to be included in result
+ * @param int $sort optional sorting of returned users
+ * @return array|bool Returns an array of the users for the specified group or false if no users or an error returned.
+ * @since  Moodle 3.3
+ */
+function groups_get_groups_members($groupsids, $extrafields=null, $sort='lastname ASC') {
+    global $DB;
+
+    $userfields = user_picture::fields('u', $extrafields);
+    list($insql, $params) = $DB->get_in_or_equal($groupsids);
+
+    return $DB->get_records_sql("SELECT $userfields
+                                   FROM {user} u, {groups_members} gm
+                                  WHERE u.id = gm.userid AND gm.groupid $insql
+                               GROUP BY $userfields
+                               ORDER BY $sort", $params);
+}
+
+/**
+ * Returns users who share group membership with the specified user in the given actiivty.
+ *
+ * @param stdClass|cm_info $cm course module
+ * @param int $userid user id (empty for current user)
+ * @return array a list of user
+ * @since  Moodle 3.3
+ */
+function groups_get_activity_shared_group_members($cm, $userid = null) {
+    global $USER;
+
+    if (empty($userid)) {
+        $userid = $USER;
+    }
+
+    $groupsids = array_keys(groups_get_activity_allowed_groups($cm, $userid));
+    // No groups no users.
+    if (empty($groupsids)) {
+        return [];
+    }
+    return groups_get_groups_members($groupsids);
+}

@@ -311,14 +311,14 @@ class repository_filesystem extends repository {
 
         if ($isdir) {
             $node['children'] = array();
-            $node['thumbnail'] = $OUTPUT->pix_url(file_folder_icon(90))->out(false);
+            $node['thumbnail'] = $OUTPUT->image_url(file_folder_icon(90))->out(false);
             $node['path'] = $this->build_node_path('browse', $relpath, $name, $rootnodepath);
 
         } else {
             $node['source'] = $relpath;
             $node['size'] = filesize($abspath);
-            $node['thumbnail'] = $OUTPUT->pix_url(file_extension_icon($name, 90))->out(false);
-            $node['icon'] = $OUTPUT->pix_url(file_extension_icon($name, 24))->out(false);
+            $node['thumbnail'] = $OUTPUT->image_url(file_extension_icon($name, 90))->out(false);
+            $node['icon'] = $OUTPUT->image_url(file_extension_icon($name, 24))->out(false);
             $node['path'] = $relpath;
 
             if (file_extension_in_typegroup($name, 'image') && ($imageinfo = @getimagesize($abspath))) {
@@ -571,7 +571,7 @@ class repository_filesystem extends repository {
             $fs = get_file_storage();
             $issyncing = true;
             if (file_extension_in_typegroup($filepath, 'web_image')) {
-                $contenthash = sha1_file($filepath);
+                $contenthash = file_storage::hash_from_path($filepath);
                 if ($file->get_contenthash() == $contenthash) {
                     // File did not change since the last synchronisation.
                     $filesize = filesize($filepath);
@@ -581,9 +581,10 @@ class repository_filesystem extends repository {
                 }
             } else {
                 // Update only file size so file will NOT be copied into moodle filepool.
-                $emptyfile = $contenthash = sha1('');
-                $currentcontenthash = $file->get_contenthash();
-                if ($currentcontenthash !== $emptyfile && $currentcontenthash === sha1_file($filepath)) {
+                if ($file->compare_to_string('') || !$file->compare_to_path($filepath)) {
+                    // File is not synchronized or the file has changed.
+                    $contenthash = file_storage::hash_from_string('');
+                } else {
                     // File content was synchronised and has not changed since then, leave it.
                     $contenthash = null;
                 }
@@ -701,7 +702,7 @@ class repository_filesystem extends repository {
             // File is not found or is not readable.
             return null;
         }
-        $filename = sha1($filecontents);
+        $filename = file_storage::hash_from_string($filecontents);
 
         // Try to get generated thumbnail for this file.
         $fs = get_file_storage();
@@ -751,7 +752,7 @@ class repository_filesystem extends repository {
         foreach ($files as $filepath => $filesinpath) {
             if ($filecontents = @file_get_contents($this->get_rootpath() . trim($filepath, '/'))) {
                 // The 'filename' in Moodle file storage is contenthash of the file in filesystem repository.
-                $filename = sha1($filecontents);
+                $filename = file_storage::hash_from_string($filecontents);
                 foreach ($filesinpath as $file) {
                     if ($file->get_filename() !== $filename && $file->get_filename() !== '.') {
                         // Contenthash does not match, this is an old thumbnail.
@@ -844,7 +845,8 @@ function repository_filesystem_pluginfile($course, $cm, $context, $filearea, $ar
     // Find stored or generated thumbnail.
     if (!($file = $repo->get_thumbnail($filepath, $filearea))) {
         // Generation failed, redirect to default icon for file extension.
-        redirect($OUTPUT->pix_url(file_extension_icon($file, 90)));
+        // Do not use redirect() here because is not compatible with webservice/pluginfile.php.
+        header('Location: ' . $OUTPUT->image_url(file_extension_icon($file, 90)));
     }
     // The thumbnails should not be changing much, but maybe the default lifetime is too long.
     $lifetime = $CFG->filelifetime;

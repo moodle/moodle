@@ -149,5 +149,33 @@ function xmldb_feedback_upgrade($oldversion) {
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2017032800) {
+
+        // Delete duplicated records in feedback_completed. We just keep the last record of completion.
+        // Related values in feedback_value won't be deleted (they won't be used and can be kept there as a backup).
+        $sql = "SELECT MAX(id) as maxid, userid, feedback, courseid
+                  FROM {feedback_completed}
+                 WHERE userid <> 0
+              GROUP BY userid, feedback, courseid
+                HAVING COUNT(id) > 1";
+
+        $duplicatedrows = $DB->get_recordset_sql($sql);
+        foreach ($duplicatedrows as $row) {
+            $DB->delete_records_select('feedback_completed', 'userid = ? AND feedback = ? AND courseid = ? AND id <> ?', array(
+                $row->userid,
+                $row->feedback,
+                $row->courseid,
+                $row->maxid,
+            ));
+        }
+        $duplicatedrows->close();
+
+        // Feedback savepoint reached.
+        upgrade_mod_savepoint(true, 2017032800, 'feedback');
+    }
+
+    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

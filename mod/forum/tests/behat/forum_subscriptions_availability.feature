@@ -35,8 +35,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | grouping | group |
       | GG1      | G1    |
     And I log in as "teacher"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   @javascript
   Scenario: A forced forum lists all subscribers
@@ -70,14 +69,14 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | Forum type        | Standard forum for general use |
       | Description       | Test forum description |
       | Subscription mode | Forced subscription |
-      | Visible           | Show |
+      | Availability      | Show on course page |
     And I follow "Forced Forum 2"
     And I navigate to "Show/edit current subscribers" in current page administration
     Then I should see "Teacher Teacher"
     And I should see "Student 1"
     And I should see "Student 2"
     And I should see "Student 3"
-    And I should not see "Turn editing on"
+    And I should not see "Manage subscriptions"
 
   Scenario: A forced and hidden forum lists only teachers
     When I add a "Forum" to section "1" and I fill the form with:
@@ -85,7 +84,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | Forum type        | Standard forum for general use |
       | Description       | Test forum description |
       | Subscription mode | Forced subscription |
-      | Visible           | Hide |
+      | Availability      | Hide from students |
     And I follow "Forced Forum 2"
     And I navigate to "Show/edit current subscribers" in current page administration
     Then I should see "Teacher Teacher"

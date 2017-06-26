@@ -133,7 +133,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     // Completion tracking.
     $temp->add(new admin_setting_heading('progress', new lang_string('completion','completion'), ''));
     $temp->add(new admin_setting_configselect('moodlecourse/enablecompletion', new lang_string('completion', 'completion'),
-        new lang_string('enablecompletion_help', 'completion'), 0, array(0 => new lang_string('no'), 1 => new lang_string('yes'))));
+        new lang_string('enablecompletion_help', 'completion'), 1, array(0 => new lang_string('no'), 1 => new lang_string('yes'))));
 
     // Groups.
     $temp->add(new admin_setting_heading('groups', new lang_string('groups', 'group'), ''));
@@ -343,4 +343,105 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     //$temp->add(new admin_setting_configcheckbox('backup/backup_auto_blogs', new lang_string('blogs', 'blog'), new lang_string('backupblogshelp','blog'), 0));
 
     $ADMIN->add('backups', $temp);
+
+    // Create a page for general restore configuration and defaults.
+    $temp = new admin_settingpage('restoregeneralsettings', new lang_string('generalrestoredefaults', 'backup'));
+
+    // General restore defaults.
+    $temp->add(new admin_setting_heading('generalsettings', new lang_string('generalrestoresettings', 'backup'), ''));
+
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_users',
+        new lang_string('generalusers', 'backup'), new lang_string('configrestoreusers', 'backup'),
+        array('value' => 1, 'locked' => 0)));
+    // Can not use actual constants here because we'd need to include 100 of backup/restore files.
+    $options = [
+        0/*backup::ENROL_NEVER*/     => get_string('rootsettingenrolments_never', 'backup'),
+        1/*backup::ENROL_WITHUSERS*/ => get_string('rootsettingenrolments_withusers', 'backup'),
+        2/*backup::ENROL_ALWAYS*/    => get_string('rootsettingenrolments_always', 'backup'),
+    ];
+    $temp->add(new admin_setting_configselect_with_lock('restore/restore_general_enrolments',
+        new lang_string('generalenrolments', 'backup'), new lang_string('configrestoreenrolments', 'backup'),
+        array('value' => 1/*backup::ENROL_WITHUSERS*/, 'locked' => 0), $options));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_role_assignments',
+        new lang_string('generalroleassignments', 'backup'),
+        new lang_string('configrestoreroleassignments', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_activities',
+        new lang_string('generalactivities', 'backup'),
+        new lang_string('configrestoreactivities', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_blocks',
+        new lang_string('generalblocks', 'backup'),
+        new lang_string('configrestoreblocks', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_filters',
+        new lang_string('generalfilters', 'backup'),
+        new lang_string('configrestorefilters', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_comments',
+        new lang_string('generalcomments', 'backup'),
+        new lang_string('configrestorecomments', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_badges',
+        new lang_string('generalbadges', 'backup'),
+        new lang_string('configrestorebadges', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_calendarevents',
+        new lang_string('generalcalendarevents', 'backup'),
+        new lang_string('configrestorecalendarevents', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_userscompletion',
+        new lang_string('generaluserscompletion', 'backup'),
+        new lang_string('configrestoreuserscompletion', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_logs',
+        new lang_string('generallogs', 'backup'),
+        new lang_string('configrestorelogs', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_histories',
+        new lang_string('generalhistories', 'backup'),
+        new lang_string('configrestorehistories', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_groups',
+        new lang_string('generalgroups', 'backup'), new lang_string('configrestoregroups', 'backup'),
+        array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_competencies',
+        new lang_string('generalcompetencies', 'backup'),
+        new lang_string('configrestorecompetencies', 'backup'), array('value' => 1, 'locked' => 0)));
+
+    // Restore defaults when merging into another course.
+    $temp->add(new admin_setting_heading('mergerestoredefaults', new lang_string('mergerestoredefaults', 'backup'), ''));
+
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_merge_overwrite_conf',
+        new lang_string('setting_overwrite_conf', 'backup'),
+    new lang_string('config_overwrite_conf', 'backup'), array('value' => 0, 'locked' => 0)));
+
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_merge_course_fullname',
+        new lang_string('setting_overwrite_course_fullname', 'backup'),
+        new lang_string('config_overwrite_course_fullname', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_merge_course_shortname',
+        new lang_string('setting_overwrite_course_shortname', 'backup'),
+        new lang_string('config_overwrite_course_shortname', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_merge_course_startdate',
+        new lang_string('setting_overwrite_course_startdate', 'backup'),
+        new lang_string('config_overwrite_course_startdate', 'backup'), array('value' => 1, 'locked' => 0)));
+
+    // Restore defaults when replacing course contents.
+    $temp->add(new admin_setting_heading('replacerestoredefaults', new lang_string('replacerestoredefaults', 'backup'), ''));
+
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_replace_overwrite_conf',
+        new lang_string('setting_overwrite_conf', 'backup'),
+        new lang_string('config_overwrite_conf', 'backup'), array('value' => 0, 'locked' => 0)));
+
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_replace_course_fullname',
+        new lang_string('setting_overwrite_course_fullname', 'backup'),
+        new lang_string('config_overwrite_course_fullname', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_replace_course_shortname',
+        new lang_string('setting_overwrite_course_shortname', 'backup'),
+        new lang_string('config_overwrite_course_shortname', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_replace_course_startdate',
+        new lang_string('setting_overwrite_course_startdate', 'backup'),
+        new lang_string('config_overwrite_course_startdate', 'backup'), array('value' => 1, 'locked' => 0)));
+
+    $temp->add(new admin_setting_configselect_with_lock('restore/restore_replace_keep_roles_and_enrolments',
+        new lang_string('setting_keep_roles_and_enrolments', 'backup'),
+        new lang_string('config_keep_roles_and_enrolments', 'backup'), array('value' => 0, 'locked' => 0),
+        array(1 => get_string('yes'), 0 => get_string('no'))));
+    $temp->add(new admin_setting_configselect_with_lock('restore/restore_replace_keep_groups_and_groupings',
+        new lang_string('setting_keep_groups_and_groupings', 'backup'),
+        new lang_string('config_keep_groups_and_groupings', 'backup'), array('value' => 0, 'locked' => 0),
+        array(1 => get_string('yes'), 0 => get_string('no'))));
+
+    $ADMIN->add('backups', $temp);
+
 }

@@ -16,8 +16,7 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
@@ -30,8 +29,7 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "Test forum name"
     Then I should not see "Subscribe to this forum"
 
@@ -44,8 +42,7 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I am on site homepage
-    When I follow "Course 1"
+    When I am on "Course 1" course homepage
     Then I should see "Guest access"
     And I set the following fields to these values:
       | Password | moodle_rules |

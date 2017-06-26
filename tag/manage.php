@@ -212,7 +212,7 @@ print('<div class="tag-management-form generalbox"><label class="accesshide" for
     '<input type="hidden" name="tc" value="'.$tagcollid.'" />'.
     '<input type="hidden" name="perpage" value="'.$perpage.'" />'.
     '<input id="id_tagfilter" name="filter" type="text" value=' . s($filter) . '>'.
-    '<input value="'. s(get_string('search')) .'" type="submit"> '.
+    '<input value="'. s(get_string('search')) .'" type="submit" class="btn btn-secondary"> '.
     ($filter !== '' ? html_writer::link(new moodle_url($PAGE->url, array('filter' => null)),
         get_string('resetfilter', 'tag'), array('class' => 'resetfilterlink')) : '').
     '</div>');
@@ -236,9 +236,11 @@ echo $table->out($perpage, true);
 if ($table->rawdata) {
     echo html_writer::start_tag('p');
     echo html_writer::tag('button', get_string('deleteselected', 'tag'),
-            array('id' => 'tag-management-delete', 'type' => 'submit', 'class' => 'tagdeleteselected', 'name' => 'bulkdelete'));
+            array('id' => 'tag-management-delete', 'type' => 'submit',
+                  'class' => 'tagdeleteselected btn btn-secondary', 'name' => 'bulkdelete'));
     echo html_writer::tag('button', get_string('combineselected', 'tag'),
-        array('id' => 'tag-management-combine', 'type' => 'submit', 'class' => 'tagcombineselected', 'name' => 'bulkcombine'));
+        array('id' => 'tag-management-combine', 'type' => 'submit',
+              'class' => 'tagcombineselected btn btn-secondary', 'name' => 'bulkcombine'));
     echo html_writer::end_tag('p');
 }
 echo '</form>';

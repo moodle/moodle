@@ -1,10 +1,47 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+
+* Added new moodleform element 'filetypes' and new admin setting widget 'admin_setting_filetypes'. These new widgets
+  allow users to define a list of file types; either by typing them manually or selecting them from a list. The widgets
+  directly support the syntax used to feed the 'accepted_types' option of the filemanager and filepicker elements. File
+  types can be specified as extensions (.jpg or just jpg), mime types (text/plain) or groups (image).
+* Removed accesslib private functions: load_course_context(), load_role_access_by_context(), dedupe_user_access() (MDL-49398).
+* Internal "accessdata" structure format has changed to improve ability to perform role definition caching (MDL-49398).
+* Role definitions are no longer cached in user session (MDL-49398).
+* External function core_group_external::get_activity_allowed_groups now returns an additional field: canaccessallgroups.
+  It indicates whether the user will be able to access all the activity groups.
+* file_get_draft_area_info does not sum the root folder anymore when calculating the foldercount.
+
+=== 3.3.1 ===
+
+* ldap_get_entries_moodle() now always returns lower-cased attribute names in the returned entries.
+  It was suppposed to do so before, but it actually didn't.
+
 === 3.3 ===
 
+* Behat compatibility changes are now being documented at
+  https://docs.moodle.org/dev/Acceptance_testing/Compatibility_changes
+* PHPUnit's bootstrap has been changed to use HTTPS wwwroot (https://www.example.com/moodle) from previous HTTP version. Any
+  existing test expecting the old HTTP URLs will need to be switched to the new HTTPS value (reference: MDL-54901).
+* The information returned by the idp list has changed. This is usually only rendered by the login page and login block.
+  The icon attribute is removed and an iconurl attribute has been added.
+* Support added for a new type of external file: FILE_CONTROLLED_LINK. This is an external file that Moodle can control
+  the permissions. Moodle makes files read-only but can grant temporary write access.
+    When accessing a URL, the info from file_browser::get_file_info will be checked to determine if the user has write access,
+    if they do - the remote file will have access controls set to allow editing.
 * The method moodleform::after_definition() has been added and can now be used to add some logic
   to be performed after the form's definition was set. This is useful for intermediate subclasses.
+* Moodle has support for font-awesome icons. Plugins should use the xxx_get_fontawesome_icon_map callback
+  to map their custom icons to one from font-awesome.
+* $OUTPUT->pix_url() has been deprecated because it is was used mostly to manually generate image tags for icons.
+  We now distinguish between icons and "small images". The difference is that an icon does not have to be rendered as an image tag
+  with a source. It is OK to still have "small images" - if this desired use $OUTPUT->image_icon() and $OUTPUT->image_url(). For
+  other uses - use $OUTPUT->pix_icon() or the pix helper in mustache templates {{#pix}}...{{/pix}}
+  For other valid use cases use $OUTPUT->image_url().
+* Activity icons have been split from standard icons. Use $OUTPUT->image_icon instead of $OUTPUT->pix_icon for these
+  type of icons (the coloured main icon for each activity).
 * YUI module moodle-core-formautosubmit has been removed, use jquery .change() instead (see lib/templates/url_select.mustache for
   an example)
 * $mform->init_javascript_enhancement() is deprecated and no longer does anything. Existing uses of smartselect enhancement
@@ -25,6 +62,11 @@ information provided here is intended especially for developers.
   - file_storage::try_content_recovery  - See MDL-46375 for more information
   - file_storage::content_exists        - See MDL-46375 for more information
   - file_storage::deleted_file_cleanup  - See MDL-46375 for more information
+  - file_storage::get_converted_document
+  - file_storage::is_format_supported_by_unoconv
+  - file_storage::can_convert_documents
+  - file_storage::send_test_pdf
+  - file_storage::test_unoconv_path
 * Following behat steps have been removed from core:
     - I click on "<element_string>" "<selector_string>" in the "<row_text_string>" table row
     - I go to notifications page
@@ -56,6 +98,11 @@ information provided here is intended especially for developers.
 * New adhoc task refresh_mod_calendar_events_task that updates existing calendar events of modules.
 * New 'priority' column for the event table to determine which event to show in case of events with user and group overrides.
 * Webservices core_course_search_courses and core_course_get_courses_by_field will always return the sortorder field.
+* core_course_external::get_activities_overview has been deprecated. Please do not call this function any more.
+* Changed the pix mustache template helper to accept context variables for the key, component and alt text.
+* New auth_plugin_base helper methods:
+  - get_identity_providers() - Retrieves available auth identity providers.
+  - prepare_identity_providers_for_output() - Prepares auth identity provider data for output (e.g. to templates, WS, etc.).
 
 === 3.2 ===
 

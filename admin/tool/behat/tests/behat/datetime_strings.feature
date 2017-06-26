@@ -19,7 +19,7 @@ Feature: Transform date time string arguments
       | user     | course | role    |
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should see "##yesterday##l, j F Y##"
     And I log out

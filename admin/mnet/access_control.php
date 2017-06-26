@@ -150,7 +150,7 @@ foreach ($columns as $column) {
     } else {
         $columndir = $dir == "ASC" ? "DESC" : "ASC";
         $columnicon = $dir == "ASC" ? "down" : "up";
-        $columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
+        $columnicon = " " . $OUTPUT->pix_icon('t/' . $columnicon, get_string('sort'));
     }
     $headings[$column] = "<a href=\"?sort=$column&amp;dir=$columndir&amp;\">".$string[$column]."</a>$columnicon";
 }

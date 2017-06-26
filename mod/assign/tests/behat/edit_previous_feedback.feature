@@ -20,8 +20,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
@@ -30,7 +29,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
       | Attempts reopened | Manually |
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -38,7 +37,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 2" "table_row"
@@ -51,12 +50,12 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I click on "Edit settings" "link"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should see "I'm the teacher first feedback" in the "Feedback comments" "table_row"
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 2" "table_row"
@@ -71,7 +70,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I click on "Edit settings" "link"
     And I log out
     Then I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should see "I'm the teacher second feedback" in the "Feedback comments" "table_row"
     And I should see "50.00"

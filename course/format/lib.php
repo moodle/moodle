@@ -266,6 +266,28 @@ abstract class format_base {
     }
 
     /**
+     * Method used in the rendered and during backup instead of legacy 'numsections'
+     *
+     * Default renderer will treat sections with sectionnumber greater that the value returned by this
+     * method as "orphaned" and not display them on the course page unless in editing mode.
+     * Backup will store this value as 'numsections'.
+     *
+     * This method ensures that 3rd party course format plugins that still use 'numsections' continue to
+     * work but at the same time we no longer expect formats to have 'numsections' property.
+     *
+     * @return int
+     */
+    public function get_last_section_number() {
+        $course = $this->get_course();
+        if (isset($course->numsections)) {
+            return $course->numsections;
+        }
+        $modinfo = get_fast_modinfo($course);
+        $sections = $modinfo->get_section_info_all();
+        return (int)max(array_keys($sections));
+    }
+
+    /**
      * Returns true if the course has a front page.
      *
      * This function is called to determine if the course has a view page, whether or not
@@ -678,7 +700,9 @@ abstract class format_base {
             if (isset($option['type'])) {
                 $mform->setType($optionname, $option['type']);
             }
-            if (is_null($mform->getElementValue($optionname)) && isset($option['default'])) {
+            if (isset($option['default']) && !array_key_exists($optionname, $mform->_defaultValues)) {
+                // Set defaults for the elements in the form.
+                // Since we call this method after set_data() make sure that we don't override what was already set.
                 $mform->setDefault($optionname, $option['default']);
             }
         }

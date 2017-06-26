@@ -102,26 +102,7 @@ class auth_plugin_base {
      * The fields we can lock and update from/to external authentication backends
      * @var array
      */
-    var $userfields = array(
-        'firstname',
-        'lastname',
-        'email',
-        'city',
-        'country',
-        'lang',
-        'description',
-        'url',
-        'idnumber',
-        'institution',
-        'department',
-        'phone1',
-        'phone2',
-        'address',
-        'firstnamephonetic',
-        'lastnamephonetic',
-        'middlename',
-        'alternatename'
-    );
+    var $userfields = \core_user::AUTHSYNCFIELDS;
 
     /**
      * Moodle custom fields to sync with.
@@ -405,8 +386,10 @@ class auth_plugin_base {
      * @param object $config
      * @param object $err
      * @param array $user_fields
+     * @deprecated since Moodle 3.3
      */
     function config_form($config, $err, $user_fields) {
+        debugging('Use of config.html files have been deprecated, please update your code to use the admin settings API.');
         //override if needed
     }
 
@@ -415,8 +398,10 @@ class auth_plugin_base {
      * do stuff before it is inserted in config_plugin
      * @param object object with submitted configuration settings (without system magic quotes)
      * @param array $err array of error messages
+     * @deprecated since Moodle 3.3
      */
      function validate_form($form, &$err) {
+        debugging('Use of config.html files have been deprecated, please update your code to use the admin settings API.');
         //override if needed
     }
 
@@ -424,8 +409,10 @@ class auth_plugin_base {
      * Processes and stores configuration data for this authentication plugin.
      *
      * @param object object with submitted configuration settings (without system magic quotes)
+     * @deprecated since Moodle 3.3
      */
     function process_config($config) {
+        debugging('Use of config.html files have been deprecated, please update your code to use the admin settings API.');
         //override if needed
         return true;
     }
@@ -574,18 +561,25 @@ class auth_plugin_base {
 
     /**
      * Returns a list of potential IdPs that this authentication plugin supports.
-     * This is used to provide links on the login page.
      *
-     * @param string $wantsurl the relative url fragment the user wants to get to.  You can use this to compose a returnurl, for example
+     * This is used to provide links on the login page and the login block.
      *
-     * @return array like:
-     *              array(
-     *                  array(
-     *                      'url' => 'http://someurl',
-     *                      'icon' => new pix_icon(...),
-     *                      'name' => get_string('somename', 'auth_yourplugin'),
-     *                 ),
-     *             )
+     * The parameter $wantsurl is typically used by the plugin to implement a
+     * return-url feature.
+     *
+     * The returned value is expected to be a list of associative arrays with
+     * string keys:
+     *
+     * - url => (moodle_url|string) URL of the page to send the user to for authentication
+     * - name => (string) Human readable name of the IdP
+     * - iconurl => (moodle_url|string) URL of the icon representing the IdP (since Moodle 3.3)
+     *
+     * For legacy reasons, pre-3.3 plugins can provide the icon via the key:
+     *
+     * - icon => (pix_icon) Icon representing the IdP
+     *
+     * @param string $wantsurl The relative url fragment the user wants to get to.
+     * @return array List of associative arrays with keys url, name, iconurl|icon
      */
     function loginpage_idp_list($wantsurl) {
         return array();
@@ -622,6 +616,54 @@ class auth_plugin_base {
      * @param stdClass $user clone of USER object before the user session was terminated
      */
     public function postlogout_hook($user) {
+    }
+
+    /**
+     * Return the list of enabled identity providers.
+     *
+     * Each identity provider data contains the keys url, name and iconurl (or
+     * icon). See the documentation of {@link auth_plugin_base::loginpage_idp_list()}
+     * for detailed description of the returned structure.
+     *
+     * @param array $authsequence site's auth sequence (list of auth plugins ordered)
+     * @return array List of arrays describing the identity providers
+     */
+    public static function get_identity_providers($authsequence) {
+        global $SESSION;
+
+        $identityproviders = [];
+        foreach ($authsequence as $authname) {
+            $authplugin = get_auth_plugin($authname);
+            $wantsurl = (isset($SESSION->wantsurl)) ? $SESSION->wantsurl : '';
+            $identityproviders = array_merge($identityproviders, $authplugin->loginpage_idp_list($wantsurl));
+        }
+        return $identityproviders;
+    }
+
+    /**
+     * Prepare a list of identity providers for output.
+     *
+     * @param array $identityproviders as returned by {@link self::get_identity_providers()}
+     * @param renderer_base $output
+     * @return array the identity providers ready for output
+     */
+    public static function prepare_identity_providers_for_output($identityproviders, renderer_base $output) {
+        $data = [];
+        foreach ($identityproviders as $idp) {
+            if (!empty($idp['icon'])) {
+                // Pre-3.3 auth plugins provide icon as a pix_icon instance.
+                $idp['iconurl'] = $output->image_url($idp['icon']->pix, $idp['icon']->component);
+            } else if ($idp['iconurl'] instanceof moodle_url) {
+                // New auth plugins (since 3.3) provide iconurl.
+                $idp['iconurl'] = $idp['iconurl']->out(false);
+            }
+            unset($idp['icon']);
+            if ($idp['url'] instanceof moodle_url) {
+                $idp['url'] = $idp['url']->out(false);
+            }
+            $data[] = $idp;
+        }
+        return $data;
     }
 }
 
@@ -933,4 +975,86 @@ function signup_is_enabled() {
         }
     }
     return false;
+}
+
+/**
+ * Helper function used to print locking for auth plugins on admin pages.
+ * @param stdclass $settings Moodle admin settings instance
+ * @param string $auth authentication plugin shortname
+ * @param array $userfields user profile fields
+ * @param string $helptext help text to be displayed at top of form
+ * @param boolean $mapremotefields Map fields or lock only.
+ * @param boolean $updateremotefields Allow remote updates
+ * @param array $customfields list of custom profile fields
+ * @since Moodle 3.3
+ */
+function display_auth_lock_options($settings, $auth, $userfields, $helptext, $mapremotefields, $updateremotefields, $customfields = array()) {
+    global $DB;
+
+    // Introductory explanation and help text.
+    if ($mapremotefields) {
+        $settings->add(new admin_setting_heading($auth.'/data_mapping', new lang_string('auth_data_mapping', 'auth'), $helptext));
+    } else {
+        $settings->add(new admin_setting_heading($auth.'/auth_fieldlocks', new lang_string('auth_fieldlocks', 'auth'), $helptext));
+    }
+
+    // Generate the list of options.
+    $lockoptions = array ('unlocked'        => get_string('unlocked', 'auth'),
+                          'unlockedifempty' => get_string('unlockedifempty', 'auth'),
+                          'locked'          => get_string('locked', 'auth'));
+    $updatelocaloptions = array('oncreate'  => get_string('update_oncreate', 'auth'),
+                                'onlogin'   => get_string('update_onlogin', 'auth'));
+    $updateextoptions = array('0'  => get_string('update_never', 'auth'),
+                              '1'  => get_string('update_onupdate', 'auth'));
+
+    // Generate the list of profile fields to allow updates / lock.
+    if (!empty($customfields)) {
+        $userfields = array_merge($userfields, $customfields);
+        $customfieldname = $DB->get_records('user_info_field', null, '', 'shortname, name');
+    }
+
+    foreach ($userfields as $field) {
+
+        // Define the fieldname we display to the  user.
+        // this includes special handling for some profile fields.
+        $fieldname = $field;
+        if ($fieldname === 'lang') {
+            $fieldname = get_string('language');
+        } else if (!empty($customfields) && in_array($field, $customfields)) {
+            // If custom field then pick name from database.
+            $fieldshortname = str_replace('profile_field_', '', $fieldname);
+            $fieldname = $customfieldname[$fieldshortname]->name;
+        } else if ($fieldname == 'url') {
+            $fieldname = get_string('webpage');
+        } else {
+            $fieldname = get_string($fieldname);
+        }
+
+        // Generate the list of fields / mappings.
+        if ($mapremotefields) {
+            // We are mapping to a remote field here.
+            // Mapping.
+            $settings->add(new admin_setting_configtext("auth_{$auth}/field_map_{$field}",
+                    get_string('auth_fieldmapping', 'auth', $fieldname), '', '', PARAM_ALPHANUMEXT, 30));
+
+            // Update local.
+            $settings->add(new admin_setting_configselect("auth_{$auth}/field_updatelocal_{$field}",
+                    get_string('auth_updatelocalfield', 'auth', $fieldname), '', 'oncreate', $updatelocaloptions));
+
+            // Update remote.
+            if ($updateremotefields) {
+                    $settings->add(new admin_setting_configselect("auth_{$auth}/field_updateremote_{$field}",
+                        get_string('auth_updateremotefield', 'auth', $fieldname), '', 0, $updateextoptions));
+            }
+
+            // Lock fields.
+            $settings->add(new admin_setting_configselect("auth_{$auth}/field_lock_{$field}",
+                    get_string('auth_fieldlockfield', 'auth', $fieldname), '', 'unlocked', $lockoptions));
+
+        } else {
+            // Lock fields Only.
+            $settings->add(new admin_setting_configselect("auth_{$auth}/field_lock_{$field}",
+                    get_string('auth_fieldlockfield', 'auth', $fieldname), '', 'unlocked', $lockoptions));
+        }
+    }
 }

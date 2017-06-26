@@ -406,30 +406,30 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $url = new moodle_url('/mod/lesson/lesson.php',
                     array('id' => $this->page->cm->id, 'action' => 'move', 'pageid' => $page->id, 'sesskey' => sesskey()));
             $label = get_string('movepagenamed', 'lesson', format_string($page->title));
-            $img = html_writer::img($this->output->pix_url('t/move'), $label, array('class' => 'iconsmall'));
+            $img = $this->output->pix_icon('t/move', $label);
             $actions[] = html_writer::link($url, $img, array('title' => $label));
         }
         $url = new moodle_url('/mod/lesson/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $page->id, 'edit' => 1));
         $label = get_string('updatepagenamed', 'lesson', format_string($page->title));
-        $img = html_writer::img($this->output->pix_url('t/edit'), $label, array('class' => 'iconsmall'));
+        $img = $this->output->pix_icon('t/edit', $label);
         $actions[] = html_writer::link($url, $img, array('title' => $label));
 
         // Duplicate action.
         $url = new moodle_url('/mod/lesson/lesson.php', array('id' => $this->page->cm->id, 'pageid' => $page->id,
                 'action' => 'duplicate', 'sesskey' => sesskey()));
         $label = get_string('duplicatepagenamed', 'lesson', format_string($page->title));
-        $img = html_writer::img($this->output->pix_url('e/copy', 'mod_lesson'), $label, array('class' => 'iconsmall'));
+        $img = $this->output->pix_icon('e/copy', $label, 'mod_lesson');
         $actions[] = html_writer::link($url, $img, array('title' => $label));
 
         $url = new moodle_url('/mod/lesson/view.php', array('id' => $this->page->cm->id, 'pageid' => $page->id));
         $label = get_string('previewpagenamed', 'lesson', format_string($page->title));
-        $img = html_writer::img($this->output->pix_url('t/preview'), $label, array('class' => 'iconsmall'));
+        $img = $this->output->pix_icon('t/preview', $label);
         $actions[] = html_writer::link($url, $img, array('title' => $label));
 
         $url = new moodle_url('/mod/lesson/lesson.php',
                 array('id' => $this->page->cm->id, 'action' => 'confirmdelete', 'pageid' => $page->id, 'sesskey' => sesskey()));
         $label = get_string('deletepagenamed', 'lesson', format_string($page->title));
-        $img = html_writer::img($this->output->pix_url('t/delete'), $label, array('class' => 'iconsmall'));
+        $img = $this->output->pix_icon('t/delete', $label);
         $actions[] = html_writer::link($url, $img, array('title' => $label));
 
         if ($printaddpage) {
@@ -477,39 +477,17 @@ class mod_lesson_renderer extends plugin_renderer_base {
       * @return string
       */
     public function ongoing_score(lesson $lesson) {
-        global $USER, $DB;
-
-        $context = context_module::instance($this->page->cm->id);
-        if (has_capability('mod/lesson:manage', $context)) {
-            return $this->output->box(get_string('teacherongoingwarning', 'lesson'), "ongoing center");
-        } else {
-            $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
-            if (isset($USER->modattempts[$lesson->id])) {
-                $ntries--;
-            }
-            $gradeinfo = lesson_grade($lesson, $ntries);
-            $a = new stdClass;
-            if ($lesson->custom) {
-                $a->score = $gradeinfo->earned;
-                $a->currenthigh = $gradeinfo->total;
-                return $this->output->box(get_string("ongoingcustom", "lesson", $a), "ongoing center");
-            } else {
-                $a->correct = $gradeinfo->earned;
-                $a->viewed = $gradeinfo->attempts;
-                return $this->output->box(get_string("ongoingnormal", "lesson", $a), "ongoing center");
-            }
-        }
+        return $this->output->box($lesson->get_ongoing_score_message(), "ongoing center");
     }
 
     /**
      * Returns HTML to display a progress bar of progression through a lesson
      *
      * @param lesson $lesson
+     * @param int $progress optional, if empty it will be calculated
      * @return string
      */
-    public function progress_bar(lesson $lesson) {
-        global $CFG, $USER, $DB;
-
+    public function progress_bar(lesson $lesson, $progress = null) {
         $context = context_module::instance($this->page->cm->id);
 
         // lesson setting to turn progress bar on or off
@@ -522,52 +500,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
             return $this->output->notification(get_string('progressbarteacherwarning2', 'lesson'));
         }
 
-        if (!isset($USER->modattempts[$lesson->id])) {
-            // all of the lesson pages
-            $pages = $lesson->load_all_pages();
-            foreach ($pages as $page) {
-                if ($page->prevpageid == 0) {
-                    $pageid = $page->id;  // find the first page id
-                    break;
-                }
-            }
-
-            // current attempt number
-            if (!$ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id))) {
-                $ntries = 0;  // may not be necessary
-            }
-
-            $viewedpageids = array();
-            if ($attempts = $lesson->get_attempts($ntries, false)) {
-                foreach($attempts as $attempt) {
-                    $viewedpageids[$attempt->pageid] = $attempt;
-                }
-            }
-
-            $viewedbranches = array();
-            // collect all of the branch tables viewed
-            if ($branches = $DB->get_records("lesson_branch", array ("lessonid"=>$lesson->id, "userid"=>$USER->id, "retry"=>$ntries), 'timeseen ASC', 'id, pageid')) {
-                foreach($branches as $branch) {
-                    $viewedbranches[$branch->pageid] = $branch;
-                }
-                $viewedpageids = array_merge($viewedpageids, $viewedbranches);
-            }
-
-            // Filter out the following pages:
-            //      End of Cluster
-            //      End of Branch
-            //      Pages found inside of Clusters
-            // Do not filter out Cluster Page(s) because we count a cluster as one.
-            // By keeping the cluster page, we get our 1
-            $validpages = array();
-            while ($pageid != 0) {
-                $pageid = $pages[$pageid]->valid_page_and_view($validpages, $viewedpageids);
-            }
-
-            // progress calculation as a percent
-            $progress = round(count($viewedpageids)/count($validpages), 2) * 100;
-        } else {
-            $progress = 100;
+        if ($progress === null) {
+            $progress = $lesson->calculate_progress();
         }
 
         // print out the Progress Bar.  Attempted to put as much as possible in the style sheets.
@@ -607,6 +541,93 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $attributes['class'] = $class;
         }
         $output = html_writer::tag('p', $contents, $attributes);
+        return $output;
+    }
+
+    /**
+     * Returns the HTML for displaying the end of lesson page.
+     *
+     * @param  lesson $lesson lesson instance
+     * @param  stdclass $data lesson data to be rendered
+     * @return string         HTML contents
+     */
+    public function display_eol_page(lesson $lesson, $data) {
+
+        $output = '';
+        $canmanage = $lesson->can_manage();
+        $course = $lesson->courserecord;
+
+        if ($lesson->custom && !$canmanage && (($data->gradeinfo->nquestions < $lesson->minquestions))) {
+            $output .= $this->box_start('generalbox boxaligncenter');
+        }
+
+        if ($data->gradelesson) {
+            // We are using level 3 header because the page title is a sub-heading of lesson title (MDL-30911).
+            $output .= $this->heading(get_string("congratulations", "lesson"), 3);
+            $output .= $this->box_start('generalbox boxaligncenter');
+        }
+
+        if ($data->notenoughtimespent !== false) {
+            $output .= $this->paragraph(get_string("notenoughtimespent", "lesson", $data->notenoughtimespent), 'center');
+        }
+
+        if ($data->numberofpagesviewed !== false) {
+            $output .= $this->paragraph(get_string("numberofpagesviewed", "lesson", $data->numberofpagesviewed), 'center');
+        }
+        if ($data->youshouldview !== false) {
+            $output .= $this->paragraph(get_string("youshouldview", "lesson", $data->youshouldview), 'center');
+        }
+        if ($data->numberofcorrectanswers !== false) {
+            $output .= $this->paragraph(get_string("numberofcorrectanswers", "lesson", $data->numberofcorrectanswers), 'center');
+        }
+
+        if ($data->displayscorewithessays !== false) {
+            $output .= $this->box(get_string("displayscorewithessays", "lesson", $data->displayscorewithessays), 'center');
+        } else if ($data->displayscorewithoutessays !== false) {
+            $output .= $this->box(get_string("displayscorewithoutessays", "lesson", $data->displayscorewithoutessays), 'center');
+        }
+
+        if ($data->yourcurrentgradeisoutof !== false) {
+            $output .= $this->paragraph(get_string("yourcurrentgradeisoutof", "lesson", $data->yourcurrentgradeisoutof), 'center');
+        }
+        if ($data->eolstudentoutoftimenoanswers !== false) {
+            $output .= $this->paragraph(get_string("eolstudentoutoftimenoanswers", "lesson"));
+        }
+        if ($data->welldone !== false) {
+            $output .= $this->paragraph(get_string("welldone", "lesson"));
+        }
+
+        if ($data->progresscompleted !== false) {
+            $output .= $this->progress_bar($lesson, $data->progresscompleted);
+        }
+
+        if ($data->displayofgrade !== false) {
+            $output .= $this->paragraph(get_string("displayofgrade", "lesson"), 'center');
+        }
+
+        $output .= $this->box_end(); // End of Lesson button to Continue.
+
+        if ($data->reviewlesson !== false) {
+            $output .= html_writer::link($data->reviewlesson, get_string('reviewlesson', 'lesson'), array('class' => 'centerpadded lessonbutton standardbutton p-r-1'));
+        }
+        if ($data->modattemptsnoteacher !== false) {
+            $output .= $this->paragraph(get_string("modattemptsnoteacher", "lesson"), 'centerpadded');
+        }
+
+        if ($data->activitylink !== false) {
+            $output .= $data->activitylink;
+        }
+
+        $url = new moodle_url('/course/view.php', array('id' => $course->id));
+        $output .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)),
+                array('class' => 'centerpadded lessonbutton standardbutton p-r-1'));
+
+        if (has_capability('gradereport/user:view', context_course::instance($course->id))
+                && $course->showgrades && $lesson->grade != 0 && !$lesson->practice) {
+            $url = new moodle_url('/grade/index.php', array('id' => $course->id));
+            $output .= html_writer::link($url, get_string('viewgrades', 'lesson'),
+                array('class' => 'centerpadded lessonbutton standardbutton p-r-1'));
+        }
         return $output;
     }
 }

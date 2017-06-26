@@ -1486,9 +1486,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         }else {
             $this->updateAttributes(array('class'=>'mform'));
         }
-        $this->_reqHTML = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
-        $this->_advancedHTML = '<img class="adv" title="'.get_string('advancedelement', 'form').'" alt="'.get_string('advancedelement', 'form').'" src="'.$OUTPUT->pix_url('adv') .'" />';
-        $this->setRequiredNote(get_string('somefieldsrequired', 'form', '<img alt="'.get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />'));
+        $this->_reqHTML = '<span class="req">' . $OUTPUT->pix_icon('req', get_string('requiredelement', 'form')) . '</span>';
+        $this->_advancedHTML = '<span class="adv">' . $OUTPUT->pix_icon('adv', get_string('advancedelement', 'form')) . '</span>';
+        $this->setRequiredNote(get_string('somefieldsrequired', 'form', $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'))));
     }
 
     /**
@@ -2452,8 +2452,14 @@ require(["core/event", "jquery"], function(Event, $) {
             $elNames = array();
             foreach ($elsInGroup as $elInGroup){
                 if (is_a($elInGroup, 'HTML_QuickForm_group')) {
-                    // not sure if this would work - groups nested in groups
+                    // Groups nested in groups: append the group name to the element and then change it back.
+                    // We will be appending group name again in MoodleQuickForm_group::export_for_template().
+                    $oldname = $elInGroup->getName();
+                    if ($element->_appendName) {
+                        $elInGroup->setName($element->getName() . '[' . $oldname . ']');
+                    }
                     $elNames = array_merge($elNames, $this->_getElNamesRecursive($elInGroup));
+                    $elInGroup->setName($oldname);
                 } else {
                     $elNames[] = $element->getElementName($elInGroup->getName());
                 }
@@ -3099,12 +3105,14 @@ MoodleQuickForm::registerElementType('duration', "$CFG->libdir/form/duration.php
 MoodleQuickForm::registerElementType('editor', "$CFG->libdir/form/editor.php", 'MoodleQuickForm_editor');
 MoodleQuickForm::registerElementType('filemanager', "$CFG->libdir/form/filemanager.php", 'MoodleQuickForm_filemanager');
 MoodleQuickForm::registerElementType('filepicker', "$CFG->libdir/form/filepicker.php", 'MoodleQuickForm_filepicker');
+MoodleQuickForm::registerElementType('filetypes', "$CFG->libdir/form/filetypes.php", 'MoodleQuickForm_filetypes');
 MoodleQuickForm::registerElementType('grading', "$CFG->libdir/form/grading.php", 'MoodleQuickForm_grading');
 MoodleQuickForm::registerElementType('group', "$CFG->libdir/form/group.php", 'MoodleQuickForm_group');
 MoodleQuickForm::registerElementType('header', "$CFG->libdir/form/header.php", 'MoodleQuickForm_header');
 MoodleQuickForm::registerElementType('hidden', "$CFG->libdir/form/hidden.php", 'MoodleQuickForm_hidden');
 MoodleQuickForm::registerElementType('htmleditor', "$CFG->libdir/form/htmleditor.php", 'MoodleQuickForm_htmleditor');
 MoodleQuickForm::registerElementType('listing', "$CFG->libdir/form/listing.php", 'MoodleQuickForm_listing');
+MoodleQuickForm::registerElementType('defaultcustom', "$CFG->libdir/form/defaultcustom.php", 'MoodleQuickForm_defaultcustom');
 MoodleQuickForm::registerElementType('modgrade', "$CFG->libdir/form/modgrade.php", 'MoodleQuickForm_modgrade');
 MoodleQuickForm::registerElementType('modvisible', "$CFG->libdir/form/modvisible.php", 'MoodleQuickForm_modvisible');
 MoodleQuickForm::registerElementType('password', "$CFG->libdir/form/password.php", 'MoodleQuickForm_password');

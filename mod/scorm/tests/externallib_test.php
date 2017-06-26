@@ -220,9 +220,6 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $student = self::getDataGenerator()->create_user();
         $teacher = self::getDataGenerator()->create_user();
 
-        // Set to the student user.
-        self::setUser($student);
-
         // Create courses to add the modules.
         $course = self::getDataGenerator()->create_course();
 
@@ -232,6 +229,9 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $record->timeopen = time() + DAYSECS;
         $record->timeclose = $record->timeopen + DAYSECS;
         $scorm = self::getDataGenerator()->create_module('scorm', $record);
+
+        // Set to the student user.
+        self::setUser($student);
 
         // Users enrolments.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
@@ -421,9 +421,6 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         // Create users.
         $student = self::getDataGenerator()->create_user();
 
-        // Set to the student user.
-        self::setUser($student);
-
         // Create courses to add the modules.
         $course = self::getDataGenerator()->create_course();
 
@@ -448,6 +445,9 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
             'element' => 'cmi.core.score.raw',
             'value' => '80'
         );
+
+        // Set to the student user.
+        self::setUser($student);
 
         // Users enrolments.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));

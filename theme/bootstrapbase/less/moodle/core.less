@@ -16,6 +16,13 @@
     display: none;
 }
 
+// Size of default icons.
+@icon-width: 16px;
+@icon-height: 16px;
+// Size of big icons.
+@icon-big-width: 64px;
+@icon-big-height: 64px;
+
 /* Default Three Columns - All
 ------------------------------*/
 
@@ -222,6 +229,9 @@ a.autolink.glossary:hover {
 .pagingbar .thispage {
     font-weight: bold;
 }
+img.userpicture {
+    margin-right: 5px;
+}
 img.resize {
     height: 1em;
     width: 1em;
@@ -233,10 +243,14 @@ img.resize {
 }
 /* Icon styles */
 img.icon {
-    height: 16px;
+    height: @icon-height;
     vertical-align: text-bottom;
-    width: 16px;
+    width: @icon-width;
     padding-right: 6px;
+    &.iconsize-big {
+        width: @icon-big-width;
+        height: @icon-big-height;
+    }
 }
 img.iconsmall {
     height: 12px;
@@ -415,9 +429,6 @@ a.skip:active {
     margin-left: 43px;
 }
 // Group
-#page-group-index #groupeditform {
-    text-align: center;
-}
 #doc-contents h1 {
     margin: 1em 0 0 0;
 }
@@ -559,7 +570,6 @@ a.skip:active {
 }
 .notepost .userpicture {
     float: left;
-    margin-right: 5px;
 }
 .notepost .content,
 .notepost .footer {
@@ -1266,13 +1276,66 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     white-space: nowrap;
     text-align: center;
 }
+
 .initialbar {
-    a,
-    strong {
-        padding-left: 3px;
-        padding-right: 3px;
+
+    overflow: auto;
+
+    .initialbarlabel {
+        display: inline-block;
+        width: 6em;
+        float: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
+
+    .initialbarall {
+        float: left;
+        width: 4em;
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .initialbargroups {
+        float: left;
+    }
+
+    .initialbargroup {
+        float: left;
+        display: inline-block;
+        white-space: nowrap;
+        margin: 0;
+        padding: 0;
+
+        li {
+            float: left;
+            list-style: none;
+        }
+    }
+
+    .letter {
+        display: inline-block;
+        height: 1.35em;
+        min-width: 1.35em;
+        text-align: center;
+
+        color: @linkColor;
+        background: @paginationBackground;
+        border-width: 1px;
+        border-color: @paginationBorder;
+        border-style: solid;
+    }
+    .letter:hover,
+    .letter.active {
+        color: white;
+        background-color: @linkColor;
+    }
+
 }
+
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
     background-color: #aaa;
@@ -1986,7 +2049,8 @@ img#persona_signin {
             padding-right: 4px;
 
             .iconsmall,
-            .smallicon {
+            .smallicon,
+            .icon {
                 margin: 4px 4px 4px 0;
                 padding: 8px 4px 0 2px;
                 vertical-align: text-bottom;
@@ -2031,7 +2095,7 @@ img#persona_signin {
         a {
             display: block;
             color: @dropdownLinkColor;
-            padding: 2px 1em 2px 28px;
+            padding: 6px 1em 6px 1em;
             &:hover {
                 color: @dropdownLinkColorHover;
                 background-color: @dropdownLinkBackgroundHover;

@@ -39,6 +39,9 @@ define('DATA_PRESET_COMPONENT', 'mod_data');
 define('DATA_PRESET_FILEAREA', 'site_presets');
 define('DATA_PRESET_CONTEXT', SYSCONTEXTID);
 
+define('DATA_EVENT_TYPE_OPEN', 'open');
+define('DATA_EVENT_TYPE_CLOSE', 'close');
+
 // Users having assigned the default role "Non-editing teacher" can export database records
 // Using the mod/data capability "viewalluserpresets" existing in Moodle 1.9.x.
 // In Moodle >= 2, new roles may be introduced and used instead.
@@ -304,8 +307,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         $str = '<div title="' . s($this->field->description) . '">';
         $str .= '<label for="field_'.$this->field->id.'"><span class="accesshide">'.$this->field->name.'</span>';
         if ($this->field->required) {
-            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
-                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $image = $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
             $str .= html_writer::div($image, 'inline-req');
         }
         $str .= '</label><input class="basefieldinput form-control d-inline mod-data-input" ' .
@@ -505,8 +507,8 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         $params = array('d'=>$this->data->id, 'fid'=>$this->field->id, 'mode'=>'display', 'sesskey'=>sesskey());
         $link = new moodle_url('/mod/data/field.php', $params);
         $str = '<a href="'.$link->out().'">';
-        $str .= '<img src="'.$OUTPUT->pix_url('field/'.$this->type, 'data') . '" ';
-        $str .= 'height="'.$this->iconheight.'" width="'.$this->iconwidth.'" alt="'.$this->type.'" title="'.$this->type.'" /></a>';
+        $str .= $OUTPUT->pix_icon('field/' . $this->type, $this->type, 'data');
+        $str .= '</a>';
         return $str;
     }
 
@@ -560,6 +562,22 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      */
     public static function get_content_value($content) {
         return trim($content->content, "\r\n ");
+    }
+
+    /**
+     * Return the plugin configs for external functions,
+     * in some cases the configs will need formatting or be returned only if the current user has some capabilities enabled.
+     *
+     * @return array the list of config parameters
+     * @since Moodle 3.3
+     */
+    public function get_config_for_external() {
+        // Return all the field configs to null (maybe there is a private key for a service or something similar there).
+        $configs = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $configs["param$i"] = null;
+        }
+        return $configs;
     }
 }
 
@@ -857,10 +875,13 @@ function data_atmaxentries($data){
  * @param object $data
  * @return int
  */
-function data_numentries($data){
+function data_numentries($data, $userid=null) {
     global $USER, $DB;
+    if ($userid === null) {
+        $userid = $USER->id;
+    }
     $sql = 'SELECT COUNT(*) FROM {data_records} WHERE dataid=? AND userid=?';
-    return $DB->count_records_sql($sql, array($data->id, $USER->id));
+    return $DB->count_records_sql($sql, array($data->id, $userid));
 }
 
 /**
@@ -900,6 +921,9 @@ function data_add_record($data, $groupid=0){
         )
     ));
     $event->trigger();
+
+    $course = get_course($cm->course);
+    data_update_completion_state($data, $course, $cm);
 
     return $record->id;
 }
@@ -1303,9 +1327,11 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         $patterns[]='##delete##';
         if (data_user_can_manage_entry($record, $data, $context)) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
-                             .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
+                             .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'">' .
+                             $OUTPUT->pix_icon('t/edit', get_string('edit')) . '</a>';
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
-                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
+                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'">' .
+                             $OUTPUT->pix_icon('t/delete', get_string('delete')) . '</a>';
         } else {
             $replacement[] = '';
             $replacement[] = '';
@@ -1316,9 +1342,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             $moreurl .= '&amp;filter=1';
         }
         $patterns[]='##more##';
-        $replacement[] = '<a href="'.$moreurl.'"><img src="'.$OUTPUT->pix_url('t/preview').
-                        '" class="iconsmall" alt="'.get_string('more', 'data').'" title="'.get_string('more', 'data').
-                        '" /></a>';
+        $replacement[] = '<a href="'.$moreurl.'">' . $OUTPUT->pix_icon('t/preview', get_string('more', 'data')) . '</a>';
 
         $patterns[]='##moreurl##';
         $replacement[] = $moreurl;
@@ -1336,6 +1360,10 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
         $patterns[] = '##userpicture##';
         $ruser = user_picture::unalias($record, null, 'userid');
+        // If the record didn't come with user data, retrieve the user from database.
+        if (!isset($ruser->picture)) {
+            $ruser = core_user::get_user($record->userid);
+        }
         $replacement[] = $OUTPUT->user_picture($ruser, array('courseid' => $data->course));
 
         $patterns[]='##export##';
@@ -2865,6 +2893,7 @@ function data_supports($feature) {
         case FEATURE_GROUPINGS:               return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_COMPLETION_HAS_RULES:    return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
         case FEATURE_RATE:                    return true;
@@ -3245,6 +3274,7 @@ function data_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
 
 function data_extend_navigation($navigation, $course, $module, $cm) {
     global $CFG, $OUTPUT, $USER, $DB;
+    require_once($CFG->dirroot . '/mod/data/locallib.php');
 
     $rid = optional_param('rid', 0, PARAM_INT);
 
@@ -3253,9 +3283,9 @@ function data_extend_navigation($navigation, $course, $module, $cm) {
     $groupmode = groups_get_activity_groupmode($cm);
 
      $numentries = data_numentries($data);
-    /// Check the number of entries required against the number of entries already made (doesn't apply to teachers)
-    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', context_module::instance($cm->id))) {
-        $data->entriesleft = $data->requiredentries - $numentries;
+    $canmanageentries = has_capability('mod/data:manageentries', context_module::instance($cm->id));
+
+    if ($data->entriesleft = data_get_entries_left_to_add($data, $numentries, $canmanageentries)) {
         $entriesnode = $navigation->add(get_string('entrieslefttoadd', 'data', $data));
         $entriesnode->add_class('note');
     }
@@ -3737,7 +3767,7 @@ function data_get_advance_search_ids($recordids, $searcharray, $dataid) {
  */
 function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
     global $DB;
-
+    $searchcriteria = $alias;   // Keep the criteria.
     $nestsearch = $searcharray[$alias];
     // searching for content outside of mdl_data_content
     if ($alias < 0) {
@@ -3760,7 +3790,10 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
     if (count($nestsearch->params) != 0) {
         $params = array_merge($params, $nestsearch->params);
         $nestsql = $nestselect . $nestwhere . $nestsearch->sql;
-    } else {
+    } else if ($searchcriteria == DATA_TIMEMODIFIED) {
+        $nestsql = $nestselect . $nestwhere . $nestsearch->field . ' >= :timemodified GROUP BY c' . $alias . '.recordid';
+        $params['timemodified'] = $nestsearch->data;
+    } else {    // First name or last name.
         $thing = $DB->sql_like($nestsearch->field, ':search1', false);
         $nestsql = $nestselect . $nestwhere . $thing . ' GROUP BY c' . $alias . '.recordid';
         $params['search1'] = "%$nestsearch->data%";
@@ -3917,11 +3950,15 @@ function data_delete_record($recordid, $data, $courseid, $cmid) {
                 ));
                 $event->add_record_snapshot('data_records', $deleterecord);
                 $event->trigger();
+                $course = get_course($courseid);
+                $cm = get_coursemodule_from_instance('data', $data->id, 0, false, MUST_EXIST);
+                data_update_completion_state($data, $course, $cm);
 
                 return true;
             }
         }
     }
+
     return false;
 }
 
@@ -4100,4 +4137,256 @@ function data_set_config(&$database, $key, $value) {
         $database->config = json_encode($config);
         $DB->set_field('data', 'config', $database->config, ['id' => $database->id]);
     }
+}
+/**
+ * Sets the automatic completion state for this database item based on the
+ * count of on its entries.
+ * @since Moodle 3.3
+ * @param object $data The data object for this activity
+ * @param object $course Course
+ * @param object $cm course-module
+ */
+function data_update_completion_state($data, $course, $cm) {
+    // If completion option is enabled, evaluate it and return true/false.
+    $completion = new completion_info($course);
+    if ($data->completionentries && $completion->is_enabled($cm)) {
+        $numentries = data_numentries($data);
+        // Check the number of entries required against the number of entries already made.
+        if ($numentries >= $data->completionentries) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        } else {
+            $completion->update_state($cm, COMPLETION_INCOMPLETE);
+        }
+    }
+}
+
+/**
+ * Obtains the automatic completion state for this database item based on any conditions
+ * on its settings. The call for this is in completion lib where the modulename is appended
+ * to the function name. This is why there are unused parameters.
+ *
+ * @since Moodle 3.3
+ * @param stdClass $course Course
+ * @param cm_info|stdClass $cm course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ */
+function data_get_completion_state($course, $cm, $userid, $type) {
+    global $DB, $PAGE;
+    $result = $type; // Default return value
+    // Get data details.
+    if (isset($PAGE->cm->id) && $PAGE->cm->id == $cm->id) {
+        $data = $PAGE->activityrecord;
+    } else {
+        $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
+    }
+    // If completion option is enabled, evaluate it and return true/false.
+    if ($data->completionentries) {
+        $numentries = data_numentries($data, $userid);
+        // Check the number of entries required against the number of entries already made.
+        if ($numentries >= $data->completionentries) {
+            $result = true;
+        } else {
+            $result = false;
+        }
+    }
+    return $result;
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $data       data object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.3
+ */
+function data_view($data, $course, $cm, $context) {
+    global $CFG;
+    require_once($CFG->libdir . '/completionlib.php');
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $data->id
+    );
+
+    $event = \mod_data\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('data', $data);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_data_get_fontawesome_icon_map() {
+    return [
+        'mod_data:field/checkbox' => 'fa-check-square-o',
+        'mod_data:field/date' => 'fa-calendar-o',
+        'mod_data:field/file' => 'fa-file',
+        'mod_data:field/latlong' => 'fa-globe',
+        'mod_data:field/menu' => 'fa-bars',
+        'mod_data:field/multimenu' => 'fa-bars',
+        'mod_data:field/number' => 'fa-hashtag',
+        'mod_data:field/picture' => 'fa-picture-o',
+        'mod_data:field/radiobutton' => 'fa-circle-o',
+        'mod_data:field/textarea' => 'fa-font',
+        'mod_data:field/text' => 'fa-i-cursor',
+        'mod_data:field/url' => 'fa-link',
+    ];
+}
+
+/*
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function data_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/data/locallib.php');
+
+    $updates = course_check_module_updates_since($cm, $from, array(), $filter);
+
+    // Check for new entries.
+    $updates->entries = (object) array('updated' => false);
+
+    $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
+    $searcharray = [];
+    $searcharray[DATA_TIMEMODIFIED] = new stdClass();
+    $searcharray[DATA_TIMEMODIFIED]->sql     = '';
+    $searcharray[DATA_TIMEMODIFIED]->params  = array();
+    $searcharray[DATA_TIMEMODIFIED]->field   = 'r.timemodified';
+    $searcharray[DATA_TIMEMODIFIED]->data    = $from;
+
+    $currentgroup = groups_get_activity_group($cm);
+    // Teachers should retrieve all entries when not in separate groups.
+    if (has_capability('mod/data:manageentries', $cm->context) && groups_get_activity_groupmode($cm) != SEPARATEGROUPS) {
+        $currentgroup = 0;
+    }
+    list($entries, $maxcount, $totalcount, $page, $nowperpage, $sort, $mode) =
+        data_search_entries($data, $cm, $cm->context, 'list', $currentgroup, '', null, null, 0, 0, true, $searcharray);
+
+    if (!empty($entries)) {
+        $updates->entries->updated = true;
+        $updates->entries->itemids = array_keys($entries);
+    }
+
+    return $updates;
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_data_core_calendar_provide_event_action(calendar_event $event,
+                                                       \core_calendar\action_factory $factory) {
+
+    $cm = get_fast_modinfo($event->courseid)->instances['data'][$event->instance];
+    $now = time();
+
+    if (!empty($cm->customdata['timeavailableto']) && $cm->customdata['timeavailableto'] < $now) {
+        // The module has closed so the user can no longer submit anything.
+        return null;
+    }
+
+    // The module is actionable if we don't have a start time or the start time is
+    // in the past.
+    $actionable = (empty($cm->customdata['timeavailablefrom']) || $cm->customdata['timeavailablefrom'] <= $now);
+
+    return $factory->create_instance(
+        get_string('add', 'data'),
+        new \moodle_url('/mod/data/view.php', array('id' => $cm->id)),
+        1,
+        $actionable
+    );
+}
+
+/**
+ * Add a get_coursemodule_info function in case any database type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function data_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $dbparams = ['id' => $coursemodule->instance];
+    $fields = 'id, name, intro, introformat, completionentries, timeavailablefrom, timeavailableto';
+    if (!$data = $DB->get_record('data', $dbparams, $fields)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $data->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('data', $data, $coursemodule->id, false);
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['completionentries'] = $data->completionentries;
+    }
+    // Other properties that may be used in calendar or on dashboard.
+    if ($data->timeavailablefrom) {
+        $result->customdata['timeavailablefrom'] = $data->timeavailablefrom;
+    }
+    if ($data->timeavailableto) {
+        $result->customdata['timeavailableto'] = $data->timeavailableto;
+    }
+
+    return $result;
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_data_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completionentries':
+                if (empty($val)) {
+                    continue;
+                }
+                $descriptions[] = get_string('completionentriesdesc', 'data', $val);
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
 }

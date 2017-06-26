@@ -15,7 +15,7 @@ Feature: Test creating a Short answer question
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Question bank" node in "Course administration"
 
   Scenario: Create a Short answer question

@@ -20,7 +20,7 @@ Feature: Users can view and search database entries
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
@@ -37,7 +37,7 @@ Feature: Users can view and search database entries
     And I press "Save and view"
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test database name"
     Then I should see "Teacher entry 1"
     And I should see "Teacher entry 2"

@@ -160,6 +160,25 @@ if ($csv) {
     groups_print_course_menu($course, $CFG->wwwroot.'/report/completion/?course='.$course->id);
 }
 
+if ($sifirst !== 'all') {
+    set_user_preference('ifirst', $sifirst);
+}
+if ($silast !== 'all') {
+    set_user_preference('ilast', $silast);
+}
+
+if (!empty($USER->preference['ifirst'])) {
+    $sifirst = $USER->preference['ifirst'];
+} else {
+    $sifirst = 'all';
+}
+
+if (!empty($USER->preference['ilast'])) {
+    $silast = $USER->preference['ilast'];
+} else {
+    $silast = 'all';
+}
+
 // Generate where clause
 $where = array();
 $where_params = array();
@@ -209,38 +228,13 @@ if (strlen($sort)) {
 }
 $link .= '&amp;start=';
 
-// Build the the page by Initial bar
-$initials = array('first', 'last');
-$alphabet = explode(',', get_string('alphabet', 'langconfig'));
-
 $pagingbar = '';
-foreach ($initials as $initial) {
-    $var = 'si'.$initial;
 
-    $othervar = $initial == 'first' ? 'silast' : 'sifirst';
-    $othervar = $$othervar != 'all' ? "&amp;{$othervar}={$$othervar}" : '';
-
-    $pagingbar .= ' <div class="initialbar '.$initial.'initial">';
-    $pagingbar .= get_string($initial.'name').':&nbsp;';
-
-    if ($$var == 'all') {
-        $pagingbar .= '<strong>'.get_string('all').'</strong> ';
-    }
-    else {
-        $pagingbar .= "<a href=\"{$link}{$othervar}\">".get_string('all').'</a> ';
-    }
-
-    foreach ($alphabet as $letter) {
-        if ($$var === $letter) {
-            $pagingbar .= '<strong>'.$letter.'</strong> ';
-        }
-        else {
-            $pagingbar .= "<a href=\"$link&amp;$var={$letter}{$othervar}\">$letter</a> ";
-        }
-    }
-
-    $pagingbar .= '</div>';
-}
+// Initials bar.
+$prefixfirst = 'sifirst';
+$prefixlast = 'silast';
+$pagingbar .= $OUTPUT->initials_bar($sifirst, 'firstinitial', get_string('firstname'), $prefixfirst, $url);
+$pagingbar .= $OUTPUT->initials_bar($silast, 'lastinitial', get_string('lastname'), $prefixlast, $url);
 
 // Do we need a paging bar?
 if ($total > COMPLETION_REPORT_PAGE) {
@@ -504,7 +498,7 @@ if (!$csv) {
 
     // Overall course completion status
     print '<th class="criteriaicon">';
-    print '<img src="'.$OUTPUT->pix_url('i/course').'" class="icon" alt="'.get_string('course').'" title="'.get_string('coursecomplete', 'completion').'" />';
+    print $OUTPUT->pix_icon('i/course', get_string('coursecomplete', 'completion'));
     print '</th>';
 
     print '</tr></thead>';
@@ -622,8 +616,7 @@ foreach ($progress as $user) {
             } else {
                 print '<td class="completion-progresscell">';
 
-                print '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).
-                      '" alt="'.s($describe).'" class="icon" title="'.s($fulldescribe).'" />';
+                print $OUTPUT->pix_icon('i/' . $completionicon, $fulldescribe);
 
                 print '</td>';
             }
@@ -670,11 +663,9 @@ foreach ($progress as $user) {
                 );
 
                 print '<a href="'.$toggleurl->out().'" title="'.s(get_string('clicktomarkusercomplete', 'report_completion')).'">' .
-                    '<img src="'.$OUTPUT->pix_url('i/completion-manual-'.($is_complete ? 'y' : 'n')).
-                    '" alt="'.s($describe).'" class="icon" /></a></td>';
+                    $OUTPUT->pix_icon('i/completion-manual-' . ($is_complete ? 'y' : 'n'), $describe) . '</a></td>';
             } else {
-                print '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).'" alt="'.s($describe).
-                        '" class="icon" title="'.s($fulldescribe).'" /></td>';
+                print $OUTPUT->pix_icon('i/' . $completionicon, $fulldescribe) . '</td>';
             }
 
             print '</td>';
@@ -714,8 +705,7 @@ foreach ($progress as $user) {
         print '<td class="completion-progresscell">';
 
         // Display course completion status icon
-        print '<img src="'.$OUTPUT->pix_url('i/completion-auto-'.$completiontype).
-               '" alt="'.s($describe).'" class="icon" title="'.s($fulldescribe).'" />';
+        print $OUTPUT->pix_icon('i/completion-auto-' . $completiontype, $fulldescribe);
 
         print '</td>';
     }

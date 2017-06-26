@@ -599,13 +599,17 @@ function data_set_events($data) {
     }
     // Data start calendar events.
     $event = new stdClass();
+    $event->eventtype = DATA_EVENT_TYPE_OPEN;
+    // The DATA_EVENT_TYPE_OPEN event should only be an action event if no close time was specified.
+    $event->type = empty($data->timeavailableto) ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
     if ($event->id = $DB->get_field('event', 'id',
-            array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => 'open'))) {
+            array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => $event->eventtype))) {
         if ($data->timeavailablefrom > 0) {
             // Calendar event exists so update it.
             $event->name         = get_string('calendarstart', 'data', $data->name);
             $event->description  = format_module_intro('data', $data, $data->coursemodule);
             $event->timestart    = $data->timeavailablefrom;
+            $event->timesort     = $data->timeavailablefrom;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
             $calendarevent = calendar_event::load($event->id);
@@ -625,8 +629,8 @@ function data_set_events($data) {
             $event->userid       = 0;
             $event->modulename   = 'data';
             $event->instance     = $data->id;
-            $event->eventtype    = 'open';
             $event->timestart    = $data->timeavailablefrom;
+            $event->timesort     = $data->timeavailablefrom;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
             calendar_event::create($event);
@@ -635,13 +639,16 @@ function data_set_events($data) {
 
     // Data end calendar events.
     $event = new stdClass();
+    $event->type = CALENDAR_EVENT_TYPE_ACTION;
+    $event->eventtype = DATA_EVENT_TYPE_CLOSE;
     if ($event->id = $DB->get_field('event', 'id',
-            array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => 'close'))) {
+            array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => $event->eventtype))) {
         if ($data->timeavailableto > 0) {
             // Calendar event exists so update it.
             $event->name         = get_string('calendarend', 'data', $data->name);
             $event->description  = format_module_intro('data', $data, $data->coursemodule);
             $event->timestart    = $data->timeavailableto;
+            $event->timesort     = $data->timeavailableto;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
             $calendarevent = calendar_event::load($event->id);
@@ -654,7 +661,6 @@ function data_set_events($data) {
     } else {
         // Event doesn't exist so create one.
         if (isset($data->timeavailableto) && $data->timeavailableto > 0) {
-            $event = new stdClass();
             $event->name         = get_string('calendarend', 'data', $data->name);
             $event->description  = format_module_intro('data', $data, $data->coursemodule);
             $event->courseid     = $data->course;
@@ -662,11 +668,617 @@ function data_set_events($data) {
             $event->userid       = 0;
             $event->modulename   = 'data';
             $event->instance     = $data->id;
-            $event->eventtype    = 'close';
             $event->timestart    = $data->timeavailableto;
+            $event->timesort     = $data->timeavailableto;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
             calendar_event::create($event);
         }
     }
+}
+
+/**
+ * Check if a database is available for the current user.
+ *
+ * @param  stdClass  $data            database record
+ * @param  boolean $canmanageentries  optional, if the user can manage entries
+ * @param  stdClass  $context         Module context, required if $canmanageentries is not set
+ * @return array                      status (available or not and possible warnings)
+ * @since  Moodle 3.3
+ */
+function data_get_time_availability_status($data, $canmanageentries = null, $context = null) {
+    $open = true;
+    $closed = false;
+    $warnings = array();
+
+    if ($canmanageentries === null) {
+        $canmanageentries = has_capability('mod/data:manageentries', $context);
+    }
+
+    if (!$canmanageentries) {
+        $timenow = time();
+
+        if (!empty($data->timeavailablefrom) and $data->timeavailablefrom > $timenow) {
+            $open = false;
+        }
+        if (!empty($data->timeavailableto) and $timenow > $data->timeavailableto) {
+            $closed = true;
+        }
+
+        if (!$open or $closed) {
+            if (!$open) {
+                $warnings['notopenyet'] = userdate($data->timeavailablefrom);
+            }
+            if ($closed) {
+                $warnings['expired'] = userdate($data->timeavailableto);
+            }
+            return array(false, $warnings);
+        }
+    }
+
+    // Database is available.
+    return array(true, $warnings);
+}
+
+/**
+ * Requires a database to be available for the current user.
+ *
+ * @param  stdClass  $data            database record
+ * @param  boolean $canmanageentries  optional, if the user can manage entries
+ * @param  stdClass  $context          Module context, required if $canmanageentries is not set
+ * @throws moodle_exception
+ * @since  Moodle 3.3
+ */
+function data_require_time_available($data, $canmanageentries = null, $context = null) {
+
+    list($available, $warnings) = data_get_time_availability_status($data, $canmanageentries, $context);
+
+    if (!$available) {
+        $reason = current(array_keys($warnings));
+        throw new moodle_exception($reason, 'data', '', $warnings[$reason]);
+    }
+}
+
+/**
+ * Return the number of entries left to add to complete the activity.
+ *
+ * @param  stdClass $data           database object
+ * @param  int $numentries          the number of entries the current user has created
+ * @param  bool $canmanageentries   whether the user can manage entries (teachers, managers)
+ * @return int the number of entries left, 0 if no entries left or if is not required
+ * @since  Moodle 3.3
+ */
+function data_get_entries_left_to_add($data, $numentries, $canmanageentries) {
+    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !$canmanageentries) {
+        return $data->requiredentries - $numentries;
+    }
+    return 0;
+}
+
+/**
+ * Return the number of entires left to add to view other users entries..
+ *
+ * @param  stdClass $data           database object
+ * @param  int $numentries          the number of entries the current user has created
+ * @param  bool $canmanageentries   whether the user can manage entries (teachers, managers)
+ * @return int the number of entries left, 0 if no entries left or if is not required
+ * @since  Moodle 3.3
+ */
+function data_get_entries_left_to_view($data, $numentries, $canmanageentries) {
+    if ($data->requiredentriestoview > 0 && $numentries < $data->requiredentriestoview && !$canmanageentries) {
+        return $data->requiredentriestoview - $numentries;
+    }
+    return 0;
+}
+
+/**
+ * Search entries in a database.
+ *
+ * @param  stdClass  $data         database object
+ * @param  stdClass  $cm           course module object
+ * @param  stdClass  $context      context object
+ * @param  stdClass  $mode         in which mode we are viewing the database (list, single)
+ * @param  int  $currentgroup      the current group being used
+ * @param  str  $search            search for this text in the entry data
+ * @param  str  $sort              the field to sort by
+ * @param  str  $order             the order to use when sorting
+ * @param  int $page               for pagination, the current page
+ * @param  int $perpage            entries per page
+ * @param  bool  $advanced         whether we are using or not advanced search
+ * @param  array  $searcharray     when using advanced search, the advanced data to use
+ * @param  stdClass  $record       if we jsut want this record after doing all the access checks
+ * @return array the entries found among other data related to the search
+ * @since  Moodle 3.3
+ */
+function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search = '', $sort = null, $order = null, $page = 0,
+        $perpage = 0, $advanced = null, $searcharray = null, $record = null) {
+    global $DB, $USER;
+
+    if ($sort === null) {
+        $sort = $data->defaultsort;
+    }
+    if ($order === null) {
+        $order = ($data->defaultsortdir == 0) ? 'ASC' : 'DESC';
+    }
+    if ($searcharray === null) {
+        $searcharray = array();
+    }
+
+    if (core_text::strlen($search) < 2) {
+        $search = '';
+    }
+
+    $approvecap = has_capability('mod/data:approve', $context);
+    $canmanageentries = has_capability('mod/data:manageentries', $context);
+
+    // If a student is not part of a group and seperate groups is enabled, we don't
+    // want them seeing all records.
+    $groupmode = groups_get_activity_groupmode($cm);
+    if ($currentgroup == 0 && $groupmode == 1 && !$canmanageentries) {
+        $canviewallrecords = false;
+    } else {
+        $canviewallrecords = true;
+    }
+
+    $numentries = data_numentries($data);
+    $requiredentriesallowed = true;
+    if (data_get_entries_left_to_view($data, $numentries, $canmanageentries)) {
+        $requiredentriesallowed = false;
+    }
+
+    // Initialise the first group of params for advanced searches.
+    $initialparams   = array();
+    $params = array(); // Named params array.
+
+    // Setup group and approve restrictions.
+    if (!$approvecap && $data->approval) {
+        if (isloggedin()) {
+            $approveselect = ' AND (r.approved=1 OR r.userid=:myid1) ';
+            $params['myid1'] = $USER->id;
+            $initialparams['myid1'] = $params['myid1'];
+        } else {
+            $approveselect = ' AND r.approved=1 ';
+        }
+    } else {
+        $approveselect = ' ';
+    }
+
+    if ($currentgroup) {
+        $groupselect = " AND (r.groupid = :currentgroup OR r.groupid = 0)";
+        $params['currentgroup'] = $currentgroup;
+        $initialparams['currentgroup'] = $params['currentgroup'];
+    } else {
+        if ($canviewallrecords) {
+            $groupselect = ' ';
+        } else {
+            // If separate groups are enabled and the user isn't in a group or
+            // a teacher, manager, admin etc, then just show them entries for 'All participants'.
+            $groupselect = " AND r.groupid = 0";
+        }
+    }
+
+    // Init some variables to be used by advanced search.
+    $advsearchselect = '';
+    $advwhere        = '';
+    $advtables       = '';
+    $advparams       = array();
+    // This is used for the initial reduction of advanced search results with required entries.
+    $entrysql        = '';
+    $namefields = user_picture::fields('u');
+    // Remove the id from the string. This already exists in the sql statement.
+    $namefields = str_replace('u.id,', '', $namefields);
+
+    // Find the field we are sorting on.
+    if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
+
+        switch ($sort) {
+            case DATA_LASTNAME:
+                $ordering = "u.lastname $order, u.firstname $order";
+                break;
+            case DATA_FIRSTNAME:
+                $ordering = "u.firstname $order, u.lastname $order";
+                break;
+            case DATA_APPROVED:
+                $ordering = "r.approved $order, r.timecreated $order";
+                break;
+            case DATA_TIMEMODIFIED:
+                $ordering = "r.timemodified $order";
+                break;
+            case DATA_TIMEADDED:
+            default:
+                $sort     = 0;
+                $ordering = "r.timecreated $order";
+        }
+
+        $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, r.groupid, r.dataid, ' . $namefields;
+        $count = ' COUNT(DISTINCT c.recordid) ';
+        $tables = '{data_content} c,{data_records} r, {user} u ';
+        $where = 'WHERE c.recordid = r.id
+                     AND r.dataid = :dataid
+                     AND r.userid = u.id ';
+        $params['dataid'] = $data->id;
+        $sortorder = " ORDER BY $ordering, r.id $order";
+        $searchselect = '';
+
+        // If requiredentries is not reached, only show current user's entries.
+        if (!$requiredentriesallowed) {
+            $where .= ' AND u.id = :myid2 ';
+            $entrysql = ' AND r.userid = :myid3 ';
+            $params['myid2'] = $USER->id;
+            $initialparams['myid3'] = $params['myid2'];
+        }
+
+        if (!empty($advanced)) {                    // If advanced box is checked.
+            $i = 0;
+            foreach ($searcharray as $key => $val) { // what does $searcharray hold?
+                if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
+                    $i++;
+                    $searchselect .= " AND ".$DB->sql_like($val->field, ":search_flname_$i", false);
+                    $params['search_flname_'.$i] = "%$val->data%";
+                    continue;
+                }
+                if ($key == DATA_TIMEMODIFIED) {
+                    $searchselect .= " AND $val->field >= :timemodified";
+                    $params['timemodified'] = $val->data;
+                    continue;
+                }
+                $advtables .= ', {data_content} c'.$key.' ';
+                $advwhere .= ' AND c'.$key.'.recordid = r.id';
+                $advsearchselect .= ' AND ('.$val->sql.') ';
+                $advparams = array_merge($advparams, $val->params);
+            }
+        } else if ($search) {
+            $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)."
+                              OR ".$DB->sql_like('u.firstname', ':search2', false)."
+                              OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
+            $params['search1'] = "%$search%";
+            $params['search2'] = "%$search%";
+            $params['search3'] = "%$search%";
+        } else {
+            $searchselect = ' ';
+        }
+
+    } else {
+
+        $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
+        $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
+
+        $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, r.groupid, r.dataid, ' . $namefields . ',
+                ' . $sortcontentfull . ' AS sortorder ';
+        $count = ' COUNT(DISTINCT c.recordid) ';
+        $tables = '{data_content} c, {data_records} r, {user} u ';
+        $where = 'WHERE c.recordid = r.id
+                     AND r.dataid = :dataid
+                     AND r.userid = u.id ';
+        if (!$advanced) {
+            $where .= 'AND c.fieldid = :sort';
+        }
+        $params['dataid'] = $data->id;
+        $params['sort'] = $sort;
+        $sortorder = ' ORDER BY sortorder '.$order.' , r.id ASC ';
+        $searchselect = '';
+
+        // If requiredentries is not reached, only show current user's entries.
+        if (!$requiredentriesallowed) {
+            $where .= ' AND u.id = :myid2';
+            $entrysql = ' AND r.userid = :myid3';
+            $params['myid2'] = $USER->id;
+            $initialparams['myid3'] = $params['myid2'];
+        }
+        $i = 0;
+        if (!empty($advanced)) {                      // If advanced box is checked.
+            foreach ($searcharray as $key => $val) {   // what does $searcharray hold?
+                if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
+                    $i++;
+                    $searchselect .= " AND ".$DB->sql_like($val->field, ":search_flname_$i", false);
+                    $params['search_flname_'.$i] = "%$val->data%";
+                    continue;
+                }
+                if ($key == DATA_TIMEMODIFIED) {
+                    $searchselect .= " AND $val->field >= :timemodified";
+                    $params['timemodified'] = $val->data;
+                    continue;
+                }
+                $advtables .= ', {data_content} c'.$key.' ';
+                $advwhere .= ' AND c'.$key.'.recordid = r.id AND c'.$key.'.fieldid = '.$key;
+                $advsearchselect .= ' AND ('.$val->sql.') ';
+                $advparams = array_merge($advparams, $val->params);
+            }
+        } else if ($search) {
+            $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR
+                ".$DB->sql_like('u.firstname', ':search2', false)." OR
+                ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
+            $params['search1'] = "%$search%";
+            $params['search2'] = "%$search%";
+            $params['search3'] = "%$search%";
+        } else {
+            $searchselect = ' ';
+        }
+    }
+
+    // To actually fetch the records.
+
+    $fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
+    $allparams  = array_merge($params, $advparams);
+
+    // Provide initial sql statements and parameters to reduce the number of total records.
+    $initialselect = $groupselect . $approveselect . $entrysql;
+
+    $recordids = data_get_all_recordids($data->id, $initialselect, $initialparams);
+    $newrecordids = data_get_advance_search_ids($recordids, $searcharray, $data->id);
+    $totalcount = count($newrecordids);
+    $selectdata = $where . $groupselect . $approveselect;
+
+    if (!empty($advanced)) {
+        $advancedsearchsql = data_get_advanced_search_sql($sort, $data, $newrecordids, $selectdata, $sortorder);
+        $sqlselect = $advancedsearchsql['sql'];
+        $allparams = array_merge($allparams, $advancedsearchsql['params']);
+    } else {
+        $sqlselect  = "SELECT $what $fromsql $sortorder";
+    }
+
+    // Work out the paging numbers and counts.
+    if (empty($searchselect) && empty($advsearchselect)) {
+        $maxcount = $totalcount;
+    } else {
+        $maxcount = count($recordids);
+    }
+
+    if ($record) {     // We need to just show one, so where is it in context?
+        $nowperpage = 1;
+        $mode = 'single';
+        $page = 0;
+        // TODO MDL-33797 - Reduce this or consider redesigning the paging system.
+        if ($allrecordids = $DB->get_fieldset_sql($sqlselect, $allparams)) {
+            $page = (int)array_search($record->id, $allrecordids);
+            unset($allrecordids);
+        }
+    } else if ($mode == 'single') {  // We rely on ambient $page settings
+        $nowperpage = 1;
+
+    } else {
+        $nowperpage = $perpage;
+    }
+
+    // Get the actual records.
+    if (!$records = $DB->get_records_sql($sqlselect, $allparams, $page * $nowperpage, $nowperpage)) {
+        // Nothing to show!
+        if ($record) {         // Something was requested so try to show that at least (bug 5132)
+            if (data_can_view_record($data, $record, $currentgroup, $canmanageentries)) {
+                // OK, we can show this one
+                $records = array($record->id => $record);
+                $totalcount = 1;
+            }
+        }
+
+    }
+
+    return [$records, $maxcount, $totalcount, $page, $nowperpage, $sort, $mode];
+}
+
+/**
+ * Check if the current user can view the given record.
+ *
+ * @param  stdClass $data           database record
+ * @param  stdClass $record         the record (entry) to check
+ * @param  int $currentgroup        current group
+ * @param  bool $canmanageentries   if the user can manage entries
+ * @return bool true if the user can view the entry
+ * @since  Moodle 3.3
+ */
+function data_can_view_record($data, $record, $currentgroup, $canmanageentries) {
+    global $USER;
+
+    if ($canmanageentries || empty($data->approval) ||
+             $record->approved || (isloggedin() && $record->userid == $USER->id)) {
+
+        if (!$currentgroup || $record->groupid == $currentgroup || $record->groupid == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Return all the field instances for a given database.
+ *
+ * @param  stdClass $data database object
+ * @return array field instances
+ * @since  Moodle 3.3
+ */
+function data_get_field_instances($data) {
+    global $DB;
+
+    $instances = [];
+    if ($fields = $DB->get_records('data_fields', array('dataid' => $data->id), 'id')) {
+        foreach ($fields as $field) {
+            $instances[] = data_get_field($field, $data);
+        }
+    }
+    return $instances;
+}
+
+/**
+ * Build the search array.
+ *
+ * @param  stdClass $data      the database object
+ * @param  bool $paging        if paging is being used
+ * @param  array $searcharray  the current search array (saved by session)
+ * @param  array $defaults     default values for the searchable fields
+ * @param  str $fn             the first name to search (optional)
+ * @param  str $ln             the last name to search (optional)
+ * @return array               the search array and plain search build based on the different elements
+ * @since  Moodle 3.3
+ */
+function data_build_search_array($data, $paging, $searcharray, $defaults = null, $fn = '', $ln = '') {
+    global $DB;
+
+    $search = '';
+    $vals = array();
+    $fields = $DB->get_records('data_fields', array('dataid' => $data->id));
+
+    if (!empty($fields)) {
+        foreach ($fields as $field) {
+            $searchfield = data_get_field_from_id($field->id, $data);
+            // Get field data to build search sql with.  If paging is false, get from user.
+            // If paging is true, get data from $searcharray which is obtained from the $SESSION (see line 116).
+            if (!$paging) {
+                $val = $searchfield->parse_search_field($defaults);
+            } else {
+                // Set value from session if there is a value @ the required index.
+                if (isset($searcharray[$field->id])) {
+                    $val = $searcharray[$field->id]->data;
+                } else { // If there is not an entry @ the required index, set value to blank.
+                    $val = '';
+                }
+            }
+            if (!empty($val)) {
+                $searcharray[$field->id] = new stdClass();
+                list($searcharray[$field->id]->sql, $searcharray[$field->id]->params) = $searchfield->generate_sql('c'.$field->id, $val);
+                $searcharray[$field->id]->data = $val;
+                $vals[] = $val;
+            } else {
+                // Clear it out.
+                unset($searcharray[$field->id]);
+            }
+        }
+    }
+
+    if (!$paging) {
+        // Name searching.
+        $fn = optional_param('u_fn', $fn, PARAM_NOTAGS);
+        $ln = optional_param('u_ln', $ln, PARAM_NOTAGS);
+    } else {
+        $fn = isset($searcharray[DATA_FIRSTNAME]) ? $searcharray[DATA_FIRSTNAME]->data : '';
+        $ln = isset($searcharray[DATA_LASTNAME]) ? $searcharray[DATA_LASTNAME]->data : '';
+    }
+    if (!empty($fn)) {
+        $searcharray[DATA_FIRSTNAME] = new stdClass();
+        $searcharray[DATA_FIRSTNAME]->sql    = '';
+        $searcharray[DATA_FIRSTNAME]->params = array();
+        $searcharray[DATA_FIRSTNAME]->field  = 'u.firstname';
+        $searcharray[DATA_FIRSTNAME]->data   = $fn;
+        $vals[] = $fn;
+    } else {
+        unset($searcharray[DATA_FIRSTNAME]);
+    }
+    if (!empty($ln)) {
+        $searcharray[DATA_LASTNAME] = new stdClass();
+        $searcharray[DATA_LASTNAME]->sql     = '';
+        $searcharray[DATA_LASTNAME]->params = array();
+        $searcharray[DATA_LASTNAME]->field   = 'u.lastname';
+        $searcharray[DATA_LASTNAME]->data    = $ln;
+        $vals[] = $ln;
+    } else {
+        unset($searcharray[DATA_LASTNAME]);
+    }
+
+    // In case we want to switch to simple search later - there might be multiple values there ;-).
+    if ($vals) {
+        $val = reset($vals);
+        if (is_string($val)) {
+            $search = $val;
+        }
+    }
+    return [$searcharray, $search];
+}
+
+/**
+ * Approves or unapproves an entry.
+ *
+ * @param  int $entryid the entry to approve or unapprove.
+ * @param  bool $approve Whether to approve or unapprove (true for approve false otherwise).
+ * @since  Moodle 3.3
+ */
+function data_approve_entry($entryid, $approve) {
+    global $DB;
+
+    $newrecord = new stdClass();
+    $newrecord->id = $entryid;
+    $newrecord->approved = $approve ? 1 : 0;
+    $DB->update_record('data_records', $newrecord);
+}
+
+/**
+ * Populate the field contents of a new record with the submitted data.
+ *
+ * @param  stdClass $data           database object
+ * @param  stdClass $context        context object
+ * @param  int $recordid            the new record id
+ * @param  array $fields            list of fields of the database
+ * @param  stdClass $datarecord     the submitted data
+ * @param  stdClass $processeddata  pre-processed submitted fields
+ * @since  Moodle 3.3
+ */
+function data_add_fields_contents_to_new_record($data, $context, $recordid, $fields, $datarecord, $processeddata) {
+    global $DB;
+
+    // Insert a whole lot of empty records to make sure we have them.
+    $records = array();
+    foreach ($fields as $field) {
+        $content = new stdClass();
+        $content->recordid = $recordid;
+        $content->fieldid = $field->id;
+        $records[] = $content;
+    }
+
+    // Bulk insert the records now. Some records may have no data but all must exist.
+    $DB->insert_records('data_content', $records);
+
+    // Add all provided content.
+    foreach ($processeddata->fields as $fieldname => $field) {
+        $field->update_content($recordid, $datarecord->$fieldname, $fieldname);
+    }
+
+    // Trigger an event for updating this record.
+    $event = \mod_data\event\record_created::create(array(
+        'objectid' => $recordid,
+        'context' => $context,
+        'courseid' => $data->course,
+        'other' => array(
+            'dataid' => $data->id
+        )
+    ));
+    $event->add_record_snapshot('data', $data);
+    $event->trigger();
+}
+
+/**
+ * Updates the fields contents of an existing record.
+ *
+ * @param  stdClass $data           database object
+ * @param  stdClass $record         record to update object
+ * @param  stdClass $context        context object
+ * @param  stdClass $datarecord     the submitted data
+ * @param  stdClass $processeddata  pre-processed submitted fields
+ * @since  Moodle 3.3
+ */
+function data_update_record_fields_contents($data, $record, $context, $datarecord, $processeddata) {
+    global $DB;
+
+    // Reset the approved flag after edit if the user does not have permission to approve their own entries.
+    if (!has_capability('mod/data:approve', $context)) {
+        $record->approved = 0;
+    }
+
+    // Update the parent record.
+    $record->timemodified = time();
+    $DB->update_record('data_records', $record);
+
+    // Update all content.
+    foreach ($processeddata->fields as $fieldname => $field) {
+        $field->update_content($record->id, $datarecord->$fieldname, $fieldname);
+    }
+
+    // Trigger an event for updating this record.
+    $event = \mod_data\event\record_updated::create(array(
+        'objectid' => $record->id,
+        'context' => $context,
+        'courseid' => $data->course,
+        'other' => array(
+            'dataid' => $data->id
+        )
+    ));
+    $event->add_record_snapshot('data', $data);
+    $event->trigger();
 }

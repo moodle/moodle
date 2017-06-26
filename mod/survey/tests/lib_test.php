@@ -166,4 +166,151 @@ class mod_survey_lib_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($survey->id, $event->other['surveyid']);
     }
+
+    public function test_survey_core_calendar_provide_event_action() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course();
+        $survey = $this->getDataGenerator()->create_module('survey', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $survey->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_survey_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('view'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_survey_core_calendar_provide_event_action_as_non_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course();
+        $survey = $this->getDataGenerator()->create_module('survey', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $survey->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Log out the user and set force login to true.
+        \core\session\manager::init_empty_session();
+        $CFG->forcelogin = true;
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_survey_core_calendar_provide_event_action($event, $factory);
+
+        // Ensure result was null.
+        $this->assertNull($actionevent);
+    }
+
+    public function test_survey_core_calendar_provide_event_action_already_completed() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $CFG->enablecompletion = 1;
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $survey = $this->getDataGenerator()->create_module('survey', array('course' => $course->id),
+            array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
+
+        // Get some additional data.
+        $cm = get_coursemodule_from_instance('survey', $survey->id);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $survey->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Mark the activity as completed.
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($cm);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_survey_core_calendar_provide_event_action($event, $factory);
+
+        // Ensure result was null.
+        $this->assertNull($actionevent);
+    }
+
+    /**
+     * Creates an action event.
+     *
+     * @param int $courseid The course id.
+     * @param int $instanceid The instance id.
+     * @param string $eventtype The event type.
+     * @return bool|calendar_event
+     */
+    private function create_action_event($courseid, $instanceid, $eventtype) {
+        $event = new stdClass();
+        $event->name = 'Calendar event';
+        $event->modulename  = 'survey';
+        $event->courseid = $courseid;
+        $event->instance = $instanceid;
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->eventtype = $eventtype;
+        $event->timestart = time();
+
+        return calendar_event::create($event);
+    }
+
+    /**
+     * Test the callback responsible for returning the completion rule descriptions.
+     * This function should work given either an instance of the module (cm_info), such as when checking the active rules,
+     * or if passed a stdClass of similar structure, such as when checking the the default completion settings for a mod type.
+     */
+    public function test_mod_survey_completion_get_active_rule_descriptions() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Two activities, both with automatic completion. One has the 'completionsubmit' rule, one doesn't.
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 2]);
+        $survey1 = $this->getDataGenerator()->create_module('survey', [
+            'course' => $course->id,
+            'completion' => 2,
+            'completionsubmit' => 1,
+        ]);
+        $survey2 = $this->getDataGenerator()->create_module('survey', [
+            'course' => $course->id,
+            'completion' => 2,
+            'completionsubmit' => 0,
+        ]);
+        $cm1 = cm_info::create(get_coursemodule_from_instance('survey', $survey1->id));
+        $cm2 = cm_info::create(get_coursemodule_from_instance('survey', $survey2->id));
+
+        // Data for the stdClass input type.
+        // This type of input would occur when checking the default completion rules for an activity type, where we don't have
+        // any access to cm_info, rather the input is a stdClass containing completion and customdata attributes, just like cm_info.
+        $moddefaults = new stdClass();
+        $moddefaults->customdata = ['customcompletionrules' => ['completionsubmit' => 1]];
+        $moddefaults->completion = 2;
+
+        $activeruledescriptions = [get_string('completionsubmit', 'survey')];
+        $this->assertEquals(mod_survey_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
+        $this->assertEquals(mod_survey_get_completion_active_rule_descriptions($cm2), []);
+        $this->assertEquals(mod_survey_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
+        $this->assertEquals(mod_survey_get_completion_active_rule_descriptions(new stdClass()), []);
+    }
 }

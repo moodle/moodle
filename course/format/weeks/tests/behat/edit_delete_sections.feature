@@ -21,24 +21,25 @@ Feature: Sections can be edited and deleted in weeks format
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: View the default name of the general section in weeks format
     When I click on "Edit section" "link" in the "li#section-0" "css_element"
-    Then I should see "Use default section name [General]"
+    Then the field "Custom" matches value "0"
+    And the field "New value for Section name" matches value "General"
 
   Scenario: Edit the default name of the general section in weeks format
     When I click on "Edit section" "link" in the "li#section-0" "css_element"
     And I set the following fields to these values:
-      | Use default section name | 0                           |
-      | name                     | This is the general section |
+      | Custom | 1                      |
+      | New value for Section name      | This is the general section |
     And I press "Save changes"
     Then I should see "This is the general section" in the "li#section-0" "css_element"
 
   Scenario: View the default name of the second section in weeks format
     When I click on "Edit week" "link" in the "li#section-2" "css_element"
-    Then I should see "Use default section name [8 May - 14 May]"
+    Then the field "Custom" matches value "0"
+    And the field "New value for Section name" matches value "8 May - 14 May"
 
   Scenario: Edit section summary in weeks format
     When I click on "Edit week" "link" in the "li#section-2" "css_element"
@@ -51,8 +52,8 @@ Feature: Sections can be edited and deleted in weeks format
     Given I should see "8 May - 14 May" in the "li#section-2" "css_element"
     When I click on "Edit week" "link" in the "li#section-2" "css_element"
     And I set the following fields to these values:
-      | Use default section name | 0                       |
-      | name                     | This is the second week |
+      | Custom | 1                  |
+      | New value for Section name      | This is the second week |
     And I press "Save changes"
     Then I should see "This is the second week" in the "li#section-2" "css_element"
     And I should not see "8 May - 14 May" in the "li#section-2" "css_element"
@@ -65,7 +66,7 @@ Feature: Sections can be edited and deleted in weeks format
     Then I should not see "1 May - 7 May" in the "region-main" "region"
     And "New name for week" "field" should not exist
     And I should see "Midterm evaluation" in the "li#section-1" "css_element"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should not see "1 May - 7 May" in the "region-main" "region"
     And I should see "Midterm evaluation" in the "li#section-1" "css_element"
 
@@ -75,9 +76,7 @@ Feature: Sections can be edited and deleted in weeks format
     Then I should see "Are you absolutely sure you want to completely delete \"29 May - 4 June\" and all the activities it contains?"
     And I press "Delete"
     And I should not see "29 May - 4 June"
-    And I navigate to "Edit settings" node in "Course administration"
-    And I expand all fieldsets
-    And the field "Number of sections" matches value "4"
+    And I should see "22 May - 28 May"
 
   Scenario: Deleting the middle section in weeks format
     Given I should see "29 May - 4 June" in the "li#section-5" "css_element"
@@ -86,31 +85,19 @@ Feature: Sections can be edited and deleted in weeks format
     Then I should not see "29 May - 4 June"
     And I should not see "Test chat name"
     And I should see "Test choice name" in the "li#section-4" "css_element"
-    And I navigate to "Edit settings" node in "Course administration"
-    And I expand all fieldsets
-    And the field "Number of sections" matches value "4"
+    And I should see "22 May - 28 May"
 
-  Scenario: Deleting the orphaned section in weeks format
-    When I follow "Reduce the number of sections"
-    Then I should see "Orphaned activities (section 5)" in the "li#section-5" "css_element"
-    And I delete section "5"
-    And I press "Delete"
-    And I should not see "29 May - 4 June"
-    And I should not see "Orphaned activities"
-    And "li#section-5" "css_element" should not exist
-    And I navigate to "Edit settings" node in "Course administration"
-    And I expand all fieldsets
-    And the field "Number of sections" matches value "4"
-
-  Scenario: Deleting a section when orphaned section is present in weeks format
-    When I follow "Reduce the number of sections"
-    Then I should see "Orphaned activities (section 5)" in the "li#section-5" "css_element"
-    And "li#section-5.orphaned" "css_element" should exist
-    And "li#section-4.orphaned" "css_element" should not exist
-    And I delete section "1"
-    And I press "Delete"
-    And I should not see "Test book name"
-    And I should see "Orphaned activities (section 4)" in the "li#section-4" "css_element"
-    And "li#section-5" "css_element" should not exist
-    And "li#section-4.orphaned" "css_element" should exist
-    And "li#section-3.orphaned" "css_element" should not exist
+  @javascript
+  Scenario: Adding sections in weeks format
+    When I follow "Add weeks"
+    Then the field "Number of sections" matches value "1"
+    And I press "Add weeks"
+    And I should see "5 June - 11 June" in the "li#section-6" "css_element"
+    And "li#section-7" "css_element" should not exist
+    And I follow "Add weeks"
+    And I set the field "Number of sections" to "3"
+    And I press "Add weeks"
+    And I should see "12 June - 18 June" in the "li#section-7" "css_element"
+    And I should see "19 June - 25 June" in the "li#section-8" "css_element"
+    And I should see "26 June - 2 July" in the "li#section-9" "css_element"
+    And "li#section-10" "css_element" should not exist

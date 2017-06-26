@@ -21,7 +21,7 @@ Feature: Test exporting drag and drop markers questions
       | questioncategory | qtype    | name         | template |
       | Test questions   | ddmarker | Drag markers | mkmap    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   @javascript
   Scenario: Export a drag and drop markers question

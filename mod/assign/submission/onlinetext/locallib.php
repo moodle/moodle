@@ -174,7 +174,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
            'maxfiles' => EDITOR_UNLIMITED_FILES,
            'maxbytes' => $this->assignment->get_course()->maxbytes,
            'context' => $this->assignment->get_context(),
-           'return_types' => FILE_INTERNAL | FILE_EXTERNAL
+           'return_types' => (FILE_INTERNAL | FILE_EXTERNAL | FILE_CONTROLLED_LINK)
         );
         return $editoroptions;
     }
@@ -291,7 +291,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
      * @return array An array of field names and descriptions. (name=>description, ...)
      */
     public function get_editor_fields() {
-        return array('onlinetext' => get_string('pluginname', 'assignsubmission_comments'));
+        return array('onlinetext' => get_string('pluginname', 'assignsubmission_onlinetext'));
     }
 
     /**

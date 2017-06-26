@@ -1388,4 +1388,140 @@ class core_grouplib_testcase extends advanced_testcase {
         $result = groups_user_groups_visible($course, $user1->id, $cm);
         $this->assertTrue($result); // Cm with visible groups.
     }
+
+    /**
+     * Tests for groups_get_groups_members() method.
+     */
+    public function test_groups_get_groups_members() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        // Create courses.
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+
+        // Create users.
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+
+        // Enrol users.
+        $generator->enrol_user($user1->id, $course1->id);
+        $generator->enrol_user($user1->id, $course2->id);
+        $generator->enrol_user($user2->id, $course2->id);
+        $generator->enrol_user($user3->id, $course2->id);
+
+        // Create groups.
+        $group1 = $generator->create_group(array('courseid' => $course1->id));
+        $group2 = $generator->create_group(array('courseid' => $course2->id));
+        $group3 = $generator->create_group(array('courseid' => $course2->id));
+
+        // Assign users to groups.
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id)));
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user1->id)));
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user2->id)));
+
+        // Test get_groups_members (with extra field and ordering).
+        $members = groups_get_groups_members([$group1->id, $group2->id], ['lastaccess'], 'u.id ASC');
+        $this->assertCount(2, $members);
+        $this->assertEquals([$user1->id, $user2->id], array_keys($members));
+        $this->assertTrue(isset($members[$user1->id]->lastaccess));
+        $this->assertTrue(isset($members[$user2->id]->lastaccess));
+
+        // Group with just one.
+        $members = groups_get_groups_members([$group1->id]);
+        $this->assertCount(1, $members);
+        $this->assertEquals($user1->id, $members[$user1->id]->id);
+
+        // Group with just one plus empty group.
+        $members = groups_get_groups_members([$group1->id, $group3->id]);
+        $this->assertCount(1, $members);
+        $this->assertEquals($user1->id, $members[$user1->id]->id);
+
+        // Empty group.
+        $members = groups_get_groups_members([$group3->id]);
+        $this->assertCount(0, $members);
+
+        // Test groups_get_members.
+        $members = groups_get_members($group2->id, 'u.*', 'u.id ASC');
+        $this->assertCount(2, $members);
+        $this->assertEquals([$user1->id, $user2->id], array_keys($members));
+    }
+
+    /**
+     * Tests for groups_get_activity_shared_group_members() method.
+     */
+    public function test_groups_get_activity_shared_group_members() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        // Create courses.
+        $course = $generator->create_course();
+
+        // Create cm.
+        $assign = $generator->create_module("assign", array('course' => $course->id));
+        $cm = get_coursemodule_from_instance("assign", $assign->id);
+
+        // Create users.
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $user4 = $generator->create_user();
+
+        // Enrol users.
+        $generator->enrol_user($user1->id, $course->id);
+        $generator->enrol_user($user2->id, $course->id);
+        $generator->enrol_user($user3->id, $course->id);
+        $generator->enrol_user($user4->id, $course->id);
+
+        // Create groups.
+        $group1 = $generator->create_group(array('courseid' => $course->id));
+        $group2 = $generator->create_group(array('courseid' => $course->id));
+        $group3 = $generator->create_group(array('courseid' => $course->id));
+
+        // Assign users to groups.
+        $generator->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
+        $generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user1->id));
+        $generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user2->id));
+        $generator->create_group_member(array('groupid' => $group3->id, 'userid' => $user3->id));
+
+        // Retrieve users sharing groups with user1.
+        $members = groups_get_activity_shared_group_members($cm, $user1->id);
+        $this->assertCount(2, $members);
+        $this->assertEquals([$user1->id, $user2->id], array_keys($members), '', 0.0, 10, true);
+
+        // Retrieve users sharing groups with user2.
+        $members = groups_get_activity_shared_group_members($cm, $user2->id);
+        $this->assertCount(2, $members);
+        $this->assertEquals([$user1->id, $user2->id], array_keys($members), '', 0.0, 10, true);
+
+        // Retrieve users sharing groups with user3.
+        $members = groups_get_activity_shared_group_members($cm, $user3->id);
+        $this->assertCount(1, $members);
+        $this->assertEquals($user3->id, $members[$user3->id]->id);
+
+        // Retrieve users sharing groups with user without groups (user4).
+        $members = groups_get_activity_shared_group_members($cm, $user4->id);
+        $this->assertCount(0, $members);
+
+        // Now, create a different activity using groupings.
+        $grouping = $generator->create_grouping(array('courseid' => $course->id, 'name' => 'Grouping 1'));
+        // Skip group 2.
+        groups_assign_grouping($grouping->id, $group1->id);
+        groups_assign_grouping($grouping->id, $group3->id);
+
+        $assign = $generator->create_module("assign", array('course' => $course->id, 'groupingid' => $grouping->id));
+        $cm = get_coursemodule_from_instance("assign", $assign->id);
+
+        // Since the activity is forced to groupings (groups 1 and 3), I don't see members of group 2.
+        $members = groups_get_activity_shared_group_members($cm, $user1->id);
+        $this->assertCount(1, $members);
+        $this->assertEquals($user1->id, $members[$user1->id]->id);
+
+        // Add user1 to group 3 (in the grouping).
+        $generator->create_group_member(array('groupid' => $group3->id, 'userid' => $user1->id));
+        $members = groups_get_activity_shared_group_members($cm, $user1->id);
+        $this->assertCount(2, $members);    // Now I see members of group 3.
+        $this->assertEquals([$user1->id, $user3->id], array_keys($members), '', 0.0, 10, true);
+    }
 }

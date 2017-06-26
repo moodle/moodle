@@ -46,17 +46,14 @@ Feature: Apply tour filters to a tour
       | Display in middle of page   | Welcome           | Welcome to your course tour.|
     And I log out
     And I log in as "editor1"
-    And I am on site homepage
-    When I follow "Course 1"
+    When I am on "Course 1" course homepage
     Then I should not see "Welcome to your course tour."
     And I log out
     And I log in as "student1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "Welcome to your course tour."
     And I click on "End tour" "button"
     And I log out
     And I log in as "teacher1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "Welcome to your course tour."

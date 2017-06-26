@@ -20,7 +20,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
       | activity | name               | intro                     | displayformat  | course | idnumber |
       | glossary | Test glossary name | Test glossary description | fullwithauthor | C1     | g1       |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test glossary name"
     And I add a glossary entries category named "The ones I like"
     And I add a glossary entries category named "All for you"
@@ -30,7 +30,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
       | Categories | All for you |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test glossary name"
     And I add a glossary entry with the following data:
       | Concept | Cucumber |
@@ -38,7 +38,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
       | Categories | The ones I like |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test glossary name"
 
   @javascript
@@ -68,10 +68,10 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
   Scenario: Browse by date
     When I follow "Browse by date"
     And I follow "By creation date"
-    Then "Delete: Eggplant" "link" should appear before "Delete: Cucumber" "link"
+    Then "Delete entry: Eggplant" "link" should appear before "Delete entry: Cucumber" "link"
     And I follow "By last update"
     And I follow "By last update change to descending"
-    And "Delete: Cucumber" "link" should appear before "Delete: Eggplant" "link"
+    And "Delete entry: Cucumber" "link" should appear before "Delete entry: Eggplant" "link"
 
   @javascript
   Scenario: Browse by author

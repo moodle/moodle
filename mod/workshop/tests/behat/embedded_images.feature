@@ -19,9 +19,7 @@ Feature: Teachers can embed images into instructions and conclusion fields
     And I follow "Manage private files"
     And I upload "mod/workshop/tests/fixtures/moodlelogo.png" file to "Files" filemanager
     And I click on "Save changes" "button"
-    And I am on homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     # Create and edit the workshop.
     When I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Workshop with embedded images  |

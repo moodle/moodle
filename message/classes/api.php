@@ -314,6 +314,7 @@ class api {
 
         // This user has no conversations so we can return early here.
         if (empty($conversationrecords)) {
+            $transaction->allow_commit();
             return [];
         }
 
@@ -440,7 +441,7 @@ class api {
         $unreadcounts = $DB->get_records_sql($unreadcountssql, [$userid]);
 
         // We can close off the transaction now.
-        $DB->commit_delegated_transaction($transaction);
+        $transaction->allow_commit();
 
         // Now we need to order the messages back into the same order of the conversations.
         $orderedconvosigs = array_keys($conversationrecords);

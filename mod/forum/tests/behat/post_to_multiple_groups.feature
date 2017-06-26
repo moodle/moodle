@@ -64,71 +64,71 @@ Feature: A user with access to multiple groups should be able to post a copy of 
 
   Scenario: Teacher is able to post a copy of a message to all groups in a separate group forum
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a new discussion to "Separate group forum" forum with:
       | Subject | Discussion 1 |
       | Message | test |
       | Post a copy to all groups | 1 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "Separate group forum"
     Then I should see "Discussion 1"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Separate group forum"
     And I should see "Discussion 1"
     And I log out
     And I log in as "student3"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Separate group forum"
     And I should see "Discussion 1"
 
   Scenario: Teacher is able to post a copy of a message to all groups in a visible group forum
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a new discussion to "Visible group forum" forum with:
       | Subject | Discussion 1 |
       | Message | test |
       | Post a copy to all groups | 1 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "Visible group forum"
     Then I should see "Discussion 1"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Visible group forum"
     And I should see "Discussion 1"
     And I log out
     And I log in as "student3"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Visible group forum"
     And I should see "Discussion 1"
 
   Scenario: Teacher is unable to post a copy of a message to all groups in a no group forum
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "No group forum"
     And I press "Add a new discussion topic"
     Then I should not see "Post a copy to all groups"
 
   Scenario: Posts to all groups that have groupings should only display within the grouping and not to other groups
     Given I log in as "teacher1"
-    And I follow "Course 2"
+    And I am on "Course 2" course homepage
     And I add a new discussion to "Groupings forum" forum with:
       | Subject | Discussion 1 |
       | Message | test |
       | Post a copy to all groups | 1 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 2"
+    And I am on "Course 2" course homepage
     When I follow "Groupings forum"
     Then I should see "Discussion 1"
     And I log out
     And I log in as "student2"
-    And I follow "Course 2"
+    And I am on "Course 2" course homepage
     And I follow "Groupings forum"
     And I should not see "Discussion 1"

@@ -61,7 +61,7 @@ class mock_info extends info {
     }
 
     protected function get_view_hidden_capability() {
-        return 'moodle/course:viewhiddensections';
+        return 'moodle/course:ignoreavailabilityrestrictions';
     }
 
     protected function set_in_database($availability) {

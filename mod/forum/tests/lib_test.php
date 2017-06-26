@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/forum/lib.php');
+require_once($CFG->dirroot . '/mod/forum/locallib.php');
 require_once($CFG->dirroot . '/rating/lib.php');
 
 class mod_forum_lib_testcase extends advanced_testcase {
@@ -2023,9 +2024,9 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $cm = get_coursemodule_from_instance('forum', $forum->id);
 
         // Create groups.
-        $group1 = self::getDataGenerator()->create_group(array('courseid' => $course->id));
-        $group2 = self::getDataGenerator()->create_group(array('courseid' => $course->id));
-        $group3 = self::getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group1 = self::getDataGenerator()->create_group(array('courseid' => $course->id, 'name' => 'group1'));
+        $group2 = self::getDataGenerator()->create_group(array('courseid' => $course->id, 'name' => 'group2'));
+        $group3 = self::getDataGenerator()->create_group(array('courseid' => $course->id, 'name' => 'group3'));
 
         // Add the user1 to g1 and g2 groups.
         groups_add_member($group1->id, $user1->id);
@@ -2055,6 +2056,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $discussiong3u3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
         self::setUser($user1);
+
         // Test retrieve discussions not passing the groupid parameter. We will receive only first group discussions.
         $discussions = forum_get_discussions($cm);
         self::assertCount(2, $discussions);
@@ -2448,6 +2450,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         }
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         // There should be one entry for course1, and no others.
         $this->assertCount(1, $results);
@@ -2499,6 +2502,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setUser($viewer1->id);
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         // There should be one entry for course1.
         $this->assertCount(1, $results);
@@ -2510,6 +2514,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setUser($viewer2->id);
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         // There should be one entry for course1.
         $this->assertCount(0, $results);
@@ -2555,6 +2560,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setUser($viewer->id);
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         if ($hasresult) {
             // There should be one entry for course1.
@@ -2620,6 +2626,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setUser($viewer1->id);
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         if ($hasresult) {
             // There should be one entry for course1.
@@ -2636,6 +2643,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setUser($viewer2->id);
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         // There should be one entry for course1.
         $this->assertCount(0, $results);
@@ -3313,5 +3321,253 @@ class mod_forum_lib_testcase extends advanced_testcase {
 
         // The student should be still the last post's author.
         $this->assertEquals($student->id, $DB->get_field('forum_discussions', 'usermodified', ['id' => $discussion->id]));
+    }
+
+    public function test_forum_core_calendar_provide_event_action() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id,
+            'completionreplies' => 5, 'completiondiscussions' => 2));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $forum->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_forum_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('view'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(7, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_forum_core_calendar_provide_event_action_as_non_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $forum->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Log out the user and set force login to true.
+        \core\session\manager::init_empty_session();
+        $CFG->forcelogin = true;
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_forum_core_calendar_provide_event_action($event, $factory);
+
+        // Ensure result was null.
+        $this->assertNull($actionevent);
+    }
+
+    public function test_forum_core_calendar_provide_event_action_already_completed() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $CFG->enablecompletion = 1;
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id),
+            array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
+
+        // Get some additional data.
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $forum->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Mark the activity as completed.
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($cm);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_forum_core_calendar_provide_event_action($event, $factory);
+
+        // Ensure result was null.
+        $this->assertNull($actionevent);
+    }
+
+    public function test_mod_forum_get_tagged_posts() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Setup test data.
+        $forumgenerator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+        $course3 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course1 = $this->getDataGenerator()->create_course();
+        $forum1 = $this->getDataGenerator()->create_module('forum', array('course' => $course1->id));
+        $forum2 = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id));
+        $forum3 = $this->getDataGenerator()->create_module('forum', array('course' => $course3->id));
+        $post11 = $forumgenerator->create_content($forum1, array('tags' => array('Cats', 'Dogs')));
+        $post12 = $forumgenerator->create_content($forum1, array('tags' => array('Cats', 'mice')));
+        $post13 = $forumgenerator->create_content($forum1, array('tags' => array('Cats')));
+        $post14 = $forumgenerator->create_content($forum1);
+        $post15 = $forumgenerator->create_content($forum1, array('tags' => array('Cats')));
+        $post16 = $forumgenerator->create_content($forum1, array('tags' => array('Cats'), 'hidden' => true));
+        $post21 = $forumgenerator->create_content($forum2, array('tags' => array('Cats')));
+        $post22 = $forumgenerator->create_content($forum2, array('tags' => array('Cats', 'Dogs')));
+        $post23 = $forumgenerator->create_content($forum2, array('tags' => array('mice', 'Cats')));
+        $post31 = $forumgenerator->create_content($forum3, array('tags' => array('mice', 'Cats')));
+
+        $tag = core_tag_tag::get_by_name(0, 'Cats');
+
+        // Admin can see everything.
+        $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$post = */0);
+        $this->assertRegExp('/'.$post11->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post12->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post13->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post14->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post15->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post16->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post21->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post22->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post23->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post31->subject.'</', $res->content);
+        $this->assertEmpty($res->prevpageurl);
+        $this->assertNotEmpty($res->nextpageurl);
+        $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$post = */1);
+        $this->assertNotRegExp('/'.$post11->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post12->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post13->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post14->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post15->subject.'</', $res->content);
+        $this->assertNotRegExp('/'.$post16->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post21->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post22->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post23->subject.'</', $res->content);
+        $this->assertRegExp('/'.$post31->subject.'</', $res->content);
+        $this->assertNotEmpty($res->prevpageurl);
+        $this->assertEmpty($res->nextpageurl);
+
+        // Create and enrol a user.
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($student->id, $course2->id, $studentrole->id, 'manual');
+        $this->setUser($student);
+        core_tag_index_builder::reset_caches();
+
+        // User can not see posts in course 3 because he is not enrolled.
+        $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$post = */1);
+        $this->assertRegExp('/'.$post22->subject.'/', $res->content);
+        $this->assertRegExp('/'.$post23->subject.'/', $res->content);
+        $this->assertNotRegExp('/'.$post31->subject.'/', $res->content);
+
+        // User can search forum posts inside a course.
+        $coursecontext = context_course::instance($course1->id);
+        $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
+            /*$fromctx = */0, /*$ctx = */$coursecontext->id, /*$rec = */1, /*$post = */0);
+        $this->assertRegExp('/'.$post11->subject.'/', $res->content);
+        $this->assertRegExp('/'.$post12->subject.'/', $res->content);
+        $this->assertRegExp('/'.$post13->subject.'/', $res->content);
+        $this->assertNotRegExp('/'.$post14->subject.'/', $res->content);
+        $this->assertRegExp('/'.$post15->subject.'/', $res->content);
+        $this->assertRegExp('/'.$post16->subject.'/', $res->content);
+        $this->assertNotRegExp('/'.$post21->subject.'/', $res->content);
+        $this->assertNotRegExp('/'.$post22->subject.'/', $res->content);
+        $this->assertNotRegExp('/'.$post23->subject.'/', $res->content);
+        $this->assertEmpty($res->nextpageurl);
+    }
+
+    /**
+     * Creates an action event.
+     *
+     * @param int $courseid The course id.
+     * @param int $instanceid The instance id.
+     * @param string $eventtype The event type.
+     * @return bool|calendar_event
+     */
+    private function create_action_event($courseid, $instanceid, $eventtype) {
+        $event = new stdClass();
+        $event->name = 'Calendar event';
+        $event->modulename  = 'forum';
+        $event->courseid = $courseid;
+        $event->instance = $instanceid;
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->eventtype = $eventtype;
+        $event->timestart = time();
+
+        return calendar_event::create($event);
+    }
+
+    /**
+     * Test the callback responsible for returning the completion rule descriptions.
+     * This function should work given either an instance of the module (cm_info), such as when checking the active rules,
+     * or if passed a stdClass of similar structure, such as when checking the the default completion settings for a mod type.
+     */
+    public function test_mod_forum_completion_get_active_rule_descriptions() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Two activities, both with automatic completion. One has the 'completionsubmit' rule, one doesn't.
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 2]);
+        $forum1 = $this->getDataGenerator()->create_module('forum', [
+            'course' => $course->id,
+            'completion' => 2,
+            'completiondiscussions' => 3,
+            'completionreplies' => 3,
+            'completionposts' => 3
+        ]);
+        $forum2 = $this->getDataGenerator()->create_module('forum', [
+            'course' => $course->id,
+            'completion' => 2,
+            'completiondiscussions' => 0,
+            'completionreplies' => 0,
+            'completionposts' => 0
+        ]);
+        $cm1 = cm_info::create(get_coursemodule_from_instance('forum', $forum1->id));
+        $cm2 = cm_info::create(get_coursemodule_from_instance('forum', $forum2->id));
+
+        // Data for the stdClass input type.
+        // This type of input would occur when checking the default completion rules for an activity type, where we don't have
+        // any access to cm_info, rather the input is a stdClass containing completion and customdata attributes, just like cm_info.
+        $moddefaults = new stdClass();
+        $moddefaults->customdata = ['customcompletionrules' => [
+            'completiondiscussions' => 3,
+            'completionreplies' => 3,
+            'completionposts' => 3
+        ]];
+        $moddefaults->completion = 2;
+
+        $activeruledescriptions = [
+            get_string('completiondiscussionsdesc', 'forum', 3),
+            get_string('completionrepliesdesc', 'forum', 3),
+            get_string('completionpostsdesc', 'forum', 3)
+        ];
+        $this->assertEquals(mod_forum_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
+        $this->assertEquals(mod_forum_get_completion_active_rule_descriptions($cm2), []);
+        $this->assertEquals(mod_forum_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
+        $this->assertEquals(mod_forum_get_completion_active_rule_descriptions(new stdClass()), []);
     }
 }

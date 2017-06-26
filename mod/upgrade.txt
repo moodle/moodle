@@ -1,6 +1,29 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.3 ===
+
+* External functions that were returning file information now return the following additional file fields:
+  - mimetype (the file mime type)
+  - isexternalfile (if is a file reference to a external repository)
+  - repositorytype (the repository name in case is a external file)
+  Those fields are VALUE_OPTIONAL for backwards compatibility.
+* The block_course_overview has been removed and the related core module *_print_overview functions have been deprecated.
+* The block_myoverview has replaced block_course_overview to provide better information to students. To support this,
+  actions can now be attached to calendar events. Documentation for the following new API callbacks introduced in
+  MDL-55611 can be found at https://docs.moodle.org/dev/Calendar_API. The 3 new callbacks are:
+  - mod_<modname>_core_calendar_is_event_visible
+  - mod_<modname>_core_calendar_provide_event_action
+  - mod_<modname>_core_calendar_event_action_show_items_acount
+* Changes to the moodleform_mod class and its usage (MDL-58138):
+  - the get_data() method has been overriden. The implementation calls parent::get_data() and a new data_postprocessing() method
+  - new data_postprocessing() method added. Mods can override this in their mod_form subclass to modify the submit data. Previously
+    mods could only modify submitted data by overriding get_data() in the mod_form subclass. data_postprocessing() is now the way to
+    do this correctly.
+  - completion: \core_completion\manager calls the overriden mod_x_mod_form->data_postprocessing() to allow mods to modify their
+    completion data before saving the bulk completion form. If you've overriden get_data() to modify submit data for completion in
+    the past, you should now override the data_postprocessing() method in your mod_form and move your code there, so bulk completion
+    editing will be properly supported for your plugin.
 === 3.2 ===
 
 * Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted

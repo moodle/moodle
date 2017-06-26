@@ -153,7 +153,8 @@ class block_community_renderer extends plugin_renderer_base {
                                 array('class' => 'hubcourseuserinfo'));
 
                 //create course content related information html
-                $course->subject = get_string($course->subject, 'edufields');
+                $course->subject = (get_string_manager()->string_exists($course->subject, 'edufields')) ?
+                        get_string($course->subject, 'edufields') : get_string('none');
                 $course->audience = get_string('audience' . $course->audience, 'hub');
                 $course->educationallevel = get_string('edulevel' . $course->educationallevel, 'hub');
                 $coursecontentinfo = '';

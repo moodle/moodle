@@ -21,15 +21,13 @@ Feature: The messages block allows users to list new messages an a course
     Given the following config values are set as admin:
       | messaging       | 0 |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    When I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Messages" block
     Then I should see "Messaging is disabled on this site" in the "Messages" "block"
 
   Scenario: View the block by a user who does not have any messages.
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    When I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Messages" block
     Then I should see "No messages" in the "Messages" "block"
 
@@ -41,20 +39,18 @@ Feature: The messages block allows users to list new messages an a course
     And I send "This is message 2" message to "Teacher 1" user
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
-    When I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Messages" block
     Then I should see "Student 1" in the "Messages" "block"
 
   @javascript
   Scenario: Use the block to send a message to a user.
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Messages" block
     And I click on "//a[normalize-space(.) = 'Messages']" "xpath_element" in the "Messages" "block"
     And I send "This is message 1" message to "Student 1" user
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     Then I should see "Teacher 1" in the "Messages" "block"

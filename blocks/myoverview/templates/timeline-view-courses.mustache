@@ -1,0 +1,121 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/timeline-view-courses
+
+    This template renders the timeline view by courses for the myoverview block.
+
+    Example context (json):
+    {}
+}}
+<div id="sort-by-courses-view-{{uniqid}}">
+    {{#coursesview}}
+        {{#inprogress}}
+            {{#haspages}}
+                {{#pages}}
+                    <ul class="list-group unstyled hidden" data-region="course-block">
+                        {{#courses}} {{> block_myoverview/course-item }} {{/courses}}
+                    </ul>
+                {{/pages}}
+                <div class="text-xs-center text-center m-t-1">
+                    <button type="button" class="btn btn-secondary" data-action="more-courses">
+                        {{#str}} morecourses, block_myoverview {{/str}}
+                        <span class="hidden" data-region="loading-icon-container">
+                            {{> core/loading }}
+                        </span>
+                    </button>
+                </div>
+            {{/haspages}}
+            {{^haspages}}
+                <div class="text-xs-center text-center m-t-3">
+                    <img class="empty-placeholder-image-lg"
+                         src="{{urls.noevents}}"
+                         alt="{{#str}} nocoursesinprogress, block_myoverview {{/str}}"
+                         role="presentation">
+                    <p class="text-muted m-t-1">{{#str}} nocoursesinprogress, block_myoverview {{/str}}</p>
+                </div>
+            {{/haspages}}
+        {{/inprogress}}
+        {{^inprogress}}
+            <div class="text-xs-center text-center m-t-3">
+                <img class="empty-placeholder-image-lg"
+                     src="{{urls.noevents}}"
+                     alt="{{#str}} nocoursesinprogress, block_myoverview {{/str}}"
+                     role="presentation">
+                <p class="text-muted m-t-1">{{#str}} nocoursesinprogress, block_myoverview {{/str}}</p>
+            </div>
+        {{/inprogress}}
+    {{/coursesview}}
+</div>
+{{#js}}
+    require(['jquery', 'core/custom_interaction_events', 'block_myoverview/event_list_by_course'],
+        function($, CustomEvents, EventListByCourse) {
+
+        var root = $("#sort-by-courses-view-{{uniqid}}");
+        // This flag is used so that we can delay the loading of the events until the tab
+        // is toggled by the user.
+        var seen = false;
+
+        CustomEvents.define(root, [CustomEvents.events.activate]);
+        // Show more courses and load their events when the user clicks the "more courses"
+        // button.
+        root.on(CustomEvents.events.activate, '[data-action="more-courses"]', function(e, data) {
+            var button = $(e.target);
+            var blocks = root.find('[data-region="course-block"].hidden');
+
+            if (blocks && blocks.length) {
+                var block = blocks.first();
+                EventListByCourse.init(block);
+                block.removeClass('hidden');
+            }
+
+            // If there was only one hidden block then we have no more to show now
+            // so we can disable the button.
+            if (blocks && blocks.length == 1) {
+                button.prop('disabled', true);
+            }
+
+            if (data) {
+                data.originalEvent.preventDefault();
+                data.originalEvent.stopPropagation();
+            }
+            e.stopPropagation();
+        });
+
+        // Listen for when the user changes tab so that we can show the first set of courses
+        // and load their events when they request the sort by courses view for the first time.
+        root.closest('[data-region="timeline-view"]').on('shown shown.bs.tab', function(e) {
+            if (seen) {
+                return;
+            }
+
+            var tab = $(e.target);
+            var tabTarget = $(tab.attr('href'));
+
+            if (!tabTarget || !tabTarget.length) {
+                return;
+            }
+
+            var viewCourses = tabTarget.find('#sort-by-courses-view-{{uniqid}}');
+
+            if (viewCourses && viewCourses.length && !seen) {
+                seen = true;
+                viewCourses.find('[data-action="more-courses"]').trigger(CustomEvents.events.activate);
+            }
+        });
+    });
+{{/js}}

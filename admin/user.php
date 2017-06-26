@@ -187,7 +187,8 @@
             } else {
                 $columnicon = ($dir == "ASC") ? "sort_asc" : "sort_desc";
             }
-            $columnicon = "<img class='iconsort' src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
+            $columnicon = $OUTPUT->pix_icon('t/' . $columnicon, get_string(strtolower($columndir)), 'core',
+                                            ['class' => 'iconsort']);
 
         }
         $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";
@@ -298,7 +299,8 @@
                 if (is_mnet_remote_user($user) or $user->id == $USER->id or is_siteadmin($user)) {
                     // no deleting of self, mnet accounts or admins allowed
                 } else {
-                    $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete'=>$user->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'alt'=>$strdelete, 'class'=>'iconsmall')), array('title'=>$strdelete));
+                    $url = new moodle_url($returnurl, array('delete'=>$user->id, 'sesskey'=>sesskey()));
+                    $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/delete', $strdelete));
                 }
             }
 
@@ -315,17 +317,20 @@
 
                 } else {
                     if ($user->suspended) {
-                        $buttons[] = html_writer::link(new moodle_url($returnurl, array('unsuspend'=>$user->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/show'), 'alt'=>$strunsuspend, 'class'=>'iconsmall')), array('title'=>$strunsuspend));
+                        $url = new moodle_url($returnurl, array('unsuspend'=>$user->id, 'sesskey'=>sesskey()));
+                        $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/show', $strunsuspend));
                     } else {
                         if ($user->id == $USER->id or is_siteadmin($user)) {
                             // no suspending of admins or self!
                         } else {
-                            $buttons[] = html_writer::link(new moodle_url($returnurl, array('suspend'=>$user->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/hide'), 'alt'=>$strsuspend, 'class'=>'iconsmall')), array('title'=>$strsuspend));
+                            $url = new moodle_url($returnurl, array('suspend'=>$user->id, 'sesskey'=>sesskey()));
+                            $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/hide', $strsuspend));
                         }
                     }
 
                     if (login_is_lockedout($user)) {
-                        $buttons[] = html_writer::link(new moodle_url($returnurl, array('unlock'=>$user->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/unlock'), 'alt'=>$strunlock, 'class'=>'iconsmall')), array('title'=>$strunlock));
+                        $url = new moodle_url($returnurl, array('unlock'=>$user->id, 'sesskey'=>sesskey()));
+                        $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/unlock', $strunlock));
                     }
                 }
             }
@@ -334,7 +339,8 @@
             if (has_capability('moodle/user:update', $sitecontext)) {
                 // prevent editing of admins by non-admins
                 if (is_siteadmin($USER) or !is_siteadmin($user)) {
-                    $buttons[] = html_writer::link(new moodle_url($securewwwroot.'/user/editadvanced.php', array('id'=>$user->id, 'course'=>$site->id)), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/edit'), 'alt'=>$stredit, 'class'=>'iconsmall')), array('title'=>$stredit));
+                    $url = new moodle_url($securewwwroot.'/user/editadvanced.php', array('id'=>$user->id, 'course'=>$site->id));
+                    $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/edit', $stredit));
                 }
             }
 

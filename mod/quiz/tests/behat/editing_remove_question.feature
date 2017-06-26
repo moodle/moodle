@@ -21,7 +21,7 @@ Feature: Edit quiz page - remove questions
       | activity   | name   | course | idnumber |
       | quiz       | Quiz 1 | C1     | quiz1    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
 
   @javascript

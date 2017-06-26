@@ -17,8 +17,7 @@ Feature: Allowed blocks controls
 
   Scenario: Blocks can be added with the default permissions
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     When I add the "Course completion status" block
     And I add the "Activities" block
     Then I should see "Activities" in the "Activities" "block"
@@ -28,14 +27,12 @@ Feature: Allowed blocks controls
     Given I log in as "admin"
     And I set the following system permissions of "Teacher" role:
       | block/activity_modules:addinstance | Prohibit |
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Users > Permissions" in current page administration
     And I override the system permissions of "Teacher" role with:
       | block/completionstatus:addinstance | Prohibit |
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     Then the add block selector should not contain "Activities" block
     And the add block selector should not contain "Course completion status" block

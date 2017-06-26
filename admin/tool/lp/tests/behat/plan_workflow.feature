@@ -171,6 +171,7 @@ Feature: Manage plan workflow
     And I follow "Learning plans"
     When I click on "Complete this learning plan" of edit menu in the "Test-Plan3" row
     And I click on "Complete this learning plan" "button" in the "Confirm" "dialogue"
+    And I wait until the page is ready
     And I follow "Test-Plan4"
     And I follow "Complete this learning plan"
     And I click on "Complete this learning plan" "button" in the "Confirm" "dialogue"

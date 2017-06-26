@@ -287,8 +287,12 @@ class condition extends \core_availability\condition {
 
             // Save the updated course module.
             if ($changed) {
-                $DB->set_field('course_sections', 'availability', json_encode($tree->save()),
-                        array('id' => $section->id));
+                $updatesection = new \stdClass();
+                $updatesection->id = $section->id;
+                $updatesection->availability = json_encode($tree->save());
+                $updatesection->timemodified = time();
+                $DB->update_record('course_sections', $updatesection);
+
                 $anychanged = true;
             }
         }

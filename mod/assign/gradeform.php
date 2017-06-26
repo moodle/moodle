@@ -78,11 +78,6 @@ class mod_assign_grade_form extends moodleform {
         $errors = parent::validation($data, $files);
         $instance = $this->assignment->get_instance();
 
-        if ($instance->markingworkflow && !empty($data['sendstudentnotifications']) &&
-                $data['workflowstate'] != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
-            $errors['workflowstate'] = get_string('studentnotificationworkflowstateerror', 'assign');
-        }
-
         // Advanced grading.
         if (!array_key_exists('grade', $data)) {
             return $errors;

@@ -50,27 +50,6 @@ class file_storage {
     /** @var file_system filesystem */
     private $filesystem;
 
-    /** @var array List of formats supported by unoconv */
-    private $unoconvformats;
-
-    // Unoconv constants.
-    /** No errors */
-    const UNOCONVPATH_OK = 'ok';
-    /** Not set */
-    const UNOCONVPATH_EMPTY = 'empty';
-    /** Does not exist */
-    const UNOCONVPATH_DOESNOTEXIST = 'doesnotexist';
-    /** Is a dir */
-    const UNOCONVPATH_ISDIR = 'isdir';
-    /** Not executable */
-    const UNOCONVPATH_NOTEXECUTABLE = 'notexecutable';
-    /** Test file missing */
-    const UNOCONVPATH_NOTESTFILE = 'notestfile';
-    /** Version not supported */
-    const UNOCONVPATH_VERSIONNOTSUPPORTED = 'versionnotsupported';
-    /** Any other error */
-    const UNOCONVPATH_ERROR = 'error';
-
     /**
      * Constructor - do not use directly use {@link get_file_storage()} call instead.
      */
@@ -188,19 +167,11 @@ class file_storage {
      * @return stored_file|bool false if unable to create the conversion, stored file otherwise
      */
     public function get_converted_document(stored_file $file, $format, $forcerefresh = false) {
+        debugging('The get_converted_document function has been deprecated and the unoconv functions been removed. '
+                . 'The file has not been converted. '
+                . 'Please update your code to use the file conversion API instead.', DEBUG_DEVELOPER);
 
-        $context = context_system::instance();
-        $path = '/' . $format . '/';
-        $conversion = $this->get_file($context->id, 'core', 'documentconversion', 0, $path, $file->get_contenthash());
-
-        if (!$conversion || $forcerefresh) {
-            $conversion = $this->create_converted_document($file, $format, $forcerefresh);
-            if (!$conversion) {
-                return false;
-            }
-        }
-
-        return $conversion;
+        return false;
     }
 
     /**
@@ -210,26 +181,10 @@ class file_storage {
      * @return bool - True if the format is supported for input.
      */
     protected function is_format_supported_by_unoconv($format) {
-        global $CFG;
+        debugging('The is_format_supported_by_unoconv function has been deprecated and the unoconv functions been removed. '
+                . 'Please update your code to use the file conversion API instead.', DEBUG_DEVELOPER);
 
-        if (!isset($this->unoconvformats)) {
-            // Ask unoconv for it's list of supported document formats.
-            $cmd = escapeshellcmd(trim($CFG->pathtounoconv)) . ' --show';
-            $pipes = array();
-            $pipesspec = array(2 => array('pipe', 'w'));
-            $proc = proc_open($cmd, $pipesspec, $pipes);
-            $programoutput = stream_get_contents($pipes[2]);
-            fclose($pipes[2]);
-            proc_close($proc);
-            $matches = array();
-            preg_match_all('/\[\.(.*)\]/', $programoutput, $matches);
-
-            $this->unoconvformats = $matches[1];
-            $this->unoconvformats = array_unique($this->unoconvformats);
-        }
-
-        $sanitized = trim(core_text::strtolower($format));
-        return in_array($sanitized, $this->unoconvformats);
+        return false;
     }
 
     /**
@@ -238,24 +193,9 @@ class file_storage {
      * @return bool true if the present version is supported, false otherwise.
      */
     public static function can_convert_documents() {
-        global $CFG;
-        $currentversion = 0;
-        $supportedversion = 0.7;
-        $unoconvbin = \escapeshellarg($CFG->pathtounoconv);
-        $command = "$unoconvbin --version";
-        exec($command, $output);
-        // If the command execution returned some output, then get the unoconv version.
-        if ($output) {
-            foreach ($output as $response) {
-                if (preg_match('/unoconv (\\d+\\.\\d+)/', $response, $matches)) {
-                    $currentversion = (float)$matches[1];
-                }
-            }
-            if ($currentversion < $supportedversion) {
-                return false;
-            }
-            return true;
-        }
+        debugging('The can_convert_documents function has been deprecated and the unoconv functions been removed. '
+                . 'Please update your code to use the file conversion API instead.', DEBUG_DEVELOPER);
+
         return false;
     }
 
@@ -263,32 +203,10 @@ class file_storage {
      * Regenerate the test pdf and send it direct to the browser.
      */
     public static function send_test_pdf() {
-        global $CFG;
-        require_once($CFG->libdir . '/filelib.php');
+        debugging('The send_test_pdf function has been deprecated and the unoconv functions been removed. '
+                . 'Please update your code to use the file conversion API instead.', DEBUG_DEVELOPER);
 
-        $filerecord = array(
-            'contextid' => \context_system::instance()->id,
-            'component' => 'test',
-            'filearea' => 'assignfeedback_editpdf',
-            'itemid' => 0,
-            'filepath' => '/',
-            'filename' => 'unoconv_test.docx'
-        );
-
-        // Get the fixture doc file content and generate and stored_file object.
-        $fs = get_file_storage();
-        $fixturefile = $CFG->libdir . '/tests/fixtures/unoconv-source.docx';
-        $fixturedata = file_get_contents($fixturefile);
-        $testdocx = $fs->get_file($filerecord['contextid'], $filerecord['component'], $filerecord['filearea'],
-                $filerecord['itemid'], $filerecord['filepath'], $filerecord['filename']);
-        if (!$testdocx) {
-            $testdocx = $fs->create_file_from_string($filerecord, $fixturedata);
-
-        }
-
-        // Convert the doc file to pdf and send it direct to the browser.
-        $result = $fs->get_converted_document($testdocx, 'pdf', true);
-        readfile_accel($result, 'application/pdf', true);
+        return false;
     }
 
     /**
@@ -297,125 +215,10 @@ class file_storage {
      * @return \stdClass an object with the test status and the UNOCONVPATH_ constant message.
      */
     public static function test_unoconv_path() {
-        global $CFG;
-        $unoconvpath = $CFG->pathtounoconv;
+        debugging('The test_unoconv_path function has been deprecated and the unoconv functions been removed. '
+                . 'Please update your code to use the file conversion API instead.', DEBUG_DEVELOPER);
 
-        $ret = new \stdClass();
-        $ret->status = self::UNOCONVPATH_OK;
-        $ret->message = null;
-
-        if (empty($unoconvpath)) {
-            $ret->status = self::UNOCONVPATH_EMPTY;
-            return $ret;
-        }
-        if (!file_exists($unoconvpath)) {
-            $ret->status = self::UNOCONVPATH_DOESNOTEXIST;
-            return $ret;
-        }
-        if (is_dir($unoconvpath)) {
-            $ret->status = self::UNOCONVPATH_ISDIR;
-            return $ret;
-        }
-        if (!file_is_executable($unoconvpath)) {
-            $ret->status = self::UNOCONVPATH_NOTEXECUTABLE;
-            return $ret;
-        }
-        if (!\file_storage::can_convert_documents()) {
-            $ret->status = self::UNOCONVPATH_VERSIONNOTSUPPORTED;
-            return $ret;
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Perform a file format conversion on the specified document.
-     *
-     * @param stored_file $file the file we want to preview
-     * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
-     * @return stored_file|bool false if unable to create the conversion, stored file otherwise
-     */
-    protected function create_converted_document(stored_file $file, $format, $forcerefresh = false) {
-        global $CFG;
-
-        if (empty($CFG->pathtounoconv) || !file_is_executable(trim($CFG->pathtounoconv))) {
-            // No conversions are possible, sorry.
-            return false;
-        }
-
-        $fileextension = core_text::strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
-        if (!self::is_format_supported_by_unoconv($fileextension)) {
-            return false;
-        }
-
-        if (!self::is_format_supported_by_unoconv($format)) {
-            return false;
-        }
-
-        // Copy the file to the tmp dir.
-        $uniqdir = "core_file/conversions/" . uniqid($file->get_id() . "-", true);
-        $tmp = make_temp_directory($uniqdir);
-        $ext = pathinfo($file->get_filename(), PATHINFO_EXTENSION);
-        // Safety.
-        $localfilename = $file->get_id() . '.' . $ext;
-
-        $filename = $tmp . '/' . $localfilename;
-        try {
-            // This function can either return false, or throw an exception so we need to handle both.
-            if ($file->copy_content_to($filename) === false) {
-                throw new file_exception('storedfileproblem', 'Could not copy file contents to temp file.');
-            }
-        } catch (file_exception $fe) {
-            remove_dir($tmp);
-            throw $fe;
-        }
-
-        $newtmpfile = pathinfo($filename, PATHINFO_FILENAME) . '.' . $format;
-
-        // Safety.
-        $newtmpfile = $tmp . '/' . clean_param($newtmpfile, PARAM_FILE);
-
-        $cmd = escapeshellcmd(trim($CFG->pathtounoconv)) . ' ' .
-               escapeshellarg('-f') . ' ' .
-               escapeshellarg($format) . ' ' .
-               escapeshellarg('-o') . ' ' .
-               escapeshellarg($newtmpfile) . ' ' .
-               escapeshellarg($filename);
-
-        $output = null;
-        $currentdir = getcwd();
-        chdir($tmp);
-        $result = exec($cmd, $output);
-        chdir($currentdir);
-        touch($newtmpfile);
-        if (filesize($newtmpfile) === 0) {
-            remove_dir($tmp);
-            // Cleanup.
-            return false;
-        }
-
-        $context = context_system::instance();
-        $path = '/' . $format . '/';
-        $record = array(
-            'contextid' => $context->id,
-            'component' => 'core',
-            'filearea'  => 'documentconversion',
-            'itemid'    => 0,
-            'filepath'  => $path,
-            'filename'  => $file->get_contenthash(),
-        );
-
-        if ($forcerefresh) {
-            $existing = $this->get_file($context->id, 'core', 'documentconversion', 0, $path, $file->get_contenthash());
-            if ($existing) {
-                $existing->delete();
-            }
-        }
-
-        $convertedfile = $this->create_file_from_pathname($record, $newtmpfile);
-        // Cleanup.
-        remove_dir($tmp);
-        return $convertedfile;
+        return false;
     }
 
     /**
@@ -1179,7 +982,7 @@ class file_storage {
         static $contenthash = null;
         if (!$contenthash) {
             $this->add_string_to_pool('');
-            $contenthash = sha1('');
+            $contenthash = self::hash_from_string('');
         }
 
         $now = time();
@@ -1325,9 +1128,9 @@ class file_storage {
         // creating a new file from an existing alias creates new alias implicitly.
         // here we just check the database consistency.
         if (!empty($newrecord->repositoryid)) {
-            if ($newrecord->referencefileid != $this->get_referencefileid($newrecord->repositoryid, $newrecord->reference, MUST_EXIST)) {
-                throw new file_reference_exception($newrecord->repositoryid, $newrecord->reference, $newrecord->referencefileid);
-            }
+            // It is OK if the current reference does not exist. It may have been altered by a repository plugin when the files
+            // where saved from a draft area.
+            $newrecord->referencefileid = $this->get_or_create_referencefileid($newrecord->repositoryid, $newrecord->reference);
         }
 
         try {
@@ -2519,5 +2322,25 @@ class file_storage {
             WHERE referencefileid = :referencefileid', $params);
         $data = array('id' => $referencefileid, 'lastsync' => $lastsync);
         $DB->update_record('files_reference', (object)$data);
+    }
+
+    /**
+     * Calculate and return the contenthash of the supplied file.
+     *
+     * @param   string $filepath The path to the file on disk
+     * @return  string The file's content hash
+     */
+    public static function hash_from_path($filepath) {
+        return sha1_file($filepath);
+    }
+
+    /**
+     * Calculate and return the contenthash of the supplied content.
+     *
+     * @param   string $content The file content
+     * @return  string The file's content hash
+     */
+    public static function hash_from_string($content) {
+        return sha1($content);
     }
 }

@@ -18,7 +18,7 @@ Feature: Edit quiz marks with no attempts
       | activity   | name   | course | idnumber | grade | decimalpoints | questiondecimalpoints |
       | quiz       | Quiz 1 | C1     | quiz1    | 20    | 2             | -1                    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "True/False" question to the "Quiz 1" quiz with:
       | Question name | First question |
       | Question text | Answer me      |

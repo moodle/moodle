@@ -62,7 +62,12 @@ function label_add_instance($label) {
     $label->name = get_label_name($label);
     $label->timemodified = time();
 
-    return $DB->insert_record("label", $label);
+    $id = $DB->insert_record("label", $label);
+
+    $completiontimeexpected = !empty($label->completionexpected) ? $label->completionexpected : null;
+    \core_completion\api::update_completion_date_event($label->coursemodule, 'label', $id, $completiontimeexpected);
+
+    return $id;
 }
 
 /**
@@ -80,6 +85,9 @@ function label_update_instance($label) {
     $label->name = get_label_name($label);
     $label->timemodified = time();
     $label->id = $label->instance;
+
+    $completiontimeexpected = !empty($label->completionexpected) ? $label->completionexpected : null;
+    \core_completion\api::update_completion_date_event($label->coursemodule, 'label', $label->id, $completiontimeexpected);
 
     return $DB->update_record("label", $label);
 }
@@ -101,6 +109,9 @@ function label_delete_instance($id) {
     }
 
     $result = true;
+
+    $cm = get_coursemodule_from_instance('label', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'label', $label->id, null);
 
     if (! $DB->delete_records("label", array("id"=>$label->id))) {
         $result = false;
@@ -337,4 +348,34 @@ function label_generate_resized_image(stored_file $file, $maxwidth, $maxheight) 
 function label_check_updates_since(cm_info $cm, $from, $filter = array()) {
     $updates = course_check_module_updates_since($cm, $from, array(), $filter);
     return $updates;
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_label_core_calendar_provide_event_action(calendar_event $event,
+                                                      \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['label'][$event->instance];
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/label/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }

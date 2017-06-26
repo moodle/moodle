@@ -19,7 +19,7 @@ Feature: We can set the grade to pass value
       | name | scale |
       | Test Scale 1 | Disappointing, Good, Very good, Excellent |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   @javascript
   Scenario: Validate that switching the type of grading used correctly disables grade to pass
@@ -58,7 +58,7 @@ Feature: We can set the grade to pass value
     And I turn editing mode on
     And I click on "Edit  assign Test Assignment 1" "link"
     Then the field "Grade to pass" matches value "25"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test Assignment 1"
     And I follow "Edit settings"
     And I expand all fieldsets
@@ -83,7 +83,7 @@ Feature: We can set the grade to pass value
     Then the field "Grade to pass" matches value "3"
     And I set the field "Grade to pass" to "4"
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test Assignment 1"
     And I follow "Edit settings"
     And the field "Grade to pass" matches value "4"
@@ -119,7 +119,7 @@ Feature: We can set the grade to pass value
     And the field "Grade to pass" matches value "10"
     And I set the field "Grade to pass" to "15"
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test Workshop 1"
     And I follow "Edit settings"
     And the field "Submission grade to pass" matches value "45"
@@ -149,7 +149,7 @@ Feature: We can set the grade to pass value
     Then the field "Grade to pass" matches value "9.5"
     And I set the field "Grade to pass" to "8"
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test Quiz 1"
     And I follow "Edit settings"
     And the field "Grade to pass" matches value "8.00"
@@ -167,7 +167,7 @@ Feature: We can set the grade to pass value
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test Lesson 1"
     And I follow "Edit settings"
     And the field "Grade to pass" matches value "80"
@@ -186,7 +186,7 @@ Feature: We can set the grade to pass value
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Edit settings" "link" in the "Test Database 1" activity
     And the field "Grade to pass" matches value "80"
 
@@ -214,7 +214,7 @@ Feature: We can set the grade to pass value
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test Forum 1"
     And I follow "Edit settings"
     And the field "Grade to pass" matches value "80"
@@ -233,7 +233,7 @@ Feature: We can set the grade to pass value
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test Glossary 1"
     And I follow "Edit settings"
     And the field "Grade to pass" matches value "80"

@@ -290,21 +290,7 @@ class behat_navigation extends behat_base {
             if ($pnode && $this->running_javascript() && $pnode->hasAttribute('aria-expanded') &&
                 ($pnode->getAttribute('aria-expanded') == "false")) {
 
-                $this->ensure_node_is_visible($pnode);
-
-                // If node is a link then some driver click in the middle of the node, which click on link and
-                // page gets redirected. To ensure expansion works in all cases, check if the node to expand is a
-                // link and if yes then click on link and wait for it to navigate to next page with node expanded.
-                $nodetoexpandliteral = behat_context_helper::escape($parentnodes[$i]);
-                $nodetoexpandxpathlink = $pnodexpath . "/a[normalize-space(.)=" . $nodetoexpandliteral . "]";
-
-                if ($nodetoexpandlink = $node->find('xpath', $nodetoexpandxpathlink)) {
-                    $behatgeneralcontext = behat_context_helper::get('behat_general');
-                    $nodetoexpandlink->click();
-                    $behatgeneralcontext->wait_until_the_page_is_ready();
-                } else {
-                    $pnode->click();
-                }
+                $this->js_trigger_click($pnode);
 
                 // Wait for node to load, if not loaded before.
                 if ($pnode->hasAttribute('data-loaded') && $pnode->getAttribute('data-loaded') == "false") {
@@ -588,4 +574,38 @@ class behat_navigation extends behat_base {
         $USER = $globuser;
     }
 
+    /**
+     * Opens the course homepage.
+     *
+     * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage$/
+     * @throws coding_exception
+     * @param string $coursefullname The full name of the course.
+     * @return void
+     */
+    public function i_am_on_course_homepage($coursefullname) {
+        global $DB;
+        $course = $DB->get_record("course", array("fullname" => $coursefullname), 'id', MUST_EXIST);
+        $url = new moodle_url('/course/view.php', ['id' => $course->id]);
+        $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
+    }
+
+    /**
+     * Opens the course homepage with editing mode on.
+     *
+     * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage with editing mode on$/
+     * @throws coding_exception
+     * @param string $coursefullname The course full name of the course.
+     * @return void
+     */
+    public function i_am_on_course_homepage_with_editing_mode_on($coursefullname) {
+        global $DB;
+        $course = $DB->get_record("course", array("fullname" => $coursefullname), 'id', MUST_EXIST);
+        $url = new moodle_url('/course/view.php', ['id' => $course->id]);
+        $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
+        try {
+            $this->execute("behat_forms::press_button", get_string('turneditingon'));
+        } catch (Exception $e) {
+            $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", [get_string('turneditingon')]);
+        }
+    }
 }

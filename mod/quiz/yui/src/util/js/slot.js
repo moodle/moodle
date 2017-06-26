@@ -29,12 +29,12 @@ Y.Moodle.mod_quiz.util.slot = {
         NUMBER: 'span.slotnumber',
         PAGECONTENT: 'div#page-content',
         PAGEBREAK: 'span.page_split_join_wrapper',
-        ICON: 'img',
+        ICON: '.icon',
         QUESTIONTYPEDESCRIPTION: '.qtype_description',
         SECTIONUL: 'ul.section',
         DEPENDENCY_WRAPPER: '.question_dependency_wrapper',
         DEPENDENCY_LINK: '.question_dependency_wrapper .cm-edit-action',
-        DEPENDENCY_ICON: '.question_dependency_wrapper img'
+        DEPENDENCY_ICON: '.question_dependency_wrapper .icon'
     },
 
     /**
@@ -418,13 +418,23 @@ Y.Moodle.mod_quiz.util.slot = {
         if (requiresprevious) {
             link.set('title', M.util.get_string('questiondependencyremove', 'quiz', a));
             link.setData('action', 'removedependency');
-            icon.set('alt', M.util.get_string('questiondependsonprevious', 'quiz'));
-            icon.set('src', M.util.image_url('t/locked', 'moodle'));
+            window.require(['core/templates'], function(Templates) {
+                Templates.renderPix('t/locked', 'core', M.util.get_string('questiondependsonprevious', 'quiz')).then(
+                    function(html) {
+                        icon.replace(html);
+                    }
+                );
+            });
         } else {
             link.set('title', M.util.get_string('questiondependencyadd', 'quiz', a));
             link.setData('action', 'adddependency');
-            icon.set('alt', M.util.get_string('questiondependencyfree', 'quiz'));
-            icon.set('src', M.util.image_url('t/unlocked', 'moodle'));
+            window.require(['core/templates'], function(Templates) {
+                Templates.renderPix('t/unlocked', 'core', M.util.get_string('questiondependencyfree', 'quiz')).then(
+                    function(html) {
+                        icon.replace(html);
+                    }
+                );
+            });
         }
     }
 };

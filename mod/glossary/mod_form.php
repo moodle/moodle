@@ -174,10 +174,12 @@ class mod_glossary_mod_form extends moodleform_mod {
         }
 
         // Set up the completion checkboxes which aren't part of standard data.
-        // We also make the default value (if you turn on the checkbox) for those
-        // numbers to be 1, this will not apply unless checkbox is ticked.
-        $default_values['completionentriesenabled']=
-            !empty($default_values['completionentries']) ? 1 : 0;
+        // Tick by default if Add mode or if completion entries settings is set to 1 or more.
+        if (empty($this->_instance) || !empty($default_values['completionentries'])) {
+            $default_values['completionentriesenabled'] = 1;
+        } else {
+            $default_values['completionentriesenabled'] = 0;
+        }
         if (empty($default_values['completionentries'])) {
             $default_values['completionentries']=1;
         }
@@ -200,11 +202,16 @@ class mod_glossary_mod_form extends moodleform_mod {
         return (!empty($data['completionentriesenabled']) && $data['completionentries']!=0);
     }
 
-    function get_data() {
-        $data = parent::get_data();
-        if (!$data) {
-            return false;
-        }
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
         if (!empty($data->completionunlocked)) {
             // Turn off completion settings if the checkboxes aren't ticked
             $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
@@ -212,7 +219,6 @@ class mod_glossary_mod_form extends moodleform_mod {
                 $data->completionentries = 0;
             }
         }
-        return $data;
     }
 
     /**

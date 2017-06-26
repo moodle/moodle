@@ -139,8 +139,7 @@ class block_mnet_hosts extends block_list {
 
         if ($hosts) {
             foreach ($hosts as $host) {
-                $icon  = '<img src="'.$OUTPUT->pix_url('i/'.$host->application.'_host') . '"'.
-                         ' class="icon" alt="'.get_string('server', 'block_mnet_hosts').'" />&nbsp;';
+                $icon = $OUTPUT->pix_icon('i/'.$host->application.'_host', get_string('server', 'block_mnet_hosts')) . '&nbsp;';
 
                 if ($host->id == $USER->mnethostid) {
                     $this->content->items[]="<a title=\"" .s($host->name).

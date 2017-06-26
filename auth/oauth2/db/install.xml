@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="auth/oauth2/db" VERSION="20170323" COMMENT="XMLDB file for Moodle auth/oauth2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="auth_oauth2_linked_login" COMMENT="Accounts linked to a users Moodle account.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user account this oauth login is linked to."/>
+        <FIELD NAME="issuerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="username" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The external username to map to this moodle account"/>
+        <FIELD NAME="email" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The external email to map to this moodle account"/>
+        <FIELD NAME="confirmtoken" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="If this is not empty - the user has not confirmed their email to create the link."/>
+        <FIELD NAME="confirmtokenexpires" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="usermodified_key" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="userid_key" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="issuerid_key" TYPE="foreign" FIELDS="issuerid" REFTABLE="oauth2_issuer" REFFIELDS="id"/>
+        <KEY NAME="uniq_key" TYPE="unique" FIELDS="userid, issuerid, username"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="search_index" UNIQUE="false" FIELDS="issuerid, username"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

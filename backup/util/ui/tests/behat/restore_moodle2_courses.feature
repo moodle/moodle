@@ -10,14 +10,13 @@ Feature: Restore Moodle 2 course backups
       | Course 1 | C1 | 0 | topics | 15 | 1 |
       | Course 2 | C2 | 0 | topics | 5 | 0 |
       | Course 3 | C3 | 0 | topics | 2 | 0 |
+      | Course 4 | C4 | 0 | topics | 20 | 0 |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | section |
       | assign | C3 | assign1 | Test assign name | Assign description | 1 |
       | data | C3 | data1 | Test database name | Database description | 2 |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
@@ -41,11 +40,11 @@ Feature: Restore Moodle 2 course backups
     Then I should see "Course 1 restored in a new course"
     And I should see "Community finder" in the "Community finder" "block"
     And I should see "Test forum name"
+    And I should see "Topic 15"
+    And I should not see "Topic 16"
     And I navigate to "Edit settings" node in "Course administration"
     And I expand all fieldsets
     And the field "id_format" matches value "Topics format"
-    And the field "Number of sections" matches value "15"
-    And the field "Course layout" matches value "Show one section per page"
     And I press "Cancel"
 
   @javascript
@@ -63,7 +62,7 @@ Feature: Restore Moodle 2 course backups
   Scenario: Restore a backup into the same course removing it's contents before that
     When I backup "Course 1" course using this options:
       | Confirmation | Filename | test_backup.mbz |
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum post backup name |
       | Description | Test forum post backup description |
@@ -122,11 +121,129 @@ Feature: Restore Moodle 2 course backups
     And I navigate to "Edit settings" node in "Course administration"
     And I expand all fieldsets
     Then the field "id_format" matches value "Topics format"
-    And the field "Number of sections" matches value "15"
     And the field "Course layout" matches value "Show one section per page"
+    And the field "Course short name" matches value "C1_1"
+    And I press "Cancel"
+    And section "3" should be visible
+    And section "7" should be hidden
+    And section "15" should be visible
+    And I should see "Topic 15"
+    And I should not see "Topic 16"
+    And I should see "Test URL name" in the "Topic 3" "section"
+    And I should see "Test forum name" in the "Topic 1" "section"
+
+  @javascript
+  Scenario: Restore a backup in an existing course keeping the target course settings
+    Given I add a "URL" to section "3" and I fill the form with:
+      | Name | Test URL name |
+      | Description | Test URL description |
+      | id_externalurl | http://www.moodle.org |
+    And I hide section "3"
+    And I hide section "7"
+    When I backup "Course 1" course using this options:
+      | Confirmation | Filename | test_backup.mbz |
+    And I restore "test_backup.mbz" backup into "Course 2" course using this options:
+      | Schema | Overwrite course configuration | No |
+    And I navigate to "Edit settings" node in "Course administration"
+    And I expand all fieldsets
+    Then the field "id_format" matches value "Topics format"
+    And the field "Course short name" matches value "C2"
+    And the field "Course layout" matches value "Show all sections on one page"
+    And I press "Cancel"
+    And section "3" should be visible
+    And section "7" should be hidden
+    And section "15" should be visible
+    And I should see "Topic 15"
+    And I should not see "Topic 16"
+    And I should see "Test URL name" in the "Topic 3" "section"
+    And I should see "Test forum name" in the "Topic 1" "section"
+
+  @javascript
+  Scenario: Restore a backup in an existing course deleting contents and retaining the backup course settings
+    Given I add a "URL" to section "3" and I fill the form with:
+      | Name | Test URL name |
+      | Description | Test URL description |
+      | id_externalurl | http://www.moodle.org |
+    And I hide section "3"
+    And I hide section "7"
+    When I backup "Course 1" course using this options:
+      | Initial |  Include enrolled users | 0 |
+      | Confirmation | Filename | test_backup.mbz |
+    And I am on site homepage
+    And I follow "Course 2"
+    And I navigate to "Restore" node in "Course administration"
+    And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
+      | Schema | Overwrite course configuration | Yes |
+    And I navigate to "Edit settings" node in "Course administration"
+    And I expand all fieldsets
+    Then the field "id_format" matches value "Topics format"
+    And the field "Course layout" matches value "Show one section per page"
+    And the field "Course short name" matches value "C1_1"
     And I press "Cancel"
     And section "3" should be hidden
     And section "7" should be hidden
     And section "15" should be visible
+    And I should see "Topic 15"
+    And I should not see "Topic 16"
+    And I should see "Test URL name" in the "Topic 3" "section"
+    And I should see "Test forum name" in the "Topic 1" "section"
+
+  @javascript
+  Scenario: Restore a backup in an existing course deleting contents and keeping the current course settings
+    Given I add a "URL" to section "3" and I fill the form with:
+      | Name | Test URL name |
+      | Description | Test URL description |
+      | id_externalurl | http://www.moodle.org |
+    And I hide section "3"
+    And I hide section "7"
+    When I backup "Course 1" course using this options:
+      | Initial |  Include enrolled users | 0 |
+      | Confirmation | Filename | test_backup.mbz |
+    And I am on site homepage
+    And I follow "Course 2"
+    And I navigate to "Restore" node in "Course administration"
+    And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
+      | Schema | Overwrite course configuration | No |
+    And I navigate to "Edit settings" node in "Course administration"
+    And I expand all fieldsets
+    Then the field "id_format" matches value "Topics format"
+    And the field "Course short name" matches value "C2"
+    And the field "Course layout" matches value "Show all sections on one page"
+    And I press "Cancel"
+    And section "3" should be hidden
+    And section "7" should be hidden
+    And section "15" should be visible
+    And I should see "Topic 15"
+    And I should not see "Topic 16"
+    And I should see "Test URL name" in the "Topic 3" "section"
+    And I should see "Test forum name" in the "Topic 1" "section"
+
+  @javascript
+  Scenario: Restore a backup in an existing course deleting contents decreasing the number of sections
+    Given I add a "URL" to section "3" and I fill the form with:
+      | Name | Test URL name |
+      | Description | Test URL description |
+      | id_externalurl | http://www.moodle.org |
+    And I hide section "3"
+    And I hide section "7"
+    When I backup "Course 1" course using this options:
+      | Initial |  Include enrolled users | 0 |
+      | Confirmation | Filename | test_backup.mbz |
+    And I am on site homepage
+    And I follow "Course 4"
+    And I navigate to "Restore" node in "Course administration"
+    And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
+      | Schema | Overwrite course configuration | No |
+    And I navigate to "Edit settings" node in "Course administration"
+    And I expand all fieldsets
+    Then the field "id_format" matches value "Topics format"
+    And the field "Course short name" matches value "C4"
+    And the field "Course layout" matches value "Show all sections on one page"
+    And I press "Cancel"
+    And section "3" should be hidden
+    And section "7" should be hidden
+    And section "15" should be visible
+    And I should see "Topic 15"
+    And I should not see "Topic 16"
     And I should see "Test URL name" in the "Topic 3" "section"
     And I should see "Test forum name" in the "Topic 1" "section"

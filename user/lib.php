@@ -554,6 +554,15 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         $userdetails['preferences'] = $preferences;
     }
 
+    if ($currentuser or has_capability('moodle/user:viewalldetails', $context)) {
+        $extrafields = ['auth', 'confirmed', 'lang', 'theme', 'timezone', 'mailformat'];
+        foreach ($extrafields as $extrafield) {
+            if (in_array($extrafield, $userfields) && isset($user->$extrafield)) {
+                $userdetails[$extrafield] = $user->$extrafield;
+            }
+        }
+    }
+
     return $userdetails;
 }
 
@@ -850,7 +859,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
     $myhome->url = new moodle_url('/my/');
     $myhome->title = get_string('mymoodle', 'admin');
     $myhome->titleidentifier = 'mymoodle,admin';
-    $myhome->pix = "i/course";
+    $myhome->pix = "i/dashboard";
     $returnobject->navitems[] = $myhome;
 
     // Links: My Profile.

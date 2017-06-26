@@ -31,7 +31,7 @@ Feature: View the user report as the student will see it
       | assign | C1 | a5 | Test assignment five | Submit something! | 100 |
       | assign | C1 | a6 | Test assignment six | Submit something! | 100 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I hide the grade item "Test assignment six"
     And I hide the grade item "Sub category 2"
@@ -82,7 +82,7 @@ Feature: View the user report as the student will see it
       | Test assignment six     |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "User report" in the course gradebook
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
@@ -120,7 +120,7 @@ Feature: View the user report as the student will see it
       | Test assignment six     |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "User report" in the course gradebook
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
@@ -158,7 +158,7 @@ Feature: View the user report as the student will see it
       | Test assignment six     |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "User report" in the course gradebook
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
@@ -182,7 +182,7 @@ Feature: View the user report as the student will see it
       | moodle/grade:viewhidden | Allow |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field with xpath "//select[@name='report_user_showtotalsifcontainhidden']" to "Show totals excluding hidden items"
     And I press "Save changes"
@@ -202,7 +202,7 @@ Feature: View the user report as the student will see it
       | Course total            | -                 | 383.00 | 0–600 | 63.83 %    | -                            |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "User report" in the course gradebook
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |

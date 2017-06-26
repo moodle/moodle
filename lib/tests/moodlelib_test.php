@@ -625,12 +625,25 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame('/just/a/path', clean_param('/just/a/path', PARAM_LOCALURL));
         $this->assertSame('course/view.php?id=3', clean_param('course/view.php?id=3', PARAM_LOCALURL));
 
-        // Local absolute HTTPS.
+        // Local absolute HTTPS in a non HTTPS site.
+        $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot); // Need to simulate non-https site.
         $httpsroot = str_replace('http:', 'https:', $CFG->wwwroot);
-        $CFG->loginhttps = false;
+        $CFG->loginhttps = false; // Not allowed.
         $this->assertSame('', clean_param($httpsroot, PARAM_LOCALURL));
         $this->assertSame('', clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
-        $CFG->loginhttps = true;
+        $CFG->loginhttps = true; // Allowed.
+        $this->assertSame($httpsroot, clean_param($httpsroot, PARAM_LOCALURL));
+        $this->assertSame($httpsroot . '/with/something?else=true',
+            clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
+
+        // Local absolute HTTPS in a HTTPS site.
+        $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
+        $httpsroot = $CFG->wwwroot;
+        $CFG->loginhttps = false; // Always allowed.
+        $this->assertSame($httpsroot, clean_param($httpsroot, PARAM_LOCALURL));
+        $this->assertSame($httpsroot . '/with/something?else=true',
+            clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
+        $CFG->loginhttps = true; // Always allowed.
         $this->assertSame($httpsroot, clean_param($httpsroot, PARAM_LOCALURL));
         $this->assertSame($httpsroot . '/with/something?else=true',
             clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
@@ -1192,6 +1205,26 @@ class core_moodlelib_testcase extends advanced_testcase {
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
         }
+    }
+
+    public function test_set_user_preference_for_current_user() {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_user_preference('test_pref', 2);
+        set_user_preference('test_pref', 1, $USER->id);
+        $this->assertEquals(1, get_user_preferences('test_pref'));
+    }
+
+    public function test_unset_user_preference_for_current_user() {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_user_preference('test_pref', 1);
+        unset_user_preference('test_pref', $USER->id);
+        $this->assertNull(get_user_preferences('test_pref'));
     }
 
     public function test_get_extra_user_fields() {
@@ -2858,6 +2891,19 @@ class core_moodlelib_testcase extends advanced_testcase {
         $result = $sink->get_messages();
         $this->assertNotEquals($CFG->noreplyaddress, $result[0]->from);
         $this->assertEquals($CFG->noreplyaddress, $result[1]->from);
+        $sink->close();
+
+        // Try to send an unsafe attachment, we should see an error message in the eventual mail body.
+        $attachment = '../test.txt';
+        $attachname = 'txt';
+
+        $sink = $this->redirectEmails();
+        email_to_user($user1, $user2, $subject, $messagetext, '', $attachment, $attachname);
+        $this->assertSame(1, $sink->count());
+        $result = $sink->get_messages();
+        $this->assertCount(1, $result);
+        $this->assertContains('error.txt', $result[0]->body);
+        $this->assertContains('Error in attachment.  User attempted to attach a filename with a unsafe name.', $result[0]->body);
         $sink->close();
     }
 

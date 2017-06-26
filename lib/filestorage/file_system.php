@@ -182,7 +182,7 @@ abstract class file_system {
      * @return bool
      */
     public function is_file_readable_locally_by_hash($contenthash, $fetchifnotfound = false) {
-        if ($contenthash === sha1('')) {
+        if ($contenthash === file_storage::hash_from_string('')) {
             // Files with empty size are either directories or empty.
             // We handle these virtually.
             return true;
@@ -203,7 +203,7 @@ abstract class file_system {
      * @return bool
      */
     public function is_file_readable_remotely_by_hash($contenthash) {
-        if ($contenthash === sha1('')) {
+        if ($contenthash === file_storage::hash_from_string('')) {
             // Files with empty size are either directories or empty.
             // We handle these virtually.
             return true;
@@ -247,8 +247,8 @@ abstract class file_system {
     protected static function is_file_removable($contenthash) {
         global $DB;
 
-        if ($contenthash === sha1('')) {
-            // No need to delete empty content file with sha1('') content hash.
+        if ($contenthash === file_storage::hash_from_string('')) {
+            // No need to delete files without content.
             return false;
         }
 

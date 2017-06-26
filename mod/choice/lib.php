@@ -42,6 +42,9 @@ define('CHOICE_SHOWRESULTS_ALWAYS',       '3');
 define('CHOICE_DISPLAY_HORIZONTAL',  '0');
 define('CHOICE_DISPLAY_VERTICAL',    '1');
 
+define('CHOICE_EVENT_TYPE_OPEN', 'open');
+define('CHOICE_EVENT_TYPE_CLOSE', 'close');
+
 /** @global array $CHOICE_PUBLISH */
 global $CHOICE_PUBLISH;
 $CHOICE_PUBLISH = array (CHOICE_PUBLISH_ANONYMOUS  => get_string('publishanonymous', 'choice'),
@@ -527,7 +530,8 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses) {
     $allusers = [];
     foreach ($choice->option as $optionid => $optiontext) {
         $display->options[$optionid] = new stdClass;
-        $display->options[$optionid]->text = $optiontext;
+        $display->options[$optionid]->text = format_string($optiontext, true,
+            ['context' => context_module::instance($cm->id)]);
         $display->options[$optionid]->maxanswer = $choice->maxanswers[$optionid];
 
         if (array_key_exists($optionid, $allresponses)) {
@@ -918,12 +922,17 @@ function choice_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * Prints choice name, due date and attempt information on
  * choice activities that have a deadline that has not already passed
  * and it is available for completing.
+ *
+ * @deprecated since 3.3
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57487.
  * @uses CONTEXT_MODULE
  * @param array $courses An array of course objects to get choice instances from.
  * @param array $htmlarray Store overview output array( course ID => 'choice' => HTML output )
  */
 function choice_print_overview($courses, &$htmlarray) {
     global $USER, $DB, $OUTPUT;
+
+    debugging('The function choice_print_overview() is now deprecated.', DEBUG_DEVELOPER);
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return;
@@ -1027,6 +1036,12 @@ function choice_can_view_results($choice, $current = null, $choiceopen = null) {
 
     if (is_null($choiceopen)) {
         $timenow = time();
+
+        if ($choice->timeopen != 0 && $timenow < $choice->timeopen) {
+            // If the choice is not available, we can't see the results.
+            return false;
+        }
+
         if ($choice->timeclose != 0 && $timenow > $choice->timeclose) {
             $choiceopen = false;
         } else {
@@ -1166,4 +1181,124 @@ function choice_check_updates_since(cm_info $cm, $from, $filter = array()) {
     }
 
     return $updates;
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_choice_core_calendar_provide_event_action(calendar_event $event,
+                                                       \core_calendar\action_factory $factory) {
+
+    $cm = get_fast_modinfo($event->courseid)->instances['choice'][$event->instance];
+    $now = time();
+
+    if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < $now) {
+        // The choice has closed so the user can no longer submit anything.
+        return null;
+    }
+
+    // The choice is actionable if we don't have a start time or the start time is
+    // in the past.
+    $actionable = (empty($cm->customdata['timeopen']) || $cm->customdata['timeopen'] <= $now);
+
+    if ($actionable && choice_get_my_response((object)['id' => $event->instance])) {
+        // There is no action if the user has already submitted their choice.
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('viewchoices', 'choice'),
+        new \moodle_url('/mod/choice/view.php', array('id' => $cm->id)),
+        1,
+        $actionable
+    );
+}
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_choice_get_fontawesome_icon_map() {
+    return [
+        'mod_choice:row' => 'fa-info',
+        'mod_choice:column' => 'fa-columns',
+    ];
+}
+
+/**
+ * Add a get_coursemodule_info function in case any choice type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function choice_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $dbparams = ['id' => $coursemodule->instance];
+    $fields = 'id, name, intro, introformat, completionsubmit, timeopen, timeclose';
+    if (!$choice = $DB->get_record('choice', $dbparams, $fields)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $choice->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('choice', $choice, $coursemodule->id, false);
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['completionsubmit'] = $choice->completionsubmit;
+    }
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($choice->timeopen) {
+        $result->customdata['timeopen'] = $choice->timeopen;
+    }
+    if ($choice->timeclose) {
+        $result->customdata['timeclose'] = $choice->timeclose;
+    }
+
+    return $result;
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_choice_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completionsubmit':
+                if (empty($val)) {
+                    continue;
+                }
+                $descriptions[] = get_string('completionsubmit', 'choice');
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
 }

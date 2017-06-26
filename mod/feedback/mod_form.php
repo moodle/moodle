@@ -160,9 +160,17 @@ class mod_feedback_mod_form extends moodleform_mod {
 
     }
 
-    public function get_data() {
-        $data = parent::get_data();
-        if ($data) {
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
+        if (isset($data->page_after_submit_editor)) {
             $data->page_after_submitformat = $data->page_after_submit_editor['format'];
             $data->page_after_submit = $data->page_after_submit_editor['text'];
 
@@ -175,8 +183,6 @@ class mod_feedback_mod_form extends moodleform_mod {
                 }
             }
         }
-
-        return $data;
     }
 
     /**
@@ -204,6 +210,8 @@ class mod_feedback_mod_form extends moodleform_mod {
                            'completionsubmit',
                            '',
                            get_string('completionsubmit', 'feedback'));
+        // Enable this completion rule by default.
+        $mform->setDefault('completionsubmit', 1);
         return array('completionsubmit');
     }
 

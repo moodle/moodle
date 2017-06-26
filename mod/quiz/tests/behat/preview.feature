@@ -29,7 +29,7 @@ Feature: Preview a quiz as a teacher
       | TF1      | 1    |         |
       | TF2      | 1    | 3.0     |
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   @javascript
   Scenario: Preview a quiz

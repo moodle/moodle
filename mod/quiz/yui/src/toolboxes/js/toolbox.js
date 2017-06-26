@@ -26,6 +26,7 @@ var CSS = {
         PAGE: 'page',
         SECTIONHIDDENCLASS: 'hidden',
         SECTIONIDPREFIX: 'section-',
+        SELECTMULTIPLE: 'select-multiple',
         SLOT: 'slot',
         SHOW: 'editing_show',
         TITLEEDITOR: 'titleeditor'
@@ -43,10 +44,11 @@ var CSS = {
         COMMANDSPAN: '.commands',
         CONTENTAFTERLINK: 'div.contentafterlink',
         CONTENTWITHOUTLINK: 'div.contentwithoutlink',
-        DELETESECTIONICON: 'a.editing_delete img',
+        DELETESECTIONICON: 'a.editing_delete .icon',
+        DESELECTALL: '#questiondeselectall',
         EDITMAXMARK: 'a.editing_maxmark',
         EDITSECTION: 'a.editing_section',
-        EDITSECTIONICON: 'a.editing_section img',
+        EDITSECTIONICON: 'a.editing_section .icon',
         EDITSHUFFLEQUESTIONSACTION: 'input.cm-edit-action[data-action]',
         EDITSHUFFLEAREA: '.instanceshufflequestions .shuffle-progress',
         HIDE: 'a.editing_hide',
@@ -63,6 +65,11 @@ var CSS = {
         SECTIONUL: 'ul.section',
         SECTIONFORM: '.instancesectioncontainer form',
         SECTIONINPUT: 'input[name=section]',
+        SELECTMULTIPLEBUTTON: '#selectmultiplecommand',
+        SELECTMULTIPLECANCELBUTTON: '#selectmultiplecancelcommand',
+        SELECTMULTIPLECHECKBOX: '.select-multiple-checkbox',
+        SELECTMULTIPLEDELETEBUTTON: '#selectmultipledeletecommand',
+        SELECTALL: '#questionselectall',
         SHOW: 'a.' + CSS.SHOW,
         SLOTLI: 'li.slot',
         SUMMARKS: '.mod_quiz_summarks'
@@ -101,6 +108,7 @@ Y.extend(TOOLBOX, Y.Base, {
         if (!data) {
             data = {};
         }
+
         // Handle any variables which we must pass back through to
         var pageparams = this.get('config').pageparams,
             varname;

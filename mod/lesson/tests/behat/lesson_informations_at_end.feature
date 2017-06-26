@@ -15,8 +15,7 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
       | Description | Test lesson description |
@@ -44,7 +43,7 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "Test lesson name"
     Then I should see "First page contents"
     And I press "Next page"

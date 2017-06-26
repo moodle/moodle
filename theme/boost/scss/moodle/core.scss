@@ -19,6 +19,7 @@
 .context-header-settings-menu .dropdown-toggle > .icon,
 #region-main-settings-menu .dropdown-toggle > .icon {
     height: 24px;
+    font-size: 24px;
     width: auto;
 }
 /** Prevent user notifications overlapping with region main settings menu */
@@ -345,9 +346,6 @@ a.skip:active {
     margin-left: 43px;
 }
 // Group
-#page-group-index #groupeditform {
-    text-align: center;
-}
 
 #doc-contents h1 {
     margin: 1em 0 0 0;
@@ -1092,12 +1090,79 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .initialbar {
-    a,
-    strong {
-        padding-left: 3px;
-        padding-right: 3px;
+
+    overflow: auto;
+
+    .initialbarlabel {
+        display: inline-block;
+        width: 6em;
+        float: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .initialbarall {
+        float: left;
+        width: 4em;
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .initialbargroups {
+        float: left;
+    }
+
+    .initialbargroup {
+        float: left;
+        display: inline-block;
+        white-space: nowrap;
+        margin: 0;
+        padding: 0;
+
+        li {
+            float: left;
+            list-style: none;
+        }
+    }
+
+    .letter {
+        display: inline-block;
+        height: 1.5em;
+        min-width: 1.5em;
+        text-align: center;
+
+        color: $pagination-color;
+        border-width: $pagination-border-width;
+        border-color: $pagination-border-color;
+        border-style: solid;
+        background-color: $pagination-bg;
+    }
+    .letter:hover {
+        color: $pagination-hover-color;
+        border-color: $pagination-hover-border;
+        background-color: $pagination-hover-bg;
+    }
+
+    .letter.active {
+        color: $pagination-active-color;
+        border-color: $pagination-active-border;
+        background-color: $pagination-active-bg;
+    }
+
+}
+
+@media (max-width: 400px) {
+    .initialbar {
+        .letter {
+            /* This is chosen so that 23 letter at 320px just fits */
+            font-size: 11.5px;
+        }
     }
 }
+
 
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
@@ -1459,6 +1524,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .chooserdialogue-course-modchooser .modicon .icon {
     width: 24px;
     height: 24px;
+    font-size: 24px;
 }
 
 @include media-breakpoint-down(xs) {
@@ -1616,6 +1682,7 @@ ul.badges {
     display: inline-block;
     vertical-align: top;
     margin-top: 17px;
+    margin-bottom: 20px;
 
     .expireimage {
         width: 100px;
@@ -1629,9 +1696,10 @@ ul.badges {
 
     .singlebutton {
         padding-top: 5px;
+        display: block;
 
-        input {
-            margin-left: 0;
+        button {
+            margin-left: 4px;
         }
     }
 }

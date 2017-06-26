@@ -137,12 +137,6 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         // Skip view page.
         $skipviewoptions = scorm_get_skip_view_array();
-        if ($COURSE->format == 'singleactivity') { // Remove option that would cause a constant redirect.
-            unset($skipviewoptions[SCORM_SKIPVIEW_ALWAYS]);
-            if ($cfgscorm->skipview == SCORM_SKIPVIEW_ALWAYS) {
-                $cfgscorm->skipview = SCORM_SKIPVIEW_FIRST;
-            }
-        }
         $mform->addElement('select', 'skipview', get_string('skipview', 'scorm'), $skipviewoptions);
         $mform->addHelpButton('skipview', 'skipview', 'scorm');
         $mform->setDefault('skipview', $cfgscorm->skipview);
@@ -519,6 +513,10 @@ class mod_scorm_mod_form extends moodleform_mod {
                 $firstkey = $key;
             }
             $mform->addElement('checkbox', $key, $name, $value);
+            // Default completion rule that requires the SCORM's status be set to "Completed".
+            if ($key === 'completionstatusrequired[4]') {
+                $mform->setDefault($key, 1);
+            }
             $mform->setType($key, PARAM_BOOL);
             $items[] = $key;
         }
@@ -540,13 +538,16 @@ class mod_scorm_mod_form extends moodleform_mod {
         return $status || $score;
     }
 
-    public function get_data($slashed = true) {
-        $data = parent::get_data($slashed);
-
-        if (!$data) {
-            return false;
-        }
-
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
         // Convert completionstatusrequired to a proper integer, if any.
         $total = 0;
         if (isset($data->completionstatusrequired) && is_array($data->completionstatusrequired)) {
@@ -570,7 +571,5 @@ class mod_scorm_mod_form extends moodleform_mod {
                 $data->completionscorerequired = null;
             }
         }
-
-        return $data;
     }
 }

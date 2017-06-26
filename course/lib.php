@@ -55,6 +55,10 @@ define('FIRSTUSEDEXCELROW', 3);
 define('MOD_CLASS_ACTIVITY', 0);
 define('MOD_CLASS_RESOURCE', 1);
 
+define('COURSE_TIMELINE_PAST', 'past');
+define('COURSE_TIMELINE_INPROGRESS', 'inprogress');
+define('COURSE_TIMELINE_FUTURE', 'future');
+
 function make_log_url($module, $url) {
     switch ($module) {
         case 'course':
@@ -833,6 +837,53 @@ function add_course_module($mod) {
 }
 
 /**
+ * Creates a course section and adds it to the specified position
+ *
+ * @param int|stdClass $courseorid course id or course object
+ * @param int $position position to add to, 0 means to the end. If position is greater than
+ *        number of existing secitons, the section is added to the end. This will become sectionnum of the
+ *        new section. All existing sections at this or bigger position will be shifted down.
+ * @param bool $skipcheck the check has already been made and we know that the section with this position does not exist
+ * @return stdClass created section object
+ */
+function course_create_section($courseorid, $position = 0, $skipcheck = false) {
+    global $DB;
+    $courseid = is_object($courseorid) ? $courseorid->id : $courseorid;
+
+    // Find the last sectionnum among existing sections.
+    if ($skipcheck) {
+        $lastsection = $position - 1;
+    } else {
+        $lastsection = (int)$DB->get_field_sql('SELECT max(section) from {course_sections} WHERE course = ?', [$courseid]);
+    }
+
+    // First add section to the end.
+    $cw = new stdClass();
+    $cw->course   = $courseid;
+    $cw->section  = $lastsection + 1;
+    $cw->summary  = '';
+    $cw->summaryformat = FORMAT_HTML;
+    $cw->sequence = '';
+    $cw->name = null;
+    $cw->visible = 1;
+    $cw->availability = null;
+    $cw->timemodified = time();
+    $cw->id = $DB->insert_record("course_sections", $cw);
+
+    // Now move it to the specified position.
+    if ($position > 0 && $position <= $lastsection) {
+        $course = is_object($courseorid) ? $courseorid : get_course($courseorid);
+        move_section_to($course, $cw->section, $position, true);
+        $cw->section = $position;
+    }
+
+    core\event\course_section_created::create_from_section($cw)->trigger();
+
+    rebuild_course_cache($courseid, true);
+    return $cw;
+}
+
+/**
  * Creates missing course section(s) and rebuilds course cache
  *
  * @param int|stdClass $courseorid course id or course object
@@ -840,31 +891,17 @@ function add_course_module($mod) {
  * @return bool if there were any sections created
  */
 function course_create_sections_if_missing($courseorid, $sections) {
-    global $DB;
     if (!is_array($sections)) {
         $sections = array($sections);
     }
     $existing = array_keys(get_fast_modinfo($courseorid)->get_section_info_all());
-    if (is_object($courseorid)) {
-        $courseorid = $courseorid->id;
-    }
-    $coursechanged = false;
-    foreach ($sections as $sectionnum) {
-        if (!in_array($sectionnum, $existing)) {
-            $cw = new stdClass();
-            $cw->course   = $courseorid;
-            $cw->section  = $sectionnum;
-            $cw->summary  = '';
-            $cw->summaryformat = FORMAT_HTML;
-            $cw->sequence = '';
-            $id = $DB->insert_record("course_sections", $cw);
-            $coursechanged = true;
+    if ($newsections = array_diff($sections, $existing)) {
+        foreach ($newsections as $sectionnum) {
+            course_create_section($courseorid, $sectionnum, true);
         }
+        return true;
     }
-    if ($coursechanged) {
-        rebuild_course_cache($courseorid, true);
-    }
-    return $coursechanged;
+    return false;
 }
 
 /**
@@ -1579,6 +1616,7 @@ function course_update_section($course, $section, $data) {
 
     // Update record in the DB and course format options.
     $data['id'] = $section->id;
+    $data['timemodified'] = time();
     $DB->update_record('course_sections', $data);
     rebuild_course_cache($courseid, true);
     course_get_format($courseid)->update_section_format_options($data);
@@ -1800,7 +1838,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
 
     if (!isset($str)) {
         $str = get_strings(array('delete', 'move', 'moveright', 'moveleft',
-            'editsettings', 'duplicate', 'hide', 'makeavailable', 'makeunavailable', 'show'), 'moodle');
+            'editsettings', 'duplicate', 'modhide', 'makeavailable', 'makeunavailable', 'modshow'), 'moodle');
         $str->assign         = get_string('assignroles', 'role');
         $str->groupsnone     = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsnone"));
         $str->groupsseparate = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsseparate"));
@@ -1880,16 +1918,16 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
         if ($displayedoncoursepage) {
             $actions['hide'] = new action_menu_link_secondary(
                 new moodle_url($baseurl, array('hide' => $mod->id)),
-                new pix_icon('t/hide', $str->hide, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-                $str->hide,
+                new pix_icon('t/hide', $str->modhide, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $str->modhide,
                 array('class' => 'editing_hide', 'data-action' => 'hide')
             );
         } else if (!$displayedoncoursepage && $sectionvisible) {
             // Offer to "show" only if the section is visible.
             $actions['show'] = new action_menu_link_secondary(
                 new moodle_url($baseurl, array('show' => $mod->id)),
-                new pix_icon('t/show', $str->show, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-                $str->show,
+                new pix_icon('t/show', $str->modshow, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $str->modshow,
                 array('class' => 'editing_show', 'data-action' => 'show')
             );
         }
@@ -1953,7 +1991,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
 
             $actions[$actionname] = new action_menu_link_primary(
                 new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $nextgroupmode)),
-                new pix_icon($groupimage, null, 'moodle', array('class' => 'iconsmall')),
+                new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall')),
                 $grouptitle,
                 array('class' => 'editing_'. $actionname, 'data-action' => $nextactionname,
                     'aria-live' => 'assertive', 'data-sectionreturn' => $sr)
@@ -2398,8 +2436,14 @@ function create_course($data, $editoroptions = NULL) {
     // Setup the blocks
     blocks_add_default_course_blocks($course);
 
-    // Create a default section.
-    course_create_sections_if_missing($course, 0);
+    // Create default section and initial sections if specified (unless they've already been created earlier).
+    // We do not want to call course_create_sections_if_missing() because to avoid creating course cache.
+    $numsections = isset($data->numsections) ? $data->numsections : 0;
+    $existingsections = $DB->get_fieldset_sql('SELECT section from {course_sections} WHERE course = ?', [$newcourseid]);
+    $newsections = array_diff(range(0, $numsections), $existingsections);
+    foreach ($newsections as $sectionnum) {
+        course_create_section($newcourseid, $sectionnum, true);
+    }
 
     // Save any custom role names.
     save_local_role_names($course->id, (array)$data);
@@ -2485,6 +2529,14 @@ function update_course($data, $editoroptions = NULL) {
                 // make sure when moving into hidden category the course is hidden automatically
                 $data->visible = 0;
             }
+        }
+    }
+
+    // Set newsitems to 0 if format does not support announcements.
+    if (isset($data->format)) {
+        $newcourseformat = course_get_format((object)['format' => $data->format]);
+        if (!$newcourseformat->supports_news()) {
+            $data->newsitems = 0;
         }
     }
 
@@ -3821,9 +3873,14 @@ function course_get_user_navigation_options($context, $course = null) {
 function course_get_user_administration_options($course, $context) {
     global $CFG;
     $isfrontpage = $course->id == SITEID;
+    $completionenabled = $CFG->enablecompletion && $course->enablecompletion;
+    $hascompletiontabs = count(core_completion\manager::get_available_completion_tabs($course, $context)) > 0;
 
     $options = new stdClass;
     $options->update = has_capability('moodle/course:update', $context);
+    $options->editcompletion = $CFG->enablecompletion &&
+                               $course->enablecompletion &&
+                               ($options->update || $hascompletiontabs);
     $options->filters = has_capability('moodle/filter:manage', $context) &&
                         count(filter_get_available_in_context($context)) > 0;
     $options->reports = has_capability('moodle/site:viewreports', $context);
@@ -3948,6 +4005,46 @@ function course_check_updates($course, $tocheck, $filter = array()) {
         }
     }
     return array($instances, $warnings);
+}
+
+/**
+ * This function classifies a course as past, in progress or future.
+ *
+ * This function may incur a DB hit to calculate course completion.
+ * @param stdClass $course Course record
+ * @param stdClass $user User record (optional - defaults to $USER).
+ * @param completion_info $completioninfo Completion record for the user (optional - will be fetched if required).
+ * @return string (one of COURSE_TIMELINE_FUTURE, COURSE_TIMELINE_INPROGRESS or COURSE_TIMELINE_PAST)
+ */
+function course_classify_for_timeline($course, $user = null, $completioninfo = null) {
+    global $USER;
+
+    if ($user == null) {
+        $user = $USER;
+    }
+
+    $today = time();
+    // End date past.
+    if (!empty($course->enddate) && $course->enddate < $today) {
+        return COURSE_TIMELINE_PAST;
+    }
+
+    if ($completioninfo == null) {
+        $completioninfo = new completion_info($course);
+    }
+
+    // Course was completed.
+    if ($completioninfo->is_enabled() && $completioninfo->is_course_complete($user->id)) {
+        return COURSE_TIMELINE_PAST;
+    }
+
+    // Start date not reached.
+    if (!empty($course->startdate) && $course->startdate > $today) {
+        return COURSE_TIMELINE_FUTURE;
+    }
+
+    // Everything else is in progress.
+    return COURSE_TIMELINE_INPROGRESS;
 }
 
 /**

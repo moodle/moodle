@@ -56,8 +56,7 @@ class data_field_multimenu extends data_field_base {
         $str .= html_writer::span($this->field->name);
         if ($this->field->required) {
             $str .= '<div class="inline-req">';
-            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
-                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
             $str .= '</div>';
         }
         $str .= '</label>';
@@ -147,9 +146,17 @@ class data_field_multimenu extends data_field_base {
 
     }
 
-    function parse_search_field() {
-        $selected    = optional_param_array('f_'.$this->field->id, array(), PARAM_NOTAGS);
-        $allrequired = optional_param('f_'.$this->field->id.'_allreq', 0, PARAM_BOOL);
+    public function parse_search_field($defaults = null) {
+        $paramselected = 'f_'.$this->field->id;
+        $paramallrequired = 'f_'.$this->field->id.'_allreq';
+
+        if (empty($defaults[$paramselected])) { // One empty means the other ones are empty too.
+            $defaults = array($paramselected => array(), $paramallrequired => 0);
+        }
+
+        $selected    = optional_param_array($paramselected, $defaults[$paramselected], PARAM_NOTAGS);
+        $allrequired = optional_param($paramallrequired, $defaults[$paramallrequired], PARAM_BOOL);
+
         if (empty($selected)) {
             // no searching
             return '';
@@ -294,4 +301,18 @@ class data_field_multimenu extends data_field_base {
         return trim($strvalue, "\r\n ");
     }
 
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of config parameters
+     * @since Moodle 3.3
+     */
+    public function get_config_for_external() {
+        // Return all the config parameters.
+        $configs = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $configs["param$i"] = $this->field->{"param$i"};
+        }
+        return $configs;
+    }
 }

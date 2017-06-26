@@ -70,6 +70,9 @@ $string['comments'] = 'Comments';
 $string['commentsaved'] = 'Comment saved';
 $string['commentsn'] = '{$a} comment(s)';
 $string['commentsoff'] = 'Comments feature is not enabled';
+$string['completionentries'] = 'Require entries';
+$string['completionentriescount'] = 'Count of entries';
+$string['completionentriesdesc'] = 'Minimum number of entries required: {$a}';
 $string['configenablerssfeeds'] = 'This switch will enable the possibility of RSS feeds for all databases. You will still need to turn feeds on manually in the settings for each database.';
 $string['confirmdeletefield'] = 'You are about to delete this field, are you sure?';
 $string['confirmdeleterecord'] = 'Are you sure you want to delete this entry?';
@@ -301,8 +304,12 @@ $string['recordssaved'] = 'entries saved';
 $string['requireapproval'] = 'Approval required';
 $string['requireapproval_help'] = 'If enabled, entries require approving by a teacher before they are viewable by everyone.';
 $string['required'] = 'Required';
-$string['requiredentries'] = 'Entries required for completion';
-$string['requiredentries_help'] = 'The number of entries a student is required to submit before the activity can be considered complete.';
+$string['requiredentries'] = 'Entries required for completion (old)';
+$string['requiredentries_help'] = "If set, a message is displayed stating the number of entries required for completion. Note that this setting is not connected to activity completion.
+
+For entries required for activity completion, the new Activity completion setting 'Require entries' should be used. To remove this setting completely, set to none, then save changes.
+Please use the Entries required fields in the Activity completion section instead.";
+$string['requiredentrieswarning'] = 'This setting has been replaced by an Activity completion setting "Require entries"';
 $string['requiredentriestoview'] = 'Entries required before viewing';
 $string['requiredentriestoview_help'] = 'The number of entries a student is required to submit before they can view entries from other students.
 

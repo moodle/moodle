@@ -46,7 +46,7 @@ Feature: Access visible and hidden cohorts
 
   Scenario: Teacher can see visible cohorts defined in the above contexts
     When I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Enrolment methods" node in "Course administration > Users"
     And I select "Cohort sync" from the "Add method" singleselect
     Then the "Cohort" select box should contain "Cohort in category 1"
@@ -58,10 +58,10 @@ Feature: Access visible and hidden cohorts
     And the "Cohort" select box should contain "System empty cohort"
     And I set the field "Cohort" to "System cohort"
     And I press "Add method"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Enrolled users" node in "Course administration > Users"
     And I should see "student@example.com"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Groups" node in "Course administration > Users"
     And I press "Auto-create groups"
     And the "Select members from cohort" select box should contain "Cohort in category 1"
@@ -74,8 +74,7 @@ Feature: Access visible and hidden cohorts
 
   Scenario: System manager can see all cohorts defined in the above contexts
     When I log in as "user1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Enrolment methods" node in "Course administration > Users"
     And I select "Cohort sync" from the "Add method" singleselect
     Then the "Cohort" select box should contain "Cohort in category 1"
@@ -101,8 +100,7 @@ Feature: Access visible and hidden cohorts
 
   Scenario: Category manager can see all cohorts defined in his category and visible cohorts defined above
     When I log in as "user2"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Enrolment methods" node in "Course administration > Users"
     And I select "Cohort sync" from the "Add method" singleselect
     Then the "Cohort" select box should contain "Cohort in category 1"

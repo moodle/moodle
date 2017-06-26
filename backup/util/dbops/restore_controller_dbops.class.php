@@ -134,4 +134,132 @@ abstract class restore_controller_dbops extends restore_dbops {
         // Invalidate the backup_ids caches.
         restore_dbops::reset_backup_ids_cached();
     }
+
+    /**
+     * Sets the default values for the settings in a restore operation
+     *
+     * @param restore_controller $controller
+     */
+    public static function apply_config_defaults(restore_controller $controller) {
+
+        $settings = array(
+            'restore_general_users'              => 'users',
+            'restore_general_enrolments'         => 'enrolments',
+            'restore_general_role_assignments'   => 'role_assignments',
+            'restore_general_activities'         => 'activities',
+            'restore_general_blocks'             => 'blocks',
+            'restore_general_filters'            => 'filters',
+            'restore_general_comments'           => 'comments',
+            'restore_general_badges'             => 'badges',
+            'restore_general_calendarevents'     => 'calendarevents',
+            'restore_general_userscompletion'    => 'userscompletion',
+            'restore_general_logs'               => 'logs',
+            'restore_general_histories'          => 'grade_histories',
+            'restore_general_questionbank'       => 'questionbank',
+            'restore_general_groups'             => 'groups',
+            'restore_general_competencies'       => 'competencies'
+        );
+        self::apply_admin_config_defaults($controller, $settings, true);
+
+        $target = $controller->get_target();
+        if ($target == backup::TARGET_EXISTING_ADDING || $target == backup::TARGET_CURRENT_ADDING) {
+            $settings = array(
+                'restore_merge_overwrite_conf'  => 'overwrite_conf',
+                'restore_merge_course_fullname'  => 'course_fullname',
+                'restore_merge_course_shortname' => 'course_shortname',
+                'restore_merge_course_startdate' => 'course_startdate',
+            );
+            self::apply_admin_config_defaults($controller, $settings, true);
+        }
+
+        if ($target == backup::TARGET_EXISTING_DELETING || $target == backup::TARGET_CURRENT_DELETING) {
+            $settings = array(
+                'restore_replace_overwrite_conf'  => 'overwrite_conf',
+                'restore_replace_course_fullname'  => 'course_fullname',
+                'restore_replace_course_shortname' => 'course_shortname',
+                'restore_replace_course_startdate' => 'course_startdate',
+                'restore_replace_keep_roles_and_enrolments' => 'keep_roles_and_enrolments',
+                'restore_replace_keep_groups_and_groupings' => 'keep_groups_and_groupings',
+            );
+            self::apply_admin_config_defaults($controller, $settings, true);
+        }
+
+        // Add some dependencies.
+        $plan = $controller->get_plan();
+        if ($plan->setting_exists('overwrite_conf')) {
+            /** @var restore_course_overwrite_conf_setting $overwriteconf */
+            $overwriteconf = $plan->get_setting('overwrite_conf');
+            if ($overwriteconf->get_visibility()) {
+                foreach (['course_fullname', 'course_shortname', 'course_startdate'] as $settingname) {
+                    if ($plan->setting_exists($settingname)) {
+                        $setting = $plan->get_setting($settingname);
+                        $overwriteconf->add_dependency($setting, setting_dependency::DISABLED_FALSE,
+                            array('defaultvalue' => $setting->get_value()));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the default value to be used for a setting from the admin restore config
+     *
+     * @param string $config
+     * @param backup_setting $setting
+     * @return mixed
+     */
+    private static function get_setting_default($config, $setting) {
+        $value = get_config('restore', $config);
+
+        if (in_array($setting->get_name(), ['course_fullname', 'course_shortname', 'course_startdate']) &&
+                $setting->get_ui() instanceof backup_setting_ui_defaultcustom) {
+            // Special case - admin config settings course_fullname, etc. are boolean and the restore settings are strings.
+            $value = (bool)$value;
+            if ($value) {
+                $attributes = $setting->get_ui()->get_attributes();
+                $value = $attributes['customvalue'];
+            }
+        }
+
+        if ($setting->get_ui() instanceof backup_setting_ui_select) {
+            // Make sure the value is a valid option in the select element, otherwise just pick the first from the options list.
+            // Example: enrolments dropdown may not have the "enrol_withusers" option because users info can not be restored.
+            $options = array_keys($setting->get_ui()->get_values());
+            if (!in_array($value, $options)) {
+                $value = reset($options);
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Sets the controller settings default values from the admin config.
+     *
+     * @param restore_controller $controller
+     * @param array $settings a map from admin config names to setting names (Config name => Setting name)
+     * @param boolean $uselocks whether "locked" admin settings should be honoured
+     */
+    private static function apply_admin_config_defaults(restore_controller $controller, array $settings, $uselocks) {
+        $plan = $controller->get_plan();
+        foreach ($settings as $config => $settingname) {
+            if ($plan->setting_exists($settingname)) {
+                $setting = $plan->get_setting($settingname);
+                $value = self::get_setting_default($config, $setting);
+                $locked = (get_config('restore', $config . '_locked') == true);
+
+                // We can only update the setting if it isn't already locked by config or permission.
+                if ($setting->get_status() != base_setting::LOCKED_BY_CONFIG
+                        && $setting->get_status() != base_setting::LOCKED_BY_PERMISSION
+                        && $setting->get_ui()->is_changeable()) {
+                    $setting->set_value($value);
+                    if ($uselocks && $locked) {
+                        $setting->set_status(base_setting::LOCKED_BY_CONFIG);
+                    }
+                }
+            } else {
+                $controller->log('Unknown setting: ' . $settingname, BACKUP::LOG_DEBUG);
+            }
+        }
+    }
 }

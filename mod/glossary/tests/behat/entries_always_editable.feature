@@ -20,22 +20,21 @@ Feature: A teacher can set whether glossary entries are always editable or not
     And the following config values are set as admin:
       | maxeditingtime | 60 |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Glossary" to section "1" and I fill the form with:
       | Name | Test glossary name |
       | Description | Test glossary description |
       | Always allow editing | No |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test glossary name"
     When I add a glossary entry with the following data:
       | Concept | Test concept name |
       | Definition | Test concept description |
-    Then "Delete: Test concept name" "link" should exist
-    And "Edit: Test concept name" "link" should exist
+    Then "Delete entry: Test concept name" "link" should exist
+    And "Edit entry: Test concept name" "link" should exist
     And I wait "65" seconds
     And I reload the page
-    Then "Delete: Test concept name" "link" should not exist
-    And "Edit: Test concept name" "link" should not exist
+    Then "Delete entry: Test concept name" "link" should not exist
+    And "Edit entry: Test concept name" "link" should not exist

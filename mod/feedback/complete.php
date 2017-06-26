@@ -24,13 +24,13 @@
 
 require_once("../../config.php");
 require_once("lib.php");
-require_once($CFG->libdir . '/completionlib.php');
 
 feedback_init_feedback_session();
 
 $id = required_param('id', PARAM_INT);
 $courseid = optional_param('courseid', null, PARAM_INT);
 $gopage = optional_param('gopage', 0, PARAM_INT);
+$gopreviouspage = optional_param('gopreviouspage', null, PARAM_RAW);
 
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 $feedback = $DB->get_record("feedback", array("id" => $cm->instance), '*', MUST_EXIST);
@@ -82,9 +82,8 @@ if (!$feedbackcompletion->is_open()) {
 }
 
 // Mark activity viewed for completion-tracking.
-$completion = new completion_info($course);
 if (isloggedin() && !isguestuser()) {
-    $completion->set_module_viewed($cm);
+    $feedbackcompletion->set_module_viewed();
 }
 
 // Check if user is prevented from re-submission.
@@ -92,32 +91,11 @@ $cansubmit = $feedbackcompletion->can_submit();
 
 // Initialise the form processing feedback completion.
 if (!$feedbackcompletion->is_empty() && $cansubmit) {
-    $form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_COMPLETE,
-            $feedbackcompletion, 'feedback_complete_form', array('gopage' => $gopage));
-    if ($form->is_cancelled()) {
-        // Form was cancelled - return to the course page.
-        redirect(course_get_url($courseid ?: $course));
-    } else if ($form->is_submitted() &&
-            ($form->is_validated() || optional_param('gopreviouspage', null, PARAM_RAW))) {
-        // Form was submitted (skip validation for "Previous page" button).
-        $data = $form->get_submitted_data();
-        if (!isset($SESSION->feedback->is_started) OR !$SESSION->feedback->is_started == true) {
-            print_error('error', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
-        }
-        $feedbackcompletion->save_response_tmp($data);
-        if (!empty($data->savevalues) || !empty($data->gonextpage)) {
-            if (($nextpage = $feedbackcompletion->get_next_page($gopage)) !== null) {
-                redirect(new moodle_url($PAGE->url, array('gopage' => $nextpage)));
-            } else {
-                $feedbackcompletion->save_response();
-                if (!$feedback->page_after_submit) {
-                    \core\notification::success(get_string('entries_saved', 'feedback'));
-                }
-            }
-        } else if (!empty($data->gopreviouspage)) {
-            $prevpage = $feedbackcompletion->get_previous_page($gopage);
-            redirect(new moodle_url($PAGE->url, array('gopage' => intval($prevpage))));
-        }
+    // Process the page via the form.
+    $urltogo = $feedbackcompletion->process_page($gopage, $gopreviouspage);
+
+    if ($urltogo !== null) {
+        redirect($urltogo);
     }
 }
 
@@ -131,7 +109,7 @@ echo $OUTPUT->heading(format_string($feedback->name));
 if ($feedbackcompletion->is_empty()) {
     \core\notification::error(get_string('no_items_available_yet', 'feedback'));
 } else if ($cansubmit) {
-    if (!empty($data->savevalues) || !empty($data->gonextpage)) {
+    if ($feedbackcompletion->just_completed()) {
         // Display information after the submit.
         if ($feedback->page_after_submit) {
             echo $OUTPUT->box($feedbackcompletion->page_after_submit(),
@@ -151,9 +129,8 @@ if ($feedbackcompletion->is_empty()) {
         }
         echo $OUTPUT->continue_button($url);
     } else {
-        // Print the items.
-        $SESSION->feedback->is_started = true;
-        $form->display();
+        // Display the form with the questions.
+        echo $feedbackcompletion->render_items();
     }
 } else {
     echo $OUTPUT->box_start('generalbox boxaligncenter');

@@ -58,6 +58,10 @@ form {
 }
 .mform .fdescription.required {
     margin-left: @horizontalComponentOffset;
+    & > .icon {
+        width: 8px;
+        height: 12px;
+    }
 }
 .mform .fpassword .unmask {
     display: inline-block;
@@ -87,6 +91,11 @@ form {
 .mform label .req,
 .mform label .adv {
     cursor: help;
+    & > .icon {
+        width: 8px;
+        height: 12px;
+        margin-left: 3px;
+    }
 }
 .mform .fcheckbox input {
     margin-left: 0;
@@ -497,4 +506,13 @@ div[data-passwordunmask="wrapper"] {
     height: 30px;
     line-height: 30px;
     margin-bottom: 10px;
+}
+
+// Styles for the JS file types browser provided by the "filetypes" element.
+[data-filetypesbrowserbody] {
+    [aria-expanded="false"] > [role="group"],
+    [aria-expanded="false"] [data-filetypesbrowserfeature="hideifcollapsed"],
+    [aria-expanded="true"] [data-filetypesbrowserfeature="hideifexpanded"] {
+        display: none;
+    }
 }

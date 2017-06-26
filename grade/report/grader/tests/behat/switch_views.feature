@@ -18,8 +18,7 @@ Feature: We can change what we are viewing on the grader report
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name 1 |
       | Description | Submit your online text |
@@ -30,14 +29,14 @@ Feature: We can change what we are viewing on the grader report
       | assignsubmission_onlinetext_enabled | 1 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name 1"
     When I press "Add submission"
     And I set the following fields to these values:
       | Online text | This is a submission for assignment 1 |
     And I press "Save changes"
     Then I should see "Submitted for grading"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name 2"
     When I press "Add submission"
     And I set the following fields to these values:
@@ -46,7 +45,7 @@ Feature: We can change what we are viewing on the grader report
     Then I should see "Submitted for grading"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name 1"
@@ -56,11 +55,10 @@ Feature: We can change what we are viewing on the grader report
 
   @javascript
   Scenario: View and minimise the grader report containing hidden activities
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I open "Test assignment name 2" actions menu
     And I click on "Hide" "link" in the "Test assignment name 2" activity
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I should see "Test assignment name 1"
     And I should see "Test assignment name 2"
@@ -85,8 +83,7 @@ Feature: We can change what we are viewing on the grader report
 
   @javascript
   Scenario: View and minimise the grader report containing hidden activities without the 'moodle/grade:viewhidden' capability
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I open "Test assignment name 2" actions menu
     And I click on "Hide" "link" in the "Test assignment name 2" activity
     And I log out
@@ -99,7 +96,7 @@ Feature: We can change what we are viewing on the grader report
       | user | course | role |
       | student2 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I should see "Test assignment name 1"
     And I should see "Test assignment name 2"

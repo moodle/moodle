@@ -89,20 +89,18 @@ class MoodleQuickForm_modvisible extends MoodleQuickForm_select{
                 $choices = array();
                 if (!$sectionvisible) {
                     // If section is not visible the activity is hidden by default but it can also be made available.
-                    $choices[self::HIDE] = get_string('hiddenfromstudents');
+                    $choices[self::HIDE] = get_string('hidefromstudents');
                     if (!$cm || $cm->has_view()) {
-                        $choices[self::SHOW] = get_string('hiddenoncoursepage');
+                        $choices[self::SHOW] = get_string('hideoncoursepage');
                     }
-                } else if (!empty($options['allowstealth']) && (!$cm || $cm->has_view())) {
-                    // If allowed in this course/section, add a third visibility option
-                    // "Available but not displayed on course page".
-                    $choices[self::SHOW] = get_string('show');
-                    $choices[self::HIDE] = get_string('hiddenfromstudents');
-                    $choices[self::STEALTH] = get_string('hiddenoncoursepage');
                 } else {
-                    // In the visible section without "stealth" activities allowed it's just "Show" or "Hide".
-                    $choices[self::SHOW] = get_string('show');
-                    $choices[self::HIDE] = get_string('hide');
+                    $choices[self::SHOW] = get_string('showoncoursepage');
+                    $choices[self::HIDE] = get_string('hidefromstudents');
+                    if (!empty($options['allowstealth']) && (!$cm || $cm->has_view())) {
+                        // If allowed in this course/section, add a third visibility option
+                        // "Available but not displayed on course page".
+                        $choices[self::STEALTH] = get_string('hideoncoursepage');
+                    }
                 }
                 $this->load($choices);
                 break;

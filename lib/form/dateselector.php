@@ -274,7 +274,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
                 $valuearray += $thisexport;
             }
         }
-        if (count($valuearray)){
+        if (count($valuearray) && isset($valuearray['year'])) {
             if($this->_options['optional']) {
                 // If checkbox is on, the value is zero, so go no further
                 if(empty($valuearray['enabled'])) {

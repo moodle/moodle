@@ -1281,11 +1281,11 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
             (question_has_capability_on($question, 'edit', $question->category) ||
                     question_has_capability_on($question, 'move', $question->category))) {
         $action = $stredit;
-        $icon = '/t/edit';
+        $icon = 't/edit';
     } else if (!empty($question->id) &&
             question_has_capability_on($question, 'view', $question->category)) {
         $action = $strview;
-        $icon = '/i/info';
+        $icon = 'i/info';
     }
 
     // Build the icon.
@@ -1295,8 +1295,8 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
         }
         $questionparams = array('returnurl' => $returnurl, 'cmid' => $cmid, 'id' => $question->id);
         $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
-        return '<a title="' . $action . '" href="' . $questionurl->out() . '" class="questioneditbutton"><img src="' .
-                $OUTPUT->pix_url($icon) . '" alt="' . $action . '" />' . $contentaftericon .
+        return '<a title="' . $action . '" href="' . $questionurl->out() . '" class="questioneditbutton">' .
+                $OUTPUT->pix_icon($icon, $action) . $contentaftericon .
                 '</a>';
     } else if ($contentaftericon) {
         return '<span class="questioneditbutton">' . $contentaftericon . '</span>';
@@ -1935,7 +1935,7 @@ class qubaids_for_quiz extends qubaid_join {
         }
 
         if ($onlyfinished) {
-            $where .= ' AND state == :statefinished';
+            $where .= ' AND state = :statefinished';
             $params['statefinished'] = quiz_attempt::FINISHED;
         }
 

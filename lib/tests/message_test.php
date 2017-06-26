@@ -165,7 +165,7 @@ class core_message_testcase extends advanced_testcase {
         $emails = $sink->get_messages();
         $this->assertCount(1, $emails);
         $email = reset($emails);
-        $recordexists = $DB->record_exists('message_read', array('id' => $messageid));
+        $recordexists = $DB->record_exists('message', array('id' => $messageid));
         $this->assertSame(true, $recordexists);
         $this->assertSame($user1->email, $email->from);
         $this->assertSame($user2->email, $email->to);
@@ -205,7 +205,7 @@ class core_message_testcase extends advanced_testcase {
         $emails = $sink->get_messages();
         $this->assertCount(1, $emails);
         $email = reset($emails);
-        $recordexists = $DB->record_exists('message_read', array('id' => $messageid));
+        $recordexists = $DB->record_exists('message', array('id' => $messageid));
         $this->assertSame(true, $recordexists);
         $this->assertSame($user1->email, $email->from);
         $this->assertSame($user2->email, $email->to);

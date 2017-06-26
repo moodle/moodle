@@ -1012,7 +1012,7 @@ class manager {
         $messageparams = new \stdClass();
         $messageparams->html    = $message->html;
         $messageparams->plain   = $message->plain;
-        $messagepreferencesurl = new \moodle_url("/message/edit.php", array('id' => $USER->id));
+        $messagepreferencesurl = new \moodle_url("/message/notificationpreferences.php", array('id' => $USER->id));
         $messageparams->messagepreferencesurl = $messagepreferencesurl->out();
         $htmlmessage = get_string('messageprocessingsuccesshtml', 'tool_messageinbound', $messageparams);
         $plainmessage = get_string('messageprocessingsuccess', 'tool_messageinbound', $messageparams);

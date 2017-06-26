@@ -20,8 +20,7 @@ Feature: Edit activities in social activities block
   @javascript
   Scenario: Edit name of acitivity in-place in social activities block
     Given I log in as "user1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I set the field "Add an activity to section 'section 0'" to "Forum"
     And I set the field "Forum name" to "My forum name"
     And I press "Save and return to course"
@@ -41,8 +40,7 @@ Feature: Edit activities in social activities block
       | allowstealth | 1 |
     And I log out
     And I log in as "user1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
     And I set the field "Add an activity to section 'section 0'" to "Forum"
     And I set the field "Forum name" to "My forum name"
@@ -66,14 +64,13 @@ Feature: Edit activities in social activities block
     And "My forum name" activity in social activities block should have "Show" editing icon
     And "My forum name" activity in social activities block should not have "Make available" editing icon
     And "My forum name" activity in social activities block should have "Make unavailable" editing icon
-    # Make sure that "Visible" dropdown in the edit menu has three options.
+    # Make sure that "Availability" dropdown in the edit menu has three options.
     And I open "My forum name" actions menu in social activities block
     And I click on "Edit settings" "link" in the "My forum name" activity in social activities block
     And I expand all fieldsets
-    And the "Visible" select box should contain "Show"
-    And the "Visible" select box should contain "Hidden from students"
-    And the "Visible" select box should not contain "Hide"
-    And the field "Visible" matches value "Available but not displayed on course page"
+    And the "Availability" select box should contain "Show on course page"
+    And the "Availability" select box should contain "Hide from students"
+    And the field "Availability" matches value "Make available but not shown on course page"
     And I press "Save and return to course"
     And "My forum name" activity in social activities block should be available but hidden from course page
     And I turn editing mode off
@@ -81,7 +78,7 @@ Feature: Edit activities in social activities block
     And I log out
     # Student will not see the module on the course page but can access it from other reports and blocks:
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should not see "My forum name" in the "Social activities" "block"
     And I click on "My forum name" "link" in the "Recent activity" "block"
     And I should see "My forum name" in the ".breadcrumb" "css_element"

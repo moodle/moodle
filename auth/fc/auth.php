@@ -39,7 +39,7 @@ class auth_plugin_fc extends auth_plugin_base {
      */
     public function __construct() {
         $this->authtype = 'fc';
-        $this->config = get_config('auth/fc');
+        $this->config = get_config('auth_fc');
     }
 
     /**
@@ -209,53 +209,6 @@ class auth_plugin_fc extends auth_plugin_base {
                 role_unassign($creatorrole->id, $user->id, $systemcontext->id, 'auth_fc');
             }
         }
-    }
-
-    /**
-     * Prints a form for configuring this authentication plugin.
-     *
-     * This function is called from admin/auth.php, and outputs a full page with
-     * a form for configuring this plugin.
-     *
-     * @param array $page An object containing all the data for this page.
-     */
-    function config_form($config, $err, $user_fields) {
-        include "config.html";
-    }
-
-    /**
-     * Processes and stores configuration data for this authentication plugin.
-     */
-    function process_config($config) {
-        // set to defaults if undefined
-        if (!isset($config->host)) {
-            $config->host = "127.0.0.1";
-        }
-        if (!isset($config->fppport)) {
-            $config->fppport = "3333";
-        }
-        if (!isset($config->userid)) {
-            $config->userid = "fcMoodle";
-        }
-        if (!isset($config->passwd)) {
-            $config->passwd = "";
-        }
-        if (!isset($config->creators)) {
-            $config->creators = "";
-        }
-        if (!isset($config->changepasswordurl)) {
-            $config->changepasswordurl = '';
-        }
-
-        // save settings
-        set_config('host',      $config->host,     'auth/fc');
-        set_config('fppport',   $config->fppport,  'auth/fc');
-        set_config('userid',    $config->userid,   'auth/fc');
-        set_config('passwd',    $config->passwd,   'auth/fc');
-        set_config('creators',  $config->creators, 'auth/fc');
-        set_config('changepasswordurl', $config->changepasswordurl, 'auth/fc');
-
-        return true;
     }
 
 }

@@ -103,12 +103,7 @@ class login implements renderable, templatable {
         }
 
         // Identity providers.
-        $identityproviders = [];
-        foreach ($authsequence as $authname) {
-            $authplugin = get_auth_plugin($authname);
-            $identityproviders = array_merge($identityproviders, $authplugin->loginpage_idp_list($SESSION->wantsurl));
-        }
-        $this->identityproviders = $identityproviders;
+        $this->identityproviders = \auth_plugin_base::get_identity_providers($authsequence);
     }
 
     /**
@@ -121,15 +116,8 @@ class login implements renderable, templatable {
     }
 
     public function export_for_template(renderer_base $output) {
-        global $CFG;
 
-        $identityproviders = array_map(function($idp) use ($output) {
-            $idp['icon'] = $idp['icon']->export_for_template($output);
-            if ($idp['url'] instanceof moodle_url) {
-                $idp['url'] = $idp['url']->out(false);
-            }
-            return $idp;
-        }, $this->identityproviders);
+        $identityproviders = \auth_plugin_base::prepare_identity_providers_for_output($this->identityproviders, $output);
 
         $data = new stdClass();
         $data->autofocusform = $this->autofocusform;
@@ -140,7 +128,7 @@ class login implements renderable, templatable {
         $data->error = $this->error;
         $data->forgotpasswordurl = $this->forgotpasswordurl->out(false);
         $data->hasidentityproviders = !empty($this->identityproviders);
-        $data->hasinstructions = !empty($this->instructions);
+        $data->hasinstructions = !empty($this->instructions) || $this->cansignup;
         $data->identityproviders = $identityproviders;
         list($data->instructions, $data->instructionsformat) = external_format_text($this->instructions, FORMAT_MOODLE,
             context_system::instance()->id);

@@ -39,6 +39,14 @@ defined('MOODLE_INTERNAL') || die();
 class mod_folder_lib_testcase extends advanced_testcase {
 
     /**
+     * Setup.
+     */
+    public function setUp() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+    }
+
+    /**
      * Prepares things before this test case is initialised
      * @return void
      */
@@ -55,9 +63,7 @@ class mod_folder_lib_testcase extends advanced_testcase {
         global $CFG;
 
         $CFG->enablecompletion = 1;
-        $this->resetAfterTest();
 
-        $this->setAdminUser();
         // Setup test data.
         $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
         $folder = $this->getDataGenerator()->create_module('folder', array('course' => $course->id),
@@ -87,6 +93,80 @@ class mod_folder_lib_testcase extends advanced_testcase {
         $completion = new completion_info($course);
         $completiondata = $completion->get_data($cm);
         $this->assertEquals(1, $completiondata->completionstate);
+    }
 
+    public function test_folder_core_calendar_provide_event_action() {
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course();
+        $folder = $this->getDataGenerator()->create_module('folder', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $folder->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_folder_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('view'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_folder_core_calendar_provide_event_action_already_completed() {
+        global $CFG;
+
+        $CFG->enablecompletion = 1;
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $folder = $this->getDataGenerator()->create_module('folder', array('course' => $course->id),
+            array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
+
+        // Get some additional data.
+        $cm = get_coursemodule_from_instance('folder', $folder->id);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $folder->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Mark the activity as completed.
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($cm);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_folder_core_calendar_provide_event_action($event, $factory);
+
+        // Ensure result was null.
+        $this->assertNull($actionevent);
+    }
+
+    /**
+     * Creates an action event.
+     *
+     * @param int $courseid The course id.
+     * @param int $instanceid The instance id.
+     * @param string $eventtype The event type.
+     * @return bool|calendar_event
+     */
+    private function create_action_event($courseid, $instanceid, $eventtype) {
+        $event = new stdClass();
+        $event->name = 'Calendar event';
+        $event->modulename  = 'folder';
+        $event->courseid = $courseid;
+        $event->instance = $instanceid;
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->eventtype = $eventtype;
+        $event->timestart = time();
+
+        return calendar_event::create($event);
     }
 }

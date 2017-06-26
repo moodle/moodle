@@ -1,4 +1,4 @@
-Description of PHPMailer 5.2.16 library import into Moodle
+Description of PHPMailer 5.2.23 library import into Moodle
 
 We now use a vanilla version of phpmailer and do our customisations in a
 subclass.

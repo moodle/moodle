@@ -21,7 +21,7 @@ Feature: Test editing a Matching question
       | questioncategory | qtype | name                 | template |
       | Test questions   | match | Matching for editing | foursubq |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Question bank" node in "Course administration"
 
   @javascript @_switch_window

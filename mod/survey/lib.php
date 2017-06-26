@@ -78,7 +78,12 @@ function survey_add_instance($survey) {
     $survey->timecreated  = time();
     $survey->timemodified = $survey->timecreated;
 
-    return $DB->insert_record("survey", $survey);
+    $id = $DB->insert_record("survey", $survey);
+
+    $completiontimeexpected = !empty($survey->completionexpected) ? $survey->completionexpected : null;
+    \core_completion\api::update_completion_date_event($survey->coursemodule, 'survey', $id, $completiontimeexpected);
+
+    return $id;
 
 }
 
@@ -102,6 +107,9 @@ function survey_update_instance($survey) {
     $survey->questions    = $template->questions;
     $survey->timemodified = time();
 
+    $completiontimeexpected = !empty($survey->completionexpected) ? $survey->completionexpected : null;
+    \core_completion\api::update_completion_date_event($survey->coursemodule, 'survey', $survey->id, $completiontimeexpected);
+
     return $DB->update_record("survey", $survey);
 }
 
@@ -120,6 +128,9 @@ function survey_delete_instance($id) {
     if (! $survey = $DB->get_record("survey", array("id"=>$id))) {
         return false;
     }
+
+    $cm = get_coursemodule_from_instance('survey', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'survey', $id, null);
 
     $result = true;
 
@@ -1072,5 +1083,128 @@ function survey_check_updates_since(cm_info $cm, $from, $filter = array()) {
         $updates->answers->updated = true;
         $updates->answers->itemids = array_keys($answers);
     }
+
+    // Now, teachers should see other students updates.
+    if (has_capability('mod/survey:readresponses', $cm->context)) {
+        $select = 'survey = ? AND time > ?';
+        $params = array($cm->instance, $from);
+
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+            $groupusers = array_keys(groups_get_activity_shared_group_members($cm));
+            if (empty($groupusers)) {
+                return $updates;
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($groupusers);
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
+
+        $updates->useranswers = (object) array('updated' => false);
+        $answers = $DB->get_records_select('survey_answers', $select, $params, '', 'id');
+        if (!empty($answers)) {
+            $updates->useranswers->updated = true;
+            $updates->useranswers->itemids = array_keys($answers);
+        }
+    }
     return $updates;
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_survey_core_calendar_provide_event_action(calendar_event $event,
+                                                      \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['survey'][$event->instance];
+    $context = context_module::instance($cm->id);
+
+    if (!has_capability('mod/survey:participate', $context)) {
+        return null;
+    }
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/survey/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
+}
+
+/**
+ * Add a get_coursemodule_info function in case any survey type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function survey_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $dbparams = ['id' => $coursemodule->instance];
+    $fields = 'id, name, intro, introformat, completionsubmit';
+    if (!$survey = $DB->get_record('survey', $dbparams, $fields)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $survey->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('survey', $survey, $coursemodule->id, false);
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['completionsubmit'] = $survey->completionsubmit;
+    }
+
+    return $result;
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_survey_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completionsubmit':
+                if (empty($val)) {
+                    continue;
+                }
+                $descriptions[] = get_string('completionsubmit', 'survey');
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
 }

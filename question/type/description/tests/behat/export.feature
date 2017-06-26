@@ -21,7 +21,7 @@ Feature: Test exporting Description questions
       | questioncategory | qtype       | name            | template |
       | Test questions   | description | description-001 | info     |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   Scenario: Export a Description question
     When I navigate to "Export" node in "Course administration > Question bank"

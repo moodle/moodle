@@ -18,8 +18,7 @@ Feature: In an assignment, students can add and edit text online
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
@@ -29,7 +28,7 @@ Feature: In an assignment, students can add and edit text online
       | assignsubmission_file_enabled | 0 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I press "Add submission"
     And I set the following fields to these values:
@@ -66,8 +65,7 @@ Feature: In an assignment, students can add and edit text online
     And the following config values are set as admin:
       | autosavefrequency | 1 | editor_atto |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
@@ -75,14 +73,14 @@ Feature: In an assignment, students can add and edit text online
       | assignsubmission_file_enabled | 0 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I press "Add submission"
     And I set the following fields to these values:
       | Online text | text submission |
     # Wait for the draft auto save.
     And I wait "2" seconds
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I press "Add submission"
     # Confirm draft was restored.

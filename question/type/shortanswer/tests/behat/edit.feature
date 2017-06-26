@@ -21,7 +21,7 @@ Feature: Test editing a Short answer question
       | questioncategory | qtype       | name                        | template |
       | Test questions   | shortanswer | shortanswer-001 for editing | frogtoad |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Question bank" node in "Course administration"
 
   @javascript @_switch_window

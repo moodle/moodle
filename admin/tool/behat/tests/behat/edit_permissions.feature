@@ -31,7 +31,7 @@ Feature: Edit capabilities
 
   Scenario: Course capabilities overrides
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Users > Permissions" in current page administration
     And I override the system permissions of "Student" role with:
       | mod/forum:deleteanypost | Prohibit |
@@ -45,8 +45,7 @@ Feature: Edit capabilities
 
   Scenario: Module capabilities overrides
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | I'm the name |
       | Description | I'm the introduction |

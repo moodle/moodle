@@ -80,6 +80,9 @@ if ($hassiteconfig) {
         $temp->add(new admin_setting_configtext('tool_mobile/iosappid', new lang_string('iosappid', 'tool_mobile'),
                     new lang_string('iosappid_desc', 'tool_mobile'), '633359593', PARAM_ALPHANUM));
 
+        $temp->add(new admin_setting_configtext('tool_mobile/androidappid', new lang_string('androidappid', 'tool_mobile'),
+                    new lang_string('androidappid_desc', 'tool_mobile'), 'com.moodle.moodlemobile', PARAM_NOTAGS));
+
         $ADMIN->add('mobileapp', $temp);
 
         // Features related settings.
@@ -109,8 +112,7 @@ if ($hassiteconfig) {
 
         $temp->add(new admin_setting_configtextarea('tool_mobile/customlangstrings',
                     new lang_string('customlangstrings', 'tool_mobile'),
-                    new lang_string('customlangstrings_desc', 'tool_mobile', tool_mobile\api::CUSTOM_STRINGS_DOC_URL),
-                    '', PARAM_RAW, '50', '10'));
+                    new lang_string('customlangstrings_desc', 'tool_mobile'), '', PARAM_RAW, '50', '10'));
 
         $ADMIN->add('mobileapp', $temp);
     }

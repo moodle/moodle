@@ -35,14 +35,9 @@ if (! $override = $DB->get_record('assign_overrides', array('id' => $overrideid)
     print_error('invalidoverrideid', 'assign');
 }
 
-$assign = new assign($DB->get_record('assign', array('id' => $override->assignid), '*', MUST_EXIST), null, null);
-
-if (! $cm = get_coursemodule_from_instance("assign", $assign->get_context()->id, $assign->get_context()->course)) {
-    print_error('invalidcoursemodule');
-}
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-
+list($course, $cm) = get_course_and_cm_from_instance($override->assignid, 'assign');
 $context = context_module::instance($cm->id);
+$assign = new assign($context, null, null);
 
 require_login($course, false, $cm);
 
@@ -63,7 +58,7 @@ if ($confirm) {
 
     $assign->delete_override($override->id);
 
-    reorder_group_overrides($assign->get_context()->id);
+    reorder_group_overrides($assign->get_instance()->id);
 
     redirect($cancelurl);
 }
@@ -79,7 +74,7 @@ $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($assign->get_context()->name, true, array('context' => $context)));
+echo $OUTPUT->heading(format_string($assign->get_instance()->name, true, array('context' => $context)));
 
 if ($override->groupid) {
     $group = $DB->get_record('groups', array('id' => $override->groupid), 'id, name');

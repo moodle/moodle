@@ -316,7 +316,6 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         this.groups = ['resource'];
         this.samenodeclass = CSS.ACTIVITY;
         this.parentnodeclass = CSS.SECTION;
-        this.resourcedraghandle = this.get_drag_handle(M.util.get_string('move', 'moodle'), CSS.EDITINGMOVE, CSS.ICONCLASS, true);
 
         this.samenodelabel = {
             identifier: 'dragtoafter',
@@ -386,7 +385,9 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
             // Replace move icons
             var move = resourcesnode.one('a.' + CSS.EDITINGMOVE);
             if (move) {
-                move.replace(this.resourcedraghandle.cloneNode(true));
+                var resourcedraghandle = this.get_drag_handle(M.util.get_string('move', 'moodle'),
+                                                              CSS.EDITINGMOVE, CSS.ICONCLASS, true);
+                move.replace(resourcedraghandle);
             }
         }, this);
     },
@@ -395,7 +396,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         // Get our drag object
         var drag = e.target;
         drag.get('dragNode').setContent(drag.get('node').get('innerHTML'));
-        drag.get('dragNode').all('img.iconsmall').setStyle('vertical-align', 'baseline');
+        drag.get('dragNode').all('.icon').setStyle('vertical-align', 'baseline');
     },
 
     drag_dropmiss: function(e) {

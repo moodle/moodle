@@ -1905,4 +1905,180 @@
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
+  <MOODLE version="3.3" requires="2.7">
+    <UNICODE level="required">
+      <FEEDBACK>
+        <ON_ERROR message="unicoderequired" />
+      </FEEDBACK>
+    </UNICODE>
+    <DATABASE level="required">
+      <VENDOR name="mariadb" version="5.5.31" />
+      <VENDOR name="mysql" version="5.5.31" />
+      <VENDOR name="postgres" version="9.3" />
+      <VENDOR name="mssql" version="10.0" />
+      <VENDOR name="oracle" version="10.2" />
+    </DATABASE>
+    <PHP version="5.6.5" level="required">
+    </PHP>
+    <PCREUNICODE level="optional">
+      <FEEDBACK>
+        <ON_CHECK message="pcreunicodewarning" />
+      </FEEDBACK>
+    </PCREUNICODE>
+    <PHP_EXTENSIONS>
+      <PHP_EXTENSION name="iconv" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="iconvrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="mbstring" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="mbstringrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="curl" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="curlrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="openssl" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="opensslrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="tokenizer" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="tokenizerrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="xmlrpc" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="xmlrpcrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="soap" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="soaprecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="ctype" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="ctyperequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="zip" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="ziprequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="zlib" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="gd" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="gdrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="simplexml" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="simplexmlrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="spl" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="splrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="pcre" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="dom" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="xml" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="xmlreader" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="intl" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="intlrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="json" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="hash" level="required"/>
+      <PHP_EXTENSION name="fileinfo" level="required"/>
+    </PHP_EXTENSIONS>
+    <PHP_SETTINGS>
+      <PHP_SETTING name="memory_limit" value="96M" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="settingmemorylimit" />
+        </FEEDBACK>
+      </PHP_SETTING>
+      <PHP_SETTING name="file_uploads" value="1" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="settingfileuploads" />
+        </FEEDBACK>
+      </PHP_SETTING>
+      <PHP_SETTING name="opcache.enable" value="1" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="opcacherecommended" />
+        </FEEDBACK>
+      </PHP_SETTING>
+    </PHP_SETTINGS>
+    <CUSTOM_CHECKS>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_database_storage_engine" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="unsupporteddbstorageengine" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="question/engine/upgrade/upgradelib.php" function="quiz_attempts_upgraded" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="quizattemptsupgradedmessage" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_slasharguments" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="slashargumentswarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_database_tables_row_format" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="unsupporteddbtablerowformat" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_unoconv_version" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="unoconvwarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_libcurl_version" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="libcurlwarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_mysql_file_format" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="unsupporteddbfileformat" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_mysql_file_per_table" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="unsupporteddbfilepertable" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_mysql_large_prefix" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="unsupporteddblargeprefix" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_is_https" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="ishttpswarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_mysql_incomplete_unicode_support" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="incompleteunicodesupport" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+    </CUSTOM_CHECKS>
+  </MOODLE>
 </COMPATIBILITY_MATRIX>

@@ -301,12 +301,18 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
         addRoleToDisplay : function(roleId, roleTitle) {
             var m = this.get(MANIPULATOR);
             var container = this.get(CONTAINER);
-            var role = Y.Node.create('<div class="role role_'+roleId+'">'+roleTitle+'<a class="unassignrolelink"><img src="'+M.util.image_url('t/delete', 'moodle')+'" alt="" /></a></div>');
-            var link = role.one('.unassignrolelink');
-            link.roleId = roleId;
-            link.on('click', m.removeRole, m, this, link.roleId);
-            container.one('.col_role .roles').append(role);
-            this._toggleCurrentRole(link.roleId, true);
+            window.require(['core/templates'], function(Templates) {
+                Templates.renderPix('t/delete', 'core').then(function(pix) {
+                    var role = Y.Node.create('<div class="role role_' + roleId + '">' +
+                                             roleTitle +
+                                             '<a class="unassignrolelink">' + pix + '</a></div>');
+                    var link = role.one('.unassignrolelink');
+                    link.roleId = roleId;
+                    link.on('click', m.removeRole, m, this, link.roleId);
+                    container.one('.col_role .roles').append(role);
+                    this._toggleCurrentRole(link.roleId, true);
+                }.bind(this));
+            }.bind(this));
         },
         removeRoleFromDisplay : function(roleId) {
             var container = this.get(CONTAINER);

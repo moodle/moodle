@@ -46,23 +46,6 @@ class edit_backpack_form extends moodleform {
         $mform->addElement('header', 'backpackheader', get_string('backpackconnection', 'badges'));
         $mform->addHelpButton('backpackheader', 'backpackconnection', 'badges');
         $mform->addElement('static', 'url', get_string('url'), BADGE_BACKPACKURL);
-        $status = html_writer::tag('span', get_string('notconnected', 'badges'),
-            array('class' => 'notconnected', 'id' => 'connection-status'));
-        $mform->addElement('static', 'status', get_string('status'), $status);
-
-        $nojs = html_writer::tag('noscript', get_string('error:personaneedsjs', 'badges'),
-            array('class' => 'notconnected'));
-        $personadiv = $OUTPUT->container($nojs, null, 'persona-container');
-
-        $mform->addElement('static', 'persona', '', $personadiv);
-        $mform->addHelpButton('persona', 'personaconnection', 'badges');
-
-        $PAGE->requires->js(new moodle_url('https://login.persona.org/include.js'));
-        $PAGE->requires->js('/badges/backpack.js');
-        $PAGE->requires->js_init_call('badges_init_persona_login_button', null, false);
-        $PAGE->requires->strings_for_js(array('error:backpackloginfailed', 'signinwithyouremail',
-            'error:noassertion', 'error:connectionunknownreason', 'error:badjson', 'connecting',
-            'notconnected'), 'badges');
 
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
@@ -70,23 +53,57 @@ class edit_backpack_form extends moodleform {
         $mform->addElement('hidden', 'backpackurl', BADGE_BACKPACKURL);
         $mform->setType('backpackurl', PARAM_URL);
 
+        if (isset($this->_customdata['email'])) {
+            // Email will be passed in when we're in the process of verifying the user's email address,
+            // so set the connection status, lock the email field, and provide options to resend the verification
+            // email or cancel the verification process entirely and start over.
+            $status = html_writer::tag('span', get_string('backpackemailverificationpending', 'badges'),
+                array('class' => 'notconnected', 'id' => 'connection-status'));
+            $mform->addElement('static', 'status', get_string('status'), $status);
+            $mform->addElement('hidden', 'email', $this->_customdata['email']);
+            $mform->setType('email', PARAM_RAW_TRIMMED);
+            $mform->hardFreeze(['email']);
+            $status = html_writer::tag('span', $this->_customdata['email'], []);
+            $mform->addElement('static', 'emailverify', get_string('email'), $status);
+            $buttonarray = [];
+            $buttonarray[] = &$mform->createElement('submit', 'submitbutton',
+                                                    get_string('backpackconnectionresendemail', 'badges'));
+            $buttonarray[] = &$mform->createElement('submit', 'revertbutton',
+                                                    get_string('backpackconnectioncancelattempt', 'badges'));
+            $mform->addGroup($buttonarray, 'buttonar', '', [''], false);
+            $mform->closeHeaderBefore('buttonar');
+        } else {
+            // Email isn't present, so provide an input element to get it and a button to start the verification process.
+            $status = html_writer::tag('span', get_string('notconnected', 'badges'),
+                array('class' => 'notconnected', 'id' => 'connection-status'));
+            $mform->addElement('static', 'status', get_string('status'), $status);
+            $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
+            $mform->addHelpButton('email', 'backpackemail', 'badges');
+            $mform->addRule('email', get_string('required'), 'required', null, 'client');
+            $mform->setType('email', PARAM_RAW_TRIMMED);
+            $this->add_action_buttons(false, get_string('backpackconnectionconnect', 'badges'));
+        }
     }
 
     /**
      * Validates form data
      */
     public function validation($data, $files) {
-        global $DB;
         $errors = parent::validation($data, $files);
 
-        $check = new stdClass();
-        $check->backpackurl = $data['backpackurl'];
-        $check->email = $data['email'];
+        // We don't need to verify the email address if we're clearing a pending email verification attempt.
+        if (!isset($data['revertbutton'])) {
+            $check = new stdClass();
+            $check->backpackurl = $data['backpackurl'];
+            $check->email = $data['email'];
 
-        $bp = new OpenBadgesBackpackHandler($check);
-        $request = $bp->curl_request('user');
-        if (isset($request->status) && $request->status == 'missing') {
-            $errors['email'] = get_string('error:nosuchuser', 'badges');
+            $bp = new OpenBadgesBackpackHandler($check);
+            $request = $bp->curl_request('user');
+            if (isset($request->status) && $request->status == 'missing') {
+                $errors['email'] = get_string('error:nosuchuser', 'badges');
+            } else if (!isset($request->status) || $request->status !== 'okay') {
+                $errors['email'] = get_string('backpackconnectionunexpectedresult', 'badges');
+            }
         }
         return $errors;
     }

@@ -21,7 +21,7 @@ Feature: Test editing a drag and drop into text questions
       | questioncategory | qtype  | name         | template |
       | Test questions   | ddwtos | Drag to text | fox      |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Question bank" node in "Course administration"
 
   @javascript

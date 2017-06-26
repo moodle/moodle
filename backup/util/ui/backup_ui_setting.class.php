@@ -644,6 +644,14 @@ class backup_setting_ui_select extends backup_setting_ui {
             return parent::is_changeable();
         }
     }
+
+    /**
+     * Returns the list of available values
+     * @return array
+     */
+    public function get_values() {
+        return $this->values;
+    }
 }
 
 /**
@@ -680,6 +688,58 @@ class backup_setting_ui_dateselector extends backup_setting_ui_text {
             return userdate($value);
         }
         return parent::get_static_value();
+    }
+}
+
+/**
+ * A wrapper for defaultcustom form element - can have either text or date_selector type
+ *
+ * @package core_backup
+ * @copyright 2017 Marina Glancy
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class backup_setting_ui_defaultcustom extends backup_setting_ui_text {
+
+    /**
+     * Constructor
+     *
+     * @param backup_setting $setting
+     * @param string $label The label to display with the setting ui
+     * @param array $attributes Array of HTML attributes to apply to the element
+     * @param array $options Array of options to apply to the setting ui object
+     */
+    public function __construct(backup_setting $setting, $label = null, array $attributes = null, array $options = null) {
+        if (!is_array($attributes)) {
+            $attributes = [];
+        }
+        $attributes += ['customlabel' => get_string('overwrite', 'backup'),
+            'type' => 'text'];
+        parent::__construct($setting, $label, $attributes, $options);
+    }
+
+    /**
+     * Returns an array of properties suitable for generating a quickforms element
+     * @param base_task $task
+     * @param renderer_base $output
+     * @return array (element, name, label, options, attributes)
+     */
+    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+        return ['element' => 'defaultcustom'] + parent::get_element_properties($task, $output);
+    }
+
+    /**
+     * Gets the static value for this select element
+     * @return string
+     */
+    public function get_static_value() {
+        $value = $this->get_value();
+        if ($value === false) {
+            $value = $this->attributes['defaultvalue'];
+        }
+        if (!empty($value) && $this->attributes['type'] === 'date_selector') {
+            return userdate($value);
+        }
+        return $value;
     }
 }
 

@@ -402,6 +402,9 @@ body.vjs-full-window {
 .vjs-error .vjs-big-play-button {
   display: none; }
 
+.vjs-has-started.vjs-paused.vjs-show-big-play-button-on-pause .vjs-big-play-button {
+  display: block; }
+
 .video-js button {
   background: none;
   border: none;
@@ -453,8 +456,8 @@ body.vjs-full-window {
   text-align: center;
   text-transform: lowercase; }
 
-.vjs-menu li:focus,
-.vjs-menu li:hover {
+.vjs-menu li.vjs-menu-item:focus,
+.vjs-menu li.vjs-menu-item:hover {
   outline: 0;
   background-color: #73859f;
   background-color: rgba(115, 133, 159, 0.5); }
@@ -932,9 +935,6 @@ body.vjs-full-window {
 .vjs-audio.vjs-has-started .vjs-poster {
   display: block; }
 
-.vjs-controls-disabled .vjs-poster {
-  display: none; }
-
 .vjs-using-native-controls .vjs-poster {
   display: none; }
 
@@ -1329,4 +1329,8 @@ video::-webkit-media-text-track-display {
 /* In case of error reset height to the default (otherwise no aspect ratio is available and height becomes 0). */
 .video-js.vjs-error {
   height: 150px;
+}
+/* Minimum height for videos should not be less than the size of play button. */
+.mediaplugin_videojs video {
+  min-height: 32px;
 }

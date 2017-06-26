@@ -45,7 +45,7 @@
                 $error = get_string('emailempty');
             }
             if (!empty($error)) {
-                echo '<img src="'.$OUTPUT->pix_url('t/emailno') . '" alt="'.$error.'" class="iconsmall" title="'.$error.'"/>';
+                echo $OUTPUT->pix_icon('t/emailno', $error);
                 unset($error);
             }
             echo '</td><td><input type="submit" onClick="this.form.deluser.value='.$user->id.';" value="' . get_string('remove') . '" /></td></tr>';

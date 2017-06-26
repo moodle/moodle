@@ -52,6 +52,10 @@ $string['addnewgroupoverride'] = 'Add group override';
 $string['addnewuseroverride'] = 'Add user override';
 $string['additionalattemptsremaining'] = 'Completed, You can re-attempt this lesson';
 $string['addpage'] = 'Add a page';
+$string['allowofflineattempts'] = 'Allow lesson to be attempted offline using the mobile app';
+$string['allowofflineattempts_help'] = 'If enabled, a mobile app user can download the lesson and attempt it offline.
+All the possible answers and correct responses will be downloaded as well.
+Note: It is not possible for a lesson to be attempted offline if it has a time limit.';
 $string['and'] = 'AND';
 $string['anchortitle'] = 'Start of main content';
 $string['answer'] = 'Answer';
@@ -101,6 +105,7 @@ $string['completethefollowingconditions'] = 'You must complete the following con
 $string['completionendreached'] = 'Require end reached';
 $string['completionendreached_desc'] = 'Student must reach the end of lesson page to complete this activity';
 $string['completiontimespent'] = 'Student must do this activity at least for';
+$string['completiontimespentdesc'] = 'Student must do this activity for at least {$a}';
 $string['completiontimespentgroup'] = 'Require time spent';
 $string['conditionsfordependency'] = 'Condition(s) for the dependency';
 $string['configintro'] = 'The values set here define the default values that are used in the settings form when creating a new lesson activity. Settings specified as advanced are only shown when the \'Show more...\' link is clicked.';
@@ -355,6 +360,7 @@ $string['numberofpagesviewed'] = 'Number of questions answered: {$a}';
 $string['numberofpagesviewedheader'] = 'Number of questions answered';
 $string['numberofpagesviewednotice'] = 'Number of questions answered: {$a->nquestions} (You should answer at least {$a->minquestions})';
 $string['numerical'] = 'Numerical';
+$string['offlinedatamessage'] = 'You have worked on this attempt using a mobile device. Data was last saved to this site {$a} ago. Please check that you do not have any unsaved work.';
 $string['ongoing'] = 'Display ongoing score';
 $string['ongoing_help'] = 'If enabled, each page will display the student\'s current points earned out of the total possible thus far.';
 $string['ongoingcustom'] = 'You have earned {$a->score} point(s) out of {$a->currenthigh} point(s) thus far.';
@@ -460,6 +466,7 @@ $string['startlesson'] = 'Start lesson';
 $string['studentattemptlesson'] = '{$a->lastname}, {$a->firstname}\'s attempt number {$a->attempt}';
 $string['studentname'] = '{$a} Name';
 $string['studentoneminwarning'] = 'Warning: You have 1 minute or less to finish the lesson.';
+$string['studentoutoftimeforreview'] = 'Attention: You ran out of time for reviewing this lesson';
 $string['studentresponse'] = '{$a}\'s response';
 $string['submit'] = 'Submit';
 $string['submitname'] = 'Submit name';
@@ -510,20 +517,6 @@ $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is {$a}';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is {$a->grade} out of {$a->total}';
 $string['youshouldview'] = 'You should answer at least: {$a}';
-
-// Deprecated since Moodle 3.0.
-$string['clicktopost'] = 'Click here to post your grade on the High Scores list.';
-$string['configmaxhighscores'] = 'Number of high scores displayed';
-$string['displayhighscores'] = 'Display high scores';
-$string['entername'] = 'Enter a nickname for the high scores list';
-$string['eventhighscoreadded'] = 'Highscore added';
-$string['eventhighscoresviewed'] = 'Highscores viewed';
-$string['highscores'] = 'High scores';
-$string['maxhighscores'] = 'Number of high scores displayed';
-$string['nothighscore'] = 'You did not make the top {$a} high scores list.';
-$string['topscorestitle'] = 'Top {$a} high scores';
-$string['viewhighscores'] = 'View high scores list';
-$string['youmadehighscore'] = 'You made it on the top {$a} high scores list.';
 
 // Deprecated since Moodle 3.1.
 $string['configactionaftercorrectanswer'] = 'The default action to take after a correct answer';

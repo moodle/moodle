@@ -27,8 +27,7 @@ Feature: Group assignment submissions
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Test assignment description |
@@ -52,7 +51,7 @@ Feature: Group assignment submissions
     And I navigate to "Users > Groups" in current page administration
     And I add "Student 0 (student0@example.com)" user to "Group 1" group members
     And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And "//tr[contains(., 'Student 0')][contains(., 'Group 1')]" "xpath_element" should exist
@@ -91,8 +90,7 @@ Feature: Group assignment submissions
       | student1 | G1 |
       | student2 | G1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Test assignment description |
@@ -103,7 +101,7 @@ Feature: Group assignment submissions
       | Require group to make submission | No |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -111,7 +109,7 @@ Feature: Group assignment submissions
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I navigate to "View all submissions" in current page administration
     Then "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
@@ -120,7 +118,7 @@ Feature: Group assignment submissions
     And "Student 4" row "Status" column of "generaltable" table should not contain "Submitted for grading"
     And I log out
     And I log in as "student3"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -128,7 +126,7 @@ Feature: Group assignment submissions
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
@@ -177,9 +175,7 @@ Feature: Group assignment submissions
       | GG1      | G1    |
       | GG1      | G2    |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Test assignment description |
@@ -191,7 +187,7 @@ Feature: Group assignment submissions
       | Require group to make submission | No |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -199,7 +195,7 @@ Feature: Group assignment submissions
     And I press "Save changes"
     And I log out
     And I log in as "student3"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -207,7 +203,7 @@ Feature: Group assignment submissions
     And I press "Save changes"
     And I log out
     And I log in as "student5"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -215,8 +211,7 @@ Feature: Group assignment submissions
     And I press "Save changes"
     And I log out
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should see "3" in the "Groups" "table_row"
     And I should see "3" in the "Submitted" "table_row"

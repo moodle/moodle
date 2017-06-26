@@ -1,5 +1,10 @@
 This files describes API changes in auth_mnet code.
 
+=== 3.3 ===
+
+* The config.html file was migrated to use the admin settings API.
+  The identifier for configuration data stored in config_plugins table was converted from 'auth/mnet' to 'auth_mnet'.
+
 === 3.1 ===
 
 * Users now are created through user_create_user function which, apart from inserting the user in the database and generating

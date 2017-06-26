@@ -280,6 +280,62 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertEquals($sharedcourse->id, $course1->id);
     }
 
+    public function test_enrol_get_shared_courses_different_methods() {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/enrol/self/externallib.php');
+
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+
+        // Enrol user1 and user2 in course1 with a different enrolment methode.
+        // Add self enrolment method for course1.
+        $selfplugin = enrol_get_plugin('self');
+        $this->assertNotEmpty($selfplugin);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->assertNotEmpty($studentrole);
+
+        $instance1id = $selfplugin->add_instance($course1, array('status' => ENROL_INSTANCE_ENABLED,
+                                                                 'name' => 'Test instance 1',
+                                                                 'customint6' => 1,
+                                                                 'roleid' => $studentrole->id));
+
+        $instance1 = $DB->get_record('enrol', array('id' => $instance1id), '*', MUST_EXIST);
+
+        self::setUser($user2);
+        // Self enrol me (user2).
+        $result = enrol_self_external::enrol_user($course1->id);
+
+        // Enrol user1 manually.
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, null, 'manual');
+
+        $course2 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id);
+
+        $course3 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user2->id, $course3->id);
+
+        // Test that user1 and user2 have courses in common.
+        $this->assertTrue(enrol_get_shared_courses($user1, $user2, false, true));
+        // Test that user1 and user3 have no courses in common.
+        $this->assertFalse(enrol_get_shared_courses($user1, $user3, false, true));
+
+        // Test retrieving the courses in common.
+        $sharedcourses = enrol_get_shared_courses($user1, $user2, true);
+
+        // Only should be one shared course.
+        $this->assertCount(1, $sharedcourses);
+        $sharedcourse = array_shift($sharedcourses);
+        // It should be course 1.
+        $this->assertEquals($sharedcourse->id, $course1->id);
+    }
+
     /**
      * Test user enrolment created event.
      */
@@ -421,5 +477,104 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals('self', $event->other['enrol']);
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Confirms that timemodified field was updated after modification of user enrollment
+     */
+    public function test_enrollment_update_timemodified() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $datagen = $this->getDataGenerator();
+
+        /** @var enrol_manual_plugin $manualplugin */
+        $manualplugin = enrol_get_plugin('manual');
+        $this->assertNotNull($manualplugin);
+
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        $course = $datagen->create_course();
+        $user = $datagen->create_user();
+
+        $instanceid = null;
+        $instances = enrol_get_instances($course->id, true);
+        foreach ($instances as $inst) {
+            if ($inst->enrol == 'manual') {
+                $instanceid = (int)$inst->id;
+                break;
+            }
+        }
+        if (empty($instanceid)) {
+            $instanceid = $manualplugin->add_default_instance($course);
+            if (empty($instanceid)) {
+                $instanceid = $manualplugin->add_instance($course);
+            }
+        }
+        $this->assertNotNull($instanceid);
+
+        $instance = $DB->get_record('enrol', ['id' => $instanceid], '*', MUST_EXIST);
+        $manualplugin->enrol_user($instance, $user->id, $studentroleid, 0, 0, ENROL_USER_ACTIVE);
+        $userenrolorig = (int)$DB->get_field(
+            'user_enrolments',
+            'timemodified',
+            ['enrolid' => $instance->id, 'userid' => $user->id],
+            MUST_EXIST
+        );
+        $this->waitForSecond();
+        $this->waitForSecond();
+        $manualplugin->update_user_enrol($instance, $user->id, ENROL_USER_SUSPENDED);
+        $userenrolpost = (int)$DB->get_field(
+            'user_enrolments',
+            'timemodified',
+            ['enrolid' => $instance->id, 'userid' => $user->id],
+            MUST_EXIST
+        );
+
+        $this->assertGreaterThan($userenrolorig, $userenrolpost);
+    }
+
+    /**
+     * Test to confirm that enrol_get_my_courses only return the courses that
+     * the logged in user is enrolled in.
+     */
+    public function test_enrol_get_my_courses_only_enrolled_courses() {
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+        $course4 = $this->getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course3->id);
+        $this->resetAfterTest(true);
+        $this->setUser($user);
+
+        // By default this function should return all of the courses the user
+        // is enrolled in.
+        $courses = enrol_get_my_courses();
+
+        $this->assertCount(3, $courses);
+        $this->assertEquals($course1->id, $courses[$course1->id]->id);
+        $this->assertEquals($course2->id, $courses[$course2->id]->id);
+        $this->assertEquals($course3->id, $courses[$course3->id]->id);
+
+        // If a set of course ids are provided then the result set will only contain
+        // these courses.
+        $courseids = [$course1->id, $course2->id];
+        $courses = enrol_get_my_courses(['id'], 'visible DESC,sortorder ASC', 0, $courseids);
+
+        $this->assertCount(2, $courses);
+        $this->assertEquals($course1->id, $courses[$course1->id]->id);
+        $this->assertEquals($course2->id, $courses[$course2->id]->id);
+
+        // If the course ids list contains any ids for courses the user isn't enrolled in
+        // then they will be ignored (in this case $course4).
+        $courseids = [$course1->id, $course2->id, $course4->id];
+        $courses = enrol_get_my_courses(['id'], 'visible DESC,sortorder ASC', 0, $courseids);
+
+        $this->assertCount(2, $courses);
+        $this->assertEquals($course1->id, $courses[$course1->id]->id);
+        $this->assertEquals($course2->id, $courses[$course2->id]->id);
     }
 }

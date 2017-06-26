@@ -32,8 +32,7 @@ Feature: Using the activity grade form element
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Forum type | Standard forum for general use |
@@ -80,8 +79,7 @@ Feature: Using the activity grade form element
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Forum type | Standard forum for general use |
@@ -92,7 +90,7 @@ Feature: Using the activity grade form element
       | Group mode | No groups |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
@@ -101,7 +99,7 @@ Feature: Using the activity grade form element
     And I press "Post to forum"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I follow "Discussion subject"
     And I set the field "rating" to "D"
@@ -134,14 +132,13 @@ Feature: Using the activity grade form element
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Test assignment description |
       | grade[modgrade_type] | Scale |
       | grade[modgrade_scale] | ABCDEF |
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -160,8 +157,7 @@ Feature: Using the activity grade form element
 
   Scenario: Attempting to change the maximum grade when ratings exist
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Forum type | Standard forum for general use |
@@ -172,7 +168,7 @@ Feature: Using the activity grade form element
       | Group mode | No groups |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
@@ -181,7 +177,7 @@ Feature: Using the activity grade form element
     And I press "Post to forum"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I follow "Discussion subject"
     And I set the field "rating" to "100"
@@ -197,12 +193,11 @@ Feature: Using the activity grade form element
   @javascript
   Scenario: Attempting to change the maximum grade when no rescaling option has been chosen
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Test assignment description |
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"

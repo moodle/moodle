@@ -125,6 +125,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->students[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(1, count($overview));
         $this->assertRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']); // No valid submission.
         $this->assertNotRegExp('/.*Assignment 1.*/', $overview[$this->course->id]['assign']); // Has valid submission.
@@ -135,11 +136,13 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
 
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(0, count($overview));
 
         $this->setUser($this->teachers[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(1, count($overview));
         // Submissions without a grade.
         $this->assertRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
@@ -148,6 +151,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->editingteachers[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(1, count($overview));
         // Submissions without a grade.
         $this->assertRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
@@ -167,6 +171,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
 
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(1, count($overview));
         // Now assignment 4 should not show up.
         $this->assertNotRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
@@ -175,6 +180,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->editingteachers[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(1, count($overview));
         // Now assignment 4 should not show up.
         $this->assertNotRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
@@ -186,6 +192,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->students[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(4);
         $this->assertEquals(0, count($overview));
     }
 
@@ -340,31 +347,52 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
     public function test_assign_refresh_events() {
         global $DB;
         $duedate = time();
+        $newduedate = $duedate + DAYSECS;
         $this->setAdminUser();
 
-        $assign = $this->create_instance(array('duedate' => $duedate));
+        $assign = $this->create_instance(['duedate' => $duedate]);
 
-        // Normal case, with existing course.
+        // Make sure the calendar event for assignment 1 matches the initial due date.
+        $instance = $assign->get_instance();
+        $eventparams = ['modulename' => 'assign', 'instance' => $instance->id];
+        $eventtime = $DB->get_field('event', 'timestart', $eventparams, MUST_EXIST);
+        $this->assertEquals($eventtime, $duedate);
+
+        // Manually update assignment 1's due date.
+        $DB->update_record('assign', (object)['id' => $instance->id, 'duedate' => $newduedate]);
+
+        // Then refresh the assignment events of assignment 1's course.
         $this->assertTrue(assign_refresh_events($this->course->id));
 
-        $instance = $assign->get_instance();
-        $eventparams = array('modulename' => 'assign', 'instance' => $instance->id);
-        $event = $DB->get_record('event', $eventparams, '*', MUST_EXIST);
-        $this->assertEquals($event->timestart, $duedate);
+        // Confirm that the assignment 1's due date event now has the new due date after refresh.
+        $eventtime = $DB->get_field('event', 'timestart', $eventparams, MUST_EXIST);
+        $this->assertEquals($eventtime, $newduedate);
+
+        // Create a second course and assignment.
+        $generator = $this->getDataGenerator();
+        $course2 = $generator->create_course();
+        $assign2 = $this->create_instance(['duedate' => $duedate, 'course' => $course2->id]);
+        $instance2 = $assign2->get_instance();
+
+        // Manually update assignment 1 and 2's due dates.
+        $newduedate += DAYSECS;
+        $DB->update_record('assign', (object)['id' => $instance->id, 'duedate' => $newduedate]);
+        $DB->update_record('assign', (object)['id' => $instance2->id, 'duedate' => $newduedate]);
+
+        // Refresh events of all courses.
+        $this->assertTrue(assign_refresh_events());
+
+        // Check the due date calendar event for assignment 1.
+        $eventtime = $DB->get_field('event', 'timestart', $eventparams, MUST_EXIST);
+        $this->assertEquals($eventtime, $newduedate);
+
+        // Check the due date calendar event for assignment 2.
+        $eventparams['instance'] = $instance2->id;
+        $eventtime = $DB->get_field('event', 'timestart', $eventparams, MUST_EXIST);
+        $this->assertEquals($eventtime, $newduedate);
 
         // In case the course ID is passed as a numeric string.
         $this->assertTrue(assign_refresh_events('' . $this->course->id));
-
-        // Course ID not provided.
-        $this->assertTrue(assign_refresh_events());
-
-        $eventparams = array('modulename' => 'assign');
-        $events = $DB->get_records('event', $eventparams);
-        foreach ($events as $event) {
-            if ($event->modulename === 'assign' && $event->instance === $instance->id) {
-                $this->assertEquals($event->timestart, $duedate);
-            }
-        }
 
         // Non-existing course ID.
         $this->assertFalse(assign_refresh_events(-1));
@@ -373,4 +401,258 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->assertFalse(assign_refresh_events('aaa'));
     }
 
+    public function test_assign_core_calendar_is_event_visible_duedate_event_as_teacher() {
+        $this->setAdminUser();
+
+        // Create an assignment.
+        $assign = $this->create_instance();
+
+        // Create a calendar event.
+        $event = $this->create_action_event($assign->get_instance()->id, ASSIGN_EVENT_TYPE_DUE);
+
+        // Set the user to a teacher.
+        $this->setUser($this->editingteachers[0]);
+
+        // The teacher should not care about the due date event.
+        $this->assertFalse(mod_assign_core_calendar_is_event_visible($event));
+    }
+
+    public function test_assign_core_calendar_is_event_visible_duedate_event_as_student() {
+        $this->setAdminUser();
+
+        // Create an assignment.
+        $assign = $this->create_instance(array('assignsubmission_onlinetext_enabled' => 1));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($assign->get_instance()->id, ASSIGN_EVENT_TYPE_DUE);
+
+        // Set the user to a student.
+        $this->setUser($this->students[0]);
+
+        // The student should care about the due date event.
+        $this->assertTrue(mod_assign_core_calendar_is_event_visible($event));
+    }
+
+    public function test_assign_core_calendar_is_event_visible_gradingduedate_event_as_teacher() {
+        $this->setAdminUser();
+
+        // Create an assignment.
+        $assign = $this->create_instance();
+
+        // Create a calendar event.
+        $event = $this->create_action_event($assign->get_instance()->id, ASSIGN_EVENT_TYPE_GRADINGDUE);
+
+        // Set the user to a teacher.
+        $this->setUser($this->editingteachers[0]);
+
+        // The teacher should care about the grading due date event.
+        $this->assertTrue(mod_assign_core_calendar_is_event_visible($event));
+    }
+
+    public function test_assign_core_calendar_is_event_visible_gradingduedate_event_as_student() {
+        $this->setAdminUser();
+
+        // Create an assignment.
+        $assign = $this->create_instance();
+
+        // Create a calendar event.
+        $event = $this->create_action_event($assign->get_instance()->id, ASSIGN_EVENT_TYPE_GRADINGDUE);
+
+        // Set the user to a student.
+        $this->setUser($this->students[0]);
+
+        // The student should not care about the grading due date event.
+        $this->assertFalse(mod_assign_core_calendar_is_event_visible($event));
+    }
+
+    public function test_assign_core_calendar_provide_event_action_duedate_as_teacher() {
+        $this->setAdminUser();
+
+        // Create an assignment.
+        $assign = $this->create_instance(array('assignsubmission_onlinetext_enabled' => 1));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($assign->get_instance()->id, ASSIGN_EVENT_TYPE_DUE);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Set the user to a teacher.
+        $this->setUser($this->teachers[0]);
+
+        // Decorate action event.
+        $actionevent = mod_assign_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('addsubmission', 'assign'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertFalse($actionevent->is_actionable());
+    }
+
+    public function test_assign_core_calendar_provide_event_action_duedate_as_student() {
+        $this->setAdminUser();
+
+        // Create an assignment.
+        $assign = $this->create_instance(array('assignsubmission_onlinetext_enabled' => 1));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($assign->get_instance()->id, ASSIGN_EVENT_TYPE_DUE);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Set the user to a student.
+        $this->setUser($this->students[0]);
+
+        // Decorate action event.
+        $actionevent = mod_assign_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('addsubmission', 'assign'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_assign_core_calendar_provide_event_action_gradingduedate_as_teacher() {
+        $this->setAdminUser();
+
+        // Create an assignment.
+        $assign = $this->create_instance();
+
+        // Create a calendar event.
+        $event = $this->create_action_event($assign->get_instance()->id, ASSIGN_EVENT_TYPE_GRADINGDUE);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Set the user to a teacher.
+        $this->setUser($this->editingteachers[0]);
+
+        // Decorate action event.
+        $actionevent = mod_assign_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('grade'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(0, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_assign_core_calendar_provide_event_action_gradingduedate_as_student() {
+        $this->setAdminUser();
+
+        // Create an assignment.
+        $assign = $this->create_instance();
+
+        // Create a calendar event.
+        $event = $this->create_action_event($assign->get_instance()->id, ASSIGN_EVENT_TYPE_GRADINGDUE);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Set the user to a student.
+        $this->setUser($this->students[0]);
+
+        // Decorate action event.
+        $actionevent = mod_assign_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('grade'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(0, $actionevent->get_item_count());
+        $this->assertFalse($actionevent->is_actionable());
+    }
+
+    public function test_assign_core_calendar_provide_event_action_duedate_as_student_submitted() {
+        $this->setAdminUser();
+
+        // Create an assignment.
+        $assign = $this->create_instance(array('assignsubmission_onlinetext_enabled' => 1));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($assign->get_instance()->id, ASSIGN_EVENT_TYPE_DUE);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Set the user to a student.
+        $this->setUser($this->students[0]);
+
+        // Submit the assignment.
+        $submission = $assign->get_user_submission($this->students[0]->id, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->students[0]->id, true, false);
+        $data = (object) [
+            'userid' => $this->students[0]->id,
+            'onlinetext_editor' => [
+                'itemid' => file_get_unused_draft_itemid(),
+                'text' => 'Submission text',
+                'format' => FORMAT_MOODLE,
+            ],
+        ];
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_assign_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm there was no event to action.
+        $this->assertNull($actionevent);
+    }
+
+    /**
+     * Creates an action event.
+     *
+     * @param int $instanceid The assign id.
+     * @param string $eventtype The event type. eg. ASSIGN_EVENT_TYPE_DUE.
+     * @return bool|calendar_event
+     */
+    private function create_action_event($instanceid, $eventtype) {
+        $event = new stdClass();
+        $event->name = 'Calendar event';
+        $event->modulename  = 'assign';
+        $event->courseid = $this->course->id;
+        $event->instance = $instanceid;
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->eventtype = $eventtype;
+        $event->timestart = time();
+
+        return calendar_event::create($event);
+    }
+
+    /**
+     * Test the callback responsible for returning the completion rule descriptions.
+     * This function should work given either an instance of the module (cm_info), such as when checking the active rules,
+     * or if passed a stdClass of similar structure, such as when checking the the default completion settings for a mod type.
+     */
+    public function test_mod_assign_completion_get_active_rule_descriptions() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Two activities, both with automatic completion. One has the 'completionsubmit' rule, one doesn't.
+        $cm1 = $this->create_instance(['completion' => '2', 'completionsubmit' => '1'])->get_course_module();
+        $cm2 = $this->create_instance(['completion' => '2', 'completionsubmit' => '0'])->get_course_module();
+
+        // Data for the stdClass input type.
+        // This type of input would occur when checking the default completion rules for an activity type, where we don't have
+        // any access to cm_info, rather the input is a stdClass containing completion and customdata attributes, just like cm_info.
+        $moddefaults = new stdClass();
+        $moddefaults->customdata = ['customcompletionrules' => ['completionsubmit' => '1']];
+        $moddefaults->completion = 2;
+
+        $activeruledescriptions = [get_string('completionsubmit', 'assign')];
+        $this->assertEquals(mod_assign_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
+        $this->assertEquals(mod_assign_get_completion_active_rule_descriptions($cm2), []);
+        $this->assertEquals(mod_assign_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
+        $this->assertEquals(mod_assign_get_completion_active_rule_descriptions(new stdClass()), []);
+    }
 }

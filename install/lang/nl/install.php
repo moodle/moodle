@@ -38,7 +38,7 @@ $string['clialreadyconfigured'] = 'Het configuratiebestand config.php bestaat al
 $string['clialreadyinstalled'] = 'Het configuratiebestand config.php bestaat al. Maak aub gebruik van admin/cli/install_database.php als je Moodle voor deze site wenst te upgraden.';
 $string['cliinstallheader'] = 'Moodle {$a} command line installatieprogramma';
 $string['databasehost'] = 'Databank host:';
-$string['databasename'] = 'Datanbanknaam:';
+$string['databasename'] = 'Databanknaam:';
 $string['databasetypehead'] = 'Kies databankdriver';
 $string['dataroot'] = 'Gegevensmap';
 $string['datarootpermission'] = 'Toestemming datamappen';
@@ -80,8 +80,9 @@ $string['pathsunsecuredataroot'] = 'De plaats van de datamap is niet veilig.';
 $string['pathswrongadmindir'] = 'De adminmap bestaat niet';
 $string['phpextension'] = '{$a} PHP-extentie';
 $string['phpversion'] = 'PHP-versie';
-$string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 4.3.0 of 5.1.0 nodig (5.0.x heeft veel bekende problemen).</p> <p>De huidige versie op je server is {$a}</p>
-<p>Je moet PHP upgraden of verhuizen naar een host met een nieuwere versie van PHP!<br />(Als je 5.0.x draait, kun je ook downgraden naar versie 4.4.x)</p>';
+$string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 5.6.5 of 7.1 nodig (7.0.x heeft een aantal beperkingen).</p>
+<p>De huidige versie op je server is {$a}</p>
+<p>Je moet PHP upgraden of verhuizen naar een host met een nieuwere versie van PHP.<br />';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Je krijgt deze pagina te zien omdat je met succes het <strong>{$a->packname} {$a->packversion}</strong> packet op je computer gezet en gestart hebt. Proficiat!';
 $string['welcomep30'] = 'Deze uitgave van <strong>{$a->installername}</strong> bevat de software die nodig is om een omgeving te creëren waarin <strong>Moodle</strong> zal werken, namelijk:';

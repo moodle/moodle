@@ -45,6 +45,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'navigate-page-select' => 'k',
             'navigate-next-button' => 'l',
             'searchcomments' => 'h',
+            'expcolcomments' => 'g',
             'comment' => 'z',
             'commentcolour' => 'x',
             'select' => 'c',
@@ -84,7 +85,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         }
         $iconalt = get_string('toolbarbutton', 'assignfeedback_editpdf', $alttext);
 
-        $iconhtml = $this->pix_icon($icon, $iconalt, 'assignfeedback_editpdf');
+        $iconhtml = $this->image_icon($icon, $iconalt, 'assignfeedback_editpdf');
         $iconparams = array('data-tool'=>$tool, 'class'=>$tool . 'button');
         if ($disabled) {
             $iconparams['disabled'] = 'true';
@@ -139,14 +140,14 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         }
 
         $iconalt = get_string('navigateprevious', 'assignfeedback_editpdf');
-        $iconhtml = $this->pix_icon($nav_prev, $iconalt, 'assignfeedback_editpdf');
+        $iconhtml = $this->image_icon($nav_prev, $iconalt, 'assignfeedback_editpdf');
         $navigation1 .= html_writer::tag('button', $iconhtml, array('disabled'=>'true',
             'class'=>'navigate-previous-button', 'accesskey' => $this->get_shortcut('navigate-previous-button')));
         $navigation1 .= html_writer::tag('select', null, array('disabled'=>'true',
             'aria-label' => get_string('gotopage', 'assignfeedback_editpdf'), 'class'=>'navigate-page-select',
             'accesskey' => $this->get_shortcut('navigate-page-select')));
         $iconalt = get_string('navigatenext', 'assignfeedback_editpdf');
-        $iconhtml = $this->pix_icon($nav_next, $iconalt, 'assignfeedback_editpdf');
+        $iconhtml = $this->image_icon($nav_next, $iconalt, 'assignfeedback_editpdf');
         $navigation1 .= html_writer::tag('button', $iconhtml, array('disabled'=>'true',
             'class'=>'navigate-next-button', 'accesskey' => $this->get_shortcut('navigate-next-button')));
 
@@ -155,6 +156,8 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $navigation2 .= $this->render_toolbar_button('comment_search', 'searchcomments', $this->get_shortcut('searchcomments'));
         $navigation2 = html_writer::div($navigation2, 'navigation-search', array('role'=>'navigation'));
 
+        $navigation3 .= $this->render_toolbar_button('comment_expcol', 'expcolcomments', $this->get_shortcut('expcolcomments'));
+        $navigation3 = html_writer::div($navigation3, 'navigation-expcol', array('role' => 'navigation'));
 
         $toolbar1 = '';
         $toolbar2 = '';
@@ -191,6 +194,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         // Toobars written in reverse order because they are floated right.
         $pageheader = html_writer::div($navigation1 .
                                        $navigation2 .
+                                       $navigation3 .
                                        $toolbar4 .
                                        $toolbar3 .
                                        $toolbar2 .
@@ -224,16 +228,19 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
 
         $footer = '';
 
-        $editorparams = array(array('header'=>$header,
-                                    'body'=>$body,
-                                    'footer'=>$footer,
-                                    'linkid'=>$linkid,
-                                    'assignmentid'=>$widget->assignment,
-                                    'userid'=>$widget->userid,
-                                    'attemptnumber'=>$widget->attemptnumber,
-                                    'stampfiles'=>$widget->stampfiles,
-                                    'readonly'=>$widget->readonly,
-                                    'pagetotal'=>$widget->pagetotal));
+        $editorparams = array(
+            array(
+                'header' => $header,
+                'body' => $body,
+                'footer' => $footer,
+                'linkid' => $linkid,
+                'assignmentid' => $widget->assignment,
+                'userid' => $widget->userid,
+                'attemptnumber' => $widget->attemptnumber,
+                'stampfiles' => $widget->stampfiles,
+                'readonly' => $widget->readonly,
+            )
+        );
 
         $this->page->requires->yui_module('moodle-assignfeedback_editpdf-editor',
                                           'M.assignfeedback_editpdf.editor.init',

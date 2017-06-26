@@ -30,7 +30,7 @@
     * autostart
     * canpost
     * cid
-    * collapsediconurl
+    * collapsediconkey
     * commentarea
     * component
     * contextid
@@ -55,7 +55,7 @@
 <div class="mdl-left">
     {{^notoggle}}
         <a href="#" class="comment-link" id="comment-link-{{cid}}">
-            <img src="{{{collapsediconurl}}}" id="comment-img-{{cid}}" alt="{{linktext}}" title="{{linktext}}"><span id="comment-link-text-{{cid}}">{{linktext}}
+            {{#pix}}{{collapsediconkey}}, core, {{linktext}}{{/pix}}<span id="comment-link-text-{{cid}}">{{linktext}}
                 {{#displaytotalcount}}
                     ({{count}})
                 {{/displaytotalcount}}</span>

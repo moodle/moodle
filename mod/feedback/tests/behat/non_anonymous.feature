@@ -109,7 +109,7 @@ Feature: Non anonymous feedback
   @javascript
   Scenario: Non anonymous feedback in a course
     When I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
@@ -120,7 +120,7 @@ Feature: Non anonymous feedback
       | Multiple choice values         | Yes of course\nNot at all\nI don't know |
     And I log out
     And I log in as "user1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Answer the questions..."
     And I should see "Do you like this course?"
@@ -129,7 +129,7 @@ Feature: Non anonymous feedback
     And I press "Submit your answers"
     And I log out
     And I log in as "user2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Answer the questions..."
     And I should see "Do you like this course?"
@@ -146,7 +146,7 @@ Feature: Non anonymous feedback
     And I should see "1 (50.00 %)" in the "Not at all" "table_row"
     And I log out
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Preview"
     And I should see "Do you like this course?"

@@ -31,7 +31,7 @@ $id = required_param('id', PARAM_INT);
 
 $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST), $cm, $course);
 
 require_login($course, false, $cm);
 require_sesskey();
@@ -39,8 +39,8 @@ require_sesskey();
 // Apply overrides.
 $lesson->update_effective_access($USER->id);
 
-$context = context_module::instance($cm->id);
-$canmanage = has_capability('mod/lesson:manage', $context);
+$context = $lesson->context;
+$canmanage = $lesson->can_manage();
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 $url = new moodle_url('/mod/lesson/continue.php', array('id'=>$cm->id));
@@ -53,16 +53,9 @@ $PAGE->navbar->add(get_string('continue', 'lesson'));
 if (!$canmanage) {
     $lesson->displayleft = lesson_displayleftif($lesson);
     $timer = $lesson->update_timer();
-    if ($lesson->timelimit) {
-        $timeleft = ($timer->starttime + $lesson->timelimit) - time();
-        if ($timeleft <= 0) {
-            // Out of time
-            $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
-            redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>LESSON_EOL, 'outoftime'=>'normal')));
-        } else if ($timeleft < 60) {
-            // One minute warning
-            $lesson->add_message(get_string("studentoneminwarning", "lesson"));
-        }
+    if (!$lesson->check_time($timer)) {
+        redirect(new moodle_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => LESSON_EOL, 'outoftime' => 'normal')));
+        die; // Shouldn't be reached, but make sure.
     }
 } else {
     $timer = new stdClass;
@@ -71,103 +64,18 @@ if (!$canmanage) {
 // record answer (if necessary) and show response (if none say if answer is correct or not)
 $page = $lesson->load_page(required_param('pageid', PARAM_INT));
 
-$userhasgrade = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
-$reviewmode = false;
-if ($userhasgrade && !$lesson->retake) {
-    $reviewmode = true;
-}
+$reviewmode = $lesson->is_in_review_mode();
 
-// Check the page has answers [MDL-25632]
-if (count($page->answers) > 0) {
-    $result = $page->record_attempt($context);
-} else {
-    // The page has no answers so we will just progress to the next page in the
-    // sequence (as set by newpageid).
-    $result = new stdClass;
-    $result->newpageid       = optional_param('newpageid', $page->nextpageid, PARAM_INT);
-    $result->nodefaultresponse  = true;
-}
+// Process the page responses.
+$result = $lesson->process_page_responses($page);
 
-if (isset($USER->modattempts[$lesson->id])) {
-    // make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time
-    if ($USER->modattempts[$lesson->id]->pageid == $page->id && $page->nextpageid == 0) {  // remember, this session variable holds the pageid of the last page that the user saw
-        $result->newpageid = LESSON_EOL;
-    } else {
-        $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
-        $nretakes--; // make sure we are looking at the right try.
-        $attempts = $DB->get_records("lesson_attempts", array("lessonid"=>$lesson->id, "userid"=>$USER->id, "retry"=>$nretakes), "timeseen", "id, pageid");
-        $found = false;
-        $temppageid = 0;
-        // Make sure that the newpageid always defaults to something valid.
-        $result->newpageid = LESSON_EOL;
-        foreach($attempts as $attempt) {
-            if ($found && $temppageid != $attempt->pageid) { // now try to find the next page, make sure next few attempts do no belong to current page
-                $result->newpageid = $attempt->pageid;
-                break;
-            }
-            if ($attempt->pageid == $page->id) {
-                $found = true; // if found current page
-                $temppageid = $attempt->pageid;
-            }
-        }
-    }
-} elseif ($result->newpageid != LESSON_CLUSTERJUMP && $page->id != 0 && $result->newpageid > 0) {
-    // going to check to see if the page that the user is going to view next, is a cluster page.
-    // If so, dont display, go into the cluster.  The $result->newpageid > 0 is used to filter out all of the negative code jumps.
-    $newpage = $lesson->load_page($result->newpageid);
-    if ($newpageid = $newpage->override_next_page($result->newpageid)) {
-        $result->newpageid = $newpageid;
-    }
-} elseif ($result->newpageid == LESSON_UNSEENBRANCHPAGE) {
-    if ($canmanage) {
-        if ($page->nextpageid == 0) {
-            $result->newpageid = LESSON_EOL;
-        } else {
-            $result->newpageid = $page->nextpageid;
-        }
-    } else {
-        $result->newpageid = lesson_unseen_question_jump($lesson, $USER->id, $page->id);
-    }
-} elseif ($result->newpageid == LESSON_PREVIOUSPAGE) {
-    $result->newpageid = $page->prevpageid;
-} elseif ($result->newpageid == LESSON_RANDOMPAGE) {
-    $result->newpageid = lesson_random_question_jump($lesson, $page->id);
-} elseif ($result->newpageid == LESSON_CLUSTERJUMP) {
-    if ($canmanage) {
-        if ($page->nextpageid == 0) {  // if teacher, go to next page
-            $result->newpageid = LESSON_EOL;
-        } else {
-            $result->newpageid = $page->nextpageid;
-        }
-    } else {
-        $result->newpageid = $lesson->cluster_jump($page->id);
-    }
-}
-
-if ($result->nodefaultresponse) {
-    // Don't display feedback
+if ($result->nodefaultresponse || $result->inmediatejump) {
+    // Don't display feedback or force a redirecto to newpageid.
     redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>$result->newpageid)));
 }
 
-/// Set Messages
-
-if ($canmanage) {
-    // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
-    if(lesson_display_teacher_warning($lesson)) {
-        $warningvars = new stdClass();
-        $warningvars->cluster = get_string("clusterjump", "lesson");
-        $warningvars->unseen = get_string("unseenpageinbranch", "lesson");
-        $lesson->add_message(get_string("teacherjumpwarning", "lesson", $warningvars));
-    }
-    // Inform teacher that s/he will not see the timer
-    if ($lesson->timelimit) {
-        $lesson->add_message(get_string("teachertimerwarning", "lesson"));
-    }
-}
-// Report attempts remaining
-if ($result->attemptsremaining != 0 && $lesson->review && !$reviewmode) {
-    $lesson->add_message(get_string('attemptsremaining', 'lesson', $result->attemptsremaining));
-}
+// Set Messages.
+$lesson->add_messages_on_page_process($page, $result, $reviewmode);
 
 $PAGE->set_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
 $PAGE->set_subpage($page->id);
@@ -210,7 +118,9 @@ if (!$result->correctanswer && !$result->noanswer && !$result->isessayquestion &
 
 $url = new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$result->newpageid));
 if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result->isessayquestion && !$result->maxattemptsreached) {
-    // Review button continue
+    // When the answer is wrong - the result->newpageid points back to the current question.
+    $newpageid = $lesson->calculate_new_page_on_jump($page, $page->nextpageid);
+    $url = new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$newpageid));
     echo $OUTPUT->single_button($url, get_string('reviewquestioncontinue', 'lesson'));
 } else {
     // Normal continue button

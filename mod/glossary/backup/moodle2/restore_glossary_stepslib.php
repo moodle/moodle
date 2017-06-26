@@ -40,6 +40,7 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         $paths[] = new restore_path_element('glossary_category', '/activity/glossary/categories/category');
         if ($userinfo) {
             $paths[] = new restore_path_element('glossary_entry', '/activity/glossary/entries/entry');
+            $paths[] = new restore_path_element('glossary_entry_tag', '/activity/glossary/entriestags/tag');
             $paths[] = new restore_path_element('glossary_alias', '/activity/glossary/entries/entry/aliases/alias');
             $paths[] = new restore_path_element('glossary_rating', '/activity/glossary/entries/entry/ratings/rating');
             $paths[] = new restore_path_element('glossary_category_entry',
@@ -132,6 +133,23 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         }
 
         $newitemid = $DB->insert_record('rating', $data);
+    }
+
+    protected function process_glossary_entry_tag($data) {
+        $data = (object)$data;
+
+        if (!core_tag_tag::is_enabled('mod_glossary', 'glossary_entries')) { // Tags disabled in server, nothing to process.
+            return;
+        }
+
+        $tag = $data->rawname;
+        if (!$itemid = $this->get_mappingid('glossary_entry', $data->itemid)) {
+            // Some orphaned tag, we could not find the glossary entry for it - ignore.
+            return;
+        }
+
+        $context = context_module::instance($this->task->get_moduleid());
+        core_tag_tag::add_item_tag('mod_glossary', 'glossary_entries', $itemid, $context, $tag);
     }
 
     protected function process_glossary_category($data) {

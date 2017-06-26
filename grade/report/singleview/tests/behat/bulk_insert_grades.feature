@@ -31,7 +31,7 @@ Feature: We can bulk insert grades for students in a course
 
   Scenario: I can bulk insert grades and check their override flags for grade view.
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment one"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -39,7 +39,7 @@ Feature: We can bulk insert grades for students in a course
       | Grade out of 100 | 50 |
     And I press "Save changes"
     And I press "Ok"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I follow "Single view for Test assignment one"
     Then the field "Grade for james (Student) 1" matches value "50.00"
@@ -72,7 +72,7 @@ Feature: We can bulk insert grades for students in a course
 
   Scenario: I can bulk insert grades and check their override flags for user view.
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment two"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -80,7 +80,7 @@ Feature: We can bulk insert grades for students in a course
       | Grade out of 100 | 50 |
     And I press "Save changes"
     And I press "Ok"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     # And I click on "input[title='Dock Navigation block']" "css_element"
     # And I click on "input[title='Dock Administration block']" "css_element"

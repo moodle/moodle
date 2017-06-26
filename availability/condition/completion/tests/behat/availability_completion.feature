@@ -21,9 +21,7 @@ Feature: availability_completion
   Scenario: Test condition
     # Basic setup.
     Given I log in as "teacher1"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
     # Add a Page with a completion tickbox.
     And I add a "Page" to section "1" and I fill the form with:
@@ -48,12 +46,11 @@ Feature: availability_completion
     # Log back in as student.
     When I log out
     And I log in as "student1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
     # Page 2 should not appear yet.
     Then I should not see "Page 2" in the "region-main" "region"
 
     # Mark page 1 complete
-    When I click on ".togglecompletion input[type=image]" "css_element"
+    When I click on ".togglecompletion .icon" "css_element"
     Then I should see "Page 2" in the "region-main" "region"

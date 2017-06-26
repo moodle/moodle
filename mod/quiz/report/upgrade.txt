@@ -14,7 +14,7 @@ methods now includes '$studentsjoins', rather than '$students' and similar
 for '$groupstudentsjoins', '$allowedjoins' and '$usersjoins'. For clear
 examples of the use of these changes please see attemptsreport_table.php
 base_sql() or almost any function in overview/report.php. The protected
-function quiz_attempts_report::load_relevant_students is depreciated,
+function quiz_attempts_report::load_relevant_students is deprecated,
 please use quiz_attempts_report::get_students_joins() instead.
 
 === 2.6 ===

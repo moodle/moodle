@@ -15,8 +15,7 @@ Feature: In a book, create chapters and sub chapters
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Book" to section "1" and I fill the form with:
       | Name | Test book |
       | Description | A book about dreams! |

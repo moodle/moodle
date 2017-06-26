@@ -67,10 +67,10 @@ Horrek Moodle-k berak memoria-muga ezartzea ahalbidetzen du.</li>
 (orriak ikustean erroreak ere ikusiko dituzu). Kasu horretan, .htaccess fitxategia ezabatu beharko duzu.</p></li>
 </ol>';
 $string['paths'] = 'Bideak';
-$string['pathserrcreatedataroot'] = 'Instalatzaileak ezin du datu-direktorioa ({$a->dataroot}) sortu.';
+$string['pathserrcreatedataroot'] = 'Instalatzaileak ezin du datu-karpeta ({$a->dataroot}) sortu.';
 $string['pathshead'] = 'Egiaztatu bideak';
 $string['pathsrodataroot'] = 'Dataroot direktorioa ez da idazteko modukoa.';
-$string['pathsroparentdataroot'] = 'Goragoko direktorioa ({$a->parent}) ez da idazteko modukoa. Instalatzaileak ezin du datu-direktorioa ({$a->dataroot}) sortu.';
+$string['pathsroparentdataroot'] = 'Goragoko karpeta ({$a->parent}) ez da idazteko modukoa. Instalatzaileak ezin du datu-karpeta ({$a->dataroot}) sortu.';
 $string['pathssubadmindir'] = 'Web ostalari gutxi batzuk /admin URL berezi gisa erabiltzen dute kontrol-panel edo antzekora sarbidea emateko. Zoritxarrez, honek Moodle-ren kudeatze-orrien berezko kokapenarekin gatazka sortzen du. Hau konpondu dezakezu zure instalazioko admin karpeta berrizendatuz, eta izen berria hemen sartuta. Adibidez <em>moodleadmin</em>. Honek Moodle-ko admin estekak konponduko du.';
 $string['pathssubdataroot'] = '<p>Moodle-k erabiltzaileek igotako fitxategien edukiak bilduko dituen direktorio bat.</p>
 <p>Direktorio honetan web-zerbitzariaren erabiltzaileak irakurtzeko eta idazteko baimena izan beharko ditu (normalean \'www-data\', \'nobody\', edo \'apache\').</p>
@@ -85,10 +85,9 @@ $string['pathsunsecuredataroot'] = 'Dataroot-en kokapena ez da segurua';
 $string['pathswrongadmindir'] = 'Admin direktorioa ez da existitzen';
 $string['phpextension'] = '{$a} PHP luzapena';
 $string['phpversion'] = 'PHP bertsioa';
-$string['phpversionhelp'] = '<p>Moodle-k gutxienez PHP 4.3.0 edo 5.1.0 (5.0.x errore batzuk ditu). </p>
+$string['phpversionhelp'] = '<p>Moodle-k PHP 5.6.5 edo 7.1 bertsioetako bat behar du (7.0.x bertsioek muga batzuk dituzte). </p>
 <p>Zure bertsioa: {$a}</p>
-<p>PHP eguneratu edo PHP bertsio berriagoa duen zerbitzari batera jo</p>
-<p>5.0.x baduzu, nahi izanez gero, 4.4.x. bertsiora jaitsi dezakezu</p>';
+<p>PHP eguneratu edo PHP bertsio berriagoa duen zerbitzari batera jo.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Orri hau ikusten baduzu <strong>{$a->packname} {$a->packversion}</strong> paketea
     zure ordenadorean instalatu ahal izan duzu. Zorionak!';

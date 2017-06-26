@@ -180,7 +180,7 @@ Moodle community|https://moodle.org
 -Moodle development|https://moodle.org/development
 Moodle.com|http://moodle.com/
 </pre>';
-$string['configcustomusermenuitems'] = 'You can configure the contents of the user menu (with the exception of the log out link, which is automatically added). Each line is separated by | characters and consists of 1) a string in "langstringname, componentname" form or as plain text, 2) a URL, and 3) an icon either as a pix icon or as a URL. Dividers can be used by adding a line of one or more # characters where desired.';
+$string['configcustomusermenuitems'] = 'You can configure the contents of the user menu (with the exception of the log out link, which is automatically added). Each line is separated by pipe characters and consists of 1) a string in "langstringname, componentname" form or as plain text, 2) a URL, and 3) an icon either as a pix icon (in the folder pix/t, or prefix the icon name with ../ if icon is in another pix folder) or as a URL. Dividers can be used by adding a line of one or more # characters where desired.';
 $string['configdbsessions'] = 'If enabled, this setting will use the database to store information about current sessions. Note that changing this setting now will log out all current users (including you). If you are using MySQL please make sure that \'max_allowed_packet\' in my.cnf (or my.ini) is at least 4M. Other session drivers can be configured directly in config.php, see config-dist.php for more information. This option disappears if you specify session driver in config.php file.';
 $string['configdebug'] = 'If you turn this on, then PHP\'s error_reporting will be increased so that more warnings are printed.  This is only useful for developers.';
 $string['configdebugdisplay'] = 'Set to on, the error reporting will go to the HTML page. This is practical, but breaks XHTML, JS, cookies and HTTP headers in general. Set to off, it will send the output to your server logs, allowing better debugging. The PHP setting error_log controls which log this goes to.';
@@ -274,7 +274,7 @@ $string['configmodchooserdefault'] = 'Should the activity chooser be presented t
 $string['configmycoursesperpage'] = 'Maximum number of courses to display in any list of a user\'s own courses';
 $string['configmymoodleredirect'] = 'This setting forces redirects to /my on login for non-admins and replaces the top level site navigation with /my';
 $string['configmypagelocked'] = 'This setting prevents the default page from being edited by any non-admins';
-$string['confignavcourselimit'] = 'Limits the number of courses shown to the user when they are either not logged in or are not enrolled in any courses.';
+$string['confignavcourselimit'] = 'Limits the number of courses shown to the user in the navigation.';
 $string['confignavshowallcourses'] = 'This setting determines whether users who are enrolled in courses can see Courses (listing all courses) in the navigation, in addition to My Courses (listing courses in which they are enrolled).';
 $string['confignavshowcategories'] = 'Show course categories in the navigation bar and navigation blocks. This does not occur with courses the user is currently enrolled in, they will still be listed under mycourses without categories.';
 $string['confignoreplyaddress'] = 'Emails are sometimes sent out on behalf of a user (eg forum posts). The email address you specify here will be used as the "From" address in those cases when the recipients should not be able to reply directly to the user (eg when a user chooses to keep their address private). This setting will also be used as the envelope sender when sending email.';
@@ -383,7 +383,7 @@ $string['courseswithsummarieslimit'] = 'Courses with summaries limit';
 $string['creatornewroleid'] = 'Creators\' role in new courses';
 $string['creatornewroleid_help'] = 'If the user does not already have the permission to manage the new course, the user is automatically enrolled using this role.';
 $string['cron'] = 'Cron';
-$string['cron_help'] = 'The cron.php maintenance script assists some of Moodle\'s modules to perform tasks on a scheduled basis, such as mailing out copies of new forum posts. A mechanism is required to run the script regularly e.g. every 5 minutes.';
+$string['cron_help'] = 'The cron.php script runs a number of tasks at different scheduled intervals, such as sending forum post notification emails. The script should be run regularly - ideally every minute.';
 $string['cron_link'] = 'admin/cron';
 $string['cronclionly'] = 'Cron execution via command line only';
 $string['cronerrorclionly'] = 'Sorry, internet access to this page has been disabled by the administrator.';
@@ -529,6 +529,7 @@ $string['experimentalsettings'] = 'Experimental settings';
 $string['extendedusernamechars'] = 'Allow extended characters in usernames';
 $string['extramemorylimit'] = 'Extra PHP memory limit';
 $string['fatalsessionautostart'] = '<p>Serious configuration error detected, please notify server administrator.</p><p> To operate properly, Moodle requires that administrator changes PHP settings.</p><p><code>session.auto_start</code> must be set to <code>off</code>.</p><p>This setting is controlled by editing <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file on the server.</p>';
+$string['fileconversioncleanuptask'] = 'Cleanup of temporary records for file conversions.';
 $string['filecreated'] = 'New file created';
 $string['filestoredin'] = 'Save file into folder :';
 $string['filestoredinhelp'] = 'Where the file will be stored';
@@ -621,6 +622,7 @@ $string['iplookupinfo'] = 'By default Moodle uses the free online NetGeo (The In
 It is recommended to install local copy of free GeoLite2 City database from MaxMind.<br />
 IP address location is displayed on simple map or using Google Maps. Please note that you need to have a Google account and apply for free Google Maps API key to enable interactive maps.';
 $string['iplookupmaxmindnote'] = 'This product includes GeoLite2 data created by MaxMind, available from <a href="http://www.maxmind.com">http://www.maxmind.com</a>.';
+$string['ishttpswarning'] = 'It has been detected that your site is not secured using HTTPS. It is strongly recommended to migrate your site to HTTPS for increased security and improved integration with other systems.';
 $string['keeptagnamecase'] = 'Keep tag name casing';
 $string['lang'] = 'Default language';
 $string['langcache'] = 'Cache language menu';
@@ -794,9 +796,12 @@ $string['notifyloginthreshold'] = 'Threshold for email notifications';
 $string['notloggedinroleid'] = 'Role for visitors';
 $string['numberofmissingstrings'] = 'Number of missing strings: {$a}';
 $string['numberofstrings'] = 'Total number of strings: {$a->strings}<br />Missing: {$a->missing} ({$a->missingpercent}&nbsp;%)';
+$string['oauthrefreshtokenexpired'] = 'The refresh token for one of the OAuth services {$a->issuer} on your site {$a->siteurl} has expired. This will limit the functionality of any plugins that use this service. To fix this issue, visit the OAuth 2 Services configuration page and click on the "Connect system account" icon in the table row for this service. Be sure to login using the same service account for the OAuth system each time.';
+$string['oauthrefreshtokenexpiredshort'] = 'OAuth refresh token expired for {$a->issuer} on your site {$a->siteurl}.';
 $string['onlynoreply'] = 'Only when from a no-reply address';
 $string['opcacherecommended'] = 'PHP opcode caching improves performance and lowers memory requirements, OPcache extension is recommended and fully supported.';
 $string['opensslrecommended'] = 'Installing the optional OpenSSL library is highly recommended -- it enables Moodle Networking functionality.';
+$string['opensslrequired'] = 'The OpenSSL PHP extension is now required by Moodle to provide stronger cryptographic services.';
 $string['opentogoogle'] = 'Open to Google';
 $string['optionalmaintenancemessage'] = 'Optional maintenance message';
 $string['order1'] = 'First';
@@ -823,8 +828,6 @@ $string['pathtopgdumpinvalid'] = 'Invalid path to pg_dump - either wrong path or
 $string['pathtopsql'] = 'Path to psql';
 $string['pathtopsqldesc'] = 'This is only necessary to enter if you have more than one psql on your system (for example if you have more than one version of postgresql installed)';
 $string['pathtopsqlinvalid'] = 'Invalid path to psql - either wrong path or not executable';
-$string['pathtounoconv'] = 'Path to unoconv document converter';
-$string['pathtounoconv_help'] = 'Path to unoconv document converter. This is an executable that is capable of converting between document formats supported by LibreOffice. This is optional, but if specified, Moodle will use it to automatically convert between document formats. This is used to support a wider range of input files for the assignment annotate PDF feature.';
 $string['pcreunicodewarning'] = 'It is strongly recommended to use PCRE PHP extension that is compatible with Unicode characters.';
 $string['perfdebug'] = 'Performance info';
 $string['performance'] = 'Performance';
@@ -1095,6 +1098,7 @@ $string['taskpasswordresetcleanup'] = 'Cleanup password reset attempts';
 $string['taskplagiarismcron'] = 'Background processing for legacy cron in plagiarism plugins';
 $string['taskportfoliocron'] = 'Background processing for portfolio plugins';
 $string['taskquestioncron'] = 'Background processing for question engine';
+$string['taskrefreshsystemtokens'] = 'Refresh OAuth tokens for service accounts';
 $string['taskregistrationcron'] = 'Site registration';
 $string['tasksendfailedloginnotifications'] = 'Send failed login notifications';
 $string['tasksendnewuserpasswords'] = 'Send new user passwords';
@@ -1131,7 +1135,6 @@ $string['unbookmarkthispage'] = 'Unbookmark this page';
 $string['unicoderequired'] = 'It is required that you store all your data in Unicode format (UTF-8). New installations must be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
 $string['uninstallplugin'] = 'Uninstall';
 $string['unlockaccount'] = 'Unlock account';
-$string['unoconvwarning'] = 'The version of unoconv you have installed is not supported. Moodle\'s assignment grading feature requires version 0.7 or higher.';
 $string['unsettheme'] = 'Unset theme';
 $string['unsupported'] = 'Unsupported';
 $string['unsupporteddbfileformat'] = 'Your database has tables using Antelope as the file format. Full UTF-8 support in MySQL and MariaDB requires the Barracuda file format. Please convert the tables to the Barracuda file format. See the documentation <a href="https://docs.moodle.org/en/cli">Administration via command line</a> for details of a tool for converting InnoDB tables to Barracuda.';
@@ -1246,3 +1249,4 @@ $string['mobile'] = 'Mobile';
 // Deprecated since Moodle 3.3.
 $string['loginpasswordautocomplete'] = 'Prevent password autocompletion on login form';
 $string['loginpasswordautocomplete_help'] = 'If enabled, users are not allowed to save their account password in their browser.';
+$string['unoconvwarning'] = 'The version of unoconv you have installed is not supported.';

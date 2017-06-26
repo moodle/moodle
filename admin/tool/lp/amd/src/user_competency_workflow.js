@@ -61,7 +61,7 @@ define(['jquery',
         Ajax.call([call])[0].then(function() {
             this._trigger('review-request-cancelled', data);
             this._trigger('status-changed', data);
-        }.bind(this), function() {
+        }.bind(this)).catch(function() {
             this._trigger('error-occured', data);
         }.bind(this));
     };
@@ -106,7 +106,7 @@ define(['jquery',
         Ajax.call([call])[0].then(function() {
             this._trigger('review-requested', data);
             this._trigger('status-changed', data);
-        }.bind(this), function() {
+        }.bind(this)).catch(function() {
             this._trigger('error-occured', data);
         }.bind(this));
     };
@@ -147,11 +147,10 @@ define(['jquery',
                 competencyid: data.competencyid
             }
         };
-
         Ajax.call([call])[0].then(function() {
             this._trigger('review-started', data);
             this._trigger('status-changed', data);
-        }.bind(this), function() {
+        }.bind(this)).catch(function() {
             this._trigger('error-occured', data);
         }.bind(this));
     };
@@ -196,7 +195,7 @@ define(['jquery',
         Ajax.call([call])[0].then(function() {
             this._trigger('review-stopped', data);
             this._trigger('status-changed', data);
-        }.bind(this), function() {
+        }.bind(this)).catch(function() {
             this._trigger('error-occured', data);
         }.bind(this));
     };

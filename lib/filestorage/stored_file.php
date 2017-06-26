@@ -94,12 +94,39 @@ class stored_file {
     }
 
     /**
+     * Magic method, called during serialization.
+     *
+     * @return array
+     */
+    public function __sleep() {
+        // We only ever want the file_record saved, not the file_storage object.
+        return ['file_record'];
+    }
+
+    /**
+     * Magic method, called during unserialization.
+     */
+    public function __wakeup() {
+        // Recreate our stored_file based on the file_record, and using file storage retrieved the correct way.
+        $this->__construct(get_file_storage(), $this->file_record);
+    }
+
+    /**
      * Whether or not this is a external resource
      *
      * @return bool
      */
     public function is_external_file() {
         return !empty($this->repository);
+    }
+
+    /**
+     * Whether or not this is a controlled link. Note that repositories cannot support FILE_REFERENCE and FILE_CONTROLLED_LINK.
+     *
+     * @return bool
+     */
+    public function is_controlled_link() {
+        return $this->is_external_file() && $this->repository->supported_returntypes() & FILE_CONTROLLED_LINK;
     }
 
     /**
@@ -807,6 +834,22 @@ class stored_file {
     }
 
     /**
+     * Returns repository type.
+     *
+     * @return mixed str|null the repository type or null if is not an external file
+     * @since  Moodle 3.3
+     */
+    public function get_repository_type() {
+
+        if (!empty($this->repository)) {
+            return $this->repository->get_typename();
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
      * get reference file id
      * @return int
      */
@@ -990,5 +1033,25 @@ class stored_file {
 
         // Generate the resized image.
         return resize_image_from_image($original, $imageinfo, $width, $height);
+    }
+
+    /**
+     * Check whether the supplied file is the same as this file.
+     *
+     * @param   string $path The path to the file on disk
+     * @return  boolean
+     */
+    public function compare_to_path($path) {
+        return $this->get_contenthash() === file_storage::hash_from_path($path);
+    }
+
+    /**
+     * Check whether the supplied content is the same as this file.
+     *
+     * @param   string $content The file content
+     * @return  boolean
+     */
+    public function compare_to_string($content) {
+        return $this->get_contenthash() === file_storage::hash_from_string($content);
     }
 }

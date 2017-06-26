@@ -25,6 +25,7 @@ namespace assignfeedback_editpdf\task;
 
 use core\task\scheduled_task;
 use assignfeedback_editpdf\document_services;
+use assignfeedback_editpdf\combined_document;
 use context_module;
 use assign;
 
@@ -91,22 +92,42 @@ class convert_submissions extends scheduled_task {
             }
 
             mtrace('Convert ' . count($users) . ' submission attempt(s) for assignment ' . $assignmentid);
+            $keepinqueue = false;
             foreach ($users as $userid) {
+                $combineddocument = document_services::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
+                $status = $combineddocument->get_status();
+
+                switch ($combineddocument->get_status()) {
+                    case combined_document::STATUS_READY:
+                    case combined_document::STATUS_PENDING_INPUT:
+                        // The document has not been converted yet or is somehow still ready.
+                        $keepinqueue = true;
+                        continue;
+                }
+
                 try {
-                    document_services::get_page_images_for_attempt($assignment,
-                                                                   $userid,
-                                                                   $attemptnumber,
-                                                                   true);
-                    document_services::get_page_images_for_attempt($assignment,
-                                                                   $userid,
-                                                                   $attemptnumber,
-                                                                   false);
+                    document_services::get_page_images_for_attempt(
+                            $assignment,
+                            $userid,
+                            $attemptnumber,
+                            false
+                        );
+                    document_services::get_page_images_for_attempt(
+                            $assignment,
+                            $userid,
+                            $attemptnumber,
+                            true
+                        );
                 } catch (\moodle_exception $e) {
                     mtrace('Conversion failed with error:' . $e->errorcode);
+                    $keepinqueue = true;
                 }
             }
 
-            $DB->delete_records('assignfeedback_editpdf_queue', array('id' => $record->id));
+            if (!$keepinqueue) {
+                // Remove from queue unless requested not to.
+                $DB->delete_records('assignfeedback_editpdf_queue', array('id' => $record->id));
+            }
         }
     }
 

@@ -78,6 +78,13 @@ class mod_glossary_entry_form extends moodleform {
             $mform->setDefault('fullmatch', $CFG->glossary_fullmatch);
         }
 
+        if (core_tag_tag::is_enabled('mod_glossary', 'glossary_entries')) {
+            $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
+
+            $mform->addElement('tags', 'tags', get_string('tags'),
+                array('itemtype' => 'glossary_entries', 'component' => 'mod_glossary'));
+        }
+
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'cmid');

@@ -25,7 +25,6 @@ YUI.add('moodle-mod_quiz-repaginate', function (Y, NAME) {
  */
 
 var CSS = {
-    REPAGINATECONTAINERCLASS: '.rpcontainerclass',
     REPAGINATECOMMAND: '#repaginatecommand'
 };
 
@@ -44,12 +43,12 @@ Y.extend(POPUP, Y.Base, {
     body: null,
 
     initializer: function() {
-        var rpcontainerclass = Y.one(CSS.REPAGINATECONTAINERCLASS);
+        var repaginatebutton = Y.one(CSS.REPAGINATECOMMAND);
 
         // Set popup header and body.
-        this.header = rpcontainerclass.getAttribute(PARAMS.HEADER);
-        this.body = rpcontainerclass.getAttribute(PARAMS.FORM);
-        Y.one(CSS.REPAGINATECOMMAND).on('click', this.display_dialog, this);
+        this.header = repaginatebutton.getData(PARAMS.HEADER);
+        this.body = repaginatebutton.getData(PARAMS.FORM);
+        repaginatebutton.on('click', this.display_dialog, this);
     },
 
     display_dialog: function(e) {

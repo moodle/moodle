@@ -617,98 +617,6 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     /**
-     * Prints a form for configuring this authentication plugin.
-     *
-     * This function is called from admin/auth.php, and outputs a full page with
-     * a form for configuring this plugin.
-     *
-     * @param object $config
-     * @param object $err
-     * @param array $user_fields
-     */
-    function config_form($config, $err, $user_fields) {
-        global $CFG, $DB;
-
-         $query = "
-            SELECT
-                h.id,
-                h.name as hostname,
-                h.wwwroot,
-                h2idp.publish as idppublish,
-                h2idp.subscribe as idpsubscribe,
-                idp.name as idpname,
-                h2sp.publish as sppublish,
-                h2sp.subscribe as spsubscribe,
-                sp.name as spname
-            FROM
-                {mnet_host} h
-            LEFT JOIN
-                {mnet_host2service} h2idp
-            ON
-               (h.id = h2idp.hostid AND
-               (h2idp.publish = 1 OR
-                h2idp.subscribe = 1))
-            INNER JOIN
-                {mnet_service} idp
-            ON
-               (h2idp.serviceid = idp.id AND
-                idp.name = 'sso_idp')
-            LEFT JOIN
-                {mnet_host2service} h2sp
-            ON
-               (h.id = h2sp.hostid AND
-               (h2sp.publish = 1 OR
-                h2sp.subscribe = 1))
-            INNER JOIN
-                {mnet_service} sp
-            ON
-               (h2sp.serviceid = sp.id AND
-                sp.name = 'sso_sp')
-            WHERE
-               ((h2idp.publish = 1 AND h2sp.subscribe = 1) OR
-               (h2sp.publish = 1 AND h2idp.subscribe = 1)) AND
-                h.id != ?
-            ORDER BY
-                h.name ASC";
-
-        $id_providers       = array();
-        $service_providers  = array();
-        if ($resultset = $DB->get_records_sql($query, array($CFG->mnet_localhost_id))) {
-            foreach($resultset as $hostservice) {
-                if(!empty($hostservice->idppublish) && !empty($hostservice->spsubscribe)) {
-                    $service_providers[]= array('id' => $hostservice->id, 'name' => $hostservice->hostname, 'wwwroot' => $hostservice->wwwroot);
-                }
-                if(!empty($hostservice->idpsubscribe) && !empty($hostservice->sppublish)) {
-                    $id_providers[]= array('id' => $hostservice->id, 'name' => $hostservice->hostname, 'wwwroot' => $hostservice->wwwroot);
-                }
-            }
-        }
-
-        include "config.html";
-    }
-
-    /**
-     * Processes and stores configuration data for this authentication plugin.
-     */
-    function process_config($config) {
-        // set to defaults if undefined
-        if (!isset ($config->rpc_negotiation_timeout)) {
-            $config->rpc_negotiation_timeout = '30';
-        }
-        /*
-        if (!isset ($config->auto_add_remote_users)) {
-            $config->auto_add_remote_users = '0';
-        } See MDL-21327   for why this is commented out
-        set_config('auto_add_remote_users',   $config->auto_add_remote_users,   'auth_mnet');
-        */
-
-        // save settings
-        set_config('rpc_negotiation_timeout', $config->rpc_negotiation_timeout, 'auth_mnet');
-
-        return true;
-    }
-
-    /**
      * Poll the IdP server to let it know that a user it has authenticated is still
      * online
      *
@@ -1156,19 +1064,10 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     /**
-     * Returns a list of potential IdPs that this authentication plugin supports.
-     * This is used to provide links on the login page.
+     * Returns a list of MNet IdPs that the user can roam from.
      *
-     * @param string $wantsurl the relative url fragment the user wants to get to.  You can use this to compose a returnurl, for example
-     *
-     * @return array like:
-     *              array(
-     *                  array(
-     *                      'url' => 'http://someurl',
-     *                      'icon' => new pix_icon(...),
-     *                      'name' => get_string('somename', 'auth_yourplugin'),
-     *                 ),
-     *             )
+     * @param string $wantsurl The relative url fragment the user wants to get to.
+     * @return array List of arrays with keys url, icon and name.
      */
     function loginpage_idp_list($wantsurl) {
         global $DB, $CFG;
@@ -1202,5 +1101,121 @@ class auth_plugin_mnet extends auth_plugin_base {
             );
         }
         return $idps;
+    }
+
+    /**
+     * Test if settings are correct, print info to output.
+     */
+    public function test_settings() {
+        global $CFG, $OUTPUT, $DB;
+
+        // Generate warning if MNET is disabled.
+        if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict') {
+                echo $OUTPUT->notification(get_string('mnetdisabled', 'mnet'), 'notifyproblem');
+                return;
+        }
+
+        // Generate full list of ID and service providers.
+        $query = "
+           SELECT
+               h.id,
+               h.name as hostname,
+               h.wwwroot,
+               h2idp.publish as idppublish,
+               h2idp.subscribe as idpsubscribe,
+               idp.name as idpname,
+               h2sp.publish as sppublish,
+               h2sp.subscribe as spsubscribe,
+               sp.name as spname
+           FROM
+               {mnet_host} h
+           LEFT JOIN
+               {mnet_host2service} h2idp
+           ON
+              (h.id = h2idp.hostid AND
+              (h2idp.publish = 1 OR
+               h2idp.subscribe = 1))
+           INNER JOIN
+               {mnet_service} idp
+           ON
+              (h2idp.serviceid = idp.id AND
+               idp.name = 'sso_idp')
+           LEFT JOIN
+               {mnet_host2service} h2sp
+           ON
+              (h.id = h2sp.hostid AND
+              (h2sp.publish = 1 OR
+               h2sp.subscribe = 1))
+           INNER JOIN
+               {mnet_service} sp
+           ON
+              (h2sp.serviceid = sp.id AND
+               sp.name = 'sso_sp')
+           WHERE
+              ((h2idp.publish = 1 AND h2sp.subscribe = 1) OR
+              (h2sp.publish = 1 AND h2idp.subscribe = 1)) AND
+               h.id != ?
+           ORDER BY
+               h.name ASC";
+
+        $idproviders = array();
+        $serviceproviders = array();
+        if ($resultset = $DB->get_records_sql($query, array($CFG->mnet_localhost_id))) {
+            foreach ($resultset as $hostservice) {
+                if (!empty($hostservice->idppublish) && !empty($hostservice->spsubscribe)) {
+                    $serviceproviders[] = array('id' => $hostservice->id,
+                        'name' => $hostservice->hostname,
+                        'wwwroot' => $hostservice->wwwroot);
+                }
+                if (!empty($hostservice->idpsubscribe) && !empty($hostservice->sppublish)) {
+                    $idproviders[] = array('id' => $hostservice->id,
+                        'name' => $hostservice->hostname,
+                        'wwwroot' => $hostservice->wwwroot);
+                }
+            }
+        }
+
+        // ID Providers.
+        $table = html_writer::start_tag('table', array('class' => 'generaltable'));
+
+        $count = 0;
+        foreach ($idproviders as $host) {
+            $table .= html_writer::start_tag('tr');
+            $table .= html_writer::start_tag('td');
+            $table .= $host['name'];
+            $table .= html_writer::end_tag('td');
+            $table .= html_writer::start_tag('td');
+            $table .= $host['wwwroot'];
+            $table .= html_writer::end_tag('td');
+            $table .= html_writer::end_tag('tr');
+            $count++;
+        }
+            $table .= html_writer::end_tag('table');
+
+        if ($count > 0) {
+            echo html_writer::tag('h3', get_string('auth_mnet_roamin', 'auth_mnet'));
+            echo $table;
+        }
+
+        // Service Providers.
+        unset($table);
+        $table = html_writer::start_tag('table', array('class' => 'generaltable'));
+        $count = 0;
+        foreach ($serviceproviders as $host) {
+            $table .= html_writer::start_tag('tr');
+            $table .= html_writer::start_tag('td');
+            $table .= $host['name'];
+            $table .= html_writer::end_tag('td');
+            $table .= html_writer::start_tag('td');
+            $table .= $host['wwwroot'];
+            $table .= html_writer::end_tag('td');
+            $table .= html_writer::end_tag('tr');
+            $count++;
+        }
+            $table .= html_writer::end_tag('table');
+        if ($count > 0) {
+            echo html_writer::tag('h3', get_string('auth_mnet_roamout', 'auth_mnet'));
+            echo $table;
+        }
     }
 }

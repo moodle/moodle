@@ -25,30 +25,29 @@ Feature: The activity results block displays student scores
       | student4 | C1 | student |
       | student5 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment 1 |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment 2 |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment 3 |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Page" to section "1"
     And I set the following fields to these values:
       | Name | Test page name |
       | Description | Test page description |
       | Page content | This is a page |
     And I press "Save and return to course"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "Test page name"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
@@ -58,7 +57,7 @@ Feature: The activity results block displays student scores
     And I give the grade "60.00" to the user "Student 4" for the grade item "Test assignment 1"
     And I give the grade "50.00" to the user "Student 5" for the grade item "Test assignment 1"
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   Scenario: Configure the block on a non-graded activity to show 3 high scores
     Given I follow "Test page name"
@@ -84,19 +83,19 @@ Feature: The activity results block displays student scores
     And I configure the "Activity results" block
     Then the field "id_config_activitygradeitemid" matches value "Test assignment 1"
     And I press "Cancel"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment 2"
     And I add the "Activity results" block
     And I configure the "Activity results" block
     And the field "id_config_activitygradeitemid" matches value "Test assignment 2"
     And I press "Cancel"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment 3"
     And I add the "Activity results" block
     And I configure the "Activity results" block
     And the field "id_config_activitygradeitemid" matches value "Test assignment 3"
     And I press "Cancel"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test page name"
     And I add the "Activity results" block
     And I configure the "Activity results" block

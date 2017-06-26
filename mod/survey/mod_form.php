@@ -47,17 +47,15 @@ class mod_survey_mod_form extends moodleform_mod {
     }
 
     /**
-     * Return submitted data if properly submitted or returns NULL if validation fails or
-     * if there is no submitted data.
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
      *
-     * @return stdClass submitted data; NULL if not valid or not submitted or cancelled
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
      */
-    public function get_data() {
-        $data = parent::get_data();
-        if (!$data) {
-            return false;
-        }
-
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
         if (!empty($data->completionunlocked)) {
             // Turn off completion settings if the checkboxes aren't ticked.
             $autocompletion = !empty($data->completion) &&
@@ -66,7 +64,6 @@ class mod_survey_mod_form extends moodleform_mod {
                 $data->completionsubmit = 0;
             }
         }
-        return $data;
     }
 
     /**
@@ -76,6 +73,8 @@ class mod_survey_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform =& $this->_form;
         $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'survey'));
+        // Enable this completion rule by default.
+        $mform->setDefault('completionsubmit', 1);
         return array('completionsubmit');
     }
 

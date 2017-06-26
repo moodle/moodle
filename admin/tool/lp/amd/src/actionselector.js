@@ -131,6 +131,7 @@ define(['jquery',
                 html,
                 self._afterRender.bind(self)
             );
+            return;
         }).fail(Notification.exception);
     };
 
@@ -156,6 +157,7 @@ define(['jquery',
         return self._render().then(function(html) {
             self._find('[data-region="action-selector"]').replaceWith(html);
             self._afterRender();
+            return;
         });
     };
 

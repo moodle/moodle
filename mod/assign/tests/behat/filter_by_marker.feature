@@ -22,8 +22,7 @@ Feature: In an assignment, teachers can filter displayed submissions by assigned
       | student2 | C1 | student |
       | marker1 | C1 | teacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
@@ -41,7 +40,7 @@ Feature: In an assignment, teachers can filter displayed submissions by assigned
     And I click on "Edit settings" "link"
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I set the field "markerfilter" to "Marker 1"

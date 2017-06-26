@@ -26,7 +26,7 @@ Feature: Saving, using and deleting feedback templates
       | feedback   | Another feedback in course 1 | C1     | feedback2   |
       | feedback   | Learning experience course 2 | C2     | feedback3   |
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Learning experience course 1"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
@@ -39,7 +39,7 @@ Feature: Saving, using and deleting feedback templates
   Scenario: Teacher can save template and re-use it in the same course only
     # Go to feedback templates and make sure none exist yet
     When I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Learning experience course 1"
     And I follow "Templates"
     Then I should see "No templates available yet"
@@ -55,7 +55,7 @@ Feature: Saving, using and deleting feedback templates
     And I should see "Template saved"
     And the "Use a template" select box should contain "My first template"
     # Create a feedback from this template in the same course
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Another feedback in course 1"
     And I follow "Templates"
     And I set the field "Use a template" to "My first template"
@@ -65,8 +65,7 @@ Feature: Saving, using and deleting feedback templates
     And I follow "Edit questions"
     And I should see "this is a multiple choice 1"
     # Make sure this template is not available in another course
-    And I am on site homepage
-    And I follow "Course 2"
+    And I am on "Course 2" course homepage
     And I follow "Learning experience course 2"
     And I follow "Templates"
     And I should see "No templates available yet"
@@ -76,13 +75,13 @@ Feature: Saving, using and deleting feedback templates
   Scenario: Teacher can append template to existing questions or remove them
     # Save feedback as a course template
     When I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Learning experience course 1"
     And I follow "Templates"
     And I set the field "Name" to "My first template"
     And I press "Save as new template"
     # Add questions to another feedback
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Another feedback in course 1"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
@@ -111,8 +110,7 @@ Feature: Saving, using and deleting feedback templates
 
   Scenario: Manager can save template as public and it will be available in any course
     When I log in as "manager"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Learning experience course 1"
     And I follow "Templates"
     And I set the field "Name" to "My first template"
@@ -120,7 +118,7 @@ Feature: Saving, using and deleting feedback templates
     And I press "Save as new template"
     And I log out
     And I log in as "teacher"
-    And I follow "Course 2"
+    And I am on "Course 2" course homepage
     And I follow "Learning experience course 2"
     And I follow "Templates"
     And I set the field "Use a template" to "My first template"
@@ -134,8 +132,7 @@ Feature: Saving, using and deleting feedback templates
   Scenario: Teacher can delete course templates but can not delete public templates
     # Save feedback as both public and course template
     When I log in as "manager"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Learning experience course 1"
     And I follow "Templates"
     And I set the field "Name" to "My public template"
@@ -146,7 +143,7 @@ Feature: Saving, using and deleting feedback templates
     And I log out
     # Login as teacher and try to delete templates
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Another feedback in course 1"
     And I follow "Templates"
     And I follow "Delete template..."
@@ -166,8 +163,7 @@ Feature: Saving, using and deleting feedback templates
   Scenario: Manager can delete both course and public templates
     # Save feedback as both public and course template
     When I log in as "manager"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Learning experience course 1"
     And I click on "Templates" "link" in the "[role=main]" "css_element"
     And I set the field "Name" to "My public template"

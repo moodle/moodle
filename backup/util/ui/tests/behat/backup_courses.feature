@@ -23,6 +23,7 @@ Feature: Backup Moodle courses
     And I should see "URL of backup"
     And I should see "Anonymize user information"
 
+  @javascript
   Scenario: Backup a course with default options
     When I backup "Course 1" course using this options:
       | Initial | Include calendar events | 0 |
@@ -34,7 +35,7 @@ Feature: Backup Moodle courses
     And I should not see "Section 3"
     And I press "Continue"
     And I click on "Continue" "button" in the ".bcs-current-course" "css_element"
-    And "//div[contains(concat(' ', normalize-space(@class), ' '), ' fitem ')][contains(., 'Include calendar events')]/descendant::img" "xpath_element" should exist
+    And "No" "icon" should exist in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' fitem ')][contains(., 'Include calendar events')]" "xpath_element"
     And "Include course logs" "checkbox" should exist
     And I press "Next"
 

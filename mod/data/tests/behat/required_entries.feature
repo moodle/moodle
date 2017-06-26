@@ -20,7 +20,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Base Text input |
       | Required | yes |
@@ -125,7 +125,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
 
   Scenario: Students receive errors for empty required fields but not for optional fields
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
        | Base Text input | Some input to allow us to submit the otherwise empty form |
     And I press "Save and view"
@@ -154,7 +154,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
 
   Scenario: Students recieve no error for filled in required fields
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
        | Base Text input               | Some input to allow us to submit the otherwise empty form |
        | Required Checkbox Option 1    | 1                                                         |
@@ -176,7 +176,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
 
   Scenario: Fields refill with data after having an error
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
        | RTOC Option 1                 | 1                   |
        | Latitude                      | 0                   |
@@ -205,7 +205,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
 
   Scenario: A student fills in Latitude but not Longitude will see an error
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I add an entry to "Test database name" database with:
        | Base Text input               | Some input to allow us to submit the otherwise empty form |
        | Required Checkbox Option 1    | 1                                                         |
@@ -226,7 +226,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
 
   Scenario: A student filling in number and text fields with zero will not see an error.
     Given I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I add an entry to "Test database name" database with:
        | Base Text input               | Some input to allow us to submit the otherwise empty form |
        | Required Checkbox Option 1    | 1                                                         |

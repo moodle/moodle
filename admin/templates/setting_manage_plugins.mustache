@@ -1,0 +1,65 @@
+<table class="admintable generaltable">
+    <thead>
+        <tr>
+            <th class="header">{{#str}}name, moodle{{/str}}</th>
+            {{#infocolumnname}}
+            <th class="header">{{infocolumnname}}</th>
+            {{/infocolumnname}}
+            <th class="header">{{#str}}order, moodle{{/str}}</th>
+            <th class="header">{{#str}}isenabled, plugin{{/str}}</th>
+            <th class="header">{{#str}}settings, moodle{{/str}}</th>
+            <th class="header">{{#str}}uninstall, plugin{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#plugins}}
+        <tr>
+            <td>{{plugin}}</td>
+            {{#infocolumnname}}
+            <td>
+                {{info}}
+            </td>
+            {{/infocolumnname}}
+            <td class="text-nowrap">
+                {{#moveuplink}}
+                    <a href="{{{moveuplink}}}">
+                        {{#pix}}t/up, moodle, {{#str}} up, moodle {{/str}}{{/pix}}
+                    </a>
+                {{/moveuplink}}
+                {{^moveuplink}}
+                    {{#pix}}spacer, moodle{{/pix}}
+                {{/moveuplink}}
+
+                {{#movedownlink}}
+                    <a href="{{{movedownlink}}}">
+                        {{#pix}}t/down, moodle, {{#str}} down, moodle {{/str}}{{/pix}}
+                    </a>
+                {{/movedownlink}}
+                {{^movedownlink}}
+                    {{#pix}}spacer, moodle{{/pix}}
+                {{/movedownlink}}
+            </td>
+            <td>
+                <a href="{{{togglelink}}}">
+                    {{#toggletarget}}
+                    {{#pix}}i/show, moodle, {{#str}} enable, moodle {{/str}}{{/pix}}
+                    {{/toggletarget}}
+                    {{^toggletarget}}
+                    {{#pix}}i/hide, moodle, {{#str}} disable, moodle {{/str}}{{/pix}}
+                    {{/toggletarget}}
+                </a>
+            </td>
+            <td>
+                {{#settingslink}}
+                    <a href="{{{settingslink}}}">{{#str}}settings,plugin{{/str}}</a>
+                {{/settingslink}}
+            </td>
+            <td>
+                {{#uninstalllink}}
+                    <a href="{{{uninstalllink}}}">{{#str}}uninstall,plugin{{/str}}</a>
+                {{/uninstalllink}}
+            </td>
+        </tr>
+        {{/plugins}}
+    </tbody>
+</table>

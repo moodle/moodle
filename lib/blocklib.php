@@ -320,6 +320,24 @@ class block_manager {
     }
 
     /**
+     * Returns an array of block content objects for all the existings regions
+     *
+     * @param renderer_base $output the rendered to use
+     * @return array of block block_contents objects for all the blocks in all regions.
+     * @since  Moodle 3.3
+     */
+    public function get_content_for_all_regions($output) {
+        $contents = array();
+        $this->check_is_loaded();
+
+        foreach ($this->regions as $region => $val) {
+            $this->ensure_content_created($region, $output);
+            $contents[$region] = $this->visibleblockcontent[$region];
+        }
+        return $contents;
+    }
+
+    /**
      * Helper method used by get_content_for_region.
      * @param string $region region name
      * @param float $weight weight. May be fractional, since you may want to move a block
@@ -2537,6 +2555,6 @@ function blocks_add_default_system_blocks() {
     }
 
     $newblocks = array('private_files', 'online_users', 'badges', 'calendar_month', 'calendar_upcoming');
-    $newcontent = array('lp', 'course_overview');
+    $newcontent = array('lp', 'myoverview');
     $page->blocks->add_blocks(array(BLOCK_POS_RIGHT => $newblocks, 'content' => $newcontent), 'my-index', $subpagepattern);
 }

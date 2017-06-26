@@ -170,7 +170,7 @@ if (isset($CFG->prefix) and $CFG->prefix === $CFG->phpunit_prefix) {
 }
 
 // override CFG settings if necessary and throw away extra CFG settings
-$CFG->wwwroot   = 'http://www.example.com/moodle';
+$CFG->wwwroot   = 'https://www.example.com/moodle';
 $CFG->dataroot  = $CFG->phpunit_dataroot;
 $CFG->prefix    = $CFG->phpunit_prefix;
 $CFG->dbtype    = isset($CFG->phpunit_dbtype) ? $CFG->phpunit_dbtype : $CFG->dbtype;
@@ -186,7 +186,7 @@ $allowed = array('wwwroot', 'dataroot', 'dirroot', 'admin', 'directorypermission
                  'dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'prefix', 'dboptions',
                  'proxyhost', 'proxyport', 'proxytype', 'proxyuser', 'proxypassword', 'proxybypass', // keep proxy settings from config.php
                  'altcacheconfigpath', 'pathtogs', 'pathtodu', 'aspellpath', 'pathtodot',
-                 'pathtounoconv'
+                 'pathtounoconv', 'alternative_file_system_class'
                 );
 $productioncfg = (array)$CFG;
 $CFG = new stdClass();

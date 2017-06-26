@@ -8,7 +8,6 @@ movedown_item,mod_feedback
 move_here,mod_feedback
 moveup_item,mod_feedback
 notavailable,mod_feedback
-not_completed_yet,mod_feedback
 parameters_missing,mod_feedback
 picture,mod_feedback
 picture_file_list,mod_feedback

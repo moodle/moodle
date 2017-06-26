@@ -633,16 +633,27 @@ table.quizreviewsummary td.cell {
     margin: 4px 0;
 }
 
+#page-mod-quiz-edit .mod_quiz-edit-top-controls {
+    position: relative;
+}
+#page-mod-quiz-edit .mod_quiz-edit-action-buttons {
+    display: block;
+    min-height: 2.85em;
+}
+
 #page-mod-quiz-edit .maxgrade,
 #page-mod-quiz-edit .totalpoints {
-    display: block;
-    float: right;
+    position: absolute;
+    right: 0;
     margin: -2.85em 0 0;
     padding: .2em;
 }
 
 #page-mod-quiz-edit .maxgrade label {
     display: inline;
+}
+#page-mod-quiz-edit .maxgrade input[type="submit"] {
+    margin: 0;
 }
 
 #page-mod-quiz-edit li.activity > div,
@@ -1117,6 +1128,82 @@ table#categoryquestions {
     background-color: #fff;
 }
 
+/* Bulk edit actions */
+
+#page-mod-quiz-edit .selectmultiplecommandbuttons {
+    margin: 0.6em 0.4em;
+}
+
+#page-mod-quiz-edit .btn-group.selectmultiplecommand,
+#page-mod-quiz-edit .btn-group.selectmultiplecommandbuttons,
+#page-mod-quiz-edit .select-multiple-checkbox {
+    display: none;
+}
+
+#page-mod-quiz-edit.select-multiple .selectmultiplecommand,
+#page-mod-quiz-edit.select-multiple .selectmultiplecommandbuttons,
+#page-mod-quiz-edit.select-multiple .select-multiple-checkbox {
+    display: inherit;
+}
+
+#page-mod-quiz-edit.select-multiple .selectmultiplecommandbuttons .separator {
+    position: relative;
+    float: left;
+    padding: .5rem 0;
+}
+
+#page-mod-quiz-edit #questionselectall {
+    padding-right: .1rem;
+}
+
+#page-mod-quiz-edit #questiondeselectall {
+    padding-left: .1rem;
+}
+
+#page-mod-quiz-edit.select-multiple input.select-multiple-checkbox[type="checkbox"] {
+    display: inline;
+}
+
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section .activity .editing_move,
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section .activity .commands {
+    display: none;
+}
+
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section .page_split_join_wrapper {
+    display: none;
+}
+
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section .activity .actions .editing_delete,
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section .activity .actions .editing_maxmark {
+    display: none;
+}
+
+#page-mod-quiz-edit.select-multiple#page-mod-quiz-edit .maxgrade,
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .last-add-menu {
+    display: none;
+}
+
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading,
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading form,
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading .instancesectioncontainer,
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading .instanceshufflequestions,
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .section-heading .instancesectioncontainer h3 {
+    display: none;
+}
+
+#page-mod-quiz-edit.select-multiple .mod-quiz-edit-content .edit-toolbar .m-b-1 {
+    display: none;
+}
+
+#page-mod-quiz-edit.select-multiple#page-mod-quiz-edit ul.slots li.section li.activity .mod-indent-outer {
+    padding-left: 3px;
+}
+
+#page-mod-quiz-edit .section .summary .iconsmall,
+#page-mod-quiz-edit .section .activity .iconsmall {
+    float: left;
+}
+
 /* Base theme needs extra support. */
 #page-mod-quiz-edit ul.slots li.section ul.section {
     list-style: none;
@@ -1176,20 +1263,5 @@ table#categoryquestions {
     #page-mod-quiz-attempt .que,
     #page-mod-quiz-review .que {
         page-break-inside: avoid;
-    }
-}
-/* Ajustments for mobile devices */
-
-@media only screen and (max-width: 565px) {
-    #page-mod-quiz-edit .rpcontainerclass {
-        margin-top: 3em;
-    }
-
-    #page-mod-quiz-edit .maxgrade {
-        margin-top: 0.1em;
-    }
-
-    #page-mod-quiz-edit .statusbar {
-        padding: 0;
     }
 }

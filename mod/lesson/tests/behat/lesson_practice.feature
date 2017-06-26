@@ -17,8 +17,7 @@ Feature: Practice mode in a lesson activity
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
       # Setup a basic lesson, we'll adjust it in the scenarios later.
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
@@ -44,14 +43,14 @@ Feature: Practice mode in a lesson activity
     And I press "Save and display"
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Non-practice lesson"
     And I set the following fields to these values:
       | True | 1 |
     And I press "Submit"
     Then I should see "View grades"
     And I follow "Grades" in the user menu
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "Non-practice lesson"
 
   Scenario: Practice lesson doesn't record grades in the gradebook
@@ -64,7 +63,7 @@ Feature: Practice mode in a lesson activity
     And I press "Save and display"
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Practice lesson"
     And I set the following fields to these values:
       | True | 1 |
@@ -85,7 +84,7 @@ Feature: Practice mode in a lesson activity
     And I press "Save and display"
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Practice lesson with scale"
     And I set the following fields to these values:
       | True | 1 |

@@ -22,15 +22,29 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['clientid'] = 'Client ID';
 $string['configplugin'] = 'Configure Google Drive plugin';
 $string['docsformat'] = 'Default document import format';
 $string['drawingformat'] = 'Default drawing import format';
 $string['googledocs:view'] = 'View Google Drive repository';
-$string['importformat'] = 'Configure the default import formats from google';
-$string['oauthinfo'] = '<p>To use this plugin, you must register your site with Google, as described in the documentation <a href="{$a->docsurl}">Google OAuth 2.0 setup</a>.</p><p>As part of the registration process, you will need to enter the following URL as \'Authorized Redirect URIs\':</p><p>{$a->callbackurl}</p><p>Once registered, you will be provided with a client ID and secret which can be used to configure all Google Drive and Picasa plugins.</p><p>Please also note that you will have to enable the service \'Drive API\'.</p>';
+$string['importformat'] = 'Configure the default import formats from Google';
 $string['pluginname'] = 'Google Drive';
 $string['presentationformat'] = 'Default presentation import format';
-$string['secret'] = 'Secret';
-$string['servicenotenabled'] = 'Access not configured. Make sure the service \'Drive API\' is enabled.';
 $string['spreadsheetformat'] = 'Default spreadsheet import format';
+$string['issuer'] = 'OAuth 2 service';
+$string['issuer_help'] = 'Select the OAuth 2 service that is configured to talk to the Google Drive API. If the service does not exist yet, you will need to create it.';
+$string['servicenotenabled'] = 'Access not configured. Make sure the service \'Drive API\' is enabled.';
+$string['oauth2serviceslink'] = '<a href="{$a}" title="Link to OAuth 2 services configuration">OAuth 2 services configuration</a>';
+$string['searchfor'] = 'Search for {$a}';
+$string['internal'] = 'Internal (files stored in Moodle)';
+$string['external'] = 'External (only links stored in Moodle)';
+$string['both'] = 'Internal and external';
+$string['supportedreturntypes'] = 'Supported files';
+$string['defaultreturntype'] = 'Default return type';
+$string['fileoptions'] = 'The types and defaults for returned files is configurable here. Note that all files linked externally will be updated so that the owner is the Moodle system account.';
+$string['owner'] = 'Owned by: {$a}';
+$string['cachedef_folder'] = 'Google file IDs for folders in the system account';
+
+// Deprecated since Moodle 3.3.
+$string['oauthinfo'] = '<p>To use this plugin, you must register your site with Google, as described in the documentation <a href="{$a->docsurl}">Google OAuth 2.0 setup</a>.</p><p>As part of the registration process, you will need to enter the following URL as \'Authorized Redirect URIs\':</p><p>{$a->callbackurl}</p><p>Once registered, you will be provided with a client ID and secret which can be used to configure certain other Google Drive and Picasa plugins.</p><p>Please also note that you will have to enable the service \'Drive API\'.</p>';
+$string['secret'] = 'Secret';
+$string['clientid'] = 'Client ID';

@@ -18,8 +18,7 @@ Feature: A teacher can set a time limit for a lesson
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson |
       | Description | Test lesson description |
@@ -35,7 +34,7 @@ Feature: A teacher can set a time limit for a lesson
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "Test lesson"
     Then I should see "You have 1 min to finish the lesson."
     And I wait "3" seconds

@@ -1,6 +1,11 @@
 This files describes API changes in /auth/db/*,
 information provided here is intended especially for developers.
 
+=== 3.3 ===
+
+* The config.html file was migrated to use the admin settings API.
+  The identifier for configuration data stored in config_plugins table was converted from 'auth/db' to 'auth_db'.
+
 === 3.1 ===
 
 * The auth_plugin_db::clean_data() has been deprecated and will be removed

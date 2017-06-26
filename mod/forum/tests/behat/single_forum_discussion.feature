@@ -22,14 +22,14 @@ Feature: Single simple forum discussion type
 
   Scenario: Teacher can start the single simple discussion
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "Single discussion forum name"
     Then I should see "Single discussion forum description" in the "div.firstpost.starter" "css_element"
     And I should not see "Add a new discussion topic"
 
   Scenario: Student can not add more discussions
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I reply "Single discussion forum name" post from "Single discussion forum name" forum with:
       | Subject | Reply to single discussion subject |
       | Message | Reply to single discussion message |

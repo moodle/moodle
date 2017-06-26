@@ -23,8 +23,7 @@ Feature: Publish rubrics as templates
       | user | role | contextlevel | reference |
       | manager1 | manager | System | |
     And I log in as "manager1"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I go to "Test assignment 1 name" advanced grading definition page
     And I set the following fields to these values:
       | Name | Assignment 1 rubric |
@@ -36,7 +35,7 @@ Feature: Publish rubrics as templates
     When I publish "Test assignment 1 name" grading form definition as a public template
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I set "Test assignment 2 name" activity to use "Assignment 1 rubric" grading form
     Then I should see "Advanced grading: Test assignment 2 name (Submissions)"
     And I should see "Criterion 1"

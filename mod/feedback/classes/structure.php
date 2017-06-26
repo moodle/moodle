@@ -32,11 +32,14 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_feedback_structure {
-    /** @var stdClass */
+    /** @var stdClass record from 'feedback' table.
+     * Reliably has fields: id, course, timeopen, timeclose, anonymous, completionsubmit.
+     * For full object or to access any other field use $this->get_feedback()
+     */
     protected $feedback;
     /** @var cm_info */
     protected $cm;
-    /** @var int */
+    /** @var int course where the feedback is filled. For feedbacks that are NOT on the front page this is 0 */
     protected $courseid = 0;
     /** @var int */
     protected $templateid;
@@ -50,15 +53,31 @@ class mod_feedback_structure {
      *
      * @param stdClass $feedback feedback object, in case of the template
      *     this is the current feedback the template is accessed from
-     * @param cm_info $cm course module object corresponding to the $feedback
+     * @param stdClass|cm_info $cm course module object corresponding to the $feedback
+     *     (at least one of $feedback or $cm is required)
      * @param int $courseid current course (for site feedbacks only)
      * @param int $templateid template id if this class represents the template structure
      */
     public function __construct($feedback, $cm, $courseid = 0, $templateid = null) {
-        $this->feedback = $feedback;
-        $this->cm = $cm;
-        $this->courseid = ($feedback->course == SITEID) ? $courseid : 0;
+        if ((empty($feedback->id) || empty($feedback->course)) && (empty($cm->instance) || empty($cm->course))) {
+            throw new coding_exception('Either $feedback or $cm must be passed to constructor');
+        }
+        $this->feedback = $feedback ?: (object)['id' => $cm->instance, 'course' => $cm->course];
+        $this->cm = ($cm && $cm instanceof cm_info) ? $cm :
+            get_fast_modinfo($this->feedback->course)->instances['feedback'][$this->feedback->id];
         $this->templateid = $templateid;
+        $this->courseid = ($this->feedback->course == SITEID) ? $courseid : 0;
+
+        if (!$feedback) {
+            // If feedback object was not specified, populate object with fields required for the most of methods.
+            // These fields were added to course module cache in feedback_get_coursemodule_info().
+            // Full instance record can be retrieved by calling mod_feedback_structure::get_feedback().
+            $customdata = ($this->cm->customdata ?: []) + ['timeopen' => 0, 'timeclose' => 0, 'anonymous' => 0];
+            $this->feedback->timeopen = $customdata['timeopen'];
+            $this->feedback->timeclose = $customdata['timeclose'];
+            $this->feedback->anonymous = $customdata['anonymous'];
+            $this->feedback->completionsubmit = empty($this->cm->customdata['customcompletionrules']['completionsubmit']) ? 0 : 1;
+        }
     }
 
     /**
@@ -66,6 +85,11 @@ class mod_feedback_structure {
      * @return stdClass
      */
     public function get_feedback() {
+        global $DB;
+        if (!isset($this->feedback->publish_stats) || !isset($this->feedback->name)) {
+            // Make sure the full object is retrieved.
+            $this->feedback = $DB->get_record('feedback', ['id' => $this->feedback->id], '*', MUST_EXIST);
+        }
         return $this->feedback;
     }
 
@@ -182,7 +206,7 @@ class mod_feedback_structure {
             return true;
         }
 
-        if (intval($this->feedback->publish_stats) != 1 ||
+        if (intval($this->get_feedback()->publish_stats) != 1 ||
                 !has_capability('mod/feedback:viewanalysepage', $context)) {
             return false;
         }

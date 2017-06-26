@@ -230,6 +230,19 @@ if ($hassiteconfig) {
         300, PARAM_INT, 10));
     $ADMIN->add('mediaplayers', $temp);
 
+    // Convert plugins.
+    $ADMIN->add('modules', new admin_category('fileconverterplugins', new lang_string('type_fileconverter_plural', 'plugin')));
+    $temp = new admin_settingpage('managefileconverterplugins', new lang_string('type_fileconvertermanage', 'plugin'));
+    $temp->add(new admin_setting_manage_fileconverter_plugins());
+    $ADMIN->add('fileconverterplugins', $temp);
+
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('fileconverter');
+    core_collator::asort_objects_by_property($plugins, 'displayname');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\media $plugin */
+        $plugin->load_settings($ADMIN, 'fileconverterplugins', $hassiteconfig);
+    }
+
     $plugins = core_plugin_manager::instance()->get_plugins_of_type('media');
     core_collator::asort_objects_by_property($plugins, 'displayname');
     foreach ($plugins as $plugin) {

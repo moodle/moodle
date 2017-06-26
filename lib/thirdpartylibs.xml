@@ -53,7 +53,7 @@
     <location>jabber</location>
     <name>XMPPHP</name>
     <license>GPL</license>
-    <version></version>
+    <version>0.1rc2-r77</version>
     <licenseversion>2.0+</licenseversion>
   </library>
   <library>
@@ -116,7 +116,7 @@
     <location>phpmailer</location>
     <name>PHPMailer</name>
     <license>LGPL</license>
-    <version>5.2.16</version>
+    <version>5.2.23</version>
     <licenseversion>2.1</licenseversion>
   </library>
   <library>
@@ -296,5 +296,12 @@
     <name>Truncate.js</name>
     <license>MIT</license>
     <version>0.0.1</version>
+  </library>
+  <library>
+    <location>/fonts</location>
+    <name>Font Awesome by Dave Gandy - http://fontawesome.io</name>
+    <license>SIL OFL</license>
+    <version>4.7.0</version>
+    <licenseversion>1.1</licenseversion>
   </library>
 </libraries>

@@ -144,6 +144,21 @@
                     <input type="text" class="form-control" name="user" id="user" value="{{user}}">
                 </td>
             </tr>
+            {{#tagsenabled}}
+                <tr>
+                    <td class="c0">
+                        <label for="tags">{{#str}}searchtags, forum{{/str}}</label>
+                    </td>
+                    <td class="c1">
+                        <select class="custom-select" name="tags[]"
+                                id="tags" multiple>
+                            {{#tagoptions}}
+                                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
+                            {{/tagoptions}}
+                        </select>
+                    </td>
+                </tr>
+            {{/tagsenabled}}
             <tr>
                 <td> </td>
                 <td class="submit">

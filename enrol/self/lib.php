@@ -1053,3 +1053,13 @@ class enrol_self_plugin extends enrol_plugin {
         return $contact;
     }
 }
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function enrol_self_get_fontawesome_icon_map() {
+    return [
+        'enrol_self:withkey' => 'fa-key',
+        'enrol_self:withoutkey' => 'fa-sign-in',
+    ];
+}

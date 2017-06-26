@@ -254,6 +254,21 @@ class renderer_base {
     }
 
     /**
+     * Return the direct URL for an image from the pix folder.
+     *
+     * Use this function sparingly and never for icons. For icons use pix_icon or the pix helper in a mustache template.
+     *
+     * @deprecated since Moodle 3.3
+     * @param string $imagename the name of the icon.
+     * @param string $component specification of one plugin like in get_string()
+     * @return moodle_url
+     */
+    public function pix_url($imagename, $component = 'moodle') {
+        debugging('pix_url is deprecated. Use image_url for images and pix_icon for icons.', DEBUG_DEVELOPER);
+        return $this->page->theme->image_url($imagename, $component);
+    }
+
+    /**
      * Return the moodle_url for an image.
      *
      * The exact image location and extension is determined
@@ -271,14 +286,14 @@ class renderer_base {
      *                    overridden via theme/mytheme/pix_core/
      * 3/ plugin images - stored in mod/mymodule/pix,
      *                    overridden via theme/mytheme/pix_plugins/mod/mymodule/,
-     *                    example: pix_url('comment', 'mod_glossary')
+     *                    example: image_url('comment', 'mod_glossary')
      *
      * @param string $imagename the pathname of the image
      * @param string $component full plugin name (aka component) or 'theme'
      * @return moodle_url
      */
-    public function pix_url($imagename, $component = 'moodle') {
-        return $this->page->theme->pix_url($imagename, $component);
+    public function image_url($imagename, $component = 'moodle') {
+        return $this->page->theme->image_url($imagename, $component);
     }
 
     /**
@@ -590,15 +605,6 @@ class core_renderer extends renderer_base {
         // already meta refreshing
         if ($this->metarefreshtag=='' && $this->page->periodicrefreshdelay!==null) {
             $output .= '<meta http-equiv="refresh" content="'.$this->page->periodicrefreshdelay.';url='.$this->page->url->out().'" />';
-        }
-
-        // Smart App Banners meta tag is only displayed if mobile services are enabled and configured.
-        if (!empty($CFG->enablemobilewebservice)) {
-            $mobilesettings = get_config('tool_mobile');
-            if (!empty($mobilesettings->enablesmartappbanners) and !empty($mobilesettings->iosappid)) {
-                $output .= '<meta name="apple-itunes-app" content="app-id=' . s($mobilesettings->iosappid) . ', ';
-                $output .= 'app-argument=' . $this->page->url->out() . '"/>';
-            }
         }
 
         // Set up help link popups for all links with the helptooltip class
@@ -950,13 +956,13 @@ class core_renderer extends renderer_base {
             // Special case for site home page - please do not remove
             return '<div class="sitelink">' .
                    '<a title="Moodle" href="http://moodle.org/">' .
-                   '<img src="' . $this->pix_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
+                   '<img src="' . $this->image_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
 
         } else if (!empty($CFG->target_release) && $CFG->target_release != $CFG->release) {
             // Special case for during install/upgrade.
             return '<div class="sitelink">'.
                    '<a title="Moodle" href="http://docs.moodle.org/en/Administrator_documentation" onclick="this.target=\'_blank\'">' .
-                   '<img src="' . $this->pix_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
+                   '<img src="' . $this->image_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
 
         } else if ($this->page->course->id == $SITE->id || strpos($this->page->pagetype, 'course-view') === 0) {
             return '<div class="homelink"><a href="' . $CFG->wwwroot . '/">' .
@@ -2024,6 +2030,34 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Return HTML for an image_icon.
+     *
+     * Theme developers: DO NOT OVERRIDE! Please override function
+     * {@link core_renderer::render_image_icon()} instead.
+     *
+     * @param string $pix short pix name
+     * @param string $alt mandatory alt attribute
+     * @param string $component standard compoennt name like 'moodle', 'mod_forum', etc.
+     * @param array $attributes htm lattributes
+     * @return string HTML fragment
+     */
+    public function image_icon($pix, $alt, $component='moodle', array $attributes = null) {
+        $icon = new image_icon($pix, $alt, $component, $attributes);
+        return $this->render($icon);
+    }
+
+    /**
+     * Renders a pix_icon widget and returns the HTML to display it.
+     *
+     * @param image_icon $icon
+     * @return string HTML fragment
+     */
+    protected function render_image_icon(image_icon $icon) {
+        $system = \core\output\icon_system::instance(\core\output\icon_system::STANDARD);
+        return $system->render_pix_icon($this, $icon);
+    }
+
+    /**
      * Return HTML for a pix_icon.
      *
      * Theme developers: DO NOT OVERRIDE! Please override function
@@ -2047,8 +2081,8 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_pix_icon(pix_icon $icon) {
-        $data = $icon->export_for_template($this);
-        return $this->render_from_template('core/pix_icon', $data);
+        $system = \core\output\icon_system::instance();
+        return $system->render_pix_icon($this, $icon);
     }
 
     /**
@@ -2058,9 +2092,8 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_pix_emoticon(pix_emoticon $emoticon) {
-        $attributes = $emoticon->attributes;
-        $attributes['src'] = $this->pix_url($emoticon->pix, $emoticon->component);
-        return html_writer::empty_tag('img', $attributes);
+        $system = \core\output\icon_system::instance(\core\output\icon_system::STANDARD);
+        return $system->render_pix_icon($this, $emoticon);
     }
 
     /**
@@ -2900,6 +2933,32 @@ EOD;
         }
 
         return html_writer::tag('div', $output, array('class' => 'paging'));
+    }
+
+    /**
+     * Returns HTML to display initials bar to provide access to other pages  (usually in a search)
+     *
+     * @param string $current the currently selected letter.
+     * @param string $class class name to add to this initial bar.
+     * @param string $title the name to put in front of this initial bar.
+     * @param string $urlvar URL parameter name for this initial.
+     * @param string $url URL object.
+     * @param array $alpha of letters in the alphabet.
+     * @return string the HTML to output.
+     */
+    public function initials_bar($current, $class, $title, $urlvar, $url, $alpha = null) {
+        $ib = new initials_bar($current, $class, $title, $urlvar, $url, $alpha);
+        return $this->render($ib);
+    }
+
+    /**
+     * Internal implementation of initials bar rendering.
+     *
+     * @param initials_bar $initialsbar
+     * @return string
+     */
+    protected function render_initials_bar(initials_bar $initialsbar) {
+        return $this->render_from_template('core/initials_bar', $initialsbar->export_for_template($this));
     }
 
     /**
@@ -3937,7 +3996,7 @@ EOD;
      * @return string The favicon URL
      */
     public function favicon() {
-        return $this->pix_url('favicon', 'theme');
+        return $this->image_url('favicon', 'theme');
     }
 
     /**
@@ -4235,7 +4294,7 @@ EOD;
         $context->cookieshelpiconformatted = $this->help_icon('cookiesenabled');
         $context->errorformatted = $this->error_text($context->error);
 
-        return $this->render_from_template('core/login', $context);
+        return $this->render_from_template('core/loginform', $context);
     }
 
     /**

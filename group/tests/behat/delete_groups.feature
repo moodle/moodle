@@ -15,7 +15,7 @@ Feature: Automatic deletion of groups and groupings
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:
@@ -64,7 +64,7 @@ Feature: Automatic deletion of groups and groupings
      | moodle/course:changeidnumber | Prevent |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration
     When I set the field "groups" to "Group (with ID) (0)"
     Then the "Delete selected group" "button" should be disabled

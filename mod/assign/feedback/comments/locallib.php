@@ -200,7 +200,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
         global $DB;
         $feedbackcomment = $this->get_feedback_comments($grade->id);
         $quickgradecomments = optional_param('quickgrade_comments_' . $userid, null, PARAM_RAW);
-        if (!$quickgradecomments) {
+        if (!$quickgradecomments && $quickgradecomments !== '') {
             return true;
         }
         if ($feedbackcomment) {

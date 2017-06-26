@@ -18,8 +18,7 @@ Feature: In an assignment, students can upload files for assessment
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
@@ -28,7 +27,7 @@ Feature: In an assignment, students can upload files for assessment
       | Maximum number of uploaded files | 2 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I press "Add submission"
     And I upload "lib/tests/fixtures/empty.txt" file to "File submissions" filemanager

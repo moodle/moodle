@@ -128,4 +128,15 @@ class message_output_popup extends message_output {
             $DB->update_record('message_popup', $record);
         }
     }
+
+    /**
+     * Determines if this processor should process a message regardless of user preferences or site settings.
+     *
+     * @return bool
+     */
+    public function force_process_messages() {
+        global $CFG;
+
+        return !empty($CFG->messaging);
+    }
 }

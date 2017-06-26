@@ -155,6 +155,7 @@ $string['submissionmodifiedgroup'] = 'The submission has been modified by somebo
 $string['duedatereached'] = 'The due date for this assignment has now passed';
 $string['duedatevalidation'] = 'Due date must be after the allow submissions from date.';
 $string['editattemptfeedback'] = 'Edit the grade and feedback for attempt number {$a}.';
+$string['editonline'] = 'Edit online';
 $string['editingpreviousfeedbackwarning'] = 'You are editing the feedback for a previous attempt. This is attempt {$a->attemptnumber} out of {$a->totalattempts}.';
 $string['editoverride'] = 'Edit override';
 $string['editsubmission'] = 'Edit submission';
@@ -249,6 +250,8 @@ $string['gradeoutofhelp_help'] = 'Enter the grade for the student\'s submission 
 $string['gradestudent'] = 'Grade student: (id={$a->id}, fullname={$a->fullname}). ';
 $string['grading'] = 'Grading';
 $string['gradingchangessaved'] = 'The grade changes were saved';
+$string['gradingduedate'] = 'Remind me to grade by';
+$string['gradingduedate_help'] = 'The expected date that marking of the submissions should be completed by. This date is used to prioritise dashboard notifications for teachers.';
 $string['gradechangessaveddetail'] = 'The changes to the grade and feedback were saved';
 $string['gradingmethodpreview'] = 'Grading criteria';
 $string['gradingoptions'] = 'Options';

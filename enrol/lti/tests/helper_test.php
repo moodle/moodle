@@ -260,7 +260,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
 
         $id = $tool1->id;
         $launchurl = \enrol_lti\helper::get_launch_url($id);
-        $this->assertEquals('http://www.example.com/moodle/enrol/lti/tool.php?id=' . $id, $launchurl->out());
+        $this->assertEquals('https://www.example.com/moodle/enrol/lti/tool.php?id=' . $id, $launchurl->out());
     }
 
     /**
@@ -281,13 +281,13 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $id = $tool1->id;
         $token = \enrol_lti\helper::generate_cartridge_token($id);
         $launchurl = \enrol_lti\helper::get_cartridge_url($tool1);
-        $this->assertEquals('http://www.example.com/moodle/enrol/lti/cartridge.php?id=' . $id . '&amp;token=' . $token,
+        $this->assertEquals('https://www.example.com/moodle/enrol/lti/cartridge.php?id=' . $id . '&amp;token=' . $token,
                             $launchurl->out());
 
         $CFG->slasharguments = true;
 
         $launchurl = \enrol_lti\helper::get_cartridge_url($tool1);
-        $this->assertEquals('http://www.example.com/moodle/enrol/lti/cartridge.php/' . $id . '/' . $token . '/cartridge.xml',
+        $this->assertEquals('https://www.example.com/moodle/enrol/lti/cartridge.php/' . $id . '/' . $token . '/cartridge.xml',
                             $launchurl->out());
 
         $CFG->slasharguments = $slasharguments;
@@ -311,13 +311,13 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $id = $tool1->id;
         $token = \enrol_lti\helper::generate_proxy_token($id);
         $launchurl = \enrol_lti\helper::get_proxy_url($tool1);
-        $this->assertEquals('http://www.example.com/moodle/enrol/lti/proxy.php?id=' . $id . '&amp;token=' . $token,
+        $this->assertEquals('https://www.example.com/moodle/enrol/lti/proxy.php?id=' . $id . '&amp;token=' . $token,
                             $launchurl->out());
 
         $CFG->slasharguments = true;
 
         $launchurl = \enrol_lti\helper::get_proxy_url($tool1);
-        $this->assertEquals('http://www.example.com/moodle/enrol/lti/proxy.php/' . $id . '/' . $token . '/',
+        $this->assertEquals('https://www.example.com/moodle/enrol/lti/proxy.php/' . $id . '/' . $token . '/',
                             $launchurl->out());
 
         $CFG->slasharguments = $slasharguments;

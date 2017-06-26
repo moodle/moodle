@@ -25,22 +25,21 @@ Feature: The activity results block displays students high scores in group as sc
       | student4 | C1 | student |
       | student5 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Scales" in the course gradebook
     And I press "Add a new scale"
     And I set the following fields to these values:
       | Name | My Scale |
       | Scale | Disappointing, Not good enough, Average, Good, Very good, Excellent! |
     And I press "Save changes"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
       | id_grade_modgrade_type | Scale |
       | id_grade_modgrade_scale | My Scale |
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "Excellent!" to the user "Student 1" for the grade item "Test assignment"
@@ -49,7 +48,7 @@ Feature: The activity results block displays students high scores in group as sc
     And I give the grade "Average" to the user "Student 4" for the grade item "Test assignment"
     And I give the grade "Not good enough" to the user "Student 5" for the grade item "Test assignment"
     And I press "Save changes"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   Scenario: Configure the block on the course page to show 1 high score
     Given I add the "Activity results" block

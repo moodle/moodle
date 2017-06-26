@@ -200,7 +200,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
             this.unreadCount = count;
             this.renderUnreadCount();
             this.updateButtonAriaLabel();
-        }.bind(this));
+        }.bind(this)).catch(DebugNotification.exception);
     };
 
     /**
@@ -226,39 +226,27 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
      */
     NotificationPopoverController.prototype.renderNotifications = function(notifications, container) {
         var promises = [];
-        var allhtml = [];
-        var alljs = [];
 
-        if (notifications.length) {
-            $.each(notifications, function(index, notification) {
-                // Determine what the offset was when loading this notification.
-                var offset = this.getOffset() - this.limit;
-                // Update the view more url to contain the offset to allow the notifications
-                // page to load to the correct position in the list of notifications.
-                notification.viewmoreurl = URL.relativeUrl('/message/output/popup/notifications.php', {
-                    notificationid: notification.id,
-                    offset: offset,
-                });
+        $.each(notifications, function(index, notification) {
+            // Determine what the offset was when loading this notification.
+            var offset = this.getOffset() - this.limit;
+            // Update the view more url to contain the offset to allow the notifications
+            // page to load to the correct position in the list of notifications.
+            notification.viewmoreurl = URL.relativeUrl('/message/output/popup/notifications.php', {
+                notificationid: notification.id,
+                offset: offset,
+            });
 
-                var promise = Templates.render('message_popup/notification_content_item', notification);
-                promises.push(promise);
+            var promise = Templates.render('message_popup/notification_content_item', notification)
+            .then(function(html, js) {
+                container.append(html);
+                Templates.runTemplateJS(js);
+                return;
+            });
+            promises.push(promise);
+        }.bind(this));
 
-                promise.then(function(html, js) {
-                    allhtml[index] = html;
-                    alljs[index] = js;
-                })
-                .fail(DebugNotification.exception);
-            }.bind(this));
-        }
-
-        return $.when.apply($.when, promises).then(function() {
-            if (notifications.length) {
-                $.each(notifications, function(index) {
-                    container.append(allhtml[index]);
-                    Templates.runTemplateJS(alljs[index]);
-                });
-            }
-        });
+        return $.when.apply($, promises);
     };
 
     /**

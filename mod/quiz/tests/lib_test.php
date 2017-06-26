@@ -489,12 +489,251 @@ class mod_quiz_lib_testcase extends advanced_testcase {
 
         $openpriorities = $priorities['open'];
         // Override 2's time open has higher priority since it is sooner than override 1's.
-        $this->assertEquals(1, $openpriorities[$override1->timeopen]);
-        $this->assertEquals(2, $openpriorities[$override2->timeopen]);
+        $this->assertEquals(2, $openpriorities[$override1->timeopen]);
+        $this->assertEquals(1, $openpriorities[$override2->timeopen]);
 
         $closepriorities = $priorities['close'];
         // Override 1's time close has higher priority since it is later than override 2's.
-        $this->assertEquals(2, $closepriorities[$override1->timeclose]);
-        $this->assertEquals(1, $closepriorities[$override2->timeclose]);
+        $this->assertEquals(1, $closepriorities[$override1->timeclose]);
+        $this->assertEquals(2, $closepriorities[$override2->timeclose]);
+    }
+
+    public function test_quiz_core_calendar_provide_event_action_open() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a quiz.
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id,
+            'timeopen' => time() - DAYSECS, 'timeclose' => time() + DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $quiz->id, QUIZ_EVENT_TYPE_OPEN);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_quiz_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('attemptquiznow', 'quiz'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_quiz_core_calendar_provide_event_action_closed() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a quiz.
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id,
+            'timeclose' => time() - DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $quiz->id, QUIZ_EVENT_TYPE_CLOSE);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Confirm the result was null.
+        $this->assertNull(mod_quiz_core_calendar_provide_event_action($event, $factory));
+    }
+
+    public function test_quiz_core_calendar_provide_event_action_open_in_future() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a quiz.
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id,
+            'timeopen' => time() + DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $quiz->id, QUIZ_EVENT_TYPE_CLOSE);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_quiz_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('attemptquiznow', 'quiz'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertFalse($actionevent->is_actionable());
+    }
+
+    public function test_quiz_core_calendar_provide_event_action_no_capability() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        // Enrol student.
+        $this->assertTrue($this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id));
+
+        // Create a quiz.
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+
+        // Remove the permission to attempt or review the quiz for the student role.
+        $coursecontext = context_course::instance($course->id);
+        assign_capability('mod/quiz:reviewmyattempts', CAP_PROHIBIT, $studentrole->id, $coursecontext);
+        assign_capability('mod/quiz:attempt', CAP_PROHIBIT, $studentrole->id, $coursecontext);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $quiz->id, QUIZ_EVENT_TYPE_OPEN);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Set current user to the student.
+        $this->setUser($student);
+
+        // Confirm null is returned.
+        $this->assertNull(mod_quiz_core_calendar_provide_event_action($event, $factory));
+    }
+
+    public function test_quiz_core_calendar_provide_event_action_already_finished() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        // Enrol student.
+        $this->assertTrue($this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id));
+
+        // Create a quiz.
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id,
+            'sumgrades' => 1));
+
+        // Add a question to the quiz.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        // Get the quiz object.
+        $quizobj = quiz::create($quiz->id, $student->id);
+
+        // Create an attempt for the student in the quiz.
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $student->id);
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        // Finish the attempt.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_finish($timenow, false);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $quiz->id, QUIZ_EVENT_TYPE_OPEN);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Set current user to the student.
+        $this->setUser($student);
+
+        // Confirm null is returned.
+        $this->assertNull(mod_quiz_core_calendar_provide_event_action($event, $factory));
+    }
+
+    /**
+     * Creates an action event.
+     *
+     * @param int $courseid
+     * @param int $instanceid The quiz id.
+     * @param string $eventtype The event type. eg. QUIZ_EVENT_TYPE_OPEN.
+     * @return bool|calendar_event
+     */
+    private function create_action_event($courseid, $instanceid, $eventtype) {
+        $event = new stdClass();
+        $event->name = 'Calendar event';
+        $event->modulename  = 'quiz';
+        $event->courseid = $courseid;
+        $event->instance = $instanceid;
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->eventtype = $eventtype;
+        $event->timestart = time();
+
+        return calendar_event::create($event);
+    }
+
+    /**
+     * Test the callback responsible for returning the completion rule descriptions.
+     * This function should work given either an instance of the module (cm_info), such as when checking the active rules,
+     * or if passed a stdClass of similar structure, such as when checking the the default completion settings for a mod type.
+     */
+    public function test_mod_quiz_completion_get_active_rule_descriptions() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Two activities, both with automatic completion. One has the 'completionsubmit' rule, one doesn't.
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 2]);
+        $quiz1 = $this->getDataGenerator()->create_module('quiz', [
+            'course' => $course->id,
+            'completion' => 2,
+            'completionattemptsexhausted' => 1,
+            'completionpass' => 1
+        ]);
+        $quiz2 = $this->getDataGenerator()->create_module('quiz', [
+            'course' => $course->id,
+            'completion' => 2,
+            'completionattemptsexhausted' => 0,
+            'completionpass' => 0
+        ]);
+        $cm1 = cm_info::create(get_coursemodule_from_instance('quiz', $quiz1->id));
+        $cm2 = cm_info::create(get_coursemodule_from_instance('quiz', $quiz2->id));
+
+        // Data for the stdClass input type.
+        // This type of input would occur when checking the default completion rules for an activity type, where we don't have
+        // any access to cm_info, rather the input is a stdClass containing completion and customdata attributes, just like cm_info.
+        $moddefaults = new stdClass();
+        $moddefaults->customdata = ['customcompletionrules' => [
+            'completionattemptsexhausted' => 1,
+            'completionpass' => 1
+        ]];
+        $moddefaults->completion = 2;
+
+        $activeruledescriptions = [
+            get_string('completionattemptsexhausteddesc', 'quiz'),
+            get_string('completionpassdesc', 'quiz'),
+        ];
+        $this->assertEquals(mod_quiz_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
+        $this->assertEquals(mod_quiz_get_completion_active_rule_descriptions($cm2), []);
+        $this->assertEquals(mod_quiz_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
+        $this->assertEquals(mod_quiz_get_completion_active_rule_descriptions(new stdClass()), []);
     }
 }

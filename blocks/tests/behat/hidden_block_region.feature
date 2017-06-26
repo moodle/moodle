@@ -12,8 +12,7 @@ Feature: Show hidden blocks in a docked block region when editing
       | user | course | role |
       | admin | C1 | editingteacher |
     And I log in as "admin"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Search forums" block
     And I add the "Latest announcements" block
     And I add the "Upcoming events" block

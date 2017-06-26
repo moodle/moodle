@@ -79,13 +79,16 @@ class block_calendar_month extends block_base {
         list($courses, $group, $user) = calendar_set_filters($filtercourse);
         if ($issite) {
             // For the front page.
-            $this->content->text .= calendar_get_mini($courses, $group, $user, false, false, 'frontpage', $courseid, $time);
+            $this->content->text .= calendar_get_mini($courses, $group, $user, false, false,
+                'frontpage', $courseid, $time);
             // No filters for now.
         } else {
             // For any other course.
-            $this->content->text .= calendar_get_mini($courses, $group, $user, false, false, 'course', $courseid, $time);
+            $this->content->text .= calendar_get_mini($courses, $group, $user, false, false,
+                'course', $courseid, $time);
             $this->content->text .= '<h3 class="eventskey">'.get_string('eventskey', 'calendar').'</h3>';
-            $this->content->text .= '<div class="filters calendar_filters">'.calendar_filter_controls($this->page->url).'</div>';
+            $this->content->text .= '<div class="filters calendar_filters">' .
+                calendar_filter_controls($this->page->url) . '</div>';
         }
 
         return $this->content;

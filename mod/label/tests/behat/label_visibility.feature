@@ -19,17 +19,16 @@ Feature: Check label visibility works
       | teacher | C1 | editingteacher |
       | student | C1 | student |
     Given I log in as "teacher"
-    And I follow "Test"
-    And I turn editing mode on
+    And I am on "Test" course homepage with editing mode on
     When I add a "label" to section "1" and I fill the form with:
       | Label text | Swanky label |
-      | Visible | Hide |
+      | Availability | Hide from students |
     Then "Swanky label" activity should be hidden
     And I turn editing mode off
     And "Swanky label" activity should be hidden
     And I log out
     And I log in as "student"
-    And I follow "Test"
+    And I am on "Test" course homepage
     And I should not see "Swanky label"
     And I log out
 
@@ -47,15 +46,14 @@ Feature: Check label visibility works
       | teacher | C1 | editingteacher |
       | student | C1 | student |
     Given I log in as "teacher"
-    And I follow "Test"
-    And I turn editing mode on
+    And I am on "Test" course homepage with editing mode on
     When I add a "label" to section "1" and I fill the form with:
       | Label text | Swanky label |
-      | Visible | Show |
+      | Availability | Show on course page |
     Then "Swanky label" activity should be visible
     And I log out
     And I log in as "student"
-    And I follow "Test"
+    And I am on "Test" course homepage
     And "Swanky label" activity should be visible
     And I log out
 
@@ -73,11 +71,10 @@ Feature: Check label visibility works
       | teacher | C1 | editingteacher |
       | student | C1 | student |
     Given I log in as "teacher"
-    And I follow "Test"
-    And I turn editing mode on
+    And I am on "Test" course homepage with editing mode on
     When I add a "label" to section "1" and I fill the form with:
       | Label text | Swanky label |
-      | Visible | Show |
+      | Availability | Show on course page |
     And I hide section "1"
     Then "Swanky label" activity should be dimmed
     And I open "Swanky label" actions menu
@@ -87,12 +84,11 @@ Feature: Check label visibility works
     And "Swanky label" actions menu should not have "Make unavailable" item
     And I click on "Edit settings" "link" in the "Swanky label" activity
     And I expand all fieldsets
-    And the "Visible" select box should contain "Hidden from students"
-    And the "Visible" select box should not contain "Available but not displayed on course page"
-    And the "Visible" select box should not contain "Hide"
-    And the "Visible" select box should not contain "Show"
+    And the "Availability" select box should contain "Hide from students"
+    And the "Availability" select box should not contain "Make available but not shown on course page"
+    And the "Availability" select box should not contain "Show on course page"
     And I log out
     And I log in as "student"
-    And I follow "Test"
+    And I am on "Test" course homepage
     And I should not see "Swanky label"
     And I log out

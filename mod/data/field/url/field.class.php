@@ -69,8 +69,7 @@ class data_field_url extends data_field_base {
 
         $label = '<label for="' . $fieldid . '"><span class="accesshide">' . $this->field->name . '</span>';
         if ($this->field->required) {
-            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
-                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $image = $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
             if ($autolinkable) {
                 $label .= html_writer::div(get_string('requiredelement', 'form'), 'accesshide');
             } else {
@@ -121,8 +120,12 @@ class data_field_url extends data_field_base {
                ' name="f_' . $this->field->id . '" value="' . s($value) . '" class="form-control d-inline"/>';
     }
 
-    function parse_search_field() {
-        return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
+    public function parse_search_field($defaults = null) {
+        $param = 'f_'.$this->field->id;
+        if (empty($defaults[$param])) {
+            $defaults = array($param => '');
+        }
+        return optional_param($param, $defaults[$param], PARAM_NOTAGS);
     }
 
     function generate_sql($tablealias, $value) {
@@ -225,4 +228,18 @@ class data_field_url extends data_field_base {
         return $record->content . " " . $record->content1;
     }
 
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of config parameters
+     * @since Moodle 3.3
+     */
+    public function get_config_for_external() {
+        // Return all the config parameters.
+        $configs = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $configs["param$i"] = $this->field->{"param$i"};
+        }
+        return $configs;
+    }
 }

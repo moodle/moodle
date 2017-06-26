@@ -200,7 +200,7 @@ M.core_comment = {
                         list[i].content = '<div class="comment-delete">' +
                             '<a href="#" role="button" id ="comment-delete-' + this.client_id + '-' + list[i].id + '"' +
                             '   title="' + deleteStr + '">' +
-                            '<img alt="' + deleteStr + '" src="' + M.util.image_url('t/delete', 'core') + '" />' +
+                            '<span></span>' +
                             '</a>' +
                             '</div>' + list[i].content;
                     }
@@ -332,6 +332,13 @@ M.core_comment = {
                             }
                         }, '13,32');
                         // 13 and 32 are the keycodes for space and enter.
+
+                        require(['core/templates', 'core/notification'], function(Templates, Notification) {
+                            var title = node.getAttribute('title');
+                            Templates.renderPix('t/delete', 'core', title).then(function(html) {
+                                node.set('innerHTML', html);
+                            }).catch(Notification.exception);
+                        });
                     }
                 );
             },
@@ -380,7 +387,9 @@ M.core_comment = {
                     } else {
                         collapsedimage = 't/collapsed';
                     }
-                    img.set('src', M.util.image_url(collapsedimage, 'core'));
+                    if (img) {
+                        img.set('src', M.util.image_url(collapsedimage, 'core'));
+                    }
                     if (ta) {
                         ta.set('value','');
                     }

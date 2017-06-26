@@ -751,92 +751,25 @@ function mygroupid($courseid) {
     throw new coding_exception('mygroupid() can not be used any more, please use groups_get_all_groups() instead.');
 }
 
-
 /**
- * Returns the current group mode for a given course or activity module
- *
- * Could be false, SEPARATEGROUPS or VISIBLEGROUPS    (<-- Martin)
- *
  * @deprecated since Moodle 2.0 MDL-14617 - please do not use this function any more.
- * @todo MDL-50273 This will be deleted in Moodle 3.2.
- *
- * @param object $course Course Object
- * @param object $cm Course Manager Object
- * @return mixed $course->groupmode
  */
 function groupmode($course, $cm=null) {
-
-    debugging('groupmode() is deprecated, please use groups_get_* instead', DEBUG_DEVELOPER);
-    if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
-        return $cm->groupmode;
-    }
-    return $course->groupmode;
+    throw new coding_exception('groupmode() can not be used any more, please use groups_get_* instead.');
 }
 
 /**
- * Sets the current group in the session variable
- * When $SESSION->currentgroup[$courseid] is set to 0 it means, show all groups.
- * Sets currentgroup[$courseid] in the session variable appropriately.
- * Does not do any permission checking.
- *
  * @deprecated Since year 2006 - please do not use this function any more.
- * @todo MDL-50273 This will be deleted in Moodle 3.2.
- *
- * @global object
- * @global object
- * @param int $courseid The course being examined - relates to id field in
- * 'course' table.
- * @param int $groupid The group being examined.
- * @return int Current group id which was set by this function
  */
 function set_current_group($courseid, $groupid) {
-    global $SESSION;
-
-    debugging('set_current_group() is deprecated, please use $SESSION->currentgroup[$courseid] instead', DEBUG_DEVELOPER);
-    return $SESSION->currentgroup[$courseid] = $groupid;
+    throw new coding_exception('set_current_group() can not be used anymore, please use $SESSION->currentgroup[$courseid] instead');
 }
 
 /**
- * Gets the current group - either from the session variable or from the database.
- *
  * @deprecated Since year 2006 - please do not use this function any more.
- * @todo MDL-50273 This will be deleted in Moodle 3.2.
- *
- * @global object
- * @param int $courseid The course being examined - relates to id field in
- * 'course' table.
- * @param bool $full If true, the return value is a full record object.
- * If false, just the id of the record.
- * @return int|bool
  */
 function get_current_group($courseid, $full = false) {
-    global $SESSION;
-
-    debugging('get_current_group() is deprecated, please use groups_get_* instead', DEBUG_DEVELOPER);
-    if (isset($SESSION->currentgroup[$courseid])) {
-        if ($full) {
-            return groups_get_group($SESSION->currentgroup[$courseid]);
-        } else {
-            return $SESSION->currentgroup[$courseid];
-        }
-    }
-
-    $mygroupid = mygroupid($courseid);
-    if (is_array($mygroupid)) {
-        $mygroupid = array_shift($mygroupid);
-        set_current_group($courseid, $mygroupid);
-        if ($full) {
-            return groups_get_group($mygroupid);
-        } else {
-            return $mygroupid;
-        }
-    }
-
-    if ($full) {
-        return false;
-    } else {
-        return 0;
-    }
+    throw new coding_exception('get_current_group() can not be used any more, please use groups_get_* instead');
 }
 
 /**
@@ -1077,7 +1010,7 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
         $strsort  = get_string('sort' . $sortdir, 'grades');
     }
 
-    $return = ' <img src="'.$OUTPUT->pix_url('t/' . $direction) . '" alt="'.$strsort.'" /> ';
+    $return = ' ' . $OUTPUT->pix_icon('t/' . $direction, $strsort) . ' ';
 
     if ($return) {
         return $return;
@@ -2219,347 +2152,87 @@ function get_timezone_record($timezonename) {
 
 /* === Apis deprecated since Moodle 3.0 === */
 /**
- * Returns the URL of the HTTP_REFERER, less the querystring portion if required.
- *
  * @deprecated since Moodle 3.0 MDL-49360 - please do not use this function any more.
- * @todo MDL-50265 Remove this function in Moodle 3.4.
- * @param boolean $stripquery if true, also removes the query part of the url.
- * @return string The resulting referer or empty string.
  */
 function get_referer($stripquery = true) {
-    debugging('get_referer() is deprecated. Please use get_local_referer() instead.', DEBUG_DEVELOPER);
-    if (isset($_SERVER['HTTP_REFERER'])) {
-        if ($stripquery) {
-            return strip_querystring($_SERVER['HTTP_REFERER']);
-        } else {
-            return $_SERVER['HTTP_REFERER'];
-        }
-    } else {
-        return '';
-    }
+    throw new coding_exception('get_referer() can not be used any more. Please use get_local_referer() instead.');
 }
 
 /**
- * Checks if current user is a web crawler.
- *
- * This list can not be made complete, this is not a security
- * restriction, we make the list only to help these sites
- * especially when automatic guest login is disabled.
- *
- * If admin needs security they should enable forcelogin
- * and disable guest access!!
- *
- * @return bool
  * @deprecated since Moodle 3.0 use \core_useragent::is_web_crawler instead.
  */
 function is_web_crawler() {
-    debugging('is_web_crawler() has been deprecated, please use core_useragent::is_web_crawler() instead.', DEBUG_DEVELOPER);
-    return core_useragent::is_web_crawler();
+    throw new coding_exception('is_web_crawler() can not be used any more. Please use core_useragent::is_web_crawler() instead.');
 }
 
 /**
- * Update user's course completion statuses
- *
- * First update all criteria completions, then aggregate all criteria completions
- * and update overall course completions.
- *
  * @deprecated since Moodle 3.0 MDL-50287 - please do not use this function any more.
- * @todo Remove this function in Moodle 3.2 MDL-51226.
  */
 function completion_cron() {
-    global $CFG;
-    require_once($CFG->dirroot.'/completion/cron.php');
-
-    debugging('completion_cron() is deprecated. Functionality has been moved to scheduled tasks.', DEBUG_DEVELOPER);
-    completion_cron_mark_started();
-
-    completion_cron_criteria();
-
-    completion_cron_completions();
+    throw new coding_exception('completion_cron() can not be used any more. Functionality has been moved to scheduled tasks.');
 }
 
 /**
- * Returns an ordered array of tags associated with visible courses
- * (boosted replacement of get_all_tags() allowing association with user and tagtype).
- *
  * @deprecated since 3.0
- * @package  core_tag
- * @category tag
- * @param    int      $courseid A course id. Passing 0 will return all distinct tags for all visible courses
- * @param    int      $userid   (optional) the user id, a default of 0 will return all users tags for the course
- * @param    string   $tagtype  (optional) The type of tag, empty string returns all types. Currently (Moodle 2.2) there are two
- *                              types of tags which are used within Moodle, they are 'official' and 'default'.
- * @param    int      $numtags  (optional) number of tags to display, default of 80 is set in the block, 0 returns all
- * @param    string   $unused   (optional) was selected sorting, moved to tag_print_cloud()
- * @return   array
  */
 function coursetag_get_tags($courseid, $userid=0, $tagtype='', $numtags=0, $unused = '') {
-    debugging('Function coursetag_get_tags() is deprecated. Userid is no longer used for tagging courses.', DEBUG_DEVELOPER);
-
-    global $CFG, $DB;
-
-    // get visible course ids
-    $courselist = array();
-    if ($courseid === 0) {
-        if ($courses = $DB->get_records_select('course', 'visible=1 AND category>0', null, '', 'id')) {
-            foreach ($courses as $key => $value) {
-                $courselist[] = $key;
-            }
-        }
-    }
-
-    // get tags from the db ordered by highest count first
-    $params = array();
-    $sql = "SELECT id as tkey, name, id, isstandard, rawname, f.timemodified, flag, count
-              FROM {tag} t,
-                 (SELECT tagid, MAX(timemodified) as timemodified, COUNT(id) as count
-                    FROM {tag_instance}
-                   WHERE itemtype = 'course' ";
-
-    if ($courseid > 0) {
-        $sql .= "    AND itemid = :courseid ";
-        $params['courseid'] = $courseid;
-    } else {
-        if (!empty($courselist)) {
-            list($usql, $uparams) = $DB->get_in_or_equal($courselist, SQL_PARAMS_NAMED);
-            $sql .= "AND itemid $usql ";
-            $params = $params + $uparams;
-        }
-    }
-
-    if ($userid > 0) {
-        $sql .= "    AND tiuserid = :userid ";
-        $params['userid'] = $userid;
-    }
-
-    $sql .= "   GROUP BY tagid) f
-             WHERE t.id = f.tagid ";
-    if ($tagtype != '') {
-        $sql .= "AND isstandard = :isstandard ";
-        $params['isstandard'] = ($tagtype === 'official') ? 1 : 0;
-    }
-    $sql .= "ORDER BY count DESC, name ASC";
-
-    // limit the number of tags for output
-    if ($numtags == 0) {
-        $tags = $DB->get_records_sql($sql, $params);
-    } else {
-        $tags = $DB->get_records_sql($sql, $params, 0, $numtags);
-    }
-
-    // prepare the return
-    $return = array();
-    if ($tags) {
-        // avoid print_tag_cloud()'s ksort upsetting ordering by setting the key here
-        foreach ($tags as $value) {
-            $return[] = $value;
-        }
-    }
-
-    return $return;
-
+    throw new coding_exception('Function coursetag_get_tags() can not be used any more. Userid is no longer used for tagging courses.');
 }
 
 /**
- * Returns an ordered array of tags
- * (replaces popular_tags_count() allowing sorting).
- *
  * @deprecated since 3.0
- * @package  core_tag
- * @category tag
- * @param    string $unused (optional) was selected sorting - moved to tag_print_cloud()
- * @param    int    $numtags (optional) number of tags to display, default of 20 is set in the block, 0 returns all
- * @return   array
  */
 function coursetag_get_all_tags($unused='', $numtags=0) {
-    debugging('Function coursetag_get_all_tag() is deprecated. Userid is no longer used for tagging courses.', DEBUG_DEVELOPER);
-
-    global $CFG, $DB;
-
-    // note that this selects all tags except for courses that are not visible
-    $sql = "SELECT id, name, isstandard, rawname, f.timemodified, flag, count
-        FROM {tag} t,
-        (SELECT tagid, MAX(timemodified) as timemodified, COUNT(id) as count
-            FROM {tag_instance} WHERE tagid NOT IN
-                (SELECT tagid FROM {tag_instance} ti, {course} c
-                WHERE c.visible = 0
-                AND ti.itemtype = 'course'
-                AND ti.itemid = c.id)
-        GROUP BY tagid) f
-        WHERE t.id = f.tagid
-        ORDER BY count DESC, name ASC";
-    if ($numtags == 0) {
-        $tags = $DB->get_records_sql($sql);
-    } else {
-        $tags = $DB->get_records_sql($sql, null, 0, $numtags);
-    }
-
-    $return = array();
-    if ($tags) {
-        foreach ($tags as $value) {
-            $return[] = $value;
-        }
-    }
-
-    return $return;
+    throw new coding_exception('Function coursetag_get_all_tag() can not be used any more. Userid is no longer used for tagging courses.');
 }
 
 /**
- * Returns javascript for use in tags block and supporting pages
- *
  * @deprecated since 3.0
- * @package  core_tag
- * @category tag
- * @return   null
  */
 function coursetag_get_jscript() {
-    debugging('Function coursetag_get_jscript() is deprecated and obsolete.', DEBUG_DEVELOPER);
-    return '';
+    throw new coding_exception('Function coursetag_get_jscript() can not be used any more and is obsolete.');
 }
 
 /**
- * Returns javascript to create the links in the tag block footer.
- *
  * @deprecated since 3.0
- * @package  core_tag
- * @category tag
- * @param    string   $elementid       the element to attach the footer to
- * @param    array    $coursetagslinks links arrays each consisting of 'title', 'onclick' and 'text' elements
- * @return   string   always returns a blank string
  */
 function coursetag_get_jscript_links($elementid, $coursetagslinks) {
-    debugging('Function coursetag_get_jscript_links() is deprecated and obsolete.', DEBUG_DEVELOPER);
-    return '';
+    throw new coding_exception('Function coursetag_get_jscript_links() can not be used any more and is obsolete.');
 }
 
 /**
- * Returns all tags created by a user for a course
- *
  * @deprecated since 3.0
- * @package  core_tag
- * @category tag
- * @param    int      $courseid tags are returned for the course that has this courseid
- * @param    int      $userid   return tags which were created by this user
  */
 function coursetag_get_records($courseid, $userid) {
-    debugging('Function coursetag_get_records() is deprecated. Userid is no longer used for tagging courses.', DEBUG_DEVELOPER);
-
-    global $CFG, $DB;
-
-    $sql = "SELECT t.id, name, rawname
-              FROM {tag} t, {tag_instance} ti
-             WHERE t.id = ti.tagid
-                 AND ti.tiuserid = :userid
-                 AND ti.itemid = :courseid
-          ORDER BY name ASC";
-
-    return $DB->get_records_sql($sql, array('userid'=>$userid, 'courseid'=>$courseid));
+    throw new coding_exception('Function coursetag_get_records() can not be used any more. Userid is no longer used for tagging courses.');
 }
 
 /**
- * Stores a tag for a course for a user
- *
  * @deprecated since 3.0
- * @package  core_tag
- * @category tag
- * @param    array  $tags     simple array of keywords to be stored
- * @param    int    $courseid the id of the course we wish to store a tag for
- * @param    int    $userid   the id of the user we wish to store a tag for
- * @param    string $tagtype  official or default only
- * @param    string $myurl    (optional) for logging creation of course tags
  */
 function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='official', $myurl='') {
-    debugging('Function coursetag_store_keywords() is deprecated. Userid is no longer used for tagging courses.', DEBUG_DEVELOPER);
-
-    global $CFG;
-
-    if (is_array($tags) and !empty($tags)) {
-        if ($tagtype === 'official') {
-            $tagcoll = core_tag_area::get_collection('core', 'course');
-            // We don't normally need to create tags, they are created automatically when added to items. but we do here because we want them to be official.
-            core_tag_tag::create_if_missing($tagcoll, $tags, true);
-        }
-        foreach ($tags as $tag) {
-            $tag = trim($tag);
-            if (strlen($tag) > 0) {
-                core_tag_tag::add_item_tag('core', 'course', $courseid, context_course::instance($courseid), $tag, $userid);
-            }
-        }
-    }
-
+    throw new coding_exception('Function coursetag_store_keywords() can not be used any more. Userid is no longer used for tagging courses.');
 }
 
 /**
- * Deletes a personal tag for a user for a course.
- *
  * @deprecated since 3.0
- * @package  core_tag
- * @category tag
- * @param    int      $tagid    the tag we wish to delete
- * @param    int      $userid   the user that the tag is associated with
- * @param    int      $courseid the course that the tag is associated with
  */
 function coursetag_delete_keyword($tagid, $userid, $courseid) {
-    debugging('Function coursetag_delete_keyword() is deprecated. Userid is no longer used for tagging courses.', DEBUG_DEVELOPER);
-
-    $tag = core_tag_tag::get($tagid);
-    core_tag_tag::remove_item_tag('core', 'course', $courseid, $tag->rawname, $userid);
+    throw new coding_exception('Function coursetag_delete_keyword() can not be used any more. Userid is no longer used for tagging courses.');
 }
 
 /**
- * Get courses tagged with a tag
- *
  * @deprecated since 3.0
- * @package  core_tag
- * @category tag
- * @param int $tagid
- * @return array of course objects
  */
 function coursetag_get_tagged_courses($tagid) {
-    debugging('Function coursetag_get_tagged_courses() is deprecated. Userid is no longer used for tagging courses.', DEBUG_DEVELOPER);
-
-    global $DB;
-
-    $courses = array();
-
-    $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
-
-    $sql = "SELECT c.*, $ctxselect
-            FROM {course} c
-            JOIN {tag_instance} t ON t.itemid = c.id
-            JOIN {context} ctx ON ctx.instanceid = c.id
-            WHERE t.tagid = :tagid AND
-            t.itemtype = 'course' AND
-            ctx.contextlevel = :contextlevel
-            ORDER BY c.sortorder ASC";
-    $params = array('tagid' => $tagid, 'contextlevel' => CONTEXT_COURSE);
-    $rs = $DB->get_recordset_sql($sql, $params);
-    foreach ($rs as $course) {
-        context_helper::preload_from_record($course);
-        if ($course->visible == 1 || has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
-            $courses[$course->id] = $course;
-        }
-    }
-    return $courses;
+    throw new coding_exception('Function coursetag_get_tagged_courses() can not be used any more. Userid is no longer used for tagging courses.');
 }
 
 /**
- * Course tagging function used only during the deletion of a course (called by lib/moodlelib.php) to clean up associated tags
- *
- * @package core_tag
  * @deprecated since 3.0
- * @param   int      $courseid     the course we wish to delete tag instances from
- * @param   bool     $showfeedback if we should output a notification of the delete to the end user
  */
 function coursetag_delete_course_tags($courseid, $showfeedback=false) {
-    debugging('Function coursetag_delete_course_tags() is deprecated. Use core_tag_tag::remove_all_item_tags().', DEBUG_DEVELOPER);
-
-    global $OUTPUT;
-    core_tag_tag::remove_all_item_tags('core', 'course', $courseid);
-
-    if ($showfeedback) {
-        echo $OUTPUT->notification(get_string('deletedcoursetags', 'tag'), 'notifysuccess');
-    }
+    throw new coding_exception('Function coursetag_delete_course_tags() is deprecated. Use core_tag_tag::remove_all_item_tags().');
 }
 
 /**
@@ -5043,7 +4716,7 @@ function message_contact_link($userid, $linktype='add', $return=false, $script=n
                 $iconpath = 't/addcontact';
         }
 
-        $img = '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$safealttext.'" />';
+        $img = $OUTPUT->pix_icon($iconpath, $safealttext);
     }
 
     $output = '<span class="'.$linktype.'contact">'.
@@ -5116,9 +4789,9 @@ function message_history_link($userid1, $userid2, $return=false, $keywords='', $
     }
 
     if ($linktext == 'icon') {  // Icon only
-        $fulllink = '<img src="'.$OUTPUT->pix_url('t/messages') . '" class="iconsmall" alt="'.$strmessagehistory.'" />';
+        $fulllink = $OUTPUT->pix_icon('t/messages', $strmessagehistory);
     } else if ($linktext == 'both') {  // Icon and standard name
-        $fulllink = '<img src="'.$OUTPUT->pix_url('t/messages') . '" class="iconsmall" alt="" />';
+        $fulllink = $OUTPUT->pix_icon('t/messages', '');
         $fulllink .= '&nbsp;'.$strmessagehistory;
     } else if ($linktext) {    // Custom name
         $fulllink = $linktext;
@@ -6457,14 +6130,14 @@ function message_get_recent_conversations($userorid, $limitfrom = 0, $limitto = 
              WHERE otheruser.deleted = 0 AND message.notification = 0
           ORDER BY message.timecreated DESC";
     $params = array(
-            'userid1' => $user->id,
-            'userid2' => $user->id,
-            'userid3' => $user->id,
-            'userid4' => $user->id,
-            'userid5' => $user->id,
-            'userid6' => $user->id,
-            'userid7' => $user->id
-        );
+        'userid1' => $user->id,
+        'userid2' => $user->id,
+        'userid3' => $user->id,
+        'userid4' => $user->id,
+        'userid5' => $user->id,
+        'userid6' => $user->id,
+        'userid7' => $user->id
+    );
     $read = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
 
     // We want to get the messages that have not been read. These are stored in the 'message' table. It is the
@@ -6525,4 +6198,188 @@ function message_get_recent_conversations($userorid, $limitfrom = 0, $limitto = 
     $conversations = array_reverse($conversations);
 
     return $conversations;
+}
+
+/**
+ * Display calendar preference button.
+ *
+ * @param stdClass $course course object
+ * @deprecated since Moodle 3.2
+ * @return string return preference button in html
+ */
+function calendar_preferences_button(stdClass $course) {
+    debugging('This should no longer be used, the calendar preferences are now linked to the user preferences page.');
+
+    global $OUTPUT;
+
+    // Guests have no preferences.
+    if (!isloggedin() || isguestuser()) {
+        return '';
+    }
+
+    return $OUTPUT->single_button(new moodle_url('/user/calendar.php'), get_string("preferences", "calendar"));
+}
+
+/**
+ * Return the name of the weekday
+ *
+ * @deprecated since 3.3
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
+ * @param string $englishname
+ * @return string of the weekeday
+ */
+function calendar_wday_name($englishname) {
+    debugging(__FUNCTION__ . '() is deprecated and no longer used in core.', DEBUG_DEVELOPER);
+    return get_string(strtolower($englishname), 'calendar');
+}
+
+/**
+ * Get the upcoming event block.
+ *
+ * @deprecated since 3.3
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
+ * @param array $events list of events
+ * @param moodle_url|string $linkhref link to event referer
+ * @param boolean $showcourselink whether links to courses should be shown
+ * @return string|null $content html block content
+ */
+function calendar_get_block_upcoming($events, $linkhref = null, $showcourselink = false) {
+    global $CFG;
+
+    debugging(__FUNCTION__ . '() is deprecated, please use block_calendar_upcoming::get_upcoming_content() instead.',
+        DEBUG_DEVELOPER);
+
+    require_once($CFG->dirroot . '/blocks/moodleblock.class.php');
+    require_once($CFG->dirroot . '/blocks/calendar_upcoming/block_calendar_upcoming.php');
+    return block_calendar_upcoming::get_upcoming_content($events, $linkhref, $showcourselink);
+}
+
+/**
+ * Display month selector options.
+ *
+ * @deprecated since 3.3
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
+ * @param string $name for the select element
+ * @param string|array $selected options for select elements
+ */
+function calendar_print_month_selector($name, $selected) {
+    debugging(__FUNCTION__ . '() is deprecated and no longer used in core.', DEBUG_DEVELOPER);
+    $months = array();
+    for ($i = 1; $i <= 12; $i++) {
+        $months[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), '%B');
+    }
+    echo html_writer::label(get_string('months'), 'menu'. $name, false, array('class' => 'accesshide'));
+    echo html_writer::select($months, $name, $selected, false);
+}
+
+/**
+ * Update calendar subscriptions.
+ *
+ * @deprecated since 3.3
+ * @todo The final deprecation of this function will take place in Moodle 3.7 - see MDL-57617.
+ * @return bool
+ */
+function calendar_cron() {
+    debugging(__FUNCTION__ . '() is deprecated and should not be used. Please use the core\task\calendar_cron_task instead.',
+        DEBUG_DEVELOPER);
+
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/calendar/lib.php');
+    // In order to execute this we need bennu.
+    require_once($CFG->libdir.'/bennu/bennu.inc.php');
+
+    mtrace('Updating calendar subscriptions:');
+    cron_trace_time_and_memory();
+
+    $time = time();
+    $subscriptions = $DB->get_records_sql('SELECT * FROM {event_subscriptions} WHERE pollinterval > 0
+      AND lastupdated + pollinterval < ?', array($time));
+    foreach ($subscriptions as $sub) {
+        mtrace("Updating calendar subscription {$sub->name} in course {$sub->courseid}");
+        try {
+            $log = calendar_update_subscription_events($sub->id);
+            mtrace(trim(strip_tags($log)));
+        } catch (moodle_exception $ex) {
+            mtrace('Error updating calendar subscription: ' . $ex->getMessage());
+        }
+    }
+
+    mtrace('Finished updating calendar subscriptions.');
+
+    return true;
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ *
+ * @access private
+ * @deprecated since Moodle 3.4 and removed immediately. MDL-49398.
+ * @param int $userid the id of the user
+ * @param context_course $coursecontext course context
+ * @param array $accessdata accessdata array (modified)
+ * @return void modifies $accessdata parameter
+ */
+function load_course_context($userid, context_course $coursecontext, &$accessdata) {
+    throw new coding_exception('load_course_context() is removed. Do not use private functions or data structures.');
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ *
+ * @access private
+ * @deprecated since Moodle 3.4 and removed immediately. MDL-49398.
+ * @param int $roleid the id of the user
+ * @param context $context needs path!
+ * @param array $accessdata accessdata array (is modified)
+ * @return array
+ */
+function load_role_access_by_context($roleid, context $context, &$accessdata) {
+    throw new coding_exception('load_role_access_by_context() is removed. Do not use private functions or data structures.');
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ *
+ * @access private
+ * @deprecated since Moodle 3.4 and removed immediately. MDL-49398.
+ * @return void
+ */
+function dedupe_user_access() {
+    throw new coding_exception('dedupe_user_access() is removed. Do not use private functions or data structures.');
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ * Return a nested array showing role assignments
+ * and all relevant role capabilities for the user.
+ *
+ * [ra]   => [/path][roleid]=roleid
+ * [rdef] => ["$contextpath:$roleid"][capability]=permission
+ *
+ * @access private
+ * @deprecated since Moodle 3.4. MDL-49398.
+ * @param int $userid - the id of the user
+ * @return array access info array
+ */
+function get_user_access_sitewide($userid) {
+    debugging('get_user_access_sitewide() is deprecated. Do not use private functions or data structures.', DEBUG_DEVELOPER);
+
+    $accessdata = get_user_accessdata($userid);
+    $accessdata['rdef'] = array();
+    $roles = array();
+
+    foreach ($accessdata['ra'] as $path => $pathroles) {
+        $roles = array_merge($pathroles, $roles);
+    }
+
+    $rdefs = get_role_definitions($roles);
+
+    foreach ($rdefs as $roleid => $rdef) {
+        foreach ($rdef as $path => $caps) {
+            $accessdata['rdef']["$path:$roleid"] = $caps;
+        }
+    }
+
+    return $accessdata;
 }

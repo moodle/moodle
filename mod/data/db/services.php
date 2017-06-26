@@ -34,5 +34,85 @@ $functions = array(
         'type' => 'read',
         'capabilities' => 'mod/data:viewentry',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    )
+    ),
+    'mod_data_view_database' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'view_database',
+        'description'   => 'Simulate the view.php web interface data: trigger events, completion, etc...',
+        'type'          => 'write',
+        'capabilities'  => 'mod/data:viewentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_data_get_data_access_information' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'get_data_access_information',
+        'description'   => 'Return access information for a given database.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/data:viewentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_data_get_entries' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'get_entries',
+        'description'   => 'Return the complete list of entries of the given database.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/data:viewentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_data_get_entry' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'get_entry',
+        'description'   => 'Return one entry record from the database, including contents optionally.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/data:viewentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_data_get_fields' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'get_fields',
+        'description'   => 'Return the list of configured fields for the given database.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/data:viewentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_data_search_entries' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'search_entries',
+        'description'   => 'Search for entries in the given database.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/data:viewentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_data_approve_entry' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'approve_entry',
+        'description'   => 'Approves or unapproves an entry.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/data:approve',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_data_delete_entry' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'delete_entry',
+        'description'   => 'Deletes an entry.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/data:manageentries',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_data_add_entry' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'add_entry',
+        'description'   => 'Adds a new entry.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/data:writeentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_data_update_entry' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'update_entry',
+        'description'   => 'Updates an existing entry.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/data:writeentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

@@ -15,14 +15,14 @@ Feature: Change number of discussions displayed
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 10 |
       | Message | This is forum post ten |
     And I press "Post to forum"
     And I wait to be redirected
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
@@ -30,7 +30,7 @@ Feature: Change number of discussions displayed
       | Message | This is forum post nine |
     And I press "Post to forum"
     And I wait to be redirected
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
@@ -38,7 +38,7 @@ Feature: Change number of discussions displayed
       | Message | This is forum post eight |
     And I press "Post to forum"
     And I wait to be redirected
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
@@ -46,7 +46,7 @@ Feature: Change number of discussions displayed
       | Message | This is forum post seven |
     And I press "Post to forum"
     And I wait to be redirected
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
@@ -54,7 +54,7 @@ Feature: Change number of discussions displayed
       | Message | This is forum post six |
     And I press "Post to forum"
     And I wait to be redirected
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
@@ -62,7 +62,7 @@ Feature: Change number of discussions displayed
       | Message | This is forum post five |
     And I press "Post to forum"
     And I wait to be redirected
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
@@ -70,7 +70,7 @@ Feature: Change number of discussions displayed
       | Message | This is forum post four |
     And I press "Post to forum"
     And I wait to be redirected
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
@@ -78,7 +78,7 @@ Feature: Change number of discussions displayed
       | Message | This is forum post three |
     And I press "Post to forum"
     And I wait to be redirected
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
@@ -86,7 +86,7 @@ Feature: Change number of discussions displayed
       | Message | This is forum post two |
     And I press "Post to forum"
     And I wait to be redirected
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
@@ -94,7 +94,7 @@ Feature: Change number of discussions displayed
       | Message | This is forum post one |
     And I press "Post to forum"
     And I wait to be redirected
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   Scenario: When number of discussions is decreased fewer discussions appear
     Given I navigate to "Edit settings" in current page administration

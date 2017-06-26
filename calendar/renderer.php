@@ -64,7 +64,8 @@ class core_calendar_renderer extends plugin_renderer_base {
     public function fake_block_filters($courseid, $day, $month, $year, $view, $courses) {
         $returnurl = $this->page->url;
         $returnurl->param('course', $courseid);
-        return html_writer::tag('div', calendar_filter_controls($returnurl), array('class'=>'calendar_filters filters'));
+        return html_writer::tag('div', calendar_filter_controls($returnurl),
+            array('class' => 'calendar_filters filters'));
     }
 
     /**
@@ -92,13 +93,16 @@ class core_calendar_renderer extends plugin_renderer_base {
             $nextmonthtime['hour'], $nextmonthtime['minute']);
 
         $content  = html_writer::start_tag('div', array('class' => 'minicalendarblock'));
-        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users, false, false, 'display', $calendar->courseid, $prevmonthtime);
+        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users,
+            false, false, 'display', $calendar->courseid, $prevmonthtime);
         $content .= html_writer::end_tag('div');
         $content .= html_writer::start_tag('div', array('class' => 'minicalendarblock'));
-        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users, false, false, 'display', $calendar->courseid, $calendar->time);
+        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users,
+            false, false, 'display', $calendar->courseid, $calendar->time);
         $content .= html_writer::end_tag('div');
         $content .= html_writer::start_tag('div', array('class' => 'minicalendarblock'));
-        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users, false, false, 'display', $calendar->courseid, $nextmonthtime);
+        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users,
+            false, false, 'display', $calendar->courseid, $nextmonthtime);
         $content .= html_writer::end_tag('div');
         return $content;
     }
@@ -164,7 +168,8 @@ class core_calendar_renderer extends plugin_renderer_base {
             $returnurl = $this->page->url;
         }
 
-        $events = calendar_get_upcoming($calendar->courses, $calendar->groups, $calendar->users, 1, 100, $calendar->timestamp_today());
+        $events = calendar_get_upcoming($calendar->courses, $calendar->groups, $calendar->users,
+            1, 100, $calendar->timestamp_today());
 
         $output  = html_writer::start_tag('div', array('class'=>'header'));
         $output .= $this->course_filter_selector($returnurl, get_string('dayviewfor', 'calendar'));
@@ -173,7 +178,8 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
         $output .= html_writer::end_tag('div');
         // Controls
-        $output .= html_writer::tag('div', calendar_top_controls('day', array('id' => $calendar->courseid, 'time' => $calendar->time)), array('class'=>'controls'));
+        $output .= html_writer::tag('div', calendar_top_controls('day', array('id' => $calendar->courseid,
+            'time' => $calendar->time)), array('class' => 'controls'));
 
         if (empty($events)) {
             // There is nothing to display today.
@@ -186,7 +192,8 @@ class core_calendar_renderer extends plugin_renderer_base {
                 $event = new calendar_event($event);
                 $event->calendarcourseid = $calendar->courseid;
                 if ($event->timestart >= $calendar->timestamp_today() && $event->timestart <= $calendar->timestamp_tomorrow()-1) {  // Print it now
-                    $event->time = calendar_format_event_time($event, time(), null, false, $calendar->timestamp_today());
+                    $event->time = calendar_format_event_time($event, time(), null, false,
+                        $calendar->timestamp_today());
                     $output .= $this->event($event);
                 } else {                                                                 // Save this for later
                     $underway[] = $event;
@@ -198,7 +205,8 @@ class core_calendar_renderer extends plugin_renderer_base {
                 $output .= html_writer::span(get_string('spanningevents', 'calendar'),
                     'calendar-information calendar-span-multiple-days');
                 foreach ($underway as $event) {
-                    $event->time = calendar_format_event_time($event, time(), null, false, $calendar->timestamp_today());
+                    $event->time = calendar_format_event_time($event, time(), null, false,
+                        $calendar->timestamp_today());
                     $output .= $this->event($event);
                 }
             }
@@ -240,15 +248,13 @@ class core_calendar_renderer extends plugin_renderer_base {
 
             $commands  = html_writer::start_tag('div', array('class' => 'commands pull-xs-right'));
             $commands .= html_writer::start_tag('a', array('href' => $editlink));
-            $url = $this->output->pix_url('t/edit');
             $str = get_string('tt_editevent', 'calendar');
-            $commands .= html_writer::empty_tag('img', array('src' => $url, 'alt' => $str, 'title' => $str, 'class' => 'icon'));
+            $commands .= $this->output->pix_icon('t/edit', $str);
             $commands .= html_writer::end_tag('a');
             if ($deletelink != null) {
                 $commands .= html_writer::start_tag('a', array('href' => $deletelink));
-                $url = $this->output->pix_url('t/delete');
                 $str = get_string('tt_deleteevent', 'calendar');
-                $commands .= html_writer::empty_tag('img', array('src' => $url, 'alt' => $str, 'title' => $str, 'class' => 'icon'));
+                $commands .= $this->output->pix_icon('t/delete', $str);
                 $commands .= html_writer::end_tag('a');
             }
             $commands .= html_writer::end_tag('div');
@@ -279,14 +285,18 @@ class core_calendar_renderer extends plugin_renderer_base {
             }
             $output .= html_writer::tag('div', $source, array('class' => 'subscription'));
         }
+        if (!empty($event->courselink)) {
+            $output .= html_writer::tag('div', $event->courselink, array('class' => 'course'));
+        }
         if (!empty($event->time)) {
             $output .= html_writer::tag('span', $event->time, array('class' => 'date pull-xs-right m-r-1'));
         } else {
             $attrs = array('class' => 'date pull-xs-right m-r-1');
             $output .= html_writer::tag('span', calendar_time_representation($event->timestart), $attrs);
         }
-        if (!empty($event->courselink)) {
-            $output .= html_writer::tag('div', $event->courselink, array('class' => 'course'));
+
+        if (!empty($event->actionurl)) {
+            $output .= html_writer::tag('div', html_writer::link(new moodle_url($event->actionurl), $event->actionname));
         }
 
         $output .= $this->output->box_end();
@@ -365,13 +375,14 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
 
         // Get events from database
-        $events = calendar_get_events($display->tstart, $display->tend, $calendar->users, $calendar->groups, $calendar->courses);
+        $events = calendar_get_legacy_events($display->tstart, $display->tend, $calendar->users, $calendar->groups,
+            $calendar->courses);
         if (!empty($events)) {
             foreach($events as $eventid => $event) {
                 $event = new calendar_event($event);
                 if (!empty($event->modulename)) {
-                    $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
-                    if (!\core_availability\info_module::is_user_visible($cm, 0, false)) {
+                    $instances = get_fast_modinfo($event->courseid)->get_instances_of($event->modulename);
+                    if (empty($instances[$event->instance]->uservisible)) {
                         unset($events[$eventid]);
                     }
                 }
@@ -379,7 +390,8 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
 
         // Extract information: events vs. time
-        calendar_events_by_day($events, $date['mon'], $date['year'], $eventsbyday, $durationbyday, $typesbyday, $calendar->courses);
+        calendar_events_by_day($events, $date['mon'], $date['year'], $eventsbyday, $durationbyday,
+            $typesbyday, $calendar->courses);
 
         $output  = html_writer::start_tag('div', array('class'=>'header'));
         $output .= $this->course_filter_selector($returnurl, get_string('detailedmonthviewfor', 'calendar'));
@@ -388,7 +400,8 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
         $output .= html_writer::end_tag('div', array('class'=>'header'));
         // Controls
-        $output .= html_writer::tag('div', calendar_top_controls('month', array('id' => $calendar->courseid, 'time' => $calendar->time)), array('class' => 'controls'));
+        $output .= html_writer::tag('div', calendar_top_controls('month', array('id' => $calendar->courseid,
+            'time' => $calendar->time)), array('class' => 'controls'));
 
         $table = new html_table();
         $table->attributes = array('class'=>'calendarmonth calendartable');
@@ -434,7 +447,8 @@ class core_calendar_renderer extends plugin_renderer_base {
 
             // Reset vars
             $cell = new html_table_cell();
-            $dayhref = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', array('view' => 'day', 'course' => $calendar->courseid)), 0, 0, 0, $daytime);
+            $dayhref = calendar_get_link_href(new moodle_url(CALENDAR_URL . 'view.php',
+                array('view' => 'day', 'course' => $calendar->courseid)), 0, 0, 0, $daytime);
 
             $cellclasses = array();
 
@@ -529,7 +543,8 @@ class core_calendar_renderer extends plugin_renderer_base {
             $returnurl = $this->page->url;
         }
 
-        $events = calendar_get_upcoming($calendar->courses, $calendar->groups, $calendar->users, $futuredays, $maxevents);
+        $events = calendar_get_upcoming($calendar->courses, $calendar->groups, $calendar->users,
+            $futuredays, $maxevents);
 
         $output  = html_writer::start_tag('div', array('class'=>'header'));
         $output .= $this->course_filter_selector($returnurl, get_string('upcomingeventsfor', 'calendar'));
@@ -541,8 +556,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         if ($events) {
             $output .= html_writer::start_tag('div', array('class' => 'eventlist'));
             foreach ($events as $event) {
-                // Convert to calendar_event object so that we transform description
-                // accordingly
+                // Convert to calendar_event object so that we transform description accordingly.
                 $event = new calendar_event($event);
                 $event->calendarcourseid = $calendar->courseid;
                 $output .= $this->event($event);

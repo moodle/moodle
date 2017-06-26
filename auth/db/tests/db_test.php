@@ -44,65 +44,65 @@ class auth_db_testcase extends advanced_testcase {
 
         $dbman = $DB->get_manager();
 
-        set_config('extencoding', 'utf-8', 'auth/db');
+        set_config('extencoding', 'utf-8', 'auth_db');
 
-        set_config('host', $CFG->dbhost, 'auth/db');
-        set_config('user', $CFG->dbuser, 'auth/db');
-        set_config('pass', $CFG->dbpass, 'auth/db');
-        set_config('name', $CFG->dbname, 'auth/db');
+        set_config('host', $CFG->dbhost, 'auth_db');
+        set_config('user', $CFG->dbuser, 'auth_db');
+        set_config('pass', $CFG->dbpass, 'auth_db');
+        set_config('name', $CFG->dbname, 'auth_db');
 
         if (!empty($CFG->dboptions['dbport'])) {
-            set_config('host', $CFG->dbhost.':'.$CFG->dboptions['dbport'], 'auth/db');
+            set_config('host', $CFG->dbhost.':'.$CFG->dboptions['dbport'], 'auth_db');
         }
 
         switch ($DB->get_dbfamily()) {
 
             case 'mysql':
-                set_config('type', 'mysqli', 'auth/db');
-                set_config('setupsql', "SET NAMES 'UTF-8'", 'auth/db');
-                set_config('sybasequoting', '0', 'auth/db');
+                set_config('type', 'mysqli', 'auth_db');
+                set_config('setupsql', "SET NAMES 'UTF-8'", 'auth_db');
+                set_config('sybasequoting', '0', 'auth_db');
                 if (!empty($CFG->dboptions['dbsocket'])) {
                     $dbsocket = $CFG->dboptions['dbsocket'];
                     if ((strpos($dbsocket, '/') === false and strpos($dbsocket, '\\') === false)) {
                         $dbsocket = ini_get('mysqli.default_socket');
                     }
-                    set_config('type', 'mysqli://'.rawurlencode($CFG->dbuser).':'.rawurlencode($CFG->dbpass).'@'.rawurlencode($CFG->dbhost).'/'.rawurlencode($CFG->dbname).'?socket='.rawurlencode($dbsocket), 'auth/db');
+                    set_config('type', 'mysqli://'.rawurlencode($CFG->dbuser).':'.rawurlencode($CFG->dbpass).'@'.rawurlencode($CFG->dbhost).'/'.rawurlencode($CFG->dbname).'?socket='.rawurlencode($dbsocket), 'auth_db');
                 }
                 break;
 
             case 'oracle':
-                set_config('type', 'oci8po', 'auth/db');
-                set_config('sybasequoting', '1', 'auth/db');
+                set_config('type', 'oci8po', 'auth_db');
+                set_config('sybasequoting', '1', 'auth_db');
                 break;
 
             case 'postgres':
-                set_config('type', 'postgres7', 'auth/db');
+                set_config('type', 'postgres7', 'auth_db');
                 $setupsql = "SET NAMES 'UTF-8'";
                 if (!empty($CFG->dboptions['dbschema'])) {
                     $setupsql .= "; SET search_path = '".$CFG->dboptions['dbschema']."'";
                 }
-                set_config('setupsql', $setupsql, 'auth/db');
-                set_config('sybasequoting', '0', 'auth/db');
+                set_config('setupsql', $setupsql, 'auth_db');
+                set_config('sybasequoting', '0', 'auth_db');
                 if (!empty($CFG->dboptions['dbsocket']) and ($CFG->dbhost === 'localhost' or $CFG->dbhost === '127.0.0.1')) {
                     if (strpos($CFG->dboptions['dbsocket'], '/') !== false) {
                         $socket = $CFG->dboptions['dbsocket'];
                         if (!empty($CFG->dboptions['dbport'])) {
                             $socket .= ':' . $CFG->dboptions['dbport'];
                         }
-                        set_config('host', $socket, 'auth/db');
+                        set_config('host', $socket, 'auth_db');
                     } else {
-                        set_config('host', '', 'auth/db');
+                        set_config('host', '', 'auth_db');
                     }
                 }
                 break;
 
             case 'mssql':
                 if (get_class($DB) == 'mssql_native_moodle_database') {
-                    set_config('type', 'mssql_n', 'auth/db');
+                    set_config('type', 'mssql_n', 'auth_db');
                 } else {
-                    set_config('type', 'mssqlnative', 'auth/db');
+                    set_config('type', 'mssqlnative', 'auth_db');
                 }
-                set_config('sybasequoting', '1', 'auth/db');
+                set_config('sybasequoting', '1', 'auth_db');
                 break;
 
             default:
@@ -121,24 +121,24 @@ class auth_db_testcase extends advanced_testcase {
             $dbman->drop_table($table);
         }
         $dbman->create_table($table);
-        set_config('table', $CFG->prefix.'auth_db_users', 'auth/db');
-        set_config('fielduser', 'name', 'auth/db');
-        set_config('fieldpass', 'pass', 'auth/db');
-        set_config('field_map_lastname', 'lastname', 'auth/db');
-        set_config('field_updatelocal_lastname', 'oncreate', 'auth/db');
-        set_config('field_lock_lastname', 'unlocked', 'auth/db');
+        set_config('table', $CFG->prefix.'auth_db_users', 'auth_db');
+        set_config('fielduser', 'name', 'auth_db');
+        set_config('fieldpass', 'pass', 'auth_db');
+        set_config('field_map_lastname', 'lastname', 'auth_db');
+        set_config('field_updatelocal_lastname', 'oncreate', 'auth_db');
+        set_config('field_lock_lastname', 'unlocked', 'auth_db');
         // Setu up field mappings.
 
-        set_config('field_map_email', 'email', 'auth/db');
-        set_config('field_updatelocal_email', 'oncreate', 'auth/db');
-        set_config('field_updateremote_email', '0', 'auth/db');
-        set_config('field_lock_email', 'unlocked', 'auth/db');
+        set_config('field_map_email', 'email', 'auth_db');
+        set_config('field_updatelocal_email', 'oncreate', 'auth_db');
+        set_config('field_updateremote_email', '0', 'auth_db');
+        set_config('field_lock_email', 'unlocked', 'auth_db');
 
         // Init the rest of settings.
-        set_config('passtype', 'plaintext', 'auth/db');
-        set_config('changepasswordurl', '', 'auth/db');
-        set_config('debugauthdb', 0, 'auth/db');
-        set_config('removeuser', AUTH_REMOVEUSER_KEEP, 'auth/db');
+        set_config('passtype', 'plaintext', 'auth_db');
+        set_config('changepasswordurl', '', 'auth_db');
+        set_config('debugauthdb', 0, 'auth_db');
+        set_config('removeuser', AUTH_REMOVEUSER_KEEP, 'auth_db');
     }
 
     protected function cleanup_auth_database() {
@@ -226,7 +226,7 @@ class auth_db_testcase extends advanced_testcase {
         $u2 = $DB->get_record('user', array('username'=>$user2->name));
         $this->assertSame($user2->email, $u2->email);
 
-        set_config('field_updatelocal_email', 'onlogin', 'auth/db');
+        set_config('field_updatelocal_email', 'onlogin', 'auth_db');
         $auth->config->field_updatelocal_email = 'onlogin';
 
         $auth->sync_users($trace, false);
@@ -252,7 +252,7 @@ class auth_db_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('user', array('deleted'=>1)));
         $this->assertEquals(0, $DB->count_records('user', array('suspended'=>1)));
 
-        set_config('removeuser', AUTH_REMOVEUSER_SUSPEND, 'auth/db');
+        set_config('removeuser', AUTH_REMOVEUSER_SUSPEND, 'auth_db');
         $auth->config->removeuser = AUTH_REMOVEUSER_SUSPEND;
 
         $auth->sync_users($trace, false);
@@ -270,7 +270,7 @@ class auth_db_testcase extends advanced_testcase {
 
         $DB->delete_records('auth_db_users', array('id'=>$user2->id));
 
-        set_config('removeuser', AUTH_REMOVEUSER_FULLDELETE, 'auth/db');
+        set_config('removeuser', AUTH_REMOVEUSER_FULLDELETE, 'auth_db');
         $auth->config->removeuser = AUTH_REMOVEUSER_FULLDELETE;
 
         $auth->sync_users($trace, false);
@@ -299,25 +299,25 @@ class auth_db_testcase extends advanced_testcase {
         $this->assertTrue($auth->user_login('u3', 'heslo'));
         $this->assertFalse($DB->record_exists('user', array('username'=>'u3', 'auth'=>'db')));
 
-        set_config('passtype', 'md5', 'auth/db');
+        set_config('passtype', 'md5', 'auth_db');
         $auth->config->passtype = 'md5';
         $user3->pass = md5('heslo');
         $DB->update_record('auth_db_users', $user3);
         $this->assertTrue($auth->user_login('u3', 'heslo'));
 
-        set_config('passtype', 'sh1', 'auth/db');
+        set_config('passtype', 'sh1', 'auth_db');
         $auth->config->passtype = 'sha1';
         $user3->pass = sha1('heslo');
         $DB->update_record('auth_db_users', $user3);
         $this->assertTrue($auth->user_login('u3', 'heslo'));
 
-        set_config('passtype', 'saltedcrypt', 'auth/db');
+        set_config('passtype', 'saltedcrypt', 'auth_db');
         $auth->config->passtype = 'saltedcrypt';
         $user3->pass = password_hash('heslo', PASSWORD_BCRYPT);
         $DB->update_record('auth_db_users', $user3);
         $this->assertTrue($auth->user_login('u3', 'heslo'));
 
-        set_config('passtype', 'internal', 'auth/db');
+        set_config('passtype', 'internal', 'auth_db');
         $auth->config->passtype = 'internal';
         create_user_record('u3', 'heslo', 'db');
         $this->assertTrue($auth->user_login('u3', 'heslo'));
@@ -325,19 +325,19 @@ class auth_db_testcase extends advanced_testcase {
 
         $DB->delete_records('auth_db_users', array('id'=>$user3->id));
 
-        set_config('removeuser', AUTH_REMOVEUSER_KEEP, 'auth/db');
+        set_config('removeuser', AUTH_REMOVEUSER_KEEP, 'auth_db');
         $auth->config->removeuser = AUTH_REMOVEUSER_KEEP;
         $this->assertTrue($auth->user_login('u3', 'heslo'));
 
-        set_config('removeuser', AUTH_REMOVEUSER_SUSPEND, 'auth/db');
+        set_config('removeuser', AUTH_REMOVEUSER_SUSPEND, 'auth_db');
         $auth->config->removeuser = AUTH_REMOVEUSER_SUSPEND;
         $this->assertFalse($auth->user_login('u3', 'heslo'));
 
-        set_config('removeuser', AUTH_REMOVEUSER_FULLDELETE, 'auth/db');
+        set_config('removeuser', AUTH_REMOVEUSER_FULLDELETE, 'auth_db');
         $auth->config->removeuser = AUTH_REMOVEUSER_FULLDELETE;
         $this->assertFalse($auth->user_login('u3', 'heslo'));
 
-        set_config('passtype', 'sh1', 'auth/db');
+        set_config('passtype', 'sh1', 'auth_db');
         $auth->config->passtype = 'sha1';
         $this->assertFalse($auth->user_login('u3', 'heslo'));
 
@@ -347,7 +347,7 @@ class auth_db_testcase extends advanced_testcase {
         $user4 = (object)array('name'=>'u4', 'pass'=>'heslo', 'email'=>'u4@example.com');
         $user4->id = $DB->insert_record('auth_db_users', $user4);
 
-        set_config('passtype', 'plaintext', 'auth/db');
+        set_config('passtype', 'plaintext', 'auth_db');
         $auth->config->passtype = 'plaintext';
 
         $iuser4 = create_user_record('u4', 'heslo', 'db');
@@ -361,14 +361,14 @@ class auth_db_testcase extends advanced_testcase {
         $user4b->email = 'u4b@example.com';
         $DB->update_record('auth_db_users', $user4b);
 
-        set_config('field_updatelocal_email', 'oncreate', 'auth/db');
+        set_config('field_updatelocal_email', 'oncreate', 'auth_db');
         $auth->config->field_updatelocal_email = 'oncreate';
 
         update_user_record('u4');
         $iuser4 = $DB->get_record('user', array('id'=>$iuser4->id));
         $this->assertSame($user4->email, $iuser4->email);
 
-        set_config('field_updatelocal_email', 'onlogin', 'auth/db');
+        set_config('field_updatelocal_email', 'onlogin', 'auth_db');
         $auth->config->field_updatelocal_email = 'onlogin';
 
         update_user_record('u4');
@@ -461,7 +461,7 @@ class auth_db_testcase extends advanced_testcase {
         $auth->db_init();
 
         // Set to delete from moodle when missing from DB.
-        set_config('removeuser', AUTH_REMOVEUSER_FULLDELETE, 'auth/db');
+        set_config('removeuser', AUTH_REMOVEUSER_FULLDELETE, 'auth_db');
         $auth->config->removeuser = AUTH_REMOVEUSER_FULLDELETE;
 
         // Create users.

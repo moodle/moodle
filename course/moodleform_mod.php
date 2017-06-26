@@ -1,6 +1,8 @@
 <?php
 require_once ($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/completionlib.php');
+require_once($CFG->libdir.'/gradelib.php');
+require_once($CFG->libdir.'/plagiarismlib.php');
 
 /**
  * This class adds extra methods to form wrapper specific to be used for module
@@ -181,6 +183,9 @@ abstract class moodleform_mod extends moodleform {
     }
 
     /**
+     * Allows module to modify data returned by get_moduleinfo_data() or prepare_new_moduleinfo_data() before calling set_data()
+     * This method is also called in the bulk activity completion form.
+     *
      * Only available on moodleform_mod.
      *
      * @param array $default_values passed by reference
@@ -557,8 +562,16 @@ abstract class moodleform_mod extends moodleform {
 
         $section = get_fast_modinfo($COURSE)->get_section_info($this->_section);
         $allowstealth = !empty($CFG->allowstealth) && $this->courseformat->allow_stealth_module_visibility($this->_cm, $section);
-        $mform->addElement('modvisible', 'visible', get_string('visible'), null,
+        if ($allowstealth && $section->visible) {
+            $modvisiblelabel = 'modvisiblewithstealth';
+        } else if ($section->visible) {
+            $modvisiblelabel = 'modvisible';
+        } else {
+            $modvisiblelabel = 'modvisiblehiddensection';
+        }
+        $mform->addElement('modvisible', 'visible', get_string($modvisiblelabel), null,
                 array('allowstealth' => $allowstealth, 'sectionvisible' => $section->visible, 'cm' => $this->_cm));
+        $mform->addHelpButton('visible', $modvisiblelabel);
         if (!empty($this->_cm)) {
             $context = context_module::instance($this->_cm->id);
             if (!has_capability('moodle/course:activityvisibility', $context)) {
@@ -628,7 +641,6 @@ abstract class moodleform_mod extends moodleform {
         }
         if ($completion->is_enabled()) {
             $mform->addElement('header', 'activitycompletionheader', get_string('activitycompletion', 'completion'));
-
             // Unlock button for if people have completed it (will
             // be removed in definition_after_data if they haven't)
             $mform->addElement('submit', 'unlockcompletion', get_string('unlockcompletion', 'completion'));
@@ -639,7 +651,13 @@ abstract class moodleform_mod extends moodleform {
             $trackingdefault = COMPLETION_TRACKING_NONE;
             // If system and activity default is on, set it.
             if ($CFG->completiondefault && $this->_features->defaultcompletion) {
-                $trackingdefault = COMPLETION_TRACKING_MANUAL;
+                $hasrules = plugin_supports('mod', $this->_modname, FEATURE_COMPLETION_HAS_RULES, true);
+                $tracksviews = plugin_supports('mod', $this->_modname, FEATURE_COMPLETION_TRACKS_VIEWS, true);
+                if ($hasrules || $tracksviews) {
+                    $trackingdefault = COMPLETION_TRACKING_AUTOMATIC;
+                } else {
+                    $trackingdefault = COMPLETION_TRACKING_MANUAL;
+                }
             }
 
             $mform->addElement('select', 'completion', get_string('completion', 'completion'),
@@ -654,6 +672,10 @@ abstract class moodleform_mod extends moodleform {
                 $mform->addElement('checkbox', 'completionview', get_string('completionview', 'completion'),
                     get_string('completionview_desc', 'completion'));
                 $mform->disabledIf('completionview', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
+                // Check by default if automatic completion tracking is set.
+                if ($trackingdefault == COMPLETION_TRACKING_AUTOMATIC) {
+                    $mform->setDefault('completionview', 1);
+                }
                 $gotcompletionoptions = true;
             }
 
@@ -909,7 +931,7 @@ abstract class moodleform_mod extends moodleform {
         // If the 'show description' feature is enabled, this checkbox appears below the intro.
         // We want to hide that when using the singleactivity course format because it is confusing.
         if ($this->_features->showdescription  && $this->courseformat->has_view_page()) {
-            $mform->addElement('checkbox', 'showdescription', get_string('showdescription'));
+            $mform->addElement('advcheckbox', 'showdescription', get_string('showdescription'));
             $mform->addHelpButton('showdescription', 'showdescription');
         }
     }
@@ -1046,6 +1068,40 @@ abstract class moodleform_mod extends moodleform {
                 }
             }
         }
+    }
+
+    /**
+     * Allows modules to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data passed by reference
+     */
+    public function data_postprocessing($data) {
+    }
+
+    /**
+     * Return submitted data if properly submitted or returns NULL if validation fails or
+     * if there is no submitted data.
+     *
+     * Do not override this method, override data_postprocessing() instead.
+     *
+     * @return object submitted data; NULL if not valid or not submitted or cancelled
+     */
+    public function get_data() {
+        $data = parent::get_data();
+        if ($data) {
+            // Convert the grade pass value - we may be using a language which uses commas,
+            // rather than decimal points, in numbers. These need to be converted so that
+            // they can be added to the DB.
+            if (isset($data->gradepass)) {
+                $data->gradepass = unformat_float($data->gradepass);
+            }
+
+            $this->data_postprocessing($data);
+        }
+        return $data;
     }
 }
 

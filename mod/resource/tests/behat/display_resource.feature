@@ -17,8 +17,7 @@ Feature: Teacher can specify different display options for the resource
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   @javascript
   Scenario: Specifying no additional display options for a file resource
@@ -31,7 +30,7 @@ Feature: Teacher can specify different display options for the resource
     And I upload "mod/resource/tests/fixtures/samplefile.txt" file to "Select files" filemanager
     And I press "Save and display"
     Then ".resourcedetails" "css_element" should not exist
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And ".activity.resource .resourcelinkdetails" "css_element" should not exist
     And I log out
 
@@ -49,7 +48,7 @@ Feature: Teacher can specify different display options for the resource
     Then I <seesize> see "6 bytes" in the ".resourcedetails" "css_element"
     And I <seetype> see "Text file" in the ".resourcedetails" "css_element"
     And I <seedate> see "Uploaded" in the ".resourcedetails" "css_element"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I <seesize> see "6 bytes" in the ".activity.resource .resourcelinkdetails" "css_element"
     And I <seetype> see "Text file" in the ".activity.resource .resourcelinkdetails" "css_element"
     And I <seedate> see "Uploaded" in the ".activity.resource .resourcelinkdetails" "css_element"

@@ -18,7 +18,7 @@ Feature: A user can view their posts and discussions
       | activity   | name                   | intro       | course | idnumber     | groupmode |
       | forum      | Test forum name        | Test forum  | C1     | forum        | 0         |
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Forum discussion 1 |
       | Message | How awesome is this forum discussion? |

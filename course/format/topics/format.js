@@ -58,7 +58,7 @@ M.course.format.process_sections = function(Y, sectionlist, response, sectionfro
         SECTIONNAME : 'sectionname'
     },
     SELECTORS = {
-        SECTIONLEFTSIDE : '.left .section-handle img'
+        SECTIONLEFTSIDE : '.left .section-handle .icon'
     };
 
     if (response.action == 'move') {

@@ -61,6 +61,10 @@ define("LESSON_MAX_EVENT_LENGTH", "432000");
 /** Answer format is HTML */
 define("LESSON_ANSWER_HTML", "HTML");
 
+// Event types.
+define('LESSON_EVENT_TYPE_OPEN', 'open');
+define('LESSON_EVENT_TYPE_CLOSE', 'close');
+
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other lesson functions go here.  Each of them must have a name that
 /// starts with lesson_
@@ -179,9 +183,7 @@ function lesson_unseen_branch_jump($lesson, $userid) {
         $retakes = 0;
     }
 
-    $params = array ("lessonid" => $lesson->id, "userid" => $userid, "retry" => $retakes);
-    if (!$seenbranches = $DB->get_records_select("lesson_branch", "lessonid = :lessonid AND userid = :userid AND retry = :retry", $params,
-                "timeseen DESC")) {
+    if (!$seenbranches = $lesson->get_content_pages_viewed($retakes, $userid, 'timeseen DESC')) {
         print_error('cannotfindrecords', 'lesson');
     }
 
@@ -677,6 +679,487 @@ function lesson_process_group_deleted_in_course($courseid, $groupid = null) {
 }
 
 /**
+ * Return the overview report table and data.
+ *
+ * @param  lesson $lesson       lesson instance
+ * @param  mixed $currentgroup  false if not group used, 0 for all groups, group id (int) to filter by that groups
+ * @return mixed false if there is no information otherwise html_table and stdClass with the table and data
+ * @since  Moodle 3.3
+ */
+function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/lesson/pagetypes/branchtable.php');
+
+    $context = $lesson->context;
+    $cm = $lesson->cm;
+    // Count the number of branch and question pages in this lesson.
+    $branchcount = $DB->count_records('lesson_pages', array('lessonid' => $lesson->id, 'qtype' => LESSON_PAGE_BRANCHTABLE));
+    $questioncount = ($DB->count_records('lesson_pages', array('lessonid' => $lesson->id)) - $branchcount);
+
+    // Only load students if there attempts for this lesson.
+    $attempts = $DB->record_exists('lesson_attempts', array('lessonid' => $lesson->id));
+    $branches = $DB->record_exists('lesson_branch', array('lessonid' => $lesson->id));
+    $timer = $DB->record_exists('lesson_timer', array('lessonid' => $lesson->id));
+    if ($attempts or $branches or $timer) {
+        list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
+        list($sort, $sortparams) = users_order_by_sql('u');
+
+        $params['a1lessonid'] = $lesson->id;
+        $params['b1lessonid'] = $lesson->id;
+        $params['c1lessonid'] = $lesson->id;
+        $ufields = user_picture::fields('u');
+        $sql = "SELECT DISTINCT $ufields
+                FROM {user} u
+                JOIN (
+                    SELECT userid, lessonid FROM {lesson_attempts} a1
+                    WHERE a1.lessonid = :a1lessonid
+                        UNION
+                    SELECT userid, lessonid FROM {lesson_branch} b1
+                    WHERE b1.lessonid = :b1lessonid
+                        UNION
+                    SELECT userid, lessonid FROM {lesson_timer} c1
+                    WHERE c1.lessonid = :c1lessonid
+                    ) a ON u.id = a.userid
+                JOIN ($esql) ue ON ue.id = a.userid
+                ORDER BY $sort";
+
+        $students = $DB->get_recordset_sql($sql, $params);
+        if (!$students->valid()) {
+            $students->close();
+            return array(false, false);
+        }
+    } else {
+        return array(false, false);
+    }
+
+    if (! $grades = $DB->get_records('lesson_grades', array('lessonid' => $lesson->id), 'completed')) {
+        $grades = array();
+    }
+
+    if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id), 'starttime')) {
+        $times = array();
+    }
+
+    // Build an array for output.
+    $studentdata = array();
+
+    $attempts = $DB->get_recordset('lesson_attempts', array('lessonid' => $lesson->id), 'timeseen');
+    foreach ($attempts as $attempt) {
+        // if the user is not in the array or if the retry number is not in the sub array, add the data for that try.
+        if (empty($studentdata[$attempt->userid]) || empty($studentdata[$attempt->userid][$attempt->retry])) {
+            // restore/setup defaults
+            $n = 0;
+            $timestart = 0;
+            $timeend = 0;
+            $usergrade = null;
+            $eol = 0;
+
+            // search for the grade record for this try. if not there, the nulls defined above will be used.
+            foreach($grades as $grade) {
+                // check to see if the grade matches the correct user
+                if ($grade->userid == $attempt->userid) {
+                    // see if n is = to the retry
+                    if ($n == $attempt->retry) {
+                        // get grade info
+                        $usergrade = round($grade->grade, 2); // round it here so we only have to do it once
+                        break;
+                    }
+                    $n++; // if not equal, then increment n
+                }
+            }
+            $n = 0;
+            // search for the time record for this try. if not there, the nulls defined above will be used.
+            foreach($times as $time) {
+                // check to see if the grade matches the correct user
+                if ($time->userid == $attempt->userid) {
+                    // see if n is = to the retry
+                    if ($n == $attempt->retry) {
+                        // get grade info
+                        $timeend = $time->lessontime;
+                        $timestart = $time->starttime;
+                        $eol = $time->completed;
+                        break;
+                    }
+                    $n++; // if not equal, then increment n
+                }
+            }
+
+            // build up the array.
+            // this array represents each student and all of their tries at the lesson
+            $studentdata[$attempt->userid][$attempt->retry] = array( "timestart" => $timestart,
+                                                                    "timeend" => $timeend,
+                                                                    "grade" => $usergrade,
+                                                                    "end" => $eol,
+                                                                    "try" => $attempt->retry,
+                                                                    "userid" => $attempt->userid);
+        }
+    }
+    $attempts->close();
+
+    $branches = $DB->get_recordset('lesson_branch', array('lessonid' => $lesson->id), 'timeseen');
+    foreach ($branches as $branch) {
+        // If the user is not in the array or if the retry number is not in the sub array, add the data for that try.
+        if (empty($studentdata[$branch->userid]) || empty($studentdata[$branch->userid][$branch->retry])) {
+            // Restore/setup defaults.
+            $n = 0;
+            $timestart = 0;
+            $timeend = 0;
+            $usergrade = null;
+            $eol = 0;
+            // Search for the time record for this try. if not there, the nulls defined above will be used.
+            foreach ($times as $time) {
+                // Check to see if the grade matches the correct user.
+                if ($time->userid == $branch->userid) {
+                    // See if n is = to the retry.
+                    if ($n == $branch->retry) {
+                        // Get grade info.
+                        $timeend = $time->lessontime;
+                        $timestart = $time->starttime;
+                        $eol = $time->completed;
+                        break;
+                    }
+                    $n++; // If not equal, then increment n.
+                }
+            }
+
+            // Build up the array.
+            // This array represents each student and all of their tries at the lesson.
+            $studentdata[$branch->userid][$branch->retry] = array( "timestart" => $timestart,
+                                                                    "timeend" => $timeend,
+                                                                    "grade" => $usergrade,
+                                                                    "end" => $eol,
+                                                                    "try" => $branch->retry,
+                                                                    "userid" => $branch->userid);
+        }
+    }
+    $branches->close();
+
+    // Need the same thing for timed entries that were not completed.
+    foreach ($times as $time) {
+        $endoflesson = $time->completed;
+        // If the time start is the same with another record then we shouldn't be adding another item to this array.
+        if (isset($studentdata[$time->userid])) {
+            $foundmatch = false;
+            $n = 0;
+            foreach ($studentdata[$time->userid] as $key => $value) {
+                if ($value['timestart'] == $time->starttime) {
+                    // Don't add this to the array.
+                    $foundmatch = true;
+                    break;
+                }
+            }
+            $n = count($studentdata[$time->userid]) + 1;
+            if (!$foundmatch) {
+                // Add a record.
+                $studentdata[$time->userid][] = array(
+                                "timestart" => $time->starttime,
+                                "timeend" => $time->lessontime,
+                                "grade" => null,
+                                "end" => $endoflesson,
+                                "try" => $n,
+                                "userid" => $time->userid
+                            );
+            }
+        } else {
+            $studentdata[$time->userid][] = array(
+                                "timestart" => $time->starttime,
+                                "timeend" => $time->lessontime,
+                                "grade" => null,
+                                "end" => $endoflesson,
+                                "try" => 0,
+                                "userid" => $time->userid
+                            );
+        }
+    }
+
+    // To store all the data to be returned by the function.
+    $data = new stdClass();
+
+    // Determine if lesson should have a score.
+    if ($branchcount > 0 AND $questioncount == 0) {
+        // This lesson only contains content pages and is not graded.
+        $data->lessonscored = false;
+    } else {
+        // This lesson is graded.
+        $data->lessonscored = true;
+    }
+    // set all the stats variables
+    $data->numofattempts = 0;
+    $data->avescore      = 0;
+    $data->avetime       = 0;
+    $data->highscore     = null;
+    $data->lowscore      = null;
+    $data->hightime      = null;
+    $data->lowtime       = null;
+    $data->students      = array();
+
+    $table = new html_table();
+
+    // Set up the table object.
+    if ($data->lessonscored) {
+        $table->head = array(get_string('name'), get_string('attempts', 'lesson'), get_string('highscore', 'lesson'));
+    } else {
+        $table->head = array(get_string('name'), get_string('attempts', 'lesson'));
+    }
+    $table->align = array('center', 'left', 'left');
+    $table->wrap = array('nowrap', 'nowrap', 'nowrap');
+    $table->attributes['class'] = 'standardtable generaltable';
+    $table->size = array(null, '70%', null);
+
+    // print out the $studentdata array
+    // going through each student that has attempted the lesson, so, each student should have something to be displayed
+    foreach ($students as $student) {
+        // check to see if the student has attempts to print out
+        if (array_key_exists($student->id, $studentdata)) {
+            // set/reset some variables
+            $attempts = array();
+            $dataforstudent = new stdClass;
+            $dataforstudent->attempts = array();
+            // gather the data for each user attempt
+            $bestgrade = 0;
+            $bestgradefound = false;
+            // $tries holds all the tries/retries a student has done
+            $tries = $studentdata[$student->id];
+            $studentname = fullname($student, true);
+
+            foreach ($tries as $try) {
+                $dataforstudent->attempts[] = $try;
+
+                // Start to build up the checkbox and link.
+                if (has_capability('mod/lesson:edit', $context)) {
+                    $temp = '<input type="checkbox" id="attempts" name="attempts['.$try['userid'].']['.$try['try'].']" /> ';
+                } else {
+                    $temp = '';
+                }
+
+                $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=".$try['userid']
+                        .'&amp;try='.$try['try'].'" class="lesson-attempt-link">';
+                if ($try["grade"] !== null) { // if null then not done yet
+                    // this is what the link does when the user has completed the try
+                    $timetotake = $try["timeend"] - $try["timestart"];
+
+                    $temp .= $try["grade"]."%";
+                    $bestgradefound = true;
+                    if ($try["grade"] > $bestgrade) {
+                        $bestgrade = $try["grade"];
+                    }
+                    $temp .= "&nbsp;".userdate($try["timestart"]);
+                    $temp .= ",&nbsp;(".format_time($timetotake).")</a>";
+                } else {
+                    if ($try["end"]) {
+                        // User finished the lesson but has no grade. (Happens when there are only content pages).
+                        $temp .= "&nbsp;".userdate($try["timestart"]);
+                        $timetotake = $try["timeend"] - $try["timestart"];
+                        $temp .= ",&nbsp;(".format_time($timetotake).")</a>";
+                    } else {
+                        // This is what the link does/looks like when the user has not completed the attempt.
+                        $temp .= get_string("notcompleted", "lesson");
+                        if ($try['timestart'] !== 0) {
+                            // Teacher previews do not track time spent.
+                            $temp .= "&nbsp;".userdate($try["timestart"]);
+                        }
+                        $temp .= "</a>";
+                        $timetotake = null;
+                    }
+                }
+                // build up the attempts array
+                $attempts[] = $temp;
+
+                // Run these lines for the stats only if the user finnished the lesson.
+                if ($try["end"]) {
+                    // User has completed the lesson.
+                    $data->numofattempts++;
+                    $data->avetime += $timetotake;
+                    if ($timetotake > $data->hightime || $data->hightime == null) {
+                        $data->hightime = $timetotake;
+                    }
+                    if ($timetotake < $data->lowtime || $data->lowtime == null) {
+                        $data->lowtime = $timetotake;
+                    }
+                    if ($try["grade"] !== null) {
+                        // The lesson was scored.
+                        $data->avescore += $try["grade"];
+                        if ($try["grade"] > $data->highscore || $data->highscore === null) {
+                            $data->highscore = $try["grade"];
+                        }
+                        if ($try["grade"] < $data->lowscore || $data->lowscore === null) {
+                            $data->lowscore = $try["grade"];
+                        }
+
+                    }
+                }
+            }
+            // get line breaks in after each attempt
+            $attempts = implode("<br />\n", $attempts);
+
+            if ($data->lessonscored) {
+                // Add the grade if the lesson is graded.
+                $table->data[] = array($studentname, $attempts, $bestgrade . "%");
+            } else {
+                // This lesson does not have a grade.
+                $table->data[] = array($studentname, $attempts);
+            }
+            // Add the student data.
+            $dataforstudent->id = $student->id;
+            $dataforstudent->fullname = $studentname;
+            $dataforstudent->bestgrade = $bestgrade;
+            $data->students[] = $dataforstudent;
+        }
+    }
+    $students->close();
+    if ($data->numofattempts > 0) {
+        $data->avescore = $data->avescore / $data->numofattempts;
+    }
+
+    return array($table, $data);
+}
+
+/**
+ * Return information about one user attempt (including answers)
+ * @param  lesson $lesson  lesson instance
+ * @param  int $userid     the user id
+ * @param  int $attempt    the attempt number
+ * @return array the user answers (array) and user data stats (object)
+ * @since  Moodle 3.3
+ */
+function lesson_get_user_detailed_report_data(lesson $lesson, $userid, $attempt) {
+    global $DB;
+
+    $context = $lesson->context;
+    if (!empty($userid)) {
+        // Apply overrides.
+        $lesson->update_effective_access($userid);
+    }
+
+    $lessonpages = $lesson->load_all_pages();
+    foreach ($lessonpages as $lessonpage) {
+        if ($lessonpage->prevpageid == 0) {
+            $pageid = $lessonpage->id;
+        }
+    }
+
+    // now gather the stats into an object
+    $firstpageid = $pageid;
+    $pagestats = array();
+    while ($pageid != 0) { // EOL
+        $page = $lessonpages[$pageid];
+        $params = array ("lessonid" => $lesson->id, "pageid" => $page->id);
+        if ($allanswers = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND pageid = :pageid", $params, "timeseen")) {
+            // get them ready for processing
+            $orderedanswers = array();
+            foreach ($allanswers as $singleanswer) {
+                // ordering them like this, will help to find the single attempt record that we want to keep.
+                $orderedanswers[$singleanswer->userid][$singleanswer->retry][] = $singleanswer;
+            }
+            // this is foreach user and for each try for that user, keep one attempt record
+            foreach ($orderedanswers as $orderedanswer) {
+                foreach($orderedanswer as $tries) {
+                    $page->stats($pagestats, $tries);
+                }
+            }
+        } else {
+            // no one answered yet...
+        }
+        //unset($orderedanswers);  initialized above now
+        $pageid = $page->nextpageid;
+    }
+
+    $manager = lesson_page_type_manager::get($lesson);
+    $qtypes = $manager->get_page_type_strings();
+
+    $answerpages = array();
+    $answerpage = "";
+    $pageid = $firstpageid;
+    // cycle through all the pages
+    //  foreach page, add to the $answerpages[] array all the data that is needed
+    //  from the question, the users attempt, and the statistics
+    // grayout pages that the user did not answer and Branch, end of branch, cluster
+    // and end of cluster pages
+    while ($pageid != 0) { // EOL
+        $page = $lessonpages[$pageid];
+        $answerpage = new stdClass;
+        // Keep the original page object.
+        $answerpage->page = $page;
+        $data ='';
+
+        $answerdata = new stdClass;
+        // Set some defaults for the answer data.
+        $answerdata->score = null;
+        $answerdata->response = null;
+        $answerdata->responseformat = FORMAT_PLAIN;
+
+        $answerpage->title = format_string($page->title);
+
+        $options = new stdClass;
+        $options->noclean = true;
+        $options->overflowdiv = true;
+        $options->context = $context;
+        $answerpage->contents = format_text($page->contents, $page->contentsformat, $options);
+
+        $answerpage->qtype = $qtypes[$page->qtype].$page->option_description_string();
+        $answerpage->grayout = $page->grayout;
+        $answerpage->context = $context;
+
+        if (empty($userid)) {
+            // there is no userid, so set these vars and display stats.
+            $answerpage->grayout = 0;
+            $useranswer = null;
+        } elseif ($useranswers = $DB->get_records("lesson_attempts",array("lessonid"=>$lesson->id, "userid"=>$userid, "retry"=>$attempt,"pageid"=>$page->id), "timeseen")) {
+            // get the user's answer for this page
+            // need to find the right one
+            $i = 0;
+            foreach ($useranswers as $userattempt) {
+                $useranswer = $userattempt;
+                $i++;
+                if ($lesson->maxattempts == $i) {
+                    break; // reached maxattempts, break out
+                }
+            }
+        } else {
+            // user did not answer this page, gray it out and set some nulls
+            $answerpage->grayout = 1;
+            $useranswer = null;
+        }
+        $i = 0;
+        $n = 0;
+        $answerpages[] = $page->report_answers(clone($answerpage), clone($answerdata), $useranswer, $pagestats, $i, $n);
+        $pageid = $page->nextpageid;
+    }
+
+    $userstats = new stdClass;
+    if (!empty($userid)) {
+        $params = array("lessonid"=>$lesson->id, "userid"=>$userid);
+
+        $alreadycompleted = true;
+
+        if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid and userid = :userid", $params, "completed", "*", $attempt, 1)) {
+            $userstats->grade = -1;
+            $userstats->completed = -1;
+            $alreadycompleted = false;
+        } else {
+            $userstats->grade = current($grades);
+            $userstats->completed = $userstats->grade->completed;
+            $userstats->grade = round($userstats->grade->grade, 2);
+        }
+
+        if (!$times = $lesson->get_user_timers($userid, 'starttime', '*', $attempt, 1)) {
+            $userstats->timetotake = -1;
+            $alreadycompleted = false;
+        } else {
+            $userstats->timetotake = current($times);
+            $userstats->timetotake = $userstats->timetotake->lessontime - $userstats->timetotake->starttime;
+        }
+
+        if ($alreadycompleted) {
+            $userstats->gradeinfo = lesson_grade($lesson, $attempt, $userid);
+        }
+    }
+
+    return array($answerpages, $userstats);
+}
+
+
+/**
  * Abstract class that page type's MUST inherit from.
  *
  * This is the abstract class that ALL add page type forms must extend.
@@ -972,6 +1455,7 @@ abstract class lesson_add_page_form_base extends moodleform {
  * @property int $available Timestamp of when this lesson becomes available
  * @property int $deadline Timestamp of when this lesson is no longer available
  * @property int $timemodified Timestamp when lesson was last modified
+ * @property int $allowofflineattempts Whether to allow the lesson to be attempted offline in the mobile app
  *
  * These properties are calculated
  * @property int $firstpageid Id of the first page of this lesson (prevpageid=0)
@@ -1018,6 +1502,13 @@ class lesson extends lesson_base {
     protected $cm = null;
 
     /**
+     * Course object gets set and retrieved by directly calling <code>$lesson->courserecord;</code>
+     * @see get_courserecord()
+     * @var stdClass
+     */
+    protected $courserecord = null;
+
+    /**
      * Context object gets set and retrieved by directly calling <code>$lesson->context;</code>
      * @see get_context()
      * @var stdClass
@@ -1029,11 +1520,13 @@ class lesson extends lesson_base {
      *
      * @param object $properties
      * @param stdClass $cm course module object
+     * @param stdClass $course course object
      * @since Moodle 3.3
      */
-    public function __construct($properties, $cm = null) {
+    public function __construct($properties, $cm = null, $course = null) {
         parent::__construct($properties);
         $this->cm = $cm;
+        $this->courserecord = $course;
     }
 
     /**
@@ -1342,6 +1835,27 @@ class lesson extends lesson_base {
         return $DB->get_records('lesson_attempts', $params, 'timeseen ASC');
     }
 
+
+    /**
+     * Get a list of content pages (formerly known as branch tables) viewed in the lesson for the given user during an attempt.
+     *
+     * @param  int $lessonattempt the lesson attempt number (also known as retries)
+     * @param  int $userid        the user id to retrieve the data from
+     * @param  string $sort          an order to sort the results in (a valid SQL ORDER BY parameter)
+     * @param  string $fields        a comma separated list of fields to return
+     * @return array of pages
+     * @since  Moodle 3.3
+     */
+    public function get_content_pages_viewed($lessonattempt, $userid = null, $sort = '', $fields = '*') {
+        global $USER, $DB;
+
+        if ($userid === null) {
+            $userid = $USER->id;
+        }
+        $conditions = array("lessonid" => $this->properties->id, "userid" => $userid, "retry" => $lessonattempt);
+        return $DB->get_records('lesson_branch', $conditions, $sort, $fields);
+    }
+
     /**
      * Returns the first page for the lesson or false if there isn't one.
      *
@@ -1529,11 +2043,16 @@ class lesson extends lesson_base {
         $event->trigger();
 
         $USER->startlesson[$this->properties->id] = true;
+
+        $timenow = time();
         $startlesson = new stdClass;
         $startlesson->lessonid = $this->properties->id;
         $startlesson->userid = $USER->id;
-        $startlesson->starttime = time();
-        $startlesson->lessontime = time();
+        $startlesson->starttime = $timenow;
+        $startlesson->lessontime = $timenow;
+        if (WS_SERVER) {
+            $startlesson->timemodifiedoffline = $timenow;
+        }
         $DB->insert_record('lesson_timer', $startlesson);
         if ($this->properties->timelimit) {
             $this->add_message(get_string('timelimitwarning', 'lesson', format_time($this->properties->timelimit)), 'center');
@@ -1555,10 +2074,9 @@ class lesson extends lesson_base {
 
         // clock code
         // get time information for this user
-        $params = array("lessonid" => $this->properties->id, "userid" => $USER->id);
-        if (!$timer = $DB->get_records('lesson_timer', $params, 'starttime DESC', '*', 0, 1)) {
+        if (!$timer = $this->get_user_timers($USER->id, 'starttime DESC', '*', 0, 1)) {
             $this->start_timer();
-            $timer = $DB->get_records('lesson_timer', $params, 'starttime DESC', '*', 0, 1);
+            $timer = $this->get_user_timers($USER->id, 'starttime DESC', '*', 0, 1);
         }
         $timer = current($timer); // This will get the latest start time record.
 
@@ -1590,7 +2108,11 @@ class lesson extends lesson_base {
             }
         }
 
-        $timer->lessontime = time();
+        $timenow = time();
+        $timer->lessontime = $timenow;
+        if (WS_SERVER) {
+            $timer->timemodifiedoffline = $timenow;
+        }
         $timer->completed = $endreached;
         $DB->update_record('lesson_timer', $timer);
 
@@ -2130,6 +2652,31 @@ class lesson extends lesson_base {
     }
 
     /**
+     * Set the lesson course object.
+     *
+     * @param stdClass $course course objct
+     * @since  Moodle 3.3
+     */
+    private function set_courserecord($course) {
+        $this->courserecord = $course;
+    }
+
+    /**
+     * Return the lesson course object.
+     *
+     * @return stdClass course
+     * @since  Moodle 3.3
+     */
+    public function get_courserecord() {
+        global $DB;
+
+        if ($this->courserecord == null) {
+            $this->courserecord = $DB->get_record('course', array('id' => $this->properties->course));
+        }
+        return $this->courserecord;
+    }
+
+    /**
      * Check if the user can manage the lesson activity.
      *
      * @return bool true if the user can manage the lesson
@@ -2254,6 +2801,713 @@ class lesson extends lesson_base {
             }
         }
         return false;
+    }
+
+    /**
+     * Check if the lesson is in review mode. (The user already finished it and retakes are not allowed).
+     *
+     * @return bool true if is in review mode
+     * @since  Moodle 3.3
+     */
+    public function is_in_review_mode() {
+        global $DB, $USER;
+
+        $userhasgrade = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+        if ($userhasgrade && !$this->properties->retake) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return the last page the current user saw.
+     *
+     * @param int $retriescount the number of retries for the lesson (the last retry number).
+     * @return mixed false if the user didn't see the lesson or the last page id
+     */
+    public function get_last_page_seen($retriescount) {
+        global $DB, $USER;
+
+        $lastpageseen = false;
+        $allattempts = $this->get_attempts($retriescount);
+        if (!empty($allattempts)) {
+            $attempt = end($allattempts);
+            $attemptpage = $this->load_page($attempt->pageid);
+            $jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
+            // Convert the jumpto to a proper page id.
+            if ($jumpto == 0) {
+                // Check if a question has been incorrectly answered AND no more attempts at it are left.
+                $nattempts = $this->get_attempts($attempt->retry, false, $attempt->pageid, $USER->id);
+                if (count($nattempts) >= $this->properties->maxattempts) {
+                    $lastpageseen = $this->get_next_page($attemptpage->nextpageid);
+                } else {
+                    $lastpageseen = $attempt->pageid;
+                }
+            } else if ($jumpto == LESSON_NEXTPAGE) {
+                $lastpageseen = $this->get_next_page($attemptpage->nextpageid);
+            } else if ($jumpto == LESSON_CLUSTERJUMP) {
+                $lastpageseen = $this->cluster_jump($attempt->pageid);
+            } else {
+                $lastpageseen = $jumpto;
+            }
+        }
+
+        if ($branchtables = $this->get_content_pages_viewed($retriescount, $USER->id, 'timeseen DESC')) {
+            // In here, user has viewed a branch table.
+            $lastbranchtable = current($branchtables);
+            if (count($allattempts) > 0) {
+                if ($lastbranchtable->timeseen > $attempt->timeseen) {
+                    // This branch table was viewed more recently than the question page.
+                    if (!empty($lastbranchtable->nextpageid)) {
+                        $lastpageseen = $lastbranchtable->nextpageid;
+                    } else {
+                        // Next page ID did not exist prior to MDL-34006.
+                        $lastpageseen = $lastbranchtable->pageid;
+                    }
+                }
+            } else {
+                // Has not answered any questions but has viewed a branch table.
+                if (!empty($lastbranchtable->nextpageid)) {
+                    $lastpageseen = $lastbranchtable->nextpageid;
+                } else {
+                    // Next page ID did not exist prior to MDL-34006.
+                    $lastpageseen = $lastbranchtable->pageid;
+                }
+            }
+        }
+        return $lastpageseen;
+    }
+
+    /**
+     * Return the number of retries in a lesson for a given user.
+     *
+     * @param  int $userid the user id
+     * @return int the retries count
+     * @since  Moodle 3.3
+     */
+    public function count_user_retries($userid) {
+        global $DB;
+
+        return $DB->count_records('lesson_grades', array("lessonid" => $this->properties->id, "userid" => $userid));
+    }
+
+    /**
+     * Check if a user left a timed session.
+     *
+     * @param int $retriescount the number of retries for the lesson (the last retry number).
+     * @return true if the user left the timed session
+     * @since  Moodle 3.3
+     */
+    public function left_during_timed_session($retriescount) {
+        global $DB, $USER;
+
+        $conditions = array('lessonid' => $this->properties->id, 'userid' => $USER->id, 'retry' => $retriescount);
+        return $DB->count_records('lesson_attempts', $conditions) > 0 || $DB->count_records('lesson_branch', $conditions) > 0;
+    }
+
+    /**
+     * Trigger module viewed event and set the module viewed for completion.
+     *
+     * @since  Moodle 3.3
+     */
+    public function set_module_viewed() {
+        global $CFG;
+        require_once($CFG->libdir . '/completionlib.php');
+
+        // Trigger module viewed event.
+        $event = \mod_lesson\event\course_module_viewed::create(array(
+            'objectid' => $this->properties->id,
+            'context' => $this->get_context()
+        ));
+        $event->add_record_snapshot('course_modules', $this->get_cm());
+        $event->add_record_snapshot('course', $this->get_courserecord());
+        $event->trigger();
+
+        // Mark as viewed.
+        $completion = new completion_info($this->get_courserecord());
+        $completion->set_module_viewed($this->get_cm());
+    }
+
+    /**
+     * Return the timers in the current lesson for the given user.
+     *
+     * @param  int      $userid    the user id
+     * @param  string   $sort      an order to sort the results in (optional, a valid SQL ORDER BY parameter).
+     * @param  string   $fields    a comma separated list of fields to return
+     * @param  int      $limitfrom return a subset of records, starting at this point (optional).
+     * @param  int      $limitnum  return a subset comprising this many records in total (optional, required if $limitfrom is set).
+     * @return array    list of timers for the given user in the lesson
+     * @since  Moodle 3.3
+     */
+    public function get_user_timers($userid = null, $sort = '', $fields = '*', $limitfrom = 0, $limitnum = 0) {
+        global $DB, $USER;
+
+        if ($userid === null) {
+            $userid = $USER->id;
+        }
+
+        $params = array('lessonid' => $this->properties->id, 'userid' => $userid);
+        return $DB->get_records('lesson_timer', $params, $sort, $fields, $limitfrom, $limitnum);
+    }
+
+    /**
+     * Check if the user is out of time in a timed lesson.
+     *
+     * @param  stdClass $timer timer object
+     * @return bool True if the user is on time, false is the user ran out of time
+     * @since  Moodle 3.3
+     */
+    public function check_time($timer) {
+        if ($this->properties->timelimit) {
+            $timeleft = $timer->starttime + $this->properties->timelimit - time();
+            if ($timeleft <= 0) {
+                // Out of time.
+                $this->add_message(get_string('eolstudentoutoftime', 'lesson'));
+                return false;
+            } else if ($timeleft < 60) {
+                // One minute warning.
+                $this->add_message(get_string('studentoneminwarning', 'lesson'));
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Add different informative messages to the given page.
+     *
+     * @param lesson_page $page page object
+     * @param reviewmode $bool whether we are in review mode or not
+     * @since  Moodle 3.3
+     */
+    public function add_messages_on_page_view(lesson_page $page, $reviewmode) {
+        global $DB, $USER;
+
+        if (!$this->can_manage()) {
+            if ($page->qtype == LESSON_PAGE_BRANCHTABLE && $this->properties->minquestions) {
+                // Tell student how many questions they have seen, how many are required and their grade.
+                $ntries = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+                $gradeinfo = lesson_grade($this, $ntries);
+                if ($gradeinfo->attempts) {
+                    if ($gradeinfo->nquestions < $this->properties->minquestions) {
+                        $a = new stdClass;
+                        $a->nquestions   = $gradeinfo->nquestions;
+                        $a->minquestions = $this->properties->minquestions;
+                        $this->add_message(get_string('numberofpagesviewednotice', 'lesson', $a));
+                    }
+
+                    if (!$reviewmode && !$this->properties->retake) {
+                        $this->add_message(get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned), 'notify');
+                        if ($this->properties->grade != GRADE_TYPE_NONE) {
+                            $a = new stdClass;
+                            $a->grade = number_format($gradeinfo->grade * $this->properties->grade / 100, 1);
+                            $a->total = $this->properties->grade;
+                            $this->add_message(get_string('yourcurrentgradeisoutof', 'lesson', $a), 'notify');
+                        }
+                    }
+                }
+            }
+        } else {
+            if ($this->properties->timelimit) {
+                $this->add_message(get_string('teachertimerwarning', 'lesson'));
+            }
+            if (lesson_display_teacher_warning($this)) {
+                // This is the warning msg for teachers to inform them that cluster
+                // and unseen does not work while logged in as a teacher.
+                $warningvars = new stdClass();
+                $warningvars->cluster = get_string('clusterjump', 'lesson');
+                $warningvars->unseen = get_string('unseenpageinbranch', 'lesson');
+                $this->add_message(get_string('teacherjumpwarning', 'lesson', $warningvars));
+            }
+        }
+    }
+
+    /**
+     * Get the ongoing score message for the user (depending on the user permission and lesson settings).
+     *
+     * @return str the ongoing score message
+     * @since  Moodle 3.3
+     */
+    public function get_ongoing_score_message() {
+        global $USER, $DB;
+
+        $context = $this->get_context();
+
+        if (has_capability('mod/lesson:manage', $context)) {
+            return get_string('teacherongoingwarning', 'lesson');
+        } else {
+            $ntries = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+            if (isset($USER->modattempts[$this->properties->id])) {
+                $ntries--;
+            }
+            $gradeinfo = lesson_grade($this, $ntries);
+            $a = new stdClass;
+            if ($this->properties->custom) {
+                $a->score = $gradeinfo->earned;
+                $a->currenthigh = $gradeinfo->total;
+                return get_string("ongoingcustom", "lesson", $a);
+            } else {
+                $a->correct = $gradeinfo->earned;
+                $a->viewed = $gradeinfo->attempts;
+                return get_string("ongoingnormal", "lesson", $a);
+            }
+        }
+    }
+
+    /**
+     * Calculate the progress of the current user in the lesson.
+     *
+     * @return int the progress (scale 0-100)
+     * @since  Moodle 3.3
+     */
+    public function calculate_progress() {
+        global $USER, $DB;
+
+        // Check if the user is reviewing the attempt.
+        if (isset($USER->modattempts[$this->properties->id])) {
+            return 100;
+        }
+
+        // All of the lesson pages.
+        $pages = $this->load_all_pages();
+        foreach ($pages as $page) {
+            if ($page->prevpageid == 0) {
+                $pageid = $page->id;  // Find the first page id.
+                break;
+            }
+        }
+
+        // Current attempt number.
+        if (!$ntries = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id))) {
+            $ntries = 0;  // May not be necessary.
+        }
+
+        $viewedpageids = array();
+        if ($attempts = $this->get_attempts($ntries, false)) {
+            foreach ($attempts as $attempt) {
+                $viewedpageids[$attempt->pageid] = $attempt;
+            }
+        }
+
+        $viewedbranches = array();
+        // Collect all of the branch tables viewed.
+        if ($branches = $this->get_content_pages_viewed($ntries, $USER->id, 'timeseen ASC', 'id, pageid')) {
+            foreach ($branches as $branch) {
+                $viewedbranches[$branch->pageid] = $branch;
+            }
+            $viewedpageids = array_merge($viewedpageids, $viewedbranches);
+        }
+
+        // Filter out the following pages:
+        // - End of Cluster
+        // - End of Branch
+        // - Pages found inside of Clusters
+        // Do not filter out Cluster Page(s) because we count a cluster as one.
+        // By keeping the cluster page, we get our 1.
+        $validpages = array();
+        while ($pageid != 0) {
+            $pageid = $pages[$pageid]->valid_page_and_view($validpages, $viewedpageids);
+        }
+
+        // Progress calculation as a percent.
+        $progress = round(count($viewedpageids) / count($validpages), 2) * 100;
+        return (int) $progress;
+    }
+
+    /**
+     * Calculate the correct page and prepare contents for a given page id (could be a page jump id).
+     *
+     * @param  int $pageid the given page id
+     * @param  mod_lesson_renderer $lessonoutput the lesson output rendered
+     * @param  bool $reviewmode whether we are in review mode or not
+     * @param  bool $redirect  Optional, default to true. Set to false to avoid redirection and return the page to redirect.
+     * @return array the page object and contents
+     * @throws moodle_exception
+     * @since  Moodle 3.3
+     */
+    public function prepare_page_and_contents($pageid, $lessonoutput, $reviewmode, $redirect = true) {
+        global $USER, $CFG;
+
+        $page = $this->load_page($pageid);
+        // Check if the page is of a special type and if so take any nessecary action.
+        $newpageid = $page->callback_on_view($this->can_manage(), $redirect);
+
+        // Avoid redirections returning the jump to special page id.
+        if (!$redirect && is_numeric($newpageid) && $newpageid < 0) {
+            return array($newpageid, null, null);
+        }
+
+        if (is_numeric($newpageid)) {
+            $page = $this->load_page($newpageid);
+        }
+
+        // Add different informative messages to the given page.
+        $this->add_messages_on_page_view($page, $reviewmode);
+
+        if (is_array($page->answers) && count($page->answers) > 0) {
+            // This is for modattempts option.  Find the users previous answer to this page,
+            // and then display it below in answer processing.
+            if (isset($USER->modattempts[$this->properties->id])) {
+                $retries = $this->count_user_retries($USER->id);
+                if (!$attempts = $this->get_attempts($retries - 1, false, $page->id)) {
+                    throw new moodle_exception('cannotfindpreattempt', 'lesson');
+                }
+                $attempt = end($attempts);
+                $USER->modattempts[$this->properties->id] = $attempt;
+            } else {
+                $attempt = false;
+            }
+            $lessoncontent = $lessonoutput->display_page($this, $page, $attempt);
+        } else {
+            require_once($CFG->dirroot . '/mod/lesson/view_form.php');
+            $data = new stdClass;
+            $data->id = $this->get_cm()->id;
+            $data->pageid = $page->id;
+            $data->newpageid = $this->get_next_page($page->nextpageid);
+
+            $customdata = array(
+                'title'     => $page->title,
+                'contents'  => $page->get_contents()
+            );
+            $mform = new lesson_page_without_answers($CFG->wwwroot.'/mod/lesson/continue.php', $customdata);
+            $mform->set_data($data);
+            ob_start();
+            $mform->display();
+            $lessoncontent = ob_get_contents();
+            ob_end_clean();
+        }
+
+        return array($page->id, $page, $lessoncontent);
+    }
+
+    /**
+     * This returns a real page id to jump to (or LESSON_EOL) after processing page responses.
+     *
+     * @param  lesson_page $page      lesson page
+     * @param  int         $newpageid the new page id
+     * @return int the real page to jump to (or end of lesson)
+     * @since  Moodle 3.3
+     */
+    public function calculate_new_page_on_jump(lesson_page $page, $newpageid) {
+        global $USER, $DB;
+
+        $canmanage = $this->can_manage();
+
+        if (isset($USER->modattempts[$this->properties->id])) {
+            // Make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time.
+            if ($USER->modattempts[$this->properties->id]->pageid == $page->id && $page->nextpageid == 0) {
+                // Remember, this session variable holds the pageid of the last page that the user saw.
+                $newpageid = LESSON_EOL;
+            } else {
+                $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+                $nretakes--; // Make sure we are looking at the right try.
+                $attempts = $DB->get_records("lesson_attempts", array("lessonid" => $this->properties->id, "userid" => $USER->id, "retry" => $nretakes), "timeseen", "id, pageid");
+                $found = false;
+                $temppageid = 0;
+                // Make sure that the newpageid always defaults to something valid.
+                $newpageid = LESSON_EOL;
+                foreach ($attempts as $attempt) {
+                    if ($found && $temppageid != $attempt->pageid) {
+                        // Now try to find the next page, make sure next few attempts do no belong to current page.
+                        $newpageid = $attempt->pageid;
+                        break;
+                    }
+                    if ($attempt->pageid == $page->id) {
+                        $found = true; // If found current page.
+                        $temppageid = $attempt->pageid;
+                    }
+                }
+            }
+        } else if ($newpageid != LESSON_CLUSTERJUMP && $page->id != 0 && $newpageid > 0) {
+            // Going to check to see if the page that the user is going to view next, is a cluster page.
+            // If so, dont display, go into the cluster.
+            // The $newpageid > 0 is used to filter out all of the negative code jumps.
+            $newpage = $this->load_page($newpageid);
+            if ($overridenewpageid = $newpage->override_next_page($newpageid)) {
+                $newpageid = $overridenewpageid;
+            }
+        } else if ($newpageid == LESSON_UNSEENBRANCHPAGE) {
+            if ($canmanage) {
+                if ($page->nextpageid == 0) {
+                    $newpageid = LESSON_EOL;
+                } else {
+                    $newpageid = $page->nextpageid;
+                }
+            } else {
+                $newpageid = lesson_unseen_question_jump($this, $USER->id, $page->id);
+            }
+        } else if ($newpageid == LESSON_PREVIOUSPAGE) {
+            $newpageid = $page->prevpageid;
+        } else if ($newpageid == LESSON_RANDOMPAGE) {
+            $newpageid = lesson_random_question_jump($this, $page->id);
+        } else if ($newpageid == LESSON_CLUSTERJUMP) {
+            if ($canmanage) {
+                if ($page->nextpageid == 0) {  // If teacher, go to next page.
+                    $newpageid = LESSON_EOL;
+                } else {
+                    $newpageid = $page->nextpageid;
+                }
+            } else {
+                $newpageid = $this->cluster_jump($page->id);
+            }
+        } else if ($newpageid == 0) {
+            $newpageid = $page->id;
+        } else if ($newpageid == LESSON_NEXTPAGE) {
+            $newpageid = $this->get_next_page($page->nextpageid);
+        }
+
+        return $newpageid;
+    }
+
+    /**
+     * Process page responses.
+     *
+     * @param lesson_page $page page object
+     * @since  Moodle 3.3
+     */
+    public function process_page_responses(lesson_page $page) {
+        $context = $this->get_context();
+
+        // Check the page has answers [MDL-25632].
+        if (count($page->answers) > 0) {
+            $result = $page->record_attempt($context);
+        } else {
+            // The page has no answers so we will just progress to the next page in the
+            // sequence (as set by newpageid).
+            $result = new stdClass;
+            $result->newpageid       = optional_param('newpageid', $page->nextpageid, PARAM_INT);
+            $result->nodefaultresponse  = true;
+            $result->inmediatejump = false;
+        }
+
+        if ($result->inmediatejump) {
+            return $result;
+        }
+
+        $result->newpageid = $this->calculate_new_page_on_jump($page, $result->newpageid);
+
+        return $result;
+    }
+
+    /**
+     * Add different informative messages to the given page.
+     *
+     * @param lesson_page $page page object
+     * @param stdClass $result the page processing result object
+     * @param bool $reviewmode whether we are in review mode or not
+     * @since  Moodle 3.3
+     */
+    public function add_messages_on_page_process(lesson_page $page, $result, $reviewmode) {
+
+        if ($this->can_manage()) {
+            // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher.
+            if (lesson_display_teacher_warning($this)) {
+                $warningvars = new stdClass();
+                $warningvars->cluster = get_string("clusterjump", "lesson");
+                $warningvars->unseen = get_string("unseenpageinbranch", "lesson");
+                $this->add_message(get_string("teacherjumpwarning", "lesson", $warningvars));
+            }
+            // Inform teacher that s/he will not see the timer.
+            if ($this->properties->timelimit) {
+                $this->add_message(get_string("teachertimerwarning", "lesson"));
+            }
+        }
+        // Report attempts remaining.
+        if ($result->attemptsremaining != 0 && $this->properties->review && !$reviewmode) {
+            $this->add_message(get_string('attemptsremaining', 'lesson', $result->attemptsremaining));
+        }
+    }
+
+    /**
+     * Process and return all the information for the end of lesson page.
+     *
+     * @param string $outoftime used to check to see if the student ran out of time
+     * @return stdclass an object with all the page data ready for rendering
+     * @since  Moodle 3.3
+     */
+    public function process_eol_page($outoftime) {
+        global $DB, $USER;
+
+        $course = $this->get_courserecord();
+        $cm = $this->get_cm();
+        $canmanage = $this->can_manage();
+
+        // Init all the possible fields and values.
+        $data = (object) array(
+            'gradelesson' => true,
+            'notenoughtimespent' => false,
+            'numberofpagesviewed' => false,
+            'youshouldview' => false,
+            'numberofcorrectanswers' => false,
+            'displayscorewithessays' => false,
+            'displayscorewithoutessays' => false,
+            'yourcurrentgradeisoutof' => false,
+            'eolstudentoutoftimenoanswers' => false,
+            'welldone' => false,
+            'progressbar' => false,
+            'displayofgrade' => false,
+            'reviewlesson' => false,
+            'modattemptsnoteacher' => false,
+            'activitylink' => false,
+            'progresscompleted' => false,
+        );
+
+        $ntries = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+        if (isset($USER->modattempts[$this->properties->id])) {
+            $ntries--;  // Need to look at the old attempts :).
+        }
+
+        $gradeinfo = lesson_grade($this, $ntries);
+        $data->gradeinfo = $gradeinfo;
+        if ($this->properties->custom && !$canmanage) {
+            // Before we calculate the custom score make sure they answered the minimum
+            // number of questions. We only need to do this for custom scoring as we can
+            // not get the miniumum score the user should achieve. If we are not using
+            // custom scoring (so all questions are valued as 1) then we simply check if
+            // they answered more than the minimum questions, if not, we mark it out of the
+            // number specified in the minimum questions setting - which is done in lesson_grade().
+            // Get the number of answers given.
+            if ($gradeinfo->nquestions < $this->properties->minquestions) {
+                $data->gradelesson = false;
+                $a = new stdClass;
+                $a->nquestions = $gradeinfo->nquestions;
+                $a->minquestions = $this->properties->minquestions;
+                $this->add_message(get_string('numberofpagesviewednotice', 'lesson', $a));
+            }
+        }
+
+        if (!$canmanage) {
+            if ($data->gradelesson) {
+                // Store this now before any modifications to pages viewed.
+                $progresscompleted = $this->calculate_progress();
+
+                // Update the clock / get time information for this user.
+                $this->stop_timer();
+
+                // Update completion state.
+                $completion = new completion_info($course);
+                if ($completion->is_enabled($cm) && $this->properties->completionendreached) {
+                    $completion->update_state($cm, COMPLETION_COMPLETE);
+                }
+
+                if ($this->properties->completiontimespent > 0) {
+                    $duration = $DB->get_field_sql(
+                        "SELECT SUM(lessontime - starttime)
+                                       FROM {lesson_timer}
+                                      WHERE lessonid = :lessonid
+                                        AND userid = :userid",
+                        array('userid' => $USER->id, 'lessonid' => $this->properties->id));
+                    if (!$duration) {
+                        $duration = 0;
+                    }
+
+                    // If student has not spend enough time in the lesson, display a message.
+                    if ($duration < $this->properties->completiontimespent) {
+                        $a = new stdClass;
+                        $a->timespentraw = $duration;
+                        $a->timespent = format_time($duration);
+                        $a->timerequiredraw = $this->properties->completiontimespent;
+                        $a->timerequired = format_time($this->properties->completiontimespent);
+                        $data->notenoughtimespent = $a;
+                    }
+                }
+
+                if ($gradeinfo->attempts) {
+                    if (!$this->properties->custom) {
+                        $data->numberofpagesviewed = $gradeinfo->nquestions;
+                        if ($this->properties->minquestions) {
+                            if ($gradeinfo->nquestions < $this->properties->minquestions) {
+                                $data->youshouldview = $this->properties->minquestions;
+                            }
+                        }
+                        $data->numberofcorrectanswers = $gradeinfo->earned;
+                    }
+                    $a = new stdClass;
+                    $a->score = $gradeinfo->earned;
+                    $a->grade = $gradeinfo->total;
+                    if ($gradeinfo->nmanual) {
+                        $a->tempmaxgrade = $gradeinfo->total - $gradeinfo->manualpoints;
+                        $a->essayquestions = $gradeinfo->nmanual;
+                        $data->displayscorewithessays = $a;
+                    } else {
+                        $data->displayscorewithoutessays = $a;
+                    }
+                    if ($this->properties->grade != GRADE_TYPE_NONE) {
+                        $a = new stdClass;
+                        $a->grade = number_format($gradeinfo->grade * $this->properties->grade / 100, 1);
+                        $a->total = $this->properties->grade;
+                        $data->yourcurrentgradeisoutof = $a;
+                    }
+
+                    $grade = new stdClass();
+                    $grade->lessonid = $this->properties->id;
+                    $grade->userid = $USER->id;
+                    $grade->grade = $gradeinfo->grade;
+                    $grade->completed = time();
+                    if (isset($USER->modattempts[$this->properties->id])) { // If reviewing, make sure update old grade record.
+                        if (!$grades = $DB->get_records("lesson_grades",
+                            array("lessonid" => $this->properties->id, "userid" => $USER->id), "completed DESC", '*', 0, 1)) {
+                            throw new moodle_exception('cannotfindgrade', 'lesson');
+                        }
+                        $oldgrade = array_shift($grades);
+                        $grade->id = $oldgrade->id;
+                        $DB->update_record("lesson_grades", $grade);
+                    } else {
+                        $newgradeid = $DB->insert_record("lesson_grades", $grade);
+                    }
+                } else {
+                    if ($this->properties->timelimit) {
+                        if ($outoftime == 'normal') {
+                            $grade = new stdClass();
+                            $grade->lessonid = $this->properties->id;
+                            $grade->userid = $USER->id;
+                            $grade->grade = 0;
+                            $grade->completed = time();
+                            $newgradeid = $DB->insert_record("lesson_grades", $grade);
+                            $data->eolstudentoutoftimenoanswers = true;
+                        }
+                    } else {
+                        $data->welldone = true;
+                    }
+                }
+
+                // Update central gradebook.
+                lesson_update_grades($this, $USER->id);
+                $data->progresscompleted = $progresscompleted;
+            }
+        } else {
+            // Display for teacher.
+            if ($this->properties->grade != GRADE_TYPE_NONE) {
+                $data->displayofgrade = true;
+            }
+        }
+
+        if ($this->properties->modattempts && !$canmanage) {
+            // Make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time
+            // look at the attempt records to find the first QUESTION page that the user answered, then use that page id
+            // to pass to view again.  This is slick cause it wont call the empty($pageid) code
+            // $ntries is decremented above.
+            if (!$attempts = $this->get_attempts($ntries)) {
+                $attempts = array();
+                $url = new moodle_url('/mod/lesson/view.php', array('id' => $cm->id));
+            } else {
+                $firstattempt = current($attempts);
+                $pageid = $firstattempt->pageid;
+                // If the student wishes to review, need to know the last question page that the student answered.
+                // This will help to make sure that the student can leave the lesson via pushing the continue button.
+                $lastattempt = end($attempts);
+                $USER->modattempts[$this->properties->id] = $lastattempt->pageid;
+
+                $url = new moodle_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $pageid));
+            }
+            $data->reviewlesson = $url->out(false);
+        } else if ($this->properties->modattempts && $canmanage) {
+            $data->modattemptsnoteacher = true;
+        }
+
+        if ($this->properties->activitylink) {
+            $data->activitylink = $this->link_for_activitylink();
+        }
+        return $data;
     }
 }
 
@@ -2695,6 +3949,11 @@ abstract class lesson_page extends lesson_base {
          */
         $result = $this->check_answer();
 
+        // Processes inmediate jumps.
+        if ($result->inmediatejump) {
+            return $result;
+        }
+
         $result->attemptsremaining  = 0;
         $result->maxattemptsreached = false;
 
@@ -2770,12 +4029,6 @@ abstract class lesson_page extends lesson_base {
                         $result->attemptsremaining = $this->lesson->maxattempts - $nattempts;
                     }
                 }
-            }
-            // TODO: merge this code with the jump code below.  Convert jumpto page into a proper page id
-            if ($result->newpageid == 0) {
-                $result->newpageid = $this->properties->id;
-            } elseif ($result->newpageid == LESSON_NEXTPAGE) {
-                $result->newpageid = $this->lesson->get_next_page($this->properties->nextpageid);
             }
 
             // Determine default feedback if necessary
@@ -2912,9 +4165,10 @@ abstract class lesson_page extends lesson_base {
      * is viewed
      *
      * @param bool $canmanage True if the user has the manage cap
+     * @param bool $redirect  Optional, default to true. Set to false to avoid redirection and return the page to redirect.
      * @return mixed
      */
-    public function callback_on_view($canmanage) {
+    public function callback_on_view($canmanage, $redirect = true) {
         return true;
     }
 
@@ -3210,6 +4464,7 @@ abstract class lesson_page extends lesson_base {
         $result->userresponse    = null;
         $result->feedback        = '';
         $result->nodefaultresponse  = false; // Flag for redirecting when default feedback is turned off
+        $result->inmediatejump = false; // Flag to detect when we should do a jump from the page without further processing.
         return $result;
     }
 
@@ -3451,6 +4706,20 @@ abstract class lesson_page extends lesson_base {
         $validpages[$this->properties->id] = 1;
         return $this->properties->nextpageid;
     }
+
+    /**
+     * Get files from the page area file.
+     *
+     * @param bool $includedirs whether or not include directories
+     * @param int $updatedsince return files updated since this time
+     * @return array list of stored_file objects
+     * @since  Moodle 3.2
+     */
+    public function get_files($includedirs = true, $updatedsince = 0) {
+        $fs = get_file_storage();
+        return $fs->get_area_files($this->lesson->context->id, 'mod_lesson', 'page_contents', $this->properties->id,
+                                    'itemid, filepath, filename', $includedirs, $updatedsince);
+    }
 }
 
 
@@ -3497,6 +4766,25 @@ class lesson_page_answer extends lesson_base {
      */
     public static function create($properties, lesson_page $page) {
         return $page->create_answers($properties);
+    }
+
+    /**
+     * Get files from the answer area file.
+     *
+     * @param bool $includedirs whether or not include directories
+     * @param int $updatedsince return files updated since this time
+     * @return array list of stored_file objects
+     * @since  Moodle 3.2
+     */
+    public function get_files($includedirs = true, $updatedsince = 0) {
+
+        $lesson = lesson::load($this->properties->lessonid);
+        $fs = get_file_storage();
+        $answerfiles = $fs->get_area_files($lesson->context->id, 'mod_lesson', 'page_answers', $this->properties->id,
+                                            'itemid, filepath, filename', $includedirs, $updatedsince);
+        $responsefiles = $fs->get_area_files($lesson->context->id, 'mod_lesson', 'page_responses', $this->properties->id,
+                                            'itemid, filepath, filename', $includedirs, $updatedsince);
+        return array_merge($answerfiles, $responsefiles);
     }
 
 }

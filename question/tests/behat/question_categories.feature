@@ -23,7 +23,7 @@ Feature: A teacher can put questions in categories in the question bank
       | questioncategory | qtype | name                      | questiontext                  |
       | Used category    | essay | Test question to be moved | Write about whatever you want |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   Scenario: A new question category can be created
     When I navigate to "Categories" node in "Course administration > Question bank"

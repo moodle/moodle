@@ -49,7 +49,7 @@ class mod_lesson_mod_form extends moodleform_mod {
     }
 
     function definition() {
-        global $CFG, $COURSE, $DB;
+        global $CFG, $COURSE, $DB, $OUTPUT;
 
         $mform    = $this->_form;
 
@@ -249,6 +249,22 @@ class mod_lesson_mod_form extends moodleform_mod {
                     'completed' => 0, 'gradebetterthan' => 0));
         }
 
+        // Allow to enable offline lessons only if the Mobile services are enabled.
+        if ($CFG->enablemobilewebservice) {
+            $mform->addElement('selectyesno', 'allowofflineattempts', get_string('allowofflineattempts', 'lesson'));
+            $mform->addHelpButton('allowofflineattempts', 'allowofflineattempts', 'lesson');
+            $mform->setDefault('allowofflineattempts', 0);
+            $mform->setAdvanced('allowofflineattempts');
+            $mform->disabledIf('allowofflineattempts', 'timelimit[number]', 'neq', 0);
+
+            $mform->addElement('static', 'allowofflineattemptswarning', '',
+                    $OUTPUT->notification(get_string('allowofflineattempts_help', 'lesson'), 'warning'));
+            $mform->setAdvanced('allowofflineattemptswarning');
+        } else {
+            $mform->addElement('hidden', 'allowofflineattempts', 0);
+            $mform->setType('allowofflineattempts', PARAM_INT);
+        }
+
         // Flow control.
         $mform->addElement('header', 'flowcontrol', get_string('flowcontrol', 'lesson'));
 
@@ -392,6 +408,8 @@ class mod_lesson_mod_form extends moodleform_mod {
 
         $mform->addElement('checkbox', 'completionendreached', get_string('completionendreached', 'lesson'),
                 get_string('completionendreached_desc', 'lesson'));
+        // Enable this completion rule by default.
+        $mform->setDefault('completionendreached', 1);
 
         $group = array();
         $group[] =& $mform->createElement('checkbox', 'completiontimespentenabled', '',
@@ -414,25 +432,26 @@ class mod_lesson_mod_form extends moodleform_mod {
         return !empty($data['completionendreached']) || $data['completiontimespent'] > 0;
     }
 
-    public function get_data() {
-        $data = parent::get_data();
-        if (!$data) {
-            return false;
-        }
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
         // Turn off completion setting if the checkbox is not ticked.
         if (!empty($data->completionunlocked)) {
             $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
             if (empty($data->completiontimespentenabled) || !$autocompletion) {
                 $data->completiontimespent = 0;
             }
-        }
-        if (!empty($data->completionunlocked)) {
-            $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
             if (empty($data->completionendreached) || !$autocompletion) {
                 $data->completionendreached = 0;
             }
         }
-        return $data;
     }
 }
 

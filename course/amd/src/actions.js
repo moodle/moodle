@@ -22,8 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.3
  */
-define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str', 'core/url', 'core/yui'],
-    function($, ajax, templates, notification, str, url, Y) {
+define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str', 'core/url', 'core/yui',
+        'core/modal_factory', 'core/modal_events', 'core/key_codes'],
+    function($, ajax, templates, notification, str, url, Y, ModalFactory, ModalEvents, KeyCodes) {
         var CSS = {
             EDITINPROGRESS: 'editinprogress',
             SECTIONDRAGGABLE: 'sectiondraggable',
@@ -36,7 +37,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             MENU: '.moodle-actionmenu[data-enhance=moodle-core-actionmenu]',
             TOGGLE: '.toggle-display,.dropdown-toggle',
             SECTIONLI: 'li.section',
-            SECTIONACTIONMENU: '.section_action_menu'
+            SECTIONACTIONMENU: '.section_action_menu',
+            ADDSECTIONS: '#changenumsections [data-add-sections]'
         };
 
         Y.use('moodle-course-coursebase', function() {
@@ -352,20 +354,32 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @param {String} titlestr string for "title" attribute (if different from stringname)
          * @param {String} titlecomponent
          * @param {String} newaction new value for data-action attribute of the link
+         * @return {Promise} promise which is resolved when the replacement has completed
          */
         var replaceActionItem = function(actionitem, image, stringname,
                                            stringcomponent, titlestr, titlecomponent, newaction) {
-            actionitem.find('img').attr('src', url.imageUrl(image, 'core'));
-            str.get_string(stringname, stringcomponent).done(function(newstring) {
-                actionitem.find('span.menu-action-text').html(newstring);
-                actionitem.attr('title', newstring);
-            });
+
+
+            var stringRequests = [{key: stringname, component: stringcomponent}];
             if (titlestr) {
-                str.get_string(titlestr, titlecomponent).done(function(newtitle) {
-                    actionitem.attr('title', newtitle);
-                });
+                stringRequests.push({key: titlestr, component: titlecomponent});
             }
-            actionitem.attr('data-action', newaction);
+
+            return str.get_strings(stringRequests).then(function(strings) {
+                actionitem.find('span.menu-action-text').html(strings[0]);
+                actionitem.attr('title', strings[0]);
+
+                var title = '';
+                if (titlestr) {
+                    title = strings[1];
+                    actionitem.attr('title', title);
+                }
+                return templates.renderPix(image, 'core', title);
+            }).then(function(pixhtml) {
+                actionitem.find('.icon').replaceWith(pixhtml);
+                actionitem.attr('data-action', newaction);
+                return;
+            }).catch(notification.exception);
         };
 
         /**
@@ -568,6 +582,44 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                     } else {
                         editSection(sectionElement, sectionId, actionItem, courseformat);
                     }
+                });
+
+                // Add a handler for "Add sections" link to ask for a number of sections to add.
+                str.get_string('numberweeks').done(function(strNumberSections) {
+                    var trigger = $(SELECTOR.ADDSECTIONS),
+                        modalTitle = trigger.attr('data-add-sections');
+                    var modalBody = $('<div><label for="add_section_numsections"></label> ' +
+                        '<input id="add_section_numsections" type="number" min="1" value="1"></div>');
+                    modalBody.find('label').html(strNumberSections);
+                    ModalFactory.create({
+                        title: modalTitle,
+                        type: ModalFactory.types.SAVE_CANCEL,
+                        body: modalBody.html()
+                    }, trigger)
+                    .done(function(modal) {
+                        var numSections = $(modal.getBody()).find('#add_section_numsections'),
+                        addSections = function() {
+                            // Check if value of the "Number of sections" is a valid positive integer and redirect
+                            // to adding a section script.
+                            if ('' + parseInt(numSections.val()) === numSections.val() && parseInt(numSections.val()) >= 1) {
+                                document.location = trigger.attr('href') + '&numsections=' + parseInt(numSections.val());
+                            }
+                        };
+                        modal.setSaveButtonText(modalTitle);
+                        modal.getRoot().on(ModalEvents.shown, function() {
+                            // When modal is shown focus and select the input and add a listener to keypress of "Enter".
+                            numSections.focus().select().on('keydown', function(e) {
+                                if (e.keyCode === KeyCodes.enter) {
+                                    addSections();
+                                }
+                            });
+                        });
+                        modal.getRoot().on(ModalEvents.save, function(e) {
+                            // When modal "Add" button is pressed.
+                            e.preventDefault();
+                            addSections();
+                        });
+                    });
                 });
             },
 

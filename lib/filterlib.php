@@ -234,20 +234,9 @@ class filter_manager {
 
     /**
      * @deprecated Since Moodle 3.0 MDL-50491. This was used by the old text filtering system, but no more.
-     * @todo MDL-50632 This will be deleted in Moodle 3.2.
-     * @param context $context the context.
-     * @return string the hash.
      */
-    public function text_filtering_hash($context) {
-        debugging('filter_manager::text_filtering_hash() is deprecated. ' .
-                'It was an internal part of the old format_text caching, ' .
-                'and should not have been called from other code.', DEBUG_DEVELOPER);
-        $filters = $this->get_text_filters($context);
-        $hashes = array();
-        foreach ($filters as $filter) {
-            $hashes[] = $filter->hash();
-        }
-        return implode('-', $hashes);
+    public function text_filtering_hash() {
+        throw new coding_exception('filter_manager::text_filtering_hash() can not be used any more');
     }
 
     /**
@@ -323,10 +312,7 @@ class null_filter_manager {
     }
 
     public function text_filtering_hash() {
-        debugging('filter_manager::text_filtering_hash() is deprecated. ' .
-                'It was an internal part of the old format_text caching, ' .
-                'and should not have been called from other code.', DEBUG_DEVELOPER);
-        return '';
+        throw new coding_exception('filter_manager::text_filtering_hash() can not be used any more');
     }
 }
 
@@ -417,14 +403,9 @@ abstract class moodle_text_filter {
 
     /**
      * @deprecated Since Moodle 3.0 MDL-50491. This was used by the old text filtering system, but no more.
-     * @todo MDL-50632 This will be deleted in Moodle 3.2.
-     * @return string The class name of the current class
      */
     public function hash() {
-        debugging('moodle_text_filter::hash() is deprecated. ' .
-                'It was an internal part of the old format_text caching, ' .
-                'and should not have been called from other code.', DEBUG_DEVELOPER);
-        return __CLASS__;
+        throw new coding_exception('moodle_text_filter::hash() can not be used any more');
     }
 
     /**
@@ -1027,7 +1008,7 @@ function filter_preload_activities(course_modinfo $modinfo) {
 
     // Get all filter_active rows relating to all these contexts
     list ($sql, $params) = $DB->get_in_or_equal($allcontextids);
-    $filteractives = $DB->get_records_select('filter_active', "contextid $sql", $params);
+    $filteractives = $DB->get_records_select('filter_active', "contextid $sql", $params, 'sortorder');
 
     // Get all filter_config only for the cm contexts
     list ($sql, $params) = $DB->get_in_or_equal($cmcontextids);

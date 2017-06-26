@@ -21,8 +21,7 @@ Feature: Use the particiaption report to message groups of students
       | student2 | C1 | student |
       | student3 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Book" to section "1" and I fill the form with:
       | Name | Test book name |
       | Description | Test book |
@@ -32,13 +31,13 @@ Feature: Use the particiaption report to message groups of students
       | Content | Test chapter content |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test book name"
     And I log out
 
   Scenario: Message students who have not participated in book
     Given I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Course participation" node in "Course administration > Reports"
     And I set the field "instanceid" to "Test book name"
     And I set the field "roleid" to "Student"
@@ -60,7 +59,7 @@ Feature: Use the particiaption report to message groups of students
       | messaging | 0 |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Course participation" node in "Course administration > Reports"
     When I set the field "instanceid" to "Test book name"
     And I set the field "roleid" to "Student"

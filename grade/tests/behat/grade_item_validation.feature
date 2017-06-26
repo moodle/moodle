@@ -28,8 +28,7 @@ Feature: Grade item validation
       | Name  | Letter scale |
       | Scale | Disappointing, Good, Very good, Excellent |
     And I press "Save changes"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I press "Add grade item"
     And I set the following fields to these values:

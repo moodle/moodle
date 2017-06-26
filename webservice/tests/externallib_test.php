@@ -122,6 +122,12 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
 
         $this->assertEquals(HOMEPAGE_MY, $siteinfo['userhomepage']);
+        $this->assertEquals($CFG->calendartype, $siteinfo['sitecalendartype']);
+        if (!empty($USER->calendartype)) {
+            $this->assertEquals($USER->calendartype, $siteinfo['usercalendartype']);
+        } else {
+            $this->assertEquals($CFG->calendartype, $siteinfo['usercalendartype']);
+        }
 
         // Now as admin.
         $this->setAdminUser();

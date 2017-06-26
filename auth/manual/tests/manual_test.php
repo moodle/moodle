@@ -41,20 +41,15 @@ class auth_manual_testcase extends advanced_testcase {
     /** @var auth_plugin_manual Keeps the authentication plugin. */
     protected $authplugin;
 
-    /** @var stdClass Keeps authentication plugin config */
-    protected $config;
-
     /**
      * Setup test data.
      */
     protected function setUp() {
         $this->resetAfterTest(true);
         $this->authplugin = new auth_plugin_manual();
-        $this->config = new stdClass();
-        $this->config->expiration = '1';
-        $this->config->expiration_warning = '2';
-        $this->config->expirationtime = '30';
-        $this->authplugin->process_config($this->config);
+        set_config('expiration', '1', 'auth_manual');
+        set_config('expiration_warning', '2', 'auth_manual');
+        set_config('expirationtime', '30', 'auth_manual');
         $this->authplugin->config = get_config(auth_plugin_manual::COMPONENT_NAME);
     }
 
@@ -95,14 +90,4 @@ class auth_manual_testcase extends advanced_testcase {
         $this->assertEquals(30, $this->authplugin->password_expire($user1->username));
     }
 
-    /**
-     * Test test_process_config method.
-     */
-    public function test_process_config() {
-        $this->assertTrue($this->authplugin->process_config($this->config));
-        $config = get_config(auth_plugin_manual::COMPONENT_NAME);
-        $this->assertEquals($this->config->expiration, $config->expiration);
-        $this->assertEquals($this->config->expiration_warning, $config->expiration_warning);
-        $this->assertEquals($this->config->expirationtime, $config->expirationtime);
-    }
 }

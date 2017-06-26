@@ -49,11 +49,10 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/notification'], functi
                 if (form.find('input:radio[data-survey-default="true"]:checked').length !== 0) {
                     e.preventDefault();
                     // Display the modal error.
-                    modalPromise.then(function(modal) {
+                    return modalPromise.then(function(modal) {
                         modal.show();
-                        return;
+                        return false;
                     });
-                    return false;
                 }
 
                 return true;

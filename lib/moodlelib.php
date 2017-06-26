@@ -1932,6 +1932,10 @@ function set_user_preference($name, $value, $user = null) {
 
     // Update value in cache.
     $user->preference[$name] = $value;
+    // Update the $USER in case where we've not a direct reference to $USER.
+    if ($user !== $USER && $user->id == $USER->id) {
+        $USER->preference[$name] = $value;
+    }
 
     // Set reload flag for other sessions.
     mark_user_preferences_changed($user->id);
@@ -2001,6 +2005,10 @@ function unset_user_preference($name, $user = null) {
 
     // Delete the preference from cache.
     unset($user->preference[$name]);
+    // Update the $USER in case where we've not a direct reference to $USER.
+    if ($user !== $USER && $user->id == $USER->id) {
+        unset($USER->preference[$name]);
+    }
 
     // Set reload flag for other sessions.
     mark_user_preferences_changed($user->id);
@@ -4978,6 +4986,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
 
     // We have tried to delete everything the nice way - now let's force-delete any remaining module data.
 
+    // Delete completion defaults.
+    $DB->delete_records("course_completion_defaults", array("course" => $courseid));
+
     // Remove all data from availability and completion tables that is associated
     // with course-modules belonging to this course. Note this is done even if the
     // features are not enabled now, in case they were enabled previously.
@@ -5961,6 +5972,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     if ($attachment && $attachname) {
         if (preg_match( "~\\.\\.~" , $attachment )) {
             // Security check for ".." in dir path.
+            $supportuser = core_user::get_support_user();
             $temprecipients[] = array($supportuser->email, fullname($supportuser, true));
             $mail->addStringAttachment('Error in attachment.  User attempted to attach a filename with a unsafe name.', 'error.txt', '8bit', 'text/plain');
         } else {

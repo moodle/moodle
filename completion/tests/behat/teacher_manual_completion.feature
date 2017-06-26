@@ -17,8 +17,7 @@ Feature: Allow teachers to manually mark users as complete when configured
       | student1 | CC1    | student        |
       | teacher1 | CC1    | editingteacher |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Completion course"
+    And I am on "Completion course" course homepage
     And completion tracking is "Enabled" in current course
     And I follow "Course completion"
     And I set the field "Teacher" to "1"
@@ -27,13 +26,11 @@ Feature: Allow teachers to manually mark users as complete when configured
     And I add the "Course completion status" block
     And I log out
     And I log in as "student1"
-    And I am on site homepage
-    And I follow "Completion course"
+    And I am on "Completion course" course homepage
     And I should see "Status: Not yet started"
     And I log out
     When I log in as "teacher1"
-    And I am on site homepage
-    And I follow "Completion course"
+    And I am on "Completion course" course homepage
     And I follow "View course report"
     And I should see "Student First"
     And I follow "Click to mark user complete"
@@ -44,6 +41,5 @@ Feature: Allow teachers to manually mark users as complete when configured
     And I am on site homepage
     And I log out
     Then I log in as "student1"
-    And I am on site homepage
-    And I follow "Completion course"
+    And I am on "Completion course" course homepage
     And I should see "Status: Complete"

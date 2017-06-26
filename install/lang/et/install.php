@@ -30,49 +30,60 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Administreerimiskataloog';
-$string['availablelangs'] = 'Saadaval keelte nimekiri';
+$string['admindirname'] = 'Halduskataloog';
+$string['availablelangs'] = 'Saadaolevad keelepaketid';
 $string['chooselanguagehead'] = 'Valige keel';
-$string['chooselanguagesub'] = 'Palun vali keel, mida kasutatakse AINULT installeerimise käigus. Hiljem saab valida õpikeskkonna ja kasutajate keelt.';
-$string['clialreadyinstalled'] = 'Fail config.php juba eksisteerib, palun kasuta admin/cli/upgrade.php kui soovid uuendada oma saiti.';
+$string['chooselanguagesub'] = 'Valige Moodle’i keel. Valitud keelt kasutatakse õpikeskkonna vaikekeelena ja seda saab hiljem muuta.';
+$string['clialreadyconfigured'] = 'Fail „config.php“ on juba olemas. Kasutage sellele saidile Moodle’i installimiseks faili „admin/cli/install_database.php“.';
+$string['clialreadyinstalled'] = 'Konfiguratsioonifail config.php on juba olemas. Palun kasutage Moodle’i selles õpikeskkonnas uuendamiseks faili admin/cli/install_database.php.';
 $string['cliinstallheader'] = 'Moodle’i {$a} käsureapõhine installiprogramm';
 $string['databasehost'] = 'Andmebaasi host';
 $string['databasename'] = 'Andmebaasi nimi';
 $string['databasetypehead'] = 'Valige andmebaasi draiver';
-$string['dataroot'] = 'Andmete kataloog';
+$string['dataroot'] = 'Andmekataloog';
 $string['datarootpermission'] = 'Andmekataloogide õigus';
 $string['dbprefix'] = 'Tabeli eesliide';
-$string['dirroot'] = 'Moodle kataloog';
+$string['dirroot'] = 'Moodle’i kataloog';
 $string['environmenthead'] = 'Keskkonna kontrollimine...';
-$string['environmentsub2'] = 'Iga Moodle väljalaskel on oma minimaalne PHP versiooni nõue ja kohustuslikud PHP laiendused.
-Täielik keskkonna kontroll tehakse enne iga installeerimist ja uuendamist. Palun võta ühendust serveri administraatoriga, kui sa ei sa kuidas installeerida või võimaldada PHP laiendusi.';
+$string['environmentsub2'] = 'Igal Moodle’i väljaandel on oma minimaalne PHP versiooni nõue ja kohustuslikud PHP- laiendused.
+Täielik keskkonnakontroll tehakse enne iga installi ja versiooniuuendust. Kui te ei tea, kuidas installida uus versioon või lubada PHP-laiendused, pöörduge administraatori poole.';
 $string['errorsinenvironment'] = 'Keskkonna sobivuse kontroll nurjus.';
 $string['installation'] = 'Installimine';
 $string['langdownloaderror'] = 'Keelt "{$a}" ei saanud alla laadida. Installimine jätkub inglise keeles.';
-$string['memorylimithelp'] = '<p>PHP mälu limiit sinu serveri jaoks on hetkel {$a}.</p>
-<p>See võib hiljem tekitada Moodle\'il mäluprobleeme, eriti kui sul on palju mooduleid ja/või kasutajaid.
-</p>
-<p>Me soovitame, et sa konfigureeriksid PHP kõrgema limiidi peale, näiteks 16M. Selle tostamiseks on mitu viisi:</p>
+$string['memorylimithelp'] = '<p>Teie serveri PHP mälulimiit on praegu {$a}.</p>
+
+<p>See võib hiljem tekitada Moodle’il mäluprobleeme,
+   eriti kui teil on palju kasutajaid ja/või lubatud palju mooduleid.</p>
+
+<p>Soovitatav on võimaluse korral konfigureerida suurem PHP limiit, näiteks 16M.
+   Selle tegemiseks on mitu viisi.</p>
 <ol>
-<li>Kui võimalik, siis kompileeri PHP uuesti parameetriga <i>--enable-memory-limit</i>.
-See lubab Moodle\'il ise mälu limiiti määrata.</li>
-<li>Kui sul on juurdepääs oma php.ini failile, siis saad muuta seal <b>memory_limit</b> väärtuseks midagi 16M lähedast. Kui sul ei ole juurdepääsu, siis võiksid paluda administraatoril seda teha.</li>
-<li>Mõnedes PHP serverites saad luua Moodle kataloogi .htaccess faili, mis sisaldab seda rida:<p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>Kuigi mõnedes serverites tõkestab see <b>kõigi</b> PHP lehekülgede tööd (sa näed veateateid, kui vaatad lehti), nii et pead eemaldama .htaccess faili.</p></li>
+<li>Kui võimalik, siis kompileerige PHP uuesti parameetriga <i>--enable-memory-limit</i>.
+    See lubab Moodle’il ise mälulimiidi määrata.</li>
+<li>Kui teil on juurdepääs teie php.ini failile, saate seal muuta sätte <b>memory_limit</b>
+     väärtuse näiteks väärtuseks 40M.  Kui teil pole juurdepääsu,
+    saate paluda administraatoril seda teha.</li>
+<li>Mõnes PHP-serveris saab luua Moodle’i kataloogi faili .htaccess,
+    mis sisaldab seda rida:
+    <blockquote><div>php_value memory_limit 40M</div></blockquote>
+    <p>Kuigi mõnes serveris tõkestab see <b>kõigi</b> PHP-lehtede tööd
+    (kui vaatate lehti, näete tõrketeateid), nii et peate faili .htaccess eemaldama.</p></li>
 </ol>';
 $string['paths'] = 'Teed';
-$string['pathserrcreatedataroot'] = 'Andmete kataloogi ({$a->dataroot}) ei saa installeerija luua.';
+$string['pathserrcreatedataroot'] = 'Installiprogramm ei saanud andmete kataloogi ({$a->dataroot}) luua.';
 $string['pathshead'] = 'Kinnita teed';
 $string['pathsrodataroot'] = 'Andmete juurkataloog ei võimalda kirjutust.';
 $string['pathsroparentdataroot'] = 'Ülemkataloog ({$a->parent}) ei võimalda kirjutust. Installiprogramm ei saanud andmete kataloogi ({$a->dataroot}) luua.';
-$string['pathssubadmindir'] = 'Väga vähesed veebihostid kasutavad /admin spetsiaalse URL-na, et pääseda ligi kontrollpaneelile või millegile sarnasele. Kahjuks on see konfliktis Moodle administreerimislehtedega. Sa saad olukorda parandada, kui nimetad kataloogi admin ümber oma üaigalduses ning kirjutad selle uue nime siia. Näiteks: <em>moodleadmin</em>. See parandab administreerimisliidese lingid Moodle\'s.';
-$string['pathssubdataroot'] = 'Sa pead näitama koha, kuhu Moodle saaks salvestada üles laetud failid. See kataloog peab olema loetav JA KIRJUTATAV veebiserveri kasutaja poolt (tavaliselt \'nobody\' or \'apache\'), samas see kataloog ei tohiks olla ligipääsetav otse veebi kaudu. Kui kataloogi ei eksisteeri, siis installeerija püüab selle ise luua.';
-$string['pathssubdirroot'] = 'Täistee Moodle paigalduse kataloogile.';
-$string['pathssubwwwroot'] = 'Täielik veebiaadress, kust kaudu Moodle\'le ligi pääsetakse.
-Ei ole võimalik kasutada mitmest kohast kohast ligipääsu.
-Kui Su sait omab mitut avalikku aadress, siis pead seadistama ümbersuunamised kõikidelt teistest aadressidelt.
-Kui Su sait on ligipääsetav nii Internetist kui intranetist (sisevõrgust), siis kasuta Interneti ehk avalikku aadressi ja seadista DNS sellisellt, et intraneti kasutajad kasutaksid ka avalikku aadressi.
-Kui aadress pole korrektne, siis palun muuda URL oma brauseris, et taasalustada installeerimist erineva väärtusega.';
+$string['pathssubadmindir'] = 'Väga vähestes veebihostides on juhtpaneelile vm juurdepääsuks spetsiaalse URL-ina kasutusel „/admin“. Kahjuks ei vasta see Moodle’i administreerimislehtede tavaasukohale. Saate olukorda parandada, kui nimetate kataloogi admin oma installis ümber ja sisestate uue nime siin. Näiteks: <em>moodleadmin</em>. See parandab Moodle’is olevad administreerimisliidese lingid.';
+$string['pathssubdataroot'] = '<p>Kataloog, kuhu Moodle salvestab kõigi kasutajate üleslaaditud failide sisu.</p>
+<p>See kataloog peab olema veebiserveri kasutaja poolt (tavaliselt \'www-data\', \'nobody\' või \'apache\') nii loetav kui ka kirjutatav.</p>
+<p>See ei tohi olla otse veebist juurdepääsetav.</p>
+<p>Kui kataloogi pole praegu olemas, püüab installimisprotsess selle ise luua.</p>';
+$string['pathssubdirroot'] = '<p>Moodle’i koodi sisaldava kataloogi täielik tee.</p>';
+$string['pathssubwwwroot'] = '<p>Täielik veebiaadress, kustkaudu Moodle’ile juurde pääsetakse, s.t see aadress, mille kasutajad Moodle’ile juurdepääsemiseks oma brauseri aadressiribale sisestavad.</p>
+<p>Moodle’ile poole võimalik juurde pääseda mitme aadressi kaudu. Kui teie õpikeskkond on juurdepääsetav mitme aadressi kaudu, valige neist lihtsaim ja määrake kõigilt teistelt aadressidelt püsiv ümbersuunamine.</p>
+<p>Kui teie õpikeskkond on juurdepääsetav nii Internetist kui ka sisevõrgust, kasutage siin avalikku aadressi.</p>
+<p>Kui praegune aadress pole õige, siis muutke oma brauseri aadressiribal URL ja alustage installi uuesti.</p>';
 $string['pathsunsecuredataroot'] = 'Andmete juurkataloogi asukoht pole turvaline';
 $string['pathswrongadmindir'] = 'Halduskataloogi pole olemas';
 $string['phpextension'] = '{$a} PHP-laiendus';
@@ -81,10 +92,17 @@ $string['phpversionhelp'] = '<p>Moodle vajab vähemalt PHP versiooni 4.1.0</p>
 <p>Sinu jooksev versioon on {$a}</p>
 <p>Sa pead oma PHP-d uuendama või kolima hosti, kus on uuem PHP versioon!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Sa näed seda lehte, sest oled edukalt installeerinud ja käivitanud <strong>{$a->packname} {$a->packversion}</strong> paketi Sinu arvutis. Õnnitleme!';
-$string['welcomep30'] = 'See <strong>{$a->installername}</strong> väljalase rakendusi loomaks keskkonda, millel <strong>Moodle</strong> hakkab will operate, namely:';
+$string['welcomep20'] = 'Teile kuvatakse see leht, kuna olete edukalt oma arvutisse installinud ja
+     käivitanud paketi <strong>{$a->packname} {$a->packversion}</strong>. Õnnitleme!';
+$string['welcomep30'] = 'See <strong>{$a->installername}</strong> väljaanne hõlmab rakendusi, mille abil
+    saab luua <strong>Moodle’i</strong> toimimiseks vajaliku keskkonna, nt:';
 $string['welcomep40'] = 'Pakett sisaldab ka järgmist: <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Kasutamaks kõiki selle rakendusi selles paketis on kaetud nende vastavad litsentsid. Täielik <strong>{$a->installername}</strong> pakett on <a href="http://www.opensource.org/docs/definition_plain.html">avatud lähtekoodil</a> ja jaotatud <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> litsentsi alusel.';
-$string['welcomep60'] = 'Järgnevatel lehtedel juhitakse sind läbi mõnede lihtsate sammude seadistamaks ja seadmaks üles <strong>Moodle</strong> oma arvutis. Sa võid nõustuda vaikeväärtustega või fakultatiivselt täiendada vastavalt oma vajadustele.';
-$string['welcomep70'] = '<strong>Moodle\\’i</strong> installi jätkamiseks klõpsake nuppu Edasi.';
+$string['welcomep50'] = 'Kõigi selle paketi rakenduste kasutamise kohta kehtivad nende vastavad
+    litsentsid. Täielik <strong>{$a->installername}</strong> pakett on
+    <a href="http://www.opensource.org/docs/definition_plain.html">avatud lähtekoodiga</a> ja seda levitatakse
+    <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> litsentsi alusel.';
+$string['welcomep60'] = 'Järgmistel lehtedel toodud lihtsate juhiste abil saate konfigureerida ja
+    häälestada <strong>Moodle</strong>’i oma arvutis. Võite nõustuda
+    vaikesätetega või muuta sätteid oma vajaduste järgi.';
+$string['welcomep70'] = '<strong>Moodle’i</strong> installi jätkamiseks klõpsake nuppu Edasi.';
 $string['wwwroot'] = 'Veebiaadress';

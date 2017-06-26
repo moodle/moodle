@@ -181,8 +181,19 @@ function message_send($eventdata) {
         }
     }
 
-    // Fetch enabled processors
-    $processors = get_message_processors(true);
+    // Fetch enabled processors.
+    // If we are dealing with a message some processors may want to handle it regardless of user and site settings.
+    if (empty($savemessage->notification)) {
+        $processors = array_filter(get_message_processors(false), function($processor) {
+            if ($processor->object->force_process_messages()) {
+                return true;
+            }
+
+            return ($processor->enabled && $processor->configured);
+        });
+    } else {
+        $processors = get_message_processors(true);
+    }
 
     // Preset variables
     $processorlist = array();
@@ -215,7 +226,9 @@ function message_send($eventdata) {
         }
 
         // Populate the list of processors we will be using
-        if ($permitted == 'forced' && $userisconfigured) {
+        if (empty($savemessage->notification) && $processor->object->force_process_messages()) {
+            $processorlist[] = $processor->name;
+        } else if ($permitted == 'forced' && $userisconfigured) {
             // An admin is forcing users to use this message processor. Use this processor unconditionally.
             $processorlist[] = $processor->name;
         } else if ($permitted == 'permitted' && $userisconfigured && !$eventdata->userto->emailstop) {

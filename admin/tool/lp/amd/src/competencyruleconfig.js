@@ -165,14 +165,14 @@ define(['jquery',
         if (!self._competency) {
             return false;
         }
-        return self._render().then(function(html) {
-            return Str.get_string('competencyrule', 'tool_lp').then(function(title) {
-                self._popup = new Dialogue(
-                    title,
-                    html,
-                    self._afterRender.bind(self)
-                );
-            });
+        return $.when(Str.get_string('competencyrule', 'tool_lp'), self._render())
+        .then(function(title, render) {
+            self._popup = new Dialogue(
+                title,
+                render[0],
+                self._afterRender.bind(self)
+            );
+            return;
         }).fail(Notification.exception);
     };
 
@@ -312,9 +312,9 @@ define(['jquery',
      */
     RuleConfig.prototype._initOutcomes = function() {
         var self = this;
-
         return Outcomes.getAll().then(function(outcomes) {
             self._outcomesOption = outcomes;
+            return;
         });
     };
 
@@ -328,11 +328,11 @@ define(['jquery',
     RuleConfig.prototype._initRules = function() {
         var self = this,
             promises = [];
-
         $.each(self._rules, function(index, rule) {
             var promise = rule.init().then(function() {
                 rule.setTargetCompetency(self._competency);
                 rule.on('change', self._afterRuleConfigChange.bind(self));
+                return;
             }, function() {
                 // Upon failure remove the rule, and resolve the promise.
                 self._rules.splice(index, 1);
@@ -518,13 +518,13 @@ define(['jquery',
             self._afterChange();
             return;
         }
-
         rule.injectTemplate(container).then(function() {
             container.show();
-        }, function() {
-            container.empty().hide();
+            return;
         }).always(function() {
             self._afterChange();
+        }).catch(function() {
+            container.empty().hide();
         });
     };
 

@@ -23,7 +23,7 @@ Feature: Test creating different types of feedback questions for non-anonymous f
       | activity   | name                | course | idnumber    | anonymous |
       | feedback   | Learning experience | C1     | feedback0   | 2         |
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Learning experience"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Information" question to the feedback with:
@@ -71,7 +71,7 @@ Feature: Test creating different types of feedback questions for non-anonymous f
       | Maximum characters accepted | 200                    |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Learning experience"
     And I follow "Answer the questions..."
     And I set the following fields to these values:
@@ -86,7 +86,7 @@ Feature: Test creating different types of feedback questions for non-anonymous f
     And I press "Submit your answers"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Learning experience"
     And I follow "Answer the questions..."
     And I set the following fields to these values:
@@ -101,14 +101,14 @@ Feature: Test creating different types of feedback questions for non-anonymous f
     And I press "Submit your answers"
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Learning experience"
     And I navigate to "Analysis" in current page administration
     And I should see "Submitted answers: 2"
     And I should see "Questions: 9"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Learning experience"
     And I navigate to "Analysis" in current page administration
     And I should see "C1" in the "(info)" "table"

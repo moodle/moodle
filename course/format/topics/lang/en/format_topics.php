@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addsections'] = 'Add topics';
 $string['currentsection'] = 'This topic';
 $string['editsection'] = 'Edit topic';
 $string['editsectionname'] = 'Edit topic name';

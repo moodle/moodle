@@ -125,7 +125,7 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $this->assertEquals(1, $CFG->slasharguments);
         $this->assertEquals(1, $CFG->themerev);
         $this->assertEquals(0, $CFG->themedesignermode);
-        $this->assertSame('http://www.example.com/moodle', $CFG->wwwroot);
+        $this->assertSame('https://www.example.com/moodle', $CFG->wwwroot);
         $this->assertSame($CFG->wwwroot, $CFG->httpswwwroot);
         $this->assertEquals(0, $CFG->enablegravatar);
         $this->assertSame('mm', $CFG->gravatardefaulturl);
@@ -204,6 +204,10 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $user3->picture = 0;
         $up3 = new user_picture($user3);
         $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
+
+        // Http version.
+        $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
+        $CFG->httpswwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
 
         // Verify defaults to misteryman (mm).
         $up2 = new user_picture($user2);

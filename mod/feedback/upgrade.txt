@@ -1,3 +1,8 @@
+=== 3.3 ===
+
+* Method get_current_completed_tmp in mod_feedback_completion class is now public.
+* Function feedback_set_tmp_values is not deprecated anymore.
+
 === 3.1 ===
 
 * feedback_get_courses_from_sitecourse_map() now returns course id as 'id' attribute

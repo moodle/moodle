@@ -124,18 +124,22 @@ class mod_choice_mod_form extends moodleform_mod {
 
     }
 
-    function get_data() {
-        $data = parent::get_data();
-        if (!$data) {
-            return false;
-        }
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
         // Set up completion section even if checkbox is not ticked
         if (!empty($data->completionunlocked)) {
             if (empty($data->completionsubmit)) {
                 $data->completionsubmit = 0;
             }
         }
-        return $data;
     }
 
     /**
@@ -161,6 +165,8 @@ class mod_choice_mod_form extends moodleform_mod {
         $mform =& $this->_form;
 
         $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'choice'));
+        // Enable this completion rule by default.
+        $mform->setDefault('completionsubmit', 1);
         return array('completionsubmit');
     }
 

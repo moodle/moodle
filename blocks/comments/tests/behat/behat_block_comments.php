@@ -99,9 +99,9 @@ class behat_block_comments extends behat_base {
         $commentnode = $this->find('xpath', $commentxpath, $exception);
 
         // Click on delete icon.
-        $deleteexception = new ExpectationException('"' . $comment . '" comment can not be deleted', $this->getSession());
-        $deleteicon = $this->find('css', '.comment-delete a img', $deleteexception, $commentnode);
-        $deleteicon->click();
+        $this->execute('behat_general::i_click_on_in_the',
+            array("Delete comment posted by", "icon", $this->escape($commentxpath), "xpath_element")
+        );
 
         // Wait for the animation to finish, in theory is just 1 sec, adding 4 just in case.
         $this->getSession()->wait(4 * 1000, false);

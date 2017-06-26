@@ -111,6 +111,9 @@ class filter_mathjaxloader extends moodle_text_filter {
             $page->requires->js_module($moduleconfig);
 
             $config = get_config('filter_mathjaxloader', 'mathjaxconfig');
+            $wwwroot = new moodle_url('/');
+
+            $config = str_replace('{wwwroot}', $wwwroot->out(true), $config);
 
             $params = array('mathjaxconfig' => $config, 'lang' => $lang);
 

@@ -65,8 +65,7 @@ class data_field_latlong extends data_field_base {
         $classes = 'mod-data-input form-control-static';
         $str .= '<label for="field_'.$this->field->id.'_0" class="' . $classes . '">' . get_string('latitude', 'data');
         if ($this->field->required) {
-            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
-                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
         }
         $classes = 'form-control m-x-1';
         $str .= '</label></td><td>';
@@ -77,8 +76,7 @@ class data_field_latlong extends data_field_base {
         $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1" class="' . $classes . '">';
         $str .= get_string('longitude', 'data');
         if ($this->field->required) {
-            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
-                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
         }
         $classes = 'form-control m-x-1';
         $str .= '</label></td><td><input class="' . $classes . '" type="text" ';
@@ -117,8 +115,12 @@ class data_field_latlong extends data_field_base {
        return $return;
     }
 
-    function parse_search_field() {
-        return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
+    public function parse_search_field($defaults = null) {
+        $param = 'f_'.$this->field->id;
+        if (empty($defaults[$param])) {
+            $defaults = array($param => '');
+        }
+        return optional_param($param, $defaults[$param], PARAM_NOTAGS);
     }
 
     function generate_sql($tablealias, $value) {
@@ -292,5 +294,20 @@ class data_field_latlong extends data_field_base {
         }
         // If we get here then only one field has been filled in.
         return get_string('latlongboth', 'data');
+    }
+
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of config parameters
+     * @since Moodle 3.3
+     */
+    public function get_config_for_external() {
+        // Return all the config parameters.
+        $configs = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $configs["param$i"] = $this->field->{"param$i"};
+        }
+        return $configs;
     }
 }

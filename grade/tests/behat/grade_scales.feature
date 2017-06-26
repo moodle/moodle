@@ -42,7 +42,7 @@ Feature: View gradebook when scales are used
       | activity | course | idnumber | name                | intro             | gradecategory  |
       | assign   | C1     | a1       | Test assignment one | Submit something! | Sub category 1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment one"
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
@@ -70,7 +70,7 @@ Feature: View gradebook when scales are used
     And I set the field "Grade" to "F"
     And I press "Save changes"
     And I press "Ok"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"

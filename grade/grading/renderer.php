@@ -64,7 +64,7 @@ class core_grading_renderer extends plugin_renderer_base {
      */
     public function management_action_icon(moodle_url $url, $text, $icon) {
 
-        $img = html_writer::empty_tag('img', array('src' => $this->output->pix_url($icon), 'class' => 'action-icon'));
+        $img = $this->output->pix_icon($icon, '');
         $txt = html_writer::tag('div', $text, array('class' => 'action-text'));
         return html_writer::link($url, $img . $txt, array('class' => 'action'));
     }
@@ -93,7 +93,7 @@ class core_grading_renderer extends plugin_renderer_base {
      */
     public function pick_action_icon(moodle_url $url, $text, $icon = '', $class = '') {
 
-        $img = html_writer::empty_tag('img', array('src' => $this->output->pix_url($icon), 'class' => 'action-icon'));
+        $img = $this->output->pix_icon($icon, '');
         $txt = html_writer::tag('div', $text, array('class' => 'action-text'));
         return html_writer::link($url, $img . $txt, array('class' => 'action '.$class));
     }

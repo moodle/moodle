@@ -10,9 +10,7 @@ Feature: Editing choice block
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice name 1 |
       | Description | Choice Description 1 |
@@ -43,8 +41,7 @@ Feature: Editing choice block
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice name 1 |
       | Description | Choice Description 1 |
@@ -74,8 +71,7 @@ Feature: Editing choice block
       | teacher1 | C1 | editingteacher |
       | teacher1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice name 1 |
       | Description | Choice Description 1 |

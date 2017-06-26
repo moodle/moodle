@@ -13,8 +13,7 @@ Feature: Forms with a multi select field dependency
       | activity   | name | intro                                                                               | course | idnumber |
       | label      | L1   | <a href="../lib/form/tests/fixtures/multi_select_dependencies.php">FixtureLink</a> | C1     | label1   |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "FixtureLink"
     Then the "Enter your name" "field" should be disabled
     And I set the field "Choose one or more directions" to "South,West"

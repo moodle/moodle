@@ -48,6 +48,30 @@ function xmldb_repository_googledocs_upgrade($oldversion) {
         // Plugin savepoint reached.
         upgrade_plugin_savepoint(true, 2017011100, 'repository', 'googledocs');
     }
+    if ($oldversion < 2017030500) {
+        $clientid = get_config('clientid', 'googledocs');
+        $secret = get_config('secret', 'googledocs');
+
+        // Update from repo config to use an OAuth service.
+        if (!empty($clientid) && !empty($secret)) {
+            $issuer = \core\oauth2\api::create_standard_issuer('google');
+
+            $issuer->set('clientid', $clientid);
+            $issuer->set('secret', $secret);
+
+            $issuer->update();
+
+            set_config('issuerid', $issuer->get('id'), 'googledocs');
+        }
+        upgrade_plugin_savepoint(true, 2017030500, 'repository', 'googledocs');
+    }
+    if ($oldversion < 2017030600) {
+        set_config('supportedfiles', 'both', 'googledocs');
+        upgrade_plugin_savepoint(true, 2017030600, 'repository', 'googledocs');
+    }
+
+    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

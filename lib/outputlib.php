@@ -60,6 +60,9 @@ function theme_reset_all_caches() {
         $cache->purge();
     }
 
+    // Purge compiled post processed css.
+    cache::make('core', 'postprocessedcss')->purge();
+
     if ($PAGE) {
         $PAGE->reload_theme();
     }
@@ -475,6 +478,12 @@ class theme_config {
     public $blockrendermethod = null;
 
     /**
+     * Remember the results of icon remapping for the current page.
+     * @var array
+     */
+    public $remapiconcache = [];
+
+    /**
      * Load the config.php file for a particular theme, and return an instance
      * of this class. (That is, this is a factory method.)
      *
@@ -551,7 +560,7 @@ class theme_config {
             'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'uarrow', 'darrow',
             'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations',
             'lessfile', 'extralesscallback', 'lessvariablescallback', 'blockrendermethod',
-            'scss', 'extrascsscallback', 'prescsscallback', 'csstreepostprocessor', 'addblockposition');
+            'scss', 'extrascsscallback', 'prescsscallback', 'csstreepostprocessor', 'addblockposition', 'iconsystem');
 
         foreach ($config as $key=>$value) {
             if (in_array($key, $configurable)) {
@@ -901,6 +910,44 @@ class theme_config {
 
         return $csscontent;
     }
+    /**
+     * Set post processed CSS content cache.
+     *
+     * @param string $csscontent The post processed CSS content.
+     * @return bool True if the content was successfully cached.
+     */
+    public function set_css_content_cache($csscontent) {
+
+        $cache = cache::make('core', 'postprocessedcss');
+        $key = $this->get_css_cache_key();
+
+        return $cache->set($key, $csscontent);
+    }
+
+    /**
+     * Return cached post processed CSS content.
+     *
+     * @return bool|string The cached css content or false if not found.
+     */
+    public function get_css_cached_content() {
+
+        $key = $this->get_css_cache_key();
+        $cache = cache::make('core', 'postprocessedcss');
+
+        return $cache->get($key);
+    }
+
+    /**
+     * Generate the css content cache key.
+     *
+     * @return string The post processed css cache key.
+     */
+    public function get_css_cache_key() {
+        $nosvg = (!$this->use_svg_icons()) ? 'nosvg_' : '';
+        $rtlmode = ($this->rtlmode == true) ? 'rtl' : 'ltr';
+
+        return $nosvg . $this->name . '_' . $rtlmode;
+    }
 
     /**
      * Get the theme designer css markup,
@@ -1233,6 +1280,26 @@ class theme_config {
     }
 
     /**
+     * Get the icon system to use.
+     *
+     * @return string
+     */
+    public function get_icon_system() {
+
+        // Getting all the candidate functions.
+        $system = false;
+        if (isset($this->iconsystem) && \core\output\icon_system::is_valid_system($this->iconsystem)) {
+            return $this->iconsystem;
+        }
+        foreach ($this->parent_configs as $parent_config) {
+            if (isset($parent_config->iconsystem) && \core\output\icon_system::is_valid_system($parent_config->iconsystem)) {
+                return $parent_config->iconsystem;
+            }
+        }
+        return \core\output\icon_system::STANDARD;
+    }
+
+    /**
      * Return extra LESS variables to use when compiling.
      *
      * @return array Where keys are the variable names (omitting the @), and the values are the value.
@@ -1545,7 +1612,7 @@ class theme_config {
                 $replaced[$match[0]] = true;
                 $imagename = $match[2];
                 $component = rtrim($match[1], '|');
-                $imageurl = $this->pix_url($imagename, $component)->out(false);
+                $imageurl = $this->image_url($imagename, $component)->out(false);
                  // we do not need full url because the image.php is always in the same dir
                 $imageurl = preg_replace('|^http.?://[^/]+|', '', $imageurl);
                 $css = str_replace($match[0], $imageurl, $css);
@@ -1616,13 +1683,30 @@ class theme_config {
     }
 
     /**
-     * Return the URL for an image
+     * Return the direct URL for an image from the pix folder.
      *
+     * Use this function sparingly and never for icons. For icons use pix_icon or the pix helper in a mustache template.
+     *
+     * @deprecated since Moodle 3.3
      * @param string $imagename the name of the icon.
      * @param string $component specification of one plugin like in get_string()
      * @return moodle_url
      */
     public function pix_url($imagename, $component) {
+        debugging('pix_url is deprecated. Use image_url for images and pix_icon for icons.', DEBUG_DEVELOPER);
+        return $this->image_url($imagename, $component);
+    }
+
+    /**
+     * Return the direct URL for an image from the pix folder.
+     *
+     * Use this function sparingly and never for icons. For icons use pix_icon or the pix helper in a mustache template.
+     *
+     * @param string $imagename the name of the icon.
+     * @param string $component specification of one plugin like in get_string()
+     * @return moodle_url
+     */
+    public function image_url($imagename, $component) {
         global $CFG;
 
         $params = array('theme'=>$this->name);
@@ -1783,7 +1867,8 @@ class theme_config {
      *
      * @param string $image name of image, may contain relative path
      * @param string $component
-     * @param bool $svg If set to true SVG images will also be looked for.
+     * @param bool $svg|null Should SVG images also be looked for? If null, resorts to $CFG->svgicons if that is set; falls back to
+     * auto-detection of browser support otherwise
      * @return string full file path
      */
     public function resolve_image_location($image, $component, $svg = false) {
@@ -2250,6 +2335,7 @@ class theme_config {
         }
         return null;
     }
+
 }
 
 /**
