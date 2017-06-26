@@ -728,7 +728,24 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     public function availability_info($text, $additionalclasses = '') {
+
         $data = ['text' => $text, 'classes' => $additionalclasses];
+        $additionalclasses = array_filter(explode(' ', $additionalclasses));
+
+        if (in_array('ishidden', $additionalclasses)) {
+            $data['ishidden'] = 1;
+
+        } else if (in_array('isstealth', $additionalclasses)) {
+            $data['isstealth'] = 1;
+
+        } else if (in_array('isrestricted', $additionalclasses)) {
+            $data['isrestricted'] = 1;
+
+            if (in_array('isfullinfo', $additionalclasses)) {
+                $data['isfullinfo'] = 1;
+            }
+        }
+
         return $this->render_from_template('core/availability_info', $data);
     }
 
@@ -752,7 +769,7 @@ class core_course_renderer extends plugin_renderer_base {
             if (!empty($mod->availableinfo)) {
                 $formattedinfo = \core_availability\info::format_info(
                         $mod->availableinfo, $mod->get_course());
-                $output = $this->availability_info($formattedinfo);
+                $output = $this->availability_info($formattedinfo, 'isrestricted');
             }
             return $output;
         }
@@ -775,9 +792,9 @@ class core_course_renderer extends plugin_renderer_base {
             // Display information about conditional availability.
             // Don't add availability information if user is not editing and activity is hidden.
             if ($mod->visible || $this->page->user_is_editing()) {
-                $hidinfoclass = '';
+                $hidinfoclass = 'isrestricted isfullinfo';
                 if (!$mod->visible) {
-                    $hidinfoclass = 'hide';
+                    $hidinfoclass .= ' hide';
                 }
                 $ci = new \core_availability\info_module($mod);
                 $fullinfo = $ci->get_full_information();

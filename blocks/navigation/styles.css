@@ -71,6 +71,6 @@
     display: block;
 }
 
-.block_navigation .block_tree [aria-hidden="true"] {
+.block_navigation .block_tree [aria-hidden="true"]:not(.icon) {
     display: none;
 }

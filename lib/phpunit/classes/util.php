@@ -229,6 +229,11 @@ class phpunit_util extends testing_util {
         // Reset internal users.
         core_user::reset_internal_users();
 
+        // Clear static caches in calendar container.
+        if (class_exists('\core_calendar\local\event\container', false)) {
+            core_calendar\local\event\container::reset_caches();
+        }
+
         //TODO MDL-25290: add more resets here and probably refactor them to new core function
 
         // Reset course and module caches.

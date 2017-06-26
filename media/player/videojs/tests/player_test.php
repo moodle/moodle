@@ -230,7 +230,7 @@ class media_videojs_testcase extends advanced_testcase {
 
     protected function youtube_plugin_engaged($t) {
         $this->assertContains('mediaplugin_videojs', $t);
-        $this->assertContains('data-setup="{&quot;techOrder&quot;: [&quot;youtube&quot;]', $t);
+        $this->assertContains('data-setup-lazy="{&quot;techOrder&quot;: [&quot;youtube&quot;]', $t);
     }
 
     /**
