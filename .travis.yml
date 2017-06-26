@@ -2,7 +2,7 @@
 # process (which uses our internal CI system) this file is here for the benefit
 # of community developers git clones - see MDL-51458.
 
-sudo: false
+sudo: required
 
 # We currently disable Travis notifications entirely until https://github.com/travis-ci/travis-ci/issues/4976
 # is fixed.
@@ -18,6 +18,10 @@ php:
 
 addons:
   postgresql: "9.3"
+  packages:
+    - mysql-server-5.6
+    - mysql-client-core-5.6
+    - mysql-client-5.6
 
 services:
     - redis-server
@@ -73,6 +77,28 @@ cache:
       - $HOME/.npm
 
 install:
+    - sudo apt-get -y install haveged
+    - sudo service haveged start
+    - >
+        if [ "$DB" = 'mysqli' ];
+        then
+            sudo mkdir /mnt/ramdisk
+            sudo mount -t tmpfs -o size=1024m tmpfs /mnt/ramdisk
+            sudo stop mysql
+            sudo mv /var/lib/mysql /mnt/ramdisk
+            sudo ln -s /mnt/ramdisk/mysql /var/lib/mysql
+            sudo start mysql
+        fi
+    - >
+        if [ "$DB" = 'pgsql' ];
+        then
+            sudo mkdir /mnt/ramdisk
+            sudo mount -t tmpfs -o size=1024m tmpfs /mnt/ramdisk
+            sudo service postgresql stop
+            sudo mv /var/lib/postgresql /mnt/ramdisk
+            sudo ln -s /mnt/ramdisk/postgresql /var/lib/postgresql
+            sudo service postgresql start 9.3
+        fi
     - >
         if [ "$TASK" = 'PHPUNIT' ];
         then
