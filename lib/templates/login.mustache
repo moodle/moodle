@@ -124,21 +124,20 @@
 
     </div>
 
+    <div class="signuppanel">
     {{#hasinstructions}}
-        <div class="signuppanel">
-            <h2>{{#str}} firsttime {{/str}}</h2>
-            <div class="subcontent">
-                {{{instructions}}}
-                {{#cansignup}}
-                    <div class="signupform">
-                        <form action="{{signupurl}}" method="get" id="signup">
-                            <div>
-                                <input type="submit" value={{#quote}}{{#str}} startsignup {{/str}}{{/quote}} />
-                            </div>
-                        </form>
-                    </div>
-                {{/cansignup}}
-            </div>
+        <h2>{{#str}} firsttime {{/str}}</h2>
+        <div class="subcontent">
+            {{{instructions}}}
+            {{#cansignup}}
+                <div class="signupform">
+                    <form action="{{signupurl}}" method="get" id="signup">
+                        <div>
+                            <input type="submit" value={{#quote}}{{#str}} startsignup {{/str}}{{/quote}} />
+                        </div>
+                    </form>
+                </div>
+            {{/cansignup}}
         </div>
     {{/hasinstructions}}
 
@@ -148,7 +147,7 @@
             <div class="potentialidplist">
                 {{#identityproviders}}
                     <div class="potentialidp">
-                        <a href="{{url}}" title={{#quote}}{{name}}{{/quote}}>
+                        <a href="{{url}}" title={{#quote}}{{name}}{{/quote}} class="btn">
                             {{#icon}}
                                 {{>core/pix_icon}}
                             {{/icon}}
@@ -159,6 +158,7 @@
             </div>
         </div>
     {{/hasidentityproviders}}
+    </div>
 </div>
 
 {{#js}}
