@@ -1457,6 +1457,15 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
                         $name = format_string($event->name, true);
                     }
                 }
+                // Include course's shortname into the event name, if applicable.
+                if (!empty($event->courseid) && $event->courseid !== SITEID) {
+                    $course = get_course($event->courseid);
+                    $eventnameparams = (object)[
+                        'name' => $name,
+                        'course' => format_string($course->shortname, true, array('context' => $event->context))
+                    ];
+                    $name = get_string('eventnameandcourse', 'calendar', $eventnameparams);
+                }
                 $popupcontent .= \html_writer::link($dayhref, $name);
                 $popupcontent .= \html_writer::end_tag('div');
             }
