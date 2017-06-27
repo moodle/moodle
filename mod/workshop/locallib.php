@@ -2998,6 +2998,33 @@ class workshop {
         }
     }
 
+    /**
+     * Helper method for validating if the current user can edit the given assessment.
+     *
+     * @param  stdClass   $assessment assessment object
+     * @param  stdClass   $submission submission object
+     * @return void
+     * @throws moodle_exception
+     * @since  Moodle 3.4
+     */
+    public function check_edit_assessment($assessment, $submission) {
+        global $USER;
+
+        $this->check_view_assessment($assessment, $submission);
+        // Further checks.
+        $isreviewer = ($USER->id == $assessment->reviewerid);
+
+        $assessmenteditable = $isreviewer && $this->assessing_allowed($USER->id);
+        if (!$assessmenteditable) {
+            throw new moodle_exception('nopermissions', 'error', '', 'edit assessments');
+        }
+
+        list($assessed, $notice) = $this->check_examples_assessed_before_assessment($assessment->reviewerid);
+        if (!$assessed) {
+            throw new moodle_exception($notice, 'mod_workshop');
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
     ////////////////////////////////////////////////////////////////////////////////

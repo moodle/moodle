@@ -1187,4 +1187,137 @@ class mod_workshop_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function get_assessment_form_definition_parameters() {
+        return new external_function_parameters(
+            array(
+                'assessmentid' => new external_value(PARAM_INT, 'Assessment id'),
+                'mode' => new external_value(PARAM_ALPHA, 'The form mode (assessment or preview)', VALUE_DEFAULT, 'assessment'),
+            )
+        );
+    }
+
+
+    /**
+     * Retrieves the assessment form definition (data required to be able to display the assessment form).
+     *
+     * @param int $assessmentid the assessment id
+     * @param string $mode the form mode (assessment or preview)
+     * @return array containing the assessment and warnings.
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function get_assessment_form_definition($assessmentid, $mode = 'assessment') {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(
+            self::get_assessment_form_definition_parameters(), array('assessmentid' => $assessmentid, 'mode' => $mode)
+        );
+        $warnings = $pending = array();
+
+        if ($params['mode'] != 'assessment' && $params['mode'] != 'preview') {
+            throw new invalid_parameter_exception('Invalid value for mode parameter (value: ' . $params['mode'] . ')');
+        }
+
+        // Get and validate the assessment, submission and workshop.
+        $assessment = $DB->get_record('workshop_assessments', array('id' => $params['assessmentid']), '*', MUST_EXIST);
+        $submission = $DB->get_record('workshop_submissions', array('id' => $assessment->submissionid), '*', MUST_EXIST);
+        list($workshop, $course, $cm, $context) = self::validate_workshop($submission->workshopid);
+
+        // Check we can edit the assessment (so we can get the form data).
+        $workshop->check_edit_assessment($assessment, $submission);
+
+        $cansetassessmentweight = has_capability('mod/workshop:allocate', $context);
+        $pending = $workshop->get_pending_assessments_by_reviewer($assessment->reviewerid, $assessment->id);
+
+        // Retrieve the data from the strategy plugin.
+        $strategy = $workshop->grading_strategy_instance();
+        $strategyname = str_replace('_strategy', '', get_class($strategy)); // Get strategy name.
+        $mform = $strategy->get_assessment_form(null, $params['mode'], $assessment, true,
+            array('editableweight' => $cansetassessmentweight, 'pending' => !empty($pending)));
+        $formdata = $mform->get_customdata();
+
+        $result = array(
+            'dimenssionscount' => $formdata['nodims'],
+            'descriptionfiles' => external_util::get_area_files($context->id, $strategyname, 'description'),
+            'warnings' => $warnings
+        );
+        // Include missing dimension fields.
+        for ($i = 0; $i < $formdata['nodims']; $i++) {
+            $formdata['fields']->{'gradeid__idx_' . $i} = 0;
+            $formdata['fields']->{'peercomment__idx_' . $i} = '';
+        }
+
+        // Convert all the form data for external.
+        foreach (array('options', 'fields', 'current') as $typeofdata) {
+            $result[$typeofdata] = array();
+
+            if (!empty($formdata[$typeofdata])) {
+                $alldata = (array) $formdata[$typeofdata];
+                foreach ($alldata as $key => $val) {
+                    if (strpos($key, 'peercomment__idx_') === 0) {
+                        // Format reviewer comment.
+                        list($val, $format) = external_format_text($val, FORMAT_MOODLE, $context->id);
+                    } else if (strpos($key, 'description__idx_')) {
+                        // Format dimension description.
+                        $id = str_replace('description__idx_', '', $key);
+                        list($val, $format) = external_format_text($val, $alldata['dimensionid__idx_' . $id . 'format'],
+                            $context->id, $strategyname, 'description', $alldata['dimensionid__idx_' . $id]);
+                    }
+                    $result[$typeofdata][] = array(
+                        'name' => $key,
+                        'value' => $val
+                    );
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function get_assessment_form_definition_returns() {
+        return new external_single_structure(
+            array(
+                'dimenssionscount' => new external_value(PARAM_INT, 'The number of dimenssions used by the form.'),
+                'descriptionfiles' => new external_files('Files in the description text'),
+                'options' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'Option name.'),
+                            'value' => new external_value(PARAM_NOTAGS, 'Option value.')
+                        )
+                    ), 'The form options.'
+                ),
+                'fields' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'Field name.'),
+                            'value' => new external_value(PARAM_RAW, 'Field default value.')
+                        )
+                    ), 'The form fields.'
+                ),
+                'current' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'Field name.'),
+                            'value' => new external_value(PARAM_RAW, 'Current field value.')
+                        )
+                    ), 'The current field values.'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

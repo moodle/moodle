@@ -79,6 +79,20 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->context = context_module::instance($this->workshop->cmid);
         $this->cm = get_coursemodule_from_instance('workshop', $this->workshop->id);
 
+        // Add grading strategy data (accumulative is the default).
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $strategy = $workshop->grading_strategy_instance();
+        $data = array();
+        for ($i = 0; $i < 4; $i++) {
+            $data['dimensionid__idx_'.$i] = 0;
+            $data['description__idx_'.$i.'_editor'] = array('text' => "Content $i", 'format' => FORMAT_MOODLE);
+            $data['grade__idx_'.$i] = 25;
+            $data['weight__idx_'.$i] = 25;
+        }
+        $data['workshopid'] = $workshop->id;
+        $data['norepeats'] = 4;
+        $strategy->save_edit_strategy_form((object) $data);
+
         // Create users.
         $this->student = self::getDataGenerator()->create_user();
         $this->anotherstudentg1 = self::getDataGenerator()->create_user();
@@ -343,7 +357,7 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(4, $result['userplan']['phases'][0]['tasks']);  // For new empty workshops, always 4 tasks.
 
         foreach ($result['userplan']['phases'][0]['tasks'] as $task) {
-            if ($task['code'] == 'intro' || $task['code'] == 'instructauthors') {
+            if ($task['code'] == 'intro' || $task['code'] == 'instructauthors' || $task['code'] == 'editform') {
                 $this->assertEquals(1, $task['completed']);
             } else {
                 $this->assertEmpty($task['completed']);
@@ -357,7 +371,8 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $result = mod_workshop_external::get_user_plan($this->workshop->id);
         $result = external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
         foreach ($result['userplan']['phases'][0]['tasks'] as $task) {
-            if ($task['code'] == 'intro' || $task['code'] == 'instructauthors' || $task['code'] == 'switchtonextphase') {
+            if ($task['code'] == 'intro' || $task['code'] == 'instructauthors' || $task['code'] == 'editform' ||
+                    $task['code'] == 'switchtonextphase') {
                 $this->assertEquals(1, $task['completed']);
             } else {
                 $this->assertEmpty($task['completed']);
@@ -1265,5 +1280,70 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
 
         $this->setExpectedException('moodle_exception');
         mod_workshop_external::get_assessment($assessmentid);
+    }
+
+    /**
+     * Test get_assessment_form_definition_reviewer_new_assessment.
+     */
+    public function test_get_assessment_form_definition_reviewer_new_assessment() {
+        global $DB;
+
+        // Create the submission.
+        $submissionid = $this->create_test_submission($this->anotherstudentg1);
+
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $submission = $workshop->get_submission_by_id($submissionid);
+        $assessmentid = $workshop->add_allocation($submission, $this->student->id);
+
+        // Switch to assessment phase.
+        $DB->set_field('workshop', 'phase', workshop::PHASE_ASSESSMENT, array('id' => $this->workshop->id));
+        $this->setUser($this->student);
+        $result = mod_workshop_external::get_assessment_form_definition($assessmentid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_form_definition_returns(), $result);
+        $this->assertEquals(4, $result['dimenssionscount']);    // We receive the expected 4 dimensions.
+        $this->assertEmpty($result['current']); // Assessment not yet done.
+        foreach ($result['fields'] as $field) {
+            if (strpos($field['name'], 'grade__idx_') === 0) {
+                $this->assertEquals(25, $field['value']); // Check one of the dimension fields attributes.
+            }
+        }
+    }
+
+    /**
+     * Test get_assessment_form_definition_teacher_new_assessment.
+     */
+    public function test_get_assessment_form_definition_teacher_new_assessment() {
+        global $DB;
+
+        // Create the submission.
+        $submissionid = $this->create_test_submission($this->anotherstudentg1);
+
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $submission = $workshop->get_submission_by_id($submissionid);
+        $assessmentid = $workshop->add_allocation($submission, $this->student->id);
+
+        // Switch to assessment phase.
+        $DB->set_field('workshop', 'phase', workshop::PHASE_ASSESSMENT, array('id' => $this->workshop->id));
+        $this->setUser($this->teacher);
+        $this->setExpectedException('moodle_exception');
+        mod_workshop_external::get_assessment_form_definition($assessmentid);   // Teachers can't add/edit assessments.
+    }
+
+    /**
+     * Test get_assessment_form_definition_invalid_phase.
+     */
+    public function test_get_assessment_form_definition_invalid_phase() {
+        global $DB;
+
+        // Create the submission.
+        $submissionid = $this->create_test_submission($this->anotherstudentg1);
+
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $submission = $workshop->get_submission_by_id($submissionid);
+        $assessmentid = $workshop->add_allocation($submission, $this->student->id);
+
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_workshop_external::get_assessment_form_definition($assessmentid);
     }
 }
