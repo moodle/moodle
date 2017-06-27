@@ -415,7 +415,10 @@ class core_enrol_external extends external_api {
      * @return array An array of users
      */
     public static function get_potential_users($courseid, $enrolid, $search, $searchanywhere, $page, $perpage) {
-        global $PAGE;
+        global $PAGE, $DB, $CFG;
+
+        require_once($CFG->dirroot.'/enrol/locallib.php');
+        require_once($CFG->dirroot.'/user/lib.php');
 
         $params = self::validate_parameters(
             self::get_potential_users_parameters(),
@@ -429,6 +432,14 @@ class core_enrol_external extends external_api {
             )
         );
         $context = context_course::instance($params['courseid']);
+        try {
+            self::validate_context($context);
+        } catch (Exception $e) {
+            $exceptionparam = new stdClass();
+            $exceptionparam->message = $e->getMessage();
+            $exceptionparam->courseid = $params['courseid'];
+            throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
+        }
         require_capability('moodle/course:enrolreview', $context);
 
         $course = $DB->get_record('course', array('id' => $params['courseid']));
@@ -441,7 +452,7 @@ class core_enrol_external extends external_api {
                                                $params['perpage']);
 
         $results = array();
-        foreach ($users as $id => $user) {
+        foreach ($users['users'] as $id => $user) {
             if ($userdetails = user_get_user_details($user)) {
                 $results[] = $userdetails;
             }

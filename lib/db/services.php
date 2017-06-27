@@ -468,6 +468,7 @@ $functions = array(
         'methodname' => 'get_potential_users',
         'classpath' => 'enrol/externallib.php',
         'description' => 'Get the list of potential users to enrol',
+        'ajax' => true,
         'type' => 'read',
         'capabilities' => 'moodle/course:enrolreview'
     ),

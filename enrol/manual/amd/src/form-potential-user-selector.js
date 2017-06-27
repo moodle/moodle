@@ -40,11 +40,11 @@ define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
 
         transport: function(selector, query, success, failure) {
             var promise;
-            var courseid = $(selector).data('courseid');
+            var courseid = $(selector).attr('courseid');
             if (typeof courseid === "undefined") {
                 courseid = '1';
             }
-            var enrolid = $(selector).data('enrolid');
+            var enrolid = $(selector).attr('enrolid');
             if (typeof enrolid === "undefined") {
                 enrolid = '';
             }
@@ -66,7 +66,7 @@ define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
                     i = 0;
 
                 // Render the label.
-                $.each(results.users, function(index, user) {
+                $.each(results, function(index, user) {
                     var ctx = user,
                         identity = [];
                     $.each(['idnumber', 'email', 'phone1', 'phone2', 'department', 'institution'], function(i, k) {
@@ -82,11 +82,11 @@ define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
                 // Apply the label to the results.
                 return $.when.apply($.when, promises).then(function() {
                     var args = arguments;
-                    $.each(results.users, function(index, user) {
+                    $.each(results, function(index, user) {
                         user._label = args[i];
                         i++;
                     });
-                    success(results.users);
+                    success(results);
                 });
 
             }, failure);

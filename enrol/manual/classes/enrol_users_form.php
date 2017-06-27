@@ -101,7 +101,7 @@ class enrol_manual_enrol_users_form extends moodleform {
         $mform->setDefault('role', $defaultrole);
 
         $options = array(
-            'ajax' => 'tool_lp/form-user-selector',
+            'ajax' => 'enrol_manual/form-potential-user-selector',
             'multiple' => true,
             'courseid' => $course->id,
             'enrolid' => $instance->id
