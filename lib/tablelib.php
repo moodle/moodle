@@ -1774,7 +1774,7 @@ class table_dataformat_export_format extends table_default_export_format_parent 
     public function output_headers($headers) {
         $this->columns = $headers;
         if (method_exists($this->dataformat, 'write_header')) {
-            error_log('The function write_header() does not support multiple tables. In order to support multiple tables you ' .
+            error_log('The function write_header() does not support multiple sheets. In order to support multiple sheets you ' .
                 'must implement start_output() and start_sheet() and remove write_header() in your dataformat.');
             $this->dataformat->write_header($headers);
         } else {
@@ -1797,7 +1797,7 @@ class table_dataformat_export_format extends table_default_export_format_parent 
      */
     public function finish_table() {
         if (method_exists($this->dataformat, 'write_footer')) {
-            error_log('The function write_footer() does not support multiple tables. In order to support multiple tables you ' .
+            error_log('The function write_footer() does not support multiple sheets. In order to support multiple sheets you ' .
                 'must implement close_sheet() and close_output() and remove write_footer() in your dataformat.');
             $this->dataformat->write_footer($this->columns);
         } else {
