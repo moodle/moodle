@@ -38,7 +38,7 @@ $PAGE->set_pagelayout('admin');
 /// Make sure they can even access this course
 if ($courseid) {
     if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-        print_error('nocourseid');
+        print_error('invalidcourseid');
     }
     require_login($course);
     $context = context_course::instance($course->id);
