@@ -59,7 +59,7 @@ $PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $pageparams)
 $PAGE->set_pagelayout('incourse');
 
 if (!$course = $DB->get_record('course', $courseparams)) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 
 require_login($course);
