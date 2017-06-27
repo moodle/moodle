@@ -42,11 +42,9 @@ class writer extends \core\dataformat\base {
     public $extension = ".html";
 
     /**
-     * Write the start of the format
-     *
-     * @param array $columns
+     * Write the start of the output
      */
-    public function write_header($columns) {
+    public function start_output() {
         echo "<!DOCTYPE html><html>";
         echo \html_writer::tag('title', $this->filename);
         echo "<style>
@@ -75,9 +73,16 @@ table {
     margin: auto;
 }
 </style>
-<body>
-<table border=1 cellspacing=0 cellpadding=3>
-";
+<body>";
+    }
+
+    /**
+     * Write the start of the sheet we will be adding data to.
+     *
+     * @param array $columns
+     */
+    public function start_sheet($columns) {
+        echo "<table border=1 cellspacing=0 cellpadding=3>";
         echo \html_writer::start_tag('tr');
         foreach ($columns as $k => $v) {
             echo \html_writer::tag('th', $v);
@@ -100,12 +105,18 @@ table {
     }
 
     /**
-     * Write the end of the format
+     * Write the end of the sheet containing the data.
      *
      * @param array $columns
      */
-    public function write_footer($columns) {
-        echo "</table></body></html>";
+    public function close_sheet($columns) {
+        echo "</table>";
     }
 
+    /**
+     * Write the end of the sheet containing the data.
+     */
+    public function close_output() {
+        echo "</body></html>";
+    }
 }
