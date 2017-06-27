@@ -1346,4 +1346,72 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->setExpectedException('moodle_exception');
         mod_workshop_external::get_assessment_form_definition($assessmentid);
     }
+
+    /**
+     * Test get_reviewer_assessments.
+     */
+    public function test_get_reviewer_assessments() {
+        global $DB;
+
+        // Create the submission.
+        $submissionid1 = $this->create_test_submission($this->student);
+        $submissionid2 = $this->create_test_submission($this->anotherstudentg1);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $assessmentid1 = $workshopgenerator->create_assessment($submissionid1, $this->student->id, array(
+            'weight' => 2,
+            'grade' => 90,
+        ));
+        $assessmentid2 = $workshopgenerator->create_assessment($submissionid2, $this->student->id, array(
+            'weight' => 3,
+            'grade' => 80,
+        ));
+
+        // Switch to assessment phase.
+        $DB->set_field('workshop', 'phase', workshop::PHASE_ASSESSMENT, array('id' => $this->workshop->id));
+        $this->setUser($this->student);
+        // Get my assessments.
+        $result = mod_workshop_external::get_reviewer_assessments($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_reviewer_assessments_returns(), $result);
+        $this->assertCount(2, $result['assessments']);
+        foreach ($result['assessments'] as $assessment) {
+            if ($assessment['id'] == $assessmentid1) {
+                $this->assertEquals(90, $assessment['grade']);
+            } else {
+                $this->assertEquals($assessmentid2, $assessment['id']);
+                $this->assertEquals(80, $assessment['grade']);
+            }
+        }
+
+        // Now, as teacher try to get the same student assessments.
+        $result = mod_workshop_external::get_reviewer_assessments($this->workshop->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_reviewer_assessments_returns(), $result);
+        $this->assertCount(2, $result['assessments']);
+    }
+
+    /**
+     * Test get_reviewer_assessments_other_student.
+     */
+    public function test_get_reviewer_assessments_other_student() {
+        global $DB;
+
+        $DB->set_field('workshop', 'phase', workshop::PHASE_ASSESSMENT, array('id' => $this->workshop->id));
+        // Try to get other user assessments.
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_workshop_external::get_reviewer_assessments($this->workshop->id, $this->anotherstudentg1->id);
+    }
+
+    /**
+     * Test get_reviewer_assessments_invalid_phase.
+     */
+    public function test_get_reviewer_assessments_invalid_phase() {
+        global $DB;
+
+        $DB->set_field('workshop', 'phase', workshop::PHASE_SUBMISSION, array('id' => $this->workshop->id));
+        // Try to get other user assessments.
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_workshop_external::get_reviewer_assessments($this->workshop->id, $this->anotherstudentg1->id);
+    }
 }
