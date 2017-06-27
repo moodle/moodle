@@ -650,6 +650,16 @@ class core_renderer extends renderer_base {
                     'type' => $type, 'title' => $alt->title, 'href' => $alt->url));
         }
 
+        // Add noindex tag if relevant page and setting applied.
+        $allowindexing = isset($CFG->allowindexing) ? $CFG->allowindexing : 0;
+        $loginpages = array('login-index', 'login-signup');
+        if ($allowindexing == 2 || ($allowindexing == 0 && in_array($this->page->pagetype, $loginpages))) {
+            if (!isset($CFG->additionalhtmlhead)) {
+                $CFG->additionalhtmlhead = '';
+            }
+            $CFG->additionalhtmlhead .= '<meta name="robots" content="noindex" />';
+        }
+
         if (!empty($CFG->additionalhtmlhead)) {
             $output .= "\n".$CFG->additionalhtmlhead;
         }
