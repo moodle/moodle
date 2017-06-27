@@ -58,7 +58,7 @@ function download_as_dataformat($filename, $dataformat, $columns, $iterator, $ca
     $format->send_http_headers();
     // This exists to support all dataformats - see MDL-56046.
     if (method_exists($format, 'write_header')) {
-        error_log('The function write_header() does not support multiple tables. In order to support multiple tables you ' .
+        error_log('The function write_header() does not support multiple sheets. In order to support multiple sheets you ' .
             'must implement start_output() and start_sheet() and remove write_header() in your dataformat.');
         $format->write_header($columns);
     } else {
@@ -77,7 +77,7 @@ function download_as_dataformat($filename, $dataformat, $columns, $iterator, $ca
     }
     // This exists to support all dataformats - see MDL-56046.
     if (method_exists($format, 'write_footer')) {
-        error_log('The function write_footer() does not support multiple tables. In order to support multiple tables you ' .
+        error_log('The function write_footer() does not support multiple sheets. In order to support multiple sheets you ' .
             'must implement close_sheet() and close_output() and remove write_footer() in your dataformat.');
         $format->write_footer($columns);
     } else {
