@@ -104,14 +104,17 @@ class data_field_latlong extends data_field_base {
         foreach ($latlongsrs as $latlong) {
             $latitude = format_float($latlong->la, 4);
             $longitude = format_float($latlong->lo, 4);
-            $options[$latlong->la . ',' . $latlong->lo] = $latitude . ' ' . $longitude;
+            if ($latitude && $longitude) {
+                $options[$latlong->la . ',' . $latlong->lo] = $latitude . ' ' . $longitude;
+            }
         }
         $latlongsrs->close();
 
         $classes = array('class' => 'accesshide');
         $return = html_writer::label(get_string('latlong', 'data'), 'menuf_'.$this->field->id, false, $classes);
         $classes = array('class' => 'custom-select');
-        $return .= html_writer::select($options, 'f_'.$this->field->id, $value, null, $classes);
+        $return .= html_writer::select($options, 'f_'.$this->field->id, $value, array('' => get_string('menuchoose', 'data')),
+            $classes);
        return $return;
     }
 
