@@ -2767,13 +2767,13 @@ class workshop {
     }
 
     /**
-     * Check whether the given user has assessed all his required examples.
+     * Check whether the given user has assessed all his required examples before submission.
      *
      * @param  int $userid the user to check
      * @return bool        false if there are examples missing assessment, true otherwise.
      * @since  Moodle 3.4
      */
-    public function check_examples_assessed($userid) {
+    public function check_examples_assessed_before_submission($userid) {
 
         if ($this->useexamples and $this->examplesmode == self::EXAMPLES_BEFORE_SUBMISSION
             and !has_capability('mod/workshop:manageexamples', $this->context)) {
@@ -2790,6 +2790,35 @@ class workshop {
             }
         }
         return true;
+    }
+
+    /**
+     * Check that all required examples have been assessed by the given user.
+     *
+     * @param  stdClass $userid     the user (reviewer) to check
+     * @return mixed bool|state     false and notice code if there are examples missing assessment, true otherwise.
+     * @since  Moodle 3.4
+     */
+    public function check_examples_assessed_before_assessment($userid) {
+
+        if ($this->useexamples and $this->examplesmode == self::EXAMPLES_BEFORE_ASSESSMENT
+                and !has_capability('mod/workshop:manageexamples', $this->context)) {
+
+            // The reviewer must have submitted their own submission.
+            $reviewersubmission = $this->get_submission_by_author($userid);
+            if (!$reviewersubmission) {
+                // No money, no love.
+                return array(false, 'exampleneedsubmission');
+            } else {
+                $examples = $this->get_examples_for_reviewer($userid);
+                foreach ($examples as $exampleid => $example) {
+                    if (is_null($example->grade)) {
+                        return array(false, 'exampleneedassessed');
+                    }
+                }
+            }
+        }
+        return array(true, null);
     }
 
     /**

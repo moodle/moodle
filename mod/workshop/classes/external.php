@@ -199,7 +199,8 @@ class mod_workshop_external extends external_api {
         if (is_null($result['assessingexamplesallowed'])) {
             $result['assessingexamplesallowed'] = false;
         }
-        $result['examplesassessed'] = $workshop->check_examples_assessed($USER->id);
+        $result['examplesassessedbeforesubmission'] = $workshop->check_examples_assessed_before_submission($USER->id);
+        list($result['examplesassessedbeforeassessment'], $code) = $workshop->check_examples_assessed_before_assessment($USER->id);
 
         $result['warnings'] = array();
         return $result;
@@ -222,8 +223,12 @@ class mod_workshop_external extends external_api {
                 'Is the user allowed to create/edit his assessments?'),
             'assessingexamplesallowed' => new external_value(PARAM_BOOL,
                 'Are reviewers allowed to create/edit their assessments of the example submissions?.'),
-            'examplesassessed' => new external_value(PARAM_BOOL,
-                'Whether the given user has assessed all his required examples (always true if there are no examples to assess).'),
+            'examplesassessedbeforesubmission' => new external_value(PARAM_BOOL,
+                'Whether the given user has assessed all his required examples before submission
+                (always true if there are not examples to assess or not configured to check before submission).'),
+            'examplesassessedbeforeassessment' => new external_value(PARAM_BOOL,
+                'Whether the given user has assessed all his required examples before assessment
+                (always true if there are not examples to assessor not configured to check before assessment).'),
             'warnings' => new external_warnings()
         );
 
@@ -476,7 +481,7 @@ class mod_workshop_external extends external_api {
 
         // Check if we can submit now.
         $canaddsubmission = $workshop->creating_submission_allowed($USER->id);
-        $canaddsubmission = $canaddsubmission && $workshop->check_examples_assessed($USER->id);
+        $canaddsubmission = $canaddsubmission && $workshop->check_examples_assessed_before_submission($USER->id);
         if (!$canaddsubmission) {
             throw new moodle_exception('nopermissions', 'error', '', 'add submission');
         }
@@ -592,7 +597,7 @@ class mod_workshop_external extends external_api {
         // Check if we can update the submission.
         $canupdatesubmission = $submission->authorid == $USER->id;
         $canupdatesubmission = $canupdatesubmission && $workshop->modifying_submission_allowed($USER->id);
-        $canupdatesubmission = $canupdatesubmission && $workshop->check_examples_assessed($USER->id);
+        $canupdatesubmission = $canupdatesubmission && $workshop->check_examples_assessed_before_submission($USER->id);
         if (!$canupdatesubmission) {
             throw new moodle_exception('nopermissions', 'error', '', 'update submission');
         }

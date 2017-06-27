@@ -103,7 +103,7 @@ if ($submission->id and !$workshop->modifying_submission_allowed($USER->id)) {
 
 $canviewall = $canviewall && $workshop->check_group_membership($submission->authorid);
 
-$editable = $editable && $workshop->check_examples_assessed($USER->id);
+$editable = ($editable && $workshop->check_examples_assessed_before_submission($USER->id));
 $edit = ($editable and $edit);
 
 if (!$candeleteall and $ownsubmission and $editable) {
