@@ -41,7 +41,7 @@ class writer extends \core\dataformat\base {
     /** @var $extension */
     public $extension = ".json";
 
-    /** @var $hasstarted */
+    /** @var $sheetstarted */
     public $sheetstarted = false;
 
     /** @var $sheetdatadded */
