@@ -1517,7 +1517,8 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
 
         } else {
 
-            $sql = "SELECT s.id, u.lastname, u.firstname
+            $userfields = get_all_user_name_fields(true, 'u');
+            $sql = "SELECT s.id, $userfields
                       FROM {workshop_submissions} s
                       JOIN {user} u ON (s.authorid = u.id)
                      WHERE s.example = 0 AND s.workshopid = ?";
