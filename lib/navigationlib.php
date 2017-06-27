@@ -3651,7 +3651,7 @@ class breadcrumb_navigation_node extends navigation_node {
                  $this->$key = $value;
             }
         } else {
-            throw coding_exception('Not a valid breadcrumb_navigation_node');
+            throw new coding_exception('Not a valid breadcrumb_navigation_node');
         }
     }
 
@@ -3705,7 +3705,7 @@ class flat_navigation_node extends navigation_node {
                  $this->$key = $value;
             }
         } else {
-            throw coding_exception('Not a valid flat_navigation_node');
+            throw new coding_exception('Not a valid flat_navigation_node');
         }
         $this->indent = $indent;
     }
