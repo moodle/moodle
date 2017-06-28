@@ -36,6 +36,13 @@ defined('MOODLE_INTERNAL') || die();
 class no_teacher extends \core_analytics\local\indicator\binary {
 
     /**
+     * Teacher role ids.
+     *
+     * @var array|null
+     */
+    protected $teacherroleids = null;
+
+    /**
      * get_name
      *
      * @return string
@@ -68,9 +75,11 @@ class no_teacher extends \core_analytics\local\indicator\binary {
 
         $context = $this->retrieve('context', $sampleid);
 
-        $teacherroles = get_config('analytics', 'teacherroles');
-        $teacherroleids = explode(',', $teacherroles);
-        foreach ($teacherroleids as $role) {
+        if (is_null($this->teacherroleids)) {
+            $this->teacherroleids = array_keys(get_archetype_roles('editingteacher') + get_archetype_roles('teacher'));
+        }
+
+        foreach ($this->teacherroleids as $role) {
             // We look for roles, not enrolments as a teacher assigned at category level is supposed to be a
             // course teacher.
             $teachers = get_role_users($role, $context, false, 'u.id', 'u.id');
