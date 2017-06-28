@@ -28,7 +28,8 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-use Behat\Mink\Exception\ExpectationException as ExpectationException,
+use Behat\Mink\Exception\DriverException,
+    Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
     Behat\Mink\Element\NodeElement as NodeElement;
 
@@ -881,6 +882,8 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
         } catch (NoSuchWindow $e) {
             // If we were interacting with a popup window it will not exists after closing it.
+        } catch (DriverException $e) {
+            // Same reason as above.
         }
     }
 
