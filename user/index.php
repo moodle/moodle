@@ -27,8 +27,6 @@ require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
 require_once($CFG->libdir.'/filelib.php');
 
-define('USER_SMALL_CLASS', 20);   // Below this is considered small.
-define('USER_LARGE_CLASS', 200);  // Above this is considered large.
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
 
@@ -110,20 +108,6 @@ $bulkoperations = has_capability('moodle/course:bulkmessaging', $context);
 
 $countries = get_string_manager()->get_list_of_countries();
 
-$strnever = get_string('never');
-
-$datestring = new stdClass();
-$datestring->year  = get_string('year');
-$datestring->years = get_string('years');
-$datestring->day   = get_string('day');
-$datestring->days  = get_string('days');
-$datestring->hour  = get_string('hour');
-$datestring->hours = get_string('hours');
-$datestring->min   = get_string('min');
-$datestring->mins  = get_string('mins');
-$datestring->sec   = get_string('sec');
-$datestring->secs  = get_string('secs');
-
 // Check to see if groups are being used in this course
 // and if so, set $currentgroup to reflect the current group.
 
@@ -154,7 +138,6 @@ if ($isseparategroups and (!$currentgroup) ) {
     exit;
 }
 
-
 // Should use this variable so that we don't break stuff every time a variable is added or changed.
 $baseurl = new moodle_url('/user/index.php', array(
         'contextid' => $context->id,
@@ -175,20 +158,6 @@ if ($course->id == SITEID) {
     $filterselect = $currentgroup;
 }
 
-
-
-// Get the hidden field list.
-if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
-    $hiddenfields = array();  // Teachers and admins are allowed to see everything.
-} else {
-    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
-}
-
-if (isset($hiddenfields['lastaccess'])) {
-    // Do not allow access since filtering.
-    $accesssince = 0;
-}
-
 // Print settings and things in a table across the top.
 $controlstable = new html_table();
 $controlstable->attributes['class'] = 'controls';
@@ -199,7 +168,16 @@ if ($groupmenu = groups_print_course_menu($course, $baseurl->out(), true)) {
     $controlstable->data[0]->cells[] = $groupmenu;
 }
 
-if (!isset($hiddenfields['lastaccess'])) {
+// Get the list of fields we have to hide.
+$hiddenfields = array();
+if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
+    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+}
+
+// If lastaccess is in the hidden fields access do not allow filtering.
+if (isset($hiddenfields['lastaccess'])) {
+    $accesssince = 0;
+} else { // The user is allowed to filter by last access.
     // Get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
     // We need to make it diferently for normal courses and site course.
     if (!$isfrontpage) {
@@ -258,160 +236,15 @@ if (!isset($hiddenfields['lastaccess'])) {
 
 echo html_writer::table($controlstable);
 
-// Define a table showing a list of users in the current role selection.
-$tablecolumns = array();
-$tableheaders = array();
-if ($bulkoperations) {
-    $tablecolumns[] = 'select';
-    $tableheaders[] = get_string('select');
-}
-$tablecolumns[] = 'userpic';
-$tablecolumns[] = 'fullname';
+$participanttable = new \core_user\participants_table($course->id, $currentgroup, $accesssince, $roleid, $search,
+    $bulkoperations, $selectall);
+$participanttable->define_baseurl($baseurl);
 
-$extrafields = get_extra_user_fields($context);
-$tableheaders[] = get_string('userpic');
-$tableheaders[] = get_string('fullnameuser');
-
-
-foreach ($extrafields as $field) {
-    $tablecolumns[] = $field;
-    $tableheaders[] = get_user_field_name($field);
-}
-if (!isset($hiddenfields['city'])) {
-    $tablecolumns[] = 'city';
-    $tableheaders[] = get_string('city');
-}
-if (!isset($hiddenfields['country'])) {
-    $tablecolumns[] = 'country';
-    $tableheaders[] = get_string('country');
-}
-if (!isset($hiddenfields['lastaccess'])) {
-    $tablecolumns[] = 'lastaccess';
-    if ($course->id == SITEID) {
-        // Exception case for viewing participants on site home.
-        $tableheaders[] = get_string('lastsiteaccess');
-    } else {
-        $tableheaders[] = get_string('lastcourseaccess');
-    }
-}
-
-$table = new flexible_table('user-index-participants-'.$course->id);
-$table->define_columns($tablecolumns);
-$table->define_headers($tableheaders);
-$table->define_baseurl($baseurl->out());
-
-if (!isset($hiddenfields['lastaccess'])) {
-    $table->sortable(true, 'lastaccess', SORT_DESC);
-} else {
-    $table->sortable(true, 'firstname', SORT_ASC);
-}
-
-$table->no_sorting('roles');
-$table->no_sorting('groups');
-$table->no_sorting('groupings');
-$table->no_sorting('select');
-
-$table->set_attribute('cellspacing', '0');
-$table->set_attribute('id', 'participants');
-$table->set_attribute('class', 'generaltable generalbox');
-
-$table->set_control_variables(array(
-            TABLE_VAR_SORT    => 'ssort',
-            TABLE_VAR_HIDE    => 'shide',
-            TABLE_VAR_SHOW    => 'sshow',
-            TABLE_VAR_IFIRST  => 'sifirst',
-            TABLE_VAR_ILAST   => 'silast',
-            TABLE_VAR_PAGE    => 'spage'
-            ));
-$table->setup();
-
-list($esql, $params) = get_enrolled_sql($context, null, $currentgroup, true);
-$joins = array("FROM {user} u");
-$wheres = array();
-
-$userfields = array('username', 'email', 'city', 'country', 'lang', 'timezone', 'maildisplay');
-$mainuserfields = user_picture::fields('u', $userfields);
-$extrasql = get_extra_user_fields_sql($context, 'u', '', $userfields);
-
-if ($isfrontpage) {
-    $select = "SELECT $mainuserfields, u.lastaccess$extrasql";
-    $joins[] = "JOIN ($esql) e ON e.id = u.id"; // Everybody on the frontpage usually.
-    if ($accesssince) {
-        $wheres[] = get_user_lastaccess_sql($accesssince);
-    }
-
-} else {
-    $select = "SELECT $mainuserfields, COALESCE(ul.timeaccess, 0) AS lastaccess$extrasql";
-    $joins[] = "JOIN ($esql) e ON e.id = u.id"; // Course enrolled users only.
-    $joins[] = "LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid)"; // Not everybody accessed course yet.
-    $params['courseid'] = $course->id;
-    if ($accesssince) {
-        $wheres[] = get_course_lastaccess_sql($accesssince);
-    }
-}
-
-// Performance hacks - we preload user contexts together with accounts.
-$ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
-$ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
-$params['contextlevel'] = CONTEXT_USER;
-$select .= $ccselect;
-$joins[] = $ccjoin;
-
-
-// Limit list to users with some role only.
-if ($roleid) {
-    // We want to query both the current context and parent contexts.
-    list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
-
-    $wheres[] = "u.id IN (SELECT userid FROM {role_assignments} WHERE roleid = :roleid AND contextid $relatedctxsql)";
-    $params = array_merge($params, array('roleid' => $roleid), $relatedctxparams);
-}
-
-$from = implode("\n", $joins);
-if ($wheres) {
-    $where = "WHERE " . implode(" AND ", $wheres);
-} else {
-    $where = "";
-}
-
-$totalcount = $DB->count_records_sql("SELECT COUNT(u.id) $from $where", $params);
-
-if (!empty($search)) {
-    $fullname = $DB->sql_fullname('u.firstname', 'u.lastname');
-    $wheres[] = "(". $DB->sql_like($fullname, ':search1', false, false) .
-                " OR ". $DB->sql_like('email', ':search2', false, false) .
-                " OR ". $DB->sql_like('idnumber', ':search3', false, false) .") ";
-    $params['search1'] = "%$search%";
-    $params['search2'] = "%$search%";
-    $params['search3'] = "%$search%";
-}
-
-list($twhere, $tparams) = $table->get_sql_where();
-if ($twhere) {
-    $wheres[] = $twhere;
-    $params = array_merge($params, $tparams);
-}
-
-$from = implode("\n", $joins);
-if ($wheres) {
-    $where = "WHERE " . implode(" AND ", $wheres);
-} else {
-    $where = "";
-}
-
-if ($table->get_sql_sort()) {
-    $sort = ' ORDER BY '.$table->get_sql_sort();
-} else {
-    $sort = '';
-}
-
-$matchcount = $DB->count_records_sql("SELECT COUNT(u.id) $from $where", $params);
-
-$table->initialbars(true);
-$table->pagesize($perpage, $matchcount);
-
-// List of users at the current visible page - paging makes it relatively short.
-$userlist = $DB->get_recordset_sql("$select $from $where $sort", $params, $table->get_page_start(), $table->get_page_size());
+// Do this so we can get the total number of rows.
+ob_start();
+$participanttable->out($perpage, true);
+$participanttablehtml = ob_get_contents();
+ob_end_clean();
 
 // If there are multiple Roles in the course, then show a drop down menu for switching.
 if (count($rolenames) > 1) {
@@ -429,14 +262,9 @@ if (count($rolenames) > 1) {
     echo '</div>';
 }
 
-$editlink = '';
-if ($course->id != SITEID && has_capability('moodle/course:enrolreview', $context)) {
-    $editlink = new moodle_url('/enrol/users.php', array('id' => $course->id));
-}
-
 if ($roleid > 0) {
     $a = new stdClass();
-    $a->number = $totalcount;
+    $a->number = $participanttable->totalrows;
     $a->role = $rolenames[$roleid];
     $heading = format_string(get_string('xuserswiththerole', 'role', $a));
 
@@ -454,10 +282,6 @@ if ($roleid > 0) {
 
     $heading .= ": $a->number";
 
-    if (!empty($editlink)) {
-        $editlink->param('role', $roleid);
-        $heading .= $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit')));
-    }
     echo $OUTPUT->heading($heading, 3);
 } else {
     if ($course->id == SITEID and $roleid < 0) {
@@ -466,17 +290,8 @@ if ($roleid > 0) {
         $strallparticipants = get_string('allparticipants');
     }
 
-    if (!empty($editlink)) {
-        $editlink = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit')));
-    }
-
-    if ($matchcount < $totalcount) {
-        echo $OUTPUT->heading($strallparticipants.get_string('labelsep', 'langconfig').$matchcount.'/'.$totalcount . $editlink, 3);
-    } else {
-        echo $OUTPUT->heading($strallparticipants.get_string('labelsep', 'langconfig').$matchcount . $editlink, 3);
-    }
+    echo $OUTPUT->heading($strallparticipants.get_string('labelsep', 'langconfig') . $participanttable->totalrows, 3);
 }
-
 
 if ($bulkoperations) {
     echo '<form action="action_redir.php" method="post" id="participantsform">';
@@ -485,92 +300,24 @@ if ($bulkoperations) {
     echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
 }
 
-$countrysort = (strpos($sort, 'country') !== false);
-$timeformat = get_string('strftimedate');
-
-if ($userlist) {
-
-    $usersprinted = array();
-    foreach ($userlist as $user) {
-        if (in_array($user->id, $usersprinted)) { // Prevent duplicates by r.hidden - MDL-13935.
-            continue;
-        }
-        $usersprinted[] = $user->id; // Add new user to the array of users printed.
-
-        context_helper::preload_from_record($user);
-
-        if ($user->lastaccess) {
-            $lastaccess = format_time(time() - $user->lastaccess, $datestring);
-        } else {
-            $lastaccess = $strnever;
-        }
-
-        if (empty($user->country)) {
-            $country = '';
-
-        } else {
-            if ($countrysort) {
-                $country = '('.$user->country.') '.$countries[$user->country];
-            } else {
-                $country = $countries[$user->country];
-            }
-        }
-
-        $usercontext = context_user::instance($user->id);
-
-        if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext))) {
-            $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
-        } else {
-            $profilelink = '<strong>'.fullname($user).'</strong>';
-        }
-
-        $data = array();
-        if ($bulkoperations) {
-            if ($selectall) {
-                $checked = 'checked="true"';
-            } else {
-                $checked = '';
-            }
-            $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" ' . $checked .'/>';
-        }
-        $data[] = $OUTPUT->user_picture($user, array('size' => 35, 'courseid' => $course->id));
-        $data[] = $profilelink;
-
-        foreach ($extrafields as $field) {
-            $data[] = $user->{$field};
-        }
-
-        if (!isset($hiddenfields['city'])) {
-            $data[] = $user->city;
-        }
-        if (!isset($hiddenfields['country'])) {
-            $data[] = $country;
-        }
-        if (!isset($hiddenfields['lastaccess'])) {
-            $data[] = $lastaccess;
-        }
-
-        $table->add_data($data);
-    }
-}
-
-$table->print_html();
+echo $participanttablehtml;
 
 $perpageurl = clone($baseurl);
 $perpageurl->remove_params('perpage');
-if ($perpage == SHOW_ALL_PAGE_SIZE) {
+if ($perpage == SHOW_ALL_PAGE_SIZE && $participanttable->totalrows > DEFAULT_PAGE_SIZE) {
     $perpageurl->param('perpage', DEFAULT_PAGE_SIZE);
     echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showperpage', '', DEFAULT_PAGE_SIZE)), array(), 'showall');
 
-} else if ($matchcount > 0 && $perpage < $matchcount) {
+} else if ($participanttable->get_page_size() < $participanttable->totalrows) {
     $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-    echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showall', '', $matchcount)), array(), 'showall');
+    echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showall', '', $participanttable->totalrows)),
+        array(), 'showall');
 }
 
 if ($bulkoperations) {
     echo '<br /><div class="buttons">';
 
-    if ($matchcount > 0 && $perpage < $matchcount) {
+    if ($participanttable->get_page_size() < $participanttable->totalrows) {
         $perpageurl = clone($baseurl);
         $perpageurl->remove_params('perpage');
         $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
@@ -581,9 +328,9 @@ if ($bulkoperations) {
     }
 
     echo html_writer::start_tag('div', array('class' => 'btn-group'));
-    if ($perpage < $matchcount) {
+    if ($participanttable->get_page_size() < $participanttable->totalrows) {
         // Select all users, refresh page showing all users and mark them all selected.
-        $label = get_string('selectalluserswithcount', 'moodle', $matchcount);
+        $label = get_string('selectalluserswithcount', 'moodle', $participanttable->totalrows);
         echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checkall', 'class' => 'btn btn-secondary',
                 'value' => $label, 'data-showallink' => $showalllink));
         // Select all users, mark all users on page as selected.
@@ -620,7 +367,7 @@ if ($bulkoperations) {
 }
 
 // Show a search box if all participants don't fit on a single screen.
-if ($totalcount > $perpage) {
+if ($participanttable->get_page_size() < $participanttable->totalrows) {
     echo '<form action="index.php" class="searchform"><div><input type="hidden" name="id" value="'.$course->id.'" />';
     echo '<label for="search">' . get_string('search', 'search') . ' </label>';
     echo '<input type="text" id="search" name="search" value="'.s($search).'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
@@ -629,41 +376,3 @@ if ($totalcount > $perpage) {
 echo '</div>';  // Userlist.
 
 echo $OUTPUT->footer();
-
-if ($userlist) {
-    $userlist->close();
-}
-
-/**
- * Returns SQL that can be used to limit a query to a period where the user last accessed a course..
- *
- * @param string $accesssince
- * @return string
- */
-function get_course_lastaccess_sql($accesssince='') {
-    if (empty($accesssince)) {
-        return '';
-    }
-    if ($accesssince == -1) { // Never.
-        return 'ul.timeaccess = 0';
-    } else {
-        return 'ul.timeaccess != 0 AND ul.timeaccess < '.$accesssince;
-    }
-}
-
-/**
- * Returns SQL that can be used to limit a query to a period where the user last accessed the system.
- *
- * @param string $accesssince
- * @return string
- */
-function get_user_lastaccess_sql($accesssince='') {
-    if (empty($accesssince)) {
-        return '';
-    }
-    if ($accesssince == -1) { // Never.
-        return 'u.lastaccess = 0';
-    } else {
-        return 'u.lastaccess != 0 AND u.lastaccess < '.$accesssince;
-    }
-}
