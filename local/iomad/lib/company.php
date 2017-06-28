@@ -2671,7 +2671,7 @@ class company {
                 }
             }
 
-            if (!empty($event->other['programchange'] && $licenserecord->program == 1)) {
+            if (isset($event->other['programchange']) && $licenserecord->program == 1) {
                 // We have switched from an ordinary license to a program license.
                 // Get the users who have courses in this licenses.
                 if ($licusers = $DB->get_records_sql("SELECT DISTINCT userid
