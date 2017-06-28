@@ -164,7 +164,6 @@ class company_license_form extends company_moodleform {
 
         $autooptions = array('multiple' => true);
         $mform->addElement('autocomplete', 'licensecourses', get_string('selectlicensecourse', 'block_iomad_company_admin'), $this->courses, $autooptions);
-        $mform->disabledIf('licensecourses', 'parentid', 'ne', 0);
         
         if ( $this->courses ) {
             $this->add_action_buttons(true, get_string('updatelicense', 'block_iomad_company_admin'));
@@ -177,6 +176,14 @@ class company_license_form extends company_moodleform {
         global $DB;
 
         $errors = array();
+
+        if (!empty($data['licenseid'])) {
+            // check that the amount of free licenses slots is more than the amount being allocated.
+            $currentlicense = $DB->get_record('companylicense', array('id' => $data['licenseid']));
+            if ($currentlicense->used > $data['allocation']) {
+                $errors['allocation'] = get_string('licensenotenough', 'block_iomad_company_admin');
+            }
+        }
 
         if (!empty($data['parentid'])) {
             // check that the amount of free licenses slots is more than the amount being allocated.
