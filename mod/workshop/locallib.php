@@ -3025,6 +3025,71 @@ class workshop {
         }
     }
 
+    /**
+     * Adds information to an allocated assessment (function used the first time a review is done or when updating an existing one).
+     *
+     * @param  stdClass $assessment the assessment
+     * @param  stdClass $submission the submission
+     * @param  stdClass $data       the assessment data to be added or Updated
+     * @param  stdClass $strategy   the strategy instance
+     * @return float|null           Raw percentual grade (0.00000 to 100.00000) for submission
+     * @since  Moodle 3.4
+     */
+    public function edit_assessment($assessment, $submission, $data, $strategy) {
+        global $DB;
+
+        $cansetassessmentweight = has_capability('mod/workshop:allocate', $this->context);
+
+        // Let the grading strategy subplugin save its data.
+        $rawgrade = $strategy->save_assessment($assessment, $data);
+
+        // Store the data managed by the workshop core.
+        $coredata = (object)array('id' => $assessment->id);
+        if (isset($data->feedbackauthor_editor)) {
+            $coredata->feedbackauthor_editor = $data->feedbackauthor_editor;
+            $coredata = file_postupdate_standard_editor($coredata, 'feedbackauthor', $this->overall_feedback_content_options(),
+                $this->context, 'mod_workshop', 'overallfeedback_content', $assessment->id);
+            unset($coredata->feedbackauthor_editor);
+        }
+        if (isset($data->feedbackauthorattachment_filemanager)) {
+            $coredata->feedbackauthorattachment_filemanager = $data->feedbackauthorattachment_filemanager;
+            $coredata = file_postupdate_standard_filemanager($coredata, 'feedbackauthorattachment',
+                $this->overall_feedback_attachment_options(), $this->context, 'mod_workshop', 'overallfeedback_attachment',
+                $assessment->id);
+            unset($coredata->feedbackauthorattachment_filemanager);
+            if (empty($coredata->feedbackauthorattachment)) {
+                $coredata->feedbackauthorattachment = 0;
+            }
+        }
+        if (isset($data->weight) and $cansetassessmentweight) {
+            $coredata->weight = $data->weight;
+        }
+        // Update the assessment data if there is something other than just the 'id'.
+        if (count((array)$coredata) > 1 ) {
+            $DB->update_record('workshop_assessments', $coredata);
+            $params = array(
+                'relateduserid' => $submission->authorid,
+                'objectid' => $assessment->id,
+                'context' => $this->context,
+                'other' => array(
+                    'workshopid' => $this->id,
+                    'submissionid' => $assessment->submissionid
+                )
+            );
+
+            if (is_null($assessment->grade)) {
+                // All workshop_assessments are created when allocations are made. The create event is of more use located here.
+                $event = \mod_workshop\event\submission_assessed::create($params);
+                $event->trigger();
+            } else {
+                $params['other']['grade'] = $assessment->grade;
+                $event = \mod_workshop\event\submission_reassessed::create($params);
+                $event->trigger();
+            }
+        }
+        return $rawgrade;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
     ////////////////////////////////////////////////////////////////////////////////
