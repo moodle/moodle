@@ -335,8 +335,6 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 if (!$exception) {
                     $exception = $e;
                 }
-                // We wait until no exception is thrown or timeout expires.
-                continue;
             }
 
             if ($this->running_javascript()) {
