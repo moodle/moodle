@@ -1412,4 +1412,132 @@ class mod_workshop_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function update_assessment_parameters() {
+        return new external_function_parameters(
+            array(
+                'assessmentid' => new external_value(PARAM_INT, 'Assessment id.'),
+                'data' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT,
+                                'The assessment data (use WS get_assessment_form_definition for obtaining the data to sent).
+                                Apart from that data, you can optionally send:
+                                feedbackauthor (str); the feedback for the submission author
+                                feedbackauthorformat (int); the format of the feedbackauthor
+                                feedbackauthorinlineattachmentsid (int); the draft file area for the editor attachments
+                                feedbackauthorattachmentsid (int); the draft file area id for the feedback attachments'
+                            ),
+                            'value' => new external_value(PARAM_RAW, 'The value of the option.')
+                        )
+                    ), 'Assessment data'
+                )
+            )
+        );
+    }
+
+
+    /**
+     * Updates an assessment.
+     *
+     * @param int $assessmentid the assessment id
+     * @param array $data the assessment data
+     * @return array indicates if the assessment was updated, the new raw grade and possible warnings.
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function update_assessment($assessmentid, $data) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(
+            self::update_assessment_parameters(), array('assessmentid' => $assessmentid, 'data' => $data)
+        );
+        $warnings = array();
+
+        // Get and validate the assessment, submission and workshop.
+        $assessment = $DB->get_record('workshop_assessments', array('id' => $params['assessmentid']), '*', MUST_EXIST);
+        $submission = $DB->get_record('workshop_submissions', array('id' => $assessment->submissionid), '*', MUST_EXIST);
+        list($workshop, $course, $cm, $context) = self::validate_workshop($submission->workshopid);
+
+        // Check we can edit the assessment.
+        $workshop->check_edit_assessment($assessment, $submission);
+
+        // Process data.
+        $data = new stdClass;
+        $data->feedbackauthor_editor = array();
+
+        foreach ($params['data'] as $wsdata) {
+            $name = trim($wsdata['name']);
+            switch ($name) {
+                case 'feedbackauthor':
+                    $data->feedbackauthor_editor['text'] = $wsdata['value'];
+                    break;
+                case 'feedbackauthorformat':
+                    $data->feedbackauthor_editor['format'] = clean_param($wsdata['value'], PARAM_FORMAT);
+                    break;
+                case 'feedbackauthorinlineattachmentsid':
+                    $data->feedbackauthor_editor['itemid'] = clean_param($wsdata['value'], PARAM_INT);
+                    break;
+                case 'feedbackauthorattachmentsid':
+                    $data->feedbackauthorattachment_filemanager = clean_param($wsdata['value'], PARAM_INT);
+                    break;
+                default:
+                    $data->{$wsdata['name']} = $wsdata['value'];    // Validation will be done in the form->validation.
+            }
+        }
+
+        $cansetassessmentweight = has_capability('mod/workshop:allocate', $context);
+        $pending = $workshop->get_pending_assessments_by_reviewer($assessment->reviewerid, $assessment->id);
+        // Retrieve the data from the strategy plugin.
+        $strategy = $workshop->grading_strategy_instance();
+        $mform = $strategy->get_assessment_form(null, 'assessment', $assessment, true,
+            array('editableweight' => $cansetassessmentweight, 'pending' => !empty($pending)));
+
+        $errors = $mform->validation((array) $data, array());
+        // We can get several errors, return them in warnings.
+        if (!empty($errors)) {
+            $status = false;
+            $rawgrade = null;
+            foreach ($errors as $itemname => $message) {
+                $warnings[] = array(
+                    'item' => $itemname,
+                    'itemid' => 0,
+                    'warningcode' => 'fielderror',
+                    'message' => s($message)
+                );
+            }
+        } else {
+            $rawgrade = $workshop->edit_assessment($assessment, $submission, $data, $strategy);
+            $status = true;
+        }
+
+        return array(
+            'status' => $status,
+            'rawgrade' => $rawgrade,
+            'warnings' => $warnings,
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function update_assessment_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if the assessment was added or updated false otherwise.'),
+                'rawgrade' => new external_value(PARAM_FLOAT, 'Raw percentual grade (0.00000 to 100.00000) for submission.',
+                    VALUE_OPTIONAL),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

@@ -75,7 +75,12 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $course->groupmode = SEPARATEGROUPS;
         $course->groupmodeforce = true;
         $this->course = $this->getDataGenerator()->create_course($course);
-        $this->workshop = $this->getDataGenerator()->create_module('workshop', array('course' => $this->course->id));
+        $this->workshop = $this->getDataGenerator()->create_module('workshop',
+            array(
+                'course' => $this->course->id,
+                'overallfeedbackfiles' => 1,
+            )
+        );
         $this->context = context_module::instance($this->workshop->cmid);
         $this->cm = get_coursemodule_from_instance('workshop', $this->workshop->id);
 
@@ -1413,5 +1418,110 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->student);
         $this->setExpectedException('moodle_exception');
         mod_workshop_external::get_reviewer_assessments($this->workshop->id, $this->anotherstudentg1->id);
+    }
+
+    /**
+     * Test update_assessment.
+     */
+    public function test_update_assessment() {
+        global $DB;
+
+        // Create the submission.
+        $submissionid = $this->create_test_submission($this->anotherstudentg1);
+
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $submission = $workshop->get_submission_by_id($submissionid);
+        $assessmentid = $workshop->add_allocation($submission, $this->student->id);
+
+        // Switch to assessment phase.
+        $DB->set_field('workshop', 'phase', workshop::PHASE_ASSESSMENT, array('id' => $this->workshop->id));
+        $this->setUser($this->student);
+        // Get the form definition.
+        $result = mod_workshop_external::get_assessment_form_definition($assessmentid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_form_definition_returns(), $result);
+
+        // Prepare the data to be sent.
+        $data = $result['fields'];
+        foreach ($data as $key => $param) {
+            if (strpos($param['name'], 'peercomment__idx_') === 0) {
+                $data[$key]['value'] = 'Some content';
+            } else if (strpos($param['name'], 'grade__idx_') === 0) {
+                $data[$key]['value'] = 25; // Set all to 25.
+            }
+        }
+
+        // Required data.
+        $data[] = array(
+            'name' => 'nodims',
+            'value' => $result['dimenssionscount'],
+        );
+
+        // General feedback.
+        $data[] = array(
+            'name' => 'feedbackauthor',
+            'value' => 'Feedback for the author',
+        );
+        $data[] = array(
+            'name' => 'feedbackauthorformat',
+            'value' => FORMAT_MOODLE,
+        );
+
+        // Create a file in a draft area for inline attachments.
+        $fs = get_file_storage();
+        $draftidinlineattach = file_get_unused_draft_itemid();
+        $usercontext = context_user::instance($this->student->id);
+        $filenameimg = 'shouldbeanimage.txt';
+        $filerecordinline = array(
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $draftidinlineattach,
+            'filepath'  => '/',
+            'filename'  => $filenameimg,
+        );
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
+        // Create a file in a draft area for regular attachments.
+        $draftidattach = file_get_unused_draft_itemid();
+        $filerecordattach = $filerecordinline;
+        $attachfilename = 'attachment.txt';
+        $filerecordattach['filename'] = $attachfilename;
+        $filerecordattach['itemid'] = $draftidattach;
+        $fs->create_file_from_string($filerecordattach, 'simple text attachment');
+
+        $data[] = array(
+            'name' => 'feedbackauthorinlineattachmentsid',
+            'value' => $draftidinlineattach,
+        );
+        $data[] = array(
+            'name' => 'feedbackauthorattachmentsid',
+            'value' => $draftidattach,
+        );
+
+        // Update the assessment.
+        $result = mod_workshop_external::update_assessment($assessmentid, $data);
+        $result = external_api::clean_returnvalue(mod_workshop_external::update_assessment_returns(), $result);
+        $this->assertEquals(100, $result['rawgrade']);
+        $this->assertTrue($result['status']);
+
+        // Get the assessment and check it was updated properly.
+        $result = mod_workshop_external::get_assessment($assessmentid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
+        $this->assertEquals(100, $result['assessment']['grade']);
+        $this->assertEquals($this->student->id, $result['assessment']['reviewerid']);
+        $this->assertEquals('Feedback for the author', $result['assessment']['feedbackauthor']);
+        $this->assertCount(1, $result['assessment']['feedbackcontentfiles']);
+        $this->assertCount(1, $result['assessment']['feedbackattachmentfiles']);
+
+        // Now, get again the form and check we received the data we already sent.
+        $result = mod_workshop_external::get_assessment_form_definition($assessmentid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_form_definition_returns(), $result);
+        foreach ($result['current'] as $currentdata) {
+            if (strpos($currentdata['name'], 'peercomment__idx_') === 0) {
+                $this->assertEquals('Some content', $currentdata['value']);
+            } else if (strpos($currentdata['name'], 'grade__idx_') === 0) {
+                $this->assertEquals(25, (int) $currentdata['value']);
+            }
+        }
     }
 }

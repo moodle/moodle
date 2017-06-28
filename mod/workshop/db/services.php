@@ -127,4 +127,11 @@ $functions = array(
         'type'          => 'read',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_workshop_update_assessment' => array(
+        'classname'     => 'mod_workshop_external',
+        'methodname'    => 'update_assessment',
+        'description'   => 'Add information to an allocated assessment.',
+        'type'          => 'write',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
