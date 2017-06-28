@@ -26,6 +26,7 @@ require_once('../config.php');
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
 require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->dirroot.'/enrol/locallib.php');
 
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
@@ -108,6 +109,10 @@ $bulkoperations = has_capability('moodle/course:bulkmessaging', $context);
 
 $countries = get_string_manager()->get_list_of_countries();
 
+// Manage enrolments.
+$manager = new course_enrolment_manager($PAGE, $course);
+$enrolbuttons = $manager->get_manual_enrol_buttons();
+
 // Check to see if groups are being used in this course
 // and if so, set $currentgroup to reflect the current group.
 
@@ -128,6 +133,13 @@ $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('participants'));
+
+$enrolrenderer = $PAGE->get_renderer('core_enrol');
+echo '<div class="pull-right">';
+foreach ($enrolbuttons as $enrolbutton) {
+    echo $enrolrenderer->render($enrolbutton);
+}
+echo '</div>';
 
 echo '<div class="userlist">';
 
@@ -374,5 +386,12 @@ if ($participanttable->get_page_size() < $participanttable->totalrows) {
 }
 
 echo '</div>';  // Userlist.
+
+$enrolrenderer = $PAGE->get_renderer('core_enrol');
+echo '<div class="pull-right">';
+foreach ($enrolbuttons as $enrolbutton) {
+    echo $enrolrenderer->render($enrolbutton);
+}
+echo '</div>';
 
 echo $OUTPUT->footer();
