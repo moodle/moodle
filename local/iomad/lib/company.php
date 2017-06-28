@@ -2670,6 +2670,33 @@ class company {
                     }
                 }
             }
+
+            if (!empty($event->other['programchange'] && $licenserecord->program == 1)) {
+                // We have switched from an ordinary license to a program license.
+                // Get the users who have courses in this licenses.
+                if ($licusers = $DB->get_records_sql("SELECT DISTINCT userid
+                                                      FROM {companylicense_users}
+                                                      WHERE licenseid = :licenseid",
+                                                      array('licenseid' => $licenseid))) {
+
+                        foreach ($licusers as $licuser) {
+                            foreach ($currentcourses as $currentcourse) {
+                            // Check if they have a license allocated.
+                            if (!$DB->get_record('companylicense_users', array('userid' => $licuser->userid,
+                                                                               'licensecourseid' => $currentcourse->courseid,
+                                                                               'licenseid' => $licenseid))) {   
+                                // If not, allocate it to them.
+                                $userlic = array('licenseid' => $licenseid,
+                                                 'userid' => $licuser->userid,
+                                                 'isusing' => 0,
+                                                 'licensecourseid' => $currentcourse->courseid,
+                                                 'issuedate' => time());
+                                $DB->insert_record('companylicense_users', $userlic);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // Update the license usage.

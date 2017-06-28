@@ -398,6 +398,9 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
                                                                                             'other' => $eventother));
         } else {
             $eventother['oldcourses'] = json_encode($oldcourses);
+            if ($currlicensedata->program != $data->program) {
+                $eventother['programchange'] = true;
+            }
             $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => context_system::instance(),
                                                                                             'userid' => $USER->id,
                                                                                             'objectid' => $licenseid,
