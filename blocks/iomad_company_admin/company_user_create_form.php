@@ -239,6 +239,10 @@ class user_edit_form extends company_moodleform {
                     }
                 }
 
+                // Is this a program of courses?
+                if (!empty($mylicensedetails->program)) {
+                     $mform->addElement('html', "<div style='display:none'>");
+                }
                 if (!$licensecourses = $DB->get_records_sql_menu("SELECT c.id, c.fullname FROM {companylicense_courses} clc
                                                              JOIN {course} c ON (clc.courseid = c.id
                                                              AND clc.licenseid = :licenseid)",
@@ -250,7 +254,13 @@ class user_edit_form extends company_moodleform {
                                                           get_string('select_license_courses', 'block_iomad_company_admin'),
                                                           $licensecourses, array('id' => 'licensecourseselector'));
                 $licensecourseselect->setMultiple(true);
-                $licensecourseselect->setSelected(array());
+                
+                if (!empty($mylicensedetails->program)) {
+                     $mform->addElement('html', "</div>");
+                     $licensecourseselect->setSelected($licensecourses);
+                 } else {
+                     $licensecourseselect->setSelected(array());
+                 }
             }
 
             if (!$onlyone) {
