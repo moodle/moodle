@@ -26,15 +26,15 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
 
-    $settings->add(new admin_setting_configtext('media_videojs/videoextensions',
+    $settings->add(new admin_setting_filetypes('media_videojs/videoextensions',
         new lang_string('videoextensions', 'media_videojs'),
         new lang_string('configvideoextensions', 'media_videojs'),
-        '.mov, .mp4, .m4v, .ogv, .webm, .flv, .f4v'));
+        'html_video,.f4v,.flv'));
 
-    $settings->add(new admin_setting_configtext('media_videojs/audioextensions',
+    $settings->add(new admin_setting_filetypes('media_videojs/audioextensions',
         new lang_string('audioextensions', 'media_videojs'),
         new lang_string('configaudioextensions', 'media_videojs'),
-        '.aac, .flac, .mp3, .m4a, .oga, .ogg, .wav'));
+        'html_audio'));
 
     $settings->add(new admin_setting_configcheckbox('media_videojs/useflash',
         new lang_string('useflash', 'media_videojs'),
