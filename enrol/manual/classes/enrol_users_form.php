@@ -94,12 +94,6 @@ class enrol_manual_enrol_users_form extends moodleform {
         $basemenu[4] = get_string('now', 'enrol_manual') . ' (' . userdate($now, get_string('strftimedatetimeshort')) . ')';
 
         $mform->addElement('header', 'main', get_string('enrolmentoptions', 'enrol'));
-        $roles = get_assignable_roles($context);
-        $mform->addElement('select', 'role', get_string('assignrole', 'enrol_manual'), $roles);
-        $keys = array_keys($roles);
-        $defaultrole = end($keys);
-        $mform->setDefault('role', $defaultrole);
-
         $options = array(
             'ajax' => 'enrol_manual/form-potential-user-selector',
             'multiple' => true,
@@ -110,6 +104,12 @@ class enrol_manual_enrol_users_form extends moodleform {
 
         $options = ['contextid' => $context->id, 'multiple' => true];
         $mform->addElement('cohort', 'cohortlist', get_string('selectcohorts', 'enrol_manual'), $options);
+
+        $roles = get_assignable_roles($context);
+        $mform->addElement('select', 'role', get_string('assignrole', 'enrol_manual'), $roles);
+        $keys = array_keys($roles);
+        $defaultrole = end($keys);
+        $mform->setDefault('role', $defaultrole);
 
         $mform->addAdvancedStatusElement('main');
 
