@@ -727,7 +727,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             $pending = '';
             try {
                 $jscode = '
-                    return function() {
+                    return (function() {
                         if (typeof M === "undefined") {
                             if (document.readyState === "complete") {
                                 return "";
@@ -741,7 +741,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                         } else {
                             return "incomplete"
                         }
-                    }();';
+                    }());';
                 $pending = $this->getSession()->evaluateScript($jscode);
             } catch (NoSuchWindow $nsw) {
                 // We catch an exception here, in case we just closed the window we were interacting with.
