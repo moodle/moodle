@@ -334,7 +334,6 @@ function css_send_cached_css_content($csscontent, $etag) {
  * The Content-Length of the body is also included, but the script is not ended.
  *
  * @param string $css The CSS content to send
- * @param int $expiry The anticipated expiry of the file
  */
 function css_send_temporary_css($css) {
     header('Cache-Control: no-cache, no-store, must-revalidate');
