@@ -634,6 +634,9 @@ class behat_general extends behat_base {
                     } catch (WebDriver\Exception\NoSuchElement $e) {
                         // Do nothing just return, as element is no more on page.
                         return true;
+                    } catch (ElementNotFoundException $e) {
+                        // Do nothing just return, as element is no more on page.
+                        return true;
                     }
                 }
 

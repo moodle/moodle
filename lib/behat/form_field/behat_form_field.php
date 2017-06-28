@@ -114,6 +114,8 @@ class behat_form_field {
             // If the JS handler attached to keydown or keypress destroys the element
             // the later events may trigger errors because form element no longer exist
             // or is not visible. Ignore such exceptions here.
+        } catch (\Behat\Mink\Exception\ElementNotFoundException $e) {
+            // Other Mink drivers can throw this for the same reason as above.
         }
     }
 
