@@ -1096,3 +1096,9 @@ function groups_sync_with_enrolment($enrolname, $courseid = 0, $gidfield = 'cust
 
     return $affectedusers;
 }
+
+function core_group_inplace_editable($itemtype, $itemid, $newvalue) {
+    if ($itemtype === 'user_groups') {
+        return \core_group\output\user_groups_editable::update($itemid, $newvalue);
+    }
+}

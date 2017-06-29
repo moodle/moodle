@@ -76,9 +76,24 @@ class participants_table extends \table_sql {
     protected $countries;
 
     /**
+     * @var stdClass[] The list of groups with membership info for the course.
+     */
+    protected $groups;
+
+    /**
      * @var string[] Extra fields to display.
      */
     protected $extrafields;
+
+    /**
+     * @var stdClass The course details.
+     */
+    protected $course;
+
+    /**
+     * @var context The course context.
+     */
+    protected $context;
 
     /**
      * Sets up the table.
@@ -98,7 +113,9 @@ class participants_table extends \table_sql {
         parent::__construct('user-index-participants-' . $courseid);
 
         // Get the context.
+        $this->course = get_course($courseid);
         $context = \context_course::instance($courseid, MUST_EXIST);
+        $this->context = $context;
 
         // Define the headers and columns.
         $headers = [];
@@ -117,6 +134,12 @@ class participants_table extends \table_sql {
             $headers[] = get_user_field_name($field);
             $columns[] = $field;
         }
+
+        // Load and cache the course groupinfo.
+        $this->groups = groups_get_all_groups($courseid, 0, 0, 'g.*', true);
+        // Add column for groups.
+        $headers[] = get_string('groups');
+        $columns[] = 'groups';
 
         // Get the list of fields we have to hide.
         $hiddenfields = array();
@@ -185,6 +208,25 @@ class participants_table extends \table_sql {
         global $OUTPUT;
 
         return $OUTPUT->user_picture($data, array('size' => 35, 'courseid' => $this->courseid)) . ' ' . fullname($data);
+    }
+
+    /**
+     * Generate the groups column.
+     *
+     * @param \stdClass $row
+     * @return string
+     */
+    public function col_groups($user) {
+        global $OUTPUT;
+
+        $usergroups = [];
+        foreach ($this->groups as $coursegroup) {
+            if (isset($coursegroup->members[$user->id])) {
+                $usergroups[] = $coursegroup->id;
+            }
+        }
+        $editable = new \core_group\output\user_groups_editable($this->course, $this->context, $user, $this->groups, $usergroups);
+        return $OUTPUT->render_from_template('core/inplace_editable', $editable->export_for_template($OUTPUT));
     }
 
     /**
