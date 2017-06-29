@@ -762,7 +762,10 @@ function survey_reset_userdata($data) {
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallanswers', 'survey'), 'error'=>false);
     }
 
-    // no date shifting
+    // No date shifting.
+    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+    // See MDL-9367.
+
     return $status;
 }
 
