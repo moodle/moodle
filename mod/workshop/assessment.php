@@ -147,19 +147,7 @@ if ($canoverridegrades or $cansetassessmentweight) {
         'overridablegradinggrade' => $canoverridegrades);
     $feedbackform = $workshop->get_feedbackreviewer_form($PAGE->url, $assessment, $options);
     if ($data = $feedbackform->get_data()) {
-        $data = file_postupdate_standard_editor($data, 'feedbackreviewer', array(), $workshop->context);
-        $record = new stdclass();
-        $record->id = $assessment->id;
-        if ($cansetassessmentweight) {
-            $record->weight = $data->weight;
-        }
-        if ($canoverridegrades) {
-            $record->gradinggradeover = $workshop->raw_grade_value($data->gradinggradeover, $workshop->gradinggrade);
-            $record->gradinggradeoverby = $USER->id;
-            $record->feedbackreviewer = $data->feedbackreviewer;
-            $record->feedbackreviewerformat = $data->feedbackreviewerformat;
-        }
-        $DB->update_record('workshop_assessments', $record);
+        $workshop->evaluate_assessment($assessment, $data, $cansetassessmentweight, $canoverridegrades);
         redirect($workshop->view_url());
     }
 }

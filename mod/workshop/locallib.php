@@ -3090,6 +3090,34 @@ class workshop {
         return $rawgrade;
     }
 
+    /**
+     * Evaluates an assessment.
+     *
+     * @param  stdClass $assessment the assessment
+     * @param  stdClass $data       the assessment data to be updated
+     * @param  bool $cansetassessmentweight   whether the user can change the assessment weight
+     * @param  bool $canoverridegrades   whether the user can override the assessment grades
+     * @return void
+     * @since  Moodle 3.4
+     */
+    public function evaluate_assessment($assessment, $data, $cansetassessmentweight, $canoverridegrades) {
+        global $DB, $USER;
+
+        $data = file_postupdate_standard_editor($data, 'feedbackreviewer', array(), $this->context);
+        $record = new stdclass();
+        $record->id = $assessment->id;
+        if ($cansetassessmentweight) {
+            $record->weight = $data->weight;
+        }
+        if ($canoverridegrades) {
+            $record->gradinggradeover = $this->raw_grade_value($data->gradinggradeover, $this->gradinggrade);
+            $record->gradinggradeoverby = $USER->id;
+            $record->feedbackreviewer = $data->feedbackreviewer;
+            $record->feedbackreviewerformat = $data->feedbackreviewerformat;
+        }
+        $DB->update_record('workshop_assessments', $record);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
     ////////////////////////////////////////////////////////////////////////////////
