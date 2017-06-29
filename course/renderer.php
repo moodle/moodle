@@ -909,6 +909,34 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Message displayed to the user when they try to access unavailable activity following URL
+     *
+     * This method is a very simplified version of {@link course_section_cm()} to be part of the error
+     * notification only. It also does not check if module is visible on course page or not.
+     *
+     * The message will be displayed inside notification!
+     *
+     * @param cm_info $cm
+     * @return string
+     */
+    public function course_section_cm_unavilable_error_message(cm_info $cm) {
+        if ($cm->uservisible) {
+            return null;
+        }
+        if (!$cm->availableinfo) {
+            return get_string('activityiscurrentlyhidden');
+        }
+
+        $altname = get_accesshide(' ' . $cm->modfullname);
+        $name = html_writer::empty_tag('img', array('src' => $cm->get_icon_url(),
+                'class' => 'iconlarge activityicon', 'alt' => ' ', 'role' => 'presentation')) .
+            html_writer::tag('span', ' '.$cm->get_formatted_name() . $altname, array('class' => 'instancename'));
+        $formattedinfo = \core_availability\info::format_info($cm->availableinfo, $cm->get_course());
+        return html_writer::div($name, 'activityinstance-error') .
+        html_writer::div($formattedinfo, 'availabilityinfo-error');
+    }
+
+    /**
      * Renders HTML to display a list of course modules in a course section
      * Also displays "move here" controls in Javascript-disabled mode
      *
@@ -2036,7 +2064,6 @@ class core_course_renderer extends plugin_renderer_base {
                 set_attributes(array('class' => 'frontpage-category-names'));
         return $this->coursecat_tree($chelper, coursecat::get(0));
     }
-
 }
 
 /**

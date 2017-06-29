@@ -2898,12 +2898,11 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         if ($preventredirect) {
             throw new require_login_exception('Activity is hidden');
         }
-        if ($course->id != SITEID) {
-            $url = new moodle_url('/course/view.php', array('id' => $course->id));
-        } else {
-            $url = new moodle_url('/');
-        }
-        redirect($url, get_string('activityiscurrentlyhidden'));
+        // Get the error message that activity is not available and why (if explanation can be shown to the user).
+        $PAGE->set_course($course);
+        $renderer = $PAGE->get_renderer('course');
+        $message = $renderer->course_section_cm_unavilable_error_message($cm);
+        redirect(course_get_url($course), $message, null, \core\output\notification::NOTIFY_ERROR);
     }
 
     // Set the global $COURSE.
