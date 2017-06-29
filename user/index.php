@@ -258,39 +258,6 @@ if (!isset($hiddenfields['lastaccess'])) {
 
 echo html_writer::table($controlstable);
 
-if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {
-    // Display info about the group.
-    if ($group = groups_get_group($currentgroup)) {
-        if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) {
-            $groupinfotable = new html_table();
-            $groupinfotable->attributes['class'] = 'groupinfobox';
-            $picturecell = new html_table_cell();
-            $picturecell->attributes['class'] = 'left side picture';
-            $picturecell->text = print_group_picture($group, $course->id, true, true, false);
-
-            $contentcell = new html_table_cell();
-            $contentcell->attributes['class'] = 'content';
-
-            $contentheading = $group->name;
-            if (has_capability('moodle/course:managegroups', $context)) {
-                $aurl = new moodle_url('/group/group.php', array('id' => $group->id, 'courseid' => $group->courseid));
-                $contentheading .= '&nbsp;' . $OUTPUT->action_icon($aurl, new pix_icon('t/edit', get_string('editgroupprofile')));
-            }
-
-            $group->description = file_rewrite_pluginfile_urls($group->description, 'pluginfile.php', $context->id, 'group',
-                'description', $group->id);
-            if (!isset($group->descriptionformat)) {
-                $group->descriptionformat = FORMAT_MOODLE;
-            }
-            $options = array('overflowdiv' => true);
-            $formatteddesc = format_text($group->description, $group->descriptionformat, $options);
-            $contentcell->text = $OUTPUT->heading($contentheading, 3) . $formatteddesc;
-            $groupinfotable->data[] = new html_table_row(array($picturecell, $contentcell));
-            echo html_writer::table($groupinfotable);
-        }
-    }
-}
-
 // Define a table showing a list of users in the current role selection.
 $tablecolumns = array();
 $tableheaders = array();
@@ -473,9 +440,11 @@ if ($roleid > 0) {
     $a->role = $rolenames[$roleid];
     $heading = format_string(get_string('xuserswiththerole', 'role', $a));
 
-    if ($currentgroup and !empty($group)) {
-        $a->group = $group->name;
-        $heading .= ' ' . format_string(get_string('ingroup', 'role', $a));
+    if ($currentgroup) {
+        if ($group = groups_get_group($currentgroup)) {
+            $a->group = $group->name;
+            $heading .= ' ' . format_string(get_string('ingroup', 'role', $a));
+        }
     }
 
     if ($accesssince && !empty($timeoptions[$accesssince])) {
