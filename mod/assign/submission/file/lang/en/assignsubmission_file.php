@@ -24,7 +24,7 @@
 
 
 $string['acceptedfiletypes'] = 'Accepted file types';
-$string['acceptedfiletypes_help'] = 'Accepted file types can be restricted by entering a comma-separated list of mimetypes, e.g. video/mp4, audio/mp3, image/png, image/jpeg, or file extensions including a dot, e.g. .png, .jpg. If the field is left empty, then all file types are allowed.';
+$string['acceptedfiletypes_help'] = 'Accepted file types can be restricted by entering a list of file extensions. If the field is left empty, then all file types are allowed.';
 $string['configmaxbytes'] = 'Maximum file size';
 $string['countfiles'] = '{$a} files';
 $string['default'] = 'Enabled by default';
