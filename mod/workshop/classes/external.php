@@ -1540,4 +1540,96 @@ class mod_workshop_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function get_grades_parameters() {
+        return new external_function_parameters (
+            array(
+                'workshopid' => new external_value(PARAM_INT, 'Workshop instance id.'),
+                'userid' => new external_value(PARAM_INT, 'User id (empty or 0 for current user).', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Returns the grades information for the given workshop and user.
+     *
+     * @param int $workshopid workshop instance id
+     * @param int $userid user id
+     * @return array of warnings and the user plan
+     * @since Moodle 3.4
+     * @throws  moodle_exception
+     */
+    public static function get_grades($workshopid, $userid = 0) {
+        global $USER;
+
+        $params = array(
+            'workshopid' => $workshopid,
+            'userid' => $userid,
+        );
+        $params = self::validate_parameters(self::get_grades_parameters(), $params);
+        $warnings = array();
+
+        list($workshop, $course, $cm, $context) = self::validate_workshop($params['workshopid']);
+
+        // Extra checks so only users with permissions can view other users plans.
+        if (empty($params['userid']) || $params['userid'] == $USER->id) {
+            $userid = $USER->id;
+        } else {
+            require_capability('mod/workshop:viewallassessments', $context);
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
+            if (!$workshop->check_group_membership($user->id)) {
+                throw new moodle_exception('notingroup');
+            }
+            $userid = $user->id;
+        }
+
+        $finalgrades = $workshop->get_gradebook_grades($userid);
+
+        $result = array('warnings' => $warnings);
+        if ($finalgrades !== false) {
+            if (!empty($finalgrades->submissiongrade)) {
+                if (is_numeric($finalgrades->submissiongrade->grade)) {
+                    $result['submissionrawgrade'] = $finalgrades->submissiongrade->grade;
+                }
+                $result['submissionlongstrgrade'] = $finalgrades->submissiongrade->str_long_grade;
+                $result['submissiongradehidden'] = $finalgrades->submissiongrade->hidden;
+            }
+            if (!empty($finalgrades->assessmentgrade)) {
+                if (is_numeric($finalgrades->assessmentgrade->grade)) {
+                    $result['assessmentrawgrade'] = $finalgrades->assessmentgrade->grade;
+                }
+                $result['assessmentlongstrgrade'] = $finalgrades->assessmentgrade->str_long_grade;
+                $result['assessmentgradehidden'] = $finalgrades->assessmentgrade->hidden;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.4
+     */
+    public static function get_grades_returns() {
+        return new external_single_structure(
+            array(
+                'assessmentrawgrade' => new external_value(PARAM_FLOAT, 'The assessment raw (numeric) grade.', VALUE_OPTIONAL),
+                'assessmentlongstrgrade' => new external_value(PARAM_NOTAGS, 'The assessment string grade.', VALUE_OPTIONAL),
+                'assessmentgradehidden' => new external_value(PARAM_BOOL, 'Whether the grade is hidden or not.', VALUE_OPTIONAL),
+                'submissionrawgrade' => new external_value(PARAM_FLOAT, 'The submission raw (numeric) grade.', VALUE_OPTIONAL),
+                'submissionlongstrgrade' => new external_value(PARAM_NOTAGS, 'The submission string grade.', VALUE_OPTIONAL),
+                'submissiongradehidden' => new external_value(PARAM_BOOL, 'Whether the grade is hidden or not.', VALUE_OPTIONAL),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

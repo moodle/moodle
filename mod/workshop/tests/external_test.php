@@ -1524,4 +1524,70 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test get_grades.
+     */
+    public function test_get_grades() {
+        global $DB;
+
+        $timenow = time();
+        $submissiongrade = array(
+            'userid' => $this->student->id,
+            'rawgrade' => 40,
+            'feedback' => '',
+            'feedbackformat' => 1,
+            'datesubmitted' => $timenow,
+            'dategraded' => $timenow,
+        );
+        $assessmentgrade = array(
+            'userid' => $this->student->id,
+            'rawgrade' => 10,
+            'feedback' => '',
+            'feedbackformat' => 1,
+            'datesubmitted' => $timenow,
+            'dategraded' => $timenow,
+        );
+
+        workshop_grade_item_update($this->workshop, (object) $submissiongrade, (object) $assessmentgrade);
+
+        // First retrieve my grades.
+        $this->setUser($this->student);
+        $result = mod_workshop_external::get_grades($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_grades_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals($assessmentgrade['rawgrade'], $result['assessmentrawgrade']);
+        $this->assertEquals($submissiongrade['rawgrade'], $result['submissionrawgrade']);
+        $this->assertFalse($result['assessmentgradehidden']);
+        $this->assertFalse($result['submissiongradehidden']);
+        $this->assertEquals($assessmentgrade['rawgrade'] . ".00 / 20.00", $result['assessmentlongstrgrade']);
+        $this->assertEquals($submissiongrade['rawgrade'] . ".00 / 80.00", $result['submissionlongstrgrade']);
+
+        // Second, teacher retrieve user grades.
+        $this->setUser($this->teacher);
+        $result = mod_workshop_external::get_grades($this->workshop->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_grades_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals($assessmentgrade['rawgrade'], $result['assessmentrawgrade']);
+        $this->assertEquals($submissiongrade['rawgrade'], $result['submissionrawgrade']);
+        $this->assertFalse($result['assessmentgradehidden']);
+        $this->assertFalse($result['submissiongradehidden']);
+        $this->assertEquals($assessmentgrade['rawgrade'] . ".00 / 20.00", $result['assessmentlongstrgrade']);
+        $this->assertEquals($submissiongrade['rawgrade'] . ".00 / 80.00", $result['submissionlongstrgrade']);
+    }
+
+    /**
+     * Test get_grades_other_student.
+     */
+    public function test_get_grades_other_student() {
+        global $DB;
+
+        // Create the submission that will be deleted.
+        $submissionid = $this->create_test_submission($this->student);
+
+        $DB->set_field('workshop', 'phase', workshop::PHASE_CLOSED, array('id' => $this->workshop->id));
+        $this->setUser($this->anotherstudentg1);
+        $this->expectException('moodle_exception');
+        mod_workshop_external::get_grades($this->workshop->id, $this->student->id);
+    }
 }
