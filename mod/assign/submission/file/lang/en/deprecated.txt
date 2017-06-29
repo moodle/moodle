@@ -1,0 +1,2 @@
+filetypewithexts,assignsubmission_file
+nonexistentfiletypes,assignsubmission_file

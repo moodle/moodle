@@ -28,20 +28,20 @@ Feature: In an assignment, limit submittable file types
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "Edit settings" in current page administration
-    When I set the field with xpath "//input[@id='id_assignsubmission_file_filetypes']" to "image/png;doesntexist;.anything;unreal/mimetype;nodot"
+    When I set the field "Accepted file types" to "image/png;doesntexist;.anything;unreal/mimetype;nodot"
     And I press "Save and display"
-    And I should see "The following file types were not recognised: doesntexist .anything unreal/mimetype nodot"
-    And I set the field with xpath "//input[@id='id_assignsubmission_file_filetypes']" to "image/png;spreadsheet"
+    And I should see "Unknown file types: .doesntexist, .anything, unreal/mimetype, .nodot"
+    And I set the field "Accepted file types" to "image/png;spreadsheet"
     And I press "Save and display"
     And I navigate to "Edit settings" in current page administration
-    And the field with xpath "//input[@id='id_assignsubmission_file_filetypes']" matches value "image/png,spreadsheet"
-    And I set the field with xpath "//input[@id='id_assignsubmission_file_filetypes']" to ""
+    And the field "Accepted file types" matches value "image/png,spreadsheet"
+    And I set the field "Accepted file types" to ""
     And I press "Choose"
     And I set the field "Image files" to "1"
     And I press "Save changes"
     And I press "Save and display"
     And I navigate to "Edit settings" in current page administration
-    Then the field with xpath "//input[@id='id_assignsubmission_file_filetypes']" matches value "image"
+    Then the field "Accepted file types" matches value "image"
 
   @javascript @_file_upload
   Scenario: Uploading permitted file types for an assignment
@@ -53,9 +53,9 @@ Feature: In an assignment, limit submittable file types
     And I follow "Test assignment name"
     When I press "Add submission"
     And I should see "Files of these types may be added to the submission"
-    And I should see "Image (PNG) — .png"
-    And I should see "Spreadsheet files — .csv .gsheet .ods .ots .xls .xlsx .xlsm"
-    And I should see ".txt"
+    And I should see "Image (PNG)"
+    And I should see "Spreadsheet files"
+    And I should see "Text file"
     And I upload "lib/tests/fixtures/gd-logo.png" file to "File submissions" filemanager
     And I upload "lib/tests/fixtures/tabfile.csv" file to "File submissions" filemanager
     And I upload "lib/tests/fixtures/empty.txt" file to "File submissions" filemanager
