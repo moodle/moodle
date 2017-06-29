@@ -28,19 +28,26 @@ Feature: In an assignment, limit submittable file types
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "Edit settings" in current page administration
-    When I set the field "Accepted file types" to "image/png;doesntexist;.anything;unreal/mimetype;nodot"
+    When I set the field with xpath "//input[@id='id_assignsubmission_file_filetypes']" to "image/png;doesntexist;.anything;unreal/mimetype;nodot"
     And I press "Save and display"
     And I should see "The following file types were not recognised: doesntexist .anything unreal/mimetype nodot"
-    And I set the field "Accepted file types" to "image/png;spreadsheet"
+    And I set the field with xpath "//input[@id='id_assignsubmission_file_filetypes']" to "image/png;spreadsheet"
     And I press "Save and display"
     And I navigate to "Edit settings" in current page administration
-    Then the field "Accepted file types" matches value "image/png;spreadsheet"
+    And the field with xpath "//input[@id='id_assignsubmission_file_filetypes']" matches value "image/png,spreadsheet"
+    And I set the field with xpath "//input[@id='id_assignsubmission_file_filetypes']" to ""
+    And I press "Choose"
+    And I set the field "Image files" to "1"
+    And I press "Save changes"
+    And I press "Save and display"
+    And I navigate to "Edit settings" in current page administration
+    Then the field with xpath "//input[@id='id_assignsubmission_file_filetypes']" matches value "image"
 
   @javascript @_file_upload
   Scenario: Uploading permitted file types for an assignment
     Given the following "activities" exist:
       | activity | course | idnumber | name                 | intro                       | duedate    | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | assignsubmission_file_maxfiles | assignsubmission_file_maxsizebytes | assignsubmission_file_filetypes |
-      | assign   | C1     | assign1  | Test assignment name | Test assignment description | 1388534400 | 0                                   | 1                             | 3                              | 0                                  | image/png;spreadsheet;.xml;.txt  |
+      | assign   | C1     | assign1  | Test assignment name | Test assignment description | 1388534400 | 0                                   | 1                             | 3                              | 0                                  | image/png,spreadsheet,.xml,.txt  |
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
