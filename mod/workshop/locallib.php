@@ -2455,12 +2455,12 @@ class workshop {
     /**
      * Returns the mform the teachers use to put a feedback for the reviewer
      *
-     * @param moodle_url $actionurl
+     * @param mixed moodle_url|null $actionurl
      * @param stdClass $assessment
      * @param array $options editable, editableweight, overridablegradinggrade
      * @return workshop_feedbackreviewer_form
      */
-    public function get_feedbackreviewer_form(moodle_url $actionurl, stdclass $assessment, $options=array()) {
+    public function get_feedbackreviewer_form($actionurl, stdclass $assessment, $options=array()) {
         global $CFG;
         require_once(__DIR__ . '/feedbackreviewer_form.php');
 

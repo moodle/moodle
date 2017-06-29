@@ -1035,8 +1035,8 @@ class mod_workshop_external extends external_api {
             return null;
         }
 
-        // Remove the feedback for the reviewer if the feedback is not closed or if we don't have enough permissions to see it.
-        if (!$canoverridegrades && ($workshop->phase != workshop::PHASE_CLOSED || !$isreviewer)) {
+        // Remove the feedback for the reviewer if the feedback phase is not valid or if we don't have enough permissions to see it.
+        if ($workshop->phase < workshop::PHASE_EVALUATION || !($isreviewer || $canviewallassessments)) {
             // Remove all the feedback information (all the optional fields).
             foreach ($properties as $attribute => $settings) {
                 if (!empty($settings['optional'])) {
@@ -1629,6 +1629,121 @@ class mod_workshop_external extends external_api {
                 'submissionlongstrgrade' => new external_value(PARAM_NOTAGS, 'The submission string grade.', VALUE_OPTIONAL),
                 'submissiongradehidden' => new external_value(PARAM_BOOL, 'Whether the grade is hidden or not.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function evaluate_assessment_parameters() {
+        return new external_function_parameters(
+            array(
+                'assessmentid' => new external_value(PARAM_INT, 'Assessment id.'),
+                'feedbacktext' => new external_value(PARAM_RAW, 'The feedback for the reviewer.', VALUE_DEFAULT, ''),
+                'feedbackformat' => new external_value(PARAM_INT, 'The feedback format for text.', VALUE_DEFAULT, FORMAT_MOODLE),
+                'weight' => new external_value(PARAM_INT, 'The new weight for the assessment.', VALUE_DEFAULT, 1),
+                'gradinggradeover' => new external_value(PARAM_ALPHANUMEXT, 'The new grading grade.', VALUE_DEFAULT, ''),
+            )
+        );
+    }
+
+
+    /**
+     * Evaluates an assessment (used by teachers for provide feedback to the reviewer).
+     *
+     * @param int $assessmentid the assessment id
+     * @param str $feedbacktext the feedback for the reviewer
+     * @param int $feedbackformat the feedback format for the reviewer text
+     * @param int $weight the new weight for the assessment
+     * @param mixed $gradinggradeover the new grading grade (empty for no overriding the grade)
+     * @return array containing the status and warnings.
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function evaluate_assessment($assessmentid, $feedbacktext = '', $feedbackformat = FORMAT_MOODLE, $weight = 1,
+            $gradinggradeover = '') {
+        global $DB;
+
+        $params = self::validate_parameters(
+            self::evaluate_assessment_parameters(),
+            array(
+                'assessmentid' => $assessmentid,
+                'feedbacktext' => $feedbacktext,
+                'feedbackformat' => $feedbackformat,
+                'weight' => $weight,
+                'gradinggradeover' => $gradinggradeover,
+            )
+        );
+        $warnings = array();
+
+        // Get and validate the assessment, submission and workshop.
+        $assessment = $DB->get_record('workshop_assessments', array('id' => $params['assessmentid']), '*', MUST_EXIST);
+        $submission = $DB->get_record('workshop_submissions', array('id' => $assessment->submissionid), '*', MUST_EXIST);
+        list($workshop, $course, $cm, $context) = self::validate_workshop($submission->workshopid);
+
+        // Check we can evaluate the assessment.
+        $workshop->check_view_assessment($assessment, $submission);
+        $cansetassessmentweight = has_capability('mod/workshop:allocate', $context);
+        $canoverridegrades      = has_capability('mod/workshop:overridegrades', $context);
+        if (!$canoverridegrades && !$cansetassessmentweight) {
+            throw new moodle_exception('nopermissions', 'error', '', 'evaluate assessments');
+        }
+
+        // Process data.
+        $data = new stdClass;
+        $data->asid = $assessment->id;
+        $data->feedbackreviewer_editor = array(
+            'text' => $params['feedbacktext'],
+            'format' => $params['feedbackformat'],
+        );
+        $data->weight = $params['weight'];
+        $data->gradinggradeover = $params['gradinggradeover'];
+
+        $options = array(
+            'editable' => true,
+            'editableweight' => $cansetassessmentweight,
+            'overridablegradinggrade' => $canoverridegrades
+        );
+        $feedbackform = $workshop->get_feedbackreviewer_form(null, $assessment, $options);
+
+        $errors = $feedbackform->validation((array) $data, array());
+        // We can get several errors, return them in warnings.
+        if (!empty($errors)) {
+            $status = false;
+            foreach ($errors as $itemname => $message) {
+                $warnings[] = array(
+                    'item' => $itemname,
+                    'itemid' => 0,
+                    'warningcode' => 'fielderror',
+                    'message' => s($message)
+                );
+            }
+        } else {
+            $workshop->evaluate_assessment($assessment, $data, $cansetassessmentweight, $canoverridegrades);
+            $status = true;
+        }
+
+        return array(
+            'status' => $status,
+            'warnings' => $warnings,
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function evaluate_assessment_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if the assessment was evaluated, false otherwise.'),
+                'warnings' => new external_warnings()
             )
         );
     }
