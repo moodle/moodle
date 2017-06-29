@@ -66,7 +66,9 @@ $string['pathshead'] = 'Bekreft stier';
 $string['pathsrodataroot'] = 'Dataroot katalog er ikke skrivbar.';
 $string['pathsroparentdataroot'] = 'Overordnet katalog ({$a->parent}) er ikke skrivbar. Datakatalogen ({$a->dataroot}) kan ikke opprettes av installasjonsprogrammet.';
 $string['pathssubadmindir'] = 'Noen ganske få webhoteller bruker  /admin som en egen url for å få tilgang til et kontrollpanel. Dessverre kommer det i konflikt med standard lokalisering av Moodle sine admin-sider. Du kan fikse dette ved å endre navn på admin-mappen og deretter oppgi dette navnet her. F.eks. <em>moodleadmin</em>.  Dette vil fikse adminlenkene i Moodle.';
-$string['pathssubdataroot'] = 'Du trenger et sted hvor Moodle kan lagre opplastede filer. Denne mappen må være med lese og skriverettigheter for webserver-brukeren (veldig ofte \'nobody\' eller \'apache\'), men denne mappen må IKKE være direkte tilgjengelig via web. Installasjonsprogrammet vil forsøke å opprette den om den ikke finnes fra før.';
+$string['pathssubdataroot'] = '<p>Du trenger et sted hvor Moodle kan lagre opplastede filer. </p>
+<p>Denne mappen må være med lese og skriverettigheter for webserver-brukeren (veldig ofte \'nobody\' eller \'apache\'), men denne mappen må IKKE være direkte tilgjengelig via web.</p>
+<p> Installasjonsprogrammet vil forsøke å opprette den om den ikke finnes fra før.</p>';
 $string['pathssubdirroot'] = '<p>Full mappesti til moodleinstallasjonen.</p>';
 $string['pathssubwwwroot'] = '<p>Full webadresse til der hvor Moodle skal vises, altså den addressen som brukere skriver inn i adresselinjen i nettlseren sin.</p>
 <p>Det er ikke mulig å bruke Moodle med mer enn en adresse. Dersom portalen din har flere webadresser bør du oppgi den enkleste av de her, og bruke videresending for  hver av de andre adressene.</p>
@@ -76,9 +78,9 @@ $string['pathsunsecuredataroot'] = 'Dataroot plassering er ikke sikker';
 $string['pathswrongadmindir'] = 'Adminkatalog finnes ikke';
 $string['phpextension'] = '{$a} PHP etternavn';
 $string['phpversion'] = 'PHP versjon';
-$string['phpversionhelp'] = '<p>Moodle trenger en PHP versjon minst 4.3.0 eller 5.1.0 (5.0.x har rekke kjente problem).</p>
+$string['phpversionhelp'] = '<p>Moodle trenger en PHP versjon minst 5.6.5 eller 7.1.0 (7.0.x har noen begrensninger).</p>
 <Du kjører nå versjon {$a}</p>
-<p>Du må oppgradere PHP eller flytte til en server med en nyere versjon av PHP!<br /> (I forhold til 5.0.x kan du også nedgradere til versjon 4.4.x)</p>';
+<p>Du må oppgradere PHP eller flytte til en server med en nyere versjon av PHP!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Du ser denne siden fordi du nå har fullført installeringen og kjøringen av pakken <strong>{$a->packname} {$a->packversion}</strong> på datamaskinen din. Gratulerer!';
 $string['welcomep30'] = 'Denne versjonen av <strong>{$a->installername}</strong> inneholder programmer for å lage et miljø som <strong>Moodle</strong> jobber i, nemlig:';
