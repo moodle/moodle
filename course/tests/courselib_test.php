@@ -3214,6 +3214,8 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
+        $this->setAdminUser();
+
         $CFG->enablecompletion = true;
 
         $this->setTimezone('UTC');
