@@ -217,7 +217,27 @@ class qtype_ordering_question extends question_graded_automatically {
      * @return string a plain text summary of that response, that could be used in reports.
      */
     public function summarise_response(array $response) {
-        return '';
+        $name = $this->get_response_fieldname();
+        if (array_key_exists($name, $response)) {
+            $items = explode(',', $response[$name]);
+        } else {
+            $items = array(); // shouldn't happen !!
+        }
+        $answerids = array();
+        foreach ($this->answers as $answer) {
+            $answerids[$answer->md5key] = $answer->id;
+        }
+        foreach ($items as $i => $item) {
+            if (array_key_exists($item, $answerids)) {
+                $item = $this->answers[$answerids[$item]];
+                $item = $this->html_to_text($item->answer, $item->answerformat);
+                $item = shorten_text($item, 10, true); // force truncate at 10 chars
+                $items[$i] = $item;
+            } else {
+                $items[$i] = ''; // shouldn't happen !!
+            }
+        }
+        return implode('; ', array_filter($items));
     }
 
     /**
@@ -451,7 +471,7 @@ class qtype_ordering_question extends question_graded_automatically {
      */
     public function update_current_response($response) {
         $name = $this->get_response_fieldname();
-        if (isset($response[$name])) {
+        if (array_key_exists($name, $response)) {
             $ids = explode(',', $response[$name]);
             foreach ($ids as $i => $id) {
                 foreach ($this->answers as $answer) {
