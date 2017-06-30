@@ -159,6 +159,6 @@ class user_groups_editable extends \core\output\inplace_editable {
 
         $course = get_course($courseid);
         $user = core_user::get_user($userid);
-        return new self($course, $context, $user, $coursegroups, $groupids);
+        return new self($course, $context, $user, $coursegroups, array_values($groupids));
     }
 }
