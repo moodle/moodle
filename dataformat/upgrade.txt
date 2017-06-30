@@ -1,6 +1,14 @@
 This files describes API changes in /dataformat/ download system,
 information provided here is intended especially for developers.
 
+=== 3.3.1 ===
+
+* In order to allow multiple sheets in an exported file the functions write_header() and write_footer() have
+  been removed from core dataformat plugins and have been replaced.
+  - write_header() has been replaced with the two functions start_output() and start_sheet().
+  - write_footer() has been replaced with the two functions close_output() and close_sheet().
+  For backwards compatibility write_header() and write_footer() will continue to work.
+
 === 3.1 ===
 * Added new plugin system with low memory support for csv, ods, xls and json
 

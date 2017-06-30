@@ -1245,7 +1245,13 @@ abstract class lesson_add_page_form_base extends moodleform {
         $mform = $this->_form;
         $editoroptions = $this->_customdata['editoroptions'];
 
-        $mform->addElement('header', 'qtypeheading', get_string('createaquestionpage', 'lesson', get_string($this->qtypestring, 'lesson')));
+        if ($this->qtypestring != 'selectaqtype') {
+            if ($this->_customdata['edit']) {
+                $mform->addElement('header', 'qtypeheading', get_string('edit'. $this->qtypestring, 'lesson'));
+            } else {
+                $mform->addElement('header', 'qtypeheading', get_string('add'. $this->qtypestring, 'lesson'));
+            }
+        }
 
         if (!empty($this->_customdata['returnto'])) {
             $mform->addElement('hidden', 'returnto', $this->_customdata['returnto']);
@@ -1574,7 +1580,9 @@ class lesson extends lesson_base {
         $DB->delete_records("lesson_timer", array("lessonid"=>$this->properties->id));
         $DB->delete_records("lesson_branch", array("lessonid"=>$this->properties->id));
         if ($events = $DB->get_records('event', array("modulename"=>'lesson', "instance"=>$this->properties->id))) {
+            $coursecontext = context_course::instance($cm->course);
             foreach($events as $event) {
+                $event->context = $coursecontext;
                 $event = calendar_event::load($event);
                 $event->delete();
             }

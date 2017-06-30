@@ -20,15 +20,17 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/*
+/**
+ * This page display the publication backup form
+ *
  * @package    course
  * @subpackage publish
  * @author     Jerome Mouneyrac <jerome@mouneyrac.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- *
- * This page display the publication backup form
  */
+
+define('NO_OUTPUT_BUFFERING', true);
 
 require_once('../../config.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');

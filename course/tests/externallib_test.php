@@ -362,6 +362,40 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test create_courses numsections
+     */
+    public function test_create_course_numsections() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Set the required capabilities by the external function.
+        $contextid = context_system::instance()->id;
+        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
+        $this->assignUserCapability('moodle/course:visibility', $contextid, $roleid);
+
+        $numsections = 10;
+        $category  = self::getDataGenerator()->create_category();
+
+        // Create base categories.
+        $course1['fullname'] = 'Test course 1';
+        $course1['shortname'] = 'Testcourse1';
+        $course1['categoryid'] = $category->id;
+        $course1['courseformatoptions'][] = array('name' => 'numsections', 'value' => $numsections);
+
+        $courses = array($course1);
+
+        $createdcourses = core_course_external::create_courses($courses);
+        foreach ($createdcourses as $createdcourse) {
+            $existingsections = $DB->get_records('course_sections', array('course' => $createdcourse['id']));
+            $modinfo = get_fast_modinfo($createdcourse['id']);
+            $sections = $modinfo->get_section_info_all();
+            $this->assertEquals(count($sections), $numsections + 1); // Includes generic section.
+            $this->assertEquals(count($existingsections), $numsections + 1); // Includes generic section.
+        }
+    }
+
+    /**
      * Test create_courses
      */
     public function test_create_courses() {

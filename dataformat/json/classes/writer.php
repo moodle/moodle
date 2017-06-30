@@ -41,12 +41,31 @@ class writer extends \core\dataformat\base {
     /** @var $extension */
     public $extension = ".json";
 
+    /** @var $sheetstarted */
+    public $sheetstarted = false;
+
+    /** @var $sheetdatadded */
+    public $sheetdatadded = false;
+
     /**
-     * Write the start of the format
+     * Write the start of the file.
+     */
+    public function start_output() {
+        echo "[";
+    }
+
+    /**
+     * Write the start of the sheet we will be adding data to.
      *
      * @param array $columns
      */
-    public function write_header($columns) {
+    public function start_sheet($columns) {
+        if ($this->sheetstarted) {
+            echo ",";
+        } else {
+            $this->sheetstarted = true;
+        }
+        $this->sheetdatadded = false;
         echo "[";
     }
 
@@ -57,19 +76,28 @@ class writer extends \core\dataformat\base {
      * @param int $rownum
      */
     public function write_record($record, $rownum) {
-        if ($rownum) {
+        if ($this->sheetdatadded) {
             echo ",";
         }
+
         echo json_encode($record);
+
+        $this->sheetdatadded = true;
     }
 
     /**
-     * Write the end of the format
+     * Write the end of the sheet containing the data.
      *
      * @param array $columns
      */
-    public function write_footer($columns) {
+    public function close_sheet($columns) {
         echo "]";
     }
 
+    /**
+     * Write the end of the file.
+     */
+    public function close_output() {
+        echo "]";
+    }
 }
