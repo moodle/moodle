@@ -28,6 +28,9 @@ use context_system;
 use context_course;
 use core_user;
 use core_external;
+use moodle_exception;
+
+require_once($CFG->dirroot . '/group/lib.php');
 
 /**
  * Class to display list of user groups.
@@ -153,6 +156,8 @@ class user_groups_editable extends \core\output\inplace_editable {
                 if (groups_remove_member_allowed($groupid, $userid)) {
                     groups_remove_member($groupid, $userid);
                     unset($coursegroups[$groupid]->members[$userid]);
+                } else {
+                    $groupids[$groupid] = $groupid;
                 }
             }
         }
