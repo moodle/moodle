@@ -34,7 +34,7 @@ class company_license_users_form extends moodleform {
     protected $courseselct = array();
     protected $firstcourseid = 0;
 
-    public function __construct($actionurl, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error) {
+    public function __construct($actionurl, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output, $chosenid=0) {
         global $USER, $DB;
         $this->selectedcompany = $companyid;
         $this->context = $context;
@@ -76,6 +76,9 @@ class company_license_users_form extends moodleform {
         } else {
             $this->departmentid = $departmentid;
         }
+
+        $this->output = $output;
+        $this->chosenid = $chosenid;
         parent::__construct($actionurl);
     }
 
@@ -119,7 +122,6 @@ class company_license_users_form extends moodleform {
     }
 
     public function definition_after_data() {
-        global $OUTPUT;
 
         $mform =& $this->_form;
 
@@ -137,6 +139,22 @@ class company_license_users_form extends moodleform {
         }
 
         $company = new company($this->selectedcompany);
+
+        // Create the sub department checkboxes html.
+        $departmentslist = company::get_all_departments($company->id);
+
+        $subdepartmenthtml = "";
+        $departmenttree = company::get_all_departments_raw($company->id);
+        $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
+
+        $mform->addElement('html', '<p>' . get_string('updatedepartmentusersselection', 'block_iomad_company_admin') . '</p>');
+        $mform->addElement('html', $treehtml);
+        //$mform->addElement('html', $subdepartmenthtml);
+
+        // This is getting hidden anyway, so no need for label
+        $mform->addElement('select', 'deptid', ' ',
+                            $departmentslist, array('class' => 'iomad_department_select', 'onchange' => 'this.form.submit()'));
+        $mform->disabledIf('deptid', 'action', 'eq', 1);
 
         if ($this->license->expirydate > time()) {
             // Add in the courses selector.
@@ -182,13 +200,17 @@ class company_license_users_form extends moodleform {
                   <td id="buttonscell">
                       <div id="addcontrols">
                           <input name="add" id="add" type="submit" value="&nbsp;' .
-                       $OUTPUT->larrow().'&nbsp;'. get_string('licenseallocate', 'block_iomad_company_admin') .
+                       $this->output->larrow().'&nbsp;'. get_string('licenseallocate', 'block_iomad_company_admin') .
                           '" title="Enrol" /><br />
+
+                          <input name="addall" id="addall" type="submit" value="&nbsp;' .
+                       $this->output->larrow().'&nbsp;'. get_string('licenseallocateall', 'block_iomad_company_admin') .
+                          '" title="Enrolall" /><br />
 
                       </div>
 
                       <div id="removecontrols"><input name="remove" id="remove" type="submit" value="' .
-                       $OUTPUT->rarrow().'&nbsp;'. get_string('licenseremove', 'block_iomad_company_admin') .
+                       $this->output->rarrow().'&nbsp;'. get_string('licenseremove', 'block_iomad_company_admin') .
                           '" title="Unenrol" />
                       </div>
                   </td>
@@ -217,9 +239,20 @@ class company_license_users_form extends moodleform {
         } else {
             $courses = $this->selectedcourses;
         }
-        // Process incoming allocations.
+        $addall = false;
+        $add = false;
+        if (optional_param('addall', false, PARAM_BOOL) && confirm_sesskey()) {
+            $search = optional_param('potentialcourseusers_searchtext', '', PARAM_RAW);
+            // Process incoming allocations.
+            $potentialusers = $this->potentialusers->find_users($search);
+            $userstoassign = array_pop($potentialusers);
+            $addall = true;
+        }
         if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             $userstoassign = $this->potentialusers->get_selected_users();
+            $add = true;
+        }
+        if ($add || $addall) {
             $numberoflicenses = $this->license->allocation;
             $count = $this->license->used;
             $licenserecord = (array) $this->license;
@@ -324,10 +357,12 @@ class company_license_users_form extends moodleform {
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 $courseid = optional_param('courseid', 0, PARAM_INTEGER);
-$departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
+$departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
 $error = optional_param('error', 0, PARAM_INTEGER);
 $selectedcourses = optional_param_array('courses', array(), PARAM_INT);
+$chosenid = optional_param('chosenid', 0, PARAM_INT);
+
 // if this is a single course then optional_param_array doesn't work.
 if( empty($selectedcourses) ){
     $selectedcourses = optional_param('courses', array(), PARAM_INT);
@@ -351,6 +386,13 @@ $PAGE->set_title($linktext);
 
 // Set the page heading.
 $PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
+// get output renderer
+$output = $PAGE->get_renderer('block_iomad_company_admin');
+
+// Javascript for fancy select.
+// Parameter is name of proper select form element. 
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 'mform1', $departmentid));
 
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
@@ -412,14 +454,18 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
     }
 }
 
-$usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $userhierarchylevel, $selectedcourses, $error);
+// If we haven't been passed a department level choose the users.
+if (!empty($departmentid)) {
+    $userhierarchylevel = $departmentid;
+}
+$usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $userhierarchylevel, $selectedcourses, $error, $output);
 
-echo $OUTPUT->header();
+echo $output->header();
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
     print_error('invaliddepartment', 'block_iomad_company_admin');
-}   
+}
 
 //  Check the license is valid for this company.
 if (!empty($licenseid) && !company::check_valid_company_license($companyid, $licenseid)) {
@@ -430,13 +476,13 @@ if (!empty($licenseid) && !company::check_valid_company_license($companyid, $lic
 $select = new single_select($linkurl, 'licenseid', $licenselist, $licenseid);
 $select->label = get_string('licenseselect', 'block_iomad_company_admin');
 $select->formid = 'chooselicense';
-echo html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_license_selector'));
-$fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_license_selector'));
+echo html_writer::tag('div', $output->render($select), array('id' => 'iomad_license_selector'));
+$fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_license_selector'));
 
 // Do we have any licenses?
 if (empty($licenselist)) {
     echo get_string('nolicenses', 'block_iomad_company_admin');
-    echo $OUTPUT->footer();
+    echo $output->footer();
     die;
 }
 
@@ -470,4 +516,4 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
     }
 }
 
-echo $OUTPUT->footer();
+echo $output->footer();

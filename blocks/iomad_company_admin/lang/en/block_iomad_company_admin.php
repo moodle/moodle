@@ -259,6 +259,7 @@ $string['iomad_templates_title'] = 'Manage learning plan templates';
 $string['leavepasswordemptytogenerate'] = 'Leave empty to have a password generated.</br>If you are manually setting a password, for</br>security reasons, only select to send by email</br>if the force change password option is selected!';
 $string['licenseaddnew'] = 'Create new license';
 $string['licenseallocate'] = 'Allocate license';
+$string['licenseallocateall'] = 'Allocate licenses to all';
 $string['licenseallocated'] = 'Max';
 $string['licenseallocation_help'] = 'The number of this license to allocate to the course';
 $string['licenseallocation'] = 'Number of licenses to allocate';
