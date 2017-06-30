@@ -4504,6 +4504,54 @@ class workshop_grading_report implements renderable {
     public function get_options() {
         return $this->options;
     }
+
+    /**
+     * Prepare the data to be exported to a external system via Web Services.
+     *
+     * This function applies extra capabilities checks.
+     * @return stdClass the data ready for external systems
+     */
+    public function export_data_for_external() {
+        $data = $this->get_data();
+        $options = $this->get_options();
+
+        foreach ($data->grades as $reportdata) {
+            // If we are in submission phase ignore the following data.
+            if ($options->workshopphase == workshop::PHASE_SUBMISSION) {
+                unset($reportdata->submissiongrade);
+                unset($reportdata->gradinggrade);
+                unset($reportdata->submissiongradeover);
+                unset($reportdata->submissiongradeoverby);
+                unset($reportdata->submissionpublished);
+                unset($reportdata->reviewedby);
+                unset($reportdata->reviewerof);
+                continue;
+            }
+
+            if (!$options->showsubmissiongrade) {
+                unset($reportdata->submissiongrade);
+                unset($reportdata->submissiongradeover);
+            }
+
+            if (!$options->showgradinggrade and $tr == 0) {
+                unset($reportdata->gradinggrade);
+            }
+
+            if (!$options->showreviewernames) {
+                foreach ($reportdata->reviewedby as $reviewedby) {
+                    $reviewedby->userid = 0;
+                }
+            }
+
+            if (!$options->showauthornames) {
+                foreach ($reportdata->reviewerof as $reviewerof) {
+                    $reviewerof->userid = 0;
+                }
+            }
+        }
+
+        return $data;
+    }
 }
 
 

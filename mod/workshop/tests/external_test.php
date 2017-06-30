@@ -1668,4 +1668,74 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         mod_workshop_external::evaluate_assessment($assessmentid, $feedbacktext, $feedbackformat, $weight, $gradinggradeover);
     }
+
+    /**
+     * Test get_grades_report.
+     */
+    public function test_get_grades_report() {
+        global $DB;
+
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $submissionid1 = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
+        $submissionid2 = $workshopgenerator->create_submission($this->workshop->id, $this->anotherstudentg1->id);
+
+        $assessmentid1 = $workshopgenerator->create_assessment($submissionid2, $this->student->id, array(
+            'weight' => 100,
+            'grade' => 50,
+        ));
+        $assessmentid2 = $workshopgenerator->create_assessment($submissionid1, $this->anotherstudentg1->id, array(
+            'weight' => 100,
+            'grade' => 55,
+        ));
+
+        $DB->set_field('workshop', 'phase', workshop::PHASE_CLOSED, array('id' => $this->workshop->id));
+        $this->setUser($this->teacher);
+        $result = mod_workshop_external::get_grades_report($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_grades_report_returns(), $result);
+        $this->assertEquals(3, $result['report']['totalcount']); // Expect 3 potential submissions.
+
+        foreach ($result['report']['grades'] as $grade) {
+            if ($grade['userid'] == $this->student->id) {
+                $this->assertEquals($this->anotherstudentg1->id, $grade['reviewedby'][0]['userid']); // Check reviewer.
+                $this->assertEquals($this->anotherstudentg1->id, $grade['reviewerof'][0]['userid']); // Check reviewer.
+                $this->assertEquals($workshop->real_grade(50), $grade['reviewerof'][0]['grade']); // Check grade (converted).
+                $this->assertEquals($workshop->real_grade(55), $grade['reviewedby'][0]['grade']); // Check grade (converted).
+            } else if ($grade['userid'] == $this->anotherstudentg1->id) {
+                $this->assertEquals($this->student->id, $grade['reviewedby'][0]['userid']); // Check reviewer.
+                $this->assertEquals($this->student->id, $grade['reviewerof'][0]['userid']); // Check reviewer.
+                $this->assertEquals($workshop->real_grade(55), $grade['reviewerof'][0]['grade']); // Check grade (converted).
+                $this->assertEquals($workshop->real_grade(50), $grade['reviewedby'][0]['grade']); // Check grade (converted).
+            }
+        }
+        // Now check pagination.
+        $result = mod_workshop_external::get_grades_report($this->workshop->id, 0, 'lastname', 'ASC', 0, 1);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_grades_report_returns(), $result);
+        $this->assertEquals(3, $result['report']['totalcount']); // Expect the total count.
+        $this->assertCount(1, $result['report']['grades']);
+
+        // Groups filtering.
+        $result = mod_workshop_external::get_grades_report($this->workshop->id, $this->group1->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_grades_report_returns(), $result);
+        $this->assertEquals(2, $result['report']['totalcount']); // Expect the group count.
+    }
+
+    /**
+     * Test get_grades_report_invalid_phase.
+     */
+    public function test_get_grades_report_invalid_phase() {
+        $this->setUser($this->teacher);
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('nothingfound', 'workshop'));
+        mod_workshop_external::get_grades_report($this->workshop->id);
+    }
+
+    /**
+     * Test get_grades_report_missing_permissions.
+     */
+    public function test_get_grades_report_missing_permissions() {
+        $this->setUser($this->student);
+        $this->expectException('required_capability_exception');
+        mod_workshop_external::get_grades_report($this->workshop->id);
+    }
 }

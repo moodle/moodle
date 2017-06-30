@@ -1747,4 +1747,175 @@ class mod_workshop_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function get_grades_report_parameters() {
+        return new external_function_parameters(
+            array(
+                'workshopid' => new external_value(PARAM_INT, 'Workshop instance id.'),
+                'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group.',
+                                                   VALUE_DEFAULT, 0),
+                'sortby' => new external_value(PARAM_ALPHA, 'sort by this element: lastname, firstname, submissiontitle,
+                    submissionmodified, submissiongrade, gradinggrade.', VALUE_DEFAULT, 'lastname'),
+                'sortdirection' => new external_value(PARAM_ALPHA, 'sort direction: ASC or DESC', VALUE_DEFAULT, 'ASC'),
+                'page' => new external_value(PARAM_INT, 'The page of records to return.', VALUE_DEFAULT, 0),
+                'perpage' => new external_value(PARAM_INT, 'The number of records to return per page.', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Retrieves the assessment grades report.
+     *
+     * @param int $workshopid       the workshop instance id
+     * @param int $groupid          (optional) group id, 0 means that the function will determine the user group
+     * @param string $sortby        sort by this element
+     * @param string $sortdirection sort direction: ASC or DESC
+     * @param int $page             page of records to return
+     * @param int $perpage          number of records to return per page
+     * @return array of warnings and the report data
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function get_grades_report($workshopid, $groupid = 0, $sortby = 'lastname', $sortdirection = 'ASC',
+            $page = 0, $perpage = 0) {
+        global $USER;
+
+        $params = array('workshopid' => $workshopid, 'groupid' => $groupid, 'sortby' => $sortby, 'sortdirection' => $sortdirection,
+            'page' => $page, 'perpage' => $perpage);
+        $params = self::validate_parameters(self::get_grades_report_parameters(), $params);
+        $submissions = $warnings = array();
+
+        $sortallowedvalues = array('lastname', 'firstname', 'submissiontitle', 'submissionmodified', 'submissiongrade',
+            'gradinggrade');
+        if (!in_array($params['sortby'], $sortallowedvalues)) {
+            throw new invalid_parameter_exception('Invalid value for sortby parameter (value: ' . $sortby . '),' .
+                'allowed values are: ' . implode(',', $sortallowedvalues));
+        }
+
+        $sortdirection = strtoupper($params['sortdirection']);
+        $directionallowedvalues = array('ASC', 'DESC');
+        if (!in_array($sortdirection, $directionallowedvalues)) {
+            throw new invalid_parameter_exception('Invalid value for sortdirection parameter (value: ' . $sortdirection . '),' .
+                'allowed values are: ' . implode(',', $directionallowedvalues));
+        }
+
+        list($workshop, $course, $cm, $context) = self::validate_workshop($params['workshopid']);
+        require_capability('mod/workshop:viewallassessments', $context);
+
+        if (!empty($params['groupid'])) {
+            $groupid = $params['groupid'];
+            // Determine is the group is visible to user.
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            // Check to see if groups are being used here.
+            if ($groupmode = groups_get_activity_groupmode($cm)) {
+                $groupid = groups_get_activity_group($cm);
+                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
+                if (!groups_group_visible($groupid, $course, $cm)) {
+                    throw new moodle_exception('notingroup');
+                }
+            } else {
+                $groupid = 0;
+            }
+        }
+
+        if ($workshop->phase >= workshop::PHASE_SUBMISSION) {
+            $showauthornames = has_capability('mod/workshop:viewauthornames', $context);
+            $showreviewernames = has_capability('mod/workshop:viewreviewernames', $context);
+
+            if ($workshop->phase >= workshop::PHASE_EVALUATION) {
+                $showsubmissiongrade = true;
+                $showgradinggrade = true;
+            } else {
+                $showsubmissiongrade = false;
+                $showgradinggrade = false;
+            }
+
+            $data = $workshop->prepare_grading_report_data($USER->id, $groupid, $params['page'], $params['perpage'],
+                $params['sortby'], $sortdirection);
+
+            if (!empty($data)) {
+                // Populate the display options for the submissions report.
+                $reportopts                      = new stdclass();
+                $reportopts->showauthornames     = $showauthornames;
+                $reportopts->showreviewernames   = $showreviewernames;
+                $reportopts->sortby              = $params['sortby'];
+                $reportopts->sorthow             = $sortdirection;
+                $reportopts->showsubmissiongrade = $showsubmissiongrade;
+                $reportopts->showgradinggrade    = $showgradinggrade;
+                $reportopts->workshopphase       = $workshop->phase;
+
+                $report = new workshop_grading_report($data, $reportopts);
+                return array(
+                    'report' => $report->export_data_for_external(),
+                    'warnings' => array(),
+                );
+            }
+        }
+        throw new moodle_exception('nothingfound', 'workshop');
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function get_grades_report_returns() {
+
+        $reviewstructure = new external_single_structure(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user (0 when is configured to do not display names).'),
+                'assessmentid' => new external_value(PARAM_INT, 'The id of the assessment.'),
+                'submissionid' => new external_value(PARAM_INT, 'The id of the submission assessed.'),
+                'grade' => new external_value(PARAM_FLOAT, 'The grade for submission.'),
+                'gradinggrade' => new external_value(PARAM_FLOAT, 'The grade for assessment.'),
+                'gradinggradeover' => new external_value(PARAM_FLOAT, 'The aggregated grade overrided.'),
+                'weight' => new external_value(PARAM_INT, 'The weight of the assessment for aggregation.'),
+            )
+        );
+
+        return new external_single_structure(
+            array(
+                'report' => new external_single_structure(
+                    array(
+                        'grades' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'userid' => new external_value(PARAM_INT, 'The id of the user being displayed in the report.'),
+                                    'submissionid' => new external_value(PARAM_INT, 'Submission id.'),
+                                    'submissiontitle' => new external_value(PARAM_RAW, 'Submission title.'),
+                                    'submissionmodified' => new external_value(PARAM_INT, 'Timestamp submission was updated.'),
+                                    'submissiongrade' => new external_value(PARAM_FLOAT, 'Aggregated grade for the submission.',
+                                        VALUE_OPTIONAL),
+                                    'gradinggrade' => new external_value(PARAM_FLOAT, 'Computed grade for the assessment.',
+                                        VALUE_OPTIONAL),
+                                    'submissiongradeover' => new external_value(PARAM_FLOAT, 'Grade for the assessment overrided
+                                        by the teacher.', VALUE_OPTIONAL),
+                                    'submissiongradeoverby' => new external_value(PARAM_INT, 'The id of the user who overrided
+                                        the grade.', VALUE_OPTIONAL),
+                                    'submissionpublished' => new external_value(PARAM_INT, 'Whether is a submission published.',
+                                        VALUE_OPTIONAL),
+                                    'reviewedby' => new external_multiple_structure($reviewstructure, 'The users who reviewed the
+                                        user submission.', VALUE_OPTIONAL),
+                                    'reviewerof' => new external_multiple_structure($reviewstructure, 'The assessments the user
+                                        reviewed.', VALUE_OPTIONAL),
+                                )
+                            )
+                        ),
+                        'totalcount' => new external_value(PARAM_INT, 'Number of total submissions.'),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

@@ -148,4 +148,11 @@ $functions = array(
         'type'          => 'write',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_workshop_get_grades_report' => array(
+        'classname'     => 'mod_workshop_external',
+        'methodname'    => 'get_grades_report',
+        'description'   => 'Retrieves the assessment grades report.',
+        'type'          => 'read',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
