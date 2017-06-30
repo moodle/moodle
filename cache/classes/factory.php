@@ -336,6 +336,15 @@ class cache_factory {
     }
 
     /**
+     * Gets all adhoc caches that have been used within this request.
+     *
+     * @return cache_store[] Caches currently in use
+     */
+    public function get_adhoc_caches_in_use() {
+        return $this->cachesfromparams;
+    }
+
+    /**
      * Creates a cache config instance with the ability to write if required.
      *
      * @param bool $writer If set to true an instance that can update the configuration will be returned.

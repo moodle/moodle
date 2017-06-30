@@ -1731,6 +1731,16 @@ class core_cache_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests that ad-hoc caches are correctly purged with a purge_all call.
+     */
+    public function test_purge_all_with_adhoc_caches() {
+        $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'core_cache', 'test');
+        $cache->set('test', 123);
+        cache_helper::purge_all();
+        $this->assertFalse($cache->get('test'));
+    }
+
+    /**
      * Test that the default stores all support searching.
      */
     public function test_defaults_support_searching() {
