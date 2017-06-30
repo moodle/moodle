@@ -24,7 +24,7 @@ define(['jquery', 'core/tree'], function($, Tree) {
 
                     // if there's a form to submit...
                     if (submitform) {
-                        $("select[name=" + selectname + "]").parent().submit();
+                        $("select[name=" + selectname + "]").closest("form").submit();
                     }
                 }
             });
