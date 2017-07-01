@@ -782,7 +782,7 @@
     bottom: 0;
     right: 0;
     overflow: hidden;
-    z-index: 1;
+    z-index: $zindex-dropdown;
 
     &.error {
         @extend .form-control-danger;
