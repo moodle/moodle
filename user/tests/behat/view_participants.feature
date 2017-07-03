@@ -103,6 +103,25 @@ Feature: View course participants
     And the field with xpath "//tbody//tr[19]//input[@class='usercheckbox']" matches value "0"
     And the field with xpath "//tbody//tr[20]//input[@class='usercheckbox']" matches value "0"
 
+  Scenario: Sort and paginate the list of users
+    Given I log in as "teacher1"
+    And the following "course enrolments" exist:
+      | user      | course | role           |
+      | student20 | C1     | student |
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I follow "Email address"
+    When I follow "2"
+    Then I should not see "student1@example.com"
+    And I should not see "student20@example.com"
+    And I should see "teacher1@example.com"
+    And I follow "Email address"
+    And I follow "2"
+    And I should not see "teacher1@example.com"
+    And I should not see "student20@example.com"
+    And I should not see "student1@example.com"
+    And I should see "student10@example.com"
+
   @javascript
   Scenario: Use select all users on this page, select all n users and deselect all
     Given the following "course enrolments" exist:
