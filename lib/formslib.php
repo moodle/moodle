@@ -572,6 +572,20 @@ abstract class moodleform {
                 $file_val = false;
             }
 
+            // Give the elements a chance to perform an implicit validation.
+            $element_val = true;
+            foreach ($mform->_elements as $element) {
+                if (method_exists($element, 'validateSubmitValue')) {
+                    $value = $mform->getSubmitValue($element->getName());
+                    $result = $element->validateSubmitValue($value);
+                    if (!empty($result) && is_string($result)) {
+                        $element_val = false;
+                        $mform->setElementError($element->getName(), $result);
+                    }
+                }
+            }
+
+            // Let the form instance validate the submitted values.
             $data = $mform->exportValues();
             $moodle_val = $this->validation($data, $files);
             if ((is_array($moodle_val) && count($moodle_val)!==0)) {
@@ -586,7 +600,7 @@ abstract class moodleform {
                 $moodle_val = true;
             }
 
-            $this->_validated = ($internal_val and $moodle_val and $file_val);
+            $this->_validated = ($internal_val and $element_val and $moodle_val and $file_val);
         }
         return $this->_validated;
     }
