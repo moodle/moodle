@@ -9670,6 +9670,9 @@ body.path-question-type .mform fieldset.hidden {
 .path-user .node_category .viewmore {
   text-align: right;
 }
+#participantsform .no-overflow {
+  overflow: visible;
+}
 /**
  * This rule has been added to duplicate the style of icons with the
  * .iconsmall class for consistent rendering.

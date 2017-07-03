@@ -72,6 +72,8 @@ class user_groups_editable extends \core\output\inplace_editable {
         foreach ($coursegroups as $group) {
             $options[$group->id] = $group->name;
         }
+        $this->edithint = get_string('editusersgroupsa', 'group', fullname($user));
+        $this->editlabel = get_string('editusersgroupsa', 'group', fullname($user));
 
         $attributes = ['multiple' => true];
         $this->set_type_autocomplete($options, $attributes);
@@ -84,9 +86,6 @@ class user_groups_editable extends \core\output\inplace_editable {
      * @return \stdClass
      */
     public function export_for_template(\renderer_base $output) {
-        // Set edithint and display value.
-        $this->edithint = get_string('editusersgroups', 'group');
-
         $listofgroups = [];
         $groupids = json_decode($this->value);
         foreach ($groupids as $id) {
