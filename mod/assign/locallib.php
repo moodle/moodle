@@ -692,6 +692,10 @@ class assign {
             // In the case of upgrades the coursemodule has not been set,
             // so we need to wait before calling these two.
             $this->update_calendar($formdata->coursemodule);
+            if (!empty($formdata->completionexpected)) {
+                \core_completion\api::update_completion_date_event($formdata->coursemodule, 'assign', $this->instance,
+                        $formdata->completionexpected);
+            }
             $this->update_gradebook(false, $formdata->coursemodule);
 
         }
@@ -1296,6 +1300,9 @@ class assign {
         }
 
         $this->update_calendar($this->get_course_module()->id);
+        $completionexpected = (!empty($formdata->completionexpected)) ? $formdata->completionexpected : null;
+        \core_completion\api::update_completion_date_event($this->get_course_module()->id, 'assign', $this->instance,
+                $completionexpected);
         $this->update_gradebook(false, $this->get_course_module()->id);
 
         $update = new stdClass();
