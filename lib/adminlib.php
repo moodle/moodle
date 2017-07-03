@@ -9538,8 +9538,14 @@ class admin_setting_managewebservicetokens extends admin_setting {
 
         $return = $OUTPUT->box_start('generalbox webservicestokenui');
 
+        $showalltokens = has_capability('moodle/webservice:managealltokens', context_system::instance());
+
         $table = new html_table();
-        $table->head  = array($strtoken, $struser, $strservice, $striprestriction, $strvaliduntil, $strcreator, $stroperation);
+        if ($showalltokens) {
+            $table->head  = array($strtoken, $struser, $strservice, $striprestriction, $strvaliduntil, $strcreator, $stroperation);
+        } else {
+            $table->head  = array($strtoken, $struser, $strservice, $striprestriction, $strvaliduntil, $stroperation);
+        }
         $table->colclasses = array('leftalign', 'leftalign', 'leftalign', 'centeralign', 'centeralign', 'leftalign', 'centeralign');
         $table->id = 'webservicetokens';
         $table->attributes['class'] = 'admintable generaltable';
@@ -9549,12 +9555,22 @@ class admin_setting_managewebservicetokens extends admin_setting {
 
         //TODO: in order to let the administrator delete obsolete token, split this request in multiple request or use LEFT JOIN
 
+        $params = [];
         //here retrieve token list (including linked users firstname/lastname and linked services name)
-        $sql = "SELECT t.id, t.token, u.id AS userid, u.firstname, u.lastname, s.name, t.iprestriction, t.validuntil,
-                   s.id AS serviceid, c.id AS creatorid, c.username AS creator
-                  FROM {external_tokens} t, {user} u, {external_services} s, {user} c
-                 WHERE t.tokentype = ? AND s.id = t.externalserviceid AND t.userid = u.id AND t.creatorid = c.id";
-        $tokens = $DB->get_records_sql($sql, array(EXTERNAL_TOKEN_PERMANENT));
+        if ($showalltokens) {
+             // Show all tokens.
+            $sql = "SELECT t.id, t.token, u.id AS userid, u.firstname, u.lastname, s.name, t.iprestriction, t.validuntil, s.id AS serviceid, t.creatorid, c.username creator
+                      FROM {external_tokens} t, {user} u, {external_services} s, {user} c
+                     WHERE t.tokentype = ? AND s.id = t.externalserviceid AND t.userid = u.id AND c.id = t.creatorid";
+            $params = [EXTERNAL_TOKEN_PERMANENT];
+        } else {
+            // Only show tokens created by the current user.
+            $sql = "SELECT t.id, t.token, u.id AS userid, u.firstname, u.lastname, s.name, t.iprestriction, t.validuntil, s.id AS serviceid, t.creatorid, c.username creator
+                      FROM {external_tokens} t, {user} u, {external_services} s, {user} c
+                     WHERE t.creatorid=? AND t.tokentype = ? AND s.id = t.externalserviceid AND t.userid = u.id AND c.id = t.creatorid";
+            $params = [$USER->id, EXTERNAL_TOKEN_PERMANENT];
+        }
+        $tokens = $DB->get_records_sql($sql, $params);
         if (!empty($tokens)) {
             foreach ($tokens as $token) {
                 //TODO: retrieve context
@@ -9601,7 +9617,16 @@ class admin_setting_managewebservicetokens extends admin_setting {
                 $creatoratag .= $token->creator;
                 $creatoratag .= html_writer::end_tag('a');
 
-                $table->data[] = array($token->token, $useratag, $token->name, $iprestriction, $validuntil, $creatoratag, $delete);
+                if ($token->creatorid != $USER->id) { // TODO: is creatorid NOT NULL? What if it's NULL?
+                    $token->token = '';
+                    // TODO: Should I also remove permissions?
+                }
+
+                if ($showalltokens) {
+                    $table->data[] = array($token->token, $useratag, $token->name, $iprestriction, $validuntil, $creatoratag, $delete);
+                } else {
+                    $table->data[] = array($token->token, $useratag, $token->name, $iprestriction, $validuntil, $delete);
+                }
             }
 
             $return .= html_writer::table($table);
