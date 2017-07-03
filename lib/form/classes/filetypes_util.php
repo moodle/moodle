@@ -493,7 +493,10 @@ class filetypes_util {
         $unknown = [];
 
         foreach ($this->normalize_file_types($types) as $type) {
-            if ($this->is_filetype_group($type)) {
+            if ($type === '*') {
+                // Any file is considered as a known type.
+                continue;
+            } else if ($this->is_filetype_group($type)) {
                 // The type is a group that exists.
                 continue;
             } else if ($this->looks_like_mimetype($type)) {

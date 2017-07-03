@@ -412,6 +412,14 @@ class filetypes_util_testcase extends advanced_testcase {
      */
     public function get_unknown_file_types_provider() {
         return [
+            'Empty list' => [
+                'filetypes' => '',
+                'expected' => [],
+            ],
+            'Any file type' => [
+                'filetypes' => '*',
+                'expected' => [],
+            ],
             'Unknown extension' => [
                 'filetypes' => '.rat',
                 'expected' => ['.rat']
