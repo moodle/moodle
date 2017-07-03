@@ -1845,6 +1845,13 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+    'moodle/webservice:managealltokens' => array(
+
+        'riskbitmask' => RISK_CONFIG | RISK_DATALOSS | RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array()
+    ),
     'moodle/webservice:createmobiletoken' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL,

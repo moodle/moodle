@@ -103,6 +103,10 @@ switch ($action) {
     case 'delete':
         $token = $webservicemanager->get_token_by_id_with_details($tokenid);
 
+        if ($token->creatorid != $USER->id) {
+            require_capability("moodle/webservice:managealltokens", context_system::instance());
+        }
+
         //Delete the token
         if ($confirm and confirm_sesskey()) {
             $webservicemanager->delete_user_ws_token($token->id);
