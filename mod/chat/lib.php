@@ -133,6 +133,11 @@ function chat_add_instance($chat) {
 
         calendar_event::create($event);
     }
+
+    if (!empty($chat->completionexpected)) {
+        \core_completion\api::update_completion_date_event($chat->coursemodule, 'chat', $returnid, $chat->completionexpected);
+    }
+
     return $returnid;
 }
 
@@ -191,6 +196,9 @@ function chat_update_instance($chat) {
             calendar_event::create($event);
         }
     }
+
+    $completionexpected = (!empty($chat->completionexpected)) ? $chat->completionexpected : null;
+    \core_completion\api::update_completion_date_event($chat->coursemodule, 'chat', $chat->id, $completionexpected);
 
     return true;
 }
@@ -431,10 +439,28 @@ function chat_cron () {
  *
  * @global object
  * @param int $courseid
+ * @param int|stdClass $instance Chat module instance or ID.
+ * @param int|stdClass $cm Course module object or ID.
  * @return bool
  */
-function chat_refresh_events($courseid = 0) {
+function chat_refresh_events($courseid = 0, $instance = null, $cm = null) {
     global $DB;
+
+    // If we have instance information then we can just update the one event instead of updating all events.
+    if (isset($instance)) {
+        if (!is_object($instance)) {
+            $instance = $DB->get_record('chat', array('id' => $instance), '*', MUST_EXIST);
+        }
+        if (isset($cm)) {
+            if (!is_object($cm)) {
+                chat_prepare_update_events($instance);
+                return true;
+            } else {
+                chat_prepare_update_events($instance, $cm);
+                return true;
+            }
+        }
+    }
 
     if ($courseid) {
         if (! $chats = $DB->get_records("chat", array("course" => $courseid))) {
@@ -445,35 +471,44 @@ function chat_refresh_events($courseid = 0) {
             return true;
         }
     }
-    $moduleid = $DB->get_field('modules', 'id', array('name' => 'chat'));
-
     foreach ($chats as $chat) {
-        $cm = get_coursemodule_from_instance('chat', $chat->id, $chat->course);
-        $event = new stdClass();
-        $event->name        = $chat->name;
-        $event->type        = CALENDAR_EVENT_TYPE_ACTION;
-        $event->description = format_module_intro('chat', $chat, $cm->id);
-        $event->timestart   = $chat->chattime;
-        $event->timesort    = $chat->chattime;
-
-        if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id))) {
-            $calendarevent = calendar_event::load($event->id);
-            $calendarevent->update($event);
-        } else if ($chat->schedule > 0) {
-            // The chat is scheduled and the event should be published.
-            $event->courseid    = $chat->course;
-            $event->groupid     = 0;
-            $event->userid      = 0;
-            $event->modulename  = 'chat';
-            $event->instance    = $chat->id;
-            $event->eventtype   = CHAT_EVENT_TYPE_CHATTIME;
-            $event->timeduration = 0;
-            $event->visible = $DB->get_field('course_modules', 'visible', array('module' => $moduleid, 'instance' => $chat->id));
-
-            calendar_event::create($event);
-        }
+        chat_prepare_update_events($chat);
     }
     return true;
+}
+
+/**
+ * Updates both the normal and completion calendar events for chat.
+ *
+ * @param  stdClass $chat The chat object (from the DB)
+ * @param  stdClass $cm The course module object.
+ */
+function chat_prepare_update_events($chat, $cm = null) {
+    global $DB;
+    if (!isset($cm)) {
+        $cm = get_coursemodule_from_instance('chat', $chat->id, $chat->course);
+    }
+    $event = new stdClass();
+    $event->name        = $chat->name;
+    $event->type        = CALENDAR_EVENT_TYPE_ACTION;
+    $event->description = format_module_intro('chat', $chat, $cm->id);
+    $event->timestart   = $chat->chattime;
+    $event->timesort    = $chat->chattime;
+    if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id))) {
+        $calendarevent = calendar_event::load($event->id);
+        $calendarevent->update($event);
+    } else if ($chat->schedule > 0) {
+        // The chat is scheduled and the event should be published.
+        $event->courseid    = $chat->course;
+        $event->groupid     = 0;
+        $event->userid      = 0;
+        $event->modulename  = 'chat';
+        $event->instance    = $chat->id;
+        $event->eventtype   = CHAT_EVENT_TYPE_CHATTIME;
+        $event->timeduration = 0;
+        $event->visible = $cm->visible;
+        calendar_event::create($event);
+    }
 }
 
 // Functions that require some SQL.
