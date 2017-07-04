@@ -521,7 +521,9 @@ if ($managersform->is_cancelled()) {
     echo html_writer::start_tag('div', array('class' => 'iomadclear'));
     echo html_writer::start_tag('div', array('class' => 'fitem'));
     echo $treehtml;
+    echo html_writer::start_tag('div', array('style' => 'display:none'));
     echo $OUTPUT->render($departmentselect);
+    echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
 
