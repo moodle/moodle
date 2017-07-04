@@ -154,6 +154,7 @@ class core_admintree_testcase extends advanced_testcase {
     public function test_config_logging() {
         global $DB;
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $DB->delete_records('config_log', array());
 
