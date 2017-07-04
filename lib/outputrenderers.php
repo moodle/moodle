@@ -89,7 +89,7 @@ class renderer_base {
             $loader = new \core\output\mustache_filesystem_loader();
             $stringhelper = new \core\output\mustache_string_helper();
             $quotehelper = new \core\output\mustache_quote_helper();
-            $jshelper = new \core\output\mustache_javascript_helper($this->page->requires);
+            $jshelper = new \core\output\mustache_javascript_helper($this->page);
             $pixhelper = new \core\output\mustache_pix_helper($this);
             $shortentexthelper = new \core\output\mustache_shorten_text_helper();
             $userdatehelper = new \core\output\mustache_user_date_helper();
