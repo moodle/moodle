@@ -25,7 +25,7 @@ class iomad_company_select_form extends moodleform {
 
     public function __construct($actionurl, $companies = array(), $selectedcompany = 0) {
         global $USER, $DB;
-        if (empty($selectedcompany)) {
+        if (empty($selectedcompany) || empty($companies[$selectedcompany])) {
             $this->companies = array(0 => get_string('selectacompany', 'block_iomad_company_selector')) + $companies;
         } else {
             $this->companies = $companies;
@@ -40,6 +40,8 @@ class iomad_company_select_form extends moodleform {
                              'onchange' => 'this.form.submit()',
                              'noselectionstring' => get_string('selectacompany', 'block_iomad_company_selector'));
         $mform->addElement('autocomplete', 'company', '', $this->companies, $autooptions);
+        $mform->addElement('hidden', 'showsuspendedcompanies');
+        $mform->setType('showsuspendedcompanies', PARAM_BOOL);
 
         // Disable the onchange popup.
         $mform->disable_form_change_checker();
@@ -320,7 +322,7 @@ class block_iomad_company_admin extends block_base {
         // Get a list of companies.
         $companylist = company::get_companies_select($showsuspendedcompanies);
         $select = new iomad_company_select_form(new moodle_url('/local/iomad_dashboard/index.php'), $companylist, $selectedcompany);
-        $select->set_data(array('company' => $selectedcompany));
+        $select->set_data(array('company' => $selectedcompany, 'showsuspendedcompanies' => $showsuspendedcompanies));
         $content = $OUTPUT->container_start('companyselect');
         if (!empty($SESSION->currenteditingcompany)) {
             //$content .= '<h3>'. get_string('currentcompany', 'block_iomad_company_selector').
