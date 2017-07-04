@@ -126,3 +126,18 @@ function tool_mobile_myprofile_navigation(\core_user\output\myprofile\tree $tree
     $node = new  core_user\output\myprofile\node('mobile', 'mobileappnode', $mobilestr, null);
     $tree->add_node($node);
 }
+
+/**
+ * Callback to add footer elements.
+ *
+ * @return str valid html footer content
+ * @since  Moodle 3.4
+ */
+function tool_mobile_standard_footer_html() {
+    global $CFG;
+    $output = '';
+    if (!empty($CFG->enablemobilewebservice) && $url = tool_mobile_create_app_download_url()) {
+        $output .= html_writer::link($url, get_string('getmoodleonyourmobile', 'tool_mobile'));
+    }
+    return $output;
+}
