@@ -95,11 +95,15 @@ function workshop_add_instance(stdclass $workshop) {
     }
 
     if (isset($workshop->submissionfiletypes)) {
-        $workshop->submissionfiletypes = workshop::clean_file_extensions($workshop->submissionfiletypes);
+        $filetypesutil = new \core_form\filetypes_util();
+        $submissionfiletypes = $filetypesutil->normalize_file_types($workshop->submissionfiletypes);
+        $workshop->submissionfiletypes = implode(' ', $submissionfiletypes);
     }
 
     if (isset($workshop->overallfeedbackfiletypes)) {
-        $workshop->overallfeedbackfiletypes = workshop::clean_file_extensions($workshop->overallfeedbackfiletypes);
+        $filetypesutil = new \core_form\filetypes_util();
+        $overallfeedbackfiletypes = $filetypesutil->normalize_file_types($workshop->overallfeedbackfiletypes);
+        $workshop->overallfeedbackfiletypes = implode(' ', $overallfeedbackfiletypes);
     }
 
     // insert the new record so we get the id
@@ -171,11 +175,15 @@ function workshop_update_instance(stdclass $workshop) {
     }
 
     if (isset($workshop->submissionfiletypes)) {
-        $workshop->submissionfiletypes = workshop::clean_file_extensions($workshop->submissionfiletypes);
+        $filetypesutil = new \core_form\filetypes_util();
+        $submissionfiletypes = $filetypesutil->normalize_file_types($workshop->submissionfiletypes);
+        $workshop->submissionfiletypes = implode(' ', $submissionfiletypes);
     }
 
     if (isset($workshop->overallfeedbackfiletypes)) {
-        $workshop->overallfeedbackfiletypes = workshop::clean_file_extensions($workshop->overallfeedbackfiletypes);
+        $filetypesutil = new \core_form\filetypes_util();
+        $overallfeedbackfiletypes = $filetypesutil->normalize_file_types($workshop->overallfeedbackfiletypes);
+        $workshop->overallfeedbackfiletypes = implode(' ', $overallfeedbackfiletypes);
     }
 
     // todo - if the grading strategy is being changed, we may want to replace all aggregated peer grades with nulls
