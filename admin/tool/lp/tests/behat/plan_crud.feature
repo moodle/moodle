@@ -30,6 +30,7 @@ Feature: Manage plearning plan
     And I click on ".template-userplans" "css_element" in the "Science template" "table_row"
     And I click on ".form-autocomplete-downarrow" "css_element"
     And I click on "Admin" item in the autocomplete list
+    And I press key "27" in the field "Select users to create learning plans for"
     When I click on "Create learning plans" "button"
     Then I should see "A learning plan was created"
     And I should see "Admin User" in the "Science template" "table_row"
@@ -54,6 +55,7 @@ Feature: Manage plearning plan
     And I click on ".template-cohorts" "css_element" in the "Science template cohort" "table_row"
     And I click on ".form-autocomplete-downarrow" "css_element"
     And I click on "cohort plan" item in the autocomplete list
+    And I press key "27" in the field "Select cohorts to sync"
     When I click on "Add cohorts" "button"
     Then I should see "2 learning plans were created."
     And I follow "Learning plan templates"
