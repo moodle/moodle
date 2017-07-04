@@ -59,21 +59,30 @@ define(['core/templates',
     QuickEnrolment.prototype.initModal = function() {
         var triggerButtons = $('.enrolusersbutton.enrol_manual_plugin [type="submit"]');
 
-        Str.get_string('enrolusers', 'enrol_manual').then(function(modalTitle) {
+        var strparams = [
+            {key: 'enroluserscohorts', component: 'enrol_manual'},
+            {key: 'enrolusers', component: 'enrol_manual'}
+        ];
+
+        $.when(Str.get_strings(strparams)).then(function(strlist) {
+            var modalSaveChanges = strlist[0],
+                modalTitle = strlist[1];
+
             return ModalFactory.create({
+                type: ModalFactory.types.SAVE_CANCEL,
                 title: modalTitle,
-                body: this.getBody(),
-                footer: this.getFooter()
+                body: this.getBody()
             }, triggerButtons).then(function(modal) {
                 this.modal = modal;
                 this.modal.setLarge();
+                this.modal.setSaveButtonText(modalSaveChanges);
 
                 // We want the reset the form every time it is opened.
                 this.modal.getRoot().on(ModalEvents.hidden, function() {
                     this.modal.setBody(this.getBody());
                 }.bind(this));
 
-                this.modal.getFooter().on('click', '[data-action="submit"]', this.submitForm.bind(this));
+                this.modal.getRoot().on(ModalEvents.save, this.submitForm.bind(this));
                 this.modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this));
             }.bind(this));
         }.bind(this)).fail(Notification.exception);
