@@ -115,49 +115,6 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
     When I press "Submit"
     Then I should see "Maximum number of attempts reached - Moving to next page"
 
-  Scenario: Check that we can move past a question we don't want to re-attempt
-    Given I log in as "teacher1"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
-    And I expand all fieldsets
-    And I set the field "Provide option to try a question again" to "Yes"
-    And I set the field "Maximum number of attempts" to "3"
-    And I press "Save and display"
-    And I log out
-    And I log in as "student1"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I follow "Test lesson name"
-    And I should see "First page contents"
-    And I press "Next page"
-    And I should see "The earth is round"
-    And I set the following fields to these values:
-      | False| 1 |
-    And I press "Submit"
-    And I should see "Wrong"
-    When I press "No, I just want to go on to the next question"
-    Then I should not see "The earth is round"
-    And I should see "Kermit is a frog"
-    And I set the following fields to these values:
-      | False | 1 |
-    And I press "Submit"
-    And I should see "Wrong"
-    And I press "Yes, I'd like to try again"
-    And I should see "Kermit is a frog"
-    And I set the following fields to these values:
-      | False | 1 |
-    And I press "Submit"
-    And I should see "Wrong"
-    And I press "Yes, I'd like to try again"
-    And I should see "Kermit is a frog"
-    And I set the following fields to these values:
-      | False | 1 |
-    And I press "Submit"
-    And I should not see "Yes, I'd like to try again"
-    And I should see "Continue"
-
   @javascript @_bug_phantomjs
   Scenario: Check that we can not click back on the browser at the last quiz result page and re-attempt the last question to get full marks
     Given I log in as "student1"
