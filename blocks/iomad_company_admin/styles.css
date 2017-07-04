@@ -167,3 +167,6 @@ border-radius: 10px;
     background-image: none;
 }
 
+.companyselect div.col-md-3 {
+    display: none;
+}
