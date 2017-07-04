@@ -2515,9 +2515,8 @@ class workshop {
             'return_types' => FILE_INTERNAL | FILE_CONTROLLED_LINK,
         );
 
-        if ($acceptedtypes = self::normalize_file_extensions($this->submissionfiletypes)) {
-            $options['accepted_types'] = $acceptedtypes;
-        }
+        $filetypesutil = new \core_form\filetypes_util();
+        $options['accepted_types'] = $filetypesutil->normalize_file_types($this->overallfeedbackfiletypes);
 
         return $options;
     }
@@ -2557,9 +2556,8 @@ class workshop {
             'return_types' => FILE_INTERNAL | FILE_CONTROLLED_LINK,
         );
 
-        if ($acceptedtypes = self::normalize_file_extensions($this->overallfeedbackfiletypes)) {
-            $options['accepted_types'] = $acceptedtypes;
-        }
+        $filetypesutil = new \core_form\filetypes_util();
+        $options['accepted_types'] = $filetypesutil->normalize_file_types($this->overallfeedbackfiletypes);
 
         return $options;
     }
