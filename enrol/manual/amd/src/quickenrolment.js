@@ -34,6 +34,7 @@ define(['core/templates',
     /**
      * Constructor
      *
+     * @param {Object} options Object containing options. The only valid option at this time is contextid.
      * Each call to templates.render gets it's own instance of this class.
      */
     var QuickEnrolment = function(options) {
@@ -82,6 +83,7 @@ define(['core/templates',
      * This triggers a form submission, so that any mform elements can do final tricks before the form submission is processed.
      *
      * @method submitForm
+     * @param {Event} e Form submission event.
      * @private
      */
     QuickEnrolment.prototype.submitForm = function(e) {
@@ -94,7 +96,7 @@ define(['core/templates',
      *
      * @method submitForm
      * @private
-     * @return Promise
+     * @param {Event} e Form submission event.
      */
     QuickEnrolment.prototype.submitFormAjax = function(e) {
         // We don't want to do a real form submission.
@@ -126,6 +128,7 @@ define(['core/templates',
                     }
                     window.location.reload();
                 }
+                return;
             })
             .fail(Notification.exception);
     };
@@ -135,7 +138,7 @@ define(['core/templates',
      *
      * @method getBody
      * @private
-     * @return Promise
+     * @return {Promise}
      */
     QuickEnrolment.prototype.getBody = function() {
         return Fragment.loadFragment('enrol_manual', 'enrol_users_form', this.contextid, {}).fail(Notification.exception);
@@ -146,7 +149,7 @@ define(['core/templates',
      *
      * @method getFooter
      * @private
-     * @return Promise
+     * @return {Promise}
      */
     QuickEnrolment.prototype.getFooter = function() {
         return Template.render('enrol_manual/enrol_modal_footer', {});
