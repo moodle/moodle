@@ -281,6 +281,7 @@ $string['licensename'] = 'License identifier';
 $string['licensenotenough'] = 'There are not enough available license slots'; 
 $string['licenseremaining'] = 'Used';
 $string['licenseremove'] = 'Unallocate license';
+$string['licenseremoveall'] = 'Unallocate all licenses';
 $string['licenseselect'] = 'Select a license';
 $string['licenses'] = 'Available licenses';
 $string['licensetoomanyusers'] = 'You have tried to allocate more than the available number of licenses.';

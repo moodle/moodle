@@ -201,17 +201,20 @@ class company_license_users_form extends moodleform {
                       <div id="addcontrols">
                           <input name="add" id="add" type="submit" value="&nbsp;' .
                        $this->output->larrow().'&nbsp;'. get_string('licenseallocate', 'block_iomad_company_admin') .
-                          '" title="Enrol" /><br />
+                          '" title="Enrol" />
 
                           <input name="addall" id="addall" type="submit" value="&nbsp;' .
-                       $this->output->larrow().'&nbsp;'. get_string('licenseallocateall', 'block_iomad_company_admin') .
-                          '" title="Enrolall" /><br />
+                          $this->output->larrow().'&nbsp;'. get_string('licenseallocateall', 'block_iomad_company_admin') .
+                          '" title="Enrolall" />
 
                       </div>
 
                       <div id="removecontrols"><input name="remove" id="remove" type="submit" value="' .
                        $this->output->rarrow().'&nbsp;'. get_string('licenseremove', 'block_iomad_company_admin') .
                           '" title="Unenrol" />
+                          <input name="removeall" id="removeall" type="submit" value="' .
+                          $this->output->rarrow().'&nbsp;'. get_string('licenseremoveall', 'block_iomad_company_admin') .
+                          '" title="Unenrolall" />
                       </div>
                   </td>
                   <td id="potentialcell">');
@@ -315,15 +318,28 @@ class company_license_users_form extends moodleform {
             }
         }
 
-        // Process incoming unallocations.
+        $removeall = false;
+        $remove = false;
+        if (optional_param('removeall', false, PARAM_BOOL) && confirm_sesskey()) {
+            $search = optional_param('currentlyenrolledusers_searchtext', '', PARAM_RAW);
+            // Process incoming allocations.
+            $potentialusers = $this->currentusers->find_users($search);
+            $licensestounassign = array_pop($potentialusers);
+            $removeall = true;
+        }
         if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
-            $licensestounassign = optional_param_array('currentlyenrolledusers', null, PARAM_INT);
+            $licensestounassign = $this->currentusers->get_selected_users();
+            $remove = true;
+        }
+
+        // Process incoming unallocations.
+        if ($remove || $removeall) {
             $licenserecord = (array) $this->license;
 
             if (!empty($licensestounassign)) {
                 foreach ($licensestounassign as $unassignid) {
                     foreach($courses as $courseid) {
-                        $licensedata = $DB->get_record('companylicense_users',array('id' => $unassignid), '*', MUST_EXIST);
+                        $licensedata = $DB->get_record('companylicense_users',array('userid' => $unassignid->id, 'licensecourseid' => $courseid, 'licenseid' => $this->license->id), '*', MUST_EXIST);
     
                         // Check the userid is valid.
                         if (!company::check_valid_user($this->selectedcompany, $licensedata->userid, $this->departmentid)) {
@@ -331,7 +347,7 @@ class company_license_users_form extends moodleform {
                         }
     
                         if (!$licensedata->isusing) {
-                            $DB->delete_records('companylicense_users', array('id' => $unassignid));
+                            $DB->delete_records('companylicense_users', array('userid' => $unassignid->id, 'licensecourseid' => $courseid, 'licenseid' => $this->license->id));
     
                             // Create an event.
                             $eventother = array('licenseid' => $this->license->id,
