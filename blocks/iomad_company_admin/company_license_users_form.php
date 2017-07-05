@@ -355,17 +355,20 @@ class company_license_users_form extends moodleform {
             $licenserecord = (array) $this->license;
 
             if (!empty($licenserecord['program'])) {
-                // Get the user from the initial license ID passed.
-                $userlic = $DB->get_record('companylicense_users',array('id' => $licensestounassign[0]), '*', MUST_EXIST);
-                if (!empty($licensestounassign)) {
-                    $licensestounassign = array_keys($DB->get_records_sql("SELECT id FROM {companylicense_users}
-                                                                           WHERE licenseid = :licenseid
-                                                                           AND userid IN (
-                                                                               SELECT userid FROM {companylicense_users}
-                                                                               WHERE id IN 
-                                                                           (" . implode(',', $licensestounassign) . "))",
-                                                                           array('licenseid' => $this->license->id)));
+                $userrecords = array();
+                foreach ($licensestounassign as $licenserecid) {
+
+                    // Get the user from the initial license ID passed.
+                    $userlic = $DB->get_record('companylicense_users',array('id' => $licenserecid), '*', MUST_EXIST);
+                    $userrecords = $userrecords + array_keys($DB->get_records_sql("SELECT id FROM {companylicense_users}
+                                                                                   WHERE licenseid = :licenseid
+                                                                                   AND userid IN (
+                                                                                       SELECT userid FROM {companylicense_users}
+                                                                                       WHERE id IN 
+                                                                                   (" . implode(',', $licensestounassign) . "))",
+                                                                                   array('licenseid' => $this->license->id)));
                 }
+                $licensestounassign = $userrecords;
                 if ($licenserecord['type']) {
                     $canremove = true;
                 } else {
@@ -383,29 +386,26 @@ class company_license_users_form extends moodleform {
 
             if (!empty($licensestounassign)) {
                 foreach ($licensestounassign as $unassignid) {
+                    $licensedata = $DB->get_record('companylicense_users' ,array('id' => $unassignid), '*', MUST_EXIST);
+    
+                    // Check the userid is valid.
+                    if (!company::check_valid_user($this->selectedcompany, $licensedata->userid, $this->departmentid)) {
+                        print_error('invaliduserdepartment', 'block_iomad_company_management');
+                    }
 
-                   // foreach($courses as $courseid) {
-                        $licensedata = $DB->get_record('companylicense_users' ,array('id' => $unassignid), '*', MUST_EXIST);
-    
-                        // Check the userid is valid.
-                        if (!company::check_valid_user($this->selectedcompany, $licensedata->userid, $this->departmentid)) {
-                            print_error('invaliduserdepartment', 'block_iomad_company_management');
-                        }
-    
-                        if (!$licensedata->isusing || $this->license->type != 0) {
-                            $DB->delete_records('companylicense_users', array('id' => $unassignid));
-    
-                            // Create an event.
-                            $eventother = array('licenseid' => $this->license->id,
-                                                'duedate' => 0);
-                            $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($licensedata->licensecourseid),
-                                                                                                            'objectid' => $this->license->id,
-                                                                                                            'courseid' => $licensedata->licensecourseid,
-                                                                                                            'userid' => $licensedata->userid,
-                                                                                                            'other' => $eventother));
-                            $event->trigger();
-                        }
-                   // }
+                    if (!$licensedata->isusing || $this->license->type != 0) {
+                        $DB->delete_records('companylicense_users', array('id' => $unassignid));
+
+                        // Create an event.
+                        $eventother = array('licenseid' => $this->license->id,
+                                            'duedate' => 0);
+                        $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($licensedata->licensecourseid),
+                                                                                                        'objectid' => $this->license->id,
+                                                                                                        'courseid' => $licensedata->licensecourseid,
+                                                                                                        'userid' => $licensedata->userid,
+                                                                                                        'other' => $eventother));
+                        $event->trigger();
+                    }
                 }
 
                 $this->potentialusers->invalidate_selected_users();
