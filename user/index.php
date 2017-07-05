@@ -195,23 +195,6 @@ $controlstable->attributes['class'] = 'controls';
 $controlstable->cellspacing = 0;
 $controlstable->data[] = new html_table_row();
 
-// Print my course menus.
-if ($mycourses = enrol_get_my_courses()) {
-    $courselist = array();
-    $popupurl = new moodle_url('/user/index.php?roleid='.$roleid.'&sifirst=&silast=');
-    foreach ($mycourses as $mycourse) {
-        $coursecontext = context_course::instance($mycourse->id);
-        $courselist[$mycourse->id] = format_string($mycourse->shortname, true, array('context' => $coursecontext));
-    }
-    if (has_capability('moodle/site:viewparticipants', $systemcontext)) {
-        unset($courselist[SITEID]);
-        $courselist = array(SITEID => format_string($SITE->shortname, true, array('context' => $systemcontext))) + $courselist;
-    }
-    $select = new single_select($popupurl, 'id', $courselist, $course->id, null, 'courseform');
-    $select->set_label(get_string('mycourses'));
-    $controlstable->data[0]->cells[] = $OUTPUT->render($select);
-}
-
 if ($groupmenu = groups_print_course_menu($course, $baseurl->out(), true)) {
     $controlstable->data[0]->cells[] = $groupmenu;
 }
