@@ -534,6 +534,8 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
         }
         echo $outputstring."</br>";
         $usersform->process();
+        // Reload the form.
+        $usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $userhierarchylevel, $selectedcourses, $error, $output);
         echo $usersform->display();
     }
 }
