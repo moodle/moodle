@@ -2401,7 +2401,7 @@ class global_navigation extends navigation_node {
                 $reports = core_component::get_plugin_list('gradereport');
                 arsort($reports); // User is last, we want to test it first.
 
-                $userscourses = enrol_get_users_courses($user->id);
+                $userscourses = enrol_get_users_courses($user->id, false, '*');
                 $userscoursesnode = $usernode->add(get_string('courses'));
 
                 $count = 0;
