@@ -67,42 +67,9 @@ class login_forgot_password_form extends moodleform {
      * @return array errors occuring during validation.
      */
     function validation($data, $files) {
-        global $CFG, $DB;
 
         $errors = parent::validation($data, $files);
-
-        if ((!empty($data['username']) and !empty($data['email'])) or (empty($data['username']) and empty($data['email']))) {
-            $errors['username'] = get_string('usernameoremail');
-            $errors['email']    = get_string('usernameoremail');
-
-        } else if (!empty($data['email'])) {
-            if (!validate_email($data['email'])) {
-                $errors['email'] = get_string('invalidemail');
-
-            } else if ($DB->count_records('user', array('email'=>$data['email'])) > 1) {
-                $errors['email'] = get_string('forgottenduplicate');
-
-            } else {
-                if ($user = get_complete_user_data('email', $data['email'])) {
-                    if (empty($user->confirmed)) {
-                        $errors['email'] = get_string('confirmednot');
-                    }
-                }
-                if (!$user and empty($CFG->protectusernames)) {
-                    $errors['email'] = get_string('emailnotfound');
-                }
-            }
-
-        } else {
-            if ($user = get_complete_user_data('username', $data['username'])) {
-                if (empty($user->confirmed)) {
-                    $errors['email'] = get_string('confirmednot');
-                }
-            }
-            if (!$user and empty($CFG->protectusernames)) {
-                $errors['username'] = get_string('usernamenotfound');
-            }
-        }
+        $errors += core_login_validate_forgot_password_data($data);
 
         return $errors;
     }

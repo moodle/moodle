@@ -121,4 +121,98 @@ class core_auth_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for request_password_reset.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function request_password_reset_parameters() {
+        return new external_function_parameters(
+            array(
+                'username' => new external_value(core_user::get_property_type('username'), 'User name', VALUE_DEFAULT, ''),
+                'email' => new external_value(core_user::get_property_type('email'), 'User email', VALUE_DEFAULT, ''),
+            )
+        );
+    }
+
+    /**
+     * Requests a password reset.
+     *
+     * @param  string $username user name
+     * @param  string $email    user email
+     * @return array warnings and success status (including notices and errors while processing)
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function request_password_reset($username = '', $email = '') {
+        global $CFG, $PAGE;
+        require_once($CFG->dirroot . '/login/lib.php');
+
+        $warnings = array();
+        $params = self::validate_parameters(
+            self::request_password_reset_parameters(),
+            array(
+                'username' => $username,
+                'email' => $email,
+            )
+        );
+
+        $context = context_system::instance();
+        $PAGE->set_context($context);   // Needed by format_string calls.
+
+        // Check if an alternate forgotten password method is set.
+        if (!empty($CFG->forgottenpasswordurl)) {
+            throw new moodle_exception('cannotmailconfirm');
+        }
+
+        $errors = core_login_validate_forgot_password_data($params);
+        if (!empty($errors)) {
+            $status = 'dataerror';
+            $notice = '';
+
+            foreach ($errors as $itemname => $message) {
+                $warnings[] = array(
+                    'item' => $itemname,
+                    'itemid' => 0,
+                    'warningcode' => 'fielderror',
+                    'message' => s($message)
+                );
+            }
+        } else {
+            list($status, $notice, $url) = core_login_process_password_reset($params['username'], $params['email']);
+        }
+
+        return array(
+            'status' => $status,
+            'notice' => $notice,
+            'warnings' => $warnings,
+        );
+    }
+
+    /**
+     * Describes the request_password_reset return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.4
+     */
+    public static function request_password_reset_returns() {
+
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_ALPHANUMEXT, 'The returned status of the process:
+                    dataerror: Error in the sent data (username or email). More information in warnings field.
+                    emailpasswordconfirmmaybesent: Email sent or not (depends on user found in database).
+                    emailpasswordconfirmnotsent: Failure, user not found.
+                    emailpasswordconfirmnoemail: Failure, email not found.
+                    emailalreadysent: Email already sent.
+                    emailpasswordconfirmsent: User pending confirmation.
+                    emailresetconfirmsent: Email sent.
+                '),
+                'notice' => new external_value(PARAM_RAW, 'Important information for the user about the process.'),
+                'warnings'  => new external_warnings(),
+            )
+        );
+    }
 }
