@@ -31,12 +31,9 @@ define('USER_SMALL_CLASS', 20);   // Below this is considered small.
 define('USER_LARGE_CLASS', 200);  // Above this is considered large.
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
-define('MODE_BRIEF', 0);
-define('MODE_USERDETAILS', 1);
 
 $page         = optional_param('page', 0, PARAM_INT); // Which page to show.
 $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT); // How many per page.
-$mode         = optional_param('mode', null, PARAM_INT); // Use the MODE_ constants.
 $accesssince  = optional_param('accesssince', 0, PARAM_INT); // Filter by last access. -1 = never.
 $search       = optional_param('search', '', PARAM_RAW); // Make sure it is processed with p() or s() when sending to output!
 $roleid       = optional_param('roleid', 0, PARAM_INT); // Optional roleid, 0 means all enrolled users (or all on the frontpage).
@@ -47,7 +44,6 @@ $selectall    = optional_param('selectall', false, PARAM_BOOL); // When renderin
 $PAGE->set_url('/user/index.php', array(
         'page' => $page,
         'perpage' => $perpage,
-        'mode' => $mode,
         'accesssince' => $accesssince,
         'search' => $search,
         'roleid' => $roleid,
@@ -127,15 +123,6 @@ $datestring->min   = get_string('min');
 $datestring->mins  = get_string('mins');
 $datestring->sec   = get_string('sec');
 $datestring->secs  = get_string('secs');
-
-if ($mode !== null) {
-    $mode = (int)$mode;
-    $SESSION->userindexmode = $mode;
-} else if (isset($SESSION->userindexmode)) {
-    $mode = (int)$SESSION->userindexmode;
-} else {
-    $mode = MODE_BRIEF;
-}
 
 // Check to see if groups are being used in this course
 // and if so, set $currentgroup to reflect the current group.
@@ -286,15 +273,6 @@ if (!isset($hiddenfields['lastaccess'])) {
     }
 }
 
-$formatmenu = array( '0' => get_string('brief'),
-                     '1' => get_string('userdetails'));
-$select = new single_select($baseurl, 'mode', $formatmenu, $mode, null, 'formatmenu');
-$select->set_label(get_string('userlist'));
-$userlistcell = new html_table_cell();
-$userlistcell->attributes['class'] = 'right';
-$userlistcell->text = $OUTPUT->render($select);
-$controlstable->data[0]->cells[] = $userlistcell;
-
 echo html_writer::table($controlstable);
 
 if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {
@@ -333,7 +311,7 @@ if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessa
 // Define a table showing a list of users in the current role selection.
 $tablecolumns = array();
 $tableheaders = array();
-if ($bulkoperations && $mode === MODE_BRIEF) {
+if ($bulkoperations) {
     $tablecolumns[] = 'select';
     $tableheaders[] = get_string('select');
 }
@@ -344,17 +322,16 @@ $extrafields = get_extra_user_fields($context);
 $tableheaders[] = get_string('userpic');
 $tableheaders[] = get_string('fullnameuser');
 
-if ($mode === MODE_BRIEF) {
-    foreach ($extrafields as $field) {
-        $tablecolumns[] = $field;
-        $tableheaders[] = get_user_field_name($field);
-    }
+
+foreach ($extrafields as $field) {
+    $tablecolumns[] = $field;
+    $tableheaders[] = get_user_field_name($field);
 }
-if ($mode === MODE_BRIEF && !isset($hiddenfields['city'])) {
+if (!isset($hiddenfields['city'])) {
     $tablecolumns[] = 'city';
     $tableheaders[] = get_string('city');
 }
-if ($mode === MODE_BRIEF && !isset($hiddenfields['country'])) {
+if (!isset($hiddenfields['country'])) {
     $tablecolumns[] = 'country';
     $tableheaders[] = get_string('country');
 }
@@ -366,11 +343,6 @@ if (!isset($hiddenfields['lastaccess'])) {
     } else {
         $tableheaders[] = get_string('lastcourseaccess');
     }
-}
-
-if ($bulkoperations && $mode === MODE_USERDETAILS) {
-    $tablecolumns[] = 'select';
-    $tableheaders[] = get_string('select');
 }
 
 $table = new flexible_table('user-index-participants-'.$course->id);
@@ -561,214 +533,76 @@ if ($bulkoperations) {
     echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
 }
 
-if ($mode === MODE_USERDETAILS) {    // Print simple listing.
-    if ($totalcount < 1) {
-        echo $OUTPUT->heading(get_string('nothingtodisplay'));
-    } else {
-        if ($totalcount > $perpage) {
+$countrysort = (strpos($sort, 'country') !== false);
+$timeformat = get_string('strftimedate');
 
-            // Initials bar.
-            $table->print_initials_bar();
+if ($userlist) {
 
-            $pagingbar = new paging_bar($matchcount, intval($table->get_page_start() / $perpage), $perpage, $baseurl);
-            $pagingbar->pagevar = 'spage';
-            echo $OUTPUT->render($pagingbar);
+    $usersprinted = array();
+    foreach ($userlist as $user) {
+        if (in_array($user->id, $usersprinted)) { // Prevent duplicates by r.hidden - MDL-13935.
+            continue;
+        }
+        $usersprinted[] = $user->id; // Add new user to the array of users printed.
+
+        context_helper::preload_from_record($user);
+
+        if ($user->lastaccess) {
+            $lastaccess = format_time(time() - $user->lastaccess, $datestring);
+        } else {
+            $lastaccess = $strnever;
         }
 
-        if ($matchcount > 0) {
-            $usersprinted = array();
-            foreach ($userlist as $user) {
-                if (in_array($user->id, $usersprinted)) { // Prevent duplicates by r.hidden - MDL-13935.
-                    continue;
-                }
-                $usersprinted[] = $user->id; // Add new user to the array of users printed.
-
-                context_helper::preload_from_record($user);
-
-                $context = context_course::instance($course->id);
-                $usercontext = context_user::instance($user->id);
-
-                $countries = get_string_manager()->get_list_of_countries();
-
-                // Get the hidden field list.
-                if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
-                    $hiddenfields = array();
-                } else {
-                    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
-                }
-                $table = new html_table();
-                $table->attributes['class'] = 'userinfobox';
-
-                $row = new html_table_row();
-                $row->cells[0] = new html_table_cell();
-                $row->cells[0]->attributes['class'] = 'left side';
-
-                $row->cells[0]->text = $OUTPUT->user_picture($user, array('size' => 100, 'courseid' => $course->id));
-                $row->cells[1] = new html_table_cell();
-                $row->cells[1]->attributes['class'] = 'content';
-
-                $row->cells[1]->text = $OUTPUT->container(fullname($user, has_capability('moodle/site:viewfullnames', $context)), 'username');
-                $row->cells[1]->text .= $OUTPUT->container_start('info');
-
-                if (!empty($user->role)) {
-                    $row->cells[1]->text .= get_string('role').get_string('labelsep', 'langconfig').$user->role.'<br />';
-                }
-                if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
-                            in_array('email', $extrafields) or ($user->id == $USER->id)) {
-                    $row->cells[1]->text .= get_string('email').get_string('labelsep', 'langconfig').html_writer::link("mailto:$user->email", $user->email) . '<br />';
-                }
-                foreach ($extrafields as $field) {
-                    if ($field === 'email') {
-                        // Skip email because it was displayed with different logic above
-                        // because this page is intended for students too.
-                        continue;
-                    }
-                    $row->cells[1]->text .= get_user_field_name($field) .
-                            get_string('labelsep', 'langconfig') . s($user->{$field}) . '<br />';
-                }
-                if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
-                    $row->cells[1]->text .= get_string('city').get_string('labelsep', 'langconfig');
-                    if ($user->city && !isset($hiddenfields['city'])) {
-                        $row->cells[1]->text .= $user->city;
-                    }
-                    if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
-                        if ($user->city && !isset($hiddenfields['city'])) {
-                            $row->cells[1]->text .= ', ';
-                        }
-                        $row->cells[1]->text .= $countries[$user->country];
-                    }
-                    $row->cells[1]->text .= '<br />';
-                }
-
-                if (!isset($hiddenfields['lastaccess'])) {
-                    if ($user->lastaccess) {
-                        $row->cells[1]->text .= get_string('lastaccess').get_string('labelsep', 'langconfig').userdate($user->lastaccess);
-                        $row->cells[1]->text .= '&nbsp; ('. format_time(time() - $user->lastaccess, $datestring) .')';
-                    } else {
-                        $row->cells[1]->text .= get_string('lastaccess').get_string('labelsep', 'langconfig').get_string('never');
-                    }
-                }
-
-                $row->cells[1]->text .= $OUTPUT->container_end();
-
-                $row->cells[2] = new html_table_cell();
-                $row->cells[2]->attributes['class'] = 'links';
-                $row->cells[2]->text = '';
-
-                $links = array();
-
-                if ($CFG->enableblogs && ($CFG->bloglevel != BLOG_USER_LEVEL || $USER->id == $user->id)) {
-                    $links[] = html_writer::link(new moodle_url('/blog/index.php?userid='.$user->id), get_string('blogs', 'blog'));
-                }
-
-                if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $context) || has_capability('moodle/notes:view', $context))) {
-                    $links[] = html_writer::link(new moodle_url('/notes/index.php?course=' . $course->id. '&user='.$user->id), get_string('notes', 'notes'));
-                }
-
-                if (has_capability('moodle/site:viewreports', $context) or has_capability('moodle/user:viewuseractivitiesreport', $usercontext)) {
-                    $links[] = html_writer::link(new moodle_url('/course/user.php?id='. $course->id .'&user='. $user->id), get_string('activity'));
-                }
-
-                if ($USER->id != $user->id && !\core\session\manager::is_loggedinas() && has_capability('moodle/user:loginas', $context) && !is_siteadmin($user->id)) {
-                    $links[] = html_writer::link(new moodle_url('/course/loginas.php?id='. $course->id .'&user='. $user->id .'&sesskey='. sesskey()), get_string('loginas'));
-                }
-
-                $links[] = html_writer::link(new moodle_url('/user/view.php?id='. $user->id .'&course='. $course->id), get_string('fullprofile') . '...');
-
-                $row->cells[2]->text .= implode('', $links);
-
-                if ($bulkoperations) {
-                    if ($selectall) {
-                        $checked = 'checked="true"';
-                    } else {
-                        $checked = '';
-                    }
-                    $row->cells[2]->text .= '<br /><input type="checkbox" class="usercheckbox" name="user'.$user->id.'" ' .$checked .'/> ';
-                }
-                $table->data = array($row);
-                echo html_writer::table($table);
-            }
+        if (empty($user->country)) {
+            $country = '';
 
         } else {
-            echo $OUTPUT->heading(get_string('nothingtodisplay'));
+            if ($countrysort) {
+                $country = '('.$user->country.') '.$countries[$user->country];
+            } else {
+                $country = $countries[$user->country];
+            }
         }
-    }
 
-} else {
-    $countrysort = (strpos($sort, 'country') !== false);
-    $timeformat = get_string('strftimedate');
+        $usercontext = context_user::instance($user->id);
 
-
-    if ($userlist) {
-
-        $usersprinted = array();
-        foreach ($userlist as $user) {
-            if (in_array($user->id, $usersprinted)) { // Prevent duplicates by r.hidden - MDL-13935.
-                continue;
-            }
-            $usersprinted[] = $user->id; // Add new user to the array of users printed.
-
-            context_helper::preload_from_record($user);
-
-            if ($user->lastaccess) {
-                $lastaccess = format_time(time() - $user->lastaccess, $datestring);
-            } else {
-                $lastaccess = $strnever;
-            }
-
-            if (empty($user->country)) {
-                $country = '';
-
-            } else {
-                if ($countrysort) {
-                    $country = '('.$user->country.') '.$countries[$user->country];
-                } else {
-                    $country = $countries[$user->country];
-                }
-            }
-
-            $usercontext = context_user::instance($user->id);
-
-            if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext))) {
-                $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
-            } else {
-                $profilelink = '<strong>'.fullname($user).'</strong>';
-            }
-
-            $data = array();
-            if ($bulkoperations) {
-                if ($selectall) {
-                    $checked = 'checked="true"';
-                } else {
-                    $checked = '';
-                }
-                $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" ' . $checked .'/>';
-            }
-            $data[] = $OUTPUT->user_picture($user, array('size' => 35, 'courseid' => $course->id));
-            $data[] = $profilelink;
-
-            if ($mode === MODE_BRIEF) {
-                foreach ($extrafields as $field) {
-                    $data[] = $user->{$field};
-                }
-            }
-            if ($mode === MODE_BRIEF && !isset($hiddenfields['city'])) {
-                $data[] = $user->city;
-            }
-            if ($mode === MODE_BRIEF && !isset($hiddenfields['country'])) {
-                $data[] = $country;
-            }
-            if (!isset($hiddenfields['lastaccess'])) {
-                $data[] = $lastaccess;
-            }
-
-            $table->add_data($data);
+        if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext))) {
+            $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
+        } else {
+            $profilelink = '<strong>'.fullname($user).'</strong>';
         }
+
+        $data = array();
+        if ($bulkoperations) {
+            if ($selectall) {
+                $checked = 'checked="true"';
+            } else {
+                $checked = '';
+            }
+            $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" ' . $checked .'/>';
+        }
+        $data[] = $OUTPUT->user_picture($user, array('size' => 35, 'courseid' => $course->id));
+        $data[] = $profilelink;
+
+        foreach ($extrafields as $field) {
+            $data[] = $user->{$field};
+        }
+
+        if (!isset($hiddenfields['city'])) {
+            $data[] = $user->city;
+        }
+        if (!isset($hiddenfields['country'])) {
+            $data[] = $country;
+        }
+        if (!isset($hiddenfields['lastaccess'])) {
+            $data[] = $lastaccess;
+        }
+
+        $table->add_data($data);
     }
-
-    $table->print_html();
-
 }
+
+$table->print_html();
 
 $perpageurl = clone($baseurl);
 $perpageurl->remove_params('perpage');
