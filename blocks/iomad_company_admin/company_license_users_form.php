@@ -318,18 +318,24 @@ class company_license_users_form extends moodleform {
             }
         }
 
-        $removeall = false;
+        $removeall = false;;
         $remove = false;
+        $licensestounassign = array();
+        $licenserecords = array();
+
         if (optional_param('removeall', false, PARAM_BOOL) && confirm_sesskey()) {
             $search = optional_param('currentlyenrolledusers_searchtext', '', PARAM_RAW);
             // Process incoming allocations.
             $potentialusers = $this->currentusers->find_users($search);
-            $licensestounassign = array_pop($potentialusers);
+            $licenserecords = array_pop($potentialusers);
             $removeall = true;
         }
         if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
-            $licensestounassign = $this->currentusers->get_selected_users();
+            $licenserecords = $this->currentusers->get_selected_users();
             $remove = true;
+        }
+        foreach($licenserecords as $licenserecord) {
+            $licensestounassign[$licenserecord->licenseid] = $licenserecord->licenseid;
         }
 
         // Process incoming unallocations.
@@ -339,7 +345,7 @@ class company_license_users_form extends moodleform {
             if (!empty($licensestounassign)) {
                 foreach ($licensestounassign as $unassignid) {
                     foreach($courses as $courseid) {
-                        $licensedata = $DB->get_record('companylicense_users',array('userid' => $unassignid->id, 'licensecourseid' => $courseid, 'licenseid' => $this->license->id), '*', MUST_EXIST);
+                        $licensedata = $DB->get_record('companylicense_users' ,array('id' => $unassignid), '*', MUST_EXIST);
     
                         // Check the userid is valid.
                         if (!company::check_valid_user($this->selectedcompany, $licensedata->userid, $this->departmentid)) {
@@ -347,7 +353,7 @@ class company_license_users_form extends moodleform {
                         }
     
                         if (!$licensedata->isusing) {
-                            $DB->delete_records('companylicense_users', array('userid' => $unassignid->id, 'licensecourseid' => $courseid, 'licenseid' => $this->license->id));
+                            $DB->delete_records('companylicense_users', array('id' => $unassignid));
     
                             // Create an event.
                             $eventother = array('licenseid' => $this->license->id,
