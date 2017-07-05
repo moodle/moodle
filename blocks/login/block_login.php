@@ -119,7 +119,9 @@ class block_login extends block_base {
                 $this->content->text .= '<h6>' . get_string('potentialidps', 'auth') . '</h6>';
                 $this->content->text .= '<div class="potentialidplist">';
                 foreach ($potentialidps as $idp) {
-                    $this->content->text .= '<div class="potentialidp"><a href="' . $idp['url']->out() . '" title="' . s($idp['name']) . '">';
+                    $this->content->text .= '<div class="potentialidp">';
+                    $this->content->text .= '<a class="btn btn-default btn-block" ';
+                    $this->content->text .= 'href="' . $idp['url']->out() . '" title="' . s($idp['name']) . '">';
                     $this->content->text .= $OUTPUT->render($idp['icon'], $idp['name']) . s($idp['name']) . '</a></div>';
                 }
                 $this->content->text .= '</div>';
