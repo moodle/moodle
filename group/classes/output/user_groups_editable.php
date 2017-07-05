@@ -92,7 +92,11 @@ class user_groups_editable extends \core\output\inplace_editable {
             $listofgroups[] = format_string($this->coursegroups[$id]->name, true, ['context' => $this->context]);
         }
 
-        $this->displayvalue = implode($listofgroups, ', ');
+        if (!empty($listofgroups)) {
+            $this->displayvalue = implode($listofgroups, ', ');
+        } else {
+            $this->displayvalue = get_string('groupsnone');
+        }
         return parent::export_for_template($output);
     }
 
