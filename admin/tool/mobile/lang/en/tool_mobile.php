@@ -63,15 +63,15 @@ $string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins
 $string['mainmenu'] = 'Main menu';
 $string['mobileapp'] = 'Mobile app';
 $string['mobileappconnected'] = 'Mobile app connected';
-$string['mobileappenabled'] = 'This site has mobile app access enabled. You can use mobile app to access the content of your courses and much more. Click <a href="{$a}">here</a> for more information';
+$string['mobileappenabled'] = 'This site has mobile app access enabled.<br /><a href="{$a}">Download the mobile app</a>.';
 $string['mobileappearance'] = 'Mobile appearance';
 $string['mobileauthentication'] = 'Mobile authentication';
 $string['mobilecssurl'] = 'CSS';
 $string['mobilefeatures'] = 'Mobile features';
 $string['mobilesettings'] = 'Mobile settings';
 $string['pluginname'] = 'Moodle Mobile tools';
-$string['setuplink'] = 'Mobile setup link';
-$string['setuplink_desc'] = 'Link to documentation page to help users setup their mobile app.';
+$string['setuplink'] = 'App download page';
+$string['setuplink_desc'] = 'URL of page with links to download the mobile app from the App Store and Google Play.';
 $string['smartappbanners'] = 'App Banners';
 $string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';
 $string['remoteaddons'] = 'Remote add-ons';
