@@ -88,7 +88,7 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
         $this->_generateId();
 
         $this->setElements([
-            $this->createFormElement('text', 'filetypes', '', [
+            $this->createFormElement('text', 'filetypes', $this->getLabel(), [
                 'id' => $this->getAttribute('id'),
             ]),
 
