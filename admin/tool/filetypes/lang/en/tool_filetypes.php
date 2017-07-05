@@ -31,7 +31,7 @@ $string['delete_confirmation'] = 'Are you absolutely sure you want to remove <st
 $string['deletea'] = 'Delete {$a}';
 $string['deletefiletypes'] = 'Delete a file type';
 $string['description'] = 'Custom description';
-$string['description_help'] = 'Simple file type description, e.g. &lsquo;Kindle ebook&rsquo;. If your site supports multiple languages and uses the multi-language filter, you can enter multi-language tags in this field to supply a description in different languages.';
+$string['description_help'] = 'Simple file type description, e.g. \'Kindle ebook\'. If your site supports multiple languages and uses the multi-language filter, you can enter multi-language tags in this field to supply a description in different languages.';
 $string['descriptiontype'] = 'Description type';
 $string['descriptiontype_help'] = 'There are three possible ways to specify a description.
 
@@ -49,15 +49,15 @@ $string['error_defaulticon'] = 'Another file extension with the same MIME type i
 $string['error_extension'] = 'The file type extension <strong>{$a}</strong> already exists or is invalid. File extensions must be unique and must not contain special characters.';
 $string['error_notfound'] = 'The file type with extension {$a} cannot be found.';
 $string['extension'] = 'Extension';
-$string['extension_help'] = 'File name extension without the dot, e.g. &lsquo;mobi&rsquo;';
+$string['extension_help'] = 'File name extension without the dot, e.g. \'mobi\'';
 $string['groups'] = 'Type groups';
-$string['groups_help'] = 'Optional list of file type groups that this type belongs to. These are generic categories such as &lsquo;document&rsquo; and &lsquo;image&rsquo;.';
+$string['groups_help'] = 'Optional list of file type groups that this type belongs to. These are generic categories such as \'document\' and \'image\'.';
 $string['icon'] = 'File icon';
 $string['icon_help'] = 'Icon filename.
 
 The list of icons is taken from the /pix/f directory inside your Moodle installation. You can add custom icons to this folder if required.';
 $string['mimetype'] = 'MIME type';
-$string['mimetype_help'] = 'MIME type associated with this file type, e.g. &lsquo;application/x-mobipocket-ebook&rsquo;';
+$string['mimetype_help'] = 'MIME type associated with this file type, e.g. \'application/x-mobipocket-ebook\'';
 $string['pluginname'] = 'File types';
 $string['revert'] = 'Restore {$a} to Moodle defaults';
 $string['revert_confirmation'] = 'Are you sure you want to restore <strong>.{$a}</strong> to Moodle defaults, discarding your changes?';
