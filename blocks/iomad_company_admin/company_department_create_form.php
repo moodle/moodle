@@ -104,7 +104,7 @@ class department_display_form extends company_moodleform {
         // This is getting hidden anyway, so no need for label
         $mform->addElement('select', 'deptid', ' ',
                             $departmentslist, array('class' => 'iomad_department_select'));
-        $mform->disabledIf('deptid', 'action', 'eq', 1);
+        //$mform->disabledIf('deptid', 'action', 'eq', 1);
 
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'create',
@@ -151,7 +151,7 @@ class department_edit_form extends company_moodleform {
         $company = new company($this->selectedcompany);
         $departmentslist = company::get_all_departments($company->id);
         $departmenttree = company::get_all_departments_raw($company->id);
-        $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
+        $treehtml = $this->output->department_tree($departmenttree, $this->chosenid);
         $department = company::get_departmentbyid($this->departmentid);
 
         // Then show the fields about where this block appears.
@@ -168,16 +168,15 @@ class department_edit_form extends company_moodleform {
         $mform->setType('action', PARAM_INT);
 
         // Display department select html (create only)
-        if ($this->action == 0) {
+        //if ($this->action == 0) {
             $mform->addElement('html', '<p>' . get_string('parentdepartment', 'block_iomad_company_admin') . '</p>');
             $mform->addElement('html', $treehtml);
-        }
+        //}
 
         // This is getting hidden anyway, so no need for label
         $mform->addElement('select', 'deptid', ' ',
                             $departmentslist, array('class' => 'iomad_department_select'));
-        $mform->disabledIf('deptid', 'action', 'eq', 1);
-
+        
         $mform->addElement('text', 'fullname',
                             get_string('fullnamedepartment', 'block_iomad_company_admin'),
                             'maxlength = "254" size = "50"');
@@ -216,6 +215,8 @@ $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $departmentid = optional_param('deptid', 0, PARAM_INT);
 $deleteids = optional_param_array('departmentids', null, PARAM_INT);
 $createnew = optional_param('createnew', 0, PARAM_INT);
+$deleteid = optional_param('deleteid', 0, PARAM_INT);
+$confirm = optional_param('confirm', null, PARAM_ALPHANUM);
 
 $context = context_system::instance();
 require_login();
@@ -250,25 +251,40 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
-// Javascript for fancy select.
-// Parameter is name of proper select form element. 
-$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid'));
-
+// Set up the initial forms.
 $mform = new department_display_form($PAGE->url, $companyid, $departmentid, $output);
 $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output);
+
+// Delete any valid departments.
+if ($deleteid && confirm_sesskey() && $confirm == md5($deleteid)) {
+    // Get the list of department ids which are to be removed..
+    if (!empty($deleteid)) {
+        // Check if department has already been removed.
+        if (company::check_valid_department($companyid, $deleteid)) {
+            // If not delete it and its sub departments moving users to
+            // $departmentid or the company parent id if not set (==0).
+            company::delete_department_recursive($deleteid, $deleteid);
+            redirect($linkurl);
+        }
+    }
+}
 
 if ($mform->is_cancelled()) {
     redirect($companylist);
 
 } else if ($data = $mform->get_data()) {
     if (isset($data->create)) {
+        // Javascript for fancy select.
+        // Parameter is name of proper select form element. 
+        $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', '', $departmentid));
+
         if (!empty($deleteids)) {
             $chosenid = $deleteids['0'];
         } else {
             $chosenid = 0;
         }
-        $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output, $chosenid);
-        $editform->set_data(array('deptid' => $chosenid));
+        $editform = new department_edit_form($PAGE->url, $companyid, 0, $output, $departmentid);
+        $editform->set_data(array('deptid' => $departmentid));
         echo $output->header();
         // Check the department is valid.
         if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -286,31 +302,25 @@ if ($mform->is_cancelled()) {
         if (empty($departmentid)) {
             echo get_string('departmentnoselect', 'block_iomad_company_admin');
         }
-        // Get the list of department ids which are to be removed..
-        if (!empty($departmentid)) {
-            // Check if department has already been removed.
-            if (company::check_valid_department($companyid, $departmentid)) {
-                // If not delete it and its sub departments moving users to
-                // $departmentid or the company parent id if not set (==0).
-                company::delete_department_recursive($departmentid, $departmentid);
-            }
-        }
-        $mform = new department_display_form($PAGE->url, $companyid, $departmentid, $output);
-        // Redisplay the form.
+
         echo $output->header();
-        $mform->display();
+        $departmentinfo = $DB->get_record('department', array('id' => $departmentid), '*', MUST_EXIST);
+        echo $output->heading(get_string('deletedepartment', 'block_iomad_company_admin'));
+        $optionsyes = array('deleteid' => $departmentid, 'confirm' => md5($departmentid), 'sesskey' => sesskey());
+        echo $output->confirm(get_string('deletedepartmentcheckfull', 'block_iomad_company_admin', "'$departmentinfo->name'"),
+                              new moodle_url('company_department_create_form.php', $optionsyes), 'company_department_create_form.php');
         echo $output->footer();
         die;
-
     } else if (isset($data->edit)) {
         // Editing an existing department.
         if (!empty($departmentid)) {
             $departmentrecord = $DB->get_record('department', array('id' => $departmentid));
-            $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output, 0, 1);
+            $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output, $departmentrecord->parent, 1);
             $editform->set_data(array('departmentid' => $departmentrecord->id,
                                       'fullname' => $departmentrecord->name,
                                       'shortname' => $departmentrecord->shortname,
-                                      'chosenid' => $departmentid));
+                                      'deptid' => $departmentrecord->parent));
+            $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', '', $departmentrecord->parent));
             echo $output->header();
 
             // Check the department is valid.
@@ -322,6 +332,10 @@ if ($mform->is_cancelled()) {
 
             echo $output->footer();
         } else {
+            // Javascript for fancy select.
+            // Parameter is name of proper select form element. 
+            $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', '', $departmentid));
+
             echo $output->header();
             // Check the department is valid.
             if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -336,23 +350,25 @@ if ($mform->is_cancelled()) {
 
     }
 } else if ($createdata = $editform->get_data()) {
-
     // Create or update the department.
-    if (!$createdata->chosenid) {
+    if (!$createdata->action) {
         // We are creating a new department.
-        company::create_department($createdata->chosenid,
+        company::create_department($createdata->departmentid,
                                    $companyid,
                                    $createdata->fullname,
                                    $createdata->shortname,
-                                   $departmentid);
+                                   $createdata->deptid);
     } else {
         // We are editing a current department.
         company::create_department($createdata->departmentid,
                                    $companyid,
                                    $createdata->fullname,
                                    $createdata->shortname,
-                                   $departmentid);
+                                   $createdata->deptid);
     }
+    // Javascript for fancy select.
+    // Parameter is name of proper select form element. 
+    $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', '', $departmentid));
 
     $mform = new department_display_form($PAGE->url, $companyid, $departmentid, $output);
     // Redisplay the form.
@@ -368,9 +384,11 @@ if ($mform->is_cancelled()) {
     echo $output->footer();
 
 } else {
+    // Javascript for fancy select.
+    // Parameter is name of proper select form element. 
+    $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', '', $departmentid));
 
     echo $output->header();
-
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');

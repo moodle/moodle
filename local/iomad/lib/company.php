@@ -1197,17 +1197,19 @@ class company {
     public static function create_department($departmentid, $companyid, $fullname,
                                       $shortname, $parentid=0) {
         global $DB;
-
         $newdepartment = array();
-        if (!$parentid) {
+        if (!empty($departmentid)) {
+            if ($departmentid == $parentid) {
+                return;
+            }
             $newdepartment['id'] = $departmentid;
-        } else {
+        }
+        if ($parentid) {
             $newdepartment['parent'] = $parentid;
         }
         $newdepartment['company'] = $companyid;
         $newdepartment['name'] = $fullname;
         $newdepartment['shortname'] = $shortname;
-
         if (isset($newdepartment['id'])) {
             // We are editing a current department.
             if (!$DB->update_record('department', $newdepartment)) {
@@ -1219,6 +1221,7 @@ class company {
                 print_error(get_string('cantinsertdepartmentdb', 'block_iomad_company_admin'));
             }
         }
+
         return true;
     }
 
