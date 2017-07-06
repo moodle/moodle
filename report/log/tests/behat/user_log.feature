@@ -38,7 +38,7 @@ Feature: User can view activity log.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I follow "Student 1"
+    And I click on "img.userpicture" "css_element" in the "Student 1" "table_row"
     When I follow "Today's logs"
     And I should see "Assignment: Test assignment name"
     And I follow "Student 1"
@@ -54,7 +54,7 @@ Feature: User can view activity log.
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I follow "Student 1"
+    And I click on "img.userpicture" "css_element" in the "Student 1" "table_row"
     When I follow "Today's logs"
     And I should see "No log reader enabled"
     And I follow "Student 1"
