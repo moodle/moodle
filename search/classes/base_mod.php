@@ -49,6 +49,15 @@ abstract class base_mod extends base {
     protected static $levels = [CONTEXT_MODULE];
 
     /**
+     * Returns the module name.
+     *
+     * @return string
+     */
+    protected function get_module_name() {
+        return substr($this->componentname, 4);
+    }
+
+    /**
      * Gets the course module for the required instanceid + modulename.
      *
      * The returned data depends on the logged user, when calling this through
@@ -75,7 +84,6 @@ abstract class base_mod extends base {
 
         // Nothing found.
         throw new \dml_missing_record_exception($modulename);
-
-        return $cm;
     }
+
 }

@@ -274,13 +274,48 @@ abstract class base {
     abstract public function get_document($record, $options = array());
 
     /**
-     * Add any files to the document that should be indexed.
+     * Return the context info required to index files for
+     * this search area.
+     *
+     * Should be onerridden by each search area.
+     *
+     * @return array
+     */
+    public function get_search_fileareas() {
+        $fileareas = array();
+
+        return $fileareas;
+    }
+
+    /**
+     * Files related to the current document are attached,
+     * to the document object ready for indexing by
+     * Global Search.
+     *
+     * The default implementation retrieves all files for
+     * the file areas returned by get_search_fileareas().
+     * If you need to filter files to specific items per
+     * file area, you will need to override this method
+     * and explicitly provide the items.
      *
      * @param document $document The current document
      * @return void
      */
     public function attach_files($document) {
-        return;
+        $fileareas = $this->get_search_fileareas();
+        $contextid = $document->get('contextid');
+        $component = $this->get_component_name();
+        $itemid = $document->get('itemid');
+
+        foreach ($fileareas as $filearea) {
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($contextid, $component, $filearea, $itemid, '', false);
+
+            foreach ($files as $file) {
+                $document->add_stored_file($file);
+            }
+        }
+
     }
 
     /**

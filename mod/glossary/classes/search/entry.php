@@ -193,4 +193,25 @@ class entry extends \core_search\base_mod {
         }
         return $this->entriesdata[$entryid];
     }
+
+    /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
+
+    /**
+     * Return the context info required to index files for
+     * this search area.
+     *
+     * @return array
+     */
+    public function get_search_fileareas() {
+        $fileareas = array('attachment', 'entry'); // Fileareas.
+
+        return $fileareas;
+    }
 }

@@ -124,4 +124,41 @@ class mycourse extends \core_search\base {
     public function get_context_url(\core_search\document $doc) {
         return new \moodle_url('/course/view.php', array('id' => $doc->get('courseid')));
     }
+
+    /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
+
+    /**
+     * Return the context info required to index files for
+     * this search area.
+     *
+     * Should be overridden by each search area.
+     *
+     * @return array
+     */
+    public function get_search_fileareas() {
+        $fileareas = array(
+                'overviewfiles',
+                'summary'// Fileareas.
+        );
+
+        return $fileareas;
+    }
+
+    /**
+     * Returns the moodle component name.
+     *
+     * It might be the plugin name (whole frankenstyle name) or the core subsystem name.
+     *
+     * @return string
+     */
+    public function get_component_name() {
+        return 'course';
+    }
 }

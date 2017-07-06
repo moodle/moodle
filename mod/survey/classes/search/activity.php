@@ -36,6 +36,15 @@ defined('MOODLE_INTERNAL') || die();
 class activity extends \core_search\base_activity {
 
     /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
+
+    /**
      * Returns recordset containing required data for indexing activities.
      *
      * Overwritten to discard records with courseid = 0.
