@@ -3187,6 +3187,18 @@ class CAS_Client
                 false/*$no_response*/, true/*$bad_response*/, $text_response
             );
             $result = false;
+	} else if ( $tree_response->getElementsByTagName("authenticationFailure")->length != 0) {
+            // authentication failed, extract the error code and message and throw exception
+            $auth_fail_list = $tree_response
+                ->getElementsByTagName("authenticationFailure");
+            throw new CAS_AuthenticationException(
+                $this, 'Ticket not validated', $validate_url,
+                false/*$no_response*/, false/*$bad_response*/,
+                $text_response,
+                $auth_fail_list->item(0)->getAttribute('code')/*$err_code*/,
+                trim($auth_fail_list->item(0)->nodeValue)/*$err_msg*/
+            );
+            $result = false;
         } else if ($tree_response->getElementsByTagName("authenticationSuccess")->length != 0) {
             // authentication succeded, extract the user name
             $success_elements = $tree_response
@@ -3227,18 +3239,6 @@ class CAS_Client
                     $result = true;
                 }
             }
-        } else if ( $tree_response->getElementsByTagName("authenticationFailure")->length != 0) {
-            // authentication succeded, extract the error code and message
-            $auth_fail_list = $tree_response
-                ->getElementsByTagName("authenticationFailure");
-            throw new CAS_AuthenticationException(
-                $this, 'Ticket not validated', $validate_url,
-                false/*$no_response*/, false/*$bad_response*/,
-                $text_response,
-                $auth_fail_list->item(0)->getAttribute('code')/*$err_code*/,
-                trim($auth_fail_list->item(0)->nodeValue)/*$err_msg*/
-            );
-            $result = false;
         } else {
             throw new CAS_AuthenticationException(
                 $this, 'Ticket not validated', $validate_url,
