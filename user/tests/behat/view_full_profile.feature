@@ -42,7 +42,6 @@ Feature: Access to full profiles of users
     And I follow "Full profile"
     And I should see "First access to site"
 
-  @javascript
   Scenario: Viewing full profiles with forceloginforprofiles off
     Given the following config values are set as admin:
       |  forceloginforprofiles | 0 |
@@ -65,7 +64,6 @@ Feature: Access to full profiles of users
     And I follow "Full profile"
     Then I should see "First access to site"
 
-  @javascript
   Scenario: Viewing own full profile
     Given I log in as "student1"
     When I follow "Profile" in the user menu
