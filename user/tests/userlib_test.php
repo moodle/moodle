@@ -867,7 +867,7 @@ class core_userliblib_testcase extends advanced_testcase {
 
         // Now, when we perform the following search we should only return 2 users. Users who belong to
         // the group and have the name 'searchforthis' and have also accessed the site in the last day.
-        $userset = user_get_participants(SITEID, $group->id, $accesssince + 1, 0, 'searchforthis');
+        $userset = user_get_participants(SITEID, $group->id, $accesssince + 1, 0, 'searchforthis', '', array(), 'ORDER BY id ASC');
 
         $this->assertEquals($user1->id, $userset->current()->id);
         $userset->next();
