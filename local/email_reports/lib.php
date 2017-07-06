@@ -95,8 +95,10 @@ function email_reports_cron() {
                                   WHERE userid = :userid
                                   AND courseid = :courseid
                                   AND templatename = :templatename
-                                  AND SENT IS NULL
-                                  OR sent > " . $runtime . " - " . $compuser->notifyperiod . " * 86400",
+                                  AND (
+                                     sent IS NULL
+                                  OR sent > " . $runtime . " - " . $compuser->notifyperiod . " * 86400
+                                  )",
                                   array('userid' => $compuser->userid,
                                         'courseid' => $compuser->courseid,
                                         'templatename' => 'completion_warn_user'))) {
