@@ -197,7 +197,7 @@ class inplace_editable implements templatable, renderable {
      * Sets the element type to be an autocomplete field
      *
      * @param array $options associative array with dropdown options
-     * @param array $attributes associative array with attributes for autoselect field. @see AMD module core/form-autocomplete
+     * @param array $attributes associative array with attributes for autoselect field. See AMD module core/form-autocomplete.
      * @return self
      */
     public function set_type_autocomplete($options, $attributes) {

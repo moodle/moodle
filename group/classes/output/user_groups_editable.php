@@ -24,11 +24,12 @@
 
 namespace core_group\output;
 
-use context_system;
 use context_course;
 use core_user;
 use core_external;
-use moodle_exception;
+use coding_exception;
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/group/lib.php');
 
@@ -49,7 +50,11 @@ class user_groups_editable extends \core\output\inplace_editable {
     /**
      * Constructor.
      *
-     * @param \stdClass|core_tag_tag $tag
+     * @param \stdClass $course The current course
+     * @param \context $context The course context
+     * @param \stdClass $user The current user
+     * @param \stdClass[] $coursegroups The list of course groups from groups_get_all_groups with membership.
+     * @param string $value JSON Encoded list of group ids.
      */
     public function __construct($course, $context, $user, $coursegroups, $value) {
         // Check capabilities to get editable value.
@@ -83,7 +88,7 @@ class user_groups_editable extends \core\output\inplace_editable {
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param \renderer_base $output
-     * @return \stdClass
+     * @return array
      */
     public function export_for_template(\renderer_base $output) {
         $listofgroups = [];

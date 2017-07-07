@@ -76,7 +76,7 @@ class participants_table extends \table_sql {
     protected $countries;
 
     /**
-     * @var stdClass[] The list of groups with membership info for the course.
+     * @var \stdClass[] The list of groups with membership info for the course.
      */
     protected $groups;
 
@@ -86,12 +86,12 @@ class participants_table extends \table_sql {
     protected $extrafields;
 
     /**
-     * @var stdClass The course details.
+     * @var \stdClass The course details.
      */
     protected $course;
 
     /**
-     * @var context The course context.
+     * @var \context The course context.
      */
     protected $context;
 
@@ -115,7 +115,6 @@ class participants_table extends \table_sql {
         // Get the context.
         $this->course = get_course($courseid);
         $context = \context_course::instance($courseid, MUST_EXIST);
-        $this->context = $context;
 
         // Define the headers and columns.
         $headers = [];
@@ -136,7 +135,6 @@ class participants_table extends \table_sql {
         }
 
         // Load and cache the course groupinfo.
-        $this->groups = groups_get_all_groups($courseid, 0, 0, 'g.*', true);
         // Add column for groups.
         $headers[] = get_string('groups');
         $columns[] = 'groups';
@@ -173,7 +171,6 @@ class participants_table extends \table_sql {
         $this->set_attribute('id', 'participants');
 
         // Set the variables we need to use later.
-        $this->courseid = $courseid;
         $this->currentgroup = $currentgroup;
         $this->accesssince = $accesssince;
         $this->roleid = $roleid;
@@ -181,6 +178,8 @@ class participants_table extends \table_sql {
         $this->selectall = $selectall;
         $this->countries = get_string_manager()->get_list_of_countries();
         $this->extrafields = $extrafields;
+        $this->context = $context;
+        $this->groups = groups_get_all_groups($courseid, 0, 0, 'g.*', true);
     }
 
     /**
@@ -207,25 +206,25 @@ class participants_table extends \table_sql {
     public function col_fullname($data) {
         global $OUTPUT;
 
-        return $OUTPUT->user_picture($data, array('size' => 35, 'courseid' => $this->courseid)) . ' ' . fullname($data);
+        return $OUTPUT->user_picture($data, array('size' => 35, 'courseid' => $this->course->id)) . ' ' . fullname($user);
     }
 
     /**
      * Generate the groups column.
      *
-     * @param \stdClass $row
+     * @param \stdClass $data
      * @return string
      */
-    public function col_groups($user) {
+    public function col_groups($data) {
         global $OUTPUT;
 
         $usergroups = [];
         foreach ($this->groups as $coursegroup) {
-            if (isset($coursegroup->members[$user->id])) {
+            if (isset($coursegroup->members[$data->id])) {
                 $usergroups[] = $coursegroup->id;
             }
         }
-        $editable = new \core_group\output\user_groups_editable($this->course, $this->context, $user, $this->groups, $usergroups);
+        $editable = new \core_group\output\user_groups_editable($this->course, $this->context, $data, $this->groups, $usergroups);
         return $OUTPUT->render_from_template('core/inplace_editable', $editable->export_for_template($OUTPUT));
     }
 
@@ -295,7 +294,7 @@ class participants_table extends \table_sql {
     public function query_db($pagesize, $useinitialsbar = true) {
         list($twhere, $tparams) = $this->get_sql_where();
 
-        $total = user_get_total_participants($this->courseid, $this->currentgroup, $this->accesssince,
+        $total = user_get_total_participants($this->course->id, $this->currentgroup, $this->accesssince,
             $this->roleid, $this->search, $twhere, $tparams);
 
         $this->pagesize($pagesize, $total);
@@ -305,7 +304,7 @@ class participants_table extends \table_sql {
             $sort = 'ORDER BY ' . $sort;
         }
 
-        $this->rawdata = user_get_participants($this->courseid, $this->currentgroup, $this->accesssince,
+        $this->rawdata = user_get_participants($this->course->id, $this->currentgroup, $this->accesssince,
             $this->roleid, $this->search, $twhere, $tparams, $sort, $this->get_page_start(),
             $this->get_page_size());
 

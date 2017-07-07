@@ -1,4 +1,4 @@
-@core_enrol @core_group @doit
+@core_enrol @core_group
 Feature: Users can be added to multiple groups at once
   In order to manage group membership effectively
   As a user
