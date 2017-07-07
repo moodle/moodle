@@ -2934,10 +2934,14 @@ class assign {
 
                 if ($this->is_blind_marking()) {
                     $prefix = str_replace('_', ' ', $groupname . get_string('participant', 'assign'));
-                    $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid));
+                    $prefix = clean_filename($prefix . '-' . $this->get_uniqueid_for_user($userid));
                 } else {
-                    $prefix = str_replace('_', ' ', $groupname . $student->lastname . '_' . $student->firstname);
-                    $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid));
+                    if ( $groupname ) {
+                        $prefix = $groupname . '-' . $student->lastname . '_' . $student->firstname);
+                    } else {
+                        $prefix = $student->lastname . '_' . $student->firstname);
+                    }
+                    $prefix = clean_filename($prefix . '-' . $this->get_uniqueid_for_user($userid));
                 }
 
                 if ($submission) {
