@@ -264,7 +264,7 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
     }
 
     if ($withmembers) {
-        $memberselect = $DB->sql_concat("COALESCE(ugm.userid, ugm.userid, 'NULL')", "':'", 'g.id') . ' AS ugmid, ugm.userid, ';
+        $memberselect = $DB->sql_concat("COALESCE(ugm.userid, 0)", "':'", 'g.id') . ' AS ugmid, ugm.userid, ';
         $memberjoin = ' LEFT JOIN {groups_members} ugm ON ugm.groupid = g.id ';
     }
 
