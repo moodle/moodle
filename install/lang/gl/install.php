@@ -84,7 +84,7 @@ $string['pathssubdataroot'] = '<p>Necesitase un lugar no que Moodle poida gardar
 <p>Se non existe o instalador tentará crealo.</p>';
 $string['pathssubdirroot'] = '<p>Ruta completa do directorio de instalación de Moodle.</p>';
 $string['pathssubwwwroot'] = 'Enderezo web completo para acceder a Moodle.
-Non é posíbel acceder a Moodle empregando enderezos múltiplos.
+Non é posíbel acceder a Moodle empregando enderezos múltiples.
 Se o seu sitio ten varios enderezos públicos debe configurar encamiñamentos permanentes en todos eles, agás neste.
 Se o seu sitio web é accesíbel tanto desde unha Intranet como desde Internet, escriba aquí o enderezo público e configure o DNS para que os usuarios da Intranet poidan empregar tamén o enderezo público.
 Se o enderezo non é correcto, cambie o URL no seu navegador para reiniciar a instalación cun valor diferente.';
