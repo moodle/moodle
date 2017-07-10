@@ -2887,5 +2887,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017061301.00);
     }
 
+    if ($oldversion < 2017071000.00) {
+
+        // Define field requireconfirmation to be added to oauth2_issuer.
+        $table = new xmldb_table('oauth2_issuer');
+        $field = new xmldb_field('requireconfirmation', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '1', 'sortorder');
+
+        // Conditionally launch add field requireconfirmation.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017071000.00);
+    }
+
     return true;
 }
