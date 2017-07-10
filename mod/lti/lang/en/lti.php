@@ -243,6 +243,7 @@ $string['lti:addinstance'] = 'Add new external tool activities';
 $string['lti:addcoursetool'] = 'Add course-specific tool configurations';
 $string['lti:grade'] = 'View grades returned by the external tool';
 $string['lti:manage'] = 'Be an Instructor when the tool is launched';
+$string['lti:admin'] = 'Be an Admininstrator when the tool is launched';
 $string['lti:requesttooladd'] = 'Request a tool is configured site-wide';
 $string['lti:view'] = 'Launch external tool activities';
 $string['ltisettings'] = 'LTI settings';
