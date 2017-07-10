@@ -2937,9 +2937,9 @@ class assign {
                     $prefix = clean_filename($prefix . '-' . $this->get_uniqueid_for_user($userid));
                 } else {
                     if ( $groupname ) {
-                        $prefix = $groupname . '-' . $student->lastname . '_' . $student->firstname);
+                        $prefix = $groupname . '-' . $student->lastname . '_' . $student->firstname;
                     } else {
-                        $prefix = $student->lastname . '_' . $student->firstname);
+                        $prefix = $student->lastname . '_' . $student->firstname;
                     }
                     $prefix = clean_filename($prefix . '-' . $this->get_uniqueid_for_user($userid));
                 }
