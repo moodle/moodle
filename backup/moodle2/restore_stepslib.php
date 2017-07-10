@@ -3937,6 +3937,14 @@ class restore_block_instance_structure_step extends restore_structure_step {
             $data->configdata = base64_encode(serialize((object)$configdata));
         }
 
+        // Set timecreated, timemodified if not included (older backup).
+        if (empty($data->timecreated)) {
+            $data->timecreated = time();
+        }
+        if (empty($data->timemodified)) {
+            $data->timemodified = $data->timecreated;
+        }
+
         // Create the block instance
         $newitemid = $DB->insert_record('block_instances', $data);
         // Save the mapping (with restorefiles support)

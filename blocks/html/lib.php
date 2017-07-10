@@ -104,7 +104,8 @@ function block_html_global_db_replace($search, $replace) {
         $config = unserialize(base64_decode($instance->configdata));
         if (isset($config->text) and is_string($config->text)) {
             $config->text = str_replace($search, $replace, $config->text);
-            $DB->set_field('block_instances', 'configdata', base64_encode(serialize($config)), array('id' => $instance->id));
+            $DB->update_record('block_instances', ['id' => $instance->id,
+                    'configdata' => base64_encode(serialize($config)), 'timemodified' => time()]);
         }
     }
     $instances->close();

@@ -255,6 +255,105 @@ class search_manager_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests the block support in get_search_user_accesses.
+     *
+     * @return void
+     */
+    public function test_search_user_accesses_blocks() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create course and add HTML block.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course();
+        $context1 = \context_course::instance($course1->id);
+        $page = new \moodle_page();
+        $page->set_context($context1);
+        $page->set_course($course1);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('course-view');
+        $page->blocks->load_blocks();
+        $page->blocks->add_block_at_end_of_default_region('html');
+
+        // Create another course with HTML blocks only in some weird page or a module page (not
+        // yet supported, so both these blocks will be ignored).
+        $course2 = $generator->create_course();
+        $context2 = \context_course::instance($course2->id);
+        $page = new \moodle_page();
+        $page->set_context($context2);
+        $page->set_course($course2);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('bogus-page');
+        $page->blocks->load_blocks();
+        $page->blocks->add_block_at_end_of_default_region('html');
+
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id));
+        $forumcontext = context_module::instance($forum->cmid);
+        $page = new \moodle_page();
+        $page->set_context($forumcontext);
+        $page->set_course($course2);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('mod-forum-view');
+        $page->blocks->load_blocks();
+        $page->blocks->add_block_at_end_of_default_region('html');
+
+        // The third course has 2 HTML blocks.
+        $course3 = $generator->create_course();
+        $context3 = \context_course::instance($course3->id);
+        $page = new \moodle_page();
+        $page->set_context($context3);
+        $page->set_course($course3);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('course-view');
+        $page->blocks->load_blocks();
+        $page->blocks->add_block_at_end_of_default_region('html');
+        $page->blocks->add_block_at_end_of_default_region('html');
+
+        // Student 1 belongs to all 3 courses.
+        $student1 = $generator->create_user();
+        $generator->enrol_user($student1->id, $course1->id, 'student');
+        $generator->enrol_user($student1->id, $course2->id, 'student');
+        $generator->enrol_user($student1->id, $course3->id, 'student');
+
+        // Student 2 belongs only to course 2.
+        $student2 = $generator->create_user();
+        $generator->enrol_user($student2->id, $course2->id, 'student');
+
+        // And the third student is only in course 3.
+        $student3 = $generator->create_user();
+        $generator->enrol_user($student3->id, $course3->id, 'student');
+
+        $search = testable_core_search::instance();
+        $search->add_core_search_areas();
+
+        // Admin gets 'true' result to function regardless of blocks.
+        $this->setAdminUser();
+        $this->assertTrue($search->get_areas_user_accesses());
+
+        // Student 1 gets all 3 block contexts.
+        $this->setUser($student1);
+        $contexts = $search->get_areas_user_accesses();
+        $this->assertArrayHasKey('block_html-content', $contexts);
+        $this->assertCount(3, $contexts['block_html-content']);
+
+        // Student 2 does not get any blocks.
+        $this->setUser($student2);
+        $contexts = $search->get_areas_user_accesses();
+        $this->assertArrayNotHasKey('block_html-content', $contexts);
+
+        // Student 3 gets only two of them.
+        $this->setUser($student3);
+        $contexts = $search->get_areas_user_accesses();
+        $this->assertArrayHasKey('block_html-content', $contexts);
+        $this->assertCount(2, $contexts['block_html-content']);
+
+        // A course limited search for student 1 is the same as the student 3 search.
+        $this->setUser($student1);
+        $limitedcontexts = $search->get_areas_user_accesses([$course3->id]);
+        $this->assertEquals($contexts['block_html-content'], $limitedcontexts['block_html-content']);
+    }
+
+    /**
      * test_is_search_area
      *
      * @return void

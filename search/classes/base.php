@@ -270,7 +270,7 @@ abstract class base {
      * Can the current user see the document.
      *
      * @param int $id The internal search area entity id.
-     * @return bool True if the user can see it, false otherwise
+     * @return int manager:ACCESS_xx constant
      */
     abstract public function check_access($id);
 
