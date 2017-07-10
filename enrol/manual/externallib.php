@@ -58,7 +58,8 @@ class enrol_manual_external extends external_api {
                                         'courseid' => new external_value(PARAM_INT, 'The course to enrol the user role in'),
                                         'timestart' => new external_value(PARAM_INT, 'Timestamp when the enrolment start', VALUE_OPTIONAL),
                                         'timeend' => new external_value(PARAM_INT, 'Timestamp when the enrolment end', VALUE_OPTIONAL),
-                                        'suspend' => new external_value(PARAM_INT, 'set to 1 to suspend the enrolment', VALUE_OPTIONAL)
+                                        'suspend' => new external_value(PARAM_BOOL, 'set to 1 to suspend the enrolment', VALUE_OPTIONAL),
+                                        'recovergrades' => new external_value(PARAM_BOOL, 'set to 1 to recover grades', VALUE_OPTIONAL)
                                     )
                             )
                     )
@@ -139,7 +140,7 @@ class enrol_manual_external extends external_api {
                     ENROL_USER_SUSPENDED : ENROL_USER_ACTIVE;
 
             $enrol->enrol_user($instance, $enrolment['userid'], $enrolment['roleid'],
-                    $enrolment['timestart'], $enrolment['timeend'], $enrolment['status']);
+                    $enrolment['timestart'], $enrolment['timeend'], $enrolment['status'], $enrolment['recovergrades']);
 
         }
 
