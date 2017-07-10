@@ -399,6 +399,7 @@ final class core_media_manager {
      * @return array Array of 1 or more moodle_url objects
      */
     public function split_alternatives($combinedurl, &$width, &$height) {
+        global $CFG;
         $urls = explode('#', $combinedurl);
         $width = 0;
         $height = 0;
@@ -426,8 +427,9 @@ final class core_media_manager {
             }
 
             // Clean up url.
-            $url = clean_param($url, PARAM_URL);
-            if (empty($url)) {
+            $url = fix_utf8($url);
+            include_once($CFG->dirroot . '/lib/validateurlsyntax.php');
+            if (!validateUrlSyntax($url, 's?H?S?F?R?E?u-P-a?I?p?f?q?r?')) {
                 continue;
             }
 
