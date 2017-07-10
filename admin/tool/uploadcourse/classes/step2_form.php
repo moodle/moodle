@@ -166,6 +166,13 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->addHelpButton('defaults[groupmodeforce]', 'groupmodeforce', 'group');
         $mform->setDefault('defaults[groupmodeforce]', $courseconfig->groupmodeforce);
 
+        // Completion tracking.
+        if (!empty($CFG->enablecompletion)) {
+            $mform->addElement('selectyesno', 'defaults[enablecompletion]', get_string('enablecompletion', 'completion'));
+            $mform->setDefault('defaults[enablecompletion]', $courseconfig->enablecompletion);
+            $mform->addHelpButton('defaults[enablecompletion]', 'enablecompletion', 'completion');
+        }
+
         // Hidden fields.
         $mform->addElement('hidden', 'importid');
         $mform->setType('importid', PARAM_INT);
