@@ -155,6 +155,7 @@ $string['linkexternal'] = 'Link external';
 $string['listview'] = 'View as list';
 $string['loading'] = 'Loading...';
 $string['login'] = 'Login to your account';
+$string['logintoaccount'] = 'Login to your {$a} account';
 $string['logout'] = 'Logout';
 $string['lostsource'] = 'Error. Source is missing. {$a}';
 $string['makefileinternal'] = 'Make a copy of the file';

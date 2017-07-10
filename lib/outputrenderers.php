@@ -89,7 +89,7 @@ class renderer_base {
             $loader = new \core\output\mustache_filesystem_loader();
             $stringhelper = new \core\output\mustache_string_helper();
             $quotehelper = new \core\output\mustache_quote_helper();
-            $jshelper = new \core\output\mustache_javascript_helper($this->page->requires);
+            $jshelper = new \core\output\mustache_javascript_helper($this->page);
             $pixhelper = new \core\output\mustache_pix_helper($this);
             $shortentexthelper = new \core\output\mustache_shorten_text_helper();
             $userdatehelper = new \core\output\mustache_user_date_helper();
@@ -4055,16 +4055,16 @@ EOD;
 
     public function context_header($headerinfo = null, $headinglevel = 1) {
         global $DB, $USER, $CFG;
+        require_once($CFG->dirroot . '/user/lib.php');
         $context = $this->page->context;
-        // Make sure to use the heading if it has been set.
-        if (isset($headerinfo['heading'])) {
-            $heading = $headerinfo['heading'];
-        } else {
-            $heading = null;
-        }
+        $heading = null;
         $imagedata = null;
         $subheader = null;
         $userbuttons = null;
+        // Make sure to use the heading if it has been set.
+        if (isset($headerinfo['heading'])) {
+            $heading = $headerinfo['heading'];
+        }
         // The user context currently has images and buttons. Other contexts may follow.
         if (isset($headerinfo['user']) || $context->contextlevel == CONTEXT_USER) {
             if (isset($headerinfo['user'])) {
@@ -4073,47 +4073,60 @@ EOD;
                 // Look up the user information if it is not supplied.
                 $user = $DB->get_record('user', array('id' => $context->instanceid));
             }
+
             // If the user context is set, then use that for capability checks.
             if (isset($headerinfo['usercontext'])) {
                 $context = $headerinfo['usercontext'];
             }
-            // Use the user's full name if the heading isn't set.
-            if (!isset($heading)) {
-                $heading = fullname($user);
+
+            // Only provide user information if the user is the current user, or a user which the current user can view.
+            $canviewdetails = false;
+            if ($user->id == $USER->id || user_can_view_profile($user)) {
+                $canviewdetails = true;
             }
 
-            $imagedata = $this->user_picture($user, array('size' => 100));
-            // Check to see if we should be displaying a message button.
-            if (!empty($CFG->messaging) && $USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
-                $iscontact = !empty(message_get_contact($user->id));
-                $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
-                $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
-                $contactimage = $iscontact ? 'removecontact' : 'addcontact';
-                $userbuttons = array(
-                    'messages' => array(
-                        'buttontype' => 'message',
-                        'title' => get_string('message', 'message'),
-                        'url' => new moodle_url('/message/index.php', array('id' => $user->id)),
-                        'image' => 'message',
-                        'linkattributes' => array('role' => 'button'),
-                        'page' => $this->page
-                    ),
-                    'togglecontact' => array(
-                        'buttontype' => 'togglecontact',
-                        'title' => get_string($contacttitle, 'message'),
-                        'url' => new moodle_url('/message/index.php', array(
-                                'user1' => $USER->id,
-                                'user2' => $user->id,
-                                $contacturlaction => $user->id,
-                                'sesskey' => sesskey())
-                        ),
-                        'image' => $contactimage,
-                        'linkattributes' => \core_message\helper::togglecontact_link_params($user, $iscontact),
-                        'page' => $this->page
-                    ),
-                );
+            if ($canviewdetails) {
+                // Use the user's full name if the heading isn't set.
+                if (!isset($heading)) {
+                    $heading = fullname($user);
+                }
 
-                $this->page->requires->string_for_js('changesmadereallygoaway', 'moodle');
+                $imagedata = $this->user_picture($user, array('size' => 100));
+
+                // Check to see if we should be displaying a message button.
+                if (!empty($CFG->messaging) && $USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
+                    $iscontact = !empty(message_get_contact($user->id));
+                    $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
+                    $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
+                    $contactimage = $iscontact ? 'removecontact' : 'addcontact';
+                    $userbuttons = array(
+                        'messages' => array(
+                            'buttontype' => 'message',
+                            'title' => get_string('message', 'message'),
+                            'url' => new moodle_url('/message/index.php', array('id' => $user->id)),
+                            'image' => 'message',
+                            'linkattributes' => array('role' => 'button'),
+                            'page' => $this->page
+                        ),
+                        'togglecontact' => array(
+                            'buttontype' => 'togglecontact',
+                            'title' => get_string($contacttitle, 'message'),
+                            'url' => new moodle_url('/message/index.php', array(
+                                    'user1' => $USER->id,
+                                    'user2' => $user->id,
+                                    $contacturlaction => $user->id,
+                                    'sesskey' => sesskey())
+                            ),
+                            'image' => $contactimage,
+                            'linkattributes' => \core_message\helper::togglecontact_link_params($user, $iscontact),
+                            'page' => $this->page
+                        ),
+                    );
+
+                    $this->page->requires->string_for_js('changesmadereallygoaway', 'moodle');
+                }
+            } else {
+                $heading = null;
             }
         }
 

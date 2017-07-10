@@ -26,6 +26,7 @@
 require(__DIR__.'/../../config.php');
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 require_once($CFG->dirroot.'/rating/lib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 
 $courseid  = optional_param('course', null, PARAM_INT); // Limit the posts to just this course
 $userid = optional_param('id', $USER->id, PARAM_INT);        // User id whose posts we want to view
@@ -134,29 +135,8 @@ if (empty($result->posts)) {
     // In either case we need to decide whether we can show personal information
     // about the requested user to the current user so we will execute some checks
 
-    // First check the obvious, its the current user, a specific course has been
-    // provided (require_login has been called), or they have a course contact role.
-    // True to any of those and the current user can see the details of the
-    // requested user.
-    $canviewuser = ($iscurrentuser || $isspecificcourse || empty($CFG->forceloginforprofiles) || has_coursecontact_role($userid));
-    // Next we'll check the caps, if the current user has the view details and a
-    // specific course has been requested, or if they have the view all details
-    $canviewuser = ($canviewuser || ($isspecificcourse && has_capability('moodle/user:viewdetails', $coursecontext) || has_capability('moodle/user:viewalldetails', $usercontext)));
-
-    // If none of the above was true the next step is to check a shared relation
-    // through some course
-    if (!$canviewuser) {
-        // Get all of the courses that the users have in common
-        $sharedcourses = enrol_get_shared_courses($USER->id, $user->id, true);
-        foreach ($sharedcourses as $sharedcourse) {
-            // Check the view cap within the course context
-            if (has_capability('moodle/user:viewdetails', context_course::instance($sharedcourse->id))) {
-                $canviewuser = true;
-                break;
-            }
-        }
-        unset($sharedcourses);
-    }
+    // TODO - Remove extra cap check once MDL-59172 is resolved.
+    $canviewuser = user_can_view_profile($user, null, $usercontext) || has_capability('moodle/user:viewalldetails', $usercontext);
 
     // Prepare the page title
     $pagetitle = get_string('noposts', 'mod_forum');
@@ -237,8 +217,10 @@ if (empty($result->posts)) {
     $PAGE->set_title($pagetitle);
     if ($isspecificcourse) {
         $PAGE->set_heading($pageheading);
-    } else {
+    } else if ($canviewuser) {
         $PAGE->set_heading(fullname($user));
+    } else {
+        $PAGE->set_heading($SITE->fullname);
     }
     echo $OUTPUT->header();
     if (!$isspecificcourse) {

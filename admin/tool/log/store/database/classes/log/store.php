@@ -88,6 +88,7 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
         $dboptions['dbport'] = $this->get_config('dbport', '');
         $dboptions['dbschema'] = $this->get_config('dbschema', '');
         $dboptions['dbcollation'] = $this->get_config('dbcollation', '');
+        $dboptions['dbhandlesoptions'] = $this->get_config('dbhandlesoptions', false);
         try {
             $db->connect($this->get_config('dbhost'), $this->get_config('dbuser'), $this->get_config('dbpass'),
                 $this->get_config('dbname'), false, $dboptions);
