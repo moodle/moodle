@@ -67,7 +67,7 @@ function theme_get_sub_revision_for_theme($themename) {
 
     if (empty($CFG->themedesignermode)) {
         $pluginname = "theme_{$themename}";
-        $revision = get_config($pluginname, 'themerev');
+        $revision = during_initial_install() ? null : get_config($pluginname, 'themerev');
 
         if (empty($revision)) {
             // This only happens during install. It doesn't matter what themerev we use as long as it's positive.
