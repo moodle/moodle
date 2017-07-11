@@ -25,3 +25,13 @@ Feature: There is a form element allowing to select filetypes
     Given I set the field "Choose from all file types" to ".png .gif .jpg"
     When I press "Save changes"
     Then the field "Choose from all file types" matches value ".png .gif .jpg"
+
+  Scenario: File types are validated to be known, unless the field allows unknown be provided
+    Given I set the field "Choose from all file types" to ".pdf .doesnoexist"
+    And I set the field "Choose from a limited set" to "doc docx pdf rtf"
+    And I set the field "Unknown file types are allowed here" to ".neverminditdoesnotexist"
+    When I press "Save changes"
+    Then I should see "Unknown file types: .doesnoexist"
+    And I should see "These file types are not allowed here: .doc, .docx, .rtf"
+    And I should see "It is not allowed to select 'All file types' here"
+    And I should not see "Unknown file types: .neverminditdoesnotexist"
