@@ -176,4 +176,5 @@ if (!empty($CFG->enablecalendarexport)) {
 echo $OUTPUT->container_end();
 echo html_writer::end_tag('div');
 echo $renderer->complete_layout();
+$PAGE->requires->js_call_amd('core_calendar/calendar', 'init');
 echo $OUTPUT->footer();

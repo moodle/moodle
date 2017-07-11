@@ -115,6 +115,16 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_calendar_get_calendar_event_by_id' => array(
+        'classname' => 'core_calendar_external',
+        'methodname' => 'get_calendar_event_by_id',
+        'description' => 'Get calendar event by id',
+        'classpath' => 'calendar/externallib.php',
+        'type' => 'read',
+        'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
         'methodname' => 'add_cohort_members',
