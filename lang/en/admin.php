@@ -611,6 +611,7 @@ $string['indexinginfo'] = 'The recommended way to index your site\'s contents is
 $string['installhijacked'] = 'Installation must be finished from the original IP address, sorry.';
 $string['installsessionerror'] = 'Can not initialise PHP session, please verify that your browser accepts cookies.';
 $string['intlrecommended'] = 'Intl extension is used to improve internationalization support, such as locale aware sorting.';
+$string['intlrequired'] = 'Intl extension is required to improve internationalization support, such as locale aware sorting and international domain names.';
 $string['invalidsection'] = 'Invalid section.';
 $string['invaliduserchangeme'] = 'Username "changeme" is reserved -- you cannot create an account with it.';
 $string['ipblocked'] = 'This site is not available currently.';
