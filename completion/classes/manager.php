@@ -320,6 +320,9 @@ class manager {
                     $needreset[] = $cm->id;
                 }
             }
+            // Update completion calendar events.
+            $completionexpected = ($data['completionexpected']) ? $data['completionexpected'] : null;
+            \core_completion\api::update_completion_date_event($cm->id, $cm->modname, $cm->instance, $completionexpected);
         }
         if ($updated) {
             // Now that modules are fully updated, also update completion data if required.

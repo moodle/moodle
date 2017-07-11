@@ -142,6 +142,9 @@ function workshop_add_instance(stdclass $workshop) {
 
     // create calendar events
     workshop_calendar_update($workshop, $workshop->coursemodule);
+    if (!empty($workshop->completionexpected)) {
+        \core_completion\api::update_completion_date_event($cmid, 'workshop', $workshop->id, $workshop->completionexpected);
+    }
 
     return $workshop->id;
 }
@@ -219,6 +222,8 @@ function workshop_update_instance(stdclass $workshop) {
 
     // update calendar events
     workshop_calendar_update($workshop, $workshop->coursemodule);
+    $completionexpected = (!empty($workshop->completionexpected)) ? $workshop->completionexpected : null;
+    \core_completion\api::update_completion_date_event($workshop->coursemodule, 'workshop', $workshop->id, $completionexpected);
 
     return true;
 }
@@ -299,10 +304,28 @@ function workshop_delete_instance($id) {
  * only workshop events belonging to the course specified are checked.
  *
  * @param  integer $courseid The Course ID.
+ * @param int|stdClass $instance workshop module instance or ID.
+ * @param int|stdClass $cm Course module object or ID.
  * @return bool Returns true if the calendar events were successfully updated.
  */
-function workshop_refresh_events($courseid = 0) {
+function workshop_refresh_events($courseid = 0, $instance = null, $cm = null) {
     global $DB;
+
+    // If we have instance information then we can just update the one event instead of updating all events.
+    if (isset($instance)) {
+        if (!is_object($instance)) {
+            $instance = $DB->get_record('workshop', array('id' => $instance), '*', MUST_EXIST);
+        }
+        if (isset($cm)) {
+            if (!is_object($cm)) {
+                $cm = (object)array('id' => $cm);
+            }
+        } else {
+            $cm = get_coursemodule_from_instance('workshop', $instance->id);
+        }
+        workshop_calendar_update($instance, $cm->id);
+        return true;
+    }
 
     if ($courseid) {
         // Make sure that the course id is numeric.
