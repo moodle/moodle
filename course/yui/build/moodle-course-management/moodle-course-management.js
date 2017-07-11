@@ -1350,10 +1350,14 @@ Category.prototype = {
         node.addClass('collapsed').setAttribute('aria-expanded', 'false');
         action.setAttribute('data-action', 'expand').setAttrs({
             title: M.util.get_string('expandcategory', 'moodle', this.getName())
-        }).one('img').setAttrs({
-            src: M.util.image_url('t/switch_plus', 'moodle'),
-            alt: M.util.get_string('expand', 'moodle')
         });
+
+        require(['core/templates', 'core/notification'], function(Templates, Notification) {
+            Templates.renderPix('t/switch_plus', 'core', M.util.get_string('expand', 'moodle')).then(function(html) {
+                action.set('innerHTML', html);
+            }).fail(Notification.exception);
+        });
+
         if (ul) {
             ul.setAttribute('aria-hidden', 'true');
         }
