@@ -25,22 +25,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_enrol_self_upgrade($oldversion) {
-    global $CFG;
-
-    // Moodle v2.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v3.0.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG, $DB;
 
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
     if ($oldversion < 2016052301) {
-        global $DB;
         // Get roles with manager archetype.
         $managerroles = get_archetype_roles('manager');
         if (!empty($managerroles)) {

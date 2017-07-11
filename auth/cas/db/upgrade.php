@@ -30,28 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool result
  */
 function xmldb_auth_cas_upgrade($oldversion) {
-    global $CFG, $DB;
-
-    // Moodle v2.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2014111001) {
-        // From now on the default LDAP objectClass setting for AD has been changed, from 'user' to '(samaccounttype=805306368)'.
-        if (is_enabled_auth('cas')
-                && ($DB->get_field('config_plugins', 'value', array('name' => 'user_type', 'plugin' => 'auth/cas')) === 'ad')
-                && ($DB->get_field('config_plugins', 'value', array('name' => 'objectclass', 'plugin' => 'auth/cas')) === '')) {
-            // Save the backwards-compatible default setting.
-            set_config('objectclass', 'user', 'auth/cas');
-        }
-
-        upgrade_plugin_savepoint(true, 2014111001, 'auth', 'cas');
-    }
-
-    // Moodle v2.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v3.0.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG;
 
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.

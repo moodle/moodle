@@ -14,7 +14,7 @@ language: php
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
     - 7.1
-    - 5.6
+    - 7.0
 
 addons:
   postgresql: "9.3"
@@ -65,11 +65,7 @@ matrix:
         # Exclude it on all versions except for 7.1
 
         - env: DB=mysqli   TASK=PHPUNIT
-          php: 5.6
-
-        # Moodle 2.7 is not compatible with PHP 7 for the upgrade test.
-        - env: DB=pgsql    TASK=UPGRADE
-          php: 7.1
+          php: 7.0
 
 cache:
     directories:
@@ -233,9 +229,9 @@ before_script:
         # We need the official upstream.
         git remote add upstream https://github.com/moodle/moodle.git;
 
-        # Checkout 27 STABLE branch.
-        git fetch upstream MOODLE_27_STABLE;
-        git checkout MOODLE_27_STABLE;
+        # Checkout 30 STABLE branch (the first version compatible with PHP 7.x)
+        git fetch upstream MOODLE_30_STABLE;
+        git checkout MOODLE_30_STABLE;
 
         # Perform the upgrade
         php admin/cli/install_database.php --agree-license --adminpass=Password --adminemail=admin@example.com --fullname="Upgrade test" --shortname=Upgrade;
