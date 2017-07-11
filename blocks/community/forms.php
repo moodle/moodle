@@ -109,6 +109,13 @@ class community_hub_search_form extends moodleform {
             $mform->addElement('static', 'errorhub', '', $error);
         }
 
+        // Hubdirectory returns old URL for the moodle.net hub, substitute it.
+        foreach ($hubs as $key => $hub) {
+            if ($hub['url'] === HUB_OLDMOODLEORGHUBURL) {
+                $hubs[$key]['url'] = HUB_MOODLEORGHUBURL;
+            }
+        }
+
         //display list of registered on hub
         $registrationmanager = new registration_manager();
         $registeredhubs = $registrationmanager->get_registered_on_hubs();
