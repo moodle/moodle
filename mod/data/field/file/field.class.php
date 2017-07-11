@@ -26,13 +26,8 @@ class data_field_file extends data_field_base {
     var $type = 'file';
 
     function display_add_field($recordid = 0, $formdata = null) {
-        global $CFG, $DB, $OUTPUT, $PAGE, $USER;
+        global $DB, $OUTPUT, $PAGE;
 
-        $file        = false;
-        $content     = false;
-        $displayname = '';
-        $fs = get_file_storage();
-        $context = $PAGE->context;
         $itemid = null;
 
         // editing an existing database entry
@@ -40,27 +35,16 @@ class data_field_file extends data_field_base {
             $fieldname = 'field_' . $this->field->id . '_file';
             $itemid = clean_param($formdata->$fieldname, PARAM_INT);
         } else if ($recordid) {
-            if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-
-                file_prepare_draft_area($itemid, $this->context->id, 'mod_data', 'content', $content->id);
-
-                if (!empty($content->content)) {
-                    if ($file = $fs->get_file($this->context->id, 'mod_data', 'content', $content->id, '/', $content->content)) {
-                        $usercontext = context_user::instance($USER->id);
-                        if (!$files = $fs->get_area_files($usercontext->id, 'user', 'draft', $itemid, 'id DESC', false)) {
-                            return false;
-                        }
-                        if (empty($content->content1)) {
-                            // Print icon if file already exists
-                            $src = moodle_url::make_draftfile_url($itemid, '/', $file->get_filename());
-                            $displayname = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file), 'moodle', array('class' => 'icon')). '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
-
-                        } else {
-                            $displayname = 'no file added';
-                        }
-                    }
-                }
+            if (!$content = $DB->get_record('data_content', array('fieldid' => $this->field->id, 'recordid' => $recordid))) {
+                // Quickly make one now!
+                $content = new stdClass();
+                $content->fieldid  = $this->field->id;
+                $content->recordid = $recordid;
+                $id = $DB->insert_record('data_content', $content);
+                $content = $DB->get_record('data_content', array('id' => $id));
             }
+            file_prepare_draft_area($itemid, $this->context->id, 'mod_data', 'content', $content->id);
+
         } else {
             $itemid = file_get_unused_draft_itemid();
         }
@@ -167,15 +151,8 @@ class data_field_file extends data_field_base {
         global $CFG, $DB, $USER;
         $fs = get_file_storage();
 
-        if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-
-        // Quickly make one now!
-            $content = new stdClass();
-            $content->fieldid  = $this->field->id;
-            $content->recordid = $recordid;
-            $id = $DB->insert_record('data_content', $content);
-            $content = $DB->get_record('data_content', array('id'=>$id));
-        }
+        // Should always be available since it is set by display_add_field before initializing the draft area.
+        $content = $DB->get_record('data_content', array('fieldid' => $this->field->id, 'recordid' => $recordid));
 
         file_save_draft_area_files($value, $this->context->id, 'mod_data', 'content', $content->id);
 
