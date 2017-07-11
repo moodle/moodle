@@ -29,7 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$version  = 2017051501.03;              // 20170515      = branching date YYYYMMDD - do not modify!
+$version  = 2017051501.04;              // 20170515      = branching date YYYYMMDD - do not modify!
                                         //         RR    = release increments - 00 in DEV branches.
                                         //           .XX = incremental changes.
 
