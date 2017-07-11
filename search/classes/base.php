@@ -175,7 +175,8 @@ abstract class base {
         list($componentname, $varname) = $this->get_config_var_name();
 
         $config = [];
-        $settingnames = array('_enabled', '_indexingstart', '_indexingend', '_lastindexrun', '_docsignored', '_docsprocessed', '_recordsprocessed');
+        $settingnames = array('_enabled', '_indexingstart', '_indexingend', '_lastindexrun',
+                '_docsignored', '_docsprocessed', '_recordsprocessed', '_partial');
         foreach ($settingnames as $name) {
             $config[$varname . $name] = get_config($componentname, $varname . $name);
         }
@@ -207,6 +208,22 @@ abstract class base {
     public function set_enabled($isenabled) {
         list($componentname, $varname) = $this->get_config_var_name();
         return set_config($varname . '_enabled', $isenabled, $componentname);
+    }
+
+    /**
+     * Gets the length of time spent indexing this area (the last time it was indexed).
+     *
+     * @return int|bool Time in seconds spent indexing this area last time, false if never indexed
+     */
+    public function get_last_indexing_duration() {
+        list($componentname, $varname) = $this->get_config_var_name();
+        $start = get_config($componentname, $varname . '_indexingstart');
+        $end = get_config($componentname, $varname . '_indexingend');
+        if ($start && $end) {
+            return $end - $start;
+        } else {
+            return false;
+        }
     }
 
     /**
