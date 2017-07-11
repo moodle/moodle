@@ -2557,5 +2557,34 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016120503.09);
     }
 
+    if ($oldversion < 2016120504.04) {
+
+        // If the site was previously registered with http://hub.moodle.org change the registration to
+        // point to https://moodle.net - this is the correct hub address using https protocol.
+        $oldhuburl = "http://hub.moodle.org";
+        $newhuburl = "https://moodle.net";
+        $cleanoldhuburl = preg_replace('/[^A-Za-z0-9_-]/i', '', $oldhuburl);
+        $cleannewhuburl = preg_replace('/[^A-Za-z0-9_-]/i', '', $newhuburl);
+
+        // Update existing registration.
+        $DB->execute("UPDATE {registration_hubs} SET hubname = ?, huburl = ? WHERE huburl = ?",
+            ['Moodle.net', $newhuburl, $oldhuburl]);
+
+        // Update settings of existing registration.
+        $sqlnamelike = $DB->sql_like('name', '?');
+        $entries = $DB->get_records_sql("SELECT * FROM {config_plugins} where plugin=? and " . $sqlnamelike,
+            ['hub', '%' . $DB->sql_like_escape('_' . $cleanoldhuburl)]);
+        foreach ($entries as $entry) {
+            $newname = substr($entry->name, 0, -strlen($cleanoldhuburl)) . $cleannewhuburl;
+            $DB->update_record('config_plugins', ['id' => $entry->id, 'name' => $newname]);
+        }
+
+        // Update published courses.
+        $DB->execute('UPDATE {course_published} SET huburl = ? WHERE huburl = ?', [$newhuburl, $oldhuburl]);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016120504.04);
+    }
+
     return true;
 }
