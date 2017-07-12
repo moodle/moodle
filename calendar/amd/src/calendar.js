@@ -69,7 +69,13 @@ define(['jquery', 'core/ajax', 'core/str', 'core/templates', 'core/notification'
             }).then(function(eventdata) {
                 return modalPromise.done(function(modal) {
                     modal.setTitle(eventdata.name);
-                    modal.setBody(Templates.render('core_calendar/event_summary_body', eventdata));
+
+                    Templates.render(
+                        'core_calendar/event_summary_body',
+                        eventdata
+                    ).done(function(html, js) {
+                        Templates.replaceNodeContents(modal.getBody(), html, js);
+                    });
 
                     // Hide edit and delete buttons if I don't have permission.
                     if (eventdata.caneditevent == false) {
