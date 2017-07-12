@@ -100,7 +100,9 @@ if ($rev > 0 and $rev < (time() + 60 * 60)) {
             $js = file_get_contents($jsfile);
             if ($js === false) {
                 error_log('Failed to load JavaScript file ' . $jsfile);
-                $js = '/* Failed to load JavaScript file ' . $jsfile . '. */';
+                $js = "/* Failed to load JavaScript file {$jsfile}. */\n";
+                $content = $js . $content;
+                continue;
             }
             $js .= "\n";
             // Inject the module name into the define.
