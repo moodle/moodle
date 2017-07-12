@@ -42,7 +42,13 @@ Feature: File types of the submission and feedback attachments can be limitted
     And I set the following fields to these values:
       | Title              | Submission1           |
       | Submission content | See the attached file |
-    And I upload "mod/workshop/tests/fixtures/testable.php" file to "Attachment" filemanager
+    # We can't directly upload the invalid file here as the upload repository would throw an exception.
+    # So instead we try to trick the filemanager and bypass its checks, to be finally stopped by the
+    # form field validation.
+    And I upload "mod/workshop/tests/fixtures/moodlelogo.png" file to "Attachment" filemanager
+    And I follow "moodlelogo.png"
+    And I set the field "Name" to "testable.php"
+    And I press "Update"
     When I press "Save changes"
     Then I should see "Some files (testable.php) cannot be uploaded. Only file types image are allowed."
     # Remove the invalid file and attach an image instead.
