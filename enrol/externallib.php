@@ -453,7 +453,11 @@ class core_enrol_external extends external_api {
 
         $results = array();
         foreach ($users['users'] as $id => $user) {
-            if ($userdetails = user_get_user_details($user)) {
+            // Note: We pass the course here to validate that the current user can at least view user details in this course.
+            // The user we are looking at is not in this course yet though - but we only fetch the minimal set of
+            // user records, and the user has been validated to have course:enrolreview in this course. Otherwise
+            // there is no way to find users who aren't in the course in order to enrol them.
+            if ($userdetails = user_get_user_details($user, $course)) {
                 $results[] = $userdetails;
             }
         }
