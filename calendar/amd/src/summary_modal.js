@@ -21,11 +21,15 @@
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/notification', 'core/custom_interaction_events', 'core/modal', 'core/modal_registry'],
-    function($, Notification, CustomEvents, Modal, ModalRegistry) {
+define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_events', 'core/modal',
+    'core/modal_registry', 'core/modal_factory', 'core/modal_events', 'core_calendar/calendar_repository',
+    'core_calendar/calendar_events'],
+    function($, Str, Notification, CustomEvents, Modal, ModalRegistry, ModalFactory, ModalEvents, CalendarRepository,
+             CalendarEvents) {
 
     var registered = false;
     var SELECTORS = {
+        ROOT: "[data-region='summary-modal-container']",
         EDIT_BUTTON: '[data-action="edit"]',
         DELETE_BUTTON: '[data-action="delete"]',
         EVENT_LINK: '[data-action="event-link"]'
@@ -52,6 +56,38 @@ define(['jquery', 'core/notification', 'core/custom_interaction_events', 'core/m
     ModalEventSummary.prototype = Object.create(Modal.prototype);
     ModalEventSummary.prototype.constructor = ModalEventSummary;
 
+    /**
+     * Set up all of the event handling for the modal.
+     *
+     * @method registerEventListeners
+     */
+    ModalEventSummary.prototype.registerEventListeners = function() {
+        // Apply parent event listeners.
+        Modal.prototype.registerEventListeners.call(this);
+        var confirmPromise = ModalFactory.create({
+            type: ModalFactory.types.CONFIRM,
+        }, this.getFooter().find(SELECTORS.DELETE_BUTTON)).then(function(modal) {
+            Str.get_string('confirm').then(function(languagestring) {
+                modal.setTitle(languagestring);
+            }.bind(this)).catch(Notification.exception);
+            modal.getRoot().on(ModalEvents.yes, function() {
+                var eventId = this.getBody().find(SELECTORS.ROOT).attr('data-event-id');
+                CalendarRepository.deleteEvent(eventId).done(function() {
+                    modal.getRoot().trigger(CalendarEvents.deleted, eventId);
+                    window.location.reload();
+                }).fail(Notification.exception);
+            }.bind(this));
+            return modal;
+        }.bind(this));
+
+        this.getRoot().on(ModalEvents.bodyRendered, function() {
+            var eventTitle = this.getBody().find(SELECTORS.ROOT).attr('data-event-title');
+            confirmPromise.then(function(modal) {
+                modal.setBody(Str.get_string('confirmeventdelete', 'core_calendar', eventTitle));
+            });
+        }.bind(this));
+    };
+
     // Automatically register with the modal registry the first time this module is imported so that you can create modals
     // of this type using the modal factory.
     if (!registered) {
@@ -60,5 +96,4 @@ define(['jquery', 'core/notification', 'core/custom_interaction_events', 'core/m
     }
 
     return ModalEventSummary;
-
 });

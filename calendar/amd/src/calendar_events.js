@@ -16,24 +16,14 @@
 /**
  * Contain the events a modal can fire.
  *
- * @module     core/modal_events
- * @class      modal_events
- * @package    core
- * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
+ * @module     core_calendar/calendar_events
+ * @class      calendar_events
+ * @package    core_calendar
+ * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define([], function() {
     return {
-        // Default events.
-        shown: 'modal:shown',
-        hidden: 'modal:hidden',
-        destroyed: 'modal:destroyed',
-        bodyRendered: 'modal:bodyRendered',
-        // ModalSaveCancel events.
-        save: 'modal-save-cancel:save',
-        cancel: 'modal-save-cancel:cancel',
-        // ModalConfirm events.
-        yes: 'modal-confirm:yes',
-        no: 'modal-confirm:no',
+        deleted: 'calendar-events:deleted'
     };
 });

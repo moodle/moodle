@@ -24,6 +24,27 @@
  */
 define(['jquery', 'core/ajax'], function($, Ajax) {
 
+    /**
+     * Delete a calendar event.
+     *
+     * @method deleteEvent
+     * @param {int} eventId The event id.
+     * @return {promise} Resolved with requested calendar event
+     */
+    var deleteEvent = function(eventId) {
+
+        var request = {
+            methodname: 'core_calendar_delete_calendar_events',
+            args: {
+                events: [{
+                    eventid: eventId,
+                    repeat: 1
+                }]
+            }
+        };
+
+        return Ajax.call([request])[0];
+    };
 
     /**
      * Get a calendar event by id.
@@ -45,6 +66,7 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
     };
 
     return {
-        getEventById: getEventById
+        getEventById: getEventById,
+        deleteEvent: deleteEvent
     };
 });
