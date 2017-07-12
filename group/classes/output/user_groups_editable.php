@@ -118,7 +118,7 @@ class user_groups_editable extends \core\output\inplace_editable {
         // Return one of me.
         // Validate the inputs.
         list($courseid, $userid) = explode(':', $itemid, 2);
-        
+
         $courseid = clean_param($courseid, PARAM_INT);
         $userid = clean_param($userid, PARAM_INT);
         $groupids = json_decode($newvalue);
