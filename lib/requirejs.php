@@ -98,7 +98,7 @@ if ($rev > 0 and $rev < (time() + 60 * 60)) {
         $content = '';
         foreach ($jsfiles as $modulename => $jsfile) {
             $js = file_get_contents($jsfile);
-            if ($jsfile === false) {
+            if ($js === false) {
                 error_log('Failed to load JavaScript file ' . $jsfile);
                 $js = '/* Failed to load JavaScript file ' . $jsfile . '. */';
             }
