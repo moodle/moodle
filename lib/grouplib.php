@@ -194,9 +194,11 @@ function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSIN
  * @param mixed $userid optional user id or array of ids, returns only groups of the user.
  * @param int $groupingid optional returns only groups in the specified grouping.
  * @param string $fields
+ * @param bool $withmembers If true - this will return an extra field which is the list of userids that
+ *                          are members of this group.
  * @return array Returns an array of the group objects (userid field returned if array in $userid)
  */
-function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*') {
+function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*', $withmembers=false) {
     global $DB;
 
     // We need to check that we each field in the fields list belongs to the group table and that it has not being
@@ -219,7 +221,7 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
         }
     }
 
-    if (empty($userid) && $knownfields) {
+    if (empty($userid) && $knownfields && !$withmembers) {
         // We can use the cache.
         $data = groups_get_course_data($courseid);
         if (empty($groupingid)) {
@@ -239,13 +241,13 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
         // Yay! We could use the cache. One more query saved.
         return $groups;
     }
-
+    $memberselect = '';
+    $memberjoin = '';
 
     if (empty($userid)) {
         $userfrom  = "";
         $userwhere = "";
         $params = array();
-
     } else {
         list($usql, $params) = $DB->get_in_or_equal($userid);
         $userfrom  = ", {groups_members} gm";
@@ -261,12 +263,35 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
         $groupingwhere = "";
     }
 
+    if ($withmembers) {
+        $memberselect = $DB->sql_concat("COALESCE(ugm.userid, 0)", "':'", 'g.id') . ' AS ugmid, ugm.userid, ';
+        $memberjoin = ' LEFT JOIN {groups_members} ugm ON ugm.groupid = g.id ';
+    }
+
     array_unshift($params, $courseid);
 
-    return $DB->get_records_sql("SELECT $fields
-                                   FROM {groups} g $userfrom $groupingfrom
+    $results = $DB->get_records_sql("SELECT $memberselect $fields
+                                   FROM {groups} g $userfrom $groupingfrom $memberjoin
                                   WHERE g.courseid = ? $userwhere $groupingwhere
                                ORDER BY name ASC", $params);
+
+    if ($withmembers) {
+        // We need to post-process the results back into standard format.
+        $groups = [];
+        foreach ($results as $row) {
+            if (!isset($groups[$row->id])) {
+                $row->members = [$row->userid => $row->userid];
+                unset($row->userid);
+                unset($row->ugmid);
+                $groups[$row->id] = $row;
+            } else {
+                $groups[$row->id]->members[$row->userid] = $row->userid;
+            }
+        }
+        $results = $groups;
+    }
+
+    return $results;
 }
 
 

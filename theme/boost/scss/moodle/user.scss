@@ -28,6 +28,11 @@
     }
 }
 
+// This rule overrides the automatic no-overflow on the participants table. It kills the auto-complete.
+#participantsform .no-overflow {
+    overflow: visible;
+}
+
 .userprofile dl.list {
     // Copied from dl.row.
     > dd + dt {

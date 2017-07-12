@@ -84,6 +84,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:e/backward' => 'fa-undo',
             'core:e/bold' => 'fa-bold',
             'core:e/bullet_list' => 'fa-list-ul',
+            'core:e/cancel' => 'fa-times',
             'core:e/cell_props' => 'fa-info',
             'core:e/cite' => 'fa-quote-right',
             'core:e/cleanup_messy_code' => 'fa-eraser',

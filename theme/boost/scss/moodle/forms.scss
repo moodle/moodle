@@ -294,9 +294,10 @@ fieldset.coursesearchbox label {
     outline: none;
 }
 /** Undo some bootstrap things */
-.form-autocomplete-selection + .form-control {
+.form-autocomplete-selection + input.form-control {
     width: auto;
     display: inline-block;
+    vertical-align: middle;
 }
 
 .form-autocomplete-selection [data-active-selection=true] {

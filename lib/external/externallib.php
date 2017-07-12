@@ -442,7 +442,7 @@ class core_external extends external_api {
             array(
                 'component' => new external_value(PARAM_COMPONENT, 'component responsible for the update', VALUE_REQUIRED),
                 'itemtype' => new external_value(PARAM_NOTAGS, 'type of the updated item inside the component', VALUE_REQUIRED),
-                'itemid' => new external_value(PARAM_INT, 'identifier of the updated item', VALUE_REQUIRED),
+                'itemid' => new external_value(PARAM_RAW, 'identifier of the updated item', VALUE_REQUIRED),
                 'value' => new external_value(PARAM_RAW, 'new value', VALUE_REQUIRED),
             ));
     }
