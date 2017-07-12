@@ -719,6 +719,7 @@ class core_calendar_external extends external_api {
         // We need to get events asked for eventids.
         $event = calendar_get_events_by_id([$eventid]);
         $eventobj = calendar_event::load($eventid);
+        list($event[$eventid]->description, $event[$eventid]->format) = $eventobj->format_external_text();
         $event[$eventid]->caneditevent = calendar_edit_event_allowed($eventobj);
 
         return array('event' => $event[$eventid], 'warnings' => $warnings);
