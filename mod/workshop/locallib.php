@@ -2532,7 +2532,7 @@ class workshop {
         );
 
         $filetypesutil = new \core_form\filetypes_util();
-        $options['accepted_types'] = $filetypesutil->normalize_file_types($this->overallfeedbackfiletypes);
+        $options['accepted_types'] = $filetypesutil->normalize_file_types($this->submissionfiletypes);
 
         return $options;
     }
