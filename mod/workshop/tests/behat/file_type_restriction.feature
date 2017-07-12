@@ -112,9 +112,9 @@ Feature: File types of the submission and feedback attachments can be limitted
     And I press "Update"
     When I press "Save and close"
     Then I should see "Some files (renamed.png) cannot be uploaded. Only file types .php are allowed."
+    And I should not see "Assigned submissions to assess"
     # Finally make sure that allowed file gets uploaded.
     And I delete "renamed.png" from "Attachment" filemanager
     And I upload "mod/workshop/tests/fixtures/testable.php" file to "Attachment" filemanager
     And I press "Save and close"
     And I should see "Assigned submissions to assess"
-    And I should see "Re-assess"
