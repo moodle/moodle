@@ -106,10 +106,10 @@ class enrol_manual_enrol_users_form extends moodleform {
         $mform->addElement('cohort', 'cohortlist', get_string('selectcohorts', 'enrol_manual'), $options);
 
         $roles = get_assignable_roles($context);
-        $mform->addElement('select', 'role', get_string('assignrole', 'enrol_manual'), $roles);
+        $mform->addElement('select', 'roletoassign', get_string('assignrole', 'enrol_manual'), $roles);
         $keys = array_keys($roles);
         $defaultrole = end($keys);
-        $mform->setDefault('role', $defaultrole);
+        $mform->setDefault('roletoassign', $defaultrole);
 
         $mform->addAdvancedStatusElement('main');
 
