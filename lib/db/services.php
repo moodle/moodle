@@ -482,6 +482,14 @@ $functions = array(
         'capabilities' => 'moodle/course:viewparticipants',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_enrol_edit_user_enrolment' => array(
+        'classname' => 'core_enrol_external',
+        'methodname' => 'edit_user_enrolment',
+        'classpath' => 'enrol/externallib.php',
+        'description' => 'External function that updates a given user enrolment',
+        'type' => 'write',
+        'ajax' => true,
+    ),
     'core_fetch_notifications' => array(
         'classname' => 'core_external',
         'methodname' => 'fetch_notifications',
