@@ -66,6 +66,15 @@ class check_defaults extends XMLDBCheckAction {
                 // Get the default value for the field.
                 $xmldbdefault = $xmldbfield->getDefault();
 
+                // Char fields with not null currently have default '' when actually installed.
+                if ($xmldbdefault === null && $xmldbfield->getType() === XMLDB_TYPE_CHAR &&
+                        $xmldbfield->getNotNull()) {
+                    $xmldbdefault = '';
+                }
+                if ($xmldbdefault !== null) {
+                    $xmldbdefault = (string)$xmldbdefault;
+                }
+
                 // If the metadata for that column doesn't exist or 'id' field found, skip.
                 if (!isset($metacolumns[$xmldbfield->getName()]) or $xmldbfield->getName() == 'id') {
                     continue;
@@ -81,13 +90,14 @@ class check_defaults extends XMLDBCheckAction {
                 if ($metacolumn->has_default == 1) {
                     $physicaldefault = $metacolumn->default_value;
                 } else {
-                    $physicaldefault = '';
+                    $physicaldefault = null;
                 }
 
                 // There *is* a default and it's wrong.
-                if ($physicaldefault != $xmldbdefault) {
-                    $info = '('.$this->str['expected']." '$xmldbdefault', ".$this->str['actual'].
-                    " '$physicaldefault')";
+                if ($physicaldefault !== $xmldbdefault) {
+                    $xmldbtext = self::display_default($xmldbdefault);
+                    $physicaltext = self::display_default($physicaldefault);
+                    $info = "({$this->str['expected']} {$xmldbtext}, {$this->str['actual']} {$physicaltext})";
                     $o .= '<font color="red">' . $this->str['wrong'] . " $info</font>";
                     // Add the wrong field to the list.
                     $obj = new stdClass();
@@ -105,6 +115,20 @@ class check_defaults extends XMLDBCheckAction {
         }
 
         return array($o, $wrongfields);
+    }
+
+    /**
+     * Converts a default value suitable for display.
+     *
+     * @param string|null $defaultvalue Default value
+     * @return string Displayed version
+     */
+    protected static function display_default($defaultvalue) {
+        if ($defaultvalue === null) {
+            return '-';
+        } else {
+            return "'" . s($defaultvalue) . "'";
+        }
     }
 
     protected function display_results(array $wrongfields) {
@@ -126,8 +150,8 @@ class check_defaults extends XMLDBCheckAction {
             foreach ($wrongfields as $obj) {
                 $xmldbtable = $obj->table;
                 $xmldbfield = $obj->field;
-                $physicaldefault = $obj->physicaldefault;
-                $xmldbdefault = $obj->xmldbdefault;
+                $physicaltext = self::display_default($obj->physicaldefault);
+                $xmldbtext = self::display_default($obj->xmldbdefault);
 
                 // Get the alter table command.
                 $sqlarr = $dbman->generator->getAlterFieldSQL($xmldbtable, $xmldbfield);
