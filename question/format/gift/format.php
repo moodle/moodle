@@ -338,6 +338,10 @@ class qformat_gift extends qformat_default {
                 return $question;
 
             case 'multichoice':
+                // "Temporary" solution to enable choice of answernumbering on GIFT import
+                // by respecting default set for multichoice questions (MDL-59447)
+                $question->answernumbering = get_config('qtype_multichoice', 'answernumbering');
+
                 if (strpos($answertext, "=") === false) {
                     $question->single = 0; // Multiple answers are enabled if no single answer is 100% correct.
                 } else {
