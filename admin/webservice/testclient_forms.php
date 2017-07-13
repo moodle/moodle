@@ -101,10 +101,8 @@ class core_course_create_categories_form extends moodleform {
 
         $params = array();
         $params['categories'] = array();
-        for ($i=0; $i<10; $i++) {
-            if (empty($data->name[$i]) or empty($data->parent[$i])) {
-                continue;
-            }
+        $count  = count((array) $data) / 2;
+        for ($i = 0; $i < $count; $i++) {
             $params['categories'][] = array('name'=>$data->name[$i], 'parent'=>$data->parent[$i],
                                             'idnumber'=>$data->idnumber[$i], 'description'=>$data->description[$i]);
         }
