@@ -91,14 +91,27 @@ class mod_lesson_lib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
         $this->setAdminUser();
-        $course = $this->getDataGenerator()->create_course();
+        $course = new stdClass();
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = true;
+        $course = $this->getDataGenerator()->create_course($course);
 
         // Create user.
-        $student = self::getDataGenerator()->create_user();
+        $studentg1 = self::getDataGenerator()->create_user();
+        $teacherg1 = self::getDataGenerator()->create_user();
+        $studentg2 = self::getDataGenerator()->create_user();
 
         // User enrolment.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id, 'manual');
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($studentg1->id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($teacherg1->id, $course->id, $teacherrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($studentg2->id, $course->id, $studentrole->id, 'manual');
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        groups_add_member($group1, $studentg1);
+        groups_add_member($group2, $studentg2);
 
         $this->setCurrentTimeStart();
         $record = array(
@@ -136,8 +149,8 @@ class mod_lesson_lib_testcase extends advanced_testcase {
         $this->assertTrue($updates->answers->updated);
         $this->assertCount(2, $updates->answers->itemids);
 
-        // Now, do something in the lesson.
-        $this->setUser($student);
+        // Now, do something in the lesson with the two users.
+        $this->setUser($studentg1);
         mod_lesson_external::launch_attempt($lesson->id);
         $data = array(
             array(
@@ -152,6 +165,22 @@ class mod_lesson_lib_testcase extends advanced_testcase {
         mod_lesson_external::process_page($lesson->id, $tfrecord->id, $data);
         mod_lesson_external::finish_attempt($lesson->id);
 
+        $this->setUser($studentg2);
+        mod_lesson_external::launch_attempt($lesson->id);
+        $data = array(
+            array(
+                'name' => 'answerid',
+                'value' => $DB->get_field('lesson_answers', 'id', array('pageid' => $tfrecord->id, 'jumpto' => -1)),
+            ),
+            array(
+                'name' => '_qf__lesson_display_answer_form_truefalse',
+                'value' => 1,
+            )
+        );
+        mod_lesson_external::process_page($lesson->id, $tfrecord->id, $data);
+        mod_lesson_external::finish_attempt($lesson->id);
+
+        $this->setUser($studentg1);
         $updates = lesson_check_updates_since($cm, $onehourago);
 
         // Check question attempts, timers and new grades.
@@ -163,6 +192,33 @@ class mod_lesson_lib_testcase extends advanced_testcase {
 
         $this->assertTrue($updates->timers->updated);
         $this->assertCount(1, $updates->timers->itemids);
+
+        // Now, as teacher, check that I can see the two users (even in separate groups).
+        $this->setUser($teacherg1);
+        $updates = lesson_check_updates_since($cm, $onehourago);
+        $this->assertTrue($updates->userquestionattempts->updated);
+        $this->assertCount(2, $updates->userquestionattempts->itemids);
+
+        $this->assertTrue($updates->usergrades->updated);
+        $this->assertCount(2, $updates->usergrades->itemids);
+
+        $this->assertTrue($updates->usertimers->updated);
+        $this->assertCount(2, $updates->usertimers->itemids);
+
+        // Now, teacher can't access all groups.
+        groups_add_member($group1, $teacherg1);
+        assign_capability('moodle/site:accessallgroups', CAP_PROHIBIT, $teacherrole->id, context_module::instance($cm->id));
+        accesslib_clear_all_caches_for_unit_testing();
+        $updates = lesson_check_updates_since($cm, $onehourago);
+        // I will see only the studentg1 updates.
+        $this->assertTrue($updates->userquestionattempts->updated);
+        $this->assertCount(1, $updates->userquestionattempts->itemids);
+
+        $this->assertTrue($updates->usergrades->updated);
+        $this->assertCount(1, $updates->usergrades->itemids);
+
+        $this->assertTrue($updates->usertimers->updated);
+        $this->assertCount(1, $updates->usertimers->itemids);
     }
 
     public function test_lesson_core_calendar_provide_event_action_open() {
