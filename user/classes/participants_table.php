@@ -26,7 +26,6 @@ namespace core_user;
 
 use context;
 use DateTime;
-use html_writer;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -205,6 +204,24 @@ class participants_table extends \table_sql {
     }
 
     /**
+     * Render the participants table.
+     *
+     * @param int $pagesize Size of page for paginated displayed table.
+     * @param bool $useinitialsbar Whether to use the initials bar which will only be used if there is a fullname column defined.
+     * @param string $downloadhelpbutton
+     */
+    public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
+        global $PAGE;
+
+        parent::out($pagesize, $useinitialsbar, $downloadhelpbutton);
+
+        if (has_capability('moodle/course:enrolreview', $this->context)) {
+            $params = ['contextid' => $this->context->id, 'courseid' => $this->course->id];
+            $PAGE->requires->js_call_amd('core_user/status_field', 'init', [$params]);
+        }
+    }
+
+    /**
      * Generate the select column.
      *
      * @param \stdClass $data
@@ -305,7 +322,7 @@ class participants_table extends \table_sql {
     /**
      * Generate the status column.
      *
-     * @param stdClass $data The data object.
+     * @param \stdClass $data The data object.
      * @return string
      */
     public function col_status($data) {
@@ -315,15 +332,14 @@ class participants_table extends \table_sql {
         $canreviewenrol = has_capability('moodle/course:enrolreview', $this->context);
         if ($canreviewenrol) {
             $fullname = fullname($data);
+            $coursename = $this->course->fullname;
             require_once($CFG->dirroot . '/enrol/locallib.php');
             $manager = new \course_enrolment_manager($PAGE, $this->course);
             $userenrolments = $manager->get_user_enrolments($data->id);
             foreach ($userenrolments as $ue) {
-                $enrolactions = $ue->enrolmentplugin->get_user_enrolment_actions($manager, $ue);
                 $timestart = $ue->timestart;
                 $timeend = $ue->timeend;
                 $status = '';
-                $dimmed = '';
                 switch ($ue->status) {
                     case ENROL_USER_ACTIVE:
                         $currentdate = new DateTime();
@@ -332,24 +348,17 @@ class participants_table extends \table_sql {
                             $status = get_string('participationactive', 'enrol');
                         } else {
                             $status = get_string('participationnotcurrent', 'enrol');
-                            $dimmed = 'dimmed_text';
                         }
                         break;
                     case ENROL_USER_SUSPENDED:
                         $status = get_string('participationsuspended', 'enrol');
-                        $dimmed = 'dimmed_text';
                         break;
                 }
-                $statusout = html_writer::span($status, $dimmed, ['title' => "{$ue->enrolmentinstancename}: {$status}"]);
-                $enrolactionsout = '';
-                foreach ($enrolactions as $action) {
-                    $icon = $OUTPUT->render($action->get_icon());
-                    $attributes = $action->get_attributes();
-                    $attributes['data-fullname'] = $fullname;
-                    $attributes['data-coursename'] = $this->course->fullname;
-                    $enrolactionsout .= html_writer::link($action->get_url(), $icon, $attributes);
-                }
-                $enrolstatusoutput .= html_writer::div($statusout . $enrolactionsout);
+                $actions = $ue->enrolmentplugin->get_user_enrolment_actions($manager, $ue);
+                $instancename = $ue->enrolmentinstancename;
+                $statusfield = new status_field($instancename, $coursename, $fullname, $status, $timestart, $timeend, $actions);
+                $statusfielddata = $statusfield->export_for_template($OUTPUT);
+                $enrolstatusoutput .= $OUTPUT->render_from_template('core_user/status_field', $statusfielddata);
             }
         }
         return $enrolstatusoutput;
