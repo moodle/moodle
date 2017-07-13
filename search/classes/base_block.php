@@ -139,7 +139,7 @@ abstract class base_block extends base {
                     preg_match('~^course-view-(.*)$~', $instance->pagetypepattern)) {
                 return new \moodle_url('/course/view.php', ['id' => $courseid], $anchor);
             } else if ($instance->pagetypepattern === 'site-index') {
-                return new \moodle_url('/', [], $anchor);
+                return new \moodle_url('/', ['redirect' => 0], $anchor);
             } else {
                 debugging('Unexpected page type for block ' . $blockinstanceid . ': ' .
                         $instance->pagetypepattern, DEBUG_DEVELOPER);
