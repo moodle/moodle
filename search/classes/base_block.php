@@ -65,10 +65,13 @@ abstract class base_block extends base {
      * Returns restrictions on which block_instances rows to return. By default, excludes rows
      * that have empty configdata.
      *
-     * @return string SQL restriction (or multiple restrictions joined by AND), empty if none
+     * If no restriction is required, you could return ['', []].
+     *
+     * @return array 2-element array of SQL restriction and params for it
      */
     protected function get_indexing_restrictions() {
-        return "bi.configdata != ''";
+        global $DB;
+        return [$DB->sql_compare_text('bi.configdata') . " != ?", ['']];
     }
 
     /**
@@ -88,10 +91,11 @@ abstract class base_block extends base {
      */
     public function get_recordset_by_timestamp($modifiedfrom = 0) {
         global $DB;
-        $restrictions = $this->get_indexing_restrictions();
+        list ($restrictions, $restrictionparams) = $this->get_indexing_restrictions();
         if ($restrictions) {
             $restrictions = 'AND ' . $restrictions;
         }
+
         // Query for all entries in block_instances for this type of block, which were modified
         // since the given date. Also find the course or module where the block is located.
         // (Although this query supports both module and course context, currently only two page
@@ -108,12 +112,12 @@ abstract class base_block extends base {
                        OR (c.id = parent.instanceid AND parent.contextlevel = ?)
                  WHERE bi.timemodified >= ?
                        AND bi.blockname = ?
-                       AND (parent.contextlevel = ? AND (bi.pagetypepattern LIKE 'course-view-%'
+                       AND (parent.contextlevel = ? AND (" . $DB->sql_like('bi.pagetypepattern', '?') . "
                            OR bi.pagetypepattern IN ('site-index', 'course-*', '*')))
                        $restrictions
               ORDER BY bi.timemodified ASC",
-                [CONTEXT_BLOCK, CONTEXT_MODULE, CONTEXT_COURSE, $modifiedfrom,
-                $this->get_block_name(), CONTEXT_COURSE]);
+                array_merge([CONTEXT_BLOCK, CONTEXT_MODULE, CONTEXT_COURSE, $modifiedfrom,
+                $this->get_block_name(), CONTEXT_COURSE, 'course-view-%'], $restrictionparams));
     }
 
     public function get_doc_url(\core_search\document $doc) {
