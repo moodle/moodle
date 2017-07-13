@@ -78,15 +78,6 @@ pop3  - Uses an external POP3 server
       a new account is created
 
 
-nntp  - Uses an external NNTP server
-
-    - user logs in using username and password
-    - these are checked against an NNTP server
-    - if correct, user is logged in
-    - if the username doesn't already exist then
-      a new account is created
-
-
 db  - Uses an external database to check username/password
 
     - user logs in using username and password
