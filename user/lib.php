@@ -1234,7 +1234,9 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
 
     $isfrontpage = ($courseid == SITEID);
 
-    list($esql, $params) = get_enrolled_sql($context, null, $groupid, true);
+    // Show active users only if the user doesn't have the 'moodle/course:enrolreview' capability.
+    $onlyactive = !has_capability('moodle/course:enrolreview', $context);
+    list($esql, $params) = get_enrolled_sql($context, null, $groupid, $onlyactive);
 
     $joins = array('FROM {user} u');
     $wheres = array();

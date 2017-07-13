@@ -104,6 +104,7 @@ $string['notenrollable'] = 'You can not enrol yourself in this course.';
 $string['notenrolledusers'] = 'Other users';
 $string['otheruserdesc'] = 'The following users are not enrolled in this course but do have roles, inherited or assigned within it.';
 $string['participationactive'] = 'Active';
+$string['participationnotcurrent'] = 'Not current';
 $string['participationstatus'] = 'Status';
 $string['participationsuspended'] = 'Suspended';
 $string['periodend'] = 'until {$a}';
