@@ -752,7 +752,7 @@ class api {
         $record->issuerid = $issuer->get('id');
         $record->refreshtoken = $refreshtoken;
         $record->grantedscopes = $scopes;
-        $record->email = $userinfo['email'];
+        $record->email = isset($userinfo['email']) ? $userinfo['email'] : '';
         $record->username = $userinfo['username'];
 
         $systemaccount = new system_account(0, $record);

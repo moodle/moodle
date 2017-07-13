@@ -3515,7 +3515,7 @@
         <FIELD NAME="issuerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the oauth 2 identity issuer"/>
         <FIELD NAME="refreshtoken" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The refresh token used to request access tokens."/>
         <FIELD NAME="grantedscopes" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The scopes that this system account has been granted access to."/>
-        <FIELD NAME="email" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The email that was connected to this issuer."/>
+        <FIELD NAME="email" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The email that was connected to this issuer."/>
         <FIELD NAME="username" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The username that was connected as a system account to this issue."/>
       </FIELDS>
       <KEYS>
