@@ -196,7 +196,7 @@ class base_block_testcase extends advanced_testcase {
 
         // Get document URL.
         $doc2 = $this->get_doc($course->id, $block2id);
-        $expected = new moodle_url('/', [], 'inst' . $block2id);
+        $expected = new moodle_url('/', ['redirect' => 0], 'inst' . $block2id);
         $this->assertEquals($expected, $area->get_doc_url($doc2));
         $this->assertEquals($expected, $area->get_context_url($doc2));
 
