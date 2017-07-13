@@ -141,5 +141,24 @@ function xmldb_lesson_upgrade($oldversion) {
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2017051501) {
+
+        // Delete orphaned lesson answer and response files.
+        $sql = "SELECT DISTINCT f.*
+                  FROM {files} f
+             LEFT JOIN {lesson_answers} la ON f.itemid = la.id
+                 WHERE component = :component
+                   AND la.id IS NULL";
+
+        $orphanedfiles = $DB->get_recordset_sql($sql, array('component' => 'mod_lesson'));
+        $fs = get_file_storage();
+        foreach ($orphanedfiles as $file) {
+            $fs->delete_area_files($file->contextid, $file->component, $file->filearea, $file->itemid);
+        }
+        $orphanedfiles->close();
+
+        upgrade_mod_savepoint(true, 2017051501, 'lesson');
+    }
+
     return true;
 }
