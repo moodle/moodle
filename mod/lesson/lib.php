@@ -1614,16 +1614,22 @@ function lesson_check_updates_since(cm_info $cm, $from, $filter = array()) {
             $updates->userpagesviewed->itemids = array_keys($pagesviewed);
         }
 
-        $select = 'lessonid = ? AND completed > ? ' . $insql;
+        $select = 'lessonid = ? AND completed > ?';
+        if (!empty($insql)) {
+            $select .= ' AND userid ' . $insql;
+        }
         $grades = $DB->get_records_select('lesson_grades', $select, $params, '', 'id');
         if (!empty($grades)) {
             $updates->usergrades->updated = true;
             $updates->usergrades->itemids = array_keys($grades);
         }
 
-        $select = 'lessonid = ? AND (starttime > ? OR lessontime > ? OR timemodifiedoffline > ?) ' . $insql;
+        $select = 'lessonid = ? AND (starttime > ? OR lessontime > ? OR timemodifiedoffline > ?)';
         $params = array($cm->instance, $from, $from, $from);
-        $params = array_merge($params, $inparams);
+        if (!empty($insql)) {
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
         $timers = $DB->get_records_select('lesson_timer', $select, $params, '', 'id');
         if (!empty($timers)) {
             $updates->usertimers->updated = true;
