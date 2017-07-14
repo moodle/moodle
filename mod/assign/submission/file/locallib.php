@@ -183,15 +183,6 @@ class assign_submission_file extends assign_submission_plugin {
                                                   $submissionid);
         $mform->addElement('filemanager', 'files_filemanager', $this->get_name(), null, $fileoptions);
 
-        if (!empty($this->get_config('filetypeslist'))) {
-            $text = html_writer::tag('p', get_string('filesofthesetypes', 'assignsubmission_file'));
-            $util = new \core_form\filetypes_util();
-            $filetypes = $this->get_configured_typesets();
-            $filetypedescriptions = $util->describe_file_types($filetypes);
-            $text .= $OUTPUT->render_from_template('core_form/filetypes-descriptions', $filetypedescriptions);
-            $mform->addElement('static', '', '', $text);
-        }
-
         return true;
     }
 
