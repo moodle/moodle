@@ -3017,7 +3017,8 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timez
         // Check to see if the event started at Midnight on the imported calendar.
         date_default_timezone_set($timezone);
         if (date('H:i:s', $eventrecord->timestart) === "00:00:00") {
-            // This event should be an all day event.
+            // This event should be an all day event. This is not correct, we don't do anything differently for all day events.
+            // See MDL-56227.
             $eventrecord->timeduration = 0;
         }
         core_date::set_default_server_timezone();
