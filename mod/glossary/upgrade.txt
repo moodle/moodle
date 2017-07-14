@@ -1,6 +1,9 @@
 This files describes API changes in /mod/glossary/*,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+  * External functions returning entries now return an additional field "ratinginfo" containing the entry rating information.
+
 === 3.2 ===
 * External functions that were returning file information now return the following file fields:
   filename, filepath, mimetype, filesize, timemodified and fileurl.
