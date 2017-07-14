@@ -1,6 +1,9 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+  * External function get_forum_discussion_posts now returns an additional field "ratinginfo" containing rating information.
+
 === 3.3 ===
   * External function get_forums_by_courses now returns and additional field "istracked" that indicates if the user
    is tracking the related forum.
