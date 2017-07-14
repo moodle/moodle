@@ -2466,9 +2466,9 @@ require(["core/event", "jquery"], function(Event, $) {
                     $result[$dependenton][$condition][$value][self::DEP_HIDE] = array();
                     foreach ($dependents as $dependent) {
                         $elements = $this->_getElNamesRecursive($dependent);
-                        if (empty($elements)) {
-                            // Probably element inside of some group.
-                            $elements = array($dependent);
+                        if (!in_array($dependent, $elements)) {
+                            // Always want to hide the main element, even if it contains sub-elements as well.
+                            $elements[] = $dependent;
                         }
                         foreach ($elements as $element) {
                             if ($element == $dependenton) {
