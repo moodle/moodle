@@ -60,15 +60,6 @@ ldap  - Uses an external LDAP server
     (see the ldap/README for more details on config etc...)
 
 
-imap  - Uses an external IMAP server
-
-    - user logs in using username and password
-    - these are checked against an IMAP server
-    - if correct, user is logged in
-    - if the username doesn't already exist then
-      a new account is created
-
-
 db  - Uses an external database to check username/password
 
     - user logs in using username and password
