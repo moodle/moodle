@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 3.4 ===
 * External function mod_data_external::search_entries() now returns the maxcount field: Total count of records that the user could
     see in the database (if all the search criterias were removed).
+* External function get_entry now returns an additional field "ratinginfo" containing the entry rating information.
 
 === 3.3.2 ===
 * data_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
