@@ -46,12 +46,12 @@ $string['environmenthead'] = 'Undersöker Din miljö...';
 $string['errorsinenvironment'] = 'Kontrollen av miljön misslyckades';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Språket "{$a}" gick tyvärr inte att ladda ner. Installationen kommer att fullföljas på engelska.';
-$string['memorylimithelp'] = '<p>Den aktuella minnesbegränsningen för PHP på Din server är  inställt till {$a}.</p>
-<p>Detta kan förorsaka att Moodle får minnesproblem senare, särskilt om Du har aktiverat många moduler och/eller har många användare.</p>
-<p>Vi rekommenderar att Du konfigurerar PHP med en högre begränsning, som t ex 16M. Det finns flera sätt att göra detta som Du kan pröva med:</p> <ol>
-<li>Om Du har möjlighet till det så kan Du kompilera om PHP med<i>--enable-memory-limit </i>Detta gör det möjligt för Moodle att ställa in minnesbegränsningen själv. </li>
-<li>Om Du har tillgång till Din php.ini-fil så kan Du ändra inställningen för <b>memory limit</b> till något i stil med 16M. Om Du inte har tillgång själv så kan Du kanske be Din systemadministratör att göra detta åt Dig.</li>
-<li>På en del PHP-servrar kan Du skapa en .htaccess-fil i Moodle-katalogen som innehåller den här raden: <blockquote>php_value memory_limit 16M</blockquote>.<br />Detta kan dock på en del servrar leda till att <b>inga</b> PHP-sidor fungerar. (Du får Error-sidor istället för de riktiga) så då får Du ta bort .htaccess-filen.</li>
+$string['memorylimithelp'] = '<p>Den aktuella minnesbegränsningen för PHP på din server är  inställt till {$a}.</p>
+<p>Detta kan förorsaka att Moodle får minnesproblem senare, särskilt om du har aktiverat många moduler och/eller har många användare.</p>
+<p>Vi rekommenderar att du konfigurerar PHP med en högre begränsning, som t ex 16M. Det finns flera sätt att göra detta som du kan pröva med:</p> <ol>
+<li>Om du har möjlighet till det så kan du kompilera om PHP med<i>--enable-memory-limit </i>Detta gör det möjligt för Moodle att ställa in minnesbegränsningen själv. </li>
+<li>Om du har tillgång till din php.ini-fil så kan du ändra inställningen för <b>memory limit</b> till något i stil med 16M. Om du inte har tillgång själv så kan du kanske be din systemadministratör att göra detta åt dig.</li>
+<li>På en del PHP-servrar kan du skapa en .htaccess-fil i Moodle-katalogen som innehåller den här raden: <blockquote>php_value memory_limit 16M</blockquote>.<br />Detta kan dock på en del servrar leda till att <b>inga</b> PHP-sidor fungerar. (Du får Error-sidor istället för de riktiga) så då får du ta bort .htaccess-filen.</li>
 </ol>';
 $string['paths'] = 'Vägar';
 $string['pathserrcreatedataroot'] = 'Datakatalogen ({$a->dataroot}) går inte att skapa med hjälp av installeraren.';
@@ -72,6 +72,6 @@ $string['welcomep30'] = 'I den här versionen av <strong>{$a->installername}</st
 $string['welcomep40'] = 'I paketet ingår även <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Användningen av alla applikationerna i det här paketet regleras av deras respektive licenser. Det kompletta paketet <strong>{$a->installername}</strong>  är <a href="http://www.opensource.org/docs/definition_plain.html">Öppen källkod </a> och distribueras
 under <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licensen.';
-$string['welcomep60'] = 'De följande sidorna leder Dig genom några enkla steg för att konfigurera och installera <strong>Moodle</strong> på Din dator, Du kan acceptera standardinställningarna eller, alternativt, modifiera dem som det passar Dina egna behov.';
+$string['welcomep60'] = 'De följande sidorna leder dig genom några enkla steg för att konfigurera och installera <strong>Moodle</strong> på din dator, du kan acceptera standardinställningarna eller, alternativt, modifiera dem som det passar dina egna behov.';
 $string['welcomep70'] = 'Klicka på knappen "Nästa" här nedan för att fortsätta installationen av <strong>Moodle</strong>';
 $string['wwwroot'] = 'Webbadress';
