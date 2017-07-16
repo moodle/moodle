@@ -62,14 +62,9 @@ Example:
 \$sudo -u www-data /usr/bin/php admin/cli/install_database.php --lang=cs --adminpass=soMePass123 --agree-license
 ";
 
-// Check that PHP is of a sufficient version
-if (version_compare(phpversion(), "5.6.5") < 0) {
-    $phpversion = phpversion();
-    // do NOT localise - lang strings would not work here and we CAN NOT move it after installib
-    fwrite(STDERR, "Moodle 3.2 or later requires at least PHP 5.6.5 (currently using version $phpversion).\n");
-    fwrite(STDERR, "Please upgrade your server software or install older Moodle version.\n");
-    exit(1);
-}
+// Check that PHP is of a sufficient version as soon as possible.
+require_once(__DIR__.'/../../lib/phpminimumversionlib.php');
+moodle_require_minimum_php_version();
 
 // Nothing to do if config.php does not exist
 $configfile = __DIR__.'/../../config.php';

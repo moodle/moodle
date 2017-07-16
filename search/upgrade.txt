@@ -1,6 +1,13 @@
 This files describes API changes in /search/*,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+
+* Search indexing now supports time limits to make the scheduled task run more neatly. In order for
+  this to work, search engine plugins will need to implement the 'stopat' parameter if they
+  override the add_documents() function, and return an extra parameter from this function (see base
+  class in engine.php). Unmodified plugins will still work, but without supporting time limits.
+
 === 3.2 ===
 
 * Base search area classes have been renamed, please update your search areas to use the classes below:

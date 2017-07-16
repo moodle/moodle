@@ -146,7 +146,7 @@ class core_plugin_manager {
     public function get_plugin_types() {
         if (func_num_args() > 0) {
             if (!func_get_arg(0)) {
-                throw coding_exception('core_plugin_manager->get_plugin_types() does not support relative paths.');
+                throw new coding_exception('core_plugin_manager->get_plugin_types() does not support relative paths.');
             }
         }
         if ($this->plugintypes) {

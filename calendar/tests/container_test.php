@@ -184,6 +184,63 @@ class core_calendar_container_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that the event factory deals with invisible courses as an admin.
+     *
+     * @dataProvider get_event_factory_testcases()
+     * @param \stdClass $dbrow Row from the "database".
+     */
+    public function test_event_factory_when_course_visibility_is_toggled_as_admin($dbrow) {
+        $legacyevent = $this->create_event($dbrow);
+        $factory = \core_calendar\local\event\container::get_event_factory();
+
+        // Create a hidden course with an assignment.
+        $course = $this->getDataGenerator()->create_course(['visible' => 0]);
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        $dbrow->id = $legacyevent->id;
+        $dbrow->courseid = $course->id;
+        $dbrow->instance = $moduleinstance->id;
+        $dbrow->modulename = 'assign';
+        $event = $factory->create_instance($dbrow);
+
+        // Module is still visible to admins even if the course is invisible.
+        $this->assertInstanceOf(event_interface::class, $event);
+    }
+
+    /**
+     * Test that the event factory deals with invisible courses as a student.
+     *
+     * @dataProvider get_event_factory_testcases()
+     * @param \stdClass $dbrow Row from the "database".
+     */
+    public function test_event_factory_when_course_visibility_is_toggled_as_student($dbrow) {
+        $legacyevent = $this->create_event($dbrow);
+        $factory = \core_calendar\local\event\container::get_event_factory();
+
+        // Create a hidden course with an assignment.
+        $course = $this->getDataGenerator()->create_course(['visible' => 0]);
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $moduleinstance = $generator->create_instance(['course' => $course->id]);
+
+        // Enrol a student into this course.
+        $student = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student->id, $course->id);
+
+        // Set the user to the student.
+        $this->setUser($student);
+
+        $dbrow->id = $legacyevent->id;
+        $dbrow->courseid = $course->id;
+        $dbrow->instance = $moduleinstance->id;
+        $dbrow->modulename = 'assign';
+        $event = $factory->create_instance($dbrow);
+
+        // Module is invisible to students if the course is invisible.
+        $this->assertNull($event);
+    }
+
+    /**
      * Test that the event factory deals with completion related events properly.
      */
     public function test_event_factory_with_completion_related_event() {
@@ -283,6 +340,37 @@ class core_calendar_container_testcase extends advanced_testcase {
 
         // Check that we get the correct instance.
         $this->assertInstanceOf(event_interface::class, $factory->create_instance($event));
+    }
+
+    /**
+     * Test that when course module is deleted all events are also deleted.
+     */
+    public function test_delete_module_delete_events() {
+        global $DB;
+        $user = $this->getDataGenerator()->create_user();
+        // Create the course we will be using.
+        $course = $this->getDataGenerator()->create_course();
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        foreach (core_component::get_plugin_list('mod') as $modname => $unused) {
+            try {
+                $generator = $this->getDataGenerator()->get_plugin_generator('mod_'.$modname);
+            } catch (coding_exception $e) {
+                // Module generator is not implemented.
+                continue;
+            }
+            $module = $generator->create_instance(['course' => $course->id]);
+
+            // Create bunch of events of different type (user override, group override, module event).
+            $this->create_event(['userid' => $user->id, 'modulename' => $modname, 'instance' => $module->id]);
+            $this->create_event(['groupid' => $group->id, 'modulename' => $modname, 'instance' => $module->id]);
+            $this->create_event(['modulename' => $modname, 'instance' => $module->id]);
+            $this->create_event(['modulename' => $modname, 'instance' => $module->id, 'courseid' => $course->id]);
+
+            // Delete module and make sure all events are deleted.
+            course_delete_module($module->cmid);
+            $this->assertEmpty($DB->get_record('event', ['modulename' => $modname, 'instance' => $module->id]));
+        }
     }
 
     /**

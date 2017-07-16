@@ -116,6 +116,7 @@ class search_manager_testcase extends advanced_testcase {
         $configs = $search->get_areas_config(array($this->forumpostareaid => $searcharea));
         $this->assertEquals($start, $configs[$this->forumpostareaid]->indexingstart);
         $this->assertEquals($end, $configs[$this->forumpostareaid]->indexingend);
+        $this->assertEquals(false, $configs[$this->forumpostareaid]->partial);
 
         try {
             $fakeareaid = \core_search\manager::generate_areaid('mod_unexisting', 'chihuaquita');
@@ -132,6 +133,7 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertEquals(0, $config[$varname . '_indexingstart']);
         $this->assertEquals(0, $config[$varname . '_indexingend']);
         $this->assertEquals(0, $config[$varname . '_lastindexrun']);
+        $this->assertEquals(0, $config[$varname . '_partial']);
         // No caching.
         $configs = $search->get_areas_config(array($this->forumpostareaid => $searcharea));
         $this->assertEquals(0, $configs[$this->forumpostareaid]->indexingstart);
@@ -149,6 +151,114 @@ class search_manager_testcase extends advanced_testcase {
         $configs = $search->get_areas_config(array($this->forumpostareaid => $searcharea));
         $this->assertEquals(0, $configs[$this->forumpostareaid]->indexingstart);
         $this->assertEquals(0, $configs[$this->forumpostareaid]->indexingend);
+    }
+
+    /**
+     * Tests the get_last_indexing_duration method in the base area class.
+     */
+    public function test_get_last_indexing_duration() {
+        $this->resetAfterTest();
+
+        $search = testable_core_search::instance();
+
+        $searcharea = $search->get_search_area($this->forumpostareaid);
+
+        // When never indexed, the duration is false.
+        $this->assertSame(false, $searcharea->get_last_indexing_duration());
+
+        // Set the start/end times.
+        list($componentname, $varname) = $searcharea->get_config_var_name();
+        $start = time() - 100;
+        $end = time();
+        set_config($varname . '_indexingstart', $start, $componentname);
+        set_config($varname . '_indexingend', $end, $componentname);
+
+        // The duration should now be 100.
+        $this->assertSame(100, $searcharea->get_last_indexing_duration());
+    }
+
+    /**
+     * Tests that partial indexing works correctly.
+     */
+    public function test_partial_indexing() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course and a forum.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $forum = $generator->create_module('forum', ['course' => $course->id]);
+
+        // Index everything up to current. Ensure the course is older than current second so it
+        // definitely doesn't get indexed again next time.
+        $this->waitForSecond();
+        $search = testable_core_search::instance();
+        $search->index(false, 0);
+
+        $searcharea = $search->get_search_area($this->forumpostareaid);
+        list($componentname, $varname) = $searcharea->get_config_var_name();
+        $this->assertFalse(get_config($componentname, $varname . '_partial'));
+
+        // Add 3 discussions to the forum.
+        $now = time();
+        $generator->get_plugin_generator('mod_forum')->create_discussion(['course' => $course->id,
+                'forum' => $forum->id, 'userid' => $USER->id, 'timemodified' => $now,
+                'name' => 'Frog']);
+        $generator->get_plugin_generator('mod_forum')->create_discussion(['course' => $course->id,
+                'forum' => $forum->id, 'userid' => $USER->id, 'timemodified' => $now + 1,
+                'name' => 'Toad']);
+        $generator->get_plugin_generator('mod_forum')->create_discussion(['course' => $course->id,
+                'forum' => $forum->id, 'userid' => $USER->id, 'timemodified' => $now + 2,
+                'name' => 'Zombie']);
+        time_sleep_until($now + 3);
+
+        // Clear the count of added documents.
+        $search->get_engine()->get_and_clear_added_documents();
+
+        // Make the search engine delay while indexing each document.
+        $search->get_engine()->set_add_delay(1.2);
+
+        // Index with a limit of 2 seconds - it should index 2 of the documents (after the second
+        // one, it will have taken 2.4 seconds so it will stop).
+        $search->index(false, 2);
+        $added = $search->get_engine()->get_and_clear_added_documents();
+        $this->assertCount(2, $added);
+        $this->assertEquals('Frog', $added[0]->get('title'));
+        $this->assertEquals('Toad', $added[1]->get('title'));
+        $this->assertEquals(1, get_config($componentname, $varname . '_partial'));
+
+        // Add a label.
+        $generator->create_module('label', ['course' => $course->id, 'intro' => 'Vampire']);
+
+        // Wait to next second (so as to not reindex the label more than once, as it will now
+        // be timed before the indexing run).
+        $this->waitForSecond();
+
+        // Next index with 1 second limit should do the label and not the forum - the logic is,
+        // if it spent ages indexing an area last time, do that one last on next run.
+        $search->index(false, 1);
+        $added = $search->get_engine()->get_and_clear_added_documents();
+        $this->assertCount(1, $added);
+        $this->assertEquals('Vampire', $added[0]->get('title'));
+
+        // Index again with a 2 second limit - it will redo last post for safety (because of other
+        // things possibly having the same time second), and then do the remaining one. (Note:
+        // because it always does more than one second worth of items, it would actually index 2
+        // posts even if the limit were less than 2.)
+        $search->index(false, 2);
+        $added = $search->get_engine()->get_and_clear_added_documents();
+        $this->assertCount(2, $added);
+        $this->assertEquals('Toad', $added[0]->get('title'));
+        $this->assertEquals('Zombie', $added[1]->get('title'));
+        $this->assertFalse(get_config($componentname, $varname . '_partial'));
+
+        // Index again - there should be nothing to index this time.
+        $search->index(false, 2);
+        $added = $search->get_engine()->get_and_clear_added_documents();
+        $this->assertCount(0, $added);
+        $this->assertFalse(get_config($componentname, $varname . '_partial'));
     }
 
     /**
@@ -252,6 +362,105 @@ class search_manager_testcase extends advanced_testcase {
         $allcontexts = array($context1->id => $context1->id, $context2->id => $context2->id);
         $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($course1ctx->id => $course1ctx->id), $contexts[$this->mycoursesareaid]);
+    }
+
+    /**
+     * Tests the block support in get_search_user_accesses.
+     *
+     * @return void
+     */
+    public function test_search_user_accesses_blocks() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create course and add HTML block.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course();
+        $context1 = \context_course::instance($course1->id);
+        $page = new \moodle_page();
+        $page->set_context($context1);
+        $page->set_course($course1);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('course-view');
+        $page->blocks->load_blocks();
+        $page->blocks->add_block_at_end_of_default_region('html');
+
+        // Create another course with HTML blocks only in some weird page or a module page (not
+        // yet supported, so both these blocks will be ignored).
+        $course2 = $generator->create_course();
+        $context2 = \context_course::instance($course2->id);
+        $page = new \moodle_page();
+        $page->set_context($context2);
+        $page->set_course($course2);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('bogus-page');
+        $page->blocks->load_blocks();
+        $page->blocks->add_block_at_end_of_default_region('html');
+
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id));
+        $forumcontext = context_module::instance($forum->cmid);
+        $page = new \moodle_page();
+        $page->set_context($forumcontext);
+        $page->set_course($course2);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('mod-forum-view');
+        $page->blocks->load_blocks();
+        $page->blocks->add_block_at_end_of_default_region('html');
+
+        // The third course has 2 HTML blocks.
+        $course3 = $generator->create_course();
+        $context3 = \context_course::instance($course3->id);
+        $page = new \moodle_page();
+        $page->set_context($context3);
+        $page->set_course($course3);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('course-view');
+        $page->blocks->load_blocks();
+        $page->blocks->add_block_at_end_of_default_region('html');
+        $page->blocks->add_block_at_end_of_default_region('html');
+
+        // Student 1 belongs to all 3 courses.
+        $student1 = $generator->create_user();
+        $generator->enrol_user($student1->id, $course1->id, 'student');
+        $generator->enrol_user($student1->id, $course2->id, 'student');
+        $generator->enrol_user($student1->id, $course3->id, 'student');
+
+        // Student 2 belongs only to course 2.
+        $student2 = $generator->create_user();
+        $generator->enrol_user($student2->id, $course2->id, 'student');
+
+        // And the third student is only in course 3.
+        $student3 = $generator->create_user();
+        $generator->enrol_user($student3->id, $course3->id, 'student');
+
+        $search = testable_core_search::instance();
+        $search->add_core_search_areas();
+
+        // Admin gets 'true' result to function regardless of blocks.
+        $this->setAdminUser();
+        $this->assertTrue($search->get_areas_user_accesses());
+
+        // Student 1 gets all 3 block contexts.
+        $this->setUser($student1);
+        $contexts = $search->get_areas_user_accesses();
+        $this->assertArrayHasKey('block_html-content', $contexts);
+        $this->assertCount(3, $contexts['block_html-content']);
+
+        // Student 2 does not get any blocks.
+        $this->setUser($student2);
+        $contexts = $search->get_areas_user_accesses();
+        $this->assertArrayNotHasKey('block_html-content', $contexts);
+
+        // Student 3 gets only two of them.
+        $this->setUser($student3);
+        $contexts = $search->get_areas_user_accesses();
+        $this->assertArrayHasKey('block_html-content', $contexts);
+        $this->assertCount(2, $contexts['block_html-content']);
+
+        // A course limited search for student 1 is the same as the student 3 search.
+        $this->setUser($student1);
+        $limitedcontexts = $search->get_areas_user_accesses([$course3->id]);
+        $this->assertEquals($contexts['block_html-content'], $limitedcontexts['block_html-content']);
     }
 
     /**

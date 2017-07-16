@@ -8122,20 +8122,24 @@ function admin_find_write_settings($node, $data) {
     }
 
     if ($node instanceof admin_category) {
-        $entries = array_keys($node->children);
-        foreach ($entries as $entry) {
-            $return = array_merge($return, admin_find_write_settings($node->children[$entry], $data));
+        if ($node->check_access()) {
+            $entries = array_keys($node->children);
+            foreach ($entries as $entry) {
+                $return = array_merge($return, admin_find_write_settings($node->children[$entry], $data));
+            }
         }
 
     } else if ($node instanceof admin_settingpage) {
+        if ($node->check_access()) {
             foreach ($node->settings as $setting) {
                 $fullname = $setting->get_full_name();
                 if (array_key_exists($fullname, $data)) {
                     $return[$fullname] = $setting;
                 }
             }
-
         }
+
+    }
 
     return $return;
 }

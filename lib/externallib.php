@@ -508,6 +508,37 @@ class external_api {
             throw new invalid_parameter_exception('Missing parameters, please provide either context level with instance id or contextid');
         }
     }
+
+    /**
+     * Returns a prepared structure to use a context parameters.
+     * @return external_single_structure
+     */
+    protected static function get_context_parameters() {
+        $id = new external_value(
+            PARAM_INT,
+            'Context ID. Either use this value, or level and instanceid.',
+            VALUE_DEFAULT,
+            0
+        );
+        $level = new external_value(
+            PARAM_ALPHA,
+            'Context level. To be used with instanceid.',
+            VALUE_DEFAULT,
+            ''
+        );
+        $instanceid = new external_value(
+            PARAM_INT,
+            'Context instance ID. To be used with level',
+            VALUE_DEFAULT,
+            0
+        );
+        return new external_single_structure(array(
+            'contextid' => $id,
+            'contextlevel' => $level,
+            'instanceid' => $instanceid,
+        ));
+    }
+
 }
 
 /**

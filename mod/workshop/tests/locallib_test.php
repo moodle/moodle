@@ -636,26 +636,8 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     public function test_normalize_file_extensions() {
         $this->resetAfterTest(true);
 
-        $this->assertSame(['.odt'], workshop::normalize_file_extensions('odt'));
-        $this->assertSame(['.odt'], workshop::normalize_file_extensions('.odt'));
-        $this->assertSame(['.odt'], workshop::normalize_file_extensions('.ODT'));
-        $this->assertSame(['.doc', '.jpg', '.mp3'], workshop::normalize_file_extensions('doc, jpg, mp3'));
-        $this->assertSame(['.doc', '.jpg', '.mp3'], workshop::normalize_file_extensions(['.doc', '.jpg', '.mp3']));
-        $this->assertSame(['.doc', '.jpg', '.mp3'], workshop::normalize_file_extensions('doc, *.jpg, mp3'));
-        $this->assertSame(['.doc', '.jpg', '.mp3'], workshop::normalize_file_extensions(['doc ', ' JPG ', '.mp3']));
-        $this->assertSame(['.rtf', '.pdf', '.docx'], workshop::normalize_file_extensions("RTF,.pdf\n...DocX,,,;\rPDF\trtf ...Rtf"));
-        $this->assertSame(['.tgz', '.tar.gz'], workshop::normalize_file_extensions('tgz,TAR.GZ tar.gz .tar.gz tgz TGZ'));
-        $this->assertSame(['.notebook'], workshop::normalize_file_extensions('"Notebook":notebook;NOTEBOOK;,\'NoTeBook\''));
-        $this->assertSame([], workshop::normalize_file_extensions(''));
-        $this->assertSame([], workshop::normalize_file_extensions([]));
-        $this->assertSame(['.0'], workshop::normalize_file_extensions(0));
-        $this->assertSame(['.0'], workshop::normalize_file_extensions('0'));
-        $this->assertSame(['.odt'], workshop::normalize_file_extensions('*.odt'));
-        $this->assertSame([], workshop::normalize_file_extensions('.'));
-        $this->assertSame(['.foo'], workshop::normalize_file_extensions('. foo'));
-        $this->assertSame([], workshop::normalize_file_extensions('*'));
-        $this->assertSame([], workshop::normalize_file_extensions('*~'));
-        $this->assertSame(['.pdf', '.ps'], workshop::normalize_file_extensions('* pdf *.ps foo* *bar .r??'));
+        workshop::normalize_file_extensions('');
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -664,13 +646,8 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     public function test_clean_file_extensions() {
         $this->resetAfterTest(true);
 
-        $this->assertSame('', workshop::clean_file_extensions(''));
-        $this->assertSame('', workshop::clean_file_extensions(null));
-        $this->assertSame('', workshop::clean_file_extensions(' '));
-        $this->assertSame('0', workshop::clean_file_extensions(0));
-        $this->assertSame('0', workshop::clean_file_extensions('0'));
-        $this->assertSame('doc, rtf, pdf', workshop::clean_file_extensions('*.Doc, RTF, PDF, .rtf'.PHP_EOL.'PDF '));
-        $this->assertSame('doc, rtf, pdf', 'doc, rtf, pdf');
+        workshop::clean_file_extensions('');
+        $this->assertDebuggingCalledCount(2);
     }
 
     /**
@@ -679,20 +656,8 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     public function test_invalid_file_extensions() {
         $this->resetAfterTest(true);
 
-        $this->assertSame([], workshop::invalid_file_extensions('', ''));
-        $this->assertSame([], workshop::invalid_file_extensions('', '.doc'));
-        $this->assertSame([], workshop::invalid_file_extensions('odt', ''));
-        $this->assertSame([], workshop::invalid_file_extensions('odt', '*'));
-        $this->assertSame([], workshop::invalid_file_extensions('odt', 'odt'));
-        $this->assertSame([], workshop::invalid_file_extensions('doc, odt, pdf', ['pdf', 'doc', 'odt']));
-        $this->assertSame([], workshop::invalid_file_extensions(['doc', 'odt', 'PDF'], ['.doc', '.pdf', '.odt']));
-        $this->assertSame([], workshop::invalid_file_extensions('*~ .docx, Odt PDF :doc .pdf', '*.docx *.odt *.pdf *.doc'));
-        $this->assertSame(['.00001-wtf-is-this'], workshop::invalid_file_extensions('docx tgz .00001-wtf-is-this', 'tgz docx'));
-        $this->assertSame(['.foobar', '.wtfisthis'], workshop::invalid_file_extensions(['.pdf', '.foobar', 'wtfisthis'], 'pdf'));
-        $this->assertSame([], workshop::invalid_file_extensions('', ''));
-        $this->assertSame(['.odt'], workshop::invalid_file_extensions(['.PDF', 'PDF', '.ODT'], 'jpg pdf png gif'));
-        $this->assertSame(['.odt'], workshop::invalid_file_extensions(['.PDF', 'PDF', '.ODT'], '.jpg,.pdf,  .png .gif'));
-        $this->assertSame(['.exe', '.bat'], workshop::invalid_file_extensions(['.exe', '.odt', '.bat', ''], 'odt'));
+        workshop::invalid_file_extensions('', '');
+        $this->assertDebuggingCalledCount(3);
     }
 
     /**
@@ -701,29 +666,8 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     public function test_is_allowed_file_type() {
         $this->resetAfterTest(true);
 
-        $this->assertTrue(workshop::is_allowed_file_type('README.txt', ''));
-        $this->assertTrue(workshop::is_allowed_file_type('README.txt', ['']));
-        $this->assertFalse(workshop::is_allowed_file_type('README.txt', '0'));
-
-        $this->assertFalse(workshop::is_allowed_file_type('README.txt', 'xt'));
-        $this->assertFalse(workshop::is_allowed_file_type('README.txt', 'old.txt'));
-
-        $this->assertTrue(workshop::is_allowed_file_type('README.txt', 'txt'));
-        $this->assertTrue(workshop::is_allowed_file_type('README.txt', '.TXT'));
-        $this->assertTrue(workshop::is_allowed_file_type('README.TXT', 'txt'));
-        $this->assertTrue(workshop::is_allowed_file_type('README.txt', '.txt .md'));
-        $this->assertTrue(workshop::is_allowed_file_type('README.txt', 'HTML TXT DOC RTF'));
-        $this->assertTrue(workshop::is_allowed_file_type('README.txt', ['HTML', '...TXT', 'DOC', 'RTF']));
-
-        $this->assertTrue(workshop::is_allowed_file_type('C:\Moodle\course-data.tar.gz', 'gzip zip 7z tar.gz'));
-        $this->assertFalse(workshop::is_allowed_file_type('C:\Moodle\course-data.tar.gz', 'gzip zip 7z tar'));
-        $this->assertTrue(workshop::is_allowed_file_type('~/course-data.tar.gz', 'gzip zip 7z gz'));
-        $this->assertFalse(workshop::is_allowed_file_type('~/course-data.tar.gz', 'gzip zip 7z'));
-
-        $this->assertFalse(workshop::is_allowed_file_type('Alice on the beach.jpg.exe', 'png gif jpg bmp'));
-        $this->assertFalse(workshop::is_allowed_file_type('xfiles.exe.jpg', 'exe com bat sh'));
-        $this->assertFalse(workshop::is_allowed_file_type('solution.odt~', 'odt, xls'));
-        $this->assertTrue(workshop::is_allowed_file_type('solution.odt~', 'odt, odt~'));
+        workshop::is_allowed_file_type('', '');
+        $this->assertDebuggingCalledCount(2);
     }
 
     /**

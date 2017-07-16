@@ -256,7 +256,7 @@ class quiz_statistics_report extends quiz_default_report {
             if ($quizstats->s()) {
                 $this->output_quiz_structure_analysis_table($questionstats);
             }
-            $this->table->finish_output();
+            $this->table->export_class_instance()->finish_document();
 
         } else {
             // On-screen display of overview report.

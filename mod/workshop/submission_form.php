@@ -88,20 +88,27 @@ class workshop_submission_form extends moodleform {
             }
         }
 
+        $getfiles = file_get_drafarea_files($data['attachment_filemanager']);
+        if (empty($getfiles->list) and html_is_blank($data['content_editor']['text'])) {
+            $errors['content_editor'] = get_string('submissionrequiredcontent', 'mod_workshop');
+            $errors['attachment_filemanager'] = get_string('submissionrequiredfile', 'mod_workshop');
+        }
+
         if (isset($data['attachment_filemanager']) and isset($this->_customdata['workshop']->submissionfiletypes)) {
-            $whitelist = workshop::normalize_file_extensions($this->_customdata['workshop']->submissionfiletypes);
+            $filetypesutil = new \core_form\filetypes_util();
+            $whitelist = $filetypesutil->normalize_file_types($this->_customdata['workshop']->submissionfiletypes);
             if ($whitelist) {
                 $draftfiles = file_get_drafarea_files($data['attachment_filemanager']);
                 if ($draftfiles) {
                     $wrongfiles = array();
                     foreach ($draftfiles->list as $file) {
-                        if (!workshop::is_allowed_file_type($file->filename, $whitelist)) {
+                        if (!$filetypesutil->is_allowed_file_type($file->filename, $whitelist)) {
                             $wrongfiles[] = $file->filename;
                         }
                     }
                     if ($wrongfiles) {
                         $a = array(
-                            'whitelist' => workshop::clean_file_extensions($whitelist),
+                            'whitelist' => implode(', ', $whitelist),
                             'wrongfiles' => implode(', ', $wrongfiles),
                         );
                         $errors['attachment_filemanager'] = get_string('err_wrongfileextension', 'mod_workshop', $a);

@@ -687,4 +687,78 @@ class core_calendar_external extends external_api {
                     )
             );
     }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_calendar_event_by_id_parameters() {
+        return new external_function_parameters(
+            array(
+                'eventid' => new external_value(PARAM_INT, 'The event id to be retrieved'),
+            )
+        );
+    }
+    /**
+     * Get calendar event by id.
+     *
+     * @param int $eventid The calendar event id to be retrieved.
+     * @return array Array of event details
+     */
+    public static function get_calendar_event_by_id($eventid) {
+        global $CFG;
+        require_once($CFG->dirroot."/calendar/lib.php");
+
+        // Parameter validation.
+        $params = ['eventid' => $eventid];
+        $params = self::validate_parameters(self::get_calendar_event_by_id_parameters(), $params);
+
+        $warnings = array();
+
+        // We need to get events asked for eventids.
+        $event = calendar_get_events_by_id([$eventid]);
+        $eventobj = calendar_event::load($eventid);
+        list($event[$eventid]->description, $event[$eventid]->format) = $eventobj->format_external_text();
+        $event[$eventid]->caneditevent = calendar_edit_event_allowed($eventobj);
+
+        return array('event' => $event[$eventid], 'warnings' => $warnings);
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function  get_calendar_event_by_id_returns() {
+
+        return new external_single_structure(array(
+            'event' => new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'event id'),
+                    'name' => new external_value(PARAM_TEXT, 'event name'),
+                    'description' => new external_value(PARAM_RAW, 'Description', VALUE_OPTIONAL, null, NULL_ALLOWED),
+                    'format' => new external_format_value('description'),
+                    'courseid' => new external_value(PARAM_INT, 'course id'),
+                    'groupid' => new external_value(PARAM_INT, 'group id'),
+                    'userid' => new external_value(PARAM_INT, 'user id'),
+                    'repeatid' => new external_value(PARAM_INT, 'repeat id'),
+                    'modulename' => new external_value(PARAM_TEXT, 'module name', VALUE_OPTIONAL, null, NULL_ALLOWED),
+                    'instance' => new external_value(PARAM_INT, 'instance id'),
+                    'eventtype' => new external_value(PARAM_TEXT, 'Event type'),
+                    'timestart' => new external_value(PARAM_INT, 'timestart'),
+                    'timeduration' => new external_value(PARAM_INT, 'time duration'),
+                    'visible' => new external_value(PARAM_INT, 'visible'),
+                    'uuid' => new external_value(PARAM_TEXT, 'unique id of ical events', VALUE_OPTIONAL, null, NULL_NOT_ALLOWED),
+                    'sequence' => new external_value(PARAM_INT, 'sequence'),
+                    'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                    'subscriptionid' => new external_value(PARAM_INT, 'Subscription id', VALUE_OPTIONAL, null, NULL_ALLOWED),
+                    'caneditevent' => new external_value(PARAM_BOOL, 'Whether the user can edit the event'),
+                ),
+                'event'
+            ),
+            'warnings' => new external_warnings()
+            )
+        );
+    }
 }

@@ -213,8 +213,18 @@ abstract class engine {
         $numdocs = 0;
         $numdocsignored = 0;
         $lastindexeddoc = 0;
+        $firstindexeddoc = 0;
+        $partial = false;
 
         foreach ($iterator as $document) {
+            // Stop if we have exceeded the time limit (and there are still more items). Always
+            // do at least one second's worth of documents otherwise it will never make progress.
+            if ($lastindexeddoc !== $firstindexeddoc &&
+                    !empty($options['stopat']) && microtime(true) >= $options['stopat']) {
+                $partial = true;
+                break;
+            }
+
             if (!$document instanceof \core_search\document) {
                 continue;
             }
@@ -236,10 +246,13 @@ abstract class engine {
             }
 
             $lastindexeddoc = $document->get('modified');
+            if (!$firstindexeddoc) {
+                $firstindexeddoc = $lastindexeddoc;
+            }
             $numrecords++;
         }
 
-        return array($numrecords, $numdocs, $numdocsignored, $lastindexeddoc);
+        return array($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial);
     }
 
     /**

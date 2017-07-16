@@ -17,7 +17,6 @@ Feature: In a report, admin can filter log data
       | student1 | C1 | student |
     And I log in as "admin"
 
-  @javascript
   Scenario: Filter log report for standard and legacy log reader
     Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And I click on "Enable" "link" in the "Legacy log" "table_row"
@@ -42,7 +41,6 @@ Feature: In a report, admin can filter log data
     And I should see "user login"
     And I should not see "Nothing to display"
 
-  @javascript
   Scenario: Filter log report for standard log reader
     Given I am on "Course 1" course homepage
     And I navigate to course participants
@@ -57,7 +55,6 @@ Feature: In a report, admin can filter log data
     And I press "Get these logs"
     Then I should see "User logged in as another user"
 
-  @javascript
   Scenario: Filter log report for legacy log reader
     Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And I click on "Enable" "link" in the "Legacy log" "table_row"

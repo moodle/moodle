@@ -33,7 +33,6 @@ Feature: User can view activity log.
     And I press "Save changes"
     And I log out
 
-  @javascript
   Scenario: View Todays' and all log report for user
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -45,7 +44,6 @@ Feature: User can view activity log.
     And I follow "All logs"
     Then I should see "Assignment: Test assignment name"
 
-  @javascript
   Scenario: No log reader enabled should be visible when no log store enabled.
     Given I log in as "admin"
     And I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"

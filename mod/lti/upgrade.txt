@@ -1,5 +1,11 @@
 This files describes API changes in the lti code.
 
+=== 3.4 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-57432 for more info:
+    - mod_lti_upgrade_custom_separator()
+
 === 3.2 ===
 
 * Support for LTI ContentItem message type.

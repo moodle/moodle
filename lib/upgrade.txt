@@ -3,6 +3,13 @@ information provided here is intended especially for developers.
 
 === 3.4 ===
 
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-57432 for more info:
+    - upgrade_mimetypes()
+    - upgrade_fix_missing_root_folders_draft()
+    - upgrade_minmaxgrade()
+    - upgrade_course_tags()
+
 * Added new moodleform element 'filetypes' and new admin setting widget 'admin_setting_filetypes'. These new widgets
   allow users to define a list of file types; either by typing them manually or selecting them from a list. The widgets
   directly support the syntax used to feed the 'accepted_types' option of the filemanager and filepicker elements. File
@@ -13,6 +20,10 @@ information provided here is intended especially for developers.
 * External function core_group_external::get_activity_allowed_groups now returns an additional field: canaccessallgroups.
   It indicates whether the user will be able to access all the activity groups.
 * file_get_draft_area_info does not sum the root folder anymore when calculating the foldercount.
+* The moodleform element classes can now optionally provide a public function validateSubmitValue(). This method can be
+  used to perform implicit validation of submitted values - without the need to explicitly add the validation rules to
+  every form. The method should accept a single parameter with the submitted value. It should return a string with the
+  eventual validation error, or an empty value if the validation passes.
 
 === 3.3.1 ===
 

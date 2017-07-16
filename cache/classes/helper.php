@@ -484,6 +484,9 @@ class cache_helper {
         foreach ($config->get_all_stores() as $store) {
             self::purge_store($store['name'], $config);
         }
+        foreach ($factory->get_adhoc_caches_in_use() as $cache) {
+            $cache->purge();
+        }
     }
 
     /**

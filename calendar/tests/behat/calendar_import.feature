@@ -31,19 +31,3 @@ Feature: Import and edit calendar events
     And I should see "Event on 2-15-2017"
     And I should see "Event on 2-25-2017"
     And I follow "Event on 2-15-2017"
-    And I should see "Event source: Test Import"
-    And I follow "Edit event"
-    And I set the following fields to these values:
-      | Event title    | Event on 2-20-2017 |
-      | Description    | Event on 2-20-2017 |
-      | timestart[day] | 20 |
-    And I press "Save changes"
-    When I view the calendar for "2" "2017"
-    Then I should see "Event on 2-20-2017"
-    And I should see "Event on 2-25-2017"
-    And I should not see "Event on 2-15-2017"
-    And I press "Manage subscriptions"
-    And I press "Remove"
-    And I view the calendar for "2" "2017"
-    And I should not see "Event on 2-25-2017"
-    And I should not see "Event on 2-20-2017"

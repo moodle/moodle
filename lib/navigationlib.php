@@ -2313,8 +2313,28 @@ class global_navigation extends navigation_node {
             return false;
         }
         // Add a branch for the current user.
-        $canseefullname = has_capability('moodle/site:viewfullnames', $coursecontext);
-        $usernode = $usersnode->add(fullname($user, $canseefullname), $userviewurl, self::TYPE_USER, null, 'user' . $user->id);
+        // Only reveal user details if $user is the current user, or a user to which the current user has access.
+        $viewprofile = true;
+        if (!$iscurrentuser) {
+            require_once($CFG->dirroot . '/user/lib.php');
+            if ($this->page->context->contextlevel == CONTEXT_USER && !has_capability('moodle/user:viewdetails', $usercontext) ) {
+                $viewprofile = false;
+            } else if ($this->page->context->contextlevel != CONTEXT_USER && !user_can_view_profile($user, $course, $usercontext)) {
+                $viewprofile = false;
+            }
+            if (!$viewprofile) {
+                $viewprofile = user_can_view_profile($user, null, $usercontext);
+            }
+        }
+
+        // Now, conditionally add the user node.
+        if ($viewprofile) {
+            $canseefullname = has_capability('moodle/site:viewfullnames', $coursecontext);
+            $usernode = $usersnode->add(fullname($user, $canseefullname), $userviewurl, self::TYPE_USER, null, 'user' . $user->id);
+        } else {
+            $usernode = $usersnode->add(get_string('user'));
+        }
+
         if ($this->page->context->contextlevel == CONTEXT_USER && $user->id == $this->page->context->instanceid) {
             $usernode->make_active();
         }
@@ -3702,7 +3722,7 @@ class breadcrumb_navigation_node extends navigation_node {
                  $this->$key = $value;
             }
         } else {
-            throw coding_exception('Not a valid breadcrumb_navigation_node');
+            throw new coding_exception('Not a valid breadcrumb_navigation_node');
         }
     }
 
@@ -3756,7 +3776,7 @@ class flat_navigation_node extends navigation_node {
                  $this->$key = $value;
             }
         } else {
-            throw coding_exception('Not a valid flat_navigation_node');
+            throw new coding_exception('Not a valid flat_navigation_node');
         }
         $this->indent = $indent;
     }

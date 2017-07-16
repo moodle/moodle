@@ -1,6 +1,12 @@
 This files describes API changes in /mod/choice/*,
 information provided here is intended especially for developers.
 
+=== 3.3.2 ===
+
+* choice_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
 === 3.2 ===
 
 * Events mod_choice\event\answer_submitted and mod_choice\event\answer_updated

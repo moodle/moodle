@@ -20,33 +20,7 @@
 // before any action that may take longer time to finish.
 
 function xmldb_glossary_upgrade($oldversion) {
-    global $CFG, $DB;
-
-    $dbman = $DB->get_manager();
-
-    // Moodle v2.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2015060200) {
-
-        // Define field showtabs to be added to glossary_formats.
-        $table = new xmldb_table('glossary_formats');
-        $field = new xmldb_field('showtabs', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'showgroup');
-
-        // Conditionally launch add field showtabs.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Glossary savepoint reached.
-        upgrade_mod_savepoint(true, 2015060200, 'glossary');
-    }
-
-    // Moodle v3.0.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG;
 
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.

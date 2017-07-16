@@ -2,7 +2,7 @@
 # process (which uses our internal CI system) this file is here for the benefit
 # of community developers git clones - see MDL-51458.
 
-sudo: false
+sudo: required
 
 # We currently disable Travis notifications entirely until https://github.com/travis-ci/travis-ci/issues/4976
 # is fixed.
@@ -14,10 +14,14 @@ language: php
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
     - 7.1
-    - 5.6
+    - 7.0
 
 addons:
   postgresql: "9.3"
+  packages:
+    - mysql-server-5.6
+    - mysql-client-core-5.6
+    - mysql-client-5.6
 
 services:
     - redis-server
@@ -61,11 +65,7 @@ matrix:
         # Exclude it on all versions except for 7.1
 
         - env: DB=mysqli   TASK=PHPUNIT
-          php: 5.6
-
-        # Moodle 2.7 is not compatible with PHP 7 for the upgrade test.
-        - env: DB=pgsql    TASK=UPGRADE
-          php: 7.1
+          php: 7.0
 
 cache:
     directories:
@@ -73,6 +73,28 @@ cache:
       - $HOME/.npm
 
 install:
+    - sudo apt-get -y install haveged
+    - sudo service haveged start
+    - >
+        if [ "$DB" = 'mysqli' ];
+        then
+            sudo mkdir /mnt/ramdisk
+            sudo mount -t tmpfs -o size=1024m tmpfs /mnt/ramdisk
+            sudo stop mysql
+            sudo mv /var/lib/mysql /mnt/ramdisk
+            sudo ln -s /mnt/ramdisk/mysql /var/lib/mysql
+            sudo start mysql
+        fi
+    - >
+        if [ "$DB" = 'pgsql' ];
+        then
+            sudo mkdir /mnt/ramdisk
+            sudo mount -t tmpfs -o size=1024m tmpfs /mnt/ramdisk
+            sudo service postgresql stop
+            sudo mv /var/lib/postgresql /mnt/ramdisk
+            sudo ln -s /mnt/ramdisk/postgresql /var/lib/postgresql
+            sudo service postgresql start 9.3
+        fi
     - >
         if [ "$TASK" = 'PHPUNIT' ];
         then
@@ -207,9 +229,9 @@ before_script:
         # We need the official upstream.
         git remote add upstream https://github.com/moodle/moodle.git;
 
-        # Checkout 27 STABLE branch.
-        git fetch upstream MOODLE_27_STABLE;
-        git checkout MOODLE_27_STABLE;
+        # Checkout 30 STABLE branch (the first version compatible with PHP 7.x)
+        git fetch upstream MOODLE_30_STABLE;
+        git checkout MOODLE_30_STABLE;
 
         # Perform the upgrade
         php admin/cli/install_database.php --agree-license --adminpass=Password --adminemail=admin@example.com --fullname="Upgrade test" --shortname=Upgrade;

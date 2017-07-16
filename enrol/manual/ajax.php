@@ -61,66 +61,36 @@ $outcome->error = '';
 $searchanywhere = get_user_preferences('userselector_searchanywhere', false);
 
 switch ($action) {
-    case 'getassignable':
-        $otheruserroles = optional_param('otherusers', false, PARAM_BOOL);
-        $outcome->response = array_reverse($manager->get_assignable_roles($otheruserroles), true);
-        break;
-    case 'searchusers':
-        $enrolid = required_param('enrolid', PARAM_INT);
-        $search = optional_param('search', '', PARAM_RAW);
-        $page = optional_param('page', 0, PARAM_INT);
-        $addedenrollment = optional_param('enrolcount', 0, PARAM_INT);
-        $perpage = optional_param('perpage', 25, PARAM_INT);  //  This value is hard-coded to 25 in quickenrolment.js
-        $outcome->response = $manager->get_potential_users($enrolid, $search, $searchanywhere, $page, $perpage, $addedenrollment);
-        $extrafields = get_extra_user_fields($context);
-        $useroptions = array();
-        // User is not enrolled yet, either link to site profile or do not link at all.
-        if (has_capability('moodle/user:viewdetails', context_system::instance())) {
-            $useroptions['courseid'] = SITEID;
-        } else {
-            $useroptions['link'] = false;
-        }
-        $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
-        foreach ($outcome->response['users'] as &$user) {
-            $user->picture = $OUTPUT->user_picture($user, $useroptions);
-            $user->fullname = fullname($user, $viewfullnames);
-            $fieldvalues = array();
-            foreach ($extrafields as $field) {
-                $fieldvalues[] = s($user->{$field});
-                unset($user->{$field});
-            }
-            $user->extrafields = implode(', ', $fieldvalues);
-        }
-        // Chrome will display users in the order of the array keys, so we need
-        // to ensure that the results ordered array keys. Fortunately, the JavaScript
-        // does not care what the array keys are. It uses user.id where necessary.
-        $outcome->response['users'] = array_values($outcome->response['users']);
-        $outcome->success = true;
-        break;
-    case 'searchcohorts':
-        $enrolid = required_param('enrolid', PARAM_INT);
-        $search = optional_param('search', '', PARAM_RAW);
-        $page = optional_param('page', 0, PARAM_INT);
-        $addedenrollment = optional_param('enrolcount', 0, PARAM_INT);
-        $perpage = optional_param('perpage', 25, PARAM_INT);  //  This value is hard-coded to 25 in quickenrolment.js
-        $outcome->response = enrol_manual_get_potential_cohorts($context, $enrolid, $search, $page, $perpage, $addedenrollment);
-        $outcome->success = true;
-        break;
     case 'enrol':
         $enrolid = required_param('enrolid', PARAM_INT);
-        $cohort = $user = null;
+        $cohorts = $users = [];
+
+        $userids = optional_param('userlist', [], PARAM_SEQUENCE);
+        $userid = optional_param('userid', 0, PARAM_INT);
+        if ($userid) {
+            $userids[] = $userid;
+        }
+        if ($userids) {
+            foreach ($userids as $userid) {
+                $users[] = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+            }
+        }
+        $cohortids = optional_param('cohortlist', [], PARAM_SEQUENCE);
         $cohortid = optional_param('cohortid', 0, PARAM_INT);
-        if (!$cohortid) {
-            $userid = required_param('userid', PARAM_INT);
-            $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
-        } else {
-            $cohort = $DB->get_record('cohort', array('id' => $cohortid), '*', MUST_EXIST);
-            if (!cohort_can_view_cohort($cohort, $context)) {
-                throw new enrol_ajax_exception('invalidenrolinstance'); // TODO error text!
+        if ($cohortid) {
+            $cohortids[] = $cohortid;
+        }
+        if ($cohortids) {
+            foreach ($cohortids as $cohortid) {
+                $cohort = $DB->get_record('cohort', array('id' => $cohortid), '*', MUST_EXIST);
+                if (!cohort_can_view_cohort($cohort, $context)) {
+                    throw new enrol_ajax_exception('invalidenrolinstance'); // TODO error text!
+                }
+                $cohorts[] = $cohort;
             }
         }
 
-        $roleid = optional_param('role', null, PARAM_INT);
+        $roleid = optional_param('roletoassign', null, PARAM_INT);
         $duration = optional_param('duration', 0, PARAM_FLOAT);
         $startdate = optional_param('startdate', 0, PARAM_INT);
         $recovergrades = optional_param('recovergrades', 0, PARAM_INT);
@@ -169,9 +139,10 @@ switch ($action) {
         }
         $plugin = $plugins[$instance->enrol];
         if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
-            if ($user) {
+            foreach ($users as $user) {
                 $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend, null, $recovergrades);
-            } else {
+            }
+            foreach ($cohorts as $cohort) {
                 $plugin->enrol_cohort($instance, $cohort->id, $roleid, $timestart, $timeend, null, $recovergrades);
             }
         } else {

@@ -622,6 +622,72 @@ class core_blocklib_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * Test the block instance time fields (timecreated, timemodified).
+     */
+    public function test_block_instance_times() {
+        global $DB;
+
+        $this->purge_blocks();
+
+        // Set up fixture.
+        $regionname = 'a-region';
+        $blockname = 'html';
+        $context = context_system::instance();
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+                $context, 'page-type');
+
+        // Add block to page.
+        $before = time();
+        $blockmanager->add_block($blockname, $regionname, 0, false);
+        $after = time();
+
+        // Check database table to ensure it contains created/modified times.
+        $blockdata = $DB->get_record('block_instances', ['blockname' => 'html']);
+        $this->assertTrue($blockdata->timemodified >= $before && $blockdata->timemodified <= $after);
+        $this->assertTrue($blockdata->timecreated >= $before && $blockdata->timecreated <= $after);
+
+        // Get block from manager.
+        $blockmanager->load_blocks();
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        $block = reset($blocks);
+
+        // Wait until at least the next second.
+        while (time() === $after) {
+            usleep(100000);
+        }
+
+        // Update block settings.
+        $this->setAdminUser();
+        $data = (object)['text' => ['text' => 'New text', 'itemid' => 0, 'format' => FORMAT_HTML]];
+        $before = time();
+        $block->instance_config_save($data);
+        $after = time();
+
+        // Check time modified updated, but time created didn't.
+        $newblockdata = $DB->get_record('block_instances', ['blockname' => 'html']);
+        $this->assertTrue(
+                $newblockdata->timemodified >= $before &&
+                $newblockdata->timemodified <= $after &&
+                $newblockdata->timemodified > $blockdata->timemodified);
+        $this->assertEquals($blockdata->timecreated, $newblockdata->timecreated);
+
+        // Also try repositioning the block.
+        while (time() === $after) {
+            usleep(100000);
+        }
+        $before = time();
+        $blockmanager->reposition_block($blockdata->id, $regionname, 10);
+        $after = time();
+        $blockdata = $newblockdata;
+        $newblockdata = $DB->get_record('block_instances', ['blockname' => 'html']);
+        $this->assertTrue(
+                $newblockdata->timemodified >= $before &&
+                $newblockdata->timemodified <= $after &&
+                $newblockdata->timemodified > $blockdata->timemodified);
+        $this->assertEquals($blockdata->timecreated, $newblockdata->timecreated);
+    }
 }
 
 /**

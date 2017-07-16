@@ -386,6 +386,97 @@ class core_enrol_external extends external_api {
     }
 
     /**
+     * Returns description of method parameters value
+     *
+     * @return external_description
+     */
+    public static function get_potential_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+                'enrolid' => new external_value(PARAM_INT, 'enrolment id'),
+                'search' => new external_value(PARAM_RAW, 'query'),
+                'searchanywhere' => new external_value(PARAM_BOOL, 'find a match anywhere, or only at the beginning'),
+                'page' => new external_value(PARAM_INT, 'Page number'),
+                'perpage' => new external_value(PARAM_INT, 'Number per page'),
+            )
+        );
+    }
+
+    /**
+     * Get potential users.
+     *
+     * @param int $courseid Course id
+     * @param int $enrolid Enrolment id
+     * @param string $search The query
+     * @param boolean $searchanywhere Match anywhere in the string
+     * @param int $page Page number
+     * @param int $perpage Max per page
+     * @return array An array of users
+     */
+    public static function get_potential_users($courseid, $enrolid, $search, $searchanywhere, $page, $perpage) {
+        global $PAGE, $DB, $CFG;
+
+        require_once($CFG->dirroot.'/enrol/locallib.php');
+        require_once($CFG->dirroot.'/user/lib.php');
+
+        $params = self::validate_parameters(
+            self::get_potential_users_parameters(),
+            array(
+                'courseid' => $courseid,
+                'enrolid' => $enrolid,
+                'search' => $search,
+                'searchanywhere' => $searchanywhere,
+                'page' => $page,
+                'perpage' => $perpage
+            )
+        );
+        $context = context_course::instance($params['courseid']);
+        try {
+            self::validate_context($context);
+        } catch (Exception $e) {
+            $exceptionparam = new stdClass();
+            $exceptionparam->message = $e->getMessage();
+            $exceptionparam->courseid = $params['courseid'];
+            throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
+        }
+        require_capability('moodle/course:enrolreview', $context);
+
+        $course = $DB->get_record('course', array('id' => $params['courseid']));
+        $manager = new course_enrolment_manager($PAGE, $course);
+
+        $users = $manager->get_potential_users($params['enrolid'],
+                                               $params['search'],
+                                               $params['searchanywhere'],
+                                               $params['page'],
+                                               $params['perpage']);
+
+        $results = array();
+        $requiredfields = ['id', 'fullname', 'profileimageurl', 'profileimageurlsmall'];
+        foreach ($users['users'] as $id => $user) {
+            // Note: We pass the course here to validate that the current user can at least view user details in this course.
+            // The user we are looking at is not in this course yet though - but we only fetch the minimal set of
+            // user records, and the user has been validated to have course:enrolreview in this course. Otherwise
+            // there is no way to find users who aren't in the course in order to enrol them.
+            if ($userdetails = user_get_user_details($user, $course, $requiredfields)) {
+                $results[] = $userdetails;
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function get_potential_users_returns() {
+        global $CFG;
+        require_once($CFG->dirroot . '/user/externallib.php');
+        return new external_multiple_structure(core_user_external::user_description());
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters

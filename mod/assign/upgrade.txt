@@ -1,5 +1,10 @@
 This files describes API changes in the assign code.
 
+=== 3.3.2 ===
+* assign_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
 === 3.3 ===
 * All pluginfile file serving functions now pass through the options to send_stored_file() (all assignment plugins should do
   the same).

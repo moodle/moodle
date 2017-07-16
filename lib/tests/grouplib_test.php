@@ -1433,6 +1433,17 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertCount(1, $members);
         $this->assertEquals($user1->id, $members[$user1->id]->id);
 
+        // Test the info matches group membership for the entire course.
+        $groups  = groups_get_all_groups($course1->id, 0, 0, 'g.*', true);
+        $group1withmembers = array_pop($groups);
+
+        // Compare the sorted keys of both arrays (should be list of user ids).
+        $members = array_keys($members);
+        sort($members);
+        $group1members = array_keys($group1withmembers->members);
+        sort($group1members);
+        $this->assertEquals($members, $group1members);
+
         // Group with just one plus empty group.
         $members = groups_get_groups_members([$group1->id, $group3->id]);
         $this->assertCount(1, $members);
@@ -1446,6 +1457,18 @@ class core_grouplib_testcase extends advanced_testcase {
         $members = groups_get_members($group2->id, 'u.*', 'u.id ASC');
         $this->assertCount(2, $members);
         $this->assertEquals([$user1->id, $user2->id], array_keys($members));
+
+        // Test the info matches group membership for the entire course.
+        $groups  = groups_get_all_groups($course2->id, 0, 0, 'g.*', true);
+        $group2withmembers = $groups[$group2->id];
+
+        // Compare the sorted keys of both arrays (should be list of user ids).
+        $members = array_keys($members);
+        sort($members);
+        $group2members = array_keys($group2withmembers->members);
+        sort($group2members);
+        $this->assertEquals($members, $group2members);
+
     }
 
     /**

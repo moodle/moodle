@@ -45,13 +45,15 @@ $PAGE->set_pagelayout('admin');
 $PAGE->navbar->add(get_string('managesubscriptions', 'calendar'));
 
 if ($courseid != SITEID && !empty($courseid)) {
-    $course = $DB->get_record('course', array('id' => $courseid));
+    // Course ID must be valid and existing.
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     $courses = array($course->id => $course);
 } else {
     $course = get_site();
     $courses = calendar_get_default_courses();
 }
-require_course_login($course);
+require_login($course, false);
+
 if (!calendar_user_can_add_event($course)) {
     print_error('errorcannotimport', 'calendar');
 }

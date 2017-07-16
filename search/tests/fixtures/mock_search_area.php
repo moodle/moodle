@@ -122,4 +122,8 @@ class mock_search_area extends \core_search\base {
     public function get_context_url(\core_search\document $doc) {
         return new \moodle_url('/index.php');
     }
+
+    public function get_visible_name($lazyload = false) {
+        return 'Mock search area';
+    }
 }

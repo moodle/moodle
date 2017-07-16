@@ -572,6 +572,20 @@ abstract class moodleform {
                 $file_val = false;
             }
 
+            // Give the elements a chance to perform an implicit validation.
+            $element_val = true;
+            foreach ($mform->_elements as $element) {
+                if (method_exists($element, 'validateSubmitValue')) {
+                    $value = $mform->getSubmitValue($element->getName());
+                    $result = $element->validateSubmitValue($value);
+                    if (!empty($result) && is_string($result)) {
+                        $element_val = false;
+                        $mform->setElementError($element->getName(), $result);
+                    }
+                }
+            }
+
+            // Let the form instance validate the submitted values.
             $data = $mform->exportValues();
             $moodle_val = $this->validation($data, $files);
             if ((is_array($moodle_val) && count($moodle_val)!==0)) {
@@ -586,7 +600,7 @@ abstract class moodleform {
                 $moodle_val = true;
             }
 
-            $this->_validated = ($internal_val and $moodle_val and $file_val);
+            $this->_validated = ($internal_val and $element_val and $moodle_val and $file_val);
         }
         return $this->_validated;
     }
@@ -3097,6 +3111,7 @@ MoodleQuickForm::registerElementType('autocomplete', "$CFG->libdir/form/autocomp
 MoodleQuickForm::registerElementType('button', "$CFG->libdir/form/button.php", 'MoodleQuickForm_button');
 MoodleQuickForm::registerElementType('cancel', "$CFG->libdir/form/cancel.php", 'MoodleQuickForm_cancel');
 MoodleQuickForm::registerElementType('course', "$CFG->libdir/form/course.php", 'MoodleQuickForm_course');
+MoodleQuickForm::registerElementType('cohort', "$CFG->libdir/form/cohort.php", 'MoodleQuickForm_cohort');
 MoodleQuickForm::registerElementType('searchableselector', "$CFG->libdir/form/searchableselector.php", 'MoodleQuickForm_searchableselector');
 MoodleQuickForm::registerElementType('checkbox', "$CFG->libdir/form/checkbox.php", 'MoodleQuickForm_checkbox');
 MoodleQuickForm::registerElementType('date_selector', "$CFG->libdir/form/dateselector.php", 'MoodleQuickForm_date_selector');

@@ -450,7 +450,7 @@ class core_course_renderer extends plugin_renderer_base {
     public function course_section_cm_completion($course, &$completioninfo, cm_info $mod, $displayoptions = array()) {
         global $CFG;
         $output = '';
-        if (!$mod->is_visible_on_course_page()) {
+        if (!empty($displayoptions['hidecompletion']) || !isloggedin() || isguestuser() || !$mod->uservisible) {
             return $output;
         }
         if ($completioninfo === null) {

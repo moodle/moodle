@@ -37,15 +37,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_workshop_upgrade($oldversion) {
     global $CFG, $DB;
 
-    // Moodle v2.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v3.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2016022200) {

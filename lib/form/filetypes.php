@@ -45,6 +45,9 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
     /** @var bool Allow selection of 'All file types' (will be stored as '*'). */
     protected $allowall = true;
 
+    /** @var bool Skip implicit validation against known file types. */
+    protected $allowunknown = false;
+
     /** @var core_form\filetypes_util instance to use as a helper. */
     protected $util = null;
 
@@ -56,6 +59,7 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
      * @param array $options element options:
      *   'onlytypes': Allow selection from these file types only; for example ['onlytypes' => ['web_image']].
      *   'allowall': Allow to select 'All file types', defaults to true. Does not apply with onlytypes are set.
+     *   'allowunknown': Skip implicit validation against the list of known file types.
      * @param array|string $attributes Either a typical HTML attribute string or an associative array
      */
     public function __construct($elementname = null, $elementlabel = null, $options = null, $attributes = null) {
@@ -75,6 +79,9 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
             if (!$this->onlytypes && array_key_exists('allowall', $options)) {
                 $this->allowall = (bool)$options['allowall'];
             }
+            if (array_key_exists('allowunknown', $options)) {
+                $this->allowunknown = (bool)$options['allowunknown'];
+            }
         }
 
         $this->util = new filetypes_util();
@@ -88,7 +95,7 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
         $this->_generateId();
 
         $this->setElements([
-            $this->createFormElement('text', 'filetypes', '', [
+            $this->createFormElement('text', 'filetypes', $this->getLabel(), [
                 'id' => $this->getAttribute('id'),
             ]),
 
@@ -196,8 +203,50 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
                 }
                 $this->setValue($value);
                 return true;
+                break;
+
         }
 
         return parent::onQuickFormEvent($event, $arg, $caller);
+    }
+
+    /**
+     * Check that the submitted list contains only known and allowed file types.
+     *
+     * The validation obeys the element options 'allowall', 'allowunknown' and
+     * 'onlytypes' passed when creating the element.
+     *
+     * @param array $value Submitted value.
+     * @return string|null Validation error message or null.
+     */
+    public function validateSubmitValue($value) {
+
+        if (!$this->allowall) {
+            // Assert that there is an actual list provided.
+            $normalized = $this->util->normalize_file_types($value['filetypes']);
+            if (empty($normalized) || $normalized == ['*']) {
+                return get_string('filetypesnotall', 'core_form');
+            }
+        }
+
+        if (!$this->allowunknown) {
+            // Assert that all file types are known.
+            $unknown = $this->util->get_unknown_file_types($value['filetypes']);
+
+            if ($unknown) {
+                return get_string('filetypesunknown', 'core_form', implode(', ', $unknown));
+            }
+        }
+
+        if ($this->onlytypes) {
+            // Assert that all file types are allowed here.
+            $notwhitelisted = $this->util->get_not_whitelisted($value['filetypes'], $this->onlytypes);
+
+            if ($notwhitelisted) {
+                return get_string('filetypesnotwhitelisted', 'core_form', implode(', ', $notwhitelisted));
+            }
+        }
+
+        return;
     }
 }

@@ -49,16 +49,6 @@ function xmldb_folder_upgrade($oldversion) {
 
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
-    // Moodle v2.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v3.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
-
     // Add showdownloadfolder option.
     if ($oldversion < 2016020201) {
         $table = new xmldb_table('folder');

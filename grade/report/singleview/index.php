@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('NO_OUTPUT_BUFFERING', true);
+
 require_once('../../../config.php');
 require_once($CFG->dirroot.'/lib/gradelib.php');
 require_once($CFG->dirroot.'/grade/lib.php');
@@ -59,7 +61,7 @@ $PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $pageparams)
 $PAGE->set_pagelayout('incourse');
 
 if (!$course = $DB->get_record('course', $courseparams)) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 
 require_login($course);

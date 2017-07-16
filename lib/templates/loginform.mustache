@@ -123,21 +123,20 @@
 
     </div>
 
+    <div class="signuppanel">
     {{#hasinstructions}}
-        <div class="signuppanel">
-            <h2>{{#str}} firsttime {{/str}}</h2>
-            <div class="subcontent">
-                {{{instructions}}}
-                {{#cansignup}}
-                    <div class="signupform">
-                        <form action="{{signupurl}}" method="get" id="signup">
-                            <div>
-                                <input type="submit" value={{#quote}}{{#str}} startsignup {{/str}}{{/quote}} />
-                            </div>
-                        </form>
-                    </div>
-                {{/cansignup}}
-            </div>
+        <h2>{{#str}} firsttime {{/str}}</h2>
+        <div class="subcontent">
+            {{{instructions}}}
+            {{#cansignup}}
+                <div class="signupform">
+                    <form action="{{signupurl}}" method="get" id="signup">
+                        <div>
+                            <input type="submit" value={{#quote}}{{#str}} startsignup {{/str}}{{/quote}} />
+                        </div>
+                    </form>
+                </div>
+            {{/cansignup}}
         </div>
     {{/hasinstructions}}
 
@@ -147,17 +146,18 @@
             <div class="potentialidplist">
                 {{#identityproviders}}
                     <div class="potentialidp">
-                        <a href="{{url}}" title={{#quote}}{{name}}{{/quote}}>
-                            {{#iconurl}}
-                                <img src="{{iconurl}}" alt="" width="24" height="24"/>
-                            {{/iconurl}}
-                            {{name}}
+                        <a href="{{url}}" title={{#quote}}{{name}}{{/quote}} class="btn">
+                        {{#iconurl}}
+                            <img src="{{iconurl}}" alt="" width="24" height="24"/>
+                        {{/iconurl}}
+                        {{name}}
                         </a>
                     </div>
                 {{/identityproviders}}
             </div>
         </div>
     {{/hasidentityproviders}}
+    </div>
 </div>
 
 {{#js}}

@@ -46,12 +46,13 @@ class search_index_task extends scheduled_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-        if (!\core_search\manager::is_global_search_enabled()) {
+        if (!\core_search\manager::is_global_search_enabled() &&
+                !get_config('core', 'searchindexwhendisabled')) {
             return;
         }
         $globalsearch = \core_search\manager::instance();
 
         // Indexing database records for modules + rich documents of forum.
-        $globalsearch->index();
+        $globalsearch->index(false, get_config('core', 'searchindextime'), new \text_progress_trace());
     }
 }

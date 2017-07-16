@@ -3,6 +3,11 @@
     left: initial;
 }
 
+.block:target {
+    padding-top: 0 !important; /* stylelint-disable declaration-no-important */
+    margin-top: 0 !important;
+}
+
 .block_search_forums .searchform {
     /* Override plugin's default. */
     text-align: left;

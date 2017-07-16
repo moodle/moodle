@@ -37,7 +37,7 @@ $newvalue = optional_param('newvalue', false, PARAM_TEXT);
 
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 $context = context_course::instance($course->id);
 require_login($course);

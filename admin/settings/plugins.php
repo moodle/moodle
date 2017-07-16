@@ -557,6 +557,13 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_heading('searchengineheading', new lang_string('searchengine', 'admin'), ''));
     $temp->add(new admin_setting_configselect('searchengine',
                                 new lang_string('selectsearchengine', 'admin'), '', 'solr', $engines));
+    $temp->add(new admin_setting_heading('searchindexingheading', new lang_string('searchoptions', 'admin'), ''));
+    $temp->add(new admin_setting_configcheckbox('searchindexwhendisabled',
+            new lang_string('searchindexwhendisabled', 'admin'), new lang_string('searchindexwhendisabled_desc', 'admin'),
+            0));
+    $temp->add(new admin_setting_configduration('searchindextime',
+            new lang_string('searchindextime', 'admin'), new lang_string('searchindextime_desc', 'admin'),
+            600));
 
     $ADMIN->add('searchplugins', $temp);
     $ADMIN->add('searchplugins', new admin_externalpage('searchareas', new lang_string('searchareas', 'admin'),

@@ -27,8 +27,9 @@ define('CLI_SCRIPT', true);
 require(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/clilib.php');      // cli only functions
 
-list($options, $unrecognized) = cli_get_params(array('help' => false, 'force' => false, 'reindex' => false),
-                                               array('h' => 'help', 'f' => 'force', 'r' => 'reindex'));
+list($options, $unrecognized) = cli_get_params(array('help' => false, 'force' => false,
+        'reindex' => false, 'timelimit' => 0),
+        array('h' => 'help', 'f' => 'force', 'r' => 'reindex', 't' => 'timelimit'));
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -40,16 +41,22 @@ if ($options['help']) {
 "Index search data
 
 Options:
--h, --help            Print out this help
--r, --reindex         Reindex data
--f, --force           Allow indexer to run, even if global search is disabled.
+-h, --help              Print out this help
+-r, --reindex           Reindex data
+-f, --force             Allow indexer to run, even if global search is disabled.
+-t=<n>, --timelimit=<n> Stop after indexing for specified time (in seconds)
 
-Example:
+Examples:
 \$ sudo -u www-data /usr/bin/php search/cli/indexer.php --reindex
+\$ sudo -u www-data /usr/bin/php search/cli/indexer.php --timelimit=300
 ";
 
     echo $help;
     die;
+}
+
+if ($options['timelimit'] && $options['reindex']) {
+    cli_error('Cannot apply time limit when reindexing');
 }
 
 if (!\core_search\manager::is_global_search_enabled() && empty($options['force'])) {
@@ -70,13 +77,20 @@ if ($serverstatus !== true) {
 $globalsearch = \core_search\manager::instance();
 
 if (empty($options['reindex'])) {
-    echo "Running full index of site\n";
-    echo "==========================\n";
-    $globalsearch->index();
+    if ($options['timelimit']) {
+        $limitinfo = ' (max ' . $options['timelimit'] . ' seconds)';
+        $limitunderline = preg_replace('~.~', '=', $limitinfo);
+        echo "Running index of site$limitinfo\n";
+        echo "=====================$limitunderline\n";
+    } else {
+        echo "Running full index of site\n";
+        echo "==========================\n";
+    }
+    $globalsearch->index(false, $options['timelimit'], new text_progress_trace());
 } else {
     echo "Running full reindex of site\n";
     echo "============================\n";
-    $globalsearch->index(true);
+    $globalsearch->index(true, 0, new text_progress_trace());
 }
 
 // Optimize index at last.

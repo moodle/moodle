@@ -33,3 +33,4 @@ $string['html:myaddinstance'] = 'Add a new HTML block to Dashboard';
 $string['leaveblanktohide'] = 'leave blank to hide the title';
 $string['newhtmlblock'] = '(new HTML block)';
 $string['pluginname'] = 'HTML';
+$string['search:content'] = 'HTML block content';
