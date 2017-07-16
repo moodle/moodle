@@ -336,7 +336,7 @@ class course_competency extends persistent {
             $companyid = \iomad::get_my_companyid(\context_system::instance());
             $companyframeworks = \iomad::get_company_frameworkids($companyid);
             if (!empty($companyframeworks)) {
-                $sql .= " AND comp.competencyframeworkid IN (" . implode(',', array_keys($companytemplates)) . ")";
+                $sql .= " AND comp.competencyframeworkid IN (" . implode(',', array_keys($companyframeworks)) . ")";
             } else {
                 $sql .= " AND 1 = 2";
             }
@@ -411,7 +411,7 @@ class course_competency extends persistent {
             $companyid = \iomad::get_my_companyid(\context_system::instance());
             $companyframeworks = \iomad::get_company_frameworkids($companyid);
             if (!empty($companyframeworks)) {
-                $sql .= " AND comp.competencyframeworkid IN (" . implode(',', array_keys($companytemplates)) . ")";
+                $sql .= " AND comp.competencyframeworkid IN (" . implode(',', array_keys($companyframeworks)) . ")";
             } else {
                 $sql .= " AND 1 = 2";
             }
