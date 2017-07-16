@@ -96,24 +96,24 @@ class theme_iomadbootstrap_core_files_renderer extends core_files_renderer {
         <div class="filemanager-toolbar">
             <div class="fp-toolbar">
                 <div class="fp-btn-add">
-                    <a role="button" title="'.$straddfile.'" href="#"><img src="'.$this->pix_url('a/add_file').'" alt="" /></a>
+                    <a role="button" title="'.$straddfile.'" href="#"><img src="'.$this->image_url('a/add_file').'" alt="" /></a>
                 </div>
                 <div class="fp-btn-mkdir">
-                    <a role="button" title="'.$strmakedir.'" href="#"><img src="'.$this->pix_url('a/create_folder').'" alt="" /></a>
+                    <a role="button" title="'.$strmakedir.'" href="#"><img src="'.$this->image_url('a/create_folder').'" alt="" /></a>
                 </div>
                 <div class="fp-btn-download">
-                    <a role="button" title="'.$strdownload.'" href="#"><img src="'.$this->pix_url('a/download_all').'" alt="" /></a>
+                    <a role="button" title="'.$strdownload.'" href="#"><img src="'.$this->image_url('a/download_all').'" alt="" /></a>
                 </div>
             </div>
             <div class="fp-viewbar">
                 <a title="'. get_string('displayicons', 'repository') .'" class="fp-vb-icons" href="#">
-                    <img alt="" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" />
+                    <img alt="" src="'. $this->image_url('fp/view_icon_active', 'theme') .'" />
                 </a>
                 <a title="'. get_string('displaydetails', 'repository') .'" class="fp-vb-details" href="#">
-                    <img alt="" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" />
+                    <img alt="" src="'. $this->image_url('fp/view_list_active', 'theme') .'" />
                 </a>
                 <a title="'. get_string('displaytree', 'repository') .'" class="fp-vb-tree" href="#">
-                    <img alt="" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" />
+                    <img alt="" src="'. $this->image_url('fp/view_tree_active', 'theme') .'" />
                 </a>
             </div>
         </div>
@@ -279,7 +279,7 @@ class theme_iomadbootstrap_core_files_renderer extends core_files_renderer {
         $rv = '
 <div class="filemanager fp-select">
     <div class="fp-select-loading">
-        <img src="'.$this->pix_url('i/loading_small').'" />
+        <img src="'.$this->image_url('i/loading_small').'" />
     </div>
     <form class="form-horizontal">
         <button class="fp-file-download">'.get_string('download').'</button>
@@ -452,35 +452,35 @@ class theme_iomadbootstrap_core_files_renderer extends core_files_renderer {
                     </div>
                     <div class="fp-tb-refresh">
                         <a title="'. get_string('refresh', 'repository') .'" href="#">
-                            <img alt=""  src="'.$this->pix_url('a/refresh').'" />
+                            <img alt=""  src="'.$this->image_url('a/refresh').'" />
                         </a>
                     </div>
                     <div class="fp-tb-logout">
                         <a title="'. get_string('logout', 'repository') .'" href="#">
-                            <img alt="" src="'.$this->pix_url('a/logout').'" />
+                            <img alt="" src="'.$this->image_url('a/logout').'" />
                         </a>
                     </div>
                     <div class="fp-tb-manage">
                         <a title="'. get_string('settings', 'repository') .'" href="#">
-                            <img alt="" src="'.$this->pix_url('a/setting').'" />
+                            <img alt="" src="'.$this->image_url('a/setting').'" />
                         </a>
                     </div>
                     <div class="fp-tb-help">
                         <a title="'. get_string('help', 'repository') .'" href="#">
-                            <img alt="" src="'.$this->pix_url('a/help').'" />
+                            <img alt="" src="'.$this->image_url('a/help').'" />
                         </a>
                     </div>
                     <div class="fp-tb-message"></div>
                 </div>
                 <div class="fp-viewbar">
                     <a title="'. get_string('displayicons', 'repository') .'" class="fp-vb-icons" href="#">
-                        <img alt="" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" />
+                        <img alt="" src="'. $this->image_url('fp/view_icon_active', 'theme') .'" />
                     </a>
                     <a title="'. get_string('displaydetails', 'repository') .'" class="fp-vb-details" href="#">
-                        <img alt="" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" />
+                        <img alt="" src="'. $this->image_url('fp/view_list_active', 'theme') .'" />
                     </a>
                     <a title="'. get_string('displaytree', 'repository') .'" class="fp-vb-tree" href="#">
-                        <img alt="" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" />
+                        <img alt="" src="'. $this->image_url('fp/view_tree_active', 'theme') .'" />
                     </a>
                 </div>
                 <div class="fp-clear-left"></div>
@@ -572,7 +572,7 @@ class theme_iomadbootstrap_core_files_renderer extends core_files_renderer {
 <div class="fp-nextpage">
     <div class="fp-nextpage-link"><a href="#">'.get_string('more').'</a></div>
     <div class="fp-nextpage-loading">
-        <img src="'.$this->pix_url('i/loading_small').'" />
+        <img src="'.$this->image_url('i/loading_small').'" />
     </div>
 </div>';
         return $rv;
@@ -610,7 +610,7 @@ class theme_iomadbootstrap_core_files_renderer extends core_files_renderer {
         $rv = '
 <div class="file-picker fp-select">
     <div class="fp-select-loading">
-        <img src="'.$this->pix_url('i/loading_small').'" />
+        <img src="'.$this->image_url('i/loading_small').'" />
     </div>
     <form class="form-horizontal">
         <div class="fp-forminset">
@@ -739,7 +739,7 @@ class theme_iomadbootstrap_core_files_renderer extends core_files_renderer {
         return '
 <div class="fp-content-loading">
     <div class="fp-content-center">
-        <img src="'.$this->pix_url('i/loading_small').'" />
+        <img src="'.$this->image_url('i/loading_small').'" />
     </div>
 </div>';
     }

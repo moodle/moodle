@@ -52,7 +52,7 @@ class block_iomad_reports extends block_base {
         $this->content->text .= '<div class="iomadlink_container clearfix">';
         foreach ($reports as $report) {
             if (iomad::has_capability("local/$report:view", $this->context)) {
-                $imgsrc = $OUTPUT->pix_url('logo', "local_$report");
+                $imgsrc = $OUTPUT->image_url('logo', "local_$report");
                 $url = new moodle_url("/local/$report/index.php");
                 $name = get_string( 'pluginname', "local_$report" );
                 $icon = '<img src="'.$imgsrc.'" alt="'.$name.'" /><br />';

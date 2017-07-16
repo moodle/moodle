@@ -146,7 +146,7 @@ class block_iomad_company_admin extends block_base {
             if (($CFG->theme == 'iomadbootstrap') && !empty($menu['icon'])) {
                 $icon = $menu['icon'];
             } else if (!empty($menu['icondefault'])) {
-                $imgsrc = $OUTPUT->pix_url($menu['icondefault'], 'block_iomad_company_admin');
+                $imgsrc = $OUTPUT->image_url($menu['icondefault'], 'block_iomad_company_admin');
                 $icon = '"><img src="'.$imgsrc.'" alt="'.$menu['name'].'" /></br';
             } else {
                 $icon = '';

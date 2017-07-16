@@ -432,7 +432,7 @@ class core_renderer extends \core_renderer {
 
         // We do not want the icon with the caret, the caret is added by Bootstrap.
         if (empty($context->primary->menutrigger)) {
-            $newurl = $this->pix_url('t/edit', 'moodle');
+            $newurl = $this->image_url('t/edit', 'moodle');
             $context->primary->icon['attributes'] = array_reduce($context->primary->icon['attributes'],
                 function($carry, $item) use ($newurl) {
                     if ($item['name'] === 'src') {

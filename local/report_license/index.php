@@ -445,7 +445,7 @@ if (empty($charttype)) {
             } else {
                 $columndir = $dir == "ASC" ? "DESC":"ASC";
                 $columnicon = $dir == "ASC" ? "down":"up";
-                $columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
+                $columnicon = " <img src=\"" . $OUTPUT->image_url('t/' . $columnicon) . "\" alt=\"\" />";
     
             }
             $$column = $string[$column].$columnicon;

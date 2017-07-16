@@ -211,34 +211,34 @@ function profile_category_icons($category) {
 
     // Edit!
     $editstr = '<a title="'.$stredit.'" href="company_user_profiles.php?id='.$category->id.
-               '&amp;action=editcategory"><img src="'.$OUTPUT->pix_url('t/edit') .
+               '&amp;action=editcategory"><img src="'.$OUTPUT->image_url('t/edit') .
                '" alt="'.$stredit.'" class="iconsmall" /></a> ';
 
     // Delete!
     // Can only delete the last category if there are no fields in it.
     if (($categorycount > 1) or ($fieldcount == 0)) {
         $editstr .= '<a title="'.$strdelete.'" href="company_user_profiles.php?id='.$category->id.'&amp;action=deletecategory';
-        $editstr .= '"><img src="'.$OUTPUT->pix_url('t/delete') . '" alt="'.$strdelete.'" class="iconsmall" /></a> ';
+        $editstr .= '"><img src="'.$OUTPUT->image_url('t/delete') . '" alt="'.$strdelete.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+        $editstr .= '<img src="'.$OUTPUT->image_url('spacer') . '" alt="" class="iconsmall" /> ';
     }
 
     // Move up!
     if ($category->sortorder > 1) {
         $editstr .= '<a title="'.$strmoveup.'" href="company_user_profiles.php?id='.$category->id.
                     '&amp;action=movecategory&amp;dir=up&amp;sesskey='.sesskey().'"><img src="'
-                    .$OUTPUT->pix_url('t/up') . '" alt="'.$strmoveup.'" class="iconsmall" /></a> ';
+                    .$OUTPUT->image_url('t/up') . '" alt="'.$strmoveup.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+        $editstr .= '<img src="'.$OUTPUT->image_url('spacer') . '" alt="" class="iconsmall" /> ';
     }
 
     // Move down!
     if ($category->sortorder < $categorycount) {
         $editstr .= '<a title="'.$strmovedown.'" href="company_user_profiles.php?id='.$category->id.
                     '&amp;action=movecategory&amp;dir=down&amp;sesskey='.sesskey().'"><img src="'
-                    .$OUTPUT->pix_url('t/down') . '" alt="'.$strmovedown.'" class="iconsmall" /></a> ';
+                    .$OUTPUT->image_url('t/down') . '" alt="'.$strmovedown.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+        $editstr .= '<img src="'.$OUTPUT->image_url('spacer') . '" alt="" class="iconsmall" /> ';
     }
 
     return $editstr;
@@ -262,31 +262,31 @@ function profile_field_icons($field) {
 
     // Edit!
     $editstr = '<a title="'.$stredit.'" href="company_user_profiles.php?id='.$field->id.
-               '&amp;action=editfield"><img src="'.$OUTPUT->pix_url('t/edit') .
+               '&amp;action=editfield"><img src="'.$OUTPUT->image_url('t/edit') .
                '" alt="'.$stredit.'" class="iconsmall" /></a> ';
 
     // Delete!
     $editstr .= '<a title="'.$strdelete.'" href="company_user_profiles.php?id='.$field->id.'&amp;action=deletefield';
-    $editstr .= '"><img src="'.$OUTPUT->pix_url('t/delete') . '" alt="'.$strdelete.'" class="iconsmall" /></a> ';
+    $editstr .= '"><img src="'.$OUTPUT->image_url('t/delete') . '" alt="'.$strdelete.'" class="iconsmall" /></a> ';
 
     // Move up!
     if ($field->sortorder > 1) {
         $editstr .= '<a title="'.$strmoveup.'" href="company_user_profiles.php?id='.
                     $field->id.'&amp;action=movefield&amp;dir=up&amp;sesskey='.sesskey().
-                    '"><img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.$strmoveup.
+                    '"><img src="'.$OUTPUT->image_url('t/up') . '" alt="'.$strmoveup.
                     '" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+        $editstr .= '<img src="'.$OUTPUT->image_url('spacer') . '" alt="" class="iconsmall" /> ';
     }
 
     // Move down!
     if ($field->sortorder < $fieldcount) {
         $editstr .= '<a title="'.$strmovedown.'" href="company_user_profiles.php?id='.
                     $field->id.'&amp;action=movefield&amp;dir=down&amp;sesskey='.sesskey().
-                    '"><img src="'.$OUTPUT->pix_url('t/down') .
+                    '"><img src="'.$OUTPUT->image_url('t/down') .
                     '" alt="'.$strmovedown.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$OUTPUT->pix_url('spacer') . '" alt="" class="iconsmall" /> ';
+        $editstr .= '<img src="'.$OUTPUT->image_url('spacer') . '" alt="" class="iconsmall" /> ';
     }
 
     return $editstr;
