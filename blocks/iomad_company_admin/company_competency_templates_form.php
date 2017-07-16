@@ -148,7 +148,7 @@ if ($returnurl) {
 // Set the name for the page.
 $linktext = get_string('assigncompetencytemplates', 'block_iomad_company_admin');
 // Set the url.
-$linkurl = new moodle_url('/blocks/iomad_company_admin/company_competencies_templates_form.php');
+$linkurl = new moodle_url('/blocks/iomad_company_admin/company_competency_templates_form.php');
 
 // Print the page header.
 $PAGE->set_context($context);
