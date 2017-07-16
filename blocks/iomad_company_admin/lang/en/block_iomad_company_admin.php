@@ -123,6 +123,7 @@ $string['completion_expiry_warn_supervisor_subject'] = 'Notice: Course {$a->full
 $string['completion_expiry_warn_supervisor_body'] = 'The training for {$a->firstname} {$a->lastname} in course {$a->fullname} will expiry shortly.  Please arrange for them to retake this training if appropriate.';
 $string['completionemails'] = 'Completion emails';
 $string['coursemanagement'] = 'Course management';
+$string['coursegroup'] = 'Course group for ';
 $string['courses'] = 'Available Courses';
 $string['coursesmatching'] = 'Courses matching \'{$a}\'';
 $string['courseusers'] = 'Course Users';
