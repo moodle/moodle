@@ -25,7 +25,7 @@ class block_iomad_reports extends block_base {
     }
 
     public function get_content() {
-        global $SITE, $CFG, $OUTPUT;
+        global $SITE, $CFG, $OUTPUT, $USER;
 
         if ($this->content !== null) {
             return $this->content;
@@ -66,7 +66,8 @@ class block_iomad_reports extends block_base {
                 // Put together link.
                 $this->content->text .= "<a class=\"testlink\" href=\"$url\">";
                 $this->content->text .= '<div class="iomadlink">';
-                if ($CFG->theme == 'iomadbootstrap') {
+                if ((empty($USER->theme) && ($CFG->theme == 'iomadbootstrap' || $CFG->theme == 'iomadboost'))
+                    || ($USER->theme == 'iomadbootstrap' || $USER->theme == 'iomadboost')) {
                     $this->content->text .= '<div class="iomadicon"><div class="fa fa-topic fa-bar-chart-o"> </div>';
                 } else {
                     $this->content->text .= '<div class="iomadicon">' . $icon ;

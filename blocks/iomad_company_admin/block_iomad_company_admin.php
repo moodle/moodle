@@ -143,7 +143,8 @@ class block_iomad_company_admin extends block_base {
 
 
             // Get topic image icon
-            if (($CFG->theme == 'iomadbootstrap') && !empty($menu['icon'])) {
+            if (((empty($USER->theme) && ($CFG->theme == 'iomadbootstrap' || $CFG->theme == 'iomadboost'))
+                  || ($USER->theme == 'iomadbootstrap' || $USER->theme == 'iomadboost'))  && !empty($menu['icon'])) {
                 $icon = $menu['icon'];
             } else if (!empty($menu['icondefault'])) {
                 $imgsrc = $OUTPUT->image_url($menu['icondefault'], 'block_iomad_company_admin');
