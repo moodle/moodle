@@ -56,7 +56,7 @@ Feature: Edited glossary entries handle tags correctly
     And I follow "Test glossary"
     And I press "Add a new entry"
     And I expand all fieldsets
-    And I click on ".form-autocomplete-downarrow" "css_element"
+    And I open the autocomplete suggestions list
     And I should see "OT1" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "OT2" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "OT3" in the ".form-autocomplete-suggestions" "css_element"
