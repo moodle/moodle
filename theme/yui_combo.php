@@ -401,7 +401,7 @@ function combo_send_cached($content, $mimetype, $etag, $lastmodified) {
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: public, max-age='.$lifetime);
+    header('Cache-Control: public, max-age='.$lifetime.', immutable');
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Etag: "'.$etag.'"');

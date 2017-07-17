@@ -284,15 +284,15 @@ function css_chunk_by_selector_count($css, $importurl, $maxselectors = 4095, $bu
  * @param string $etag The revision to make sure we utilise any caches.
  */
 function css_send_cached_css($csspath, $etag) {
-    // 60 days only - the revision may get incremented quite often.
-    $lifetime = 60*60*24*60;
+    // 90 days only - based on Moodle point release cadence being every 3 months.
+    $lifetime = 60 * 60 * 24 * 90;
 
     header('Etag: "'.$etag.'"');
     header('Content-Disposition: inline; filename="styles.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($csspath)) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: public, max-age='.$lifetime);
+    header('Cache-Control: public, max-age='.$lifetime.', immutable');
     header('Accept-Ranges: none');
     header('Content-Type: text/css; charset=utf-8');
     if (!min_enable_zlib_compression()) {
@@ -310,15 +310,15 @@ function css_send_cached_css($csspath, $etag) {
  * @param string $etag The revision to make sure we utilise any caches.
  */
 function css_send_cached_css_content($csscontent, $etag) {
-    // 60 days only - the revision may get incremented quite often.
-    $lifetime = 60*60*24*60;
+    // 90 days only - based on Moodle point release cadence being every 3 months.
+    $lifetime = 60 * 60 * 24 * 90;
 
     header('Etag: "'.$etag.'"');
     header('Content-Disposition: inline; filename="styles.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: public, max-age='.$lifetime);
+    header('Cache-Control: public, max-age='.$lifetime.', immutable');
     header('Accept-Ranges: none');
     header('Content-Type: text/css; charset=utf-8');
     if (!min_enable_zlib_compression()) {
@@ -363,8 +363,8 @@ function css_send_uncached_css($css) {
  * @param string $etag
  */
 function css_send_unmodified($lastmodified, $etag) {
-    // 60 days only - the revision may get incremented quite often.
-    $lifetime = 60*60*24*60;
+    // 90 days only - based on Moodle point release cadence being every 3 months.
+    $lifetime = 60 * 60 * 24 * 90;
     header('HTTP/1.1 304 Not Modified');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Cache-Control: public, max-age='.$lifetime);
