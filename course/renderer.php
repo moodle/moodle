@@ -956,7 +956,7 @@ class core_course_renderer extends plugin_renderer_base {
      * @param cm_info $cm
      * @return string
      */
-    public function course_section_cm_unavilable_error_message(cm_info $cm) {
+    public function course_section_cm_unavailable_error_message(cm_info $cm) {
         if ($cm->uservisible) {
             return null;
         }
