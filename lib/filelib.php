@@ -4633,7 +4633,18 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             if (!plugin_supports('mod', $modname, FEATURE_MOD_INTRO, true)) {
                 send_file_not_found();
             }
-            require_course_login($course, true, $cm);
+
+            // Require login to the course first (without login to the module).
+            require_course_login($course, true);
+
+            // Now check if module is available OR it is restricted but the intro is shown on the course page.
+            $cminfo = cm_info::create($cm);
+            if (!$cminfo->uservisible) {
+                if (!$cm->showdescription || !$cminfo->is_visible_on_course_page()) {
+                    // Module intro is not visible on the course page and module is not available, show access error.
+                    require_course_login($course, true, $cminfo);
+                }
+            }
 
             // all users may access it
             $filename = array_pop($args);
