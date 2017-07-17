@@ -204,7 +204,12 @@ class company_license_form extends company_moodleform {
         if (!empty($data['licenseid'])) {
             // check that the amount of free licenses slots is more than the amount being allocated.
             $currentlicense = $DB->get_record('companylicense', array('id' => $data['licenseid']));
-            if ($currentlicense->used > $data['allocation']) {
+            if (!empty($currentlicense->program)) {
+                $used = $currentlicense->used / count($data['licensecourses']);
+            } else {
+                $used = $currentlicense->used;
+            }
+            if ($used > $data['allocation']) {
                 $errors['allocation'] = get_string('licensenotenough', 'block_iomad_company_admin');
             }
         }
@@ -223,6 +228,13 @@ class company_license_form extends company_moodleform {
             $free = $parentlicense->allocation - $parentlicense->used + $weighting;
             if ($data['allocation'] > $free) {
                 $errors['allocation'] = get_string('licensenotenough', 'block_iomad_company_admin');
+            }
+        }
+
+        // Check the passmark is valid.
+        if (!empty($data['passmark'])) {
+            if ($data['passmark'] > 100 || $data['passmark'] < 0 ) {
+                $errors['passmark'] = get_string('invalidpassmark', 'block_iomad_company_admin');
             }
         }
 
