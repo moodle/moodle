@@ -548,5 +548,4 @@ class behat_forms extends behat_base {
         $csstarget = ".form-autocomplete-downarrow";
         $this->execute('behat_general::i_click_on', [$csstarget, 'css_element']);
     }
-    
 }
