@@ -1830,7 +1830,7 @@ class behat_course extends behat_base {
         $node->click();
 
         // Smooth expansion.
-        $this->getSession()->wait(1000, false);
+        $this->getSession()->wait(1000);
     }
 
     /**

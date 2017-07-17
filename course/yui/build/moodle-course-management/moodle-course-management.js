@@ -278,7 +278,7 @@ Console.prototype = {
         if (!this.categoriesinit) {
             this.get('categorylisting').delegate('click', this.handleCategoryDelegation, 'a[data-action]', this);
             this.get('categorylisting').delegate('click', this.handleCategoryDelegation, 'input[name="bcat[]"]', this);
-            this.get('categorylisting').delegate('click', this.handleBulkSortByaction, '#menuselectsortby', this);
+            this.get('categorylisting').delegate('change', this.handleBulkSortByaction, '#menuselectsortby', this);
             this.categoriesinit = true;
         } else {
         }
