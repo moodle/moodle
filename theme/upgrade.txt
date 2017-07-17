@@ -1,6 +1,11 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.4 ===
+
+* The Boost flat navigation nodes now have several data-attributes which let plugin developers
+  access properties from the underlying navigation nodes in the browser - see MDL-59425.
+
 === 3.3 ===
 
 * As boost-based themes no longer use the moodle-core-popuphelp help popups, the javascript
