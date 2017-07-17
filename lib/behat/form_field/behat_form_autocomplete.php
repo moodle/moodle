@@ -54,5 +54,6 @@ class behat_form_autocomplete extends behat_form_text {
         $id = $this->field->getAttribute('id');
         $js = ' require(["jquery"], function($) { $(document.getElementById("'.$id.'")).trigger("behat:set-value"); }); ';
         $this->session->executeScript($js);
+        $this->key_press(27);
     }
 }

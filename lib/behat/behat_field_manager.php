@@ -293,5 +293,4 @@ class behat_field_manager {
 
         return self::get_field_node_type($fieldnode, $session);
     }
-
 }

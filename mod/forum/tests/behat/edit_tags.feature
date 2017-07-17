@@ -52,7 +52,7 @@ Feature: Edited forum posts handle tags correctly
     And I follow "Test forum"
     And I click on "Add a new discussion topic" "button"
     And I expand all fieldsets
-    And I click on ".form-autocomplete-downarrow" "css_element"
+    And I open the autocomplete suggestions list
     And I should see "OT1" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "OT2" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "OT3" in the ".form-autocomplete-suggestions" "css_element"

@@ -56,7 +56,7 @@ Feature: Edited wiki pages handle tags correctly
     And I am on "Course 1" course homepage
     And I follow "Test wiki name"
     And I press "Create page"
-    And I click on ".form-autocomplete-downarrow" "css_element"
+    And I open the autocomplete suggestions list
     And I should see "OT1" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "OT2" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "OT3" in the ".form-autocomplete-suggestions" "css_element"

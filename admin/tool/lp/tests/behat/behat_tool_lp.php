@@ -63,16 +63,4 @@ class behat_tool_lp extends behat_base {
         $this->execute('behat_general::i_click_on', [$xpathtarget, 'xpath_element']);
     }
 
-    /**
-     * Select item from autocomplete list.
-     *
-     * @Given /^I click on "([^"]*)" item in the autocomplete list$/
-     *
-     * @param string $item
-     */
-    public function i_click_on_item_in_the_autocomplete_list($item) {
-        $xpathtarget = "//ul[@class='form-autocomplete-suggestions']//li//span//span[contains(.,'" . $item . "')]";
-
-        $this->execute('behat_general::i_click_on', [$xpathtarget, 'xpath_element']);
-    }
 }

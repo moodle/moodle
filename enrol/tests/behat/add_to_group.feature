@@ -28,10 +28,10 @@ Feature: Users can be added to multiple groups at once
     And I am on "Course 1" course homepage
     And I follow "Participants"
     And I click on "Edit groups for \"Student 1\"" "link" in the "student1" "table_row"
-    And I click on ".form-autocomplete-downarrow" "css_element"
-    And I click on ".form-autocomplete-suggestions [role=option]" "css_element"
-    And I click on ".form-autocomplete-downarrow" "css_element"
-    And I click on ".form-autocomplete-suggestions [role=option]" "css_element"
+    And I open the autocomplete suggestions list
+    And I click on "Group 1" item in the autocomplete list
+    And I open the autocomplete suggestions list
+    And I click on "Group 2" item in the autocomplete list
     And I click on "Save changes" "link"
     Then I should see "Group 1, Group 2"
 
