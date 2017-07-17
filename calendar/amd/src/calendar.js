@@ -36,13 +36,28 @@ define(['jquery', 'core/ajax', 'core/str', 'core/templates', 'core/notification'
          * Get the event type lang string.
          *
          * @param {String} eventType The event type.
-         * @return {String} The lang string of the event type.
+         * @return {promise} The lang string promise.
          */
         var getEventType = function(eventType) {
             var lang = 'type' + eventType;
             return Str.get_string(lang, 'core_calendar').then(function(langStr) {
                 return langStr;
-            }).fail(Notification.exception);
+            });
+        };
+
+        /**
+         * Get the event source.
+         *
+         * @param {Object} subscription The event subscription object.
+         * @return {promise} The lang string promise.
+         */
+        var getEventSource = function(subscription) {
+            return Str.get_string('subsource', 'core_calendar', subscription).then(function(langStr) {
+                if (subscription.url) {
+                    return '<a href="' + subscription.url + '">' + langStr + '</a>';
+                }
+                return langStr;
+            });
         };
 
         /**
@@ -53,20 +68,41 @@ define(['jquery', 'core/ajax', 'core/str', 'core/templates', 'core/notification'
          */
         var renderEventSummaryModal = function(eventId) {
 
-            var promise = CalendarRepository.getEventById(eventId);
 
-            return promise.then(function(result) {
+            // Calendar repository promise.
+            var repositoryPromise = CalendarRepository.getEventById(eventId);
+            return repositoryPromise.then(function(result) {
                 if (!result.event) {
-                    promise.fail(Notification.exception);
+                    repositoryPromise.fail(Notification.exception);
                 } else {
                     return result.event;
                 }
             }).then(function(eventdata) {
-                return getEventType(eventdata.eventtype).then(function(langStr) {
-                    eventdata.eventtype = langStr;
-                    return eventdata;
+                // Event type promise.
+                var eventTypePromise = getEventType(eventdata.eventtype);
+                return eventTypePromise.then(function(langStr) {
+                    if(!langStr) {
+                        eventTypePromise.fail(Notification.exception);
+                    } else {
+                        eventdata.eventtype = langStr;
+                        return eventdata;
+                    }
                 });
             }).then(function(eventdata) {
+                // If the calendar event has event source, get the language string or the link.
+                if (eventdata.displayeventsource == true) {
+                    eventdata.subscription = JSON.parse(eventdata.subscription);
+                    var eventpromise = getEventSource({url: eventdata.subscription.url, name: eventdata.subscription.name});
+                    if (eventpromise) {
+                        $.Deferred().resolve();
+                        eventpromise.done(function(source) {
+                            eventdata.source = source;
+                        });
+                    } else {
+                        eventpromise.fail(Notification.exception);
+                    }
+
+                }
                 return modalPromise.done(function(modal) {
                     modal.setTitle(eventdata.name);
                     modal.setBody(Templates.render('core_calendar/event_summary_body', eventdata));
@@ -99,7 +135,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/templates', 'core/notification'
 
                     renderEventSummaryModal(eventId).done(function() {
                         loading = false;
-                    });
+                    }).fail(Notification.exception);
                 }
             });
         };
