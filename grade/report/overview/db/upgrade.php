@@ -15,15 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for the overview gradebook report
+ * Grade overview report upgrade steps.
  *
  * @package    gradereport_overview
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017051501;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2017050500;        // Requires this Moodle version
-$plugin->component = 'gradereport_overview'; // Full name of the plugin (used for diagnostics)
+/**
+ * Function to upgrade grade overview report.
+ *
+ * @param int $oldversion the version we are upgrading from
+ * @return bool result
+ */
+function xmldb_gradereport_overview_upgrade($oldversion) {
+
+    if ($oldversion < 2017051501) {
+        $context = context_system::instance();
+        $capability = 'gradereport/overview:view';
+
+        // Now allow authenticated user role to access that report.
+        $authenticateduserroles = get_archetype_roles('user');
+        foreach ($authenticateduserroles as $roleid => $notused) {
+            assign_capability($capability, CAP_ALLOW, $roleid, $context->id);
+        }
+
+        upgrade_plugin_savepoint(true, 2017051501, 'gradereport', 'overview');
+    }
+    return true;
+}
