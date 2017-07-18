@@ -304,4 +304,10 @@
     <version>4.7.0</version>
     <licenseversion>1.1</licenseversion>
   </library>
+  <library>
+    <location>validateurlsyntax.php</location>
+    <name>Url Syntax Validation using PHP and Regular Expressions</name>
+    <license>GPL</license>
+    <licenseversion>2.0+</licenseversion>
+  </library>
 </libraries>

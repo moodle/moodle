@@ -76,10 +76,13 @@
  * </code>
  *
  * Last Edited:
- *  December 15th 2004
+ *  June 15th 2017
  *
  *
  * Changelog:
+ *  June 15th 2017 by Moodle.
+ *    -Added rtmp:// option.
+ *
  *  December 15th 2004
  *    -Added new TLD's - .jobs, .mobi, .post and .travel. They are official, but not yet active.
  *
@@ -174,7 +177,7 @@ function validateUrlSyntax( $urladdr, $options="" ){
     //    $options = strtolower($options);
 
     // Check Options Parameter
-    if (!preg_match( '/^([sHSEFuPaIpfqr][+?-])*$/', $options ))
+    if (!preg_match( '/^([sHSEFRuPaIpfqr][+?-])*$/', $options ))
     {
         trigger_error("Options attribute malformed", E_USER_ERROR);
     }
@@ -195,6 +198,9 @@ function validateUrlSyntax( $urladdr, $options="" ){
     // ftp://
     if (strpos( $options, 'F') === false) $aOptions['F'] = '-';
     else $aOptions['F'] = substr( $options, strpos( $options, 'F') + 1, 1);
+    // rtmp://
+    if (strpos( $options, 'R') === false) $aOptions['R'] = '-';
+    else $aOptions['R'] = substr( $options, strpos( $options, 'R') + 1, 1);
     // User section
     if (strpos( $options, 'u') === false) $aOptions['u'] = '?';
     else $aOptions['u'] = substr( $options, strpos( $options, 'u') + 1, 1);
@@ -245,18 +251,20 @@ function validateUrlSyntax( $urladdr, $options="" ){
     $reserved    = '[;/?:@&=+$,]'; // Special characters in the URI
 
     // Beginning Regular Expression
-                       // Scheme - Allows for 'http://', 'https://', 'mailto:', or 'ftp://'
+    // Scheme - Allows for 'http://', 'https://', 'mailto:', 'ftp://' or 'rtmp://'
     $scheme            = '(';
     if     ($aOptions['H'] === '') { $scheme .= 'http://'; }
     elseif ($aOptions['S'] === '') { $scheme .= 'https://'; }
     elseif ($aOptions['E'] === '') { $scheme .= 'mailto:'; }
     elseif ($aOptions['F'] === '') { $scheme .= 'ftp://'; }
+    elseif ($aOptions['R'] === '') { $scheme .= 'rtmp://'; }
     else
     {
         if ($aOptions['H'] === '?') { $scheme .= '|(http://)'; }
         if ($aOptions['S'] === '?') { $scheme .= '|(https://)'; }
         if ($aOptions['E'] === '?') { $scheme .= '|(mailto:)'; }
         if ($aOptions['F'] === '?') { $scheme .= '|(ftp://)'; }
+        if ($aOptions['R'] === '?') { $scheme .= '|(rtmp://)'; }
         $scheme = str_replace('(|', '(', $scheme); // fix first pipe
     }
     $scheme            .= ')' . $aOptions['s'];
