@@ -354,6 +354,26 @@ class manager {
     }
 
     /**
+     * This function load the adhoc tasks for a given classname.
+     *
+     * @param string $classname
+     * @return \core\task\adhoc_task[]
+     */
+    public static function get_adhoc_tasks($classname) {
+        global $DB;
+
+        if (strpos($classname, '\\') !== 0) {
+            $classname = '\\' . $classname;
+        }
+        // We are just reading - so no locks required.
+        $records = $DB->get_records('task_adhoc', array('classname' => $classname));
+
+        return array_map(function($record) {
+            return self::adhoc_task_from_record($record);
+        }, $records);
+    }
+
+    /**
      * This function load the default scheduled task details for a given classname.
      *
      * @param string $classname

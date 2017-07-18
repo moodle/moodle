@@ -803,6 +803,12 @@ if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed)) {
 
 if (!$options['skip-database']) {
     install_cli_database($options, $interactive);
+    // This needs to happen at the end to ensure it occurs after all caches
+    // have been purged for the last time.
+    // This will build a cached version of the current theme for the user
+    // to immediately start browsing the site.
+    require_once($CFG->libdir.'/upgradelib.php');
+    upgrade_themes();
 } else {
     echo get_string('cliskipdatabase', 'install')."\n";
 }
