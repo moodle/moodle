@@ -87,3 +87,41 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     Then I should see "Topic 1"
     And I should not see "Enrolment options"
     And I should not see "Enrol me in this course"
+
+  @javascript
+  Scenario: Edit a self-enrolled user's enrolment from the course participants page
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    When I add "Self enrolment" enrolment method with:
+      | Custom instance name | Test student enrolment |
+    And I log out
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I press "Enrol me"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    When I click on "//a[@data-action='editenrolment']" "xpath_element" in the "student1" "table_row"
+    And I should see "Edit Student 1's enrolment"
+    And I set the field "Status" to "Suspended"
+    And I click on "Save changes" "button"
+    Then I should see "Suspended" in the "student1" "table_row"
+
+  @javascript
+  Scenario: Unenrol a self-enrolled student from the course participants page
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    When I add "Self enrolment" enrolment method with:
+      | Custom instance name | Test student enrolment |
+    And I log out
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I press "Enrol me"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    When I click on "//a[@data-action='unenrol']" "xpath_element" in the "student1" "table_row"
+    And I click on "Yes" "button"
+    Then I should not see "Student 1" in the "participants" "table"

@@ -16,18 +16,21 @@ Feature: Enrolments are synchronised with meta courses
       | Course 1 | C1C1 |
       | Course 2 | C2C2 |
       | Course 3 | C3C3 |
+      | Course 4 | C4C4 |
     And the following "groups" exist:
       | name | course | idnumber |
       | Groupcourse 1 | C3C3 | G1 |
       | Groupcourse 2 | C3C3 | G2 |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | student1 | C1C1 | student |
-      | student2 | C1C1 | student |
-      | student3 | C1C1 | student |
-      | student4 | C1C1 | student |
-      | student1 | C2C2 | student |
-      | student2 | C2C2 | student |
+      | user | course | role | status |
+      | student1 | C1C1 | student | 0 |
+      | student2 | C1C1 | student | 0 |
+      | student3 | C1C1 | student | 0 |
+      | student4 | C1C1 | student | 0 |
+      | student1 | C2C2 | student | 0 |
+      | student2 | C2C2 | student | 0 |
+      | student1 | C4C4 | student | 0 |
+      | student2 | C4C4 | student | 1 |
     And I log in as "admin"
     And I navigate to "Manage enrol plugins" node in "Site administration > Plugins > Enrolments"
     And I click on "Enable" "link" in the "Course meta link" "table_row"
@@ -105,3 +108,13 @@ Feature: Enrolments are synchronised with meta courses
     And I should see "Groupcourse 1" in the "Student 4" "table_row"
     And I should see "Course 2" in the "Student 1" "table_row"
     And I should not see "Course 2" in the "Student 3" "table_row"
+
+  Scenario: Unenrol a user from the course participants page that was enrolled via course meta link.
+    Given I am on "Course 3" course homepage
+    And I add "Course meta link" enrolment method with:
+      | Link course  | C4C4 |
+    And I navigate to course participants
+    # Suspended users can be unenrolled.
+    When I click on "//a[@data-action='unenrol']" "xpath_element" in the "student2" "table_row"
+    And I click on "Yes" "button"
+    Then I should not see "Student 2" in the "participants" "table"
