@@ -87,6 +87,12 @@ define('ENROL_SEND_EMAIL_FROM_KEY_HOLDER', 2);
  */
 define('ENROL_SEND_EMAIL_FROM_NOREPLY', 3);
 
+/** Edit enrolment action. */
+define('ENROL_ACTION_EDIT', 'editenrolment');
+
+/** Unenrol action. */
+define('ENROL_ACTION_UNENROL', 'unenrol');
+
 /**
  * Returns instances of enrol plugins
  * @param bool $enabled return enabled only
