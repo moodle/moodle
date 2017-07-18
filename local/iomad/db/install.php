@@ -426,7 +426,7 @@ function xmldb_local_iomad_install() {
     }
 
     // Even worse - change the theme.
-    $theme = theme_config::load('iomadbootstrap');
+    $theme = theme_config::load('iomadboost');
     set_config('theme', $theme->name);
     set_config('allowuserthemes', 1);
 
