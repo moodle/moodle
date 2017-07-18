@@ -422,10 +422,16 @@ class core_media_manager {
                 $url = str_replace($matches[0], '', $url);
             }
 
-            // Clean up url.
+            // Clean up url. Allow rtmp:// protocol even though it's not allowed by clean_param(..., PARAM_URL).
+            if ($isrtmp = preg_match('|^(rtmp://)(.*)$|i', trim($url), $matches)) {
+                $url = "http://" . $matches[2];
+            }
             $url = clean_param($url, PARAM_URL);
             if (empty($url)) {
                 continue;
+            }
+            if ($isrtmp) {
+                $url = preg_replace('|^http://|', $matches[1], $url);
             }
 
             // Turn it into moodle_url object.

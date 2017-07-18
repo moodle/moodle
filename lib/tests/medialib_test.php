@@ -413,6 +413,16 @@ class core_medialib_testcase extends advanced_testcase {
         $this->assertEquals($webm, $result[1]->out(false));
         $this->assertEquals(400, $w);
         $this->assertEquals(280, $h);
+
+        // Support for rtmp.
+        $rtmp = 'rtmp://rtmpsite.net/somestream';
+        $result = $mediamanager->split_alternatives($rtmp, $w, $h);
+        $this->assertEquals($rtmp, $result[0]->out(false));
+
+        // Invalid URL is not supported.
+        $invalid = 'mailto:user@example.com';
+        $result = $mediamanager->split_alternatives($invalid, $w, $h);
+        $this->assertEmpty($result);
     }
 
     /**
