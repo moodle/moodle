@@ -1616,7 +1616,7 @@ class company {
         return false;
     }
 
-    public function get_menu_courses($shared = false, $licensed = false, $groups = false) {
+    public function get_menu_courses($shared = false, $licensed = false, $groups = false, $default = true) {
         global $DB;
         
         // Deal with license option.
@@ -1671,7 +1671,11 @@ class company {
                                                        'companyid2' => $this->id));
 
         // Add a default entry and return the courses.
-        return array('0' => get_string('noselection', 'form')) + $retcourses;
+        if ($default) {
+            return array('0' => get_string('noselection', 'form')) + $retcourses;
+        } else {
+            return $retcourses;
+        }
     }
 
     public function get_course_groups_menu($courseid) {
