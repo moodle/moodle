@@ -24,6 +24,7 @@ information provided here is intended especially for developers.
   used to perform implicit validation of submitted values - without the need to explicitly add the validation rules to
   every form. The method should accept a single parameter with the submitted value. It should return a string with the
   eventual validation error, or an empty value if the validation passes.
+* New user_picture attribute $includefullname to determine whether to include the user's full name with the user's picture.
 
 === 3.3.1 ===
 

@@ -2368,6 +2368,7 @@ class core_renderer extends renderer_base {
      *     - alttext=true (add image alt attribute)
      *     - class = image class attribute (default 'userpicture')
      *     - visibletoscreenreaders=true (whether to be visible to screen readers)
+     *     - includefullname=false (whether to include the user's full name together with the user picture)
      * @return string HTML fragment
      */
     public function user_picture(stdClass $user, array $options = null) {
@@ -2424,6 +2425,11 @@ class core_renderer extends renderer_base {
 
         // get the image html output fisrt
         $output = html_writer::empty_tag('img', $attributes);
+
+        // Show fullname together with the picture when desired.
+        if ($userpicture->includefullname) {
+            $output .= fullname($userpicture->user);
+        }
 
         // then wrap it in link if needed
         if (!$userpicture->link) {
