@@ -405,6 +405,10 @@ class form_filemanager implements renderable {
         }
         $this->options->maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $coursebytes, $maxbytes);
 
+        $this->options->userprefs = array();
+        $this->options->userprefs['recentviewmode'] = get_user_preferences('filemanager_recentviewmode', '');
+        user_preference_allow_ajax_update('filemanager_recentviewmode', PARAM_INT);
+
         // building file picker options
         $params = new stdClass();
         $params->accepted_types = $options->accepted_types;
