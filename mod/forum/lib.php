@@ -6808,6 +6808,21 @@ function forum_get_view_actions() {
 }
 
 /**
+ * List the options for forum subscription modes.
+ * This is used by the settings page and by the mod_form page.
+ *
+ * @return array
+ */
+function forum_get_subscriptionmode_options() {
+    $options = array();
+    $options[FORUM_CHOOSESUBSCRIBE] = get_string('subscriptionoptional', 'forum');
+    $options[FORUM_FORCESUBSCRIBE] = get_string('subscriptionforced', 'forum');
+    $options[FORUM_INITIALSUBSCRIBE] = get_string('subscriptionauto', 'forum');
+    $options[FORUM_DISALLOWSUBSCRIBE] = get_string('subscriptiondisabled', 'forum');
+    return $options;
+}
+
+/**
  * List the actions that correspond to a post of this module.
  * This is used by the participation report.
  *
