@@ -118,7 +118,6 @@ function xmldb_main_install() {
     $defaults = array(
         'rolesactive'           => '0', // marks fully set up system
         'auth'                  => 'email',
-        'auth_pop3mailbox'      => 'INBOX',
         'enrol_plugins_enabled' => 'manual,guest,self,cohort',
         'theme'                 => theme_config::DEFAULT_THEME,
         'filter_multilang_converted' => 1,

@@ -1646,7 +1646,7 @@ class core_plugin_manager {
         // Moodle 2.3 supports upgrades from 2.2.x only.
         $plugins = array(
             'qformat' => array('blackboard', 'learnwise'),
-            'auth' => array('radius'),
+            'auth' => array('radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'),
             'block' => array('course_overview'),
             'enrol' => array('authorize'),
             'report' => array('search'),
@@ -1701,8 +1701,8 @@ class core_plugin_manager {
             ),
 
             'auth' => array(
-                'cas', 'db', 'email', 'fc', 'imap', 'ldap', 'lti', 'manual', 'mnet',
-                'nntp', 'nologin', 'none', 'oauth2', 'pam', 'pop3', 'shibboleth', 'webservice'
+                'cas', 'db', 'email', 'ldap', 'lti', 'manual', 'mnet',
+                'nologin', 'none', 'oauth2', 'shibboleth', 'webservice'
             ),
 
             'availability' => array(
