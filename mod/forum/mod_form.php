@@ -90,10 +90,15 @@ class mod_forum_mod_form extends moodleform_mod {
         // Subscription and tracking.
         $mform->addElement('header', 'subscriptionandtrackinghdr', get_string('subscriptionandtracking', 'forum'));
 
-        $options = forum_get_subscriptionmode_opions();
+        $options = forum_get_subscriptionmode_options();
         $mform->addElement('select', 'forcesubscribe', get_string('subscriptionmode', 'forum'), $options);
         $mform->addHelpButton('forcesubscribe', 'subscriptionmode', 'forum');
-        $mform->setDefault('forcesubscribe', $CFG->forum_subscription);
+        if (isset($CFG->forum_subscription)) {
+            $defaultforumsubscription = $CFG->forum_subscription;
+        } else {
+            $defaultforumsubscription = FORUM_CHOOSESUBSCRIBE;
+        }
+        $mform->setDefault('forcesubscribe', $defaultforumsubscription);
 
         $options = array();
         $options[FORUM_TRACKING_OPTIONAL] = get_string('trackingoptional', 'forum');

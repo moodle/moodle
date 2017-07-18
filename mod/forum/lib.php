@@ -6813,7 +6813,7 @@ function forum_get_view_actions() {
  *
  * @return array
  */
-function forum_get_subscriptionmode_opions() {
+function forum_get_subscriptionmode_options() {
     $options = array();
     $options[FORUM_CHOOSESUBSCRIBE] = get_string('subscriptionoptional', 'forum');
     $options[FORUM_FORCESUBSCRIBE] = get_string('subscriptionforced', 'forum');

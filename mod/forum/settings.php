@@ -55,7 +55,7 @@ if ($ADMIN->fulltree) {
                        get_string('configmaxattachments', 'forum'), 9, PARAM_INT));
 
     // Default Subscription mode setting.
-    $options = forum_get_subscriptionmode_opions();
+    $options = forum_get_subscriptionmode_options();
     $settings->add(new admin_setting_configselect('forum_subscription', get_string('subscriptionmode', 'forum'),
         get_string('configsubscriptiontype', 'forum'), FORUM_CHOOSESUBSCRIBE, $options));
 
