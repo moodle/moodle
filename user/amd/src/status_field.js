@@ -196,6 +196,7 @@ define(['core/templates',
                     "coursename": parentContainer.data('coursename'),
                     "enrolinstancename": parentContainer.data('enrolinstancename'),
                     "status": parentContainer.data('status'),
+                    "statusclass": parentContainer.find('span').attr('class'),
                     "timestart": parentContainer.data('timestart'),
                     "timeend": parentContainer.data('timeend')
                 };

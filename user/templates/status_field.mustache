@@ -55,7 +55,7 @@
 }}
 <div data-fullname="{{fullname}}" data-coursename="{{coursename}}" data-enrolinstancename="{{enrolinstancename}}"
      data-status="{{status}}" data-timestart="{{timestart}}" data-timeend="{{timeend}}">
-    <span>{{status}}</span>
+    <span class="label {{#statusclass}}label-{{statusclass}}{{/statusclass}}">{{status}}</span>
     <a data-action="showdetails" role="button" tabindex="0">
         {{#pix}}docs, core, {{#str}}enroldetails, enrol{{/str}}{{/pix}}
     </a>

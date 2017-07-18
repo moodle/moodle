@@ -24,6 +24,7 @@
     * coursename string - The course name.
     * enrolinstancename string - The enrolment instance name.
     * status string - The enrolment status.
+    * statusclass string - The CSS class for the enrolment status.
     * timestart string - Optional. The enrolment time start.
     * timeend string - Optional. The enrolment time end.
 
@@ -33,6 +34,7 @@
         "coursename": "TC 1",
         "enrolinstancename": "Manual enrolment",
         "status": "Active",
+        "statusclass": "label label-success",
         "timestart": "1 January 2017",
         "timeend": "31 January 2018"
     }
@@ -67,7 +69,9 @@
             {{#str}}participationstatus, enrol{{/str}}
         </th>
         <td class="user-enrol-status">
-            {{status}}
+            <span class="{{statusclass}}">
+                {{status}}
+            </span>
         </td>
     </tr>
     {{#timestart}}

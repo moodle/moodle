@@ -340,23 +340,28 @@ class participants_table extends \table_sql {
                 $timestart = $ue->timestart;
                 $timeend = $ue->timeend;
                 $status = '';
+                $statusclass = '';
                 switch ($ue->status) {
                     case ENROL_USER_ACTIVE:
                         $currentdate = new DateTime();
                         $now = $currentdate->getTimestamp();
                         if ($timestart <= $now && ($timeend == 0 || $timeend >= $now)) {
                             $status = get_string('participationactive', 'enrol');
+                            $statusclass = 'success';
                         } else {
                             $status = get_string('participationnotcurrent', 'enrol');
+                            $statusclass = 'default';
                         }
                         break;
                     case ENROL_USER_SUSPENDED:
                         $status = get_string('participationsuspended', 'enrol');
+                        $statusclass = 'warning';
                         break;
                 }
                 $actions = $ue->enrolmentplugin->get_user_enrolment_actions($manager, $ue);
                 $instancename = $ue->enrolmentinstancename;
-                $statusfield = new status_field($instancename, $coursename, $fullname, $status, $timestart, $timeend, $actions);
+                $statusfield = new status_field($instancename, $coursename, $fullname, $status, $statusclass, $timestart, $timeend,
+                    $actions);
                 $statusfielddata = $statusfield->export_for_template($OUTPUT);
                 $enrolstatusoutput .= $OUTPUT->render_from_template('core_user/status_field', $statusfielddata);
             }
