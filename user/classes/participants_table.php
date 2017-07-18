@@ -134,6 +134,9 @@ class participants_table extends \table_sql {
             $columns[] = $field;
         }
 
+        $headers[] = get_string('roles');
+        $columns[] = 'roles';
+
         // Load and cache the course groupinfo.
         // Add column for groups.
         $headers[] = get_string('groups');
@@ -180,6 +183,8 @@ class participants_table extends \table_sql {
         $this->extrafields = $extrafields;
         $this->context = $context;
         $this->groups = groups_get_all_groups($courseid, 0, 0, 'g.*', true);
+        $this->allroles = role_fix_names(get_all_roles($this->context), $this->context);
+        $this->assignableroles = get_assignable_roles($this->context, ROLENAME_ALIAS, false);
     }
 
     /**
@@ -207,6 +212,31 @@ class participants_table extends \table_sql {
         global $OUTPUT;
 
         return $OUTPUT->user_picture($data, array('size' => 35, 'courseid' => $this->course->id)) . ' ' . fullname($data);
+    }
+
+    /**
+     * User roles column.
+     *
+     * @param \stdClass $data
+     * @return string
+     */
+    public function col_roles($data) {
+        global $OUTPUT;
+
+        $roles = get_user_roles($this->context, $data->id, true, 'c.contextlevel DESC, r.sortorder ASC');
+        $getrole = function($role) {
+            return $role->roleid;
+        };
+        $ids = array_values(array_map($getrole, $roles));
+
+        $editable = new \core_user\output\user_roles_editable($this->course,
+                                                              $this->context,
+                                                              $data,
+                                                              $this->allroles,
+                                                              $this->assignableroles,
+                                                              $ids);
+
+        return $OUTPUT->render_from_template('core/inplace_editable', $editable->export_for_template($OUTPUT));
     }
 
     /**
