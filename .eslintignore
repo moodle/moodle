@@ -57,6 +57,7 @@ lib/maxmind/MaxMind/
 lib/ltiprovider/
 lib/amd/src/truncate.js
 lib/fonts/
+lib/validateurlsyntax.php
 media/player/videojs/amd/src/video-lazy.js
 media/player/videojs/amd/src/Youtube-lazy.js
 media/player/videojs/videojs/
