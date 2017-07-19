@@ -217,4 +217,26 @@ abstract class type_base {
      * @return string locale
      */
     public abstract function locale_win_charset();
+
+    /**
+     * Provided with a day, month, year, hour and minute in the specific
+     * calendar type convert it into the equivalent Unix Time Stamp.
+     *
+     * @param int $year
+     * @param int $month
+     * @param int $day
+     * @param int $hour
+     * @param int $minute
+     * @return int timestamp
+     */
+    public function convert_to_timestamp($year, $month, $day, $hour = 0, $minute = 0) {
+        $gregorianinfo = $this->convert_to_gregorian($year, $month, $day, $hour, $minute);
+        return make_timestamp(
+            $gregorianinfo['year'],
+            $gregorianinfo['month'],
+            $gregorianinfo['day'],
+            $gregorianinfo['hour'],
+            $gregorianinfo['minute'],
+            0);
+    }
 }
