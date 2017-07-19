@@ -132,48 +132,51 @@ echo $renderer->start_layout();
 echo html_writer::start_tag('div', array('class'=>'heightcontainer'));
 echo $OUTPUT->heading(get_string('calendar', 'calendar'));
 
-switch($view) {
-    case 'day':
-        echo $renderer->show_day($calendar);
-    break;
-    case 'month':
-        echo $renderer->show_month_detailed($calendar, $url);
-    break;
-    case 'upcoming':
-        $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
-        if (isset($CFG->calendar_lookahead)) {
-            $defaultlookahead = intval($CFG->calendar_lookahead);
-        }
-        $lookahead = get_user_preferences('calendar_lookahead', $defaultlookahead);
+if ($view == 'day' || $view == 'upcoming') {
+    switch($view) {
+        case 'day':
+            echo $renderer->show_day($calendar);
+        break;
+        case 'upcoming':
+            $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
+            if (isset($CFG->calendar_lookahead)) {
+                $defaultlookahead = intval($CFG->calendar_lookahead);
+            }
+            $lookahead = get_user_preferences('calendar_lookahead', $defaultlookahead);
 
-        $defaultmaxevents = CALENDAR_DEFAULT_UPCOMING_MAXEVENTS;
-        if (isset($CFG->calendar_maxevents)) {
-            $defaultmaxevents = intval($CFG->calendar_maxevents);
-        }
-        $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
-        echo $renderer->show_upcoming_events($calendar, $lookahead, $maxevents);
-    break;
-}
-
-//Link to calendar export page.
-echo $OUTPUT->container_start('bottom');
-if (!empty($CFG->enablecalendarexport)) {
-    echo $OUTPUT->single_button(new moodle_url('export.php', array('course'=>$courseid)), get_string('exportcalendar', 'calendar'));
-    if (calendar_user_can_add_event($course)) {
-        echo $OUTPUT->single_button(new moodle_url('/calendar/managesubscriptions.php', array('course'=>$courseid)), get_string('managesubscriptions', 'calendar'));
+            $defaultmaxevents = CALENDAR_DEFAULT_UPCOMING_MAXEVENTS;
+            if (isset($CFG->calendar_maxevents)) {
+                $defaultmaxevents = intval($CFG->calendar_maxevents);
+            }
+            $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
+            echo $renderer->show_upcoming_events($calendar, $lookahead, $maxevents);
+        break;
     }
-    if (isloggedin()) {
-        $authtoken = sha1($USER->id . $DB->get_field('user', 'password', array('id' => $USER->id)) . $CFG->calendar_exportsalt);
-        $link = new moodle_url(
-            '/calendar/export_execute.php',
-            array('preset_what'=>'all', 'preset_time' => 'recentupcoming', 'userid' => $USER->id, 'authtoken'=>$authtoken)
-        );
-        echo html_writer::tag('a', 'iCal',
-            array('href' => $link, 'title' => get_string('quickdownloadcalendar', 'calendar'), 'class' => 'ical-link m-l-1'));
-    }
-}
 
-echo $OUTPUT->container_end();
+    //Link to calendar export page.
+    echo $OUTPUT->container_start('bottom');
+    if (!empty($CFG->enablecalendarexport)) {
+        echo $OUTPUT->single_button(new moodle_url('export.php', array('course'=>$courseid)), get_string('exportcalendar', 'calendar'));
+        if (calendar_user_can_add_event($course)) {
+            $manageurl = new moodle_url('/calendar/managesubscriptions.php', ['course' => $courseid]);
+            echo $OUTPUT->single_button($manageurl, get_string('managesubscriptions', 'calendar'));
+        }
+        if (isloggedin()) {
+            $authtoken = sha1($USER->id . $DB->get_field('user', 'password', array('id' => $USER->id)) . $CFG->calendar_exportsalt);
+            $link = new moodle_url(
+                '/calendar/export_execute.php',
+                array('preset_what'=>'all', 'preset_time' => 'recentupcoming', 'userid' => $USER->id, 'authtoken'=>$authtoken)
+            );
+            echo html_writer::tag('a', 'iCal',
+                array('href' => $link, 'title' => get_string('quickdownloadcalendar', 'calendar'), 'class' => 'ical-link m-l-1'));
+        }
+    }
+
+    echo $OUTPUT->container_end();
+} else if ($view == 'month') {
+    list($data, $template) = calendar_get_view($calendar, $view);
+    echo $renderer->render_from_template($template, $data);
+}
 echo html_writer::end_tag('div');
 echo $renderer->complete_layout();
 $PAGE->requires->js_call_amd('core_calendar/calendar', 'init');

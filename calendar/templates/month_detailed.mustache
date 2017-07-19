@@ -1,0 +1,66 @@
+<span class="calendarwrapper" data-courseid="{{courseid}}">
+    {{> core_calendar/month_header }}
+    {{> core_calendar/month_navigation }}
+    <table class="calendarmonth calendartable table card-deck m-b-0">
+        <thead>
+            <tr>
+                {{# daynames }}
+                <th class="header text-xs-center">
+                    {{shortname}}
+                </th>
+                {{/ daynames }}
+            </tr>
+        </thead>
+        <tbody>
+    {{#weeks}}
+            <tr>
+                {{#prepadding}}
+                    <td class="dayblank">&nbsp;</td>
+                {{/prepadding}}
+                {{#days}}
+                    <td class="day text-sm-center text-md-left{{!
+                            }}{{#istoday}} today{{/istoday}}{{!
+                            }}{{#isweekend}} weekend{{/isweekend}}{{!
+                            }}{{#durationevents.0}} duration{{/durationevents.0}}{{!
+                            }}{{#durationevents}} duration_{{.}}{{/durationevents}}{{!
+                        }}">
+                        <div class="hidden-sm-down text-xs-center">
+                            {{#events.0}}
+                                <a href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
+                            {{/events.0}}
+                            {{^events.0}}
+                                {{mday}}
+                            {{/events.0}}
+                            {{#events.0}}
+                                <ul>
+                                    {{#events}}
+                                        {{#underway}}
+                                            <li class="events-underway">[{{name}}]</li>
+                                        {{/underway}}
+                                        {{^underway}}
+                                            <li class="calendar_event_{{eventtype}}">
+                                                <a data-action="view-event" data-event-id="{{id}}" href="{{url}}">{{name}}</a>
+                                            </li>
+                                        {{/underway}}
+                                    {{/events}}
+                                </ul>
+                            {{/events.0}}
+                        </div>
+                        <div class="hidden-md-up">
+                            {{#events.0}}
+                                <a href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
+                            {{/events.0}}
+                            {{^events.0}}
+                                {{mday}}
+                            {{/events.0}}
+                        </div>
+                    </td>
+                {{/days}}
+                {{#postpadding}}
+                    <td class="dayblank">&nbsp;</td>
+                {{/postpadding}}
+            </tr>
+    {{/weeks}}
+        </tbody>
+    </table>
+</span>

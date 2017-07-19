@@ -3422,6 +3422,111 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses, $
     }, []);
 }
 
+
+/**
+ * Get theh calendar view output.
+ *
+ * @param   \calendar_information $calendar The calendar being represented
+ * @param   string      $view The type of calendar to have displayed
+ * @return  array[array, string]
+ */
+function calendar_get_view(\calendar_information $calendar, $view) {
+    global $PAGE, $DB, $OUTPUT;
+
+    $renderer = $PAGE->get_renderer('core_calendar');
+    $type = \core_calendar\type_factory::get_calendar_instance();
+
+    // Calculate the bounds of the month.
+    $date = $type->timestamp_to_date_array($calendar->time);
+    $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], 1);
+
+    if ($view === 'day') {
+        $tend = $tstart + DAYSECS - 1;
+        $selectortitle = get_string('dayviewfor', 'calendar');
+    } else if ($view === 'upcoming') {
+        $defaultlookahead = isset($CFG->calendar_lookahead) ? intval($CFG->calendar_lookahead) : CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
+        $tend = $tstart + get_user_preferences('calendar_lookahead', $defaultlookahead);
+        $selectortitle = get_string('upcomingeventsfor', 'calendar');
+    } else {
+        $monthdays = $type->get_num_days_in_month($date['year'], $date['mon']);
+        $tend = $tstart + ($monthdays * DAYSECS) - 1;
+        $selectortitle = get_string('detailedmonthviewfor', 'calendar');
+    }
+
+    list($userparam, $groupparam, $courseparam) = array_map(function($param) {
+        // If parameter is true, return null.
+        if ($param === true) {
+            return null;
+        }
+
+        // If parameter is false, return an empty array.
+        if ($param === false) {
+            return [];
+        }
+
+        // If the parameter is a scalar value, enclose it in an array.
+        if (!is_array($param)) {
+            return [$param];
+        }
+
+        // No normalisation required.
+        return $param;
+    }, [$calendar->users, $calendar->groups, $calendar->courses]);
+
+    $events = \core_calendar\local\api::get_events(
+        $tstart,
+        $tend,
+        null,
+        null,
+        null,
+        null,
+        40,
+        null,
+        $userparam,
+        $groupparam,
+        $courseparam,
+        true,
+        true,
+        function ($event) {
+            if ($proxy = $event->get_course_module()) {
+                $cminfo = $proxy->get_proxied_instance();
+                return $cminfo->uservisible;
+
+            }
+
+            return true;
+        }
+    );
+
+    $related = [
+        'events' => $events,
+        'cache' => new \core_calendar\external\events_related_objects_cache($events),
+    ];
+
+    if ($view === 'day') {
+        // TODO: Export the days events in a new exporter.
+    } else if ($view === 'upcoming') {
+        $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
+        if (isset($CFG->calendar_lookahead)) {
+            $defaultlookahead = intval($CFG->calendar_lookahead);
+        }
+        $lookahead = get_user_preferences('calendar_lookahead', $defaultlookahead);
+
+        $defaultmaxevents = CALENDAR_DEFAULT_UPCOMING_MAXEVENTS;
+        if (isset($CFG->calendar_maxevents)) {
+            $defaultmaxevents = intval($CFG->calendar_maxevents);
+        }
+        $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
+        // TODO: Export the upcoming events in a new exporter.
+    } else {
+        $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
+        $data = $month->export($renderer);
+        $template = 'core_calendar/month_detailed';
+    }
+
+    return [$data, $template];
+}
+
 /**
  * Request and render event form fragment.
  *

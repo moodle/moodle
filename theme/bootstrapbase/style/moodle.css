@@ -5542,7 +5542,7 @@ img.iconsmall {
 .calendar_event_course {
   background-color: #ffd3bd;
 }
-.calendar_event_global {
+.calendar_event_site {
   background-color: #d6f8cd;
 }
 .calendar_event_group {
@@ -5630,7 +5630,7 @@ img.iconsmall {
   margin: 10px auto;
 }
 .path-calendar .maincalendar .calendar_event_course,
-.path-calendar .maincalendar .calendar_event_global,
+.path-calendar .maincalendar .calendar_event_site,
 .path-calendar .maincalendar .calendar_event_group,
 .path-calendar .maincalendar .calendar_event_user {
   border-width: 1px 1px 1px 12px;
@@ -5639,7 +5639,7 @@ img.iconsmall {
 .path-calendar .maincalendar .calendar_event_course {
   border-color: #ffd3bd;
 }
-.path-calendar .maincalendar .calendar_event_global {
+.path-calendar .maincalendar .calendar_event_site {
   border-color: #d6f8cd;
 }
 .path-calendar .maincalendar .calendar_event_group {
