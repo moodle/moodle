@@ -2173,7 +2173,11 @@ function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide = 
         return $text;
     }
 
-    return link_arrow_left($text, (string)$href, $accesshide, 'previous');
+    $attrs = [
+        'data-time' => calendar_get_timestamp($d, $m, $y, $time),
+    ];
+
+    return link_arrow_left($text, $href->out(false), $accesshide, 'previous', $attrs);
 }
 
 /**
@@ -2196,7 +2200,11 @@ function calendar_get_link_next($text, $linkbase, $d, $m, $y, $accesshide = fals
         return $text;
     }
 
-    return link_arrow_right($text, (string)$href, $accesshide, 'next');
+    $attrs = [
+        'data-time' => calendar_get_timestamp($d, $m, $y, $time),
+    ];
+
+    return link_arrow_right($text, $href->out(false), $accesshide, 'next', $attrs);
 }
 
 /**
