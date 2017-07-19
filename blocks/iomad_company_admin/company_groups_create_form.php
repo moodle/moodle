@@ -315,7 +315,7 @@ if (!empty($selectedcourse)) {
             // Editing an existing group..
             if (!empty($groupid)) {
                 $grouprecord = $DB->get_record('groups', array('id' => $groupid));
-                $editform = new course_group_edit_form($PAGE->url, $companyid, $selectedcourse, $groupid, $output);
+                $editform = new group_edit_form($PAGE->url, $companyid, $selectedcourse, $groupid, $output);
                 $editform->set_data(array('groupid' => $grouprecord->id,
                                           'name' => $grouprecord->name,
                                           'description' => $grouprecord->description));
