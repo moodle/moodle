@@ -1746,7 +1746,7 @@ class company {
             $companygroup->id = self::create_company_course_group($companyid, $courseid);
         }
         // Get the group information.
-        $groupinfo = $DB->get_record('groups', array('id' => $companygroup->id));
+        $groupinfo = $DB->get_record('groups', array('id' => $companygroup->groupid));
         return $groupinfo;
     }
 
