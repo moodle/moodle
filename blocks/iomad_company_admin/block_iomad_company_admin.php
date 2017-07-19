@@ -36,9 +36,9 @@ class iomad_company_select_form extends moodleform {
 
     public function definition() {
         $mform =& $this->_form;
+        $mform->addElement('html', '<b>' . get_string('selectacompany', 'block_iomad_company_selector') . '</b></br>');
         $autooptions = array('multiple' => false,
-                             'onchange' => 'this.form.submit()',
-                             'noselectionstring' => get_string('selectacompany', 'block_iomad_company_selector'));
+                             'onchange' => 'this.form.submit()');
         $mform->addElement('autocomplete', 'company', '', $this->companies, $autooptions);
         $mform->addElement('hidden', 'showsuspendedcompanies');
         $mform->setType('showsuspendedcompanies', PARAM_BOOL);
