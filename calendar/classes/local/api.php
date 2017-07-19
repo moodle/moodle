@@ -70,7 +70,8 @@ class api {
         array $groupsfilter = null,
         array $coursesfilter = null,
         $withduration = true,
-        $ignorehidden = true
+        $ignorehidden = true,
+        callable $filter = null
     ) {
         global $USER;
 
@@ -100,7 +101,8 @@ class api {
             $groupsfilter,
             $coursesfilter,
             $withduration,
-            $ignorehidden
+            $ignorehidden,
+            $filter
         );
     }
 
