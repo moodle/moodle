@@ -452,6 +452,52 @@ class enrol_license_plugin extends enrol_plugin {
 
         return true;
     }
+
+    /**
+     * Get the "from" contact which the email will be sent from.
+     *
+     * @param int $sendoption send email from constant ENROL_SEND_EMAIL_FROM_*
+     * @param $context context where the user will be fetched
+     * @return mixed|stdClass the contact user object.
+     */
+    public function get_welcome_email_contact($sendoption, $context) {
+        global $CFG;
+
+        $contact = null;
+        // Send as the first user assigned as the course contact.
+        if ($sendoption == ENROL_SEND_EMAIL_FROM_COURSE_CONTACT) {
+            $rusers = array();
+            if (!empty($CFG->coursecontact)) {
+                $croles = explode(',', $CFG->coursecontact);
+                list($sort, $sortparams) = users_order_by_sql('u');
+                // We only use the first user.
+                $i = 0;
+                do {
+                    $rusers = get_role_users($croles[$i], $context, true, '',
+                        'r.sortorder ASC, ' . $sort, null, '', '', '', '', $sortparams);
+                    $i++;
+                } while (empty($rusers) && !empty($croles[$i]));
+            }
+            if ($rusers) {
+                $contact = array_values($rusers)[0];
+            }
+        } else if ($sendoption == ENROL_SEND_EMAIL_FROM_KEY_HOLDER) {
+            // Send as the first user with enrol/self:holdkey capability assigned in the course.
+            list($sort) = users_order_by_sql('u');
+            $keyholders = get_users_by_capability($context, 'enrol/self:holdkey', 'u.*', $sort);
+            if (!empty($keyholders)) {
+                $contact = array_values($keyholders)[0];
+            }
+        }
+
+        // If send welcome email option is set to no reply or if none of the previous options have
+        // returned a contact send welcome message as noreplyuser.
+        if ($sendoption == ENROL_SEND_EMAIL_FROM_NOREPLY || empty($contact)) {
+            $contact = core_user::get_noreply_user();
+        }
+
+        return $contact;
+    }
 }
 
 /**
