@@ -210,7 +210,15 @@ class company_course_users_form extends moodleform {
         $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
         $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
 
-        $mform->addElement('autocomplete', 'groupid', get_string('group'), $this->groups, array('setmultiple' => false, 'onchange' => 'this.form.submit()'));
+        if ($DB->get_record('iomad_courses', array('courseid' => $this->course->id, 'shared' => 0))) {
+            $mform->addElement('hidden', 'groupid', 0);
+            $mform->setType('groupid', PARAM_INT);
+        } else {
+            $mform->addElement('autocomplete', 'groupid', get_string('group'),
+                               $this->groups,
+                               array('setmultiple' => false,
+                                     'onchange' => 'this.form.submit()'));
+        }
 
         $mform->addElement('html', '<table summary="" class="companycourseuserstable'.
                                    ' addremovetable generaltable generalbox'.
@@ -244,6 +252,10 @@ class company_course_users_form extends moodleform {
               </td>
             </tr>
           </table>');
+
+        // Disable the onchange popup.
+        $mform->disable_form_change_checker();
+
     }
 
     public function process() {
@@ -317,6 +329,7 @@ $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 $courseid = optional_param('courseid', 0, PARAM_INTEGER);
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $selectedcourse = optional_param('selectedcourse', 0, PARAM_INTEGER);
+$groupid = optional_param('groupid', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
@@ -419,6 +432,9 @@ if ($coursesform->is_cancelled() || $usersform->is_cancelled() ||
             $course = $DB->get_record('course', array('id' => $courseid));
             $usersform->set_course(array($course));
             $usersform->process();
+            $usersform = new company_course_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourse);
+            $usersform->set_course(array($course));
+            $usersform->set_data(array('groupid' => $groupid));
             echo $usersform->display();
         }
     }
