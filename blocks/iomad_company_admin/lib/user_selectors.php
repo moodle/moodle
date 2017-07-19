@@ -953,6 +953,7 @@ class current_license_user_selector extends user_selector_base {
 
         // Are we dealing with a program?
         if (empty($this->program)) {
+            $maxcount = company_user_selector_base::MAX_USERS_PER_PAGE;
             $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, c.fullname, clu.isusing ';
             $countfields = 'SELECT COUNT(1)';
     
@@ -964,6 +965,8 @@ class current_license_user_selector extends user_selector_base {
                      AND timecompleted IS NULL ";
             $order = ' ORDER BY lastname ASC, firstname ASC';
         } else {
+            $licensecourses = $DB->get_records('companylicense_courses', array('licenseid' => $this->licenseid));
+            $maxcount = company_user_selector_base::MAX_USERS_PER_PAGE * count($licensecourses);
             $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, clu.isusing ';
             $countfields = 'SELECT COUNT(1)';
     
@@ -978,7 +981,7 @@ class current_license_user_selector extends user_selector_base {
         if (!$this->is_validating() && !$all) {
             if (!empty($userfilter)) {
                 $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-                if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+                if ($potentialmemberscount > $maxcount) {
                     return $this->too_many_results($search, $potentialmemberscount);
                 }
             } else {
