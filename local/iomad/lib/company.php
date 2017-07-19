@@ -1852,7 +1852,7 @@ class company {
                 if ($groupusers = $DB->get_records('groups_members', array('groupid' => $groupid))) {
                     foreach($groupusers as $user) {
                         groups_add_member($group->id, $user->userid);
-                        group_remove_member($groupid, $user->userid);
+                        groups_remove_member($groupid, $user->userid);
                     }
                 }
                 $DB->delete_records('groups', array('id' => $groupid));
