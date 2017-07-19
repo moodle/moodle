@@ -321,7 +321,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core/custom_interactio
                 notification.contexturl = contextUrl;
                 this.setCacheNotification(notification);
                 // Pass the Rendered content out.
-                return [html, js];
+                return {html: html, js: js};
             }.bind(this));
             promises.push(promise);
         }.bind(this));
@@ -330,25 +330,9 @@ define(['jquery', 'core/templates', 'core/notification', 'core/custom_interactio
             // Each of the promises in the when will pass its results as an argument to the function.
             // The order of the arguments will be the order that the promises are passed to when()
             // i.e. the first promise's results will be in the first argument.
-            var args = arguments;
-            if (args.length === 2 && !Array.isArray(args[0])) {
-                // If there is only a single promise then arguments does not hold each
-                // promises return as a array, it instead holds each of the variables returned by the
-                // promise in it's array as a separate paramter. We need to remake this into the form
-                // expected by the each loop.
-                args = {
-                    0: [
-                        arguments[0],
-                        arguments[1]
-                    ]
-                };
-            }
-            $.each(args, function(index, argument) {
-                // The promises will return an array containing two values.
-                // The first value is the html that should be attached to the page.
-                // The second will be any JavaScript that needs to be run.
-                container.append(argument[0]);
-                Templates.runTemplateJS(argument[1]);
+            $.each(arguments, function(index, argument) {
+                container.append(argument.html);
+                Templates.runTemplateJS(argument.js);
             });
             return;
         });
