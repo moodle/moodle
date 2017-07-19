@@ -3625,3 +3625,24 @@ function calendar_get_timestamp($d, $m, $y, $time = 0) {
 
     return $time;
 }
+
+/**
+ * Get the calendar footer options.
+ *
+ * @param calendar_information $calendar The calendar information object.
+ * @return array The data for template and template name.
+ */
+function calendar_get_footer_options($calendar) {
+    global $CFG, $USER, $DB, $PAGE;
+
+    // Generate hash for iCal link.
+    $rawhash = $USER->id . $DB->get_field('user', 'password', ['id' => $USER->id]) . $CFG->calendar_exportsalt;
+    $authtoken = sha1($rawhash);
+
+    $renderer = $PAGE->get_renderer('core_calendar');
+    $footer = new \core_calendar\external\footer_options_exporter($calendar, $USER->id, $authtoken);
+    $data = $footer->export($renderer);
+    $template = 'core_calendar/footer_options';
+
+    return [$data, $template];
+}
