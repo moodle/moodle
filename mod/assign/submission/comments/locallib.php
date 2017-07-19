@@ -69,7 +69,6 @@ class assign_submission_comments extends assign_submission_plugin {
         $options->displaycancel = true;
 
         $comment = new comment($options);
-        $comment->set_view_permission(true);
 
         $o = $this->assignment->get_renderer()->container($comment->output(true), 'commentscontainer');
         return $o;
