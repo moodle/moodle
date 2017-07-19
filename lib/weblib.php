@@ -2215,7 +2215,7 @@ function send_headers($contenttype, $cacheable = true) {
  * @param string $addclass Additional class names for the link, or the arrow character.
  * @return string HTML string.
  */
-function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
+function link_arrow_right($text, $url='', $accesshide=false, $addclass='', $addparams = []) {
     global $OUTPUT; // TODO: move to output renderer.
     $arrowclass = 'arrow ';
     if (!$url) {
@@ -2234,7 +2234,16 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
         if ($addclass) {
             $class .= ' '.$addclass;
         }
-        return '<a class="'.$class.'" href="'.$url.'" title="'.preg_replace('/<.*?>/', '', $text).'">'.$htmltext.$arrow.'</a>';
+
+        $linkparams = [
+            'class' => $class,
+            'href' => $url,
+            'title' => preg_replace('/<.*?>/', '', $text),
+        ];
+
+        $linkparams += $addparams;
+
+        return html_writer::link($url, $htmltext . $arrow, $linkparams);
     }
     return $htmltext.$arrow;
 }
@@ -2248,7 +2257,7 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
  * @param string $addclass Additional class names for the link, or the arrow character.
  * @return string HTML string.
  */
-function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
+function link_arrow_left($text, $url='', $accesshide=false, $addclass='', $addparams = []) {
     global $OUTPUT; // TODO: move to utput renderer.
     $arrowclass = 'arrow ';
     if (! $url) {
@@ -2267,7 +2276,16 @@ function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
         if ($addclass) {
             $class .= ' '.$addclass;
         }
-        return '<a class="'.$class.'" href="'.$url.'" title="'.preg_replace('/<.*?>/', '', $text).'">'.$arrow.$htmltext.'</a>';
+
+        $linkparams = [
+            'class' => $class,
+            'href' => $url,
+            'title' => preg_replace('/<.*?>/', '', $text),
+        ];
+
+        $linkparams += $addparams;
+
+        return html_writer::link($url, $arrow . $htmltext, $linkparams);
     }
     return $arrow.$htmltext;
 }
