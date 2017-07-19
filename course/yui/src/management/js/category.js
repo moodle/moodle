@@ -171,10 +171,14 @@ Category.prototype = {
             title: M.util.get_string('collapsecategory', 'moodle', this.getName())
         });
 
-        require(['core/templates', 'core/notification'], function(Templates, Notification) {
-            Templates.renderPix('t/switch_minus', 'core', M.util.get_string('collapse', 'moodle')).then(function(html) {
-                action.set('innerHTML', html);
-            }).fail(Notification.exception);
+        require(['core/str', 'core/templates', 'core/notification'], function(Str, Templates, Notification) {
+            Str.get_string('collapse', 'core')
+                .then(function(string) {
+                    return Templates.renderPix('t/switch_minus', 'core', string);
+                })
+                .then(function(html) {
+                    return action.set('innerHTML', html);
+                }).fail(Notification.exception);
         });
 
         if (ul) {
@@ -196,10 +200,14 @@ Category.prototype = {
             title: M.util.get_string('expandcategory', 'moodle', this.getName())
         });
 
-        require(['core/templates', 'core/notification'], function(Templates, Notification) {
-            Templates.renderPix('t/switch_plus', 'core', M.util.get_string('expand', 'moodle')).then(function(html) {
-                action.set('innerHTML', html);
-            }).fail(Notification.exception);
+        require(['core/str', 'core/templates', 'core/notification'], function(Str, Templates, Notification) {
+            Str.get_string('expand', 'core')
+                .then(function(string) {
+                    return Templates.renderPix('t/switch_plus', 'core', string);
+                })
+                .then(function(html) {
+                    return action.set('innerHTML', html);
+                }).fail(Notification.exception);
         });
 
         if (ul) {
