@@ -1239,18 +1239,17 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
     $joins = array('FROM {user} u');
     $wheres = array();
 
-    $userfields = array('username', 'email', 'city', 'country', 'lang', 'timezone', 'maildisplay');
-    $mainuserfields = user_picture::fields('u', $userfields);
-    $extrasql = get_extra_user_fields_sql($context, 'u', '', $userfields);
+    $userfields = get_extra_user_fields($context, array('username', 'lang', 'timezone', 'maildisplay'));
+    $userfieldssql = user_picture::fields('u', $userfields);
 
     if ($isfrontpage) {
-        $select = "SELECT $mainuserfields, u.lastaccess$extrasql";
+        $select = "SELECT $userfieldssql, u.lastaccess";
         $joins[] = "JOIN ($esql) e ON e.id = u.id"; // Everybody on the frontpage usually.
         if ($accesssince) {
             $wheres[] = user_get_user_lastaccess_sql($accesssince);
         }
     } else {
-        $select = "SELECT $mainuserfields, COALESCE(ul.timeaccess, 0) AS lastaccess$extrasql";
+        $select = "SELECT $userfieldssql, COALESCE(ul.timeaccess, 0) AS lastaccess";
         $joins[] = "JOIN ($esql) e ON e.id = u.id"; // Course enrolled users only.
         // Not everybody has accessed the course yet.
         $joins[] = 'LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid)';
