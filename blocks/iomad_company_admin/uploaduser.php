@@ -793,6 +793,16 @@ if ($mform->is_cancelled()) {
                 company_user::enrol($user, array_keys($formdata->selectedcourses) );
             }
 
+            // Deal with program license.
+            if (!empty($formdata->licenseid) && empty($formdata->licensecourses)) {
+                if ($DB->get_record('companylicense', array('id' => $formdata->licenseid, 'program' => 1))) {
+                    // This is a program of courses.  Set them!
+                    $formdata->licensecourses = $DB->get_records_sql_menu("SELECT c.id, c.id FROM {companylicense_courses} clc
+                                                                          JOIN {course} c ON (clc.courseid = c.id
+                                                                          AND clc.licenseid = :licenseid)",
+                                                                          array('licenseid' => $formdata->licenseid));
+                }
+            }
             // Assign and licenses.
             if (!empty($formdata->licensecourses)) {
                 $licenserecord = (array) $DB->get_record('companylicense', array('id' => $formdata->licenseid));
@@ -840,6 +850,10 @@ if ($mform->is_cancelled()) {
                 // Set the used amount for the license.
                 $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $formdata->licenseid));
                 $DB->update_record('companylicense', $licenserecord);
+
+                if (!empty($licenserecord->program)) {
+                    $numlicenses = $numlicenses / count($formdata->licensecourses);
+                }
             }
 
 
