@@ -22,9 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/test_target_shortname.php');
-
 defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/test_target_shortname.php');
 
 /**
  * Test static target.

@@ -126,9 +126,7 @@ abstract class calculable {
      * @param string|false $subtype
      * @return int
      */
-    public function get_calculation_outcome($value, $subtype = false) {
-        throw new \coding_exception('Please overwrite get_calculation_outcome method');
-    }
+    abstract public function get_calculation_outcome($value, $subtype = false);
 
     /**
      * Retrieve the specified element associated to $sampleid.

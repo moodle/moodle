@@ -18,7 +18,7 @@
  * Unit tests for core time splitting methods.
  *
  * @package   core
- * @category  phpunit
+ * @category  analytics
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,7 +32,7 @@ require_once(__DIR__ . '/../../lib/enrollib.php');
  * Unit tests for core time splitting methods.
  *
  * @package   core
- * @category  phpunit
+ * @category  analytics
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

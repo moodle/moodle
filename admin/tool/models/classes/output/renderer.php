@@ -42,7 +42,7 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
-     * @param \tool_models\output\models_list $templatable
+     * @param \tool_models\output\models_list $modelslist
      * @return string HTML
      */
     protected function render_models_list(\tool_models\output\models_list $modelslist) {

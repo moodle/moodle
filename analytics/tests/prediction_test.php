@@ -280,19 +280,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      */
     public function provider_ml_test_evaluation() {
 
-        $notenoughandlowscore = \core_analytics\model::EVALUATE_NOT_ENOUGH_DATA + \core_analytics\model::EVALUATE_LOW_SCORE;
         $cases = array(
-            'bad-and-no-enough-data' => array(
-                'modelquality' => 'random',
-                'ncourses' => 5,
-                'expectedresults' => array(
-                    // The course duration is too much to be processed by in weekly basis.
-                    '\core\analytics\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
-                    // 10 samples is not enough to process anything.
-                    '\core\analytics\time_splitting\single_range' => $notenoughandlowscore,
-                    '\core\analytics\time_splitting\quarters' => $notenoughandlowscore,
-                )
-            ),
             'bad' => array(
                 'modelquality' => 'random',
                 'ncourses' => 50,

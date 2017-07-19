@@ -1066,7 +1066,6 @@ class model {
 
         list($unused, $samplesdata) = $this->get_analyser()->get_samples($sampleids);
 
-
         $current = 0;
 
         if ($page !== false) {

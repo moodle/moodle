@@ -100,7 +100,7 @@ class manager {
                 $conditions[] = 'am.trained = :trained';
                 $params['trained'] = 1;
             }
-            $sql .= ' WHERE ' . implode(' AND ', $conditions);
+            $sql .= ' WHERE ' . implode(' AND ', $conditions) . ' ORDER BY am.timemodified DESC';
         }
         $modelobjs = $DB->get_records_sql($sql, $params);
 
@@ -390,7 +390,7 @@ class manager {
      */
     public static function add_builtin_models() {
 
-        $target = \core_analytics\manager::get_target('\core\analytics\target\course_dropout');
+        $target = self::get_target('\core\analytics\target\course_dropout');
 
         // Community of inquiry indicators.
         $coiindicators = array(
@@ -439,7 +439,7 @@ class manager {
         );
         $indicators = array();
         foreach ($coiindicators as $coiindicator) {
-            $indicator = \core_analytics\manager::get_indicator($coiindicator);
+            $indicator = self::get_indicator($coiindicator);
             $indicators[$indicator->get_id()] = $indicator;
         }
         if (!\core_analytics\model::exists($target, $indicators)) {
@@ -447,9 +447,9 @@ class manager {
         }
 
         // No teaching model.
-        $target = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
+        $target = self::get_target('\core\analytics\target\no_teaching');
         $timesplittingmethod = '\core\analytics\time_splitting\single_range';
-        $noteacher = \core_analytics\manager::get_indicator('\core_course\analytics\indicator\no_teacher');
+        $noteacher = self::get_indicator('\core_course\analytics\indicator\no_teacher');
         $indicators = array($noteacher->get_id() => $noteacher);
         if (!\core_analytics\model::exists($target, $indicators)) {
             \core_analytics\model::create($target, $indicators, $timesplittingmethod);

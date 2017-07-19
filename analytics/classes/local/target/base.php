@@ -181,7 +181,7 @@ abstract class base extends \core_analytics\calculable {
 
                 $message->fullmessage = get_string('insightinfomessage', 'analytics', $insighturl->out());
                 $message->fullmessageformat = FORMAT_PLAIN;
-                $message->fullmessagehtml = get_string('insightinfomessage', 'analytics', $insighturl->out());
+                $message->fullmessagehtml = get_string('insightinfomessagehtml', 'analytics', $insighturl->out());
                 $message->smallmessage = get_string('insightinfomessage', 'analytics', $insighturl->out());
                 $message->contexturl = $insighturl->out(false);
 

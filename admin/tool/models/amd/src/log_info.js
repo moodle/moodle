@@ -39,9 +39,9 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/notification'], functi
             str.get_string('loginfo', 'tool_models').then(function(langString) {
 
                 var bodyInfo = $("<ul>");
-                for (var i in info) {
-                    bodyInfo.append("<li>" + info[i] + "</li>");
-                }
+                info.forEach(function(item) {
+                    bodyInfo.append('<li>' + item + '</li>');
+                });
                 bodyInfo.append("</ul>");
 
                 return ModalFactory.create({

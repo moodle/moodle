@@ -198,7 +198,7 @@ class course_dropout extends \core_analytics\local\target\binary {
      * @param \core_analytics\analysable $course
      * @param int $starttime
      * @param int $endtime
-     * @return float
+     * @return float 0 -> not at risk, 1 -> at risk
      */
     protected function calculate_sample($sampleid, \core_analytics\analysable $course, $starttime = false, $endtime = false) {
 
@@ -226,8 +226,8 @@ class course_dropout extends \core_analytics\local\target\binary {
         $params = array('userid' => $userenrol->userid, 'courseid' => $course->get_id(), 'limit' => $limit);
         $nlogs = $logstore->get_events_select_count($select, $params);
         if ($nlogs == 0) {
-            return 0;
+            return 1;
         }
-        return 1;
+        return 0;
     }
 }
