@@ -137,7 +137,14 @@ function assignsubmission_comments_comment_display($comments, $options) {
         $userinteam = false;
         if ($assignment->get_instance()->teamsubmission && has_capability('mod/assign:submit', $context)) {
             $assignment->set_course(get_course($course));
-            $userinteam = $assignment->can_edit_group_submission($submission->groupid);
+
+            $members = $assignment->get_submission_group_members($submission->groupid, true);
+            foreach ($members as $member) {
+                if ($assignment->can_edit_submission($member->id)) {
+                    $userinteam = true;
+                    break;
+                }
+            }
         }
 
         foreach ($comments as $comment) {
