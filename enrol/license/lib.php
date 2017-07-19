@@ -279,47 +279,48 @@ class enrol_license_plugin extends enrol_plugin {
     }
 
     /**
-     * Send welcome email to specified user
+     * Send welcome email to specified user.
      *
-     * @param object $instance
-     * @param object $user user record
+     * @param stdClass $instance
+     * @param stdClass $user user record
      * @return void
      */
     protected function email_welcome_message($instance, $user) {
         global $CFG, $DB;
 
-        $course = $DB->get_record('course', array('id' => $instance->courseid), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
+        $context = context_course::instance($course->id);
 
         $a = new stdClass();
-        $a->coursename = format_string($course->fullname);
+        $a->coursename = format_string($course->fullname, true, array('context'=>$context));
         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
-        $a->userurl = "$CFG->wwwroot/user/view.php?id=$user->id";
-        $a->courseurl = "$CFG->wwwroot/course/view.php?id=$course->id";
 
         if (trim($instance->customtext1) !== '') {
             $message = $instance->customtext1;
-            $message = str_replace('{$a->coursename}', $a->coursename, $message);
-            $message = str_replace('{$a->profileurl}', $a->profileurl, $message);
+            $key = array('{$a->coursename}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}');
+            $value = array($a->coursename, $a->profileurl, fullname($user), $user->email);
+            $message = str_replace($key, $value, $message);
+            if (strpos($message, '<') === false) {
+                // Plain text only.
+                $messagetext = $message;
+                $messagehtml = text_to_html($messagetext, null, false, true);
+            } else {
+                // This is most probably the tag/newline soup known as FORMAT_MOODLE.
+                $messagehtml = format_text($message, FORMAT_MOODLE, array('context'=>$context, 'para'=>false, 'newlines'=>true, 'filter'=>true));
+                $messagetext = html_to_text($messagehtml);
+            }
         } else {
-            $message = get_string('welcometocoursetext', 'enrol_license', $a);
+            $messagetext = get_string('welcometocoursetext', 'enrol_license', $a);
+            $messagehtml = text_to_html($messagetext, null, false, true);
         }
 
-        $subject = get_string('welcometocourse', 'enrol_license', format_string($course->fullname));
+        $subject = get_string('welcometocourse', 'enrol_self', format_string($course->fullname, true, array('context'=>$context)));
 
-        $context = context_course::instance($course->id);
-        $rusers = array();
-        if (!empty($CFG->coursecontact)) {
-            $croles = explode(', ', $CFG->coursecontact);
-            $rusers = get_role_users($croles, $context, true, '', 'r.sortorder ASC, u.lastname ASC');
-        }
-        if ($rusers) {
-            $contact = reset($rusers);
-        } else {
-            $contact = get_admin();
-        }
+        $sendoption = $instance->customint4;
+        $contact = $this->get_welcome_email_contact($sendoption, $context);
 
         // Directly emailing welcome message rather than using messaging.
-        email_to_user($user, $contact, $subject, $message);
+        email_to_user($user, $contact, $subject, $messagetext, $messagehtml);
     }
 
     /**
