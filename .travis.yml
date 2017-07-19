@@ -77,8 +77,6 @@ cache:
       - $HOME/.npm
 
 install:
-    - sudo apt-get -y install haveged
-    - sudo service haveged start
     - >
         if [ "$DB" = 'mysqli' ];
         then
