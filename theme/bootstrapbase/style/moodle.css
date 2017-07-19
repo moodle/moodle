@@ -3724,7 +3724,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   background-image: linear-gradient(to bottom, #fff, #ccc);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffcccccc', GradientType=0);
-  filter: 0;
+  filter: none;
 }
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
   padding: 0;

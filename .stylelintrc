@@ -1,5 +1,9 @@
 {
+    "plugins": [
+        "stylelint-csstree-validator"
+    ],
     "rules": {
+        "csstree/validator": true,
         "at-rule-empty-line-before": [ "always",
           {"except": [ "blockless-after-blockless"], ignore: ["after-comment", "inside-block"]}
         ],
