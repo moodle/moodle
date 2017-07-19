@@ -2148,20 +2148,7 @@ function calendar_get_link_href($linkbase, $d, $m, $y, $time = 0) {
         $linkbase = new \moodle_url($linkbase);
     }
 
-    // If a day, month and year were passed then convert it to a timestamp. If these were passed
-    // then we can assume the day, month and year are passed as Gregorian, as no where in core
-    // should we be passing these values rather than the time.
-    if (!empty($d) && !empty($m) && !empty($y)) {
-        if (checkdate($m, $d, $y)) {
-            $time = make_timestamp($y, $m, $d);
-        } else {
-            $time = time();
-        }
-    } else if (empty($time)) {
-        $time = time();
-    }
-
-    $linkbase->param('time', $time);
+    $linkbase->param('time', calendar_get_timestamp($d, $m, $y, $time));
 
     return $linkbase;
 }
@@ -3498,4 +3485,30 @@ function calendar_output_fragment_event_form($args) {
 
     $html .= $mform->render();
     return $html;
+}
+
+/**
+ * Calculate the timestamp from the supplied Gregorian Year, Month, and Day.
+ *
+ * @param   int     $d The day
+ * @param   int     $m The month
+ * @param   int     $y The year
+ * @param   int     $time The timestamp to use instead of a separate y/m/d.
+ * @return  int     The timestamp
+ */
+function calendar_get_timestamp($d, $m, $y, $time = 0) {
+    // If a day, month and year were passed then convert it to a timestamp. If these were passed
+    // then we can assume the day, month and year are passed as Gregorian, as no where in core
+    // should we be passing these values rather than the time.
+    if (!empty($d) && !empty($m) && !empty($y)) {
+        if (checkdate($m, $d, $y)) {
+            $time = make_timestamp($y, $m, $d);
+        } else {
+            $time = time();
+        }
+    } else if (empty($time)) {
+        $time = time();
+    }
+
+    return $time;
 }
