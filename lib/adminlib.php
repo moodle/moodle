@@ -9524,115 +9524,24 @@ class admin_setting_managewebservicetokens extends admin_setting {
      * @return string
      */
     public function output_html($data, $query='') {
-        global $CFG, $OUTPUT, $DB, $USER;
+        global $CFG, $OUTPUT;
 
-        // display strings
-        $stroperation = get_string('operation', 'webservice');
-        $strtoken = get_string('token', 'webservice');
-        $strservice = get_string('service', 'webservice');
-        $struser = get_string('user');
-        $strcreator = get_string('tokencreator', 'webservice');
-        $strcontext = get_string('context', 'webservice');
-        $strvaliduntil = get_string('validuntil', 'webservice');
-        $striprestriction = get_string('iprestriction', 'webservice');
+        require_once($CFG->dirroot . '/webservice/classes/token_table.php');
+        $baseurl = new moodle_url('/' . $CFG->admin . '/settings.php?section=webservicetokens');
 
         $return = $OUTPUT->box_start('generalbox webservicestokenui');
 
-        $showalltokens = has_capability('moodle/webservice:managealltokens', context_system::instance());
-
-        $table = new html_table();
-        if ($showalltokens) {
-            $table->head  = array($strtoken, $struser, $strservice, $striprestriction, $strvaliduntil, $strcreator, $stroperation);
-        } else {
-            $table->head  = array($strtoken, $struser, $strservice, $striprestriction, $strvaliduntil, $stroperation);
-        }
-        $table->colclasses = array('leftalign', 'leftalign', 'leftalign', 'centeralign', 'centeralign', 'leftalign', 'centeralign');
-        $table->id = 'webservicetokens';
-        $table->attributes['class'] = 'admintable generaltable';
+        $table = new \webservice\token_table('webservicetokens');
+        $table->define_baseurl($baseurl);
+        $table->attributes['class'] = 'admintable generaltable'; // Any need changing?
         $table->data  = array();
+        ob_start();
+        $table->out(10, false);
+        $tablehtml = ob_get_contents();
+        ob_end_clean();
+        $return .= $tablehtml;
 
         $tokenpageurl = "$CFG->wwwroot/$CFG->admin/webservice/tokens.php?sesskey=" . sesskey();
-
-        //TODO: in order to let the administrator delete obsolete token, split this request in multiple request or use LEFT JOIN
-
-        $params = [];
-        //here retrieve token list (including linked users firstname/lastname and linked services name)
-        if ($showalltokens) {
-             // Show all tokens.
-            $sql = "SELECT t.id, t.token, u.id AS userid, u.firstname, u.lastname, s.name, t.iprestriction, t.validuntil, s.id AS serviceid, t.creatorid, c.username creator
-                      FROM {external_tokens} t, {user} u, {external_services} s, {user} c
-                     WHERE t.tokentype = ? AND s.id = t.externalserviceid AND t.userid = u.id AND c.id = t.creatorid";
-            $params = [EXTERNAL_TOKEN_PERMANENT];
-        } else {
-            // Only show tokens created by the current user.
-            $sql = "SELECT t.id, t.token, u.id AS userid, u.firstname, u.lastname, s.name, t.iprestriction, t.validuntil, s.id AS serviceid, t.creatorid, c.username creator
-                      FROM {external_tokens} t, {user} u, {external_services} s, {user} c
-                     WHERE t.creatorid=? AND t.tokentype = ? AND s.id = t.externalserviceid AND t.userid = u.id AND c.id = t.creatorid";
-            $params = [$USER->id, EXTERNAL_TOKEN_PERMANENT];
-        }
-        $tokens = $DB->get_records_sql($sql, $params);
-        if (!empty($tokens)) {
-            foreach ($tokens as $token) {
-                //TODO: retrieve context
-
-                $delete = "<a href=\"".$tokenpageurl."&amp;action=delete&amp;tokenid=".$token->id."\">";
-                $delete .= get_string('delete')."</a>";
-
-                $validuntil = '';
-                if (!empty($token->validuntil)) {
-                    $validuntil = userdate($token->validuntil, get_string('strftimedatetime', 'langconfig'));
-                }
-
-                $iprestriction = '';
-                if (!empty($token->iprestriction)) {
-                    $iprestriction = $token->iprestriction;
-                }
-
-                $userprofilurl = new moodle_url('/user/profile.php?id='.$token->userid);
-                $useratag = html_writer::start_tag('a', array('href' => $userprofilurl));
-                $useratag .= $token->firstname." ".$token->lastname;
-                $useratag .= html_writer::end_tag('a');
-
-                //check user missing capabilities
-                require_once($CFG->dirroot . '/webservice/lib.php');
-                $webservicemanager = new webservice();
-                $usermissingcaps = $webservicemanager->get_missing_capabilities_by_users(
-                        array(array('id' => $token->userid)), $token->serviceid);
-
-                if (!is_siteadmin($token->userid) and
-                        array_key_exists($token->userid, $usermissingcaps)) {
-                    $missingcapabilities = implode(', ',
-                            $usermissingcaps[$token->userid]);
-                    if (!empty($missingcapabilities)) {
-                        $useratag .= html_writer::tag('div',
-                                        get_string('usermissingcaps', 'webservice',
-                                                $missingcapabilities)
-                                        . '&nbsp;' . $OUTPUT->help_icon('missingcaps', 'webservice'),
-                                        array('class' => 'missingcaps'));
-                    }
-                }
-
-                $creatorprofileurl = new moodle_url('/user/profile.php?id='.$token->creatorid);
-                $creatoratag = html_writer::start_tag('a', array('href' => $creatorprofileurl));
-                $creatoratag .= $token->creator;
-                $creatoratag .= html_writer::end_tag('a');
-
-                if ($token->creatorid != $USER->id) { // TODO: is creatorid NOT NULL? What if it's NULL?
-                    $token->token = '';
-                    // TODO: Should I also remove permissions?
-                }
-
-                if ($showalltokens) {
-                    $table->data[] = array($token->token, $useratag, $token->name, $iprestriction, $validuntil, $creatoratag, $delete);
-                } else {
-                    $table->data[] = array($token->token, $useratag, $token->name, $iprestriction, $validuntil, $delete);
-                }
-            }
-
-            $return .= html_writer::table($table);
-        } else {
-            $return .= get_string('notoken', 'webservice');
-        }
 
         $return .= $OUTPUT->box_end();
         // add a token to the table
