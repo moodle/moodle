@@ -38,6 +38,9 @@ information provided here is intended especially for developers.
   - get_enrolled_with_capabilities_join()
   Setting this parameter to a non-zero value will add a condition to the query such that only users that were enrolled
   with this enrolment method will be returned.
+* New optional parameter 'closeSuggestionsOnSelect' for the enhance() function for form-autocomplete. Setting this to true will
+  close the suggestions popup immediately after an option has been selected. If not specified, it defaults to true for single-select
+  elements and false for multiple-select elements.
 
 === 3.3.1 ===
 
