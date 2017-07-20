@@ -66,4 +66,26 @@ class scanner extends \core\antivirus\scanner {
                 break;
         }
     }
+
+    /**
+     * Scan data.
+     *
+     * Provides fake responses for testing \core\antivirus\manager.
+     *
+     * @param string $data The variable containing the data to scan.
+     * @return int Scanning result constant.
+     */
+    public function scan_data($data) {
+        switch ($data) {
+            case 'OK':
+                return self::SCAN_RESULT_OK;
+            case 'FOUND':
+                return self::SCAN_RESULT_FOUND;
+            case 'ERROR':
+                return self::SCAN_RESULT_ERROR;
+            default:
+                debugging('$data should be either OK, FOUND or ERROR.');
+                break;
+        }
+    }
 }
