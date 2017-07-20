@@ -851,15 +851,17 @@ if ($mform->is_cancelled()) {
                 $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $formdata->licenseid));
                 $DB->update_record('companylicense', $licenserecord);
 
-                if (!empty($licenserecord->program)) {
-                    $numlicenses = $numlicenses / count($formdata->licensecourses);
-                }
             }
 
 
             // If user was set to have password generated, generate it now, so that it can be downloaded.
             company_user::generate_temporary_password($user, $formdata->sendnewpasswordemails);
         }
+
+        if (!empty($licenserecord['program'])) {
+            $numlicenses = $numlicenses / count($formdata->licensecourses);
+        }
+
         $upt->flush();
         $upt->close(); // Close table.
     
