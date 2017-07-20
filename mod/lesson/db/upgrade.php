@@ -419,7 +419,7 @@ function xmldb_lesson_upgrade($oldversion) {
     if ($oldversion < 2017051501) {
 
         // Delete orphaned lesson answer and response files.
-        $sql = "SELECT DISTINCT f.*
+        $sql = "SELECT DISTINCT f.contextid, f.component, f.filearea, f.itemid
                   FROM {files} f
              LEFT JOIN {lesson_answers} la ON f.itemid = la.id
                  WHERE component = :component
