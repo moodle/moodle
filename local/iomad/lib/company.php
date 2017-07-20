@@ -2432,13 +2432,10 @@ class company {
             foreach ($licenserecords as $licenserecord) {
                 // Delete the record.
                 $DB->delete_records('companylicense_users', array('id' => $licenserecord->id));
+
                 // Update the license used count.
-                $DB->execute("UPDATE {companylicense},
-                                  (
-                                   SELECT licenseid,count(*) AS licCount FROM {companylicense_users} GROUP BY licenseid
-                                  ) AS t2
-                                  SET {companylicense}.used = t2.licCount
-                                  WHERE mdl_companylicense.id = t2.licenseid;");
+                $licensecount = count($DB->get_records('companylicense_users', array('licenseid' => $licenserecord->licenseid)));
+                $DB->set_field('companylicense', 'used', $licensecount, array('id' => $licenserecord->licenseid));
             }
         }
         return true;
