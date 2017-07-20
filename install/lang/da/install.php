@@ -85,10 +85,9 @@ $string['pathsunsecuredataroot'] = 'Datamappen er ikke sikret';
 $string['pathswrongadmindir'] = 'Adminmappe eksisterer ikke';
 $string['phpextension'] = '{$a} PHP-extension';
 $string['phpversion'] = 'PHP version';
-$string['phpversionhelp'] = '<p>Moodle kræver mindst PHP version 4.3.0. eller 5.1.0 (5.0.x er behæftet med fejl).</p>
+$string['phpversionhelp'] = '<p>Moodle kræver mindst PHP version 5.6.5. eller 7.1 (7.0.x har nogle maskinbegrænsninger).</p>
 <p>Webserveren bruger i øjeblikket version {$a}</p>
-<p>Du bliver nødt til at opdatere PHP eller flytte systemet over på en anden webserver der har en nyere version af PHP!</p>
-(Har du ver. 5.0.x kan du også nedgradere til 4.4.x)</p>';
+<p>Du bliver nødt til at opgradere PHP eller flytte systemet over på en anden webserver der har en nyere version af PHP!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Du ser denne side fordi du har installeret og åbnet pakken <strong>{$a->packname} {$a->packversion}</strong> på din computer.
 Tillykke med det!';
