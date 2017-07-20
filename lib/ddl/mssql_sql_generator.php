@@ -652,36 +652,29 @@ class mssql_sql_generator extends sql_generator {
     public static function getReservedWords() {
         // This file contains the reserved words for MSSQL databases
         // from http://msdn2.microsoft.com/en-us/library/ms189822.aspx
+        // Should be identical to sqlsrv_native_moodle_database::$reservewords.
         $reserved_words = array (
-            'add', 'all', 'alter', 'and', 'any', 'as', 'asc', 'authorization',
-            'avg', 'backup', 'begin', 'between', 'break', 'browse', 'bulk',
-            'by', 'cascade', 'case', 'check', 'checkpoint', 'close', 'clustered',
-            'coalesce', 'collate', 'column', 'commit', 'committed', 'compute',
-            'confirm', 'constraint', 'contains', 'containstable', 'continue',
-            'controlrow', 'convert', 'count', 'create', 'cross', 'current',
-            'current_date', 'current_time', 'current_timestamp', 'current_user',
-            'cursor', 'database', 'dbcc', 'deallocate', 'declare', 'default', 'delete',
-            'deny', 'desc', 'disk', 'distinct', 'distributed', 'double', 'drop', 'dummy',
-            'dump', 'else', 'end', 'errlvl', 'errorexit', 'escape', 'except', 'exec',
-            'execute', 'exists', 'exit', 'external', 'fetch', 'file', 'fillfactor', 'floppy',
-            'for', 'foreign', 'freetext', 'freetexttable', 'from', 'full', 'function',
-            'goto', 'grant', 'group', 'having', 'holdlock', 'identity', 'identitycol',
-            'identity_insert', 'if', 'in', 'index', 'inner', 'insert', 'intersect', 'into',
-            'is', 'isolation', 'join', 'key', 'kill', 'left', 'level', 'like', 'lineno',
-            'load', 'max', 'min', 'mirrorexit', 'national', 'nocheck', 'nonclustered',
-            'not', 'null', 'nullif', 'of', 'off', 'offsets', 'on', 'once', 'only', 'open',
-            'opendatasource', 'openquery', 'openrowset', 'openxml', 'option', 'or', 'order',
-            'outer', 'over', 'percent', 'perm', 'permanent', 'pipe', 'pivot', 'plan', 'precision',
-            'prepare', 'primary', 'print', 'privileges', 'proc', 'procedure', 'processexit',
-            'public', 'raiserror', 'read', 'readtext', 'reconfigure', 'references',
-            'repeatable', 'replication', 'restore', 'restrict', 'return', 'revoke',
-            'right', 'rollback', 'rowcount', 'rowguidcol', 'rule', 'save', 'schema',
-            'select', 'serializable', 'session_user', 'set', 'setuser', 'shutdown', 'some',
-            'statistics', 'sum', 'system_user', 'table', 'tape', 'temp', 'temporary',
-            'textsize', 'then', 'to', 'top', 'tran', 'transaction', 'trigger', 'truncate',
-            'tsequal', 'uncommitted', 'union', 'unique', 'update', 'updatetext', 'use',
-            'user', 'values', 'varying', 'view', 'waitfor', 'when', 'where', 'while',
-            'with', 'work', 'writetext'
+            "add", "all", "alter", "and", "any", "as", "asc", "authorization", "avg", "backup", "begin", "between", "break",
+            "browse", "bulk", "by", "cascade", "case", "check", "checkpoint", "close", "clustered", "coalesce", "collate", "column",
+            "commit", "committed", "compute", "confirm", "constraint", "contains", "containstable", "continue", "controlrow",
+            "convert", "count", "create", "cross", "current", "current_date", "current_time", "current_timestamp", "current_user",
+            "cursor", "database", "dbcc", "deallocate", "declare", "default", "delete", "deny", "desc", "disk", "distinct",
+            "distributed", "double", "drop", "dummy", "dump", "else", "end", "errlvl", "errorexit", "escape", "except", "exec",
+            "execute", "exists", "exit", "external", "fetch", "file", "fillfactor", "floppy", "for", "foreign", "freetext",
+            "freetexttable", "from", "full", "function", "goto", "grant", "group", "having", "holdlock", "identity",
+            "identity_insert", "identitycol", "if", "in", "index", "inner", "insert", "intersect", "into", "is", "isolation",
+            "join", "key", "kill", "left", "level", "like", "lineno", "load", "max", "merge", "min", "mirrorexit", "national",
+            "nocheck", "nonclustered", "not", "null", "nullif", "of", "off", "offsets", "on", "once", "only", "open",
+            "opendatasource", "openquery", "openrowset", "openxml", "option", "or", "order", "outer", "over", "percent", "perm",
+            "permanent", "pipe", "pivot", "plan", "precision", "prepare", "primary", "print", "privileges", "proc", "procedure",
+            "processexit", "public", "raiserror", "read", "readtext", "reconfigure", "references", "repeatable", "replication",
+            "restore", "restrict", "return", "revert", "revoke", "right", "rollback", "rowcount", "rowguidcol", "rule", "save",
+            "schema", "securityaudit", "select", "semantickeyphrasetable", "semanticsimilaritydetailstable",
+            "semanticsimilaritytable", "serializable", "session_user", "set", "setuser", "shutdown", "some", "statistics", "sum",
+            "system_user", "table", "tablesample", "tape", "temp", "temporary", "textsize", "then", "to", "top", "tran",
+            "transaction", "trigger", "truncate", "try_convert", "tsequal", "uncommitted", "union", "unique", "unpivot", "update",
+            "updatetext", "use", "user", "values", "varying", "view", "waitfor", "when", "where", "while", "with", "within group",
+            "work", "writetext"
         );
         return $reserved_words;
     }
