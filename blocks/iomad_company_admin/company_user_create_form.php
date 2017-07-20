@@ -484,7 +484,7 @@ if ($data = $mform->get_data()) {
         $licenserecord = (array) $DB->get_record('companylicense', array('id' => $licenseid));
         if (!empty($licenserecord['program'])) {
             // If so the courses are not passed automatically.
-            $data->licensecourses =  $DB->get_records_sql_menu("SELECT c.id, c.id FROM {companylicense_courses} clc
+            $data->licensecourses =  $DB->get_records_sql_menu("SELECT c.id, clc.courseid FROM {companylicense_courses} clc
                                                                    JOIN {course} c ON (clc.courseid = c.id
                                                                    AND clc.licenseid = :licenseid)",
                                                                    array('licenseid' => $licenserecord['id']));
