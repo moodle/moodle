@@ -88,7 +88,7 @@ class scanner extends \core\antivirus\scanner {
     /**
      * Scan data.
      *
-     * @param string $data The varaible containing the data to scan.
+     * @param string $data The variable containing the data to scan.
      * @return int Scanning result constant.
      */
     public function scan_data($data) {
@@ -234,7 +234,7 @@ class scanner extends \core\antivirus\scanner {
      * @param string $data The varaible containing the data to scan.
      * @return int Scanning result constant.
      */
-    private function scan_data_execute_unixsocket($data) {
+    public function scan_data_execute_unixsocket($data) {
         $socket = stream_socket_client('unix://' . $this->get_config('pathtounixsocket'), $errno, $errstr, ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT);
         if (!$socket) {
             // Can't open socket for some reason, notify admins.
