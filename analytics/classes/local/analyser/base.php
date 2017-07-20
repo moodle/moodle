@@ -259,7 +259,7 @@ abstract class base {
 
         // We need to check that the analysable is valid for the target even if we don't include targets
         // as we still need to discard invalid analysables for the target.
-        $result = $target->is_valid_analysable($analysable, $includetarget, true);
+        $result = $target->is_valid_analysable($analysable, $includetarget);
         if ($result !== true) {
             $a = new \stdClass();
             $a->analysableid = $analysable->get_id();

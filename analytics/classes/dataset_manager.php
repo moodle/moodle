@@ -387,7 +387,7 @@ class dataset_manager {
             $filename = self::EVALUATION_FILENAME;
         } else {
             // Incremental time, the lock will make sure we don't have concurrency problems.
-            $filename = time() . '.csv';
+            $filename = microtime(false) . '.csv';
         }
 
         return $filename;

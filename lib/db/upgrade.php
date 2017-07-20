@@ -1988,7 +1988,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017071100.00);
     }
 
-    if ($oldversion < 2017072000.01) {
+    if ($oldversion < 2017072000.02) {
 
         // Define table analytics_models to be created.
         $table = new xmldb_table('analytics_models');
@@ -2138,73 +2138,80 @@ function xmldb_main_upgrade($oldversion) {
 
         $now = time();
         $admin = get_admin();
-        // We can not use API calls to create the built-in models.
-        $modelobj = new stdClass();
-        $modelobj->target = '\core\analytics\target\course_dropout';
-        $modelobj->indicators = json_encode(array(
-            '\mod_assign\analytics\indicator\cognitive_depth',
-            '\mod_assign\analytics\indicator\social_breadth',
-            '\mod_book\analytics\indicator\cognitive_depth',
-            '\mod_book\analytics\indicator\social_breadth',
-            '\mod_chat\analytics\indicator\cognitive_depth',
-            '\mod_chat\analytics\indicator\social_breadth',
-            '\mod_choice\analytics\indicator\cognitive_depth',
-            '\mod_choice\analytics\indicator\social_breadth',
-            '\mod_data\analytics\indicator\cognitive_depth',
-            '\mod_data\analytics\indicator\social_breadth',
-            '\mod_feedback\analytics\indicator\cognitive_depth',
-            '\mod_feedback\analytics\indicator\social_breadth',
-            '\mod_folder\analytics\indicator\cognitive_depth',
-            '\mod_folder\analytics\indicator\social_breadth',
-            '\mod_forum\analytics\indicator\cognitive_depth',
-            '\mod_forum\analytics\indicator\social_breadth',
-            '\mod_glossary\analytics\indicator\cognitive_depth',
-            '\mod_glossary\analytics\indicator\social_breadth',
-            '\mod_imscp\analytics\indicator\cognitive_depth',
-            '\mod_imscp\analytics\indicator\social_breadth',
-            '\mod_label\analytics\indicator\cognitive_depth',
-            '\mod_label\analytics\indicator\social_breadth',
-            '\mod_lesson\analytics\indicator\cognitive_depth',
-            '\mod_lesson\analytics\indicator\social_breadth',
-            '\mod_lti\analytics\indicator\cognitive_depth',
-            '\mod_lti\analytics\indicator\social_breadth',
-            '\mod_page\analytics\indicator\cognitive_depth',
-            '\mod_page\analytics\indicator\social_breadth',
-            '\mod_quiz\analytics\indicator\cognitive_depth',
-            '\mod_quiz\analytics\indicator\social_breadth',
-            '\mod_resource\analytics\indicator\cognitive_depth',
-            '\mod_resource\analytics\indicator\social_breadth',
-            '\mod_scorm\analytics\indicator\cognitive_depth',
-            '\mod_scorm\analytics\indicator\social_breadth',
-            '\mod_survey\analytics\indicator\cognitive_depth',
-            '\mod_survey\analytics\indicator\social_breadth',
-            '\mod_url\analytics\indicator\cognitive_depth',
-            '\mod_url\analytics\indicator\social_breadth',
-            '\mod_wiki\analytics\indicator\cognitive_depth',
-            '\mod_wiki\analytics\indicator\social_breadth',
-            '\mod_workshop\analytics\indicator\cognitive_depth',
-            '\mod_workshop\analytics\indicator\social_breadth',
-        ));
-        $modelobj->version = $now;
-        $modelobj->timecreated = $now;
-        $modelobj->timemodified = $now;
-        $modelobj->usermodified = $admin->id;
-        $DB->insert_record('analytics_models', $modelobj);
 
-        $modelobj = new stdClass();
-        $modelobj->enabled = 1;
-        $modelobj->trained = 1;
-        $modelobj->target = '\core\analytics\target\no_teaching';
-        $modelobj->indicators = json_encode(array('\core_course\analytics\indicator\no_teacher'));
-        $modelobj->timesplitting = '\core\analytics\time_splitting\single_range';
-        $modelobj->version = $now;
-        $modelobj->timecreated = $now;
-        $modelobj->timemodified = $now;
-        $modelobj->usermodified = $admin->id;
-        $DB->insert_record('analytics_models', $modelobj);
+        $targetname = '\core\analytics\target\course_dropout';
+        if (!$DB->record_exists('analytics_models', array('target' => $targetname))) {
+            // We can not use API calls to create the built-in models.
+            $modelobj = new stdClass();
+            $modelobj->target = $targetname;
+            $modelobj->indicators = json_encode(array(
+                '\mod_assign\analytics\indicator\cognitive_depth',
+                '\mod_assign\analytics\indicator\social_breadth',
+                '\mod_book\analytics\indicator\cognitive_depth',
+                '\mod_book\analytics\indicator\social_breadth',
+                '\mod_chat\analytics\indicator\cognitive_depth',
+                '\mod_chat\analytics\indicator\social_breadth',
+                '\mod_choice\analytics\indicator\cognitive_depth',
+                '\mod_choice\analytics\indicator\social_breadth',
+                '\mod_data\analytics\indicator\cognitive_depth',
+                '\mod_data\analytics\indicator\social_breadth',
+                '\mod_feedback\analytics\indicator\cognitive_depth',
+                '\mod_feedback\analytics\indicator\social_breadth',
+                '\mod_folder\analytics\indicator\cognitive_depth',
+                '\mod_folder\analytics\indicator\social_breadth',
+                '\mod_forum\analytics\indicator\cognitive_depth',
+                '\mod_forum\analytics\indicator\social_breadth',
+                '\mod_glossary\analytics\indicator\cognitive_depth',
+                '\mod_glossary\analytics\indicator\social_breadth',
+                '\mod_imscp\analytics\indicator\cognitive_depth',
+                '\mod_imscp\analytics\indicator\social_breadth',
+                '\mod_label\analytics\indicator\cognitive_depth',
+                '\mod_label\analytics\indicator\social_breadth',
+                '\mod_lesson\analytics\indicator\cognitive_depth',
+                '\mod_lesson\analytics\indicator\social_breadth',
+                '\mod_lti\analytics\indicator\cognitive_depth',
+                '\mod_lti\analytics\indicator\social_breadth',
+                '\mod_page\analytics\indicator\cognitive_depth',
+                '\mod_page\analytics\indicator\social_breadth',
+                '\mod_quiz\analytics\indicator\cognitive_depth',
+                '\mod_quiz\analytics\indicator\social_breadth',
+                '\mod_resource\analytics\indicator\cognitive_depth',
+                '\mod_resource\analytics\indicator\social_breadth',
+                '\mod_scorm\analytics\indicator\cognitive_depth',
+                '\mod_scorm\analytics\indicator\social_breadth',
+                '\mod_survey\analytics\indicator\cognitive_depth',
+                '\mod_survey\analytics\indicator\social_breadth',
+                '\mod_url\analytics\indicator\cognitive_depth',
+                '\mod_url\analytics\indicator\social_breadth',
+                '\mod_wiki\analytics\indicator\cognitive_depth',
+                '\mod_wiki\analytics\indicator\social_breadth',
+                '\mod_workshop\analytics\indicator\cognitive_depth',
+                '\mod_workshop\analytics\indicator\social_breadth',
+            ));
+            $modelobj->version = $now;
+            $modelobj->timecreated = $now;
+            $modelobj->timemodified = $now;
+            $modelobj->usermodified = $admin->id;
+            $DB->insert_record('analytics_models', $modelobj);
+        }
+
+        $targetname = '\core\analytics\target\no_teaching';
+        if (!$DB->record_exists('analytics_models', array('target' => $targetname))) {
+            $modelobj = new stdClass();
+            $modelobj->enabled = 1;
+            $modelobj->trained = 1;
+            $modelobj->target = $targetname;
+            $modelobj->indicators = json_encode(array('\core_course\analytics\indicator\no_teacher'));
+            $modelobj->timesplitting = '\core\analytics\time_splitting\single_range';
+            $modelobj->version = $now;
+            $modelobj->timecreated = $now;
+            $modelobj->timemodified = $now;
+            $modelobj->usermodified = $admin->id;
+            $DB->insert_record('analytics_models', $modelobj);
+        }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017072000.01);
+        upgrade_main_savepoint(true, 2017072000.02);
     }
 
     return true;

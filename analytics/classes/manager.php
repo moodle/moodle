@@ -100,8 +100,10 @@ class manager {
                 $conditions[] = 'am.trained = :trained';
                 $params['trained'] = 1;
             }
-            $sql .= ' WHERE ' . implode(' AND ', $conditions) . ' ORDER BY am.timemodified DESC';
+            $sql .= ' WHERE ' . implode(' AND ', $conditions);
         }
+        $sql .= ' ORDER BY am.enabled DESC, am.timemodified DESC';
+
         $modelobjs = $DB->get_records_sql($sql, $params);
 
         $models = array();
