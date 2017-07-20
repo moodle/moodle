@@ -797,7 +797,7 @@ if ($mform->is_cancelled()) {
             if (!empty($formdata->licenseid) && empty($formdata->licensecourses)) {
                 if ($DB->get_record('companylicense', array('id' => $formdata->licenseid, 'program' => 1))) {
                     // This is a program of courses.  Set them!
-                    $formdata->licensecourses = $DB->get_records_sql_menu("SELECT c.id, c.id FROM {companylicense_courses} clc
+                    $formdata->licensecourses = $DB->get_records_sql_menu("SELECT c.id, clc.courseid FROM {companylicense_courses} clc
                                                                           JOIN {course} c ON (clc.courseid = c.id
                                                                           AND clc.licenseid = :licenseid)",
                                                                           array('licenseid' => $formdata->licenseid));
