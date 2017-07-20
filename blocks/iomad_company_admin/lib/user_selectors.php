@@ -774,7 +774,7 @@ class potential_license_user_selector extends user_selector_base {
         }
     }
 
-    public function find_users($search) {
+    public function find_users($search, $all = false) {
         global $DB, $USER;
 
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
@@ -822,7 +822,7 @@ class potential_license_user_selector extends user_selector_base {
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
-        if (!$this->is_validating()) {
+        if (!$this->is_validating() && !$all) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
             if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
                 return $this->too_many_results($search, $potentialmemberscount);
@@ -920,7 +920,7 @@ class current_license_user_selector extends user_selector_base {
         }
     }
 
-    public function find_users($search) {
+    public function find_users($search, $all = false) {
         global $DB, $USER;
 
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
@@ -959,7 +959,7 @@ class current_license_user_selector extends user_selector_base {
 
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
-        if (!$this->is_validating()) {
+        if (!$this->is_validating() && !$all) {
             if (!empty($userfilter)) {
                 $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
                 if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {

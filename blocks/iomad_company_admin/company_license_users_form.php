@@ -247,7 +247,7 @@ class company_license_users_form extends moodleform {
         if (optional_param('addall', false, PARAM_BOOL) && confirm_sesskey()) {
             $search = optional_param('potentialcourseusers_searchtext', '', PARAM_RAW);
             // Process incoming allocations.
-            $potentialusers = $this->potentialusers->find_users($search);
+            $potentialusers = $this->potentialusers->find_users($search, true);
             $userstoassign = array_pop($potentialusers);
             $addall = true;
         }
@@ -326,7 +326,7 @@ class company_license_users_form extends moodleform {
         if (optional_param('removeall', false, PARAM_BOOL) && confirm_sesskey()) {
             $search = optional_param('currentlyenrolledusers_searchtext', '', PARAM_RAW);
             // Process incoming allocations.
-            $potentialusers = $this->currentusers->find_users($search);
+            $potentialusers = $this->currentusers->find_users($search, true);
             $licenserecords = array_pop($potentialusers);
             $removeall = true;
         }
