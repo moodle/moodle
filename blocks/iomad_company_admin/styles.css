@@ -82,16 +82,16 @@ border-radius: 10px;
     float: left;
 }
 
-.companyselect {
-    padding-bottom: 10px;
-    margin-bottom: 3px;
-}
-
 .companyselect .singlebutton {
     float: right;
     position: relative;
-    top: -30px;
+    top: -47px;
     left: 4px;
+}
+
+.companyselect .col-md-3 {
+    top: 31px;
+    left: 3px;
 }
 
 .block_iomad_company_admin .nav-tabs {
@@ -165,8 +165,4 @@ border-radius: 10px;
 
 .dep_tree .nochildren [aria-expanded="false"] {
     background-image: none;
-}
-
-.companyselect div.col-md-3 {
-    display: none;
 }
