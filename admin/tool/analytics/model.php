@@ -51,6 +51,13 @@ switch ($action) {
     case 'log':
         $title = get_string('viewlog', 'tool_analytics');
         break;
+    case 'enable':
+        $title = get_string('enable');
+        break;
+    case 'disable':
+        $title = get_string('disable');
+        break;
+
     default:
         throw new moodle_exception('errorunknownaction', 'analytics');
 }
@@ -62,6 +69,14 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
 switch ($action) {
+
+    case 'enable':
+        $model->enable();
+        redirect(new \moodle_url('/admin/tool/analytics/index.php'));
+
+    case 'disable':
+        $model->update(0, false, false);
+        redirect(new \moodle_url('/admin/tool/analytics/index.php'));
 
     case 'edit':
 

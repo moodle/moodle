@@ -395,20 +395,30 @@ class model {
      * Updates the model.
      *
      * @param int|bool $enabled
-     * @param \core_analytics\local\indicator\base[] $indicators
-     * @param string $timesplittingid
+     * @param \core_analytics\local\indicator\base[]|false $indicators False to respect current indicators
+     * @param string|false $timesplittingid False to respect current time splitting method
      * @return void
      */
-    public function update($enabled, $indicators, $timesplittingid = '') {
+    public function update($enabled, $indicators = false, $timesplittingid = '') {
         global $USER, $DB;
 
         \core_analytics\manager::check_can_manage_models();
 
         $now = time();
 
-        $indicatorclasses = self::indicator_classes($indicators);
+        if ($indicators !== false) {
+            $indicatorclasses = self::indicator_classes($indicators);
+            $indicatorsstr = json_encode($indicatorclasses);
+        } else {
+            // Respect current value.
+            $indicatorsstr = $this->model->indicators;
+        }
 
-        $indicatorsstr = json_encode($indicatorclasses);
+        if ($timesplittingid === false) {
+            // Respect current value.
+            $timesplittingid = $this->model->timesplitting;
+        }
+
         if ($this->model->timesplitting !== $timesplittingid ||
                 $this->model->indicators !== $indicatorsstr) {
             // We update the version of the model so different time splittings are not mixed up.
@@ -900,7 +910,7 @@ class model {
     /**
      * Enabled the model using the provided time splitting method.
      *
-     * @param string $timesplittingid
+     * @param string|false $timesplittingid False to respect the current time splitting method.
      * @return void
      */
     public function enable($timesplittingid = false) {
