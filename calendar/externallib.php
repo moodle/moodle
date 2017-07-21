@@ -728,11 +728,12 @@ class core_calendar_external extends external_api {
             $subscription = calendar_get_subscription($event[$eventid]->subscriptionid);
             if (!empty($subscription) && $CFG->calendar_showicalsource) {
                 $event[$eventid]->displayeventsource = true;
+                $subscriptiondata = new stdClass();
                 if (!empty($subscription->url)) {
-                    $event[$eventid]->subscription->url = $subscription->url;
+                    $subscriptiondata->url = $subscription->url;
                 }
-                $event[$eventid]->subscription->name = $subscription->name;
-                $event[$eventid]->subscription = json_encode($event[$eventid]->subscription);
+                $subscriptiondata->name = $subscription->name;
+                $event[$eventid]->subscription = json_encode($subscriptiondata);
             }
         }
 

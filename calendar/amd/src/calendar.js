@@ -22,15 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/ajax', 'core/str', 'core/templates', 'core/notification', 'core/custom_interaction_events',
-        'core/modal_factory', 'core_calendar/summary_modal', 'core_calendar/calendar_repository'],
-    function($, Ajax, Str, Templates, Notification, CustomEvents, ModalFactory, SummaryModal, CalendarRepository) {
+        'core/modal_factory', 'core_calendar/summary_modal', 'core/modal_events', 'core_calendar/calendar_repository'],
+    function($, Ajax, Str, Templates, Notification, CustomEvents, ModalFactory, SummaryModal, ModalEvents, CalendarRepository) {
 
         var SELECTORS = {
             ROOT: "[data-region='calendar']",
             EVENT_LINK: "[data-action='view-event']",
         };
-
-        var modalPromise = null;
 
         /**
          * Get the event type lang string.
@@ -64,89 +62,80 @@ define(['jquery', 'core/ajax', 'core/str', 'core/templates', 'core/notification'
          * Render the event summary modal.
          *
          * @param {Number} eventId The calendar event id.
-         * @return {promise} The summary modal promise.
          */
         var renderEventSummaryModal = function(eventId) {
-
-
             // Calendar repository promise.
-            var repositoryPromise = CalendarRepository.getEventById(eventId);
-            return repositoryPromise.then(function(result) {
-                if (!result.event) {
-                    repositoryPromise.fail(Notification.exception);
-                } else {
-                    return result.event;
+            CalendarRepository.getEventById(eventId).then(function(getEventResponse) {
+                if (!getEventResponse.event) {
+                    throw new Error('Error encountered while trying to fetch calendar event with ID: ' + eventId);
                 }
-            }).then(function(eventdata) {
-                // Event type promise.
-                var eventTypePromise = getEventType(eventdata.eventtype);
-                return eventTypePromise.then(function(langStr) {
-                    if(!langStr) {
-                        eventTypePromise.fail(Notification.exception);
-                    } else {
-                        eventdata.eventtype = langStr;
-                        return eventdata;
-                    }
-                });
-            }).then(function(eventdata) {
-                // If the calendar event has event source, get the language string or the link.
-                if (eventdata.displayeventsource == true) {
-                    eventdata.subscription = JSON.parse(eventdata.subscription);
-                    var eventpromise = getEventSource({url: eventdata.subscription.url, name: eventdata.subscription.name});
-                    if (eventpromise) {
-                        $.Deferred().resolve();
-                        eventpromise.done(function(source) {
-                            eventdata.source = source;
-                        });
-                    } else {
-                        eventpromise.fail(Notification.exception);
-                    }
+                var eventData = getEventResponse.event;
+                var eventTypePromise = getEventType(eventData.eventtype);
 
+                // If the calendar event has event source, get the source's language string/link.
+                if (eventData.displayeventsource) {
+                    eventData.subscription = JSON.parse(eventData.subscription);
+                    var eventSourceParams = {
+                        url: eventData.subscription.url,
+                        name: eventData.subscription.name
+                    };
+                    var eventSourcePromise = getEventSource(eventSourceParams);
+
+                    // Return event data with event type and event source info.
+                    return $.when(eventTypePromise, eventSourcePromise).then(function(eventType, eventSource) {
+                        eventData.eventtype = eventType;
+                        eventData.source = eventSource;
+                        return eventData;
+                    });
                 }
-                return modalPromise.done(function(modal) {
-                    modal.setTitle(eventdata.name);
-                    modal.setBody(Templates.render('core_calendar/event_summary_body', eventdata));
-                    // Hide edit and delete buttons if I don't have permission.
-                    if (eventdata.caneditevent == false) {
-                        modal.setFooter('');
-                    }
 
-                    modal.show();
+                // Return event data with event type info.
+                return eventTypePromise.then(function(eventType) {
+                    eventData.eventtype = eventType;
+                    return eventData;
                 });
-            });
+
+            }).then(function(eventData) {
+                // Build the modal parameters from the event data.
+                var modalParams = {
+                    title: eventData.name,
+                    type: SummaryModal.TYPE,
+                    body: Templates.render('core_calendar/event_summary_body', eventData)
+                };
+                if (!eventData.caneditevent) {
+                    modalParams.footer = '';
+                }
+                // Create the modal.
+                return ModalFactory.create(modalParams);
+
+            }).done(function(modal) {
+                // Handle hidden event.
+                modal.getRoot().on(ModalEvents.hidden, function() {
+                    // Destroy when hidden.
+                    modal.destroy();
+                });
+
+                // Finally, render the modal!
+                modal.show();
+
+            }).fail(Notification.exception);
         };
 
         /**
          * Register event listeners for the module.
-         *
-         * @param {object} root The root element.
          */
-        var registerEventListeners = function(root) {
-            root = $(root);
-
-            var loading = false;
-            root.on('click', SELECTORS.EVENT_LINK, function(e) {
-                if (!loading) {
-                    loading = true;
-                    e.preventDefault();
-
-                    var eventElement = $(e.target).closest(SELECTORS.EVENT_LINK);
-                    var eventId = eventElement.attr('data-event-id');
-
-                    renderEventSummaryModal(eventId).done(function() {
-                        loading = false;
-                    }).fail(Notification.exception);
-                }
+        var registerEventListeners = function() {
+            // Bind click events to event links.
+            $(SELECTORS.EVENT_LINK).click(function(e) {
+                e.preventDefault();
+                var eventId = $(this).attr('data-event-id');
+                renderEventSummaryModal(eventId);
             });
         };
 
         return {
             init: function() {
-                modalPromise = ModalFactory.create({
-                    type: SummaryModal.TYPE
-                });
-
-                registerEventListeners(SELECTORS.ROOT);
+                registerEventListeners();
             }
         };
     });
