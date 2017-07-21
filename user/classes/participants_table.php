@@ -96,6 +96,16 @@ class participants_table extends \table_sql {
     protected $context;
 
     /**
+     * @var \stdClass[] List of roles indexed by roleid.
+     */
+    protected $allroles;
+
+    /**
+     * @var \stdClass[] Assignable roles in this course.
+     */
+    protected $assignableroles;
+
+    /**
      * Sets up the table.
      *
      * @param int $courseid
@@ -227,7 +237,7 @@ class participants_table extends \table_sql {
         $getrole = function($role) {
             return $role->roleid;
         };
-        $ids = array_values(array_map($getrole, $roles));
+        $ids = array_values(array_unique(array_map($getrole, $roles)));
 
         $editable = new \core_user\output\user_roles_editable($this->course,
                                                               $this->context,

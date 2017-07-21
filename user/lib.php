@@ -1391,7 +1391,7 @@ function user_get_user_lastaccess_sql($accesssince = null, $tableprefix = 'u') {
  * Callback for inplace editable API.
  *
  * @param string $itemtype - Only user_roles is supported.
- * @param string $itemid - Userid and courseid separated by a :
+ * @param string $itemid - Courseid and userid separated by a :
  * @param string $newvalue - json encoded list of roleids.
  * @return \core\output\inplace_editable
  */

@@ -54,7 +54,7 @@ class user_groups_editable extends \core\output\inplace_editable {
      * @param \context $context The course context
      * @param \stdClass $user The current user
      * @param \stdClass[] $coursegroups The list of course groups from groups_get_all_groups with membership.
-     * @param string $value JSON Encoded list of group ids.
+     * @param string $value Array of groupids.
      */
     public function __construct($course, $context, $user, $coursegroups, $value) {
         // Check capabilities to get editable value.

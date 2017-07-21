@@ -43,6 +43,9 @@ class user_roles_editable extends \core\output\inplace_editable {
     /** @var $context */
     private $context = null;
 
+    /** @var $courseroles Array */
+    private $courseroles = null;
+
     /**
      * Constructor.
      *
@@ -51,7 +54,7 @@ class user_roles_editable extends \core\output\inplace_editable {
      * @param \stdClass $user The current user
      * @param \stdClass[] $courseroles The list of course roles.
      * @param \stdClass[] $assignableroles The list of assignable roles in this course.
-     * @param string $value JSON Encoded list of role ids.
+     * @param string $value Array of role ids.
      */
     public function __construct($course, $context, $user, $courseroles, $assignableroles, $value) {
         // Check capabilities to get editable value.
@@ -106,8 +109,9 @@ class user_roles_editable extends \core\output\inplace_editable {
      * @return \self
      */
     public static function update($itemid, $newvalue) {
-        global $DB;
+        global $DB, $CFG;
 
+        require_once($CFG->libdir . '/external/externallib.php');
         // Check caps.
         // Do the thing.
         // Return one of me.
@@ -125,6 +129,9 @@ class user_roles_editable extends \core\output\inplace_editable {
         $context = context_course::instance($courseid);
         core_external::validate_context($context);
 
+        // Check permissions.
+        require_capability('moodle/role:assign', $context);
+
         if (!is_enrolled($context, $userid)) {
             throw new coding_exception('User does not belong to the course');
         }
@@ -134,6 +141,7 @@ class user_roles_editable extends \core\output\inplace_editable {
         $assignableroles = get_assignable_roles($context, ROLENAME_ALIAS, false);
         $userroles = get_user_roles($context, $userid, true, 'c.contextlevel DESC, r.sortorder ASC');
         $ids = [];
+
         foreach ($userroles as $role) {
             $ids[$role->roleid] = $role->roleid;
         }
@@ -146,9 +154,6 @@ class user_roles_editable extends \core\output\inplace_editable {
             $byid[$roleid] = $roleid;
         }
         $roleids = $byid;
-        // Check permissions.
-        require_capability('moodle/role:assign', $context);
-
         // Process adds.
         foreach ($roleids as $roleid) {
             if (!isset($ids[$roleid])) {
@@ -187,6 +192,6 @@ class user_roles_editable extends \core\output\inplace_editable {
 
         $course = get_course($courseid);
         $user = core_user::get_user($userid);
-        return new self($course, $context, $user, $allroles, $assignableroles, array_values($ids));
+        return new self($course, $context, $user, $allroles, $assignableroles, array_values(array_unique($ids)));
     }
 }
