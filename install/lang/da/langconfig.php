@@ -30,5 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['parentlanguage'] = 'modersprog';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Dansk';
