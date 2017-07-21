@@ -17,7 +17,6 @@ Feature: tool_monitor_rule
     And I log in as "admin"
     And I navigate to "Event monitoring rules" node in "Site administration > Reports"
     And I click on "Enable" "link"
-    And I am on site homepage
     And I am on "Course 1" course homepage
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     And I press "Add a new rule"

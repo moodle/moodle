@@ -17,8 +17,7 @@ Feature: As a user, "Course preferences" allows me to set my course preference(s
     # See that the "activity chooser" is enabled by default.
     Given the field "enableactivitychooser" matches value "1"
     # See that the "activity chooser" is actually shown by default in course page.
-    When I am on homepage
-    And I am on "Course 1" course homepage
+    When I am on "Course 1" course homepage
     And I should not see "Add an activity or resource" in the "Topic 1" "section"
     And I turn editing mode on
     Then I should see "Add an activity or resource" in the "Topic 1" "section"
@@ -28,8 +27,7 @@ Feature: As a user, "Course preferences" allows me to set my course preference(s
   Scenario: As a user, "activity chooser" should be disabled when I uncheck it in "Course preferences"
     Given I set the field "enableactivitychooser" to "0"
     And I press "Save changes"
-    When I am on homepage
-    And I am on "Course 1" course homepage
+    When I am on "Course 1" course homepage
     And I should not see "Add a resource..." in the "Topic 1" "section"
     And I turn editing mode on
     Then I should see "Add a resource..." in the "Topic 1" "section"

@@ -96,7 +96,7 @@ Feature: availability_grade
     And I click on "Add submission" "button"
     And I set the field "Online text" to "Q"
     And I click on "Save changes" "button"
-    And I follow "C1"
+    And I am on "Course 1" course homepage
 
     # None of the pages should appear (check assignment though).
     Then I should not see "P2" in the "region-main" "region"

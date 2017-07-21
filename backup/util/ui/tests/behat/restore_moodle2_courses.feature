@@ -169,8 +169,7 @@ Feature: Restore Moodle 2 course backups
     When I backup "Course 1" course using this options:
       | Initial |  Include enrolled users | 0 |
       | Confirmation | Filename | test_backup.mbz |
-    And I am on site homepage
-    And I follow "Course 2"
+    And I am on "Course 2" course homepage
     And I navigate to "Restore" node in "Course administration"
     And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
       | Schema | Overwrite course configuration | Yes |
@@ -199,8 +198,7 @@ Feature: Restore Moodle 2 course backups
     When I backup "Course 1" course using this options:
       | Initial |  Include enrolled users | 0 |
       | Confirmation | Filename | test_backup.mbz |
-    And I am on site homepage
-    And I follow "Course 2"
+    And I am on "Course 2" course homepage
     And I navigate to "Restore" node in "Course administration"
     And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
       | Schema | Overwrite course configuration | No |
@@ -229,8 +227,7 @@ Feature: Restore Moodle 2 course backups
     When I backup "Course 1" course using this options:
       | Initial |  Include enrolled users | 0 |
       | Confirmation | Filename | test_backup.mbz |
-    And I am on site homepage
-    And I follow "Course 4"
+    And I am on "Course 4" course homepage
     And I navigate to "Restore" node in "Course administration"
     And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
       | Schema | Overwrite course configuration | No |

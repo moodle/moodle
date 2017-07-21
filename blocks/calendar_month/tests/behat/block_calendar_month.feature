@@ -81,7 +81,6 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I create a calendar event with form data:
       | id_eventtype | User |
       | id_name | User Event |
-    When I am on homepage
     And I am on "Course 1" course homepage
     And I follow "Hide course events"
     And I hover over today in the calendar
@@ -96,8 +95,7 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I create a calendar event with form data:
       | id_eventtype | User |
       | id_name | User Event |
-    When I am on homepage
-    And I am on "Course 1" course homepage
+    When I am on "Course 1" course homepage
     And I hover over today in the calendar
     Then I should see "User Event"
 
@@ -113,8 +111,7 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I create a calendar event with form data:
       | id_eventtype | User |
       | id_name | User Event |
-    When I am on homepage
-    And I am on "Course 1" course homepage
+    When I am on "Course 1" course homepage
     And I follow "Hide user events"
     And I hover over today in the calendar
     Then I should not see "User Event"

@@ -93,8 +93,7 @@ Feature: Enrolments are synchronised with meta courses
     And I press "Next"
     And I press "Perform restore"
     And I trigger cron
-    And I am on course index
-    And I follow "Course 4"
+    And I am on "Course 4" course homepage
     And I navigate to "Enrolment methods" node in "Course administration > Users"
     Then I should see "Course meta link (Course 1)"
     And I should see "Course meta link (Course 2)"
