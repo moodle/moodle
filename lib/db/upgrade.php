@@ -2255,5 +2255,40 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017072700.02);
     }
 
+    if ($oldversion < 2017080400.01) {
+
+        // Get the table by its previous name.
+        $table = new xmldb_table('analytics_predict_ranges');
+        if ($dbman->table_exists($table)) {
+
+            // We can only accept this because we are in master.
+            $DB->delete_records('analytics_predictions');
+            $DB->delete_records('analytics_used_files', array('action' => 'predicted'));
+            $DB->delete_records('analytics_predict_ranges');
+
+            // Define field sampleids to be added to analytics_predict_ranges (renamed below to analytics_predict_samples).
+            $field = new xmldb_field('sampleids', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'rangeindex');
+
+            // Conditionally launch add field sampleids.
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+
+            // Define field timemodified to be added to analytics_predict_ranges (renamed below to analytics_predict_samples).
+            $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'timecreated');
+
+            // Conditionally launch add field timemodified.
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+
+            // Rename the table to its new name.
+            $dbman->rename_table($table, 'analytics_predict_samples');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017080400.01);
+    }
+
     return true;
 }
