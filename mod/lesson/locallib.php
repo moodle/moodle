@@ -2291,6 +2291,15 @@ abstract class lesson_page extends lesson_base {
         $DB->delete_records("lesson_attempts", array("pageid" => $this->properties->id));
 
         $DB->delete_records("lesson_branch", array("pageid" => $this->properties->id));
+
+        // Delete files related to answers and responses.
+        if ($answers = $DB->get_records("lesson_answers", array("pageid" => $this->properties->id))) {
+            foreach ($answers as $answer) {
+                $fs->delete_area_files($context->id, 'mod_lesson', 'page_answers', $answer->id);
+                $fs->delete_area_files($context->id, 'mod_lesson', 'page_responses', $answer->id);
+            }
+        }
+
         // ...now delete the answers...
         $DB->delete_records("lesson_answers", array("pageid" => $this->properties->id));
         // ..and the page itself
@@ -2310,8 +2319,6 @@ abstract class lesson_page extends lesson_base {
 
         // Delete files associated with this page.
         $fs->delete_area_files($context->id, 'mod_lesson', 'page_contents', $this->properties->id);
-        $fs->delete_area_files($context->id, 'mod_lesson', 'page_answers', $this->properties->id);
-        $fs->delete_area_files($context->id, 'mod_lesson', 'page_responses', $this->properties->id);
 
         // repair the hole in the linkage
         if (!$this->properties->prevpageid && !$this->properties->nextpageid) {
