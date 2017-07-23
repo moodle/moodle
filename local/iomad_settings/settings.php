@@ -62,7 +62,5 @@ if ($hassiteconfig) {
                          'jS \of F Y' => 'nth of Mon YYYY',
                          'M d, y, ' => 'Mon n, YYYY');
     $settings->add(new admin_setting_configselect('iomad_date_format', get_string('dateformat', 'local_iomad_settings'), '', 'Y-m-d', $dateformats));
-
-    $settings->add(new admin_setting_configtextarea('iomad_license_languages', get_string('languages', 'local_iomad_settings'), get_string('setting_languages_description', 'local_iomad_settings'), ''));
 }
 
