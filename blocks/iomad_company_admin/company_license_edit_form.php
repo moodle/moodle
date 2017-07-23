@@ -231,13 +231,6 @@ class company_license_form extends company_moodleform {
             }
         }
 
-        // Check the passmark is valid.
-        if (!empty($data['passmark'])) {
-            if ($data['passmark'] > 100 || $data['passmark'] < 0 ) {
-                $errors['passmark'] = get_string('invalidpassmark', 'block_iomad_company_admin');
-            }
-        }
-
         // Did we get passed any courses?
         if (empty($data['licensecourses'])) {
             $errors['licensecourses'] = get_string('select_license_courses', 'block_iomad_company_admin');
@@ -315,7 +308,7 @@ $mform = new company_license_form($PAGE->url, $context, $companyid, $departmenti
 if ($licenseinfo = $DB->get_record('companylicense', array('id' => $licenseid))) {
     if ($currentcourses = $DB->get_records('companylicense_courses', array('licenseid' => $licenseid), null, 'courseid')) {
         foreach ($currentcourses as $currentcourse) {
-            $licenseinfo->selectedcourses[] = $currentcourse->courseid;
+            $licenseinfo->licensecourses[] = $currentcourse->courseid;
         }
     }
 
@@ -367,11 +360,6 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             $licensedata['parentid'] = $data->parentid;
         }
         $licensedata['validlength'] = $data->validlength;
-        $licensedata['releaseday'] = $data->releaseday;
-        $licensedata['releasefrequency'] = $data->releasefrequency;
-        $licensedata['releaseperiod'] = $data->releaseperiod;
-        $licensedata['languages'] = serialize($data->languages);
-        $licensedata['passmark'] = $data->passmark;
         $licensedata['type'] = $data->type;
 
         if ( !empty($licenseid) && $currlicensedata = $DB->get_record('companylicense', array('id' => $licenseid))) {
