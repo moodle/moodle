@@ -232,5 +232,8 @@ class core_analytics_indicators_testcase extends advanced_testcase {
         $values = $indicator->calculate($sampleids, 'user', $startdate, $enddate);
         $this->assertEquals($indicator::get_max_value(), $values[$user1->id][0]);
         $this->assertEquals($indicator::get_min_value(), $values[$user2->id][0]);
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
     }
 }
