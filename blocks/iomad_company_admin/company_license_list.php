@@ -259,20 +259,18 @@ if ($departmentid == $companydepartment->id) {
     }
 }
 
-if (!empty($table)) {
-    echo html_writer::table($table);
-    echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
-}
-
 
 echo '<div class="buttons">';
-
 if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context)) {
     echo $OUTPUT->single_button(new moodle_url('company_license_edit_form.php'),
                                                 get_string('licenseaddnew', 'block_iomad_company_admin'), 'get');
 }
-echo $OUTPUT->single_button(new moodle_url('/local/iomad_dashboard/index.php'), get_string('cancel'), 'get');
-
 echo '</div>';
+
+// Display the list of licenses.
+if (!empty($table)) {
+    echo html_writer::table($table);
+    echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
+}
 
 echo $OUTPUT->footer();
