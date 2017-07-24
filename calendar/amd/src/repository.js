@@ -16,7 +16,7 @@
 /**
  * A javascript module to handle calendar ajax actions.
  *
- * @module     core_calendar/calendar_repository
+ * @module     core_calendar/repository
  * @class      repository
  * @package    core_calendar
  * @copyright  2017 Simey Lameze <lameze@moodle.com>
@@ -65,8 +65,27 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
         return Ajax.call([request])[0];
     };
 
+    /**
+     * Submit the form data for the event form.
+     *
+     * @method submitCreateUpdateForm
+     * @param {string} formdata The URL encoded values from the form
+     * @return {promise} Resolved with the new or edited event
+     */
+    var submitCreateUpdateForm = function(formdata) {
+        var request = {
+            methodname: 'core_calendar_submit_create_update_form',
+            args: {
+                formdata: formdata
+            }
+        };
+
+        return Ajax.call([request])[0];
+    };
+
     return {
         getEventById: getEventById,
-        deleteEvent: deleteEvent
+        deleteEvent: deleteEvent,
+        submitCreateUpdateForm: submitCreateUpdateForm
     };
 });
