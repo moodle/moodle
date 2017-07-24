@@ -78,6 +78,7 @@ trait templatable_form_element {
                 $otherattributes[] = $attr . '="' . s($value) . '"';
             }
         }
+        $context['name'] = $context['name'] ?: $this->getName();
         $context['extraclasses'] = $extraclasses;
         $context['type'] = $this->getType();
         $context['attributes'] = implode(' ', $otherattributes);
