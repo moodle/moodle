@@ -5,3 +5,5 @@ information provided here is intended especially for theme designers.
 * For improved accessibility, the footer links for boost have been changed to use $bg-inverse-link-color (defaults to white) and
   now have an underline text-decoration. To override the link colour simply set $bg-inverse-link-color in your preset file or
   theme scss.
+* To match the new primary colour we are switching to using the UX pallette, which uses a purple colour for info. To override,
+  set $brand-info in your preset file or theme scss.
