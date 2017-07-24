@@ -31,3 +31,4 @@ Feature: Import and edit calendar events
     And I should see "Event on 2-15-2017"
     And I should see "Event on 2-25-2017"
     And I follow "Event on 2-15-2017"
+    And I should see "Event source: Test Import"

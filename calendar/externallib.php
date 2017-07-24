@@ -722,6 +722,21 @@ class core_calendar_external extends external_api {
         list($event[$eventid]->description, $event[$eventid]->format) = $eventobj->format_external_text();
         $event[$eventid]->caneditevent = calendar_edit_event_allowed($eventobj);
 
+        $event[$eventid]->subscription = null;
+        $event[$eventid]->displayeventsource = false;
+        if (!empty($event[$eventid]->subscriptionid)) {
+            $subscription = calendar_get_subscription($event[$eventid]->subscriptionid);
+            if (!empty($subscription) && $CFG->calendar_showicalsource) {
+                $event[$eventid]->displayeventsource = true;
+                $subscriptiondata = new stdClass();
+                if (!empty($subscription->url)) {
+                    $subscriptiondata->url = $subscription->url;
+                }
+                $subscriptiondata->name = $subscription->name;
+                $event[$eventid]->subscription = json_encode($subscriptiondata);
+            }
+        }
+
         return array('event' => $event[$eventid], 'warnings' => $warnings);
     }
 
@@ -753,7 +768,10 @@ class core_calendar_external extends external_api {
                     'sequence' => new external_value(PARAM_INT, 'sequence'),
                     'timemodified' => new external_value(PARAM_INT, 'time modified'),
                     'subscriptionid' => new external_value(PARAM_INT, 'Subscription id', VALUE_OPTIONAL, null, NULL_ALLOWED),
+                    'subscription' => new external_value(PARAM_RAW, 'Subscription object serialized', VALUE_OPTIONAL,
+                            null, NULL_ALLOWED),
                     'caneditevent' => new external_value(PARAM_BOOL, 'Whether the user can edit the event'),
+                    'displayeventsource' => new external_value(PARAM_BOOL, 'Whether the source should be displayed'),
                 ),
                 'event'
             ),
