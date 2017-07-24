@@ -447,7 +447,7 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
             $parentlevel = company::get_company_parentnode($companyid);
             $userhierarchylevel = $parentlevel->id;
             // Get all the licenses.
-            $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), null, 'id,name,expirydate');
+            $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), 'expirydate DESC', 'id,name,expirydate');
             foreach ($licenses as $license) {
                 if ($license->expirydate > time()) {
                     $licenselist[$license->id] = $license->name;

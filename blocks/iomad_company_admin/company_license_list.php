@@ -161,7 +161,8 @@ if ($departmentid == $companydepartment->id) {
     // Get the licenses.
     $licenses = $DB->get_records_sql("SELECT * FROM {companylicense}
                                       WHERE companyid = :companyid
-                                      $childsql",
+                                      $childsql
+                                      ORDER BY expirydate DESC",
                                       array('companyid' => $companyid));
 
     // Cycle through the results.
