@@ -805,6 +805,7 @@ if ($mform->is_cancelled()) {
             }
             // Assign and licenses.
             if (!empty($formdata->licensecourses)) {
+                $timestamp = time();
                 $licenserecord = (array) $DB->get_record('companylicense', array('id' => $formdata->licenseid));
                 $count = $licenserecord['used'];
                 $numberoflicenses = $licenserecord['allocation'];
@@ -838,19 +839,17 @@ if ($mform->is_cancelled()) {
                                                   'licensecourseid' => $licensecourse,
                                                   'issuedate' => time()));
                     }
-                    // Create an email event.
-                    $license = new stdclass();
-                    $license->length = $licenserecord['validlength'];
-                    $license->valid = date($CFG->iomad_date_format, $licenserecord['expirydate']);
-                    EmailTemplate::send('license_allocated', array('course' => $licensecourse,
-                                                                   'user' => $user,
-                                                                   'license' => $license));
-                }
-        
-                // Set the used amount for the license.
-                $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $formdata->licenseid));
-                $DB->update_record('companylicense', $licenserecord);
 
+                    // Create an event.
+                    $eventother = array('licenseid' => $formdata->licenseid,
+                                    'duedate' => $timestamp);
+                    $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($licensecourse),
+                                                                                                  'objectid' => $formdata->licenseid,
+                                                                                                  'courseid' => $licensecourse,
+                                                                                                  'userid' => $user->id,
+                                                                                                  'other' => $eventother));
+                    $event->trigger();
+                }
             }
 
 

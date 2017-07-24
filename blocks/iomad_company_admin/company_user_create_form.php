@@ -512,20 +512,18 @@ if ($data = $mform->get_data()) {
                                               'issuedate' => time(),
                                               'licensecourseid' => $licensecourse));
                 }
-                // Create an email event.
-                $license = new stdclass();
-                $license->length = $licenserecord['validlength'];
-                $license->valid = date($CFG->iomad_date_format, $licenserecord['expirydate']);
-                EmailTemplate::send('license_allocated', array('course' => $licensecourse,
-                                                               'user' => $userdata,
-                                                               'due' => $data->due,
-                                                               'license' => $license));
+
+                // Create an event.
+                $eventother = array('licenseid' => $licenseid,
+                                    'duedate' => $data->due);
+                $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($licensecourse),
+                                                                                              'objectid' => $licenseid,
+                                                                                              'courseid' => $licensecourse,
+                                                                                              'userid' => $userdata->id,
+                                                                                              'other' => $eventother));
+                $event->trigger();
             }
         }
-
-        // Set the used amount for the license.
-        $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $licenseid));
-        $DB->update_record('companylicense', $licenserecord);
     }
 
     if (isset($data->submitandback)) {
