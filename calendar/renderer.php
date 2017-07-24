@@ -142,18 +142,13 @@ class core_calendar_renderer extends plugin_renderer_base {
             $time = time();
         }
 
-        $output = html_writer::start_tag('div', array('class'=>'buttons'));
-        $output .= html_writer::start_tag('form', array('action' => CALENDAR_URL . 'event.php', 'method' => 'get'));
-        $output .= html_writer::start_tag('div');
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name' => 'action', 'value' => 'new'));
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name' => 'course', 'value' => $courseid));
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name' => 'time', 'value' => $time));
-        $attributes = array('type' => 'submit', 'value' => get_string('newevent', 'calendar'), 'class' => 'btn btn-secondary');
-        $output .= html_writer::empty_tag('input', $attributes);
-        $output .= html_writer::end_tag('div');
-        $output .= html_writer::end_tag('form');
-        $output .= html_writer::end_tag('div');
-        return $output;
+        $coursecontext = \context_course::instance($courseid);
+        $attributes = [
+            'class' => 'btn btn-secondary pull-xs-right pull-right',
+            'data-context-id' => $coursecontext->id,
+            'data-action' => 'new-event-button'
+        ];
+        return html_writer::tag('button', get_string('newevent', 'calendar'), $attributes);
     }
 
     /**

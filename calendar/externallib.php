@@ -30,6 +30,11 @@ defined('MOODLE_INTERNAL') || die;
 require_once("$CFG->libdir/externallib.php");
 
 use \core_calendar\local\api as local_api;
+use \core_calendar\local\event\container as event_container;
+use \core_calendar\local\event\forms\create as create_event_form;
+use \core_calendar\local\event\forms\update as update_event_form;
+use \core_calendar\local\event\mappers\create_update_form_mapper;
+use \core_calendar\external\event_exporter;
 use \core_calendar\external\events_exporter;
 use \core_calendar\external\events_grouped_by_course_exporter;
 use \core_calendar\external\events_related_objects_cache;
@@ -776,6 +781,92 @@ class core_calendar_external extends external_api {
                 'event'
             ),
             'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters.
+     */
+    public static function submit_create_update_form_parameters() {
+        return new external_function_parameters(
+            [
+                'formdata' => new external_value(PARAM_RAW, 'The data from the event form'),
+            ]
+        );
+    }
+
+    /**
+     * Handles the event form submission.
+     *
+     * @param string $formdata The event form data in a URI encoded param string
+     * @return array The created or modified event
+     * @throws moodle_exception
+     */
+    public static function submit_create_update_form($formdata) {
+        global $CFG, $USER, $PAGE;
+        require_once($CFG->dirroot."/calendar/lib.php");
+
+        // Parameter validation.
+        $params = self::validate_parameters(self::submit_create_update_form_parameters(), ['formdata' => $formdata]);
+        $context = \context_user::instance($USER->id);
+        $data = [];
+
+        self::validate_context($context);
+        parse_str($params['formdata'], $data);
+
+        if (!empty($data['id'])) {
+            $eventid = clean_param($data['id'], PARAM_INT);
+            $legacyevent = calendar_event::load($eventid);
+            $legacyevent->count_repeats();
+            $formoptions = ['event' => $legacyevent];
+            $mform = new update_event_form(null, $formoptions, 'post', '', null, true, $data);
+        } else {
+            $legacyevent = null;
+            $mform = new create_event_form(null, null, 'post', '', null, true, $data);
+        }
+
+        if ($validateddata = $mform->get_data()) {
+            $formmapper = new create_update_form_mapper();
+            $properties = $formmapper->from_data_to_event_properties($validateddata);
+
+            if (is_null($legacyevent)) {
+                $legacyevent = new \calendar_event($properties);
+            }
+
+            $legacyevent->update($properties);
+
+            $eventmapper = event_container::get_event_mapper();
+            $event = $eventmapper->from_legacy_event_to_event($legacyevent);
+            $cache = new events_related_objects_cache([$event]);
+            $relatedobjects = [
+                'context' => $cache->get_context($event),
+                'course' => $cache->get_course($event),
+            ];
+            $exporter = new event_exporter($event, $relatedobjects);
+            $renderer = $PAGE->get_renderer('core_calendar');
+
+            return [ 'event' => $exporter->export($renderer) ];
+        } else {
+            return [ 'validationerror' => true ];
+        }
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description.
+     */
+    public static function  submit_create_update_form_returns() {
+        $eventstructure = event_exporter::get_read_structure();
+        $eventstructure->required = VALUE_OPTIONAL;
+
+        return new external_single_structure(
+            array(
+                'event' => $eventstructure,
+                'validationerror' => new external_value(PARAM_BOOL, 'Invalid form data', VALUE_DEFAULT, false),
             )
         );
     }

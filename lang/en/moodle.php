@@ -1627,6 +1627,7 @@ $string['rsserrorauth'] = 'Your RSS link does not contain a valid authentication
 $string['rsserrorguest'] = 'This feed uses guest access to access the data, but guest does not have permission to read the data. Visit the original location that this feed comes from (URL) as a valid user and get a new RSS link from there.';
 $string['rsskeyshelp'] = '<p>To ensure security and privacy, RSS feed URLs contain a special token that identifies the user they are for. This prevents other users from accessing areas of the site where they are not allowed.</p><p>The token is automatically created the first time you access an area that produces an RSS feed. If you think that your RSS feed token has been compromised, you can request a new one by clicking the reset link. Please note that your current RSS feed URLs will then become invalid.</p>';
 $string['rsstype'] = 'RSS feed for this activity';
+$string['save'] = 'Save';
 $string['saveandnext'] = 'Save and show next';
 $string['savedat'] = 'Saved at:';
 $string['savechanges'] = 'Save changes';

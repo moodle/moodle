@@ -126,6 +126,15 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_calendar_submit_create_update_form' => array(
+        'classname' => 'core_calendar_external',
+        'methodname' => 'submit_create_update_form',
+        'description' => 'Submit form data for event form',
+        'classpath' => 'calendar/externallib.php',
+        'type' => 'write',
+        'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries',
+        'ajax' => true,
+    ),
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
         'methodname' => 'add_cohort_members',
