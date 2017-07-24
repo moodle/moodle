@@ -3724,7 +3724,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   background-image: linear-gradient(to bottom, #fff, #ccc);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffcccccc', GradientType=0);
-  filter: 0;
+  filter: none;
 }
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
   padding: 0;
@@ -9062,7 +9062,7 @@ a.ygtvspacer:hover {
   border-bottom: 1px solid #bbb;
   padding: 0.24em 0;
 }
-/* stylelint-disable declaration-block-no-duplicate-properties, no-browser-hacks */
+/* stylelint-disable declaration-block-no-duplicate-properties */
 #chooseqtype .alloptions {
   overflow-x: hidden;
   overflow-y: auto;
@@ -15610,7 +15610,7 @@ h4 small {
     content: "";
   }
 }
-/* stylelint-disable declaration-block-no-duplicate-properties, no-browser-hacks */
+/* stylelint-disable declaration-block-no-duplicate-properties */
 /* stylelint-enable */
 /**
  * Implement missing variables, or faulty ones, in Bootstrap rules.
@@ -19429,7 +19429,7 @@ span[data-flexitour="container"][x-placement="right-start"] div[data-role="arrow
   border-right-color: #fff;
 }
 /* Styling for mustache templates */
-/* stylelint-disable declaration-block-no-duplicate-properties, no-browser-hacks */
+/* stylelint-disable declaration-block-no-duplicate-properties */
 /* stylelint-enable */
 .columns-autoflow-1to1to1 {
   -webkit-column-count: 3;
@@ -20538,7 +20538,7 @@ span[data-flexitour="container"][x-placement="right-start"] div[data-role="arrow
   }
 }
 /* responsive.less */
-/* stylelint-disable declaration-block-no-duplicate-properties, no-browser-hacks */
+/* stylelint-disable declaration-block-no-duplicate-properties */
 @media (min-width: 980px) {
   a[id]:empty::before,
   a[name]:empty::before {
