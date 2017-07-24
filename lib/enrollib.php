@@ -436,7 +436,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
     if ($course->id != SITEID) {
         // list all participants - allows assigning roles, groups, etc.
         if (has_capability('moodle/course:enrolreview', $coursecontext)) {
-            $url = new moodle_url('/enrol/users.php', array('id'=>$course->id));
+            $url = new moodle_url('/user/index.php', array('id'=>$course->id));
             $usersnode->add(get_string('enrolledusers', 'enrol'), $url, navigation_node::TYPE_SETTING, null, 'review', new pix_icon('i/enrolusers', ''));
         }
 
@@ -2873,7 +2873,7 @@ abstract class enrol_plugin {
         $a->course    = format_string($course->fullname, true, array('context'=>$context));
         $a->threshold = get_string('numdays', '', $instance->expirythreshold / (60*60*24));
         $a->users     = implode("\n", $users);
-        $a->extendurl = (string)new moodle_url('/enrol/users.php', array('id'=>$instance->courseid));
+        $a->extendurl = (string)new moodle_url('/user/index.php', array('id'=>$instance->courseid));
 
         $subject = get_string('expirymessageenrollersubject', 'enrol_'.$name, $a);
         $body = get_string('expirymessageenrollerbody', 'enrol_'.$name, $a);

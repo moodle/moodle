@@ -395,7 +395,7 @@ class helper {
         // Permissions.
         if ($course->can_review_enrolments()) {
             $actions['enrolledusers'] = array(
-                'url' => new \moodle_url('/enrol/users.php', array('id' => $course->id)),
+                'url' => new \moodle_url('/user/index.php', array('id' => $course->id)),
                 'string' => \get_string('enrolledusers', 'enrol')
             );
         }
