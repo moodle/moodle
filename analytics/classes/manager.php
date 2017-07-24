@@ -84,7 +84,9 @@ class manager {
 
         $params = array();
 
-        $sql = "SELECT DISTINCT am.* FROM {analytics_models} am";
+        $fields = 'am.id, am.enabled, am.trained, am.target, ' . $DB->sql_compare_text('am.indicators') .
+            ', am.timesplitting, am.version, am.timecreated, am.timemodified, am.usermodified';
+        $sql = "SELECT DISTINCT $fields FROM {analytics_models} am";
         if ($predictioncontext) {
             $sql .= " JOIN {analytics_predictions} ap ON ap.modelid = am.id AND ap.contextid = :contextid";
             $params['contextid'] = $predictioncontext->id;
