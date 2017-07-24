@@ -146,14 +146,6 @@ class participants_table extends \table_sql {
         }
 
         // Do not show the columns if it exists in the hiddenfields array.
-        if (!isset($hiddenfields['city'])) {
-            $headers[] = get_string('city');
-            $columns[] = 'city';
-        }
-        if (!isset($hiddenfields['country'])) {
-            $headers[] = get_string('country');
-            $columns[] = 'country';
-        }
         if (!isset($hiddenfields['lastaccess'])) {
             if ($courseid == SITEID) {
                 $headers[] = get_string('lastsiteaccess');
@@ -165,6 +157,9 @@ class participants_table extends \table_sql {
 
         $this->define_columns($columns);
         $this->define_headers($headers);
+
+        // Make this table sorted by first name by default.
+        $this->sortable(true, 'firstname');
 
         $this->no_sorting('select');
 
@@ -226,16 +221,6 @@ class participants_table extends \table_sql {
         }
         $editable = new \core_group\output\user_groups_editable($this->course, $this->context, $data, $this->groups, $usergroups);
         return $OUTPUT->render_from_template('core/inplace_editable', $editable->export_for_template($OUTPUT));
-    }
-
-    /**
-     * Generate the city column.
-     *
-     * @param \stdClass $data
-     * @return string
-     */
-    public function col_city($data) {
-        return $data->city;
     }
 
     /**
