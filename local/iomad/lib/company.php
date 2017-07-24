@@ -2433,11 +2433,11 @@ class company {
                 // Delete the record.
                 $DB->delete_records('companylicense_users', array('id' => $licenserecord->id));
 
-                // Update the license used count.
-                $licensecount = count($DB->get_records('companylicense_users', array('licenseid' => $licenserecord->licenseid)));
-                $DB->set_field('companylicense', 'used', $licensecount, array('id' => $licenserecord->licenseid));
+                // Update the license usage.
+                self::update_license_usage($licenserecord->licenseid);
             }
         }
+
         return true;
     }
 
