@@ -319,4 +319,7 @@ function xmldb_main_install() {
     require_once($CFG->libdir . '/db/upgradelib.php');
     make_default_scale();
     make_competence_scale();
+
+    // Add built-in prediction models.
+    \core_analytics\manager::add_builtin_models();
 }

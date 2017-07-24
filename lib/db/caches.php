@@ -312,6 +312,15 @@ $definitions = array(
         ),
     ),
 
+    // Caches contexts with insights.
+    'contextwithinsights' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1
+    ),
+
     // Caches message processors.
     'message_processors_enabled' => array(
         'mode' => cache_store::MODE_APPLICATION,

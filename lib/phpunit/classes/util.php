@@ -220,6 +220,7 @@ class phpunit_util extends testing_util {
         if (class_exists('core_media_manager', false)) {
             core_media_manager::reset_caches();
         }
+        \core_analytics\course::reset_caches();
 
         // Reset static unit test options.
         if (class_exists('\availability_date\condition', false)) {

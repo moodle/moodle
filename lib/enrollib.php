@@ -1415,8 +1415,83 @@ function enrol_send_welcome_email_options() {
 }
 
 /**
+ * Returns the course where a user enrolment belong to.
+ *
+ * @param int $ueid user_enrolments id
+ * @return stdClass
+ */
+function enrol_get_course_by_user_enrolment_id($ueid) {
+    global $DB;
+    $sql = "SELECT c.* FROM {user_enrolments} ue
+              JOIN {enrol} e ON e.id = ue.enrolid
+              JOIN {course} c ON c.id = e.courseid
+             WHERE ue.id = :ueid";
+    return $DB->get_record_sql($sql, array('ueid' => $ueid));
+}
+
+/**
+ * Return all users enrolled in a course.
+ *
+ * @param int $courseid Course id or false if using $uefilter (user enrolment ids may belong to different courses)
+ * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @param array $usersfilter Limit the results obtained to this list of user ids. $uefilter compatibility not guaranteed.
+ * @param array $uefilter Limit the results obtained to this list of user enrolment ids. $usersfilter compatibility not guaranteed.
+ * @return stdClass[]
+ */
+function enrol_get_course_users($courseid = false, $onlyactive = false, $usersfilter = array(), $uefilter = array()) {
+    global $DB;
+
+    if (!$courseid && !$usersfilter && !$uefilter) {
+        throw new \coding_exception('You should specify at least 1 filter: courseid, users or user enrolments');
+    }
+
+    $sql = "SELECT ue.id AS ueid, ue.status AS uestatus, ue.enrolid AS ueenrolid, ue.timestart AS uetimestart,
+             ue.timeend AS uetimeend, ue.modifierid AS uemodifierid, ue.timecreated AS uetimecreated,
+             ue.timemodified AS uetimemodified,
+             u.* FROM {user_enrolments} ue
+              JOIN {enrol} e ON e.id = ue.enrolid
+              JOIN {user} u ON ue.userid = u.id
+             WHERE ";
+    $params = array();
+
+    if ($courseid) {
+        $conditions[] = "e.courseid = :courseid";
+        $params['courseid'] = $courseid;
+    }
+
+    if ($onlyactive) {
+        $conditions[] = "ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND " .
+            "(ue.timeend = 0 OR ue.timeend > :now2)";
+        // Improves db caching.
+        $params['now1']    = round(time(), -2);
+        $params['now2']    = $params['now1'];
+        $params['active']  = ENROL_USER_ACTIVE;
+        $params['enabled'] = ENROL_INSTANCE_ENABLED;
+    }
+
+    if ($usersfilter) {
+        list($usersql, $userparams) = $DB->get_in_or_equal($usersfilter, SQL_PARAMS_NAMED);
+        $conditions[] = "ue.userid $usersql";
+        $params = $params + $userparams;
+    }
+
+    if ($uefilter) {
+        list($uesql, $ueparams) = $DB->get_in_or_equal($uefilter, SQL_PARAMS_NAMED);
+        $conditions[] = "ue.id $uesql";
+        $params = $params + $ueparams;
+    }
+
+    return $DB->get_records_sql($sql . ' ' . implode(' AND ', $conditions), $params);
+}
+
+/**
+ * Enrolment plugins abstract class.
+ *
  * All enrol plugins should be based on this class,
  * this is also the main source of documentation.
+ *
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class enrol_plugin {
     protected $config = null;

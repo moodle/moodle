@@ -1,0 +1,176 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * No teaching target.
+ *
+ * @package   core
+ * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core\analytics\target;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * No teaching target.
+ *
+ * @package   core
+ * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class no_teaching extends \core_analytics\local\target\binary {
+
+    /**
+     * Machine learning backends are not required to predict.
+     *
+     * @return bool
+     */
+    public static function based_on_assumptions() {
+        return true;
+    }
+
+    /**
+     * get_name
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('target:noteachingactivity');
+    }
+
+    /**
+     * prediction_actions
+     *
+     * @param \core_analytics\prediction $prediction
+     * @param mixed $includedetailsaction
+     * @return \core_analytics\prediction_action[]
+     */
+    public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
+
+        // No need to call the parent as the parent's action is view details and this target only have 1 feature.
+        $actions = array();
+
+        $sampledata = $prediction->get_sample_data();
+        $course = $sampledata['course'];
+
+        $url = new \moodle_url('/course/view.php', array('id' => $course->id));
+        $pix = new \pix_icon('i/course', get_string('course'));
+        $actions['viewcourse'] = new \core_analytics\prediction_action('viewcourse', $prediction,
+            $url, $pix, get_string('view'));
+
+        if (has_capability('moodle/course:enrolreview', $sampledata['context'])) {
+            $url = new \moodle_url('/enrol/users.php', array('id' => $course->id));
+            $pix = new \pix_icon('i/enrolusers', get_string('enrolledusers', 'enrol'));
+            $actions['enrolusers'] = new \core_analytics\prediction_action('enrolusers', $prediction,
+                $url, $pix, get_string('enrolledusers', 'enrol'));
+        }
+
+        if (has_capability('moodle/course:viewparticipants', $sampledata['context'])) {
+            $url = new \moodle_url('/user/index.php', array('id' => $course->id));
+            $pix = new \pix_icon('i/cohort', get_string('participants'));
+            $actions['viewparticipants'] = new \core_analytics\prediction_action('viewparticipants', $prediction,
+                $url, $pix, get_string('participants'));
+        }
+
+        return $actions;
+    }
+
+    /**
+     * classes_description
+     *
+     * @return string[]
+     */
+    protected static function classes_description() {
+        return array(
+            get_string('targetlabelteachingyes'),
+            get_string('targetlabelteachingno'),
+        );
+    }
+
+    /**
+     * Returns the predicted classes that will be ignored.
+     *
+     * @return array
+     */
+    protected function ignored_predicted_classes() {
+        // No need to list the course if there is teaching activity.
+        return array(0);
+    }
+
+    /**
+     * get_analyser_class
+     *
+     * @return string
+     */
+    public function get_analyser_class() {
+        return '\core\analytics\analyser\site_courses';
+    }
+
+    /**
+     * is_valid_analysable
+     *
+     * @param \core_analytics\analysable $analysable
+     * @param mixed $fortraining
+     * @return true|string
+     */
+    public function is_valid_analysable(\core_analytics\analysable $analysable, $fortraining = true) {
+        // The analysable is the site, so yes, it is always valid.
+        return true;
+    }
+
+    /**
+     * Only process samples which start date is getting close.
+     *
+     * @param int $sampleid
+     * @param \core_analytics\analysable $analysable
+     * @param bool $fortraining
+     * @return true|string
+     */
+    public function is_valid_sample($sampleid, \core_analytics\analysable $analysable, $fortraining = true) {
+
+        $course = $this->retrieve('course', $sampleid);
+
+        $now = time();
+
+        // No courses without start date, no finished courses nor predictions before start - 1 week.
+        if (!$course->startdate || (!empty($course->enddate) && $course->enddate < $now) ||
+                $course->startdate - WEEKSECS > $now) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * calculate_sample
+     *
+     * @param int $sampleid
+     * @param \core_analytics\analysable $analysable
+     * @param int $starttime
+     * @param int $endtime
+     * @return float
+     */
+    protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false) {
+
+        $noteachersindicator = $this->retrieve('\core_course\analytics\indicator\no_teacher', $sampleid);
+        if ($noteachersindicator == \core_course\analytics\indicator\no_teacher::get_min_value()) {
+            // No teachers :( we flag this as 1.
+            return 1;
+        }
+        return 0;
+    }
+}

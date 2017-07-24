@@ -14,6 +14,7 @@ lib/editor/atto/yui/src/rangy/js/*.*
 lib/editor/tinymce/plugins/pdw/tinymce/
 lib/editor/tinymce/plugins/spellchecker/rpc.php
 lib/editor/tinymce/tiny_mce/
+lib/mlbackend/php/phpml/
 lib/adodb/
 lib/bennu/
 lib/evalmath/
