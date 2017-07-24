@@ -193,6 +193,9 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             array('modelid' => $model->get_id(), 'action' => 'predicted')));
         $this->assertEquals(2 * $npredictedranges, $DB->count_records('analytics_predictions',
             array('modelid' => $model->get_id())));
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
     }
 
     /**
@@ -271,6 +274,9 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             $filtered = $result->status & $expected[$timesplitting];
             $this->assertEquals($expected[$timesplitting], $filtered, $message);
         }
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
     }
 
     /**
