@@ -15,16 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version of workshop
+ * Workshop external functions and service definitions.
  *
  * @package    mod_workshop
- * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
+ * @category   external
+ * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.4
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2017051501;        // The current module version (YYYYMMDDXX)
-$plugin->requires  = 2017050500;        // Requires this Moodle version.
-$plugin->component = 'mod_workshop';
-$plugin->cron      = 60;                // Give as a chance every minute.
+$functions = array(
+
+    'mod_workshop_get_workshops_by_courses' => array(
+        'classname'     => 'mod_workshop_external',
+        'methodname'    => 'get_workshops_by_courses',
+        'description'   => 'Returns a list of workshops in a provided list of courses, if no list is provided all workshops that
+                            the user can view will be returned.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/workshop:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+);
