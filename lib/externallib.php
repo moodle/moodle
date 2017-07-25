@@ -999,7 +999,7 @@ function external_format_text($text, $textformat, $contextid, $component = null,
  * @throws moodle_exception
  */
 function external_generate_token_for_current_user($service) {
-    global $DB, $USER;
+    global $DB, $USER, $CFG;
 
     core_user::require_active_user($USER, true, true);
 
@@ -1083,8 +1083,8 @@ function external_generate_token_for_current_user($service) {
             $token->creatorid = $USER->id;
             $token->timecreated = time();
             $token->externalserviceid = $service->id;
-            // MDL-43119 Token valid for 3 months (12 weeks).
-            $token->validuntil = $token->timecreated + 12 * WEEKSECS;
+            // By default tokens are valid for 12 weeks.
+            $token->validuntil = $token->timecreated + $CFG->tokenduration;
             $token->iprestriction = null;
             $token->sid = null;
             $token->lastaccess = null;

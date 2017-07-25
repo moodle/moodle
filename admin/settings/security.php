@@ -108,6 +108,10 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         new lang_string('passwordchangetokendeletion', 'admin'),
         new lang_string('passwordchangetokendeletion_desc', 'admin'), 0));
 
+    $temp->add(new admin_setting_configduration('tokenduration',
+        new lang_string('tokenduration', 'admin'),
+        new lang_string('tokenduration_desc', 'admin'), 12 * WEEKSECS, WEEKSECS));
+
     $temp->add(new admin_setting_configcheckbox('groupenrolmentkeypolicy', new lang_string('groupenrolmentkeypolicy', 'admin'), new lang_string('groupenrolmentkeypolicy_desc', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('disableuserimages', new lang_string('disableuserimages', 'admin'), new lang_string('configdisableuserimages', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('emailchangeconfirmation', new lang_string('emailchangeconfirmation', 'admin'), new lang_string('configemailchangeconfirmation', 'admin'), 1));

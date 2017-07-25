@@ -571,6 +571,32 @@ class core_externallib_testcase extends advanced_testcase {
         }
 
     }
+
+    /**
+     * Test default time for user created tokens.
+     */
+    public function test_user_created_tokens_duration() {
+        global $CFG, $DB;
+        $this->resetAfterTest(true);
+
+        $CFG->enablewebservices = 1;
+        $CFG->enablemobilewebservice = 1;
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE, 'enabled' => 1));
+
+        $this->setUser($user1);
+        $timenow = time();
+        $token = external_generate_token_for_current_user($service);
+        $this->assertGreaterThanOrEqual($timenow + $CFG->tokenduration, $token->validuntil);
+
+        // Change token default time.
+        $this->setUser($user2);
+        set_config('tokenduration', DAYSECS);
+        $token = external_generate_token_for_current_user($service);
+        $timenow = time();
+        $this->assertLessThanOrEqual($timenow + DAYSECS, $token->validuntil);
+    }
 }
 
 /*
