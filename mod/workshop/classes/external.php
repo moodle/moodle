@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
+require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 
 use mod_workshop\external\workshop_summary_exporter;
 
@@ -125,5 +126,109 @@ class mod_workshop_external extends external_api {
                 'warnings' => new external_warnings(),
             )
         );
+    }
+
+    /**
+     * Utility function for validating a workshop.
+     *
+     * @param int $workshopid workshop instance id
+     * @return array array containing the workshop object, course, context and course module objects
+     * @since  Moodle 3.4
+     */
+    protected static function validate_workshop($workshopid) {
+        global $DB, $USER;
+
+        // Request and permission validation.
+        $workshop = $DB->get_record('workshop', array('id' => $workshopid), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($workshop, 'workshop');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $workshop = new workshop($workshop, $cm, $course);
+
+        return array($workshop, $course, $cm, $context);
+    }
+
+
+    /**
+     * Describes the parameters for get_workshop_access_information.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function get_workshop_access_information_parameters() {
+        return new external_function_parameters (
+            array(
+                'workshopid' => new external_value(PARAM_INT, 'Workshop instance id.')
+            )
+        );
+    }
+
+    /**
+     * Return access information for a given workshop.
+     *
+     * @param int $workshopid workshop instance id
+     * @return array of warnings and the access information
+     * @since Moodle 3.4
+     * @throws  moodle_exception
+     */
+    public static function get_workshop_access_information($workshopid) {
+        global $USER;
+
+        $params = self::validate_parameters(self::get_workshop_access_information_parameters(), array('workshopid' => $workshopid));
+
+        list($workshop, $course, $cm, $context) = self::validate_workshop($params['workshopid']);
+
+        $result = array();
+        // Return all the available capabilities.
+        $capabilities = load_capability_def('mod_workshop');
+        foreach ($capabilities as $capname => $capdata) {
+            // Get fields like cansubmit so it is consistent with the access_information function implemented in other modules.
+            $field = 'can' . str_replace('mod/workshop:', '', $capname);
+            $result[$field] = has_capability($capname, $context);
+        }
+
+        // Now, specific features access information.
+        $result['creatingsubmissionallowed'] = $workshop->creating_submission_allowed($USER->id);
+        $result['modifyingsubmissionallowed'] = $workshop->modifying_submission_allowed($USER->id);
+        $result['assessingallowed'] = $workshop->assessing_allowed($USER->id);
+        $result['assessingexamplesallowed'] = $workshop->assessing_examples_allowed();
+        if (is_null($result['assessingexamplesallowed'])) {
+            $result['assessingexamplesallowed'] = false;
+        }
+
+        $result['warnings'] = array();
+        return $result;
+    }
+
+    /**
+     * Describes the get_workshop_access_information return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.4
+     */
+    public static function get_workshop_access_information_returns() {
+
+        $structure = array(
+            'creatingsubmissionallowed' => new external_value(PARAM_BOOL,
+                'Is the given user allowed to create their submission?'),
+            'modifyingsubmissionallowed' => new external_value(PARAM_BOOL,
+                'Is the user allowed to modify his existing submission?'),
+            'assessingallowed' => new external_value(PARAM_BOOL,
+                'Is the user allowed to create/edit his assessments?'),
+            'assessingexamplesallowed' => new external_value(PARAM_BOOL,
+                'Are reviewers allowed to create/edit their assessments of the example submissions?.'),
+            'warnings' => new external_warnings()
+        );
+
+        $capabilities = load_capability_def('mod_workshop');
+        foreach ($capabilities as $capname => $capdata) {
+            // Get fields like cansubmit so it is consistent with the access_information function implemented in other modules.
+            $field = 'can' . str_replace('mod/workshop:', '', $capname);
+            $structure[$field] = new external_value(PARAM_BOOL, 'Whether the user has the capability ' . $capname . ' allowed.');
+        }
+
+        return new external_single_structure($structure);
     }
 }
