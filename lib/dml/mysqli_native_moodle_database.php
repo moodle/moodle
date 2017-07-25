@@ -784,6 +784,14 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Indicates whether column information retrieved from `information_schema.columns` has default values quoted or not.
+     * @return boolean True when default values are quoted (breaking change); otherwise, false.
+     */
+    protected function has_breaking_change_quoted_defaults() {
+        return false;
+    }
+
+    /**
      * Returns moodle column info for raw column from information schema.
      * @param stdClass $rawcolumn
      * @return stdClass standardised colum info
@@ -794,7 +802,11 @@ class mysqli_native_moodle_database extends moodle_database {
         $info->name           = $rawcolumn->column_name;
         $info->type           = $rawcolumn->data_type;
         $info->meta_type      = $this->mysqltype2moodletype($rawcolumn->data_type);
-        $info->default_value  = $rawcolumn->column_default;
+        if ($this->has_breaking_change_quoted_defaults()) {
+            $info->default_value = trim($rawcolumn->column_default, "'");
+        } else {
+            $info->default_value = $rawcolumn->column_default;
+        }
         $info->has_default    = !is_null($rawcolumn->column_default);
         $info->not_null       = ($rawcolumn->is_nullable === 'NO');
         $info->primary_key    = ($rawcolumn->column_key === 'PRI');

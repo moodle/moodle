@@ -88,6 +88,12 @@ class mariadb_native_moodle_database extends mysqli_native_moodle_database {
         return array('description'=>$this->mysqli->server_info, 'version'=>$version);
     }
 
+    protected function has_breaking_change_quoted_defaults() {
+        $version = $this->get_server_info()['version'];
+        // Breaking change since 10.2.7: MDEV-13132.
+        return version_compare($version, '10.2.7', '>=');
+    }
+
     /**
      * It is time to require transactions everywhere.
      *
