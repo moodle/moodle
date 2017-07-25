@@ -3210,7 +3210,7 @@ EOD;
             array('role' => 'button', 'tabindex' => 0));
         $formattrs = array('class' => 'search-input-form', 'action' => $CFG->wwwroot . '/search/index.php');
         $inputattrs = array('type' => 'text', 'name' => 'q', 'placeholder' => get_string('search', 'search'),
-            'size' => 13, 'tabindex' => -1, 'id' => 'id_q_' . $id);
+            'size' => 13, 'tabindex' => -1, 'id' => 'id_q_' . $id, 'class' => 'form-control');
 
         $contents = html_writer::tag('label', get_string('enteryoursearchquery', 'search'),
             array('for' => 'id_q_' . $id, 'class' => 'accesshide')) . html_writer::tag('input', '', $inputattrs);
