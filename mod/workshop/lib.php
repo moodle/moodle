@@ -1890,6 +1890,11 @@ function workshop_reset_course_form_defaults(stdClass $course) {
 function workshop_reset_userdata(stdClass $data) {
     global $CFG, $DB;
 
+    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+    // See MDL-9367.
+    shift_course_mod_dates('workshop', array('submissionstart', 'submissionend', 'assessmentstart', 'assessmentend'),
+        $data->timeshift, $data->courseid);
+
     if (empty($data->reset_workshop_submissions)
             and empty($data->reset_workshop_assessments)
             and empty($data->reset_workshop_phase) ) {
