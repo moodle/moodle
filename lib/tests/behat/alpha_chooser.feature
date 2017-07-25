@@ -63,12 +63,6 @@ Feature: Initials bar
       | student22 | C1     | student        |
       | student23 | C1     | student        |
       | student24 | C1     | student        |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I log out
 
   @javascript
   Scenario: Filter users on assignment submission page
