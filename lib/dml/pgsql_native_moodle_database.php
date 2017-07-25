@@ -1497,4 +1497,13 @@ class pgsql_native_moodle_database extends moodle_database {
     private function trim_quotes($str) {
         return trim(trim($str), "'\"");
     }
+
+    /**
+     * Postgresql supports full-text search indexes.
+     *
+     * @return bool
+     */
+    public function is_fulltext_search_supported() {
+        return true;
+    }
 }

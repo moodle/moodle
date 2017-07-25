@@ -22,6 +22,8 @@ information provided here is intended especially for developers.
 * Scripts can define a constant NO_SITEPOLICY_CHECK and set it to true before requiring the main config.php file. It
   will make the require_login() skipping the test for the user's policyagreed status. This is useful for plugins that
   act as a site policy handler.
+* There is a new is_fulltext_search_supported() DML function. The default implementation returns false. This function
+  is used by 'Simple search' global search engine to determine if the database full-text search capabilities can be used.
 
 === 3.4 ===
 

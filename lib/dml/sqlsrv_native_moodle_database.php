@@ -1586,4 +1586,26 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $result = sqlsrv_rollback($this->sqlsrv);
         $this->query_end($result);
     }
+
+    /**
+     * Is fulltext search enabled?.
+     *
+     * @return bool
+     */
+    public function is_fulltext_search_supported() {
+        global $CFG;
+
+        $sql = "SELECT FULLTEXTSERVICEPROPERTY('IsFullTextInstalled')";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = sqlsrv_query($this->sqlsrv, $sql);
+        $this->query_end($result);
+        if ($result) {
+            if ($row = sqlsrv_fetch_array($result)) {
+                $property = (bool)reset($row);
+            }
+        }
+        $this->free_result($result);
+
+        return !empty($property);
+    }
 }

@@ -1989,4 +1989,18 @@ class mysqli_native_moodle_database extends moodle_database {
             $this->change_database_structure("ALTER TABLE {$prefix}$tablename $rowformat");
         }
     }
+
+    /**
+     * Does this mysql instance support fulltext indexes?
+     *
+     * @return bool
+     */
+    public function is_fulltext_search_supported() {
+        $info = $this->get_server_info();
+
+        if (version_compare($info['version'], '5.6.4', '>=')) {
+            return true;
+        }
+        return false;
+    }
 }

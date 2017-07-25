@@ -36,14 +36,22 @@ defined('MOODLE_INTERNAL') || die();
 class engine extends \core_search\engine {
 
     /**
-     * Prepares a Solr query, applies filters and executes it returning its results.
+     * Total number of available results.
+     *
+     * @var null|int
+     */
+    protected $totalresults = null;
+
+    /**
+     * Prepares a SQL query, applies filters and executes it returning its results.
      *
      * @throws \core_search\engine_exception
      * @param  stdClass     $filters Containing query and filters.
      * @param  array        $usercontexts Contexts where the user has access. True if the user can access all contexts.
+     * @param  int          $limit The maximum number of results to return.
      * @return \core_search\document[] Results or false if no results
      */
-    public function execute_query($filters, $usercontexts) {
+    public function execute_query($filters, $usercontexts, $limit = 0) {
         global $DB, $USER;
 
         // Let's keep these changes internal.
@@ -54,7 +62,10 @@ class engine extends \core_search\engine {
             throw new \core_search\engine_exception('engineserverstatus', 'search');
         }
 
-        $sql = 'SELECT * FROM {search_simpledb_index} WHERE ';
+        if (empty($limit)) {
+            $limit = \core_search\manager::MAX_RESULTS;
+        }
+
         $params = array();
 
         // To store all conditions we will add to where.
@@ -71,7 +82,7 @@ class engine extends \core_search\engine {
             // Join all area contexts into a single array and implode.
             $allcontexts = array();
             foreach ($usercontexts as $areaid => $areacontexts) {
-                if (!empty($data->areaid) && ($areaid !== $data->areaid)) {
+                if (!empty($data->areaids) && !in_array($areaid, $data->areaids)) {
                     // Skip unused areas.
                     continue;
                 }
@@ -98,16 +109,15 @@ class engine extends \core_search\engine {
         }
 
         // Area id filter.
-        if (!empty($data->areaid)) {
-            list($conditionsql, $conditionparams) = $DB->get_in_or_equal($data->areaid);
+        if (!empty($data->areaids)) {
+            list($conditionsql, $conditionparams) = $DB->get_in_or_equal($data->areaids);
             $ands[] = 'areaid ' . $conditionsql;
             $params = array_merge($params, $conditionparams);
         }
 
         if (!empty($data->title)) {
-            list($conditionsql, $conditionparams) = $DB->get_in_or_equal($data->title);
-            $ands[] = 'title ' . $conditionsql;
-            $params = array_merge($params, $conditionparams);
+            $ands[] = $DB->sql_like('title', '?', false, false);
+            $params[] = $data->title;
         }
 
         if (!empty($data->timestart)) {
@@ -120,53 +130,77 @@ class engine extends \core_search\engine {
         }
 
         // And finally the main query after applying all AND filters.
-        switch ($DB->get_dbfamily()) {
-            case 'postgres':
-                $ands[] = "(" .
-                    "to_tsvector('simple', title) @@ plainto_tsquery(?) OR ".
-                    "to_tsvector('simple', content) @@ plainto_tsquery(?) OR ".
-                    "to_tsvector('simple', description1) @@ plainto_tsquery(?) OR ".
-                    "to_tsvector('simple', description2) @@ plainto_tsquery(?)".
-                    ")";
-                $params[] = $data->q;
-                $params[] = $data->q;
-                $params[] = $data->q;
-                $params[] = $data->q;
-                break;
-            case 'mysql':
-                $ands[] = "MATCH (title, content, description1, description2) AGAINST (?)";
-                $params[] = $data->q;
-                break;
-            case 'mssql':
-                $ands[] = "CONTAINS ((title, content, description1, description2), ?)";
-                $params[] = $data->q;
-                break;
-            default:
-                $ands[] = '(' .
-                    $DB->sql_like('title', '?', false, false) . ' OR ' .
-                    $DB->sql_like('content', '?', false, false) . ' OR ' .
-                    $DB->sql_like('description1', '?', false, false) . ' OR ' .
-                    $DB->sql_like('description2', '?', false, false) .
-                    ')';
-                $params[] = '%' . $data->q . '%';
-                $params[] = '%' . $data->q . '%';
-                $params[] = '%' . $data->q . '%';
-                $params[] = '%' . $data->q . '%';
-                break;
+        if (!empty($data->q)) {
+            switch ($DB->get_dbfamily()) {
+                case 'postgres':
+                    $ands[] = "(" .
+                        "to_tsvector('simple', title) @@ plainto_tsquery('simple', ?) OR ".
+                        "to_tsvector('simple', content) @@ plainto_tsquery('simple', ?) OR ".
+                        "to_tsvector('simple', description1) @@ plainto_tsquery('simple', ?) OR ".
+                        "to_tsvector('simple', description2) @@ plainto_tsquery('simple', ?)".
+                        ")";
+                    $params[] = $data->q;
+                    $params[] = $data->q;
+                    $params[] = $data->q;
+                    $params[] = $data->q;
+                    break;
+                case 'mysql':
+                    if ($DB->is_fulltext_search_supported()) {
+                        $ands[] = "MATCH (title, content, description1, description2) AGAINST (?)";
+                        $params[] = $data->q;
+
+                        // Sorry for the hack, but it does not seem that we will have a solution for
+                        // this soon (https://bugs.mysql.com/bug.php?id=78485).
+                        if ($data->q === '*') {
+                            return array();
+                        }
+                    } else {
+                        // Clumsy version for mysql versions with no fulltext support.
+                        list($queryand, $queryparams) = $this->get_simple_query($data->q);
+                        $ands[] = $queryand;
+                        $params = array_merge($params, $queryparams);
+                    }
+                    break;
+                case 'mssql':
+                    if ($DB->is_fulltext_search_supported()) {
+                        $ands[] = "CONTAINS ((title, content, description1, description2), ?)";
+                        // Special treatment for double quotes:
+                        // - Puntuation is ignored so we can get rid of them.
+                        // - Phrases should be enclosed in double quotation marks.
+                        $params[] = '"' . str_replace('"', '', $data->q) . '"';
+                    } else {
+                        // Clumsy version for mysql versions with no fulltext support.
+                        list($queryand, $queryparams) = $this->get_simple_query($data->q);
+                        $ands[] = $queryand;
+                        $params = array_merge($params, $queryparams);
+                    }
+                    break;
+                default:
+                    list($queryand, $queryparams) = $this->get_simple_query($data->q);
+                    $ands[] = $queryand;
+                    $params = array_merge($params, $queryparams);
+                    break;
+            }
         }
 
-        $recordset = $DB->get_recordset_sql($sql . implode(' AND ', $ands), $params, 0, \core_search\manager::MAX_RESULTS);
+        // It is limited to $limit, no need to use recordsets.
+        $documents = $DB->get_records_select('search_simpledb_index', implode(' AND ', $ands), $params, '', '*', 0, $limit);
+
+        // Hopefully database cached results as this applies the same filters than above.
+        $this->totalresults = $DB->count_records_select('search_simpledb_index', implode(' AND ', $ands), $params);
 
         $numgranted = 0;
 
-        if (!$recordset->valid()) {
-            return array();
-        }
-
         // Iterate through the results checking its availability and whether they are available for the user or not.
         $docs = array();
-        foreach ($recordset as $docdata) {
+        foreach ($documents as $docdata) {
+            if ($docdata->owneruserid != \core_search\manager::NO_OWNER_ID && $docdata->owneruserid != $USER->id) {
+                // If owneruserid is set, no other user should be able to access this record.
+                continue;
+            }
+
             if (!$searcharea = $this->get_search_area($docdata->areaid)) {
+                $this->totalresults--;
                 continue;
             }
 
@@ -178,8 +212,10 @@ class engine extends \core_search\engine {
             switch ($access) {
                 case \core_search\manager::ACCESS_DELETED:
                     $this->delete_by_id($docdata->id);
+                    $this->totalresults--;
                     break;
                 case \core_search\manager::ACCESS_DENIED:
+                    $this->totalresults--;
                     break;
                 case \core_search\manager::ACCESS_GRANTED:
                     $numgranted++;
@@ -188,12 +224,11 @@ class engine extends \core_search\engine {
             }
 
             // This should never happen.
-            if ($numgranted >= \core_search\manager::MAX_RESULTS) {
-                $docs = array_slice($docs, 0, \core_search\manager::MAX_RESULTS, true);
+            if ($numgranted >= $limit) {
+                $docs = array_slice($docs, 0, $limit, true);
                 break;
             }
         }
-        $recordset->close();
 
         return $docs;
     }
@@ -228,6 +263,7 @@ class engine extends \core_search\engine {
         } catch (\dml_exception $ex) {
             debugging('dml error while trying to insert document with id ' . $doc->docid . ': ' . $ex->getMessage(),
                 DEBUG_DEVELOPER);
+            return false;
         }
 
         return true;
@@ -280,5 +316,45 @@ class engine extends \core_search\engine {
      */
     public function is_installed() {
         return true;
+    }
+
+    /**
+     * Returns the total results.
+     *
+     * Including skipped results.
+     *
+     * @return int
+     */
+    public function get_query_total_count() {
+        if (!is_null($this->totalresults)) {
+            // This is a just in case as we count total results in execute_query.
+            return \core_search\manager::MAX_RESULTS;
+        }
+
+        return $this->totalresults;
+    }
+
+    /**
+     * Returns the default query for db engines.
+     *
+     * @param string $q The query string
+     * @return array SQL string and params list
+     */
+    protected function get_simple_query($q) {
+        global $DB;
+
+        $sql = '(' .
+            $DB->sql_like('title', '?', false, false) . ' OR ' .
+            $DB->sql_like('content', '?', false, false) . ' OR ' .
+            $DB->sql_like('description1', '?', false, false) . ' OR ' .
+            $DB->sql_like('description2', '?', false, false) .
+            ')';
+        $params = array(
+            '%' . $q . '%',
+            '%' . $q . '%',
+            '%' . $q . '%',
+            '%' . $q . '%'
+        );
+        return array($sql, $params);
     }
 }

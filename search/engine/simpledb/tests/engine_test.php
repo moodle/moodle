@@ -18,7 +18,7 @@
  * Simple db search engine tests.
  *
  * @package     search_simpledb
- * @category    phpunit
+ * @category    test
  * @copyright   2016 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/search/tests/fixtures/mock_search_area.php');
  * Simple search engine base unit tests.
  *
  * @package     search_simpledb
- * @category    phpunit
+ * @category    test
  * @copyright   2016 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -44,22 +44,70 @@ class search_simpledb_engine_testcase extends advanced_testcase {
      */
     protected $search = null;
 
+    /**
+     * @var \
+     */
+    protected $engine = null;
+
+    /**
+     * @var core_search_generator
+     */
+    protected $generator = null;
+
+    /**
+     * Initial stuff.
+     *
+     * @return void
+     */
     public function setUp() {
         $this->resetAfterTest();
+
+        if ($this->requires_manual_index_update()) {
+            // We need to update fulltext index manually, which requires an alter table statement.
+            $this->preventResetByRollback();
+        }
+
         set_config('enableglobalsearch', true);
 
         // Inject search_simpledb engine into the testable core search as we need to add the mock
         // search component to it.
-        $searchengine = new \search_simpledb\engine();
-        $this->search = testable_core_search::instance($searchengine);
-        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
-        $this->search->add_search_area($areaid, new core_mocksearch\search\role_capabilities());
+
+        $this->engine = new \search_simpledb\engine();
+        $this->search = testable_core_search::instance($this->engine);
+        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
+        $this->search->add_search_area($areaid, new core_mocksearch\search\mock_search_area());
+
+        $this->generator = self::getDataGenerator()->get_plugin_generator('core_search');
+        $this->generator->setup();
+
+        $this->setAdminUser();
     }
 
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown() {
+        // For unit tests before PHP 7, teardown is called even on skip. So only do our teardown if we did setup.
+        if ($this->generator) {
+            // Moodle DML freaks out if we don't teardown the temp table after each run.
+            $this->generator->teardown();
+            $this->generator = null;
+        }
+    }
+
+    /**
+     * Test indexing process.
+     *
+     * @return void
+     */
     public function test_index() {
         global $DB;
 
-        $noneditingteacherid = $DB->get_field('role', 'id', array('shortname' => 'teacher'));
+        $record = new \stdClass();
+        $record->timemodified = time() - 1;
+        $this->generator->create_record($record);
 
         // Data gets into the search engine.
         $this->assertTrue($this->search->index());
@@ -68,8 +116,7 @@ class search_simpledb_engine_testcase extends advanced_testcase {
         sleep(1);
         $this->assertFalse($this->search->index());
 
-        assign_capability('moodle/course:renameroles', CAP_ALLOW, $noneditingteacherid, context_system::instance()->id);
-        accesslib_clear_all_caches_for_unit_testing();
+        $this->generator->create_record();
 
         // Indexing again once there is new data.
         $this->assertTrue($this->search->index());
@@ -83,19 +130,13 @@ class search_simpledb_engine_testcase extends advanced_testcase {
     public function test_search() {
         global $USER, $DB;
 
-        $this->setAdminUser();
-
-        $noneditingteacherid = $DB->get_field('role', 'id', array('shortname' => 'teacher'));
-
-        $this->search->index();
-
-        // Check that docid - id is respected.
-        $rolecaps = $DB->get_records('role_capabilities', array('capability' => 'moodle/course:renameroles'));
-        $rolecap = reset($rolecaps);
-        $rolecap->timemodified = time();
-        $DB->update_record('role_capabilities', $rolecap);
+        $this->generator->create_record();
+        $record = new \stdClass();
+        $record->title = "Special title";
+        $this->generator->create_record($record);
 
         $this->search->index();
+        $this->update_index();
 
         $querydata = new stdClass();
         $querydata->q = 'message';
@@ -104,32 +145,32 @@ class search_simpledb_engine_testcase extends advanced_testcase {
 
         // Based on core_mocksearch\search\indexer.
         $this->assertEquals($USER->id, $results[0]->get('userid'));
-        $this->assertEquals(\context_system::instance()->id, $results[0]->get('contextid'));
+        $this->assertEquals(\context_course::instance(SITEID)->id, $results[0]->get('contextid'));
 
         // Do a test to make sure we aren't searching non-query fields, like areaid.
-        $querydata->q = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
+        $querydata->q = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
         $this->assertCount(0, $this->search->search($querydata));
         $querydata->q = 'message';
 
         sleep(1);
         $beforeadding = time();
         sleep(1);
-        assign_capability('moodle/course:renameroles', CAP_ALLOW, $noneditingteacherid, context_system::instance()->id);
-        accesslib_clear_all_caches_for_unit_testing();
+        $this->generator->create_record();
         $this->search->index();
+        $this->update_index();
 
         // Timestart.
         $querydata->timestart = $beforeadding;
-        $this->assertCount(2, $this->search->search($querydata));
+        $this->assertCount(1, $this->search->search($querydata));
 
         // Timeend.
         unset($querydata->timestart);
         $querydata->timeend = $beforeadding;
-        $this->assertCount(1, $this->search->search($querydata));
+        $this->assertCount(2, $this->search->search($querydata));
 
         // Title.
         unset($querydata->timeend);
-        $querydata->title = 'moodle/course:renameroles roleid 1';
+        $querydata->title = 'Special title';
         $this->assertCount(1, $this->search->search($querydata));
 
         // Course IDs.
@@ -140,42 +181,69 @@ class search_simpledb_engine_testcase extends advanced_testcase {
         $querydata->courseids = array(SITEID);
         $this->assertCount(3, $this->search->search($querydata));
 
+        // Now try some area-id combinations.
+        unset($querydata->courseids);
+        $forumpostareaid = \core_search\manager::generate_areaid('mod_forum', 'post');
+        $mockareaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
+
+        $querydata->areaids = array($forumpostareaid);
+        $this->assertCount(0, $this->search->search($querydata));
+
+        $querydata->areaids = array($forumpostareaid, $mockareaid);
+        $this->assertCount(3, $this->search->search($querydata));
+
+        $querydata->areaids = array($mockareaid);
+        $this->assertCount(3, $this->search->search($querydata));
+
+        $querydata->areaids = array();
+        $this->assertCount(3, $this->search->search($querydata));
+
         // Check that index contents get updated.
-        $DB->delete_records('role_capabilities', array('capability' => 'moodle/course:renameroles'));
+        $this->generator->delete_all();
         $this->search->index(true);
+        $this->update_index();
         unset($querydata->title);
-        $querydata->q = '*renameroles*';
+        $querydata->q = '';
         $this->assertCount(0, $this->search->search($querydata));
     }
 
+    /**
+     * Test delete function
+     *
+     * @return void
+     */
     public function test_delete() {
+
+        $this->generator->create_record();
+        $this->generator->create_record();
         $this->search->index();
+        $this->update_index();
 
         $querydata = new stdClass();
         $querydata->q = 'message';
 
         $this->assertCount(2, $this->search->search($querydata));
 
-        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
+        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
         $this->search->delete_index($areaid);
+        $this->update_index();
         $this->assertCount(0, $this->search->search($querydata));
     }
 
+    /**
+     * Test user is allowed.
+     *
+     * @return void
+     */
     public function test_alloweduserid() {
-        $engine = $this->search->get_engine();
-        $area = new core_mocksearch\search\role_capabilities();
 
-        // Get the first record for the recordset.
-        $recordset = $area->get_recordset_by_timestamp();
-        foreach ($recordset as $r) {
-            $record = $r;
-            break;
-        }
-        $recordset->close();
+        $area = new core_mocksearch\search\mock_search_area();
+
+        $record = $this->generator->create_record();
 
         // Get the doc and insert the default doc.
         $doc = $area->get_document($record);
-        $engine->add_document($doc);
+        $this->engine->add_document($doc);
 
         $users = array();
         $users[] = $this->getDataGenerator()->create_user();
@@ -190,10 +258,11 @@ class search_simpledb_engine_testcase extends advanced_testcase {
             $doc = $area->get_document($record);
             $doc->set('id', $originalid.'-'.$user->id);
             $doc->set('owneruserid', $user->id);
-            $engine->add_document($doc);
+            $this->engine->add_document($doc);
         }
+        $this->update_index();
 
-        $engine->area_index_complete($area->get_area_id());
+        $this->engine->area_index_complete($area->get_area_id());
 
         $querydata = new stdClass();
         $querydata->q = 'message';
@@ -239,26 +308,72 @@ class search_simpledb_engine_testcase extends advanced_testcase {
     }
 
     public function test_delete_by_id() {
-        // First get files in the index.
+
+        $this->generator->create_record();
+        $this->generator->create_record();
         $this->search->index();
-        $engine = $this->search->get_engine();
+        $this->update_index();
 
         $querydata = new stdClass();
 
         // Then search to make sure they are there.
-        $querydata->q = 'moodle/course:renameroles';
+        $querydata->q = 'message';
         $results = $this->search->search($querydata);
         $this->assertCount(2, $results);
 
         $first = reset($results);
         $deleteid = $first->get('id');
 
-        $engine->delete_by_id($deleteid);
+        $this->engine->delete_by_id($deleteid);
+        $this->update_index();
 
         // Check that we don't get a result for it anymore.
         $results = $this->search->search($querydata);
         $this->assertCount(1, $results);
         $result = reset($results);
         $this->assertNotEquals($deleteid, $result->get('id'));
+    }
+
+    /**
+     * Updates mssql fulltext index if necessary.
+     *
+     * @return bool
+     */
+    private function update_index() {
+        global $DB;
+
+        if (!$this->requires_manual_index_update()) {
+            return;
+        }
+
+        $DB->execute("ALTER FULLTEXT INDEX ON t_search_simpledb_index START UPDATE POPULATION");
+
+        $catalogname = $DB->get_prefix() . 'search_simpledb_catalog';
+        $retries = 0;
+        do {
+            // 0.2 seconds.
+            usleep(200000);
+
+            $record = $DB->get_record_sql("SELECT FULLTEXTCATALOGPROPERTY(cat.name, 'PopulateStatus') AS [PopulateStatus]
+                                             FROM sys.fulltext_catalogs AS cat
+                                            WHERE cat.name = ?", array($catalogname));
+            $retries++;
+
+        } while ($retries < 100 && $record->populatestatus != '0');
+
+        if ($retries === 100) {
+            // No update after 20 seconds...
+            $this->fail('Sorry, your SQL server fulltext search index is too slow.');
+        }
+    }
+
+    /**
+     * Mssql with fulltext support requires manual updates.
+     *
+     * @return bool
+     */
+    private function requires_manual_index_update() {
+        global $DB;
+        return ($DB->get_dbfamily() === 'mssql' && $DB->is_fulltext_search_supported());
     }
 }
