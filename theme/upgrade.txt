@@ -7,6 +7,8 @@ information provided here is intended especially for theme designer.
   and a template with the same name in /theme/boost/templates/ rendering the pagelayout "login".
   To prevent misunderstanding when overriding one of these templates in a Boost child theme,
   the first one was renamed to loginform.mustache - see MDL-58970.
+* The Boost flat navigation nodes now have several data-attributes which let plugin developers
+  access properties from the underlying navigation nodes in the browser - see MDL-59425.
 
 === 3.3 ===
 
