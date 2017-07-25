@@ -2460,8 +2460,8 @@ class company {
         $company = new company($companyid);
         $childcompanies = $company->get_child_companies();
 
-        foreach ($childcompanies as $childid) {
-            $childcompany = new company($childid);
+        foreach ($childcompanies as $child) {
+            $childcompany = new company($child->id);
             $childcompany->assign_user_to_company($userid, 0, $event->other['usertype'], true);
         }
         
@@ -2487,8 +2487,8 @@ class company {
         $company = new company($companyid);
         $childcompanies = $company->get_child_companies();
 
-        foreach ($childcompanies as $childid) {
-            $childcompany = new company($childid);
+        foreach ($childcompanies as $child) {
+            $childcompany = new company($child->id);
             $childcompany->unassign_user_from_company($userid, true);
         }
         
