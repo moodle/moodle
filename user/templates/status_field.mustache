@@ -24,6 +24,9 @@
     * coursename string - The course name.
     * enrolinstancename string - The enrolment instance name.
     * status string - The enrolment status.
+    * active boolean - Flag to indicate whether the user has an active enrolment.
+    * suspended boolean - Flag to indicate whether the user is suspended.
+    * notcurrent boolean - Flag to indicate whether the user's enrolment is active, but not current.
     * timestart string - Optional. The enrolment time start.
     * timeend string - Optional. The enrolment time end.
     * enrolactions array - Optional. Array of enrol actions consisting of:
@@ -37,6 +40,7 @@
         "coursename": "TC 1",
         "enrolinstancename": "Manual enrolment",
         "status": "Active",
+        "active": true,
         "timestart": "1 January 2017",
         "timeend": "31 January 2018",
         "enrolactions": [
@@ -55,7 +59,7 @@
 }}
 <div data-fullname="{{fullname}}" data-coursename="{{coursename}}" data-enrolinstancename="{{enrolinstancename}}"
      data-status="{{status}}" data-timestart="{{timestart}}" data-timeend="{{timeend}}">
-    <span class="label {{#statusclass}}label-{{statusclass}}{{/statusclass}}">{{status}}</span>
+    <span class="label {{#active}}label-success{{/active}}{{#suspended}}label-warning{{/suspended}}{{#notcurrent}}label-default{{/notcurrent}}">{{status}}</span>
     <a data-action="showdetails" role="button" tabindex="0">
         {{#pix}}docs, core, {{#str}}enroldetails, enrol{{/str}}{{/pix}}
     </a>

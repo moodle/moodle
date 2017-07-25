@@ -25,6 +25,7 @@
 namespace core_user;
 
 use context;
+use core_user\output\status_field;
 use DateTime;
 
 defined('MOODLE_INTERNAL') || die;
@@ -339,30 +340,30 @@ class participants_table extends \table_sql {
             foreach ($userenrolments as $ue) {
                 $timestart = $ue->timestart;
                 $timeend = $ue->timeend;
-                $status = '';
-                $statusclass = '';
+                $actions = $ue->enrolmentplugin->get_user_enrolment_actions($manager, $ue);
+                $instancename = $ue->enrolmentinstancename;
+
+                // Default status field label and value.
+                $status = get_string('participationactive', 'enrol');
+                $statusval = status_field::STATUS_ACTIVE;
                 switch ($ue->status) {
                     case ENROL_USER_ACTIVE:
                         $currentdate = new DateTime();
                         $now = $currentdate->getTimestamp();
-                        if ($timestart <= $now && ($timeend == 0 || $timeend >= $now)) {
-                            $status = get_string('participationactive', 'enrol');
-                            $statusclass = 'success';
-                        } else {
+                        // If user enrolment status has not yet started/already ended.
+                        if ($timestart > $now || ($timeend > 0 && $timeend < $now)) {
                             $status = get_string('participationnotcurrent', 'enrol');
-                            $statusclass = 'default';
+                            $statusval = status_field::STATUS_NOT_CURRENT;
                         }
                         break;
                     case ENROL_USER_SUSPENDED:
                         $status = get_string('participationsuspended', 'enrol');
-                        $statusclass = 'warning';
+                        $statusval = status_field::STATUS_SUSPENDED;
                         break;
                 }
-                $actions = $ue->enrolmentplugin->get_user_enrolment_actions($manager, $ue);
-                $instancename = $ue->enrolmentinstancename;
-                $statusfield = new status_field($instancename, $coursename, $fullname, $status, $statusclass, $timestart, $timeend,
-                    $actions);
-                $statusfielddata = $statusfield->export_for_template($OUTPUT);
+
+                $statusfield = new status_field($instancename, $coursename, $fullname, $status, $timestart, $timeend, $actions);
+                $statusfielddata = $statusfield->set_status($statusval)->export_for_template($OUTPUT);
                 $enrolstatusoutput .= $OUTPUT->render_from_template('core_user/status_field', $statusfielddata);
             }
         }

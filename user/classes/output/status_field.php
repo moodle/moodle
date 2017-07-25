@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_user;
+namespace core_user\output;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,6 +41,15 @@ use user_enrolment_action;
  */
 class status_field implements renderable, templatable {
 
+    /** Active user enrolment status constant. */
+    const STATUS_ACTIVE = 0;
+
+    /** Suspended user enrolment status constant. */
+    const STATUS_SUSPENDED = 1;
+
+    /** Not current user enrolment status constant. */
+    const STATUS_NOT_CURRENT = 2;
+
     /** @var string $enrolinstancename The enrolment instance name. */
     protected $enrolinstancename;
 
@@ -53,9 +62,6 @@ class status_field implements renderable, templatable {
     /** @var string $status The user enrolment status. */
     protected $status;
 
-    /** @var string $statusclass The CSS class to be used for rendering the status label.  */
-    protected $statusclass;
-
     /** @var int $timestart The timestamp when the user's enrolment starts. */
     protected $timestart;
 
@@ -65,6 +71,15 @@ class status_field implements renderable, templatable {
     /** @var user_enrolment_action[] $enrolactions Array of enrol action objects for the given enrolment method. */
     protected $enrolactions;
 
+    /** @var bool $statusactive Indicates whether a user enrolment status should be rendered as active. */
+    protected $statusactive = false;
+
+    /** @var bool $statusactive Indicates whether a user enrolment status should be rendered as suspended. */
+    protected $statussuspended = false;
+
+    /** @var bool $statusactive Indicates whether a user enrolment status should be rendered as not current. */
+    protected $statusnotcurrent = false;
+
     /**
      * status_field constructor.
      *
@@ -72,18 +87,16 @@ class status_field implements renderable, templatable {
      * @param string $coursename The course's full name.
      * @param string $fullname The user's full name.
      * @param string $status The user enrolment status.
-     * @param string $statusclass The CSS class to be used for rendering the status label.
      * @param int|null $timestart The timestamp when the user's enrolment starts.
      * @param int|null $timeend The timestamp when the user's enrolment ends.
      * @param user_enrolment_action[] $enrolactions Array of enrol action objects for the given enrolment method.
      */
-    public function __construct($enrolinstancename, $coursename, $fullname, $status, $statusclass = '',
-                                $timestart = null, $timeend = null, $enrolactions = []) {
+    public function __construct($enrolinstancename, $coursename, $fullname, $status, $timestart = null, $timeend = null,
+                                $enrolactions = []) {
         $this->enrolinstancename = $enrolinstancename;
         $this->coursename = $coursename;
         $this->fullname = $fullname;
         $this->status = $status;
-        $this->statusclass = $statusclass;
         $this->timestart = $timestart;
         $this->timeend = $timeend;
         $this->enrolactions = $enrolactions;
@@ -104,7 +117,10 @@ class status_field implements renderable, templatable {
         $data->coursename = $this->coursename;
         $data->fullname = $this->fullname;
         $data->status = $this->status;
-        $data->statusclass = $this->statusclass;
+        $data->active = $this->statusactive;
+        $data->suspended = $this->statussuspended;
+        $data->notcurrent = $this->statusnotcurrent;
+
         if ($this->timestart) {
             $data->timestart = userdate($this->timestart);
         }
@@ -129,5 +145,19 @@ class status_field implements renderable, templatable {
         }
 
         return $data;
+    }
+
+    /**
+     * Status setter.
+     *
+     * @param int $status The user enrolment status representing one of this class' STATUS_* constants.
+     * @return status_field This class' instance. Useful for chaining.
+     */
+    public function set_status($status = self::STATUS_ACTIVE) {
+        $this->statusactive = $status == static::STATUS_ACTIVE;
+        $this->statussuspended = $status == static::STATUS_SUSPENDED;
+        $this->statusnotcurrent = $status == static::STATUS_NOT_CURRENT;
+
+        return $this;
     }
 }
