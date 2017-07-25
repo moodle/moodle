@@ -56,6 +56,20 @@ if ($hassiteconfig) {
             }
             $options[$plugin] = $reader->get_name();
         }
+
+        if (empty($defaultreader)) {
+            // We fall here during initial site installation because log stores are not
+            // enabled until admin/tool/log/db/install.php is executed and get_readers
+            // return nothing.
+
+            if ($enabledlogstores = get_config('tool_log', 'enabled_stores')) {
+                $enabledlogstores = explode(',', $enabledlogstores);
+                $defaultreader = reset($enabledlogstores);
+
+                // No need to set the correct name, just the value, this will not be displayed.
+                $options[$defaultreader] = $defaultreader;
+            }
+        }
         $settings->add(new admin_setting_configselect('analytics/logstore',
             new lang_string('analyticslogstore', 'analytics'), new lang_string('analyticslogstore_help', 'analytics'),
             $defaultreader, $options));

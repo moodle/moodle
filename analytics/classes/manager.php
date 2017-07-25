@@ -314,10 +314,12 @@ class manager {
     public static function get_analytics_logstore() {
         $readers = get_log_manager()->get_readers('core\log\sql_reader');
         $analyticsstore = get_config('analytics', 'logstore');
-        if (empty($analyticsstore)) {
-            $logstore = reset($readers);
-        } else if (!empty($readers[$analyticsstore])) {
+
+        if (!empty($analyticsstore) && !empty($readers[$analyticsstore])) {
             $logstore = $readers[$analyticsstore];
+        } else if (empty($analyticsstore) && !empty($readers)) {
+            // The first one, it is the same default than in settings.
+            $logstore = reset($readers);
         } else if (!empty($readers)) {
             $logstore = reset($readers);
             debugging('The selected log store for analytics is not available anymore. Using "' .
