@@ -2520,7 +2520,13 @@ function lti_get_capabilities() {
     $capabilities = array(
        'basic-lti-launch-request' => '',
        'ContentItemSelectionRequest' => '',
+       'ToolProxyRegistrationRequest' => '',
        'Context.id' => 'context_id',
+       'Context.title' => 'context_title',
+       'Context.label' => 'context_label',
+       'Context.sourcedId' => 'lis_course_section_sourcedid',
+       'Context.longDescription' => '$COURSE->summary',
+       'Context.timeFrame.begin' => '$COURSE->startdate',
        'CourseSection.title' => 'context_title',
        'CourseSection.label' => 'context_label',
        'CourseSection.sourcedId' => 'lis_course_section_sourcedid',
