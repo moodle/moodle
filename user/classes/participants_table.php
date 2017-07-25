@@ -96,6 +96,16 @@ class participants_table extends \table_sql {
     protected $context;
 
     /**
+     * @var \stdClass[] List of roles indexed by roleid.
+     */
+    protected $allroles;
+
+    /**
+     * @var \stdClass[] Assignable roles in this course.
+     */
+    protected $assignableroles;
+
+    /**
      * Sets up the table.
      *
      * @param int $courseid
@@ -133,6 +143,9 @@ class participants_table extends \table_sql {
             $headers[] = get_user_field_name($field);
             $columns[] = $field;
         }
+
+        $headers[] = get_string('roles');
+        $columns[] = 'roles';
 
         // Load and cache the course groupinfo.
         // Add column for groups.
@@ -175,6 +188,8 @@ class participants_table extends \table_sql {
         $this->extrafields = $extrafields;
         $this->context = $context;
         $this->groups = groups_get_all_groups($courseid, 0, 0, 'g.*', true);
+        $this->allroles = role_fix_names(get_all_roles($this->context), $this->context);
+        $this->assignableroles = get_assignable_roles($this->context, ROLENAME_ALIAS, false);
     }
 
     /**
@@ -202,6 +217,31 @@ class participants_table extends \table_sql {
         global $OUTPUT;
 
         return $OUTPUT->user_picture($data, array('size' => 35, 'courseid' => $this->course->id, 'includefullname' => true));
+    }
+
+    /**
+     * User roles column.
+     *
+     * @param \stdClass $data
+     * @return string
+     */
+    public function col_roles($data) {
+        global $OUTPUT;
+
+        $roles = get_user_roles($this->context, $data->id, true, 'c.contextlevel DESC, r.sortorder ASC');
+        $getrole = function($role) {
+            return $role->roleid;
+        };
+        $ids = array_values(array_unique(array_map($getrole, $roles)));
+
+        $editable = new \core_user\output\user_roles_editable($this->course,
+                                                              $this->context,
+                                                              $data,
+                                                              $this->allroles,
+                                                              $this->assignableroles,
+                                                              $ids);
+
+        return $OUTPUT->render_from_template('core/inplace_editable', $editable->export_for_template($OUTPUT));
     }
 
     /**

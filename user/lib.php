@@ -1385,3 +1385,17 @@ function user_get_user_lastaccess_sql($accesssince = null, $tableprefix = 'u') {
         return $tableprefix . '.lastaccess != 0 AND u.lastaccess < ' . $accesssince;
     }
 }
+
+/**
+ * Callback for inplace editable API.
+ *
+ * @param string $itemtype - Only user_roles is supported.
+ * @param string $itemid - Courseid and userid separated by a :
+ * @param string $newvalue - json encoded list of roleids.
+ * @return \core\output\inplace_editable
+ */
+function core_user_inplace_editable($itemtype, $itemid, $newvalue) {
+    if ($itemtype === 'user_roles') {
+        return \core_user\output\user_roles_editable::update($itemid, $newvalue);
+    }
+}
