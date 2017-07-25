@@ -54,7 +54,7 @@ class user_roles_editable extends \core\output\inplace_editable {
      * @param \stdClass $user The current user
      * @param \stdClass[] $courseroles The list of course roles.
      * @param \stdClass[] $assignableroles The list of assignable roles in this course.
-     * @param string $value Array of role ids.
+     * @param array $value Array of role ids.
      */
     public function __construct($course, $context, $user, $courseroles, $assignableroles, $value) {
         // Check capabilities to get editable value.
