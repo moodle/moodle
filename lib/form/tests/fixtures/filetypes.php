@@ -57,6 +57,8 @@ class test_form extends moodleform {
         $mform->addElement('filetypes', 'filetypes3', 'Unknown file types are allowed here',
             ['allowunknown' => true]);
 
+        $mform->addElement('filemanager', 'fileman1', 'Picky file manager', null, ['accepted_types' => '.txt']);
+
         $this->add_action_buttons(false);
     }
 }

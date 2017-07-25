@@ -35,3 +35,14 @@ Feature: There is a form element allowing to select filetypes
     And I should see "These file types are not allowed here: .doc, .docx, .rtf"
     And I should see "It is not allowed to select 'All file types' here"
     And I should not see "Unknown file types: .neverminditdoesnotexist"
+
+  @javascript @_file_upload
+  Scenario: File manager element implicitly validates submitted files
+    # We can't directly upload the invalid file here as the upload repository would throw an exception.
+    # So instead we try to trick the filemanager, to be finally stopped by the implicit validation.
+    And I upload "lib/tests/fixtures/empty.txt" file to "Picky file manager" filemanager
+    And I follow "empty.txt"
+    And I set the field "Name" to "renamed.exe"
+    And I press "Update"
+    When I press "Save changes"
+    Then I should see "Some files (renamed.exe) cannot be uploaded. Only file types .txt are allowed."
