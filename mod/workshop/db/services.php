@@ -45,4 +45,12 @@ $functions = array(
         'capabilities'  => 'mod/workshop:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'mod_workshop_get_user_plan' => array(
+        'classname'     => 'mod_workshop_external',
+        'methodname'    => 'get_user_plan',
+        'description'   => 'Return the planner information for the given user.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/workshop:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );
