@@ -2886,11 +2886,17 @@ class assign {
      * @param assign_plugin $plugin - The assignment plugin
      */
     public function download_rewrite_pluginfile_urls($text, $user, $plugin) {
-        $groupmode = groups_get_activity_groupmode($this->get_course_module());
+        // The groupname prefix for the urls doesn't depend on the group mode of the assignment instance.
+        // Rather, it should be determined by checking the group submission settings of the instance,
+        // which is what download_submission() does when generating the file name prefixes.
         $groupname = '';
-        if ($groupmode) {
-            $groupid = groups_get_activity_group($this->get_course_module(), true);
-            $groupname = groups_get_group_name($groupid).'-';
+        if ($this->get_instance()->teamsubmission) {
+            $submissiongroup = $this->get_submission_group($user->id);
+            if ($submissiongroup) {
+                $groupname = $submissiongroup->name . '-';
+            } else {
+                $groupname = get_string('defaultteam', 'assign') . '-';
+            }
         }
 
         if ($this->is_blind_marking()) {
@@ -3114,7 +3120,9 @@ class assign {
         $groupname = '';
         if ($groupmode) {
             $groupid = groups_get_activity_group($this->get_course_module(), true);
-            $groupname = groups_get_group_name($groupid).'-';
+            if (!empty($groupid)) {
+                $groupname = groups_get_group_name($groupid) . '-';
+            }
         }
 
         // Construct the zip file name.
