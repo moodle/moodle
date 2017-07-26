@@ -65,11 +65,9 @@ class refresh_mod_calendar_events_task extends adhoc_task {
                 // This plugin is not in the list, move on to the next one.
                 continue;
             }
-            // Check if the plugin implements *_refresh_events() and call it when it does.
-            if (component_callback_exists('mod_' . $plugin->name, 'refresh_events')) {
-                mtrace('Refreshing events for ' . $plugin->name);
-                course_module_bulk_update_calendar_events($plugin->name, $courseid);
-            }
+            // Refresh events.
+            mtrace('Refreshing events for ' . $plugin->name);
+            course_module_bulk_update_calendar_events($plugin->name, $courseid);
         }
     }
 }
