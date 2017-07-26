@@ -986,7 +986,9 @@ class model {
     public function get_predictions_contexts() {
         global $DB;
 
-        $sql = "SELECT DISTINCT contextid FROM {analytics_predictions} WHERE modelid = ?";
+        $sql = "SELECT DISTINCT ap.contextid FROM {analytics_predictions} ap
+                  JOIN {context} ctx ON ctx.id = ap.contextid
+                 WHERE ap.modelid = ?";
         return $DB->get_records_sql($sql, array($this->model->id));
     }
 
@@ -1044,16 +1046,16 @@ class model {
         \core_analytics\manager::check_can_list_insights($context);
 
         // Filters out previous predictions keeping only the last time range one.
-        $sql = "SELECT tip.*
-                  FROM {analytics_predictions} tip
+        $sql = "SELECT ap.*
+                  FROM {analytics_predictions} ap
                   JOIN (
                     SELECT sampleid, max(rangeindex) AS rangeindex
                       FROM {analytics_predictions}
                      WHERE modelid = ? and contextid = ?
                     GROUP BY sampleid
-                  ) tipsub
-                  ON tip.sampleid = tipsub.sampleid AND tip.rangeindex = tipsub.rangeindex
-                 WHERE tip.modelid = ? and tip.contextid = ?";
+                  ) apsub
+                  ON ap.sampleid = apsub.sampleid AND ap.rangeindex = apsub.rangeindex
+                 WHERE ap.modelid = ? and ap.contextid = ?";
         $params = array($this->model->id, $context->id, $this->model->id, $context->id);
         if (!$predictions = $DB->get_records_sql($sql, $params)) {
             return array();
