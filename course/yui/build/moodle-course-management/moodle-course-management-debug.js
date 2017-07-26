@@ -1360,6 +1360,7 @@ Category.prototype = {
                     return Templates.renderPix('t/switch_minus', 'core', string);
                 })
                 .then(function(html) {
+                    html = Y.Node.create(html).addClass('tree-icon').getDOMNode().outerHTML;
                     return action.set('innerHTML', html);
                 }).fail(Notification.exception);
         });
@@ -1389,6 +1390,7 @@ Category.prototype = {
                     return Templates.renderPix('t/switch_plus', 'core', string);
                 })
                 .then(function(html) {
+                    html = Y.Node.create(html).addClass('tree-icon').getDOMNode().outerHTML;
                     return action.set('innerHTML', html);
                 }).fail(Notification.exception);
         });
