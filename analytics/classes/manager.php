@@ -370,14 +370,17 @@ class manager {
         global $DB;
 
         if (!$predictionobj = $DB->get_record('analytics_predictions', array('id' => $predictionid))) {
-            throw new \moodle_exception('errorpredictionnotfound', 'report_insights');
+            throw new \moodle_exception('errorpredictionnotfound', 'analytics');
+        }
+
+        $context = \context::instance_by_id($predictionobj->contextid, IGNORE_MISSING);
+        if (!$context) {
+            throw new \moodle_exception('errorpredictioncontextnotavailable', 'analytics');
         }
 
         if ($requirelogin) {
             list($context, $course, $cm) = get_context_info_array($predictionobj->contextid);
             require_login($course, false, $cm);
-        } else {
-            $context = \context::instance_by_id($predictionobj->contextid);
         }
 
         self::check_can_list_insights($context);

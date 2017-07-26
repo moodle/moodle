@@ -74,11 +74,6 @@ class models_list implements \renderable, \templatable {
                     foreach ($predictioncontexts as $contextid => $unused) {
                         // We prepare this to be used as single_select template options.
                         $context = \context::instance_by_id($contextid);
-                        if (empty($context)) {
-                            // The context may have been deleted.
-                            unset($predictioncontexts[$contextid]);
-                            continue;
-                        }
 
                         // Special name for system level predictions as showing "System is not visually nice".
                         if ($contextid == SYSCONTEXTID) {
