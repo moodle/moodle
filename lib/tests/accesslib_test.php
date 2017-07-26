@@ -1586,7 +1586,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $user3 = $this->getDataGenerator()->create_user();
 
         $u1roles = get_user_roles($coursecontext, $user1->id);
-        
+
         $u2roles = get_user_roles($coursecontext, $user2->id);
 
         $allroles = get_users_roles($coursecontext);
