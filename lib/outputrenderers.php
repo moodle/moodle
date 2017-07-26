@@ -814,6 +814,68 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Returns standard navigation between activities in a course.
+     *
+     * @return string the navigation HTML.
+     */
+    public function activity_navigation() {
+        // First we should check if we want to add navigation.
+        $context = $this->page->context;
+        if ($this->page->pagelayout !== 'incourse' || $context->contextlevel != CONTEXT_MODULE) {
+            return '';
+        }
+
+        // If the activity is in stealth mode, show no links.
+        if ($this->page->cm->is_stealth()) {
+            return '';
+        }
+
+        // Get a list of all the activities in the course.
+        $course = $this->page->cm->get_course();
+        $modules = get_fast_modinfo($course->id)->get_cms();
+
+        // Put the modules into an array in order by the position they are shown in the course.
+        $mods = [];
+        foreach ($modules as $module) {
+            // Only add activities the user can access, aren't in stealth mode and have a url (eg. mod_label does not).
+            if (!$module->uservisible || $module->is_stealth() || empty($module->url)) {
+                continue;
+            }
+            $mods[$module->id] = $module;
+        }
+
+        $nummods = count($mods);
+
+        // If there is only one mod then do nothing.
+        if ($nummods == 1) {
+            return '';
+        }
+
+        // Get an array of just the course module ids used to get the cmid value based on their position in the course.
+        $modids = array_keys($mods);
+
+        // Get the position in the array of the course module we are viewing.
+        $position = array_search($this->page->cm->id, $modids);
+
+        $prevmod = null;
+        $nextmod = null;
+
+        // Check if we have a previous mod to show.
+        if ($position > 0) {
+            $prevmod = $mods[$modids[$position - 1]];
+        }
+
+        // Check if we have a next mod to show.
+        if ($position < ($nummods - 1)) {
+            $nextmod = $mods[$modids[$position + 1]];
+        }
+
+        $activitynav = new \core_course\output\activity_navigation($prevmod, $nextmod);
+        $renderer = $this->page->get_renderer('core', 'course');
+        return $renderer->render($activitynav);
+    }
+
+    /**
      * The standard tags (typically script tags that are not needed earlier) that
      * should be output after everything else. Designed to be called in theme layout.php files.
      *

@@ -2100,6 +2100,19 @@ class core_course_renderer extends plugin_renderer_base {
                 set_attributes(array('class' => 'frontpage-category-names'));
         return $this->coursecat_tree($chelper, coursecat::get(0));
     }
+
+    /**
+     * Renders the activity navigation.
+     *
+     * Defer to template.
+     *
+     * @param \core_course\output\activity_navigation $page
+     * @return string html for the page
+     */
+    public function render_activity_navigation(\core_course\output\activity_navigation $page) {
+        $data = $page->export_for_template($this->output);
+        return $this->output->render_from_template('core_course/activity_navigation', $data);
+    }
 }
 
 /**

@@ -931,6 +931,7 @@ $string['hiddensections'] = 'Hidden sections';
 $string['hiddensections_help'] = 'This setting determines whether hidden sections are displayed to students in collapsed form (perhaps for a course in weekly format to indicate holidays) or are completely hidden.';
 $string['hiddensectionscollapsed'] = 'Hidden sections are shown in collapsed form';
 $string['hiddensectionsinvisible'] = 'Hidden sections are completely invisible';
+$string['hiddenwithbrackets'] = '(hidden)';
 $string['hide'] = 'Hide';
 $string['hideadvancedsettings'] = 'Hide advanced settings';
 $string['hidechartdata'] = 'Hide chart data';
