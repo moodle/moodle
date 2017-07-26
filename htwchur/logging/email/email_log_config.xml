@@ -3,7 +3,7 @@
 	<renderer renderedClass="email_log_info" renderingClass="email_log_renderer" />
     <appender name="emailRollingFile" class="LoggerAppenderRollingFile">
         <layout class="LoggerLayoutSimple" />
-        <param name="file" value="/var/log/moodle/email/emaillog.log" />
+        <param name="file" value="/var/www/moodle/log/email/emaillog.log" />
         <param name="append" value="true" />
         <param name="maxFileSize" value="100MB" />
     </appender>
