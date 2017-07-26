@@ -105,6 +105,11 @@ class participants_table extends \table_sql {
     protected $allroles;
 
     /**
+     * @var \stdClass[] List of roles indexed by roleid.
+     */
+    protected $allroleassignments;
+
+    /**
      * @var \stdClass[] Assignable roles in this course.
      */
     protected $assignableroles;
@@ -201,6 +206,7 @@ class participants_table extends \table_sql {
         $this->context = $context;
         $this->groups = groups_get_all_groups($courseid, 0, 0, 'g.*', true);
         $this->allroles = role_fix_names(get_all_roles($this->context), $this->context);
+        $this->allroleassignments = get_users_roles($this->context, [], true, 'c.contextlevel DESC, r.sortorder ASC');
         $this->assignableroles = get_assignable_roles($this->context, ROLENAME_ALIAS, false);
     }
 
@@ -258,7 +264,7 @@ class participants_table extends \table_sql {
     public function col_roles($data) {
         global $OUTPUT;
 
-        $roles = get_user_roles($this->context, $data->id, true, 'c.contextlevel DESC, r.sortorder ASC');
+        $roles = isset($this->allroleassignments[$data->id]) ? $this->allroleassignments[$data->id] : [];
         $getrole = function($role) {
             return $role->roleid;
         };
