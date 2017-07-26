@@ -28,15 +28,10 @@ require_once("$CFG->libdir/formslib.php");
 
 class enrol_user_enrolment_form extends moodleform {
     function definition() {
-        global $CFG, $DB;
-
         $mform = $this->_form;
 
-        $user   = $this->_customdata['user'];
-        $course = $this->_customdata['course'];
-        $ue     = $this->_customdata['ue'];
-
-        $mform->addElement('header','general', '');
+        $ue = $this->_customdata['ue'];
+        $modal = !empty($this->_customdata['modal']);
 
         $options = array(ENROL_USER_ACTIVE    => get_string('participationactive', 'enrol'),
                          ENROL_USER_SUSPENDED => get_string('participationsuspended', 'enrol'));
@@ -56,7 +51,10 @@ class enrol_user_enrolment_form extends moodleform {
         $mform->addElement('hidden', 'ifilter');
         $mform->setType('ifilter', PARAM_ALPHA);
 
-        $this->add_action_buttons();
+        // Show action buttons if this is not being rendered as a fragment.
+        if (!$modal) {
+            $this->add_action_buttons();
+        }
 
         $this->set_data(array(
             'ue' => $ue->id,
@@ -71,8 +69,7 @@ class enrol_user_enrolment_form extends moodleform {
 
         if (!empty($data['timestart']) and !empty($data['timeend'])) {
             if ($data['timestart'] >= $data['timeend']) {
-                $errors['timestart'] = get_string('error');
-                $errors['timeend'] = get_string('error');
+                $errors['timeend'] = get_string('enroltimeendinvalid', 'enrol');
             }
         }
 
