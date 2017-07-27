@@ -60,8 +60,8 @@ abstract class equal_parts extends base {
 
             // Check the end of the previous time range.
             if ($i > 0 && $start === $ranges[$i - 1]['end']) {
-                // We deduct 1 second from the previous end so each timestamp only belongs to 1 range.
-                $ranges[$i - 1]['end'] = $ranges[$i - 1]['end'] - 1;
+                // We add 1 second so each timestamp only belongs to 1 range.
+                $start = $start + 1;
             }
 
             if ($i === ($nparts - 1)) {
