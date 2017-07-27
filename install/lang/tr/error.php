@@ -46,7 +46,9 @@ $string['dmlexceptiononinstall'] = '<p>Bir veritabanı hatası oluştu [{$a->err
 $string['downloadedfilecheckfailed'] = 'İndirilen dosya kontrolü hatası';
 $string['invalidmd5'] = 'Kontrol değişkeni yanlış - yeniden deneyin';
 $string['missingrequiredfield'] = 'Gerekli alanlardan bazıları eksik';
-$string['remotedownloaderror'] = 'Bileşeni sunucunuza indirirken hata oluştu, lütfen proxy(vekil) ayarlarını kontrol edin. PHP cURL eklentisi şiddetle tavsiye edilir.<br /><br /><a href="{$a->url}">{$a->url}</a><br />dosyasını kendiniz indirmeli ve indirdiğiniz dosyayı sunucunuzundaki "{$a->dest}" klasörüne kaydetmeli ve zip arşivini açmalısınız.';
+$string['remotedownloaderror'] = '<p>Bileşeni sunucunuza indirirken hata oluştu, lütfen proxy ayarlarını kontrol edin. PHP cURL eklentisi şiddetle tavsiye edilir.</p>
+<p><a href="{$a->url}">{$a->url}</a> dosyasını kendiniz indirmeli ve indirdiğiniz dosyayı sunucunuzundaki "{$a->dest}" klasörüne kaydetmeli ve zip arşivini açmalısınız.
+</p>';
 $string['wrongdestpath'] = 'Yanlış hedef yolu';
 $string['wrongsourcebase'] = 'Yanlış kaynak URL tabanı';
 $string['wrongzipfilename'] = 'Yanlış ZIP dosya adı';
