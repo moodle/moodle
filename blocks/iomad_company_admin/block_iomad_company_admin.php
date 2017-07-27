@@ -61,7 +61,7 @@ class block_iomad_company_admin extends block_base {
     }
 
     public function get_content() {
-        global $OUTPUT, $CFG, $SESSION;
+        global $OUTPUT, $CFG, $SESSION, $USER;
 
         // TODO: Really need a cap check to prevent it being displayed at all.
 
