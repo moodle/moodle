@@ -59,10 +59,11 @@ $string['insightinfomessage'] = 'The system generated some insights for you: {$a
 $string['insightinfomessagehtml'] = 'The system generated some insights for you: <a href="{$a}">{$a}</a>.';
 $string['invalidtimesplitting'] = 'Model with id {$a} needs a time splitting method before it can be used to train';
 $string['invalidanalysablefortimesplitting'] = 'It can not be analysed using {$a} time splitting method';
-$string['modeloutputdir'] = 'Models output directory';
-$string['modeloutputdirinfo'] = 'Directory where prediction processors store all evaluation info. Useful for debugging and research.';
 $string['nocourses'] = 'No courses to analyse';
 $string['nodata'] = 'No data available';
+$string['modeloutputdir'] = 'Models output directory';
+$string['modeloutputdirinfo'] = 'Directory where prediction processors store all evaluation info. Useful for debugging and research.';
+$string['noevaluationbasedassumptions'] = 'Models based on assumptions can not be evaluated';
 $string['noinsightsmodel'] = 'This model does not generate insights';
 $string['noinsights'] = 'No insights reported';
 $string['nonewdata'] = 'No new data available';
