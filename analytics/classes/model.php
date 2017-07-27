@@ -467,8 +467,8 @@ class model {
         if ($this->is_static()) {
             $this->get_analyser()->add_log(get_string('noevaluationbasedassumptions', 'analytics'));
             $result = new \stdClass();
-            $result->status = self::OK;
-            return $result;
+            $result->status = self::NO_DATASET;
+            return array($this->get_time_splitting()->get_id() => $result);
         }
 
         $options['evaluation'] = true;
