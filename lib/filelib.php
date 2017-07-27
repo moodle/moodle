@@ -237,6 +237,9 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
     if (!isset($options['maxbytes'])) {
         $options['maxbytes'] = 0; // unlimited
     }
+    if (!isset($options['removeorphaneddrafts'])) {
+        $options['removeorphaneddrafts'] = false; // Don't remove orphaned draft files by default.
+    }
 
     if ($options['trusttext']) {
         $data->{$field.'trust'} = trusttext_trusted($context);
@@ -249,6 +252,10 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
     if ($options['maxfiles'] == 0 or is_null($filearea) or is_null($itemid) or empty($editor['itemid'])) {
         $data->{$field} = $editor['text'];
     } else {
+        // Clean the user drafts area of any files not referenced in the editor text.
+        if ($options['removeorphaneddrafts']) {
+            file_remove_editor_orphaned_files($editor);
+        }
         $data->{$field} = file_save_draft_area_files($editor['itemid'], $context->id, $component, $filearea, $itemid, $options, $editor['text'], $options['forcehttps']);
     }
     $data->{$field.'format'} = $editor['format'];
@@ -792,6 +799,38 @@ function file_restore_source_field_from_draft_file($storedfile) {
     }
     return $storedfile;
 }
+
+/**
+ * Removes those files from the user drafts filearea which are not referenced in the editor text.
+ *
+ * @param stdClass $editor The online text editor element from the submitted form data.
+ */
+function file_remove_editor_orphaned_files($editor) {
+    global $CFG, $USER;
+
+    // Find those draft files included in the text, and generate their hashes.
+    $context = context_user::instance($USER->id);
+    $baseurl = $CFG->wwwroot . '/draftfile.php/' . $context->id . '/user/draft/' . $editor['itemid'] . '/';
+    $pattern = "/" . preg_quote($baseurl, '/') . "(.+?)[\?\"']/";
+    preg_match_all($pattern, $editor['text'], $matches);
+    $usedfilehashes = [];
+    foreach ($matches[1] as $matchedfilename) {
+        $matchedfilename = urldecode($matchedfilename);
+        $usedfilehashes[] = \file_storage::get_pathname_hash($context->id, 'user', 'draft', $editor['itemid'], '/',
+                                                             $matchedfilename);
+    }
+
+    // Now, compare the hashes of all draft files, and remove those which don't match used files.
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'user', 'draft', $editor['itemid'], 'id', false);
+    foreach ($files as $file) {
+        $tmphash = $file->get_pathnamehash();
+        if (!in_array($tmphash, $usedfilehashes)) {
+            $file->delete();
+        }
+    }
+}
+
 /**
  * Saves files from a draft file area to a real one (merging the list of files).
  * Can rewrite URLs in some content at the same time if desired.
