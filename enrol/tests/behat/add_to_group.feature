@@ -32,7 +32,8 @@ Feature: Users can be added to multiple groups at once
     And I click on "Group 1" item in the autocomplete list
     And I open the autocomplete suggestions list
     And I click on "Group 2" item in the autocomplete list
-    And I click on "Save changes" "link"
+    And I press key "27" in the field "Edit groups for \"Student 1\""
+    And I click on "Save changes" "link" in the "student1" "table_row"
     Then I should see "Group 1, Group 2"
 
   @javascript
