@@ -821,7 +821,8 @@ class core_renderer extends renderer_base {
     public function activity_navigation() {
         // First we should check if we want to add navigation.
         $context = $this->page->context;
-        if ($this->page->pagelayout !== 'incourse' || $context->contextlevel != CONTEXT_MODULE) {
+        if (($this->page->pagelayout !== 'incourse' && $this->page->pagelayout !== 'frametop')
+            || $context->contextlevel != CONTEXT_MODULE) {
             return '';
         }
 
