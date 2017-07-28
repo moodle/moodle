@@ -1,6 +1,18 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+
+* Navigation between activities via a previous and next link was added to Boost, Clean and Bootstrapbase. This
+  was made possible by a new function core_renderer->activity_navigation(). However, there was an issue when linking
+  to the mod_resource and mod_url view.php pages where it would automatically download the file, or redirect to
+  the URL. It was noticed that this was not the case when editing the module and clicking 'Save and display' which would
+  take you to the pages without downloading the file or redirecting to a link. The reason this worked was because of the
+  hard-coded check 'if (strpos(get_local_referer(false), 'modedit.php') === false) {' in the view.php files. This check
+  has been removed in favour of an optional_param('forceview'). If you are using the above hard-coded check in your
+  plugin it is recommended to remove it and use the optional param as it will prevent the navigation from working as
+  expected.
+
 === 3.3 ===
 
 * External functions that were returning file information now return the following additional file fields:

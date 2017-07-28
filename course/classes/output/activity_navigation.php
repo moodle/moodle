@@ -58,23 +58,25 @@ class activity_navigation implements renderable, templatable {
 
         // Check if there is a previous module to display.
         if ($prevmod) {
+            $linkurl = new \moodle_url($prevmod->url, array('forceview' => 1));
             $linkname = $prevmod->name;
             if (!$prevmod->visible) {
                 $linkname .= ' ' . get_string('hiddenwithbrackets');
             }
 
-            $link = new \action_link($prevmod->url, $OUTPUT->larrow() . ' ' . $linkname);
+            $link = new \action_link($linkurl, $OUTPUT->larrow() . ' ' . $linkname);
             $this->prevlink = $OUTPUT->render($link);
         }
 
         // Check if there is a next module to display.
         if ($nextmod) {
+            $linkurl = new \moodle_url($nextmod->url, array('forceview' => 1));
             $linkname = $nextmod->name;
             if (!$nextmod->visible) {
                 $linkname .= ' ' . get_string('hiddenwithbrackets');
             }
 
-            $link = new \action_link($nextmod->url, $linkname . ' ' . $OUTPUT->rarrow());
+            $link = new \action_link($linkurl, $linkname . ' ' . $OUTPUT->rarrow());
             $this->nextlink = $OUTPUT->render($link);
         }
     }
