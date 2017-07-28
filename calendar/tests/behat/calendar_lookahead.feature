@@ -1,4 +1,4 @@
-@core @core_calendar
+@core @core_calendar @javascript
 Feature: Limit displayed upcoming events
   In order to filter what is displayed on the calendar
   As a user
@@ -23,10 +23,9 @@ Feature: Limit displayed upcoming events
     And I follow "This month"
     And I click on "a.next" "css_element"
     And I click on "a.next" "css_element"
-    And I create a calendar event:
+    When I create a calendar event:
       | Type of event     | course |
       | Event title       | Two months away event |
-    When I follow "C1"
     Then I should not see "Two months away event"
     And I am on site homepage
     And I follow "Preferences" in the user menu

@@ -4,11 +4,14 @@ Feature: View a site event on the frontpage
   As a teacher
   I can view the event in the upcoming events block
 
-  Scenario: View a global event in the upcoming events block on the frontpage
+  Background:
     Given the following "users" exist:
       | username | firstname | lastname | email | idnumber |
       | teacher1 | Teacher | 1 | teacher1@example.com | T1 |
-    And I log in as "admin"
+
+  @javascript
+  Scenario: View a global event in the upcoming events block on the frontpage
+    Given I log in as "admin"
     And I create a calendar event with form data:
       | id_eventtype | Site |
       | id_name | My Site Event |
