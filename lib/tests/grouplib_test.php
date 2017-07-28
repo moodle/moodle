@@ -1548,6 +1548,9 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertEquals([$user1->id, $user3->id], array_keys($members), '', 0.0, 10, true);
     }
 
+    /**
+     * Test groups_get_all_groups_for_courses() method.
+     */
     public function test_groups_get_all_groups_for_courses_no_courses() {
         $this->resetAfterTest(true);
         $generator = $this->getDataGenerator();
@@ -1555,6 +1558,9 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertEquals([], groups_get_all_groups_for_courses([]));
     }
 
+    /**
+     * Test groups_get_all_groups_for_courses() method.
+     */
     public function test_groups_get_all_groups_for_courses_with_courses() {
         $this->resetAfterTest(true);
         $generator = $this->getDataGenerator();
@@ -1606,7 +1612,7 @@ class core_grouplib_testcase extends advanced_testcase {
         $generator->create_group_member(array('groupid' => $group9->id, 'userid' => $user2->id));
 
         $result = groups_get_all_groups_for_courses($courses);
-        $assertPropertiesMatch = function($expected, $actual) {
+        $assertpropertiesmatch = function($expected, $actual) {
             $props = get_object_vars($expected);
 
             foreach ($props as $name => $val) {
@@ -1627,7 +1633,7 @@ class core_grouplib_testcase extends advanced_testcase {
         $coursegroup = $coursegroups[$group1->id];
         $this->assertCount(1, $coursegroups);
         $this->assertEquals([], $coursegroup->members);
-        $assertPropertiesMatch($group1, $coursegroup);
+        $assertpropertiesmatch($group1, $coursegroup);
 
         // Course 3 has one group with one member.
         $coursegroups = $result[$course3->id];
@@ -1635,7 +1641,7 @@ class core_grouplib_testcase extends advanced_testcase {
         $groupmember1 = $coursegroup->members[$user1->id];
         $this->assertCount(1, $coursegroups);
         $this->assertCount(1, $coursegroup->members);
-        $assertPropertiesMatch($group2, $coursegroup);
+        $assertpropertiesmatch($group2, $coursegroup);
         $this->assertEquals($user1->id, $groupmember1->userid);
 
         // Course 4 has one group with multiple members.
@@ -1645,7 +1651,7 @@ class core_grouplib_testcase extends advanced_testcase {
         $groupmember2 = $coursegroup->members[$user2->id];
         $this->assertCount(1, $coursegroups);
         $this->assertCount(2, $coursegroup->members);
-        $assertPropertiesMatch($group3, $coursegroup);
+        $assertpropertiesmatch($group3, $coursegroup);
         $this->assertEquals($user1->id, $groupmember1->userid);
         $this->assertEquals($user2->id, $groupmember2->userid);
 
@@ -1656,8 +1662,8 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertCount(2, $coursegroups);
         $this->assertEquals([], $coursegroup1->members);
         $this->assertEquals([], $coursegroup2->members);
-        $assertPropertiesMatch($group4, $coursegroup1);
-        $assertPropertiesMatch($group5, $coursegroup2);
+        $assertpropertiesmatch($group4, $coursegroup1);
+        $assertpropertiesmatch($group5, $coursegroup2);
 
         // Course 6 has multiple groups with one member.
         $coursegroups = $result[$course6->id];
@@ -1668,8 +1674,8 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertCount(2, $coursegroups);
         $this->assertCount(1, $coursegroup1->members);
         $this->assertCount(1, $coursegroup2->members);
-        $assertPropertiesMatch($group6, $coursegroup1);
-        $assertPropertiesMatch($group7, $coursegroup2);
+        $assertpropertiesmatch($group6, $coursegroup1);
+        $assertpropertiesmatch($group7, $coursegroup2);
         $this->assertEquals($user1->id, $group1member1->userid);
         $this->assertEquals($user1->id, $group2member1->userid);
 
@@ -1684,8 +1690,8 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertCount(2, $coursegroups);
         $this->assertCount(2, $coursegroup1->members);
         $this->assertCount(2, $coursegroup2->members);
-        $assertPropertiesMatch($group8, $coursegroup1);
-        $assertPropertiesMatch($group9, $coursegroup2);
+        $assertpropertiesmatch($group8, $coursegroup1);
+        $assertpropertiesmatch($group9, $coursegroup2);
         $this->assertEquals($user1->id, $group1member1->userid);
         $this->assertEquals($user2->id, $group1member2->userid);
         $this->assertEquals($user1->id, $group2member1->userid);

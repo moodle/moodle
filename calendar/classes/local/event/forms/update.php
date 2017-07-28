@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,7 +20,6 @@
  *
  * @copyright 2017 Ryan Wyllie <ryan@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package calendar
  */
 namespace core_calendar\local\event\forms;
 
@@ -39,9 +37,7 @@ class update extends create {
     /**
      * Add the repeat elements for the form when editing an existing event.
      *
-     * @method add_event_repeat_elements
      * @param MoodleQuickForm $mform
-     * @param stdClass $event The event properties
      */
     protected function add_event_repeat_elements($mform) {
         $event = $this->_customdata['event'];
@@ -50,7 +46,8 @@ class update extends create {
         $mform->setType('repeatid', PARAM_INT);
 
         $group = [];
-        $group[] = $mform->createElement('radio', 'repeateditall', null, get_string('repeateditall', 'calendar', $event->eventrepeats), 1);
+        $group[] = $mform->createElement('radio', 'repeateditall', null, get_string('repeateditall', 'calendar',
+                $event->eventrepeats), 1);
         $group[] = $mform->createElement('radio', 'repeateditall', null, get_string('repeateditthis', 'calendar'), 0);
         $mform->addGroup($group, 'repeatgroup', get_string('repeatedevents', 'calendar'), '<br />', false);
 

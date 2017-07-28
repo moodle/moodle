@@ -38,8 +38,7 @@ interface create_update_form_mapper_interface {
     /**
      * Generate the appropriate data for the form from a legacy event.
      *
-     * @method from_legacy_event_to_data
-     * @param calendar_event $legacyevent
+     * @param \calendar_event $legacyevent
      * @return stdClass
      */
     public function from_legacy_event_to_data(\calendar_event $legacyevent);
@@ -47,8 +46,7 @@ interface create_update_form_mapper_interface {
     /**
      * Generate the appropriate calendar_event properties from the form data.
      *
-     * @method from_data_to_event_properties
-     * @param stdClass $data
+     * @param \stdClass $data
      * @return stdClass
      */
     public function from_data_to_event_properties(\stdClass $data);

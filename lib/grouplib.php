@@ -352,44 +352,46 @@ function groups_get_all_groups_for_courses($courses) {
 
     $results = $DB->get_records_sql($sql, $params);
 
-    // The results will come back as a flat dataset thanks to the left
-    // join so we will need to do some post processing to blow it out
-    // into a more useable data structure.
-    //
-    // This loop will extract the distinct groups from the result set
-    // and add it's list of members to the object as a property called
-    // 'members'. Then each group will be added to the result set indexed
-    // by it's course id.
-    //
-    // The resulting data structure for $groups should be:
-    // $groups = [
-    //      '1' = [
-    //          '1' => (object) [
-    //              'id' => 1,
-    //              <rest of group properties>
-    //              'members' => [
-    //                  '1' => (object) [
-    //                      <group member properties>
-    //                  ],
-    //                  '2' => (object) [
-    //                      <group member properties>
-    //                  ]
-    //              ]
-    //          ],
-    //          '2' => (object) [
-    //              'id' => 2,
-    //              <rest of group properties>
-    //              'members' => [
-    //                  '1' => (object) [
-    //                      <group member properties>
-    //                  ],
-    //                  '3' => (object) [
-    //                      <group member properties>
-    //                  ]
-    //              ]
-    //          ]
-    //      ]
-    // ]
+    /** 
+     * The results will come back as a flat dataset thanks to the left
+     * join so we will need to do some post processing to blow it out
+     * into a more usable data structure.
+     *
+     * This loop will extract the distinct groups from the result set
+     * and add it's list of members to the object as a property called
+     * 'members'. Then each group will be added to the result set indexed
+     * by it's course id.
+     *
+     * The resulting data structure for $groups should be:
+     * $groups = [
+     *      '1' = [
+     *          '1' => (object) [
+     *              'id' => 1,
+     *              <rest of group properties>
+     *              'members' => [
+     *                  '1' => (object) [
+     *                      <group member properties>
+     *                  ],
+     *                  '2' => (object) [
+     *                      <group member properties>
+     *                  ]
+     *              ]
+     *          ],
+     *          '2' => (object) [
+     *              'id' => 2,
+     *              <rest of group properties>
+     *              'members' => [
+     *                  '1' => (object) [
+     *                      <group member properties>
+     *                  ],
+     *                  '3' => (object) [
+     *                      <group member properties>
+     *                  ]
+     *              ]
+     *          ]
+     *      ]
+     * ]
+     */
     foreach ($results as $key => $result) {
         $groupid = $result->gid;
         $courseid = $result->courseid;

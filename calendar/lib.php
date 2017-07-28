@@ -2744,7 +2744,7 @@ function calendar_get_allowed_types(&$allowed, $course = null, $groups = null) {
  *      'groupcourses' : array of courses that the groups belong to (can
  *                       be different from the list in 'course'.
  *
- * @param array The available types for the logged in user
+ * @return array The array of allowed types.
  */
 function calendar_get_all_allowed_types() {
     global $CFG, $USER;
@@ -3416,6 +3416,12 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses, $
     }, []);
 }
 
+/**
+ * Request and render event form fragment.
+ *
+ * @param array $args The fragment arguments.
+ * @return string The rendered mform fragment.
+ */
 function calendar_output_fragment_event_form($args) {
     global $CFG, $OUTPUT;
     require_once($CFG->dirroot.'/calendar/event_form.php');

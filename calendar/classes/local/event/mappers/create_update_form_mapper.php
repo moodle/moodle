@@ -47,8 +47,7 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
     /**
      * Generate the appropriate data for the form from a legacy event.
      *
-     * @method from_legacy_event_to_data
-     * @param calendar_event $legacyevent
+     * @param \calendar_event $legacyevent
      * @return stdClass
      */
     public function from_legacy_event_to_data(\calendar_event $legacyevent) {
@@ -69,8 +68,7 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
     /**
      * Generate the appropriate calendar_event properties from the form data.
      *
-     * @method from_data_to_event_properties
-     * @param stdClass $data
+     * @param \stdClass $data
      * @return stdClass
      */
     public function from_data_to_event_properties(\stdClass $data) {
@@ -105,13 +103,12 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
      * A helper function to calculate the time duration for an event based on
      * the event_form data.
      *
-     * @method get_time_duration_from_form_data
      * @param \stdClass $data event_form data
      * @return int
      */
     private function get_time_duration_from_form_data(\stdClass $data) {
         if ($data->duration == 1) {
-            return $data->timedurationuntil- $data->timestart;
+            return $data->timedurationuntil - $data->timestart;
         } else if ($data->duration == 2) {
             return $data->timedurationminutes * MINSECS;
         } else {
