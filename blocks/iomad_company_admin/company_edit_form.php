@@ -40,7 +40,7 @@ class company_edit_form extends company_moodleform {
         $this->companyrecord = $companyrecord;
         $this->firstcompany = $firstcompany;
         if (empty($this->companyrecord->theme)) {
-            $this->companyrecord->theme = 'iomadbootstrap';
+            $this->companyrecord->theme = 'iomadboost';
         }
         parent::__construct($actionurl);
     }
