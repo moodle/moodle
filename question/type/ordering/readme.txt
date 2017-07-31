@@ -60,4 +60,7 @@ funded by the Moodle Association of Japan, with partial funding from Sapporo Gak
 Coding enhancements and standardization in preparation for future merging into Moodle core
 were undertaken by Vadim Dvorovenko (Kemerovo State University of Culture and Arts, Russia).
 
+Development of "relative to correct" grading method commissioned by Anatoliy Markiv and
+sponsored by Kings College London, UK.
+
 many thanks to all concerned!
