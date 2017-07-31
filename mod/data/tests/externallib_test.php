@@ -696,6 +696,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(2, $result['entries']);
         $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals(2, $result['maxcount']);
 
         // Now as the other student I should receive my not approved entry. Apply ordering here.
         $this->setUser($this->student2);
@@ -703,6 +704,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(3, $result['entries']);
         $this->assertEquals(3, $result['totalcount']);
+        $this->assertEquals(3, $result['maxcount']);
         // The not approved one should be the first.
         $this->assertEquals($entry13, $result['entries'][0]['id']);
 
@@ -712,6 +714,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertEquals(1, $result['totalcount']);
+        $this->assertEquals(1, $result['maxcount']);
         $this->assertEquals($this->student3->id, $result['entries'][0]['userid']);
 
         // Same normal text search as teacher.
@@ -720,6 +723,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(4, $result['entries']);  // I can see all groups and non approved.
         $this->assertEquals(4, $result['totalcount']);
+        $this->assertEquals(4, $result['maxcount']);
 
         // Pagination.
         $this->setUser($this->teacher);
@@ -727,6 +731,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(2, $result['entries']);  // Only 2 per page.
         $this->assertEquals(4, $result['totalcount']);
+        $this->assertEquals(4, $result['maxcount']);
 
         // Now advanced search or not dinamic fields (user firstname for example).
         $this->setUser($this->student1);
@@ -737,6 +742,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertEquals(1, $result['totalcount']);
+        $this->assertEquals(2, $result['maxcount']);
         $this->assertEquals($this->student2->id, $result['entries'][0]['userid']);  // I only found mine!
 
         // Advanced search for fields.
@@ -748,6 +754,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(2, $result['entries']);  // Found two entries matching this.
         $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals(2, $result['maxcount']);
 
         // Combined search.
         $field2 = $DB->get_record('data_fields', array('type' => 'number'));
@@ -760,6 +767,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);  // Only one matching everything.
         $this->assertEquals(1, $result['totalcount']);
+        $this->assertEquals(2, $result['maxcount']);
 
         // Combined search (no results).
         $field2 = $DB->get_record('data_fields', array('type' => 'number'));
@@ -771,6 +779,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);  // Only one matching everything.
         $this->assertEquals(0, $result['totalcount']);
+        $this->assertEquals(2, $result['maxcount']);
     }
 
     /**
