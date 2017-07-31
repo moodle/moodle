@@ -40,7 +40,7 @@ Feature: Set a quiz to be marked complete when the student passes
     And I set the field "True" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
-    And I follow "C1"
+    And I am on "Course 1" course homepage
     Then "Completed: Test quiz name" "icon" should exist in the "li.modtype_quiz" "css_element"
     And I log out
     And I log in as "teacher1"

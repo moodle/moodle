@@ -109,7 +109,6 @@ Feature: Block activity modules
       | workshop   | Test workshop name     | Test workshop description     | C1     | workshop1   |
 
     When I log in as "admin"
-    And I am on course index
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Activities" block
     And I click on "Assignments" "link" in the "Activities" "block"

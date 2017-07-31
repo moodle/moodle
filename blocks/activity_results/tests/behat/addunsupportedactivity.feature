@@ -22,7 +22,7 @@ Feature: The activity results block doesn't display student scores for unsupport
       | Assignment name | Test assignment |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
-    And I follow "C1"
+    And I am on "Course 1" course homepage
     And I add the "Activity results" block
     And I configure the "Activity results" block
     And I set the following fields to these values:

@@ -36,7 +36,7 @@ Feature: edit_availability
     And I add a "Page" to section "1"
     Then "Restrict access" "fieldset" should not exist
 
-    Given I follow "C1"
+    Given I am on "Course 1" course homepage
     When I edit the section "1"
     Then "Restrict access" "fieldset" should not exist
 
@@ -47,7 +47,7 @@ Feature: edit_availability
     And I add a "Page" to section "1"
     Then "Restrict access" "fieldset" should exist
 
-    Given I follow "C1"
+    Given I am on "Course 1" course homepage
     When I edit the section "1"
     Then "Restrict access" "fieldset" should exist
 

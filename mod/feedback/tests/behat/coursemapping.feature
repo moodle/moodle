@@ -81,7 +81,7 @@ Feature: Mapping courses in a feedback
       | this is a simple multiple choice | option d |
     And I press "Submit your answers"
     And I press "Continue"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I click on "Course feedback" "link" in the "Feedback" "block"
     And I follow "Answer the questions..."
     And I should not see "Acceptance test site" in the ".feedback_form" "css_element"

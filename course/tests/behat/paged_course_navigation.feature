@@ -12,9 +12,9 @@ Feature: Course paged mode
     And I log in as "admin"
     And I am on "Course 1" course homepage
     Then I click on <section2> "link" in the <section2> "section"
-    And I follow "C1"
+    And I am on "Course 1" course homepage
     And I click on <section3> "link" in the <section3> "section"
-    And I follow "C1"
+    And I am on "Course 1" course homepage
     And I click on <section1> "link" in the <section1> "section"
     And I should see <section1> in the "div.single-section" "css_element"
     And I should see <section2> in the ".single-section span.mdl-right" "css_element"
@@ -45,9 +45,9 @@ Feature: Course paged mode
     And I log in as "admin"
     And I am on "Course 1" course homepage
     Then I click on <section2> "link" in the <section2> "section"
-    And I follow "C1"
+    And I am on "Course 1" course homepage
     And I click on <section3> "link" in the <section3> "section"
-    And I follow "C1"
+    And I am on "Course 1" course homepage
     And I click on <section1> "link" in the <section1> "section"
     And I should see <section1> in the "div.single-section" "css_element"
     And I should see <section2> in the ".single-section span.mdl-right" "css_element"

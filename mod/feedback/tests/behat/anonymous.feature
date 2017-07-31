@@ -247,7 +247,7 @@ Feature: Anonymous feedback
 
   Scenario: Collecting new non-anonymous feedback from a previously anonymous feedback activity
     When I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
@@ -260,7 +260,7 @@ Feature: Anonymous feedback
       | Maximum characters accepted | 200                    |
     And I log out
     When I log in as "user1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Answer the questions..."
     And I set the following fields to these values:
@@ -269,7 +269,7 @@ Feature: Anonymous feedback
     And I log out
     # Switch to non-anon responses.
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
@@ -278,7 +278,7 @@ Feature: Anonymous feedback
     And I log out
     # Now leave a non-anon feedback as user1
     When I log in as "user1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Answer the questions..."
     And I set the following fields to these values:
@@ -287,7 +287,7 @@ Feature: Anonymous feedback
     And I log out
     # Now check the responses are correct.
     When I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Show responses"
     And I should see "Anonymous entries (1)"

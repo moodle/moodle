@@ -26,7 +26,7 @@ Feature: Limit displayed upcoming events
     And I create a calendar event:
       | Type of event     | course |
       | Event title       | Two months away event |
-    When I follow "C1"
+    When I am on "Course 1" course homepage
     Then I should not see "Two months away event"
     And I am on site homepage
     And I follow "Preferences" in the user menu
