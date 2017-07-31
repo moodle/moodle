@@ -131,6 +131,7 @@ $string['norequiredcapability'] = 'No required capability';
 $string['notoken'] = 'The token list is empty.';
 $string['onesystemcontrolling'] = 'Allow an external system to control Moodle';
 $string['onesystemcontrollingdescription'] = 'The following steps help you to set up the Moodle web services to allow an external system to interact with Moodle. This includes setting up a token (security key) authentication method.';
+$string['onlyseecreatedtokens'] = 'Only tokens you own or created can be seen. You can still delete other tokens.';
 $string['operation'] = 'Operation';
 $string['optional'] = 'Optional';
 $string['passwordisexpired'] = 'Password is expired.';

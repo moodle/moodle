@@ -9531,6 +9531,10 @@ class admin_setting_managewebservicetokens extends admin_setting {
 
         $return = $OUTPUT->box_start('generalbox webservicestokenui');
 
+        if (has_capability('moodle/webservice:managealltokens', context_system::instance())) {
+            $return .= \html_writer::div(get_string('onlyseecreatedtokens', 'webservice'));
+        }
+
         $table = new \webservice\token_table('webservicetokens');
         $table->define_baseurl($baseurl);
         $table->attributes['class'] = 'admintable generaltable'; // Any need changing?
