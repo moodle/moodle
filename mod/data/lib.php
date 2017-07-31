@@ -32,6 +32,7 @@ define ('DATA_LASTNAME', -2);
 define ('DATA_APPROVED', -3);
 define ('DATA_TIMEADDED', 0);
 define ('DATA_TIMEMODIFIED', -4);
+define ('DATA_TAGS', -5);
 
 define ('DATA_CAP_EXPORT', 'mod/data:viewalluserpresets');
 
@@ -680,10 +681,11 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
 /**
  * Build the form elements to manage tags for a record.
  *
- * @param int $recordid
+ * @param int|bool $recordid
+ * @param string[] $selected raw tag names
  * @return string
  */
-function data_generate_tag_form($recordid) {
+function data_generate_tag_form($recordid = false, $selected = []) {
     global $CFG, $DB, $PAGE;
 
     $tagtypestoshow = \core_tag_area::get_showstandard('mod_data', 'data_records');
@@ -694,22 +696,31 @@ function data_generate_tag_form($recordid) {
 
     $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
 
-    $existingtags = core_tag_tag::get_item_tags_array('mod_data', 'data_records', $recordid);
+    $tagcollid = \core_tag_area::get_collection('mod_data', 'data_records');
+    $tags = [];
+    $selectedtags = [];
 
     if ($showstandard) {
-        $tags = $DB->get_records_menu('tag', array(
-            'isstandard' => 1,
-            'tagcollid'  => \core_tag_area::get_collection('mod_data', 'data_records')
-        ), $namefield, 'id,' . $namefield . ' as fieldname');
-
-        $tags = $existingtags + $tags;
-    } else {
-        $tags = $existingtags;
+        $tags += $DB->get_records_menu('tag', array('isstandard' => 1, 'tagcollid' => $tagcollid),
+            $namefield, 'id,' . $namefield . ' as fieldname');
     }
+
+    if ($recordid) {
+        $selectedtags += core_tag_tag::get_item_tags_array('mod_data', 'data_records', $recordid);
+    }
+
+    if (!empty($selected)) {
+        list($sql, $params) = $DB->get_in_or_equal($selected, SQL_PARAMS_NAMED);
+        $params['tagcollid'] = $tagcollid;
+        $sql = "SELECT id, $namefield FROM {tag} WHERE tagcollid = :tagcollid AND rawname $sql";
+        $selectedtags += $DB->get_records_sql_menu($sql, $params);
+    }
+
+    $tags += $selectedtags;
 
     $str .= '<select class="custom-select" name="tags[]" id="tags" multiple>';
     foreach ($tags as $tagid => $tag) {
-        $selected = key_exists($tagid, $existingtags) ? 'selected' : '';
+        $selected = key_exists($tagid, $selectedtags) ? 'selected' : '';
         $str .= "<option value='$tag' $selected>$tag</option>";
     }
     $str .= '</select>';
@@ -1893,6 +1904,12 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $patterns[]    = '/##lastname##/';
     $replacement[] = '<label class="accesshide" for="u_ln">' . get_string('authorlastname', 'data') . '</label>' .
                      '<input type="text" class="form-control" size="16" id="u_ln" name="u_ln" value="' . s($ln) . '" />';
+
+    if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+        $patterns[] = "/##tags##/";
+        $selectedtags = isset($search_array[DATA_TAGS]->rawtagnames) ? $search_array[DATA_TAGS]->rawtagnames : [];
+        $replacement[] = data_generate_tag_form(false, $selectedtags);
+    }
 
     // actual replacement of the tags
     $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
@@ -3853,14 +3870,14 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
     }
     list($insql, $params) = $DB->get_in_or_equal($recordids, SQL_PARAMS_NAMED);
     $nestselect = 'SELECT c' . $alias . '.recordid
-                     FROM {data_content} c' . $alias . ',
-                          {data_fields} f,
-                          {data_records} r,
-                          {user} u ';
-    $nestwhere = 'WHERE u.id = r.userid
-                    AND f.id = c' . $alias . '.fieldid
-                    AND r.id = c' . $alias . '.recordid
-                    AND r.dataid = :dataid
+                     FROM {data_content} c' . $alias . '
+               INNER JOIN {data_fields} f
+                       ON f.id = c' . $alias . '.fieldid
+               INNER JOIN {data_records} r
+                       ON r.id = c' . $alias . '.recordid
+               INNER JOIN {user} u
+                       ON u.id = r.userid ';
+    $nestwhere = 'WHERE r.dataid = :dataid
                     AND c' . $alias .'.recordid ' . $insql . '
                     AND ';
 
@@ -3871,6 +3888,25 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
     } else if ($searchcriteria == DATA_TIMEMODIFIED) {
         $nestsql = $nestselect . $nestwhere . $nestsearch->field . ' >= :timemodified GROUP BY c' . $alias . '.recordid';
         $params['timemodified'] = $nestsearch->data;
+    } else if ($searchcriteria == DATA_TAGS) {
+        if (empty($nestsearch->rawtagnames)) {
+            return [];
+        }
+        $i = 0;
+        $tagwhere = [];
+        $tagselect = '';
+        foreach ($nestsearch->rawtagnames as $tagrawname) {
+            $tagselect .= " INNER JOIN {tag_instance} AS ti_$i
+                                    ON ti_$i.component = 'mod_data'
+                                   AND ti_$i.itemtype = 'data_records'
+                                   AND ti_$i.itemid = r.id
+                            INNER JOIN {tag} AS t_$i
+                                    ON ti_$i.tagid = t_$i.id ";
+            $tagwhere[] = " t_$i.rawname = :trawname_$i ";
+            $params["trawname_$i"] = $tagrawname;
+            $i++;
+        }
+        $nestsql = $nestselect . $tagselect . $nestwhere . implode(' AND ', $tagwhere);
     } else {    // First name or last name.
         $thing = $DB->sql_like($nestsearch->field, ':search1', false);
         $nestsql = $nestselect . $nestwhere . $thing . ' GROUP BY c' . $alias . '.recordid';

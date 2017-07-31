@@ -1147,26 +1147,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
             $initialparams['myid3'] = $params['myid2'];
         }
 
-        if (!empty($advanced)) {                    // If advanced box is checked.
-            $i = 0;
-            foreach ($searcharray as $key => $val) { // what does $searcharray hold?
-                if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
-                    $i++;
-                    $searchselect .= " AND ".$DB->sql_like($val->field, ":search_flname_$i", false);
-                    $params['search_flname_'.$i] = "%$val->data%";
-                    continue;
-                }
-                if ($key == DATA_TIMEMODIFIED) {
-                    $searchselect .= " AND $val->field >= :timemodified";
-                    $params['timemodified'] = $val->data;
-                    continue;
-                }
-                $advtables .= ', {data_content} c'.$key.' ';
-                $advwhere .= ' AND c'.$key.'.recordid = r.id';
-                $advsearchselect .= ' AND ('.$val->sql.') ';
-                $advparams = array_merge($advparams, $val->params);
-            }
-        } else if ($search) {
+        if ($search) {
             $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)."
                               OR ".$DB->sql_like('u.firstname', ':search2', false)."
                               OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
@@ -1204,26 +1185,8 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
             $params['myid2'] = $USER->id;
             $initialparams['myid3'] = $params['myid2'];
         }
-        $i = 0;
-        if (!empty($advanced)) {                      // If advanced box is checked.
-            foreach ($searcharray as $key => $val) {   // what does $searcharray hold?
-                if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
-                    $i++;
-                    $searchselect .= " AND ".$DB->sql_like($val->field, ":search_flname_$i", false);
-                    $params['search_flname_'.$i] = "%$val->data%";
-                    continue;
-                }
-                if ($key == DATA_TIMEMODIFIED) {
-                    $searchselect .= " AND $val->field >= :timemodified";
-                    $params['timemodified'] = $val->data;
-                    continue;
-                }
-                $advtables .= ', {data_content} c'.$key.' ';
-                $advwhere .= ' AND c'.$key.'.recordid = r.id AND c'.$key.'.fieldid = '.$key;
-                $advsearchselect .= ' AND ('.$val->sql.') ';
-                $advparams = array_merge($advparams, $val->params);
-            }
-        } else if ($search) {
+
+        if ($search) {
             $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR
                 ".$DB->sql_like('u.firstname', ':search2', false)." OR
                 ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
@@ -1383,6 +1346,15 @@ function data_build_search_array($data, $paging, $searcharray, $defaults = null,
                 unset($searcharray[$field->id]);
             }
         }
+    }
+
+    $rawtagnames = optional_param_array('tags', false, PARAM_TAGLIST);
+
+    if ($rawtagnames) {
+        $searcharray[DATA_TAGS] = new stdClass();
+        $searcharray[DATA_TAGS]->params = [];
+        $searcharray[DATA_TAGS]->rawtagnames = $rawtagnames;
+        $searcharray[DATA_TAGS]->sql = '';
     }
 
     if (!$paging) {
