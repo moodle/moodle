@@ -62,6 +62,8 @@ class qtype_ordering_question extends question_graded_automatically {
     const GRADING_LONGEST_ORDERED_SUBSET = 5;
     /** @var int Only longest ordered and contignous subset is graded */
     const GRADING_LONGEST_CONTIGUOUS_SUBSET = 6;
+    /** @var int Items are graded relative to their position in the correct answer */
+    const GRADING_RELATIVE_TO_CORRECT = 7;
 
     // Fields from "qtype_ordering_options" table.
     /** @var string */
@@ -328,7 +330,7 @@ class qtype_ordering_question extends question_graded_automatically {
                 $correctresponse = $this->correctresponse;
                 $currentresponse = $this->currentresponse;
                 foreach ($correctresponse as $position => $answerid) {
-                    if (isset($currentresponse[$position])) {
+                    if (array_key_exists($position, $currentresponse)) {
                         if ($currentresponse[$position] == $answerid) {
                             $countcorrect++;
                         }
@@ -346,7 +348,7 @@ class qtype_ordering_question extends question_graded_automatically {
                 $currentresponse = $this->get_next_answerids($this->currentresponse, $lastitem);
                 $correctresponse = $this->get_next_answerids($this->correctresponse, $lastitem);
                 foreach ($correctresponse as $thisanswerid => $nextanswerid) {
-                    if (isset($currentresponse[$thisanswerid])) {
+                    if (array_key_exists($thisanswerid, $currentresponse)) {
                         if ($currentresponse[$thisanswerid] == $nextanswerid) {
                             $countcorrect++;
                         }
@@ -361,7 +363,7 @@ class qtype_ordering_question extends question_graded_automatically {
                 $currentresponse = $this->get_previous_and_next_answerids($this->currentresponse, $all);
                 $correctresponse = $this->get_previous_and_next_answerids($this->correctresponse, $all);
                 foreach ($correctresponse as $thisanswerid => $answerids) {
-                    if (isset($currentresponse[$thisanswerid])) {
+                    if (array_key_exists($thisanswerid, $currentresponse)) {
                         $prev = $currentresponse[$thisanswerid]->prev;
                         $prev = array_intersect($prev, $answerids->prev);
                         $countcorrect += count($prev);
@@ -380,6 +382,22 @@ class qtype_ordering_question extends question_graded_automatically {
                 $subset = $this->get_ordered_subset($contiguous);
                 $countcorrect = count($subset);
                 $countanswers = count($this->currentresponse);
+                break;
+
+            case self::GRADING_RELATIVE_TO_CORRECT:
+                $correctresponse = $this->correctresponse;
+                $currentresponse = $this->currentresponse;
+                $count = (count($correctresponse) - 1);
+                foreach ($correctresponse as $position => $answerid) {
+                    if (in_array($answerid, $currentresponse)) {
+                        $currentposition = array_search($answerid, $currentresponse);
+                        $currentscore = ($count - abs($position - $currentposition));
+                        if ($currentscore > 0) {
+                            $countcorrect += $currentscore;
+                        }
+                    }
+                    $countanswers += $count;
+                }
                 break;
         }
         if ($countanswers == 0) {
@@ -793,6 +811,7 @@ class qtype_ordering_question extends question_graded_automatically {
         $types = array(
             self::GRADING_ALL_OR_NOTHING                 => get_string('allornothing',               $plugin),
             self::GRADING_ABSOLUTE_POSITION              => get_string('absoluteposition',           $plugin),
+            self::GRADING_RELATIVE_TO_CORRECT            => get_string('relativetocorrect',          $plugin),
             self::GRADING_RELATIVE_NEXT_EXCLUDE_LAST     => get_string('relativenextexcludelast',    $plugin),
             self::GRADING_RELATIVE_NEXT_INCLUDE_LAST     => get_string('relativenextincludelast',    $plugin),
             self::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT => get_string('relativeonepreviousandnext', $plugin),

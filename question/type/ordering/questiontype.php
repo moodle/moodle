@@ -522,6 +522,9 @@ class qtype_ordering extends question_type {
             case qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET:
                 $grading = 'LONGEST_CONTIGUOUS_SUBSET';
                 break;
+            case qtype_ordering_question::GRADING_RELATIVE_TO_CORRECT:
+                $grading = 'RELATIVE_TO_CORRECT';
+                break;
             default:
                 $grading = ''; // Shouldn't happen !!
         }
@@ -787,6 +790,9 @@ class qtype_ordering extends question_type {
                 break;
             case 'LONGEST_CONTIGUOUS_SUBSET':
                 $gradingtype = qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET;
+                break;
+            case 'RELATIVE_TO_CORRECT':
+                $gradingtype = qtype_ordering_question::GRADING_RELATIVE_TO_CORRECT;
                 break;
         }
 

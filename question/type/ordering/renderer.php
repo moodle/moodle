@@ -346,6 +346,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
             case qtype_ordering_question::GRADING_ALL_OR_NOTHING:
             case qtype_ordering_question::GRADING_ABSOLUTE_POSITION:
+            case qtype_ordering_question::GRADING_RELATIVE_TO_CORRECT:
                 $this->correctinfo = $question->correctresponse;
                 $this->currentinfo = $question->currentresponse;
                 break;
@@ -457,6 +458,18 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                             $score = $currentinfo[$position];
                         }
                         $maxscore = 1;
+                    }
+                    break;
+
+                case qtype_ordering_question::GRADING_RELATIVE_TO_CORRECT:
+                    if (isset($correctinfo[$position])) {
+                        $maxscore = (count($correctinfo) - 1);
+                        $answerid = $currentinfo[$position];
+                        $correctposition = array_search($answerid, $correctinfo);
+                        $score = ($maxscore - abs($correctposition - $position));
+                        if ($score < 0) {
+                            $score = 0;
+                        }
                     }
                     break;
             }
