@@ -38,14 +38,14 @@ use templatable;
 class activity_navigation implements renderable, templatable {
 
     /**
-     * @var string The html for the prev link
+     * @var \action_link The action link object for the prev link.
      */
-    public $prevlink = '';
+    public $prevlink = null;
 
     /**
-     * @var string The html for the next link
+     * @var \action_link The action link object for the next link.
      */
-    public $nextlink = '';
+    public $nextlink = null;
 
     /**
      * Constructor.
@@ -64,8 +64,12 @@ class activity_navigation implements renderable, templatable {
                 $linkname .= ' ' . get_string('hiddenwithbrackets');
             }
 
-            $link = new \action_link($linkurl, $OUTPUT->larrow() . ' ' . $linkname);
-            $this->prevlink = $OUTPUT->render($link);
+            $attributes = [
+                'classes' => 'btn btn-link',
+                'id' => 'prev-activity-link',
+                'title' => $linkname,
+            ];
+            $this->prevlink = new \action_link($linkurl, $OUTPUT->larrow() . ' ' . $linkname, null, $attributes);
         }
 
         // Check if there is a next module to display.
@@ -76,8 +80,12 @@ class activity_navigation implements renderable, templatable {
                 $linkname .= ' ' . get_string('hiddenwithbrackets');
             }
 
-            $link = new \action_link($linkurl, $linkname . ' ' . $OUTPUT->rarrow());
-            $this->nextlink = $OUTPUT->render($link);
+            $attributes = [
+                'classes' => 'btn btn-link',
+                'id' => 'next-activity-link',
+                'title' => $linkname,
+            ];
+            $this->nextlink = new \action_link($linkurl, $linkname . ' ' . $OUTPUT->rarrow(), null, $attributes);
         }
     }
 
@@ -89,8 +97,13 @@ class activity_navigation implements renderable, templatable {
      */
     public function export_for_template(\renderer_base $output) {
         $data = new \stdClass();
-        $data->prevlink = $this->prevlink;
-        $data->nextlink = $this->nextlink;
+        if ($this->prevlink) {
+            $data->prevlink = $this->prevlink->export_for_template($output);
+        }
+
+        if ($this->nextlink) {
+            $data->nextlink = $this->nextlink->export_for_template($output);
+        }
 
         return $data;
     }

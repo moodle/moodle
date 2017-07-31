@@ -20,25 +20,49 @@
     Displays the activity navigation
 
     Context variables required for this template:
-    * prevlink - The link to the previous module the user can see
-    * nextlink - The link to the next module the user can see
+    * prevlink Object - The action link data for the previous activity link. Corresponds with the core/action_link context.
+    * nextlink Object - The action link data for the next activity link. Corresponds with the core/action_link context.
 
     Example context (json):
     {
-        "prevlink": "<a href='#'>The origins of Moodle</a>",
-        "nextlink": "<a href='#'>Moodlers - are they contagious?</a>"
+        "prevlink": {
+            "disabled": false,
+            "url": "#",
+            "id": "test-id-1",
+            "classes": "btn btn-link",
+            "attributes": [
+                {
+                    "name": "title",
+                    "value": "Activity A"
+                }
+            ],
+            "text": "◄ Activity A"
+        },
+        "nextlink": {
+            "disabled": false,
+            "url": "#",
+            "id": "test-id-2",
+            "classes": "btn btn-link",
+            "attributes": [
+                {
+                    "name": "title",
+                    "value": "Activity C"
+                }
+            ],
+            "text": "Activity C ►"
+        }
     }
 }}
 <div>
 {{< core/columns-1to1to1}}
     {{$column1}}
         <div class="pull-left">
-            {{{prevlink}}}
+            {{#prevlink}}{{> core/action_link }}{{/prevlink}}
         </div>
     {{/column1}}
     {{$column3}}
         <div class="pull-right">
-            {{{nextlink}}}
+            {{#nextlink}}{{> core/action_link }}{{/nextlink}}
         </div>
     {{/column3}}
 {{/ core/columns-1to1to1}}
