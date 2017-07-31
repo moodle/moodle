@@ -98,8 +98,8 @@ class enrol_database_plugin extends enrol_plugin {
         if ($this->allow_unenrol_user($instance, $ue) && has_capability('enrol/database:unenrol', $context)) {
             $url = new moodle_url('/enrol/unenroluser.php', $params);
             $actionparams = array('class' => 'unenrollink', 'rel' => $ue->id, 'data-action' => ENROL_ACTION_UNENROL);
-            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url,
-                $actionparams);
+            $actions[] = new user_enrolment_action(new pix_icon('t/delete', get_string('unenrol', 'enrol')),
+                get_string('unenrol', 'enrol'), $url, $actionparams);
         }
         return $actions;
     }
