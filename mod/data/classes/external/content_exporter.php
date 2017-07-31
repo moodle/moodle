@@ -70,12 +70,12 @@ class content_exporter extends exporter {
                 'null' => NULL_ALLOWED,
             ),
             'content3' => array(
-                'type' => PARAM_BOOL,
+                'type' => PARAM_RAW,
                 'description' => 'Contents.',
                 'null' => NULL_ALLOWED,
             ),
             'content4' => array(
-                'type' => PARAM_BOOL,
+                'type' => PARAM_RAW,
                 'description' => 'Contents.',
                 'null' => NULL_ALLOWED,
             ),
