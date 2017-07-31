@@ -63,6 +63,7 @@ echo $OUTPUT->doctype() ?>
             <?php
             echo $OUTPUT->course_content_header();
             echo $OUTPUT->main_content();
+            echo $OUTPUT->activity_navigation();
             echo $OUTPUT->course_content_footer();
             ?>
         </section>
