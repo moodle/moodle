@@ -596,7 +596,7 @@ class mod_data_external extends external_api {
 
         $params = array('databaseid' => $databaseid);
         $params = self::validate_parameters(self::get_fields_parameters(), $params);
-        $warnings = array();
+        $fields = $warnings = array();
 
         list($database, $course, $cm, $context) = self::validate_database($params['databaseid']);
 

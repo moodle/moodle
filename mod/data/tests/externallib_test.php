@@ -660,6 +660,18 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_fields_database_without_fields.
+     */
+    public function test_get_fields_database_without_fields() {
+
+        $this->setUser($this->student1);
+        $result = mod_data_external::get_fields($this->database->id);
+        $result = external_api::clean_returnvalue(mod_data_external::get_fields_returns(), $result);
+
+        $this->assertEmpty($result['fields']);
+    }
+
+    /**
      * Test search_entries.
      */
     public function test_search_entries() {
