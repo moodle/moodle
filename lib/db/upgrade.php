@@ -2875,5 +2875,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017051500.06);
     }
 
+    if ($oldversion < 2017051501.04) {
+        // Changing nullability of field email on table oauth2_system_account to null.
+        $table = new xmldb_table('oauth2_system_account');
+        $field = new xmldb_field('email', XMLDB_TYPE_TEXT, null, null, null, null, null, 'grantedscopes');
+
+        // Launch change of nullability for field email.
+        $dbman->change_field_notnull($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017051501.04);
+    }
+
     return true;
 }
