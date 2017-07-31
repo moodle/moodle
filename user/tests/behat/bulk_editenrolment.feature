@@ -31,7 +31,7 @@ Feature: Bulk enrolments
     Then I should see "Suspended" in the "Teacher 1" "table_row"
     Then I should see "Suspended" in the "Student 1" "table_row"
     And I should see "Suspended" in the "Student 2" "table_row"
-    
+
   @javascript
   Scenario: Bulk delete enrolments
     When I log in as "admin"
