@@ -1015,7 +1015,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
         $totalcount = count($newrecordids);
     } else {
         $sqlselect  = "SELECT $what $fromsql $sortorder";
-        $sqlcountselect  = "SELECT $count $fromsql $sortorder";
+        $sqlcountselect  = "SELECT $count $fromsql";
         $totalcount = $DB->count_records_sql($sqlcountselect, $allparams);
     }
 
