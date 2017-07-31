@@ -117,6 +117,20 @@ class models_list implements \renderable, \templatable {
                 $actionsmenu->add($icon);
             }
 
+            // Enable / disable.
+            if ($model->is_enabled()) {
+                $action = 'disable';
+                $text = get_string('disable');
+                $icontype = 't/block';
+            } else {
+                $action = 'enable';
+                $text = get_string('enable');
+                $icontype = 'i/checked';
+            }
+            $url = new \moodle_url('model.php', array('action' => $action, 'id' => $model->get_id()));
+            $icon = new \action_menu_link_secondary($url, new \pix_icon($icontype, $text), $text);
+            $actionsmenu->add($icon);
+
             // Evaluate machine-learning-based models.
             if ($model->get_indicators() && !$model->is_static()) {
                 $url = new \moodle_url('model.php', array('action' => 'evaluate', 'id' => $model->get_id()));
