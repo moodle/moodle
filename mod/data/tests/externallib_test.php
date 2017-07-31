@@ -666,8 +666,20 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         global $DB;
         list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
 
-        // First do a normal text search as student 1. I should see my two group entries.
         $this->setUser($this->student1);
+        // Empty search, it should return all the visible entries.
+        $result = mod_data_external::search_entries($this->database->id, 0, false);
+        $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
+        $this->assertCount(2, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+
+        // Search for something that does not exists.
+        $result = mod_data_external::search_entries($this->database->id, 0, false, 'abc');
+        $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
+        $this->assertCount(0, $result['entries']);
+        $this->assertEquals(0, $result['totalcount']);
+
+        // Search by text matching all the entries.
         $result = mod_data_external::search_entries($this->database->id, 0, false, 'text');
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(2, $result['entries']);
