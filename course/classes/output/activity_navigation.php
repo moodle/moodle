@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use renderable;
 use templatable;
+use url_select;
 
 /**
  * The class activity navigation renderable.
@@ -48,12 +49,18 @@ class activity_navigation implements renderable, templatable {
     public $nextlink = null;
 
     /**
+     * @var url_select The url select object for the activity selector menu.
+     */
+    public $activitylist = null;
+
+    /**
      * Constructor.
      *
      * @param \cm_info|null $prevmod The previous module to display, null if none.
      * @param \cm_info|null $nextmod The previous module to display, null if none.
+     * @param array $activitylist The list of activity URLs (as key) and names (as value) for the activity dropdown menu.
      */
-    public function __construct($prevmod, $nextmod) {
+    public function __construct($prevmod, $nextmod, $activitylist = array()) {
         global $OUTPUT;
 
         // Check if there is a previous module to display.
@@ -87,6 +94,14 @@ class activity_navigation implements renderable, templatable {
             ];
             $this->nextlink = new \action_link($linkurl, $linkname . ' ' . $OUTPUT->rarrow(), null, $attributes);
         }
+
+        // Render the activity list dropdown menu if available.
+        if (!empty($activitylist)) {
+            $select = new url_select($activitylist, '', array('' => get_string('jumpto')));
+            $select->set_label(get_string('jumpto'), array('class' => 'sr-only'));
+            $select->attributes = array('id' => 'jump-to-activity');
+            $this->activitylist = $select;
+        }
     }
 
     /**
@@ -103,6 +118,10 @@ class activity_navigation implements renderable, templatable {
 
         if ($this->nextlink) {
             $data->nextlink = $this->nextlink->export_for_template($output);
+        }
+
+        if ($this->activitylist) {
+            $data->activitylist = $this->activitylist->export_for_template($output);
         }
 
         return $data;

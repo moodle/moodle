@@ -837,12 +837,24 @@ class core_renderer extends renderer_base {
 
         // Put the modules into an array in order by the position they are shown in the course.
         $mods = [];
+        $activitylist = [];
         foreach ($modules as $module) {
             // Only add activities the user can access, aren't in stealth mode and have a url (eg. mod_label does not).
             if (!$module->uservisible || $module->is_stealth() || empty($module->url)) {
                 continue;
             }
             $mods[$module->id] = $module;
+
+            // Module name.
+            $modname = $module->name;
+            // Display the hidden text if necessary.
+            if (!$module->visible) {
+                $modname .= ' ' . get_string('hiddenwithbrackets');
+            }
+            // Module URL.
+            $linkurl = new moodle_url($module->url, array('forceview' => 1));
+            // Add module URL (as key) and name (as value) to the activity list array.
+            $activitylist[$linkurl->out(false)] = $modname;
         }
 
         $nummods = count($mods);
@@ -871,7 +883,7 @@ class core_renderer extends renderer_base {
             $nextmod = $mods[$modids[$position + 1]];
         }
 
-        $activitynav = new \core_course\output\activity_navigation($prevmod, $nextmod);
+        $activitynav = new \core_course\output\activity_navigation($prevmod, $nextmod, $activitylist);
         $renderer = $this->page->get_renderer('core', 'course');
         return $renderer->render($activitynav);
     }

@@ -22,6 +22,7 @@
     Context variables required for this template:
     * prevlink Object - The action link data for the previous activity link. Corresponds with the core/action_link context.
     * nextlink Object - The action link data for the next activity link. Corresponds with the core/action_link context.
+    * activitylist Object - The data for the activity selector menu. Corresponds with the core/url_select context.
 
     Example context (json):
     {
@@ -50,16 +51,31 @@
                 }
             ],
             "text": "Activity C ►"
+        },
+        "activitylist": {
+            "id": "url_select_test",
+            "action": "#",
+            "options": [
+                {"name": "Jump to...", "value": "#0"},
+                {"name": "Activity A", "value": "#1"},
+                {"name": "Activity B", "value": "#2"},
+                {"name": "Activity C", "value": "#3"}
+            ]
         }
     }
 }}
-<div>
+<div class="m-t-2 m-b-1">
 {{< core/columns-1to1to1}}
     {{$column1}}
         <div class="pull-left">
             {{#prevlink}}{{> core/action_link }}{{/prevlink}}
         </div>
     {{/column1}}
+    {{$column2}}
+        <div class="mdl-align">
+            {{#activitylist}}{{> core/url_select }}{{/activitylist}}
+        </div>
+    {{/column2}}
     {{$column3}}
         <div class="pull-right">
             {{#nextlink}}{{> core/action_link }}{{/nextlink}}
