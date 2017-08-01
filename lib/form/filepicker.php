@@ -184,6 +184,14 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input implements templat
         $html .= "<div><object type='text/html' data='$nonjsfilepicker' height='160' width='600' style='border:1px solid #000'></object></div>";
         $html .= '</noscript>';
 
+        if (!empty($options->accepted_types) && $options->accepted_types != '*') {
+            $html .= html_writer::tag('p', get_string('filesofthesetypes', 'form'));
+            $util = new \core_form\filetypes_util();
+            $filetypes = $options->accepted_types;
+            $filetypedescriptions = $util->describe_file_types($filetypes);
+            $html .= $OUTPUT->render_from_template('core_form/filetypes-descriptions', $filetypedescriptions);
+        }
+
         return $html;
     }
 
