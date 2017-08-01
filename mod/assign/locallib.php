@@ -50,6 +50,9 @@ define('ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS', 'untilpass');
 // Special value means allow unlimited attempts.
 define('ASSIGN_UNLIMITED_ATTEMPTS', -1);
 
+// Special value means no grade has been set.
+define('ASSIGN_GRADE_NOT_SET', -1);
+
 // Grading states.
 define('ASSIGN_GRADING_STATUS_GRADED', 'graded');
 define('ASSIGN_GRADING_STATUS_NOT_GRADED', 'notgraded');

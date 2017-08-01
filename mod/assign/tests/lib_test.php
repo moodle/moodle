@@ -670,7 +670,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $data = ['grade' => 50];
         $assign->testable_apply_grade_to_user((object)$data, $this->students[0]->id, 0);
 
-        // Try getting another students grade. This will give a grade of -1.
+        // Try getting another students grade. This will give a grade of ASSIGN_GRADE_NOT_SET (-1).
         $assign->get_user_grade($this->students[1]->id, true);
 
         // Rescale.
@@ -680,8 +680,8 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $student0grade = $assign->get_user_grade($this->students[0]->id, true);
         $student1grade = $assign->get_user_grade($this->students[1]->id, true);
 
-        // Make sure the real grade is scaled, but the -1 stays the same.
+        // Make sure the real grade is scaled, but the ASSIGN_GRADE_NOT_SET stays the same.
         $this->assertEquals($student0grade->grade, 5);
-        $this->assertEquals($student1grade->grade, -1);
+        $this->assertEquals($student1grade->grade, ASSIGN_GRADE_NOT_SET);
     }
 }
