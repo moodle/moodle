@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 3.2.4 ===
 
 * The caching option 'immutable' has been added to send_stored_file() and send_file().
+* user_can_view_profile() now also checks the moodle/user:viewalldetails capability.
 
 === 3.2.3 ===
 

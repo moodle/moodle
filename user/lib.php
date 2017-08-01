@@ -1143,7 +1143,7 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
         $usercontext = context_user::instance($user->id);
     }
     // Number 3.
-    if (has_capability('moodle/user:viewdetails', $usercontext)) {
+    if (has_capability('moodle/user:viewdetails', $usercontext) || has_capability('moodle/user:viewalldetails', $usercontext)) {
         return true;
     }
 
