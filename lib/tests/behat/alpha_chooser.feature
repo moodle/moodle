@@ -64,7 +64,6 @@ Feature: Initials bar
       | student23 | C1     | student        |
       | student24 | C1     | student        |
 
-  @javascript
   Scenario: Filter users on assignment submission page
     Given the following "activities" exist:
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
@@ -123,7 +122,6 @@ Feature: Initials bar
     And I should see "Bstudent Astudent"
     And I should see "Cstudent Cstudent"
 
-  @javascript
   Scenario: Filter users on view gradebook page
     Given the following "activities" exist:
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
@@ -184,11 +182,16 @@ Feature: Initials bar
     And I should see "Bstudent Astudent"
     And I should see "Cstudent Cstudent"
 
-  @javascript
   Scenario: Filter users on course participants page
     Given the following "activities" exist:
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
       | assign   | C1     | assign1  | TestAssignment | Test assignment description | 0                                   | 0                             |
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I log out
+    And I log in as "student2"
+    And I am on "Course 1" course homepage
+    And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
     And I follow "Participants"
