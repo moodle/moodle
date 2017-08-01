@@ -1585,7 +1585,8 @@ function assign_rescale_activity_grades($course, $cm, $oldmin, $oldmax, $newmin,
         'a' => $cm->instance
     );
 
-    $sql = 'UPDATE {assign_grades} set grade = (((grade - :p1) * :p2) + :p3) where assignment = :a';
+    // Only rescale grades that are greater than or equal to 0. Anything else is a special value.
+    $sql = 'UPDATE {assign_grades} set grade = (((grade - :p1) * :p2) + :p3) where assignment = :a and grade >= 0';
     $dbupdate = $DB->execute($sql, $params);
     if (!$dbupdate) {
         return false;
