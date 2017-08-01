@@ -32,6 +32,15 @@ information provided here is intended especially for developers.
   These attributes enable enrol actions to be rendered via modals. If not added, clicking on the enrolment action buttons will still
   redirect the user to the appropriate enrolment action page. Though optional, it is recommended to add these attributes for a
   better user experience when performing enrol actions.
+* New optional parameter $enrolid for the following functions:
+  - get_enrolled_join()
+  - get_enrolled_sql()
+  - get_enrolled_with_capabilities_join()
+  Setting this parameter to a non-zero value will add a condition to the query such that only users that were enrolled
+  with this enrolment method will be returned.
+* New optional parameter 'closeSuggestionsOnSelect' for the enhance() function for form-autocomplete. Setting this to true will
+  close the suggestions popup immediately after an option has been selected. If not specified, it defaults to true for single-select
+  elements and false for multiple-select elements.
 
 === 3.3.1 ===
 

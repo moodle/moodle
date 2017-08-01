@@ -521,13 +521,12 @@ class course_enrolment_manager {
     /**
      * Returns all of the enrolment instances for this course.
      *
-     * NOTE: since 2.4 it includes instances of disabled plugins too.
-     *
+     * @param bool $onlyenabled Whether to return data from enabled enrolment instance names only.
      * @return array
      */
-    public function get_enrolment_instances() {
+    public function get_enrolment_instances($onlyenabled = false) {
         if ($this->_instances === null) {
-            $this->_instances = enrol_get_instances($this->course->id, false);
+            $this->_instances = enrol_get_instances($this->course->id, $onlyenabled);
         }
         return $this->_instances;
     }
@@ -535,13 +534,12 @@ class course_enrolment_manager {
     /**
      * Returns the names for all of the enrolment instances for this course.
      *
-     * NOTE: since 2.4 it includes instances of disabled plugins too.
-     *
+     * @param bool $onlyenabled Whether to return data from enabled enrolment instance names only.
      * @return array
      */
-    public function get_enrolment_instance_names() {
+    public function get_enrolment_instance_names($onlyenabled = false) {
         if ($this->_inames === null) {
-            $instances = $this->get_enrolment_instances();
+            $instances = $this->get_enrolment_instances($onlyenabled);
             $plugins = $this->get_enrolment_plugins(false);
             foreach ($instances as $key=>$instance) {
                 if (!isset($plugins[$instance->enrol])) {

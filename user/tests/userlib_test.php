@@ -748,7 +748,8 @@ class core_userliblib_testcase extends advanced_testcase {
 
         // Now, when we perform the following search we should only return 1 user. A student who belongs to
         // the group and has the name 'searchforthis' and has also accessed the course in the last day.
-        $count = user_get_total_participants($course->id, $group->id, $accesssince + 1, $roleids['student'], 'searchforthis');
+        $count = user_get_total_participants($course->id, $group->id, $accesssince + 1, $roleids['student'], 0, -1,
+            'searchforthis');
 
         $this->assertEquals(1, $count);
     }
@@ -778,7 +779,7 @@ class core_userliblib_testcase extends advanced_testcase {
 
         // Now, when we perform the following search we should only return 2 users. Users who belong to
         // the group and have the name 'searchforthis' and have also accessed the site in the last day.
-        $count = user_get_total_participants(SITEID, $group->id, $accesssince + 1, 0, 'searchforthis');
+        $count = user_get_total_participants(SITEID, $group->id, $accesssince + 1, 0, 0, -1, 'searchforthis');
 
         $this->assertEquals(2, $count);
     }
@@ -836,7 +837,7 @@ class core_userliblib_testcase extends advanced_testcase {
 
         // Now, when we perform the following search we should only return 1 user. A student who belongs to
         // the group and has the name 'searchforthis' and has also accessed the course in the last day.
-        $userset = user_get_participants($course->id, $group->id, $accesssince + 1, $roleids['student'], 'searchforthis');
+        $userset = user_get_participants($course->id, $group->id, $accesssince + 1, $roleids['student'], 0, -1, 'searchforthis');
 
         $this->assertEquals(1, sizeof($userset));
         $this->assertEquals($student1->id, $userset->current()->id);
@@ -867,7 +868,8 @@ class core_userliblib_testcase extends advanced_testcase {
 
         // Now, when we perform the following search we should only return 2 users. Users who belong to
         // the group and have the name 'searchforthis' and have also accessed the site in the last day.
-        $userset = user_get_participants(SITEID, $group->id, $accesssince + 1, 0, 'searchforthis', '', array(), 'ORDER BY id ASC');
+        $userset = user_get_participants(SITEID, $group->id, $accesssince + 1, 0, 0, -1, 'searchforthis', '', array(),
+            'ORDER BY id ASC');
 
         $this->assertEquals($user1->id, $userset->current()->id);
         $userset->next();

@@ -65,6 +65,16 @@ class participants_table extends \table_sql {
     protected $roleid;
 
     /**
+     * @var int $enrolid The applied filter for the user enrolment ID.
+     */
+    protected $enrolid;
+
+    /**
+     * @var int $status The applied filter for the user's enrolment status.
+     */
+    protected $status;
+
+    /**
      * @var string $search The string being searched.
      */
     protected $search;
@@ -121,11 +131,13 @@ class participants_table extends \table_sql {
      * @param int|false $currentgroup False if groups not used, int if groups used, 0 for all groups.
      * @param int $accesssince The time the user last accessed the site
      * @param int $roleid The role we are including, 0 means all enrolled users
-     * @param string $search The string being searched
+     * @param int $enrolid The applied filter for the user enrolment ID.
+     * @param int $status The applied filter for the user's enrolment status.
+     * @param string|array $search The search string(s)
      * @param bool $bulkoperations Is the user allowed to perform bulk operations?
      * @param bool $selectall Has the user selected all users on the page?
      */
-    public function __construct($courseid, $currentgroup, $accesssince, $roleid, $search,
+    public function __construct($courseid, $currentgroup, $accesssince, $roleid, $enrolid, $status, $search,
             $bulkoperations, $selectall) {
         global $CFG;
 
@@ -200,6 +212,8 @@ class participants_table extends \table_sql {
         $this->accesssince = $accesssince;
         $this->roleid = $roleid;
         $this->search = $search;
+        $this->enrolid = $enrolid;
+        $this->status = $status;
         $this->selectall = $selectall;
         $this->countries = get_string_manager()->get_list_of_countries();
         $this->extrafields = $extrafields;
@@ -406,7 +420,7 @@ class participants_table extends \table_sql {
         list($twhere, $tparams) = $this->get_sql_where();
 
         $total = user_get_total_participants($this->course->id, $this->currentgroup, $this->accesssince,
-            $this->roleid, $this->search, $twhere, $tparams);
+            $this->roleid, $this->enrolid, $this->status, $this->search, $twhere, $tparams);
 
         $this->pagesize($pagesize, $total);
 
@@ -416,7 +430,7 @@ class participants_table extends \table_sql {
         }
 
         $this->rawdata = user_get_participants($this->course->id, $this->currentgroup, $this->accesssince,
-            $this->roleid, $this->search, $twhere, $tparams, $sort, $this->get_page_start(),
+            $this->roleid, $this->enrolid, $this->status, $this->search, $twhere, $tparams, $sort, $this->get_page_start(),
             $this->get_page_size());
 
         // Set initial bars.
