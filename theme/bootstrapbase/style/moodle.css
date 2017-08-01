@@ -16985,6 +16985,9 @@ body.modal-open {
   border-radius: 10px;
   border: none;
 }
+.modal-container .modal.modal-lg {
+  max-width: 900px;
+}
 .modal-container .modal .modal-header {
   min-height: 13px;
   padding: 5px;
@@ -17043,9 +17046,6 @@ body.modal-open {
   background-color: #f2f2f2;
   box-shadow: none;
   border-radius: 0 0 10px 10px;
-}
-.modal-container.large .modal {
-  max-width: 900px;
 }
 .modal-backdrop {
   z-index: 4049;
