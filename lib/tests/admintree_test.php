@@ -112,6 +112,43 @@ class core_admintree_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that changes to config trigger events.
+     */
+    public function test_config_log_created_event() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $adminroot = new admin_root(true);
+        $adminroot->add('root', $one = new admin_category('one', 'One'));
+        $page = new admin_settingpage('page', 'Page');
+        $page->add(new admin_setting_configtext('text1', 'Text 1', '', ''));
+        $page->add(new admin_setting_configpasswordunmask('pass1', 'Password 1', '', ''));
+        $adminroot->add('one', $page);
+
+        $sink = $this->redirectEvents();
+        $data = array('s__text1' => 'sometext', 's__pass1' => '');
+        $this->save_config_data($adminroot, $data);
+
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\config_log_created', $event);
+
+        $sink = $this->redirectEvents();
+        $data = array('s__text1'=>'other', 's__pass1'=>'nice password');
+        $count = $this->save_config_data($adminroot, $data);
+
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\config_log_created', $event);
+        // Verify password was nuked.
+        $this->assertNotEquals($event->other['value'], 'nice password');
+
+    }
+
+    /**
      * Testing whether a configexecutable setting is executable.
      */
     public function test_admin_setting_configexecutable() {
