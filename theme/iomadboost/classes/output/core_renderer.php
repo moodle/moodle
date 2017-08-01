@@ -151,55 +151,45 @@ class core_renderer extends \theme_boost\output\core_renderer {
     }
 
     /**
-     * Take a node in the nav tree and make an action menu out of it.
-     * The links are injected in the action menu.
+     * The standard tags that should be included in the <head> tag
+     * including a meta description for the front page
+     * We cheekily add un-cached CSS for Iomad here
      *
-     * @param action_menu $menu
-     * @param navigation_node $node
-     * @param boolean $indent
-     * @param boolean $onlytopleafnodes
-     * @return boolean nodesskipped - True if nodes were skipped in building the menu
+     * @return string HTML fragment.
      */
-    private function build_action_menu_from_navigation(action_menu $menu,
-                                                       navigation_node $node,
-                                                       $indent = false,
-                                                       $onlytopleafnodes = false) {
-        $skipped = false;
-        // Build an action menu based on the visible nodes from this navigation tree.
-        foreach ($node->children as $menuitem) {
-            if ($menuitem->display) {
-                if ($onlytopleafnodes && $menuitem->children->count()) {
-                    $skipped = true;
-                    continue;
-                }
-                if ($menuitem->action) {
-                    if ($menuitem->action instanceof action_link) {
-                        $link = $menuitem->action;
-                        // Give preference to setting icon over action icon.
-                        if (!empty($menuitem->icon)) {
-                            $link->icon = $menuitem->icon;
-                        }
-                    } else {
-                        $link = new action_link($menuitem->action, $menuitem->text, null, null, $menuitem->icon);
-                    }
-                } else {
-                    if ($onlytopleafnodes) {
-                        $skipped = true;
-                        continue;
-                    }
-                    $link = new action_link(new moodle_url('#'), $menuitem->text, null, ['disabled' => true], $menuitem->icon);
-                }
-                if ($indent) {
-                    $link->add_class('m-l-1');
-                }
-                if (!empty($menuitem->classes)) {
-                    $link->add_class(implode(" ", $menuitem->classes));
-                }
+    public function standard_head_html() {
+        global $SITE, $PAGE, $DB;
 
-                $menu->add_secondary_action($link);
-                $skipped = $skipped || $this->build_action_menu_from_navigation($menu, $menuitem, true);
+        // Inject additional 'live' css
+        $css = '';
+
+        // Get company colours
+        $companyid = \iomad::is_company_user();
+        if ($companyid) {
+            $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
+            $linkcolor = $company->linkcolor;
+            if ($linkcolor) {
+                $css .= 'a {color: ' . $linkcolor . '} ';
             }
+            $headingcolor = $company->headingcolor;
+            if ($headingcolor) {
+                $css .= '.navbar {background-color: ' . $headingcolor . '} ';
+            }
+            $maincolor = $company->maincolor;
+            if ($maincolor) {
+                $css .= 'body, #nav-drawer {background-color: ' . $maincolor . '} ';
+            }
+
+            $css .= $company->customcss;
         }
-        return $skipped;
+
+        $output = parent::standard_head_html();
+
+        if ($css) {
+            $output .= '<style>' . $css . '</style>';
+        }
+
+        return $output;
     }
+
 }

@@ -1,5 +1,4 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/lib.php');
 
 $THEME->name = 'iomadboost';
-//$THEME->sheets = ['font-awesome', 'font-iomad', 'iomad'];
 $THEME->sheets = ['font-iomad', 'iomad'];
 $THEME->editor_sheets = [];
 $THEME->parents = ['boost'];
@@ -36,4 +34,3 @@ $THEME->yuicssmodules = array();
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->requiredblocks = '';
 $THEME->addblockposition = BLOCK_ADDBLOCK_POSITION_FLATNAV;
-//$THEME->iconsystem = \core\output\icon_system::FONTAWESOME;
