@@ -2214,7 +2214,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017072000.02);
     }
 
-<<<<<<< HEAD
     if ($oldversion < 2017072700.01) {
         // Changing nullability of field email on table oauth2_system_account to null.
         $table = new xmldb_table('oauth2_system_account');
