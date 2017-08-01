@@ -93,6 +93,8 @@ class moodle1_mod_feedback_handler extends moodle1_mod_handler {
         $this->moduleid = $cminfo['id'];
         $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
+
+
         // get a fresh new file manager for this instance
         $this->fileman = $this->converter->get_file_manager($contextid, 'mod_feedback');
 

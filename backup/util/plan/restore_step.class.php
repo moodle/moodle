@@ -51,6 +51,8 @@ abstract class restore_step extends base_step {
      * Note we are using one static cache here, but *by restoreid*, so it's ok for concurrence/multiple
      * executions in the same request
      *
+     * Note: The policy is to roll date only for configurations and not for user data. see MDL-9367.
+     *
      * @param int $value Time value (seconds since epoch), or empty for nothing
      * @return int Time value after applying the date offset, or empty for nothing
      */

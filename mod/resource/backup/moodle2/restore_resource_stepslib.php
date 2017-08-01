@@ -46,7 +46,9 @@ class restore_resource_activity_structure_step extends restore_activity_structur
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
+
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
 
         // insert the resource record
         $newitemid = $DB->insert_record('resource', $data);

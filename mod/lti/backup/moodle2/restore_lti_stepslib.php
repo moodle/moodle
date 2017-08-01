@@ -75,6 +75,9 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         $data->course = $this->get_courseid();
         $data->servicesalt = uniqid('', true);
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
+
          // Grade used to be a float (whole numbers only), restore as int.
         $data->grade = (int) $data->grade;
 

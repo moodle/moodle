@@ -53,9 +53,10 @@ class restore_feedback_activity_structure_step extends restore_activity_structur
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // insert the feedback record
         $newitemid = $DB->insert_record('feedback', $data);
@@ -84,7 +85,6 @@ class restore_feedback_activity_structure_step extends restore_activity_structur
         $oldid = $data->id;
         $data->feedback = $this->get_new_parentid('feedback');
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
         if ($this->task->is_samesite() && !empty($data->courseid)) {
             $data->courseid = $data->courseid;
         } else if ($this->get_courseid() == SITEID) {

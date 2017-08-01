@@ -1556,6 +1556,8 @@ function quiz_reset_userdata($data) {
                        WHERE quiz IN (SELECT id FROM {quiz} WHERE course = ?)
                          AND timeclose <> 0", array($data->timeshift, $data->courseid));
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
         shift_course_mod_dates('quiz', array('timeopen', 'timeclose'),
                 $data->timeshift, $data->courseid);
 

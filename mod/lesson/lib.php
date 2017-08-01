@@ -1120,6 +1120,8 @@ function lesson_reset_userdata($data) {
                        WHERE lessonid IN (SELECT id FROM {lesson} WHERE course = ?)
                          AND deadline <> 0", array($data->timeshift, $data->courseid));
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
         shift_course_mod_dates('lesson', array('available', 'deadline'), $data->timeshift, $data->courseid);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
     }
