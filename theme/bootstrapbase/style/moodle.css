@@ -5551,6 +5551,9 @@ img.iconsmall {
 .calendar_event_user {
   background-color: #dce7ec;
 }
+.path-calendar #dateselector-calendar-panel {
+  z-index: 4054;
+}
 .path-calendar .calendartable {
   width: 100%;
 }
