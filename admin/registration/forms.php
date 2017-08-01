@@ -128,7 +128,7 @@ class hub_selector_form extends moodleform {
 
         //remove moodle.org from the hub list
         foreach ($hubs as $key => $hub) {
-            if ($hub['url'] == HUB_MOODLEORGHUBURL) {
+            if ($hub['url'] == HUB_MOODLEORGHUBURL || $hub['url'] == HUB_OLDMOODLEORGHUBURL) {
                 unset($hubs[$key]);
             }
         }
