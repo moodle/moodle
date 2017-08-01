@@ -226,14 +226,17 @@ if ($ADMIN->fulltree) {
                 get_string('auth_ldap_create_context_key', 'auth_ldap'),
                 get_string('auth_ldap_create_context', 'auth_ldap'), '', PARAM_RAW_TRIMMED));
 
-        // Course Creators Header.
-        $settings->add(new admin_setting_heading('auth_ldap/coursecreators',
-                new lang_string('coursecreators'), ''));
+        // System roles mapping header.
+        $settings->add(new admin_setting_heading('auth_ldap/systemrolemapping',
+                                        new lang_string('systemrolemapping', 'auth_ldap'), ''));
 
-        // Course creators field mapping.
-        $settings->add(new admin_setting_configtext('auth_ldap/creators',
-                get_string('auth_ldap_creators_key', 'auth_ldap'),
-                get_string('auth_ldap_creators', 'auth_ldap'), '', PARAM_RAW_TRIMMED));
+        // Create system role mapping field for each assignable system role.
+        $roles = get_ldap_assignable_role_names();
+        foreach ($roles as $role) {
+            $settings->add(new admin_setting_configtext('auth_ldap/' . $role['settingname'],
+                    get_string('auth_ldap_rolecontext', 'auth_ldap', $role),
+                    get_string('auth_ldap_rolecontext_help', 'auth_ldap', $role), '', PARAM_RAW_TRIMMED));
+        }
 
         // User Account Sync.
         $settings->add(new admin_setting_heading('auth_ldap/syncusers',
