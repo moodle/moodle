@@ -1557,7 +1557,7 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function coursecat_tree(coursecat_helper $chelper, $coursecat) {
-        $categorycontent = $this->coursecat_category_content($chelper, $coursecat, 0);
+        $categorycontent = $this->coursecat_category_content($chelper, $coursecat, 1);
         if (empty($categorycontent)) {
             return '';
         }
