@@ -9524,83 +9524,28 @@ class admin_setting_managewebservicetokens extends admin_setting {
      * @return string
      */
     public function output_html($data, $query='') {
-        global $CFG, $OUTPUT, $DB, $USER;
+        global $CFG, $OUTPUT;
 
-        // display strings
-        $stroperation = get_string('operation', 'webservice');
-        $strtoken = get_string('token', 'webservice');
-        $strservice = get_string('service', 'webservice');
-        $struser = get_string('user');
-        $strcontext = get_string('context', 'webservice');
-        $strvaliduntil = get_string('validuntil', 'webservice');
-        $striprestriction = get_string('iprestriction', 'webservice');
+        require_once($CFG->dirroot . '/webservice/classes/token_table.php');
+        $baseurl = new moodle_url('/' . $CFG->admin . '/settings.php?section=webservicetokens');
 
         $return = $OUTPUT->box_start('generalbox webservicestokenui');
 
-        $table = new html_table();
-        $table->head  = array($strtoken, $struser, $strservice, $striprestriction, $strvaliduntil, $stroperation);
-        $table->colclasses = array('leftalign', 'leftalign', 'leftalign', 'centeralign', 'centeralign', 'centeralign');
-        $table->id = 'webservicetokens';
-        $table->attributes['class'] = 'admintable generaltable';
+        if (has_capability('moodle/webservice:managealltokens', context_system::instance())) {
+            $return .= \html_writer::div(get_string('onlyseecreatedtokens', 'webservice'));
+        }
+
+        $table = new \webservice\token_table('webservicetokens');
+        $table->define_baseurl($baseurl);
+        $table->attributes['class'] = 'admintable generaltable'; // Any need changing?
         $table->data  = array();
+        ob_start();
+        $table->out(10, false);
+        $tablehtml = ob_get_contents();
+        ob_end_clean();
+        $return .= $tablehtml;
 
         $tokenpageurl = "$CFG->wwwroot/$CFG->admin/webservice/tokens.php?sesskey=" . sesskey();
-
-        //TODO: in order to let the administrator delete obsolete token, split this request in multiple request or use LEFT JOIN
-
-        //here retrieve token list (including linked users firstname/lastname and linked services name)
-        $sql = "SELECT t.id, t.token, u.id AS userid, u.firstname, u.lastname, s.name, t.iprestriction, t.validuntil, s.id AS serviceid
-                  FROM {external_tokens} t, {user} u, {external_services} s
-                 WHERE t.creatorid=? AND t.tokentype = ? AND s.id = t.externalserviceid AND t.userid = u.id";
-        $tokens = $DB->get_records_sql($sql, array($USER->id, EXTERNAL_TOKEN_PERMANENT));
-        if (!empty($tokens)) {
-            foreach ($tokens as $token) {
-                //TODO: retrieve context
-
-                $delete = "<a href=\"".$tokenpageurl."&amp;action=delete&amp;tokenid=".$token->id."\">";
-                $delete .= get_string('delete')."</a>";
-
-                $validuntil = '';
-                if (!empty($token->validuntil)) {
-                    $validuntil = userdate($token->validuntil, get_string('strftimedatetime', 'langconfig'));
-                }
-
-                $iprestriction = '';
-                if (!empty($token->iprestriction)) {
-                    $iprestriction = $token->iprestriction;
-                }
-
-                $userprofilurl = new moodle_url('/user/profile.php?id='.$token->userid);
-                $useratag = html_writer::start_tag('a', array('href' => $userprofilurl));
-                $useratag .= $token->firstname." ".$token->lastname;
-                $useratag .= html_writer::end_tag('a');
-
-                //check user missing capabilities
-                require_once($CFG->dirroot . '/webservice/lib.php');
-                $webservicemanager = new webservice();
-                $usermissingcaps = $webservicemanager->get_missing_capabilities_by_users(
-                        array(array('id' => $token->userid)), $token->serviceid);
-
-                if (!is_siteadmin($token->userid) and
-                        array_key_exists($token->userid, $usermissingcaps)) {
-                    $missingcapabilities = implode(', ',
-                            $usermissingcaps[$token->userid]);
-                    if (!empty($missingcapabilities)) {
-                        $useratag .= html_writer::tag('div',
-                                        get_string('usermissingcaps', 'webservice',
-                                                $missingcapabilities)
-                                        . '&nbsp;' . $OUTPUT->help_icon('missingcaps', 'webservice'),
-                                        array('class' => 'missingcaps'));
-                    }
-                }
-
-                $table->data[] = array($token->token, $useratag, $token->name, $iprestriction, $validuntil, $delete);
-            }
-
-            $return .= html_writer::table($table);
-        } else {
-            $return .= get_string('notoken', 'webservice');
-        }
 
         $return .= $OUTPUT->box_end();
         // add a token to the table
