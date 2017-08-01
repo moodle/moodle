@@ -41,6 +41,7 @@ information provided here is intended especially for developers.
 * New optional parameter 'closeSuggestionsOnSelect' for the enhance() function for form-autocomplete. Setting this to true will
   close the suggestions popup immediately after an option has been selected. If not specified, it defaults to true for single-select
   elements and false for multiple-select elements.
+* user_can_view_profile() now also checks the moodle/user:viewalldetails capability.
 
 === 3.3.1 ===
 
