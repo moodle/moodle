@@ -292,13 +292,14 @@ class enrol_paypal_plugin extends enrol_plugin {
         if ($this->allow_unenrol($instance) && has_capability("enrol/paypal:unenrol", $context)) {
             $url = new moodle_url('/enrol/unenroluser.php', $params);
             $actionparams = array('class' => 'unenrollink', 'rel' => $ue->id, 'data-action' => ENROL_ACTION_UNENROL);
-            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url,
-                $actionparams);
+            $actions[] = new user_enrolment_action(new pix_icon('t/delete', get_string('unenrol', 'enrol')),
+                get_string('unenrol', 'enrol'), $url, $actionparams);
         }
         if ($this->allow_manage($instance) && has_capability("enrol/paypal:manage", $context)) {
             $url = new moodle_url('/enrol/editenrolment.php', $params);
             $actionparams = array('class' => 'editenrollink', 'rel' => $ue->id, 'data-action' => ENROL_ACTION_EDIT);
-            $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''), get_string('edit'), $url, $actionparams);
+            $actions[] = new user_enrolment_action(new pix_icon('t/edit', get_string('editenrolment', 'enrol')),
+                get_string('editenrolment', 'enrol'), $url, $actionparams);
         }
         return $actions;
     }
