@@ -725,6 +725,9 @@ class company {
     public function get_userlevel($user) {
 
         global $DB;
+        if (is_siteadmin()) {
+            return self::get_company_parentnode($this->id);
+        }
         if ($userdepartment = $DB->get_record('company_users', array('userid' => $user->id, 'companyid' => $this->id))) {
             $userlevel = $DB->get_record('department', array('id' => $userdepartment->departmentid));
             return $userlevel;
@@ -1014,6 +1017,19 @@ class company {
         $parentlist = array();
         $parentnode = self::get_company_parentnode($companyid);
         $departmenttree = self::get_subdepartments($parentnode);
+
+        return $departmenttree;
+    }
+
+    /**
+     * Get array of all departments given companyid
+     * Used to display select tree
+     * @param int companyid
+     * @return array
+     */
+    public static function get_all_subdepartments_raw($departmentid) {
+        $departmentnode = self::get_departmentbyid($departmentid);
+        $departmenttree = self::get_subdepartments($departmentnode);
 
         return $departmenttree;
     }

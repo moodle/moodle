@@ -61,10 +61,15 @@ class department_display_form extends company_moodleform {
             // Company has not been set up, possibly from before an upgrade.
             company::initialise_departments($company->id);
         }
+
         if (!empty($this->departmentid)) {
             $departmentslist = company::get_all_subdepartments($this->departmentid);
+            $departmenttree = company::get_all_subdepartments_raw($this->departmentid);
+            $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
         } else {
             $departmentslist = company::get_all_departments($company->id);
+            $departmenttree = company::get_all_departments_raw($company->id);
+            $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
         }
 
         if (!empty($this->departmentid)) {
@@ -77,8 +82,6 @@ class department_display_form extends company_moodleform {
 
         // Create the sub department checkboxes html.
         $subdepartmenthtml = "";
-        $departmenttree = company::get_all_departments_raw($company->id);
-        $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
 
         if (!empty($subdepartmentslist)) {
             $subdepartmenthtml = "<p>".get_string('subdepartments', 'block_iomad_company_admin').
@@ -102,9 +105,10 @@ class department_display_form extends company_moodleform {
         //$mform->addElement('html', $subdepartmenthtml);
 
         // This is getting hidden anyway, so no need for label
+        $mform->addElement('html', "<div style='display:none;'>");
         $mform->addElement('select', 'deptid', ' ',
                             $departmentslist, array('class' => 'iomad_department_select'));
-        //$mform->disabledIf('deptid', 'action', 'eq', 1);
+        $mform->addElement('html', "</div></br>");
 
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'create',
@@ -145,13 +149,23 @@ class department_edit_form extends company_moodleform {
     }
 
     public function definition() {
-        global $CFG;
+        global $CFG, $USER;
 
         $mform =& $this->_form;
         $company = new company($this->selectedcompany);
-        $departmentslist = company::get_all_departments($company->id);
-        $departmenttree = company::get_all_departments_raw($company->id);
-        $treehtml = $this->output->department_tree($departmenttree, $this->chosenid);
+
+        if (!empty($this->departmentid)) {
+            $departmentslist = company::get_all_subdepartments($this->departmentid);
+            $departmenttree = company::get_all_subdepartments_raw($this->departmentid);
+            $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
+        } else {
+            $userdepartment = $company->get_userlevel($USER);
+            $departmentslist = company::get_all_subdepartments($userdepartment->id);
+            $departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
+            $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
+        }
+
+
         $department = company::get_departmentbyid($this->departmentid);
 
         // Then show the fields about where this block appears.
@@ -174,11 +188,11 @@ class department_edit_form extends company_moodleform {
         //}
 
         // This is getting hidden anyway, so no need for label
-        $mform->addElement('html', "<div style='display: none;'>");
+        $mform->addElement('html', "<div style='display:none;'>");
         $mform->addElement('select', 'deptid', ' ',
                             $departmentslist, array('class' => 'iomad_department_select'));
-        $mform->addElement('html', "</div>");
-        
+        $mform->addElement('html', "</div></br>");
+
         $mform->addElement('text', 'fullname',
                             get_string('fullnamedepartment', 'block_iomad_company_admin'),
                             'maxlength = "254" size = "50"');

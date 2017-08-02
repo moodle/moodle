@@ -123,6 +123,7 @@ class company_license_users_form extends moodleform {
     }
 
     public function definition_after_data() {
+        global $USER;
 
         $mform =& $this->_form;
 
@@ -141,11 +142,10 @@ class company_license_users_form extends moodleform {
 
         $company = new company($this->selectedcompany);
 
-        // Create the sub department checkboxes html.
-        $departmentslist = company::get_all_departments($company->id);
-
         $subdepartmenthtml = "";
-        $departmenttree = company::get_all_departments_raw($company->id);
+        $userdepartment = $company->get_userlevel($USER);
+        $departmentslist = company::get_all_subdepartments($userdepartment->id);
+        $departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
         $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
 
         $mform->addElement('html', '<p>' . get_string('updatedepartmentusersselection', 'block_iomad_company_admin') . '</p>');
@@ -499,7 +499,7 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
     if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
         $alllicenses = true;
     } else {
-        $allliceses = false;
+        $alllicenses = false;
     }
     $licenses = company::get_recursive_departments_licenses($userhierarchylevel);
     if (!empty($licenses)) {
