@@ -120,13 +120,23 @@ class company_license_form extends company_moodleform {
             $mform->setType('designatedcompany', PARAM_INT);
         } else {
             $licenseinfo = $DB->get_record('companylicense', array('id' => $this->parentid));
+
+            // If this is a program, sort out the displayed used and allocated.
+            if (!empty($licenseinfo->program)) {
+                $used = $licenseinfo->used / count($this->courses);
+                $free = $licenseinfo->free / count($this->courses);
+            } else {
+                $used = $licenseinfo->used;
+                $free = $licenseinfo->free;
+            }
+
             $company = new company($licenseinfo->companyid);
             $companylist = $company->get_child_companies_select(false);
             $mform->addElement('header', 'header', get_string('split_licenses', 'block_iomad_company_admin'));
             $this->free = $licenseinfo->allocation - $licenseinfo->used;
             $mform->addElement('static', 'parentlicensename', get_string('parentlicensename', 'block_iomad_company_admin') . ': ' . $licenseinfo->name);
-            $mform->addElement('static', 'parentlicenseused', get_string('parentlicenseused', 'block_iomad_company_admin') . ': ' . $licenseinfo->used);
-            $mform->addElement('static', 'parentlicenseavailable', get_string('parentlicenseavailable', 'block_iomad_company_admin') . ': ' . $this->free);
+            $mform->addElement('static', 'parentlicenseused', get_string('parentlicenseused', 'block_iomad_company_admin') . ': ' . $used);
+            $mform->addElement('static', 'parentlicenseavailable', get_string('parentlicenseavailable', 'block_iomad_company_admin') . ': ' . $free);
 
             // Add in the selector for the company the license will be for.
             $mform->addElement('select', 'designatedcompany', get_string('designatedcompany', 'block_iomad_company_admin'), $companylist);
