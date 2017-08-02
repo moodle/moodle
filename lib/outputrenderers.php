@@ -845,8 +845,12 @@ class core_renderer extends renderer_base {
             }
             $mods[$module->id] = $module;
 
+            // No need to add the current module to the list for the activity dropdown menu.
+            if ($module->id == $this->page->cm->id) {
+                continue;
+            }
             // Module name.
-            $modname = $module->name;
+            $modname = $module->get_formatted_name();
             // Display the hidden text if necessary.
             if (!$module->visible) {
                 $modname .= ' ' . get_string('hiddenwithbrackets');
