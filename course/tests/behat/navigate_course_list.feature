@@ -45,7 +45,7 @@ Feature: Browse course list and return back from enrolment page
     And I open my profile in edit mode
     And I expand "Courses" node
     And I expand "Sample category" node
-    And I am on "Course 1" course homepage
+    And I follow "Course 1"
     And I press "Continue"
     Then I should see "Edit profile" in the ".breadcrumb-nav" "css_element"
 
