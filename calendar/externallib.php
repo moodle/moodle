@@ -836,6 +836,7 @@ class core_calendar_external extends external_api {
                 $legacyevent = new \calendar_event($properties);
             }
 
+            $properties = $legacyevent->properties(true);
             $legacyevent->update($properties);
 
             $eventmapper = event_container::get_event_mapper();

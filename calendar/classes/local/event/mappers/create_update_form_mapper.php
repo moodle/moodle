@@ -89,7 +89,7 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
         }
 
         // Default course id if none is set.
-        if (!isset($data->courseid)) {
+        if (!isset($properties->courseid)) {
             $properties->courseid = 0;
         }
 
