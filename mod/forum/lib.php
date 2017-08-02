@@ -3795,7 +3795,6 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
     echo '<span class="name">';
     // User name
     $fullname = fullname($postuser, has_capability('moodle/site:viewfullnames', $modcontext));
-    echo '<td class="author">';
     echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->userid.'&amp;course='.$forum->course.'">'.$fullname.'</a>';
     echo '</span>';
     echo "</td>\n";
