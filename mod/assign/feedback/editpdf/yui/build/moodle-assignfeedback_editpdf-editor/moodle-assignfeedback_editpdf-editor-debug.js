@@ -2592,11 +2592,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
             'height': scrollheight + 'px',
             'overflow': 'hidden'
         });
-        marker.setStyles({
-            'position': 'absolute',
-            'bottom': 0 - scrollheight + 'px',
-            'color': COMMENTCOLOUR[this.colour]
-        });
+        marker.setStyle('color', COMMENTCOLOUR[this.colour]);
         this.attach_events(node, menu);
         if (focus) {
             node.focus();
