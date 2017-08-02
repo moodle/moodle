@@ -92,11 +92,11 @@ Feature: Enrolments are synchronised with meta courses
     And I set the field "targetid" to "1"
     And I click on "Continue" "button" in the ".bcs-new-course" "css_element"
     And I press "Next"
-    And I set the field "Course name" to "Course 4"
+    And I set the field "Course name" to "Course 5"
     And I press "Next"
     And I press "Perform restore"
     And I trigger cron
-    And I am on "Course 4" course homepage
+    And I am on "Course 5 copy 1" course homepage
     And I navigate to "Enrolment methods" node in "Course administration > Users"
     Then I should see "Course meta link (Course 1)"
     And I should see "Course meta link (Course 2)"
