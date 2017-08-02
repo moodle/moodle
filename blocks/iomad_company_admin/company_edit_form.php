@@ -511,11 +511,12 @@ if ($mform->is_cancelled()) {
         }
 
         //  Has the company name changed?
-        $topdepartment = $company->get_company_parentnode($companyid);
-        if ($topdepartment->name != $data->name) {
-            $topdepartment->name = $data->name;
-            $topdepartment->shorname = $data->shortname;
-            $DB->update_record('department', $topdepartment);
+        if ($topdepartment = $company->get_company_parentnode($companyid)) {
+            if ($topdepartment->name != $data->name) {
+                $topdepartment->name = $data->name;
+                $topdepartment->shorname = $data->shortname;
+                $DB->update_record('department', $topdepartment);
+            }
         }
 
         // Has the company parentid changed?
@@ -540,7 +541,6 @@ if ($mform->is_cancelled()) {
         }
     }
     if (!empty($data->companylogo)) {
-//echo "COMPANYLOGO HERE"; die;
         file_save_draft_area_files($data->companylogo,
                                    $context->id,
                                    'theme_iomad',
