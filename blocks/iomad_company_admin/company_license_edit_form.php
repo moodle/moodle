@@ -124,10 +124,10 @@ class company_license_form extends company_moodleform {
             // If this is a program, sort out the displayed used and allocated.
             if (!empty($licenseinfo->program)) {
                 $used = $licenseinfo->used / count($this->courses);
-                $free = $licenseinfo->free / count($this->courses);
+                $free = ($licenseinfo->allocation - $licenseinfo->used) / count($this->courses);
             } else {
                 $used = $licenseinfo->used;
-                $free = $licenseinfo->free;
+                $free = $licenseinfo->allocation - $licenseinfo->used;
             }
 
             $company = new company($licenseinfo->companyid);
