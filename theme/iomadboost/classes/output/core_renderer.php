@@ -145,9 +145,8 @@ class core_renderer extends \theme_boost\output\core_renderer {
      * @return bool
      */
     public function should_display_navbar_logo() {
-        return true;
-        //$logo = $this->get_compact_logo_url();
-        //return !empty($logo) && !$this->should_display_main_logo();
+        $logo = $this->get_compact_logo_url();
+        return !empty($logo) && !$this->should_display_main_logo();
     }
 
     /**
