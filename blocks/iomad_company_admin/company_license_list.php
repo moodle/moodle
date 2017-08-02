@@ -203,15 +203,21 @@ if ($departmentid == $companydepartment->id) {
             }
         }
 
+        // Deal with allocation numbers if a program.
         if (!empty($license->program)) {
             $programstring = get_string('yes');
             $allocation = $license->allocation / count($licensecourses);
             $used = $license->used / count($licensecourses);
-            $validlength = "-";
         } else {
             $programstring = get_string('no');
             $allocation = $license->allocation;
             $used = $license->used;
+        }
+
+        // Deal with valid length if a subscription.
+        if (!empty($license->type)) {
+            $validlength = "-";
+        } else {
             $validlength = $license->validlength;
         }
 
