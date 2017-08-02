@@ -57,7 +57,7 @@ class activity_navigation implements renderable, templatable {
      * Constructor.
      *
      * @param \cm_info|null $prevmod The previous module to display, null if none.
-     * @param \cm_info|null $nextmod The previous module to display, null if none.
+     * @param \cm_info|null $nextmod The next module to display, null if none.
      * @param array $activitylist The list of activity URLs (as key) and names (as value) for the activity dropdown menu.
      */
     public function __construct($prevmod, $nextmod, $activitylist = array()) {
@@ -66,7 +66,7 @@ class activity_navigation implements renderable, templatable {
         // Check if there is a previous module to display.
         if ($prevmod) {
             $linkurl = new \moodle_url($prevmod->url, array('forceview' => 1));
-            $linkname = $prevmod->name;
+            $linkname = $prevmod->get_formatted_name();
             if (!$prevmod->visible) {
                 $linkname .= ' ' . get_string('hiddenwithbrackets');
             }
@@ -82,7 +82,7 @@ class activity_navigation implements renderable, templatable {
         // Check if there is a next module to display.
         if ($nextmod) {
             $linkurl = new \moodle_url($nextmod->url, array('forceview' => 1));
-            $linkname = $nextmod->name;
+            $linkname = $nextmod->get_formatted_name();
             if (!$nextmod->visible) {
                 $linkname .= ' ' . get_string('hiddenwithbrackets');
             }
