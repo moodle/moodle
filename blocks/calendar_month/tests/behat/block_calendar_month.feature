@@ -138,7 +138,6 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I add the "Calendar" block
     And I create a calendar event with form data:
       | id_eventtype | Group |
-      | id_groupid | Group 1 |
       | id_name | Group Event |
     And I log out
     Then I log in as "student1"
@@ -176,7 +175,6 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I am on "Course 1" course homepage
     And I create a calendar event with form data:
       | id_eventtype | Group |
-      | id_groupid | Group 1 |
       | id_name | Group Event 1 |
     And I log out
     Then I log in as "student1"

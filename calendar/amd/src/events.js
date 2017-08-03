@@ -14,9 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contain the events a modal can fire.
+ * Contain the events the calendar component can fire.
  *
- * @module     core_calendar/calendar_events
+ * @module     core_calendar/events
  * @class      calendar_events
  * @package    core_calendar
  * @copyright  2017 Simey Lameze <simey@moodle.com>
@@ -24,6 +24,9 @@
  */
 define([], function() {
     return {
-        deleted: 'calendar-events:deleted'
+        created: 'calendar-events:created',
+        deleted: 'calendar-events:deleted',
+        updated: 'calendar-events:updated',
+        editEvent: 'calendar-events:edit_event'
     };
 });

@@ -71,7 +71,7 @@ class event_exporter extends exporter {
         $data->timestart = $starttimestamp;
         $data->timeduration = $endtimestamp - $starttimestamp;
         $data->timesort = $event->get_times()->get_sort_time()->getTimestamp();
-        $data->visible = $event->is_visible();
+        $data->visible = $event->is_visible() ? 1 : 0;
         $data->timemodified = $event->get_times()->get_modified_time()->getTimestamp();
 
         if ($repeats = $event->get_repeats()) {
