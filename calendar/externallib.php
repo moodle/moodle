@@ -834,9 +834,12 @@ class core_calendar_external extends external_api {
 
             if (is_null($legacyevent)) {
                 $legacyevent = new \calendar_event($properties);
+                // Need to do this in order to initialise the description
+                // property which then triggers the update function below
+                // to set the appropriate default properties on the event.
+                $properties = $legacyevent->properties(true);
             }
 
-            $properties = $legacyevent->properties(true);
             $legacyevent->update($properties);
 
             $eventmapper = event_container::get_event_mapper();
