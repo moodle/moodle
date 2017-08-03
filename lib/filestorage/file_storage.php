@@ -1318,7 +1318,7 @@ class file_storage {
         $newrecord->status       = empty($filerecord->status) ? 0 : $filerecord->status;
         $newrecord->sortorder    = $filerecord->sortorder;
 
-        list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_file_to_pool($pathname);
+        list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_file_to_pool($pathname, null, $newrecord);
 
         $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
@@ -1432,7 +1432,7 @@ class file_storage {
         $newrecord->status       = empty($filerecord->status) ? 0 : $filerecord->status;
         $newrecord->sortorder    = $filerecord->sortorder;
 
-        list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
+        list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content, $newrecord);
         if (empty($filerecord->mimetype)) {
             $newrecord->mimetype = $this->filesystem->mimetype_from_hash($newrecord->contenthash, $newrecord->filename);
         } else {
@@ -1570,7 +1570,7 @@ class file_storage {
             } else {
                 // External file doesn't have content in moodle.
                 // So we create an empty file for it.
-                list($filerecord->contenthash, $filerecord->filesize, $newfile) = $this->add_string_to_pool(null);
+                list($filerecord->contenthash, $filerecord->filesize, $newfile) = $this->add_string_to_pool(null, $filerecord);
             }
         }
 
@@ -1759,10 +1759,12 @@ class file_storage {
      * Add file content to sha1 pool.
      *
      * @param string $pathname path to file
-     * @param string $contenthash sha1 hash of content if known (performance only)
+     * @param string|null $contenthash sha1 hash of content if known (performance only)
+     * @param stdClass|null $newrecord New file record
      * @return array (contenthash, filesize, newfile)
      */
-    public function add_file_to_pool($pathname, $contenthash = NULL) {
+    public function add_file_to_pool($pathname, $contenthash = null, $newrecord = null) {
+        $this->call_before_file_created_plugin_functions($newrecord, $pathname);
         return $this->filesystem->add_file_from_path($pathname, $contenthash);
     }
 
@@ -1772,8 +1774,25 @@ class file_storage {
      * @param string $content file content - binary string
      * @return array (contenthash, filesize, newfile)
      */
-    public function add_string_to_pool($content) {
+    public function add_string_to_pool($content, $newrecord = null) {
+        $this->call_before_file_created_plugin_functions($newrecord, null, $content);
         return $this->filesystem->add_file_from_string($content);
+    }
+
+    /**
+     * before_file_created hook.
+     *
+     * @param stdClass|null $newrecord New file record.
+     * @param string|null $pathname Path to file.
+     * @param string|null $content File content.
+     */
+    protected function call_before_file_created_plugin_functions($newrecord, $pathname = null, $content = null) {
+        $pluginsfunction = get_plugins_with_function('before_file_created');
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($newrecord, ['pathname' => $pathname, 'content' => $content]);
+            }
+        }
     }
 
     /**
