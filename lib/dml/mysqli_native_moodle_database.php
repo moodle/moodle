@@ -804,10 +804,13 @@ class mysqli_native_moodle_database extends moodle_database {
         $info->meta_type      = $this->mysqltype2moodletype($rawcolumn->data_type);
         if ($this->has_breaking_change_quoted_defaults()) {
             $info->default_value = trim($rawcolumn->column_default, "'");
+            if ($info->default_value === 'NULL') {
+                $info->default_value = null;
+            }
         } else {
             $info->default_value = $rawcolumn->column_default;
         }
-        $info->has_default    = !is_null($rawcolumn->column_default);
+        $info->has_default    = !is_null($info->default_value);
         $info->not_null       = ($rawcolumn->is_nullable === 'NO');
         $info->primary_key    = ($rawcolumn->column_key === 'PRI');
         $info->binary         = false;
