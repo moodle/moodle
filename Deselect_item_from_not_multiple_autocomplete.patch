@@ -1,0 +1,136 @@
+Index: theme/bootstrapbase/style/moodle.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- theme/bootstrapbase/style/moodle.css	(revision d509f80c48f4ef49a03ab8396eec869bc7563882)
++++ theme/bootstrapbase/style/moodle.css	(revision )
+@@ -16900,7 +16900,7 @@
+   margin: 0.2em;
+   min-height: 21px;
+ }
+-.form-autocomplete-multiple [role=listitem] {
++.form-autocomplete-multiple [role=listitem], .form-autocomplete-single [role=listitem] {
+   cursor: pointer;
+ }
+ .form-autocomplete-suggestions {
+Index: lib/amd/src/form-autocomplete.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- lib/amd/src/form-autocomplete.js	(revision d509f80c48f4ef49a03ab8396eec869bc7563882)
++++ lib/amd/src/form-autocomplete.js	(revision )
+@@ -89,7 +89,7 @@
+             activeValue = $(document.getElementById(activeId)).attr('data-value');
+         }
+         originalSelect.children('option').each(function(index, ele) {
+-            if ($(ele).prop('selected')) {
++            if ($(ele).prop('selected') && $(ele).attr('value')) {
+                 items.push({label: $(ele).html(), value: $(ele).attr('value')});
+             }
+         });
+@@ -135,20 +135,27 @@
+      */
+     var deselectItem = function(options, state, item, originalSelect) {
+         var selectedItemValue = $(item).attr('data-value');
++        var emptyoption = false;
+ 
+-        // We can only deselect items if this is a multi-select field.
+-        if (options.multiple) {
+-            // Look for a match, and toggle the selected property if there is a match.
+-            originalSelect.children('option').each(function(index, ele) {
+-                if ($(ele).attr('value') == selectedItemValue) {
+-                    $(ele).prop('selected', false);
+-                    // We remove newly created custom tags from the suggestions list when they are deselected.
+-                    if ($(ele).attr('data-iscustom')) {
+-                        $(ele).remove();
+-                    }
++        originalSelect.children('option').each(function (index, ele) {
++            if ($(ele).attr('value') == selectedItemValue && options.multiple) {
++                $(ele).prop('selected', false);
++                // We remove newly created custom tags from the suggestions list when they are deselected.
++                if ($(ele).attr('data-iscustom')) {
++                    $(ele).remove();
++                }
++            } else if (!options.multiple) {
++                $(ele).prop('selected', false);
++                if (!$(ele).attr('value')) {
++                    emptyoption = true;
+                 }
+-            });
++            }
++        });
++
++        if (!emptyoption) {
++            originalSelect.prepend($('<option selected>'));
+         }
++
+         // Rerender the selection list.
+         updateSelectionList(options, state, originalSelect);
+         // Notifiy that the selection changed.
+Index: theme/bootstrapbase/less/moodle/forms.less
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- theme/bootstrapbase/less/moodle/forms.less	(revision d509f80c48f4ef49a03ab8396eec869bc7563882)
++++ theme/bootstrapbase/less/moodle/forms.less	(revision )
+@@ -449,7 +449,7 @@
+     margin: 0.2em;
+     min-height: 21px;
+ }
+-.form-autocomplete-multiple [role=listitem] {
++.form-autocomplete-multiple [role=listitem], .form-autocomplete-single [role=listitem] {
+     cursor: pointer;
+ }
+ 
+Index: lib/amd/build/form-autocomplete.min.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- lib/amd/build/form-autocomplete.min.js	(revision d509f80c48f4ef49a03ab8396eec869bc7563882)
++++ lib/amd/build/form-autocomplete.min.js	(revision )
+@@ -1,1 +1,1 @@
+-define(["jquery","core/log","core/str","core/templates","core/notification"],function(a,b,c,d,e){var f={DOWN:40,ENTER:13,SPACE:32,ESCAPE:27,COMMA:44,UP:38},g=function(b,c){var d=a(document.getElementById(c.selectionId)),e=d.children("[aria-selected=true]").length;for(b%=e;b<0;)b+=e;var f=a(d.children("[aria-selected=true]").get(b)),g=c.selectionId+"-"+b;d.children().attr("data-active-selection",!1).attr("id",""),f.attr("data-active-selection",!0).attr("id",g),d.attr("aria-activedescendant",g)},h=function(b,c,f){var h=[],i=a(document.getElementById(c.selectionId)),j=i.attr("aria-activedescendant"),k=!1;j&&(k=a(document.getElementById(j)).attr("data-value")),f.children("option").each(function(b,c){a(c).prop("selected")&&h.push({label:a(c).html(),value:a(c).attr("value")})});var l=a.extend({items:h},b,c);d.render("core/form_autocomplete_selection",l).done(function(b){i.empty().append(a(b).html()),k!==!1&&i.children("[aria-selected=true]").each(function(b,d){a(d).attr("data-value")===k&&g(b,c)})}).fail(e.exception)},i=function(a){"undefined"!=typeof M.core_formchangechecker&&M.core_formchangechecker.set_form_changed(),a.change()},j=function(b,c,d,e){var f=a(d).attr("data-value");b.multiple&&e.children("option").each(function(b,c){a(c).attr("value")==f&&(a(c).prop("selected",!1),a(c).attr("data-iscustom")&&a(c).remove())}),h(b,c,e),i(e)},k=function(b,c){var d=a(document.getElementById(c.inputId)),e=a(document.getElementById(c.suggestionsId)),f=e.children("[aria-hidden=false]").length;for(b%=f;b<0;)b+=f;var g=a(e.children("[aria-hidden=false]").get(b)),h=a(e.children("[role=option]")).index(g),i=c.suggestionsId+"-"+h;e.children().attr("aria-selected",!1).attr("id",""),g.attr("aria-selected",!0).attr("id",i),d.attr("aria-activedescendant",i);var j=g.offset().top-e.offset().top+e.scrollTop()-e.height()/2;e.animate({scrollTop:j},100)},l=function(b){var c=a(document.getElementById(b.suggestionsId)),d=c.children("[aria-selected=true]"),e=c.children("[aria-hidden=false]").index(d);k(e+1,b)},m=function(b){var c=a(document.getElementById(b.selectionId)),d=c.children("[data-active-selection=true]");if(!d)return void g(0,b);var e=c.children("[aria-selected=true]").index(d);g(e-1,b)},n=function(b){var c=a(document.getElementById(b.selectionId)),d=c.children("[data-active-selection=true]");if(!d)return void g(0,b);var e=c.children("[aria-selected=true]").index(d);g(e+1,b)},o=function(b){var c=a(document.getElementById(b.suggestionsId)),d=c.children("[aria-selected=true]"),e=c.children("[aria-hidden=false]").index(d);k(e-1,b)},p=function(b){var c=a(document.getElementById(b.inputId)),d=a(document.getElementById(b.suggestionsId));c.attr("aria-expanded",!1).attr("aria-activedescendant",b.selectionId),d.hide().attr("aria-hidden",!0)},q=function(b,f,g,h){var i=a(document.getElementById(f.inputId)),j=a(document.getElementById(f.suggestionsId)),l=!1,m=[];h.children("option").each(function(b,c){a(c).prop("selected")!==!0&&(m[m.length]={label:c.innerHTML,value:a(c).attr("value")})});var n=f.caseSensitive?g:g.toLocaleLowerCase(),o=a.extend({options:m},b,f);d.render("core/form_autocomplete_suggestions",o).done(function(d){j.replaceWith(d),j=a(document.getElementById(f.suggestionsId)),j.show().attr("aria-hidden",!1),j.children().each(function(c,d){d=a(d),b.caseSensitive&&d.text().indexOf(n)>-1||!b.caseSensitive&&d.text().toLocaleLowerCase().indexOf(n)>-1?(d.show().attr("aria-hidden",!1),l=!0):d.hide().attr("aria-hidden",!0)}),i.attr("aria-expanded",!0),l?b.tags||k(0,f):c.get_string("nosuggestions","form").done(function(a){j.html(a)})}).fail(e.exception)},r=function(b,c,d){var e=a(document.getElementById(c.inputId)),f=e.val(),g=f.split(","),j=!1;a.each(g,function(c,e){if(e=e.trim(),""!==e&&(b.multiple||d.children("option").prop("selected",!1),d.children("option").each(function(b,c){a(c).attr("value")==e&&(j=!0,a(c).prop("selected",!0))}),!j)){var f=a("<option>");f.append(e),f.attr("value",e),d.append(f),f.prop("selected",!0),f.attr("data-iscustom",!0)}}),h(b,c,d),i(d),e.val(""),p(c)},s=function(b,c,d){var e=a(document.getElementById(c.inputId)),f=a(document.getElementById(c.suggestionsId)),g=f.children("[aria-selected=true]").attr("data-value");b.multiple||d.children("option").prop("selected",!1),d.children("option").each(function(b,c){a(c).attr("value")==g&&a(c).prop("selected",!0)}),h(b,c,d),i(d),b.multiple?(e.focus(),q(b,c,e.val(),d)):(e.val(""),p(c))},t=function(b,c,d,f,g){var h=a(b.currentTarget).val();g.transport(c.selector,h,function(b){var e=g.processResults(c.selector,b),h=[];if(f.children("option").each(function(b,c){c=a(c),c.prop("selected")?h.push(String(c.attr("value"))):c.remove()}),!c.multiple&&0===f.children("option").length){var i=a("<option>");f.append(i)}a.each(e,function(b,c){if(h.indexOf(String(c.value))===-1){var d=a("<option>");d.append(c.label),d.attr("value",c.value),f.append(d)}}),q(c,d,"",f)},e.exception)},u=function(b,c,d){var e=a(document.getElementById(c.inputId));if(e.on("keydown",function(g){switch(g.keyCode){case f.DOWN:return!b.showSuggestions||("true"===e.attr("aria-expanded")?l(c):!e.val()&&b.ajax?require([b.ajax],function(a){t(g,b,c,d,a)}):q(b,c,e.val(),d),g.preventDefault(),!1);case f.UP:return o(c),g.preventDefault(),!1;case f.ENTER:var h=a(document.getElementById(c.suggestionsId));return"true"===e.attr("aria-expanded")&&h.children("[aria-selected=true]").length>0?s(b,c,d):b.tags&&r(b,c,d),g.preventDefault(),!1;case f.ESCAPE:return"true"===e.attr("aria-expanded")&&p(c),g.preventDefault(),!1}return!0}),e.on("keypress",function(a){return a.keyCode!==f.COMMA||(b.tags&&r(b,c,d),a.preventDefault(),!1)}),e.on("behat:set-value",function(){var f=a(document.getElementById(c.suggestionsId));"true"===e.attr("aria-expanded")&&f.children("[aria-selected=true]").length>0?s(b,c,d):b.tags&&r(b,c,d)}),e.on("blur",function(){window.setTimeout(function(){var f=a(document.activeElement);f.attr("id")!=e.attr("id")&&(b.tags&&r(b,c,d),p(c))},500)}),b.showSuggestions){var g=a(document.getElementById(c.downArrowId));g.on("click",function(a){e.focus(),!e.val()&&b.ajax?require([b.ajax],function(e){t(a,b,c,d,e)}):q(b,c,e.val(),d)})}var h=a(document.getElementById(c.suggestionsId));h.parent().on("click","[role=option]",function(e){var f=a(e.currentTarget).closest("[role=option]"),g=a(document.getElementById(c.suggestionsId)),h=g.children("[aria-hidden=false]").index(f);k(h,c),s(b,c,d)});var i=a(document.getElementById(c.selectionId));i.on("click","[role=listitem]",function(e){var f=a(e.currentTarget);j(b,c,f,d)}),i.on("keydown",function(e){switch(e.keyCode){case f.DOWN:return n(c),e.preventDefault(),!1;case f.UP:return m(c),e.preventDefault(),!1;case f.SPACE:case f.ENTER:var g=a(document.getElementById(c.selectionId)).children("[data-active-selection=true]");return g&&(j(b,c,g,d),e.preventDefault()),!1}return!0}),b.showSuggestions&&e.on("input",function(e){var f=a(e.currentTarget).val(),g=a(e.currentTarget).data("last-value");g!==f&&q(b,c,f,d),a(e.currentTarget).data("last-value",f)})};return{enhance:function(f,g,i,j,k,l,m){var n={selector:f,tags:!1,ajax:!1,placeholder:j,caseSensitive:!1,showSuggestions:!0,noSelectionString:m};"undefined"!=typeof g&&(n.tags=g),"undefined"!=typeof i&&(n.ajax=i),"undefined"!=typeof k&&(n.caseSensitive=k),"undefined"!=typeof l&&(n.showSuggestions=l),"undefined"==typeof m&&c.get_string("noselection","form").done(function(a){n.noSelectionString=a}).fail(e.exception);var o=a(f);if(!o)return b.debug("Selector not found: "+f),!1;o.hide().attr("aria-hidden",!0);var p={selectId:o.attr("id"),inputId:"form_autocomplete_input-"+a.now(),suggestionsId:"form_autocomplete_suggestions-"+a.now(),selectionId:"form_autocomplete_selection-"+a.now(),downArrowId:"form_autocomplete_downarrow-"+a.now()};n.multiple=o.attr("multiple");var q=a("[for="+p.selectId+"]"),r=[];o.children("option").each(function(b,c){r[b]={label:c.innerHTML,value:a(c).attr("value")}});var s=a.extend({},n,p);s.options=r,s.items=[];var v=d.render("core/form_autocomplete_input",s),w=d.render("core/form_autocomplete_suggestions",s),x=d.render("core/form_autocomplete_selection",s);return a.when(v,w,x).then(function(b,c,d){o.after(c),o.after(b),o.after(d),q.attr("for",p.inputId),u(n,p,o);var e=a(document.getElementById(p.inputId)),f=a(document.getElementById(p.suggestionsId));return f.hide().attr("aria-hidden",!0),n.ajax&&require([n.ajax],function(a){var b=null,c=function(b){t(b,n,p,o,a)},d=function(a){null!==b&&(window.clearTimeout(b),b=null),b=window.setTimeout(c.bind(this,a),300)};e.on("input",d)}),h(n,p,o),!0})}}});
+\ No newline at end of file
++define(["jquery","core/log","core/str","core/templates","core/notification"],function(e,t,n,a,r){var o={DOWN:40,ENTER:13,SPACE:32,ESCAPE:27,COMMA:44,UP:38},i=function(t,n){var a=e(document.getElementById(n.selectionId)),r=a.children("[aria-selected=true]").length;for(t%=r;t<0;)t+=r;var o=e(a.children("[aria-selected=true]").get(t)),i=n.selectionId+"-"+t;a.children().attr("data-active-selection",!1).attr("id",""),o.attr("data-active-selection",!0).attr("id",i),a.attr("aria-activedescendant",i)},d=function(t,n,o){var d=[],c=e(document.getElementById(n.selectionId)),l=c.attr("aria-activedescendant"),u=!1;l&&(u=e(document.getElementById(l)).attr("data-value")),o.children("option").each(function(t,n){e(n).prop("selected")&&e(n).attr("value")&&d.push({label:e(n).html(),value:e(n).attr("value")})});var s=e.extend({items:d},t,n);a.render("core/form_autocomplete_selection",s).done(function(t){c.empty().append(e(t).html()),!1!==u&&c.children("[aria-selected=true]").each(function(t,a){e(a).attr("data-value")===u&&i(t,n)})}).fail(r.exception)},c=function(e){void 0!==M.core_formchangechecker&&M.core_formchangechecker.set_form_changed(),e.change()},l=function(t,n,a,r){var o=e(a).attr("data-value"),i=!1;r.children("option").each(function(n,a){e(a).attr("value")==o&&t.multiple?(e(a).prop("selected",!1),e(a).attr("data-iscustom")&&e(a).remove()):t.multiple||(e(a).prop("selected",!1),e(a).attr("value")||(i=!0))}),i||r.prepend(e("<option selected>")),d(t,n,r),c(r)},u=function(t,n){var a=e(document.getElementById(n.inputId)),r=e(document.getElementById(n.suggestionsId)),o=r.children("[aria-hidden=false]").length;for(t%=o;t<0;)t+=o;var i=e(r.children("[aria-hidden=false]").get(t)),d=e(r.children("[role=option]")).index(i),c=n.suggestionsId+"-"+d;r.children().attr("aria-selected",!1).attr("id",""),i.attr("aria-selected",!0).attr("id",c),a.attr("aria-activedescendant",c);var l=i.offset().top-r.offset().top+r.scrollTop()-r.height()/2;r.animate({scrollTop:l},100)},s=function(t){var n=e(document.getElementById(t.suggestionsId)),a=n.children("[aria-selected=true]"),r=n.children("[aria-hidden=false]").index(a);u(r+1,t)},p=function(t){var n=e(document.getElementById(t.selectionId)),a=n.children("[data-active-selection=true]");if(a){var r=n.children("[aria-selected=true]").index(a);i(r-1,t)}else i(0,t)},g=function(t){var n=e(document.getElementById(t.selectionId)),a=n.children("[data-active-selection=true]");if(a){var r=n.children("[aria-selected=true]").index(a);i(r+1,t)}else i(0,t)},v=function(t){var n=e(document.getElementById(t.suggestionsId)),a=n.children("[aria-selected=true]"),r=n.children("[aria-hidden=false]").index(a);u(r-1,t)},f=function(t){var n=e(document.getElementById(t.inputId)),a=e(document.getElementById(t.suggestionsId));n.attr("aria-expanded",!1).attr("aria-activedescendant",t.selectionId),a.hide().attr("aria-hidden",!0)},m=function(t,o,i,d){var c=e(document.getElementById(o.inputId)),l=e(document.getElementById(o.suggestionsId)),s=!1,p=[];d.children("option").each(function(t,n){!0!==e(n).prop("selected")&&(p[p.length]={label:n.innerHTML,value:e(n).attr("value")})});var g=o.caseSensitive?i:i.toLocaleLowerCase(),v=e.extend({options:p},t,o);a.render("core/form_autocomplete_suggestions",v).done(function(a){l.replaceWith(a),(l=e(document.getElementById(o.suggestionsId))).show().attr("aria-hidden",!1),l.children().each(function(n,a){a=e(a),t.caseSensitive&&a.text().indexOf(g)>-1||!t.caseSensitive&&a.text().toLocaleLowerCase().indexOf(g)>-1?(a.show().attr("aria-hidden",!1),s=!0):a.hide().attr("aria-hidden",!0)}),c.attr("aria-expanded",!0),s?t.tags||u(0,o):n.get_string("nosuggestions","form").done(function(e){l.html(e)})}).fail(r.exception)},h=function(t,n,a){var r=e(document.getElementById(n.inputId)),o=r.val().split(","),i=!1;e.each(o,function(n,r){if(""!==(r=r.trim())&&(t.multiple||a.children("option").prop("selected",!1),a.children("option").each(function(t,n){e(n).attr("value")==r&&(i=!0,e(n).prop("selected",!0))}),!i)){var o=e("<option>");o.append(r),o.attr("value",r),a.append(o),o.prop("selected",!0),o.attr("data-iscustom",!0)}}),d(t,n,a),c(a),r.val(""),f(n)},I=function(t,n,a){var r=e(document.getElementById(n.inputId)),o=e(document.getElementById(n.suggestionsId)).children("[aria-selected=true]").attr("data-value");t.multiple||a.children("option").prop("selected",!1),a.children("option").each(function(t,n){e(n).attr("value")==o&&e(n).prop("selected",!0)}),d(t,n,a),c(a),t.multiple?(r.focus(),m(t,n,r.val(),a)):(r.val(""),f(n))},E=function(t,n,a,o,i){var d=e(t.currentTarget).val();i.transport(n.selector,d,function(t){var r=i.processResults(n.selector,t),d=[];if(o.children("option").each(function(t,n){(n=e(n)).prop("selected")?d.push(String(n.attr("value"))):n.remove()}),!n.multiple&&0===o.children("option").length){var c=e("<option>");o.append(c)}e.each(r,function(t,n){if(-1===d.indexOf(String(n.value))){var a=e("<option>");a.append(n.label),a.attr("value",n.value),o.append(a)}}),m(n,a,"",o)},r.exception)},y=function(t,n,a){var r=e(document.getElementById(n.inputId));r.on("keydown",function(i){switch(i.keyCode){case o.DOWN:return!t.showSuggestions||("true"===r.attr("aria-expanded")?s(n):!r.val()&&t.ajax?require([t.ajax],function(e){E(i,t,n,a,e)}):m(t,n,r.val(),a),i.preventDefault(),!1);case o.UP:return v(n),i.preventDefault(),!1;case o.ENTER:var d=e(document.getElementById(n.suggestionsId));return"true"===r.attr("aria-expanded")&&d.children("[aria-selected=true]").length>0?I(t,n,a):t.tags&&h(t,n,a),i.preventDefault(),!1;case o.ESCAPE:return"true"===r.attr("aria-expanded")&&f(n),i.preventDefault(),!1}return!0}),r.on("keypress",function(e){return e.keyCode!==o.COMMA||(t.tags&&h(t,n,a),e.preventDefault(),!1)}),r.on("behat:set-value",function(){var o=e(document.getElementById(n.suggestionsId));"true"===r.attr("aria-expanded")&&o.children("[aria-selected=true]").length>0?I(t,n,a):t.tags&&h(t,n,a)}),r.on("blur",function(){window.setTimeout(function(){e(document.activeElement).attr("id")!=r.attr("id")&&(t.tags&&h(t,n,a),f(n))},500)}),t.showSuggestions&&e(document.getElementById(n.downArrowId)).on("click",function(e){r.focus(),!r.val()&&t.ajax?require([t.ajax],function(r){E(e,t,n,a,r)}):m(t,n,r.val(),a)}),e(document.getElementById(n.suggestionsId)).parent().on("click","[role=option]",function(r){var o=e(r.currentTarget).closest("[role=option]"),i=e(document.getElementById(n.suggestionsId)).children("[aria-hidden=false]").index(o);u(i,n),I(t,n,a)});var i=e(document.getElementById(n.selectionId));i.on("click","[role=listitem]",function(r){var o=e(r.currentTarget);l(t,n,o,a)}),i.on("keydown",function(r){switch(r.keyCode){case o.DOWN:return g(n),r.preventDefault(),!1;case o.UP:return p(n),r.preventDefault(),!1;case o.SPACE:case o.ENTER:var i=e(document.getElementById(n.selectionId)).children("[data-active-selection=true]");return i&&(l(t,n,i,a),r.preventDefault()),!1}return!0}),t.showSuggestions&&r.on("input",function(r){var o=e(r.currentTarget).val();e(r.currentTarget).data("last-value")!==o&&m(t,n,o,a),e(r.currentTarget).data("last-value",o)})};return{enhance:function(o,i,c,l,u,s,p){var g={selector:o,tags:!1,ajax:!1,placeholder:l,caseSensitive:!1,showSuggestions:!0,noSelectionString:p};void 0!==i&&(g.tags=i),void 0!==c&&(g.ajax=c),void 0!==u&&(g.caseSensitive=u),void 0!==s&&(g.showSuggestions=s),void 0===p&&n.get_string("noselection","form").done(function(e){g.noSelectionString=e}).fail(r.exception);var v=e(o);if(!v)return t.debug("Selector not found: "+o),!1;v.hide().attr("aria-hidden",!0);var f={selectId:v.attr("id"),inputId:"form_autocomplete_input-"+e.now(),suggestionsId:"form_autocomplete_suggestions-"+e.now(),selectionId:"form_autocomplete_selection-"+e.now(),downArrowId:"form_autocomplete_downarrow-"+e.now()};g.multiple=v.attr("multiple");var m=e("[for="+f.selectId+"]"),h=[];v.children("option").each(function(t,n){h[t]={label:n.innerHTML,value:e(n).attr("value")}});var I=e.extend({},g,f);I.options=h,I.items=[];var x=a.render("core/form_autocomplete_input",I),w=a.render("core/form_autocomplete_suggestions",I),B=a.render("core/form_autocomplete_selection",I);return e.when(x,w,B).then(function(t,n,a){v.after(n),v.after(t),v.after(a),m.attr("for",f.inputId),y(g,f,v);var r=e(document.getElementById(f.inputId));return e(document.getElementById(f.suggestionsId)).hide().attr("aria-hidden",!0),g.ajax&&require([g.ajax],function(e){var t=null,n=function(t){E(t,g,f,v,e)};r.on("input",function(e){null!==t&&(window.clearTimeout(t),t=null),t=window.setTimeout(n.bind(this,e),300)})}),d(g,f,v),!0})}}});
+\ No newline at end of file
+Index: lib/templates/form_autocomplete_selection.mustache
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- lib/templates/form_autocomplete_selection.mustache	(revision d509f80c48f4ef49a03ab8396eec869bc7563882)
++++ lib/templates/form_autocomplete_selection.mustache	(revision )
+@@ -37,11 +37,11 @@
+         { "label": "Another item label with <strong>tags</strong>", "value": "4" }
+     ], "noSelectionString": "No selection" }
+ }}
+-<div class="form-autocomplete-selection {{#multiple}}form-autocomplete-multiple{{/multiple}}" id="{{selectionId}}" role="list" aria-atomic="true" {{#multiple}}tabindex="0" aria-multiselectable="true"{{/multiple}}>
++<div class="form-autocomplete-selection {{#multiple}}form-autocomplete-multiple{{/multiple}}{{^multiple}}form-autocomplete-single{{/multiple}}" id="{{selectionId}}" role="list" aria-atomic="true" {{#multiple}}tabindex="0" aria-multiselectable="true"{{/multiple}}>
+ <span class="accesshide">{{#str}}selecteditems, form{{/str}}</span>
+     {{#items}}
+         <span role="listitem" data-value="{{value}}" aria-selected="true" class="label label-info" style="font-size: larger; margin-bottom: 0.5rem;">
+-            {{#multiple}}<span aria-hidden="true">× </span>{{/multiple}}{{{label}}}
++            <span aria-hidden="true">× </span>{{{label}}}
+         </span>
+     {{/items}}
+     {{^items}}
+Index: theme/boost/scss/moodle/forms.scss
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- theme/boost/scss/moodle/forms.scss	(revision d509f80c48f4ef49a03ab8396eec869bc7563882)
++++ theme/boost/scss/moodle/forms.scss	(revision )
+@@ -246,7 +246,7 @@
+     min-height: 21px;
+ }
+ 
+-.form-autocomplete-multiple [role=listitem] {
++.form-autocomplete-multiple [role=listitem], .form-autocomplete-single [role=listitem] {
+     cursor: pointer;
+ }
+ 
