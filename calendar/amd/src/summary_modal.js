@@ -107,7 +107,9 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
         Modal.prototype.registerEventListeners.call(this);
 
         var confirmPromise = ModalFactory.create(
-            { type: ModalFactory.types.CONFIRM },
+            {
+                type: ModalFactory.types.CONFIRM
+            },
             this.getDeleteButton()
         ).then(function(modal) {
             modal.getRoot().on(ModalEvents.yes, function() {

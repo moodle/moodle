@@ -187,9 +187,15 @@ define([
 
         // TODO: Replace these with actual logic to update
         // the UI without having to force a page reload.
-        body.on(CalendarEvents.created, function() { window.location.reload(); });
-        body.on(CalendarEvents.deleted, function() { window.location.reload(); });
-        body.on(CalendarEvents.updated, function() { window.location.reload(); });
+        body.on(CalendarEvents.created, function() {
+            window.location.reload();
+        });
+        body.on(CalendarEvents.deleted, function() {
+            window.location.reload();
+        });
+        body.on(CalendarEvents.updated, function() {
+            window.location.reload();
+        });
 
         eventFormModalPromise.then(function(modal) {
             // When something within the calendar tells us the user wants

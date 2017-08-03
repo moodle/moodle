@@ -131,7 +131,7 @@ define(['jquery', 'core/templates'], function($, Templates) {
         formElement.find(SELECTORS.EVENT_GROUP_ID)
             .find(SELECTORS.SELECT_OPTION)
             .each(function(index, element) {
-                var element = $(element);
+                element = $(element);
                 var value = element.attr('value');
                 var splits = value.split('-');
                 var courseId = splits[0];

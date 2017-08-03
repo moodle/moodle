@@ -146,6 +146,7 @@ define([
         this.moreLessButton.attr('data-collapsed', 'true');
         Str.get_string('more', 'calendar').then(function(string) {
             this.moreLessButton.text(string);
+            return;
         }.bind(this));
     };
 
@@ -159,6 +160,7 @@ define([
         this.moreLessButton.attr('data-collapsed', 'false');
         Str.get_string('less', 'calendar').then(function(string) {
             this.moreLessButton.text(string);
+            return;
         }.bind(this));
     };
 
@@ -356,6 +358,8 @@ define([
                         $('body').trigger(CalendarEvents.created, [response.event]);
                     }
                 }
+
+                return;
             }.bind(this))
             .always(function() {
                 // Regardless of success or error we should always stop
