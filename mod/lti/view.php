@@ -94,6 +94,8 @@ if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
     $PAGE->set_pagelayout('incourse');
 }
 
+lti_view($lti, $course, $cm, $context);
+
 $pagetitle = strip_tags($course->shortname.': '.format_string($lti->name));
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
@@ -112,7 +114,7 @@ if ($lti->showdescriptionlaunch && $lti->intro) {
 
 if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo "<script language=\"javascript\">//<![CDATA[\n";
-    echo "window.open('launch.php?id=".$cm->id."','lti-".$cm->id."');";
+    echo "window.open('launch.php?id=".$cm->id."&triggerview=0','lti-".$cm->id."');";
     echo "//]]\n";
     echo "</script>\n";
     echo "<p>".get_string("basiclti_in_new_window", "lti")."</p>\n";
@@ -122,7 +124,7 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo html_writer::end_tag('p');
 } else {
     // Request the launch content with an iframe tag.
-    echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'"></iframe>';
+    echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'&triggerview=0"></iframe>';
 
     // Output script to make the iframe tag be as large as possible.
     $resize = '
