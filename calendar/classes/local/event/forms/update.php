@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mform for updating a calendar event. Based on the
- * old event form.
+ * The mform for updating a calendar event. Based on the old event form.
  *
+ * @package    core_calendar
  * @copyright 2017 Ryan Wyllie <ryan@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

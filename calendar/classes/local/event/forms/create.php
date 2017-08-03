@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mform for creating a calendar event. Based on the
- * old event form.
+ * The mform for creating a calendar event. Based on the old event form.
  *
+ * @package    core_calendar
  * @copyright 2017 Ryan Wyllie <ryan@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -117,7 +117,6 @@ class create extends \moodleform {
      * Add the list of hidden elements that should appear in this form each
      * time. These elements will never be visible to the user.
      *
-     * @method add_default_hidden_elements
      * @param MoodleQuickForm $mform
      */
     protected function add_default_hidden_elements($mform) {
@@ -161,7 +160,6 @@ class create extends \moodleform {
      *                   from the above course select) and a select
      *                   element for the group.
      *
-     * @method add_event_type_elements
      * @param MoodleQuickForm $mform
      * @param array $eventtypes The available event types for the user
      */
@@ -236,7 +234,6 @@ class create extends \moodleform {
      * Add the various elements to express the duration options available
      * for an event.
      *
-     * @method add_event_duration_elements
      * @param MoodleQuickForm $mform
      */
     protected function add_event_duration_elements($mform) {
@@ -266,7 +263,6 @@ class create extends \moodleform {
     /**
      * Add the repeat elements for the form when creating a new event.
      *
-     * @method add_event_repeat_elements
      * @param MoodleQuickForm $mform
      */
     protected function add_event_repeat_elements($mform) {
