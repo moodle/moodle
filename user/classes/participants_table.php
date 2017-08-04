@@ -204,6 +204,8 @@ class participants_table extends \table_sql {
         $this->sortable(true, 'firstname');
 
         $this->no_sorting('select');
+        $this->no_sorting('roles');
+        $this->no_sorting('groups');
 
         $this->set_attribute('id', 'participants');
 
