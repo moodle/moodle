@@ -175,7 +175,9 @@ class event_exporter extends exporter {
                 'optional' => true,
                 'default' => null,
                 'null' => NULL_ALLOWED
-            ]
+            ],
+            'isactionevent' => ['type' => PARAM_BOOL],
+            'candelete' => ['type' => PARAM_BOOL]
         ];
     }
 
@@ -191,10 +193,12 @@ class event_exporter extends exporter {
         $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
 
         $context = $this->related['context'];
+        $values['isactionevent'] = false;
         if ($moduleproxy = $event->get_course_module()) {
             $modulename = $moduleproxy->get('modname');
             $moduleid = $moduleproxy->get('id');
             $url = new \moodle_url(sprintf('/mod/%s/view.php', $modulename), ['id' => $moduleid]);
+            $values['isactionevent'] = true;
         } else {
             // TODO MDL-58866 We do not have any way to find urls for events outside of course modules.
             global $CFG;
@@ -220,7 +224,9 @@ class event_exporter extends exporter {
             $coursesummaryexporter = new course_summary_exporter($course, ['context' => $context]);
             $values['course'] = $coursesummaryexporter->export($output);
         }
+
         $values['canedit'] = calendar_edit_event_allowed($legacyevent);
+        $values['candelete'] = (!$values['isactionevent'] && $values['canedit']);
 
         // Handle event subscription.
         $values['subscription'] = null;

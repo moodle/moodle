@@ -130,11 +130,13 @@ define([
             var modalParams = {
                 title: eventData.name,
                 type: SummaryModal.TYPE,
-                body: Templates.render('core_calendar/event_summary_body', eventData)
+                body: Templates.render('core_calendar/event_summary_body', eventData),
+                templateContext: {
+                    canedit: eventData.canedit,
+                    candelete: eventData.candelete
+                }
             };
-            if (!eventData.caneditevent) {
-                modalParams.footer = '';
-            }
+
             // Create the modal.
             return ModalFactory.create(modalParams);
 

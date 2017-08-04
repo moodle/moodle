@@ -41,14 +41,6 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
      */
     var ModalEventSummary = function(root) {
         Modal.call(this, root);
-
-        if (!this.getEditButton().length) {
-            Notification.exception({message: 'No edit button found'});
-        }
-
-        if (!this.getDeleteButton().length) {
-            Notification.exception({message: 'No delete button found'});
-        }
     };
 
     ModalEventSummary.TYPE = 'core_calendar-event_summary';
