@@ -31,13 +31,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatedboninstall'] = '<p>Die Datenbank konnte nicht angelegt werden.</p><p>Die angegebene Datenbank existiert nicht und das genannten Nutzerkonto hat keine Rechte, die Datenbank neu anzulegen. Die Datenbank-Konfiguration muss überprüft werden.</p>';
-$string['cannotcreatelangdir'] = 'Verzeichnis \'lang\' wurde nicht angelegt';
-$string['cannotcreatetempdir'] = 'Das Verzeichnis \'temp\' wurde nicht angelegt';
+$string['cannotcreatelangdir'] = 'Das Verzeichnis \'lang\' wurde nicht angelegt.';
+$string['cannotcreatetempdir'] = 'Das Verzeichnis \'temp\' wurde nicht angelegt.';
 $string['cannotdownloadcomponents'] = 'Einige Komponenten können nicht geladen werden.';
 $string['cannotdownloadzipfile'] = 'ZIP-Datei kann nicht heruntergeladen werden.';
-$string['cannotfindcomponent'] = 'Komponente wurde nicht gefunden';
-$string['cannotsavemd5file'] = 'Die md5-Datei wurde nicht gespeichert';
-$string['cannotsavezipfile'] = 'Die ZIP-Datei wurde nicht gespeichert';
+$string['cannotfindcomponent'] = 'Die Komponente kann nicht gefunden werden.';
+$string['cannotsavemd5file'] = 'Die md5-Datei wurde nicht gespeichert.';
+$string['cannotsavezipfile'] = 'Die ZIP-Datei wurde nicht gespeichert.';
 $string['cannotunzipfile'] = 'Die Datei kann nicht entpackt werden';
 $string['componentisuptodate'] = 'Die Komponente ist aktuell.';
 $string['dmlexceptiononinstall'] = '<p>Ein Datenbankfehler ist aufgetreten [{$a->errorcode}]. <br />{$a->debuginfo}</p>';
