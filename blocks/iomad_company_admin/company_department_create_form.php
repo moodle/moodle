@@ -174,8 +174,10 @@ class department_edit_form extends company_moodleform {
         //}
 
         // This is getting hidden anyway, so no need for label
+        $mform->addElement('html', "<div style='display: none;'>");
         $mform->addElement('select', 'deptid', ' ',
                             $departmentslist, array('class' => 'iomad_department_select'));
+        $mform->addElement('html', "</div>");
         
         $mform->addElement('text', 'fullname',
                             get_string('fullnamedepartment', 'block_iomad_company_admin'),
@@ -205,9 +207,17 @@ class department_edit_form extends company_moodleform {
         $this->add_action_buttons();
     }
 
-    public function get_data() {
-        $data = parent::get_data();
-        return $data;
+    public function validation($data, $files) {
+        global $DB;
+
+        $errors = array();
+
+        if ($departmentbyname = $DB->get_record('department', array('company' => $this->selectedcompany, 'shortname' => $data['shortname']))) {
+            if ($departmentbyname->id != $this->departmentid) {
+                $errors['shortname'] = get_string('departmentnameinuse', 'block_iomad_company_admin');
+            }
+        }
+        return $errors;
     }
 }
 
@@ -217,6 +227,7 @@ $deleteids = optional_param_array('departmentids', null, PARAM_INT);
 $createnew = optional_param('createnew', 0, PARAM_INT);
 $deleteid = optional_param('deleteid', 0, PARAM_INT);
 $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
+$submit = optional_param('submitbutton', '', PARAM_ALPHANUM);
 
 $context = context_system::instance();
 require_login();
@@ -272,8 +283,8 @@ if ($deleteid && confirm_sesskey() && $confirm == md5($deleteid)) {
 if ($mform->is_cancelled()) {
     redirect($companylist);
 
-} else if ($data = $mform->get_data()) {
-    if (isset($data->create)) {
+} else if ($submit == 'Savechanges' || $data = $mform->get_data()) {
+    if (!empty($data->create) || $submit == 'Savechanges') {
         // Javascript for fancy select.
         // Parameter is name of proper select form element. 
         $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', '', $departmentid));
@@ -285,7 +296,9 @@ if ($mform->is_cancelled()) {
         }
         $editform = new department_edit_form($PAGE->url, $companyid, 0, $output, $departmentid);
         $editform->set_data(array('deptid' => $departmentid));
+        $editform->get_data();
         echo $output->header();
+
         // Check the department is valid.
         if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
             print_error('invaliddepartment', 'block_iomad_company_admin');
