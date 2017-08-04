@@ -25,7 +25,7 @@ Feature: Edit user roles
     And I am on "Course 1" course homepage
     And I navigate to course participants
     And I click on "Student 1's role assignments" "link"
-    And I open the autocomplete suggestions list
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "student1" "table_row"
     And I click on "Non-editing teacher" item in the autocomplete list
     And I press key "27" in the field "Student 1's role assignments"
     When I click on "Save changes" "link"
