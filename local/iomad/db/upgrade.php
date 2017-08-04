@@ -1528,5 +1528,43 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017041715, 'local', 'iomad');
     }
 
+    if ($oldversion < 2017041717) {
+
+        // Define table company_role_templates to be created.
+        $table = new xmldb_table('company_role_templates');
+
+        // Adding fields to table company_role_templates.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table company_role_templates.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for company_role_templates.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table company_role_templates_caps to be created.
+        $table = new xmldb_table('company_role_templates_caps');
+
+        // Adding fields to table company_role_templates_caps.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('templateid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('capability', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table company_role_templates_caps.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for company_role_templates_caps.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017041717, 'local', 'iomad');
+    }
+
     return $result;
 }

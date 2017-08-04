@@ -24,6 +24,7 @@ $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page.
 $companyid    = optional_param('companyid', 0, PARAM_INTEGER);
+$save         = optional_param('save', 0, PARAM_INTEGER);
 
 global $DB;
 

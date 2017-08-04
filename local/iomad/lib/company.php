@@ -329,6 +329,46 @@ class company {
     }
 
     /**
+     * Get company role templates
+     *
+     **/
+    public static function get_role_templates($companyid = 0) {
+        global $DB;
+
+        $templates = $DB->get_records_menu('company_role_templates', array(), 'name', 'id,name');
+        $templates = array('i' => get_string('inherit', 'block_iomad_company_admin')) + $templates;
+
+        // Add the default.
+        $templates = array(0 => get_string('none')) + $templates;
+        
+        return $templates;
+    }
+
+    /**
+     * Apply company role templates
+     *
+     **/
+    public function apply_role_templates($templateid = 0) {
+        global $DB;
+
+        if (!empty($templateid)) {
+            $restrictions = $DB->get_records('company_role_templates_caps', array('templateid' => $templateid));
+        } else {
+            // Get the same role entries as for the parent company id.
+            $restrictions = $DB->get_records('company_role_restriction', array('companyid' => $this->get_parentid()));
+        }
+
+        // Insert the restrictions.
+        // Remove them first.
+        $DB->delete_records('company_role_restriction', array('companyid' => $this->id));
+
+        // Add the template.
+        foreach ($restrictions as $restriction) {
+            $DB->insert_record('company_role_restriction', array('companyid' => $this->id, 'roleid' => $restriction->roleid, 'capability' => $restriction->capability));
+        }
+    }
+
+    /**
      * Associates a course to a company
      *
      * Parameters -

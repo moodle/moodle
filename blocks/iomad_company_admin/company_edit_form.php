@@ -151,6 +151,10 @@ class company_edit_form extends company_moodleform {
             
         $mform->addElement('select', 'managernotify', get_string('managernotify', 'block_iomad_company_admin'), $emailchoices);
         $mform->setDefault('managernotify', 0);
+
+        // Add in the company role template selector.
+        $templates = company::get_role_templates($this->companyid);
+        $mform->addElement('select', 'roletemplate', get_string('applyroletemplate', 'block_iomad_company_admin'), $templates);
             
         /* === end company email notifications === */
 
@@ -540,6 +544,20 @@ if ($mform->is_cancelled()) {
             company_user::reload_company();
         }
     }
+
+    // Deal with role templates.
+    if (!empty($data->roletemplate)) {
+        // We need to do something with the roles.
+        if ($data->roletemplate == 'i') {
+            if (!empty($data->parentid)) {
+                // Apply the same roles as per the parent company.
+                $company->apply_role_templates();
+            }
+        } else {
+            $company->apply_role_templates($data->roletemplate);
+        }
+    }
+
     if (!empty($data->companylogo)) {
         file_save_draft_area_files($data->companylogo,
                                    $context->id,

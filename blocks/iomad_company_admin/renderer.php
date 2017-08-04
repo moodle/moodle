@@ -20,12 +20,18 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
      * Display list of available roles
      * @param array $roles
      */
-    public function role_select($roles, $linkurl, $companyid) {
+    public function role_select($roles, $linkurl, $companyid, $templateid) {
         global $DB;
 
         // get company info for heading
-        $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
-        $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
+        if (empty($templateid)) {
+            $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
+            $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
+        } else {
+            $template = $DB->get_record('company_role_templates', array('id' => $templateid), '*', MUST_EXIST);
+            $title = get_string('roletemplate', 'block_iomad_company_admin') . ' ' . $template->name;
+            $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $title) . '</h3>';
+        }
 
         $table = new html_table();
         $table->head = array(
@@ -49,13 +55,21 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
     /**
      * Display capabilities for role
      */
-    public function capabilities($capabilities, $roleid, $companyid) {
+    public function capabilities($capabilities, $roleid, $companyid, $templateid) {
         global $DB;
 
         // get heading
-        $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
+        if (empty($templateid)) {
+            $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
+            $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
+            $prefix = "c." . $companyid;
+        } else {
+            $template = $DB->get_record('company_role_templates', array('id' => $templateid), '*', MUST_EXIST);
+            $title = get_string('roletemplate', 'block_iomad_company_admin') . ' ' . $template->name;
+            $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $title) . '</h3>';
+            $prefix = "t." . $templateid;
+        }
         $role = $DB->get_record('role', array('id' => $roleid), '*', MUST_EXIST);
-        $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
         $out .= '<p><b>' . get_string('rolename', 'block_iomad_company_admin', $role->name) . '</b></p>';
         $out .= '<p>' . get_string('iomadcapabilities_boiler', 'block_iomad_company_admin') . '</p>';
 
@@ -65,7 +79,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
             if (!$capability->iomad_restriction) {
                 $checked = 'checked="checked"';
             }
-            $value ="{$companyid}.{$roleid}.{$capability->capability}";
+            $value ="{$prefix}.{$roleid}.{$capability->capability}";
             $caplink = '<a href="' .iomad::documentation_link() . $capability->capability . '">' . get_capability_string($capability->capability) . '</a>';
             $row = array(
                 $caplink . '<br /><small>' . $capability->capability . '</small>',
@@ -87,6 +101,51 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
         return $out;
     }
 
+    /**
+     * Back to list of roles button
+     */
+    public function templates_buttons($savelink, $managelink, $backlink) {
+        $out = '<p><a class="btn btn-primary" href="'.$savelink.'">' . get_string('saveroletemplate', 'block_iomad_company_admin') . '</a> '.
+               '<a class="btn btn-primary" href="'.$managelink.'">' . get_string('managetemplates', 'block_iomad_company_admin') . '</a>';
+        if (!empty($backlink)) {
+            $out .= ' <a class="btn btn-primary" href="'.$backlink.'">' . get_string('backtocompanytemplate', 'block_iomad_company_admin') . '</a>';
+        }
+        $out .= '</p>';
+
+        return $out;
+    }
+
+    /**
+     * Display role templates.
+     */
+    public function role_templates($templates, $backlink) {
+        global $DB;
+
+        // get heading
+        $out = '<h3>' . get_string('roletemplates', 'block_iomad_company_admin') . '</h3>';
+
+        $out .= '<a class="btn btn-primary" href="'.$backlink.'">' .
+                                           get_string('back') . '</a>'; 
+        $table = new html_table();
+        foreach ($templates as $template) {
+            $deletelink = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
+                                          array('templateid' => $template->id,
+                                                'action' => 'delete',
+                                                'sesskey' => sesskey()));
+            $editlink = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
+                                        array('templateid' => $template->id, 'action' => 'edit'));
+            $row = array($template->name, '<a class="btn btn-primary" href="'.$deletelink.'">' .
+                                           get_string('deleteroletemplate', 'block_iomad_company_admin') . '</a> ' .
+                                           '<a class="btn btn-primary" href="'.$editlink.'">' .
+                                           get_string('editroletemplate', 'block_iomad_company_admin') . '</a>');
+                
+            $table->data[] = $row;
+        }
+
+        $out .= html_writer::table($table);
+        return $out;
+    }
+    
     /**
      * Is the supplied id in the leaf somewhere?
      * @param array $leaf
