@@ -473,7 +473,7 @@ if (empty($departmentid)) {
 
 $userdepartment = $company->get_userlevel($USER);
 $departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
-$treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
+$treehtml = $output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
 
 $departmentselect = new single_select(new moodle_url($linkurl, $urlparams), 'deptid', $subhierarchieslist, $departmentid);
 $departmentselect->label = get_string('department', 'block_iomad_company_admin') .
