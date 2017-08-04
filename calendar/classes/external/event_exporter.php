@@ -26,9 +26,12 @@ namespace core_calendar\external;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . "/calendar/lib.php");
+
 use \core\external\exporter;
 use \core_calendar\local\event\entities\event_interface;
 use \core_calendar\local\event\entities\action_event_interface;
+use \core_calendar\local\event\container;
 use \core_course\external\course_summary_exporter;
 use \renderer_base;
 
@@ -164,6 +167,14 @@ class event_exporter extends exporter {
             'course' => [
                 'type' => course_summary_exporter::read_properties_definition(),
                 'optional' => true,
+            ],
+            'canedit' => ['type' => PARAM_BOOL],
+            'displayeventsource' => ['type' => PARAM_BOOL],
+            'subscription' => [
+                'type' => PARAM_RAW,
+                'optional' => true,
+                'default' => null,
+                'null' => NULL_ALLOWED
             ]
         ];
     }
@@ -177,6 +188,8 @@ class event_exporter extends exporter {
     protected function get_other_values(renderer_base $output) {
         $values = [];
         $event = $this->event;
+        $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
+
         $context = $this->related['context'];
         if ($moduleproxy = $event->get_course_module()) {
             $modulename = $moduleproxy->get('modname');
@@ -207,7 +220,23 @@ class event_exporter extends exporter {
             $coursesummaryexporter = new course_summary_exporter($course, ['context' => $context]);
             $values['course'] = $coursesummaryexporter->export($output);
         }
+        $values['canedit'] = calendar_edit_event_allowed($legacyevent);
 
+        // Handle event subscription.
+        $values['subscription'] = null;
+        $values['displayeventsource'] = false;
+        if (!empty($legacyevent->subscriptionid)) {
+            $subscription = calendar_get_subscription($legacyevent->subscriptionid);
+            if (!empty($subscription) && $CFG->calendar_showicalsource) {
+                $values['displayeventsource'] = true;
+                $subscriptiondata = new \stdClass();
+                if (!empty($subscription->url)) {
+                    $subscriptiondata->url = $subscription->url;
+                }
+                $subscriptiondata->name = $subscription->name;
+                $values['subscription'] = json_encode($subscriptiondata);
+            }
+        }
         return $values;
     }
 
