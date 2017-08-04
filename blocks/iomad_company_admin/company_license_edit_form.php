@@ -115,7 +115,11 @@ class company_license_form extends company_moodleform {
 
         $company = new company($this->selectedcompany);
         if (empty($this->parentid)) {
-            $mform->addElement('header', 'header', get_string('edit_licenses', 'block_iomad_company_admin'));
+            if (!empty($this->licenseid)) {
+                $mform->addElement('header', 'header', get_string('edit_licenses', 'block_iomad_company_admin'));
+            } else {
+                $mform->addElement('header', 'header', get_string('createlicense', 'block_iomad_company_admin'));
+            }
             $mform->addElement('hidden', 'designatedcompany', 0);
             $mform->setType('designatedcompany', PARAM_INT);
         } else {
@@ -146,7 +150,7 @@ class company_license_form extends company_moodleform {
                            'maxlength="254" size="50"');
         $mform->addHelpButton('name', 'licensename', 'block_iomad_company_admin');
         $mform->addRule('name', get_string('missinglicensename', 'block_iomad_company_admin'), 'required', null, 'client');
-        $mform->setType('name', PARAM_MULTILANG);
+        $mform->setType('name', PARAM_ALPHANUMEXT);
 
         if (empty($this->parentid)) {
             $licensetypes = array(get_string('standard', 'block_iomad_company_admin'),
@@ -156,6 +160,8 @@ class company_license_form extends company_moodleform {
             $mform->addElement('selectyesno', 'program', get_string('licenseprogram', 'block_iomad_company_admin'));
             $mform->addHelpButton('program', 'licenseprogram', 'block_iomad_company_admin');
             $mform->addElement('date_selector', 'expirydate', get_string('licenseexpires', 'block_iomad_company_admin'));
+            $mform->setDefault('expirydate', strtotime('+ 1 year'));
+
             $mform->addHelpButton('expirydate', 'licenseexpires', 'block_iomad_company_admin');
             $mform->addRule('expirydate', get_string('missinglicenseexpires', 'block_iomad_company_admin'),
                             'required', null, 'client');
@@ -163,8 +169,6 @@ class company_license_form extends company_moodleform {
             $mform->addElement('text', 'validlength', get_string('licenseduration', 'block_iomad_company_admin'),
                                'maxlength="254" size="50"');
             $mform->addHelpButton('validlength', 'licenseduration', 'block_iomad_company_admin');
-            $mform->addRule('validlength', get_string('missinglicenseduration', 'block_iomad_company_admin'),
-                            'required', null, 'client');
             $mform->setType('validlength', PARAM_INTEGER);
         } else {
             $mform->addElement('hidden', 'type', $this->parentlicense->type);
@@ -194,6 +198,8 @@ class company_license_form extends company_moodleform {
         }
         $autooptions = array('multiple' => true);
         $mform->addElement('autocomplete', 'licensecourses', get_string('selectlicensecourse', 'block_iomad_company_admin'), $this->courses, $autooptions);
+        $mform->addRule('licensecourses', get_string('missinglicensecourses', 'block_iomad_company_admin'),
+                        'required', null, 'client');
 
         // If we are not a child of a program license then show all of the courses.
         if (!empty($this->parentlicense->program)) {
@@ -210,6 +216,12 @@ class company_license_form extends company_moodleform {
         global $DB;
 
         $errors = array();
+
+        $name = optional_param('name', '', PARAM_ALPHANUMEXT);
+
+        if (empty($name)) {
+            $errors['name'] = get_string('invalidlicensename', 'block_iomad_company_admin');
+        }
 
         if (!empty($data['licenseid'])) {
             // check that the amount of free licenses slots is more than the amount being allocated.
@@ -245,6 +257,11 @@ class company_license_form extends company_moodleform {
         if (empty($data['licensecourses'])) {
             $errors['licensecourses'] = get_string('select_license_courses', 'block_iomad_company_admin');
         }
+        
+        if (empty($data['type']) && empty($data['validlength'])) {
+            $errors['validlength'] = get_string('missinglicenseduration', 'block_iomad_company_admin');
+        }
+
         // Is the value for length appropriate?
         if ($data['validlength'] < 1 ) {
             $errors['validlegth'] = get_string('invalidnumber', 'block_iomad_company_admin');
