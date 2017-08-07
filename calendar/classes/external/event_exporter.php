@@ -157,6 +157,10 @@ class event_exporter extends exporter {
     protected static function define_other_properties() {
         return [
             'url' => ['type' => PARAM_URL],
+            'editurl' => [
+                'type' => PARAM_URL,
+                'optional' => true
+            ],
             'icon' => [
                 'type' => event_icon_exporter::read_properties_definition(),
             ],
@@ -198,7 +202,13 @@ class event_exporter extends exporter {
             $modulename = $moduleproxy->get('modname');
             $moduleid = $moduleproxy->get('id');
             $url = new \moodle_url(sprintf('/mod/%s/view.php', $modulename), ['id' => $moduleid]);
+
             $values['isactionevent'] = true;
+
+            // Build edit event url for action events.
+            $params = array('update' => $moduleid, 'return' => true, 'sesskey' => sesskey());
+            $editurl = new \moodle_url('/course/mod.php', $params);
+            $values['editurl'] = $editurl->out(false);
         } else {
             // TODO MDL-58866 We do not have any way to find urls for events outside of course modules.
             global $CFG;

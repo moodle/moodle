@@ -198,6 +198,10 @@ define([
         body.on(CalendarEvents.updated, function() {
             window.location.reload();
         });
+        body.on(CalendarEvents.editActionEvent, function(e, url) {
+            // Action events needs to be edit directly on the course module.
+            window.location.assign(url);
+        });
 
         eventFormModalPromise.then(function(modal) {
             // When something within the calendar tells us the user wants
