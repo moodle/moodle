@@ -23,7 +23,7 @@ Feature: Bulk enrolments
   Scenario: Bulk edit enrolments
     When I log in as "admin"
     And I am on "Course 1" course homepage
-    And I follow "Participants"
+    And I navigate to course participants
     And I press "Select all"
     And I set the field "With selected users..." to "Edit selected user enrolments"
     And I set the field "Alter status" to "Suspended"
@@ -36,7 +36,7 @@ Feature: Bulk enrolments
   Scenario: Bulk delete enrolments
     When I log in as "admin"
     And I am on "Course 1" course homepage
-    And I follow "Participants"
+    And I navigate to course participants
     And I press "Select all"
     And I set the field "With selected users..." to "Delete selected user enrolments"
     And I press "Unenrol users"
