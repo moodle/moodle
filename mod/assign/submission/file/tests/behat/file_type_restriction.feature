@@ -52,7 +52,7 @@ Feature: In an assignment, limit submittable file types
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I press "Add submission"
-    And I should see "Files of these types may be added to the submission"
+    And I should see "Accepted file types"
     And I should see "Image (PNG)"
     And I should see "Spreadsheet files"
     And I should see "Text file"
@@ -73,7 +73,7 @@ Feature: In an assignment, limit submittable file types
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I press "Add submission"
-    And I should not see "Files of these types may be added to the submission"
+    And I should not see "Accepted file types"
     And I upload "lib/tests/fixtures/gd-logo.png" file to "File submissions" filemanager
     And I upload "lib/tests/fixtures/tabfile.csv" file to "File submissions" filemanager
     And I press "Save changes"
