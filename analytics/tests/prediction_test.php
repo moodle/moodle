@@ -31,6 +31,8 @@ require_once(__DIR__ . '/fixtures/test_indicator_random.php');
 require_once(__DIR__ . '/fixtures/test_target_shortname.php');
 require_once(__DIR__ . '/fixtures/test_static_target_shortname.php');
 
+require_once(__DIR__ . '/../../course/lib.php');
+
 /**
  * Unit tests for evaluation, training and prediction.
  *
@@ -81,7 +83,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         }
 
         // 1 range for each analysable.
-        $predictedranges = $DB->get_records('analytics_predict_ranges', array('modelid' => $model->get_id()));
+        $predictedranges = $DB->get_records('analytics_predict_samples', array('modelid' => $model->get_id()));
         $this->assertCount(2, $predictedranges);
         $this->assertEquals(1, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'predicted')));
@@ -91,7 +93,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
 
         // No new generated files nor records as there are no new courses available.
         $model->predict();
-        $predictedranges = $DB->get_records('analytics_predict_ranges', array('modelid' => $model->get_id()));
+        $predictedranges = $DB->get_records('analytics_predict_samples', array('modelid' => $model->get_id()));
         $this->assertCount(2, $predictedranges);
         $this->assertEquals(1, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'predicted')));
@@ -104,11 +106,11 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      *
      * @dataProvider provider_ml_training_and_prediction
      * @param string $timesplittingid
-     * @param int $npredictedranges
+     * @param int $predictedrangeindex
      * @param string $predictionsprocessorclass
      * @return void
      */
-    public function test_ml_training_and_prediction($timesplittingid, $npredictedranges, $predictionsprocessorclass) {
+    public function test_ml_training_and_prediction($timesplittingid, $predictedrangeindex, $predictionsprocessorclass) {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -176,22 +178,75 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             $this->assertEquals($correct[$sampleid], $predictiondata->prediction);
         }
 
-        // 2 ranges will be predicted.
-        $predictedranges = $DB->get_records('analytics_predict_ranges', array('modelid' => $model->get_id()));
-        $this->assertCount($npredictedranges, $predictedranges);
+        // 1 range will be predicted.
+        $predictedranges = $DB->get_records('analytics_predict_samples', array('modelid' => $model->get_id()));
+        $this->assertCount(1, $predictedranges);
+        foreach ($predictedranges as $predictedrange) {
+            $this->assertEquals($predictedrangeindex, $predictedrange->rangeindex);
+            $sampleids = json_decode($predictedrange->sampleids, true);
+            $this->assertCount(2, $sampleids);
+            $this->assertContains($course1->id, $sampleids);
+            $this->assertContains($course2->id, $sampleids);
+        }
         $this->assertEquals(1, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'predicted')));
-        // 2 predictions for each range.
-        $this->assertEquals(2 * $npredictedranges, $DB->count_records('analytics_predictions',
+        // 2 predictions.
+        $this->assertEquals(2, $DB->count_records('analytics_predictions',
             array('modelid' => $model->get_id())));
 
         // No new generated files nor records as there are no new courses available.
         $model->predict();
-        $predictedranges = $DB->get_records('analytics_predict_ranges', array('modelid' => $model->get_id()));
-        $this->assertCount($npredictedranges, $predictedranges);
+        $predictedranges = $DB->get_records('analytics_predict_samples', array('modelid' => $model->get_id()));
+        $this->assertCount(1, $predictedranges);
+        foreach ($predictedranges as $predictedrange) {
+            $this->assertEquals($predictedrangeindex, $predictedrange->rangeindex);
+        }
         $this->assertEquals(1, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'predicted')));
-        $this->assertEquals(2 * $npredictedranges, $DB->count_records('analytics_predictions',
+        $this->assertEquals(2, $DB->count_records('analytics_predictions',
+            array('modelid' => $model->get_id())));
+
+        // New samples that can be used for prediction.
+        $courseparams = $params + array('shortname' => 'cccccc', 'fullname' => 'cccccc', 'visible' => 0);
+        $course3 = $this->getDataGenerator()->create_course($courseparams);
+        $courseparams = $params + array('shortname' => 'dddddd', 'fullname' => 'dddddd', 'visible' => 0);
+        $course4 = $this->getDataGenerator()->create_course($courseparams);
+
+        $result = $model->predict();
+
+        $predictedranges = $DB->get_records('analytics_predict_samples', array('modelid' => $model->get_id()));
+        $this->assertCount(1, $predictedranges);
+        foreach ($predictedranges as $predictedrange) {
+            $this->assertEquals($predictedrangeindex, $predictedrange->rangeindex);
+            $sampleids = json_decode($predictedrange->sampleids, true);
+            $this->assertCount(4, $sampleids);
+            $this->assertContains($course1->id, $sampleids);
+            $this->assertContains($course2->id, $sampleids);
+            $this->assertContains($course3->id, $sampleids);
+            $this->assertContains($course4->id, $sampleids);
+        }
+        $this->assertEquals(2, $DB->count_records('analytics_used_files',
+            array('modelid' => $model->get_id(), 'action' => 'predicted')));
+        $this->assertEquals(4, $DB->count_records('analytics_predictions',
+            array('modelid' => $model->get_id())));
+
+        // New visible course (for training).
+        $course5 = $this->getDataGenerator()->create_course(array('shortname' => 'aaa', 'fullname' => 'aa'));
+        $course6 = $this->getDataGenerator()->create_course();
+        $result = $model->train();
+        $this->assertEquals(2, $DB->count_records('analytics_used_files',
+            array('modelid' => $model->get_id(), 'action' => 'trained')));
+
+        // Update one of the courses to not visible, it should be used again for prediction.
+        $course5->visible = 0;
+        update_course($course5);
+
+        $model->predict();
+        $this->assertEquals(1, $DB->count_records('analytics_predict_samples',
+            array('modelid' => $model->get_id())));
+        $this->assertEquals(2, $DB->count_records('analytics_used_files',
+            array('modelid' => $model->get_id(), 'action' => 'predicted')));
+        $this->assertEquals(4, $DB->count_records('analytics_predictions',
             array('modelid' => $model->get_id())));
 
         set_config('enabled_stores', '', 'tool_log');
@@ -205,8 +260,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      */
     public function provider_ml_training_and_prediction() {
         $cases = array(
-            'no_splitting' => array('\core\analytics\time_splitting\no_splitting', 1),
-            'quarters' => array('\core\analytics\time_splitting\quarters', 4)
+            'no_splitting' => array('\core\analytics\time_splitting\no_splitting', 0),
+            'quarters' => array('\core\analytics\time_splitting\quarters', 3)
         );
 
         // We need to test all system prediction processors.

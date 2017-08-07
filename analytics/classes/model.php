@@ -1013,7 +1013,7 @@ class model {
      */
     public function any_prediction_obtained() {
         global $DB;
-        return $DB->record_exists('analytics_predict_ranges',
+        return $DB->record_exists('analytics_predict_samples',
             array('modelid' => $this->model->id, 'timesplitting' => $this->model->timesplitting));
     }
 
@@ -1317,8 +1317,8 @@ class model {
     private function clear_model() {
         global $DB;
 
-        $DB->delete_records('analytics_predict_ranges', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_predictions', array('modelid' => $this->model->id));
+        $DB->delete_records('analytics_predict_samples', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_train_samples', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_used_files', array('modelid' => $this->model->id));
 
