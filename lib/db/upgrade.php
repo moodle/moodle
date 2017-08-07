@@ -2255,7 +2255,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017072700.02);
     }
 
-    if ($oldversion < 2017080700.00) {
+    if ($oldversion < 2017080700.01) {
 
         // Get the table by its previous name.
         $table = new xmldb_table('analytics_predict_ranges');
@@ -2286,8 +2286,26 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->rename_table($table, 'analytics_predict_samples');
         }
 
+        $table = new xmldb_table('analytics_predict_samples');
+
+        $index = new xmldb_index('modelidandanalysableidandtimesplitting', XMLDB_INDEX_NOTUNIQUE,
+            array('modelid', 'analysableid', 'timesplitting'));
+
+        // Conditionally launch drop index.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $index = new xmldb_index('modelidandanalysableidandtimesplittingandrangeindex', XMLDB_INDEX_NOTUNIQUE,
+            array('modelid', 'analysableid', 'timesplitting', 'rangeindex'));
+
+        // Conditionally launch add index.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017080700.00);
+        upgrade_main_savepoint(true, 2017080700.01);
     }
 
     return true;
