@@ -318,10 +318,15 @@ if ($mform->is_cancelled()) {
 
         echo $output->header();
         $departmentinfo = $DB->get_record('department', array('id' => $departmentid), '*', MUST_EXIST);
-        echo $output->heading(get_string('deletedepartment', 'block_iomad_company_admin'));
-        $optionsyes = array('deleteid' => $departmentid, 'confirm' => md5($departmentid), 'sesskey' => sesskey());
-        echo $output->confirm(get_string('deletedepartmentcheckfull', 'block_iomad_company_admin', "'$departmentinfo->name'"),
-                              new moodle_url('company_department_create_form.php', $optionsyes), 'company_department_create_form.php');
+        if (company::get_recursive_department_users($departmentid)) {
+            // there are users under this department.  We can't delete them.
+            notice(get_string('cantdeletedepartment', 'block_iomad_company_admin'), $linkurl);
+        } else {
+            echo $output->heading(get_string('deletedepartment', 'block_iomad_company_admin'));
+            $optionsyes = array('deleteid' => $departmentid, 'confirm' => md5($departmentid), 'sesskey' => sesskey());
+            echo $output->confirm(get_string('deletedepartmentcheckfull', 'block_iomad_company_admin', "'$departmentinfo->name'"),
+                                  new moodle_url('company_department_create_form.php', $optionsyes), 'company_department_create_form.php');
+        }
         echo $output->footer();
         die;
     } else if (isset($data->edit)) {

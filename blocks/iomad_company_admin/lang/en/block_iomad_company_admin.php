@@ -35,6 +35,7 @@ $string['backtocompanytemplate'] = 'Back to company template';
 $string['bgcolor_content'] = 'Content Background Colour';
 $string['bgcolor_header'] = 'Header Background Colour';
 $string['blocktitle'] = 'Company / User Admin';
+$string['cantdeletedepartment'] = 'You cannot delete this department until all of the users are removed.';
 $string['classroom_capacity'] = 'Room capacity';
 $string['classroom_delete_checkfull'] = 'Are you absolutely sure you want to delete {$a}?';
 $string['classroom_delete'] = 'Delete teaching location';
