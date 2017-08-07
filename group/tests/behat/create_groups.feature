@@ -47,11 +47,16 @@ Feature: Organize students into groups
     And the "members" select box should contain "Student 3"
     And the "members" select box should not contain "Student 0"
     And I navigate to course participants
-    And I set the field "Separate groups" to "Group 1"
+    And I open the autocomplete suggestions list
+    And I click on "Group: Group 1" item in the autocomplete list
+    And I press "Filter"
     And I should see "Student 0"
     And I should see "Student 1"
     And I should not see "Student 2"
-    And I set the field "Separate groups" to "Group 2"
+    And I click on "Group: Group 1" "text" in the ".form-autocomplete-selection" "css_element"
+    And I open the autocomplete suggestions list
+    And I click on "Group: Group 2" item in the autocomplete list
+    And I press "Filter"
     And I should see "Student 2"
     And I should see "Student 3"
     And I should not see "Student 0"
