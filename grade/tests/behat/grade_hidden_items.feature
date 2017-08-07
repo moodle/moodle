@@ -27,6 +27,14 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
       | assign | C1 | a3 | Test assignment three | Submit something! | Sub category 2 | 100 |
       | assign | C1 | a4 | Test assignment four | Submit something! | Sub category 2 | 100 |
     And I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    And I press "Add grade item"
+    And I set the following fields to these values:
+      | Item name | calculated |
+    And I press "Save changes"
+    And I set "=[[a4]]/2" calculation for grade item "calculated" with idnumbers:
+      | Sub category 1 | sub1 |
     And I navigate to "Overview report" node in "Site administration > Grades > Report settings"
     And I set the field "s__grade_report_overview_showtotalsifcontainhidden" to "Show totals excluding hidden items"
     And I navigate to "User report" node in "Site administration > Grades > Report settings"
