@@ -30,7 +30,6 @@ $string['analyticslogstore_help'] = 'The log store that will be used by the anal
 $string['analyticssettings'] = 'Analytics settings';
 $string['coursetoolong'] = 'The course is too long';
 $string['enabledtimesplittings'] = 'Time splitting methods';
-$string['enabledtimesplittings_help'] = 'The time splitting method divides the course duration in parts, the predictions engine will run at the end of these parts. It is recommended that you only enable the time splitting methods you could be interested on using; the evaluation process will iterate through all of them so the more time splitting methods to go through the slower the evaluation process will be.';
 $string['erroralreadypredict'] = '{$a} file has already been used to predict';
 $string['errorcannotreaddataset'] = 'Dataset file {$a} can not be read';
 $string['errorcannotwritedataset'] = 'Dataset file {$a} can not be written';
