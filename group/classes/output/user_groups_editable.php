@@ -75,7 +75,7 @@ class user_groups_editable extends \core\output\inplace_editable {
         $options = [];
 
         foreach ($coursegroups as $group) {
-            $options[$group->id] = $group->name;
+            $options[$group->id] = format_string($group->name, true, ['context' => $this->context]);
         }
         $this->edithint = get_string('editusersgroupsa', 'group', fullname($user));
         $this->editlabel = get_string('editusersgroupsa', 'group', fullname($user));
