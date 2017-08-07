@@ -92,7 +92,7 @@ if ($lesson->ongoing && !$reviewmode) {
     echo $lessonoutput->ongoing_score($lesson);
 }
 if (!$reviewmode) {
-    echo $result->feedback;
+    echo format_text($result->feedback, FORMAT_MOODLE, array('context' => $context));
 }
 
 // User is modifying attempts - save button and some instructions
