@@ -525,14 +525,14 @@ abstract class grade_report {
                     $aggregationweight = null;
                 }
             }
-        } else if (!empty($hiding_affected['unknown'][$course_item->id])) {
+        } else if (array_key_exists($course_item->id, $hiding_affected['unknowngrades'])) {
             //not sure whether or not this item depends on a hidden item
             if (!$this->showtotalsifcontainhidden[$courseid]) {
                 //hide the grade
                 $finalgrade = null;
             } else {
                 //use reprocessed marks that exclude hidden items
-                $finalgrade = $hiding_affected['unknown'][$course_item->id];
+                $finalgrade = $hiding_affected['unknowngrades'][$course_item->id];
 
                 if (array_key_exists($course_item->id, $hiding_affected['alteredgrademin'])) {
                     $grademin = $hiding_affected['alteredgrademin'][$course_item->id];
