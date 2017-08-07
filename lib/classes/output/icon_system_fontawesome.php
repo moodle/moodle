@@ -371,7 +371,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/switch_whole' => 'fa-square-o',
             'core:t/unblock' => 'fa-commenting',
             'core:t/unlocked' => 'fa-unlock-alt',
-            'core:t/unlock' => 'fa-unlock',
+            'core:t/unlock' => 'fa-lock',
             'core:t/up' => 'fa-arrow-up',
             'core:t/user' => 'fa-user',
             'core:t/viewdetails' => 'fa-list',
