@@ -337,15 +337,29 @@ class core_statslib_testcase extends advanced_testcase {
 
         $this->assertEquals($firstoldtime, stats_get_start_from('daily'));
 
+        $time = time() - 5;
         \core_tests\event\create_executed::create(array('context' => context_system::instance()))->trigger();
+        $DB->set_field('logstore_standard_log', 'timecreated', $time++, [
+                'eventname' => '\\core_tests\\event\\create_executed',
+            ]);
+
         \core_tests\event\read_executed::create(array('context' => context_system::instance()))->trigger();
+        $DB->set_field('logstore_standard_log', 'timecreated', $time++, [
+                'eventname' => '\\core_tests\\event\\read_executed',
+            ]);
+
         \core_tests\event\update_executed::create(array('context' => context_system::instance()))->trigger();
+        $DB->set_field('logstore_standard_log', 'timecreated', $time++, [
+                'eventname' => '\\core_tests\\event\\update_executed',
+            ]);
+
         \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
+        $DB->set_field('logstore_standard_log', 'timecreated', $time++, [
+                'eventname' => '\\core_tests\\event\\delete_executed',
+            ]);
 
-        // Fake the origin of events.
         $DB->set_field('logstore_standard_log', 'origin', 'web', array());
-
-        $logs = $DB->get_records('logstore_standard_log');
+        $logs = $DB->get_records('logstore_standard_log', null, 'timecreated ASC');
         $this->assertCount(4, $logs);
 
         $firstnew = reset($logs);
