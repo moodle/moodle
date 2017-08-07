@@ -524,7 +524,7 @@ abstract class oauth2_client extends curl {
     public function build_post_data($params) {
         $result = [];
         foreach ($params as $name => $value) {
-            $result[] = str_replace('&', '%26', $name) . '=' . str_replace('&', '%26', $value);
+            $result[] = urlencode($name) . '=' . urlencode($value);
         }
         return implode('&', $result);
     }
