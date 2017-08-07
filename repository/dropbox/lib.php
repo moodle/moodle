@@ -662,9 +662,7 @@ class repository_dropbox extends repository {
                     ]);
                 $info = $c->get_info();
                 if ($result === true && isset($info['http_code']) && $info['http_code'] == 200) {
-                    $fs = get_file_storage();
-                    list($contenthash, $filesize, ) = $fs->add_file_to_pool($saveas);
-                    $file->set_synchronized($contenthash, $filesize);
+                    $file->set_synchronised_content_from_file($saveas);
                     return true;
                 }
             } catch (Exception $e) {

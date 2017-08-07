@@ -1457,6 +1457,30 @@ class file_storage {
     }
 
     /**
+     * Synchronise stored file from file.
+     *
+     * @param stored_file $file Stored file to synchronise.
+     * @param string $path Path to the file to synchronise from.
+     * @param stdClass $filerecord The file record from the database.
+     */
+    public function synchronise_stored_file_from_file(stored_file $file, $path, $filerecord) {
+        list($contenthash, $filesize) = $this->add_file_to_pool($path, null, $filerecord);
+        $file->set_synchronized($contenthash, $filesize);
+    }
+
+    /**
+     * Synchronise stored file from string.
+     *
+     * @param stored_file $file Stored file to synchronise.
+     * @param string $content File content.
+     * @param stdClass $filerecord The file record from the database.
+     */
+    public function synchronise_stored_file_from_string(stored_file $file, $content, $filerecord) {
+        list($contenthash, $filesize) = $this->add_string_to_pool($content, $filerecord);
+        $file->set_synchronized($contenthash, $filesize);
+    }
+
+    /**
      * Create a new alias/shortcut file from file reference information
      *
      * @param stdClass|array $filerecord object or array describing the new file
