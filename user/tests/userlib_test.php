@@ -576,6 +576,15 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->setUser($user5);
         $this->assertTrue(user_can_view_profile($user4));
 
+        // Test the user:viewalldetails cap check using the course creator role which, by default, can't see student profiles.
+        $this->setUser($user7);
+        $this->assertFalse(user_can_view_profile($user4));
+        assign_capability('moodle/user:viewalldetails', CAP_ALLOW, $coursecreatorrole->id, context_system::instance()->id, true);
+        reload_all_capabilities();
+        $this->assertTrue(user_can_view_profile($user4));
+        unassign_capability('moodle/user:viewalldetails', $coursecreatorrole->id, $coursecontext->id);
+        reload_all_capabilities();
+
         $CFG->coursecontact = null;
 
         // Visitor (Not a guest user, userid=0).

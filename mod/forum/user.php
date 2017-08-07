@@ -135,8 +135,7 @@ if (empty($result->posts)) {
     // In either case we need to decide whether we can show personal information
     // about the requested user to the current user so we will execute some checks
 
-    // TODO - Remove extra cap check once MDL-59172 is resolved.
-    $canviewuser = user_can_view_profile($user, null, $usercontext) || has_capability('moodle/user:viewalldetails', $usercontext);
+    $canviewuser = user_can_view_profile($user, null, $usercontext);
 
     // Prepare the page title
     $pagetitle = get_string('noposts', 'mod_forum');
