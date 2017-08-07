@@ -130,18 +130,25 @@ abstract class base extends \core_analytics\calculable {
      * @param string $samplesorigin
      * @param integer $starttime Limit the calculation to this timestart
      * @param integer $endtime Limit the calculation to this timeend
-     * @return array The format to follow is [userid] = int|float[]
+     * @param array $existingcalculations Existing calculations of this indicator, indexed by sampleid.
+     * @return array array[0] with format [sampleid] = int[]|float[], array[1] with format [sampleid] = int|float
      */
-    public function calculate($sampleids, $samplesorigin, $starttime = false, $endtime = false) {
+    public function calculate($sampleids, $samplesorigin, $starttime = false, $endtime = false, $existingcalculations = array()) {
 
         if (!PHPUNIT_TEST && CLI_SCRIPT) {
             echo '.';
         }
 
         $calculations = array();
+        $newcalculations = array();
         foreach ($sampleids as $sampleid => $unusedsampleid) {
 
-            $calculatedvalue = $this->calculate_sample($sampleid, $samplesorigin, $starttime, $endtime);
+            if (isset($existingcalculations[$sampleid])) {
+                $calculatedvalue = $existingcalculations[$sampleid];
+            } else {
+                $calculatedvalue = $this->calculate_sample($sampleid, $samplesorigin, $starttime, $endtime);
+                $newcalculations[$sampleid] = $calculatedvalue;
+            }
 
             if (!is_null($calculatedvalue) && ($calculatedvalue > self::MAX_VALUE || $calculatedvalue < self::MIN_VALUE)) {
                 throw new \coding_exception('Calculated values should be higher than ' . self::MIN_VALUE .
@@ -151,8 +158,8 @@ abstract class base extends \core_analytics\calculable {
             $calculations[$sampleid] = $calculatedvalue;
         }
 
-        $calculations = $this->to_features($calculations);
+        $features = $this->to_features($calculations);
 
-        return $calculations;
+        return array($features, $newcalculations);
     }
 }

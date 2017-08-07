@@ -107,10 +107,11 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      * @dataProvider provider_ml_training_and_prediction
      * @param string $timesplittingid
      * @param int $predictedrangeindex
+     * @param int $nranges
      * @param string $predictionsprocessorclass
      * @return void
      */
-    public function test_ml_training_and_prediction($timesplittingid, $predictedrangeindex, $predictionsprocessorclass) {
+    public function test_ml_training_and_prediction($timesplittingid, $predictedrangeindex, $nranges, $predictionsprocessorclass) {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -152,6 +153,10 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $results = $model->train();
         $this->assertEquals(1, $model->is_enabled());
         $this->assertEquals(1, $model->is_trained());
+
+        // 20 courses * the 3 model indicators * the number of time ranges of this time splitting method.
+        $indicatorcalc = 20 * 3 * $nranges;
+        $this->assertEquals($indicatorcalc, $DB->count_records('analytics_indicator_calc'));
 
         // 1 training file was created.
         $trainedsamples = $DB->get_records('analytics_train_samples', array('modelid' => $model->get_id()));
@@ -260,8 +265,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      */
     public function provider_ml_training_and_prediction() {
         $cases = array(
-            'no_splitting' => array('\core\analytics\time_splitting\no_splitting', 0),
-            'quarters' => array('\core\analytics\time_splitting\quarters', 3)
+            'no_splitting' => array('\core\analytics\time_splitting\no_splitting', 0, 1),
+            'quarters' => array('\core\analytics\time_splitting\quarters', 3, 4)
         );
 
         // We need to test all system prediction processors.
@@ -332,6 +337,28 @@ class core_analytics_prediction_testcase extends advanced_testcase {
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
+    }
+
+    /**
+     * test_read_indicator_calculations
+     *
+     * @return void
+     */
+    public function test_read_indicator_calculations() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $starttime = 123;
+        $endtime = 321;
+        $sampleorigin = 'whatever';
+
+        $indicator = $this->getMockBuilder('test_indicator_max')->setMethods(['calculate_sample'])->getMock();
+        $indicator->expects($this->never())->method('calculate_sample');
+
+        $existingcalcs = array(111 => 1, 222 => 0.5);
+        $sampleids = array(111 => 111, 222 => 222);
+        list($values, $unused) = $indicator->calculate($sampleids, $sampleorigin, $starttime, $endtime, $existingcalcs);
     }
 
     /**
