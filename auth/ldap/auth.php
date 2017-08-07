@@ -928,7 +928,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                 $id = user_create_user($user, false);
                 echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
-                $euser = $DB->get_record('user', array('id' => $id));
+                $user = $DB->get_record('user', array('id' => $id));
 
                 if (!empty($this->config->forcechangepassword)) {
                     set_user_preference('auth_forcepasswordchange', 1, $id);
