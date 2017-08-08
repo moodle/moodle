@@ -38,7 +38,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
         var registerEventListeners = function(root) {
             root = $(root);
 
-            $(root).on('click', SELECTORS.CALENDAR_NAV_LINK, function(e) {
+            root.on('click', SELECTORS.CALENDAR_NAV_LINK, function(e) {
                 var courseId = $(root).find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('courseid');
                 var link = $(e.currentTarget);
                 changeMonth(link.attr('href'), link.data('time'), courseId);
@@ -58,16 +58,13 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
             CalendarRepository.getCalendarMonthData(time, courseid)
             .then(function(context) {
                 window.history.pushState({}, '', url);
-
                 return Templates.render('core_calendar/month_detailed', context);
             })
             .then(function(html, js) {
-                $(SELECTORS.CALENDAR_MONTH_WRAPPER).replaceWith(html);
-
-                return Templates.runTemplateJS(js);
+                return Templates.replaceNodeContents(SELECTORS.CALENDAR_MONTH_WRAPPER, html, js);
             })
             .done(function() {
-                $('body').trigger(CalendarEvents.monthChanged, []);
+                $('body').trigger(CalendarEvents.monthChanged, [time, courseid]);
             })
             .fail(Notification.exception);
         };

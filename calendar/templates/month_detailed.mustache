@@ -34,7 +34,7 @@
 <span class="calendarwrapper" data-courseid="{{courseid}}">
     {{> core_calendar/month_header }}
     {{> core_calendar/month_navigation }}
-    <table class="calendarmonth calendartable table card-deck m-b-0">
+    <table class="calendarmonth calendartable card-deck m-b-0">
         <thead>
             <tr>
                 {{# daynames }}
@@ -79,7 +79,7 @@
                                 </ul>
                             {{/events.0}}
                         </div>
-                        <div class="hidden-md-up">
+                        <div class="hidden-md-up hidden-desktop">
                             {{#events.0}}
                                 <a href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
                             {{/events.0}}

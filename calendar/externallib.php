@@ -857,8 +857,6 @@ class core_calendar_external extends external_api {
         global $CFG, $DB, $USER, $PAGE;
         require_once($CFG->dirroot."/calendar/lib.php");
 
-        $warnings = [];
-
         // Parameter validation.
         $params = self::validate_parameters(self::get_calendar_monthly_view_parameters(), [
             'time' => $time,

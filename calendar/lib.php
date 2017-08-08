@@ -3424,7 +3424,7 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses, $
 
 
 /**
- * Get theh calendar view output.
+ * Get the calendar view output.
  *
  * @param   \calendar_information $calendar The calendar being represented
  * @param   string      $view The type of calendar to have displayed
@@ -3507,23 +3507,9 @@ function calendar_get_view(\calendar_information $calendar, $view) {
         'cache' => new \core_calendar\external\events_related_objects_cache($events),
     ];
 
-    if ($view === 'upcoming') {
-        $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
-        if (isset($CFG->calendar_lookahead)) {
-            $defaultlookahead = intval($CFG->calendar_lookahead);
-        }
-        $lookahead = get_user_preferences('calendar_lookahead', $defaultlookahead);
-
-        $defaultmaxevents = CALENDAR_DEFAULT_UPCOMING_MAXEVENTS;
-        if (isset($CFG->calendar_maxevents)) {
-            $defaultmaxevents = intval($CFG->calendar_maxevents);
-        }
-        $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
-    } else {
-        $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
-        $data = $month->export($renderer);
-        $template = 'core_calendar/month_detailed';
-    }
+    $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
+    $data = $month->export($renderer);
+    $template = 'core_calendar/month_detailed';
 
     return [$data, $template];
 }

@@ -95,7 +95,7 @@ class day_exporter extends exporter {
                 'optional' => true,
             ],
             'events' => [
-                'type' => event_exporter::read_properties_definition(),
+                'type' => calendar_event_exporter::read_properties_definition(),
                 'multiple' => true,
             ]
         ];
