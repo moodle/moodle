@@ -388,7 +388,7 @@ class enrol_license_plugin extends enrol_plugin {
         // Deal with users who are past enrolment time/ completed the course.
         $runtime = time();
         if ($userids = $DB->get_records_sql("SELECT ue.id, ue.userid, ue.enrolid, e.courseid
-                                             FROM mdl_user_enrolments ue, mdl_enrol e
+                                             FROM {user_enrolments} ue, {enrol} e
                                              WHERE e.enrol='license'
                                              AND e.id = ue.enrolid
                                              AND ue.timeend < :time",
