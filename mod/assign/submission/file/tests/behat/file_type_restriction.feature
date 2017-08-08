@@ -35,13 +35,10 @@ Feature: In an assignment, limit submittable file types
     And I press "Save and display"
     And I navigate to "Edit settings" in current page administration
     And the field "Accepted file types" matches value "image/png,spreadsheet"
-    And I set the field "Accepted file types" to ""
-    And I press "Choose"
-    And I set the field "Image files" to "1"
-    And I press "Save changes"
+    And I set the field "Accepted file types" to "image"
     And I press "Save and display"
     And I navigate to "Edit settings" in current page administration
-    Then the field "Accepted file types" matches value "image"
+    Then I should see "Image files"
 
   @javascript @_file_upload
   Scenario: Uploading permitted file types for an assignment
@@ -52,7 +49,7 @@ Feature: In an assignment, limit submittable file types
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I press "Add submission"
-    And I should see "Files of these types may be added to the submission"
+    And I should see "Accepted file types"
     And I should see "Image (PNG)"
     And I should see "Spreadsheet files"
     And I should see "Text file"
@@ -73,7 +70,7 @@ Feature: In an assignment, limit submittable file types
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I press "Add submission"
-    And I should not see "Files of these types may be added to the submission"
+    And I should not see "Accepted file types"
     And I upload "lib/tests/fixtures/gd-logo.png" file to "File submissions" filemanager
     And I upload "lib/tests/fixtures/tabfile.csv" file to "File submissions" filemanager
     And I press "Save changes"
