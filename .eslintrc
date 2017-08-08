@@ -16,6 +16,7 @@
 
     // === Possible Errors ===
     'comma-dangle': 'off',
+    'no-compare-neg-zero': 'error',
     'no-cond-assign': 'error',
     'no-console': 'error',
     'no-constant-condition': 'error',
@@ -106,6 +107,7 @@
     'block-spacing': 'warn',
     'brace-style': ['warn', '1tbs'],
     'camelcase': 'warn',
+    'capitalized-comments': ['warn', 'always', { 'ignoreConsecutiveComments': true }],
     'comma-spacing': ['warn', { 'before': false, 'after': true }],
     'comma-style': ['warn', 'last'],
     'computed-property-spacing': 'error',
