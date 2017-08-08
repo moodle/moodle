@@ -497,7 +497,7 @@ abstract class base {
         $ranges = $timesplitting->get_all_ranges();
 
         // Opposite order as we are interested in the last range that can be used for prediction.
-        arsort($ranges);
+        krsort($ranges);
 
         // We already provided the analysable to the time splitting method, there is no need to feed it back.
         foreach ($ranges as $rangeindex => $range) {
