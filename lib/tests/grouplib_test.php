@@ -1562,6 +1562,8 @@ class core_grouplib_testcase extends advanced_testcase {
      * Test groups_get_all_groups_for_courses() method.
      */
     public function test_groups_get_all_groups_for_courses_with_courses() {
+        global $DB;
+
         $this->resetAfterTest(true);
         $generator = $this->getDataGenerator();
 
@@ -1610,6 +1612,18 @@ class core_grouplib_testcase extends advanced_testcase {
         $generator->create_group_member(array('groupid' => $group8->id, 'userid' => $user2->id));
         $generator->create_group_member(array('groupid' => $group9->id, 'userid' => $user1->id));
         $generator->create_group_member(array('groupid' => $group9->id, 'userid' => $user2->id));
+
+        // The process of modifying group members changes the timemodified of the group.
+        // Refresh the group records.
+        $group1 = $DB->get_record('groups', ['id' => $group1->id]);
+        $group2 = $DB->get_record('groups', ['id' => $group2->id]);
+        $group3 = $DB->get_record('groups', ['id' => $group3->id]);
+        $group4 = $DB->get_record('groups', ['id' => $group4->id]);
+        $group5 = $DB->get_record('groups', ['id' => $group5->id]);
+        $group6 = $DB->get_record('groups', ['id' => $group6->id]);
+        $group7 = $DB->get_record('groups', ['id' => $group7->id]);
+        $group8 = $DB->get_record('groups', ['id' => $group8->id]);
+        $group9 = $DB->get_record('groups', ['id' => $group9->id]);
 
         $result = groups_get_all_groups_for_courses($courses);
         $assertpropertiesmatch = function($expected, $actual) {
