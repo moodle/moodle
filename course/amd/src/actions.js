@@ -206,7 +206,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          */
         var findNextFocusable = function(mainElement) {
             var tabables = $("a:visible");
-            var isInside = false, foundElement = null;
+            var isInside = false;
+            var foundElement = null;
             tabables.each(function() {
                 if ($.contains(mainElement[0], this)) {
                     isInside = true;
