@@ -60,6 +60,7 @@ class event_exporter extends event_exporter_base {
             'null' => NULL_ALLOWED
         ];
         $values['isactionevent'] = ['type' => PARAM_BOOL];
+        $values['iscourseevent'] = ['type' => PARAM_BOOL];
         $values['candelete'] = ['type' => PARAM_BOOL];
         $values['url'] = ['type' => PARAM_URL];
         $values['action'] = [
@@ -79,12 +80,15 @@ class event_exporter extends event_exporter_base {
     protected function get_other_values(renderer_base $output) {
         $values = parent::get_other_values($output);
 
+        global $CFG;
+        require_once($CFG->dirroot.'/course/lib.php');
+
         $event = $this->event;
         $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
 
         $context = $this->related['context'];
         $values['isactionevent'] = false;
-
+        $values['iscourseevent'] = false;
         if ($moduleproxy = $event->get_course_module()) {
             $modulename = $moduleproxy->get('modname');
             $moduleid = $moduleproxy->get('id');
@@ -96,13 +100,13 @@ class event_exporter extends event_exporter_base {
             $params = array('update' => $moduleid, 'return' => true, 'sesskey' => sesskey());
             $editurl = new \moodle_url('/course/mod.php', $params);
             $values['editurl'] = $editurl->out(false);
+        } else if ($event->get_type() == 'course') {
+            $values['iscourseevent'] = true;
+            $url = \course_get_url($this->related['course'] ?: SITEID);
         } else {
             // TODO MDL-58866 We do not have any way to find urls for events outside of course modules.
-            global $CFG;
-            require_once($CFG->dirroot.'/course/lib.php');
             $url = \course_get_url($this->related['course'] ?: SITEID);
         }
-
         $values['url'] = $url->out(false);
 
         if ($event instanceof action_event_interface) {
