@@ -82,6 +82,10 @@ border-radius: 10px;
     float: left;
 }
 
+.companyselect {
+    min-height: 75px;
+}
+
 .companyselect .singlebutton {
     float: right;
     position: relative;
