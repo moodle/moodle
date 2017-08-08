@@ -145,18 +145,19 @@ define(['core/templates',
                     }
                 ];
 
-                $.when(Str.get_strings(strings)).then(function(results) {
+                var deleteModalPromise = ModalFactory.create({
+                    type: ModalFactory.types.SAVE_CANCEL
+                });
+
+                $.when(Str.get_strings(strings), deleteModalPromise).done(function(results, modal) {
                     var title = results[0];
                     var confirmMessage = results[1];
-                    return ModalFactory.create({
-                        body: confirmMessage,
-                        large: true,
-                        title: title,
-                        type: ModalFactory.types.CONFIRM
-                    });
-                }).done(function(modal) {
+                    modal.setTitle(title);
+                    modal.setBody(confirmMessage);
+                    modal.setSaveButtonText(title);
+
                     // Handle confirm event.
-                    modal.getRoot().on(ModalEvents.yes, function() {
+                    modal.getRoot().on(ModalEvents.save, function() {
                         // Build params.
                         var unenrolParams = {
                             confirm: 1,
