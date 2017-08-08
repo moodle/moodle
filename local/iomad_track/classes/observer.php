@@ -209,7 +209,12 @@ class observer {
         $completion->timeenrolled = $enrolrec->timestart;
         $completion->timestarted = $comprec->timestarted;
         $completion->timecompleted = $timecompleted;
-        $completion->finalscore = $finalgrade;
+        if (!empty(graderec->finalgrade)) {
+            $completion->finalscore = $graderec->finalgrade;
+        } else {
+            $completion->finalscore = 0;
+        }
+
         $trackid = $DB->insert_record('local_iomad_track', $completion);
 
         // Debug

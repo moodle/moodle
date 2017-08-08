@@ -22,5 +22,18 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
     $result = true;
     $dbman = $DB->get_manager();
 
+    if ($oldversion < 2017080800) {
+
+        // Changing type of field finalscore on table local_iomad_track to number.
+        $table = new xmldb_table('local_iomad_track');
+        $field = new xmldb_field('finalscore', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'timestarted');
+
+        // Launch change of type for field finalscore.
+        $dbman->change_field_type($table, $field);
+
+        // Iomad_track savepoint reached.
+        upgrade_plugin_savepoint(true, 2017080800, 'local', 'iomad_track');
+    }
+
     return $result;
 }
