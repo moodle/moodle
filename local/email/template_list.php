@@ -26,6 +26,7 @@ $sort         = optional_param('sort', 'name', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page.
+$lang         = optional_param('lang', 'en', PARAM_LANG);
 
 $context = context_system::instance();
 require_login();
@@ -109,6 +110,14 @@ echo '<h3>' . get_string('email_templates_for', $block, $company->get_name()) . 
 // Check we can actually do anything on this page.
 iomad::require_capability('local/email:list', $context);
 
+// Deal with the language selector.
+$langs = get_string_manager()->get_list_of_translations();
+$s = new single_select($PAGE->url, 'lang', $langs);
+$s->label = get_accesshide(get_string('language'));
+$s->class = 'langselector';
+$s->selected = $lang;
+echo $OUTPUT->box($OUTPUT->render($s), 'langselectorbox');
+
 // Get the number of templates.
 $objectcount = $DB->count_records('email_template');
 echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
@@ -126,20 +135,20 @@ function allow_sending_to_template($templatename) {
     return in_array($templatename, array('advertise_classroom_based_course'));
 }
 
-function create_default_template_row($templatename, $strdefault, $stradd, $strsend) {
+function create_default_template_row($templatename, $strdefault, $stradd, $strsend, $lang) {
     global $PAGE;
 
     $deletebutton = "";
 
     if ($stradd) {
         $editbutton = "<a class='btn' href='" . new moodle_url('template_edit_form.php',
-                       array("templatename" => $templatename)) . "'>$stradd</a>";
+                       array("templatename" => $templatename, 'lang' => $lang)) . "'>$stradd</a>";
     } else {
         $editbutton = "";
     }
     if ($strsend && allow_sending_to_template($templatename) ) {
         $sendbutton = "<a class='btn' href='" . new moodle_url('template_send_form.php',
-                       array("templatename" => $templatename)) . "'>$strsend</a>";
+                       array("templatename" => $templatename, 'lang' => $lang)) . "'>$strsend</a>";
     } else {
         $sendbutton = "";
     }
@@ -151,7 +160,7 @@ function create_default_template_row($templatename, $strdefault, $stradd, $strse
                   $sendbutton);
 }
 
-if ($templates = $DB->get_recordset('email_template', array('companyid' => $companyid),
+if ($templates = $DB->get_recordset('email_template', array('companyid' => $companyid, 'lang' => $lang),
                                     'name', '*', $page, $perpage)) {
     if (iomad::has_capability('local/email:edit', $context)) {
         $stredit = get_string('edit');
@@ -188,27 +197,27 @@ if ($templates = $DB->get_recordset('email_template', array('companyid' => $comp
     foreach ($templates as $template) {
         while ($i < $ntemplates && $configtemplates[$i] < $template->name) {
             $table->data[] = create_default_template_row($configtemplates[$i], $strdefault,
-                                                         $stradd, $strsend);
+                                                         $stradd, $strsend, $lang);
             $i++;
         }
 
         if ($strdelete) {
-            $deletebutton = "<a class='btn' href=\"template_list.php?delete=$template->id&amp;sesskey=".
-                             sesskey()."\">$strdelete</a>";
+            $deletebutton = "<a class='btn' href='" . new moodle_url('template_list.php',
+                          array("delete" => $template->id, 'lang' => $lang, 'sesskey' => sesskey())) ."'>$strdelete</a>";
         } else {
             $deletebutton = "";
         }
 
         if ($stredit) {
             $editbutton = "<a class='btn' href='" . new moodle_url('template_edit_form.php',
-                          array("templateid" => $template->id)) . "'>$stredit</a>";
+                          array("templateid" => $template->id, 'lang' => $lang)) . "'>$stredit</a>";
         } else {
             $editbutton = "";
         }
 
         if ($strsend && allow_sending_to_template($templatename)) {
             $sendbutton = "<a class='btn' href='" . new moodle_url('template_send_form.php',
-                          array("templateid" => $template->id)) . "'>$strsend</a>";
+                          array("templateid" => $template->id, 'lang' => $lang)) . "'>$strsend</a>";
         } else {
             $sendbutton = "";
         }
@@ -226,7 +235,7 @@ if ($templates = $DB->get_recordset('email_template', array('companyid' => $comp
 
     while ($i < $ntemplates) {
         $table->data[] = create_default_template_row($configtemplates[$i],
-                          $strdefault, $stradd, $strsend);
+                          $strdefault, $stradd, $strsend, $lang);
         $i++;
     }
 

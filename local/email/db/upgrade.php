@@ -143,6 +143,21 @@ function xmldb_local_email_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016051601, 'local', 'email');
     }
 
+    if ($oldversion < 2017080700) {
+
+        // Define field lang to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('lang', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'en', 'name');
+
+        // Conditionally launch add field lang.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2017080700, 'local', 'email');
+    }
+
     return $result;
 
 }

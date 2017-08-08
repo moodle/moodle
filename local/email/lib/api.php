@@ -370,11 +370,16 @@ class EmailTemplate {
         $email = local_email_get_templates();
         // Try to get it out of the database, otherwise get it from config file.
         if (!isset($companyid) || !$template = $DB->get_record('email_template', array('name' => $templatename,
-                                                                                       'companyid' => $companyid), '*')) {
-            if (isset($email[$templatename])) {
-                $template = (object) $email[$templatename];
-            } else {
-                print_error("Email template '$templatename' not found");
+                                                                                       'companyid' => $companyid,
+                                                                                       'lang' => $this->user->lang), '*')) {
+            if (!$template = $DB->get_record('email_template', array('name' => $templatename,
+                                                                     'companyid' => $companyid,
+                                                                     'lang' => 'en'), '*')) {
+                if (isset($email[$templatename])) {
+                    $template = (object) $email[$templatename];
+                } else {
+                    print_error("Email template '$templatename' not found");
+                }
             }
         }
 

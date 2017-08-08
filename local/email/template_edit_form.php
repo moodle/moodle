@@ -52,9 +52,11 @@ class template_edit_form extends moodleform {
         $mform->addElement('hidden', 'templateid', $this->templateid);
         $mform->addElement('hidden', 'templatename', $this->templaterecord->name);
         $mform->addElement('hidden', 'companyid', $this->companyid);
+        $mform->addElement('hidden', 'lang', $this->templaterecord->lang);
         $mform->setType('templateid', PARAM_INT);
         $mform->setType('companyid', PARAM_INT);
         $mform->setType('templatename', PARAM_CLEAN);
+        $mform->setType('lang', PARAM_LANG);
 
         $company = new company($this->companyid);
 
@@ -117,6 +119,7 @@ $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $templateid = optional_param('templateid', 0, PARAM_INTEGER);
 $templatename = optional_param('templatename', '', PARAM_NOTAGS);
 $new = optional_param('createnew', 0, PARAM_INTEGER);
+$lang = optional_param('lang', 'en', PARAM_LANG);
 
 $context = context_system::instance();
 require_login();
@@ -148,6 +151,8 @@ if (!$new) {
 
     iomad::require_capability('local/email:add', $context);
 }
+
+$templaterecord->lang = $lang;
 
 // Correct the navbar.
 // Set the name for the page.
