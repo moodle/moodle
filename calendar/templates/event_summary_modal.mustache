@@ -26,7 +26,11 @@
 }}
 {{< core/modal }}
 {{$footer}}
-<button type="button" class="btn btn-secondary" data-action="delete">{{#str}} delete {{/str}}</button>
-<button type="button" class="btn btn-primary" data-action="edit">{{#str}} edit {{/str}}</button>
+{{#canedit}}
+    {{#candelete}}
+        <button type="button" class="btn btn-secondary" data-action="delete">{{#str}} delete {{/str}}</button>
+    {{/candelete}}
+    <button type="button" class="btn btn-primary" data-action="edit">{{#str}} edit {{/str}}</button>
+{{/canedit}}
 {{/footer}}
 {{/ core/modal }}

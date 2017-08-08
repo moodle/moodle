@@ -26,7 +26,8 @@
         "eventtype": "open"
     }
 }}
-<div data-region="summary-modal-container" data-event-id="{{id}}" data-event-title="{{name}}">
+<div data-region="summary-modal-container" data-event-id="{{id}}" data-event-title="{{name}}"
+     data-action-event="{{isactionevent}}" data-edit-url="{{editurl}}">
     <h4>{{#str}} when, core_calendar {{/str}}</h4>
     {{#userdate}} {{timestart}}, {{#str}} strftimerecentfull {{/str}} {{/userdate}}
     <br>

@@ -712,37 +712,32 @@ class core_calendar_external extends external_api {
      * @return array Array of event details
      */
     public static function get_calendar_event_by_id($eventid) {
-        global $CFG;
+        global $CFG, $PAGE, $USER;
         require_once($CFG->dirroot."/calendar/lib.php");
 
-        // Parameter validation.
         $params = ['eventid' => $eventid];
-        $params = self::validate_parameters(self::get_calendar_event_by_id_parameters(), $params);
+        self::validate_parameters(self::get_calendar_event_by_id_parameters(), $params);
+        $context = \context_user::instance($USER->id);
 
+        self::validate_context($context);
         $warnings = array();
 
-        // We need to get events asked for eventids.
-        $event = calendar_get_events_by_id([$eventid]);
-        $eventobj = calendar_event::load($eventid);
-        list($event[$eventid]->description, $event[$eventid]->format) = $eventobj->format_external_text();
-        $event[$eventid]->caneditevent = calendar_edit_event_allowed($eventobj);
+        $legacyevent = calendar_event::load($eventid);
+        $legacyevent->count_repeats();
 
-        $event[$eventid]->subscription = null;
-        $event[$eventid]->displayeventsource = false;
-        if (!empty($event[$eventid]->subscriptionid)) {
-            $subscription = calendar_get_subscription($event[$eventid]->subscriptionid);
-            if (!empty($subscription) && $CFG->calendar_showicalsource) {
-                $event[$eventid]->displayeventsource = true;
-                $subscriptiondata = new stdClass();
-                if (!empty($subscription->url)) {
-                    $subscriptiondata->url = $subscription->url;
-                }
-                $subscriptiondata->name = $subscription->name;
-                $event[$eventid]->subscription = json_encode($subscriptiondata);
-            }
-        }
+        $eventmapper = event_container::get_event_mapper();
+        $event = $eventmapper->from_legacy_event_to_event($legacyevent);
 
-        return array('event' => $event[$eventid], 'warnings' => $warnings);
+        $cache = new events_related_objects_cache([$event]);
+        $relatedobjects = [
+            'context' => $cache->get_context($event),
+            'course' => $cache->get_course($event),
+        ];
+
+        $exporter = new event_exporter($event, $relatedobjects);
+        $renderer = $PAGE->get_renderer('core_calendar');
+
+        return array('event' => $exporter->export($renderer), 'warnings' => $warnings);
     }
 
     /**
@@ -751,35 +746,10 @@ class core_calendar_external extends external_api {
      * @return external_description
      */
     public static function  get_calendar_event_by_id_returns() {
+        $eventstructure = event_exporter::get_read_structure();
 
         return new external_single_structure(array(
-            'event' => new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'event id'),
-                    'name' => new external_value(PARAM_TEXT, 'event name'),
-                    'description' => new external_value(PARAM_RAW, 'Description', VALUE_OPTIONAL, null, NULL_ALLOWED),
-                    'format' => new external_format_value('description'),
-                    'courseid' => new external_value(PARAM_INT, 'course id'),
-                    'groupid' => new external_value(PARAM_INT, 'group id'),
-                    'userid' => new external_value(PARAM_INT, 'user id'),
-                    'repeatid' => new external_value(PARAM_INT, 'repeat id'),
-                    'modulename' => new external_value(PARAM_TEXT, 'module name', VALUE_OPTIONAL, null, NULL_ALLOWED),
-                    'instance' => new external_value(PARAM_INT, 'instance id'),
-                    'eventtype' => new external_value(PARAM_TEXT, 'Event type'),
-                    'timestart' => new external_value(PARAM_INT, 'timestart'),
-                    'timeduration' => new external_value(PARAM_INT, 'time duration'),
-                    'visible' => new external_value(PARAM_INT, 'visible'),
-                    'uuid' => new external_value(PARAM_TEXT, 'unique id of ical events', VALUE_OPTIONAL, null, NULL_NOT_ALLOWED),
-                    'sequence' => new external_value(PARAM_INT, 'sequence'),
-                    'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                    'subscriptionid' => new external_value(PARAM_INT, 'Subscription id', VALUE_OPTIONAL, null, NULL_ALLOWED),
-                    'subscription' => new external_value(PARAM_RAW, 'Subscription object serialized', VALUE_OPTIONAL,
-                            null, NULL_ALLOWED),
-                    'caneditevent' => new external_value(PARAM_BOOL, 'Whether the user can edit the event'),
-                    'displayeventsource' => new external_value(PARAM_BOOL, 'Whether the source should be displayed'),
-                ),
-                'event'
-            ),
+            'event' => $eventstructure,
             'warnings' => new external_warnings()
             )
         );

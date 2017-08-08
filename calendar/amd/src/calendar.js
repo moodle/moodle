@@ -130,11 +130,13 @@ define([
             var modalParams = {
                 title: eventData.name,
                 type: SummaryModal.TYPE,
-                body: Templates.render('core_calendar/event_summary_body', eventData)
+                body: Templates.render('core_calendar/event_summary_body', eventData),
+                templateContext: {
+                    canedit: eventData.canedit,
+                    candelete: eventData.candelete
+                }
             };
-            if (!eventData.caneditevent) {
-                modalParams.footer = '';
-            }
+
             // Create the modal.
             return ModalFactory.create(modalParams);
 
@@ -195,6 +197,10 @@ define([
         });
         body.on(CalendarEvents.updated, function() {
             window.location.reload();
+        });
+        body.on(CalendarEvents.editActionEvent, function(e, url) {
+            // Action events needs to be edit directly on the course module.
+            window.location.assign(url);
         });
 
         eventFormModalPromise.then(function(modal) {

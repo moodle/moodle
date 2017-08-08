@@ -41,14 +41,6 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
      */
     var ModalEventSummary = function(root) {
         Modal.call(this, root);
-
-        if (!this.getEditButton().length) {
-            Notification.exception({message: 'No edit button found'});
-        }
-
-        if (!this.getDeleteButton().length) {
-            Notification.exception({message: 'No delete button found'});
-        }
     };
 
     ModalEventSummary.TYPE = 'core_calendar-event_summary';
@@ -98,6 +90,26 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
     };
 
     /**
+     * Get the url for the event being shown in this modal.
+     *
+     * @method getEventUrl
+     * @return {String}
+     */
+    ModalEventSummary.prototype.getEditUrl = function() {
+        return this.getBody().find(SELECTORS.ROOT).attr('data-edit-url');
+    };
+
+    /**
+     * Is this an action event.
+     *
+     * @method getEventUrl
+     * @return {String}
+     */
+    ModalEventSummary.prototype.isActionEvent = function() {
+        return (this.getBody().find(SELECTORS.ROOT).attr('data-action-event') == 'true');
+    };
+
+    /**
      * Set up all of the event handling for the modal.
      *
      * @method registerEventListeners
@@ -140,9 +152,16 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
         ]);
 
         this.getEditButton().on(CustomEvents.events.activate, function(e, data) {
-            // When the edit button is clicked we fire an event for the calendar UI to handle.
-            // We don't care how the UI chooses to handle it.
-            $('body').trigger(CalendarEvents.editEvent, [this.getEventId()]);
+
+            if (this.isActionEvent()) {
+                // Action events cannot be edited on the event form and must be redirected to the module UI.
+                $('body').trigger(CalendarEvents.editActionEvent, [this.getEditUrl()]);
+            } else {
+                // When the edit button is clicked we fire an event for the calendar UI to handle.
+                // We don't care how the UI chooses to handle it.
+                $('body').trigger(CalendarEvents.editEvent, [this.getEventId()]);
+            }
+
             // There is nothing else for us to do so let's hide.
             this.hide();
 
