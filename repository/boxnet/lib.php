@@ -430,9 +430,7 @@ class repository_boxnet extends repository {
             $result = $c->download_one($url, null, array('filepath' => $path, 'timeout' => $CFG->repositorysyncimagetimeout));
             $info = $c->get_info();
             if ($result === true && isset($info['http_code']) && $info['http_code'] == 200) {
-                $fs = get_file_storage();
-                list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($path);
-                $file->set_synchronized($contenthash, $filesize);
+                $file->set_synchronised_content_from_file($path);
                 return true;
             }
         }

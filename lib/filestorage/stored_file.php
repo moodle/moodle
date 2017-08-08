@@ -589,6 +589,24 @@ class stored_file {
     }
 
     /**
+     * Set synchronised content from file.
+     *
+     * @param string $path Path to the file.
+     */
+    public function set_synchronised_content_from_file($path) {
+        $this->fs->synchronise_stored_file_from_file($this, $path, $this->file_record);
+    }
+
+    /**
+     * Set synchronised content from content.
+     *
+     * @param string $content File content.
+     */
+    public function set_synchronised_content_from_string($content) {
+        $this->fs->synchronise_stored_file_from_string($this, $content, $this->file_record);
+    }
+
+    /**
      * Synchronize file if it is a reference and needs synchronizing
      *
      * Updates contenthash and filesize
