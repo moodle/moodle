@@ -57,6 +57,8 @@ class footer_options_exporter extends exporter {
      * Constructor for month_exporter.
      *
      * @param \calendar_information $calendar The calendar being represented
+     * @param int $userid The user id
+     * @param string $token The user sha1 token.
      */
     public function __construct(\calendar_information $calendar, $userid, $token) {
         $this->calendar = $calendar;
@@ -82,7 +84,7 @@ class footer_options_exporter extends exporter {
      */
     protected function get_ical_url() {
         return new moodle_url('/calendar/export_execute.php', ['preset_what' => 'all',
-                'preset_time' => 'recentupcoming', 'userid' => $this->userid, 'authtoken'=> $this->token]);
+                'preset_time' => 'recentupcoming', 'userid' => $this->userid, 'authtoken' => $this->token]);
 
     }
 

@@ -1,11 +1,42 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Contains event class for displaying the month view.
+ *
+ * @package   core_calendar
+ * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace core_calendar\external;
+
+defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use renderer_base;
 use moodle_url;
 
+/**
+ * Class for displaying the month view.
+ *
+ * @package   core_calendar
+ * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class month_exporter extends exporter {
 
     /**
@@ -48,6 +79,11 @@ class month_exporter extends exporter {
         parent::__construct([], $related);
     }
 
+    /**
+     * Return the list of additional properties.
+     *
+     * @return array
+     */
     protected static function define_other_properties() {
         return [
             'courseid' => [
@@ -79,6 +115,12 @@ class month_exporter extends exporter {
         ];
     }
 
+    /**
+     * Get the additional values to inject while exporting.
+     *
+     * @param renderer_base $output The renderer.
+     * @return array Keys are the property names, values are their values.
+     */
     protected function get_other_values(renderer_base $output) {
         return [
             'courseid' => $this->calendar->courseid,
@@ -94,10 +136,9 @@ class month_exporter extends exporter {
 
     /**
      * Get the course filter selector.
-     * TODO Convert to new exporter?
      *
-     * @param   renderer_base $output
-     * return   string
+     * @param renderer_base $output
+     * @return string The html code for the course filter selector.
      */
     protected function get_course_filter_selector(renderer_base $output) {
         $content = '';
@@ -110,11 +151,10 @@ class month_exporter extends exporter {
     }
 
     /**
-     * Get the course filter selector.
-     * TODO Convert to new exporter?
+     * Get the calendar navigation controls.
      *
-     * @param   renderer_base $output
-     * return   string
+     * @param renderer_base $output
+     * @return string The html code to the calendar top navigation.
      */
     protected function get_navigation(renderer_base $output) {
         return calendar_top_controls('month', [
@@ -149,8 +189,8 @@ class month_exporter extends exporter {
      * Get the list of week days, ordered into weeks and padded according
      * to the value of the first day of the week.
      *
-     * @param   renderer_base $output
-     * @return  array
+     * @param renderer_base $output
+     * @return array The list of weeks.
      */
     protected function get_weeks(renderer_base $output) {
         $weeks = [];
@@ -185,7 +225,7 @@ class month_exporter extends exporter {
     /**
      * Get the list of days with the matching date array.
      *
-     * @return  array
+     * @return array
      */
     protected function get_days() {
         $date = $this->related['type']->timestamp_to_date_array($this->calendar->time);
@@ -202,6 +242,11 @@ class month_exporter extends exporter {
         return $days;
     }
 
+    /**
+     * Returns a list of objects that are related.
+     *
+     * @return array
+     */
     protected static function define_related() {
         return [
             'events' => '\core_calendar\local\event\entities\event_interface[]',
@@ -210,17 +255,29 @@ class month_exporter extends exporter {
         ];
     }
 
+    /**
+     * Get the previous month timestamp.
+     *
+     * @return int The previous month timestamp.
+     */
     protected function get_previous_month_timestamp() {
         $date = $this->related['type']->timestamp_to_date_array($this->calendar->time);
         $month = calendar_sub_month($date['mon'], $date['year']);
         $monthtime = $this->related['type']->convert_to_gregorian($month[1], $month[0], 1);
+
         return make_timestamp($monthtime['year'], $monthtime['month'], $monthtime['day'], $monthtime['hour'], $monthtime['minute']);
     }
 
+    /**
+     * Get the next month timestamp.
+     *
+     * @return int The next month timestamp.
+     */
     protected function get_next_month_timestamp() {
         $date = $this->related['type']->timestamp_to_date_array($this->calendar->time);
         $month = calendar_sub_month($date['mon'], $date['year']);
         $monthtime = $this->related['type']->convert_to_gregorian($month[1], $month[0], 1);
+
         return make_timestamp($monthtime['year'], $monthtime['month'], $monthtime['day'], $monthtime['hour'], $monthtime['minute']);
     }
 }

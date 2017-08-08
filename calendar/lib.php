@@ -3431,7 +3431,7 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses, $
  * @return  array[array, string]
  */
 function calendar_get_view(\calendar_information $calendar, $view) {
-    global $PAGE, $DB, $OUTPUT;
+    global $PAGE, $CFG;
 
     $renderer = $PAGE->get_renderer('core_calendar');
     $type = \core_calendar\type_factory::get_calendar_instance();
@@ -3444,7 +3444,11 @@ function calendar_get_view(\calendar_information $calendar, $view) {
         $tend = $tstart + DAYSECS - 1;
         $selectortitle = get_string('dayviewfor', 'calendar');
     } else if ($view === 'upcoming') {
-        $defaultlookahead = isset($CFG->calendar_lookahead) ? intval($CFG->calendar_lookahead) : CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
+        if (isset($CFG->calendar_lookahead)) {
+            $defaultlookahead = intval($CFG->calendar_lookahead);
+        } else {
+            $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
+        }
         $tend = $tstart + get_user_preferences('calendar_lookahead', $defaultlookahead);
         $selectortitle = get_string('upcomingeventsfor', 'calendar');
     } else {
@@ -3503,9 +3507,7 @@ function calendar_get_view(\calendar_information $calendar, $view) {
         'cache' => new \core_calendar\external\events_related_objects_cache($events),
     ];
 
-    if ($view === 'day') {
-        // TODO: Export the days events in a new exporter.
-    } else if ($view === 'upcoming') {
+    if ($view === 'upcoming') {
         $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
         if (isset($CFG->calendar_lookahead)) {
             $defaultlookahead = intval($CFG->calendar_lookahead);
@@ -3517,7 +3519,6 @@ function calendar_get_view(\calendar_information $calendar, $view) {
             $defaultmaxevents = intval($CFG->calendar_maxevents);
         }
         $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
-        // TODO: Export the upcoming events in a new exporter.
     } else {
         $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
         $data = $month->export($renderer);

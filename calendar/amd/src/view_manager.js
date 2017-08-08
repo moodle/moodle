@@ -21,8 +21,8 @@
  * @copyright  2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/templates', 'core/notification', 'core_calendar/repository'],
-    function($, Templates, Notification, CalendarRepository) {
+define(['jquery', 'core/templates', 'core/notification', 'core_calendar/repository', 'core_calendar/events'],
+    function($, Templates, Notification, CalendarRepository, CalendarEvents) {
 
         var SELECTORS = {
             ROOT: "[data-region='calendar']",
@@ -47,18 +47,17 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
             });
         };
 
-
         /**
          * Handle changes to the current calendar view.
          *
+         * @param {String} url The calendar url to be shown
          * @param {Number} time The calendar time to be shown
          * @param {Number} courseid The id of the course whose events are shown
          */
         var changeMonth = function(url, time, courseid) {
             CalendarRepository.getCalendarMonthData(time, courseid)
             .then(function(context) {
-                // TODO Fetch the page title from somewhere..?
-                window.history.pushState({}, 'Some new title', url);
+                window.history.pushState({}, '', url);
 
                 return Templates.render('core_calendar/month_detailed', context);
             })
@@ -67,8 +66,8 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
 
                 return Templates.runTemplateJS(js);
             })
-            .then(function() {
-                // TODO Fire an event to say the month changed.
+            .done(function() {
+                $('body').trigger(CalendarEvents.monthChanged, []);
             })
             .fail(Notification.exception);
         };

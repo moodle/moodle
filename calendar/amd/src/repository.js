@@ -91,12 +91,12 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
      * @param {Number} courseid The course id.
      * @return {promise} Resolved with the month view data.
      */
-    var getCalendarMonthData = function (time, courseid) {
+    var getCalendarMonthData = function(time, courseid) {
         var request = {
             methodname: 'core_calendar_get_calendar_monthly_view',
             args: {
                 time: time,
-                courseid: courseid,
+                courseid: courseid
             }
         };
 

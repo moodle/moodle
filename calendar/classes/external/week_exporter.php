@@ -1,11 +1,42 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Contains event class for displaying the week view.
+ *
+ * @package   core_calendar
+ * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace core_calendar\external;
+
+defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use renderer_base;
 use moodle_url;
 
+/**
+ * Class for displaying the week view.
+ *
+ * @package   core_calendar
+ * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class week_exporter extends exporter {
 
     /**
@@ -14,17 +45,23 @@ class week_exporter extends exporter {
     protected $days = [];
 
     /**
-     * @var int $prepadding The number of pre-padding days at the start of
-     * the week.
+     * @var int $prepadding The number of pre-padding days at the start of the week.
      */
     protected $prepadding = 0;
 
     /**
-     * @var int $postpadding The number of post-padding days at the start of
-     * the week.
+     * @var int $postpadding The number of post-padding days at the start of the week.
      */
     protected $postpadding = 0;
 
+    /**
+     * Constructor.
+     *
+     * @param mixed $days An array of day_exporter objects.
+     * @param int $prepadding The number of pre-padding days at the start of the week.
+     * @param int $postpadding The number of post-padding days at the start of the week.
+     * @param array $related Related objects.
+     */
     public function __construct($days, $prepadding, $postpadding, $related) {
         $this->days = $days;
         $this->prepadding = $prepadding;
@@ -33,6 +70,11 @@ class week_exporter extends exporter {
         parent::__construct([], $related);
     }
 
+    /**
+     * Return the list of additional properties.
+     *
+     * @return array
+     */
     protected static function define_other_properties() {
         return [
             'prepadding' => [
@@ -50,6 +92,12 @@ class week_exporter extends exporter {
         ];
     }
 
+    /**
+     * Get the additional values to inject while exporting.
+     *
+     * @param renderer_base $output The renderer.
+     * @return array Keys are the property names, values are their values.
+     */
     protected function get_other_values(renderer_base $output) {
         $return = [
             'prepadding' => [],
@@ -82,22 +130,26 @@ class week_exporter extends exporter {
                     // Ends before today.
                     continue;
                 }
-
                 $events[] = $event;
             }
-
 
             $day = new day_exporter($daydata, [
                 'events' => $events,
                 'cache' => $this->related['cache'],
                 'type' => $this->related['type'],
             ]);
+
             $return['days'][] = $day->export($output);
         }
 
         return $return;
     }
 
+    /**
+     * Returns a list of objects that are related.
+     *
+     * @return array
+     */
     protected static function define_related() {
         return [
             'events' => '\core_calendar\local\event\entities\event_interface[]',
