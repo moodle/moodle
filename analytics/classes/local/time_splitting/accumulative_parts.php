@@ -51,11 +51,11 @@ abstract class accumulative_parts extends base {
 
         $nparts = $this->get_number_parts();
 
-        $rangeduration = intval(floor(($this->analysable->get_end() - $this->analysable->get_start()) / $nparts));
+        $rangeduration = ($this->analysable->get_end() - $this->analysable->get_start()) / $nparts;
 
         $ranges = array();
         for ($i = 0; $i < $nparts; $i++) {
-            $end = $this->analysable->get_start() + ($rangeduration * ($i + 1));
+            $end = $this->analysable->get_start() + intval($rangeduration * ($i + 1));
             if ($i === ($nparts - 1)) {
                 // Better to use the end for the last one as we are using floor above.
                 $end = $this->analysable->get_end();

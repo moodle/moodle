@@ -83,7 +83,7 @@ class site implements \core_analytics\analysable {
         if ($events) {
             // There should be just 1 event.
             $event = reset($events);
-            $this->start = $event->timecreated;
+            $this->start = intval($event->timecreated);
         } else {
             $this->start = 0;
         }
@@ -111,7 +111,7 @@ class site implements \core_analytics\analysable {
         if ($events) {
             // There should be just 1 event.
             $event = reset($events);
-            $this->end = $event->timecreated;
+            $this->end = intval($event->timecreated);
         } else {
             $this->end = time();
         }
