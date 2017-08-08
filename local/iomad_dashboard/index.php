@@ -23,7 +23,7 @@ require_login();
 
 // Get parameters.
 $edit = optional_param( 'edit', null, PARAM_BOOL );
-$company = optional_param('company', '', PARAM_TEXT);
+$company = optional_param('company', 0, PARAM_INT);
 $showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
 
 // Check we are allowed to view this page.
