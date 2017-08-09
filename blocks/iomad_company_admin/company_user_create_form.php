@@ -393,8 +393,10 @@ $companyid = iomad::get_my_companyid($context);
 $company = new company($companyid);
 
 $mform = new user_edit_form($PAGE->url, $companyid, $departmentid, $licenseid);
-
-if ($data = $mform->get_data()) {
+if ($mform->is_cancelled()) {
+    redirect($dashboardurl);
+    die;
+} else if ($data = $mform->get_data()) {
     $data->userid = $USER->id;
     if ($companyid > 0) {
         $data->companyid = $companyid;
