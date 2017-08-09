@@ -927,7 +927,9 @@ class company {
         global $DB;
         if (!$parentnode = $DB->get_record('department', array('company' => $companyid,
                                                                'parent' => '0'))) {
-            return false;
+            self::initialise_departments($companyid);
+            $parentnode = $DB->get_record('department', array('company' => $companyid,
+                                                               'parent' => '0'));
         }
         return $parentnode;
     }

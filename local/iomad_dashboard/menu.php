@@ -64,7 +64,7 @@ class iomad_admin_menu {
                 'category' => 'CompanyAdmin',
                 'tab' => 1,
                 'name' => get_string('editdepartment', 'block_iomad_company_admin'),
-                'url' => 'company_department_create_form.php',
+                'url' => 'company_departments.php',
                 'cap' => 'block/iomad_company_admin:edit_departments',
                 'icondefault' => 'managedepartment',
                 'icon' => 'fa-group',
