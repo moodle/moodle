@@ -5560,6 +5560,6 @@ class restore_calendar_action_events extends restore_execution_step {
         // The task will automatically populate all data.
         $task = new \core\task\refresh_mod_calendar_events_task();
         $task->set_custom_data(array('courseid' => $this->get_courseid()));
-        \core\task\manager::queue_adhoc_task($task);
+        \core\task\manager::queue_adhoc_task($task, true);
     }
 }
