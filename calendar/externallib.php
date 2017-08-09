@@ -81,8 +81,9 @@ class core_calendar_external extends external_api {
             $eventobj = calendar_event::load($event['eventid']);
 
             // Let's check if the user is allowed to delete an event.
-            if (!calendar_edit_event_allowed($eventobj)) {
-                throw new moodle_exception("nopermissions");
+            if (!empty($eventobj->modulename) || !calendar_edit_event_allowed($eventobj)) {
+                throw new moodle_exception("nopermissions", 'error', '',
+                    get_string('deleteevent', 'calendar'));
             }
             // Time to do the magic.
             $eventobj->delete($event['repeat']);
