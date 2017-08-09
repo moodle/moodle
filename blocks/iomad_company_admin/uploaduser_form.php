@@ -30,7 +30,7 @@ class admin_uploaduser_form1 extends company_moodleform {
 
         $mform->addElement('header', 'settingsheader', get_string('upload'));
 
-        $mform->addElement('filepicker', 'userfile', get_string('file'));
+        $mform->addElement('filepicker', 'userfile', get_string('file'), null, array('accepted_types' => array('.csv')));
         $mform->addRule('userfile', null, 'required');
 
         $choices = csv_import_reader::get_delimiter_list();
