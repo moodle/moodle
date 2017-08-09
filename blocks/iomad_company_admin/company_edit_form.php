@@ -156,6 +156,42 @@ class company_edit_form extends company_moodleform {
         $templates = company::get_role_templates($this->companyid);
         $mform->addElement('select', 'roletemplate', get_string('applyroletemplate', 'block_iomad_company_admin'), $templates);
             
+        // Add in the release frequency scheduler.
+        $daysofweek = array(get_string('none'),
+                            get_string('sunday', 'calendar'),
+                            get_string('monday', 'calendar'),
+                            get_string('tuesday', 'calendar'),
+                            get_string('wednesday', 'calendar'),
+                            get_string('thursday', 'calendar'),
+                            get_string('friday', 'calendar'),
+                            get_string('saturday', 'calendar'));
+
+        $mform->addElement('select', 'managerdigestday', get_string('managerdigestday', 'block_iomad_company_admin'), $daysofweek);
+        $mform->setDefault('managerdigestday', 0);
+        $mform->addHelpButton('managerdigestday', 'managerdigestday', 'block_iomad_company_admin');
+
+        // Add the auto enrol courses.
+        $parentnodeid = company::get_company_parentnode($this->companyid);
+        if ($courses = $DB->get_records_sql_menu("SELECT c.id, c.fullname
+                                                  FROM {course} c
+                                                  JOIN {company_course} cc
+                                                  ON (c.id = cc.courseid)
+                                                  WHERE cc.departmentid = :departmentid
+                                                  AND c.id NOT IN
+                                                  ( SELECT courseid FROM {iomad_courses}
+                                                    WHERE licensed != 0)",
+                                                  array('departmentid' => $parentnodeid->id))) {
+            // Add the autoselect for this.
+            $mform->addElement('autocomplete', 'autocourses',
+                               get_string('autocourses', 'block_iomad_company_admin'),
+                               $courses,
+                               array('multiple' => true));
+            $mform->addHelpButton('autocourses', 'autocourses', 'block_iomad_company_admin');
+        } else {
+            $mform->addElement('hidden', 'autocourses', array());
+            $mform->setType('autocourses', PARAM_INT);
+        }
+
         /* === end company email notifications === */
 
         /* === User defaults === */
@@ -460,6 +496,13 @@ if ($domains = $DB->get_records('company_domains', array('companyid' => $company
         $companyrecord->companydomains .= $domain->domain ."\n";
     }
 }
+if ($currentcourses = $DB->get_records('company_course',
+                                        array('autoenrol' => true,
+                                              'companyid' => $companyid), null, 'courseid')) {
+    foreach ($currentcourses as $currentcourse) {
+        $companyrecord->autocourses[] = $currentcourse->courseid;
+    }
+}
 
 // Set up the form.
 $mform = new company_edit_form($PAGE->url, $isadding, $companyid, $companyrecord, $firstcompany);
@@ -574,6 +617,14 @@ if ($mform->is_cancelled()) {
             if (!empty($domain)) {
                 $DB->insert_record('company_domains', array('companyid' => $companyid, 'domain' => $domain));
             }
+        }
+    }
+
+    // Deal with autoenrol courses.
+    $DB->set_field('company_course', 'autoenrol', false, array('companyid' => $companyid));
+    if (!empty($data->autocourses)) {
+        foreach ($data->autocourses as $autoid) {
+            $DB->set_field('company_course', 'autoenrol', true, array('companyid' => $companyid, 'courseid' => $autoid));
         }
     }
     redirect($companylist);

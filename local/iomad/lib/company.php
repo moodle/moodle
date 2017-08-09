@@ -2228,9 +2228,7 @@ class company {
 
         // Get the courses which are assigned to the company which are not licensed.
         $courses = $DB->get_records_sql("SELECT courseid FROM {company_course} WHERE companyid = :companyid
-                                         AND courseid IN (
-                                             SELECT courseid from {iomad_courses}
-                                             WHERE licensed = 0)",
+                                         AND autoenrol = 1",
                                          array('companyid' => $user->companyid));
 
         // Are we also enrolling to unattached courses?

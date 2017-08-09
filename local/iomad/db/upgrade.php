@@ -1566,5 +1566,21 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017041717, 'local', 'iomad');
     }
 
+
+    if ($oldversion < 2017041718) {
+
+        // Define field autoenrol to be added to company_course.
+        $table = new xmldb_table('company_course');
+        $field = new xmldb_field('autoenrol', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'departmentid');
+
+        // Conditionally launch add field autoenrol.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017041718, 'local', 'iomad');
+    }
+
     return $result;
 }

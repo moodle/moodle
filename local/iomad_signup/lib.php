@@ -43,7 +43,13 @@ function local_iomad_signup_user_created($user) {
 
     // If the user is already in a company then we do nothing more
     // as this came from the self sign up pages.
-    if ($DB->get_record('company_users', array('userid' => $user->id))) {
+    if ($userrecord = $DB->get_record('company_users', array('userid' => $user->id))) {
+
+        $company = new company($userrecord->companyid);
+        // Deal with any auto enrolments.
+        if ($CFG->local_iomad_signup_autoenrol) {
+            $company->autoenrol($user);
+        }
         return true;
     }
 
@@ -75,6 +81,11 @@ function local_iomad_signup_user_created($user) {
             // assign the user to the role
             role_assign($role->id, $user->id, $context->id);
         }
+    }
+
+    // Deal with auto enrolments.
+    if ($CFG->local_iomad_signup_autoenrol) {
+        $company->autoenrol($user);
     }
 
     return true;
