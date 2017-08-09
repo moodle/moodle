@@ -201,12 +201,40 @@ define(['core/templates',
                     "timeend": parentContainer.data('timeend')
                 };
 
-                var modalTitlePromise = Str.get_string('enroldetails', 'enrol');
-                var modalPromise = ModalFactory.create({large: true, type: ModalFactory.types.CANCEL});
-                $.when(modalTitlePromise, modalPromise).done(function(modalTitle, modal) {
+                // Get default string for the modal and modal type.
+                var strings = [
+                    {
+                        key: 'enroldetails',
+                        component: 'enrol'
+                    }
+                ];
+                var modalType = ModalFactory.types.CANCEL;
+
+                // Find the edit enrolment link.
+                var editEnrolLink = detailsButton.next(SELECTORS.EDIT_ENROLMENT);
+                if (editEnrolLink.length) {
+                    // If there's an edit enrolment link for this user, use a SAVE_CANCEL type of modal.
+                    strings.push({key: 'editenrolment', component: 'enrol'});
+                    modalType = ModalFactory.types.SAVE_CANCEL;
+                }
+
+                var modalStringsPromise = Str.get_strings(strings);
+                var modalPromise = ModalFactory.create({large: true, type: modalType});
+                $.when(modalStringsPromise, modalPromise).done(function(strings, modal) {
                     var modalBodyPromise = Template.render('core_user/status_details', context);
-                    modal.setTitle(modalTitle);
+                    modal.setTitle(strings[0]);
                     modal.setBody(modalBodyPromise);
+
+                    if (modalType === ModalFactory.types.SAVE_CANCEL) {
+                        // Set the edit enrolment button text.
+                        modal.setSaveButtonText(strings[1]);
+                        // Handle event when the "Edit enrolment" button is clicked.
+                        modal.getRoot().on(ModalEvents.save, function() {
+                            // Trigger click event for the edit enrolment link to show the edit enrolment modal.
+                            $(editEnrolLink).trigger('click');
+                        });
+                    }
+
                     modal.show();
 
                     // Handle hidden event.
