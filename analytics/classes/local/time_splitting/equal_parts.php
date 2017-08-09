@@ -51,15 +51,23 @@ abstract class equal_parts extends base {
 
         $nparts = $this->get_number_parts();
 
-        $rangeduration = intval(floor(($this->analysable->get_end() - $this->analysable->get_start()) / $nparts));
+        $rangeduration = ($this->analysable->get_end() - $this->analysable->get_start()) / $nparts;
+
+        if ($rangeduration < $nparts) {
+            // It is interesting to avoid having a single timestamp belonging to multiple time ranges
+            // because of things like community of inquiry indicators, where activities have a due date
+            // that, ideally, would fall only into 1 time range. If the analysable duration is very short
+            // it is because the model doesn't contain indicators that depend so heavily on time and therefore
+            // we don't need to worry about timestamps being present in multiple time ranges.
+            $allowmultipleranges = true;
+        }
 
         $ranges = array();
         for ($i = 0; $i < $nparts; $i++) {
-            $start = $this->analysable->get_start() + ($rangeduration * $i);
-            $end = $this->analysable->get_start() + ($rangeduration * ($i + 1));
+            $start = $this->analysable->get_start() + intval($rangeduration * $i);
+            $end = $this->analysable->get_start() + intval($rangeduration * ($i + 1));
 
-            // Check the end of the previous time range.
-            if ($i > 0 && $start === $ranges[$i - 1]['end']) {
+            if (empty($allowmultipleranges) && $i > 0 && $start === $ranges[$i - 1]['end']) {
                 // We add 1 second so each timestamp only belongs to 1 range.
                 $start = $start + 1;
             }
