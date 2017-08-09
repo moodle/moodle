@@ -28,6 +28,10 @@ require_once($CFG->libdir.'/formslib.php');
 
 // Behat test fixture only.
 defined('BEHAT_SITE_RUNNING') || die('Only available on Behat test server');
+require_login();
+if (!is_siteadmin()) {
+    die('Admin only');
+}
 
 /**
  * Class hideif_form

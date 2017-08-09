@@ -18,7 +18,7 @@ Feature: hideIf functionality in forms
     Then I should see "Test eq hideif"
     And "#id_testeqhideif" "css_element" should be visible
     And I press "Submit"
-    And I should see "Number of submitted form elements: 6"
+    And I should see "Number of submitted form elements: 7"
     And I should see "[testeqhideif] =>"
 
   Scenario: When 'eq' hideIf conditions are met, the relevant elements are hidden
@@ -26,7 +26,7 @@ Feature: hideIf functionality in forms
     Then I should not see "Test eq hideif"
     And "#id_testeqhideif" "css_element" should not be visible
     And I press "Submit"
-    And I should see "Number of submitted form elements: 5"
+    And I should see "Number of submitted form elements: 6"
     And I should not see "[testeqhideif] =>"
 
   Scenario: When 'checked' hideIf conditions are not met, the relevant elements are shown
@@ -36,7 +36,7 @@ Feature: hideIf functionality in forms
     And "#id_testcheckedhideif" "css_element" should be visible
     And "#id_testnotcheckedhideif" "css_element" should not be visible
     And I press "Submit"
-    And I should see "Number of submitted form elements: 5"
+    And I should see "Number of submitted form elements: 6"
     And I should see "[testcheckedhideif] =>"
     And I should not see "[testnotcheckedhideif] =>"
 
@@ -47,7 +47,7 @@ Feature: hideIf functionality in forms
     And "#id_testcheckedhideif" "css_element" should not be visible
     And "#id_testnotcheckedhideif" "css_element" should be visible
     And I press "Submit"
-    And I should see "Number of submitted form elements: 5"
+    And I should see "Number of submitted form elements: 6"
     And I should not see "[testcheckedhideif] =>"
     And I should see "[testnotcheckedhideif] =>"
 
@@ -68,5 +68,5 @@ Feature: hideIf functionality in forms
     And I should not see "Files"
     And "#id_testinhideif" "css_element" should not be visible
     And I press "Submit"
-    And I should see "Number of submitted form elements: 5"
+    And I should see "Number of submitted form elements: 6"
     And I should not see "[testinhideif] =>"
