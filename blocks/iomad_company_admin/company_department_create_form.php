@@ -164,6 +164,7 @@ if (!empty($departmentid)) {
     $editform->set_data($department);
 } else {
     $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output);
+    $editform->set_data(array('deptid' => $deptid));
 }
 
 if ($editform->is_cancelled()) {
