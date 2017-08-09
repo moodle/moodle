@@ -214,6 +214,7 @@ $string['iomad_company_admin:company_course_unenrol'] = 'Add/remove a course wit
 $string['iomad_company_admin:company_course_users'] = 'Enrol/unenrol users on company courses';
 $string['iomad_company_admin:company_delete'] = 'Delete a company';
 $string['iomad_company_admin:company_edit'] = 'Edit a company';
+$string['iomad_company_admin:company_edit_appearance'] = 'Edit the company appearance';
 $string['iomad_company_admin:company_framework'] = 'Assign competency frameworks to a company';
 $string['iomad_company_admin:company_manager'] = 'Company manager form';
 $string['iomad_company_admin:companymanagement_view'] = 'View company management tab';

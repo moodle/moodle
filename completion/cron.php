@@ -101,7 +101,9 @@ function completion_cron_mark_started() {
     ";
 
     $now = time();
+$DB->set_debug(true);
     $rs = $DB->get_recordset_sql($sql, array($now, $now, $now, $now));
+$DB->set_debug(false);
 
     // Check if result is empty
     if (!$rs->valid()) {

@@ -239,7 +239,7 @@ class company_edit_form extends company_moodleform {
         }
         // Only show the Appearence section if the theme is iomad or you have abilities
         // to change that.
-        if (iomad::has_capability('block/iomad_company_admin:company_add', $context) ||
+        if (iomad::has_capability('block/iomad_company_admin:company_edit_appearance', $context) ||
             $this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'bootstrap' || $ischild) {
 
             $mform->addElement('header', 'appearance',
