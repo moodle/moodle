@@ -228,7 +228,7 @@ class core_calendar_renderer extends plugin_renderer_base {
 
         $output .= $this->output->box_start('card-header clearfix');
         if (calendar_edit_event_allowed($event) && $showactions) {
-            if (empty($event->cmid)) {
+            if (calendar_delete_event_allowed($event)) {
                 $editlink = new moodle_url(CALENDAR_URL.'event.php', array('action' => 'edit', 'id' => $event->id));
                 $deletelink = new moodle_url(CALENDAR_URL.'delete.php', array('id' => $event->id));
                 if (!empty($event->calendarcourseid)) {

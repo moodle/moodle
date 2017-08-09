@@ -236,7 +236,7 @@ class event_exporter extends exporter {
         }
 
         $values['canedit'] = calendar_edit_event_allowed($legacyevent);
-        $values['candelete'] = (!$values['isactionevent'] && $values['canedit']);
+        $values['candelete'] = calendar_delete_event_allowed($legacyevent);
 
         // Handle event subscription.
         $values['subscription'] = null;
