@@ -177,7 +177,7 @@ class company_users_course_form extends moodleform {
                     $mform->setType('inuse', PARAM_INT);
                     $programselect->setSelected(false);
                 }
-                $this->add_action_buttons(true, get_string('updatelicense', 'block_iomad_company_admin'));
+                $this->add_action_buttons(false, get_string('updatelicense', 'block_iomad_company_admin'));
             } else {
                 $mform->addElement('html', '<table summary=""
                                             class="companycourseuserstable addremovetable generaltable generalbox boxaligncenter"
@@ -493,7 +493,7 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
         }
     }
 
-    echo "<a class='btn btn-primary' href='$returnurl'>" . get_string('cancel') . "</a>";
+    echo "<a class='btn btn-primary' href='$returnurl'>" . get_string('back') . "</a>";
 
     echo $OUTPUT->footer();
 }
