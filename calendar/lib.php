@@ -2494,6 +2494,17 @@ function calendar_edit_event_allowed($event) {
 }
 
 /**
+ * Return the capability for deleting a calendar event.
+ *
+ * @param calendar_event $event The event object
+ * @return bool Whether the user has permission to delete the event or not.
+ */
+function calendar_delete_event_allowed($event) {
+    // Only allow delete if you have capabilities and it is not an module event.
+    return (calendar_edit_event_allowed($event) && empty($event->modulename));
+}
+
+/**
  * Returns the default courses to display on the calendar when there isn't a specific
  * course to display.
  *
