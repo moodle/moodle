@@ -46,6 +46,11 @@ class dataset_manager {
     const UNLABELLED_FILEAREA = 'unlabelled';
 
     /**
+     * File area for exported datasets.
+     */
+    const EXPORT_FILEAREA = 'export';
+
+    /**
      * Evaluation file file name.
      */
     const EVALUATION_FILENAME = 'evaluation.csv';
@@ -77,11 +82,11 @@ class dataset_manager {
     protected $evaluation;
 
     /**
-     * Labelled (true) or unlabelled data (false).
+     * The dataset filearea. Must be one of the self::*_FILEAREA options.
      *
-     * @var bool
+     * @var string
      */
-    protected $includetarget;
+    protected $filearea;
 
     /**
      * Constructor method.
@@ -89,16 +94,22 @@ class dataset_manager {
      * @param int $modelid
      * @param int $analysableid
      * @param string $timesplittingid
+     * @param string $filearea
      * @param bool $evaluation
-     * @param bool $includetarget
      * @return void
      */
-    public function __construct($modelid, $analysableid, $timesplittingid, $evaluation = false, $includetarget = false) {
+    public function __construct($modelid, $analysableid, $timesplittingid, $filearea, $evaluation = false) {
+
+        if ($filearea !== self::EXPORT_FILEAREA && $filearea !== self::LABELLED_FILEAREA &&
+                $filearea !== self::UNLABELLED_FILEAREA) {
+            throw new \coding_exception('Invalid provided filearea');
+        }
+
         $this->modelid = $modelid;
         $this->analysableid = $analysableid;
         $this->timesplittingid = $timesplittingid;
         $this->evaluation = $evaluation;
-        $this->includetarget = $includetarget;
+        $this->filearea = $filearea;
     }
 
     /**
@@ -108,8 +119,7 @@ class dataset_manager {
      */
     public function init_process() {
         $lockkey = 'modelid:' . $this->modelid . '-analysableid:' . $this->analysableid .
-            '-timesplitting:' . self::clean_time_splitting_id($this->timesplittingid) .
-            '-includetarget:' . (int)$this->includetarget;
+            '-timesplitting:' . self::clean_time_splitting_id($this->timesplittingid);
 
         // Large timeout as processes may be quite long.
         $lockfactory = \core\lock\lock_config::get_lock_factory('core_analytics');
@@ -132,9 +142,10 @@ class dataset_manager {
 
         // Delete previous file if it exists.
         $fs = get_file_storage();
+
         $filerecord = [
             'component' => 'analytics',
-            'filearea' => self::get_filearea($this->includetarget),
+            'filearea' => $this->filearea,
             'itemid' => $this->modelid,
             'contextid' => \context_system::instance()->id,
             'filepath' => '/analysable/' . $this->analysableid . '/' . self::clean_time_splitting_id($this->timesplittingid) . '/',
@@ -217,7 +228,7 @@ class dataset_manager {
         $fs = get_file_storage();
 
         // Always evaluation.csv and labelled as it is an evaluation file.
-        $filearea = self::get_filearea(true);
+        $filearea = self::LABELLED_FILEAREA;
         $filename = self::get_filename(true);
         $filepath = '/analysable/' . $analysableid . '/' . self::clean_time_splitting_id($timesplittingid) . '/';
         return $fs->get_file(\context_system::instance()->id, 'analytics', $filearea, $modelid, $filepath, $filename);
@@ -231,11 +242,11 @@ class dataset_manager {
      * @param array  $files
      * @param int    $modelid
      * @param string $timesplittingid
+     * @param string $filearea
      * @param bool   $evaluation
-     * @param bool   $includetarget
      * @return \stored_file
      */
-    public static function merge_datasets(array $files, $modelid, $timesplittingid, $evaluation, $includetarget) {
+    public static function merge_datasets(array $files, $modelid, $timesplittingid, $filearea, $evaluation = false) {
 
         $tmpfilepath = make_request_directory() . DIRECTORY_SEPARATOR . 'tmpfile.csv';
 
@@ -297,7 +308,7 @@ class dataset_manager {
 
         $filerecord = [
             'component' => 'analytics',
-            'filearea' => self::get_filearea($includetarget),
+            'filearea' => $filearea,
             'itemid' => $modelid,
             'contextid' => \context_system::instance()->id,
             'filepath' => '/timesplitting/' . self::clean_time_splitting_id($timesplittingid) . '/',
@@ -387,27 +398,9 @@ class dataset_manager {
             $filename = self::EVALUATION_FILENAME;
         } else {
             // Incremental time, the lock will make sure we don't have concurrency problems.
-            $filename = microtime(false) . '.csv';
+            $filename = microtime(true) . '.csv';
         }
 
         return $filename;
     }
-
-    /**
-     * Returns the file area to be used.
-     *
-     * @param bool $includetarget
-     * @return string
-     */
-    protected static function get_filearea($includetarget) {
-
-        if ($includetarget === true) {
-            $filearea = self::LABELLED_FILEAREA;
-        } else {
-            $filearea = self::UNLABELLED_FILEAREA;
-        }
-
-        return $filearea;
-    }
-
 }

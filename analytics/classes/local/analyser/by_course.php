@@ -111,8 +111,13 @@ abstract class by_course extends base {
             }
 
             // Merge all course files into one.
+            if ($includetarget) {
+                $filearea = \core_analytics\dataset_manager::LABELLED_FILEAREA;
+            } else {
+                $filearea = \core_analytics\dataset_manager::UNLABELLED_FILEAREA;
+            }
             $timesplittingfiles[$timesplittingid] = \core_analytics\dataset_manager::merge_datasets($files,
-                $this->modelid, $timesplittingid, $this->options['evaluation'], $includetarget);
+                $this->modelid, $timesplittingid, $filearea, $this->options['evaluation']);
         }
 
         return $timesplittingfiles;
