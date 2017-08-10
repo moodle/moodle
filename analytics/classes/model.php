@@ -1234,6 +1234,19 @@ class model {
     }
 
     /**
+     * Merges all training data files into one and returns it.
+     *
+     * @return \stored_file|false
+     */
+    public function get_training_data() {
+
+        \core_analytics\manager::check_can_manage_models();
+
+        $timesplittingid = $this->get_time_splitting()->get_id();
+        return \core_analytics\dataset_manager::export_training_data($this->get_id(), $timesplittingid);
+    }
+
+    /**
      * Flag the provided file as used for training or prediction.
      *
      * @param \stored_file $file

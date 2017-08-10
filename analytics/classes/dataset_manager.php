@@ -91,6 +91,7 @@ class dataset_manager {
     /**
      * Constructor method.
      *
+     * @throws \coding_exception
      * @param int $modelid
      * @param int $analysableid
      * @param string $timesplittingid
@@ -318,6 +319,37 @@ class dataset_manager {
         $fs = get_file_storage();
 
         return $fs->create_file_from_pathname($filerecord, $tmpfilepath);
+    }
+
+    /**
+     * Exports the model training data.
+     *
+     * @param int $modelid
+     * @param string $timesplittingid
+     * @return \stored_file|false
+     */
+    public static function export_training_data($modelid, $timesplittingid) {
+
+        $fs = get_file_storage();
+
+        $contextid = \context_system::instance()->id;
+        $filepath = '/timesplitting/' . self::clean_time_splitting_id($timesplittingid) . '/';
+
+        $files = $fs->get_directory_files($contextid, 'analytics', self::LABELLED_FILEAREA, $modelid,
+            $filepath, true, false);
+
+        // Discard evaluation files.
+        foreach ($files as $key => $file) {
+            if ($file->get_filename() === self::EVALUATION_FILENAME) {
+                unset($files[$key]);
+            }
+        }
+
+        if (empty($files)) {
+            return false;
+        }
+
+        return self::merge_datasets($files, $modelid, $timesplittingid, self::EXPORT_FILEAREA);
     }
 
     /**

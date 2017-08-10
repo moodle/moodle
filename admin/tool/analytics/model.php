@@ -57,6 +57,9 @@ switch ($action) {
     case 'disable':
         $title = get_string('disable');
         break;
+    case 'export':
+        $title = get_string('export', 'tool_analytics');
+        break;
 
     default:
         throw new moodle_exception('errorunknownaction', 'analytics');
@@ -161,6 +164,22 @@ switch ($action) {
         $renderer = $PAGE->get_renderer('tool_analytics');
         $modellogstable = new \tool_analytics\output\model_logs('model-' . $model->get_id(), $model);
         echo $renderer->render_table($modellogstable);
+        break;
+
+    case 'export':
+
+        if ($model->is_static() || !$model->is_trained()) {
+            throw new moodle_exception('errornoexport', 'tool_analytics');
+        }
+
+        $file = $model->get_training_data();
+        if (!$file) {
+            redirect(new \moodle_url('/admin/tool/analytics/index.php'), get_string('errortrainingdataexport', 'tool_analytics'),
+                null, \core\output\notification::NOTIFY_ERROR);
+        }
+
+        $filename = 'training-data.' . $model->get_id() . '.' . time() . '.csv';
+        send_file($file, $filename, null, 0, false, true);
         break;
 }
 
