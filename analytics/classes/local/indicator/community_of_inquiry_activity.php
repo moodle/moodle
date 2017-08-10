@@ -61,6 +61,20 @@ abstract class community_of_inquiry_activity extends linear {
     const INDICATOR_SOCIAL = "social";
 
     /**
+     * Fetch the course grades of this activity type instances.
+     *
+     * @param \core_analytics\analysable $analysable
+     * @return void
+     */
+    public function fill_per_analysable_caches(\core_analytics\analysable $analysable) {
+
+        // Better to check it, we can not be 100% it will be a \core_analytics\course object.
+        if ($analysable instanceof \core_analytics\course) {
+            $this->fetch_student_grades($analysable);
+        }
+    }
+
+    /**
      * Returns the activity type. No point in changing this class in children classes.
      *
      * @var string The activity name (e.g. assign or quiz)
@@ -396,8 +410,8 @@ abstract class community_of_inquiry_activity extends linear {
         }
 
         if ($this->grades === null) {
-            $courseactivities = $this->course->get_all_activities($this->get_activity_type());
-            $this->grades = $this->course->get_student_grades($courseactivities);
+            // Even if this is probably already filled during fill_per_analysable_caches.
+            $this->fetch_student_grades($this->course);
         }
 
         if ($cm = $this->retrieve('cm', $sampleid)) {
@@ -643,6 +657,17 @@ abstract class community_of_inquiry_activity extends linear {
             return $this->social_calculate_sample($sampleid, $tablename, $starttime, $endtime);
         }
         throw new \coding_exception("Indicator type is invalid.");
+    }
+
+    /**
+     * Gets the course student grades.
+     *
+     * @param \core_analytics\course $course
+     * @return void
+     */
+    protected function fetch_student_grades(\core_analytics\course $course) {
+        $courseactivities = $course->get_all_activities($this->get_activity_type());
+        $this->grades = $course->get_student_grades($courseactivities);
     }
 
     /**

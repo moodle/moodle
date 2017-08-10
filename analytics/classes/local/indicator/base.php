@@ -122,6 +122,22 @@ abstract class base extends \core_analytics\calculable {
     }
 
     /**
+     * Hook to allow indicators to pre-fill data that is shared accross time range calculations.
+     *
+     * Useful to fill analysable-dependant data that does not depend on the time ranges. Use
+     * instance vars to cache data that can be re-used across samples calculations but changes
+     * between time ranges (indicator instances are reset between time ranges to avoid unexpected
+     * problems).
+     *
+     * You are also responsible of emptying previous analysable caches.
+     *
+     * @param \core_analytics\analysable $analysable
+     * @return void
+     */
+    public function fill_per_analysable_caches(\core_analytics\analysable $analysable) {
+    }
+
+    /**
      * Calculates the indicator.
      *
      * Returns an array of values which size matches $sampleids size.

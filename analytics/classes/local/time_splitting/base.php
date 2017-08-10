@@ -201,6 +201,9 @@ abstract class base {
         // Fill the dataset samples with indicators data.
         foreach ($indicators as $indicator) {
 
+            // Hook to allow indicators to store analysable-dependant data.
+            $indicator->fill_per_analysable_caches($this->analysable);
+
             // Per-range calculations.
             foreach ($ranges as $rangeindex => $range) {
 
