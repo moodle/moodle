@@ -140,10 +140,18 @@ class course implements \core_analytics\analysable {
         $this->now = time();
 
         // Get the course users, including users assigned to student and teacher roles at an higher context.
-        $studentroles = array_keys(get_archetype_roles('student'));
+        $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'core_analytics', 'rolearchetypes');
+
+        if (!$studentroles = $cache->get('student')) {
+            $studentroles = array_keys(get_archetype_roles('student'));
+            $cache->set('student', $studentroles);
+        }
         $this->studentids = $this->get_user_ids($studentroles);
 
-        $teacherroles = array_keys(get_archetype_roles('editingteacher') + get_archetype_roles('teacher'));
+        if (!$teacherroles = $cache->get('teacher')) {
+            $teacherroles = array_keys(get_archetype_roles('editingteacher') + get_archetype_roles('teacher'));
+            $cache->set('teacher', $teacherroles);
+        }
         $this->teacherids = $this->get_user_ids($teacherroles);
     }
 
