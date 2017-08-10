@@ -168,7 +168,7 @@ class block_iomad_company_admin extends block_base {
             // Put together link.
             $html .= "<a href=\"$url\">";
             $html .= '<div class="iomadlink">';
-            $html .= '<div class="iomadicon"><div class="fa fa-topic '. $icon .'"> </div>';
+            $html .= '<div class="iomadicon ' . $menu['style'] . '"><div class="fa fa-topic '. $icon .'"> </div>';
             $html .= '<div class="fa fa-action '. $iconsmall .'"> </div></div>';
             $html .= '<div class="actiondescription">' . $action . "</div>";
             $html .= '</div>';

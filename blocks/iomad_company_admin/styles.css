@@ -46,12 +46,12 @@ ul.iomadtab a:hover {
     text-decoration: underline;
 }
 
-div.iomadlink a:hover {
+div.iomadlink a:hover, div.iomadlinkreports a:hover{
     color:#fad163 !important;
     text-decoration: none;
 }
 
-div.iomadlink {
+div.iomadlink, div.iomadlinkreports {
     width: 100px;
     min-height: 100px;
     text-align: center;
