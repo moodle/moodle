@@ -154,9 +154,11 @@ class company_license_users_form extends moodleform {
         //$mform->addElement('html', $subdepartmenthtml);
 
         // This is getting hidden anyway, so no need for label
+        $mform->addElement('html', '<div class="display:none;">');
         $mform->addElement('select', 'deptid', ' ',
                             $departmentslist, array('class' => 'iomad_department_select', 'onchange' => 'this.form.submit()'));
         $mform->disabledIf('deptid', 'action', 'eq', 1);
+        $mform->addElement('html', '</div>');
 
         if ($this->license->expirydate > time()) {
             // Add in the courses selector.
