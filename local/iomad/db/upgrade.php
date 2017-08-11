@@ -1566,8 +1566,22 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017041717, 'local', 'iomad');
     }
 
+    if ($oldversion < 2017041719) {
 
-    if ($oldversion < 2017041718) {
+        // Define field custommenuitems to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('custommenuitems', XMLDB_TYPE_TEXT, null, null, null, null, null, 'ecommerce');
+
+        // Conditionally launch add field custommenuitems.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017041719, 'local', 'iomad');
+    }
+
+    if ($oldversion < 2017041720) {
 
         // Define field autoenrol to be added to company_course.
         $table = new xmldb_table('company_course');
@@ -1579,7 +1593,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
         }
 
         // Iomad savepoint reached.
-        upgrade_plugin_savepoint(true, 2017041718, 'local', 'iomad');
+        upgrade_plugin_savepoint(true, 2017041720, 'local', 'iomad');
     }
 
     return $result;

@@ -24,6 +24,9 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once($CFG->dirroot.'/local/iomad/lib/user.php');
+require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
+
 class theme_iomadbootstrap_core_renderer extends core_renderer {
 
     public function notification($message, $classes = 'notifyproblem') {
@@ -80,10 +83,19 @@ class theme_iomadbootstrap_core_renderer extends core_renderer {
     public function custom_menu($custommenuitems = '') {
         // The custom menu is always shown, even if no menu items
         // are configured in the global theme settings page.
-        global $CFG;
+        global $CFG, $DB;
 
         if (empty($custommenuitems) && !empty($CFG->custommenuitems)) { // MDL-45507.
             $custommenuitems = $CFG->custommenuitems;
+        }
+
+        // Deal with company custom menu items.
+        if ($companyid = iomad::is_company_user()) {
+            if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
+                if (!empty($companyrec->custommenuitems)) {
+                    $custommenuitems = $companyrec->custommenuitems;
+                }
+            }
         }
         $custommenu = new custom_menu($custommenuitems, current_language());
         return $this->render_custom_menu($custommenu);

@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<<<<<<< HEAD
-<XMLDB PATH="local/iomad/db" VERSION="20170803" COMMENT="XMLDB file for Moodle local/iomad"
-=======
 <XMLDB PATH="local/iomad/db" VERSION="20170810" COMMENT="XMLDB file for Moodle local/iomad"
->>>>>>> 743a70bd91b... IOMAD: Allow per company course autoenrolment.  closes #615
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -39,6 +35,7 @@
         <FIELD NAME="managernotify" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="send emails to manager 0 = never 1 = when there is a reminder 2 = when the user completes a course 3 - both of the above"/>
         <FIELD NAME="parentid" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of parent company"/>
         <FIELD NAME="ecommerce" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Does the company support eccommerce?"/>
+        <FIELD NAME="custommenuitems" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Per company custom menu items which overwrite the site ones if defined."/>
         <FIELD NAME="managerdigestday" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Day of the week when a manager gets the digest emails."/>
       </FIELDS>
       <KEYS>

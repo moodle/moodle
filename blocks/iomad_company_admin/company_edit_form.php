@@ -353,6 +353,13 @@ class company_edit_form extends company_moodleform {
                 $mform->addElement('hidden', 'linkcolor');
                 $mform->setType('linkcolor', PARAM_CLEAN);
             }
+
+            // Company custom menu items.
+            $mform->addElement('textarea', 'custommenuitems',
+                                get_string('custommenuitems', 'admin'),
+                                'wrap="virtual" rows="20" cols="75"');
+            $mform->setType('customcss', PARAM_CLEAN);
+            $mform->addElement('HTML', get_string('configcustommenuitems', 'admin'));
         } else {
                 $mform->addElement('hidden', 'theme', $this->companyrecord->theme);
                 $mform->setType('theme', PARAM_TEXT);
