@@ -349,7 +349,7 @@ class api {
      */
     protected static function guess_image($issuer) {
         if (empty($issuer->get('image'))) {
-            $baseurl = parse_url($issuer->get('discoveryurl'));
+            $baseurl = parse_url($issuer->get('baseurl'));
             $imageurl = $baseurl['scheme'] . '://' . $baseurl['host'] . '/favicon.ico';
             $issuer->set('image', $imageurl);
             $issuer->update();
@@ -752,7 +752,7 @@ class api {
         $record->issuerid = $issuer->get('id');
         $record->refreshtoken = $refreshtoken;
         $record->grantedscopes = $scopes;
-        $record->email = $userinfo['email'];
+        $record->email = isset($userinfo['email']) ? $userinfo['email'] : '';
         $record->username = $userinfo['username'];
 
         $systemaccount = new system_account(0, $record);

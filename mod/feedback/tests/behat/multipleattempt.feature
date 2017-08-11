@@ -25,7 +25,7 @@ Feature: Non anonymous feedback with multiple submissions
 
   Scenario: Completing a feedback second time
     When I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Short text answer" question to the feedback with:
@@ -39,7 +39,7 @@ Feature: Non anonymous feedback with multiple submissions
       | Maximum characters accepted | 200        |
     And I log out
     And I log in as "user1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Answer the questions..."
     And I set the following fields to these values:
@@ -50,7 +50,7 @@ Feature: Non anonymous feedback with multiple submissions
     And I press "Submit your answers"
     And I log out
     And I log in as "user1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Course feedback"
     And I follow "Answer the questions..."
     Then the field "first" matches value "111"

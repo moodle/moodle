@@ -24,6 +24,24 @@ information provided here is intended especially for developers.
   used to perform implicit validation of submitted values - without the need to explicitly add the validation rules to
   every form. The method should accept a single parameter with the submitted value. It should return a string with the
   eventual validation error, or an empty value if the validation passes.
+* New user_picture attribute $includefullname to determine whether to include the user's full name with the user's picture.
+* Enrol plugins which provide enrolment actions can now declare the following "data-action" attributes in their implementation of
+  enrol_plugin::get_user_enrolment_actions() whenever applicable:
+  * "editenrolment" - For editing a user'e enrolment details. Defined by constant ENROL_ACTION_EDIT.
+  * "unenrol" - For unenrolling a student. Defined by constant ENROL_ACTION_UNENROL.
+  These attributes enable enrol actions to be rendered via modals. If not added, clicking on the enrolment action buttons will still
+  redirect the user to the appropriate enrolment action page. Though optional, it is recommended to add these attributes for a
+  better user experience when performing enrol actions.
+* New optional parameter $enrolid for the following functions:
+  - get_enrolled_join()
+  - get_enrolled_sql()
+  - get_enrolled_with_capabilities_join()
+  Setting this parameter to a non-zero value will add a condition to the query such that only users that were enrolled
+  with this enrolment method will be returned.
+* New optional parameter 'closeSuggestionsOnSelect' for the enhance() function for form-autocomplete. Setting this to true will
+  close the suggestions popup immediately after an option has been selected. If not specified, it defaults to true for single-select
+  elements and false for multiple-select elements.
+* user_can_view_profile() now also checks the moodle/user:viewalldetails capability.
 
 === 3.3.1 ===
 

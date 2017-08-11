@@ -39,7 +39,7 @@
         <FIELD NAME="conclusionformat" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The format of the conclusion field content."/>
         <FIELD NAME="overallfeedbackmode" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Mode of the overall feedback support."/>
         <FIELD NAME="overallfeedbackfiles" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of allowed attachments to the overall feedback."/>
-        <FIELD NAME="overallfeedbackfiletypes" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="comma separated liat of file extensions"/>
+        <FIELD NAME="overallfeedbackfiletypes" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="comma separated list of file extensions"/>
         <FIELD NAME="overallfeedbackmaxbytes" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="100000" SEQUENCE="false" COMMENT="Maximum size of one file attached to the overall feedback."/>
       </FIELDS>
       <KEYS>

@@ -1006,15 +1006,17 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
 
     $recordids = data_get_all_recordids($data->id, $initialselect, $initialparams);
     $newrecordids = data_get_advance_search_ids($recordids, $searcharray, $data->id);
-    $totalcount = count($newrecordids);
     $selectdata = $where . $groupselect . $approveselect;
 
     if (!empty($advanced)) {
         $advancedsearchsql = data_get_advanced_search_sql($sort, $data, $newrecordids, $selectdata, $sortorder);
         $sqlselect = $advancedsearchsql['sql'];
         $allparams = array_merge($allparams, $advancedsearchsql['params']);
+        $totalcount = count($newrecordids);
     } else {
         $sqlselect  = "SELECT $what $fromsql $sortorder";
+        $sqlcountselect  = "SELECT $count $fromsql";
+        $totalcount = $DB->count_records_sql($sqlcountselect, $allparams);
     }
 
     // Work out the paging numbers and counts.

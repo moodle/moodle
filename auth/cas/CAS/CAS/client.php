@@ -641,7 +641,33 @@ class CAS_Client
     }
 
     /**
-     * @var callback $_postAuthenticateCallbackFunction;
+     * @var callback $_attributeParserCallbackFunction;
+     */
+    private $_casAttributeParserCallbackFunction = null;
+
+    /**
+     * @var array $_attributeParserCallbackArgs;
+     */
+    private $_casAttributeParserCallbackArgs = array();
+
+    /**
+     * Set a callback function to be run when parsing CAS attributes
+     *
+     * The callback function will be passed a XMLNode as its first parameter,
+     * followed by any $additionalArgs you pass.
+     *
+     * @param string $function       callback function to call
+     * @param array  $additionalArgs optional array of arguments
+     *
+     * @return void
+     */
+    public function setCasAttributeParserCallback($function, array $additionalArgs = array())
+    {
+        $this->_casAttributeParserCallbackFunction = $function;
+        $this->_casAttributeParserCallbackArgs = $additionalArgs;
+    }
+
+    /** @var callback $_postAuthenticateCallbackFunction;
      */
     private $_postAuthenticateCallbackFunction = null;
 
@@ -905,7 +931,12 @@ class CAS_Client
             session_start();
             phpCAS :: trace("Starting a new session " . session_id());
         }
-
+        // Only for debug purposes
+        if ($this->isSessionAuthenticated()){
+            phpCAS :: trace("Session is authenticated as: " . $_SESSION['phpCAS']['user']);
+        } else {
+            phpCAS :: trace("Session is not authenticated");
+        }
         // are we in proxy mode ?
         $this->_proxy = $proxy;
 
@@ -1664,8 +1695,15 @@ class CAS_Client
         header('Location: '.$cas_url);
         phpCAS::trace("Prepare redirect to : ".$cas_url);
 
+        phpCAS::trace("Destroying session : ".session_id());
         session_unset();
         session_destroy();
+        if (session_status() === PHP_SESSION_NONE) {
+            phpCAS::trace("Session terminated");
+        } else {
+            phpCAS::error("Session was not terminated");
+            phpCAS::trace("Session was not terminated");
+        }
         $lang = $this->getLangObj();
         $this->printHTMLHeader($lang->getLogout());
         printf('<p>'.$lang->getShouldHaveBeenRedirected(). '</p>', $cas_url);
@@ -1905,12 +1943,16 @@ class CAS_Client
      */
     public function setCasServerCACert($cert, $validate_cn)
     {
-    	// Argument validation
-    	if (gettype($cert) != 'string')
-        	throw new CAS_TypeMismatchException($cert, '$cert', 'string');
-        if (gettype($validate_cn) != 'boolean')
-        	throw new CAS_TypeMismatchException($validate_cn, '$validate_cn', 'boolean');
-
+    // Argument validation
+        if (gettype($cert) != 'string') {
+            throw new CAS_TypeMismatchException($cert, '$cert', 'string');
+        }
+        if (gettype($validate_cn) != 'boolean') {
+            throw new CAS_TypeMismatchException($validate_cn, '$validate_cn', 'boolean');
+        }
+        if ( !file_exists($cert) && $this->_requestImplementation !== 'CAS_TestHarness_DummyRequest'){
+            throw new CAS_InvalidArgumentException("Certificate file does not exist " . $this->_requestImplementation);
+        }
         $this->_cas_server_ca_cert = $cert;
         $this->_cas_server_cn_validate = $validate_cn;
     }
@@ -3187,7 +3229,7 @@ class CAS_Client
                 false/*$no_response*/, true/*$bad_response*/, $text_response
             );
             $result = false;
-	} else if ( $tree_response->getElementsByTagName("authenticationFailure")->length != 0) {
+        } else if ( $tree_response->getElementsByTagName("authenticationFailure")->length != 0) {
             // authentication failed, extract the error code and message and throw exception
             $auth_fail_list = $tree_response
                 ->getElementsByTagName("authenticationFailure");
@@ -3288,7 +3330,16 @@ class CAS_Client
         // 		</cas:authenticationSuccess>
         // 	</cas:serviceResponse>
         //
-        if ( $success_elements->item(0)->getElementsByTagName("attributes")->length != 0) {
+        if ($this->_casAttributeParserCallbackFunction !== null
+            && is_callable($this->_casAttributeParserCallbackFunction)
+        ) {
+            array_unshift($this->_casAttributeParserCallbackArgs, $success_elements->item(0));
+            phpCas :: trace("Calling attritubeParser callback");
+            $extra_attributes =  call_user_func_array(
+                $this->_casAttributeParserCallbackFunction,
+                $this->_casAttributeParserCallbackArgs
+            );
+        } elseif ( $success_elements->item(0)->getElementsByTagName("attributes")->length != 0) {
             $attr_nodes = $success_elements->item(0)
                 ->getElementsByTagName("attributes");
             phpCas :: trace("Found nested jasig style attributes");
@@ -3501,6 +3552,22 @@ class CAS_Client
         return $this->_url;
     }
 
+    /**
+     * This method sets the base URL of the CAS server.
+     *
+     * @param string $url the base URL
+     *
+     * @return string base url
+     */
+    public function setBaseURL($url)
+    {
+    	// Argument Validation
+    	if (gettype($url) != 'string')
+        	throw new CAS_TypeMismatchException($url, '$url', 'string');
+
+        return $this->_server['base_url'] = $url;
+    }
+
 
     /**
      * Try to figure out the phpCas client URL with possible Proxys / Ports etc.
@@ -3551,15 +3618,16 @@ class CAS_Client
     {
         if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
             return ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
-        }
-        if ( isset($_SERVER['HTTPS'])
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTOCOL'])) {
+            return ($_SERVER['HTTP_X_FORWARDED_PROTOCOL'] === 'https');
+        } elseif ( isset($_SERVER['HTTPS'])
             && !empty($_SERVER['HTTPS'])
             && strcasecmp($_SERVER['HTTPS'], 'off') !== 0
         ) {
             return true;
-        } else {
-            return false;
         }
+        return false;
+
     }
 
     /**

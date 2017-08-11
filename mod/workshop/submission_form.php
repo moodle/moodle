@@ -94,29 +94,6 @@ class workshop_submission_form extends moodleform {
             $errors['attachment_filemanager'] = get_string('submissionrequiredfile', 'mod_workshop');
         }
 
-        if (isset($data['attachment_filemanager']) and isset($this->_customdata['workshop']->submissionfiletypes)) {
-            $filetypesutil = new \core_form\filetypes_util();
-            $whitelist = $filetypesutil->normalize_file_types($this->_customdata['workshop']->submissionfiletypes);
-            if ($whitelist) {
-                $draftfiles = file_get_drafarea_files($data['attachment_filemanager']);
-                if ($draftfiles) {
-                    $wrongfiles = array();
-                    foreach ($draftfiles->list as $file) {
-                        if (!$filetypesutil->is_allowed_file_type($file->filename, $whitelist)) {
-                            $wrongfiles[] = $file->filename;
-                        }
-                    }
-                    if ($wrongfiles) {
-                        $a = array(
-                            'whitelist' => implode(', ', $whitelist),
-                            'wrongfiles' => implode(', ', $wrongfiles),
-                        );
-                        $errors['attachment_filemanager'] = get_string('err_wrongfileextension', 'mod_workshop', $a);
-                    }
-                }
-            }
-        }
-
         return $errors;
     }
 }

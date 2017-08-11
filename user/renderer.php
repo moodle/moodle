@@ -170,6 +170,154 @@ class core_user_renderer extends plugin_renderer_base {
         return $this->output->render_from_template('core_tag/tagfeed', $items);
     }
 
+    /**
+     * Renders the unified filter element for the course participants page.
+     *
+     * @param stdClass $course The course object.
+     * @param context $context The context object.
+     * @param array $filtersapplied Array of currently applied filters.
+     * @return bool|string
+     */
+    public function unified_filter($course, $context, $filtersapplied) {
+        global $CFG, $DB, $USER;
+
+        $filteroptions = [];
+        $isfrontpage = ($course->id == SITEID);
+
+        // Get the list of fields we have to hide.
+        $hiddenfields = array();
+        if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
+            $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+        }
+        $haslastaccess = !isset($hiddenfields['lastaccess']);
+        // Filter options for last access.
+        if ($haslastaccess) {
+            // Get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
+            // We need to make it diferently for normal courses and site course.
+            if (!$isfrontpage) {
+                $params = ['courseid' => $course->id, 'timeaccess' => 0];
+                $select = 'courseid = :courseid AND timeaccess != :timeaccess';
+                $minlastaccess = $DB->get_field_select('user_lastaccess', 'MIN(timeaccess)', $select, $params);
+                $lastaccess0exists = $DB->record_exists('user_lastaccess', $params);
+            } else {
+                $params = ['lastaccess' => 0];
+                $select = 'lastaccess != :lastaccess';
+                $minlastaccess = $DB->get_field_select('user', 'MIN(lastaccess)', $select, $params);
+                $lastaccess0exists = $DB->record_exists('user', $params);
+            }
+            $now = usergetmidnight(time());
+            $timeoptions = [];
+            $criteria = get_string('usersnoaccesssince');
+
+            // Days.
+            for ($i = 1; $i < 7; $i++) {
+                $timestamp = strtotime('-' . $i . ' days', $now);
+                if ($timestamp >= $minlastaccess) {
+                    $value = get_string('numdays', 'moodle', $i);
+                    $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
+                }
+            }
+            // Weeks.
+            for ($i = 1; $i < 10; $i++) {
+                $timestamp = strtotime('-'.$i.' weeks', $now);
+                if ($timestamp >= $minlastaccess) {
+                    $value = get_string('numweeks', 'moodle', $i);
+                    $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
+                }
+            }
+            // Months.
+            for ($i = 2; $i < 12; $i++) {
+                $timestamp = strtotime('-'.$i.' months', $now);
+                if ($timestamp >= $minlastaccess) {
+                    $value = get_string('nummonths', 'moodle', $i);
+                    $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
+                }
+            }
+            // Try a year.
+            $timestamp = strtotime('-'.$i.' year', $now);
+            if ($timestamp >= $minlastaccess) {
+                $value = get_string('lastyear', 'moodle');
+                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
+            }
+            if (!empty($lastaccess0exists)) {
+                $value = get_string('never', 'moodle');
+                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
+            }
+            if (count($timeoptions) > 1) {
+                $filteroptions += $timeoptions;
+            }
+        }
+
+        require_once($CFG->dirroot . '/enrol/locallib.php');
+        $manager = new course_enrolment_manager($this->page, $course);
+
+        $canreviewenrol = has_capability('moodle/course:enrolreview', $context);
+
+        // Filter options for enrolment methods.
+        if ($canreviewenrol && $enrolmentmethods = $manager->get_enrolment_instance_names(true)) {
+            $criteria = get_string('enrolmentinstances', 'enrol');
+            $enroloptions = [];
+            foreach ($enrolmentmethods as $id => $enrolname) {
+                $enroloptions += $this->format_filter_option(USER_FILTER_ENROLMENT, $criteria, $id, $enrolname);
+            }
+            $filteroptions += $enroloptions;
+        }
+
+        // Filter options for groups, if available.
+        if ($course->groupmode != NOGROUPS) {
+            if (has_capability('moodle/site:accessallgroups', $context)) {
+                // List all groups if the user can access all groups.
+                $groups = $manager->get_all_groups();
+            } else {
+                // Otherwise, just list the groups the user belongs to.
+                $groups = groups_get_all_groups($course->id, $USER->id);
+            }
+            $criteria = get_string('group');
+            $groupoptions = [];
+            foreach ($groups as $id => $group) {
+                $groupoptions += $this->format_filter_option(USER_FILTER_GROUP, $criteria, $id, $group->name);
+            }
+            $filteroptions += $groupoptions;
+        }
+
+        // Filter options for role.
+        $roles = role_fix_names(get_profile_roles($context), $context, ROLENAME_ALIAS, true);
+        $criteria = get_string('role');
+        $roleoptions = [];
+        foreach ($roles as $id => $role) {
+            $roleoptions += $this->format_filter_option(USER_FILTER_ROLE, $criteria, $id, $role);
+        }
+        $filteroptions += $roleoptions;
+
+        // Filter options for status.
+        if ($canreviewenrol) {
+            $criteria = get_string('status');
+            // Add statuses.
+            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_ACTIVE, get_string('active'));
+            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_SUSPENDED,
+                get_string('inactive'));
+        }
+
+        $indexpage = new \core_user\output\unified_filter($filteroptions, $filtersapplied);
+        $context = $indexpage->export_for_template($this->output);
+
+        return $this->output->render_from_template('core_user/unified_filter', $context);
+    }
+
+    /**
+     * Returns a formatted filter option.
+     *
+     * @param int $filtertype The filter type (e.g. status, role, group, enrolment, last access).
+     * @param string $criteria The string label of the filter type.
+     * @param int $value The value for the filter option.
+     * @param string $label The string representation of the filter option's value.
+     * @return array The formatted option with the ['filtertype:value' => 'criteria: label'] format.
+     */
+    protected function format_filter_option($filtertype, $criteria, $value, $label) {
+        $optionlabel = get_string('filteroption', 'moodle', (object)['criteria' => $criteria, 'value' => $label]);
+        $optionvalue = "$filtertype:$value";
+        return [$optionvalue => $optionlabel];
+    }
 }
 
 /**

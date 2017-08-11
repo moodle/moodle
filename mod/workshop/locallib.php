@@ -57,6 +57,9 @@ class workshop {
     const EXAMPLES_BEFORE_SUBMISSION    = 1;
     const EXAMPLES_BEFORE_ASSESSMENT    = 2;
 
+    /** @var stdclass workshop record from database */
+    public $dbrecord;
+
     /** @var cm_info course module record */
     public $cm;
 
@@ -195,7 +198,8 @@ class workshop {
      * @param stdClass $context The context of the workshop instance
      */
     public function __construct(stdclass $dbrecord, $cm, $course, stdclass $context=null) {
-        foreach ($dbrecord as $field => $value) {
+        $this->dbrecord = $dbrecord;
+        foreach ($this->dbrecord as $field => $value) {
             if (property_exists('workshop', $field)) {
                 $this->{$field} = $value;
             }
@@ -2683,6 +2687,31 @@ class workshop {
                 return true;
             }
         }
+    }
+
+    /**
+     * Trigger module viewed event and set the module viewed for completion.
+     *
+     * @since  Moodle 3.4
+     */
+    public function set_module_viewed() {
+        global $CFG;
+        require_once($CFG->libdir . '/completionlib.php');
+
+        // Mark viewed.
+        $completion = new completion_info($this->course);
+        $completion->set_module_viewed($this->cm);
+
+        $eventdata = array();
+        $eventdata['objectid'] = $this->id;
+        $eventdata['context'] = $this->context;
+
+        // Trigger module viewed event.
+        $event = \mod_workshop\event\course_module_viewed::create($eventdata);
+        $event->add_record_snapshot('course', $this->course);
+        $event->add_record_snapshot('workshop', $this->dbrecord);
+        $event->add_record_snapshot('course_modules', $this->cm);
+        $event->trigger();
     }
 
     ////////////////////////////////////////////////////////////////////////////////

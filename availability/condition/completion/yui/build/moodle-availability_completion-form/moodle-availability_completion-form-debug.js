@@ -78,6 +78,16 @@ M.availability_completion.form.fillErrors = function(errors, node) {
     if (cmid === 0) {
         errors.push('availability_completion:error_selectcmid');
     }
+    var e = parseInt(node.one('select[name=e]').get('value'), 10);
+    if (((e === 2) || (e === 3))) {
+        this.cms.forEach(function(cm) {
+            if (cm.id === cmid) {
+                if (cm.completiongradeitemnumber === null) {
+                    errors.push('availability_completion:error_selectcmidpassfail');
+                }
+            }
+        });
+    }
 };
 
 

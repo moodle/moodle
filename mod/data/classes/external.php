@@ -596,7 +596,7 @@ class mod_data_external extends external_api {
 
         $params = array('databaseid' => $databaseid);
         $params = self::validate_parameters(self::get_fields_parameters(), $params);
-        $warnings = array();
+        $fields = $warnings = array();
 
         list($database, $course, $cm, $context) = self::validate_database($params['databaseid']);
 
@@ -807,7 +807,9 @@ class mod_data_external extends external_api {
                 'entries' => new external_multiple_structure(
                     record_exporter::get_read_structure()
                 ),
-                'totalcount' => new external_value(PARAM_INT, 'Total count of records.'),
+                'totalcount' => new external_value(PARAM_INT, 'Total count of records returned by the search.'),
+                'maxcount' => new external_value(PARAM_INT, 'Total count of records that the user could see in the database
+                    (if all the search criterias were removed).', VALUE_OPTIONAL),
                 'listviewcontents' => new external_value(PARAM_RAW, 'The list view contents as is rendered in the site.',
                                                             VALUE_OPTIONAL),
                 'warnings' => new external_warnings()

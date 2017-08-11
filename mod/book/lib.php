@@ -164,6 +164,9 @@ function book_print_recent_activity($course, $viewfullnames, $timestart) {
  * @return array status array
  */
 function book_reset_userdata($data) {
+    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+    // See MDL-9367.
+
     return array();
 }
 

@@ -6,7 +6,6 @@ vendor/
 admin/tool/usertours/amd/src/tour.js
 admin/tool/usertours/amd/src/popper.js
 auth/cas/CAS/
-auth/fc/fcFPP.php
 enrol/lti/ims-blti/
 filter/algebra/AlgParser.pm
 filter/tex/mimetex.*
@@ -14,6 +13,7 @@ lib/editor/atto/yui/src/rangy/js/*.*
 lib/editor/tinymce/plugins/pdw/tinymce/
 lib/editor/tinymce/plugins/spellchecker/rpc.php
 lib/editor/tinymce/tiny_mce/
+lib/mlbackend/php/phpml/
 lib/adodb/
 lib/bennu/
 lib/evalmath/
@@ -58,6 +58,7 @@ lib/maxmind/MaxMind/
 lib/ltiprovider/
 lib/amd/src/truncate.js
 lib/fonts/
+lib/validateurlsyntax.php
 media/player/videojs/amd/src/video-lazy.js
 media/player/videojs/amd/src/Youtube-lazy.js
 media/player/videojs/videojs/

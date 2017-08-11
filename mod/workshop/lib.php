@@ -1890,24 +1890,31 @@ function workshop_reset_course_form_defaults(stdClass $course) {
 function workshop_reset_userdata(stdClass $data) {
     global $CFG, $DB;
 
+    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+    // See MDL-9367.
+    shift_course_mod_dates('workshop', array('submissionstart', 'submissionend', 'assessmentstart', 'assessmentend'),
+        $data->timeshift, $data->courseid);
+    $status = array();
+    $status[] = array('component' => get_string('modulenameplural', 'workshop'), 'item' => get_string('datechanged'),
+        'error' => false);
+
     if (empty($data->reset_workshop_submissions)
             and empty($data->reset_workshop_assessments)
             and empty($data->reset_workshop_phase) ) {
         // Nothing to do here.
-        return array();
+        return $status;
     }
 
     $workshoprecords = $DB->get_records('workshop', array('course' => $data->courseid));
 
     if (empty($workshoprecords)) {
         // What a boring course - no workshops here!
-        return array();
+        return $status;
     }
 
     require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 
     $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
-    $status = array();
 
     foreach ($workshoprecords as $workshoprecord) {
         $cm = get_coursemodule_from_instance('workshop', $workshoprecord->id, $course->id, false, MUST_EXIST);

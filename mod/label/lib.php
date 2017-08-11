@@ -156,6 +156,10 @@ function label_get_coursemodule_info($coursemodule) {
  * @return array status array
  */
 function label_reset_userdata($data) {
+
+    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+    // See MDL-9367.
+
     return array();
 }
 

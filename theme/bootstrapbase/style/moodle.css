@@ -3724,7 +3724,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   background-image: linear-gradient(to bottom, #fff, #ccc);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffcccccc', GradientType=0);
-  filter: 0;
+  filter: none;
 }
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
   padding: 0;
@@ -5550,6 +5550,9 @@ img.iconsmall {
 }
 .calendar_event_user {
   background-color: #dce7ec;
+}
+.path-calendar #dateselector-calendar-panel {
+  z-index: 4054;
 }
 .path-calendar .calendartable {
   width: 100%;
@@ -9062,7 +9065,7 @@ a.ygtvspacer:hover {
   border-bottom: 1px solid #bbb;
   padding: 0.24em 0;
 }
-/* stylelint-disable declaration-block-no-duplicate-properties, no-browser-hacks */
+/* stylelint-disable declaration-block-no-duplicate-properties */
 #chooseqtype .alloptions {
   overflow-x: hidden;
   overflow-y: auto;
@@ -9134,6 +9137,9 @@ a.ygtvspacer:hover {
 }
 #categoryquestions label {
   margin: 0;
+}
+#categoryquestions .header {
+  text-align: left;
 }
 #page-mod-quiz-edit div.questionbankwindow div.header {
   margin: 0;
@@ -15610,7 +15616,7 @@ h4 small {
     content: "";
   }
 }
-/* stylelint-disable declaration-block-no-duplicate-properties, no-browser-hacks */
+/* stylelint-disable declaration-block-no-duplicate-properties */
 /* stylelint-enable */
 /**
  * Implement missing variables, or faulty ones, in Bootstrap rules.
@@ -16985,6 +16991,9 @@ body.modal-open {
   border-radius: 10px;
   border: none;
 }
+.modal-container .modal.modal-lg {
+  max-width: 900px;
+}
 .modal-container .modal .modal-header {
   min-height: 13px;
   padding: 5px;
@@ -17043,9 +17052,6 @@ body.modal-open {
   background-color: #f2f2f2;
   box-shadow: none;
   border-radius: 0 0 10px 10px;
-}
-.modal-container.large .modal {
-  max-width: 900px;
 }
 .modal-backdrop {
   z-index: 4049;
@@ -17177,11 +17183,14 @@ body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebrea
 .path-mod-forum .forumheaderlist .discussion .topic,
 .path-mod-forum .forumheaderlist .discussion .discussionsubscription,
 .path-mod-forum .forumheaderlist .discussion .topic.starter,
-.path-mod-forum .forumheaderlist .discussion .picture,
 .path-mod-forum .forumheaderlist .discussion .author,
 .path-mod-forum .forumheaderlist .discussion .replies,
 .path-mod-forum .forumheaderlist .discussion .lastpost {
   vertical-align: top;
+}
+.path-mod-forum .forumheaderlist .discussion .picture {
+  margin: 0 20px;
+  float: left;
 }
 .path-mod-forum .forumheaderlist .discussion .unread img {
   margin: 0;
@@ -19429,7 +19438,7 @@ span[data-flexitour="container"][x-placement="right-start"] div[data-role="arrow
   border-right-color: #fff;
 }
 /* Styling for mustache templates */
-/* stylelint-disable declaration-block-no-duplicate-properties, no-browser-hacks */
+/* stylelint-disable declaration-block-no-duplicate-properties */
 /* stylelint-enable */
 .columns-autoflow-1to1to1 {
   -webkit-column-count: 3;
@@ -20538,7 +20547,7 @@ span[data-flexitour="container"][x-placement="right-start"] div[data-role="arrow
   }
 }
 /* responsive.less */
-/* stylelint-disable declaration-block-no-duplicate-properties, no-browser-hacks */
+/* stylelint-disable declaration-block-no-duplicate-properties */
 @media (min-width: 980px) {
   a[id]:empty::before,
   a[name]:empty::before {

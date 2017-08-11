@@ -1,16 +1,23 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.4 ===
+
+* There was a mustache template login.mustache in /lib/templates/ rendering the login form
+  and a template with the same name in /theme/boost/templates/ rendering the pagelayout "login".
+  To prevent misunderstanding when overriding one of these templates in a Boost child theme,
+  the first one was renamed to loginform.mustache - see MDL-58970.
+* The Boost flat navigation nodes now have several data-attributes which let plugin developers
+  access properties from the underlying navigation nodes in the browser - see MDL-59425.
+* Navigation between activities via a previous and next link was added to Boost, Clean and Bootstrapbase. This
+  is made possible by a new function core_renderer->activity_navigation().
+
 === 3.3 ===
 
 * As boost-based themes no longer use the moodle-core-popuphelp help popups, the javascript
   setup for this module have been moved from core standard_head_html to the bootstrapbase
   renderer. If your theme needs this javascript you will need to ensure the bootstrap renderer
   is called, or require the JS yourself
-* There was a mustache template login.mustache in /lib/templates/ rendering the login form
-  and a template with the same name in /theme/boost/templates/ rendering the pagelayout "login".
-  To prevent misunderstanding when overriding one of these templates in a Boost child theme,
-  the first one was renamed to loginform.mustache - see MDL-58970.
 
 === 3.2 ===
 

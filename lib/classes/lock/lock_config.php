@@ -48,7 +48,9 @@ class lock_config {
         global $CFG, $DB;
         $lockfactory = null;
 
-        if (isset($CFG->lock_factory) && $CFG->lock_factory != 'auto') {
+        if (during_initial_install()) {
+            $lockfactory = new \core\lock\installation_lock_factory($type);
+        } else if (isset($CFG->lock_factory) && $CFG->lock_factory != 'auto') {
             if (!class_exists($CFG->lock_factory)) {
                 // In this case I guess it is not safe to continue. Different cluster nodes could end up using different locking
                 // types because of an installation error.

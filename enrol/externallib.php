@@ -805,6 +805,107 @@ class core_enrol_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of edit_user_enrolment() parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function edit_user_enrolment_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'User enrolment ID'),
+                'ueid' => new external_value(PARAM_INT, 'User enrolment ID'),
+                'status' => new external_value(PARAM_INT, 'Enrolment status'),
+                'timestart' => new external_value(PARAM_INT, 'Enrolment start timestamp', VALUE_DEFAULT, 0),
+                'timeend' => new external_value(PARAM_INT, 'Enrolment end timestamp', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * External function that updates a given user enrolment.
+     *
+     * @param int $courseid The course ID.
+     * @param int $ueid The user enrolment ID.
+     * @param int $status The enrolment status.
+     * @param int $timestart Enrolment start timestamp.
+     * @param int $timeend Enrolment end timestamp.
+     * @return array An array consisting of the processing result, errors and form output, if available.
+     */
+    public static function edit_user_enrolment($courseid, $ueid, $status, $timestart = 0, $timeend = 0) {
+        global $CFG, $DB, $PAGE;
+
+        $params = self::validate_parameters(self::edit_user_enrolment_parameters(), [
+            'courseid' => $courseid,
+            'ueid' => $ueid,
+            'status' => $status,
+            'timestart' => $timestart,
+            'timeend' => $timeend,
+        ]);
+
+        $course = get_course($courseid);
+        $context = context_course::instance($course->id);
+        self::validate_context($context);
+
+        $userenrolment = $DB->get_record('user_enrolments', ['id' => $params['ueid']], '*', MUST_EXIST);
+        $userenroldata = [
+            'status' => $params['status'],
+            'timestart' => $params['timestart'],
+            'timeend' => $params['timeend'],
+        ];
+
+        $result = false;
+        $errors = [];
+
+        // Validate data against the edit user enrolment form.
+        require_once("$CFG->dirroot/enrol/editenrolment_form.php");
+        $customformdata = [
+            'ue' => $userenrolment,
+            'modal' => true,
+        ];
+        $mform = new \enrol_user_enrolment_form(null, $customformdata, 'post', '', null, true, $userenroldata);
+        $mform->set_data($userenroldata);
+        $validationerrors = $mform->validation($userenroldata, null);
+        if (empty($validationerrors)) {
+            require_once($CFG->dirroot . '/enrol/locallib.php');
+            $manager = new course_enrolment_manager($PAGE, $course);
+            $result = $manager->edit_enrolment($userenrolment, (object)$userenroldata);
+        } else {
+            foreach ($validationerrors as $key => $errormessage) {
+                $errors[] = (object)[
+                    'key' => $key,
+                    'message' => $errormessage
+                ];
+            }
+        }
+
+        return [
+            'result' => $result,
+            'errors' => $errors,
+        ];
+    }
+
+    /**
+     * Returns description of edit_user_enrolment() result value
+     *
+     * @return external_description
+     */
+    public static function edit_user_enrolment_returns() {
+        return new external_single_structure(
+            array(
+                'result' => new external_value(PARAM_BOOL, 'True if the user\'s enrolment was successfully updated'),
+                'errors' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'key' => new external_value(PARAM_TEXT, 'The data that failed the validation'),
+                            'message' => new external_value(PARAM_TEXT, 'The error message'),
+                        )
+                    ), 'List of validation errors'
+                ),
+            )
+        );
+    }
 }
 
 /**

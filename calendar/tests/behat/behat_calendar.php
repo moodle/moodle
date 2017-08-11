@@ -64,17 +64,16 @@ class behat_calendar extends behat_base {
         $eventname = $eventname[1];
 
         // Click to create new event.
+        $this->execute("behat_general::i_wait_seconds", 1);
+
+        // Click to create new event.
         $this->execute("behat_general::i_click_on", array(get_string('newevent', 'calendar'), "button"));
 
         // Set form fields.
         $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
 
         // Save event.
-        $this->execute("behat_forms::press_button", get_string('savechanges'));
-
-        // Check if event is created. Being last step, don't need to wait or check for exceptions.
-        $this->execute("behat_general::assert_page_contains_text", $eventname);
-
+        $this->execute("behat_forms::press_button", get_string('save'));
     }
 
     /**

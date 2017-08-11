@@ -1120,6 +1120,8 @@ function lesson_reset_userdata($data) {
                        WHERE lessonid IN (SELECT id FROM {lesson} WHERE course = ?)
                          AND deadline <> 0", array($data->timeshift, $data->courseid));
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
         shift_course_mod_dates('lesson', array('available', 'deadline'), $data->timeshift, $data->courseid);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
     }
@@ -1614,16 +1616,22 @@ function lesson_check_updates_since(cm_info $cm, $from, $filter = array()) {
             $updates->userpagesviewed->itemids = array_keys($pagesviewed);
         }
 
-        $select = 'lessonid = ? AND completed > ? ' . $insql;
+        $select = 'lessonid = ? AND completed > ?';
+        if (!empty($insql)) {
+            $select .= ' AND userid ' . $insql;
+        }
         $grades = $DB->get_records_select('lesson_grades', $select, $params, '', 'id');
         if (!empty($grades)) {
             $updates->usergrades->updated = true;
             $updates->usergrades->itemids = array_keys($grades);
         }
 
-        $select = 'lessonid = ? AND (starttime > ? OR lessontime > ? OR timemodifiedoffline > ?) ' . $insql;
+        $select = 'lessonid = ? AND (starttime > ? OR lessontime > ? OR timemodifiedoffline > ?)';
         $params = array($cm->instance, $from, $from, $from);
-        $params = array_merge($params, $inparams);
+        if (!empty($insql)) {
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
         $timers = $DB->get_records_select('lesson_timer', $select, $params, '', 'id');
         if (!empty($timers)) {
             $updates->usertimers->updated = true;

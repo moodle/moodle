@@ -239,14 +239,21 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
 
             var promise = Templates.render('message_popup/notification_content_item', notification)
             .then(function(html, js) {
-                container.append(html);
-                Templates.runTemplateJS(js);
-                return;
+                return {html: html, js: js};
             });
             promises.push(promise);
         }.bind(this));
 
-        return $.when.apply($, promises);
+        return $.when.apply($, promises).then(function() {
+            // Each of the promises in the when will pass its results as an argument to the function.
+            // The order of the arguments will be the order that the promises are passed to when()
+            // i.e. the first promise's results will be in the first argument.
+            $.each(arguments, function(index, argument) {
+                container.append(argument.html);
+                Templates.runTemplateJS(argument.js);
+            });
+            return;
+        });
     };
 
     /**

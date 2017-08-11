@@ -41,7 +41,7 @@ $instance = $DB->get_record('enrol', array('id'=>$ue->enrolid), '*', MUST_EXIST)
 $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
 
 // The URL of the enrolled users page for the course.
-$usersurl = new moodle_url('/enrol/users.php', array('id' => $course->id));
+$usersurl = new moodle_url('/user/index.php', array('id' => $course->id));
 
 // Do not allow any changes if plugin disabled, not available or not suitable.
 if (!$plugin = enrol_get_plugin($instance->enrol)) {

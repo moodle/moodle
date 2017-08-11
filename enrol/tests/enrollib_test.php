@@ -577,4 +577,37 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertEquals($course1->id, $courses[$course1->id]->id);
         $this->assertEquals($course2->id, $courses[$course2->id]->id);
     }
+
+    /**
+     * test_course_users
+     *
+     * @return void
+     */
+    public function test_course_users() {
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id);
+
+        $this->assertCount(2, enrol_get_course_users($course1->id));
+        $this->assertCount(2, enrol_get_course_users($course1->id, true));
+
+        $this->assertCount(1, enrol_get_course_users($course1->id, true, array($user1->id)));
+
+        $this->assertCount(2, enrol_get_course_users(false, false, array($user1->id)));
+
+        $instances = enrol_get_instances($course1->id, true);
+        $manualinstance = reset($instances);
+
+        $manualplugin = enrol_get_plugin('manual');
+        $manualplugin->update_user_enrol($manualinstance, $user1->id, ENROL_USER_SUSPENDED);
+        $this->assertCount(2, enrol_get_course_users($course1->id, false));
+        $this->assertCount(1, enrol_get_course_users($course1->id, true));
+    }
 }

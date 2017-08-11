@@ -109,4 +109,44 @@ class core_adhoc_task_testcase extends advanced_testcase {
         $task->execute();
         \core\task\manager::adhoc_task_complete($task);
     }
+
+    /**
+     * Test empty set of adhoc tasks
+     */
+    public function test_get_adhoc_tasks_empty_set() {
+        $this->resetAfterTest(true);
+
+        $this->assertEquals([], \core\task\manager::get_adhoc_tasks('\\core\\task\\adhoc_test_task'));
+    }
+
+    /**
+     * Test correct set of adhoc tasks is returned for class.
+     */
+    public function test_get_adhoc_tasks_result_set() {
+        $this->resetAfterTest(true);
+
+        for ($i = 0; $i < 3; $i++) {
+            $task = new \core\task\adhoc_test_task();
+            \core\task\manager::queue_adhoc_task($task);
+        }
+
+        for ($i = 0; $i < 3; $i++) {
+            $task = new \core\task\adhoc_test2_task();
+            \core\task\manager::queue_adhoc_task($task);
+        }
+
+        $adhoctests = \core\task\manager::get_adhoc_tasks('\\core\\task\\adhoc_test_task');
+        $adhoctest2s = \core\task\manager::get_adhoc_tasks('\\core\\task\\adhoc_test2_task');
+
+        $this->assertCount(3, $adhoctests);
+        $this->assertCount(3, $adhoctest2s);
+
+        foreach ($adhoctests as $task) {
+            $this->assertInstanceOf('\\core\\task\\adhoc_test_task', $task);
+        }
+
+        foreach ($adhoctest2s as $task) {
+            $this->assertInstanceOf('\\core\\task\\adhoc_test2_task', $task);
+        }
+    }
 }

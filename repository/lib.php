@@ -1757,9 +1757,7 @@ abstract class repository implements cacheable_object {
                 try {
                     $fileinfo = $this->get_file($file->get_reference());
                     if (isset($fileinfo['path'])) {
-                        list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($fileinfo['path']);
-                        // set this file and other similar aliases synchronised
-                        $file->set_synchronized($contenthash, $filesize);
+                        $file->set_synchronised_content_from_file($fileinfo['path']);
                     } else {
                         throw new moodle_exception('errorwhiledownload', 'repository', '', '');
                     }

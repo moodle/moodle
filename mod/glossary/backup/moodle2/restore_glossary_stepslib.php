@@ -58,6 +58,8 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
         $data->assesstimestart = $this->apply_date_offset($data->assesstimestart);
         $data->assesstimefinish = $this->apply_date_offset($data->assesstimefinish);
         if ($data->scale < 0) { // scale found, get mapping
@@ -88,9 +90,6 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->sourceglossaryid = $this->get_mappingid('glossary', $data->sourceglossaryid);
 
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-
         // insert the entry record
         $newitemid = $DB->insert_record('glossary_entries', $data);
         $this->set_mapping('glossary_entry', $oldid, $newitemid, true); // childs and files by itemname
@@ -120,8 +119,6 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         }
         $data->rating = $data->value;
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // Make sure that we have both component and ratingarea set. These were added in 2.1.
         // Prior to that all ratings were for entries so we know what to set them too.

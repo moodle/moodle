@@ -178,5 +178,12 @@ if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed)) {
 
 install_cli_database($options, true);
 
+// This needs to happen at the end to ensure it occurs after all caches
+// have been purged for the last time.
+// This will build a cached version of the current theme for the user
+// to immediately start browsing the site.
+require_once($CFG->libdir.'/upgradelib.php');
+upgrade_themes();
+
 echo get_string('cliinstallfinished', 'install')."\n";
 exit(0); // 0 means success

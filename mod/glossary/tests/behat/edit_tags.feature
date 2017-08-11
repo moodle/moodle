@@ -17,8 +17,7 @@ Feature: Edited glossary entries handle tags correctly
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Glossary" to section "1" and I fill the form with:
       | Name | Test glossary |
       | Description | A glossary about dreams! |
@@ -56,7 +55,7 @@ Feature: Edited glossary entries handle tags correctly
     And I follow "Test glossary"
     And I press "Add a new entry"
     And I expand all fieldsets
-    And I click on ".form-autocomplete-downarrow" "css_element"
+    And I open the autocomplete suggestions list
     And I should see "OT1" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "OT2" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "OT3" in the ".form-autocomplete-suggestions" "css_element"

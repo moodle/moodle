@@ -65,7 +65,7 @@ h4 small {
 }
 
 // TODO: MDL-55142 remove browser these brwoser hacks:
-/* stylelint-disable declaration-block-no-duplicate-properties, no-browser-hacks */
+/* stylelint-disable declaration-block-no-duplicate-properties */
 .fluid-span-full (@columns, @columnWidth, @gutterWidth) {
     width: (@columnWidth * @columns) + (@gutterWidth * (@columns - 1));
     *width: (@columnWidth * @columns) + (@gutterWidth * (@columns - 1)) - (.5 / @gridRowWidth * 100 * 1%);

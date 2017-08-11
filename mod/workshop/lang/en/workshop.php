@@ -107,7 +107,6 @@ $string['editingsubmission'] = 'Editing submission';
 $string['editsubmission'] = 'Edit submission';
 $string['err_multiplesubmissions'] = 'While editing this form, another version of the submission has been saved. Multiple submissions per user are not allowed.';
 $string['err_removegrademappings'] = 'Unable to remove the unused grade mappings';
-$string['err_wrongfileextension'] = 'Some files ({$a->wrongfiles}) cannot be uploaded. Only file types {$a->whitelist} are allowed.';
 $string['evaluategradeswait'] = 'Please wait until the assessments are evaluated and the grades are calculated';
 $string['evaluation'] = 'Grading evaluation';
 $string['evaluationmethod'] = 'Grading evaluation method';
@@ -176,6 +175,8 @@ $string['gradingsettings'] = 'Grading settings';
 $string['groupnoallowed'] = 'You are not allowed to access any group in this workshop';
 $string['chooseuser'] = 'Choose user...';
 $string['iamsure'] = 'Yes, I am sure';
+$string['indicator:cognitivedepthworkshop'] = 'Workshop cognitive';
+$string['indicator:socialbreadthworkshop'] = 'Workshop social';
 $string['info'] = 'Info';
 $string['instructauthors'] = 'Instructions for submission';
 $string['instructreviewers'] = 'Instructions for assessment';
@@ -373,3 +374,4 @@ $string['yourassessment'] = 'Your assessment';
 
 // Deprecated since Moodle 3.4.
 $string['err_unknownfileextension'] = 'Unknown file extension: {$a}';
+$string['err_wrongfileextension'] = 'Some files ({$a->wrongfiles}) cannot be uploaded. Only file types {$a->whitelist} are allowed.';

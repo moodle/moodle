@@ -187,5 +187,11 @@ upgrade_noncore(true);
 admin_apply_default_settings(NULL, false);
 admin_apply_default_settings(NULL, false);
 
+// This needs to happen at the end to ensure it occurs after all caches
+// have been purged for the last time.
+// This will build a cached version of the current theme for the user
+// to immediately start browsing the site.
+upgrade_themes();
+
 echo get_string('cliupgradefinished', 'admin')."\n";
 exit(0); // 0 means success

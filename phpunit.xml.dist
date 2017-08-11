@@ -64,6 +64,9 @@
             <directory suffix="_test.php">grade/grading/tests</directory>
             <directory suffix="_test.php">grade/import/csv/tests</directory>
         </testsuite>
+        <testsuite name="core_analytics_testsuite">
+            <directory suffix="_test.php">analytics/tests</directory>
+        </testsuite>
         <testsuite name="core_availability_testsuite">
             <directory suffix="_test.php">availability/tests</directory>
         </testsuite>

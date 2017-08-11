@@ -1988,5 +1988,325 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017071100.00);
     }
 
+    if ($oldversion < 2017072000.02) {
+
+        // Define table analytics_models to be created.
+        $table = new xmldb_table('analytics_models');
+
+        // Adding fields to table analytics_models.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('enabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('trained', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('target', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('indicators', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timesplitting', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('version', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table analytics_models.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table analytics_models.
+        $table->add_index('enabledandtrained', XMLDB_INDEX_NOTUNIQUE, array('enabled', 'trained'));
+
+        // Conditionally launch create table for analytics_models.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table analytics_models_log to be created.
+        $table = new xmldb_table('analytics_models_log');
+
+        // Adding fields to table analytics_models_log.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('modelid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('version', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('target', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('indicators', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timesplitting', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('score', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('info', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('dir', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table analytics_models_log.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table analytics_models_log.
+        $table->add_index('modelid', XMLDB_INDEX_NOTUNIQUE, array('modelid'));
+
+        // Conditionally launch create table for analytics_models_log.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table analytics_predictions to be created.
+        $table = new xmldb_table('analytics_predictions');
+
+        // Adding fields to table analytics_predictions.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('modelid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sampleid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('rangeindex', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('prediction', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('predictionscore', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('calculations', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table analytics_predictions.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table analytics_predictions.
+        $table->add_index('modelidandcontextid', XMLDB_INDEX_NOTUNIQUE, array('modelid', 'contextid'));
+
+        // Conditionally launch create table for analytics_predictions.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table analytics_train_samples to be created.
+        $table = new xmldb_table('analytics_train_samples');
+
+        // Adding fields to table analytics_train_samples.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('modelid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('analysableid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timesplitting', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('fileid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sampleids', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table analytics_train_samples.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table analytics_train_samples.
+        $table->add_index('modelidandanalysableidandtimesplitting', XMLDB_INDEX_NOTUNIQUE,
+            array('modelid', 'analysableid', 'timesplitting'));
+
+        // Conditionally launch create table for analytics_train_samples.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table analytics_predict_ranges to be created.
+        $table = new xmldb_table('analytics_predict_ranges');
+
+        // Adding fields to table analytics_predict_ranges.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('modelid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('analysableid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timesplitting', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('rangeindex', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table analytics_predict_ranges.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table analytics_predict_ranges.
+        $table->add_index('modelidandanalysableidandtimesplitting', XMLDB_INDEX_NOTUNIQUE,
+            array('modelid', 'analysableid', 'timesplitting'));
+
+        // Conditionally launch create table for analytics_predict_ranges.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table analytics_used_files to be created.
+        $table = new xmldb_table('analytics_used_files');
+
+        // Adding fields to table analytics_used_files.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('modelid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('fileid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('action', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('time', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table analytics_used_files.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table analytics_used_files.
+        $table->add_index('modelidandfileidandaction', XMLDB_INDEX_NOTUNIQUE, array('modelid', 'fileid', 'action'));
+
+        // Conditionally launch create table for analytics_used_files.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        $now = time();
+        $admin = get_admin();
+
+        $targetname = '\core\analytics\target\course_dropout';
+        if (!$DB->record_exists('analytics_models', array('target' => $targetname))) {
+            // We can not use API calls to create the built-in models.
+            $modelobj = new stdClass();
+            $modelobj->target = $targetname;
+            $modelobj->indicators = json_encode(array(
+                '\mod_assign\analytics\indicator\cognitive_depth',
+                '\mod_assign\analytics\indicator\social_breadth',
+                '\mod_book\analytics\indicator\cognitive_depth',
+                '\mod_book\analytics\indicator\social_breadth',
+                '\mod_chat\analytics\indicator\cognitive_depth',
+                '\mod_chat\analytics\indicator\social_breadth',
+                '\mod_choice\analytics\indicator\cognitive_depth',
+                '\mod_choice\analytics\indicator\social_breadth',
+                '\mod_data\analytics\indicator\cognitive_depth',
+                '\mod_data\analytics\indicator\social_breadth',
+                '\mod_feedback\analytics\indicator\cognitive_depth',
+                '\mod_feedback\analytics\indicator\social_breadth',
+                '\mod_folder\analytics\indicator\cognitive_depth',
+                '\mod_folder\analytics\indicator\social_breadth',
+                '\mod_forum\analytics\indicator\cognitive_depth',
+                '\mod_forum\analytics\indicator\social_breadth',
+                '\mod_glossary\analytics\indicator\cognitive_depth',
+                '\mod_glossary\analytics\indicator\social_breadth',
+                '\mod_imscp\analytics\indicator\cognitive_depth',
+                '\mod_imscp\analytics\indicator\social_breadth',
+                '\mod_label\analytics\indicator\cognitive_depth',
+                '\mod_label\analytics\indicator\social_breadth',
+                '\mod_lesson\analytics\indicator\cognitive_depth',
+                '\mod_lesson\analytics\indicator\social_breadth',
+                '\mod_lti\analytics\indicator\cognitive_depth',
+                '\mod_lti\analytics\indicator\social_breadth',
+                '\mod_page\analytics\indicator\cognitive_depth',
+                '\mod_page\analytics\indicator\social_breadth',
+                '\mod_quiz\analytics\indicator\cognitive_depth',
+                '\mod_quiz\analytics\indicator\social_breadth',
+                '\mod_resource\analytics\indicator\cognitive_depth',
+                '\mod_resource\analytics\indicator\social_breadth',
+                '\mod_scorm\analytics\indicator\cognitive_depth',
+                '\mod_scorm\analytics\indicator\social_breadth',
+                '\mod_survey\analytics\indicator\cognitive_depth',
+                '\mod_survey\analytics\indicator\social_breadth',
+                '\mod_url\analytics\indicator\cognitive_depth',
+                '\mod_url\analytics\indicator\social_breadth',
+                '\mod_wiki\analytics\indicator\cognitive_depth',
+                '\mod_wiki\analytics\indicator\social_breadth',
+                '\mod_workshop\analytics\indicator\cognitive_depth',
+                '\mod_workshop\analytics\indicator\social_breadth',
+            ));
+            $modelobj->version = $now;
+            $modelobj->timecreated = $now;
+            $modelobj->timemodified = $now;
+            $modelobj->usermodified = $admin->id;
+            $DB->insert_record('analytics_models', $modelobj);
+        }
+
+        $targetname = '\core\analytics\target\no_teaching';
+        if (!$DB->record_exists('analytics_models', array('target' => $targetname))) {
+            $modelobj = new stdClass();
+            $modelobj->enabled = 1;
+            $modelobj->trained = 1;
+            $modelobj->target = $targetname;
+            $modelobj->indicators = json_encode(array('\core_course\analytics\indicator\no_teacher'));
+            $modelobj->timesplitting = '\core\analytics\time_splitting\single_range';
+            $modelobj->version = $now;
+            $modelobj->timecreated = $now;
+            $modelobj->timemodified = $now;
+            $modelobj->usermodified = $admin->id;
+            $DB->insert_record('analytics_models', $modelobj);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017072000.02);
+    }
+
+    if ($oldversion < 2017072700.01) {
+        // Changing nullability of field email on table oauth2_system_account to null.
+        $table = new xmldb_table('oauth2_system_account');
+        $field = new xmldb_field('email', XMLDB_TYPE_TEXT, null, null, null, null, null, 'grantedscopes');
+
+        // Launch change of nullability for field email.
+        $dbman->change_field_notnull($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017072700.01);
+    }
+
+    if ($oldversion < 2017072700.02) {
+
+        // If the site was previously registered with http://hub.moodle.org change the registration to
+        // point to https://moodle.net - this is the correct hub address using https protocol.
+        $oldhuburl = "http://hub.moodle.org";
+        $newhuburl = "https://moodle.net";
+        $cleanoldhuburl = preg_replace('/[^A-Za-z0-9_-]/i', '', $oldhuburl);
+        $cleannewhuburl = preg_replace('/[^A-Za-z0-9_-]/i', '', $newhuburl);
+
+        // Update existing registration.
+        $DB->execute("UPDATE {registration_hubs} SET hubname = ?, huburl = ? WHERE huburl = ?",
+            ['Moodle.net', $newhuburl, $oldhuburl]);
+
+        // Update settings of existing registration.
+        $sqlnamelike = $DB->sql_like('name', '?');
+        $entries = $DB->get_records_sql("SELECT * FROM {config_plugins} where plugin=? and " . $sqlnamelike,
+            ['hub', '%' . $DB->sql_like_escape('_' . $cleanoldhuburl)]);
+        foreach ($entries as $entry) {
+            $newname = substr($entry->name, 0, -strlen($cleanoldhuburl)) . $cleannewhuburl;
+            $DB->update_record('config_plugins', ['id' => $entry->id, 'name' => $newname]);
+        }
+
+        // Update published courses.
+        $DB->execute('UPDATE {course_published} SET huburl = ? WHERE huburl = ?', [$newhuburl, $oldhuburl]);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017072700.02);
+    }
+
+    if ($oldversion < 2017080700.01) {
+
+        // Get the table by its previous name.
+        $table = new xmldb_table('analytics_predict_ranges');
+        if ($dbman->table_exists($table)) {
+
+            // We can only accept this because we are in master.
+            $DB->delete_records('analytics_predictions');
+            $DB->delete_records('analytics_used_files', array('action' => 'predicted'));
+            $DB->delete_records('analytics_predict_ranges');
+
+            // Define field sampleids to be added to analytics_predict_ranges (renamed below to analytics_predict_samples).
+            $field = new xmldb_field('sampleids', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'rangeindex');
+
+            // Conditionally launch add field sampleids.
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+
+            // Define field timemodified to be added to analytics_predict_ranges (renamed below to analytics_predict_samples).
+            $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'timecreated');
+
+            // Conditionally launch add field timemodified.
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+
+            // Rename the table to its new name.
+            $dbman->rename_table($table, 'analytics_predict_samples');
+        }
+
+        $table = new xmldb_table('analytics_predict_samples');
+
+        $index = new xmldb_index('modelidandanalysableidandtimesplitting', XMLDB_INDEX_NOTUNIQUE,
+            array('modelid', 'analysableid', 'timesplitting'));
+
+        // Conditionally launch drop index.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $index = new xmldb_index('modelidandanalysableidandtimesplittingandrangeindex', XMLDB_INDEX_NOTUNIQUE,
+            array('modelid', 'analysableid', 'timesplitting', 'rangeindex'));
+
+        // Conditionally launch add index.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017080700.01);
+    }
+
     return true;
 }

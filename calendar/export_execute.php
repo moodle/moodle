@@ -216,10 +216,14 @@ foreach($events as $event) {
         //dtend is better than duration, because it works in Microsoft Outlook and works better in Korganizer
         $ev->add_property('dtstart', Bennu::timestamp_to_datetime($event->timestart)); // when event starts.
         $ev->add_property('dtend', Bennu::timestamp_to_datetime($event->timestart + $event->timeduration));
+    } else if ($event->timeduration == 0) {
+        // When no duration is present, the event is instantaneous event, ex - Due date of a module.
+        // Moodle doesn't support all day events yet. See MDL-56227.
+        $ev->add_property('dtstart', Bennu::timestamp_to_datetime($event->timestart));
+        $ev->add_property('dtend', Bennu::timestamp_to_datetime($event->timestart));
     } else {
-        // When no duration is present, ie an all day event, VALUE should be date instead of time and dtend = dtstart + 1 day.
-        $ev->add_property('dtstart', Bennu::timestamp_to_date($event->timestart), array('value' => 'DATE')); // All day event.
-        $ev->add_property('dtend', Bennu::timestamp_to_date($event->timestart + DAYSECS), array('value' => 'DATE')); // All day event.
+        // This can be used to represent all day events in future.
+        throw new coding_exception("Negative duration is not supported yet.");
     }
     if ($event->courseid != 0) {
         $coursecontext = context_course::instance($event->courseid);

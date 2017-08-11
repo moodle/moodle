@@ -28,7 +28,7 @@ Feature: Manage plearning plan
     And I follow "Home"
     And I navigate to "Competencies > Learning plan templates" in site administration
     And I click on ".template-userplans" "css_element" in the "Science template" "table_row"
-    And I click on ".form-autocomplete-downarrow" "css_element"
+    And I open the autocomplete suggestions list
     And I click on "Admin" item in the autocomplete list
     And I press key "27" in the field "Select users to create learning plans for"
     When I click on "Create learning plans" "button"

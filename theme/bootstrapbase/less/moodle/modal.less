@@ -10,7 +10,7 @@ body {
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 4050;
+    z-index: @zindexModalContainer;
     outline: 0;
     overflow-x: hidden;
     overflow-y: auto;
@@ -27,6 +27,10 @@ body {
         box-shadow: 5px 5px 20px 0 #666;
         border-radius: 10px;
         border: none;
+
+        &.modal-lg {
+            max-width: 900px;
+        }
 
         .modal-header {
             min-height: 13px;
@@ -98,16 +102,10 @@ body {
             border-radius: 0 0 10px 10px;
         }
     }
-
-    &.large {
-        .modal {
-            max-width: 900px;
-        }
-    }
 }
 
 .modal-backdrop {
-    z-index: 4049;
+    z-index: @zindexModalContainerBackdrop;
     background-color: #aaa;
     opacity: 0.4;
 }

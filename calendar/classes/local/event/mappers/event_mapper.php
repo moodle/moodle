@@ -54,28 +54,34 @@ class event_mapper implements event_mapper_interface {
 
     public function from_legacy_event_to_event(\calendar_event $legacyevent) {
         $coalesce = function($property) use ($legacyevent) {
-            return property_exists($legacyevent, $property) ? $legacyevent->{$property} : null;
+            try {
+                return $legacyevent->$property;
+            } catch (\coding_exception $e) {
+                // The magic setter throews an exception if the
+                // property doesn't exist.
+                return null;
+            }
         };
 
         return $this->factory->create_instance(
             (object)[
-                $coalesce('id'),
-                $coalesce('name'),
-                $coalesce('description'),
-                $coalesce('format'),
-                $coalesce('courseid'),
-                $coalesce('groupid'),
-                $coalesce('userid'),
-                $coalesce('repeatid'),
-                $coalesce('modulename'),
-                $coalesce('instance'),
-                $coalesce('type'),
-                $coalesce('timestart'),
-                $coalesce('timeduration'),
-                $coalesce('timemodified'),
-                $coalesce('timesort'),
-                $coalesce('visible'),
-                $coalesce('subscription')
+                'id' => $coalesce('id'),
+                'name' => $coalesce('name'),
+                'description' => $coalesce('description'),
+                'format' => $coalesce('format'),
+                'courseid' => $coalesce('courseid'),
+                'groupid' => $coalesce('groupid'),
+                'userid' => $coalesce('userid'),
+                'repeatid' => $coalesce('repeatid'),
+                'modulename' => $coalesce('modulename'),
+                'instance' => $coalesce('instance'),
+                'eventtype' => $coalesce('eventtype'),
+                'timestart' => $coalesce('timestart'),
+                'timeduration' => $coalesce('timeduration'),
+                'timemodified' => $coalesce('timemodified'),
+                'timesort' => $coalesce('timesort'),
+                'visible' => $coalesce('visible'),
+                'subscriptionid' => $coalesce('subscriptionid')
             ]
         );
     }

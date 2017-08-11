@@ -202,6 +202,11 @@ class user_picture implements renderable {
     public $visibletoscreenreaders = true;
 
     /**
+     * @var bool Whether to include the fullname in the user picture link.
+     */
+    public $includefullname = false;
+
+    /**
      * User picture constructor.
      *
      * @param stdClass $user user record with at least id, picture, imagealt, firstname and lastname set.

@@ -57,9 +57,10 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
         $data->editbegin = $this->apply_date_offset($data->editbegin);
         $data->editend = $this->apply_date_offset($data->editend);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // insert the wiki record
         $newitemid = $DB->insert_record('wiki', $data);
@@ -101,9 +102,6 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
         $data->subwikiid = $this->get_new_parentid('wiki_subwiki');
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->timerendered = $this->apply_date_offset($data->timerendered);
 
         // Check that we were able to get a parentid for this page.
         if ($data->subwikiid !== false) {
@@ -122,7 +120,6 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
         $data->pageid = $this->get_new_parentid('wiki_page');
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
 
         $newitemid = $DB->insert_record('wiki_versions', $data);
         $this->set_mapping('wiki_version', $oldid, $newitemid);

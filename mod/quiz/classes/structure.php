@@ -715,7 +715,8 @@ class structure {
         }
 
         $followingslotnumber = $moveafterslotnumber + 1;
-        if ($followingslotnumber == $movingslotnumber) {
+        // Prevent checking against non-existance slot when already at the last slot.
+        if ($followingslotnumber == $movingslotnumber && !$this->is_last_slot_in_quiz($followingslotnumber)) {
             $followingslotnumber += 1;
         }
 

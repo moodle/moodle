@@ -159,7 +159,7 @@ OET;
         $shortlink = '((youtu|y2u)\.be/)';
 
         // Initial part of link.
-        $start = '~^https?://(www\.)?(' . $link . '|' . $shortlink . ')';
+        $start = '~^https?://((www|m)\.)?(' . $link . '|' . $shortlink . ')';
         // Middle bit: Video key value.
         $middle = '([a-z0-9\-_]+)';
         return $start . $middle . core_media_player_external::END_LINK_REGEX_PART;

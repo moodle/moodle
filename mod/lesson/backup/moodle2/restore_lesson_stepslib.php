@@ -62,9 +62,10 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
         $data->available = $this->apply_date_offset($data->available);
         $data->deadline = $this->apply_date_offset($data->deadline);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // The lesson->highscore code was removed in MDL-49581.
         // Remove it if found in the backup file.
@@ -110,8 +111,6 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->lessonid = $this->get_new_parentid('lesson');
 
         // We'll remap all the prevpageid and nextpageid at the end, once all pages have been created
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
 
         $newitemid = $DB->insert_record('lesson_pages', $data);
         $this->set_mapping('lesson_page', $oldid, $newitemid, true); // Has related fileareas
@@ -124,8 +123,6 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->lessonid = $this->get_new_parentid('lesson');
         $data->pageid = $this->get_new_parentid('lesson_page');
         $data->answer = $data->answer_text;
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
 
         // Set a dummy mapping to get the old ID so that it can be used by get_old_parentid when
         // processing attempts. It will be corrected in after_execute
@@ -147,7 +144,6 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         // We use the old answerid here as the answer isn't created until after_execute
         $data->answerid = $this->get_old_parentid('lesson_answer');
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->timeseen = $this->apply_date_offset($data->timeseen);
 
         $newitemid = $DB->insert_record('lesson_attempts', $data);
         $this->set_mapping('lesson_attempt', $oldid, $newitemid, true); // Has related fileareas.
@@ -160,7 +156,6 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $oldid = $data->id;
         $data->lessonid = $this->get_new_parentid('lesson');
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->completed = $this->apply_date_offset($data->completed);
 
         $newitemid = $DB->insert_record('lesson_grades', $data);
         $this->set_mapping('lesson_grade', $oldid, $newitemid);
@@ -174,7 +169,6 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->lessonid = $this->get_new_parentid('lesson');
         $data->pageid = $this->get_new_parentid('lesson_page');
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->timeseen = $this->apply_date_offset($data->timeseen);
 
         $newitemid = $DB->insert_record('lesson_branch', $data);
     }
@@ -191,8 +185,6 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $oldid = $data->id;
         $data->lessonid = $this->get_new_parentid('lesson');
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->starttime = $this->apply_date_offset($data->starttime);
-        $data->lessontime = $this->apply_date_offset($data->lessontime);
         // Supply item that maybe missing from previous versions.
         if (!isset($data->completed)) {
             $data->completed = 0;

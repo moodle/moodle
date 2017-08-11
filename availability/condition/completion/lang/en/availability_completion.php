@@ -24,6 +24,7 @@
 
 $string['description'] = 'Require students to complete (or not complete) another activity.';
 $string['error_selectcmid'] = 'You must select an activity for the completion condition.';
+$string['error_selectcmidpassfail'] = 'You must select an activity with "Require grade" completion condition set.';
 $string['label_cm'] = 'Activity or resource';
 $string['label_completion'] = 'Required completion status';
 $string['missing'] = '(Missing activity)';

@@ -315,6 +315,24 @@ class mod_quiz_structure_testcase extends advanced_testcase {
             ), $structure);
     }
 
+    public function test_move_last_slot_to_previous_page_emptying_the_last_page() {
+        $quizobj = $this->create_test_quiz(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ));
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        $idtomove = $structure->get_question_in_slot(2)->slotid;
+        $idmoveafter = $structure->get_question_in_slot(1)->slotid;
+        $structure->move_slot($idtomove, $idmoveafter, '1');
+
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $this->assert_quiz_layout(array(
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+            ), $structure);
+    }
+
     public function test_end_of_one_section_to_start_of_next() {
         $quizobj = $this->create_test_quiz(array(
                 array('TF1', 1, 'truefalse'),

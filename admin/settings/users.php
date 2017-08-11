@@ -189,6 +189,8 @@ if ($hassiteconfig
                     'phone2'      => new lang_string('phone2'),
                     'department'  => new lang_string('department'),
                     'institution' => new lang_string('institution'),
+                    'city'        => new lang_string('city'),
+                    'country'     => new lang_string('country'),
                 )));
         $setting = new admin_setting_configtext('fullnamedisplay', new lang_string('fullnamedisplay', 'admin'),
             new lang_string('configfullnamedisplay', 'admin'), 'language', PARAM_TEXT, 50);

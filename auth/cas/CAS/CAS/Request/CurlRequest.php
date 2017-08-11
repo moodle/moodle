@@ -67,7 +67,7 @@ implements CAS_Request_RequestInterface
         /*********************************************************
          * initialize the CURL session
         *********************************************************/
-        $ch = $this->_initAndConfigure();
+        $ch = $this->initAndConfigure();
 
         /*********************************************************
          * Perform the query
@@ -99,7 +99,7 @@ implements CAS_Request_RequestInterface
      *
      * @return resource The cURL handle on success, false on failure
      */
-    private function _initAndConfigure()
+    public function initAndConfigure()
     {
         /*********************************************************
          * initialize the CURL session

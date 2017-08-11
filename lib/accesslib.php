@@ -2665,6 +2665,65 @@ function get_archetype_roles($archetype) {
 }
 
 /**
+ * Gets all the user roles assigned in this context, or higher contexts for a list of users.
+ *
+ * @param context $context
+ * @param array $userids. An empty list means fetch all role assignments for the context.
+ * @param bool $checkparentcontexts defaults to true
+ * @param string $order defaults to 'c.contextlevel DESC, r.sortorder ASC'
+ * @return array
+ */
+function get_users_roles(context $context, $userids = [], $checkparentcontexts = true, $order = 'c.contextlevel DESC, r.sortorder ASC') {
+    global $USER, $DB;
+
+    if ($checkparentcontexts) {
+        $contextids = $context->get_parent_context_ids();
+    } else {
+        $contextids = array();
+    }
+    $contextids[] = $context->id;
+
+    list($contextids, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'con');
+
+    // If userids was passed as an empty array, we fetch all role assignments for the course.
+    if (empty($userids)) {
+        $useridlist = ' IS NOT NULL ';
+        $uparams = [];
+    } else {
+        list($useridlist, $uparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'uids');
+    }
+
+    $sql = "SELECT ra.*, r.name, r.shortname, ra.userid
+              FROM {role_assignments} ra, {role} r, {context} c
+             WHERE ra.userid $useridlist
+                   AND ra.roleid = r.id
+                   AND ra.contextid = c.id
+                   AND ra.contextid $contextids
+          ORDER BY $order";
+
+    $all = $DB->get_records_sql($sql , array_merge($params, $uparams));
+
+    // Return results grouped by userid.
+    $result = [];
+    foreach ($all as $id => $record) {
+        if (!isset($result[$record->userid])) {
+            $result[$record->userid] = [];
+        }
+        $result[$record->userid][$record->id] = $record;
+    }
+
+    // Make sure all requested users are included in the result, even if they had no role assignments.
+    foreach ($userids as $id) {
+        if (!isset($result[$id])) {
+            $result[$id] = [];
+        }
+    }
+
+    return $result;
+}
+
+
+/**
  * Gets all the user roles assigned in this context, or higher contexts
  * this is mainly used when checking if a user can assign a role, or overriding a role
  * i.e. we need to know what this user holds, in order to verify against allow_assign and

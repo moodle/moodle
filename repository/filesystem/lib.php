@@ -577,7 +577,9 @@ class repository_filesystem extends repository {
                     $filesize = filesize($filepath);
                 } else {
                     // Copy file into moodle filepool (used to generate an image thumbnail).
-                    list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($filepath);
+                    $file->set_timemodified(filemtime($filepath));
+                    $file->set_synchronised_content_from_file($filepath);
+                    return true;
                 }
             } else {
                 // Update only file size so file will NOT be copied into moodle filepool.

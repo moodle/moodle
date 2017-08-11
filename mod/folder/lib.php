@@ -65,6 +65,10 @@ function folder_get_extra_capabilities() {
  * @return array status array
  */
 function folder_reset_userdata($data) {
+
+    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+    // See MDL-9367.
+
     return array();
 }
 

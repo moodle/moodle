@@ -376,11 +376,15 @@ class enrol_manual_plugin extends enrol_plugin {
         $params['ue'] = $ue->id;
         if ($this->allow_unenrol_user($instance, $ue) && has_capability("enrol/manual:unenrol", $context)) {
             $url = new moodle_url('/enrol/unenroluser.php', $params);
-            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
+            $actionparams = array('class' => 'unenrollink', 'rel' => $ue->id, 'data-action' => ENROL_ACTION_UNENROL);
+            $actions[] = new user_enrolment_action(new pix_icon('t/delete', get_string('unenrol', 'enrol')),
+                get_string('unenrol', 'enrol'), $url, $actionparams);
         }
         if ($this->allow_manage($instance) && has_capability("enrol/manual:manage", $context)) {
             $url = new moodle_url('/enrol/editenrolment.php', $params);
-            $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''), get_string('edit'), $url, array('class'=>'editenrollink', 'rel'=>$ue->id));
+            $actionparams = array('class' => 'editenrollink', 'rel' => $ue->id, 'data-action' => ENROL_ACTION_EDIT);
+            $actions[] = new user_enrolment_action(new pix_icon('t/edit', get_string('editenrolment', 'enrol')),
+                get_string('editenrolment', 'enrol'), $url, $actionparams);
         }
         return $actions;
     }

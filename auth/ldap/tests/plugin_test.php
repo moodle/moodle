@@ -110,7 +110,7 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         set_config('user_attribute', 'cn', 'auth_ldap');
         set_config('memberattribute', 'memberuid', 'auth_ldap');
         set_config('memberattribute_isdn', 0, 'auth_ldap');
-        set_config('creators', 'cn=creators,'.$topdn, 'auth_ldap');
+        set_config('coursecreatorcontext', 'cn=creators,'.$topdn, 'auth_ldap');
         set_config('removeuser', AUTH_REMOVEUSER_KEEP, 'auth_ldap');
 
         set_config('field_map_email', 'mail', 'auth_ldap');

@@ -50,6 +50,31 @@ class sqlsrv_native_moodle_database extends moodle_database {
     /** @var array list of open recordsets */
     protected $recordsets = array();
 
+    /** @var array list of reserve words in MSSQL / Transact from http://msdn2.microsoft.com/en-us/library/ms189822.aspx */
+    protected $reservewords = [
+        "add", "all", "alter", "and", "any", "as", "asc", "authorization", "avg", "backup", "begin", "between", "break",
+        "browse", "bulk", "by", "cascade", "case", "check", "checkpoint", "close", "clustered", "coalesce", "collate", "column",
+        "commit", "committed", "compute", "confirm", "constraint", "contains", "containstable", "continue", "controlrow",
+        "convert", "count", "create", "cross", "current", "current_date", "current_time", "current_timestamp", "current_user",
+        "cursor", "database", "dbcc", "deallocate", "declare", "default", "delete", "deny", "desc", "disk", "distinct",
+        "distributed", "double", "drop", "dummy", "dump", "else", "end", "errlvl", "errorexit", "escape", "except", "exec",
+        "execute", "exists", "exit", "external", "fetch", "file", "fillfactor", "floppy", "for", "foreign", "freetext",
+        "freetexttable", "from", "full", "function", "goto", "grant", "group", "having", "holdlock", "identity",
+        "identity_insert", "identitycol", "if", "in", "index", "inner", "insert", "intersect", "into", "is", "isolation",
+        "join", "key", "kill", "left", "level", "like", "lineno", "load", "max", "merge", "min", "mirrorexit", "national",
+        "nocheck", "nonclustered", "not", "null", "nullif", "of", "off", "offsets", "on", "once", "only", "open",
+        "opendatasource", "openquery", "openrowset", "openxml", "option", "or", "order", "outer", "over", "percent", "perm",
+        "permanent", "pipe", "pivot", "plan", "precision", "prepare", "primary", "print", "privileges", "proc", "procedure",
+        "processexit", "public", "raiserror", "read", "readtext", "reconfigure", "references", "repeatable", "replication",
+        "restore", "restrict", "return", "revert", "revoke", "right", "rollback", "rowcount", "rowguidcol", "rule", "save",
+        "schema", "securityaudit", "select", "semantickeyphrasetable", "semanticsimilaritydetailstable",
+        "semanticsimilaritytable", "serializable", "session_user", "set", "setuser", "shutdown", "some", "statistics", "sum",
+        "system_user", "table", "tablesample", "tape", "temp", "temporary", "textsize", "then", "to", "top", "tran",
+        "transaction", "trigger", "truncate", "try_convert", "tsequal", "uncommitted", "union", "unique", "unpivot", "update",
+        "updatetext", "use", "user", "values", "varying", "view", "waitfor", "when", "where", "while", "with", "within group",
+        "work", "writetext"
+    ];
+
     /**
      * Constructor - instantiates the database, specifying if it's external (connect to other systems) or no (Moodle DB)
      *              note this has effect to decide if prefix checks must be performed or no
@@ -182,7 +207,13 @@ class sqlsrv_native_moodle_database extends moodle_database {
         sqlsrv_configure("LogSeverity", SQLSRV_LOG_SEVERITY_ERROR);
 
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
-        $this->sqlsrv = sqlsrv_connect($this->dbhost, array
+
+        $dbhost = $this->dbhost;
+        if (!empty($dboptions['dbport'])) {
+            $dbhost .= ',' . $dboptions['dbport'];
+        }
+
+        $this->sqlsrv = sqlsrv_connect($dbhost, array
          (
           'UID' => $this->dbuser,
           'PWD' => $this->dbpass,
@@ -858,12 +889,44 @@ class sqlsrv_native_moodle_database extends moodle_database {
                 }
             }
         }
+
+        // Add WITH (NOLOCK) to any temp tables.
+        $sql = $this->add_no_lock_to_temp_tables($sql);
+
         $result = $this->do_query($sql, $params, SQL_QUERY_SELECT, false, $needscrollable);
 
         if ($needscrollable) { // Skip $limitfrom records.
             sqlsrv_fetch($result, SQLSRV_SCROLL_ABSOLUTE, $limitfrom - 1);
         }
         return $this->create_recordset($result);
+    }
+
+    /**
+     * Use NOLOCK on any temp tables. Since it's a temp table and uncommitted reads are low risk anyway.
+     *
+     * @param string $sql the SQL select query to execute.
+     * @return string The SQL, with WITH (NOLOCK) added to all temp tables
+     */
+    protected function add_no_lock_to_temp_tables($sql) {
+        return preg_replace_callback('/(\{([a-z][a-z0-9_]*)\})(\s+(\w+))?/', function($matches) {
+            $table = $matches[1]; // With the braces, so we can put it back in the query.
+            $name = $matches[2]; // Without the braces, so we can check if it's a temptable.
+            $tail = isset($matches[3]) ? $matches[3] : ''; // Catch the next word afterwards so that we can check if it's an alias.
+            $replacement = $matches[0]; // The table and the word following it, so we can replace it back if no changes are needed.
+
+            if ($this->temptables && $this->temptables->is_temptable($name)) {
+                if (!empty($tail)) {
+                    if (in_array(strtolower(trim($tail)), $this->reservewords)) {
+                        // If the table is followed by a reserve word, it's not an alias so put the WITH (NOLOCK) in between.
+                        return $table . ' WITH (NOLOCK)' . $tail;
+                    }
+                }
+                // If the table is not followed by a reserve word, put the WITH (NOLOCK) after the whole match.
+                return $replacement . ' WITH (NOLOCK)';
+            } else {
+                return $replacement;
+            }
+        }, $sql);
     }
 
     /**

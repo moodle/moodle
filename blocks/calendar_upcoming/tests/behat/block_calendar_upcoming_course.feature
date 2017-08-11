@@ -4,7 +4,7 @@ Feature: Enable the upcoming events block in a course
   As a teacher
   I can view the event in the upcoming events block
 
-  Scenario: View a global event in the upcoming events block in a course
+  Background:
     Given the following "users" exist:
       | username | firstname | lastname | email | idnumber |
       | teacher1 | Teacher | 1 | teacher1@example.com | T1 |
@@ -14,7 +14,10 @@ Feature: Enable the upcoming events block in a course
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    When I log in as "admin"
+
+  @javascript
+  Scenario: View a global event in the calendar block
+    Given I log in as "admin"
     And I create a calendar event with form data:
       | id_eventtype | Site |
       | id_name | My Site Event |
