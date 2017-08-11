@@ -70,11 +70,12 @@ class company_license_users_form extends moodleform {
             $userhierarchylevel = $userlevel->id;
         }
 
-        $this->subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
         if ($departmentid == 0) {
             $this->departmentid = $userhierarchylevel;
+            $this->subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
         } else {
             $this->departmentid = $departmentid;
+            $this->subhierarchieslist = company::get_all_subdepartments($departmentid);
         }
 
         $this->output = $output;
@@ -517,10 +518,11 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
 }
 
 // If we haven't been passed a department level choose the users.
-if (!empty($departmentid)) {
-    $userhierarchylevel = $departmentid;
+if (empty($departmentid)) {
+    $departmentid = $userhierarchylevel;
 }
-$usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $userhierarchylevel, $selectedcourses, $error, $output);
+
+$usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output);
 
 echo $output->header();
 
@@ -575,7 +577,7 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
         echo $outputstring."</br>";
         $usersform->process();
         // Reload the form.
-        $usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $userhierarchylevel, $selectedcourses, $error, $output);
+        $usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output);
         echo $usersform->display();
     }
 }

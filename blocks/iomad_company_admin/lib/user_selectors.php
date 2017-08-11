@@ -891,11 +891,20 @@ class current_license_user_selector extends user_selector_base {
         if (!isset( $this->licenseid) ) {
             return array();
         } else {
-            $usersql = "select DISTINCT userid from {companylicense_users} where licenseid=".$this->licenseid." and id not in
-            (SELECT id from {companylicense_users}
-            WHERE licenseid = ".$this->licenseid."
-            AND timecompleted IS NOT NULL)";
-            if ($users = $DB->get_records_sql($usersql)) {
+            $usersql = "SELECT DISTINCT userid
+                        FROM {companylicense_users}
+                        WHERE licenseid=".$this->licenseid."
+                        AND id NOT IN (
+                            SELECT id FROM {companylicense_users}
+                            WHERE licenseid = :licenseid
+                            AND timecompleted IS NOT NULL
+                        ) AND userid IN (
+                            SELECT userid
+                            FROM {company_users}
+                            WHERE departmentid IN (" .
+                            implode(',', array_keys($this->subdepartments)) .
+                            "))";
+            if ($users = $DB->get_records_sql($usersql, array('licenseid' => $this->licenseid))) {
                 // Only return the keys (user ids).
                 return array_values($users);
             } else {
@@ -962,7 +971,13 @@ class current_license_user_selector extends user_selector_base {
                      WHERE $wherecondition AND u.suspended = 0
                      AND clu.licensecourseid = c.id 
                      AND clu.licenseid = :licenseid
-                     AND timecompleted IS NULL ";
+                     AND clu.timecompleted IS NULL 
+                     AND userid IN (
+                        SELECT userid
+                        FROM {company_users}
+                        WHERE departmentid IN (" .
+                        implode(',', array_keys($this->subdepartments)) .
+                     "))";
             $order = ' ORDER BY lastname ASC, firstname ASC';
         } else {
             $licensecourses = $DB->get_records('companylicense_courses', array('licenseid' => $this->licenseid));
@@ -974,7 +989,13 @@ class current_license_user_selector extends user_selector_base {
                      {companylicense_users} clu LEFT JOIN {user} u ON (clu.userid = u.id)
                      WHERE $wherecondition AND u.suspended = 0
                      AND clu.licenseid = :licenseid
-                     AND timecompleted IS NULL ";
+                     AND clu.timecompleted IS NULL 
+                     AND userid IN (
+                        SELECT userid
+                        FROM {company_users}
+                        WHERE departmentid IN (" .
+                        implode(',', array_keys($this->subdepartments)) .
+                     "))";
             $order = ' ORDER BY lastname ASC, firstname ASC';
         }
 
