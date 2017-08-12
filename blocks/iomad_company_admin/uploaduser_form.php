@@ -246,8 +246,7 @@ class admin_uploaduser_form2 extends company_moodleform {
         if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', $systemcontext)) {
             $foundlicenses = $DB->get_records_sql_menu("SELECT id, name FROM {companylicense}
                                                    WHERE expirydate >= :timestamp
-                                                   AND companyid = :companyid
-                                                   AND used < allocation",
+                                                   AND companyid = :companyid",
                                                    array('timestamp' => time(),
                                                          'companyid' => $this->selectedcompany));
             $licenses = array('0' => get_string('nolicense', 'block_iomad_company_admin')) + $foundlicenses;
@@ -273,10 +272,12 @@ class admin_uploaduser_form2 extends company_moodleform {
                 $licensecourses = array();
             }
 
+            $mform->addElement('html', '<div id="licensecoursescontainer" style="display:none;">');
             $licensecourseselect = $mform->addElement('select', 'licensecourses',
                                                       get_string('select_license_courses', 'block_iomad_company_admin'),
                                                       $licensecourses, array('id' => 'licensecourseselector'));
             $licensecourseselect->setMultiple(true);
+            $mform->addElement('html', '</div>');
             
             if (!empty($mylicensedetails->program)) {
                 $licensecourseselect->setSelected($licensecourses);

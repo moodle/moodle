@@ -35,19 +35,12 @@ $context = context_system::instance();
 require_login();
 iomad::require_capability('block/iomad_company_admin:user_create', $context);
 
-$return = '';
+$return = 'none';
 
 if ($license = $DB->get_record('companylicense', array('id' => $licenseid))) {
-    if ($license->program) {
-        $liccourses = $DB->get_records('companylicense_courses', array('licenseid' => $licenseid));
-        $license->used = $license->used / count($liccourses);
-        $license->allocation = $license->allocation / count($liccourses);
+    if (empty($license->program)) {
+        $return = 'inline';
     }
-    $return = '<div class="fitemtitle"></div>
-               <div class="felement">
-               <b>' . get_string('licensedetails', 'block_iomad_company_admin', $license) . '</b>
-               </div>
-               </div>';
 }
 echo $return;
 die;

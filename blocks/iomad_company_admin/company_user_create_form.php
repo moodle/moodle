@@ -235,11 +235,12 @@ class user_edit_form extends company_moodleform {
                 }
             }
 
+            $mform->addElement('html', '<div id="licensecoursescontainer" style="display:none;">');
             $licensecourseselect = $mform->addElement('select', 'licensecourses',
                                                       get_string('select_license_courses', 'block_iomad_company_admin'),
                                                       $licensecourses, array('id' => 'licensecourseselector'));
             $licensecourseselect->setMultiple(true);
-            
+            $mform->addElement('html', '</div>');
             if (!empty($mylicensedetails->program)) {
                 $mform->addElement('html', "</div>");
                 $licensecourseselect->setSelected($licensecourses);
@@ -570,6 +571,14 @@ Y.on('change', submit_form, '#licenseidselector');
         datatype: "HTML",
         success: function(response){
             $("#licensedetails").html(response);
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "<?php echo $CFG->wwwroot; ?>/blocks/iomad_company_admin/js/company_user_create_form-license-courses.ajax.php?licenseid="+nValue,
+        datatype: "HTML",
+        success: function(response){
+            $("#licensecoursescontainer")[0].style.display = response;
         }
     });
  }

@@ -1159,6 +1159,14 @@ Y.on('change', submit_form, '#licenseidselector');
             $("#licensedetails").html(response);
         }
     });
+    $.ajax({
+        type: "GET",
+        url: "<?php echo $CFG->wwwroot; ?>/blocks/iomad_company_admin/js/company_user_create_form-license-courses.ajax.php?licenseid="+nValue,
+        datatype: "HTML",
+        success: function(response){
+            $("#licensecoursescontainer")[0].style.display = response;
+        }
+    });
  }
 </script>
 <?php
