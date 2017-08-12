@@ -253,6 +253,11 @@ class company_license_form extends company_moodleform {
             }
         }
 
+        // Allocation needs to be an integer.
+        if (!is_int($data['allocation'])) {
+            $errors['allocation'] = get_string('notawholenumber', 'block_iomad_company_admin');
+        }
+
         // Did we get passed any courses?
         if (empty($data['licensecourses'])) {
             $errors['licensecourses'] = get_string('select_license_courses', 'block_iomad_company_admin');
