@@ -50,7 +50,9 @@ $companyid = iomad::get_my_companyid($systemcontext);
 // Correct the navbar .
 // Set the name for the page.
 $linktext = get_string('company_edit_advanced_title', 'block_iomad_company_admin');
+$listtext = get_string('edit_users_title', 'block_iomad_company_admin');
 // Set the url.
+$listurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
 $linkurl = $url;
 
 // Print the page header.
@@ -63,7 +65,7 @@ $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
 
 // Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+company_admin_fix_breadcrumb($PAGE, $listtext, $listurl);
 
 if ($id == -1) {
     // Creating new user.
