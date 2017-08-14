@@ -91,12 +91,16 @@ class insights_list implements \renderable, \templatable {
         $total = 0;
 
         if ($this->model->uses_insights()) {
-            list($total, $predictions) = $this->model->get_predictions($this->context, $this->page, $this->perpage);
+            $predictionsdata = $this->model->get_predictions($this->context, $this->page, $this->perpage);
 
             $data->insights = array();
-            foreach ($predictions as $prediction) {
-                $insightrenderable = new \report_insights\output\insight($prediction, $this->model, true);
-                $data->insights[] = $insightrenderable->export_for_template($output);
+            if ($predictionsdata) {
+                list($total, $predictions) = $predictionsdata;
+
+                foreach ($predictions as $prediction) {
+                    $insightrenderable = new \report_insights\output\insight($prediction, $this->model, true);
+                    $data->insights[] = $insightrenderable->export_for_template($output);
+                }
             }
 
             if (empty($data->insights) && $this->page == 0) {
