@@ -72,13 +72,13 @@ class company_edit_form extends company_moodleform {
                             get_string('companyname', 'block_iomad_company_admin'),
                             'maxlength="50" size="50"');
         $mform->setType('name', PARAM_NOTAGS);
-        $mform->addRule('name', $strrequired, 'required');
+        $mform->addRule('name', $strrequired, 'required', null, 'client');
 
         $mform->addElement('text', 'shortname',
                             get_string('companyshortname', 'block_iomad_company_admin'),
                             'maxlength="25" size="25"');
         $mform->setType('shortname', PARAM_NOTAGS);
-        $mform->addRule('shortname', $strrequired, 'required');
+        $mform->addRule('shortname', $strrequired, 'required', null, 'client');
         
         if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             // Add the parent company selector.
@@ -109,7 +109,7 @@ class company_edit_form extends company_moodleform {
                             get_string('companycity', 'block_iomad_company_admin'),
                             'maxlength="50" size="50"');
         $mform->setType('city', PARAM_NOTAGS);
-        $mform->addRule('city', $strrequired, 'required');
+        $mform->addRule('city', $strrequired, 'required', null, 'client');
 
         /* copied from user/editlib.php */
         $choices = get_string_manager()->get_list_of_countries();
