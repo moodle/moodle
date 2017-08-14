@@ -175,7 +175,7 @@ define([
                     contextid: contextId
                 }
             },
-            newEventButton
+            [root, SELECTORS.NEW_EVENT_BUTTON]
         );
     };
 
@@ -224,7 +224,7 @@ define([
         var root = $(SELECTORS.ROOT);
 
         // Bind click events to event links.
-        $(SELECTORS.EVENT_LINK).click(function(e) {
+        root.on('click', SELECTORS.EVENT_LINK, function(e) {
             e.preventDefault();
             var eventId = $(this).attr('data-event-id');
             renderEventSummaryModal(eventId);
