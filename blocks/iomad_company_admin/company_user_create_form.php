@@ -535,6 +535,7 @@ if ($mform->is_cancelled()) {
     }
 
     if (isset($data->submitandback)) {
+        $dashboardurl->param('noticeok', get_string('usercreated', 'block_iomad_company_admin'));
         redirect($dashboardurl);
     } else {
         redirect($linkurl."?createdok=1");
@@ -587,7 +588,9 @@ Y.on('change', submit_form, '#licenseidselector');
 
 // Display a message if user is created..
 if ($createdok) {
-    echo '<h2>'.get_string('usercreated', 'block_iomad_company_admin').'</h2>';
+    echo html_writer::start_tag('div', array('class' => "alert alert-success"));
+    echo get_string('usercreated', 'block_iomad_company_admin');
+    echo "</div>";
 }
 // Display the form.
 $mform->display();

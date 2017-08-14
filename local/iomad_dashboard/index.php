@@ -25,6 +25,8 @@ require_login();
 $edit = optional_param( 'edit', null, PARAM_BOOL );
 $company = optional_param('company', 0, PARAM_INT);
 $showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
+$noticeok = optional_param('noticeok', '', PARAM_CLEAN);
+$noticefail = optional_param('noticefail', '', PARAM_CLEAN);
 
 // Check we are allowed to view this page.
 $systemcontext = context_system::instance();
@@ -76,5 +78,18 @@ $PAGE->set_pagelayout('mydashboard');
 // Now we can display the page.
 
 echo $OUTPUT->header();
+
+// Deal with any notices.
+if (!empty($noticeok)) {
+    echo html_writer::start_tag('div', array('class' => "alert alert-success"));
+    echo $noticeok;
+    echo "</div>";
+} 
+if (!empty($noticefail)) {
+    echo html_writer::start_tag('div', array('class' => "alert alert-warning"));
+    echo $noticefail;
+    echo "</div>";
+} 
+
 echo $OUTPUT->blocks_for_region('content');
 echo $OUTPUT->footer();
