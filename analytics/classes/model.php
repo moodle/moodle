@@ -81,6 +81,11 @@ class model {
     const MIN_SCORE = 0.7;
 
     /**
+     * Minimum prediction confidence (from 0 to 1) to accept a prediction as reliable enough.
+     */
+    const PREDICTION_MIN_SCORE = 0.6;
+
+    /**
      * Maximum standard deviation between different evaluation repetitions to consider that evaluation results are stable.
      */
     const ACCEPTED_DEVIATION = 0.05;
@@ -524,8 +529,13 @@ class model {
             $outputdir = $this->get_output_dir(array('evaluation', $dashestimesplittingid));
 
             // Evaluate the dataset, the deviation we accept in the results depends on the amount of iterations.
-            $predictorresult = $predictor->evaluate($this->model->id, self::ACCEPTED_DEVIATION,
+            if ($this->get_target()->is_linear()) {
+                $predictorresult = $predictor->evaluate_regression($this->get_unique_id(), self::ACCEPTED_DEVIATION,
                 self::EVALUATION_ITERATIONS, $dataset, $outputdir);
+            } else {
+                $predictorresult = $predictor->evaluate_classification($this->get_unique_id(), self::ACCEPTED_DEVIATION,
+                self::EVALUATION_ITERATIONS, $dataset, $outputdir);
+            }
 
             $result->status = $predictorresult->status;
             $result->info = $predictorresult->info;
@@ -599,7 +609,11 @@ class model {
         $samplesfile = $datasets[$this->model->timesplitting];
 
         // Train using the dataset.
-        $predictorresult = $predictor->train($this->get_unique_id(), $samplesfile, $outputdir);
+        if ($this->get_target()->is_linear()) {
+            $predictorresult = $predictor->train_regression($this->get_unique_id(), $samplesfile, $outputdir);
+        } else {
+            $predictorresult = $predictor->train_classification($this->get_unique_id(), $samplesfile, $outputdir);
+        }
 
         $result = new \stdClass();
         $result->status = $predictorresult->status;
@@ -678,8 +692,12 @@ class model {
             $result->predictions = $this->get_static_predictions($indicatorcalculations);
 
         } else {
-            // Prediction process runs on the machine learning backend.
-            $predictorresult = $predictor->predict($this->get_unique_id(), $samplesfile, $outputdir);
+            // Estimation and classification processes run on the machine learning backend side.
+            if ($this->get_target()->is_linear()) {
+                $predictorresult = $predictor->estimate($this->get_unique_id(), $samplesfile, $outputdir);
+            } else {
+                $predictorresult = $predictor->classify($this->get_unique_id(), $samplesfile, $outputdir);
+            }
             $result->status = $predictorresult->status;
             $result->info = $predictorresult->info;
             $result->predictions = $this->format_predictor_predictions($predictorresult);

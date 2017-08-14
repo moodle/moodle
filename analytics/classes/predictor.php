@@ -43,34 +43,67 @@ interface predictor {
     public function is_ready();
 
     /**
-     * Train the provided dataset.
+     * Train this processor classification model using the provided supervised learning dataset.
      *
-     * @param int $modelid
+     * @param string $uniqueid
      * @param \stored_file $dataset
      * @param string $outputdir
      * @return \stdClass
      */
-    public function train($modelid, \stored_file $dataset, $outputdir);
+    public function train_classification($uniqueid, \stored_file $dataset, $outputdir);
 
     /**
-     * Predict the provided dataset samples.
+     * Classifies the provided dataset samples.
      *
-     * @param int $modelid
+     * @param string $uniqueid
      * @param \stored_file $dataset
      * @param string $outputdir
      * @return \stdClass
      */
-    public function predict($modelid, \stored_file $dataset, $outputdir);
+    public function classify($uniqueid, \stored_file $dataset, $outputdir);
 
     /**
-     * evaluate
+     * Evaluates this processor classification model using the provided supervised learning dataset.
      *
-     * @param int $modelid
+     * @param string $uniqueid
      * @param float $maxdeviation
      * @param int $niterations
      * @param \stored_file $dataset
      * @param string $outputdir
      * @return \stdClass
      */
-    public function evaluate($modelid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir);
+    public function evaluate_classification($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir);
+
+    /**
+     * Train this processor regression model using the provided supervised learning dataset.
+     *
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
+    public function train_regression($uniqueid, \stored_file $dataset, $outputdir);
+
+    /**
+     * Estimates linear values for the provided dataset samples.
+     *
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param mixed $outputdir
+     * @return void
+     */
+    public function estimate($uniqueid, \stored_file $dataset, $outputdir);
+
+    /**
+     * Evaluates this processor regression model using the provided supervised learning dataset.
+     *
+     * @param string $uniqueid
+     * @param float $maxdeviation
+     * @param int $niterations
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
+    public function evaluate_regression($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir);
+
 }

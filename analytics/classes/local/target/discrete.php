@@ -42,17 +42,18 @@ abstract class discrete extends base {
      */
     public function is_linear() {
         // Not supported yet.
-        throw new \coding_exception('Sorry, this version\'s prediction processors only support targets with binary values.');
+        throw new \coding_exception('Sorry, this version\'s prediction processors only support targets with binary values.' .
+            ' You can write your own and overwrite this method though.');
     }
 
     /**
      * Is the provided class one of this target valid classes?
      *
-     * @param string $class
+     * @param mixed $class
      * @return bool
      */
     protected static function is_a_class($class) {
-        return (in_array($class, static::get_classes()));
+        return (in_array($class, static::get_classes(), false));
     }
 
     /**
@@ -99,7 +100,7 @@ abstract class discrete extends base {
             throw new \moodle_exception('errorpredictionformat', 'analytics');
         }
 
-        if (in_array($value, $this->ignored_predicted_classes())) {
+        if (in_array($value, $this->ignored_predicted_classes(), false)) {
             // Just in case, if it is ignored the prediction should not even be recorded.
             return self::OUTCOME_OK;
         }
@@ -138,15 +139,16 @@ abstract class discrete extends base {
      * Returns the predicted classes that will be ignored.
      *
      * Better be keen to add more than less classes here, the callback is always able to discard some classes. As an example
-     * a target with classes 'grade 0-3', 'grade 3-6', 'grade 6-8' and 'grade 8-10' is interested in flagging both 'grade 0-3'
-     * and 'grade 3-6'. On the other hand, a target like dropout risk with classes 'yes', 'no' may just be interested in 'yes'.
+     * a target with classes 'grade 0-3', 'grade 3-6', 'grade 6-8' and 'grade 8-10' is interested in flagging both 'grade 6-8'
+     * and 'grade 8-10' as ignored. On the other hand, a target like dropout risk with classes 'yes', 'no' may just be
+     * interested in 'yes'.
      *
      * @return array List of values that will be ignored (array keys are ignored).
      */
     protected function ignored_predicted_classes() {
         // Coding exception as this will only be called if this target have non-linear values.
-        throw new \coding_exception('Overwrite ignored_predicted_classes() and return an array with the classes that triggers ' .
-            'the callback');
+        throw new \coding_exception('Overwrite ignored_predicted_classes() and return an array with the classes that should not ' .
+            'trigger the callback');
     }
 
     /**
@@ -162,10 +164,8 @@ abstract class discrete extends base {
             return false;
         }
 
-        if (!$this->is_linear()) {
-            if (in_array($predictedvalue, $this->ignored_predicted_classes())) {
-                return false;
-            }
+        if (in_array($predictedvalue, $this->ignored_predicted_classes())) {
+            return false;
         }
 
         return true;

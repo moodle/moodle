@@ -134,7 +134,7 @@ class insight implements \renderable, \templatable {
      * Returns a CSS class from the calculated value outcome.
      *
      * @param \core_analytics\calculable $calculable
-     * @param mixed $value
+     * @param float $value
      * @param string|false $subtype
      * @return string
      */
@@ -159,8 +159,8 @@ class insight implements \renderable, \templatable {
             default:
                 throw new \coding_exception('The outcome returned by ' . get_class($calculable) . '::get_calculation_outcome is ' .
                     'not one of the accepted values. Please use \core_analytics\calculable::OUTCOME_VERY_POSITIVE, ' .
-                    '\core_analytics\calculable::OUTCOME_OK, \core_analytics\calculable::OUTCOME_NEGATIVE or ' .
-                    '\core_analytics\calculable::OUTCOME_VERY_NEGATIVE');
+                    '\core_analytics\calculable::OUTCOME_OK, \core_analytics\calculable::OUTCOME_NEGATIVE, ' .
+                    '\core_analytics\calculable::OUTCOME_VERY_NEGATIVE or \core_analytics\calculable::OUTCOME_NEUTRAL');
         }
         return $style;
     }

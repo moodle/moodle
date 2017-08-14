@@ -469,6 +469,9 @@ abstract class base {
             return $result;
         }
 
+        // Add target metadata.
+        $this->add_target_metadata($data);
+
         // Write all calculated data to a file.
         $file = $dataset->store($data);
 
@@ -634,6 +637,30 @@ abstract class base {
             $predictionrange->timecreated = time();
             $predictionrange->timemodified = $predictionrange->timecreated;
             $DB->insert_record('analytics_predict_samples', $predictionrange);
+        }
+    }
+
+    /**
+     * Adds target metadata to the dataset.
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function add_target_metadata(&$data) {
+        $data[0][] = 'targetcolumn';
+        $data[1][] = $this->analysabletarget->get_id();
+        if ($this->analysabletarget->is_linear()) {
+            $data[0][] = 'targettype';
+            $data[1][] = 'linear';
+            $data[0][] = 'targetmin';
+            $data[1][] = $this->analysabletarget::get_min_value();
+            $data[0][] = 'targetmax';
+            $data[1][] = $this->analysabletarget::get_max_value();
+        } else {
+            $data[0][] = 'targettype';
+            $data[1][] = 'discrete';
+            $data[0][] = 'targetclasses';
+            $data[1][] = json_encode($this->analysabletarget::get_classes());
         }
     }
 }
