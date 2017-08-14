@@ -27,8 +27,13 @@ function email_cron() {
     $DB->delete_records_select('email', "modifiedtime < $halfyearagoish AND due < $now");
 
     // Send emails.
-echo "Processign email cron\n";
-    if ($emails = $DB->get_records_select('email', "sent IS NULL AND due < $now")) {
+    mtrace("Processign email cron");
+    if ($emails = $DB->get_records_sql("SELECT e.* from {email} e
+                                        JOIN {user} u ON (e.userid = u.id)
+                                        WHERE e.sent IS NULL
+                                        AND e.due < :now
+                                        AND u.deleted = 0
+                                        AND u.suspended = 0", array('now' => $now))) {
         foreach ($emails as $email) {
             EmailTemplate::send_to_user($email);
             // Adding a sleep to ensure there is no processing confusion.
