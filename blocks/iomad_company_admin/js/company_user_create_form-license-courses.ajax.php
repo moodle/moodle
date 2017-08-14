@@ -38,9 +38,7 @@ iomad::require_capability('block/iomad_company_admin:user_create', $context);
 $return = 'none';
 
 if ($license = $DB->get_record('companylicense', array('id' => $licenseid))) {
-    if (empty($license->program)) {
-        $return = 'inline';
-    }
+    $return = 'inline';
 }
 echo $return;
 die;
