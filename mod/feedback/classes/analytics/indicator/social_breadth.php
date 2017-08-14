@@ -41,7 +41,7 @@ class social_breadth extends activity_base {
      * @return string
      */
     public static function get_name() {
-        return get_string('indicator:socialbreadthfeedback', 'mod_feedback');
+        return get_string('indicator:socialbreadth', 'mod_feedback');
     }
 
     /**
