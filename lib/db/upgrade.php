@@ -2586,5 +2586,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016120504.04);
     }
 
+    if ($oldversion < 2016120504.08) {
+
+        // This script in included in each major version upgrade process so make sure we don't run it twice.
+        if (empty($CFG->linkcoursesectionsupgradescriptwasrun)) {
+            // Check if the site is using a boost-based theme.
+            // If value of 'linkcoursesections' is set to the old default value, change it to the new default.
+            if (upgrade_theme_is_from_family('boost', $CFG->theme)) {
+                set_config('linkcoursesections', 1);
+            }
+            set_config('linkcoursesectionsupgradescriptwasrun', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016120504.08);
+    }
+
     return true;
 }
