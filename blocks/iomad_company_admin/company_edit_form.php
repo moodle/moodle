@@ -170,27 +170,33 @@ class company_edit_form extends company_moodleform {
         $mform->setDefault('managerdigestday', 0);
         $mform->addHelpButton('managerdigestday', 'managerdigestday', 'block_iomad_company_admin');
 
-        // Add the auto enrol courses.
-        $parentnodeid = company::get_company_parentnode($this->companyid);
-        if ($courses = $DB->get_records_sql_menu("SELECT c.id, c.fullname
-                                                  FROM {course} c
-                                                  JOIN {company_course} cc
-                                                  ON (c.id = cc.courseid)
-                                                  WHERE cc.departmentid = :departmentid
-                                                  AND c.id NOT IN
-                                                  ( SELECT courseid FROM {iomad_courses}
-                                                    WHERE licensed != 0)",
-                                                  array('departmentid' => $parentnodeid->id))) {
-            // Add the autoselect for this.
-            $mform->addElement('autocomplete', 'autocourses',
-                               get_string('autocourses', 'block_iomad_company_admin'),
-                               $courses,
-                               array('multiple' => true));
-            $mform->addHelpButton('autocourses', 'autocourses', 'block_iomad_company_admin');
+        if (!empty($this->companyid)) {        
+            // Add the auto enrol courses.
+            $parentnodeid = company::get_company_parentnode($this->companyid);
+            if ($courses = $DB->get_records_sql_menu("SELECT c.id, c.fullname
+                                                      FROM {course} c
+                                                      JOIN {company_course} cc
+                                                      ON (c.id = cc.courseid)
+                                                      WHERE cc.departmentid = :departmentid
+                                                      AND c.id NOT IN
+                                                      ( SELECT courseid FROM {iomad_courses}
+                                                        WHERE licensed != 0)",
+                                                      array('departmentid' => $parentnodeid->id))) {
+                // Add the autoselect for this.
+                $mform->addElement('autocomplete', 'autocourses',
+                                   get_string('autocourses', 'block_iomad_company_admin'),
+                                   $courses,
+                                   array('multiple' => true));
+                $mform->addHelpButton('autocourses', 'autocourses', 'block_iomad_company_admin');
+            } else {
+                $mform->addElement('hidden', 'autocourses', null);
+                $mform->setType('autocourses', PARAM_INT);
+            }
         } else {
-            $mform->addElement('hidden', 'autocourses', array());
+            $mform->addElement('hidden', 'autocourses', null);
             $mform->setType('autocourses', PARAM_INT);
         }
+
 
         /* === end company email notifications === */
 
