@@ -4,8 +4,25 @@
 
 // Add support for card. We map it to well.
 // This is not meant to be perfect - but at least applies some styles to a bs4 card.
-.card:extend(.well) {
+.card {
+    position: relative;
+    display: block;
+    margin-bottom: .75rem;
+    background-color: #fff;
+    border: 1px solid @wellBorder;
+    border-radius: 0;
 }
+
+.card-header {
+    padding: .75rem 1.25rem;
+    background-color: @wellBackground;
+    border-bottom: 1px solid @wellBorder;
+}
+
+.card-block {
+    padding: 1.25rem;
+}
+
 
 // Due to lessphp limitations, the following classes must be declared statically without use of a loop.
 .p-l-1 {

@@ -5708,7 +5708,6 @@ img.iconsmall {
 }
 .path-calendar .maincalendar .eventlist .event .description {
   background-color: #fff;
-  padding: 5px;
   clear: both;
 }
 .path-calendar .maincalendar .eventlist .event .commands a {
@@ -12929,8 +12928,7 @@ table th[class*="span"],
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
-.well,
-.card {
+.well {
   min-height: 20px;
   padding: 19px;
   margin-bottom: 20px;
@@ -15631,8 +15629,7 @@ legend {
 .breadcrumb {
   background-color: #f5f5f5;
 }
-.well,
-.card {
+.well {
   border-color: #e3e3e3;
 }
 sup {
@@ -21614,6 +21611,22 @@ ul.indented-list {
   margin-left: 20px;
 }
 /* stylelint-disable declaration-no-important, block-no-empty */
+.card {
+  position: relative;
+  display: block;
+  margin-bottom: .75rem;
+  background-color: #fff;
+  border: 1px solid #e3e3e3;
+  border-radius: 0;
+}
+.card-header {
+  padding: .75rem 1.25rem;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e3e3e3;
+}
+.card-block {
+  padding: 1.25rem;
+}
 .p-l-1 {
   padding-left: 14px !important;
 }
