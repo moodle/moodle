@@ -139,6 +139,7 @@ $string['unenrolroleusers'] = 'Unenrol users';
 $string['uninstallmigrating'] = 'Migrating "{$a}" enrolments';
 $string['unknowajaxaction'] = 'Unknown action requested';
 $string['unlimitedduration'] = 'Unlimited';
+$string['userremovedfromselectiona'] = 'User "{$a}" was removed from the selection.';
 $string['usersearch'] = 'Search ';
 $string['withselectedusers'] = 'With selected users';
 $string['extremovedaction'] = 'External unenrol action';
