@@ -244,7 +244,7 @@ if ($mform->is_cancelled()) {
             if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
                 print_error('invaliddepartment', 'block_iomad_company_admin');
             } else {
-                if (!empty($departmentid->parent)) {
+                if (!empty($departmentrecord->parent)) {
                     redirect(new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/company_department_create_form.php',
                                             array('departmentid' => $departmentid, 'deptid' => $departmentid)));
                     die;
