@@ -254,7 +254,7 @@ class company_license_form extends company_moodleform {
         }
 
         // Allocation needs to be an integer.
-        if (!is_int($data['allocation'])) {
+        if (!preg_match('/^\d+$/', $data['allocation'])) {
             $errors['allocation'] = get_string('notawholenumber', 'block_iomad_company_admin');
         }
 
