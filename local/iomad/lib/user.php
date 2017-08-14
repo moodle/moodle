@@ -149,6 +149,11 @@ class company_user {
             self::enrol($user, array_keys($data->selectedcourses));
         }
 
+        // Deal with auto enrolments.
+        if ($CFG->local_iomad_signup_autoenrol) {
+            $company->autoenrol($user);
+        }
+
         return $user->id;
     }
 
