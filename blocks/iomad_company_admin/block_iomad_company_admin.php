@@ -189,13 +189,16 @@ class block_iomad_company_admin extends block_base {
     public function gettabs($tabs, $selected) {
         global $OUTPUT;
 
+        $showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
+
         $row = array();
 
         // Build list.
         foreach ($tabs as $key => $tab) {
             $row[] = new tabobject(
                 $key,
-                new moodle_url('/local/iomad_dashboard/index.php', array('tabid'=>$key)),
+                new moodle_url('/local/iomad_dashboard/index.php', array('tabid'=>$key,
+                                                                         'showsuspendedcompanies' => $showsuspendedcompanies)),
                 $tab
             );
         }
