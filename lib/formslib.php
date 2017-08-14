@@ -1390,6 +1390,27 @@ abstract class moodleform {
             $_POST = $simulatedsubmitteddata;
         }
     }
+
+    /**
+     * Used by tests to generate valid submit keys for moodle forms that are
+     * submitted with ajax data.
+     *
+     * @throws \moodle_exception If called outside unit test environment
+     * @param array  $data Existing form data you wish to add the keys to.
+     * @return array
+     */
+    public static function mock_generate_submit_keys($data = []) {
+        if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
+            throw new \moodle_exception("This function can only be used for unit testing.");
+        }
+
+        $formidentifier = get_called_class();
+        $formidentifier = str_replace('\\', '_', $formidentifier); // See MDL-56233 for more information.
+        $data['sesskey'] = sesskey();
+        $data['_qf__' . $formidentifier] = 1;
+
+        return $data;
+    }
 }
 
 /**
