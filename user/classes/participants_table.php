@@ -125,6 +125,11 @@ class participants_table extends \table_sql {
     protected $assignableroles;
 
     /**
+     * @var \stdClass[] Profile roles in this course.
+     */
+    protected $profileroles;
+
+    /**
      * Sets up the table.
      *
      * @param int $courseid
@@ -224,6 +229,7 @@ class participants_table extends \table_sql {
         $this->allroles = role_fix_names(get_all_roles($this->context), $this->context);
         $this->allroleassignments = get_users_roles($this->context, [], true, 'c.contextlevel DESC, r.sortorder ASC');
         $this->assignableroles = get_assignable_roles($this->context, ROLENAME_ALIAS, false);
+        $this->profileroles = get_profile_roles($this->context);
     }
 
     /**
@@ -291,6 +297,7 @@ class participants_table extends \table_sql {
                                                               $data,
                                                               $this->allroles,
                                                               $this->assignableroles,
+                                                              $this->profileroles,
                                                               $ids);
 
         return $OUTPUT->render_from_template('core/inplace_editable', $editable->export_for_template($OUTPUT));
