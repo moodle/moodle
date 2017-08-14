@@ -2369,5 +2369,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017082300.01);
     }
 
+    if ($oldversion < 2017082300.02) {
+
+        // Changing type of field prediction on table analytics_predictions to number.
+        $table = new xmldb_table('analytics_predictions');
+        $field = new xmldb_field('prediction', XMLDB_TYPE_NUMBER, '10, 2', null, XMLDB_NOTNULL, null, null, 'rangeindex');
+
+        // Launch change of type for field prediction.
+        $dbman->change_field_type($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017082300.02);
+    }
+
     return true;
 }
