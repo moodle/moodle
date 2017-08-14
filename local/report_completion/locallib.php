@@ -262,7 +262,12 @@ class report_completion {
                       cc.certsource as certsource,
                       d.name as department,
                       cc.finalscore as result ";
-        $fromsql = " FROM {user} u, {".$tempcomptablename."} cc, {department} d, {company_users} du, {user_enrolments} ue, {enrol} e
+        $fromsql = " FROM {user} u
+                     JOIN {".$tempcomptablename."} cc ON (u.id = cc.userid)
+                     JOIN {company_users} du ON (u.id = du.userid)
+                     JOIN {department} d ON (du.departmentid = d.id)
+                     JOIN {user_enrolments} ue ON (u.id = ue.userid)
+                     JOIN {enrol} e ON (ue.enrolid = e.id and cc.courseid = e.courseid)
                     WHERE $searchinfo->sqlsearch
                     AND cc.userid = u.id
                     AND u.id = cc.userid
@@ -270,6 +275,7 @@ class report_completion {
                     AND ue.userid = cc.userid
                     AND du.userid = u.id
                     AND d.id = du.departmentid
+                    AND cc.courseid = $courseid
                     $completionsql ";
 
         $searchinfo->searchparams['courseid'] = $courseid;
