@@ -1194,7 +1194,7 @@ class model {
 
         // Generate a unique id for this site, this model and this time splitting method, considering the last time
         // that the model target and indicators were updated.
-        $ids = array($CFG->wwwroot, $CFG->dirroot, $CFG->prefix, $this->model->id, $this->model->version);
+        $ids = array($CFG->wwwroot, $CFG->prefix, $this->model->id, $this->model->version);
         $this->uniqueid = sha1(implode('$$', $ids));
 
         return $this->uniqueid;
