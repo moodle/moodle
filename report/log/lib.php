@@ -92,10 +92,10 @@ function report_log_can_access_user_report($user, $course) {
     $today = false;
     $all = false;
 
-    if (has_capability('report/log:view', $coursecontext)) {
+    if (has_capability('report/log:viewtoday', $coursecontext)) {
         $today = true;
     }
-    if (has_capability('report/log:viewtoday', $coursecontext)) {
+    if (has_capability('report/log:view', $coursecontext)) {
         $all = true;
     }
 
