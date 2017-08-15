@@ -248,7 +248,16 @@ class company_license_form extends company_moodleform {
                 $weighting = 0;
             }
             $free = $parentlicense->allocation - $parentlicense->used + $weighting;
-            if ($data['allocation'] > $free) {
+
+            // How manay license do we actually need?
+            if (!empty($data['program'])) {
+                $required = $data['allocation'] * count($data['licensecourses']);
+            } else {
+                $required = $data['allocation'];
+            }
+
+            // Check if we have enough.
+            if ($required > $free) {
                 $errors['allocation'] = get_string('licensenotenough', 'block_iomad_company_admin');
             }
         }
