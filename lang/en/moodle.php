@@ -729,6 +729,7 @@ $string['eventcommentcreated'] = 'Comment created';
 $string['eventcommentdeleted'] = 'Comment deleted';
 $string['eventcommentsviewed'] = 'Comments viewed';
 $string['eventconfiglogcreated'] = 'Config log created';
+$string['eventcoursebackupcreated'] = 'Course backup created';
 $string['eventcoursecategorycreated'] = 'Category created';
 $string['eventcoursecategorydeleted'] = 'Category deleted';
 $string['eventcoursecategoryupdated'] = 'Category updated';
