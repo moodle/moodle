@@ -131,6 +131,7 @@ $string['completion_warn_supervisor_body'] = '{$a->firstname} {$a->lastname} has
 $string['completion_expiry_warn_supervisor_subject'] = 'Notice: Course {$a->fullname} training expiry';
 $string['completion_expiry_warn_supervisor_body'] = 'The training for {$a->firstname} {$a->lastname} in course {$a->fullname} will expiry shortly.  Please arrange for them to retake this training if appropriate.';
 $string['completionemails'] = 'Completion emails';
+$string['coursecreatedok'] = 'Course was created successfully';
 $string['coursemanagement'] = 'Course management';
 $string['coursegroup'] = 'Course group for ';
 $string['courses'] = 'Available Courses';

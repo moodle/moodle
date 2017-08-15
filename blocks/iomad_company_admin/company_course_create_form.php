@@ -267,6 +267,7 @@ if ($mform->is_cancelled()) {
         // We are going to the course instead.
         redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
     } else {
+        $companylist->param('noticeok', get_string('coursecreatedok', 'block_iomad_company_admin'));
         redirect($companylist);
     }
 } else {
