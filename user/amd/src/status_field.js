@@ -201,12 +201,37 @@ define(['core/templates',
                     "timeend": parentContainer.data('timeend')
                 };
 
-                var modalTitlePromise = Str.get_string('enroldetails', 'enrol');
+                // Get default string for the modal and modal type.
+                var strings = [
+                    {
+                        key: 'enroldetails',
+                        component: 'enrol'
+                    }
+                ];
+
+                // Find the edit enrolment link.
+                var editEnrolLink = detailsButton.next(SELECTORS.EDIT_ENROLMENT);
+                if (editEnrolLink.length) {
+                    // If there's an edit enrolment link for this user, clone it into the context for the modal.
+                    context.editenrollink = $('<div>').append(editEnrolLink.clone()).html();
+                }
+
+                var modalStringsPromise = Str.get_strings(strings);
                 var modalPromise = ModalFactory.create({large: true, type: ModalFactory.types.CANCEL});
-                $.when(modalTitlePromise, modalPromise).done(function(modalTitle, modal) {
+                $.when(modalStringsPromise, modalPromise).done(function(strings, modal) {
                     var modalBodyPromise = Template.render('core_user/status_details', context);
-                    modal.setTitle(modalTitle);
+                    modal.setTitle(strings[0]);
                     modal.setBody(modalBodyPromise);
+
+                    if (editEnrolLink.length) {
+                        modal.getRoot().on('click', SELECTORS.EDIT_ENROLMENT, function(e) {
+                            e.preventDefault();
+                            modal.hide();
+                            // Trigger click event for the edit enrolment link to show the edit enrolment modal.
+                            $(editEnrolLink).trigger('click');
+                        });
+                    }
+
                     modal.show();
 
                     // Handle hidden event.
