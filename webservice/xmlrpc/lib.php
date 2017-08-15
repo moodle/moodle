@@ -75,7 +75,8 @@ class webservice_xmlrpc_client {
 
         // Set output options.
         $outputoptions = array(
-            'encoding' => 'utf-8'
+            'encoding' => 'utf-8',
+            'escaping' => 'markup',
         );
 
         // Encode the request.
