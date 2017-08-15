@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Moodle XML-RPC library
  *
@@ -23,10 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Moodle XML-RPC client
- *
- * It has been implemented for unit testing purpose (all protocols have similar client)
  *
  * @package    webservice_xmlrpc
  * @copyright  2010 Jerome Mouneyrac
