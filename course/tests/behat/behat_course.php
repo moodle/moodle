@@ -386,7 +386,7 @@ class behat_course extends behat_base {
 
         // We need to know the course format as the text strings depends on them.
         $courseformat = $this->get_course_format();
-        if (get_string_manager()->string_exists('editsection', $courseformat)) {
+        if ($sectionnumber > 0 && get_string_manager()->string_exists('editsection', $courseformat)) {
             $stredit = get_string('editsection', $courseformat);
         } else {
             $stredit = get_string('editsection');
