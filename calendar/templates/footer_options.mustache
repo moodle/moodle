@@ -27,7 +27,9 @@
     }
 }}
 <div class="bottom">
-    {{{exportcalendarbutton}}}
+    {{#exportcalendarbutton}}
+        {{> core/single_button }}
+    {{/exportcalendarbutton}}
     {{{managesubscriptionbutton}}}
     <a href="{{icalurl}}" title="{{#str}} quickdownloadcalendar, calendar {{/str}}" class="ical-link m-l-1">iCal</a>
 </div>

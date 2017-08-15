@@ -69,12 +69,11 @@ class footer_options_exporter extends exporter {
     /**
      * Get the export calendar button.
      *
-     * @param renderer_base $output
-     * @return string The export calendar button html.
+     * @return \single_button The export calendar button html.
      */
-    protected function get_export_calendar_button(renderer_base $output) {
+    protected function get_export_calendar_button() {
         $exportcalendarurl = new moodle_url('/calendar/export.php', ['course' => $this->calendar->course->id]);
-        return $output->single_button($exportcalendarurl->out(false), get_string('exportcalendar', 'calendar'));
+        return new \single_button($exportcalendarurl, get_string('exportcalendar', 'calendar'));
     }
 
     /**
@@ -115,7 +114,8 @@ class footer_options_exporter extends exporter {
         $values = new stdClass();
 
         if (!empty($CFG->enablecalendarexport)) {
-            $values->exportcalendarbutton = $this->get_export_calendar_button($output);
+            $exportbutton = $this->get_export_calendar_button();
+            $values->exportcalendarbutton = $exportbutton->export_for_template($output);
             $values->managesubscriptionbutton = $this->get_manage_subscriptions_button($output);
             $values->icalurl = $this->get_ical_url($output)->out(false);
         }
