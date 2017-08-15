@@ -25,19 +25,17 @@ Feature: Sections can be edited and deleted in topics format
     And I turn editing mode on
 
   Scenario: View the default name of the general section in topics format
-    When I click on "Edit section" "link" in the "li#section-0" "css_element"
+    When I edit the section "0"
     Then I should see "Use default section name [General]"
 
   Scenario: Edit the default name of the general section in topics format
-    When I click on "Edit section" "link" in the "li#section-0" "css_element"
-    And I set the following fields to these values:
+    When I edit the section "0" and I fill the form with:
       | Use default section name | 0                           |
       | name                     | This is the general section |
-    And I press "Save changes"
     Then I should see "This is the general section" in the "li#section-0" "css_element"
 
   Scenario: View the default name of the second section in topics format
-    When I click on "Edit topic" "link" in the "li#section-2" "css_element"
+    When I edit the section "2"
     Then I should see "Use default section name [Topic 2]"
 
   Scenario: Edit section summary in topics format
