@@ -73,16 +73,7 @@ class webservice_xmlrpc_client {
             $this->serverurl->param('wstoken', $this->token);
         }
 
-        // Set output options.
-        $outputoptions = array(
-            'encoding' => 'utf-8',
-            'escaping' => 'markup',
-        );
-
-        // Encode the request.
-        // See MDL-53962 - needed for backwards compatibility on <= 3.0
-        $params = array_values($params);
-        $request = xmlrpc_encode_request($functionname, $params, $outputoptions);
+        $request = $this->encode_request($functionname, $params);
 
         // Set the headers.
         $headers = array(
@@ -102,5 +93,25 @@ class webservice_xmlrpc_client {
         }
 
         return $result;
+    }
+
+    /**
+     * Generates XML for a method request.
+     *
+     * @param string $functionname Name of the method to call.
+     * @param mixed $params Method parameters compatible with the method signature.
+     * @return string
+     */
+    protected function encode_request($functionname, $params) {
+
+        $outputoptions = array(
+            'encoding' => 'utf-8',
+            'escaping' => 'markup',
+        );
+
+        // See MDL-53962 - needed for backwards compatibility on <= 3.0.
+        $params = array_values($params);
+
+        return xmlrpc_encode_request($functionname, $params, $outputoptions);
     }
 }
