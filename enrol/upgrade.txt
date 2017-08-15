@@ -1,6 +1,11 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+
+* render_course_enrolment_users_table method has been removed from the renderer. The enrolled users page is now
+  combined with the participants page. /enrol/users.php no longer exists.
+
 === 3.3 ===
 
 * External function core_enrol_external::get_users_courses now return the user progress, start and the end course dates.
