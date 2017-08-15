@@ -2789,6 +2789,46 @@ class company {
                 }
             }
         }
+
+        // Deal with any children.
+        if ($children = $DB->get_records('companylicense', array('parentid' => $licenseid))) {
+            foreach ($children as $child) {
+                // Get the courses.
+                 $oldcourses = $DB->get_records('companylicense_courses', array('licenseid' => $child->id), null, 'courseid');
+
+                // Clear down all of them initially.
+                $DB->delete_records('companylicense_courses', array('licenseid' => $child->id));
+                if (!empty($currentcourses)) {
+                    // Add the course license allocations.
+                    foreach ($currentcourses as $selectedcourse) {
+                        $DB->insert_record('companylicense_courses', array('licenseid' => $child->id, 'courseid' => $selectedcourse->courseid));
+                    }
+                }
+
+                // Deal with the allocation amount if courses changed.
+                if (!empty($child->program)) {
+                    $old = count($oldcourses);
+                    $new = count($currentcourses);
+                    if ($old != $new) {
+                        $allocation = $child->allocation / $old * $new;
+                        $DB->set_field('companylicense', 'allocation', $allocation, array('id' => $child->id));
+                    }
+                }  
+
+                // Create an event to deal with any child license allocations.
+                $eventother = $event->other;
+                $eventother['licenseid'] = $child->id;
+                $eventother['parentid'] = $licenseid;
+                $eventother['oldcourses'] = json_encode($oldcourses);
+
+                $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => context_system::instance(),
+                                                                                                'userid' => $event->userid,
+                                                                                                'objectid' => $child->id,
+                                                                                                'other' => $eventother));
+                $event->trigger();
+            }
+        }
+
         return true;
     }
 
