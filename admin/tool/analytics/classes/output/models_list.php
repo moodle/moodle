@@ -66,6 +66,54 @@ class models_list implements \renderable, \templatable {
         foreach ($this->models as $model) {
             $modeldata = $model->export();
 
+            // Check if there is a help icon for the target to show.
+            $identifier = $modeldata->target->get_identifier();
+            $component = $modeldata->target->get_component();
+            if (get_string_manager()->string_exists($identifier . '_help', $component)) {
+                $helpicon = new \help_icon($identifier, $component);
+                $modeldata->targethelp = $helpicon->export_for_template($output);
+            } else {
+                // We really want to encourage developers to add help to their targets.
+                debugging("The target '{$modeldata->target}' should include a '{$identifier}_help' string to
+                    describe its purpose.", DEBUG_DEVELOPER);
+            }
+
+            // Check if there is a help icon for the indicators to show.
+            if (!empty($modeldata->indicators)) {
+                $indicators = array();
+                foreach ($modeldata->indicators as $ind) {
+                    // Create the indicator with the details we want for the context.
+                    $indicator = new \stdClass();
+                    $indicator->name = $ind->out();
+                    $identifier = $ind->get_identifier();
+                    $component = $ind->get_component();
+                    if (get_string_manager()->string_exists($identifier . '_help', $component)) {
+                        $helpicon = new \help_icon($identifier, $component);
+                        $indicator->help = $helpicon->export_for_template($output);
+                    } else {
+                        // We really want to encourage developers to add help to their indicators.
+                        debugging("The indicator '{$ind}' should include a '{$identifier}_help' string to
+                            describe its purpose.", DEBUG_DEVELOPER);
+                    }
+                    $indicators[] = $indicator;
+                }
+                $modeldata->indicators = $indicators;
+            }
+
+            // Check if there is a help icon for the time splitting method.
+            if (!empty($modeldata->timesplitting)) {
+                $identifier = $modeldata->timesplitting->get_identifier();
+                $component = $modeldata->timesplitting->get_component();
+                if (get_string_manager()->string_exists($identifier . '_help', $component)) {
+                    $helpicon = new \help_icon($identifier, $component);
+                    $modeldata->timesplittinghelp = $helpicon->export_for_template($output);
+                } else {
+                    // We really want to encourage developers to add help to their time splitting methods.
+                    debugging("The time splitting method '{$modeldata->timesplitting}' should include a '{$identifier}_help
+                        string to describe its purpose.", DEBUG_DEVELOPER);
+                }
+            }
+
             // Model predictions list.
             if ($model->uses_insights()) {
                 $predictioncontexts = $model->get_predictions_contexts();
