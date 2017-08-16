@@ -1,5 +1,9 @@
 This files describes API changes in the assign code.
 
+=== 3.4 ===
+* assign::add_attempt requires that set_most_recent_team_submission() be called if attempting to use this function with a team
+  submission.
+
 === 3.3.2 ===
 * assign_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
   now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
