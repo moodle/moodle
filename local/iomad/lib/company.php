@@ -2486,15 +2486,63 @@ class company {
         global $DB;
 
         $userid = $event->objectid;
+        $timestamp = time();
 
-        // Does the user have any unused licenses?
-        if ($licenserecords = $DB->get_records('companylicense_users', array('userid' => $userid, 'isusing' => 0))) {
-            foreach ($licenserecords as $licenserecord) {
-                // Delete the record.
-                $DB->delete_records('companylicense_users', array('id' => $licenserecord->id));
+        // Get licenses which are reusable and can be removed.
+        if ($reusablelicenses = $DB->get_records_sql("SELECT clu.*
+                                                      FROM {companylicense_users} clu
+                                                      JOIN {companylicense} cl ON (clu.licenseid = cl.id)
+                                                      WHERE cl.type = 1
+                                                      AND cl.expirydate > :timestamp
+                                                      AND clu.userid = :userid",
+                                                      array('timestamp' => $timestamp,
+                                                            'userid' => $userid))) {
+            foreach ($reusablelicenses as $reusablelicense) {
+                $DB->delete_records('companylicense_users', array('id' => $reusablelicense->id));
 
                 // Update the license usage.
-                self::update_license_usage($licenserecord->licenseid);
+                self::update_license_usage($reusablelicense->licenseid);
+            }
+        }
+
+        // Get licenses which are unused, non-program and can be removed.
+        if ($nonprogramlicenses = $DB->get_records_sql("SELECT clu.*
+                                                        FROM {companylicense_users} clu
+                                                        JOIN {companylicense} cl ON (clu.licenseid = cl.id)
+                                                        WHERE cl.type = 0
+                                                        AND cl.program = 0
+                                                        AND clu.isusing = 0
+                                                        AND cl.expirydate > :timestamp
+                                                        AND clu.userid = :userid",
+                                                        array('timestamp' => $timestamp,
+                                                              'userid' => $userid))) {
+            foreach ($nonprogramlicenses as $nonprogramlicense) {
+                $DB->delete_records('companylicense_users', array('id' => $nonprogramlicense->id));
+
+                // Update the license usage.
+                self::update_license_usage($nonprogramlicense->licenseid);
+            }
+        }
+
+        // Deal with program licenses.
+        if ($programlicenses = $DB->get_records_sql("SELECT cl.*
+                                                     FROM {companylicense} cl
+                                                     JOIN {companylicense_users} clu ON (cl.id = clu.licenseid)
+                                                     WHERE clu.userid = :userid
+                                                     AND cl.expirydate > :timestamp
+                                                     GROUP BY cl.id",
+                                                     array('timestamp' => $timestamp,
+                                                           'userid' => $userid))) {
+
+            foreach ($programlicenses as $programlicense) {
+                // Check if there is a used course here
+                if ($DB->get_records('companylicense_users', array('userid' => $userid, 'licenseid' => $programlicense->id, 'isusing' => 1))) {
+                    continue;
+                } else {
+                    $DB->delete_records('companylicense_users', array('userid' => $userid, 'licenseid' => $programlicense->id));
+                    // Update the license usage.
+                    self::update_license_usage($programlicense->id);
+                }
             }
         }
 
