@@ -606,7 +606,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $courseurl = new moodle_url($returnurl);
         $courseurl->remove_params('course');
         $select = new single_select($courseurl, 'course', $courseoptions, $selected, null);
-        $select->class = 'cal_courses_flt m-r-1';
+        $select->class = 'm-r-1';
         if ($label !== null) {
             $select->set_label($label);
         } else {
