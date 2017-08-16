@@ -480,6 +480,14 @@ $departmentselect->label = get_string('department', 'block_iomad_company_admin')
                            $OUTPUT->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
 
 $managertypes = $company->get_managertypes();
+if ($departmentid != $parentlevel->id) {
+    unset($managertypes[1]);
+    if ($roleid ==1) {
+        $urlparams['managertype'] = '';
+        $urlparams['deptid'] = $departmentid;
+        redirect(new moodle_url($linkurl, $urlparams));
+    }
+}
 $managerselect = new single_select(new moodle_url($linkurl, $urlparams), 'managertype', $managertypes, $roleid);
 $managerselect->label = get_string('managertype', 'block_iomad_company_admin') .
                         $OUTPUT->help_icon('managertype', 'block_iomad_company_admin') . '&nbsp';
