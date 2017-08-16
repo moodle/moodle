@@ -170,3 +170,11 @@ border-radius: 10px;
 .dep_tree .nochildren [aria-expanded="false"] {
     background-image: none;
 }
+
+.licenseok, .licensewarning {
+    font-weight: bold;
+}
+
+.licensewarning {
+    color: red;
+}

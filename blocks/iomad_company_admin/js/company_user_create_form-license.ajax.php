@@ -43,9 +43,14 @@ if ($license = $DB->get_record('companylicense', array('id' => $licenseid))) {
         $license->used = $license->used / count($liccourses);
         $license->allocation = $license->allocation / count($liccourses);
     }
+    if ($license->used == $license->allocation) {
+        $licensestring = '<div class="licensewarning">' . get_string('nolicensesleft', 'block_iomad_company_admin') . '</div>';
+    } else {
+        $licensestring = '<div class="licenseok">' . get_string('licensedetails', 'block_iomad_company_admin', $license) . '</div>';
+    }
     $return = '<div class="fitemtitle"></div>
-               <div class="felement">
-               <b>' . get_string('licensedetails', 'block_iomad_company_admin', $license) . '</b>
+               <div class="felement">' .
+               $licensestring . '
                </div>
                </div>';
 }

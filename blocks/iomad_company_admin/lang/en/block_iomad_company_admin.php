@@ -350,6 +350,7 @@ $string['nocompanytemplates'] = 'Unallocated competency templates';
 $string['nocourses'] = 'There are no courses.';
 $string['nogroups'] = 'There are no course groups';
 $string['nodepartments'] = 'There are no departments defined';
+$string['nolicensesleft'] = '0 licenses left to allocate';
 $string['nolocations'] = 'No teaching locations have been created yet';
 $string['licensecount'] = 'Licenses allocated:';
 $string['licenseerrors'] = 'Licenses not allocated:';
