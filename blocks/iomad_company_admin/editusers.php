@@ -156,8 +156,7 @@ if (!$showall) {
     $select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
     $select->label = get_string('department', 'block_iomad_company_admin');
     $select->formid = 'choosedepartment';
-    echo html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
-    $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));
+    $departmentselect = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
 }
 
 // Set up the filter form.
@@ -168,9 +167,6 @@ if (iomad::has_capability('block/iomad_company_admin:company_add', $systemcontex
 }
 $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
-
-// Display the user filter form.
-$mform->display();
 
 // Get the company additional optional user parameter names.
 $fieldnames = array();
@@ -403,10 +399,14 @@ if ($confirmuser and confirm_sesskey()) {
 
 // Carry on with the user listing.
 if (!$showall) {
+    echo $departmentselect;
     $columns = array("firstname", "lastname", "email", "department", "lastaccess");
 } else {
     $columns = array('company', "firstname", "lastname", "email", "department", "lastaccess");
 }
+
+// Display the user filter form.
+$mform->display();
 
 foreach ($columns as $column) {
     if ($column == 'company') {
