@@ -83,9 +83,30 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
         return Ajax.call([request])[0];
     };
 
+    /**
+     * Get calendar data for the month view.
+     *
+     * @method getCalendarMonthData
+     * @param {Number} time Timestamp.
+     * @param {Number} courseid The course id.
+     * @return {promise} Resolved with the month view data.
+     */
+    var getCalendarMonthData = function(time, courseid) {
+        var request = {
+            methodname: 'core_calendar_get_calendar_monthly_view',
+            args: {
+                time: time,
+                courseid: courseid
+            }
+        };
+
+        return Ajax.call([request])[0];
+    };
+
     return {
         getEventById: getEventById,
         deleteEvent: deleteEvent,
-        submitCreateUpdateForm: submitCreateUpdateForm
+        submitCreateUpdateForm: submitCreateUpdateForm,
+        getCalendarMonthData: getCalendarMonthData
     };
 });

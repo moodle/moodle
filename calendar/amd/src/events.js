@@ -28,6 +28,7 @@ define([], function() {
         deleted: 'calendar-events:deleted',
         updated: 'calendar-events:updated',
         editEvent: 'calendar-events:edit_event',
-        editActionEvent: 'calendar-events:edit_action_event'
+        editActionEvent: 'calendar-events:edit_action_event',
+        monthChanged: 'calendar-events:month_changed'
     };
 });

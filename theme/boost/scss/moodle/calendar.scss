@@ -11,7 +11,7 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
     background-color: $calendarEventCourseColor;
 }
 
-.calendar_event_global {
+.calendar_event_site {
     background-color: $calendarEventGlobalColor;
 }
 
@@ -119,7 +119,7 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
         }
 
         .calendar_event_course,
-        .calendar_event_global,
+        .calendar_event_site,
         .calendar_event_group,
         .calendar_event_user {
             border-width: 1px 1px 1px 12px;
@@ -130,7 +130,7 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
             border-color: $calendarEventCourseColor;
         }
 
-        .calendar_event_global {
+        .calendar_event_site {
             border-color: $calendarEventGlobalColor;
         }
 

@@ -37,7 +37,8 @@ define([
             'core_calendar/modal_event_form',
             'core_calendar/summary_modal',
             'core_calendar/repository',
-            'core_calendar/events'
+            'core_calendar/events',
+            'core_calendar/view_manager'
         ],
         function(
             $,
@@ -51,7 +52,8 @@ define([
             ModalEventForm,
             SummaryModal,
             CalendarRepository,
-            CalendarEvents
+            CalendarEvents,
+            CalendarViewManager
         ) {
 
     var SELECTORS = {
@@ -173,7 +175,7 @@ define([
                     contextid: contextId
                 }
             },
-            newEventButton
+            [root, SELECTORS.NEW_EVENT_BUTTON]
         );
     };
 
@@ -222,7 +224,7 @@ define([
         var root = $(SELECTORS.ROOT);
 
         // Bind click events to event links.
-        $(SELECTORS.EVENT_LINK).click(function(e) {
+        root.on('click', SELECTORS.EVENT_LINK, function(e) {
             e.preventDefault();
             var eventId = $(this).attr('data-event-id');
             renderEventSummaryModal(eventId);
@@ -234,6 +236,7 @@ define([
 
     return {
         init: function() {
+            CalendarViewManager.init();
             registerEventListeners();
         }
     };

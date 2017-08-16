@@ -249,7 +249,7 @@ define(['jquery', 'core/templates'], function($, Templates) {
     };
 
     /**
-     * Initialise all of the form enhancementds.
+     * Initialise all of the form enhancements.
      *
      * @method init
      * @param {string} formId The value of the form's id attribute
