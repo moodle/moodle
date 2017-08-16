@@ -90,14 +90,13 @@ class footer_options_exporter extends exporter {
     /**
      * Get manage subscription button.
      *
-     * @param renderer_base $output
      * @return string The manage subscription button html.
      */
-    protected function get_manage_subscriptions_button(renderer_base $output) {
+    protected function get_manage_subscriptions_button() {
         if (calendar_user_can_add_event($this->calendar->course)) {
             $managesubscriptionurl = new moodle_url('/calendar/managesubscriptions.php',
                     ['course' => $this->calendar->course->id]);
-            return $output->single_button($managesubscriptionurl->out(false),
+            return new \single_button($managesubscriptionurl,
                     get_string('managesubscriptions', 'calendar'));
         }
     }
@@ -115,8 +114,9 @@ class footer_options_exporter extends exporter {
 
         if (!empty($CFG->enablecalendarexport)) {
             $exportbutton = $this->get_export_calendar_button();
+            $managesubscriptionbutton = $this->get_manage_subscriptions_button();
             $values->exportcalendarbutton = $exportbutton->export_for_template($output);
-            $values->managesubscriptionbutton = $this->get_manage_subscriptions_button($output);
+            $values->managesubscriptionbutton = $managesubscriptionbutton->export_for_template($output);
             $values->icalurl = $this->get_ical_url()->out(false);
         }
 
