@@ -79,7 +79,7 @@ if ($hassiteconfig) {
 
         $timesplittingoptions = array();
         $timesplittingdefaults = array('\core\analytics\time_splitting\quarters_accum',
-            '\core\analytics\time_splitting\quarters', '\core\analytics\time_splitting\no_splitting');
+            '\core\analytics\time_splitting\quarters', '\core\analytics\time_splitting\single_range');
         foreach ($alltimesplittings as $key => $timesplitting) {
             $timesplittingoptions[$key] = $timesplitting->get_name();
         }
