@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use renderer_base;
-use moodle_url;
 
 /**
  * Class for displaying the week view.

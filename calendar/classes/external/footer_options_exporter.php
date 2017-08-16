@@ -117,7 +117,7 @@ class footer_options_exporter extends exporter {
             $exportbutton = $this->get_export_calendar_button();
             $values->exportcalendarbutton = $exportbutton->export_for_template($output);
             $values->managesubscriptionbutton = $this->get_manage_subscriptions_button($output);
-            $values->icalurl = $this->get_ical_url($output)->out(false);
+            $values->icalurl = $this->get_ical_url()->out(false);
         }
 
         return (array) $values;
