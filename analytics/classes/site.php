@@ -73,21 +73,14 @@ class site implements \core_analytics\analysable {
             return $this->start;
         }
 
-        if (!$logstore = \core_analytics\manager::get_analytics_logstore()) {
-            $this->start = 0;
-            return $this->start;
+        // Much faster than reading the first log in the site.
+        $admins = get_admins();
+        $this->start = 9999999999;
+        foreach ($admins as $admin) {
+            if ($admin->firstaccess < $this->start) {
+                $this->start = $admin->firstaccess;
+            }
         }
-
-        // Basically a SELECT MIN(timecreated) FROM ...
-        $events = $logstore->get_events_select("", array(), "timecreated ASC", 0, 1);
-        if ($events) {
-            // There should be just 1 event.
-            $event = reset($events);
-            $this->start = intval($event->timecreated);
-        } else {
-            $this->start = 0;
-        }
-
         return $this->start;
     }
 
@@ -101,21 +94,7 @@ class site implements \core_analytics\analysable {
             return $this->end;
         }
 
-        if (!$logstore = \core_analytics\manager::get_analytics_logstore()) {
-            $this->end = time();
-            return $this->end;
-        }
-
-        // Basically a SELECT MAX(timecreated) FROM ...
-        $events = $logstore->get_events_select("", array(), "timecreated DESC", 0, 1);
-        if ($events) {
-            // There should be just 1 event.
-            $event = reset($events);
-            $this->end = intval($event->timecreated);
-        } else {
-            $this->end = time();
-        }
-
+        $this->end = time();
         return $this->end;
     }
 }
