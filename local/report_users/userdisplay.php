@@ -81,8 +81,16 @@ if ($showhistoric) {
 }
 
 $usercourses = array();
+// We only want student roles here.
+$studentrole = $DB->get_record('role', array('shortname' => 'student'));
 foreach ($enrolcourses as $enrolcourse) {
-    $usercourses[$enrolcourse->id] = $enrolcourse;
+    $roles = get_user_roles(context_course::instance($enrolcourse->id), $userid, false);
+    foreach ($roles as $role) {
+        if ($role->roleid == $studentrole->id) {
+
+            $usercourses[$enrolcourse->id] = $enrolcourse;
+        }
+    }
 }
 foreach ($completioncourses as $completioncourse) {
     $usercourses[$completioncourse->id] = $completioncourse;
@@ -243,8 +251,20 @@ foreach ($usercourses as $usercourse) {
                     'action' => 'clear'
                 ));
             if (empty($usercompcourse->certsource) && has_capability('block/iomad_company_admin:editusers', $context)) {
-                $delaction = '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete', 'local_report_users') . '</a>' .
-                              '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                // Its from the course_completions table.  Check the license type.
+                if ($DB->get_record_sql("SELECT cl.* FROM {companylicense} cl
+                                         JOIN {companylicense_users} clu
+                                         ON (cl.id = clu.licenseid)
+                                         WHERE cl.program = 1
+                                         AND clu.userid = :userid
+                                         AND clu.courseid = :courseid",
+                                         array('userid' => $userid,
+                                               'courseid' => $usercourseid))) {
+                    $delaction = '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                } else {
+                    $delaction = '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete', 'local_report_users') . '</a>' .
+                                 '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                }
             } else {
                 $delaction = '';
             }

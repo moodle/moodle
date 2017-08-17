@@ -64,32 +64,57 @@ class report_completion {
             $courses = company::get_recursive_department_courses($departmentid);
         }
 
+        // We only want the student role.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
         // Process them!
         $returnarr = array();
         foreach ($courses as $course) {
+            $coursecontext = context_course::instance($course->courseid);
             $courseobj = new stdclass();
             $courseobj->id = $course->courseid;
 
             $courseobj->numenrolled = $DB->count_records_sql("SELECT COUNT(ue.id) FROM {user_enrolments} ue
                                                    JOIN {enrol} e ON (e.id = ue.enrolid AND e.status = 0)
+                                                   JOIN {role_assignments} ra ON (ue.userid = ra.userid)
                                                    JOIN {".$temptablename."} tt ON (ue.userid = tt.userid)
-                                                   WHERE
-                                                   e.courseid = :course", array('course' => $course->courseid));
+                                                   WHERE e.courseid = :course
+                                                   AND ra.roleid = :student
+                                                   AND ra.contextid = :coursecontext",
+                                                   array('course' => $course->courseid,
+                                                         'student' => $studentrole->id,
+                                                         'coursecontext' => $contextcourse->id));
             $courseobj->numnotstarted = $DB->count_records_sql("SELECT COUNT(cc.id) FROM {course_completions} cc
+                                                   JOIN {role_assignments} ra ON (cc.userid = ra.userid)
                                                    JOIN {".$temptablename."} tt ON (cc.userid = tt.userid)
-                                                   WHERE
-                                                   cc.course = :course AND
-                                                   cc.timestarted = 0", array('course' => $course->courseid));
+                                                   WHERE cc.course = :course
+                                                   AND ra.roleid = :student
+                                                   AND ra.contextid = :coursecontext
+                                                   AND cc.timestarted = 0",
+                                                   array('course' => $course->courseid,
+                                                         'student' => $studentrole->id,
+                                                         'coursecontext' => $contextcourse->id));
             $courseobj->numstarted = $DB->count_records_sql("SELECT COUNT(cc.id) FROM {course_completions} cc
+                                                   JOIN {role_assignments} ra ON (cc.userid = ra.userid)
                                                    JOIN {".$temptablename."} tt ON (cc.userid = tt.userid)
                                                    WHERE
-                                                   cc.course = :course AND
-                                                   cc.timestarted != 0", array('course' => $course->courseid));
+                                                   cc.course = :course
+                                                   AND ra.roleid = :student
+                                                   AND ra.contextid = :coursecontext
+                                                   AND cc.timestarted != 0",
+                                                   array('course' => $course->courseid,
+                                                         'student' => $studentrole->id,
+                                                         'coursecontext' => $contextcourse->id));
             $courseobj->numcompleted = $DB->count_records_sql("SELECT COUNT(cc.id) FROM {course_completions} cc
+                                                   JOIN {role_assignments} ra ON (cc.userid = ra.userid)
                                                    JOIN {".$temptablename."} tt ON (cc.userid = tt.userid)
-                                                   WHERE
-                                                   cc.course = :course AND
-                                                   cc.timecompleted IS NOT NULL", array('course' => $course->courseid));
+                                                   WHERE cc.course = :course
+                                                   AND ra.roleid = :student
+                                                   AND ra.contextid = :coursecontext
+                                                   AND cc.timecompleted IS NOT NULL",
+                                                   array('course' => $course->courseid,
+                                                         'student' => $studentrole->id,
+                                                         'coursecontext' => $contextcourse->id));
             $courseobj->historic = $DB->count_records_sql("SELECT COUNT(lct.id) FROM {local_iomad_track} lct
                                                    JOIN {".$temptablename."} tt ON (lct.userid = tt.userid)
                                                    WHERE
@@ -157,6 +182,9 @@ class report_completion {
 
         $dbman->create_temp_table($table);
 
+        // We only want the student role.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
         // Populate it.
         $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
                           SELECT ue.userid, e.courseid, ue.timestart, cc.timestarted, cc.timecompleted, gg.finalgrade, 0
@@ -164,15 +192,16 @@ class report_completion {
                           JOIN {user_enrolments} ue ON (tut.userid = ue.userid)
                           INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
                           JOIN {course_completions} cc ON (ue.userid = cc.userid AND e.courseid = cc.course)
+                          JOIN {role_assignments} ra ON (ue.userid = ra.userid)
+                          JOIN {context} c ON (ra.contextid = c.id AND c.contextlevel = 50 AND c.instanceid = e.courseid)
                           LEFT JOIN {grade_items} gi
                           ON (cc.course = gi.courseid
                           AND gi.itemtype = 'course')
-                          LEFT JOIN {grade_grades} gg ON (gg.userid = cc.userid AND gi.id = gg.itemid)";
-                          
-                          //WHERE tut.userid = cc.userid";
+                          LEFT JOIN {grade_grades} gg ON (gg.userid = cc.userid AND gi.id = gg.itemid)
+                          WHERE ra.roleid = " . $studentrole->id;
+
         if (!empty($courseid)) {
-            //$tempcreatesql .= " AND cc.course = ".$courseid;
-            $tempcreatesql .= " WHERE cc.course = ".$courseid;
+            $tempcreatesql .= " AND cc.course = ".$courseid;
         }
         $DB->execute($tempcreatesql);
 
