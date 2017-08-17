@@ -2308,5 +2308,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017080700.01);
     }
 
+    if ($oldversion < 2017082200.00) {
+        $plugins = ['radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'];
+
+        foreach ($plugins as $plugin) {
+            // Check to see if the plugin exists on disk.
+            // If it does not, remove the config for it.
+            if (!file_exists($CFG->dirroot . "/auth/{$plugin}/auth.php")) {
+                // Clean config.
+                unset_all_config_for_plugin("auth_{$plugin}");
+            }
+        }
+        upgrade_main_savepoint(true, 2017082200.00);
+    }
+
     return true;
 }
