@@ -59,7 +59,9 @@ define([
     var SELECTORS = {
         ROOT: "[data-region='calendar']",
         EVENT_LINK: "[data-action='view-event']",
-        NEW_EVENT_BUTTON: "[data-action='new-event-button']"
+        NEW_EVENT_BUTTON: "[data-action='new-event-button']",
+        DAY_CONTENT: "[data-region='day-content']",
+        LOADING_ICON: '.loading-icon',
     };
 
     /**
@@ -156,6 +158,60 @@ define([
     };
 
     /**
+     * Handler for the drag and drop move event. Provides a loading indicator
+     * while the request is sent to the server to update the event start date.
+     *
+     * Triggers a eventMoved calendar javascript event if the event was successfully
+     * updated.
+     *
+     * @param {event} e The calendar move event
+     * @param {object} eventElement The jQuery element with the event id
+     * @param {object} originElement The jQuery element for where the event is moving from
+     * @param {object} destinationElement The jQuery element for where the event is moving to
+     */
+    var handleMoveEvent = function(e, eventElement, originElement, destinationElement) {
+        var eventId = eventElement.attr('data-event-id');
+        var originTimestamp = originElement.attr('data-day-timestamp');
+        var destinationTimestamp = destinationElement.attr('data-day-timestamp');
+
+        // If the event has actually changed day.
+        if (originTimestamp != destinationTimestamp) {
+            Templates.render('core/loading', {})
+                .then(function(html, js) {
+                    // First we show some loading icons in each of the days being affected.
+                    originElement.find(SELECTORS.DAY_CONTENT).addClass('hidden');
+                    destinationElement.find(SELECTORS.DAY_CONTENT).addClass('hidden');
+                    Templates.appendNodeContents(originElement, html, js);
+                    Templates.appendNodeContents(destinationElement, html, js);
+                    return;
+                })
+                .then(function() {
+                    // Send a request to the server to make the change.
+                    return CalendarRepository.updateEventStartDay(eventId, destinationTimestamp);
+                })
+                .then(function() {
+                    // If the update was successful then broadcast an event letting the calendar
+                    // know that an event has been moved.
+                    $('body').trigger(CalendarEvents.eventMoved, [eventElement, originElement, destinationElement]);
+                    return;
+                })
+                .always(function() {
+                    // Always remove the loading icons regardless of whether the update
+                    // request was successful or not.
+                    var originLoadingElement = originElement.find(SELECTORS.LOADING_ICON);
+                    var destinationLoadingElement = destinationElement.find(SELECTORS.LOADING_ICON);
+                    originElement.find(SELECTORS.DAY_CONTENT).removeClass('hidden');
+                    destinationElement.find(SELECTORS.DAY_CONTENT).removeClass('hidden');
+
+                    Templates.replaceNode(originLoadingElement, '', '');
+                    Templates.replaceNode(destinationLoadingElement, '', '');
+                    return;
+                })
+                .fail(Notification.exception);
+        }
+    };
+
+    /**
      * Create the event form modal for creating new events and
      * editing existing events.
      *
@@ -203,6 +259,12 @@ define([
         body.on(CalendarEvents.editActionEvent, function(e, url) {
             // Action events needs to be edit directly on the course module.
             window.location.assign(url);
+        });
+        // Handle the event fired by the drag and drop code.
+        body.on(CalendarEvents.moveEvent, handleMoveEvent);
+        // When an event is successfully moved we should updated the UI.
+        body.on(CalendarEvents.eventMoved, function() {
+            window.location.reload();
         });
 
         eventFormModalPromise.then(function(modal) {

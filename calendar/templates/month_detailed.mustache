@@ -31,7 +31,7 @@
     {
     }
 }}
-<span class="calendarwrapper" data-courseid="{{courseid}}" data-current-time="{{time}}">
+<span id="month-detailed-{{uniqid}}" class="calendarwrapper" data-courseid="{{courseid}}" data-current-time="{{time}}">
     {{> core_calendar/month_header }}
     {{> core_calendar/month_navigation }}
     <table class="calendarmonth calendartable card-deck m-b-0">
@@ -46,7 +46,7 @@
         </thead>
         <tbody>
     {{#weeks}}
-            <tr>
+            <tr data-region="month-view-week">
                 {{#prepadding}}
                     <td class="dayblank">&nbsp;</td>
                 {{/prepadding}}
@@ -56,7 +56,9 @@
                             }}{{#isweekend}} weekend{{/isweekend}}{{!
                             }}{{#durationevents.0}} duration{{/durationevents.0}}{{!
                             }}{{#durationevents}} duration_{{.}}{{/durationevents}}{{!
-                        }}">
+                        }}"
+                        data-day-timestamp="{{timestamp}}"
+                        data-drop-zone="true">
                         <div class="hidden-sm-down text-xs-center">
                             {{#events.0}}
                                 <a href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
@@ -65,18 +67,25 @@
                                 {{mday}}
                             {{/events.0}}
                             {{#events.0}}
-                                <ul>
-                                    {{#events}}
+                                <div data-region="day-content">
+                                    <ul>
+                                        {{#events}}
                                         {{#underway}}
                                             <li class="events-underway">[{{name}}]</li>
                                         {{/underway}}
                                         {{^underway}}
-                                            <li class="calendar_event_{{eventtype}}">
+                                            <li class="calendar_event_{{eventtype}}"
+                                                {{#canedit}}
+                                                    draggable="true"
+                                                    data-drag-type="move"
+                                                {{/canedit}}>
+
                                                 <a data-action="view-event" data-event-id="{{id}}" href="{{url}}">{{name}}</a>
                                             </li>
                                         {{/underway}}
-                                    {{/events}}
-                                </ul>
+                                        {{/events}}
+                                    </ul>
+                                </div>
                             {{/events.0}}
                         </div>
                         <div class="hidden-md-up hidden-desktop">
@@ -84,7 +93,9 @@
                                 <a href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
                             {{/events.0}}
                             {{^events.0}}
-                                {{mday}}
+                                <div data-region="day-content">
+                                    {{mday}}
+                                </div>
                             {{/events.0}}
                         </div>
                     </td>
@@ -97,3 +108,9 @@
         </tbody>
     </table>
 </span>
+{{#js}}
+require(['jquery', 'core_calendar/drag_drop'], function($, DragDrop) {
+    var root = $('#month-detailed-{{uniqid}}');
+    DragDrop.init(root);
+});
+{{/js}}

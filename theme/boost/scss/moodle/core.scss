@@ -2151,3 +2151,7 @@ $footer-link-color: $bg-inverse-link-color !default;
         top: 0;
     }
 }
+
+[data-drag-type="move"] {
+    cursor: move;
+}

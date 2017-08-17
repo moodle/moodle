@@ -103,9 +103,31 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
         return Ajax.call([request])[0];
     };
 
+    /**
+     * Change the start day for the given event id. The day timestamp
+     * only has to be any time during the target day because only the
+     * date information is extracted, the time of the day is ignored.
+     *
+     * @param {int} eventId The id of the event to update
+     * @param {int} dayTimestamp A timestamp for some time during the target day
+     * @return {promise}
+     */
+    var updateEventStartDay = function(eventId, dayTimestamp) {
+        var request = {
+            methodname: 'core_calendar_update_event_start_day',
+            args: {
+                eventId: eventId,
+                dayTimestamp: dayTimestamp
+            }
+        };
+
+        return Ajax.call([request])[0];
+    };
+
     return {
         getEventById: getEventById,
         deleteEvent: deleteEvent,
+        updateEventStartDay: updateEventStartDay,
         submitCreateUpdateForm: submitCreateUpdateForm,
         getCalendarMonthData: getCalendarMonthData
     };
