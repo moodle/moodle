@@ -5,68 +5,25 @@ Feature: hideIf functionality in forms
   If I trigger the hideIf condition then the form elements will be hidden
 
   Background:
-    Given the following "activities" exist:
-      | activity | name | intro                                                                   | course               | section | idnumber |
-      | label    | L1   | <a href="lib/form/tests/fixtures/formhideiftestpage.php">HideIfLink</a> | Acceptance test site | 1       | L1       |
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
     And I log in as "admin"
-    And I am on site homepage
-    And I wait "5" seconds
-    And I follow "HideIfLink"
+    And I am on "Course 1" course homepage
+    And I turn editing mode on
 
   Scenario: When 'eq' hideIf conditions are not met, the relevant elements are shown
-    When I set the field "Select yesno example" to "Yes"
-    Then I should see "Test eq hideif"
-    And "#id_testeqhideif" "css_element" should be visible
-    And I press "Submit"
-    And I should see "Number of submitted form elements: 7"
-    And I should see "[testeqhideif] =>"
+    When I add a "Assignment" to section "1"
+    And I expand all fieldsets
+    And I set the field "Students submit in groups" to "Yes"
+    Then I should see "Require group to make submission"
+    And I should see "Require all group members submit"
+    And I should see "Grouping for student groups"
 
   Scenario: When 'eq' hideIf conditions are met, the relevant elements are hidden
-    When I set the field "Select yesno example" to "No"
-    Then I should not see "Test eq hideif"
-    And "#id_testeqhideif" "css_element" should not be visible
-    And I press "Submit"
-    And I should see "Number of submitted form elements: 6"
-    And I should not see "[testeqhideif] =>"
-
-  Scenario: When 'checked' hideIf conditions are not met, the relevant elements are shown
-    When I set the field "Checkbox example" to "0"
-    Then I should see "Test checked hideif"
-    And I should not see "Test not checked hideif"
-    And "#id_testcheckedhideif" "css_element" should be visible
-    And "#id_testnotcheckedhideif" "css_element" should not be visible
-    And I press "Submit"
-    And I should see "Number of submitted form elements: 6"
-    And I should see "[testcheckedhideif] =>"
-    And I should not see "[testnotcheckedhideif] =>"
-
-  Scenario: When 'checked' hideIf conditions are met, the relevant elements are hidden
-    When I set the field "Checkbox example" to "1"
-    Then I should not see "Test checked hideif"
-    And I should see "Test not checked hideif"
-    And "#id_testcheckedhideif" "css_element" should not be visible
-    And "#id_testnotcheckedhideif" "css_element" should be visible
-    And I press "Submit"
-    And I should see "Number of submitted form elements: 6"
-    And I should not see "[testcheckedhideif] =>"
-    And I should see "[testnotcheckedhideif] =>"
-
-  Scenario: When 'in' hideIf conditions are not met, the relevant elements are shown
-    When I set the field "Select example" to "3"
-    Then I should see "Test in hideif"
-    And I should see "Date time example"
-    And I should see "Files"
-    And "#id_testinhideif" "css_element" should be visible
-    And I press "Submit"
-    And I should see "Number of submitted form elements: 8"
-    And I should see "[testinhideif] =>"
-
-  Scenario: When 'in' hideIf conditions are met, the relevant elements are hidden
-    When I set the field "Select example" to "2"
-    Then I should not see "Test in hideif"
-    And I should not see "Date time example"
-    And I should not see "Files"
-    And "#id_testinhideif" "css_element" should not be visible
-    And I press "Submit"
-    And I should see "Number of submitted form elements: 6"
-    And I should not see "[testinhideif] =>"
+    When I add a "Assignment" to section "1"
+    And I expand all fieldsets
+    And I set the field "Students submit in groups" to "No"
+    Then I should not see "Require group to make submission"
+    And I should not see "Require all group members to submit"
+    And I should not see "Grouping for student groups"
