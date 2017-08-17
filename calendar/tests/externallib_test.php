@@ -1290,4 +1290,84 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         core_calendar_external::delete_calendar_events($params);
     }
+
+    /**
+     * Updating the event start day should change the date value but leave
+     * the time of day unchanged.
+     */
+    public function test_update_event_start_day() {
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $roleid = $generator->create_role();
+        $context = \context_system::instance();
+        $originalStartTime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newStartDate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+
+        $generator->role_assign($roleid, $user->id, $context->id);
+        assign_capability('moodle/calendar:manageownentries', CAP_ALLOW, $roleid, $context, true);
+
+        $this->setUser($user);
+        $this->resetAfterTest(true);
+
+        $event = $this->create_calendar_event(
+            'Test event',
+            $user->id,
+            'user',
+            0,
+            null,
+            [
+                'courseid' => 0,
+                'timestart' => $originalStartTime->getTimestamp()
+            ]
+        );
+
+        $result = core_calendar_external::update_event_start_day($event->id, $newStartDate->getTimestamp());
+        $result = external_api::clean_returnvalue(
+            core_calendar_external::update_event_start_day_returns(),
+            $result
+        );
+
+        $this->assertEquals($expected->getTimestamp(), $result['event']['timestart']);
+    }
+
+    /**
+     * Updating the event start day should change the date value but leave
+     * the time of day unchanged.
+     */
+    public function test_update_event_start_day_no_permission() {
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $roleid = $generator->create_role();
+        $context = \context_system::instance();
+        $originalStartTime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newStartDate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+
+        $generator->role_assign($roleid, $user->id, $context->id);
+        assign_capability('moodle/calendar:manageownentries', CAP_ALLOW, $roleid, $context, true);
+
+        $this->setUser($user);
+        $this->resetAfterTest(true);
+
+        $event = $this->create_calendar_event(
+            'Test event',
+            $user->id,
+            'user',
+            0,
+            null,
+            [
+                'courseid' => 0,
+                'timestart' => $originalStartTime->getTimestamp()
+            ]
+        );
+
+        assign_capability('moodle/calendar:manageownentries', CAP_PROHIBIT, $roleid, $context, true);
+        $this->expectException('moodle_exception');
+        $result = core_calendar_external::update_event_start_day($event->id, $newStartDate->getTimestamp());
+        $result = external_api::clean_returnvalue(
+            core_calendar_external::update_event_start_day_returns(),
+            $result
+        );
+    }
 }

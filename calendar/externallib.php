@@ -906,4 +906,73 @@ class core_calendar_external extends external_api {
     public static function get_calendar_monthly_view_returns() {
         return \core_calendar\external\month_exporter::get_read_structure();
     }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function update_event_start_day_parameters() {
+        return new external_function_parameters(
+            [
+                'eventId' => new external_value(PARAM_INT, 'Id of event to be updated', VALUE_REQUIRED),
+                'dayTimestamp' => new external_value(PARAM_INT, 'Timestamp for the new start day', VALUE_REQUIRED),
+            ]
+        );
+    }
+
+    /**
+     * Change the start day for the given calendar event to the day that
+     * corresponds with the provided timestamp.
+     *
+     * The timestamp only needs to be anytime within the desired day as only
+     * the date data is extracted from it.
+     *
+     * The event's original time of day is maintained, only the date is shifted.
+     *
+     * @param int $eventId Id of event to be updated
+     * @param int $dayTimestamp Timestamp for the new start day
+     * @return  array
+     */
+    public static function update_event_start_day($eventId, $dayTimestamp) {
+        global $USER, $PAGE;
+
+        // Parameter validation.
+        $params = self::validate_parameters(self::update_event_start_day_parameters(), [
+            'eventId' => $eventId,
+            'dayTimestamp' => $dayTimestamp,
+        ]);
+
+        $context = \context_user::instance($USER->id);
+        self::validate_context($context);
+
+        $vault = event_container::get_event_vault();
+        $event = $vault->get_event_by_id($eventId);
+        $newdate = usergetdate($dayTimestamp);
+        $startdatestring = implode('-', [$newdate['year'], $newdate['mon'], $newdate['mday']]);
+        $startdate = new DateTimeImmutable($startdatestring);
+        $event = local_api::update_event_start_day($event, $startdate);
+        $cache = new events_related_objects_cache([$event]);
+        $relatedobjects = [
+            'context' => $cache->get_context($event),
+            'course' => $cache->get_course($event),
+        ];
+        $exporter = new event_exporter($event, $relatedobjects);
+        $renderer = $PAGE->get_renderer('core_calendar');
+
+        return array('event' => $exporter->export($renderer));
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function update_event_start_day_returns() {
+        return new external_single_structure(
+            array(
+                'event' => event_exporter::get_read_structure()
+            )
+        );
+    }
 }
