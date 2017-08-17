@@ -554,7 +554,7 @@ class course_enrolment_manager {
     }
 
     /**
-     * Gets all of the enrolment plugins that are active for this course.
+     * Gets all of the enrolment plugins that are available for this course.
      *
      * @param bool $onlyenabled return only enabled enrol plugins
      * @return array

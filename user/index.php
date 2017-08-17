@@ -254,8 +254,14 @@ if ($bulkoperations) {
     }
 
     if ($context->id != $frontpagectx->id) {
-        $plugins = $manager->get_enrolment_plugins();
-        foreach ($plugins as $plugin) {
+        $instances = $manager->get_enrolment_instances();
+        $plugins = $manager->get_enrolment_plugins(false);
+        foreach ($instances as $key => $instance) {
+            if (!isset($plugins[$instance->enrol])) {
+                // Weird, some broken stuff in plugin.
+                continue;
+            }
+            $plugin = $plugins[$instance->enrol];
             $bulkoperations = $plugin->get_bulk_operations($manager);
 
             $pluginoptions = [];
