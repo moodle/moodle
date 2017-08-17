@@ -60,6 +60,9 @@ require_once("$CFG->libdir/filebrowser/file_info_context_module.php");
 */
 class file_browser {
 
+    /** @var array cached list of enrolled courses.  */
+    protected $enrolledcourses = null;
+
     /**
      * Looks up file_info instance
      *
@@ -234,4 +237,21 @@ class file_browser {
         return $level->get_file_info($component, $filearea, $itemid, $filepath, $filename);
     }
 
+    /**
+     * Check if user is enrolled into the course
+     *
+     * This function keeps a cache of enrolled courses because it may be called multiple times for many courses in one request
+     *
+     * @param int $courseid
+     * @return bool
+     */
+    public function is_enrolled($courseid) {
+        if ($this->enrolledcourses === null || PHPUNIT_TEST) {
+            // Since get_file_browser() returns a statically cached object we can't rely on cache
+            // inside the file_browser class in the unittests.
+            // TODO MDL-59964 remove this caching when it's implemented inside enrol_get_my_courses().
+            $this->enrolledcourses = enrol_get_my_courses(['id']);
+        }
+        return array_key_exists($courseid, $this->enrolledcourses);
+    }
 }

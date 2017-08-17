@@ -99,7 +99,7 @@ class file_info_context_module extends file_info {
             return null;
         }
 
-        if (!is_viewing($this->context) and !is_enrolled($this->context)) {
+        if (!is_viewing($this->context) and !$this->browser->is_enrolled($this->course->id)) {
             // no peaking here if not enrolled or inspector
             return null;
         }
