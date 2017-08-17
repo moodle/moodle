@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/helpers.php');
 
+use \core_calendar\local\event\container;
+
 /**
  * Class contaning unit tests for the calendar local API.
  *
@@ -857,5 +859,73 @@ class core_calendar_local_api_testcase extends advanced_testcase {
         // Make sure repeating events are not filtered out.
         $events = calendar_get_legacy_events($timestart, $timeend, true, true, true);
         $this->assertCount(3, $events);
+    }
+
+    /**
+     * Setting the start date on the calendar event should update the date
+     * of the event but should leave the time of day unchanged.
+     */
+    public function test_update_event_start_day_updates_date() {
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $roleid = $generator->create_role();
+        $context = \context_system::instance();
+        $originalStartTime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newStartDate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+        $mapper = container::get_event_mapper();
+
+        $generator->role_assign($roleid, $user->id, $context->id);
+        assign_capability('moodle/calendar:manageownentries', CAP_ALLOW, $roleid, $context, true);
+
+        $this->setUser($user);
+        $this->resetAfterTest(true);
+
+        $event = create_event([
+            'name' => 'Test event',
+            'userid' => $user->id,
+            'eventtype' => 'user',
+            'repeats' => 0,
+            'timestart' => $originalStartTime->getTimestamp(),
+        ]);
+        $event = $mapper->from_legacy_event_to_event($event);
+
+        $newEvent = \core_calendar\local\api::update_event_start_day($event, $newStartDate);
+        $actual = $newEvent->get_times()->get_start_time();
+
+        $this->assertEquals($expected->getTimestamp(), $actual->getTimestamp());
+    }
+
+    /**
+     * A user should not be able to update the start date of the event
+     * that they don't have the capabilities to modify.
+     */
+    public function test_update_event_start_day_no_permission() {
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $roleid = $generator->create_role();
+        $context = \context_system::instance();
+        $originalStartTime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newStartDate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+        $mapper = container::get_event_mapper();
+
+        $generator->role_assign($roleid, $user->id, $context->id);
+
+        $this->setUser($user);
+        $this->resetAfterTest(true);
+
+        $event = create_event([
+            'name' => 'Test event',
+            'userid' => $user->id,
+            'eventtype' => 'user',
+            'repeats' => 0,
+            'timestart' => $originalStartTime->getTimestamp(),
+        ]);
+        $event = $mapper->from_legacy_event_to_event($event);
+
+        assign_capability('moodle/calendar:manageownentries', CAP_PROHIBIT, $roleid, $context, true);
+        $this->expectException('moodle_exception');
+        $newEvent = \core_calendar\local\api::update_event_start_day($event, $newStartDate);
     }
 }
