@@ -24,6 +24,7 @@
 
 require_once('../config.php');
 require_once($CFG->dirroot.'/user/lib.php');
+require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->dirroot.'/enrol/locallib.php');
@@ -40,13 +41,15 @@ $page         = optional_param('page', 0, PARAM_INT); // Which page to show.
 $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT); // How many per page.
 $contextid    = optional_param('contextid', 0, PARAM_INT); // One of this or.
 $courseid     = optional_param('id', 0, PARAM_INT); // This are required.
+$newcourse    = optional_param('newcourse', false, PARAM_BOOL);
 $selectall    = optional_param('selectall', false, PARAM_BOOL); // When rendering checkboxes against users mark them all checked.
 
 $PAGE->set_url('/user/index.php', array(
         'page' => $page,
         'perpage' => $perpage,
         'contextid' => $contextid,
-        'id' => $courseid));
+        'id' => $courseid,
+        'newcourse' => $newcourse));
 
 if ($contextid) {
     $context = context::instance_by_id($contextid, MUST_EXIST);
@@ -292,5 +295,14 @@ foreach ($enrolbuttons as $enrolbutton) {
     echo $enrolrenderer->render($enrolbutton);
 }
 echo '</div>';
+
+if ($newcourse == 1) {
+    $str = get_string('proceedtocourse', 'enrol');
+    // Floated left so it goes under the enrol users button on mobile.
+    // The margin is to make it line up with the enrol users button when they are both on the same line.
+    $classes = 'm-y-1 pull-xs-left';
+    $url = course_get_url($course);
+    echo $OUTPUT->single_button($url, $str, 'GET', array('class' => $classes));
+}
 
 echo $OUTPUT->footer();
