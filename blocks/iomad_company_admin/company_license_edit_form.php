@@ -160,7 +160,6 @@ class company_license_form extends company_moodleform {
             $mform->addElement('selectyesno', 'program', get_string('licenseprogram', 'block_iomad_company_admin'));
             $mform->addHelpButton('program', 'licenseprogram', 'block_iomad_company_admin');
             $mform->addElement('date_selector', 'expirydate', get_string('licenseexpires', 'block_iomad_company_admin'));
-            $mform->setDefault('expirydate', strtotime('+ 1 year'));
 
             $mform->addHelpButton('expirydate', 'licenseexpires', 'block_iomad_company_admin');
             $mform->addRule('expirydate', get_string('missinglicenseexpires', 'block_iomad_company_admin'),
@@ -450,6 +449,11 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
         $event->trigger();
         redirect(new moodle_url('/blocks/iomad_company_admin/company_license_list.php'));
     }
+
+    $licenseinfo = new stdclass();
+    $licenseinfo->expirydate = strtotime('+ 1 year');
+
+    $mform->set_data($licenseinfo);
 
     // Display the form.
     echo $OUTPUT->header();
