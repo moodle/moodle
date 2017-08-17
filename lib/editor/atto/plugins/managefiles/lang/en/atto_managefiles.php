@@ -29,4 +29,5 @@ $string['managefiles'] = 'Manage files';
 $string['missingfiles'] = 'Missing files';
 $string['pluginname'] = 'Manage files';
 $string['unusedfilesdesc'] = 'The following embedded files are not used in the text area:';
+$string['unusedfilesremovalnotice'] = 'Any unused files will be automatically deleted when saving changes.';
 $string['unusedfilesheader'] = 'Unused files';
