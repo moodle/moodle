@@ -26,7 +26,10 @@ namespace core_calendar\external;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . "/calendar/lib.php");
+
 use \core\external\exporter;
+use \core_calendar\local\event\container;
 use \core_calendar\local\event\entities\event_interface;
 use \core_calendar\local\event\entities\action_event_interface;
 use \core_course\external\course_summary_exporter;
@@ -153,18 +156,19 @@ class event_exporter_base extends exporter {
      */
     protected static function define_other_properties() {
         return [
-            'url' => ['type' => PARAM_URL],
             'icon' => [
                 'type' => event_icon_exporter::read_properties_definition(),
-            ],
-            'action' => [
-                'type' => event_action_exporter::read_properties_definition(),
-                'optional' => true,
             ],
             'course' => [
                 'type' => course_summary_exporter::read_properties_definition(),
                 'optional' => true,
-            ]
+            ],
+            'canedit' => [
+                'type' => PARAM_BOOL
+            ],
+            'candelete' => [
+                'type' => PARAM_BOOL
+            ],
         ];
     }
 
@@ -177,36 +181,20 @@ class event_exporter_base extends exporter {
     protected function get_other_values(renderer_base $output) {
         $values = [];
         $event = $this->event;
+        $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
         $context = $this->related['context'];
-        if ($moduleproxy = $event->get_course_module()) {
-            $modulename = $moduleproxy->get('modname');
-            $moduleid = $moduleproxy->get('id');
-            $url = new \moodle_url(sprintf('/mod/%s/view.php', $modulename), ['id' => $moduleid]);
-        } else {
-            // TODO MDL-58866 We do not have any way to find urls for events outside of course modules.
-            global $CFG;
-            require_once($CFG->dirroot.'/course/lib.php');
-            $url = \course_get_url($this->related['course'] ?: SITEID);
-        }
         $timesort = $event->get_times()->get_sort_time()->getTimestamp();
         $iconexporter = new event_icon_exporter($event, ['context' => $context]);
 
-        $values['url'] = $url->out(false);
         $values['icon'] = $iconexporter->export($output);
-
-        if ($event instanceof action_event_interface) {
-            $actionrelated = [
-                'context' => $context,
-                'event' => $event
-            ];
-            $actionexporter = new event_action_exporter($event->get_action(), $actionrelated);
-            $values['action'] = $actionexporter->export($output);
-        }
 
         if ($course = $this->related['course']) {
             $coursesummaryexporter = new course_summary_exporter($course, ['context' => $context]);
             $values['course'] = $coursesummaryexporter->export($output);
         }
+
+        $values['canedit'] = calendar_edit_event_allowed($legacyevent);
+        $values['candelete'] = calendar_delete_event_allowed($legacyevent);
 
         return $values;
     }

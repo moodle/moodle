@@ -44,16 +44,11 @@ class calendar_event_exporter extends event_exporter_base {
      * @return array
      */
     protected static function define_other_properties() {
-        return [
-            'url' => ['type' => PARAM_URL],
-            'icon' => [
-                'type' => event_icon_exporter::read_properties_definition(),
-            ],
-            'course' => [
-                'type' => course_summary_exporter::read_properties_definition(),
-                'optional' => true,
-            ]
-        ];
+
+        $values = parent::define_other_properties();
+        $values['url'] = ['type' => PARAM_URL];
+
+        return $values;
     }
 
     /**
