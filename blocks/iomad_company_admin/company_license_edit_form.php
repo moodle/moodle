@@ -279,9 +279,15 @@ class company_license_form extends company_moodleform {
         if ($data['validlength'] < 1 ) {
             $errors['validlegth'] = get_string('invalidnumber', 'block_iomad_company_admin');
         }
+
         // Did we get passed any courses?
         if ($data['allocation'] < 1 ) {
             $errors['allocation'] = get_string('invalidnumber', 'block_iomad_company_admin');
+        }
+
+        // Is expiry date valid?
+        if ($data['expirydate'] < time()) {
+            $errors['expirydate'] = get_string('errorinvaliddate', 'calendar');
         }
         return $errors;
     }
