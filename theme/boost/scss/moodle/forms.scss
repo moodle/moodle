@@ -241,9 +241,24 @@ fieldset.coursesearchbox label {
 }
 
 /* Custom styles for autocomplete form element */
+/* These styles reserve a standard amount of space in the DOM to avoid flicker when the original select element is replaced */
+[data-fieldtype=autocomplete] select,
+[data-fieldtype=tags] select,
+.form-autocomplete-original-select {
+    visibility: hidden;
+    overflow: hidden;
+    width: 15rem;
+    height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    margin-top: $font-size-base * $line-height-base + $tag-padding-y;
+    vertical-align: bottom;
+}
 .form-autocomplete-selection {
-    margin: 0.2em;
-    min-height: 21px;
+    margin: $tag-padding-y;
+    // Padding top and bottom, plus m-b-1 and the 100% lineheight.
+    min-height: 2 * $tag-padding-y + 2 * $font-size-base;
 }
 
 .form-autocomplete-multiple [role=listitem] {
