@@ -191,7 +191,7 @@ class participants_table extends \table_sql {
         }
 
         $canreviewenrol = has_capability('moodle/course:enrolreview', $context);
-        if ($canreviewenrol) {
+        if ($canreviewenrol && $courseid != SITEID) {
             $columns[] = 'status';
             $headers[] = get_string('participationstatus', 'enrol');
             $this->no_sorting('status');
