@@ -23,7 +23,9 @@
     {
         "timestart": 1490320388,
         "description": "An random event description",
-        "eventtype": "open"
+        "eventtype": "User",
+        "source": "Ical imported",
+        "groupname": "Group 1"
     }
 }}
 <div data-region="summary-modal-container" data-event-id="{{id}}" data-event-title="{{name}}"
@@ -40,4 +42,7 @@
     {{#source}}
         <div>{{{source}}}</div>
     {{/source}}
+    {{#groupname}}
+        <div>{{{groupname}}}</div>
+    {{/groupname}}
 </div>
