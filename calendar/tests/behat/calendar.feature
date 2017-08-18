@@ -132,3 +132,30 @@ Feature: Perform basic calendar functionality
       | Description | Wait, this event isn't that great. |
     And I press "Save"
     And I should see "Mediocre event"
+
+  Scenario: Module events editing
+    Given I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And the following "activities" exist:
+      | activity | course | idnumber | name          | intro                   | timeopen      | timeclose     |
+      | choice   | C1     | choice1  | Test choice 1 | Test choice description | ##yesterday## | ##tomorrow##  |
+    And I add the "Calendar" block
+    When I follow "This month"
+    Then I should see "Choice Test choice 1 open"
+    And I should see "Choice Test choice 1 close"
+    When I click on "Choice Test choice 1 open" "link"
+    Then "Delete" "button" should not exist
+    And I should see "Open event"
+    And "Edit" "button" should exist
+    When I click on "Edit" "button"
+    And I wait to be redirected
+    Then I should see "Updating: Choice"
+    And I am on "Course 1" course homepage
+    And I follow "This month"
+    When I click on "Choice Test choice 1 close" "link"
+    Then "Delete" "button" should not exist
+    And I should see "Close event"
+    And "Edit" "button" should exist
+    When I click on "Edit" "button"
+    And I wait to be redirected
+    Then I should see "Updating: Choice"
