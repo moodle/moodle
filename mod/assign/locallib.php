@@ -8534,7 +8534,7 @@ class assign {
 
             // Fix the grades.
             $this->fix_null_grades();
-            set_config('has_rescaled_null_grades_' . $instance->id, 0, 'assign');
+            unset_config('has_rescaled_null_grades_' . $instance->id, 'assign');
 
             // Display the notice.
             $o .= $this->get_renderer()->notification(get_string('fixrescalednullgradesdone', 'assign'), 'notifysuccess');
