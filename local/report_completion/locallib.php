@@ -70,7 +70,7 @@ class report_completion {
         // Process them!
         $returnarr = array();
         foreach ($courses as $course) {
-            $coursecontext = context_course::instance($course->courseid);
+            $contextcourse = context_course::instance($course->courseid);
             $courseobj = new stdclass();
             $courseobj->id = $course->courseid;
 
