@@ -66,6 +66,10 @@ class event_exporter extends event_exporter_base {
             'type' => event_action_exporter::read_properties_definition(),
             'optional' => true,
         ];
+        $values['editurl'] = [
+            'type' => PARAM_URL,
+            'optional' => true,
+        ];
 
         return $values;
     }
