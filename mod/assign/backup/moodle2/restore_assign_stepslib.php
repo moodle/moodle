@@ -243,7 +243,10 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $flags->userid = $this->get_mappingid('user', $data->userid);
             $DB->insert_record('assign_user_flags', $flags);
         }
-
+        // Fix null grades that were rescaled.
+        if ($data->grade < 0 && $data->grade != -1) {
+            $data->grade = -1;
+        }
         $newitemid = $DB->insert_record('assign_grades', $data);
 
         // Note - the old contextid is required in order to be able to restore files stored in
