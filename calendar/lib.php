@@ -2435,9 +2435,10 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
  * Return the capability for editing calendar event.
  *
  * @param calendar_event $event event object
+ * @param bool $manualedit is the event being edited manually by the user
  * @return bool capability to edit event
  */
-function calendar_edit_event_allowed($event) {
+function calendar_edit_event_allowed($event, $manualedit = false) {
     global $USER, $DB;
 
     // Must be logged in.
@@ -2447,6 +2448,12 @@ function calendar_edit_event_allowed($event) {
 
     // Can not be using guest account.
     if (isguestuser()) {
+        return false;
+    }
+
+    if ($manualedit && !empty($event->modulename)) {
+        // A user isn't allowed to directly edit an event generated
+        // by a module.
         return false;
     }
 

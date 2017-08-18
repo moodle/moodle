@@ -193,7 +193,7 @@ class event_exporter_base extends exporter {
             $values['course'] = $coursesummaryexporter->export($output);
         }
 
-        $values['canedit'] = calendar_edit_event_allowed($legacyevent);
+        $values['canedit'] = calendar_edit_event_allowed($legacyevent, true);
         $values['candelete'] = calendar_delete_event_allowed($legacyevent);
 
         return $values;
