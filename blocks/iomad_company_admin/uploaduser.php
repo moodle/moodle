@@ -747,9 +747,21 @@ if ($mform->is_cancelled()) {
                 // Add the user to the company
                 $company->assign_user_to_company($user->id);
     
-                // Add the user to the company default hierarchy level.
-                company::assign_user_to_department($formdata->userdepartment, $user->id);
-    
+                // Do we have a department in the file?
+                if ($department = $DB->get_record('department', array('company' => $company->id,
+                                                                      'shortname' => $user->department))) {
+                    // Make sure the user can manage this department.
+                    if (company::can_manage_department($department->id)) {
+                        company::assign_user_to_department($department->id, $user->id);
+
+                    } else {
+                        // They get the one from the form.
+                        company::assign_user_to_department($formdata->userdepartment, $user->id);
+                    }
+                } else {
+                    company::assign_user_to_department($formdata->userdepartment, $user->id);
+                }
+
                 \core\event\user_created::create_from_userid($user->id)->trigger();
     
                 if ($bulk == 1 or $bulk == 3) {
@@ -1193,7 +1205,8 @@ class uu_progress_tracker {
                             'password',
                             'auth',
                             'enrolments',
-                            'deleted');
+                            'deleted',
+                            'department');
 
     public function __construct() {
     }
@@ -1214,6 +1227,7 @@ class uu_progress_tracker {
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('authentication').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('enrolments', 'enrol').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('delete').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('department', 'block_iomad_company_admin').'</th>';
         echo '</tr>';
         $this->_row = null;
     }
