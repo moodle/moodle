@@ -1034,6 +1034,13 @@ class block_iomad_company_admin_external extends external_api {
                              'used' => new external_value(PARAM_INT, 'Number allocated'),
                              'companyid' => new external_value(PARAM_INT, 'Company id'),
                              'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+                             'courses' => new external_multiple_structure(
+                                 new external_single_structure(
+                                        array(
+                                            'courseid'  => new external_value(PARAM_INT, 'Course ID'),
+                                        )
+                                 )
+                            ),
                         )
                     )
                 )
@@ -1065,9 +1072,15 @@ class block_iomad_company_admin_external extends external_api {
         foreach ($params['licenses'] as $license) {
             // Create the License record
             $licenseid = $DB->insert_record('companylicense', $license);
-            $newlicense = $DB->get_record('companylicense', array('id' => $licenseid));
+
+            // Deal with the courses.
+            foreach ($license->courses as $course) {
+                $DB->insert_record('companylicemse_courses', array('licenseid' => $licenseid,
+                                                                   'courseid' => $course->courseid));
+            }
 
             // Create an event to deal with an parent license allocations.
+            $newlicense = $DB->get_record('companylicense', array('id' => $licenseid));
             $eventother = array('licenseid' => $licenseid,
                                 'parentid' => $newlicense->parentid);
 
@@ -1077,6 +1090,7 @@ class block_iomad_company_admin_external extends external_api {
                                                                                             'other' => $eventother));
 
             $event->trigger();
+            $newlicense->courses = $license->courses;
             $licenseinfo[] = (array)$newlicense;
         }
 
@@ -1101,6 +1115,13 @@ class block_iomad_company_admin_external extends external_api {
                      'used' => new external_value(PARAM_INT, 'Number allocated'),
                      'companyid' => new external_value(PARAM_INT, 'Company id'),
                      'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+                     'courses' => new external_multiple_structure(
+                         new external_single_structure(
+                                array(
+                                    'courseid'  => new external_value(PARAM_INT, 'Course ID'),
+                                )
+                         )
+                    ),
                 )
             )
         );
