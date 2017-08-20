@@ -72,17 +72,29 @@ class companyrep{
 
         // Iterate over companies adding their managers.
         foreach ($companies as $company) {
+            $companymanagers = array();
             $managers = array();
             if ($companymanagers = $DB->get_records_sql("SELECT * from {company_users} WHERE
                                                   companyid = :companyid
-                                                  AND managertype != 0", array('companyid' => $company->id))) {
+                                                  AND managertype = 1", array('companyid' => $company->id))) {
                 foreach ($companymanagers as $companymanager) {
                     if ($user = $DB->get_record( 'user', array('id' => $companymanager->userid))) {
                         $managers[$user->id] = $user;
                     }
                 }
             }
-            $company->managers = $managers;
+            $company->managers['company'] = $managers;
+            $managers = array();
+            if ($companymanagers = $DB->get_records_sql("SELECT * from {company_users} WHERE
+                                                  companyid = :companyid
+                                                  AND managertype = 2", array('companyid' => $company->id))) {
+                foreach ($companymanagers as $companymanager) {
+                    if ($user = $DB->get_record( 'user', array('id' => $companymanager->userid))) {
+                        $managers[$user->id] = $user;
+                    }
+                }
+            }
+            $company->managers['department'] = $managers;
         }
     }
 

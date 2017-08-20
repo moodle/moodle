@@ -126,6 +126,7 @@ $strunsuspendcheck = get_string('unsuspendcompanycheck', 'block_iomad_company_ad
 $strenableecommerce = get_string('ecommerceenabled', 'block_iomad_company_admin');
 $strdisableecommerce = get_string('disableecommerce', 'block_iomad_company_admin');
 $strshowallusers = get_string('showallcompanies', 'block_iomad_company_admin');
+$stroverview = get_string('overview', 'local_report_companies');
 
 if (empty($CFG->loginhttps)) {
     $securewwwroot = $CFG->wwwroot;
@@ -334,6 +335,10 @@ if (!$companies) {
             $ecommercebutton = '';
         }
 
+        $overviewurl = new moodle_url($CFG->wwwroot . "/local/report_companies/index.php",
+                                    array('companyid' => $company->id));
+        $overviewurl = "<a class='btn btn-primary' href='$overviewurl'>$stroverview</a>";
+
         // Is the company suspended?
         if (!empty($company->suspended)) {
             $fullname = $company->name . ' (S)';
@@ -343,6 +348,7 @@ if (!$companies) {
         $table->data[] = array ("$fullname",
                             "$company->city",
                             "$company->country",
+                            $overviewurl,
                             $ecommercebutton . ' ' .
                             $suspendbutton);
     }

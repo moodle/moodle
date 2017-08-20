@@ -22,6 +22,7 @@ require_once('lib.php');
 require_login($SITE);
 $context = context_system::instance();
 iomad::require_capability('local/report_companies:view', $context);
+$companyid = optional_param('companyid', 0, PARAM_INT);
 
 
 // Url stuff.
@@ -54,54 +55,62 @@ companyrep::addcourses( $companies );
 
 // Iterate over companies.
 foreach ($companies as $company) {
-    echo "<div class=\"iomad_company\" />\n";
-    echo "<h2>{$company->name}</h2>";
-
-    // Managers.
-    echo "<div class=\"iomad_managers\" />\n";
-    if (empty($company->managers)) {
-        echo "<strong>".get_string('nomanagers', 'local_report_companies')."</strong>";
+    if (!empty($companyid && $company->id != $companyid)) {
+        continue;
     } else {
-        echo "<h4>".get_string('coursemanagers', 'local_report_companies')."</h4>\n";
-        companyrep::listusers( $company->managers );
+        echo "<div class=\"iomad_company\" />\n";
+        echo "<h2>{$company->name}</h2>";
+    
+        // Managers.
+        echo "<div class=\"iomad_managers\" />\n";
+        if (empty($company->managers)) {
+            echo "<strong>".get_string('nomanagers', 'local_report_companies')."</strong>";
+        } else {
+            echo "<h4>".get_string('coursemanagers', 'local_report_companies')."</h4>\n";
+            echo get_string('totalusercount', 'local_report_companies') . count($company->managers['company']);
+            companyrep::listusers( $company->managers['company'] );
+            echo "<h4>".get_string('departmentmanagers', 'local_report_companies')."</h4>\n";
+            echo get_string('totalusercount', 'local_report_companies') . count($company->managers['department']);
+            companyrep::listusers( $company->managers['department'] );
+        }
+        echo "</div>\n";
+    
+        // Users.
+        echo "<div class=\"iomad_users\" />\n";
+        if (empty($company->users)) {
+            echo "<strong>".get_string('nousers', 'local_report_companies')."</strong>";
+        } else {
+            echo "<h4>".get_string('courseusers', 'local_report_companies')."</h4>\n";
+            echo get_string('totalusercount', 'local_report_companies') . count($company->users);
+        }
+        echo "</div>\n";
+    
+        // Courses.
+        echo "<div class=\"iomad_courses\" />\n";
+        if (empty($company->courses)) {
+            echo "<strong>".get_string('nocourses', 'local_report_companies')."</strong>";
+        } else {
+            echo "<h4>".get_string('courses', 'local_report_companies')."</h4>\n";
+            echo get_string('totalcoursecount', 'local_report_companies'). count($company->courses);
+        }
+        echo "</div>\n";
+    
+        // Theme.
+        echo "<div class=\"iomad_Theme\" />\n";
+        if (empty($company->theme)) {
+            echo "<strong>".get_string('notheme', 'local_report_companies')."</strong>";
+        } else {
+            echo "<h4>".get_string('themeinfo', 'local_report_companies')."</h4>\n";
+            echo get_string('themedetails', 'local_report_companies'). $company->theme;
+            $screenshotpath = new moodle_url('/theme/image.php', array('theme' => $company->theme,
+                                                                       'image' => 'screenshot',
+                                                                       'component' => 'theme'));
+            echo '<p>'.html_writer::empty_tag('img', array('src' => $screenshotpath, 'alt' => $company->theme)) .'</p>';
+        }
+        echo "</div>\n";
+    
+        echo "</div>\n";
     }
-    echo "</div>\n";
-
-    // Users.
-    echo "<div class=\"iomad_users\" />\n";
-    if (empty($company->users)) {
-        echo "<strong>".get_string('nousers', 'local_report_companies')."</strong>";
-    } else {
-        echo "<h4>".get_string('courseusers', 'local_report_companies')."</h4>\n";
-        echo get_string('totalusercount', 'local_report_companies') . count($company->users);
-    }
-    echo "</div>\n";
-
-    // Courses.
-    echo "<div class=\"iomad_courses\" />\n";
-    if (empty($company->courses)) {
-        echo "<strong>".get_string('nocourses', 'local_report_companies')."</strong>";
-    } else {
-        echo "<h4>".get_string('courses', 'local_report_companies')."</h4>\n";
-        echo get_string('totalcoursecount', 'local_report_companies'). count($company->courses);
-    }
-    echo "</div>\n";
-
-    // Theme.
-    echo "<div class=\"iomad_Theme\" />\n";
-    if (empty($company->theme)) {
-        echo "<strong>".get_string('notheme', 'local_report_companies')."</strong>";
-    } else {
-        echo "<h4>".get_string('themeinfo', 'local_report_companies')."</h4>\n";
-        echo get_string('themedetails', 'local_report_companies'). $company->theme;
-        $screenshotpath = new moodle_url('/theme/image.php', array('theme' => $company->theme,
-                                                                   'image' => 'screenshot',
-                                                                   'component' => 'theme'));
-        echo '<p>'.html_writer::empty_tag('img', array('src' => $screenshotpath, 'alt' => $company->theme)) .'</p>';
-    }
-    echo "</div>\n";
-
-    echo "</div>\n";
 }
 
 echo $OUTPUT->footer();
