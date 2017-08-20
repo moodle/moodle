@@ -643,7 +643,7 @@ if (!$users) {
         if ($user->id != $USER->id) {
             if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
                  or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
-                $url = new moodle_url('/blocks/iomad_company_admin/', array(
+                $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
                     'delete' => $user->id,
                     'sesskey' => sesskey(),
                 ));
@@ -653,7 +653,7 @@ if (!$users) {
                     $strdelete
                 );
                 if (!empty($user->suspended)) {
-                    $url = new moodle_url('/blocks/iomad_company_admin/', array(
+                    $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
                         'unsuspend' => $user->id,
                         'sesskey' => sesskey(),
                     ));
@@ -663,7 +663,7 @@ if (!$users) {
                         $strunsuspend
                     );
                 } else {
-                    $url = new moodle_url('/blocks/iomad_company_admin/', array(
+                    $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
                         'suspend' => $user->id,
                         'sesskey' => sesskey(),
                     ));
