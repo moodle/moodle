@@ -71,9 +71,10 @@ class template_edit_form extends moodleform {
         $mform->setType('subject', PARAM_NOTAGS);
         $mform->addRule('subject', $strrequired, 'required');
 
-        $mform->addElement('textarea', 'body_editor', get_string('body', 'local_email'),
-                           'wrap="virtual" rows="50" cols="100"');
-        $mform->setType('body_editor', PARAM_NOTAGS);
+        $mform->addElement('editor', 'body_editor', get_string('body', 'local_email'),
+                           array('enable_filemanagement' => false,
+                                 'changeformat' => false));
+        $mform->setType('body_editor', PARAM_RAW);
         $mform->addRule('body_editor', $strrequired, 'required');
 
         $vars = EmailVars::vars();
@@ -196,7 +197,7 @@ if (!empty($SESSION->currenteditingcompany)) {
 
 // Set up the form.
 $mform = new template_edit_form($PAGE->url, $isadding, $companyid, $templateid, $templaterecord);
-$templaterecord->body_editor = $templaterecord->body;
+$templaterecord->body_editor = array('text' => $templaterecord->body, 'format' => 1);
 $mform->set_data($templaterecord);
 
 if ($mform->is_cancelled()) {
@@ -204,17 +205,21 @@ if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
     $data->userid = $USER->id;
-
+/*echo "<pre>";
+print_r($data);
+die;
+*/
     if ($isadding) {
         $data->companyid = $companyid;
         $data->name = $templatename;
+        $data->body = $data->body_editor['text']; 
         $templateid = $DB->insert_record('email_template', $data);
         $data->id = $templateid;
     } else {
         $data->id = $templateid;
+        $data->body = $data->body_editor['text']; 
         $DB->update_record('email_template', $data);
     }
-
     redirect($templatelist);
 }
 

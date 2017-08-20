@@ -262,7 +262,11 @@ class EmailTemplate {
             } else {
                 $supportuser->customheaders = '';
             }
-            return email_to_user($user, $supportuser, $email->subject, $email->body);
+            return email_to_user($user,
+                                 $supportuser,
+                                 $email->subject,
+                                 html_to_text($email->body),
+                                 $email->body);
 
         }
     }
@@ -289,7 +293,11 @@ class EmailTemplate {
             $supportuser->customheaders = '';
         }
 
-        return email_to_user($this->user, $supportuser, $subject, $body);
+        return email_to_user($this->user,
+                             $supportuser,
+                             $subject,
+                             html_to_text($body),
+                             $body);
     }
 
     /**
