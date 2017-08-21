@@ -71,6 +71,12 @@ class event_exporter extends event_exporter_base {
             'type' => PARAM_URL,
             'optional' => true,
         ];
+        $values['groupname'] = [
+            'type' => PARAM_RAW,
+            'optional' => true,
+            'default' => null,
+            'null' => NULL_ALLOWED
+        ];
 
         return $values;
     }
@@ -143,6 +149,15 @@ class event_exporter extends event_exporter_base {
                 }
                 $subscriptiondata->name = $subscription->name;
                 $values['subscription'] = json_encode($subscriptiondata);
+            }
+        }
+
+        if ($legacyevent->groupid) {
+            if ($group = calendar_get_group_cached($legacyevent->groupid)) {
+                $values['groupname'] = format_string($group->name, true,
+                        ['context' => \context_course::instance($group->courseid)]);
+            } else {
+                $values['groupname'] = null;
             }
         }
 
