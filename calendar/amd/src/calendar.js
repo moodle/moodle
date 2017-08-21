@@ -198,7 +198,7 @@ define([
             CalendarViewManager.reloadCurrentMonth();
         });
         body.on(CalendarEvents.updated, function() {
-            window.location.reload();
+            CalendarViewManager.reloadCurrentMonth();
         });
         body.on(CalendarEvents.editActionEvent, function(e, url) {
             // Action events needs to be edit directly on the course module.
