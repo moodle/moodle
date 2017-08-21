@@ -548,19 +548,25 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
  *   so name the fields you really need, which will
  *   be added and uniq'd
  *
+ * If $allaccessible is true, this will additionally return courses that the current user is not
+ * enrolled in, but can access because they are open to the user for other reasons (course view
+ * permission, currently viewing course as a guest, or course allows guest access without
+ * password).
+ *
  * @param string|array $fields
  * @param string $sort
  * @param int $limit max number of courses
  * @param array $courseids the list of course ids to filter by
+ * @param bool $allaccessible Include courses user is not enrolled in, but can access
  * @return array
  */
 function enrol_get_my_courses($fields = null, $sort = 'visible DESC,sortorder ASC',
-                              $limit = 0, $courseids = []) {
-    global $DB, $USER;
+          $limit = 0, $courseids = [], $allaccessible = false) {
+    global $DB, $USER, $CFG;
 
-    // Guest account does not have any courses
-    if (isguestuser() or !isloggedin()) {
-        return(array());
+    // Guest account does not have any enrolled courses.
+    if (!$allaccessible && (isguestuser() or !isloggedin())) {
+        return array();
     }
 
     $basefields = array('id', 'category', 'sortorder',
@@ -621,22 +627,85 @@ function enrol_get_my_courses($fields = null, $sort = 'visible DESC,sortorder AS
         $params = array_merge($params, $courseidsparams);
     }
 
-    //note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why we have the subselect there
+    $courseidsql = "";
+    // Logged-in, non-guest users get their enrolled courses.
+    if (!isguestuser() && isloggedin()) {
+        $courseidsql .= "
+                SELECT DISTINCT e.courseid
+                  FROM {enrol} e
+                  JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
+                 WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1
+                       AND (ue.timeend = 0 OR ue.timeend > :now2)";
+        $params['userid'] = $USER->id;
+        $params['active'] = ENROL_USER_ACTIVE;
+        $params['enabled'] = ENROL_INSTANCE_ENABLED;
+        $params['now1'] = round(time(), -2); // Improves db caching.
+        $params['now2'] = $params['now1'];
+    }
+
+    // When including non-enrolled but accessible courses...
+    if ($allaccessible) {
+        if (is_siteadmin()) {
+            // Site admins can access all courses.
+            $courseidsql = "SELECT DISTINCT c2.id AS courseid FROM {course} c2";
+        } else {
+            // If we used the enrolment as well, then this will be UNIONed.
+            if ($courseidsql) {
+                $courseidsql .= " UNION ";
+            }
+
+            // Include courses with guest access and no password.
+            $courseidsql .= "
+                    SELECT DISTINCT e.courseid
+                      FROM {enrol} e
+                     WHERE e.enrol = 'guest' AND e.password = '' AND e.status = :enabled2";
+            $params['enabled2'] = ENROL_INSTANCE_ENABLED;
+
+            // Include courses where the current user is currently using guest access (may include
+            // those which require a password).
+            $courseids = [];
+            $accessdata = get_user_accessdata($USER->id);
+            foreach ($accessdata['ra'] as $contextpath => $roles) {
+                if (array_key_exists($CFG->guestroleid, $roles)) {
+                    // Work out the course id from context path.
+                    $context = context::instance_by_id(preg_replace('~^.*/~', '', $contextpath));
+                    if ($context instanceof context_course) {
+                        $courseids[$context->instanceid] = true;
+                    }
+                }
+            }
+
+            // Include courses where the current user has moodle/course:view capability.
+            $courses = get_user_capability_course('moodle/course:view', null, false);
+            if (!$courses) {
+                $courses = [];
+            }
+            foreach ($courses as $course) {
+                $courseids[$course->id] = true;
+            }
+
+            // If there are any in either category, list them individually.
+            if ($courseids) {
+                list ($allowedsql, $allowedparams) = $DB->get_in_or_equal(
+                        array_keys($courseids), SQL_PARAMS_NAMED);
+                $courseidsql .= "
+                        UNION
+                       SELECT DISTINCT c3.id AS courseid
+                         FROM {course} c3
+                        WHERE c3.id $allowedsql";
+                $params = array_merge($params, $allowedparams);
+            }
+        }
+    }
+
+    // Note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why
+    // we have the subselect there.
     $sql = "SELECT $coursefields $ccselect
               FROM {course} c
-              JOIN (SELECT DISTINCT e.courseid
-                      FROM {enrol} e
-                      JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
-                     WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)
-                   ) en ON (en.courseid = c.id)
+              JOIN ($courseidsql) en ON (en.courseid = c.id)
            $ccjoin
              WHERE $wheres
           $orderby";
-    $params['userid']  = $USER->id;
-    $params['active']  = ENROL_USER_ACTIVE;
-    $params['enabled'] = ENROL_INSTANCE_ENABLED;
-    $params['now1']    = round(time(), -2); // improves db caching
-    $params['now2']    = $params['now1'];
 
     $courses = $DB->get_records_sql($sql, $params, 0, $limit);
 
