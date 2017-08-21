@@ -3534,6 +3534,7 @@ function calendar_output_fragment_event_form($args) {
     $html = '';
     $data = null;
     $eventid = isset($args['eventid']) ? clean_param($args['eventid'], PARAM_INT) : null;
+    $starttime = isset($args['starttime']) ? clean_param($args['starttime'], PARAM_INT) : null;
     $event = null;
     $hasformdata = isset($args['formdata']) && !empty($args['formdata']);
     $formoptions = [];
@@ -3544,6 +3545,10 @@ function calendar_output_fragment_event_form($args) {
 
     if (isset($args['haserror'])) {
         $formoptions['haserror'] = clean_param($args['haserror'], PARAM_BOOL);
+    }
+
+    if ($starttime) {
+        $formoptions['starttime'] = $starttime;
     }
 
     if (is_null($eventid)) {

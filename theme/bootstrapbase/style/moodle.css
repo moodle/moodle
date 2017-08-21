@@ -4774,6 +4774,9 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   visibility: visible;
   transition: opacity 0.15s 0.5s, visibility 0.15s 0.5s;
 }
+.clickable {
+  cursor: pointer;
+}
 /* admin.less */
 .formtable tbody th {
   font-weight: normal;
@@ -5618,6 +5621,9 @@ img.iconsmall {
 .path-calendar .maincalendar .calendarmonth td {
   height: 5em;
 }
+.path-calendar .maincalendar .calendarmonth .clickable:hover {
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
 .path-calendar .maincalendar .calendar-controls .previous,
 .path-calendar .maincalendar .calendar-controls .next {
   width: 30%;
@@ -5629,12 +5635,12 @@ img.iconsmall {
   width: 98%;
   margin: 10px auto;
 }
-.path-calendar .maincalendar .calendar_event_course,
-.path-calendar .maincalendar .calendar_event_site,
-.path-calendar .maincalendar .calendar_event_group,
-.path-calendar .maincalendar .calendar_event_user {
-  border-width: 1px 1px 1px 12px;
-  border-style: solid;
+.path-calendar .maincalendar .calendar_event_course:hover a,
+.path-calendar .maincalendar .calendar_event_site:hover a,
+.path-calendar .maincalendar .calendar_event_group:hover a,
+.path-calendar .maincalendar .calendar_event_user:hover a {
+  color: #003d5c;
+  text-decoration: underline;
 }
 .path-calendar .maincalendar .calendar_event_course {
   border-color: #ffd3bd;

@@ -42,6 +42,7 @@ class create extends \moodleform {
 
         $mform = $this->_form;
         $haserror = !empty($this->_customdata['haserror']);
+        $starttime = isset($this->_customdata['starttime']) ? $this->_customdata['starttime'] : 0;
         $eventtypes = calendar_get_all_allowed_types();
 
         $mform->setDisableShortforms();
@@ -58,7 +59,7 @@ class create extends \moodleform {
         $mform->setType('name', PARAM_TEXT);
 
         // Event time start field.
-        $mform->addElement('date_time_selector', 'timestart', get_string('date'));
+        $mform->addElement('date_time_selector', 'timestart', get_string('date'), ['defaulttime' => $starttime]);
 
         // Add the select elements for the available event types.
         $this->add_event_type_elements($mform, $eventtypes);

@@ -82,6 +82,9 @@ class day_exporter extends exporter {
             'timestamp' => [
                 'type' => PARAM_INT,
             ],
+            'neweventtimestamp' => [
+                'type' => PARAM_INT,
+            ],
             'istoday' => [
                 'type' => PARAM_BOOL,
                 'default' => false,
@@ -108,13 +111,26 @@ class day_exporter extends exporter {
      * @return array Keys are the property names, values are their values.
      */
     protected function get_other_values(renderer_base $output) {
+        $timestamp = $this->data[0];
+        // Need to account for user's timezone.
+        $usernow = usergetdate(time());
+        $today = new \DateTimeImmutable();
+        // The start time should use the day's date but the current
+        // time of the day (adjusted for user's timezone).
+        $neweventstarttime = $today->setTimestamp($timestamp)->setTime(
+            $usernow['hours'],
+            $usernow['minutes'],
+            $usernow['seconds']
+        );
+
         $return = [
-            'timestamp' => $this->data[0],
+            'timestamp' => $timestamp,
+            'neweventtimestamp' => $neweventstarttime->getTimestamp()
         ];
 
         $url = new moodle_url('/calendar/view.php', [
                 'view' => 'day',
-                'time' => $this->data[0],
+                'time' => $timestamp,
             ]);
         $return['viewdaylink'] = $url->out(false);
 
