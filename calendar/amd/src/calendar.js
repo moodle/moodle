@@ -195,7 +195,7 @@ define([
             window.location.reload();
         });
         body.on(CalendarEvents.deleted, function() {
-            window.location.reload();
+            CalendarViewManager.reloadCurrentMonth();
         });
         body.on(CalendarEvents.updated, function() {
             window.location.reload();

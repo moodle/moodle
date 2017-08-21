@@ -112,6 +112,9 @@ class month_exporter extends exporter {
             'nextperiod' => [
                 'type' => PARAM_INT,
             ],
+            'time' => [
+                'type' => PARAM_INT,
+            ]
         ];
     }
 
@@ -131,6 +134,7 @@ class month_exporter extends exporter {
             'navigation' => $this->get_navigation($output),
             'weeks' => $this->get_weeks($output),
             'daynames' => $this->get_day_names($output),
+            'time' => $this->calendar->time
         ];
     }
 

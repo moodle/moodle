@@ -48,30 +48,60 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
         };
 
         /**
+         * Refresh the month content.
+         *
+         * @param {Number} time The calendar time to be shown
+         * @param {Number} courseid The id of the course whose events are shown
+         * @return {promise}
+         */
+        var refreshMonthContent = function(time, courseid) {
+            return CalendarRepository.getCalendarMonthData(time, courseid)
+                .then(function(context) {
+                    return Templates.render('core_calendar/month_detailed', context);
+                })
+                .then(function(html, js) {
+                    return Templates.replaceNodeContents(SELECTORS.CALENDAR_MONTH_WRAPPER, html, js);
+                })
+                .fail(Notification.exception);
+        };
+
+        /**
          * Handle changes to the current calendar view.
          *
          * @param {String} url The calendar url to be shown
          * @param {Number} time The calendar time to be shown
          * @param {Number} courseid The id of the course whose events are shown
+         * @return {promise}
          */
         var changeMonth = function(url, time, courseid) {
-            CalendarRepository.getCalendarMonthData(time, courseid)
-            .then(function(context) {
-                window.history.pushState({}, '', url);
-                return Templates.render('core_calendar/month_detailed', context);
-            })
-            .then(function(html, js) {
-                return Templates.replaceNodeContents(SELECTORS.CALENDAR_MONTH_WRAPPER, html, js);
-            })
-            .done(function() {
-                $('body').trigger(CalendarEvents.monthChanged, [time, courseid]);
-            })
-            .fail(Notification.exception);
+            return refreshMonthContent(time, courseid)
+                .then(function() {
+                    window.history.pushState({}, '', url);
+                })
+                .then(function() {
+                    $('body').trigger(CalendarEvents.monthChanged, [time, courseid]);
+                });
+        };
+
+        /**
+         * Reload the current month view data.
+         *
+         * @return {promise}
+         */
+        var reloadCurrentMonth = function() {
+            var root = $(SELECTORS.ROOT),
+                courseid = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('courseid'),
+                time = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('current-time');
+
+            return refreshMonthContent(time, courseid);
         };
 
         return {
             init: function() {
                 registerEventListeners(SELECTORS.ROOT);
-            }
+            },
+            reloadCurrentMonth: reloadCurrentMonth,
+            changeMonth: changeMonth,
+            refreshMonthContent: refreshMonthContent
         };
     });
