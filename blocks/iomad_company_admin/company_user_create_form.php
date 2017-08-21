@@ -204,6 +204,7 @@ class user_edit_form extends company_moodleform {
                                                    array('timestamp' => time(),
                                                          'companyid' => $this->selectedcompany));
             $licenses = array('0' => get_string('nolicense', 'block_iomad_company_admin')) + $foundlicenses;
+            $licensecourses = array();
             if (count($foundlicenses) == 0) {
                 // No valid licenses.
                 $mform->addElement('html', '<div id="licensedetails"><b>' . get_string('nolicenses', 'block_iomad_company_admin') . '</b></div>');
@@ -242,12 +243,10 @@ class user_edit_form extends company_moodleform {
             $licensecourseselect->setMultiple(true);
             $mform->addElement('html', '</div>');
             if (!empty($mylicensedetails->program)) {
-                $mform->addElement('html', "</div>");
                 $licensecourseselect->setSelected($licensecourses);
             } else {
                 $licensecourseselect->setSelected(array());
             }
-            $mform->addElement('html', "</div></div>");
         }
 
         if (iomad::has_capability('block/iomad_company_admin:company_course_users', $systemcontext)) {
