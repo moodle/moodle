@@ -32,6 +32,8 @@ require_once($CFG->dirroot . '/course/format/weeks/lib.php');
 
 $help = "Guesses course start and end dates based on activity logs.
 
+IMPORTANT: Don't use this script if you keep previous academic years users enrolled in courses. Guesses would not be accurate.
+
 Options:
 --guessstart           Guess the course start date (default to true)
 --guessend             Guess the course end date (default to true)
@@ -183,10 +185,14 @@ function tool_analytics_calculate_course_dates($course, $options) {
 
                 $course->enddate = $guessedenddate;
 
-                if ($course->enddate > $course->startdate) {
-                    $notification .= PHP_EOL . '  ' . get_string('enddate') . ': ' . userdate($course->enddate);
-                } else {
+                $updateit = false;
+                if ($course->enddate < $course->startdate) {
                     $notification .= PHP_EOL . '  ' . get_string('errorendbeforestart', 'analytics', userdate($course->enddate));
+                } else if ($course->startdate + (YEARSECS + (WEEKSECS * 4)) > $course->enddate) {
+                    $notification .= PHP_EOL . '  ' . get_string('coursetoolong', 'analytics');
+                } else {
+                    $notification .= PHP_EOL . '  ' . get_string('enddate') . ': ' . userdate($course->enddate);
+                    $updateit = true;
                 }
 
                 if ($options['update']) {
