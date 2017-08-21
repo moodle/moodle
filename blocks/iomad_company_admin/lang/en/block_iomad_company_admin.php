@@ -316,6 +316,7 @@ $string['license_users_for'] = 'Users for license \'{$a}\' ';
 $string['licenseusers'] = 'User license allocations';
 $string['listroles'] = 'Show Iomad roles';
 $string['managecompanies'] = 'Manage companies';
+$string['managecompany'] = 'Manage company';
 $string['managecourses'] = 'Select';
 $string['managegroups'] = 'Manage company groups';
 $string['managelicenses'] = 'License management';

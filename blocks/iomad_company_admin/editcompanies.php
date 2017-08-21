@@ -126,6 +126,7 @@ $strunsuspendcheck = get_string('unsuspendcompanycheck', 'block_iomad_company_ad
 $strenableecommerce = get_string('ecommerceenabled', 'block_iomad_company_admin');
 $strdisableecommerce = get_string('disableecommerce', 'block_iomad_company_admin');
 $strshowallusers = get_string('showallcompanies', 'block_iomad_company_admin');
+$strmanage = get_string('managecompany', 'block_iomad_company_admin');
 $stroverview = get_string('overview', 'local_report_companies');
 
 if (empty($CFG->loginhttps)) {
@@ -317,6 +318,9 @@ if (!$companies) {
                                         array('suspend' => $company->id,
                                               'sesskey' => sesskey()));
             $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strsuspend</a>";
+            $manageurl = new moodle_url($CFG->wwwroot . "/local/iomad_dashboard/index.php",
+                                        array('company' => $company->id));
+            $managebutton = "<a class='btn btn-primary' href='$manageurl'>$strmanage</a>";
         }
 
         if (empty($CFG->commerce_admin_enableall)) {
@@ -348,7 +352,8 @@ if (!$companies) {
         $table->data[] = array ("$fullname",
                             "$company->city",
                             "$company->country",
-                            $overviewurl,
+                            $managebutton . ' ' .
+                            $overviewurl . ' ' .
                             $ecommercebutton . ' ' .
                             $suspendbutton);
     }
