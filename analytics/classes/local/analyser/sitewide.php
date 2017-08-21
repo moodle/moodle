@@ -57,8 +57,13 @@ abstract class sitewide extends base {
             }
 
             // We use merge but it is just a copy.
+            if ($includetarget) {
+                $filearea = \core_analytics\dataset_manager::LABELLED_FILEAREA;
+            } else {
+                $filearea = \core_analytics\dataset_manager::UNLABELLED_FILEAREA;
+            }
             $files[$timesplittingid] = \core_analytics\dataset_manager::merge_datasets(array($file), $this->modelid,
-                $timesplittingid, $this->options['evaluation'], $includetarget);
+                $timesplittingid, $filearea, $this->options['evaluation']);
         }
 
         return $files;

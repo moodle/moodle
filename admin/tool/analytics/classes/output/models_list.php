@@ -139,6 +139,7 @@ class models_list implements \renderable, \templatable {
                 $actionsmenu->add($icon);
             }
 
+            // Get predictions.
             if ($modeldata->enabled && !empty($modeldata->timesplitting)) {
                 $url = new \moodle_url('model.php', array('action' => 'getpredictions', 'id' => $model->get_id()));
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/notifications',
@@ -151,6 +152,14 @@ class models_list implements \renderable, \templatable {
                 $url = new \moodle_url('model.php', array('action' => 'log', 'id' => $model->get_id()));
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/report', get_string('viewlog', 'tool_analytics')),
                     get_string('viewlog', 'tool_analytics'));
+                $actionsmenu->add($icon);
+            }
+
+            // Export training data.
+            if (!$model->is_static() && $model->is_trained()) {
+                $url = new \moodle_url('model.php', array('action' => 'export', 'id' => $model->get_id()));
+                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/export',
+                    get_string('exporttrainingdata', 'tool_analytics')), get_string('export', 'tool_analytics'));
                 $actionsmenu->add($icon);
             }
 
