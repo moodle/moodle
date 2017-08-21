@@ -215,15 +215,9 @@ class client extends \oauth2_client {
         $this->store_token($accesstoken);
 
         if (isset($r->refresh_token)) {
-            $userinfo = $this->get_userinfo();
-
-            if ($userinfo['email'] == $systemaccount->get('email')) {
-                $systemaccount->set('refreshtoken', $r->refresh_token);
-                $systemaccount->update();
-                $this->refreshtoken = $r->refresh_token;
-            } else {
-                throw new moodle_exception('Attempt to store refresh token for non-system user.');
-            }
+            $systemaccount->set('refreshtoken', $r->refresh_token);
+            $systemaccount->update();
+            $this->refreshtoken = $r->refresh_token;
         }
 
         return true;
