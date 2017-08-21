@@ -37,6 +37,9 @@
     {{/description}}
     <h4>{{#str}} eventtype, core_calendar {{/str}}</h4>
     {{eventtype}}
+    {{#iscourseevent}}
+        <a href="{{url}}">{{course.shortname}}</a>
+    {{/iscourseevent}}
     {{#source}}
         <div>{{{source}}}</div>
     {{/source}}
