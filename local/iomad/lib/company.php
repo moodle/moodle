@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once(dirname(__FILE__) . '/../../../config.php');
+require_once(dirname(__FILE__) . '/iomad.php');
+require_once(dirname(__FILE__) . '/user.php');
+
 class company {
     public $id = 0;
 
@@ -2223,13 +2227,13 @@ class company {
      *              $user = stdclass();
      *
      **/
-    public static function autoenrol($user) {
+    public function autoenrol($user) {
         global $DB, $CFG, $SITE;
 
         // Get the courses which are assigned to the company which are not licensed.
         $courses = $DB->get_records_sql("SELECT courseid FROM {company_course} WHERE companyid = :companyid
                                          AND autoenrol = 1",
-                                         array('companyid' => $user->companyid));
+                                         array('companyid' => $this->id));
 
         // Are we also enrolling to unattached courses?
         if (!empty($CFG->local_iomad_signup_autoenrol_unassigned)) {
