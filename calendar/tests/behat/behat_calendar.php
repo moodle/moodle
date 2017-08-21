@@ -63,17 +63,18 @@ class behat_calendar extends behat_base {
         $eventname = $data->getRow(1);
         $eventname = $eventname[1];
 
-        // Click to create new event.
-        $this->execute("behat_general::i_wait_seconds", 1);
+        $this->execute("behat_general::wait_until_the_page_is_ready");
 
-        // Click to create new event.
-        $this->execute("behat_general::i_click_on", array(get_string('newevent', 'calendar'), "button"));
+        if ($this->running_javascript()) {
+            // Click to create new event.
+            $this->execute("behat_general::i_click_on", array(get_string('newevent', 'calendar'), "button"));
 
-        // Set form fields.
-        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
+            // Set form fields.
+            $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
 
-        // Save event.
-        $this->execute("behat_forms::press_button", get_string('save'));
+            // Save event.
+            $this->execute("behat_forms::press_button", get_string('save'));
+        }
     }
 
     /**

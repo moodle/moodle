@@ -1,4 +1,4 @@
-@core @core_calendar @javascript
+@core @core_calendar
 Feature: Perform basic calendar functionality
   In order to ensure the calendar works as expected
   As an admin
@@ -26,11 +26,14 @@ Feature: Perform basic calendar functionality
       | user | group |
       | student1 | G1 |
       | teacher1 | G1 |
-
-  Scenario: Create a site event
-    Given I log in as "admin"
+    And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Calendar" block
+    And I log out
+
+  @javascript
+  Scenario: Create a site event
+    Given I log in as "admin"
     And I create a calendar event with form data:
       | Type of event | site |
       | Event title | Really awesome event! |
@@ -44,21 +47,17 @@ Feature: Perform basic calendar functionality
     And I log in as "student2"
     And I follow "This month"
     And I should see "Really awesome event!"
-    And I log out
 
+  @javascript
   Scenario: Create a course event
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Calendar" block
-    And I log out
-    And I log in as "teacher1"
+    Given I log in as "teacher1"
     And I create a calendar event with form data:
       | Type of event | course |
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I log out
     And I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on "Course 1" course homepage
     And I follow "This month"
     And I click on "Really awesome event!" "link"
     And "C1" "link" should exist in the ".modal-body" "css_element"
@@ -66,74 +65,65 @@ Feature: Perform basic calendar functionality
     And I log out
     And I log in as "student2"
     And I follow "This month"
-    And I should not see "Really awesome event!"
-    And I log out
+    Then I should see "Really awesome event!"
 
+  @javascript
   Scenario: Create a group event
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Calendar" block
-    And I log out
-    And I log in as "teacher1"
+    Given I log in as "teacher1"
     And I create a calendar event with form data:
       | Type of event | group |
       | Event title | Really awesome event! |
       | Description | Come join this awesome event |
     And I log out
     And I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on "Course 1" course homepage
     And I follow "This month"
-    And I follow "Really awesome event!"
+    Then I follow "Really awesome event!"
 
+  @javascript
   Scenario: Create a user event
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Calendar" block
+    Given I log in as "teacher1"
     And I create a calendar event with form data:
       | Type of event | user |
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I log out
     And I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on "Course 1" course homepage
     And I follow "This month"
-    And I should not see "Really awesome event!"
+    Then I should not see "Really awesome event!"
 
+  @javascript
   Scenario: Delete an event
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Calendar" block
-    And I log out
-    And I log in as "teacher1"
+    Given I log in as "teacher1"
     And I create a calendar event with form data:
       | Type of event | user |
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I am on "Course 1" course homepage
-    And I follow "This month"
+    When I follow "This month"
     And I click on "Really awesome event!" "link"
     And I click on "Delete" "button"
     And I click on "Yes" "button"
     And I wait to be redirected
-    And I should not see "Really awesome event!"
+    Then I should not see "Really awesome event!"
 
+  @javascript
   Scenario: Edit an event
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Calendar" block
+    Given I log in as "teacher1"
     And I create a calendar event with form data:
       | Type of event | user |
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I am on "Course 1" course homepage
-    And I follow "This month"
+    When I follow "This month"
     And I click on "Really awesome event!" "link"
     And I click on "Edit" "button"
     And I set the following fields to these values:
       | Event title | Mediocre event :( |
       | Description | Wait, this event isn't that great. |
     And I press "Save"
-    And I should see "Mediocre event"
+    Then I should see "Mediocre event"
 
   Scenario: Module events editing
     Given I log in as "admin"
