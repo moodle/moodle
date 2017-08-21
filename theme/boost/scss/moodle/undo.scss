@@ -141,9 +141,9 @@ ol {
 
 // Dont allow z-index creep anywhere.
 .page-item {
-  &.active .page-link {
-    @include plain-hover-focus {
-      z-index: inherit;
+    &.active .page-link {
+        @include plain-hover-focus {
+            z-index: inherit;
+        }
     }
-  }
 }
