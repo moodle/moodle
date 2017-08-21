@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once($CFG->dirroot . '/repository/lib.php');
-require_once($CFG->libdir.'/flickrlib.php');
+require_once($CFG->libdir.'/flickrclient.php');
 
 /**
  * This plugin is used to access user's private flickr repository
@@ -34,7 +34,22 @@ require_once($CFG->libdir.'/flickrlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_flickr extends repository {
-    private $flickr;
+
+    /** @var flickr_client */
+    protected $flickr;
+
+    /** @var string oauth consumer key */
+    protected $api_key;
+
+    /** @var string oauth consumer secret */
+    protected $secret;
+
+    /** @var string oauth access token */
+    protected $accesstoken;
+
+    /** @var string oauth access token secret */
+    protected $accesstokensecret;
+
     public $photos;
 
     /**
@@ -53,44 +68,45 @@ class repository_flickr extends repository {
         $options['page']    = optional_param('p', 1, PARAM_INT);
         parent::__construct($repositoryid, $context, $options);
 
-        $this->setting = 'flickr_';
-
         $this->api_key = $this->get_option('api_key');
         $this->secret  = $this->get_option('secret');
 
-        $this->token = get_user_preferences($this->setting, '');
-        $this->nsid  = get_user_preferences($this->setting.'_nsid', '');
+        $this->accesstoken = get_user_preferences('repository_flickr_access_token');
+        $this->accesstokensecret = get_user_preferences('repository_flickr_access_token_secret');
 
-        $this->flickr = new phpFlickr($this->api_key, $this->secret, $this->token);
-
-        $frob  = optional_param('frob', '', PARAM_RAW);
-        if (empty($this->token) && !empty($frob)) {
-            $auth_info = $this->flickr->auth_getToken($frob);
-            $this->token = $auth_info['token'];
-            $this->nsid  = $auth_info['user']['nsid'];
-            set_user_preference($this->setting, $auth_info['token']);
-            set_user_preference($this->setting.'_nsid', $auth_info['user']['nsid']);
-        }
-
+        $callbackurl = new moodle_url('/repository/repository_callback.php', ['repo_id' => $repositoryid]);
+        $this->flickr = new flickr_client($this->api_key, $this->secret, $callbackurl);
+        $this->flickr->set_access_token($this->accesstoken, $this->accesstokensecret);
     }
 
     /**
+     * Check if the user has authorized us to make requests to Flickr API.
      *
      * @return bool
      */
     public function check_login() {
-        return !empty($this->token);
+
+        if (empty($this->accesstoken) || empty($this->accesstokensecret)) {
+            return false;
+
+        } else {
+            return true;
+        }
     }
 
     /**
+     * Purge the stored access token and related user data.
      *
-     * @return mixed
+     * @return string
      */
     public function logout() {
-        set_user_preference($this->setting, '');
-        set_user_preference($this->setting.'_nsid', '');
-        $this->token = '';
-        $this->nsid  = '';
+
+        set_user_preference('repository_flickr_access_token', null);
+        set_user_preference('repository_flickr_access_token_secret', null);
+
+        $this->accesstoken = null;
+        $this->accesstokensecret = null;
+
         return $this->print_login();
     }
 
@@ -143,77 +159,104 @@ class repository_flickr extends repository {
     }
 
     /**
+     * Show the interface to log in to Flickr..
      *
-     * @return null
+     * @return string|array
      */
     public function print_login() {
+
+        $reqtoken = $this->flickr->request_token();
+        $this->flickr->set_request_token_secret(['caller' => 'repository_flickr'], $reqtoken['oauth_token_secret']);
+
+        // Even when the Flick auth docs states the "perms" argument is
+        // optional, it does not work without it.
+        $authurl = new moodle_url($reqtoken['authorize_url'], array('perms' => 'read'));
+
         if ($this->options['ajax']) {
-            $ret = array();
-            $popup_btn = new stdClass();
-            $popup_btn->type = 'popup';
-            $popup_btn->url = $this->flickr->auth();
-            $ret['login'] = array($popup_btn);
-            return $ret;
+            return [
+                'login' => [
+                    [
+                        'type' => 'popup',
+                        'url' => $authurl->out(false),
+                    ],
+                ],
+            ];
+
         } else {
-            echo '<a target="_blank" href="'.$this->flickr->auth().'">'.get_string('login', 'repository').'</a>';
+            echo '<a target="_blank" href="'.$authurl->out().'">'.get_string('login', 'repository').'</a>';
         }
     }
 
     /**
-     * Converts result received from phpFlickr::photo_search to Filepicker/repository format
+     * Search for the user's photos at Flickr
      *
-     * @param mixed $photos
+     * @param string $searchtext Photos with title, description or tags containing the text will be returned
+     * @param int $page Page number to load
      * @return array
      */
-    private function build_list($photos) {
-        $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
-        $ret = array();
-        $ret['manage'] = $photos_url;
-        $ret['list']  = array();
-        $ret['pages'] = $photos['pages'];
-        $ret['total'] = $photos['total'];
-        $ret['perpage'] = $photos['perpage'];
-        $ret['page'] = $photos['page'];
-        if (!empty($photos['photo'])) {
-            foreach ($photos['photo'] as $p) {
-                if(empty($p['title'])) {
-                    $p['title'] = get_string('notitle', 'repository_flickr');
+    public function search($searchtext, $page = 0) {
+
+        $response = $this->flickr->call('photos.search', [
+            'user_id' => 'me',
+            'per_page' => 24,
+            'extras' => 'original_format,url_sq,url_o,date_upload,owner_name',
+            'page' => $page,
+            'text' => $searchtext,
+        ]);
+
+        if ($response === false) {
+            $this->logout();
+            return [];
+        }
+
+        // Convert the response to the format expected by the filepicker.
+
+        $ret = [
+            'manage' => 'https://www.flickr.com/photos/organize',
+            'list' => [],
+            'pages' => $response->photos->pages,
+            'total' => $response->photos->total,
+            'perpage' => $response->photos->perpage,
+            'page' => $response->photos->page,
+        ];
+
+        if (!empty($response->photos->photo)) {
+            foreach ($response->photos->photo as $p) {
+                if (empty($p->title)) {
+                    $p->title = get_string('notitle', 'repository_flickr');
                 }
-                if (isset($p['originalformat'])) {
-                    $format = $p['originalformat'];
+
+                if (isset($p->originalformat)) {
+                    $format = $p->originalformat;
                 } else {
                     $format = 'jpg';
                 }
                 $format = '.'.$format;
-                // append extensions to the files
-                if (substr($p['title'], strlen($p['title'])-strlen($format)) != $format) {
-                    $p['title'] .= $format;
+
+                // Append extension to the file name.
+                if (substr($p->title, strlen($p->title) - strlen($format)) != $format) {
+                    $p->title .= $format;
                 }
-                $ret['list'][] = array('title'=>$p['title'],'source'=>$p['id'],
-                    'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'),
-                    'thumbnail_width'=>75, 'thumbnail_height'=>75,
-                    'date'=>'', 'size'=>'unknown', 'url'=>$photos_url.$p['id']);
+
+                $ret['list'][] = [
+                    'title' => $p->title,
+                    'source' => $p->id,
+                    'id' => $p->id,
+                    'thumbnail' => $p->url_sq,
+                    'thumbnail_width' => $p->width_sq,
+                    'thumbnail_height' => $p->height_sq,
+                    'date' => $p->dateupload,
+                    'url' => $p->url_o,
+                    'author' => $p->ownername,
+                    'size' => null,
+                    'license' => '',
+                ];
             }
         }
-        return $ret;
-    }
 
-    /**
-     *
-     * @param string $search_text
-     * @param int $page
-     * @return array
-     */
-    public function search($search_text, $page = 0) {
-        $photos = $this->flickr->photos_search(array(
-            'user_id'=>$this->nsid,
-            'per_page'=>24,
-            'extras'=>'original_format',
-            'page'=>$page,
-            'text'=>$search_text
-            ));
-        $ret = $this->build_list($photos);
-        $ret['list'] = array_filter($ret['list'], array($this, 'filter')); // TODO this breaks pagination
+        // Filter file listing to display specific types only.
+        $ret['list'] = array_filter($ret['list'], array($this, 'filter'));
+
         return $ret;
     }
 
@@ -227,45 +270,8 @@ class repository_flickr extends repository {
         return $this->search('', $page);
     }
 
-    /**
-     * Return photo url by given photo id
-     * @param string $photoid
-     * @return string
-     */
-    private function build_photo_url($photoid) {
-        $bestsize = $this->get_best_size($photoid);
-        if (!isset($bestsize['source'])) {
-            throw new repository_exception('cannotdownload', 'repository');
-        }
-        return $bestsize['source'];
-    }
-
-    /**
-     * Returns the best size for a photo
-     *
-     * @param string $photoid the photo identifier
-     * @return array of information provided by the API
-     */
-    protected function get_best_size($photoid) {
-        if (!isset(self::$sizes[$photoid])) {
-            // Sizes are returned from smallest to greatest.
-            self::$sizes[$photoid] = $this->flickr->photos_getSizes($photoid);
-        }
-        $sizes = self::$sizes[$photoid];
-        $bestsize = array();
-        if (is_array($sizes)) {
-            while ($bestsize = array_pop($sizes)) {
-                // Make sure the source is set. Exit the loop if found.
-                if (isset($bestsize['source'])) {
-                    break;
-                }
-            }
-        }
-        return $bestsize;
-    }
-
     public function get_link($photoid) {
-        return $this->build_photo_url($photoid);
+        return $this->flickr->get_photo_url($photoid);
     }
 
     /**
@@ -275,8 +281,7 @@ class repository_flickr extends repository {
      * @return string
      */
     public function get_file($photoid, $file = '') {
-        $url = $this->build_photo_url($photoid);
-        return parent::get_file($url, $file);
+        return parent::get_file($this->flickr->get_photo_url($photoid), $file);
     }
 
     /**
@@ -344,6 +349,25 @@ class repository_flickr extends repository {
      * @return string|null
      */
     public function get_file_source_info($photoid) {
-        return $this->build_photo_url($photoid);
+        return $this->flickr->get_photo_url($photoid);
+    }
+
+    /**
+     * Handle the oauth authorize callback
+     *
+     * This is to exchange the approved request token for an access token.
+     */
+    public function callback() {
+
+        $token = required_param('oauth_token', PARAM_RAW);
+        $verifier = required_param('oauth_verifier', PARAM_RAW);
+        $secret = $this->flickr->get_request_token_secret(['caller' => 'repository_flickr']);
+
+        // Exchange the request token for the access token.
+        $accesstoken = $this->flickr->get_access_token($token, $secret, $verifier);
+
+        // Store the access token and the access token secret in the user preferences.
+        set_user_preference('repository_flickr_access_token', $accesstoken['oauth_token']);
+        set_user_preference('repository_flickr_access_token_secret', $accesstoken['oauth_token_secret']);
     }
 }
