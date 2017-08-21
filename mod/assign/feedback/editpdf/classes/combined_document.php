@@ -106,6 +106,7 @@ class combined_document {
                     case \core_files\conversion::STATUS_IN_PROGRESS:
                     case \core_files\conversion::STATUS_PENDING:
                         $pending = true;
+                        break;
 
                     case \core_files\conversion::STATUS_FAILED:
                         return self::STATUS_FAILED;
