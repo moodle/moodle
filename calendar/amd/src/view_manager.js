@@ -77,9 +77,11 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
             return refreshMonthContent(time, courseid)
                 .then(function() {
                     window.history.pushState({}, '', url);
+                    return arguments;
                 })
                 .then(function() {
                     $('body').trigger(CalendarEvents.monthChanged, [time, courseid]);
+                    return arguments;
                 });
         };
 
