@@ -312,7 +312,6 @@ class userrep {
                 $DB->execute("DELETE FROM {lesson_attempts} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
                 $DB->execute("DELETE FROM {lesson_grades} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
                 $DB->execute("DELETE FROM {lesson_branch} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
-                $DB->execute("DELETE FROM {lesson_high_scores} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
                 $DB->execute("DELETE FROM {lesson_timer} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
             }
         }
