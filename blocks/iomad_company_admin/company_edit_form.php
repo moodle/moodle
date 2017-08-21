@@ -282,7 +282,7 @@ class company_edit_form extends company_moodleform {
         // Only show the Appearence section if the theme is iomad or you have abilities
         // to change that.
         if (iomad::has_capability('block/iomad_company_admin:company_edit_appearance', $context) ||
-            if (strpos($this->companyrecord->theme, 'iomad') || $ischild) {
+             preg_match('/iomad/', $this->companyrecord->theme) || $ischild) {
 
             $mform->addElement('header', 'appearance',
                                     get_string('appearance', 'block_iomad_company_admin'));
@@ -325,7 +325,7 @@ class company_edit_form extends company_moodleform {
             }
 
             // If theme is already set to a real theme, dont show this.
-            if ($this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'iomadbootstrap' || $this->companyrecord->theme == 'iomadboost' || $ischild) {
+            if ( preg_match('/iomad/', $this->companyrecord->theme) || $ischild) {
                 $mform->addElement('HTML', get_string('theoptionsbelow',
                                                       'block_iomad_company_admin'));
                 $mform->addElement('filemanager', 'companylogo',
