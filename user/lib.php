@@ -1153,19 +1153,21 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
     }
 
     if (isset($course)) {
-        $sharedcourses = array($course);
+        $userscourses = array($course);
     } else {
-        $sharedcourses = enrol_get_shared_courses($USER->id, $user->id, true);
+        // This returns context information, so we can preload below.
+        $userscourses = enrol_get_all_users_courses($user->id);
     }
 
-    if (empty($sharedcourses)) {
+    if (empty($userscourses)) {
         return false;
     }
 
-    foreach ($sharedcourses as $sharedcourse) {
-        $coursecontext = context_course::instance($sharedcourse->id);
+    foreach ($userscourses as $userscourse) {
+        context_helper::preload_from_record($userscourse);
+        $coursecontext = context_course::instance($userscourse->id);
         if (has_capability('moodle/user:viewdetails', $coursecontext)) {
-            if (!groups_user_groups_visible($sharedcourse, $user->id)) {
+            if (!groups_user_groups_visible($userscourse, $user->id)) {
                 // Not a member of the same group.
                 continue;
             }
