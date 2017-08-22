@@ -232,7 +232,7 @@ class oauth_helper {
         //     oauth_token_secret
         $result = $this->parse_result($content);
         if (empty($result['oauth_token'])) {
-            throw new moodle_exception('Error while requesting an oauth token');
+            throw new moodle_exception('oauth1requesttoken', 'core_error', '', null, $content);
         }
         // Build oauth authorize url.
         $result['authorize_url'] = $this->authorize_url . '?oauth_token='.$result['oauth_token'];
@@ -265,6 +265,11 @@ class oauth_helper {
         unset($params['oauth_callback']);
         $content = $this->http->post($this->access_token_api, $params, $this->http_options);
         $keys = $this->parse_result($content);
+
+        if (empty($keys['oauth_token']) || empty($keys['oauth_token_secret'])) {
+            throw new moodle_exception('oauth1accesstoken', 'core_error', '', null, $content);
+        }
+
         $this->set_access_token($keys['oauth_token'], $keys['oauth_token_secret']);
         return $keys;
     }
