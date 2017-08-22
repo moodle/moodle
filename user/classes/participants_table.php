@@ -293,18 +293,13 @@ class participants_table extends \table_sql {
         global $OUTPUT;
 
         $roles = isset($this->allroleassignments[$data->id]) ? $this->allroleassignments[$data->id] : [];
-        $getrole = function($role) {
-            return $role->roleid;
-        };
-        $ids = array_values(array_unique(array_map($getrole, $roles)));
-
         $editable = new \core_user\output\user_roles_editable($this->course,
                                                               $this->context,
                                                               $data,
                                                               $this->allroles,
                                                               $this->assignableroles,
                                                               $this->profileroles,
-                                                              $ids);
+                                                              $roles);
 
         return $OUTPUT->render_from_template('core/inplace_editable', $editable->export_for_template($OUTPUT));
     }
