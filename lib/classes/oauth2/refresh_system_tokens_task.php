@@ -25,6 +25,7 @@
 namespace core\oauth2;
 
 use \core\task\scheduled_task;
+use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -84,7 +85,14 @@ class refresh_system_tokens_task extends scheduled_task {
         $issuers = \core\oauth2\api::get_all_issuers();
         foreach ($issuers as $issuer) {
             if ($issuer->is_system_account_connected()) {
-                if (!\core\oauth2\api::get_system_oauth_client($issuer)) {
+                try {
+                    // Try to get an authenticated client; renew token if necessary.
+                    // Returns false or throws a moodle_exception on error.
+                    $success = \core\oauth2\api::get_system_oauth_client($issuer);
+                } catch (moodle_exception $e) {
+                    $success = false;
+                }
+                if ($success === false) {
                     $this->notify_admins($issuer);
                 }
             }
