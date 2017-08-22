@@ -50,6 +50,14 @@ class core_course_renderer extends plugin_renderer_base {
     protected $strings;
 
     /**
+     * Whether a category content is being initially rendered with children. This is mainly used by the
+     * core_course_renderer::corsecat_tree() to render the appropriate action for the Expand/Collapse all link on
+     * page load.
+     * @var bool
+     */
+    protected $categoryexpandedonload = false;
+
+    /**
      * Override the constructor so that we can initialise the string cache
      *
      * @param moodle_page $page
@@ -1511,6 +1519,8 @@ class core_course_renderer extends plugin_renderer_base {
             $classes[] = 'loaded';
             if (!empty($categorycontent)) {
                 $classes[] = 'with_children';
+                // Category content loaded with children.
+                $this->categoryexpandedonload = true;
             }
         }
 
@@ -1557,6 +1567,8 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function coursecat_tree(coursecat_helper $chelper, $coursecat) {
+        // Reset the category expanded flag for this course category tree first.
+        $this->categoryexpandedonload = false;
         $categorycontent = $this->coursecat_category_content($chelper, $coursecat, 0);
         if (empty($categorycontent)) {
             return '';
@@ -1572,10 +1584,17 @@ class core_course_renderer extends plugin_renderer_base {
                 'collapseexpand',
             );
 
+            // Check if the category content contains subcategories with children's content loaded.
+            if ($this->categoryexpandedonload) {
+                $classes[] = 'collapse-all';
+                $linkname = get_string('collapseall');
+            } else {
+                $linkname = get_string('expandall');
+            }
+
             // Only show the collapse/expand if there are children to expand.
             $content .= html_writer::start_tag('div', array('class' => 'collapsible-actions'));
-            $content .= html_writer::link('#', get_string('expandall'),
-                    array('class' => implode(' ', $classes)));
+            $content .= html_writer::link('#', $linkname, array('class' => implode(' ', $classes)));
             $content .= html_writer::end_tag('div');
             $this->page->requires->strings_for_js(array('collapseall', 'expandall'), 'moodle');
         }
