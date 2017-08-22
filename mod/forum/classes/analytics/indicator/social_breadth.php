@@ -36,12 +36,14 @@ defined('MOODLE_INTERNAL') || die();
 class social_breadth extends activity_base {
 
     /**
-     * get_name
+     * Returns the name.
      *
-     * @return string
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    public static function get_name() {
-        return get_string('indicator:socialbreadthforum', 'mod_forum');
+    public static function get_name() : \lang_string {
+        return new \lang_string('indicator:socialbreadth', 'mod_forum');
     }
 
     /**

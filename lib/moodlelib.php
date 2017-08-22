@@ -9990,4 +9990,22 @@ class lang_string {
         $this->forcedstring = true;
         return array('forcedstring', 'string', 'lang');
     }
+
+    /**
+     * Returns the identifier.
+     *
+     * @return string
+     */
+    public function get_identifier() {
+        return $this->identifier;
+    }
+
+    /**
+     * Returns the component.
+     *
+     * @return string
+     */
+    public function get_component() {
+        return $this->component;
+    }
 }

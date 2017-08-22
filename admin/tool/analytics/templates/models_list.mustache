@@ -33,14 +33,66 @@
         "models": [
             {
                 "target": "Prevent devs at risk",
-                "enabled": 1,
-                "indicators": [
-                    "Indicator 1",
-                    "Indicator 2",
-                    "Indicator 3",
-                    "Indicator 4"
+                "targethelp": [
+                    {
+                        "title": "Help with something",
+                        "url": "http://example.org/help",
+                        "linktext": "",
+                        "icon":{
+                            "extraclasses": "iconhelp",
+                            "attributes": [
+                                {"name": "src", "value": "../../../pix/help.svg"},
+                                {"name": "alt", "value": "Help icon"}
+                            ]
+                        }
+                    }
                 ],
+                "enabled": 1,
+                "indicators": [{
+                    "name": "Indicator 1",
+                    "help": [{
+                            "title": "Help with something",
+                            "url": "http://example.org/help",
+                            "linktext": "",
+                            "icon":{
+                                "extraclasses": "iconhelp",
+                                "attributes": [
+                                    {"name": "src", "value": "../../../pix/help.svg"},
+                                    {"name": "alt", "value": "Help icon"}
+                                ]
+                            }
+                        }]
+                    },
+                    {
+                    "name": "Indicator 2",
+                    "help": [{
+                            "title": "Help with something",
+                            "url": "http://example.org/help",
+                            "linktext": "",
+                            "icon":{
+                                "extraclasses": "iconhelp",
+                                "attributes": [
+                                    {"name": "src", "value": "../../../pix/help.svg"},
+                                    {"name": "alt", "value": "Help icon"}
+                                ]
+                            }
+                        }]
+                    }],
                 "timesplitting": "Quarters",
+                "timesplittinghelp": [
+                    {
+                        "title": "Help with something",
+                        "url": "http://example.org/help",
+                        "linktext": "",
+                        "icon":{
+                            "extraclasses": "iconhelp",
+                            "attributes": [
+                                {"name": "src", "value": "../../../pix/help.svg"},
+                                {"name": "alt", "value": "Help icon"}
+                            ]
+                        }
+                    }
+                ],
                 "noinsights": "No insights available yet"
             }
         ],
@@ -69,7 +121,12 @@
         <tbody>
         {{#models}}
             <tr>
-                <td>{{target}}</td>
+                <td>
+                    {{target}}
+                    {{#targethelp}}
+                        {{>core/help_icon}}
+                    {{/targethelp}}
+                </td>
                 <td>
                     {{#enabled}}
                         {{#pix}}i/checked, core, {{#str}}yes{{/str}}{{/pix}}
@@ -81,12 +138,25 @@
                 <td>
                     <ul>
                     {{#indicators}}
-                        <li>{{.}}</li>
+                        <li>
+                            {{name}}
+                            {{#help}}
+                                {{>core/help_icon}}
+                            {{/help}}
+                        </li>
                     {{/indicators}}
                     </ul>
                 </td>
                 <td>
-                    {{#timesplitting}}{{timesplitting}}{{/timesplitting}}{{^timesplitting}}{{#str}}notdefined, tool_analytics{{/str}}{{/timesplitting}}
+                    {{#timesplitting}}
+                        {{timesplitting}}
+                        {{#timesplittinghelp}}
+                            {{>core/help_icon}}
+                        {{/timesplittinghelp}}
+                    {{/timesplitting}}
+                    {{^timesplitting}}
+                        {{#str}}notdefined, tool_analytics{{/str}}
+                    {{/timesplitting}}
                 </td>
                 <td>
                     {{! models_list renderer is responsible of sending one or the other}}

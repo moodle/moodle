@@ -77,14 +77,15 @@ abstract class base {
     abstract protected function define_ranges();
 
     /**
-     * The time splitting method name.
+     * Returns a lang_string object representing the name for the time splitting method.
      *
-     * It is very recommendable to overwrite this method as this name appears in the UI.
-     * @return string
+     * Used as column identificator.
+     *
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    public function get_name() {
-        return $this->get_id();
-    }
+    public static abstract function get_name() : \lang_string;
 
     /**
      * Returns the time splitting method id.

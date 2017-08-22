@@ -41,12 +41,14 @@ require_once($CFG->dirroot . '/completion/completion_completion.php');
 class course_dropout extends \core_analytics\local\target\binary {
 
     /**
-     * get_name
+     * Returns the name.
      *
-     * @return string
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    public static function get_name() {
-        return get_string('target:coursedropout');
+    public static function get_name() : \lang_string {
+        return new \lang_string('target:coursedropout');
     }
 
     /**

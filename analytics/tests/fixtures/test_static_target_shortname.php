@@ -39,6 +39,20 @@ require_once(__DIR__ . '/test_target_shortname.php');
 class test_static_target_shortname extends test_target_shortname {
 
     /**
+     * Returns a lang_string object representing the name for the indicator.
+     *
+     * Used as column identificator.
+     *
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
+     */
+    public static function get_name() : \lang_string {
+        // Using a string that exists and contains a corresponding '_help' string.
+        return new \lang_string('allowstealthmodules');
+    }
+
+    /**
      * based_on_assumptions
      *
      * @return bool

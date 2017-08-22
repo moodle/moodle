@@ -36,12 +36,14 @@ defined('MOODLE_INTERNAL') || die();
 class any_write_action extends \core_analytics\local\indicator\binary {
 
     /**
-     * get_name
+     * Returns the name.
      *
-     * @return string
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    public static function get_name() {
-        return get_string('indicator:anywrite');
+    public static function get_name() : \lang_string {
+        return new \lang_string('indicator:anywrite');
     }
 
     /**
