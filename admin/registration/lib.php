@@ -282,7 +282,7 @@ class registration_manager {
         $siteinfo['url'] = $CFG->wwwroot;
         // Mobile related information.
         $siteinfo['mobileservicesenabled'] = 0;
-        $siteinfo['mobilenotificacionsenabled'] = 0;
+        $siteinfo['mobilenotificationsenabled'] = 0;
         $siteinfo['registereduserdevices'] = 0;
         $siteinfo['registeredactiveuserdevices'] = 0;
         if (!empty($CFG->enablewebservices) && !empty($CFG->enablemobilewebservice)) {
@@ -291,7 +291,7 @@ class registration_manager {
             $airnotifierextpath = $CFG->dirroot . '/message/output/airnotifier/externallib.php';
             if (file_exists($airnotifierextpath)) { // Maybe some one uninstalled the plugin.
                 require_once($airnotifierextpath);
-                $siteinfo['mobilenotificacionsenabled'] = message_airnotifier_external::is_system_configured();
+                $siteinfo['mobilenotificationsenabled'] = message_airnotifier_external::is_system_configured();
                 $siteinfo['registeredactiveuserdevices'] = $DB->count_records('message_airnotifier_devices', array('enable' => 1));
             }
         }
