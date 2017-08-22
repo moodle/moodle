@@ -65,7 +65,7 @@ Feature: Perform basic calendar functionality
     And I log out
     And I log in as "student2"
     And I follow "This month"
-    Then I should see "Really awesome event!"
+    Then I should not see "Really awesome event!"
 
   @javascript
   Scenario: Create a group event
@@ -125,13 +125,13 @@ Feature: Perform basic calendar functionality
     And I press "Save"
     Then I should see "Mediocre event"
 
+  @javascript
   Scenario: Module events editing
     Given I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
     And the following "activities" exist:
       | activity | course | idnumber | name          | intro                   | timeopen      | timeclose     |
       | choice   | C1     | choice1  | Test choice 1 | Test choice description | ##yesterday## | ##tomorrow##  |
-    And I add the "Calendar" block
     When I follow "This month"
     Then I should see "Choice Test choice 1 open"
     And I should see "Choice Test choice 1 close"
