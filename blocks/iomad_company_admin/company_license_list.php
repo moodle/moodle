@@ -151,10 +151,12 @@ if ($departmentid == $companydepartment->id) {
 
     // Do we have any child companies?
     if ($childcompanies = $company->get_child_companies_recursive()) {
+        $showcompanies = true;
         $gotchildren = true;
         array_unshift($table->head, get_string('company', 'block_iomad_company_admin'));
         $childsql = "OR companyid IN (" . join(',', array_keys($childcompanies)) . ")";
     } else {
+        $showcompanies = false;
         $gotchildren = false;
         $childsql = "";
     }
@@ -179,6 +181,13 @@ if ($departmentid == $companydepartment->id) {
         } else {
             $deletebutton = "";
             $editbutton = "";
+        }
+        // does the company the license is allocated to have any kids?
+        $licensecompany = new company($license->companyid);
+        if ($childcompanies = $licensecompany->get_child_companies_recursive()) {
+            $gotchildren = true;
+        } else {
+            $gotchildren = false;
         }
 
         // Set up the edit buttons.
@@ -231,11 +240,11 @@ if ($departmentid == $companydepartment->id) {
                            $validlength,
                            $allocation,
                            $used,
-                           $editbutton,
-                           $splitbutton,
+                           $editbutton . ' ' .
+                           $splitbutton . ' ' .
                            $deletebutton);
         // Add in the company name if we have any.
-        if ($gotchildren) {
+        if ($showcompanies) {
             $liccompany = new company($license->companyid);
             array_unshift($dataarray, $liccompany->get_name());
         }
