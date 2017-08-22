@@ -109,7 +109,7 @@ class models_list implements \renderable, \templatable {
                     $modeldata->timesplittinghelp = $helpicon->export_for_template($output);
                 } else {
                     // We really want to encourage developers to add help to their time splitting methods.
-                    debugging("The time splitting method '{$modeldata->timesplitting}' should include a '{$identifier}_help
+                    debugging("The time splitting method '{$modeldata->timesplitting}' should include a '{$identifier}_help'
                         string to describe its purpose.", DEBUG_DEVELOPER);
                 }
             }
