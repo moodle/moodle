@@ -568,7 +568,8 @@ class question_usage_by_activity {
         }
 
         foreach ($this->questionattempts as $qa) {
-            $qa->start($this->preferredbehaviour, $qa->select_variant($variantstrategy));
+            $qa->start($this->preferredbehaviour, $qa->select_variant($variantstrategy), array(),
+                    $timestamp, $userid);
             $this->observer->notify_attempt_modified($qa);
         }
     }
