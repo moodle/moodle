@@ -59,33 +59,41 @@ define(['core/templates',
     QuickEnrolment.prototype.initModal = function() {
         var triggerButtons = $('.enrolusersbutton.enrol_manual_plugin [type="submit"]');
 
-        var strparams = [
+        var stringsPromise = Str.get_strings([
             {key: 'enroluserscohorts', component: 'enrol_manual'},
-            {key: 'enrolusers', component: 'enrol_manual'}
-        ];
+            {key: 'enrolusers', component: 'enrol_manual'},
+        ]);
 
-        $.when(Str.get_strings(strparams)).then(function(strlist) {
-            var modalSaveChanges = strlist[0],
-                modalTitle = strlist[1];
+        var titlePromise = stringsPromise.then(function(strings) {
+            return strings[1];
+        });
 
-            return ModalFactory.create({
-                type: ModalFactory.types.SAVE_CANCEL,
-                title: modalTitle,
-                body: this.getBody()
-            }, triggerButtons).then(function(modal) {
-                this.modal = modal;
-                this.modal.setLarge();
-                this.modal.setSaveButtonText(modalSaveChanges);
+        var buttonPromise = stringsPromise.then(function(strings) {
+            return strings[0];
+        });
 
-                // We want the reset the form every time it is opened.
-                this.modal.getRoot().on(ModalEvents.hidden, function() {
-                    this.modal.setBody(this.getBody());
-                }.bind(this));
+        return ModalFactory.create({
+            type: ModalFactory.types.SAVE_CANCEL,
+            large: true,
+            title: titlePromise,
+            body: this.getBody()
+        }, triggerButtons)
+        .then(function(modal) {
+            this.modal = modal;
 
-                this.modal.getRoot().on(ModalEvents.save, this.submitForm.bind(this));
-                this.modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this));
+            this.modal.setSaveButtonText(buttonPromise);
+
+            // We want the reset the form every time it is opened.
+            this.modal.getRoot().on(ModalEvents.hidden, function() {
+                this.modal.setBody(this.getBody());
             }.bind(this));
-        }.bind(this)).fail(Notification.exception);
+
+            this.modal.getRoot().on(ModalEvents.save, this.submitForm.bind(this));
+            this.modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this));
+
+            return modal;
+        }.bind(this))
+        .fail(Notification.exception);
     };
 
     /**
