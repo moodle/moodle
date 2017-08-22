@@ -88,6 +88,27 @@ class webservice_xmlrpc_test extends advanced_testcase {
         $this->expectException('moodle_exception');
         $client->call('testfunction');
     }
+
+    /**
+     * Test the XML-RPC request encoding.
+     */
+    public function test_encode_request() {
+
+        $client = new webservice_xmlrpc_client_mock('/webservice/xmlrpc/server.php', 'anytoken');
+
+        // Encode the request with the proper encoding and escaping options.
+        $xml = $client->encode_request('do_it', ['foo' => '<bar>ŠČŘŽÝÁÍÉ</bar>']);
+
+        // Assert that decoding with explicit encoding will work. This appeared
+        // to fail if the markup escaping was not set.
+        $this->assertEquals(['<bar>ŠČŘŽÝÁÍÉ</bar>'], xmlrpc_decode($xml, 'UTF-8'));
+
+        // Our experiments show that even with default/implicit encoding,
+        // requests encoded with markup escaping set are also decoded
+        // correctly. This is known to be used in some servers so we test it
+        // here, too.
+        $this->assertEquals(['<bar>ŠČŘŽÝÁÍÉ</bar>'], xmlrpc_decode($xml));
+    }
 }
 
 /**
@@ -136,5 +157,16 @@ class webservice_xmlrpc_client_mock extends webservice_xmlrpc_client {
         }
 
         return $result;
+    }
+
+    /**
+     * Allows to test the request encoding.
+     *
+     * @param string $functionname Name of the method to call.
+     * @param mixed $params Method parameters compatible with the method signature.
+     * @return string
+     */
+    public function encode_request($functionname, $params) {
+        return parent::encode_request($functionname, $params);
     }
 }
