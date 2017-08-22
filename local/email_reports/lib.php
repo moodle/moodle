@@ -25,6 +25,10 @@ function email_reports_cron() {
     $courses = array();
     $dayofweek = date('N', $runtime);
 
+    // We only want the student role.
+    $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+
     mtrace("Running email report cron at ".date('D M Y h:m:s', $runtime));
 
     // Deal with courses which have completed by warnings
@@ -92,6 +96,20 @@ function email_reports_cron() {
         if (!$company = $DB->get_record('company', array('id' => $compuser->companyid))) {
             continue;
         }
+        if (!$DB->get_record_sql("SELECT ra.id FROM
+                                 {user_enrolments} ue 
+                                 INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
+                                 JOIN {role_assignments} ra ON (ue.userid = ra.userid)
+                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanced = e.courseid)
+                                 WHERE c.contextlevel = 50
+                                 AND ue.userid = :userid
+                                 AND e.instanceid = :courseid
+                                 AND ra.roleid = :studentrole",
+                                 array('courseid' => $compuser->courseid,
+                                       'userid' => $compuser->userid,
+                                       'studentrole' => $studentrole->id))) {
+            continue;
+        }
         if ($DB->get_records_sql("SELECT id FROM {email}
                                   WHERE userid = :userid
                                   AND courseid = :courseid
@@ -152,6 +170,20 @@ function email_reports_cron() {
                         if (!$course = $DB->get_record('course', array('id' => $manageruser->courseid))) {
                             continue;
                         }
+                        if (!$DB->get_record_sql("SELECT ra.id FROM
+                                                 {user_enrolments} ue 
+                                                 INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
+                                                 JOIN {role_assignments} ra ON (ue.userid = ra.userid)
+                                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanced = e.courseid)
+                                                 WHERE c.contextlevel = 50
+                                                 AND ue.userid = :userid
+                                                 AND e.instanceid = :courseid
+                                                 AND ra.roleid = :studentrole",
+                                                 array('courseid' => $manageruser->courseid,
+                                                       'userid' => $manageruser->userid,
+                                                       'studentrole' => $studentrole->id))) {
+                            continue;
+                        }
                         if ($DB->get_records_sql("SELECT id FROM {email}
                                                   WHERE userid = :userid
                                                   AND courseid = :courseid
@@ -191,6 +223,20 @@ function email_reports_cron() {
                             continue;
                         }
                         if (!$course = $DB->get_record('course', array('id' => $manageruser->courseid))) {
+                            continue;
+                        }
+                        if (!$DB->get_record_sql("SELECT ra.id FROM
+                                                 {user_enrolments} ue 
+                                                 INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
+                                                 JOIN {role_assignments} ra ON (ue.userid = ra.userid)
+                                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanced = e.courseid)
+                                                 WHERE c.contextlevel = 50
+                                                 AND ue.userid = :userid
+                                                 AND e.instanceid = :courseid
+                                                 AND ra.roleid = :studentrole",
+                                                 array('courseid' => $manageruser->courseid,
+                                                       'userid' => $manageruser->userid,
+                                                       'studentrole' => $studentrole->id))) {
                             continue;
                         }
                         if ($DB->get_records_sql("SELECT id FROM {email}
@@ -298,6 +344,20 @@ function email_reports_cron() {
         if (!$company = $DB->get_record('company', array('id' => $compuser->companyid))) {
             continue;
         }
+        if (!$DB->get_record_sql("SELECT ra.id FROM
+                                 {user_enrolments} ue 
+                                 INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
+                                 JOIN {role_assignments} ra ON (ue.userid = ra.userid)
+                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanced = e.courseid)
+                                 WHERE c.contextlevel = 50
+                                 AND ue.userid = :userid
+                                 AND e.instanceid = :courseid
+                                 AND ra.roleid = :studentrole",
+                                 array('courseid' => $compuser->courseid,
+                                       'userid' => $compuser->userid,
+                                       'studentrole' => $studentrole->id))) {
+            continue;
+        }
         if ($DB->get_records_sql("SELECT id FROM {email}
                                   WHERE userid = :userid
                                   AND courseid = :courseid
@@ -372,6 +432,20 @@ function email_reports_cron() {
                                 continue;
                             }
                             if (!$course = $DB->get_record('course', array('id' => $manageruser->courseid))) {
+                                continue;
+                            }
+                            if (!$DB->get_record_sql("SELECT ra.id FROM
+                                                     {user_enrolments} ue 
+                                                     INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
+                                                     JOIN {role_assignments} ra ON (ue.userid = ra.userid)
+                                                     JOIN {context} c ON (ra.contextid = c.id AND c.instanced = e.courseid)
+                                                     WHERE c.contextlevel = 50
+                                                     AND ue.userid = :userid
+                                                     AND e.instanceid = :courseid
+                                                     AND ra.roleid = :studentrole",
+                                                     array('courseid' => $manageruser->courseid,
+                                                           'userid' => $manageruser->userid,
+                                                           'studentrole' => $studentrole->id))) {
                                 continue;
                             }
                             if ($DB->get_records_sql("SELECT id FROM {email}
