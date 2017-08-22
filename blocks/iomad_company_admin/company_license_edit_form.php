@@ -276,7 +276,7 @@ class company_license_form extends company_moodleform {
         }
 
         // Is the value for length appropriate?
-        if ($data['validlength'] < 1 ) {
+        if (empty($data['type']) && $data['validlength'] < 1 ) {
             $errors['validlegth'] = get_string('invalidnumber', 'block_iomad_company_admin');
         }
 
@@ -289,6 +289,7 @@ class company_license_form extends company_moodleform {
         if ($data['expirydate'] < time()) {
             $errors['expirydate'] = get_string('errorinvaliddate', 'calendar');
         }
+
         return $errors;
     }
 }
