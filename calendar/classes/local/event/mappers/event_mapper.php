@@ -89,8 +89,16 @@ class event_mapper implements event_mapper_interface {
     public function from_event_to_legacy_event(event_interface $event) {
         $action = ($event instanceof action_event_interface) ? $event->get_action() : null;
         $timeduration = $event->get_times()->get_end_time()->getTimestamp() - $event->get_times()->get_start_time()->getTimestamp();
+        $properties = $this->from_event_to_stdclass($event);
 
-        return new \calendar_event($this->from_event_to_stdclass($event));
+        // Normalise for the legacy event because it wants zero rather than null.
+        $properties->courseid = empty($properties->courseid) ? 0 : $properties->courseid;
+        $properties->groupid = empty($properties->groupid) ? 0 : $properties->groupid;
+        $properties->userid = empty($properties->userid) ? 0 : $properties->userid;
+        $properties->modulename = empty($properties->modulename) ? 0 : $properties->modulename;
+        $properties->instance = empty($properties->instance) ? 0 : $properties->instance;
+
+        return new \calendar_event($properties);
     }
 
     public function from_event_to_stdclass(event_interface $event) {

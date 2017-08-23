@@ -51,7 +51,6 @@ class event_exporter extends event_exporter_base {
 
         $values = parent::define_other_properties();
 
-        $values['canedit'] = ['type' => PARAM_BOOL];
         $values['displayeventsource'] = ['type' => PARAM_BOOL];
         $values['subscription'] = [
             'type' => PARAM_RAW,
@@ -94,8 +93,6 @@ class event_exporter extends event_exporter_base {
         require_once($CFG->dirroot.'/course/lib.php');
 
         $event = $this->event;
-        $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
-
         $context = $this->related['context'];
         $values['isactionevent'] = false;
         $values['iscourseevent'] = false;
@@ -133,14 +130,11 @@ class event_exporter extends event_exporter_base {
             $values['course'] = $coursesummaryexporter->export($output);
         }
 
-        $values['canedit'] = calendar_edit_event_allowed($legacyevent);
-        $values['candelete'] = calendar_delete_event_allowed($legacyevent);
-
         // Handle event subscription.
         $values['subscription'] = null;
         $values['displayeventsource'] = false;
-        if (!empty($legacyevent->subscriptionid)) {
-            $subscription = calendar_get_subscription($legacyevent->subscriptionid);
+        if ($event->get_subscription()) {
+            $subscription = calendar_get_subscription($event->get_subscription()->get('id'));
             if (!empty($subscription) && $CFG->calendar_showicalsource) {
                 $values['displayeventsource'] = true;
                 $subscriptiondata = new \stdClass();
@@ -152,13 +146,9 @@ class event_exporter extends event_exporter_base {
             }
         }
 
-        if ($legacyevent->groupid) {
-            if ($group = calendar_get_group_cached($legacyevent->groupid)) {
-                $values['groupname'] = format_string($group->name, true,
-                        ['context' => \context_course::instance($group->courseid)]);
-            } else {
-                $values['groupname'] = null;
-            }
+        if ($group = $event->get_group()) {
+            $values['groupname'] = format_string($group->get('name'), true,
+                ['context' => \context_course::instance($event->get_course()->get('id'))]);
         }
 
         return $values;

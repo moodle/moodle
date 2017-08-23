@@ -68,6 +68,15 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_calendar_update_event_start_day' => array(
+        'classname' => 'core_calendar_external',
+        'methodname' => 'update_event_start_day',
+        'description' => 'Update the start day (but not time) for an event.',
+        'classpath' => 'calendar/externallib.php',
+        'type' => 'write',
+        'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries',
+        'ajax' => true,
+    ),
     'core_calendar_create_calendar_events' => array(
         'classname' => 'core_calendar_external',
         'methodname' => 'create_calendar_events',
