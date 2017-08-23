@@ -947,9 +947,6 @@ class core_calendar_external extends external_api {
             'dayTimestamp' => $dayTimestamp,
         ]);
 
-        $context = \context_user::instance($USER->id);
-        self::validate_context($context);
-
         $vault = event_container::get_event_vault();
         $mapper = event_container::get_event_mapper();
         $event = $vault->get_event_by_id($eventId);
@@ -963,6 +960,8 @@ class core_calendar_external extends external_api {
         if (!calendar_edit_event_allowed($legacyevent, true)) {
             print_error('nopermissiontoupdatecalendar');
         }
+
+        self::validate_context($legacyevent->context);
 
         $newdate = usergetdate($dayTimestamp);
         $startdatestring = implode('-', [$newdate['year'], $newdate['mon'], $newdate['mday']]);
