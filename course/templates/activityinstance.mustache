@@ -39,11 +39,11 @@
         <div>
             {{#canmanage}}
             <label class="accesshide" for="selectactivity_{{cmid}}">{{#str}}select, completion{{/str}} {{modname}}</label>
-            <input type="checkbox" id="selectactivity_{{cmid}}" class="m-r-1" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{modname}}{{/str}}">
+            <input type="checkbox" id="selectactivity_{{cmid}}" class="m-r-1" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{{modname}}}{{/str}}">
             {{/canmanage}}
             <a href="{{url}}">
             <img src="{{icon}}" class="iconlarge activityicon" alt=" " role="presentation" />
-            <span class="instancename">{{modname}}</span>
+            <span class="instancename">{{{modname}}}</span>
             </a>
         </div>
     </div>
