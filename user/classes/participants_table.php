@@ -169,15 +169,17 @@ class participants_table extends \table_sql {
         $headers[] = get_string('roles');
         $columns[] = 'roles';
 
-        // Load and cache the course groupinfo.
-        // Add column for groups.
-        $headers[] = get_string('groups');
-        $columns[] = 'groups';
-
         // Get the list of fields we have to hide.
         $hiddenfields = array();
         if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
             $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+        }
+
+        // Add column for groups if the user can view them.
+        $canseegroups = !isset($hiddenfields['groups']);
+        if ($canseegroups) {
+            $headers[] = get_string('groups');
+            $columns[] = 'groups';
         }
 
         // Do not show the columns if it exists in the hiddenfields array.
@@ -205,7 +207,9 @@ class participants_table extends \table_sql {
 
         $this->no_sorting('select');
         $this->no_sorting('roles');
-        $this->no_sorting('groups');
+        if ($canseegroups) {
+            $this->no_sorting('groups');
+        }
 
         $this->set_attribute('id', 'participants');
 
@@ -220,7 +224,9 @@ class participants_table extends \table_sql {
         $this->countries = get_string_manager()->get_list_of_countries();
         $this->extrafields = $extrafields;
         $this->context = $context;
-        $this->groups = groups_get_all_groups($courseid, 0, 0, 'g.*', true);
+        if ($canseegroups) {
+            $this->groups = groups_get_all_groups($courseid, 0, 0, 'g.*', true);
+        }
         $this->allroles = role_fix_names(get_all_roles($this->context), $this->context);
         $this->allroleassignments = get_users_roles($this->context, [], true, 'c.contextlevel DESC, r.sortorder ASC');
         $this->assignableroles = get_assignable_roles($this->context, ROLENAME_ALIAS, false);
