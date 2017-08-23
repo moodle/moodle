@@ -137,13 +137,9 @@ class event_exporter extends event_exporter_base {
             }
         }
 
-        if ($legacyevent->groupid) {
-            if ($group = calendar_get_group_cached($legacyevent->groupid)) {
-                $values['groupname'] = format_string($group->name, true,
-                        ['context' => \context_course::instance($group->courseid)]);
-            } else {
-                $values['groupname'] = null;
-            }
+        if ($group = $event->get_group()) {
+            $values['groupname'] = format_string($group->get('name'), true,
+                ['context' => \context_course::instance($event->get_course()->get('id'))]);
         }
 
         return $values;
