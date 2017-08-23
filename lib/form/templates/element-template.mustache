@@ -46,7 +46,7 @@
     }
 
 }}
-<div id="fitem_{{ element.id }}" class="fitem fitem_{{ element.type }}">
+<div id="fitem_{{ element.id }}" class="fitem fitem_{{ element.type }}" {{#element.groupname}}data-groupname="{{.}}"{{/element.groupname}}>
     <div class="fitemtitle">
       <label for="{{element.id}}">{{{ label }}}</label>
         {{{ helpbutton }}}
