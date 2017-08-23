@@ -2377,6 +2377,45 @@ class company {
     }
 
     /**
+     * Triggered via course_deleted event.
+     *
+     * @param \core\event\course_deleted $event
+     * @return bool true on success.
+     */
+    public static function course_deleted(\core\event\course_deleted $event) {
+        global $DB;
+
+        // Clear everything from the iomad_courses table.
+        $DB->delete_records('iomad_courses', array('courseid' => $event->courseid));
+
+        // Remove the course from company allocation tables.
+        $DB->delete_records('company_course', array('courseid' => $event->courseid));
+
+        // Remove the course from company created course tables.
+        $DB->delete_records('company_created_courses', array('courseid' => $event->courseid));
+
+        // Remove the course from company shared courses tables.
+        $DB->delete_records('company_shared_courses', array('courseid' => $event->courseid));
+
+        // Deal with licenses allocations.
+        $DB->delete_records('companylicense_users', array('licensecourseid' => $event->courseid));
+        $courselicenses = $DB->get_records('//companylicense_courses', array('courseid' => $event->courseid));
+        foreach ($courselicenses as $courselicense) {
+            // Delete the course from the license.
+            $DB->delete_record('companylicense_courses', array('id' => $courselicense->id));
+            // Does the license have any courses left?
+            if ($DB->get_records('companylicense_courses', array('licensid' => $courselicense->licenseid))) {
+                self::update_license_usage($courselicense->licenseid);
+            } else {
+                // Delete the license.  It no longer is valid.
+                $DB->delete_records('companylicense', array('id' => $courselicense->licenseid));
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Triggered via course_completed event.
      *
      * @param \core\event\course_completed $event

@@ -74,6 +74,17 @@ class local_iomad_observer {
     }
 
     /**
+     * Triggered via course_deleted event.
+     *
+     * @param \core\event\course_deleted $event
+     * @return bool true on success.
+     */
+    public static function course_deleted($event) {
+        company::course_deleted($event);
+        return true;
+    }
+
+    /**
      * Triggered via course_completed event.
      *
      * @param \core\event\course_completed $event
