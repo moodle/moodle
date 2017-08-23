@@ -222,19 +222,19 @@ class api {
      * modified, the time of day for the event will be left as is.
      *
      * @param event_interface $event The existing event to modify
-     * @param DateTimeInterface $startDate The new date to use for the start day
+     * @param DateTimeInterface $startdate The new date to use for the start day
      * @return event_interface The new event with updated start date
      */
     public static function update_event_start_day(
         event_interface $event,
-        \DateTimeInterface $startDate
+        \DateTimeInterface $startdate
     ) {
         $mapper = container::get_event_mapper();
         $legacyevent = $mapper->from_event_to_legacy_event($event);
         $starttime = $event->get_times()->get_start_time()->setDate(
-            $startDate->format('Y'),
-            $startDate->format('n'),
-            $startDate->format('j')
+            $startdate->format('Y'),
+            $startdate->format('n'),
+            $startdate->format('j')
         );
 
         // This function does our capability checks.
