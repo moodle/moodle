@@ -2588,7 +2588,38 @@ abstract class enrol_plugin {
      * @return array An array of user_enrolment_actions
      */
     public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
-        return array();
+        $actions = [];
+        $context = $manager->get_context();
+        $instance = $ue->enrolmentinstance;
+        $params = $manager->get_moodlepage()->url->params();
+        $params['ue'] = $ue->id;
+
+        // Edit enrolment action.
+        if ($this->allow_manage($instance) && has_capability("enrol/{$instance->enrol}:manage", $context)) {
+            $title = get_string('editenrolment', 'enrol');
+            $icon = new pix_icon('t/edit', $title);
+            $url = new moodle_url('/enrol/editenrolment.php', $params);
+            $actionparams = [
+                'class' => 'editenrollink',
+                'rel' => $ue->id,
+                'data-action' => ENROL_ACTION_EDIT
+            ];
+            $actions[] = new user_enrolment_action($icon, $title, $url, $actionparams);
+        }
+
+        // Unenrol action.
+        if ($this->allow_unenrol_user($instance, $ue) && has_capability("enrol/{$instance->enrol}:unenrol", $context)) {
+            $title = get_string('unenrol', 'enrol');
+            $icon = new pix_icon('t/delete', $title);
+            $url = new moodle_url('/enrol/unenroluser.php', $params);
+            $actionparams = [
+                'class' => 'unenrollink',
+                'rel' => $ue->id,
+                'data-action' => ENROL_ACTION_UNENROL
+            ];
+            $actions[] = new user_enrolment_action($icon, $title, $url, $actionparams);
+        }
+        return $actions;
     }
 
     /**
