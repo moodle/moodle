@@ -1300,8 +1300,8 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $roleid = $generator->create_role();
         $context = \context_system::instance();
-        $originalStartTime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
-        $newStartDate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $originalstarttime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
         $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
 
         $generator->role_assign($roleid, $user->id, $context->id);
@@ -1318,11 +1318,11 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
             null,
             [
                 'courseid' => 0,
-                'timestart' => $originalStartTime->getTimestamp()
+                'timestart' => $originalstarttime->getTimestamp()
             ]
         );
 
-        $result = core_calendar_external::update_event_start_day($event->id, $newStartDate->getTimestamp());
+        $result = core_calendar_external::update_event_start_day($event->id, $newstartdate->getTimestamp());
         $result = external_api::clean_returnvalue(
             core_calendar_external::update_event_start_day_returns(),
             $result
@@ -1340,8 +1340,8 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $roleid = $generator->create_role();
         $context = \context_system::instance();
-        $originalStartTime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
-        $newStartDate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $originalstarttime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
         $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
 
         $generator->role_assign($roleid, $user->id, $context->id);
@@ -1358,13 +1358,13 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
             null,
             [
                 'courseid' => 0,
-                'timestart' => $originalStartTime->getTimestamp()
+                'timestart' => $originalstarttime->getTimestamp()
             ]
         );
 
         assign_capability('moodle/calendar:manageownentries', CAP_PROHIBIT, $roleid, $context, true);
         $this->expectException('moodle_exception');
-        $result = core_calendar_external::update_event_start_day($event->id, $newStartDate->getTimestamp());
+        $result = core_calendar_external::update_event_start_day($event->id, $newstartdate->getTimestamp());
         $result = external_api::clean_returnvalue(
             core_calendar_external::update_event_start_day_returns(),
             $result
@@ -1378,12 +1378,12 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
-        $moduleinstance = $generator->get_plugin_generator('mod_assign')
-                                    ->create_instance(['course' => $course->id]);
+        $plugingenerator = $generator->get_plugin_generator('mod_assign');
+        $moduleinstance = $plugingenerator->create_instance(['course' => $course->id]);
         $roleid = $generator->create_role();
         $context = \context_course::instance($course->id);
-        $originalStartTime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
-        $newStartDate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $originalstarttime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
         $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
 
         $generator->role_assign($roleid, $user->id, $context->id);
@@ -1402,13 +1402,13 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
                 'modulename' => 'assign',
                 'instance' => $moduleinstance->id,
                 'courseid' => $course->id,
-                'timestart' => $originalStartTime->getTimestamp()
+                'timestart' => $originalstarttime->getTimestamp()
             ]
         );
 
         assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $context, true);
         $this->expectException('moodle_exception');
-        $result = core_calendar_external::update_event_start_day($event->id, $newStartDate->getTimestamp());
+        $result = core_calendar_external::update_event_start_day($event->id, $newstartdate->getTimestamp());
         $result = external_api::clean_returnvalue(
             core_calendar_external::update_event_start_day_returns(),
             $result

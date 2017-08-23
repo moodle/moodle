@@ -919,8 +919,8 @@ class core_calendar_external extends external_api {
     public static function update_event_start_day_parameters() {
         return new external_function_parameters(
             [
-                'eventId' => new external_value(PARAM_INT, 'Id of event to be updated', VALUE_REQUIRED),
-                'dayTimestamp' => new external_value(PARAM_INT, 'Timestamp for the new start day', VALUE_REQUIRED),
+                'eventid' => new external_value(PARAM_INT, 'Id of event to be updated', VALUE_REQUIRED),
+                'daytimestamp' => new external_value(PARAM_INT, 'Timestamp for the new start day', VALUE_REQUIRED),
             ]
         );
     }
@@ -934,25 +934,25 @@ class core_calendar_external extends external_api {
      *
      * The event's original time of day is maintained, only the date is shifted.
      *
-     * @param int $eventId Id of event to be updated
-     * @param int $dayTimestamp Timestamp for the new start day
+     * @param int $eventid Id of event to be updated
+     * @param int $daytimestamp Timestamp for the new start day
      * @return  array
      */
-    public static function update_event_start_day($eventId, $dayTimestamp) {
+    public static function update_event_start_day($eventid, $daytimestamp) {
         global $USER, $PAGE;
 
         // Parameter validation.
         $params = self::validate_parameters(self::update_event_start_day_parameters(), [
-            'eventId' => $eventId,
-            'dayTimestamp' => $dayTimestamp,
+            'eventid' => $eventid,
+            'daytimestamp' => $daytimestamp,
         ]);
 
         $vault = event_container::get_event_vault();
         $mapper = event_container::get_event_mapper();
-        $event = $vault->get_event_by_id($eventId);
+        $event = $vault->get_event_by_id($eventid);
 
         if (!$event) {
-            throw new \moodle_exception('Unable to find event with id ' . $eventId);
+            throw new \moodle_exception('Unable to find event with id ' . $eventid);
         }
 
         $legacyevent = $mapper->from_event_to_legacy_event($event);
@@ -963,7 +963,7 @@ class core_calendar_external extends external_api {
 
         self::validate_context($legacyevent->context);
 
-        $newdate = usergetdate($dayTimestamp);
+        $newdate = usergetdate($daytimestamp);
         $startdatestring = implode('-', [$newdate['year'], $newdate['mon'], $newdate['mday']]);
         $startdate = new DateTimeImmutable($startdatestring);
         $event = local_api::update_event_start_day($event, $startdate);

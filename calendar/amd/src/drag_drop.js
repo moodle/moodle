@@ -188,6 +188,8 @@ define([
     return {
         /**
          * Initialise the event handlers for the drag events.
+         *
+         * @param {object} root The root calendar element that containers the drag drop elements
          */
         init: function(root) {
             root = $(root);

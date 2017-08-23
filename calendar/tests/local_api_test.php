@@ -870,8 +870,8 @@ class core_calendar_local_api_testcase extends advanced_testcase {
         $user = $generator->create_user();
         $roleid = $generator->create_role();
         $context = \context_system::instance();
-        $originalStartTime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
-        $newStartDate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $originalstarttime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
         $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
         $mapper = container::get_event_mapper();
 
@@ -886,11 +886,11 @@ class core_calendar_local_api_testcase extends advanced_testcase {
             'userid' => $user->id,
             'eventtype' => 'user',
             'repeats' => 0,
-            'timestart' => $originalStartTime->getTimestamp(),
+            'timestart' => $originalstarttime->getTimestamp(),
         ]);
         $event = $mapper->from_legacy_event_to_event($event);
 
-        $newEvent = \core_calendar\local\api::update_event_start_day($event, $newStartDate);
+        $newEvent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
         $actual = $newEvent->get_times()->get_start_time();
 
         $this->assertEquals($expected->getTimestamp(), $actual->getTimestamp());
@@ -905,8 +905,8 @@ class core_calendar_local_api_testcase extends advanced_testcase {
         $user = $generator->create_user();
         $roleid = $generator->create_role();
         $context = \context_system::instance();
-        $originalStartTime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
-        $newStartDate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $originalstarttime = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
         $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
         $mapper = container::get_event_mapper();
 
@@ -920,12 +920,12 @@ class core_calendar_local_api_testcase extends advanced_testcase {
             'userid' => $user->id,
             'eventtype' => 'user',
             'repeats' => 0,
-            'timestart' => $originalStartTime->getTimestamp(),
+            'timestart' => $originalstarttime->getTimestamp(),
         ]);
         $event = $mapper->from_legacy_event_to_event($event);
 
         assign_capability('moodle/calendar:manageownentries', CAP_PROHIBIT, $roleid, $context, true);
         $this->expectException('moodle_exception');
-        $newEvent = \core_calendar\local\api::update_event_start_day($event, $newStartDate);
+        $newEvent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
     }
 }

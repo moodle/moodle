@@ -116,8 +116,8 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
         var request = {
             methodname: 'core_calendar_update_event_start_day',
             args: {
-                eventId: eventId,
-                dayTimestamp: dayTimestamp
+                eventid: eventId,
+                daytimestamp: dayTimestamp
             }
         };
 
