@@ -10567,7 +10567,7 @@ class admin_setting_filetypes extends admin_setting_configtext {
 
         $PAGE->requires->js_call_amd('core_form/filetypes', 'init', [
             $this->get_id(),
-            $this->visiblename,
+            $this->visiblename->out(),
             $this->onlytypes,
             $this->allowall,
         ]);
