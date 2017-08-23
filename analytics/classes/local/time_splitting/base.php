@@ -67,6 +67,11 @@ abstract class base {
     protected static $indicators = [];
 
     /**
+     * @var bool
+     */
+    protected $evaluation = false;
+
+    /**
      * Define the time splitting methods ranges.
      *
      * 'time' value defines when predictions are executed, their values will be compared with
@@ -94,6 +99,24 @@ abstract class base {
      */
     public function get_id() {
         return '\\' . get_class($this);
+    }
+
+    /**
+     * Returns current evaluation value.
+     *
+     * @return bool
+     */
+    public function is_evaluating() {
+        return $this->evaluation;
+    }
+
+    /**
+     * Sets the evaluation flag.
+     *
+     * @param bool $evaluation
+     */
+    public function set_evaluating($evaluation) {
+        $this->evaluation = (bool)$evaluation;
     }
 
     /**
@@ -196,10 +219,20 @@ abstract class base {
      * @return array
      */
     protected function calculate_indicators($sampleids, $samplesorigin, $indicators, $ranges) {
+        global $DB;
 
         $dataset = array();
 
+        // Faster to run 1 db query per range.
+        $existingcalculations = array();
+        foreach ($ranges as $rangeindex => $range) {
+            // Load existing calculations.
+            $existingcalculations[$rangeindex] = \core_analytics\manager::get_indicator_calculations($this->analysable,
+                $range['start'], $range['end'], $samplesorigin);
+        }
+
         // Fill the dataset samples with indicators data.
+        $newcalculations = array();
         foreach ($indicators as $indicator) {
 
             // Per-range calculations.
@@ -208,11 +241,17 @@ abstract class base {
                 // Indicator instances are per-range.
                 $rangeindicator = clone $indicator;
 
-                // Calculate the indicator for each sample in this time range.
-                $calculated = $rangeindicator->calculate($sampleids, $samplesorigin, $range['start'], $range['end']);
+                $prevcalculations = array();
+                if (!empty($existingcalculations[$rangeindex][$rangeindicator->get_id()])) {
+                    $prevcalculations = $existingcalculations[$rangeindex][$rangeindicator->get_id()];
+                }
 
-                // Copy the calculated data to the dataset.
-                foreach ($calculated as $analysersampleid => $calculatedvalues) {
+                // Calculate the indicator for each sample in this time range.
+                list($samplesfeatures, $newindicatorcalculations) = $rangeindicator->calculate($sampleids,
+                    $samplesorigin, $range['start'], $range['end'], $prevcalculations);
+
+                // Copy the features data to the dataset.
+                foreach ($samplesfeatures as $analysersampleid => $features) {
 
                     $uniquesampleid = $this->append_rangeindex($analysersampleid, $rangeindex);
 
@@ -221,10 +260,48 @@ abstract class base {
                         $dataset[$uniquesampleid] = array();
                     }
 
-                    // Append the calculated indicator features at the end of the sample.
-                    $dataset[$uniquesampleid] = array_merge($dataset[$uniquesampleid], $calculatedvalues);
+                    // Append the features indicator features at the end of the sample.
+                    $dataset[$uniquesampleid] = array_merge($dataset[$uniquesampleid], $features);
+                }
+
+                if (!$this->is_evaluating()) {
+                    $timecreated = time();
+                    foreach ($newindicatorcalculations as $sampleid => $calculatedvalue) {
+                        // Prepare the new calculations to be stored into DB.
+
+                        $indcalc = new \stdClass();
+                        $indcalc->contextid = $this->analysable->get_context()->id;
+                        $indcalc->starttime = $range['start'];
+                        $indcalc->endtime = $range['end'];
+                        $indcalc->sampleid = $sampleid;
+                        $indcalc->sampleorigin = $samplesorigin;
+                        $indcalc->indicator = $rangeindicator->get_id();
+                        $indcalc->value = $calculatedvalue;
+                        $indcalc->timecreated = $timecreated;
+                        $newcalculations[] = $indcalc;
+                    }
                 }
             }
+
+            if (!$this->is_evaluating()) {
+                $batchsize = self::get_insert_batch_size();
+                if (count($newcalculations) > $batchsize) {
+                    // We don't want newcalculations array to grow too much as we already keep the
+                    // system memory busy storing $dataset contents.
+
+                    // Insert from the beginning.
+                    $remaining = array_splice($newcalculations, $batchsize);
+
+                    // Sorry mssql and oracle, this will be slow.
+                    $DB->insert_records('analytics_indicator_calc', $newcalculations);
+                    $newcalculations = $remaining;
+                }
+            }
+        }
+
+        if (!$this->is_evaluating() && $newcalculations) {
+            // Insert the remaining records.
+            $DB->insert_records('analytics_indicator_calc', $newcalculations);
         }
 
         return $dataset;
@@ -410,5 +487,33 @@ abstract class base {
                     '" range is not fully defined. We need a start timestamp and an end timestamp.');
             }
         }
+    }
+
+    /**
+     * Returns the batch size used for insert_records.
+     *
+     * This method tries to find the best batch size without getting
+     * into dml internals. Maximum 1000 records to save memory.
+     *
+     * @return int
+     */
+    private static function get_insert_batch_size() {
+        global $DB;
+
+        // 500 is pgsql default so using 1000 is fine, no other db driver uses a hardcoded value.
+        if (empty($DB->dboptions['bulkinsertsize'])) {
+            return 1000;
+        }
+
+        $bulkinsert = $DB->dboptions['bulkinsertsize'];
+        if ($bulkinsert < 1000) {
+            return $bulkinsert;
+        }
+
+        while ($bulkinsert > 1000) {
+            $bulkinsert = round($bulkinsert / 2, 0);
+        }
+
+        return (int)$bulkinsert;
     }
 }

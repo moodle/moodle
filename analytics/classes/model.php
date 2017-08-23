@@ -293,6 +293,12 @@ class model {
             throw new \moodle_exception('errornotimesplittings', 'analytics');
         }
 
+        if (!empty($options['evaluation'])) {
+            foreach ($timesplittings as $timesplitting) {
+                $timesplitting->set_evaluating(true);
+            }
+        }
+
         $classname = $target->get_analyser_class();
         if (!class_exists($classname)) {
             throw new \coding_exception($classname . ' class does not exists');

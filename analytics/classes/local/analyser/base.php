@@ -48,6 +48,13 @@ abstract class base {
     protected $target;
 
     /**
+     * A $this->$target copy loaded with the ongoing analysis analysable.
+     *
+     * @var \core_analytics\local\target\base
+     */
+    protected $analysabletarget;
+
+    /**
      * The model indicators.
      *
      * @var \core_analytics\local\indicator\base[]
@@ -255,11 +262,11 @@ abstract class base {
 
         // Target instances scope is per-analysable (it can't be lower as calculations run once per
         // analysable, not time splitting method nor time range).
-        $target = call_user_func(array($this->target, 'instance'));
+        $this->analysabletarget = call_user_func(array($this->target, 'instance'));
 
         // We need to check that the analysable is valid for the target even if we don't include targets
         // as we still need to discard invalid analysables for the target.
-        $result = $target->is_valid_analysable($analysable, $includetarget);
+        $result = $this->analysabletarget->is_valid_analysable($analysable, $includetarget);
         if ($result !== true) {
             $a = new \stdClass();
             $a->analysableid = $analysable->get_id();
@@ -291,11 +298,7 @@ abstract class base {
                 }
             }
 
-            if ($includetarget) {
-                $result = $this->process_time_splitting($timesplitting, $analysable, $target);
-            } else {
-                $result = $this->process_time_splitting($timesplitting, $analysable);
-            }
+            $result = $this->process_time_splitting($timesplitting, $analysable, $includetarget);
 
             if (!empty($result->file)) {
                 $files[$timesplitting->get_id()] = $result->file;
@@ -342,10 +345,10 @@ abstract class base {
      *
      * @param \core_analytics\local\time_splitting\base $timesplitting
      * @param \core_analytics\analysable $analysable
-     * @param \core_analytics\local\target\base|false $target
+     * @param bool $includetarget
      * @return \stdClass Results object.
      */
-    protected function process_time_splitting($timesplitting, $analysable, $target = false) {
+    protected function process_time_splitting($timesplitting, $analysable, $includetarget = false) {
 
         $result = new \stdClass();
 
@@ -372,7 +375,7 @@ abstract class base {
             return $result;
         }
 
-        if ($target) {
+        if ($includetarget) {
             // All ranges are used when we are calculating data for training.
             $ranges = $timesplitting->get_all_ranges();
         } else {
@@ -399,7 +402,7 @@ abstract class base {
             }
 
             // Only when processing data for predictions.
-            if ($target === false) {
+            if (!$includetarget) {
                 // We also filter out samples and ranges that have already been used for predictions.
                 $this->filter_out_prediction_samples_and_ranges($sampleids, $ranges, $timesplitting);
             }
@@ -433,10 +436,9 @@ abstract class base {
             return $result;
         }
 
-        // Remove samples the target consider invalid. Note that we use $this->target, $target will be false
-        // during prediction, but we still need to discard samples the target considers invalid.
-        $this->target->add_sample_data($samplesdata);
-        $this->target->filter_out_invalid_samples($sampleids, $analysable, $target);
+        // Remove samples the target consider invalid.
+        $this->analysabletarget->add_sample_data($samplesdata);
+        $this->analysabletarget->filter_out_invalid_samples($sampleids, $analysable, $includetarget);
 
         if (!$sampleids) {
             $result->status = \core_analytics\model::NO_DATASET;
@@ -450,15 +452,15 @@ abstract class base {
             // indicator to calculate the sample.
             $this->indicators[$key]->add_sample_data($samplesdata);
         }
-        // Provide samples to the target instance (different than $this->target) $target is the new instance we get
-        // for each analysis in progress.
-        if ($target) {
-            $target->add_sample_data($samplesdata);
-        }
 
         // Here we start the memory intensive process that will last until $data var is
         // unset (until the method is finished basically).
-        $data = $timesplitting->calculate($sampleids, $this->get_samples_origin(), $this->indicators, $ranges, $target);
+        if ($includetarget) {
+            $data = $timesplitting->calculate($sampleids, $this->get_samples_origin(), $this->indicators, $ranges,
+                $this->analysabletarget);
+        } else {
+            $data = $timesplitting->calculate($sampleids, $this->get_samples_origin(), $this->indicators, $ranges);
+        }
 
         if (!$data) {
             $result->status = \core_analytics\model::ANALYSABLE_REJECTED_TIME_SPLITTING_METHOD;
@@ -477,7 +479,7 @@ abstract class base {
         if ($this->options['evaluation'] === false) {
             // Save the samples that have been already analysed so they are not analysed again in future.
 
-            if ($target) {
+            if ($includetarget) {
                 $this->save_train_samples($sampleids, $timesplitting, $file);
             } else {
                 $this->save_prediction_samples($sampleids, $ranges, $timesplitting);

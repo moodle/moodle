@@ -338,6 +338,32 @@ class manager {
     }
 
     /**
+     * Returns this analysable calculations during the provided period.
+     *
+     * @param \core_analytics\analysable $analysable
+     * @param int $starttime
+     * @param int $endtime
+     * @param string $samplesorigin The samples origin as sampleid is not unique across models.
+     * @return array
+     */
+    public static function get_indicator_calculations($analysable, $starttime, $endtime, $samplesorigin) {
+        global $DB;
+
+        $params = array('starttime' => $starttime, 'endtime' => $endtime, 'contextid' => $analysable->get_context()->id,
+            'sampleorigin' => $samplesorigin);
+        $calculations = $DB->get_recordset('analytics_indicator_calc', $params, '', 'indicator, sampleid, value');
+
+        $existingcalculations = array();
+        foreach ($calculations as $calculation) {
+            if (empty($existingcalculations[$calculation->indicator])) {
+                $existingcalculations[$calculation->indicator] = array();
+            }
+            $existingcalculations[$calculation->indicator][$calculation->sampleid] = $calculation->value;
+        }
+        return $existingcalculations;
+    }
+
+    /**
      * Returns the models with insights at the provided context.
      *
      * @param \context $context

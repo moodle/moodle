@@ -119,6 +119,9 @@ class dataset_manager {
      * @return bool Could we get the lock or not.
      */
     public function init_process() {
+
+        // Do not include $this->includetarget as we don't want the same analysable to be analysed for training
+        // and prediction at the same time.
         $lockkey = 'modelid:' . $this->modelid . '-analysableid:' . $this->analysableid .
             '-timesplitting:' . self::clean_time_splitting_id($this->timesplittingid);
 
