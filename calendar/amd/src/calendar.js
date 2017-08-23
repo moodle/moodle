@@ -245,10 +245,8 @@ define([
     var registerCalendarEventListeners = function(root, eventFormModalPromise) {
         var body = $('body');
 
-        // TODO: Replace these with actual logic to update
-        // the UI without having to force a page reload.
         body.on(CalendarEvents.created, function() {
-            window.location.reload();
+            CalendarViewManager.reloadCurrentMonth();
         });
         body.on(CalendarEvents.deleted, function() {
             CalendarViewManager.reloadCurrentMonth();
