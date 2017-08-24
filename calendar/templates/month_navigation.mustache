@@ -32,7 +32,13 @@
     }
 }}
 {{#navigation}}
-<div class="controls" data-view="{{view}}">
+<div id="month-navigation-{{uniqid}}" class="controls" data-view="{{view}}">
     {{{navigation}}}
 </div>
 {{/navigation}}
+{{#js}}
+require(['jquery', 'core_calendar/month_navigation_drag_drop'], function($, DragDrop) {
+    var root = $('#month-navigation-{{uniqid}}');
+    DragDrop.init(root);
+});
+{{/js}}

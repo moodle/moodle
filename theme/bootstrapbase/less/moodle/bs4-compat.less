@@ -254,3 +254,46 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.text-white {
+    color: @white;
+}
+
+// Bg utilities.
+.bg {
+    // Important (red)
+    &-danger {
+        background-color: @errorText;
+    }
+    &-danger[href] {
+        background-color: darken(@errorText, 10%);
+    }
+    // Warnings (orange)
+    &-warning {
+        background-color: @orange;
+    }
+    &-warning[href] {
+        background-color: darken(@orange, 10%);
+    }
+    // Success (green)
+    &-success {
+        background-color: @successText;
+    }
+    &-success[href] {
+        background-color: darken(@successText, 10%);
+    }
+    // Info (turquoise)
+    &-info {
+        background-color: @infoText;
+    }
+    &-info[href] {
+        background-color: darken(@infoText, 10%);
+    }
+    // Primary (blue)
+    &-primary {
+        background-color: @blue;
+    }
+    &-primary[href] {
+        background-color: darken(@blue, 10%);
+    }
+}

@@ -2175,6 +2175,7 @@ function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide = 
 
     $attrs = [
         'data-time' => calendar_get_timestamp($d, $m, $y, $time),
+        'data-drop-zone' => 'nav-link',
     ];
 
     return link_arrow_left($text, $href->out(false), $accesshide, 'previous', $attrs);
@@ -2202,6 +2203,7 @@ function calendar_get_link_next($text, $linkbase, $d, $m, $y, $accesshide = fals
 
     $attrs = [
         'data-time' => calendar_get_timestamp($d, $m, $y, $time),
+        'data-drop-zone' => 'nav-link',
     ];
 
     return link_arrow_right($text, $href->out(false), $accesshide, 'next', $attrs);

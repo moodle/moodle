@@ -48,6 +48,7 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
 
         .previous {
             text-align: left;
+            border: 1px solid transparent;
         }
 
         .current {
@@ -57,6 +58,12 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
 
         .next {
             text-align: right;
+            border: 1px solid transparent;
+        }
+
+        .drop-target {
+            box-sizing: border-box;
+            border: 1px dashed $brand-primary;
         }
     }
 

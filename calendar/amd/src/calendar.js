@@ -168,24 +168,30 @@ define([
      * updated.
      *
      * @param {event} e The calendar move event
-     * @param {object} eventElement The jQuery element with the event id
-     * @param {object} originElement The jQuery element for where the event is moving from
+     * @param {int} eventId The event id being moved
+     * @param {object|null} originElement The jQuery element for where the event is moving from
      * @param {object} destinationElement The jQuery element for where the event is moving to
      */
-    var handleMoveEvent = function(e, eventElement, originElement, destinationElement) {
-        var eventId = eventElement.attr('data-event-id');
-        var originTimestamp = originElement.attr('data-day-timestamp');
+    var handleMoveEvent = function(e, eventId, originElement, destinationElement) {
+        var originTimestamp = null;
         var destinationTimestamp = destinationElement.attr('data-day-timestamp');
 
+        if (originElement) {
+            originTimestamp = originElement.attr('data-day-timestamp');
+        }
+
         // If the event has actually changed day.
-        if (originTimestamp != destinationTimestamp) {
+        if (!originElement || originTimestamp != destinationTimestamp) {
             Templates.render('core/loading', {})
                 .then(function(html, js) {
                     // First we show some loading icons in each of the days being affected.
-                    originElement.find(SELECTORS.DAY_CONTENT).addClass('hidden');
                     destinationElement.find(SELECTORS.DAY_CONTENT).addClass('hidden');
-                    Templates.appendNodeContents(originElement, html, js);
                     Templates.appendNodeContents(destinationElement, html, js);
+
+                    if (originElement) {
+                        originElement.find(SELECTORS.DAY_CONTENT).addClass('hidden');
+                        Templates.appendNodeContents(originElement, html, js);
+                    }
                     return;
                 })
                 .then(function() {
@@ -195,19 +201,21 @@ define([
                 .then(function() {
                     // If the update was successful then broadcast an event letting the calendar
                     // know that an event has been moved.
-                    $('body').trigger(CalendarEvents.eventMoved, [eventElement, originElement, destinationElement]);
+                    $('body').trigger(CalendarEvents.eventMoved, [eventId, originElement, destinationElement]);
                     return;
                 })
                 .always(function() {
                     // Always remove the loading icons regardless of whether the update
                     // request was successful or not.
-                    var originLoadingElement = originElement.find(SELECTORS.LOADING_ICON);
                     var destinationLoadingElement = destinationElement.find(SELECTORS.LOADING_ICON);
-                    originElement.find(SELECTORS.DAY_CONTENT).removeClass('hidden');
                     destinationElement.find(SELECTORS.DAY_CONTENT).removeClass('hidden');
-
-                    Templates.replaceNode(originLoadingElement, '', '');
                     Templates.replaceNode(destinationLoadingElement, '', '');
+
+                    if (originElement) {
+                        var originLoadingElement = originElement.find(SELECTORS.LOADING_ICON);
+                        originElement.find(SELECTORS.DAY_CONTENT).removeClass('hidden');
+                        Templates.replaceNode(originLoadingElement, '', '');
+                    }
                     return;
                 })
                 .fail(Notification.exception);
@@ -265,7 +273,7 @@ define([
         body.on(CalendarEvents.moveEvent, handleMoveEvent);
         // When an event is successfully moved we should updated the UI.
         body.on(CalendarEvents.eventMoved, function() {
-            window.location.reload();
+            CalendarViewManager.reloadCurrentMonth(root);
         });
 
         eventFormModalPromise.then(function(modal) {

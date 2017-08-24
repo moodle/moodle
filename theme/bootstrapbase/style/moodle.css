@@ -4777,6 +4777,9 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 .clickable {
   cursor: pointer;
 }
+[data-drag-type="move"] {
+  cursor: move;
+}
 /* admin.less */
 .formtable tbody th {
   font-weight: normal;
@@ -5576,6 +5579,8 @@ img.iconsmall {
 }
 .path-calendar .calendar-controls .previous {
   text-align: left;
+  border: 1px solid transparent;
+  box-sizing: border-box;
 }
 .path-calendar .calendar-controls .current {
   text-align: center;
@@ -5583,6 +5588,12 @@ img.iconsmall {
 }
 .path-calendar .calendar-controls .next {
   text-align: right;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+}
+.path-calendar .calendar-controls .drop-target {
+  box-sizing: border-box;
+  border: 1px dashed #049cdb;
 }
 .path-calendar .filters table {
   border-collapse: separate;
@@ -21826,4 +21837,37 @@ ul.indented-list {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.text-white {
+  color: #fff;
+}
+.bg-danger {
+  background-color: #b94a48;
+}
+.bg-danger[href] {
+  background-color: #953b39;
+}
+.bg-warning {
+  background-color: #f89406;
+}
+.bg-warning[href] {
+  background-color: #c67605;
+}
+.bg-success {
+  background-color: #468847;
+}
+.bg-success[href] {
+  background-color: #356635;
+}
+.bg-info {
+  background-color: #3a87ad;
+}
+.bg-info[href] {
+  background-color: #2d6987;
+}
+.bg-primary {
+  background-color: #049cdb;
+}
+.bg-primary[href] {
+  background-color: #0378a9;
 }

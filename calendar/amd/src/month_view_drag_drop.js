@@ -14,44 +14,47 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A javascript module to handle calendar drag and drop. This module
- * unfortunately requires some state to be maintained because of the
- * limitations of the HTML5 drag and drop API which means it can't
- * be used multiple times with the current implementation.
+ * A javascript module to handle calendar drag and drop in the calendar
+ * month view.
  *
- * @module     core_calendar/drag_drop
- * @class      drag_drop
+ * @module     core_calendar/month_view_drag_drop
+ * @class      month_view_drag_drop
  * @package    core_calendar
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define([
             'jquery',
-            'core_calendar/events'
+            'core_calendar/events',
+            'core_calendar/drag_drop_data_store'
         ],
         function(
             $,
-            CalendarEvents
+            CalendarEvents,
+            DataStore
         ) {
 
     var SELECTORS = {
         ROOT: "[data-region='calendar']",
-        DRAGGABLE: '[draggable="true"]',
-        DROP_ZONE: '[data-drop-zone="true"]',
+        DRAGGABLE: '[draggable="true"][data-region="event-item"]',
+        DROP_ZONE: '[data-drop-zone="month-view-day"]',
         WEEK: '[data-region="month-view-week"]',
     };
-    var HOVER_CLASS = 'bg-primary';
+    var HOVER_CLASS = 'bg-primary text-white';
+    /* @var {bool} registered If the event listeners have been added */
+    var registered = false;
 
-    // Unfortunately we are required to maintain some module
-    // level state due to the limitations of the HTML5 drag
-    // and drop API. Specifically the inability to pass data
-    // between the dragstate and dragover events handlers
-    // using the DataTransfer object in the event.
-
-    /** @var int eventId The event id being moved. */
-    var eventId = null;
-    /** @var int duration The number of days the event spans */
-    var duration = null;
+    /**
+     * Get the correct drop zone element from the given javascript
+     * event.
+     *
+     * @param {event} e The javascript event
+     * @return {object|null}
+     */
+    var getDropZoneFromEvent = function(e) {
+        var dropZone = $(e.target).closest(SELECTORS.DROP_ZONE);
+        return (dropZone.length) ? dropZone : null;
+    };
 
     /**
      * Update the hover state for the event in the calendar to reflect
@@ -70,11 +73,10 @@ define([
      * @param {bool} hovered If the target is hovered or not
      * @param {int} count How many days to highlight (default to duration)
      */
-    var updateHoverState = function(target, hovered, count) {
-        var dropZone = $(target).closest(SELECTORS.DROP_ZONE);
+    var updateHoverState = function(dropZone, hovered, count) {
         if (typeof count === 'undefined') {
             // This is how many days we need to highlight.
-            count = duration;
+            count = DataStore.getDurationDays();
         }
 
         if (hovered) {
@@ -115,16 +117,20 @@ define([
      * @param {event} e The dragstart event
      */
     var dragstartHandler = function(e) {
-        var eventElement = $(e.target);
+        var eventElement = $(e.target).closest(SELECTORS.DRAGGABLE);
 
-        if (!eventElement.is('[data-event-id]')) {
-            eventElement = eventElement.find('[data-event-id]');
+        if (!eventElement.length) {
+            return;
         }
 
-        eventId = eventElement.attr('data-event-id');
+        eventElement = eventElement.find('[data-event-id]');
 
+        var eventId = eventElement.attr('data-event-id');
         var eventsSelector = SELECTORS.ROOT + ' [data-event-id="' + eventId + '"]';
-        duration = $(eventsSelector).length;
+        var duration = $(eventsSelector).length;
+
+        DataStore.setEventId(eventId);
+        DataStore.setDurationDays(duration);
 
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.dropEffect = "move";
@@ -145,7 +151,14 @@ define([
      */
     var dragoverHandler = function(e) {
         e.preventDefault();
-        updateHoverState(e.target, true);
+
+        var dropZone = getDropZoneFromEvent(e);
+
+        if (!dropZone) {
+            return;
+        }
+
+        updateHoverState(dropZone, true);
     };
 
     /**
@@ -158,8 +171,14 @@ define([
      * @param {event} e The dragstart event
      */
     var dragleaveHandler = function(e) {
+        var dropZone = getDropZoneFromEvent(e);
+
+        if (!dropZone) {
+            return;
+        }
+
+        updateHoverState(dropZone, false);
         e.preventDefault();
-        updateHoverState(e.target, false);
     };
 
     /**
@@ -174,35 +193,46 @@ define([
      * @param {event} e The dragstart event
      */
     var dropHandler = function(e) {
-        e.preventDefault();
+        var dropZone = getDropZoneFromEvent(e);
 
+        if (!dropZone) {
+            DataStore.clearAll();
+            return;
+        }
+
+        var eventId = DataStore.getEventId();
         var eventElementSelector = SELECTORS.ROOT + ' [data-event-id="' + eventId + '"]';
         var eventElement = $(eventElementSelector);
-        var origin = eventElement.closest(SELECTORS.DROP_ZONE);
+        var origin = null;
         var destination = $(e.target).closest(SELECTORS.DROP_ZONE);
 
-        updateHoverState(e.target, false);
-        $('body').trigger(CalendarEvents.moveEvent, [eventElement, origin, destination]);
+        if (eventElement.length) {
+            origin = eventElement.closest(SELECTORS.DROP_ZONE);
+        }
+
+        updateHoverState(dropZone, false);
+        $('body').trigger(CalendarEvents.moveEvent, [eventId, origin, destination]);
+        DataStore.clearAll();
+
+        e.preventDefault();
     };
 
     return {
         /**
          * Initialise the event handlers for the drag events.
-         *
-         * @param {object} root The root calendar element that containers the drag drop elements
          */
-        init: function(root) {
-            root = $(root);
-
-            root.find(SELECTORS.DRAGGABLE).each(function(index, element) {
-                element.addEventListener('dragstart', dragstartHandler, true);
-            });
-
-            root.find(SELECTORS.DROP_ZONE).each(function(index, element) {
-                element.addEventListener('dragover', dragoverHandler, true);
-                element.addEventListener('dragleave', dragleaveHandler, true);
-                element.addEventListener('drop', dropHandler, true);
-            });
+        init: function() {
+            if (!registered) {
+                // These handlers are only added the first time the module
+                // is loaded because we don't want to have a new listener
+                // added each time the "init" function is called otherwise we'll
+                // end up with lots of stale handlers.
+                document.addEventListener('dragstart', dragstartHandler, false);
+                document.addEventListener('dragover', dragoverHandler, false);
+                document.addEventListener('dragleave', dragleaveHandler, false);
+                document.addEventListener('drop', dropHandler, false);
+                registered = true;
+            }
         },
     };
 });
