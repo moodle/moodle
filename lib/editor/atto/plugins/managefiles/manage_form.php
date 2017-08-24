@@ -47,7 +47,7 @@ class atto_managefiles_manage_form extends moodleform {
         $elementid = $this->_customdata['elementid'];
         $options = $this->_customdata['options'];
         $files = $this->_customdata['files'];
-        $removeorphaneddrafts = $this->_customdata['removeorphaneddrafts'];
+        $removeorphaneddrafts = $this->_customdata['removeorphaneddrafts'] ?? false;
 
         $mform->addElement('header', 'filemanagerhdr', get_string('filemanager', 'atto_managefiles'));
 
