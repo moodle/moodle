@@ -171,17 +171,27 @@ if ($departmentid == $companydepartment->id) {
     // Cycle through the results.
     foreach ($licenses as $license) {
         // Set up the edit buttons.
+        $deletebutton = "";
+        $editbutton = "";
+
         if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
             (iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context) && !empty($license->parentid))) {
-            $deletebutton = "<a class='btn btn-primary' href='". 
-                             new moodle_url('company_license_list.php', array('delete' => $license->id,
-                                                                              'sesskey' => sesskey())) ."'>$strdelete</a>";
-            $editbutton = "<a class='btn btn-primary' href='" . new moodle_url('company_license_edit_form.php',
-                           array("licenseid" => $license->id, 'departmentid' => $departmentid)) . "'>$stredit</a>";
-        } else {
-            $deletebutton = "";
-            $editbutton = "";
+                // Is this above the user's company allocation?
+                if ($DB->get_record_sql("SELECT id FROM {company_users}
+                                         WHERE userid = :userid
+                                         AND companyid = (
+                                            SELECT companyid FROM {companylicense}
+                                            WHERE id = :parentid)",
+                                         array('userid' => $USER->id,
+                                               'parentid' => $license->parentid))) {
+                $deletebutton = "<a class='btn btn-primary' href='". 
+                                 new moodle_url('company_license_list.php', array('delete' => $license->id,
+                                                                                  'sesskey' => sesskey())) ."'>$strdelete</a>";
+                $editbutton = "<a class='btn btn-primary' href='" . new moodle_url('company_license_edit_form.php',
+                               array("licenseid" => $license->id, 'departmentid' => $departmentid)) . "'>$stredit</a>";
+            }
         }
+
         // does the company the license is allocated to have any kids?
         $licensecompany = new company($license->companyid);
         if ($childcompanies = $licensecompany->get_child_companies_recursive()) {
