@@ -167,15 +167,25 @@ class backup_course_task extends backup_task {
     /**
      * Helper method, used by encode_content_links.
      * @param string $content content in which to encode links.
-     * @param unknown_type $name the name of this type of encoded link.
-     * @param unknown_type $path the path that identifies this type of link, up
+     * @param string $name the name of this type of encoded link.
+     * @param string $path the path that identifies this type of link, up
      *      to the ?paramname= bit.
      * @return string content with one type of link encoded.
      */
     static private function encode_links_helper($content, $name, $path) {
         global $CFG;
-        $base = preg_quote($CFG->wwwroot . $path, '/');
-        return preg_replace('/(' . $base . ')([0-9]+)/', '$@' . $name . '*$2@$', $content);
+        // We want to convert both http and https links.
+        $root = $CFG->wwwroot;
+        $httpsroot = str_replace('http://', 'https://', $root);
+        $httproot = str_replace('https://', 'http://', $root);
+
+        $httpsbase = preg_quote($httpsroot . $path, '/');
+        $httpbase = preg_quote($httproot . $path, '/');
+
+        $return = preg_replace('/(' . $httpsbase . ')([0-9]+)/', '$@' . $name . '*$2@$', $content);
+        $return = preg_replace('/(' . $httpbase . ')([0-9]+)/', '$@' . $name . '*$2@$', $return);
+
+        return $return;
     }
 
 // Protected API starts here
