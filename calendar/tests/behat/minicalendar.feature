@@ -27,6 +27,7 @@ Feature: Open calendar popup
       | Type of event     | site |
       | Event title       | Event 1:2 |
       | timestart[day]    | 1  |
+    And I reload the page
     When I hover over day "1" of this month in the calendar
     Then I should see "Event 1:1"
     And I should see "Event 1:2"
