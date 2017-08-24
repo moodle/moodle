@@ -60,7 +60,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
                     return Templates.render('core_calendar/month_detailed', context);
                 })
                 .then(function(html, js) {
-                    return Templates.replaceNodeContents(SELECTORS.CALENDAR_MONTH_WRAPPER, html, js);
+                    return Templates.replaceNode(SELECTORS.CALENDAR_MONTH_WRAPPER, html, js);
                 })
                 .fail(Notification.exception);
         };
