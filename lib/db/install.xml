@@ -3600,10 +3600,8 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
       </KEYS>
-      <INDEXES>
-        <INDEX NAME="modelid" UNIQUE="false" FIELDS="modelid" COMMENT="Index on modelid"/>
-      </INDEXES>
     </TABLE>
     <TABLE NAME="analytics_predictions" COMMENT="Predictions">
       <FIELDS>
@@ -3619,6 +3617,8 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="modelidandcontextid" UNIQUE="false" FIELDS="modelid, contextid" COMMENT="Index on modelid and contextid"/>
@@ -3636,6 +3636,8 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
+        <KEY NAME="fileid" TYPE="foreign" FIELDS="fileid" REFTABLE="files" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="modelidandanalysableidandtimesplitting" UNIQUE="false" FIELDS="modelid, analysableid, timesplitting" COMMENT="Index on modelid and analysableid and timesplitting"/>
@@ -3654,6 +3656,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="modelidandanalysableidandtimesplittingandrangeindex" UNIQUE="false" FIELDS="modelid, analysableid, timesplitting, rangeindex" COMMENT="Index on modelid and analysableid and timesplitting"/>
@@ -3669,6 +3672,8 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
+        <KEY NAME="fileid" TYPE="foreign" FIELDS="fileid" REFTABLE="files" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="modelidandfileidandaction" UNIQUE="false" FIELDS="modelid, fileid, action" COMMENT="Index on modelid and fileid and action"/>
@@ -3688,6 +3693,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="starttime-endtime-contextid" UNIQUE="false" FIELDS="starttime, endtime, contextid"/>
