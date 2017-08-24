@@ -105,6 +105,12 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK
     ),
 
+    'block/iomad_company_admin:company_add_child' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
+
     'block/iomad_company_admin:company_edit' => array(
 
         'captype' => 'write',
@@ -242,6 +248,12 @@ $capabilities = array(
     ),
 
     'block/iomad_company_admin:edit_licenses' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+
+    'block/iomad_company_admin:split_my_licenses' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
