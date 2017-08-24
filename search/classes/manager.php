@@ -136,8 +136,11 @@ class manager {
 
         $serverstatus = $engine->is_server_ready();
         if ($serverstatus !== true) {
-            // Error message with no details as this is an exception that any user may find if the server crashes.
-            throw new \core_search\engine_exception('engineserverstatus', 'search');
+            // Skip this error in Behat when faking seach results.
+            if (!defined('BEHAT_SITE_RUNNING') || !get_config('core_search', 'behat_fakeresult')) {
+                // Error message with no details as this is an exception that any user may find if the server crashes.
+                throw new \core_search\engine_exception('engineserverstatus', 'search');
+            }
         }
 
         static::$instance = new \core_search\manager($engine);
@@ -552,7 +555,39 @@ class manager {
      * @return \core_search\document[]
      */
     public function search(\stdClass $formdata, $limit = 0) {
-        global $USER;
+        // For Behat testing, the search results can be faked using a special step.
+        if (defined('BEHAT_SITE_RUNNING')) {
+            $fakeresult = get_config('core_search', 'behat_fakeresult');
+            if ($fakeresult) {
+                // Clear config setting.
+                unset_config('core_search', 'behat_fakeresult');
+
+                // Check query matches expected value.
+                $details = json_decode($fakeresult);
+                if ($formdata->q !== $details->query) {
+                    throw new \coding_exception('Unexpected search query: ' . $formdata->q);
+                }
+
+                // Create search documents from the JSON data.
+                $docs = [];
+                foreach ($details->results as $result) {
+                    $doc = new \core_search\document($result->itemid, $result->componentname,
+                            $result->areaname);
+                    foreach ((array)$result->fields as $field => $value) {
+                        $doc->set($field, $value);
+                    }
+                    foreach ((array)$result->extrafields as $field => $value) {
+                        $doc->set_extra($field, $value);
+                    }
+                    $area = $this->get_search_area($doc->get('areaid'));
+                    $doc->set_doc_url($area->get_doc_url($doc));
+                    $doc->set_context_url($area->get_context_url($doc));
+                    $docs[] = $doc;
+                }
+
+                return $docs;
+            }
+        }
 
         $limitcourseids = false;
         if (!empty($formdata->courseids)) {
