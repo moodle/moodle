@@ -38,7 +38,7 @@ use Phpml\ModelManager;
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class processor implements \core_analytics\predictor {
+class processor implements \core_analytics\classifier, \core_analytics\regressor {
 
     /**
      * Size of training / prediction batches.
