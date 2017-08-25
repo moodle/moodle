@@ -30,6 +30,7 @@ $string['analyticslogstore_help'] = 'The log store that will be used by the anal
 $string['analyticssettings'] = 'Analytics settings';
 $string['coursetoolong'] = 'The course is too long';
 $string['enabledtimesplittings'] = 'Time splitting methods';
+$string['disabledmodel'] = 'Disabled model';
 $string['erroralreadypredict'] = '{$a} file has already been used to predict';
 $string['errorcannotreaddataset'] = 'Dataset file {$a} can not be read';
 $string['errorcannotwritedataset'] = 'Dataset file {$a} can not be written';

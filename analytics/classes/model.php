@@ -443,7 +443,12 @@ class model {
 
             // Reset trained flag.
             $this->model->trained = 0;
+
+        } else if ($this->model->enabled != $enabled) {
+            // We purge the cached contexts with insights as some will not be visible anymore.
+            $this->purge_insights_cache();
         }
+
         $this->model->enabled = intval($enabled);
         $this->model->indicators = $indicatorsstr;
         $this->model->timesplitting = $timesplittingid;
@@ -971,6 +976,13 @@ class model {
             $this->model->timesplitting = $timesplittingid;
             $this->model->version = $now;
         }
+
+        // Purge pages with insights as this may change things.
+        if ($timesplittingid && $timesplittingid !== $this->model->timesplitting ||
+                $this->model->enabled != 1) {
+            $this->purge_insights_cache();
+        }
+
         $this->model->enabled = 1;
         $this->model->timemodified = $now;
 
@@ -1375,6 +1387,13 @@ class model {
 
         // We don't expect people to clear models regularly and the cost of filling the cache is
         // 1 db read per context.
+        $this->purge_insights_cache();
+    }
+
+    /**
+     * Purges the insights cache.
+     */
+    private function purge_insights_cache() {
         $cache = \cache::make('core', 'contextwithinsights');
         $cache->purge();
     }

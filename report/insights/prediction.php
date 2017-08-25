@@ -45,7 +45,7 @@ $insightinfo->insightname = $model->get_target()->get_name();
 $title = get_string('insightinfo', 'analytics', $insightinfo);
 
 $modelready = $model->is_enabled() && $model->is_trained() && $model->predictions_exist($context);
-if (!$modelready && !has_capability('moodle/analytics:managemodels', $context)) {
+if (!$modelready) {
     echo $renderer->render_model_disabled($insightinfo);
     exit(0);
 }
