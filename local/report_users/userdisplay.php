@@ -257,7 +257,7 @@ foreach ($usercourses as $usercourse) {
                                          ON (cl.id = clu.licenseid)
                                          WHERE cl.program = 1
                                          AND clu.userid = :userid
-                                         AND clu.courseid = :courseid",
+                                         AND clu.licensecourseid = :courseid",
                                          array('userid' => $userid,
                                                'courseid' => $usercourseid))) {
                     $delaction = '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
