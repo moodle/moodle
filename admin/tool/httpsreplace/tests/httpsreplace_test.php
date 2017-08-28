@@ -29,73 +29,232 @@ defined('MOODLE_INTERNAL') || die();
 
 class httpsreplace_test extends \advanced_testcase {
 
-    public function test_find_and_replace() {
+    /**
+     * Data provider for test_upgrade_http_links
+     */
+    public function upgrade_http_links_provider() {
+        global $CFG;
+        // Get the http url, since the default test wwwroot is https.
+        $wwwroothttp = preg_replace('/^https:/', 'http:', $CFG->wwwroot);
+        return [
+            "Test image from another site should be replaced" => [
+                "content" => '<img src="' . $this->getExternalTestFileUrl('/test.jpg', false) . '">',
+                "outputregex" => '/UPDATE/',
+                "expectedcontent" => '<img src="' . $this->getExternalTestFileUrl('/test.jpg', true) . '">',
+            ],
+            "Test object from another site should be replaced" => [
+                "content" => '<object data="' . $this->getExternalTestFileUrl('/test.swf', false) . '">',
+                "outputregex" => '/UPDATE/',
+                "expectedcontent" => '<object data="' . $this->getExternalTestFileUrl('/test.swf', true) . '">',
+            ],
+            "Link that is from this site should be replaced" => [
+                "content" => '<img src="' . $wwwroothttp . '/logo.png">',
+                "outputregex" => '/UPDATE/',
+                "expectedcontent" => '<img src="' . $CFG->wwwroot . '/logo.png">',
+            ],
+            "Link that is from this site, https new so doesn't need replacing" => [
+                "content" => '<img src="' . $CFG->wwwroot . '/logo.png">',
+                "outputregex" => '/^$/',
+                "expectedcontent" => '<img src="' . $CFG->wwwroot . '/logo.png">',
+            ],
+            "Unavailable image should be replaced" => [
+                "content" => '<img src="http://intentionally.unavailable/link1.jpg">',
+                "outputregex" => '/UPDATE/',
+                "expectedcontent" => '<img src="https://intentionally.unavailable/link1.jpg">',
+            ],
+            "Https content that has an http url as a param should not be replaced" => [
+                "content" => '<img src="https://anothersite.com?param=http://asdf.com">',
+                "outputregex" => '/^$/',
+                "expectedcontent" => '<img src="https://anothersite.com?param=http://asdf.com">',
+            ],
+            "Known supported domain should be replaced" => [
+                "content" => '<iframe src="http://fe8be92ac963979368eca.r38.cf1.rackcdn.com/Helpful_ET_Websites_Apps_Resources.pdf">',
+                "domain" => 'fe8be92ac963979368eca.ssl.cf1.rackcdn.com',
+                "outputregex" => '/UPDATE/',
+            ],
+            "Exception is replaced with new domain" => [
+                "content" => '<script src="http://cdnapi.kaltura.com/p/730212/sp/73021200/embedIframeJs">',
+                "domain" => 'cdnapisec.kaltura.com',
+                "outputregex" => '/UPDATE/',
+            ],
+            "More params should not interfere" => [
+                "content" => '<img alt="A picture" src="' . $this->getExternalTestFileUrl('/test.png', false) . '" width="1”><p style="font-size: \'20px\'"></p>',
+                "outputregex" => '/UPDATE/',
+                "expectedcontent" => '<img alt="A picture" src="' . $this->getExternalTestFileUrl('/test.png', true) . '" width="1”><p style="font-size: \'20px\'"></p>',
+            ],
+            "Broken URL should not be changed" => [
+                "content" => '<img src="broken.' . $this->getExternalTestFileUrl('/test.png', false) . '">',
+                "outputregex" => '/^$/',
+                "expectedcontent" => '<img src="broken.' . $this->getExternalTestFileUrl('/test.png', false) . '">',
+            ],
+            "Link URL should not be changed" => [
+                "content" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '">' . $this->getExternalTestFileUrl('/test.png', false) . '</a>',
+                "outputregex" => '/^$/',
+                "expectedcontent" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '">' . $this->getExternalTestFileUrl('/test.png', false) . '</a>',
+            ],
+        ];
+    }
+
+    /**
+     * Test upgrade_http_links
+     * @param string $content Example content that we'll attempt to replace.
+     * @param string $ouputregex Regex for what output we expect.
+     * @param string $expectedcontent What content we are expecting afterwards.
+     * @dataProvider upgrade_http_links_provider
+     */
+    public function test_upgrade_http_links($content, $ouputregex, $expectedcontent) {
         global $DB;
 
         $this->resetAfterTest();
-        $this->expectOutputRegex("/UPDATE/");
+        $this->expectOutputRegex($ouputregex);
 
         $finder = new \tool_httpsreplace\url_finder();
-        $results = $finder->http_link_stats();
-        $this->assertEmpty($results);
 
         $generator = $this->getDataGenerator();
-        $imglink1 = '<img src="http://intentionally.unavailable/link1.jpg">';
-        $course1 = $generator->create_course((object) [
-            'summary' => $imglink1,
+        $course = $generator->create_course((object) [
+            'summary' => $content,
         ]);
 
-        $imglink2 = '<img src="http://intentionally.unavailable/link2.gif">';
-        $course2 = $generator->create_course((object) [
-            'summary' => $imglink2,
-        ]);
+        $finder->upgrade_http_links();
 
-        $imglink3 = '<img src="http://other.unavailable/link3.svg">';
-        $course3 = $generator->create_course((object) [
-            'summary' => $imglink1.$imglink2.$imglink3,
-        ]);
+        $summary = $DB->get_field('course', 'summary', ['id' => $course->id]);
+        $this->assertContains($expectedcontent, $summary);
+    }
 
-        $kaltura = '<script src="http://cdnapi.kaltura.com/p/730212/sp/73021200/embedIframeJs">';
-        $course4 = $generator->create_course((object) [
-            'summary' => $kaltura,
-        ]);
+    /**
+     * Data provider for test_http_link_stats
+     */
+    public function http_link_stats_provider() {
+        global $CFG;
+        // Get the http url, since the default test wwwroot is https.
+        $wwwrootdomain = 'www.example.com';
+        $wwwroothttp = preg_replace('/^https:/', 'http:', $CFG->wwwroot);
+        $testdomain = 'download.moodle.org';
+        return [
+            "Test image from an available site so shouldn't be reported" => [
+                "content" => '<img src="' . $this->getExternalTestFileUrl('/test.jpg', false) . '">',
+                "domain" => $testdomain,
+                "expectedcount" => 0,
+            ],
+            "Link that is from this site shouldn't be reported" => [
+                "content" => '<img src="' . $wwwroothttp . '/logo.png">',
+                "domain" => $wwwrootdomain,
+                "expectedcount" => 0,
+            ],
+            "Unavailable, but https shouldn't be reported" => [
+                "content" => '<img src="https://intentionally.unavailable/logo.png">',
+                "domain" => 'intentionally.unavailable',
+                "expectedcount" => 0,
+            ],
+            "Unavailable image should be reported" => [
+                "content" => '<img src="http://intentionally.unavailable/link1.jpg">',
+                "domain" => 'intentionally.unavailable',
+                "expectedcount" => 1,
+            ],
+            "Unavailable object should be reported" => [
+                "content" => '<object data="http://intentionally.unavailable/file.swf">',
+                "domain" => 'intentionally.unavailable',
+                "expectedcount" => 1,
+            ],
+            "Known supported domain should not be reported" => [
+                "content" => '<iframe src="http://fe8be92ac963979368eca.r38.cf1.rackcdn.com/Helpful_ET_Websites_Apps_Resources.pdf">',
+                "domain" => 'fe8be92ac963979368eca.r38.cf1.rackcdn.com',
+                "expectedcount" => 0,
+            ],
+            "Link should not be reported" => [
+                "content" => '<a href="http://intentionally.unavailable/page.php">Link</a>',
+                "domain" => 'intentionally.unavailable',
+                "expectedcount" => 0,
+            ],
+            "Text should not be reported" => [
+                "content" => 'http://intentionally.unavailable/page.php',
+                "domain" => 'intentionally.unavailable',
+                "expectedcount" => 0,
+            ],
+        ];
+    }
 
-        $rackcdn = '<iframe src="http://fe8be92ac963979368eca.r38.cf1.rackcdn.com/Helpful_ET_Websites_Apps_Resources.pdf">';
-        $course5 = $generator->create_course((object) [
-            'summary' => $rackcdn,
+    /**
+     * Test http_link_stats
+     * @param string $content Example content that we'll attempt to replace.
+     * @param string $domain The domain we will check was replaced.
+     * @param string $expectedcount Number of urls from that domain that we expect to be replaced.
+     * @dataProvider http_link_stats_provider
+     */
+    public function test_http_link_stats($content, $domain, $expectedcount) {
+        $this->resetAfterTest();
+
+        $finder = new \tool_httpsreplace\url_finder();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course((object) [
+            'summary' => $content,
         ]);
 
         $results = $finder->http_link_stats();
-        $this->assertCount(2, $results);
-        $this->assertEquals(4, $results['intentionally.unavailable']);
-        $this->assertEquals(1, $results['other.unavailable']);
+
+        $this->assertEquals($expectedcount, $results[$domain] ?? 0);
+    }
+
+    /**
+     * Test links and text are not changed
+     */
+    public function test_links_and_text() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->expectOutputRegex('/^$/');
+
+        $finder = new \tool_httpsreplace\url_finder();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course((object) [
+            'summary' => '<a href="http://intentionally.unavailable/page.php">Link</a> http://other.unavailable/page.php',
+        ]);
+
+        $results = $finder->http_link_stats();
+        $this->assertCount(0, $results);
 
         $finder->upgrade_http_links();
 
         $results = $finder->http_link_stats();
-        $this->assertEmpty($results);
+        $this->assertCount(0, $results);
 
-        $summary1 = $DB->get_field('course', 'summary', ['id' => $course1->id]);
-        $this->assertContains('https://intentionally.unavailable', $summary1);
-        $this->assertNotContains('http://intentionally.unavailable', $summary1);
-
-        $summary2 = $DB->get_field('course', 'summary', ['id' => $course2->id]);
-        $this->assertContains('https://intentionally.unavailable', $summary2);
-        $this->assertNotContains('http://intentionally.unavailable', $summary2);
-
-        $summary3 = $DB->get_field('course', 'summary', ['id' => $course3->id]);
-        $this->assertContains('https://other.unavailable', $summary3);
-        $this->assertContains('https://intentionally.unavailable', $summary3);
-        $this->assertNotContains('http://intentionally.unavailable', $summary3);
-
-        $summary4 = $DB->get_field('course', 'summary', ['id' => $course4->id]);
-        $this->assertContains('https://cdnapisec.kaltura.com', $summary4);
-
-        $summary5 = $DB->get_field('course', 'summary', ['id' => $course5->id]);
-        $expected = "https://fe8be92ac963979368eca.ssl.cf1.rackcdn.com/Helpful_ET_Websites_Apps_Resources.pdf";
-        $this->assertContains($expected, $summary5);
+        $summary = $DB->get_field('course', 'summary', ['id' => $course->id]);
+        $this->assertContains('http://intentionally.unavailable/page.php', $summary);
+        $this->assertContains('http://other.unavailable/page.php', $summary);
+        $this->assertNotContains('https://intentionally.unavailable', $summary);
+        $this->assertNotContains('https://other.unavailable', $summary);
     }
 
+    /**
+     * If we have an http wwwroot then we shouldn't report it.
+     */
+    public function test_httpwwwroot() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+        $CFG->wwwroot = preg_replace('/^https:/', 'http:', $CFG->wwwroot);
+        $this->expectOutputRegex('/^$/');
+
+        $finder = new \tool_httpsreplace\url_finder();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course((object) [
+            'summary' => '<img src="' . $CFG->wwwroot . '/image.png">',
+        ]);
+
+        $results = $finder->http_link_stats();
+        $this->assertCount(0, $results);
+
+        $finder->upgrade_http_links();
+        $summary = $DB->get_field('course', 'summary', ['id' => $course->id]);
+        $this->assertContains($CFG->wwwroot, $summary);
+    }
+
+    /**
+     * Test that links in excluded tables are not replaced
+     */
     public function test_upgrade_http_links_excluded_tables() {
         $this->resetAfterTest();
 
