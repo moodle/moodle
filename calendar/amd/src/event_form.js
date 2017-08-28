@@ -232,7 +232,7 @@ define(['jquery', 'core/templates'], function($, Templates) {
                     element.removeClass('hidden');
                     element.prop('disabled', false);
 
-                    if (selectedIndex === null) {
+                    if (selectedIndex === null || element.attr('selected')) {
                         selectedIndex = index;
                     }
                 } else {
