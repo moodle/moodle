@@ -191,6 +191,110 @@ $extraeditbuttons = false;
 $lessonpageid = null;
 $timer = null;
 
+$duration = $DB->get_field_sql(		
+	                    "SELECT SUM(lessontime - starttime)		
+	                                   FROM {lesson_timer}		
+	                                  WHERE lessonid = :lessonid		
+	                                    AND userid = :userid",		
+	                    array('userid' => $USER->id, 'lessonid' => $lesson->id));		
+	                if (!$duration) {		
+	                    $duration = 0;		
+	                }		
+			
+			
+	$a = new stdClass;		
+	$a->timespent = format_time($duration);		
+			
+	echo '<script type="text/javascript">		
+	function format_time(totalsecs) {		
+	    var totalsecs = Math.abs(totalsecs);		
+		var remainder;  		
+				
+	    var years     = Math.floor(totalsecs/31536000);		
+	     remainder = totalsecs - (years*31536000);		
+	    var days      = Math.floor(remainder/86400);		
+	     remainder = totalsecs - (days*86400);		
+	    var hours     = Math.floor(remainder/3600);		
+	     remainder = remainder - (hours*3600);		
+	    var mins      = Math.floor(remainder/60);		
+	    var secs      = remainder - (mins*60);		
+			
+	    var ss = (secs == 1)  ? "sec." : "sec.";		
+	    var sm = (mins == 1)  ? "min." : "min.";		
+	    var sh = (hours == 1) ? "ora" : "ore";		
+	    var sd = (days == 1)  ? "giorno" : "giorni";		
+	    var sy = (years == 1)  ? "anno" : "anni";		
+			
+	    var oyears = "";		
+	    var odays = "";		
+	    var ohours = "";		
+	    var omins = "";		
+	    var osecs = "";		
+			
+	    if (years) {		
+	        oyears  = years +" "+ sy;		
+	    }		
+	    if (days) {		
+	        odays  = days +" "+ sd;		
+	    }		
+	    if (hours) {		
+	        ohours = hours +" "+ sh;		
+	    }		
+	    if (mins) {		
+	        omins  = mins +" "+ sm;		
+	    }		
+	    if (secs) {		
+	        osecs  = secs +" "+ ss;		
+	    }		
+				
+		var res		
+				
+	    if (years) {		
+	        res = oyears +" "+ odays;		
+			return res.trim()		
+	    }		
+	    if (days) {		
+	         res = odays +" "+ ohours +" "+ omins +" "+ osecs;		
+			 return res.trim()		
+	    }		
+	    if (hours) {		
+	        res = ohours +" "+ omins +" "+ osecs;		
+			return res.trim()		
+	    }		
+	    if (mins) {		
+	         res = omins +" "+ osecs;		
+			 return res.trim()		
+	    }		
+	    if (secs) {		
+	        return osecs;		
+	    }		
+	    return "adesso";		
+	}		
+			
+	function Start_Timer(spendedseconds, totaldurationseconds){		
+		var timeCount = spendedseconds;		
+		var strTimeSpent = "' . get_string('totaltimespent', 'lesson', ' ') . '";		
+		if (timerID) {		
+			window.clearInterval(timerID);		
+		}		
+		var timerID = window.setInterval(function(){		
+			timeCount=timeCount+1;		
+			if (totaldurationseconds) {		
+				var strTempoRimanente		
+				if (totaldurationseconds-timeCount > 0) {		
+					strTempoRimanente = "<br>Manca al completamento: " + format_time(totaldurationseconds-timeCount);		
+				}else{		
+					strTempoRimanente = "<br>Manca al completamento: " + "Complimenti! Hai terminato le ore minime di studio!";		
+				}		
+				$("#timespent").html(strTimeSpent + format_time(timeCount) + "<br>Tempo minimo di studio: " + format_time(totaldurationseconds) + strTempoRimanente);		
+			}else{		
+				$("#timespent").html(strTimeSpent + format_time(timeCount));		
+			}		
+			}, 1000);			
+	}		
+			
+	</script>';
+
 if ($pageid != LESSON_EOL) {
 
     $lesson->set_module_viewed();
@@ -241,6 +345,8 @@ if ($pageid != LESSON_EOL) {
     }
     echo $lessoncontent;
     echo $lessonoutput->progress_bar($lesson);
+		echo html_writer::tag('div id="timespent"', get_string('totaltimespent', 'lesson', $a->timespent));		
+		echo '<script type="text/javascript">Start_Timer(' . $duration . ', ' . $lesson->completiontimespent . ');</script>';	
     echo $lessonoutput->footer();
 
 } else {
@@ -255,5 +361,7 @@ if ($pageid != LESSON_EOL) {
     lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
     echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid, get_string("congratulations", "lesson"));
     echo $lessoncontent;
+		echo html_writer::tag('div id="timespent"', get_string('totaltimespent', 'lesson', $a->timespent));		
+		echo '<script type="text/javascript">Start_Timer(' . $duration . ', ' . $lesson->completiontimespent . ');</script>';		
     echo $lessonoutput->footer();
 }
