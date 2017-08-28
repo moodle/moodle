@@ -38,7 +38,7 @@ use Phpml\ModelManager;
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class processor implements \core_analytics\predictor {
+class processor implements \core_analytics\classifier, \core_analytics\regressor {
 
     /**
      * Size of training / prediction batches.
@@ -73,14 +73,14 @@ class processor implements \core_analytics\predictor {
     }
 
     /**
-     * Trains a machine learning algorithm with the provided training set.
+     * Train this processor classification model using the provided supervised learning dataset.
      *
      * @param string $uniqueid
      * @param \stored_file $dataset
      * @param string $outputdir
      * @return \stdClass
      */
-    public function train($uniqueid, \stored_file $dataset, $outputdir) {
+    public function train_classification($uniqueid, \stored_file $dataset, $outputdir) {
 
         // Output directory is already unique to the model.
         $modelfilepath = $outputdir . DIRECTORY_SEPARATOR . self::MODEL_FILENAME;
@@ -134,14 +134,14 @@ class processor implements \core_analytics\predictor {
     }
 
     /**
-     * Predicts the provided samples
+     * Classifies the provided dataset samples.
      *
      * @param string $uniqueid
      * @param \stored_file $dataset
      * @param string $outputdir
      * @return \stdClass
      */
-    public function predict($uniqueid, \stored_file $dataset, $outputdir) {
+    public function classify($uniqueid, \stored_file $dataset, $outputdir) {
 
         // Output directory is already unique to the model.
         $modelfilepath = $outputdir . DIRECTORY_SEPARATOR . self::MODEL_FILENAME;
@@ -199,7 +199,7 @@ class processor implements \core_analytics\predictor {
     }
 
     /**
-     * Evaluates the provided dataset.
+     * Evaluates this processor classification model using the provided supervised learning dataset.
      *
      * During evaluation we need to shuffle the evaluation dataset samples to detect deviated results,
      * if the dataset is massive we can not load everything into memory. We know that 2GB is the
@@ -216,7 +216,7 @@ class processor implements \core_analytics\predictor {
      * @param string $outputdir
      * @return \stdClass
      */
-    public function evaluate($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
+    public function evaluate_classification($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
         $fh = $dataset->get_content_file_handle();
 
         // The first lines are var names and the second one values.
@@ -349,6 +349,47 @@ class processor implements \core_analytics\predictor {
         }
 
         return $resultobj;
+    }
+
+    /**
+     * Train this processor regression model using the provided supervised learning dataset.
+     *
+     * @throws new \coding_exception
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
+    public function train_regression($uniqueid, \stored_file $dataset, $outputdir) {
+        throw new \coding_exception('This predictor does not support regression yet.');
+    }
+
+    /**
+     * Estimates linear values for the provided dataset samples.
+     *
+     * @throws new \coding_exception
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param mixed $outputdir
+     * @return void
+     */
+    public function estimate($uniqueid, \stored_file $dataset, $outputdir) {
+        throw new \coding_exception('This predictor does not support regression yet.');
+    }
+
+    /**
+     * Evaluates this processor regression model using the provided supervised learning dataset.
+     *
+     * @throws new \coding_exception
+     * @param string $uniqueid
+     * @param float $maxdeviation
+     * @param int $niterations
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
+    public function evaluate_regression($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
+        throw new \coding_exception('This predictor does not support regression yet.');
     }
 
     /**

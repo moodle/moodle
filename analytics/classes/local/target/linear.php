@@ -42,7 +42,8 @@ abstract class linear extends base {
      */
     public function is_linear() {
         // Not supported yet.
-        throw new \coding_exception('Sorry, this version\'s prediction processors only support targets with binary values.');
+        throw new \coding_exception('Sorry, this version\'s prediction processors only support targets with binary values.' .
+            ' You can write your own and overwrite this method though.');
     }
 
     /**
@@ -52,7 +53,7 @@ abstract class linear extends base {
      * @param string $ignoredsubtype
      * @return int
      */
-    public function get_calculated_outcome($value, $ignoredsubtype = false) {
+    public function get_calculation_outcome($value, $ignoredsubtype = false) {
 
         // This is very generic, targets will probably be interested in overwriting this.
         $diff = static::get_max_value() - static::get_min_value();
@@ -67,7 +68,7 @@ abstract class linear extends base {
      *
      * @return float
      */
-    protected static function get_max_value() {
+    public static function get_max_value() {
         // Coding exception as this will only be called if this target have linear values.
         throw new \coding_exception('Overwrite get_max_value() and return the target max value');
     }
@@ -77,9 +78,31 @@ abstract class linear extends base {
      *
      * @return float
      */
-    protected static function get_min_value() {
+    public static function get_min_value() {
         // Coding exception as this will only be called if this target have linear values.
         throw new \coding_exception('Overwrite get_min_value() and return the target min value');
+    }
+
+    /**
+     * Should the model callback be triggered?
+     *
+     * @param mixed $predictedvalue
+     * @param float $predictionscore
+     * @return bool
+     */
+    public function triggers_callback($predictedvalue, $predictionscore) {
+
+        if (!parent::triggers_callback($predictedvalue, $predictionscore)) {
+            return false;
+        }
+
+        // People may not want to set a boundary.
+        $boundary = $this->get_callback_boundary();
+        if (!empty($boundary) && floatval($predictedvalue) < $boundary) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

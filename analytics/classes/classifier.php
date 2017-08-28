@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Predictions processor interface.
+ * Classifier interface.
  *
  * @package   core_analytics
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
@@ -27,18 +27,43 @@ namespace core_analytics;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Predictors interface.
+ * Classifier interface.
  *
  * @package   core_analytics
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface predictor {
+interface classifier extends predictor {
 
     /**
-     * Is it ready to predict?
+     * Train this processor classification model using the provided supervised learning dataset.
      *
-     * @return bool
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
      */
-    public function is_ready();
+    public function train_classification($uniqueid, \stored_file $dataset, $outputdir);
+
+    /**
+     * Classifies the provided dataset samples.
+     *
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
+    public function classify($uniqueid, \stored_file $dataset, $outputdir);
+
+    /**
+     * Evaluates this processor classification model using the provided supervised learning dataset.
+     *
+     * @param string $uniqueid
+     * @param float $maxdeviation
+     * @param int $niterations
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
+    public function evaluate_classification($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir);
 }

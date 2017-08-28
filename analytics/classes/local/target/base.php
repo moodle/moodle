@@ -231,7 +231,7 @@ abstract class base extends \core_analytics\calculable {
      */
     protected function min_prediction_score() {
         // The default minimum discards predictions with a low score.
-        return \core_analytics\model::MIN_SCORE;
+        return \core_analytics\model::PREDICTION_MIN_SCORE;
     }
 
     /**

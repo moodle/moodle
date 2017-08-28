@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class processor implements \core_analytics\predictor {
+class processor implements  \core_analytics\classifier, \core_analytics\regressor {
 
     /**
      * The required version of the python package that performs all calculations.
@@ -79,7 +79,7 @@ class processor implements \core_analytics\predictor {
      * @param string $outputdir
      * @return \stdClass
      */
-    public function train($uniqueid, \stored_file $dataset, $outputdir) {
+    public function train_classification($uniqueid, \stored_file $dataset, $outputdir) {
 
         // Obtain the physical route to the file.
         $datasetpath = $this->get_file_path($dataset);
@@ -113,14 +113,14 @@ class processor implements \core_analytics\predictor {
     }
 
     /**
-     * Returns predictions for the provided dataset samples.
+     * Classifies the provided dataset samples.
      *
      * @param string $uniqueid
      * @param \stored_file $dataset
      * @param string $outputdir
      * @return \stdClass
      */
-    public function predict($uniqueid, \stored_file $dataset, $outputdir) {
+    public function classify($uniqueid, \stored_file $dataset, $outputdir) {
 
         // Obtain the physical route to the file.
         $datasetpath = $this->get_file_path($dataset);
@@ -154,7 +154,7 @@ class processor implements \core_analytics\predictor {
     }
 
     /**
-     * Evaluates the provided dataset.
+     * Evaluates this processor classification model using the provided supervised learning dataset.
      *
      * @param string $uniqueid
      * @param float $maxdeviation
@@ -163,7 +163,7 @@ class processor implements \core_analytics\predictor {
      * @param string $outputdir
      * @return \stdClass
      */
-    public function evaluate($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
+    public function evaluate_classification($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
 
         // Obtain the physical route to the file.
         $datasetpath = $this->get_file_path($dataset);
@@ -193,6 +193,47 @@ class processor implements \core_analytics\predictor {
         }
 
         return $resultobj;
+    }
+
+    /**
+     * Train this processor regression model using the provided supervised learning dataset.
+     *
+     * @throws new \coding_exception
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
+    public function train_regression($uniqueid, \stored_file $dataset, $outputdir) {
+        throw new \coding_exception('This predictor does not support regression yet.');
+    }
+
+    /**
+     * Estimates linear values for the provided dataset samples.
+     *
+     * @throws new \coding_exception
+     * @param string $uniqueid
+     * @param \stored_file $dataset
+     * @param mixed $outputdir
+     * @return void
+     */
+    public function estimate($uniqueid, \stored_file $dataset, $outputdir) {
+        throw new \coding_exception('This predictor does not support regression yet.');
+    }
+
+    /**
+     * Evaluates this processor regression model using the provided supervised learning dataset.
+     *
+     * @throws new \coding_exception
+     * @param string $uniqueid
+     * @param float $maxdeviation
+     * @param int $niterations
+     * @param \stored_file $dataset
+     * @param string $outputdir
+     * @return \stdClass
+     */
+    public function evaluate_regression($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
+        throw new \coding_exception('This predictor does not support regression yet.');
     }
 
     /**

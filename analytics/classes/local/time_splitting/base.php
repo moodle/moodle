@@ -371,12 +371,9 @@ abstract class base {
         $metadata = array(
             'timesplitting' => $this->get_id(),
             // If no target the first column is the sampleid, if target the last column is the target.
+            // This will need to be updated when we support unsupervised learning models.
             'nfeatures' => count(current($dataset)) - 1
         );
-        if ($target) {
-            $metadata['targetclasses'] = json_encode($target::get_classes());
-            $metadata['targettype'] = ($target->is_linear()) ? 'linear' : 'discrete';
-        }
 
         // The first 2 samples will be used to store metadata about the dataset.
         $metadatacolumns = [];
