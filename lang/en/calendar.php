@@ -228,6 +228,7 @@ $string['tuesday'] = 'Tuesday';
 $string['typeclose'] = 'Close event';
 $string['typecourse'] = 'Course event';
 $string['typedue'] = 'Due event';
+$string['typegradingdue'] = 'Grading due event';
 $string['typegroup'] = 'Group event';
 $string['typeopen'] = 'Open event';
 $string['typesite'] = 'Site event';
