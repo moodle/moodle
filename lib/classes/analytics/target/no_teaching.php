@@ -73,14 +73,7 @@ class no_teaching extends \core_analytics\local\target\binary {
         $actions['viewcourse'] = new \core_analytics\prediction_action('viewcourse', $prediction,
             $url, $pix, get_string('view'));
 
-        if (has_capability('moodle/course:enrolreview', $sampledata['context'])) {
-            $url = new \moodle_url('/user/index.php', array('id' => $course->id));
-            $pix = new \pix_icon('i/enrolusers', get_string('enrolledusers', 'enrol'));
-            $actions['enrolusers'] = new \core_analytics\prediction_action('enrolusers', $prediction,
-                $url, $pix, get_string('enrolledusers', 'enrol'));
-        }
-
-        if (has_capability('moodle/course:viewparticipants', $sampledata['context'])) {
+        if (has_any_capability(['moodle/course:viewparticipants', 'moodle/course:enrolreview'], $sampledata['context'])) {
             $url = new \moodle_url('/user/index.php', array('id' => $course->id));
             $pix = new \pix_icon('i/cohort', get_string('participants'));
             $actions['viewparticipants'] = new \core_analytics\prediction_action('viewparticipants', $prediction,
