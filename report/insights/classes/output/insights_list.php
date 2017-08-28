@@ -93,7 +93,7 @@ class insights_list implements \renderable, \templatable {
         $total = 0;
 
         if ($this->model->uses_insights()) {
-            $predictionsdata = $this->model->get_predictions($this->context, $this->page, $this->perpage);
+            $predictionsdata = $this->model->get_predictions($this->context, true, $this->page, $this->perpage);
 
             $data->insights = array();
             if ($predictionsdata) {

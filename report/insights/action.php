@@ -34,15 +34,14 @@ if ($context->contextlevel < CONTEXT_COURSE) {
     $PAGE->set_context($context);
 }
 
+if (empty($forwardurl)) {
+    $params = array('modelid' => $model->get_id(), 'contextid' => $context->id);
+    $forwardurl = new \moodle_url('/report/insights/insights.php', $params);
+}
+
 $params = array('predictionid' => $prediction->get_prediction_data()->id, 'action' => $actionname, 'forwardurl' => $forwardurl);
 $url = new \moodle_url('/report/insights/action.php', $params);
 $PAGE->set_url($url);
-
-// Check that the provided action exists.
-$actions = $model->get_target()->prediction_actions($prediction, true);
-if (!isset($actions[$actionname])) {
-    throw new \moodle_exception('errorunknownaction', 'analytics');
-}
 
 $modelready = $model->is_enabled() && $model->is_trained() && $model->predictions_exist($context);
 if (!$modelready) {
@@ -58,11 +57,6 @@ if (!$modelready) {
     exit(0);
 }
 
-$eventdata = array (
-    'context' => $context,
-    'objectid' => $predictionid,
-    'other' => array('actionname' => $actionname)
-);
-\core\event\prediction_action_started::create($eventdata)->trigger();
+$prediction->action_executed($actionname, $model->get_target());
 
 redirect($forwardurl);
