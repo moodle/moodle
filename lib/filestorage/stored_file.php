@@ -138,6 +138,7 @@ class stored_file {
     protected function update($dataobject) {
         global $DB;
         $updatereferencesneeded = false;
+        $updatemimetype = false;
         $keys = array_keys((array)$this->file_record);
         $filepreupdate = clone($this->file_record);
         foreach ($dataobject as $field => $value) {
@@ -202,6 +203,10 @@ class stored_file {
                     $updatereferencesneeded = true;
                 }
 
+                if ($updatereferencesneeded || ($field === 'filename' && $this->file_record->filename != $value)) {
+                    $updatemimetype = true;
+                }
+
                 // adding the field
                 $this->file_record->$field = $value;
             } else {
@@ -209,8 +214,10 @@ class stored_file {
             }
         }
         // Validate mimetype field
-        $mimetype = $this->filesystem->mimetype_from_storedfile($this);
-        $this->file_record->mimetype = $mimetype;
+        if ($updatemimetype) {
+            $mimetype = $this->filesystem->mimetype_from_storedfile($this);
+            $this->file_record->mimetype = $mimetype;
+        }
 
         $DB->update_record('files', $this->file_record);
         if ($updatereferencesneeded) {
