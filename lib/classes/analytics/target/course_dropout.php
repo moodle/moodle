@@ -61,25 +61,27 @@ class course_dropout extends \core_analytics\local\target\binary {
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
         global $USER;
 
-        $actions = parent::prediction_actions($prediction, $includedetailsaction);
+        $actions = array();
 
         $sampledata = $prediction->get_sample_data();
         $studentid = $sampledata['user']->id;
 
+        $attrs = array('target' => '_blank');
+
         // Send a message.
         $url = new \moodle_url('/message/index.php', array('user' => $USER->id, 'id' => $studentid));
         $pix = new \pix_icon('t/message', get_string('sendmessage', 'message'));
-        $actions['studentmessage'] = new \core_analytics\prediction_action('studentmessage', $prediction, $url, $pix,
-            get_string('sendmessage', 'message'));
+        $actions[] = new \core_analytics\prediction_action('studentmessage', $prediction, $url, $pix,
+            get_string('sendmessage', 'message'), $attrs);
 
         // View outline report.
         $url = new \moodle_url('/report/outline/user.php', array('id' => $studentid, 'course' => $sampledata['course']->id,
             'mode' => 'outline'));
         $pix = new \pix_icon('i/report', get_string('outlinereport'));
-        $actions['viewoutlinereport'] = new \core_analytics\prediction_action('viewoutlinereport', $prediction, $url, $pix,
-            get_string('outlinereport'));
+        $actions[] = new \core_analytics\prediction_action('viewoutlinereport', $prediction, $url, $pix,
+            get_string('outlinereport'), $attrs);
 
-        return $actions;
+        return array_merge($actions, parent::prediction_actions($prediction, $includedetailsaction));
     }
 
     /**

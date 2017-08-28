@@ -1100,8 +1100,8 @@ class model {
      * @param int $perpage The max number of results to fetch. Ignored if $page is false.
      * @return array($total, \core_analytics\prediction[])
      */
-    public function get_predictions(\context $context, $page = false, $perpage = 100) {
-        global $DB;
+    public function get_predictions(\context $context, $skiphidden = true, $page = false, $perpage = 100) {
+        global $DB, $USER;
 
         \core_analytics\manager::check_can_list_insights($context);
 
@@ -1111,12 +1111,27 @@ class model {
                   JOIN (
                     SELECT sampleid, max(rangeindex) AS rangeindex
                       FROM {analytics_predictions}
-                     WHERE modelid = ? and contextid = ?
+                     WHERE modelid = :modelidsubap and contextid = :contextidsubap
                     GROUP BY sampleid
                   ) apsub
                   ON ap.sampleid = apsub.sampleid AND ap.rangeindex = apsub.rangeindex
-                 WHERE ap.modelid = ? and ap.contextid = ?";
-        $params = array($this->model->id, $context->id, $this->model->id, $context->id);
+                WHERE ap.modelid = :modelid and ap.contextid = :contextid";
+
+        $params = array('modelid' => $this->model->id, 'contextid' => $context->id,
+            'modelidsubap' => $this->model->id, 'contextidsubap' => $context->id);
+
+        if ($skiphidden) {
+            $sql .= " AND NOT EXISTS (
+              SELECT 1
+                FROM {analytics_prediction_actions} apa
+               WHERE apa.predictionid = ap.id AND apa.userid = :userid AND (apa.actionname = :fixed OR apa.actionname = :notuseful)
+            )";
+            $params['userid'] = $USER->id;
+            $params['fixed'] = \core_analytics\prediction::ACTION_FIXED;
+            $params['notuseful'] = \core_analytics\prediction::ACTION_NOT_USEFUL;
+        }
+
+        $sql .= " ORDER BY ap.timecreated DESC";
         if (!$predictions = $DB->get_records_sql($sql, $params)) {
             return array();
         }
