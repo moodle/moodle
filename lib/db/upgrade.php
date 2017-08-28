@@ -2369,5 +2369,59 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017082300.01);
     }
 
+    if ($oldversion < 2017082500.00) {
+        // Handle FKs for the table 'analytics_models_log'.
+        $table = new xmldb_table('analytics_models_log');
+
+        // Remove the existing index before adding FK (which creates an index).
+        $index = new xmldb_index('modelid', XMLDB_INDEX_NOTUNIQUE, array('modelid'));
+
+        // Conditionally launch drop index.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Now, add the FK.
+        $key = new xmldb_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Handle FKs for the table 'analytics_predictions'.
+        $table = new xmldb_table('analytics_predictions');
+        $key = new xmldb_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+        $dbman->add_key($table, $key);
+
+        $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Handle FKs for the table 'analytics_train_samples'.
+        $table = new xmldb_table('analytics_train_samples');
+        $key = new xmldb_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+        $dbman->add_key($table, $key);
+
+        $key = new xmldb_key('fileid', XMLDB_KEY_FOREIGN, array('fileid'), 'files', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Handle FKs for the table 'analytics_predict_samples'.
+        $table = new xmldb_table('analytics_predict_samples');
+        $key = new xmldb_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Handle FKs for the table 'analytics_used_files'.
+        $table = new xmldb_table('analytics_used_files');
+        $key = new xmldb_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+        $dbman->add_key($table, $key);
+
+        $key = new xmldb_key('fileid', XMLDB_KEY_FOREIGN, array('fileid'), 'files', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Handle FKs for the table 'analytics_indicator_calc'.
+        $table = new xmldb_table('analytics_indicator_calc');
+        $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017082500.00);
+    }
+
     return true;
 }
