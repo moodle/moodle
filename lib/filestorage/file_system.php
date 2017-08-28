@@ -444,6 +444,60 @@ abstract class file_system {
     }
 
     /**
+     * Validate that the content hash matches the content hash of the file on disk.
+     *
+     * @param string $contenthash The current content hash to validate
+     * @param string $pathname The path to the file on disk
+     * @return array The content hash (it might change) and file size
+     */
+    protected function validate_hash_and_file_size($contenthash, $pathname) {
+        global $CFG;
+
+        if (!is_readable($pathname)) {
+            throw new file_exception('storedfilecannotread', '', $pathname);
+        }
+
+        $filesize = filesize($pathname);
+        if ($filesize === false) {
+            throw new file_exception('storedfilecannotread', '', $pathname);
+        }
+
+        if (is_null($contenthash)) {
+            $contenthash = file_storage::hash_from_path($pathname);
+        } else if ($CFG->debugdeveloper) {
+            $filehash = file_storage::hash_from_path($pathname);
+            if ($filehash === false) {
+                throw new file_exception('storedfilecannotread', '', $pathname);
+            }
+            if ($filehash !== $contenthash) {
+                // Hopefully this never happens, if yes we need to fix calling code.
+                debugging("Invalid contenthash submitted for file $pathname", DEBUG_DEVELOPER);
+                $contenthash = $filehash;
+            }
+        }
+        if ($contenthash === false) {
+            throw new file_exception('storedfilecannotread', '', $pathname);
+        }
+
+        if ($filesize > 0 and $contenthash === file_storage::hash_from_string('')) {
+            // Did the file change or is file_storage::hash_from_path() borked for this file?
+            clearstatcache();
+            $contenthash = file_storage::hash_from_path($pathname);
+            $filesize    = filesize($pathname);
+
+            if ($contenthash === false or $filesize === false) {
+                throw new file_exception('storedfilecannotread', '', $pathname);
+            }
+            if ($filesize > 0 and $contenthash === file_storage::hash_from_string('')) {
+                // This is very weird...
+                throw new file_exception('storedfilecannotread', '', $pathname);
+            }
+        }
+
+        return [$contenthash, $filesize];
+    }
+
+    /**
      * Add the supplied file to the file system.
      *
      * Note: If overriding this function, it is advisable to store the file
