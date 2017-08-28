@@ -61,11 +61,21 @@ abstract class community_of_inquiry_activity extends linear {
     const INDICATOR_SOCIAL = "social";
 
     /**
+     * Max cognitive depth level accepted.
+     */
+    const MAX_COGNITIVE_LEVEL = 5;
+
+    /**
+     * Max social breadth level accepted.
+     */
+    const MAX_SOCIAL_LEVEL = 2;
+
+    /**
      * Returns the activity type. No point in changing this class in children classes.
      *
      * @var string The activity name (e.g. assign or quiz)
      */
-    protected final function get_activity_type() {
+    public final function get_activity_type() {
         $class = get_class($this);
         $package = stristr($class, "\\", true);
         $type = str_replace("mod_", "", $package);
@@ -81,7 +91,7 @@ abstract class community_of_inquiry_activity extends linear {
      * @param \cm_info $cm
      * @return int
      */
-    protected function get_cognitive_depth_level(\cm_info $cm) {
+    public function get_cognitive_depth_level(\cm_info $cm) {
         throw new \coding_exception('Overwrite get_cognitive_depth_level method to set your activity potential cognitive ' .
             'depth level');
     }
@@ -92,7 +102,7 @@ abstract class community_of_inquiry_activity extends linear {
      * @param \cm_info $cm
      * @return int
      */
-    protected function get_social_breadth_level(\cm_info $cm) {
+    public function get_social_breadth_level(\cm_info $cm) {
         throw new \coding_exception('Overwrite get_social_breadth_level method to set your activity potential social ' .
             'breadth level');
     }
@@ -506,7 +516,7 @@ abstract class community_of_inquiry_activity extends linear {
         foreach ($useractivities as $contextid => $cm) {
 
             $potentiallevel = $this->get_cognitive_depth_level($cm);
-            if (!is_int($potentiallevel) || $potentiallevel > 5 || $potentiallevel < 1) {
+            if (!is_int($potentiallevel) || $potentiallevel > self::MAX_COGNITIVE_LEVEL || $potentiallevel < 1) {
                 throw new \coding_exception('Activities\' potential cognitive depth go from 1 to 5.');
             }
             $scoreperlevel = $scoreperactivity / $potentiallevel;
@@ -593,8 +603,10 @@ abstract class community_of_inquiry_activity extends linear {
         foreach ($useractivities as $contextid => $cm) {
 
             $potentiallevel = $this->get_social_breadth_level($cm);
-            if (!is_int($potentiallevel) || $potentiallevel > 2 || $potentiallevel < 1) {
-                throw new \coding_exception('Activities\' potential social breadth go from 1 to 2.');
+            if (!is_int($potentiallevel) || $potentiallevel > self::MAX_SOCIAL_LEVEL || $potentiallevel < 1) {
+                throw new \coding_exception('Although social breadth levels can go from 1 to 5 at the moment Moodle core ' .
+                    'can only accept social breadth levels between 1 and ' . self::MAX_SOCIAL_LEVEL . '. Sorry for the ' .
+                    'inconvenience. This will change in future releases.');
             }
             $scoreperlevel = $scoreperactivity / $potentiallevel;
             switch ($potentiallevel) {
@@ -650,5 +662,5 @@ abstract class community_of_inquiry_activity extends linear {
      *
      * @return string
      */
-    abstract protected function get_indicator_type();
+    abstract public function get_indicator_type();
 }
