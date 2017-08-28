@@ -421,7 +421,10 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
                 $original->filename  = $file->get_filename();
                 $original->filepath  = $file->get_filepath();
                 $newsourcefield->original = file_storage::pack_reference($original);
-                $draftfile->set_source(serialize($newsourcefield));
+                // Check we can read the file before we update it.
+                if ($fs->content_exists($file->get_contenthash())) {
+                    $draftfile->set_source(serialize($newsourcefield));
+                }
                 // End of file manager hack
             }
         }
@@ -707,11 +710,18 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
                 $item->url = $itemurl->out();
                 $item->icon = $OUTPUT->pix_url(file_file_icon($file, 24))->out(false);
                 $item->thumbnail = $OUTPUT->pix_url(file_file_icon($file, 90))->out(false);
-                if ($imageinfo = $file->get_imageinfo()) {
-                    $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb', 'oid' => $file->get_timemodified()));
-                    $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
-                    $item->image_width = $imageinfo['width'];
-                    $item->image_height = $imageinfo['height'];
+
+                // The call to $file->get_imageinfo() fails with an exception if the file can't be read on the file system.
+                // We still want to add such files to the list, so the owner can view and delete them if needed. So, we only call
+                // get_imageinfo() on files that can be read.
+                if ($fs->content_exists($file->get_contenthash())) {
+                    if ($imageinfo = $file->get_imageinfo()) {
+                        $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb',
+                                                                          'oid' => $file->get_timemodified()));
+                        $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
+                        $item->image_width = $imageinfo['width'];
+                        $item->image_height = $imageinfo['height'];
+                    }
                 }
             }
             $list[] = $item;
