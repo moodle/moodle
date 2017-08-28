@@ -71,10 +71,16 @@ $frontpagectx = context_course::instance(SITEID);
 
 if ($isfrontpage) {
     $PAGE->set_pagelayout('admin');
-    require_capability('moodle/site:viewparticipants', $systemcontext);
+    if (!has_any_capability(['moodle/site:viewparticipants', 'moodle/course:enrolreview'], $systemcontext)) {
+        // We know they do not have any of the capabilities, so lets throw an exception using the capability with the least access.
+        throw new required_capability_exception($systemcontext, 'moodle/site:viewparticipants', 'nopermissions', '');
+    }
 } else {
     $PAGE->set_pagelayout('incourse');
-    require_capability('moodle/course:viewparticipants', $context);
+    if (!has_any_capability(['moodle/course:viewparticipants', 'moodle/course:enrolreview'], $context)) {
+        // We know they do not have any of the capabilities, so lets throw an exception using the capability with the least access.
+        throw new required_capability_exception($context, 'moodle/course:viewparticipants', 'nopermissions', '');
+    }
 }
 
 // Trigger events.
