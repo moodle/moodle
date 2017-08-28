@@ -707,11 +707,22 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
                 $item->url = $itemurl->out();
                 $item->icon = $OUTPUT->image_url(file_file_icon($file, 24))->out(false);
                 $item->thumbnail = $OUTPUT->image_url(file_file_icon($file, 90))->out(false);
-                if ($imageinfo = $file->get_imageinfo()) {
-                    $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb', 'oid' => $file->get_timemodified()));
-                    $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
-                    $item->image_width = $imageinfo['width'];
-                    $item->image_height = $imageinfo['height'];
+
+                // The call to $file->get_imageinfo() fails with an exception if the file can't be read on the file system.
+                // We still want to add such files to the list, so the owner can view and delete them if needed. So, we only call
+                // get_imageinfo() on files that can be read, and we also spoof the file status based on whether it was found.
+                // We'll use the same status types used by stored_file->get_status(), where 0 = OK. 1 = problem, as these will be
+                // used by the widget to display a warning about the problem files.
+                // The value of stored_file->get_status(), and the file record are unaffected by this. It's only superficially set.
+                $item->status = $fs->get_file_system()->is_file_readable_remotely_by_storedfile($file) ? 0 : 1;
+                if ($item->status == 0) {
+                    if ($imageinfo = $file->get_imageinfo()) {
+                        $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb',
+                            'oid' => $file->get_timemodified()));
+                        $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
+                        $item->image_width = $imageinfo['width'];
+                        $item->image_height = $imageinfo['height'];
+                    }
                 }
             }
             $list[] = $item;
