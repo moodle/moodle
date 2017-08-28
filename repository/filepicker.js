@@ -427,6 +427,27 @@ YUI.add('moodle-core_filepicker', function(Y) {
             }
         }
 
+        // Notify the user if any of the files has a problem status.
+        var problemFiles = [];
+        fileslist.forEach(function(file) {
+            if (!file_is_folder(file) && file.hasOwnProperty('status') && file.status != 0) {
+                problemFiles.push(file);
+            }
+        });
+        if (problemFiles.length > 0) {
+            require(["core/notification", "core/str"], function(Notification, Str) {
+                problemFiles.forEach(function(problemFile) {
+                    Str.get_string('storedfilecannotreadfile', 'error', problemFile.fullname).then(function(string) {
+                        Notification.addNotification({
+                            message: string,
+                            type: "error"
+                        });
+                        return;
+                    }).catch(Notification.exception);
+                });
+            });
+        }
+
         // If table view, need some additional properties
         // before passing fileslist to the YUI tableview
         if (options.viewmode == 3) {
