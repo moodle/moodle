@@ -30,7 +30,6 @@ require_once($CFG->libdir . '/filelib.php');
 
 use moodle_url;
 use moodle_exception;
-use curl;
 use stdClass;
 
 /**
@@ -172,6 +171,7 @@ class client extends \oauth2_client {
      *
      * @param \core\oauth2\system_account $systemaccount
      * @return boolean true if token is upgraded succesfully
+     * @throws moodle_exception Request for token upgrade failed for technical reasons
      */
     public function upgrade_refresh_token(system_account $systemaccount) {
         $refreshtoken = $systemaccount->get('refreshtoken');
@@ -233,7 +233,7 @@ class client extends \oauth2_client {
      * Fetch the user info from the user info endpoint and map all
      * the fields back into moodle fields.
      *
-     * @return array (Moodle user fields for the logged in user).
+     * @return array|false Moodle user fields for the logged in user (or false if request failed)
      */
     public function get_userinfo() {
         $url = $this->get_issuer()->get_endpoint_url('userinfo');
@@ -244,7 +244,7 @@ class client extends \oauth2_client {
         $userinfo = new stdClass();
         try {
             $userinfo = json_decode($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
 
