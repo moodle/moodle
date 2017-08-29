@@ -150,12 +150,11 @@ class analytics_model_testcase extends advanced_testcase {
 
         global $DB;
 
-        // 2 built-in models + the testing one.
-        $this->assertCount(3, $DB->get_records('analytics_models'));
+        $count = $DB->count_records('analytics_models');
 
         // No new models added if the builtin ones already exist.
         \core_analytics\manager::add_builtin_models();
-        $this->assertCount(3, $DB->get_records('analytics_models'));
+        $this->assertCount($count, $DB->get_records('analytics_models'));
 
         $target = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
         $this->assertTrue(\core_analytics\model::exists($target));

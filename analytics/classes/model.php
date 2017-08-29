@@ -775,8 +775,11 @@ class model {
                 list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
 
                 // Store the predicted values.
-                $samplecontext = $this->save_prediction($sampleid, $rangeindex, $prediction->prediction,
+                list($record, $samplecontext) = $this->prepare_prediction_record($sampleid, $rangeindex, $prediction->prediction,
                     $prediction->predictionscore, json_encode($indicatorcalculations[$uniquesampleid]));
+
+                // We will later bulk-insert them all.
+                $records[$uniquesampleid] = $record;
 
                 // Also store all samples context to later generate insights or whatever action the target wants to perform.
                 $samplecontexts[$samplecontext->id] = $samplecontext;
@@ -785,6 +788,8 @@ class model {
                     $prediction->prediction, $prediction->predictionscore);
             }
         }
+
+        $this->save_predictions($records);
 
         return $samplecontexts;
     }
@@ -912,7 +917,7 @@ class model {
      * @param string $calculations
      * @return \context
      */
-    protected function save_prediction($sampleid, $rangeindex, $prediction, $predictionscore, $calculations) {
+    protected function prepare_prediction_record($sampleid, $rangeindex, $prediction, $predictionscore, $calculations) {
         global $DB;
 
         $context = $this->get_analyser()->sample_access_context($sampleid);
@@ -926,9 +931,18 @@ class model {
         $record->predictionscore = $predictionscore;
         $record->calculations = $calculations;
         $record->timecreated = time();
-        $DB->insert_record('analytics_predictions', $record);
 
-        return $context;
+        return array($record, $context);
+    }
+
+    /**
+     * Save the prediction objects.
+     *
+     * @param \stdClass[] $records
+     */
+    protected function save_predictions($records) {
+        global $DB;
+        $DB->insert_records('analytics_predictions', $records);
     }
 
     /**

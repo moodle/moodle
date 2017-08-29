@@ -130,6 +130,8 @@ abstract class base extends \core_analytics\calculable {
     /**
      * Callback to execute once a prediction has been returned from the predictions processor.
      *
+     * Note that the analytics_predictions db record is not yet inserted.
+     *
      * @param int $modelid
      * @param int $sampleid
      * @param int $rangeindex
