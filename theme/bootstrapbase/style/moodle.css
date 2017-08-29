@@ -5551,9 +5551,6 @@ img.iconsmall {
 .calendar_event_user {
   background-color: #dce7ec;
 }
-.path-calendar #dateselector-calendar-panel {
-  z-index: 4054;
-}
 .path-calendar .calendartable {
   width: 100%;
 }
@@ -17071,7 +17068,6 @@ body.modal-open {
   border-radius: 0 0 10px 10px;
 }
 .modal-backdrop {
-  z-index: 4049;
   background-color: #aaa;
   opacity: 0.4;
 }
@@ -19326,7 +19322,6 @@ div[data-flexitour="backdrop"] {
   background-color: #000;
   opacity: 0.8;
   filter: alpha(opacity=80);
-  z-index: 4049;
   background-color: #aaa;
   opacity: 0.4;
   z-index: 4030;
