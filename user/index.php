@@ -263,19 +263,21 @@ if ($bulkoperations) {
         $displaylist['groupaddnote.php'] = get_string('groupaddnewnote', 'notes');
     }
 
-    $plugins = $manager->get_enrolment_plugins();
-    foreach ($plugins as $plugin) {
-        $bulkoperations = $plugin->get_bulk_operations($manager);
+    if ($context->id != $frontpagectx->id) {
+        $plugins = $manager->get_enrolment_plugins();
+        foreach ($plugins as $plugin) {
+            $bulkoperations = $plugin->get_bulk_operations($manager);
 
-        $pluginoptions = [];
-        foreach ($bulkoperations as $key => $bulkoperation) {
-            $params = ['plugin' => $plugin->get_name(), 'operation' => $key];
-            $url = new moodle_url('bulkchange.php', $params);
-            $pluginoptions[$url->out(false)] = $bulkoperation->get_title();
-        }
-        if (!empty($pluginoptions)) {
-            $name = get_string('pluginname', 'enrol_' . $plugin->get_name());
-            $displaylist[] = [$name => $pluginoptions];
+            $pluginoptions = [];
+            foreach ($bulkoperations as $key => $bulkoperation) {
+                $params = ['plugin' => $plugin->get_name(), 'operation' => $key];
+                $url = new moodle_url('bulkchange.php', $params);
+                $pluginoptions[$url->out(false)] = $bulkoperation->get_title();
+            }
+            if (!empty($pluginoptions)) {
+                $name = get_string('pluginname', 'enrol_' . $plugin->get_name());
+                $displaylist[] = [$name => $pluginoptions];
+            }
         }
     }
 
