@@ -5583,12 +5583,6 @@ img.iconsmall {
   border-spacing: 2px;
   width: 100%;
 }
-.path-calendar .cal_courses_flt {
-  float: left;
-}
-.path-calendar .cal_courses_flt label {
-  margin-right: .45em;
-}
 .path-calendar .maincalendar {
   vertical-align: top;
   padding: 0;
