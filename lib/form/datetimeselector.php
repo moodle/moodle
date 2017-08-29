@@ -228,7 +228,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
                 }
                 break;
             case 'createElement':
-                if ($arg[2]['optional']) {
+                if (isset($arg[2]['optional']) && $arg[2]['optional']) {
                     // When using the function addElement, rather than createElement, we still
                     // enter this case, making this check necessary.
                     if ($this->_usedcreateelement) {
