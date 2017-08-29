@@ -440,6 +440,7 @@ $string['deleteunconfirmed'] = 'Delete not fully setup users after';
 $string['deleteuser'] = 'Delete user';
 $string['density'] = 'Density';
 $string['denyemailaddresses'] = 'Denied email domains';
+$string['devlibdirpresent'] = 'Directories with development libraries such as <em>vendor</em> or <em>node_modules</em> should not be present on public sites. See the <a href="{$a->moreinfourl}">security overview report</a> for more details.';
 $string['development'] = 'Development';
 $string['devicedetectregex'] = 'Device detection regular expressions';
 $string['devicedetectregex_desc'] = '<p>By default, Moodle can detect devices of the type default (desktop PCs, laptops, etc), mobile (phones and small hand held devices), tablet (iPads, Android tablets) and legacy (Internet Explorer 6 users).  The theme selector can be used to apply separate themes to all of these.  This setting allows regular expressions that allow the detection of extra device types (these take precedence over the default types).</p>
