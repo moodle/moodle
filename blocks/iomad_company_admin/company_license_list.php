@@ -177,7 +177,8 @@ if ($departmentid == $companydepartment->id) {
         if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
             (iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context) && !empty($license->parentid))) {
                 // Is this above the user's company allocation?
-                if ($DB->get_record_sql("SELECT id FROM {company_users}
+                if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
+                    $DB->get_record_sql("SELECT id FROM {company_users}
                                          WHERE userid = :userid
                                          AND companyid = (
                                             SELECT companyid FROM {companylicense}
