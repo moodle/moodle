@@ -14,33 +14,42 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * url_finder class definition.
+ *
+ * @package    tool_httpsreplace
+ * @copyright Copyright (c) 2016 Blackboard Inc. (http://www.blackboard.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace tool_httpsreplace;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Examines DB for non-https src or data links that will cause trouble
- * when embedded in HTTPS sites.
+ * Examines DB for non-https src or data links
  *
  * @package tool_httpsreplace
  * @copyright Copyright (c) 2016 Blackboard Inc. (http://www.blackboard.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class url_finder {
 
-    /**
-     * Domains that need replaced when using https links.
-     *
-     * @var array
-     * @access private
-     */
-    private $exceptions = [
-        'cdnapi.kaltura.com' => 'cdnapisec.kaltura.com',
-    ];
 
+    /**
+     * Returns a hash of what hosts are referred to over http and would need to be changed.
+     *
+     * @return array Hash of domains with number of references as the value.
+     */
     public function http_link_stats() {
         return $this->process(false);
     }
 
+    /**
+     * Changes all resources referred to over http to https.
+     *
+     * @return bool True upon success
+     */
     public function upgrade_http_links() {
         return $this->process(true);
     }
@@ -52,23 +61,17 @@ class url_finder {
      * @param string $table
      * @param string $column
      * @param string $domain
-     * @access private
      * @return void
      */
     private function domain_swap($table, $column, $domain) {
         global $DB;
 
+        $renames = (array)json_decode(get_config('tool_httpsreplace', 'renames'));
+
         $search = "http://$domain";
         $replace = "https://$domain";
-        if (isset($this->exceptions[$domain])) {
-            $replace = 'https://' . $this->exceptions[$domain];
-        }
-        if (preg_match('/rackcdn.com$/', $domain)) {
-            // Regexes adapted from
-            // https://www.eff.org/https-everywhere/atlas/domains/rackcdn.com.html ruleset.
-            $pattern = '/^([\w-]+)\.(?:r\d+|ssl)\.cf(\d)\.rackcdn\.com$/';
-            $replacement = 'https://$1.ssl.cf$2.rackcdn.com';
-            $replace = preg_replace($pattern, $replacement, $domain);
+        if (isset($renames[$domain])) {
+            $replace = 'https://' . $renames[$domain];
         }
         $DB->set_debug(true);
         // Note, this search is case sensitive.
@@ -78,6 +81,8 @@ class url_finder {
 
     /**
      * Originally forked from core function db_search().
+     * @param bool $replacing Whether or not to replace the found urls.
+     * @return bool|array If $replacing, return true on success. If not, return hash of http urls to number of times used.
      */
     private function process($replacing = false) {
         global $DB, $CFG;
@@ -87,7 +92,7 @@ class url_finder {
         $httpurls  = "(src|data)\ *=\ *[\\\"\']http://";
 
         // TODO: block_instances have HTML content as base64, need to decode then
-        // search, currently just skipped.
+        // search, currently just skipped. See MDL-60024.
         $skiptables = array(
             'block_instances',
             'config',
@@ -186,19 +191,8 @@ class url_finder {
         $uniquedomains = array_unique($domains);
 
         $sslfailures = array();
-        $knownsupported = array(
-            'amazon.com',
-            'www.amazon.com',
-            'dropbox.com',
-            'www.dropbox.com',
-            'cdnapi.kaltura.com',
-            'fe8be92ac963979368eca.r38.cf1.rackcdn.com', // Not actually a real domain, but used for testing.
-        );
 
         foreach ($uniquedomains as $domain) {
-            if (in_array($domain, $knownsupported)) {
-                continue;
-            }
             $url = "https://$domain/";
             $curl = new \curl();
             $curl->head($url);

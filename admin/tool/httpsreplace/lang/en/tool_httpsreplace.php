@@ -17,25 +17,21 @@
 /**
  * Strings for component 'tool_httpsreplace'
  *
- * @package    tool
- * @subpackage httpsreplace
+ * @package    tool_httpsreplace
  * @copyright Copyright (c) 2016 Blackboard Inc. (http://www.blackboard.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['count'] = 'Number of links';
+$string['count'] = 'Number of embeded content items';
 $string['disclaimer'] = 'I understand the risks of this operation';
 $string['doclink'] = 'Read more documentation on the wiki';
-$string['doit'] = 'Yes, do it!';
+$string['doit'] = 'Perform replacement';
 $string['domain'] = 'Problematic domain';
-$string['domainexplain'] = 'This tool locates embedded content that may not work when upgrading a site to use https. It also allows you to fix the problems automatically.';
-$string['domainexplainhelp'] = 'These domains are found in your content, but do not appear to support https links. After switching to https, the content included from these sites will no longer display within Moodle for users with secure modern browsers. It is possible that these sites are temporarily or permanently unavailable and will not work with either security setting. Proceed only after reviewing these results and determining if this externally hosted content is non-essential.';
-$string['invalidcharacter'] = 'Invalid characters were found in the search or replace text.';
-$string['notifyfinished'] = '...finished';
-$string['notifyrebuilding'] = 'Rebuilding course cache...';
+$string['domainexplain'] = 'When an instance is moved from http to https, all embeded http content will stop working. This tool always you to automatically convert the http content to https. Below is a report of content that may not work once you run this script. You may want to check each one has https available or find alternative resources.';
+$string['domainexplainhelp'] = 'These domains are found in your content, but do not appear to support https content. After switching to https, the content included from these sites will no longer display within Moodle for users with secure modern browsers. It is possible that these sites are temporarily or permanently unavailable and will not work with either security setting. Proceed only after reviewing these results and determining if this externally hosted content is non-essential.';
 $string['notimplemented'] = 'Sorry, this feature is not implemented in your database driver.';
-$string['oktoprocede'] = 'The scan finds no issues with your content. You can proceed to upgrade any http links to use https.';
+$string['oktoprocede'] = 'The scan finds no issues with your content. You can proceed to upgrade any http content to use https.';
 $string['pageheader'] = 'Upgrade externally hosted content urls to https';
-$string['pluginname'] = 'HTTPS Replace';
-$string['replacing'] = 'Replacing http links with https...';
-$string['takeabackupwarning'] = 'Changes made can\'t be reverted. A complete backup should be made before running this script!';
+$string['pluginname'] = 'HTTPS conversion tool';
+$string['replacing'] = 'Replacing http content with https...';
+$string['takeabackupwarning'] = 'Once this tool run, changes made can\'t be reverted. A complete backup should be made before running this script! There is a low risk that the wrong content will be replaced, introducing problems.';

@@ -27,6 +27,13 @@ namespace tool_httpsreplace\tests;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Tests the httpsreplace tool.
+ *
+ * @package   tool_httpsreplace
+ * @copyright Copyright (c) 2016 Blackboard Inc. (http://www.blackboard.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class httpsreplace_test extends \advanced_testcase {
 
     /**
@@ -66,16 +73,6 @@ class httpsreplace_test extends \advanced_testcase {
                 "content" => '<img src="https://anothersite.com?param=http://asdf.com">',
                 "outputregex" => '/^$/',
                 "expectedcontent" => '<img src="https://anothersite.com?param=http://asdf.com">',
-            ],
-            "Known supported domain should be replaced" => [
-                "content" => '<iframe src="http://fe8be92ac963979368eca.r38.cf1.rackcdn.com/Helpful_ET_Websites_Apps_Resources.pdf">',
-                "domain" => 'fe8be92ac963979368eca.ssl.cf1.rackcdn.com',
-                "outputregex" => '/UPDATE/',
-            ],
-            "Exception is replaced with new domain" => [
-                "content" => '<script src="http://cdnapi.kaltura.com/p/730212/sp/73021200/embedIframeJs">',
-                "domain" => 'cdnapisec.kaltura.com',
-                "outputregex" => '/UPDATE/',
             ],
             "More params should not interfere" => [
                 "content" => '<img alt="A picture" src="' . $this->getExternalTestFileUrl('/test.png', false) . '" width="1”><p style="font-size: \'20px\'"></p>',
@@ -155,11 +152,6 @@ class httpsreplace_test extends \advanced_testcase {
                 "content" => '<object data="http://intentionally.unavailable/file.swf">',
                 "domain" => 'intentionally.unavailable',
                 "expectedcount" => 1,
-            ],
-            "Known supported domain should not be reported" => [
-                "content" => '<iframe src="http://fe8be92ac963979368eca.r38.cf1.rackcdn.com/Helpful_ET_Websites_Apps_Resources.pdf">',
-                "domain" => 'fe8be92ac963979368eca.r38.cf1.rackcdn.com',
-                "expectedcount" => 0,
             ],
             "Link should not be reported" => [
                 "content" => '<a href="http://intentionally.unavailable/page.php">Link</a>',
@@ -270,6 +262,37 @@ class httpsreplace_test extends \advanced_testcase {
         $testconf = get_config('core', 'test_upgrade_http_links');
         $this->assertContains('http://somesite', $testconf);
         $this->assertNotContains('https://somesite', $testconf);
+    }
+
+    /**
+     * Test renamed domains
+     */
+    public function test_renames() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $this->expectOutputRegex('/UPDATE/');
+
+        $renames = [
+            'example.com' => 'secure.example.com',
+        ];
+
+        set_config('renames', json_encode($renames), 'tool_httpsreplace');
+
+        $finder = new \tool_httpsreplace\url_finder();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course((object) [
+            'summary' => '<script src="http://example.com/test.js">',
+        ]);
+
+        $results = $finder->http_link_stats();
+        $this->assertCount(0, $results);
+
+        $finder->upgrade_http_links();
+
+        $summary = $DB->get_field('course', 'summary', ['id' => $course->id]);
+        $this->assertContains('https://secure.example.com', $summary);
+        $this->assertNotContains('http://example.com', $summary);
     }
 
 }

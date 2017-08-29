@@ -24,11 +24,21 @@
 
 define('NO_OUTPUT_BUFFERING', true);
 
-require_once('../../../config.php');
-require_once($CFG->dirroot.'/course/lib.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once(__DIR__ . '/../../../config.php');
+require_once($CFG->dirroot . '/course/lib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('toolhttpsreplace');
+
+$context = context_system::instance();
+
+require_login();
+require_capability('moodle/site:config', $context);
+
+$PAGE->set_context($context);
+$PAGE->set_url(new moodle_url('/admin/tool/httpsreplace/index.php'));
+$PAGE->set_title(get_string('pageheader', 'tool_httpsreplace'));
+$PAGE->set_pagelayout('admin');
 
 echo $OUTPUT->header();
 
