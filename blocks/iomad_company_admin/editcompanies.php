@@ -88,7 +88,7 @@ if ($companyid) {
 $context = context_system::instance();
 
 require_login();
-iomad::require_capability('block/iomad_company_admin:company_add', $context);
+iomad::require_capability('block/iomad_company_admin:company_add_child', $context);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -128,6 +128,7 @@ $strdisableecommerce = get_string('disableecommerce', 'block_iomad_company_admin
 $strshowallusers = get_string('showallcompanies', 'block_iomad_company_admin');
 $strmanage = get_string('managecompany', 'block_iomad_company_admin');
 $stroverview = get_string('overview', 'local_report_companies');
+$strcreatechild = get_string('createchildcompany', 'block_iomad_company_admin');
 
 if (empty($CFG->loginhttps)) {
     $securewwwroot = $CFG->wwwroot;
@@ -268,7 +269,13 @@ $companyrecords = $DB->get_fieldset_select('company', 'id', $sqlsearch, $searchp
 
 $companylist = "";
 if (!empty($companyrecords)) {
-    $companylist = "id in (". implode(',', array_values($companyrecords)).")";
+    if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+        $companylist = "id IN (". implode(',', array_values($companyrecords)).")";
+    } else {
+        $mycompanylist = company::get_companies_select(true);
+        $companylist = "id IN (". implode(',', array_values($companyrecords)).") AND
+                        id IN (". implode(',', array_keys($mycompanylist)).")";
+    }
 } else {
     $companylist = "1=2";
 }
@@ -307,23 +314,50 @@ if (!$companies) {
     $table->head = array ($name, $city, $country, "");
     $table->align = array ("left", "left", "left", "center");
     $table->width = "95%";
+
     foreach ($companies as $company) {
+        $primary = true;
+        $suspendurl = '';
+        $suspendbutton = '';
+        $manageurl = '';
+        $managebutton = '';
+        $ecommerceurl = '';
+        $ecommercebutton = '';
+        $childurl = '';
+        $childbutton = '';
+        if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+            $primary = false;
+        } else if ($DB->get_records_sql("SELECT * FROM {company} c
+                                  JOIN {company_users} cu
+                                  ON (c.id = cu.companyid)
+                                  WHERE c.id = :companyid
+                                  AND c.parentid IN (". implode(',', array_keys($companies)) . ")
+                                  AND cu.userid = :userid",
+                                  array('companyid' => $company->id, 'userid' => $USER->id))) {
+            // primary company is either only company you are in or its any company in the list
+            // which doesn't have a parent in the list.
+            $primary = false; 
+        }
         if (!empty($company->suspended)) {
-            $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
-                                        array('unsuspend' => $company->id,
-                                              'sesskey' => sesskey()));
-            $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strunsuspend</a>";
+            if (!$primary) {
+                $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
+                                            array('unsuspend' => $company->id,
+                                                  'sesskey' => sesskey()));
+                $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strunsuspend</a>";
+            }
         } else {
-            $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
-                                        array('suspend' => $company->id,
-                                              'sesskey' => sesskey()));
-            $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strsuspend</a>";
+            if (!$primary) {
+                $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
+                                            array('suspend' => $company->id,
+                                                  'sesskey' => sesskey()));
+                $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strsuspend</a>";
+            }
             $manageurl = new moodle_url($CFG->wwwroot . "/local/iomad_dashboard/index.php",
                                         array('company' => $company->id));
             $managebutton = "<a class='btn btn-primary' href='$manageurl'>$strmanage</a>";
         }
 
-        if (empty($CFG->commerce_admin_enableall)) {
+        if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             if (!empty($company->ecommerce)) {
                 $ecommerceurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
                                             array('disableecommerce' => $company->id,
@@ -335,8 +369,12 @@ if (!$companies) {
                                                   'sesskey' => sesskey()));
                 $ecommercebutton = "<a class='btn btn-primary' href='$ecommerceurl'>$strenableecommerce</a>";
             }
-        } else {
-            $ecommercebutton = '';
+        }
+
+        if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {
+            $childurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/company_edit_form.php",
+                                       array('createnew' => 1, 'parentid' => $company->id));
+            $childbutton = "<a class='btn btn-primary' href='$childurl'>$strcreatechild</a>";
         }
 
         $overviewurl = new moodle_url($CFG->wwwroot . "/local/report_companies/index.php",
@@ -352,10 +390,11 @@ if (!$companies) {
         $table->data[] = array ("$fullname",
                             "$company->city",
                             "$company->country",
-                            $managebutton . ' ' .
                             $overviewurl . ' ' .
-                            $ecommercebutton . ' ' .
-                            $suspendbutton);
+                            $managebutton . ' ' .
+                            $childbutton . ' ' .
+                            $suspendbutton . ' ' .
+                            $ecommercebutton);
     }
 }
 

@@ -34,11 +34,16 @@ class company_edit_form extends company_moodleform {
     protected $companyid;
     protected $companyrecord;
 
-    public function __construct($actionurl, $isadding, $companyid, $companyrecord, $firstcompany = false) {
+    public function __construct($actionurl, $isadding, $companyid, $companyrecord, $firstcompany = false, $parentcompanyid = 0, $child = false) {
         $this->isadding = $isadding;
         $this->companyid = $companyid;
         $this->companyrecord = $companyrecord;
         $this->firstcompany = $firstcompany;
+        $this->parentcompanyid = $parentcompanyid;
+        if (!empty($companyrecord->templates)) {
+            $this->companyrecord->templates = array();
+        }
+        $this->child = $child;
         if (empty($this->companyrecord->theme)) {
             $this->companyrecord->theme = 'iomadboost';
         }
@@ -87,23 +92,38 @@ class company_edit_form extends company_moodleform {
                                             ORDER by name", array('companyid' => $this->companyid));
             $allcompanies = array('0' => get_string('none')) + $companies;
             $mform->addElement('select', 'parentid', get_string('parentcompany', 'block_iomad_company_admin'), $allcompanies);
+            $mform->setDefault('parentid', 0);
 
+            // Add in the template selector for the company.
+            $templates = $DB->get_records_menu('company_role_templates', array(), 'name', 'id,name');
+            $mform->addElement('autocomplete', 'templates', get_string('availabletemplates', 'block_iomad_company_admin'), $templates, array('multiple' => true));
+            $mform->addHelpButton('templates', 'availabletemplates', 'block_iomad_company_admin');
+
+        } else if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context) && !empty($this->parentcompanyid)) {
+            // Add it as a hidden field.
+            $mform->addElement('hidden', 'parentid', $this->parentcompanyid);
+            foreach ($this->companyrecord->templates as $companytemplateid) {
+                $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
+            }
         } else {
             // Add it as a hidden field.
             $mform->addElement('hidden', 'parentid');
+            foreach ($this->companyrecord->templates as $companytemplateid) {
+                $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
+            }
         }
 
         // Add the ecommerce selector.
-        if (empty($CFG->commerce_admin_enableall)) {
+        if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
+            $mform->setDefault('ecommerce', 0);
         } else {
             $mform->addElement('hidden', 'ecommerce');
         }
 
-        $mform->setDefault('parentid', 0);
-        $mform->setDefault('ecommerce', 0);
         $mform->setType('parentid', PARAM_INT);
         $mform->setType('ecommerce', PARAM_INT);
+        $mform->setType('templates', PARAM_RAW);
 
         $mform->addElement('text', 'city',
                             get_string('companycity', 'block_iomad_company_admin'),
@@ -442,6 +462,7 @@ class company_edit_form extends company_moodleform {
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INT);
+$parentid = optional_param('parentid', 0, PARAM_INT);
 $new = optional_param('createnew', 0, PARAM_INT);
 
 $context = context_system::instance();
@@ -452,8 +473,13 @@ require_login();
 if (!$new) {
     $linktext = get_string('editcompany', 'block_iomad_company_admin');
 } else {
-    $linktext = get_string('addnewcompany', 'block_iomad_company_admin');
+    if (!empty($parentid)) {
+        $linktext = get_string('createchildcompany', 'block_iomad_company_admin');
+    } else {
+        $linktext = get_string('addnewcompany', 'block_iomad_company_admin');
+    }
 }
+
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_edit_form.php');
 
@@ -470,20 +496,35 @@ $PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext")
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
+$child = false;
 if (!$new) {
+    iomad::require_capability('block/iomad_company_admin:company_edit', $context);
+
     // Set the companyid
     $companyid = iomad::get_my_companyid($context);
 
     $isadding = false;
     $companyrecord = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
-
-    iomad::require_capability('block/iomad_company_admin:company_edit', $context);
+    $companyrecord->templates = array();
+    if ($companytemplates = $DB->get_records('company_role_templates_ass', array('companyid' => $companyid), null, 'templateid')) {
+        $companyrecord->templates = array_keys($companytemplates);
+    }
 } else {
     $isadding = true;
     $companyid = 0;
     $companyrecord = new stdClass;
 
-    iomad::require_capability('block/iomad_company_admin:company_add', $context);
+    if (!empty($parentid) && iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {
+        // We are adding a child company.
+        $child = true;
+        // Can this user manage this parentid?
+        if (!$DB->get_record('company_users', array('companyid' => $parentid, 'userid' => $USER->id, 'managertype' => 1))) {
+            print_error(get_string('invalidcompany', 'block_iomad_company_admin'), 'error', new moodle_url('/local/iomad_dashboard/index.php'));
+            die;
+        }
+    } else {
+        iomad::require_capability('block/iomad_company_admin:company_add', $context);
+    }
 }
 
 // Are there any existing companies?
@@ -518,7 +559,11 @@ if ($currentcourses = $DB->get_records('company_course',
 }
 
 // Set up the form.
-$mform = new company_edit_form($PAGE->url, $isadding, $companyid, $companyrecord, $firstcompany);
+$mform = new company_edit_form($PAGE->url, $isadding, $companyid, $companyrecord, $firstcompany, $parentid, $child);
+$companyrecord->templates = array();
+if ($companytemplates = $DB->get_records('company_role_templates_ass', array('companyid' => $companyid), null, 'templateid')) {
+    $companyrecord->templates = array_keys($companytemplates);
+}
 $mform->set_data($companyrecord);
 
 if ($mform->is_cancelled()) {
@@ -559,6 +604,9 @@ if ($mform->is_cancelled()) {
             $company->assign_parent_managers($companydetails->parentid);
         }
         $companylist->param('noticeok', get_string('companycreatedok', 'block_iomad_company_admin'));
+
+        // Deal with any assigned templates.
+        $company->assign_role_templates($data->templates);
 
     } else {
         $data->id = $companyid;
@@ -615,6 +663,12 @@ if ($mform->is_cancelled()) {
             $company->apply_role_templates($data->roletemplate);
         }
     }
+
+    // Deal with any assigned templates.
+    if (empty($data->templates)) {
+        $data->templates = array();
+    }
+    $company->assign_role_templates($data->templates, true);
 
     if (!empty($data->companylogo)) {
         file_save_draft_area_files($data->companylogo,

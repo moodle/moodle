@@ -35,8 +35,9 @@ class iomad_admin_menu {
                 'tab' => 1,
                 'name' => get_string('managecompanies', 'block_iomad_company_admin'),
                 'url' => 'editcompanies.php',
-                'cap' => 'block/iomad_company_admin:company_add',
-                'icondefault' => 'editcompany',
+                'cap' => 'block/iomad_company_admin:company_add_child',
+                'icondefault' => 'managecompany',
+                'style' => 'company',
                 'icon' => 'fa-building',
                 'iconsmall' => 'fa-gear'
             ),

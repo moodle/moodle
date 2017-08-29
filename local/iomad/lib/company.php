@@ -339,7 +339,17 @@ class company {
     public static function get_role_templates($companyid = 0) {
         global $DB;
 
-        $templates = $DB->get_records_menu('company_role_templates', array(), 'name', 'id,name');
+        $context = context_system::instance();
+        if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+            $templates = $DB->get_records_menu('company_role_templates', array(), 'name', 'id,name');
+        } else {
+            $templates = $DB->get_records_sql_menu("SELECT crt.id,crt.name FROM {company_role_templates} crt
+                                                    JOIN {company_role_templates_ass} crta
+                                                    ON (crt.id = crta.templateid)
+                                                    WHERE crta.companyid = :companyid
+                                                    ORDEr BY crt.name",
+                                                    array('companyid' => $companyid));
+        }
         $templates = array('i' => get_string('inherit', 'block_iomad_company_admin')) + $templates;
 
         // Add the default.
@@ -369,6 +379,29 @@ class company {
         // Add the template.
         foreach ($restrictions as $restriction) {
             $DB->insert_record('company_role_restriction', array('companyid' => $this->id, 'roleid' => $restriction->roleid, 'capability' => $restriction->capability));
+        }
+    }
+
+    /**
+     * Assign company role templates
+     *
+     **/
+    public function assign_role_templates($templates = array(), $clear = false) {
+        global $DB;
+
+        // Deal with any children.
+        $children = $this->get_child_companies();
+        foreach ($children as $child) {
+            $childcompany = new company($child->id);
+            $childcompany->assign_role_templates($templates, $clear);
+        }
+
+        // Final Deal with our own.
+        if ($clear) {
+            $DB->delete_records('company_role_templates_ass', array('companyid' => $this->id));
+        }
+        foreach ($templates as $templateid) {
+            $DB->insert_record('company_role_templates_ass', array('companyid' => $this->id, 'templateid' => $templateid));
         }
     }
 
