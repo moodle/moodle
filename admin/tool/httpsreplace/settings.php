@@ -28,5 +28,5 @@ if ($hassiteconfig) {
 
     $pluginname = get_string('pluginname', 'tool_httpsreplace');
     $url = $CFG->wwwroot.'/'.$CFG->admin.'/tool/httpsreplace/index.php';
-    $ADMIN->add('unsupported', new admin_externalpage('toolhttpsreplace', $pluginname, $url, 'moodle/site:config', true));
+    $ADMIN->add('security', new admin_externalpage('toolhttpsreplace', $pluginname, $url, 'moodle/site:config'));
 }
