@@ -531,6 +531,11 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user4->id, $course3->id);
         $this->getDataGenerator()->enrol_user($user5->id, $course3->id);
 
+        // User 3 should not be able to see user 1, either by passing their own course (course 2) or user 1's course (course 1).
+        $this->setUser($user3);
+        $this->assertFalse(user_can_view_profile($user1, $course2));
+        $this->assertFalse(user_can_view_profile($user1, $course1));
+
         // Remove capability moodle/user:viewdetails in course 2.
         assign_capability('moodle/user:viewdetails', CAP_PROHIBIT, $studentrole->id, $coursecontext);
         $coursecontext->mark_dirty();
