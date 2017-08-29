@@ -58,10 +58,13 @@ define([
 
     var SELECTORS = {
         ROOT: "[data-region='calendar']",
+        DAY: "[data-region='day']",
+        EVENT_ITEM: "[data-region='event-item']",
         EVENT_LINK: "[data-action='view-event']",
         NEW_EVENT_BUTTON: "[data-action='new-event-button']",
         DAY_CONTENT: "[data-region='day-content']",
         LOADING_ICON: '.loading-icon',
+        VIEW_DAY_LINK: "[data-action='view-day-link']"
     };
 
     /**
@@ -284,14 +287,42 @@ define([
         var root = $(SELECTORS.ROOT);
 
         // Bind click events to event links.
-        root.on('click', SELECTORS.EVENT_LINK, function(e) {
+        root.on('click', SELECTORS.EVENT_ITEM, function(e) {
             e.preventDefault();
-            var eventId = $(this).attr('data-event-id');
+            // We've handled the event so stop it from bubbling
+            // and causing the day click handler to fire.
+            e.stopPropagation();
+
+            var target = $(e.target);
+            var eventId = null;
+
+            if (target.is(SELECTORS.EVENT_LINK)) {
+                eventId = target.attr('data-event-id');
+            } else {
+                eventId = target.find(SELECTORS.EVENT_LINK).attr('data-event-id');
+            }
+
             renderEventSummaryModal(eventId);
         });
 
         var eventFormPromise = registerEventFormModal(root);
         registerCalendarEventListeners(root, eventFormPromise);
+
+        // Bind click events to calendar days.
+        root.on('click', SELECTORS.DAY, function(e) {
+            var target = $(e.target);
+
+            if (!target.is(SELECTORS.VIEW_DAY_LINK)) {
+                var startTime = $(this).attr('data-new-event-timestamp');
+                eventFormPromise.then(function(modal) {
+                    modal.setStartTime(startTime);
+                    modal.show();
+                    return;
+                });
+
+                e.preventDefault();
+            }
+        });
     };
 
     return {

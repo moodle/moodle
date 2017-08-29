@@ -2155,3 +2155,7 @@ $footer-link-color: $bg-inverse-link-color !default;
 [data-drag-type="move"] {
     cursor: move;
 }
+
+.clickable {
+    cursor: pointer;
+}

@@ -66,6 +66,7 @@ define([
     var ModalEventForm = function(root) {
         Modal.call(this, root);
         this.eventId = null;
+        this.startTime = null;
         this.reloadingBody = false;
         this.reloadingTitle = false;
         this.saveButton = this.getFooter().find(SELECTORS.SAVE_BUTTON);
@@ -104,6 +105,36 @@ define([
      */
     ModalEventForm.prototype.hasEventId = function() {
         return this.eventId !== null;
+    };
+
+    /**
+     * Set the start time to the given value.
+     *
+     * @method setStartTime
+     * @param {int} time The start time
+     */
+    ModalEventForm.prototype.setStartTime = function(time) {
+        this.startTime = time;
+    };
+
+    /**
+     * Retrieve the current start time, if any.
+     *
+     * @method getStartTime
+     * @return {int|null} The start time
+     */
+    ModalEventForm.prototype.getStartTime = function() {
+        return this.startTime;
+    };
+
+    /**
+     * Check if the modal has start time.
+     *
+     * @method hasStartTime
+     * @return {bool}
+     */
+    ModalEventForm.prototype.hasStartTime = function() {
+        return this.startTime !== null;
     };
 
     /**
@@ -244,6 +275,10 @@ define([
             args.eventid = this.getEventId();
         }
 
+        if (this.hasStartTime()) {
+            args.starttime = this.getStartTime();
+        }
+
         if (typeof formData !== 'undefined') {
             args.formdata = formData;
         }
@@ -305,6 +340,7 @@ define([
     ModalEventForm.prototype.hide = function() {
         Modal.prototype.hide.call(this);
         this.setEventId(null);
+        this.setStartTime(null);
     };
 
     /**
