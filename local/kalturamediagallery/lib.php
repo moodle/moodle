@@ -92,7 +92,7 @@ function local_kalturamediagallery_extend_navigation($navigation) {
     $coursesNode = $navigation->find('courses', $navigation::TYPE_ROOTNODE);
     if (isNodeNotEmpty($coursesNode)) {
         $currentCourseInCourses = $coursesNode->find($coursecontext->instanceid, navigation_node::TYPE_COURSE);
-        if ($coursesNode) {
+        if ($currentCourseInCourses) {
             // we found the current course in the 'courses' node, add the link to it.
             $currentCourseInCourses->add($mediaGalleryLinkName, $linkUrl, navigation_node::NODETYPE_LEAF, $mediaGalleryLinkName, 'kalturacoursegallerylink-allcourses');
         }
