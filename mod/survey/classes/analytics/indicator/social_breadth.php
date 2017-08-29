@@ -46,22 +46,11 @@ class social_breadth extends activity_base {
         return new \lang_string('indicator:socialbreadth', 'mod_survey');
     }
 
-    /**
-     * get_indicator_type
-     *
-     * @return string
-     */
-    protected function get_indicator_type() {
+    public function get_indicator_type() {
         return self::INDICATOR_SOCIAL;
     }
 
-    /**
-     * get_social_breadth_level
-     *
-     * @param \cm_info $cm
-     * @return int
-     */
-    protected function get_social_breadth_level(\cm_info $cm) {
+    public function get_social_breadth_level(\cm_info $cm) {
         return 1;
     }
 }

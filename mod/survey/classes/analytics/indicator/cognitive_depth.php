@@ -46,22 +46,11 @@ class cognitive_depth extends activity_base {
         return new \lang_string('indicator:cognitivedepth', 'mod_survey');
     }
 
-    /**
-     * get_indicator_type
-     *
-     * @return string
-     */
-    protected function get_indicator_type() {
+    public function get_indicator_type() {
         return self::INDICATOR_COGNITIVE;
     }
 
-    /**
-     * get_cognitive_depth_level
-     *
-     * @param \cm_info $cm
-     * @return int
-     */
-    protected function get_cognitive_depth_level(\cm_info $cm) {
+    public function get_cognitive_depth_level(\cm_info $cm) {
         return 2;
     }
 }

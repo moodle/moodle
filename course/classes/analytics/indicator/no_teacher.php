@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * No teacher indicator.
  *
- * @package   core_analytics
+ * @package   core_course
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
