@@ -48,7 +48,7 @@ Use inappbrowser when you want to open the link in a browser without leaving the
 $string['disabledfeatures'] = 'Disabled features';
 $string['disabledfeatures_desc'] = 'Select here the features you want to disable in the Mobile app for your site. Please note that some features listed here could be already disabled via other site settings. You will have to log out and log in again in the app to see the changes.';
 $string['enablesmartappbanners'] = 'Enable App Banners';
-$string['enablesmartappbanners_desc'] = 'This will display a banner promoting the Moodle Mobile app when visiting the site in a Mobile browser.';
+$string['enablesmartappbanners_desc'] = 'If enabled, a banner promoting the mobile app will be displayed when accessing the site using a mobile browser.';
 $string['forcedurlscheme'] = 'If you want to allow only your custom branded app to be opened via a browser window, then specify its URL scheme here; otherwise leave the field empty.';
 $string['forcedurlscheme_key'] = 'URL scheme';
 $string['forcelogout'] = 'Force log out';
