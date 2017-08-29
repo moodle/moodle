@@ -65,6 +65,7 @@ abstract class rest {
      * @param string $functionname
      * @param array $functionargs
      * @param string $rawpost Optional param to include in the body of a post.
+     * @param string $contenttype The MIME type for the request's Content-Type header.
      * @return string|stdClass
      */
     public function call($functionname, $functionargs, $rawpost = false, $contenttype = false) {

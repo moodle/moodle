@@ -241,7 +241,7 @@ class api {
      * Never ever ever expose this to a webservice because it contains the refresh token which grants API access.
      *
      * @param \core\oauth2\issuer $issuer
-     * @return \core\oauth2\client
+     * @return system_account|false
      */
     public static function get_system_account(issuer $issuer) {
         return system_account::get_record(['issuerid' => $issuer->get('id')]);
