@@ -68,7 +68,7 @@ abstract class community_of_inquiry_activity extends linear {
     /**
      * Max social breadth level accepted.
      */
-    const MAX_SOCIAL_LEVEL = 2;
+    const MAX_SOCIAL_LEVEL = 5;
 
     /**
      * Returns the activity type. No point in changing this class in children classes.
@@ -604,13 +604,18 @@ abstract class community_of_inquiry_activity extends linear {
 
             $potentiallevel = $this->get_social_breadth_level($cm);
             if (!is_int($potentiallevel) || $potentiallevel > self::MAX_SOCIAL_LEVEL || $potentiallevel < 1) {
-                throw new \coding_exception('Although social breadth levels can go from 1 to 5 at the moment Moodle core ' .
-                    'can only accept social breadth levels between 1 and ' . self::MAX_SOCIAL_LEVEL . '. Sorry for the ' .
-                    'inconvenience. This will change in future releases.');
+                throw new \coding_exception('Activities\' potential social breadth go from 1 to ' .
+                    community_of_inquiry_activity::MAX_SOCIAL_LEVEL . '.');
             }
             $scoreperlevel = $scoreperactivity / $potentiallevel;
             switch ($potentiallevel) {
                 case 2:
+                case 3:
+                case 4:
+                case 5:
+                    // Core activities social breadth only reaches level 2, until core activities social
+                    // breadth do not reach level 5 we limit it to what we currently support, which is level 2.
+
                     // Social breadth level 2 is to view feedback. (Same as cognitive level 3).
 
                     if ($this->any_feedback('viewed', $cm, $contextid, $user)) {

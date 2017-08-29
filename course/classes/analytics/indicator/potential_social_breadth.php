@@ -105,6 +105,12 @@ class potential_social_breadth extends \core_analytics\local\indicator\linear {
             }
         }
 
+        // Core activities social breadth only reaches level 2, until core activities social
+        // breadth do not reach level 5 we limit it to what we currently support, which is level 2.
+        if ($potentiallevel > 2) {
+            $potentiallevel = 2;
+        }
+
         // Supporting only social breadth level 1 and 2 the possible values are -1 or 1.
         $levelscore = round(self::get_max_value() - self::get_min_value(), 2);
 
@@ -136,7 +142,7 @@ class potential_social_breadth extends \core_analytics\local\indicator\linear {
      * @param int $level
      */
     protected function level_not_accepted($level) {
-        throw new \coding_exception('Although social breadth levels can go from 1 to 5 at the moment Moodle core can only accept' .
-            ' social breadth levels 1 and 2. Sorry for the inconvenience, this will change in future releases.');
+        throw new \coding_exception('Activities\' potential social breadth go from 1 to ' .
+            community_of_inquiry_activity::MAX_SOCIAL_LEVEL . '.');
     }
 }
