@@ -2953,4 +2953,147 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $completiondata = $completion->get_data($cm, false, $student2->id);
         $this->assertEquals(1, $completiondata->completionstate);
     }
+
+    public function get_assignments_with_rescaled_null_grades_provider() {
+        return [
+            'Negative less than one is errant' => [
+                'grade' => -0.64,
+                'count' => 1,
+            ],
+            'Negative more than one is errant' => [
+                'grade' => -30.18,
+                'count' => 1,
+            ],
+            'Negative one exactly is not errant' => [
+                'grade' => ASSIGN_GRADE_NOT_SET,
+                'count' => 0,
+            ],
+            'Positive grade is not errant' => [
+                'grade' => 1,
+                'count' => 0,
+            ],
+            'Large grade is not errant' => [
+                'grade' => 100,
+                'count' => 0,
+            ],
+            'Zero grade is not errant' => [
+                'grade' => 0,
+                'count' => 0,
+            ],
+        ];
+    }
+
+    /**
+     * Test determining if the assignment as any null grades that were rescaled.
+     * @dataProvider get_assignments_with_rescaled_null_grades_provider
+     */
+    public function test_get_assignments_with_rescaled_null_grades($grade, $count) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $assign = $this->create_instance(array('grade' => 100));
+
+        // Try getting a student's grade. This will give a grade of -1.
+        // Then we can override it with a bad negative grade.
+        $assign->get_user_grade($this->students[0]->id, true);
+
+        // Set the grade to something errant.
+        $DB->set_field(
+            'assign_grades',
+            'grade',
+            $grade,
+            [
+                'userid' => $this->students[0]->id,
+                'assignment' => $assign->get_instance()->id,
+            ]
+        );
+
+        $this->assertCount($count, get_assignments_with_rescaled_null_grades());
+    }
+
+    /**
+     * Data provider for test_fix_null_grades
+     * @return array[] Test data for test_fix_null_grades. Each element should contain grade, expectedcount and gradebookvalue
+     */
+    public function fix_null_grades_provider() {
+        return [
+            'Negative less than one is errant' => [
+                'grade' => -0.64,
+                'gradebookvalue' => null,
+            ],
+            'Negative more than one is errant' => [
+                'grade' => -30.18,
+                'gradebookvalue' => null,
+            ],
+            'Negative one exactly is not errant, but shouldn\'t be pushed to gradebook' => [
+                'grade' => ASSIGN_GRADE_NOT_SET,
+                'gradebookvalue' => null,
+            ],
+            'Positive grade is not errant' => [
+                'grade' => 1,
+                'gradebookvalue' => 1,
+            ],
+            'Large grade is not errant' => [
+                'grade' => 100,
+                'gradebookvalue' => 100,
+            ],
+            'Zero grade is not errant' => [
+                'grade' => 0,
+                'gradebookvalue' => 0,
+            ],
+        ];
+    }
+
+    /**
+     * Test fix_null_grades
+     * @param number $grade The grade we should set in the assign grading table.
+     * @param number $expectedcount The finalgrade we expect in the gradebook after fixing the grades.
+     * @dataProvider fix_null_grades_provider
+     */
+    public function test_fix_null_grades($grade, $gradebookvalue) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $studentid = $this->students[0]->id;
+
+        $assign = $this->create_instance();
+
+        // Try getting a student's grade. This will give a grade of -1.
+        // Then we can override it with a bad negative grade.
+        $assign->get_user_grade($studentid, true);
+
+        // Set the grade to something errant.
+        $DB->set_field(
+            'assign_grades',
+            'grade',
+            $grade,
+            [
+                'userid' => $studentid,
+                'assignment' => $assign->get_instance()->id,
+            ]
+        );
+        $assign->grade = $grade;
+        $assigntemp = clone $assign->get_instance();
+        $assigntemp->cmidnumber = $assign->get_course_module()->idnumber;
+        assign_update_grades($assigntemp);
+
+        // Check that the gradebook was updated with the assign grade. So we can guarentee test results later on.
+        $expectedgrade = $grade == -1 ? null : $grade; // Assign sends null to the gradebook for -1 grades.
+        $gradegrade = grade_grade::fetch(array('userid' => $studentid, 'itemid' => $assign->get_grade_item()->id));
+        $this->assertEquals($expectedgrade, $gradegrade->rawgrade);
+
+        // Call fix_null_grades().
+        $method = new ReflectionMethod(assign::class, 'fix_null_grades');
+        $method->setAccessible(true);
+        $result = $method->invoke($assign);
+
+        $this->assertSame(true, $result);
+
+        $gradegrade = grade_grade::fetch(array('userid' => $studentid, 'itemid' => $assign->get_grade_item()->id));
+
+        // Check that the grade was updated in the gradebook by fix_null_grades.
+        $this->assertEquals($gradebookvalue, $gradegrade->finalgrade);
+    }
 }
