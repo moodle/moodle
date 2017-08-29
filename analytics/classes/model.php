@@ -247,15 +247,15 @@ class model {
     /**
      * Returns the model analyser (defined by the model target).
      *
+     * @param array $options Default initialisation with no options.
      * @return \core_analytics\local\analyser\base
      */
-    public function get_analyser() {
+    public function get_analyser($options = array()) {
         if ($this->analyser !== null) {
             return $this->analyser;
         }
 
-        // Default initialisation with no options.
-        $this->init_analyser();
+        $this->init_analyser($options);
 
         return $this->analyser;
     }
@@ -276,26 +276,29 @@ class model {
             throw new \moodle_exception('errornotarget', 'analytics');
         }
 
-        if (!empty($options['evaluation'])) {
-            // The evaluation process will run using all available time splitting methods unless one is specified.
-            if (!empty($options['timesplitting'])) {
-                $timesplitting = \core_analytics\manager::get_time_splitting($options['timesplitting']);
-                $timesplittings = array($timesplitting->get_id() => $timesplitting);
+        $timesplittings = array();
+        if (empty($options['notimesplitting'])) {
+            if (!empty($options['evaluation'])) {
+                // The evaluation process will run using all available time splitting methods unless one is specified.
+                if (!empty($options['timesplitting'])) {
+                    $timesplitting = \core_analytics\manager::get_time_splitting($options['timesplitting']);
+                    $timesplittings = array($timesplitting->get_id() => $timesplitting);
+                } else {
+                    $timesplittings = \core_analytics\manager::get_enabled_time_splitting_methods();
+                }
             } else {
-                $timesplittings = \core_analytics\manager::get_enabled_time_splitting_methods();
+
+                if (empty($this->model->timesplitting)) {
+                    throw new \moodle_exception('invalidtimesplitting', 'analytics', '', $this->model->id);
+                }
+
+                // Returned as an array as all actions (evaluation, training and prediction) go through the same process.
+                $timesplittings = array($this->model->timesplitting => $this->get_time_splitting());
             }
-        } else {
 
-            if (empty($this->model->timesplitting)) {
-                throw new \moodle_exception('invalidtimesplitting', 'analytics', '', $this->model->id);
+            if (empty($timesplittings)) {
+                throw new \moodle_exception('errornotimesplittings', 'analytics');
             }
-
-            // Returned as an array as all actions (evaluation, training and prediction) go through the same process.
-            $timesplittings = array($this->model->timesplitting => $this->get_time_splitting());
-        }
-
-        if (empty($timesplittings)) {
-            throw new \moodle_exception('errornotimesplittings', 'analytics');
         }
 
         if (!empty($options['evaluation'])) {

@@ -113,6 +113,16 @@ abstract class base {
     }
 
     /**
+     * Returns the list of analysable elements available on the site.
+     *
+     * \core_analytics\local\analyser\by_course and \core_analytics\local\analyser\sitewide are implementing
+     * this method returning site courses (by_course) and the whole system (sitewide) as analysables.
+     *
+     * @return \core_analytics\analysable[]
+     */
+    abstract public function get_analysables();
+
+    /**
      * This function returns this analysable list of samples.
      *
      * @param \core_analytics\analysable $analysable
@@ -141,7 +151,7 @@ abstract class base {
      *
      * @return string
      */
-    abstract protected function get_samples_origin();
+    abstract public function get_samples_origin();
 
     /**
      * Returns the context of a sample.
@@ -166,15 +176,29 @@ abstract class base {
     /**
      * Main analyser method which processes the site analysables.
      *
-     * \core_analytics\local\analyser\by_course and \core_analytics\local\analyser\sitewide are implementing
-     * this method returning site courses (by_course) and the whole system (sitewide) as analysables.
-     * In most of the cases you should have enough extending from one of these classes so you don't need
-     * to reimplement this method.
-     *
      * @param bool $includetarget
      * @return \stored_file[]
      */
-    abstract public function get_analysable_data($includetarget);
+    public function get_analysable_data($includetarget) {
+
+        $filesbytimesplitting = array();
+
+        $analysables = $this->get_analysables();
+        foreach ($analysables as $analysable) {
+
+            $files = $this->process_analysable($analysable, $includetarget);
+
+            // Later we will need to aggregate data by time splitting method.
+            foreach ($files as $timesplittingid => $file) {
+                $filesbytimesplitting[$timesplittingid][$analysable->get_id()] = $file;
+            }
+        }
+
+        // We join the datasets by time splitting method.
+        $timesplittingfiles = $this->merge_analysable_files($filesbytimesplitting, $includetarget);
+
+        return $timesplittingfiles;
+    }
 
     /**
      * Samples data this analyser provides.
@@ -218,6 +242,36 @@ abstract class base {
                     json_encode($missingrequired) . ' sample data which is not provided by ' . get_class($this));
             }
         }
+    }
+
+    /**
+     * Merges analysable dataset files into 1.
+     *
+     * @param array $filesbytimesplitting
+     * @param bool $includetarget
+     * @return \stored_file[]
+     */
+    protected function merge_analysable_files($filesbytimesplitting, $includetarget) {
+
+        $timesplittingfiles = array();
+        foreach ($filesbytimesplitting as $timesplittingid => $files) {
+
+            if ($this->options['evaluation'] === true) {
+                // Delete the previous copy. Only when evaluating.
+                \core_analytics\dataset_manager::delete_previous_evaluation_file($this->modelid, $timesplittingid);
+            }
+
+            // Merge all course files into one.
+            if ($includetarget) {
+                $filearea = \core_analytics\dataset_manager::LABELLED_FILEAREA;
+            } else {
+                $filearea = \core_analytics\dataset_manager::UNLABELLED_FILEAREA;
+            }
+            $timesplittingfiles[$timesplittingid] = \core_analytics\dataset_manager::merge_datasets($files,
+                $this->modelid, $timesplittingid, $filearea, $this->options['evaluation']);
+        }
+
+        return $timesplittingfiles;
     }
 
     /**

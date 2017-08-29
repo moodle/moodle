@@ -36,36 +36,12 @@ defined('MOODLE_INTERNAL') || die();
 abstract class sitewide extends base {
 
     /**
-     * Returns the analysable data.
+     * Returns one single analysable element, the site.
      *
-     * @param bool $includetarget
-     * @return \stored_file[] One file for each time splitting method.
+     * @return \core_analytics\analysable[]
      */
-    public function get_analysable_data($includetarget) {
-
-        // Here there is a single analysable and it is the system.
+    public function get_analysables() {
         $analysable = new \core_analytics\site();
-
-        $files = $this->process_analysable($analysable, $includetarget);
-
-        // Copy to range files as there is just one analysable.
-        foreach ($files as $timesplittingid => $file) {
-
-            if ($this->options['evaluation'] === true) {
-                // Delete the previous copy. Only when evaluating.
-                \core_analytics\dataset_manager::delete_previous_evaluation_file($this->modelid, $timesplittingid);
-            }
-
-            // We use merge but it is just a copy.
-            if ($includetarget) {
-                $filearea = \core_analytics\dataset_manager::LABELLED_FILEAREA;
-            } else {
-                $filearea = \core_analytics\dataset_manager::UNLABELLED_FILEAREA;
-            }
-            $files[$timesplittingid] = \core_analytics\dataset_manager::merge_datasets(array($file), $this->modelid,
-                $timesplittingid, $filearea, $this->options['evaluation']);
-        }
-
-        return $files;
+        return array($analysable);
     }
 }
