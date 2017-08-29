@@ -43,8 +43,11 @@ class user_roles_editable extends \core\output\inplace_editable {
     /** @var $context */
     private $context = null;
 
-    /** @var $courseroles Array */
-    private $courseroles = null;
+    /** @var \stdClass[] $courseroles */
+    private $courseroles;
+
+    /** @var \stdClass[] $profileroles */
+    private $profileroles;
 
     /**
      * Constructor.
