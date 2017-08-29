@@ -88,6 +88,13 @@ $PAGE->set_pagetype('course-view-' . $course->format);
 $PAGE->add_body_class('path-user');                     // So we can style it independently.
 $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 
+// Expand the users node in the settings navigation when it exists because those pages
+// are related to this one.
+$node = $PAGE->settingsnav->find('users', navigation_node::TYPE_CONTAINER);
+if ($node) {
+    $node->forceopen();
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('participants'));
 
