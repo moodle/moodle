@@ -44,6 +44,10 @@ class create extends \moodleform {
         $haserror = !empty($this->_customdata['haserror']);
         $eventtypes = calendar_get_all_allowed_types();
 
+        if (empty($eventtypes)) {
+            print_error('nopermissiontoupdatecalendar');
+        }
+
         $mform->setDisableShortforms();
         $mform->disable_form_change_checker();
 
@@ -93,6 +97,12 @@ class create extends \moodleform {
 
         $errors = parent::validation($data, $files);
         $coursekey = isset($data['groupcourseid']) ? 'groupcourseid' : 'courseid';
+        $eventtypes = calendar_get_all_allowed_types();
+        $eventtype = isset($data['eventtype']) ? $data['eventtype'] : null;
+
+        if (empty($eventtype) || !isset($eventtypes[$eventtype])) {
+            $errors['eventtype'] = get_string('invalideventtype', 'calendar');
+        }
 
         if (isset($data[$coursekey]) && $data[$coursekey] > 0) {
             if ($course = $DB->get_record('course', ['id' => $data[$coursekey]])) {
