@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['complete'] = 'Completed.';
 $string['count'] = 'Number of embeded content items';
 $string['disclaimer'] = 'I understand the risks of this operation';
 $string['doclink'] = 'Read more documentation on the wiki';
@@ -34,4 +35,5 @@ $string['oktoprocede'] = 'The scan finds no issues with your content. You can pr
 $string['pageheader'] = 'Upgrade externally hosted content urls to https';
 $string['pluginname'] = 'HTTPS conversion tool';
 $string['replacing'] = 'Replacing http content with https...';
+$string['searching'] = 'Searching {$a}';
 $string['takeabackupwarning'] = 'Once this tool run, changes made can\'t be reverted. A complete backup should be made before running this script! There is a low risk that the wrong content will be replaced, introducing problems.';

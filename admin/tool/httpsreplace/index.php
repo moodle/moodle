@@ -60,10 +60,17 @@ $form = new \tool_httpsreplace\form();
 $finder = new \tool_httpsreplace\url_finder();
 if (!$data = $form->get_data()) {
 
-    $results = $finder->http_link_stats();
-
     echo '<p>'.get_string('domainexplain', 'tool_httpsreplace').'</p>';
     echo '<p>'.page_doc_link(get_string('doclink', 'tool_httpsreplace')).'</p>';
+
+    $PAGE->set_cacheable(false);
+    $progressbar = new progress_bar();
+    echo $progressbar->create();
+
+    $results = $finder->http_link_stats($progressbar);
+
+    $progressbar->update_full(100, get_string('complete', 'tool_httpsreplace'));
+
     if (empty($results)) {
         echo '<p>'.get_string('oktoprocede', 'tool_httpsreplace').'</p>';
     } else {
@@ -89,9 +96,15 @@ if (!$data = $form->get_data()) {
 
     echo '<p>'.get_string('replacing', 'tool_httpsreplace').'</p>';
 
+    $PAGE->set_cacheable(false);
+    $progressbar = new progress_bar();
+    echo $progressbar->create();
+
     echo $OUTPUT->box_start();
-    $finder->upgrade_http_links();
+    $finder->upgrade_http_links($progressbar);
     echo $OUTPUT->box_end();
+
+    $progressbar->update_full(100, get_string('complete', 'tool_httpsreplace'));
 
     echo $OUTPUT->continue_button(new moodle_url('/admin/index.php'));
 

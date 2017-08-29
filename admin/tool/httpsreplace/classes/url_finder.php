@@ -39,19 +39,21 @@ class url_finder {
     /**
      * Returns a hash of what hosts are referred to over http and would need to be changed.
      *
+     * @param progress_bar $progress Progress bar keeping track of this process.
      * @return array Hash of domains with number of references as the value.
      */
-    public function http_link_stats() {
-        return $this->process(false);
+    public function http_link_stats($progress = null) {
+        return $this->process(false, $progress);
     }
 
     /**
      * Changes all resources referred to over http to https.
      *
+     * @param progress_bar $progress Progress bar keeping track of this process.
      * @return bool True upon success
      */
-    public function upgrade_http_links() {
-        return $this->process(true);
+    public function upgrade_http_links($progress = null) {
+        return $this->process(true, $progress);
     }
 
     /**
@@ -82,9 +84,10 @@ class url_finder {
     /**
      * Originally forked from core function db_search().
      * @param bool $replacing Whether or not to replace the found urls.
+     * @param progress_bar $progress Progress bar keeping track of this process.
      * @return bool|array If $replacing, return true on success. If not, return hash of http urls to number of times used.
      */
-    private function process($replacing = false) {
+    private function process($replacing = false, $progress = null) {
         global $DB, $CFG;
 
         require_once($CFG->libdir.'/filelib.php');
@@ -126,7 +129,13 @@ class url_finder {
             'varchar',
         );
 
+        $numberoftables = count($tables);
+        $tablenumber = 0;
         foreach ($tables as $table) {
+            if ($progress) {
+                $progress->update($tablenumber, $numberoftables, get_string('searching', 'tool_httpsreplace', $table));
+                $tablenumber++;
+            }
             if (in_array($table, $skiptables)) {
                 continue;
             }
