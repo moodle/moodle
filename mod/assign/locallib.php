@@ -600,6 +600,8 @@ class assign {
             $o .= $this->view_batch_markingallocation($mform);
         } else if ($action == 'viewsubmitforgradingerror') {
             $o .= $this->view_error_page(get_string('submitforgrading', 'assign'), $notices);
+        } else if ($action == 'fixrescalednullgrades') {
+            $o .= $this->view_fix_rescaled_null_grades();
         } else {
             $o .= $this->view_submission_page();
         }
@@ -4232,6 +4234,8 @@ class assign {
         $this->require_view_grades();
         require_once($CFG->dirroot . '/mod/assign/gradeform.php');
 
+        $this->add_grade_notices();
+
         // Only load this if it is.
         $o .= $this->view_grading_table();
 
@@ -5204,6 +5208,8 @@ class assign {
         global $CFG, $DB, $USER, $PAGE;
 
         $instance = $this->get_instance();
+
+        $this->add_grade_notices();
 
         $o = '';
 
@@ -8537,6 +8543,92 @@ class assign {
     public function set_module_viewed() {
         $completion = new completion_info($this->get_course());
         $completion->set_module_viewed($this->get_course_module());
+    }
+
+    /**
+     * Checks for any grade notices, and adds notifications. Will display on assignment main page and grading table.
+     *
+     * @return void The notifications API will render the notifications at the appropriate part of the page.
+     */
+    protected function add_grade_notices() {
+        if (has_capability('mod/assign:grade', $this->get_context()) && get_config('assign', 'has_rescaled_null_grades_' . $this->get_instance()->id)) {
+            $link = new \moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id, 'action' => 'fixrescalednullgrades'));
+            \core\notification::warning(get_string('fixrescalednullgrades', 'mod_assign', ['link' => $link->out()]));
+        }
+    }
+
+    /**
+     * View fix rescaled null grades.
+     *
+     * @return bool True if null all grades are now fixed.
+     */
+    protected function fix_null_grades() {
+        global $DB;
+        $result = $DB->set_field_select(
+            'assign_grades',
+            'grade',
+            -1,
+            'grade <> ? AND grade < 0',
+            [-1]
+        );
+        $assign = clone $this->get_instance();
+        $assign->cmidnumber = $this->get_course_module()->idnumber;
+        assign_update_grades($assign);
+        return $result;
+    }
+
+    /**
+     * View fix rescaled null grades.
+     *
+     * @return void The notifications API will render the notifications at the appropriate part of the page.
+     */
+    protected function view_fix_rescaled_null_grades() {
+        global $OUTPUT;
+
+        $o = '';
+
+        require_capability('mod/assign:grade', $this->get_context());
+
+        $instance = $this->get_instance();
+
+        $o .= $this->get_renderer()->render(
+            new assign_header(
+                $instance,
+                $this->get_context(),
+                $this->show_intro(),
+                $this->get_course_module()->id
+            )
+        );
+
+        $confirm = optional_param('confirm', 0, PARAM_BOOL);
+
+        if ($confirm) {
+            confirm_sesskey();
+
+            // Fix the grades.
+            $this->fix_null_grades();
+            unset_config('has_rescaled_null_grades_' . $instance->id, 'assign');
+
+            // Display the notice.
+            $o .= $this->get_renderer()->notification(get_string('fixrescalednullgradesdone', 'assign'), 'notifysuccess');
+            $url = new moodle_url(
+                '/mod/assign/view.php',
+                array(
+                    'id' => $this->get_course_module()->id,
+                    'action' => 'grading'
+                )
+            );
+            $o .= $this->get_renderer()->continue_button($url);
+        } else {
+            // Ask for confirmation.
+            $continue = new \moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id, 'action' => 'fixrescalednullgrades', 'confirm' => true, 'sesskey' => sesskey()));
+            $cancel = new \moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+            $o .= $OUTPUT->confirm(get_string('fixrescalednullgradesconfirm', 'mod_assign'), $continue, $cancel);
+        }
+
+        $o .= $this->view_footer();
+
+        return $o;
     }
 }
 
