@@ -748,8 +748,9 @@ if ($mform->is_cancelled()) {
                 $company->assign_user_to_company($user->id);
     
                 // Do we have a department in the file?
-                if ($department = $DB->get_record('department', array('company' => $company->id,
-                                                                      'shortname' => $user->department))) {
+                if (if (!empty($user->department) &&
+                        $department = $DB->get_record('department', array('company' => $company->id,
+                                                                          'shortname' => $user->department))) {
                     // Make sure the user can manage this department.
                     if (company::can_manage_department($department->id)) {
                         company::assign_user_to_department($department->id, $user->id);
