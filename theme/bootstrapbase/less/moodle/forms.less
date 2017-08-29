@@ -445,9 +445,27 @@ input[size] {
 }
 
 /* Custom styles for autocomplete form element */
+
+[data-fieldtype=autocomplete] select,
+[data-fieldtype=tags] select,
+select.form-autocomplete-original-select {
+    visibility: hidden;
+    overflow: hidden;
+    width: 15rem;
+    height: 3 * @baseLineHeight + @baseFontSize / 2;
+    margin: 0;
+    margin-bottom: 0.2em;
+    padding: 0;
+    border: 0;
+    vertical-align: top;
+}
+.form-autocomplete-container {
+    display: inline-block;
+    min-height: 4.2rem;
+}
 .form-autocomplete-selection {
     margin: 0.2em;
-    min-height: 21px;
+    min-height: @baseLineHeight + @baseFontSize / 2;
 }
 .form-autocomplete-multiple [role=listitem] {
     cursor: pointer;
