@@ -233,5 +233,18 @@ function xmldb_assign_upgrade($oldversion) {
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2016120501) {
+        require_once($CFG->dirroot.'/mod/assign/upgradelib.php');
+        $brokenassigns = get_assignments_with_rescaled_null_grades();
+
+        // Set config value.
+        foreach ($brokenassigns as $assign) {
+            set_config('has_rescaled_null_grades_' . $assign, 1, 'assign');
+        }
+
+        // Main savepoint reached.
+        upgrade_mod_savepoint(true, 2016120501, 'assign');
+    }
+
     return true;
 }

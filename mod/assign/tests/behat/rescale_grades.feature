@@ -12,10 +12,12 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student10@example.com |
+      | student2 | Student | 2 | student10@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+      | student2 | C1 | student |
     And the following "groups" exist:
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
@@ -70,3 +72,18 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     When I press "Save and display"
     And I navigate to "View all submissions" in current page administration
     Then "Student 1" row "Grade" column of "generaltable" table should contain "20.00"
+
+  Scenario: Rescaling should not produce negative grades
+    Given I navigate to "View all submissions" in current page administration
+    And I click on "Grade" "link" in the "Student 2" "table_row"
+    And I wait until the page is ready
+    And I follow "Assignment: Test assignment name"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Rescale existing grades" to "Yes"
+    And I set the field "Maximum grade" to "50"
+    When I press "Save and display"
+    And I navigate to "View all submissions" in current page administration
+    # Since the decimal places are always displayed (e.g. 0.00), this will catch any grade. The student should not have one.
+    # We can't just check for - (empty grade) because a negative grade would also have that character.
+    Then "Student 2" row "Grade" column of "generaltable" table should not contain "."
