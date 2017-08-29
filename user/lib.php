@@ -1108,10 +1108,15 @@ function user_mygrades_url($userid = null, $courseid = SITEID) {
 }
 
 /**
- * Check if a user has the permission to viewdetails in a shared course's context.
+ * Check if the current user has permission to view details of the supplied user.
+ *
+ * This function supports two modes:
+ * If the optional $course param is omitted, then this function finds all shared courses and checks whether the current user has
+ * permission in any of them, returning true if so.
+ * If the $course param is provided, then this function checks permissions in ONLY that course.
  *
  * @param object $user The other user's details.
- * @param object $course Use this course to see if we have permission to see this user's profile.
+ * @param object $course if provided, only check permissions in this course.
  * @param context $usercontext The user context if available.
  * @return bool true for ability to view this user, else false.
  */
@@ -1122,9 +1127,7 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
         return false;
     }
 
-    // Perform some quick checks and eventually return early.
-
-    // Number 1.
+    // Do we need to be logged in?
     if (empty($CFG->forceloginforprofiles)) {
         return true;
     } else {
@@ -1134,27 +1137,30 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
         }
     }
 
-    // Number 2.
+    // Current user can always view their profile.
     if ($USER->id == $user->id) {
         return true;
     }
 
-    if (empty($usercontext)) {
-        $usercontext = context_user::instance($user->id);
-    }
-    // Number 3.
-    if (has_capability('moodle/user:viewdetails', $usercontext) || has_capability('moodle/user:viewalldetails', $usercontext)) {
-        return true;
-    }
-
-    // Number 4.
+    // Course contacts have visible profiles always.
     if (has_coursecontact_role($user->id)) {
         return true;
     }
 
+    // If we're only checking the capabilities in the single provided course.
     if (isset($course)) {
-        $userscourses = array($course);
+        // Confirm that $user is enrolled in the $course we're checking.
+        if (is_enrolled(context_course::instance($course->id), $user)) {
+            $userscourses = array($course);
+        }
     } else {
+        // Else we're checking whether the current user can view $user's profile anywhere, so check user context first.
+        if (empty($usercontext)) {
+            $usercontext = context_user::instance($user->id);
+        }
+        if (has_capability('moodle/user:viewdetails', $usercontext) || has_capability('moodle/user:viewalldetails', $usercontext)) {
+            return true;
+        }
         // This returns context information, so we can preload below.
         $userscourses = enrol_get_all_users_courses($user->id);
     }
@@ -1166,7 +1172,8 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
     foreach ($userscourses as $userscourse) {
         context_helper::preload_from_record($userscourse);
         $coursecontext = context_course::instance($userscourse->id);
-        if (has_capability('moodle/user:viewdetails', $coursecontext)) {
+        if (has_capability('moodle/user:viewdetails', $coursecontext) ||
+            has_capability('moodle/user:viewalldetails', $coursecontext)) {
             if (!groups_user_groups_visible($userscourse, $user->id)) {
                 // Not a member of the same group.
                 continue;
