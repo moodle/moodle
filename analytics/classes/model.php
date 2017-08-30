@@ -1041,15 +1041,29 @@ class model {
     /**
      * Get the contexts with predictions.
      *
+     * @param bool $skiphidden Skip hidden predictions
      * @return \stdClass[]
      */
-    public function get_predictions_contexts() {
-        global $DB;
+    public function get_predictions_contexts($skiphidden = true) {
+        global $DB, $USER;
 
         $sql = "SELECT DISTINCT ap.contextid FROM {analytics_predictions} ap
                   JOIN {context} ctx ON ctx.id = ap.contextid
-                 WHERE ap.modelid = ?";
-        return $DB->get_records_sql($sql, array($this->model->id));
+                 WHERE ap.modelid = :modelid";
+        $params = array('modelid' => $this->model->id);
+
+        if ($skiphidden) {
+            $sql .= " AND NOT EXISTS (
+              SELECT 1
+                FROM {analytics_prediction_actions} apa
+               WHERE apa.predictionid = ap.id AND apa.userid = :userid AND (apa.actionname = :fixed OR apa.actionname = :notuseful)
+            )";
+            $params['userid'] = $USER->id;
+            $params['fixed'] = \core_analytics\prediction::ACTION_FIXED;
+            $params['notuseful'] = \core_analytics\prediction::ACTION_NOT_USEFUL;
+        }
+
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -1096,6 +1110,7 @@ class model {
      * Gets the predictions for this context.
      *
      * @param \context $context
+     * @param bool $skiphidden Skip hidden predictions
      * @param int $page The page of results to fetch. False for all results.
      * @param int $perpage The max number of results to fetch. Ignored if $page is false.
      * @return array($total, \core_analytics\prediction[])
