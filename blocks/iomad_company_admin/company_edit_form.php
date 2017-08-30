@@ -333,7 +333,7 @@ class company_edit_form extends company_moodleform {
                     }
 
                     // Build the theme selection list.
-                    $themeselectarray[$themename] = $themename;
+                    $themeselectarray[$themename] = get_string('pluginname', 'theme_'.$themename);
                 }
                 $mform->addElement('select', 'theme',
                                     get_string('selectatheme', 'block_iomad_company_admin'),

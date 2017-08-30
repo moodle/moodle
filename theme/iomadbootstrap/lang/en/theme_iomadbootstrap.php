@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'iomad bootstrap';
+$string['pluginname'] = 'Iomad Bootstrap';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
 $string['fullscreen'] = 'Full screen';
