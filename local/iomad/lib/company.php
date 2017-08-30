@@ -619,6 +619,11 @@ class company {
             $managertype = 0;
         }
 
+        // if this is the only company, set the theme.
+        if (!$DB->get_record('company_users', array('userid' => $userid))) {
+            $DB->set_field('user', 'theme', $this->get_theme(), array('id' => $userid));
+        }
+
         // Create the record.
         $userrecord = array();
         $userrecord['departmentid'] = $departmentid;
@@ -634,9 +639,6 @@ class company {
                 print_error(get_string('cantassignusersdb', 'block_iomad_company_admin'));
             }
         }
-
-        // Deal with the company theme.
-        $DB->set_field('user', 'theme', $this->get_theme(), array('id' => $userid));
 
         return true;
     }
