@@ -26,7 +26,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
 
         var SELECTORS = {
             ROOT: "[data-region='calendar']",
-            CALENDAR_NAV_LINK: "span.calendarwrapper .arrow_link",
+            CALENDAR_NAV_LINK: ".calendarwrapper .arrow_link",
             CALENDAR_MONTH_WRAPPER: ".calendarwrapper",
         };
 
