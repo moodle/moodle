@@ -77,6 +77,93 @@ class analytics_model_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core_analytics\model', $model);
     }
 
+    /**
+     * test_delete
+     */
+    public function test_delete() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+
+        $coursepredict1 = $this->getDataGenerator()->create_course(array('visible' => 0));
+        $coursepredict2 = $this->getDataGenerator()->create_course(array('visible' => 0));
+        $coursetrain1 = $this->getDataGenerator()->create_course(array('visible' => 1));
+        $coursetrain2 = $this->getDataGenerator()->create_course(array('visible' => 1));
+
+        $this->model->enable('\core\analytics\time_splitting\no_splitting');
+
+        $this->model->train();
+        $this->model->predict();
+
+        // Fake evaluation results record to check that it is actually deleted.
+        $this->add_fake_log();
+
+        // Generate a prediction action to confirm that it is deleted when there is an important update.
+        $predictions = $DB->get_records('analytics_predictions');
+        $prediction = reset($predictions);
+        $prediction = new \core_analytics\prediction($prediction, array('whatever' => 'not used'));
+        $prediction->action_executed(\core_analytics\prediction::ACTION_FIXED, $this->model->get_target());
+
+        $this->model->delete();
+        $this->assertEmpty($DB->count_records('analytics_models', array('id' => $this->modelobj->id)));
+        $this->assertEmpty($DB->count_records('analytics_models_log', array('modelid' => $this->modelobj->id)));
+        $this->assertEmpty($DB->count_records('analytics_predictions'));
+        $this->assertEmpty($DB->count_records('analytics_prediction_actions'));
+        $this->assertEmpty($DB->count_records('analytics_train_samples'));
+        $this->assertEmpty($DB->count_records('analytics_predict_samples'));
+        $this->assertEmpty($DB->count_records('analytics_used_files'));
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
+    }
+
+    /**
+     * test_clear
+     */
+    public function test_clear() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+
+        $coursepredict1 = $this->getDataGenerator()->create_course(array('visible' => 0));
+        $coursepredict2 = $this->getDataGenerator()->create_course(array('visible' => 0));
+        $coursetrain1 = $this->getDataGenerator()->create_course(array('visible' => 1));
+        $coursetrain2 = $this->getDataGenerator()->create_course(array('visible' => 1));
+
+        $this->model->enable('\core\analytics\time_splitting\no_splitting');
+
+        $this->model->train();
+        $this->model->predict();
+
+        // Fake evaluation results record to check that it is actually deleted.
+        $this->add_fake_log();
+
+        // Generate a prediction action to confirm that it is deleted when there is an important update.
+        $predictions = $DB->get_records('analytics_predictions');
+        $prediction = reset($predictions);
+        $prediction = new \core_analytics\prediction($prediction, array('whatever' => 'not used'));
+        $prediction->action_executed(\core_analytics\prediction::ACTION_FIXED, $this->model->get_target());
+
+        // Update to an empty time splitting method to force clear_model execution.
+        $this->model->update(1, false, '');
+        // Restore previous time splitting method.
+        $this->model->enable('\core\analytics\time_splitting\no_splitting');
+
+        // Check that most of the stuff got deleted.
+        $this->assertEquals(1, $DB->count_records('analytics_models', array('id' => $this->modelobj->id)));
+        $this->assertEquals(1, $DB->count_records('analytics_models_log', array('modelid' => $this->modelobj->id)));
+        $this->assertEmpty($DB->count_records('analytics_predictions'));
+        $this->assertEmpty($DB->count_records('analytics_prediction_actions'));
+        $this->assertEmpty($DB->count_records('analytics_train_samples'));
+        $this->assertEmpty($DB->count_records('analytics_predict_samples'));
+        $this->assertEmpty($DB->count_records('analytics_used_files'));
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
+    }
+
     public function test_model_manager() {
         $this->resetAfterTest(true);
 
@@ -158,6 +245,25 @@ class analytics_model_testcase extends advanced_testcase {
 
         $target = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
         $this->assertTrue(\core_analytics\model::exists($target));
+    }
+
+    /**
+     * Generates a model log record.
+     */
+    private function add_fake_log() {
+        global $DB, $USER;
+
+        $log = new stdClass();
+        $log->modelid = $this->modelobj->id;
+        $log->version = $this->modelobj->version;
+        $log->target = $this->modelobj->target;
+        $log->indicators = $this->modelobj->indicators;
+        $log->score = 1;
+        $log->info = json_encode([]);
+        $log->dir = 'not important';
+        $log->timecreated = time();
+        $log->usermodified = $USER->id;
+        $DB->insert_record('analytics_models_log', $log);
     }
 }
 

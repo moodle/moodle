@@ -441,9 +441,6 @@ class model {
             // Delete generated predictions.
             $this->clear_model();
 
-            // Purge all generated files.
-            \core_analytics\dataset_manager::clear_model_files($this->model->id);
-
             // Reset trained flag.
             $this->model->trained = 0;
 
@@ -476,6 +473,7 @@ class model {
 
         $this->clear_model();
         $DB->delete_records('analytics_models', array('id' => $this->model->id));
+        $DB->delete_records('analytics_models_log', array('modelid' => $this->model->id));
     }
 
     /**
@@ -1413,10 +1411,20 @@ class model {
     private function clear_model() {
         global $DB;
 
+        $predictionids = $DB->get_fieldset_select('analytics_predictions', 'id', 'modelid = :modelid',
+            array('modelid' => $this->get_id()));
+        if ($predictionids) {
+            list($sql, $params) = $DB->get_in_or_equal($predictionids);
+            $DB->delete_records_select('analytics_prediction_actions', "predictionid $sql", $params);
+        }
+
         $DB->delete_records('analytics_predictions', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_predict_samples', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_train_samples', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_used_files', array('modelid' => $this->model->id));
+
+        // Purge all generated files.
+        \core_analytics\dataset_manager::clear_model_files($this->model->id);
 
         // We don't expect people to clear models regularly and the cost of filling the cache is
         // 1 db read per context.
