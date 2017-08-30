@@ -249,13 +249,13 @@ define([
         var body = $('body');
 
         body.on(CalendarEvents.created, function() {
-            CalendarViewManager.reloadCurrentMonth();
+            CalendarViewManager.reloadCurrentMonth(root);
         });
         body.on(CalendarEvents.deleted, function() {
-            CalendarViewManager.reloadCurrentMonth();
+            CalendarViewManager.reloadCurrentMonth(root);
         });
         body.on(CalendarEvents.updated, function() {
-            CalendarViewManager.reloadCurrentMonth();
+            CalendarViewManager.reloadCurrentMonth(root);
         });
         body.on(CalendarEvents.editActionEvent, function(e, url) {
             // Action events needs to be edit directly on the course module.

@@ -28,6 +28,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
             ROOT: "[data-region='calendar']",
             CALENDAR_NAV_LINK: "span.calendarwrapper .arrow_link",
             CALENDAR_MONTH_WRAPPER: ".calendarwrapper",
+            LOADING_ICON_CONTAINER: '[data-region="overlay-icon-container"]'
         };
 
         /**
@@ -55,12 +56,19 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
          * @return {promise}
          */
         var refreshMonthContent = function(time, courseid) {
+            var root = $(SELECTORS.ROOT);
+
+            startLoading(root);
+
             return CalendarRepository.getCalendarMonthData(time, courseid)
                 .then(function(context) {
                     return Templates.render('core_calendar/month_detailed', context);
                 })
                 .then(function(html, js) {
                     return Templates.replaceNode(SELECTORS.CALENDAR_MONTH_WRAPPER, html, js);
+                })
+                .always(function() {
+                    return stopLoading(root);
                 })
                 .fail(Notification.exception);
         };
@@ -90,12 +98,35 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
          *
          * @return {promise}
          */
-        var reloadCurrentMonth = function() {
-            var root = $(SELECTORS.ROOT),
-                courseid = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('courseid'),
+        var reloadCurrentMonth = function(root) {
+            var courseid = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('courseid'),
                 time = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('current-time');
 
             return refreshMonthContent(time, courseid);
+        };
+
+        /**
+         * Set the element state to loading.
+         *
+         * @param {object} root The container element
+         * @method startLoading
+         */
+        var startLoading = function(root) {
+            var loadingIconContainer = root.find(SELECTORS.LOADING_ICON_CONTAINER);
+
+            loadingIconContainer.removeClass('hidden');
+        };
+
+        /**
+         * Remove the loading state from the element.
+         *
+         * @param {object} root The container element
+         * @method stopLoading
+         */
+        var stopLoading = function(root) {
+            var loadingIconContainer = root.find(SELECTORS.LOADING_ICON_CONTAINER);
+
+            loadingIconContainer.addClass('hidden');
         };
 
         return {
