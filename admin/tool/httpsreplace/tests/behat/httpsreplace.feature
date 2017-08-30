@@ -13,12 +13,14 @@ Feature: View the httpsreplace report
 
   @javascript
   Scenario: Go to the HTTPS replace report screen. Make sure broken domains are reported.
-    When I navigate to "HTTPS replace" node in "Site administration > Security"
+    When I navigate to "HTTP security" node in "Site administration > Security"
+    And I follow "HTTPS conversion tool"
     Then I should see "intentionally.unavailable"
 
   @javascript
   Scenario: Use the find and replace tool.
-    When I navigate to "HTTPS replace" node in "Site administration > Security"
+    When I navigate to "HTTP security" node in "Site administration > Security"
+    And I follow "HTTPS conversion tool"
     And I set the field "I understand the risks of this operation" to "1"
     And I press "Perform replacement"
     Then I should see "intentionally.unavailable"

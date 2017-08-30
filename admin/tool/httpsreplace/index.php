@@ -106,7 +106,7 @@ if (!$data = $form->get_data()) {
 
     $progressbar->update_full(100, get_string('complete', 'tool_httpsreplace'));
 
-    echo $OUTPUT->continue_button(new moodle_url('/admin/index.php'));
+    echo $OUTPUT->continue_button(new moodle_url('/admin/settings.php', ['section' => 'httpsecurity']));
 
 }
 echo $OUTPUT->footer();

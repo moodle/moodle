@@ -28,5 +28,15 @@ if ($hassiteconfig) {
 
     $pluginname = get_string('pluginname', 'tool_httpsreplace');
     $url = $CFG->wwwroot.'/'.$CFG->admin.'/tool/httpsreplace/index.php';
-    $ADMIN->add('security', new admin_externalpage('toolhttpsreplace', $pluginname, $url, 'moodle/site:config'));
+    $ADMIN->add('security', new admin_externalpage('toolhttpsreplace', $pluginname, $url, 'moodle/site:config', true));
+
+    $httpsreplaceurl = $CFG->wwwroot.'/'.$CFG->admin.'/tool/httpsreplace/index.php';
+    $ADMIN->locate('httpsecurity')->add(
+        new admin_setting_heading(
+            'tool_httpsreplaceheader',
+            new lang_string('pluginname', 'tool_httpsreplace'),
+            new lang_string('toolintro', 'tool_httpsreplace', $httpsreplaceurl)
+        )
+    );
+
 }
