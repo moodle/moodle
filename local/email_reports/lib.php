@@ -134,7 +134,7 @@ function email_reports_cron() {
     // Get the companies from the list of users in the temp table.
     $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename . "}");
     foreach ($companies as $company) {
-        if ($company->managernotify == 1 || $company->managernotify == 4) {
+        if ($company->managernotify == 1 || $company->managernotify == 3) {
             if ($dayofweek == $company->managerdigestday || empty($company->managerdigestday)) {
                 // Get the managers.
                 $managers = $DB->get_records_sql("SELECT * FROM {company_users}
@@ -380,7 +380,7 @@ function email_reports_cron() {
     // Get the companies from the list of users in the temp table.
     $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename ."}");
     foreach ($companies as $company) {
-        if ($company->managernotify == 1 || $company->managernotify == 4) {
+        if ($company->managernotify == 1 || $company->managernotify == 3) {
             if ($dayofweek == $company->managerdigestday || empty($company->managerdigestday)) {
                 // Get the managers.
                 $managers = $DB->get_records_sql("SELECT * FROM {company_users}
@@ -513,4 +513,76 @@ function email_reports_cron() {
         }
     }
     $dbman->drop_table($table);
+
+    // Deal with manager completion digests.
+    // Get the companies from the list of users in the temp table.
+    $companies = $DB->get_records_sql("SELECT id FROM {company}
+                                       WHERE managerdigestday = :dayofweek
+                                       AND managernotify in (2,3)",
+                                       array('dayofweek' => $dayofweek));
+    foreach ($companies as $company) {
+        $managers = $DB->get_records_sql("SELECT * FROM {company_users}
+                                          WHERE companyid = :companyid
+                                          AND managertype != 0", array('companyid' => $company->companyid));
+        foreach ($managers as $manager) {
+            // Get their users.
+            $departmentusers = company::get_recursive_department_users($manager->departmentid);
+            $departmentids = "";
+            foreach ($departmentusers as $departmentuser) {
+                if (!empty($departmentids)) {
+                    $departmentids .= ",".$departmentuser->userid;
+                } else {
+                    $departmentids .= $departmentuser->userid;
+                }
+            }
+            $managerusers = $DB->get_records_sql("SELECT * FROM {" . $tempcomptablename . "}
+                                                  WHERE userid IN (" . $departmentids . ")");
+            $summary = get_string('firstname') . "," .
+                       get_string('lastname') . "," .
+                       get_string('email') . "," .
+                       get_string('department', 'block_iomad_company_admin') ."\n";
+                       get_string('course') . "," .
+                       get_string('completed', 'local_report_completion') ."\n";
+            $foundusers = false;
+            foreach ($managerusers as $manageruser) {
+                if (!$user = $DB->get_record('user', array('id' => $manageruser->userid))) {
+                    continue;
+                }
+
+                if (!$course = $DB->get_record('course', array('id' => $manageruser->courseid))) {
+                    continue;
+                }
+
+                if ($managerusers = $DB->get_records_sql("SELECT u.firstname, u.lastname, u.email, c.fullname, cc.timecompleted
+                                                          FROM {course_completions} cc
+                                                          JOIN {user} u ON (cc.userid = u.id)
+                                                          JOIN {course} c ON (cc.course = c.id)
+                                                          WHERE cc.userid IN (" . $departmentids . ")
+                                                          AND cc.timecompleted > :weekago",
+                                                          array('weekago' => $timenow - (60 * 60 * 24 * 7)))) {
+                    $summary = get_string('firstname') . "," .
+                               get_string('lastname') . "," .
+                               get_string('email') . "," .
+                               get_string('course') . "," .
+                               get_string('completed', 'local_report_completion') ."\n";
+                    foreach ($managerusers as $manageruser) {
+                        $datestring = date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n";
+
+                        $summary .= $manageruser->firstname . "," .
+                                    $manageruser->lastname . "," .
+                                    $manageruser->email . "," .
+                                    $manageruser->coursename . "," .
+                                    $datestring;
+                    }
+                    if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
+                        $course = new stdclass();
+                        $course->reporttext = $summary;
+                        $course->id = 0;
+                        mtrace("Sending completion summary report to $user->email");
+                        EmailTemplate::send('completion_digest_manager', array('user' => $user, 'course' => $course, 'company' => $company));
+                    }
+                }
+            }
+        }
+    }
 }
