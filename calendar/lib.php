@@ -3537,6 +3537,7 @@ function calendar_output_fragment_event_form($args) {
     $data = null;
     $eventid = isset($args['eventid']) ? clean_param($args['eventid'], PARAM_INT) : null;
     $starttime = isset($args['starttime']) ? clean_param($args['starttime'], PARAM_INT) : null;
+    $courseid = isset($args['courseid']) ? clean_param($args['courseid'], PARAM_INT) : null;
     $event = null;
     $hasformdata = isset($args['formdata']) && !empty($args['formdata']);
     $formoptions = [];
@@ -3563,6 +3564,12 @@ function calendar_output_fragment_event_form($args) {
             true,
             $data
         );
+        if ($courseid != SITEID) {
+            $data['eventtype'] = 'course';
+            $data['courseid'] = $courseid;
+            $data['groupcourseid'] = $courseid;
+        }
+        $mform->set_data($data);
     } else {
         $event = calendar_event::load($eventid);
         $event->count_repeats();

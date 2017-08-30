@@ -64,7 +64,8 @@ define([
         NEW_EVENT_BUTTON: "[data-action='new-event-button']",
         DAY_CONTENT: "[data-region='day-content']",
         LOADING_ICON: '.loading-icon',
-        VIEW_DAY_LINK: "[data-action='view-day-link']"
+        VIEW_DAY_LINK: "[data-action='view-day-link']",
+        CALENDAR_MONTH_WRAPPER: ".calendarwrapper"
     };
 
     /**
@@ -254,7 +255,8 @@ define([
      * @param {object} eventFormModalPromise A promise reolved with the event form modal
      */
     var registerCalendarEventListeners = function(root, eventFormModalPromise) {
-        var body = $('body');
+        var body = $('body'),
+            courseId = $(root).find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('courseid');
 
         body.on(CalendarEvents.created, function() {
             CalendarViewManager.reloadCurrentMonth(root);
@@ -283,7 +285,7 @@ define([
                 modal.setEventId(eventId);
                 modal.show();
             });
-
+            modal.setCourseId(courseId);
             return;
         });
     };
