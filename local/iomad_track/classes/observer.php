@@ -202,6 +202,24 @@ class observer {
                                          AND e.status = 0",
                                          array('userid' => $userid,
                                                'courseid' => $courseid));
+
+        // Is the record broken?
+        $broken = false;
+        if (empty($comprec->timeenrolled)) {
+            $broken = true;
+            $comprec->timeenrolled = $enrolrec->timestart;
+        }
+
+        if (empty($comprec->timestarted)) {
+            $broken = true;
+            $comprec->started = $enrolrec->timestart;
+        }
+
+        if ($broken) {
+            // Update the completion record.
+            $DB->update_record('course_completions', $comprec);
+        }
+
         // Record the completion event.
         $completion = new \StdClass();
         $completion->courseid = $courseid;
