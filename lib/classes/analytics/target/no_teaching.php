@@ -63,6 +63,9 @@ class no_teaching extends \core_analytics\local\target\binary {
      * @return \core_analytics\prediction_action[]
      */
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/course/lib.php');
 
         // No need to call the parent as the parent's action is view details and this target only have 1 feature.
         $actions = array();
@@ -75,7 +78,7 @@ class no_teaching extends \core_analytics\local\target\binary {
         $actions['viewcourse'] = new \core_analytics\prediction_action('viewcourse', $prediction,
             $url, $pix, get_string('view'));
 
-        if (has_any_capability(['moodle/course:viewparticipants', 'moodle/course:enrolreview'], $sampledata['context'])) {
+        if (course_can_view_participants($sampledata['context'])) {
             $url = new \moodle_url('/user/index.php', array('id' => $course->id));
             $pix = new \pix_icon('i/cohort', get_string('participants'));
             $actions['viewparticipants'] = new \core_analytics\prediction_action('viewparticipants', $prediction,

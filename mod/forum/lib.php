@@ -5362,6 +5362,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
                                         $currentgroup = -1, $groupmode = -1, $page = -1, $perpage = 100, $cm = null) {
     global $CFG, $USER, $OUTPUT;
 
+    require_once($CFG->dirroot . '/course/lib.php');
+
     if (!$cm) {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
             print_error('invalidcoursemodule');
@@ -5498,7 +5500,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
         }
     }
 
-    $canviewparticipants = has_capability('moodle/course:viewparticipants',$context);
+    $canviewparticipants = course_can_view_participants($context);
     $canviewhiddentimedposts = has_capability('mod/forum:viewhiddentimedposts', $context);
 
     $strdatestring = get_string('strftimerecentfull');

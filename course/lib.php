@@ -3894,16 +3894,14 @@ function course_get_user_navigation_options($context, $course = null) {
     // Frontpage settings?
     if ($isfrontpage) {
         // We are on the front page, so make sure we use the proper capability (site:viewparticipants).
-        $options->participants = has_capability('moodle/site:viewparticipants', $sitecontext) ||
-            has_capability('moodle/course:enrolreview', $sitecontext);
+        $options->participants = course_can_view_participants($sitecontext);
         $options->badges = !empty($CFG->enablebadges) && has_capability('moodle/badges:viewbadges', $sitecontext);
         $options->tags = !empty($CFG->usetags) && $isloggedin;
         $options->search = !empty($CFG->enableglobalsearch) && has_capability('moodle/search:query', $sitecontext);
         $options->calendar = $isloggedin;
     } else {
         // We are in a course, so make sure we use the proper capability (course:viewparticipants).
-        $options->participants = has_capability('moodle/course:viewparticipants', $context) ||
-            has_capability('moodle/course:enrolreview', $context);
+        $options->participants = course_can_view_participants($context);
         $options->badges = !empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges) &&
                             has_capability('moodle/badges:viewbadges', $context);
         // Add view grade report is permitted.
@@ -4236,4 +4234,35 @@ function course_check_module_updates_since($cm, $from, $fileareas = array(), $fi
     }
 
     return $updates;
+}
+
+/**
+ * Returns true if the user can view the participant page, false otherwise,
+ *
+ * @param context $context The context we are checking.
+ * @return bool
+ */
+function course_can_view_participants($context) {
+    $viewparticipantscap = 'moodle/course:viewparticipants';
+    if ($context->contextlevel == CONTEXT_SYSTEM) {
+        $viewparticipantscap = 'moodle/site:viewparticipants';
+    }
+
+    return has_any_capability([$viewparticipantscap, 'moodle/course:enrolreview'], $context);
+}
+
+/**
+ * Checks if a user can view the participant page, if not throws an exception.
+ *
+ * @param context $context The context we are checking.
+ * @throws required_capability_exception
+ */
+function course_require_view_participants($context) {
+    if (!course_can_view_participants($context)) {
+        $viewparticipantscap = 'moodle/course:viewparticipants';
+        if ($context->contextlevel == CONTEXT_SYSTEM) {
+            $viewparticipantscap = 'moodle/site:viewparticipants';
+        }
+        throw new required_capability_exception($context, $viewparticipantscap, 'nopermissions', '');
+    }
 }

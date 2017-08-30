@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/lib/grade/constants.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
 define('B_ACTIVITYRESULTS_NAME_FORMAT_FULL', 1);
 define('B_ACTIVITYRESULTS_NAME_FORMAT_ID',   2);
@@ -328,7 +329,7 @@ class block_activity_results extends block_base {
                 if ($nameformat == B_ACTIVITYRESULTS_NAME_FORMAT_FULL) {
                     if (has_capability('moodle/course:managegroups', $context)) {
                         $grouplink = $CFG->wwwroot.'/group/overview.php?id='.$courseid.'&amp;group=';
-                    } else if (has_capability('moodle/course:viewparticipants', $context)) {
+                    } else if (course_can_view_participants($context)) {
                         $grouplink = $CFG->wwwroot.'/user/index.php?id='.$courseid.'&amp;group=';
                     } else {
                         $grouplink = '';
