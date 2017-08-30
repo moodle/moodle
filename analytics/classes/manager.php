@@ -490,6 +490,54 @@ class manager {
     }
 
     /**
+     * Cleans up analytics db tables that do not directly depend on analysables that may have been deleted.
+     */
+    public static function cleanup() {
+        global $DB;
+
+        // Clean up stuff that depends on contexts that do not exist anymore.
+        $sql = "SELECT DISTINCT ap.contextid FROM {analytics_predictions} ap
+                  LEFT JOIN {context} ctx ON ap.contextid = ctx.id
+                 WHERE ctx.id IS NULL";
+        $apcontexts = $DB->get_records_sql($sql);
+
+        $sql = "SELECT DISTINCT aic.contextid FROM {analytics_indicator_calc} aic
+                  LEFT JOIN {context} ctx ON aic.contextid = ctx.id
+                 WHERE ctx.id IS NULL";
+        $indcalccontexts = $DB->get_records_sql($sql);
+
+        $contexts = $apcontexts + $indcalccontexts;
+        if ($contexts) {
+            list($sql, $params) = $DB->get_in_or_equal(array_keys($contexts));
+            $DB->execute("DELETE FROM {analytics_prediction_actions} apa WHERE apa.predictionid IN
+                (SELECT ap.id FROM {analytics_predictions} ap WHERE ap.contextid $sql)", $params);
+
+            $DB->delete_records_select('analytics_predictions', "contextid $sql", $params);
+            $DB->delete_records_select('analytics_indicator_calc', "contextid $sql", $params);
+        }
+
+        // Clean up stuff that depends on analysable ids that do not exist anymore.
+        $models = self::get_all_models();
+        foreach ($models as $model) {
+            $analyser = $model->get_analyser(array('notimesplitting' => true));
+            $analysables = $analyser->get_analysables();
+            if (!$analysables) {
+                continue;
+            }
+
+            $analysableids = array_map(function($analysable) {
+                return $analysable->get_id();
+            }, $analysables);
+
+            list($notinsql, $params) = $DB->get_in_or_equal($analysableids, SQL_PARAMS_NAMED, 'param', false);
+            $params['modelid'] = $model->get_id();
+
+            $DB->delete_records_select('analytics_predict_samples', "modelid = :modelid AND analysableid $notinsql", $params);
+            $DB->delete_records_select('analytics_train_samples', "modelid = :modelid AND analysableid $notinsql", $params);
+        }
+    }
+
+    /**
      * Returns the provided element classes in the site.
      *
      * @param string $element
