@@ -50,9 +50,9 @@ if (!$DB->replace_all_text_supported()) {
     die;
 }
 
-echo $OUTPUT->box_start();
-echo $OUTPUT->notification(get_string('takeabackupwarning', 'tool_httpsreplace'));
-echo $OUTPUT->box_end();
+if (!is_https()) {
+    echo $OUTPUT->notification(get_string('httpwarning', 'tool_httpsreplace'), 'warning');
+}
 
 
 $form = new \tool_httpsreplace\form();
@@ -89,6 +89,7 @@ if (!$data = $form->get_data()) {
         $table->data = $data;
         echo html_writer::table($table);
     }
+    echo $OUTPUT->notification(get_string('takeabackupwarning', 'tool_httpsreplace'), 'warning');
     $form->display();
 } else {
     // Scroll to the end when finished.

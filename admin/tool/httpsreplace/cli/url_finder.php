@@ -41,6 +41,10 @@ Example:
     exit(0);
 }
 
+if (!is_https()) {
+    echo $OUTPUT->notification(get_string('httpwarning', 'tool_httpsreplace'), 'warning');
+}
+
 $urlfinder = new \tool_httpsreplace\url_finder();
 $results = $urlfinder->http_link_stats();
 $fp = fopen('php://stdout', 'w');
