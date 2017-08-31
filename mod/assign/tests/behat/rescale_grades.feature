@@ -84,6 +84,5 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I set the field "Maximum grade" to "50"
     When I press "Save and display"
     And I navigate to "View all submissions" in current page administration
-    # Since the decimal places are always displayed (e.g. 0.00), this will catch any grade. The student should not have one.
-    # We can't just check for - (empty grade) because a negative grade would also have that character.
-    Then "Student 2" row "Grade" column of "generaltable" table should not contain "."
+    # Make sure the student did not receive a negative grade.
+    Then "Student 2" row "Grade" column of "generaltable" table should not contain "-0.50"
