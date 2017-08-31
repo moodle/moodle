@@ -43,7 +43,7 @@ class company {
         if (!empty($SESSION->currenteditingcompany)) {
             return new company($SESSION->currenteditingcompany);
         } else {
-            if ($companies = $DB->get_records('company_users', array('userid' => $userid), 'companyid')) {
+            if ($companies = $DB->get_records('company_users', array('userid' => $userid), 'companyid DESC')) {
                 $company = array_pop($companies);
                 return new company($company->companyid);
             } else {

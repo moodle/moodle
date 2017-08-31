@@ -465,10 +465,10 @@ if ($mform->is_cancelled()) {
                         'companyid' => $company->id,
                         'usertype' => $data->managertype,
                         'usertypename' => $managertypes[$data->managertype]);
-    $event = \block_iomad_company_admin\event\company_user_unassigned::create(array('context' => context_system::instance(),
-                                                                                    'objectid' => $company->id,
-                                                                                    'userid' => $user->id,
-                                                                                    'other' => $eventother));
+    $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => context_system::instance(),
+                                                                                  'objectid' => $company->id,
+                                                                                  'userid' => $user->id,
+                                                                                  'other' => $eventother));
     $event->trigger();
 
     // Assign the user to the default company department.
