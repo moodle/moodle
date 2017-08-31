@@ -88,6 +88,8 @@ class insights_list implements \renderable, \templatable {
         global $PAGE;
 
         $data = new \stdClass();
+        $data->insightname = format_string($this->model->get_target()->get_name());
+
         $total = 0;
 
         if ($this->model->uses_insights()) {

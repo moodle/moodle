@@ -54,7 +54,6 @@ $string['errorunexistingmodel'] = 'Unexisting model {$a}';
 $string['errorunknownaction'] = 'Unknown action';
 $string['eventpredictionactionstarted'] = 'Prediction action started';
 $string['insightmessagesubject'] = 'New insight for "{$a->contextname}": {$a->insightname}';
-$string['insightinfo'] = '{$a->insightname} - {$a->contextname}';
 $string['insightinfomessage'] = 'The system generated some insights for you: {$a}';
 $string['insightinfomessagehtml'] = 'The system generated some insights for you: <a href="{$a}">{$a}</a>.';
 $string['invalidtimesplitting'] = 'Model with id {$a} needs a time splitting method before it can be used to train';

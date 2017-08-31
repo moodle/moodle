@@ -15,15 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Links and settings
+ *
+ * Contains settings used by insights report.
  *
  * @package    report_insights
- * @copyright  2017 David Monllao {@link http://www.davidmonllao.com/}
+ * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2017051501; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017050500; // Requires this Moodle version.
-$plugin->component = 'report_insights'; // Full name of the plugin (used for diagnostics).
+// Just a link to course report.
+$ADMIN->add('reports', new admin_externalpage('reportinsights', get_string('insights', 'report_insights'),
+        $CFG->wwwroot . "/report/insights/insights.php?contextid=" . SYSCONTEXTID, 'moodle/analytics:listinsights'));
+
+// No report settings.
+$settings = null;
