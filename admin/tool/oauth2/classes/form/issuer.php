@@ -78,6 +78,10 @@ class issuer extends persistent {
         $mform->addRule('clientsecret', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('clientsecret', 'issuerclientsecret', 'tool_oauth2');
 
+        // Use basic authentication.
+        $mform->addElement('checkbox', 'basicauth', get_string('usebasicauth', 'tool_oauth2'));
+        $mform->addHelpButton('basicauth', 'usebasicauth', 'tool_oauth2');
+
         // Login scopes.
         $mform->addElement('text', 'loginscopes', get_string('issuerloginscopes', 'tool_oauth2'));
         $mform->addRule('loginscopes', null, 'required', null, 'client');
