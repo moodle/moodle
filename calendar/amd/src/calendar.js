@@ -140,7 +140,9 @@ define([
                 body: Templates.render('core_calendar/event_summary_body', eventData),
                 templateContext: {
                     canedit: eventData.canedit,
-                    candelete: eventData.candelete
+                    candelete: eventData.candelete,
+                    isactionevent: eventData.isactionevent,
+                    url: eventData.url
                 }
             };
 

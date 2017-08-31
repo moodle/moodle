@@ -32,5 +32,8 @@
     {{/candelete}}
     <button type="button" class="btn btn-primary" data-action="edit">{{#str}} edit {{/str}}</button>
 {{/canedit}}
+{{#isactionevent}}
+    <a href="{{url}}">{{#str}} gotoactivity, core_calendar {{/str}}</a>
+{{/isactionevent}}
 {{/footer}}
 {{/ core/modal }}
