@@ -3514,6 +3514,7 @@
         <FIELD NAME="scopessupported" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The list of scopes this service supports."/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="showonloginpage" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="basicauth" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Use HTTP Basic authentication scheme when sending client ID and password"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The defined sort order."/>
         <FIELD NAME="requireconfirmation" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
       </FIELDS>
