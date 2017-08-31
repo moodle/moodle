@@ -518,7 +518,8 @@ if (!$new) {
         // We are adding a child company.
         $child = true;
         // Can this user manage this parentid?
-        if (!$DB->get_record('company_users', array('companyid' => $parentid, 'userid' => $USER->id, 'managertype' => 1))) {
+        if (!iomad::has_capability('block/iomad_company_admin:company_add', $context) &&
+            !$DB->get_record('company_users', array('companyid' => $parentid, 'userid' => $USER->id, 'managertype' => 1))) {
             print_error(get_string('invalidcompany', 'block_iomad_company_admin'), 'error', new moodle_url('/local/iomad_dashboard/index.php'));
             die;
         }
