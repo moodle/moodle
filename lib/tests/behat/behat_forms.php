@@ -532,7 +532,7 @@ class behat_forms extends behat_base {
      * @param string $item
      */
     public function i_click_on_item_in_the_autocomplete_list($item) {
-        $xpathtarget = "//ul[@class='form-autocomplete-suggestions']//*[contains(.,'" . $item . "')]";
+        $xpathtarget = "//ul[@class='form-autocomplete-suggestions']//*[contains(concat('|', string(.), '|'),'|" . $item . "|')]";
 
         $this->execute('behat_general::i_click_on', [$xpathtarget, 'xpath_element']);
 
