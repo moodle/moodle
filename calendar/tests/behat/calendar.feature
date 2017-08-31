@@ -124,3 +124,30 @@ Feature: Perform basic calendar functionality
       | Description | Wait, this event isn't that great. |
     And I press "Save"
     Then I should see "Mediocre event"
+
+  @javascript
+  Scenario: Module events editing
+    Given I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And the following "activities" exist:
+      | activity | course | idnumber | name        | intro                   | timeopen      | timeclose     |
+      | choice   | C1     | choice1  | Test choice | Test choice description | ##today## | ##today##  |
+    When I follow "This month"
+    Then I should see "Choice Test choice open"
+    And I should see "Choice Test choice close"
+    When I click on "Choice Test choice open" "link"
+    Then "Delete" "button" should not exist
+    And "Edit" "button" should not exist
+    And I should see "Open event"
+    When I click on "Go to activity" "link"
+    And I wait to be redirected
+    Then I should see "Test choice"
+    And I am on "Course 1" course homepage
+    And I follow "This month"
+    When I click on "Choice Test choice close" "link"
+    Then "Delete" "button" should not exist
+    And "Edit" "button" should not exist
+    And I should see "Close event"
+    When I click on "Go to activity" "link"
+    And I wait to be redirected
+    Then I should see "Test choice"
