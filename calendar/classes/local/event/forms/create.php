@@ -214,7 +214,7 @@ class create extends \moodleform {
             }
 
             $mform->addElement('select', 'courseid', get_string('course'), $courseoptions);
-            $mform->disabledIf('courseid', 'eventtype', 'noteq', 'course');
+            $mform->hideIf('courseid', 'eventtype', 'noteq', 'course');
         }
 
         if (isset($eventtypes['group'])) {
@@ -225,7 +225,7 @@ class create extends \moodleform {
             }
 
             $mform->addElement('select', 'groupcourseid', get_string('course'), $courseoptions);
-            $mform->disabledIf('groupcourseid', 'eventtype', 'noteq', 'group');
+            $mform->hideIf('groupcourseid', 'eventtype', 'noteq', 'group');
 
             $groupoptions = [];
             foreach ($eventtypes['group'] as $group) {
@@ -237,7 +237,7 @@ class create extends \moodleform {
             }
 
             $mform->addElement('select', 'groupid', get_string('group'), $groupoptions);
-            $mform->disabledIf('groupid', 'eventtype', 'noteq', 'group');
+            $mform->hideIf('groupid', 'eventtype', 'noteq', 'group');
         }
     }
 
