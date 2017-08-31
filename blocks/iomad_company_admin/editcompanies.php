@@ -284,7 +284,7 @@ if (!empty($companylist)) {
 } else {
     $companies = array();
 }
-$companycount = count($companyrecords);
+$companycount = count($companies);
 
 if ($companycount == 1) {
     echo $OUTPUT->heading(get_string('companycount', 'block_iomad_company_admin', $companycount));
