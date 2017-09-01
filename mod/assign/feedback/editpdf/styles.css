@@ -27,7 +27,12 @@
 }
 
 .assignfeedback_editpdf_widget .drawingregion[data-currenttool=select] .drawingcanvas {
-    cursor: pointer;
+    cursor: default;
+}
+
+.assignfeedback_editpdf_widget .drawingregion[data-currenttool=select] .commentdrawable textarea,
+.assignfeedback_editpdf_widget .drawingregion[data-currenttool=select] .commentdrawable svg {
+    cursor: move;
 }
 
 .assignfeedback_editpdf_widget .drawingregion {
@@ -337,7 +342,7 @@ ul.assignfeedback_editpdf_menu {
 }
 
 .assignfeedback_editpdf_widget .commentdrawable {
-    display: inline-block;
+    display: flex;
     z-index: 1;
 }
 
