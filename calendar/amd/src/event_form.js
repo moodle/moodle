@@ -35,13 +35,6 @@ define(['jquery', 'core/templates'], function($, Templates) {
         MORELESS_TOGGLE: '.moreless-actions'
     };
 
-    var EVENT_TYPES = {
-        USER: 'user',
-        SITE: 'site',
-        COURSE: 'course',
-        GROUP: 'group'
-    };
-
     var EVENTS = {
         SHOW_ADVANCED: 'event_form-show-advanced',
         HIDE_ADVANCED: 'event_form-hide-advanced',
@@ -141,75 +134,6 @@ define(['jquery', 'core/templates'], function($, Templates) {
     };
 
     /**
-     * Toggle the visibility of the secondary select elements based on
-     * the event type the user has selected.
-     *
-     * There are 3 secondary select elements within the form:
-     *      - course: a list of all courses a user can add course events to
-     *      - group course: a list of all courses a user can add group events to.
-     *                      this list can be different from the course list above.
-     *      - group: a list of all groups a user can add an event to. This list will
-     *               be filtered further based on the group course selected.
-     *
-     *  There are 4 event types:
-     *      - user: none of the secondary selects should be visible.
-     *      - site: none of the secondary selects should be visible.
-     *      - course: "course" select should be visible and both "group course"
-     *                and "group" should be hidden.
-     *      - group: "group course" and "group" should be visible and "course"
-     *               should be hidden.
-     *
-     * @method hideTypeSubSelects
-     * @param {object} formElement The root form element
-     */
-    var hideTypeSubSelects = function(formElement) {
-        var typeSelect = formElement.find(SELECTORS.EVENT_TYPE);
-        var eventType = typeSelect.val();
-        var courseIdSelect = formElement.find(SELECTORS.EVENT_COURSE_ID)
-            .closest(SELECTORS.FORM_GROUP)
-            .removeClass('hidden');
-        var groupCourseIdSelect = formElement.find(SELECTORS.EVENT_GROUP_COURSE_ID)
-            .closest(SELECTORS.FORM_GROUP)
-            .removeClass('hidden');
-        var groupIdSelect = formElement.find(SELECTORS.EVENT_GROUP_ID)
-            .closest(SELECTORS.FORM_GROUP)
-            .removeClass('hidden');
-
-        // Hide the unreleated selectors for the given event type.
-        switch (eventType) {
-            case EVENT_TYPES.COURSE:
-                groupCourseIdSelect.addClass('hidden');
-                groupIdSelect.addClass('hidden');
-                break;
-            case EVENT_TYPES.GROUP:
-                courseIdSelect.addClass('hidden');
-                break;
-            default:
-                courseIdSelect.addClass('hidden');
-                groupCourseIdSelect.addClass('hidden');
-                groupIdSelect.addClass('hidden');
-        }
-    };
-
-    /**
-     * Listen for when the user changes the event type select in the
-     * form and then toggle the visibility of the appropriate secondary
-     * select elements.
-     *
-     * See: hideTypeSubSelects.
-     *
-     * @method addTypeSelectListeners
-     * @param {object} formElement The root form element
-     */
-    var addTypeSelectListeners = function(formElement) {
-        var typeSelect = formElement.find(SELECTORS.EVENT_TYPE);
-
-        typeSelect.on('change', function() {
-            hideTypeSubSelects(formElement);
-        });
-    };
-
-    /**
      * Listen for when the user changes the group course when configuring
      * a group event and filter the options in the group select to only
      * show the groups available within the course the user has selected.
@@ -260,9 +184,7 @@ define(['jquery', 'core/templates'], function($, Templates) {
 
         listenForShowHideEvents(formElement);
         destroyOldMoreLessToggle(formElement);
-        hideTypeSubSelects(formElement);
         parseGroupSelect(formElement);
-        addTypeSelectListeners(formElement);
         addCourseGroupSelectListeners(formElement);
 
         // If we know that the form has been rendered with server side
