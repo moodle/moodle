@@ -259,6 +259,11 @@ class company_license_form extends company_moodleform {
             if ($required > $free) {
                 $errors['allocation'] = get_string('licensenotenough', 'block_iomad_company_admin');
             }
+
+            // Check if we have a designated company.
+            if (empty($data['designatedcompany'])) {
+                $errors['designatedcompany'] = get_string('invalid_company', 'block_iomad_company_admin');
+            }
         }
 
         // Allocation needs to be an integer.
