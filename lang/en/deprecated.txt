@@ -61,3 +61,5 @@ error:backpackloginfailed,core_badges
 signinwithyouremail,core_badges
 sectionusedefaultname,core
 registermoochtips,core_hub
+monthnext,core_access
+monthprev,core_access

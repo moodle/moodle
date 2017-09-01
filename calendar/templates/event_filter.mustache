@@ -15,24 +15,31 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_calendar/minicalendar_day_link
+    @template calendar/event_filter
 
-    Displays link to calendar day in mini calendar, with hover tooltip.
+    Filter to select which event types displayed on this page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
 
     Example context (json):
     {
-        "day": "Today",
-        "url": "http://example.com/",
-        "title": "Monday 2nd January",
-        "content": "<img class='icon smallicon' alt='icon' src='../../../pix/i/siteevent.svg'>Test site event"
     }
 }}
-{{< core/hover_tooltip }}
-    {{$anchor}}
-        <a href="{{url}}">{{$day}}{{day}}{{/day}}</a>
-    {{/anchor}}
-    {{$tooltip}}
-        <b>{{$title}}{{title}}{{/title}}</b>
-        {{$content}}{{{content}}}{{/content}}
-    {{/tooltip}}
-{{/ core/hover_tooltip }}
+<div id="event-filter-{{uniqid}}" class="calendar_filters m-t-2">
+    <ul>
+        {{#eventtypes}}
+            <li>
+                {{> core_calendar/event_filter_key }}
+            </li>
+        {{/eventtypes}}
+    </ul>
+</div>
+{{#js}}
+require(['jquery', 'core_calendar/calendar_filter'], function($, CalendarFilter) {
+    CalendarFilter.init($("#event-filter-{{uniqid}}"));
+});
+{{/js}}

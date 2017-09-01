@@ -47,6 +47,16 @@ class calendar_event_exporter extends event_exporter_base {
 
         $values = parent::define_other_properties();
         $values['url'] = ['type' => PARAM_URL];
+        $values['islastday'] = [
+            'type' => PARAM_BOOL,
+            'default' => false,
+        ];
+        $values['calendareventtype'] = [
+            'type' => PARAM_TEXT,
+        ];
+        $values['popupname'] = [
+            'type' => PARAM_RAW,
+        ];
 
         return $values;
     }
@@ -58,12 +68,63 @@ class calendar_event_exporter extends event_exporter_base {
      * @return array Keys are the property names, values are their values.
      */
     protected function get_other_values(renderer_base $output) {
+        global $CFG;
+
         $values = parent::get_other_values($output);
 
         $eventid = $this->event->get_id();
 
         $url = new \moodle_url($this->related['daylink'], [], "event_{$eventid}");
         $values['url'] = $url->out(false);
+
+        $values['islastday'] = false;
+        $today = $this->related['type']->timestamp_to_date_array($this->related['today']);
+
+        $values['popupname'] = $this->event->get_name();
+
+        $times = $this->event->get_times();
+        if ($duration = $times->get_duration()) {
+            $enddate = $this->related['type']->timestamp_to_date_array($times->get_end_time()->getTimestamp());
+            $values['islastday'] = true;
+            $values['islastday'] = $values['islastday'] && $enddate['year'] == $today['year'];
+            $values['islastday'] = $values['islastday'] && $enddate['mon'] == $today['mon'];
+            $values['islastday'] = $values['islastday'] && $enddate['mday'] == $today['mday'];
+        }
+
+        $subscription = $this->event->get_subscription();
+        if ($subscription && !empty($subscription->get('id')) && $CFG->calendar_showicalsource) {
+            $a = (object) [
+                'name' => $values['popupname'],
+                'source' => $subscription->get('name'),
+            ];
+            $values['popupname'] = get_string('namewithsource', 'calendar', $a);
+        } else {
+            if ($values['islastday']) {
+                $startdate = $this->related['type']->timestamp_to_date_array($times->get_start_time()->getTimestamp());
+                $samedate = true;
+                $samedate = $samedate && $startdate['mon'] == $enddate['mon'];
+                $samedate = $samedate && $startdate['year'] == $enddate['year'];
+                $samedate = $samedate && $startdate['mday'] == $enddate['mday'];
+
+                if (!$samedate) {
+                    $values['popupname'] = get_string('eventendtimewrapped', 'calendar', $values['popupname']);
+                }
+            }
+        }
+
+        // Include course's shortname into the event name, if applicable.
+        $course = $this->event->get_course();
+        if ($course && $course->get('id') && $course->get('id') !== SITEID) {
+            $eventnameparams = (object) [
+                'name' => $values['popupname'],
+                'course' => format_string($course->get('shortname'), true, [
+                        'context' => $this->related['context'],
+                    ])
+            ];
+            $values['popupname'] = get_string('eventnameandcourse', 'calendar', $eventnameparams);
+        }
+
+        $values['calendareventtype'] = $this->get_calendar_event_type();
 
         return $values;
     }
@@ -76,7 +137,24 @@ class calendar_event_exporter extends event_exporter_base {
     protected static function define_related() {
         $related = parent::define_related();
         $related['daylink'] = \moodle_url::class;
+        $related['type'] = '\core_calendar\type_base';
+        $related['today'] = 'int';
 
         return $related;
+    }
+
+    /**
+     * Return the normalised event type.
+     * Activity events are normalised to be course events.
+     *
+     * @return string
+     */
+    public function get_calendar_event_type() {
+        $type = $this->event->get_type();
+        if ($type == 'open' || $type == 'close') {
+            $type = 'course';
+        }
+
+        return $type;
     }
 }

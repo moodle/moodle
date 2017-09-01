@@ -502,4 +502,16 @@ class core_calendar_renderer extends plugin_renderer_base {
         $html .= html_writer::end_tag('form');
         return $html;
     }
+
+    /**
+     * Render the event filter region.
+     *
+     * @return  string
+     */
+    public function event_filter() {
+        $data = [
+            'eventtypes' => calendar_get_filter_types(),
+        ];
+        return $this->render_from_template('core_calendar/event_filter', $data);
+    }
 }

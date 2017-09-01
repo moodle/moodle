@@ -1478,7 +1478,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
 
             // Class and cell content.
             if (isset($typesbyday[$day]['startglobal'])) {
-                $class .= ' calendar_event_global';
+                $class .= ' calendar_event_site';
             } else if (isset($typesbyday[$day]['startcourse'])) {
                 $class .= ' calendar_event_course';
             } else if (isset($typesbyday[$day]['startgroup'])) {
@@ -3464,6 +3464,11 @@ function calendar_get_view(\calendar_information $calendar, $view) {
         $monthdays = $type->get_num_days_in_month($date['year'], $date['mon']);
         $tend = $tstart + ($monthdays * DAYSECS) - 1;
         $selectortitle = get_string('detailedmonthviewfor', 'calendar');
+        if ($view === 'mini') {
+            $template = 'core_calendar/calendar_mini';
+        } else {
+            $template = 'core_calendar/calendar_month';
+        }
     }
 
     list($userparam, $groupparam, $courseparam) = array_map(function($param) {
@@ -3518,7 +3523,6 @@ function calendar_get_view(\calendar_information $calendar, $view) {
 
     $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
     $data = $month->export($renderer);
-    $template = 'core_calendar/calendar_month';
 
     return [$data, $template];
 }
@@ -3653,4 +3657,26 @@ function calendar_get_footer_options($calendar) {
     $template = 'core_calendar/footer_options';
 
     return [$data, $template];
+}
+
+/**
+ * Get the list of potential calendar filter types as a type => name
+ * combination.
+ *
+ * @return array
+ */
+function calendar_get_filter_types() {
+    $types = [
+        'site',
+        'course',
+        'group',
+        'user',
+    ];
+
+    return array_map(function($type) {
+        return [
+            'type' => $type,
+            'name' => get_string("eventtype{$type}", "calendar"),
+        ];
+    }, $types);
 }

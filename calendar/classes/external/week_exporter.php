@@ -53,7 +53,6 @@ class week_exporter extends exporter {
      */
     protected $postpadding = 0;
 
-
     /**
      * @var \calendar_information $calendar The calendar being displayed.
      */
@@ -106,6 +105,7 @@ class week_exporter extends exporter {
      * @return array Keys are the property names, values are their values.
      */
     protected function get_other_values(renderer_base $output) {
+        global $CFG;
         $return = [
             'prepadding' => [],
             'postpadding' => [],
@@ -120,6 +120,14 @@ class week_exporter extends exporter {
         }
 
         $return['days'] = [];
+        $today = $this->related['type']->timestamp_to_date_array(time());
+
+        $weekend = CALENDAR_DEFAULT_WEEKEND;
+        if (isset($CFG->calendar_weekend)) {
+            $weekend = intval($CFG->calendar_weekend);
+        }
+        $numberofdaysinweek = $this->related['type']->get_num_weekdays();
+
         foreach ($this->days as $daydata) {
             $events = [];
             foreach ($this->related['events'] as $event) {
@@ -140,7 +148,14 @@ class week_exporter extends exporter {
                 $events[] = $event;
             }
 
-            $day = new week_day_exporter($daydata, [
+            $istoday = true;
+            $istoday = $istoday && $today['year'] == $daydata['year'];
+            $istoday = $istoday && $today['yday'] == $daydata['yday'];
+            $daydata['istoday'] = $istoday;
+
+            $daydata['isweekend'] = !!($weekend & (1 << ($daydata['wday'] % $numberofdaysinweek)));
+
+            $day = new week_day_exporter($this->calendar, $daydata, [
                 'events' => $events,
                 'cache' => $this->related['cache'],
                 'type' => $this->related['type'],

@@ -87,6 +87,15 @@ class day_exporter extends exporter {
             'yday' => [
                 'type' => PARAM_INT,
             ],
+            // These are additional params.
+            'istoday' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
+            'isweekend' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
         ];
     }
 
@@ -110,7 +119,19 @@ class day_exporter extends exporter {
             'events' => [
                 'type' => calendar_event_exporter::read_properties_definition(),
                 'multiple' => true,
-            ]
+            ],
+            'calendareventtypes' => [
+                'type' => PARAM_RAW,
+                'multiple' => true,
+            ],
+            'popovertitle' => [
+                'type' => PARAM_RAW,
+                'default' => '',
+            ],
+            'haslastdayofevent' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
         ];
     }
 
@@ -141,21 +162,45 @@ class day_exporter extends exporter {
         $url = new moodle_url('/calendar/view.php', [
                 'view' => 'day',
                 'time' => $timestamp,
+                'course' => $this->calendar->course->id,
             ]);
         $return['viewdaylink'] = $url->out(false);
 
         $cache = $this->related['cache'];
-        $return['events'] = array_map(function($event) use ($cache, $output, $url) {
+        $eventexporters = array_map(function($event) use ($cache, $output, $url) {
             $context = $cache->get_context($event);
             $course = $cache->get_course($event);
             $exporter = new calendar_event_exporter($event, [
                 'context' => $context,
                 'course' => $course,
                 'daylink' => $url,
+                'type' => $this->related['type'],
+                'today' => $this->data[0],
             ]);
 
-            return $exporter->export($output);
+            return $exporter;
         }, $this->related['events']);
+
+        $return['events'] = array_map(function($exporter) use ($output) {
+            return $exporter->export($output);
+        }, $eventexporters);
+
+        if ($popovertitle = $this->get_popover_title()) {
+            $return['popovertitle'] = $popovertitle;
+        }
+
+        $return['calendareventtypes'] = array_map(function($exporter) {
+            return $exporter->get_calendar_event_type();
+        }, $eventexporters);
+        $return['calendareventtypes'] = array_values(array_unique($return['calendareventtypes']));
+
+        $return['haslastdayofevent'] = false;
+        foreach ($return['events'] as $event) {
+            if ($event->islastday) {
+                $return['haslastdayofevent'] = true;
+                break;
+            }
+        }
 
         return $return;
     }
@@ -171,5 +216,27 @@ class day_exporter extends exporter {
             'cache' => '\core_calendar\external\events_related_objects_cache',
             'type' => '\core_calendar\type_base',
         ];
+    }
+
+    /**
+     * Get the title for this popover.
+     *
+     * @return string
+     */
+    protected function get_popover_title() {
+        $title = null;
+
+        $userdate = userdate($this->data[0], get_string('strftimedayshort'));
+        if (count($this->related['events'])) {
+            $title = get_string('eventsfor', 'calendar', $userdate);
+        } else if ($this->data['istoday']) {
+            $title = $userdate;
+        }
+
+        if ($this->data['istoday']) {
+            $title = get_string('todayplustitle', 'calendar', $userdate);
+        }
+
+        return $title;
     }
 }

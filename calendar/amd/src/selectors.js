@@ -14,25 +14,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contain the events the calendar component can fire.
+ * This module is responsible for the calendar filter.
  *
- * @module     core_calendar/events
- * @class      calendar_events
+ * @module     core_calendar/calendar_selectors
  * @package    core_calendar
- * @copyright  2017 Simey Lameze <simey@moodle.com>
+ * @copyright  2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define([], function() {
     return {
-        created: 'calendar-events:created',
-        deleted: 'calendar-events:deleted',
-        updated: 'calendar-events:updated',
-        editEvent: 'calendar-events:edit_event',
-        editActionEvent: 'calendar-events:edit_action_event',
-        eventMoved: 'calendar-events:event_moved',
-        monthChanged: 'calendar-events:month_changed',
-        moveEvent: 'calendar-events:move_event',
-        filterChanged: 'calendar-events:filter_changed',
-        viewUpdated: 'calendar-events:view_updated',
+        eventFilterItem: "[data-action='filter-event-type']",
+        eventType: {
+            site: "[data-eventtype-site]",
+            course: "[data-eventtype-course]",
+            group: "[data-eventtype-group]",
+            user: "[data-eventtype-user]",
+        },
+        popoverType: {
+            site: "[data-popover-eventtype-site]",
+            course: "[data-popover-eventtype-course]",
+            group: "[data-popover-eventtype-group]",
+            user: "[data-popover-eventtype-user]",
+        },
     };
 });

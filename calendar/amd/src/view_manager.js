@@ -65,6 +65,10 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
                 .then(function(html, js) {
                     return Templates.replaceNode(root.find(SELECTORS.CALENDAR_MONTH_WRAPPER), html, js);
                 })
+                .then(function() {
+                    $('body').trigger(CalendarEvents.viewUpdated);
+                    return;
+                })
                 .always(function() {
                     return stopLoading(root);
                 })
