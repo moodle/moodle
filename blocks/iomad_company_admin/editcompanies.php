@@ -355,6 +355,12 @@ if (!$companies) {
             $manageurl = new moodle_url($CFG->wwwroot . "/local/iomad_dashboard/index.php",
                                         array('company' => $company->id));
             $managebutton = "<a class='btn btn-primary' href='$manageurl'>$strmanage</a>";
+
+            if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {
+                $childurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/company_edit_form.php",
+                                           array('createnew' => 1, 'parentid' => $company->id));
+                $childbutton = "<a class='btn btn-primary' href='$childurl'>$strcreatechild</a>";
+            }
         }
 
         if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
@@ -369,12 +375,6 @@ if (!$companies) {
                                                   'sesskey' => sesskey()));
                 $ecommercebutton = "<a class='btn btn-primary' href='$ecommerceurl'>$strenableecommerce</a>";
             }
-        }
-
-        if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {
-            $childurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/company_edit_form.php",
-                                       array('createnew' => 1, 'parentid' => $company->id));
-            $childbutton = "<a class='btn btn-primary' href='$childurl'>$strcreatechild</a>";
         }
 
         $overviewurl = new moodle_url($CFG->wwwroot . "/local/report_companies/index.php",
