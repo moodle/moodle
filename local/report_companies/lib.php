@@ -47,7 +47,7 @@ class companyrep{
         }
 
         // Get companies information.
-        if (!$companies = $DB->get_records('company')) {
+        if (!$companies = $DB->get_records('company', array(), 'name')) {
             return $companylist;
         }
 
