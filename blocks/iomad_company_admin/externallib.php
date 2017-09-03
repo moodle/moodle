@@ -1336,22 +1336,31 @@ class block_iomad_company_admin_external extends external_api {
 
             // Does this license exist?
             if (!$oldlicense = $DB->get_record('companylicense', array('id' => $licenseid))) {
-                throw new invalid_parameter_exception("License id=$id does not exist");
+                throw new invalid_parameter_exception("License id=$licenseid does not exist");
             }
 
             // What about the company?
             if (!$companyrec = $DB->get_record('company', array('id' => $oldlicense->companyid))) {
-                throw new invalid_parameter_exception("Company does not exist for license id=$licenseid");
+                throw new invalid_parameter_exception("Company does not match for license id=$licenseid");
             }
 
             // The user?
-            if (!$user = $DB->get_record('user', array('id' => $oldlicense->userid))) {
-                throw new invalid_parameter_exception("User id=" . $user->id ." does not exist");
+            if (!$user = $DB->get_record('user', array('id' => $license['userid'], 'deleted' => 0))) {
+                throw new invalid_parameter_exception("User id=" . $license['userid'] ." does not exist");
+            }
+            if ($user->suspended == 1) {
+                throw new invalid_parameter_exception("User id=" . $license['userid'] ." is suspended");
             }
 
             // The course?
-            if (!$course = $DB->get_record('course', array('id' => $params['licensecourseid']))) {
-                throw new invalid_parameter_exception("Course id=" . $params['licensecourseid'] ." does not exist");
+            if (!$course = $DB->get_record('course', array('id' => $license['licensecourseid']))) {
+                throw new invalid_parameter_exception("Course id=" . $license['licensecourseid'] ." does not exist");
+            }
+
+            // Does the license include this course?
+            if (!$DB->get_record('companylicense_courses', array('courseid' => $license['licensecourseid'],
+                                                                 'licenseid' => $licenseid))) {
+                throw new invalid_parameter_exception("Course id=" . $license['licensecourseid'] ." is not inculded in license id $licenseid");
             }
 
             // Has the license expired?
@@ -1365,14 +1374,14 @@ class block_iomad_company_admin_external extends external_api {
             }
 
             // Are we double allocating?
-            $params['isusing'] = 0;
-            if ($DB->get_record('companylicense_users', $params)) {
+            $license['isusing'] = 0;
+            if ($DB->get_record('companylicense_users', $license)) {
                 throw new invalid_parameter_exception("User id=" . $user->id ." already has an unused license for that course.");
             }
 
             // Set up the rest of the record.
-            $params['issuedate'] = $timestamp;
-            $DB->insert_record('companylicense_users', $params);
+            $license['issuedate'] = $timestamp;
+            $DB->insert_record('companylicense_users', $license);
 
             // Create an event.
             $eventother = array('licenseid' => $licenseid,
@@ -1447,33 +1456,51 @@ class block_iomad_company_admin_external extends external_api {
 
             // Does this license exist?
             if (!$oldlicense = $DB->get_record('companylicense', array('id' => $licenseid))) {
-                throw new invalid_parameter_exception("License id=$id does not exist");
+                throw new invalid_parameter_exception("License id=$licenseid does not exist");
             }
 
             // What about the company?
             if (!$companyrec = $DB->get_record('company', array('id' => $oldlicense->companyid))) {
-                throw new invalid_parameter_exception("Company does not exist for license id=$licenseid");
+                throw new invalid_parameter_exception("Company does not match for license id=$licenseid");
             }
 
             // The user?
-            if (!$user = $DB->get_record('user', array('id' => $oldlicense->userid))) {
-                throw new invalid_parameter_exception("User id=" . $user->id ." does not exist");
+            if (!$user = $DB->get_record('user', array('id' => $license['userid'], 'deleted' => 0))) {
+                throw new invalid_parameter_exception("User id=" . $license['userid'] ." does not exist");
+            }
+            if ($user->suspended == 1) {
+                throw new invalid_parameter_exception("User id=" . $license['userid'] ." is suspended");
             }
 
             // The course?
-            if (!$course = $DB->get_record('course', array('id' => $params['licensecourseid']))) {
-                throw new invalid_parameter_exception("Course id=" . $params['licensecourseid'] ." does not exist");
+            if (!$course = $DB->get_record('course', array('id' => $license['licensecourseid']))) {
+                throw new invalid_parameter_exception("Course id=" . $license['licensecourseid'] ." does not exist");
             }
 
-            // Has this been allocated and we can?
-            $params['isusing'] = 0;
-            if (!$allocationrec = $DB->get_record('companylicense_users', $params)) {
-                throw new invalid_parameter_exception("User id=" . $user->id ." already has an unused license for that course.");
+            // Does the license include this course?
+            if (!$DB->get_record('companylicense_courses', array('courseid' => $license['licensecourseid'],
+                                                                 'licenseid' => $licenseid))) {
+                throw new invalid_parameter_exception("Course id=" . $license['licensecourseid'] ." is not inculded in license id $licenseid");
+            }
+
+            // Has the license expired?
+            if ($oldlicense->expirydate < $timenow) {
+                throw new invalid_parameter_exception("License id=$licenseid has expired");
+            }
+
+            // Is there any space left?
+            if ($oldlicense->allocation <= $oldlicense->used) {
+                throw new invalid_parameter_exception("License id=$licenseid has no free slots");
+            }
+
+            // Can we remove this?
+            $license['isusing'] = 0;
+            if (!$allocationrec = $DB->get_record('companylicense_users', $license)) {
+                throw new invalid_parameter_exception("User id=" . $user->id ." has used the license for that course.");
             }
 
             // Set up the rest of the record.
-            $params['issuedate'] = $timestamp;
-            $DB->insert_record('companylicense_users', $params);
+            $DB->delete_record('companylicense_users', array('id' => $allocationrec->id));
 
             // Create an event.
             $eventother = array('licenseid' => $licenseid);
