@@ -327,29 +327,42 @@ class company_user {
      * @param int $companyid
      * @return void
      */
-    public static function unenrol($user, $courseids, $companyid=null) {
+    public static function unenrol($user, $courseids, $companyid=null, $all = true) {
         global $DB, $PAGE;
 
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $isstudent = false;
+
         foreach ($courseids as $courseid) {
-            if (!$DB->get_record('iomad_courses', array('courseid' => $courseid, 'shared' => 0))) {
-                $shared = true;
-            } else {
-                $shared = false;
+            $roles = get_user_roles(context_course::instance($courseid), $user->id, false);
+            foreach ($roles as $role) {
+                if (!$all && $role->roleid == $studentrole->id) {
+                    $isstudent = true;
+                } else {
+                    $DB->delete_records('role_assignments', array('id' => $role->id));
+                }
             }
-            $course = $DB->get_record('course', array('id' => $courseid));
-            $courseenrolmentmanager = new course_enrolment_manager($PAGE, $course);
+            if (!$isstudent) {
+                if (!$DB->get_record('iomad_courses', array('courseid' => $courseid, 'shared' => 0))) {
+                    $shared = true;
+                } else {
+                    $shared = false;
+                }
+                $course = $DB->get_record('course', array('id' => $courseid));
+                $courseenrolmentmanager = new course_enrolment_manager($PAGE, $course);
 
-            $ues = $courseenrolmentmanager->get_user_enrolments($user->id);
+                $ues = $courseenrolmentmanager->get_user_enrolments($user->id);
 
-            foreach ($ues as $ue) {
-                if ( $ue->enrolmentinstance->courseid == $courseid ) {
-                    $courseenrolmentmanager->unenrol_user($ue);
-                    if ($shared) {
-                        if (!empty($companyid)) {
-                            company::remove_user_from_shared_course($courseid,
-                                                                    $user->id,
-                                                                    $companyid);
-                        }
+                foreach ($ues as $ue) {
+                    if ( $ue->enrolmentinstance->courseid == $courseid ) {
+                        $courseenrolmentmanager->unenrol_user($ue);
+                    }
+                }
+                if ($shared) {
+                    if (!empty($companyid)) {
+                        company::remove_user_from_shared_course($courseid,
+                                                                $user->id,
+                                                                $companyid);
                     }
                 }
             }

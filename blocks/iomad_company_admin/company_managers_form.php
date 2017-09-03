@@ -359,7 +359,7 @@ class company_managers_form extends moodleform {
                         if ($companycourses = $DB->get_records('company_course', array('companyid' => $this->selectedcompany))) {
                             foreach ($companycourses as $companycourse) {
                                 if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
-                                    company_user::unenrol($removeuser, array($companycourse->courseid), $companycourse->companyid);
+                                    company_user::unenrol($removeuser, array($companycourse->courseid), $companycourse->companyid, false);
                                 }
                             }
                         }
