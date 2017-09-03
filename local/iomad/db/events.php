@@ -106,5 +106,17 @@ $observers = array(
         'callback'    => 'local_iomad_observer::user_license_unassigned',
         'includefile' => '/local/iomad/classes/observer.php'
     ),
+
+    array(
+        'eventname'   => '\block_iomad_company_admin\event\company_suspended',
+        'callback'    => 'local_iomad_observer::company_suspended',
+        'includefile' => '/local/iomad/classes/observer.php'
+    ),
+
+    array(
+        'eventname'   => '\block_iomad_company_admin\event\company_unsuspended',
+        'callback'    => 'local_iomad_observer::company_unsuspended',
+        'includefile' => '/local/iomad/classes/observer.php'
+    ),
 );
 

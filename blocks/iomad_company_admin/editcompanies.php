@@ -107,12 +107,8 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
-
-echo $OUTPUT->header();
 
 // Set up the filter form.
 $mform = new iomad_company_filter_form();
@@ -136,9 +132,8 @@ if (empty($CFG->loginhttps)) {
     $securewwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
 }
 
-$returnurl = "$CFG->wwwroot/blocks/iomad_company_admin/editcompanies.php";
-
-if ($suspend and confirm_sesskey()) {              // Delete a selected user, after confirmation.
+if ($suspend and confirm_sesskey()) {
+    // Suspend a company, after confirmation.
 
     /* if (!iomad::has_capability('block/iomad_company_admin:suspendcompany', $context)) {
         print_error('nopermissions', 'error', '', 'delete a user');
@@ -150,16 +145,31 @@ if ($suspend and confirm_sesskey()) {              // Delete a selected user, af
 
     if ($confirm != md5($suspend)) {
         $fullname = $company->name;
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('suspendcompany', 'block_iomad_company_admin'). " " . $fullname);
-        $optionsyes = array('suspend' => $suspend, 'confirm' => md5($suspend), 'sesskey' => sesskey());
+        $optionsyes = array('suspend' => $suspend,
+                            'confirm' => md5($suspend),
+                            'showsuspended' => $showsuspended,
+                            'sesskey' => sesskey());
+
         echo $OUTPUT->confirm(get_string('suspendcompanycheckfull', 'block_iomad_company_admin', "'$fullname'"),
                               new moodle_url('editcompanies.php', $optionsyes), 'editcompanies.php');
         echo $OUTPUT->footer();
         die;
     } else {
         // Suspend the company
-        $suspendcompany = new company($company->id);
-        $suspendcompany->suspend(1);
+        // Create an event for this.  This handles the actual lifting.
+        $eventother = array('companyid' => $company->id);
+        $event = \block_iomad_company_admin\event\company_suspended::create(array('context' => context_system::instance(),
+                                                                                      'objectid' => $company->id,
+                                                                                      'userid' => $USER->id,
+                                                                                      'other' => $eventother));
+        $event->trigger();
+        $returnurl->param('suspend', 0);
+        $returnurl->param('unsuspend', 0);
+        $returnurl->param('showsuspended', $showsuspended);
+        redirect($returnurl);
+        die;
     }
 } else if ($unsuspend and confirm_sesskey()) {
     // Unsuspends a selected company, after confirmation.
@@ -172,18 +182,36 @@ if ($suspend and confirm_sesskey()) {              // Delete a selected user, af
         print_error('companynotfound', 'block_iomad_company_admin');
     }
 
+    if (!empty($company->parentid) && $DB->get_record('company', array('id' => $company->parentid, 'suspended' => 1))) {
+        print_error('parentcompanysuspended', 'block_iomad_company_admin');
+    }
+
     if ($confirm != md5($unsuspend)) {
         $fullname = $company->name;
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('unsuspendcompany', 'block_iomad_company_admin'). " " . $fullname);
-        $optionsyes = array('unsuspend' => $unsuspend, 'confirm' => md5($unsuspend), 'sesskey' => sesskey());
+        $optionsno = array('unsuspend' => $unsuspend,
+                            'confirm' => md5($unsuspend),
+                            'showsuspended' => $showsuspended,
+                            'sesskey' => sesskey());
         echo $OUTPUT->confirm(get_string('unsuspendcompanycheckfull', 'block_iomad_company_admin', "'$fullname'"),
-                              new moodle_url('editcompanies.php', $optionsyes), 'editcompanies.php');
+                              new moodle_url('editcompanies.php', $optionsno), 'editcompanies.php');
         echo $OUTPUT->footer();
         die;
     } else {
         // Unsuspend the company
-        $unsuspendcompany = new company($company->id);
-        $unsuspendcompany->suspend(0);
+        // Create an event for this.  This handles the actual lifting.
+        $eventother = array('companyid' => $company->id);
+        $event = \block_iomad_company_admin\event\company_unsuspended::create(array('context' => context_system::instance(),
+                                                                                      'objectid' => $company->id,
+                                                                                      'userid' => $USER->id,
+                                                                                      'other' => $eventother));
+        $event->trigger();
+        $returnurl->param('unsuspend', 0);
+        $returnurl->param('suspend', 0);
+        $returnurl->param('showsuspended', $showsuspended);
+        redirect($returnurl);
+        die;
     }
 
 } else if ($enableecommerce and confirm_sesskey()) {
@@ -208,6 +236,8 @@ if ($suspend and confirm_sesskey()) {              // Delete a selected user, af
     $enableecommercecompany = new company($company->id);
     $enableecommercecompany->ecommerce(0);
 }
+
+echo $OUTPUT->header();
 
 // Display the user filter form.
 $mform->display();
@@ -325,6 +355,8 @@ if (!$companies) {
         $ecommercebutton = '';
         $childurl = '';
         $childbutton = '';
+        $linkparams = $params;
+        $linkparams['sesskey'] = sesskey();
         if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             $primary = false;
         } else if ($DB->get_records_sql("SELECT * FROM {company} c
@@ -340,16 +372,19 @@ if (!$companies) {
         }
         if (!empty($company->suspended)) {
             if (!$primary) {
-                $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
-                                            array('unsuspend' => $company->id,
-                                                  'sesskey' => sesskey()));
-                $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strunsuspend</a>";
+                // is the parent suspended?
+                if (empty($company->parentid) || $DB->get_record('company', array('id' => $company->parentid, 'suspended' => 0))) {
+                    $linkparams['unsuspend'] = $company->id;
+                    $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
+                                                $linkparams);
+                    $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strunsuspend</a>";
+                }
             }
         } else {
             if (!$primary) {
+                $linkparams['suspend'] = $company->id;
                 $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
-                                            array('suspend' => $company->id,
-                                                  'sesskey' => sesskey()));
+                                            $linkparams);
                 $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strsuspend</a>";
             }
             $manageurl = new moodle_url($CFG->wwwroot . "/local/iomad_dashboard/index.php",
@@ -365,14 +400,15 @@ if (!$companies) {
 
         if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             if (!empty($company->ecommerce)) {
+                $linkparams['disableecommerce'] = $company->id;
+
                 $ecommerceurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
-                                            array('disableecommerce' => $company->id,
-                                                  'sesskey' => sesskey()));
+                                            $linkparams);
                 $ecommercebutton = "<a class='btn btn-primary' href='$ecommerceurl'>$strdisableecommerce</a>";
             } else {
+                $linkparams['enableecommerce'] = $company->id;
                 $ecommerceurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
-                                            array('enableecommerce' => $company->id,
-                                                  'sesskey' => sesskey()));
+                                           $linkparams);
                 $ecommercebutton = "<a class='btn btn-primary' href='$ecommerceurl'>$strenableecommerce</a>";
             }
         }

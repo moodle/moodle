@@ -2057,13 +2057,13 @@ class company {
      *              $theme = string;
      *
      **/
-    public function suspend($suspend) {
+    public function suspend($suspend = true) {
         global $DB;
 
         // Get the company users.
         $users = $this->get_all_user_ids();
 
-        // Update their theme.
+        // Update the users.
         foreach ($users as $userid) {
             if ($user = $DB->get_record('user', array('id' => $userid))) {
                 if (! $DB->get_record('company_users', array('userid' => $user->id, 'companyid' => $this->id, 'suspended' => 1))) {
@@ -2078,6 +2078,16 @@ class company {
 
         // Set the suspend field for the company.
         $DB->set_field('company', 'suspended', $suspend, array('id' => $this->id));
+
+        // Deal with child companies.
+        $childcompanies = $this->get_child_companies();
+        if (!empty($childcompanies)) {
+            foreach ($childcompanies as $childcomprec) {
+
+                $childcompany = new company($childcomprec->id);
+                $childcompany->suspend($suspend);
+            }
+        }
     }
 
     /**
@@ -2979,6 +2989,48 @@ class company {
 
         // Update the license usage.
         self::update_license_usage($parentid);
+
+        return true;
+    }
+
+    /**
+     * Triggered via company_suspended event.
+     *
+     * @param \block_iomad_company_user\event\company_suspended $event
+     * @return bool true on success.
+     */
+    public static function company_suspended(\block_iomad_company_admin\event\company_suspended $event) {
+        global $DB, $CFG;
+
+        $companyid = $event->other['companyid'];
+        
+        if (empty($companyid) || !$companyrecord = $DB->get_record('company', array('id' => $companyid))) {
+            return;
+        }
+
+        $suspendcompany = new company($companyid);
+        $suspendcompany->suspend(true);
+
+        return true;
+    }
+
+    /**
+     * Triggered via company_unsuspended event.
+     *
+     * @param \block_iomad_company_user\event\company_unsuspended $event
+     * @return bool true on success.
+     */
+    public static function company_unsuspended(\block_iomad_company_admin\event\company_unsuspended $event) {
+        global $DB, $CFG;
+
+        $companyid = $event->other['companyid'];
+        
+        if (empty($companyid) || !$companyrecord = $DB->get_record('company', array('id' => $companyid))) {
+            return;
+        }
+
+        $suspendcompany = new company($companyid);
+        $suspendcompany->suspend(false);
 
         return true;
     }
