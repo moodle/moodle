@@ -71,6 +71,12 @@ $PAGE->set_pagelayout('report');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
+$onlycli = get_config('analytics', 'onlycli');
+if ($onlycli === false) {
+    // Default applied if no config found.
+    $onlycli = 1;
+}
+
 switch ($action) {
 
     case 'enable':
@@ -131,6 +137,10 @@ switch ($action) {
             throw new moodle_exception('errornostaticevaluate', 'tool_analytics');
         }
 
+        if ($onlycli) {
+            throw new moodle_exception('erroronlycli', 'tool_analytics');
+        }
+
         // Web interface is used by people who can not use CLI nor code stuff, always use
         // cached stuff as they will change the model through the web interface as well
         // which invalidates the previously analysed stuff.
@@ -141,6 +151,10 @@ switch ($action) {
 
     case 'getpredictions':
         echo $OUTPUT->header();
+
+        if ($onlycli) {
+            throw new moodle_exception('erroronlycli', 'tool_analytics');
+        }
 
         $trainresults = $model->train();
         $trainlogs = $model->get_analyser()->get_logs();

@@ -62,6 +62,12 @@ class models_list implements \renderable, \templatable {
 
         $data = new \stdClass();
 
+        $onlycli = get_config('analytics', 'onlycli');
+        if ($onlycli === false) {
+            // Default applied if no config found.
+            $onlycli = 1;
+        }
+
         $data->models = array();
         foreach ($this->models as $model) {
             $modeldata = $model->export();
@@ -182,7 +188,7 @@ class models_list implements \renderable, \templatable {
             $actionsmenu->add($icon);
 
             // Evaluate machine-learning-based models.
-            if ($model->get_indicators() && !$model->is_static()) {
+            if (!$onlycli && $model->get_indicators() && !$model->is_static()) {
                 $url = new \moodle_url('model.php', array('action' => 'evaluate', 'id' => $model->get_id()));
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/calc', get_string('evaluate', 'tool_analytics')),
                     get_string('evaluate', 'tool_analytics'));
@@ -190,7 +196,7 @@ class models_list implements \renderable, \templatable {
             }
 
             // Get predictions.
-            if ($modeldata->enabled && !empty($modeldata->timesplitting)) {
+            if (!$onlycli && $modeldata->enabled && !empty($modeldata->timesplitting)) {
                 $url = new \moodle_url('model.php', array('action' => 'getpredictions', 'id' => $model->get_id()));
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/notifications',
                     get_string('getpredictions', 'tool_analytics')), get_string('getpredictions', 'tool_analytics'));
@@ -218,9 +224,18 @@ class models_list implements \renderable, \templatable {
             $data->models[] = $modeldata;
         }
 
-        $data->warnings = array(
-            (object)array('message' => get_string('bettercli', 'tool_analytics'), 'closebutton' => true)
-        );
+        if (!$onlycli) {
+            $data->warnings = array(
+                (object)array('message' => get_string('bettercli', 'tool_analytics'), 'closebutton' => true)
+            );
+        } else {
+            $url = new \moodle_url('/admin/settings.php', array('section' => 'analyticssettings'),
+                'id_s_analytics_onlycli');
+            $data->infos = array(
+                (object)array('message' => get_string('clievaluationandpredictions', 'tool_analytics', $url->out()),
+                    'closebutton' => true)
+            );
+        }
 
         return $data;
     }

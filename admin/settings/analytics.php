@@ -97,5 +97,9 @@ if ($hassiteconfig) {
         }
         $settings->add(new admin_setting_configdirectory('analytics/modeloutputdir', new lang_string('modeloutputdir', 'analytics'),
             new lang_string('modeloutputdirinfo', 'analytics'), $defaultmodeloutputdir));
+
+        // Disable web interface evaluation and get predictions.
+        $settings->add(new admin_setting_configcheckbox('analytics/onlycli', new lang_string('onlycli', 'analytics'),
+            new lang_string('onlycliinfo', 'analytics'), 1));
     }
 }
