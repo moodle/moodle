@@ -8,6 +8,19 @@
         "formid": "url_select_form",
         "sesskey": "sesskey",
         "label": "core/url_select",
+        "helpicon": {
+            "title": "Help with something",
+            "text": "Help with something",
+            "url": "http://example.org/help",
+            "linktext": "",
+            "icon":{
+                "extraclasses": "iconhelp",
+                "attributes": [
+                    {"name": "src", "value": "../../../pix/help.svg"},
+                    {"name": "alt", "value": "Help icon"}
+                ]
+            }
+        },
         "showbutton": "Go",
         "options": [{
             "name": "Group 1", "isgroup": true, "options":
@@ -25,30 +38,28 @@
 <div class="{{classes}}">
     <form method="post" action="{{action}}" class="form-inline" id="{{formid}}">
         <input type="hidden" name="sesskey" value="{{sesskey}}">
-        <div class="form-group">
-            {{#label}}
-                <label for="{{id}}"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>
-                    {{label}}
-                </label>
-            {{/label}}
-            {{#helpicon}}
-                {{>core/help_icon}}
-            {{/helpicon}}
-            <select {{#attributes}}{{name}}="{{value}}" {{/attributes}} id="{{id}}" class="custom-select {{classes}}" name="jump">
-                {{#options}}
-                    {{#isgroup}}
-                        <optgroup label="{{name}}">
-                            {{#options}}
-                                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-                            {{/options}}
-                        </optgroup>
-                    {{/isgroup}}
-                    {{^isgroup}}
-                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-                    {{/isgroup}}
-                {{/options}}
-            </select>
-        </div>
+        {{#label}}
+            <label for="{{id}}"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>
+                {{label}}
+            </label>
+        {{/label}}
+        {{#helpicon}}
+            {{>core/help_icon}}
+        {{/helpicon}}
+        <select {{#attributes}}{{name}}="{{value}}" {{/attributes}} id="{{id}}" class="custom-select {{classes}}" name="jump">
+            {{#options}}
+                {{#isgroup}}
+                    <optgroup label="{{name}}">
+                        {{#options}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                        {{/options}}
+                    </optgroup>
+                {{/isgroup}}
+                {{^isgroup}}
+                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                {{/isgroup}}
+            {{/options}}
+        </select>
         {{#showbutton}}
             <input type="submit" class="btn btn-secondary" value="{{showbutton}}">
         {{/showbutton}}
