@@ -73,20 +73,22 @@ class insight implements \renderable, \templatable {
     public function export_for_template(\renderer_base $output) {
 
         $data = new \stdClass();
+        $data->insightname = format_string($this->model->get_target()->get_name());
 
         // Sample info (determined by the analyser).
         list($data->sampledescription, $samplerenderable) = $this->model->prediction_sample_description($this->prediction);
 
         // Sampleimage is a renderable we should pass it to HTML.
         if ($samplerenderable) {
-            $data->samplelink = $output->render($samplerenderable);
+            $data->sampleimage = $output->render($samplerenderable);
         }
 
         // Prediction info.
         $predictedvalue = $this->prediction->get_prediction_data()->prediction;
         $predictionid = $this->prediction->get_prediction_data()->id;
         $data->predictiondisplayvalue = $this->model->get_target()->get_display_value($predictedvalue);
-        $data->predictionstyle = $this->get_calculation_style($this->model->get_target(), $predictedvalue);
+        list($data->style, $data->outcomeicon) = $this->get_calculation_display($this->model->get_target(), $predictedvalue,
+            $output);
 
         $actions = $this->model->get_target()->prediction_actions($this->prediction, $this->includedetailsaction);
         if ($actions) {
@@ -122,39 +124,58 @@ class insight implements \renderable, \templatable {
             $obj = new \stdClass();
             $obj->name = call_user_func(array($calculation->indicator, 'get_name'));
             $obj->displayvalue = $calculation->indicator->get_display_value($calculation->value, $calculation->subtype);
-            $obj->style = $this->get_calculation_style($calculation->indicator, $calculation->value, $calculation->subtype);
+            list($obj->style, $obj->outcomeicon) = $this->get_calculation_display($calculation->indicator, $calculation->value,
+                $output, $calculation->subtype);
 
             $data->calculations[] = $obj;
+        }
+
+        if (empty($data->calculations)) {
+            $data->nocalculations = (object)array(
+                'message' => get_string('nodetailsavailable', 'report_insights'),
+                'closebutton' => false
+            );
         }
 
         return $data;
     }
 
     /**
-     * Returns a CSS class from the calculated value outcome.
+     * Returns display info for the calculated value outcome.
      *
      * @param \core_analytics\calculable $calculable
      * @param float $value
+     * @param \renderer_base $output
      * @param string|false $subtype
-     * @return string
+     * @return array The style as 'success', 'info', 'warning' or 'danger' and pix_icon
      */
-    protected function get_calculation_style(\core_analytics\calculable $calculable, $value, $subtype = false) {
+    protected function get_calculation_display(\core_analytics\calculable $calculable, $value, $output, $subtype = false) {
         $outcome = $calculable->get_calculation_outcome($value, $subtype);
         switch ($outcome) {
             case \core_analytics\calculable::OUTCOME_NEUTRAL:
                 $style = '';
+                $text = get_string('outcomeneutral', 'report_insights');
+                $icon = 't/check';
                 break;
             case \core_analytics\calculable::OUTCOME_VERY_POSITIVE:
-                $style = 'alert alert-success';
+                $style = 'success';
+                $text = get_string('outcomeverypositive', 'report_insights');
+                $icon = 't/approve';
                 break;
             case \core_analytics\calculable::OUTCOME_OK:
-                $style = 'alert alert-info';
+                $style = 'info';
+                $text = get_string('outcomeok', 'report_insights');
+                $icon = 't/check';
                 break;
             case \core_analytics\calculable::OUTCOME_NEGATIVE:
-                $style = 'alert alert-warning';
+                $style = 'warning';
+                $text = get_string('outcomenegative', 'report_insights');
+                $icon = 'i/warning';
                 break;
             case \core_analytics\calculable::OUTCOME_VERY_NEGATIVE:
-                $style = 'alert alert-danger';
+                $style = 'danger';
+                $text = get_string('outcomeverynegative', 'report_insights');
+                $icon = 'i/warning';
                 break;
             default:
                 throw new \coding_exception('The outcome returned by ' . get_class($calculable) . '::get_calculation_outcome is ' .
@@ -162,6 +183,7 @@ class insight implements \renderable, \templatable {
                     '\core_analytics\calculable::OUTCOME_OK, \core_analytics\calculable::OUTCOME_NEGATIVE, ' .
                     '\core_analytics\calculable::OUTCOME_VERY_NEGATIVE or \core_analytics\calculable::OUTCOME_NEUTRAL');
         }
-        return $style;
+        $icon = new \pix_icon($icon, $text);
+        return array($style, $icon->export_for_template($output));
     }
 }

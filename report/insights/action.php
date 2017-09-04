@@ -45,7 +45,7 @@ if (!isset($actions[$actionname])) {
 }
 
 $modelready = $model->is_enabled() && $model->is_trained() && $model->predictions_exist($context);
-if (!$modelready && !has_capability('moodle/analytics:managemodels', $context)) {
+if (!$modelready) {
 
     $PAGE->set_pagelayout('report');
 
@@ -53,7 +53,7 @@ if (!$modelready && !has_capability('moodle/analytics:managemodels', $context)) 
     $PAGE->set_title($context->get_context_name());
     $PAGE->set_heading($context->get_context_name());
     echo $OUTPUT->header();
-    echo $OUTPUT->notification(get_string('disabledmodel', 'analytics'), \core\output\notification::NOTIFY_INFO);
+    echo $OUTPUT->notification(get_string('disabledmodel', 'report_insights'), \core\output\notification::NOTIFY_INFO);
     echo $OUTPUT->footer();
     exit(0);
 }

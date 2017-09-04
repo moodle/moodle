@@ -75,7 +75,7 @@ class renderer extends plugin_renderer_base {
         $PAGE->set_heading($insightinfo->contextname);
 
         $output = $OUTPUT->header();
-        $output .= $OUTPUT->notification(get_string('disabledmodel', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= $OUTPUT->notification(get_string('disabledmodel', 'report_insights'), \core\output\notification::NOTIFY_INFO);
         $output .= $OUTPUT->footer();
 
         return $output;

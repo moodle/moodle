@@ -115,7 +115,9 @@ class models_list implements \renderable, \templatable {
             }
 
             // Model predictions list.
-            if ($model->uses_insights()) {
+            if (!$model->is_enabled()) {
+                $modeldata->noinsights = get_string('disabledmodel', 'analytics');
+            } else if ($model->uses_insights()) {
                 $predictioncontexts = $model->get_predictions_contexts();
                 if ($predictioncontexts) {
 

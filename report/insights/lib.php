@@ -36,20 +36,85 @@ function report_insights_extend_navigation_course($navigation, $course, $context
 
     if (has_capability('moodle/analytics:listinsights', $context)) {
 
-        $cache = \cache::make('core', 'contextwithinsights');
-        $modelids = $cache->get($context->id);
-        if ($modelids === false) {
-            // They will be full unless a model has been cleared.
-            $models = \core_analytics\manager::get_models_with_insights($context);
-            $modelids = array_keys($models);
-            $cache->set($context->id, $modelids);
-        }
-
+        $modelids = report_insights_context_insights($context);
         if (!empty($modelids)) {
             $url = new moodle_url('/report/insights/insights.php', array('contextid' => $context->id));
-            $settingsnode = navigation_node::create(get_string('insights', 'report_insights'), $url, navigation_node::TYPE_SETTING,
-                null, null, new pix_icon('i/settings', ''));
-            $navigation->add_node($settingsnode);
+            $node = navigation_node::create(get_string('insights', 'report_insights'), $url, navigation_node::TYPE_SETTING,
+                null, null, new pix_icon('i/report', get_string('insights', 'report_insights')));
+            $navigation->add_node($node);
         }
     }
+}
+
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ *
+ * @return bool
+ */
+function report_insights_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+
+    $context = \context_user::instance($user->id);
+    if (has_capability('moodle/analytics:listinsights', $context)) {
+
+        $modelids = report_insights_context_insights($context);
+        if (!empty($modelids)) {
+            $url = new moodle_url('/report/insights/insights.php', array('contextid' => $context->id));
+            $node = new core_user\output\myprofile\node('reports', 'insights', get_string('insights', 'report_insights'),
+                null, $url);
+            $tree->add_node($node);
+        }
+    }
+}
+
+/**
+ * Adds nodes to category navigation
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param context $context The context of the course
+ * @return void|null return null if we don't want to display the node.
+ */
+function report_insights_extend_navigation_category_settings($navigation, $context) {
+
+    if (has_capability('moodle/analytics:listinsights', $context)) {
+
+        $modelids = report_insights_context_insights($context);
+        if (!empty($modelids)) {
+            $url = new moodle_url('/report/insights/insights.php', array('contextid' => $context->id));
+
+            $node = navigation_node::create(
+                get_string('insights', 'report_insights'),
+                $url,
+                navigation_node::NODETYPE_LEAF,
+                null,
+                'insights',
+                new pix_icon('i/report', get_string('insights', 'report_insights'))
+            );
+
+            $navigation->add_node($node);
+        }
+    }
+}
+
+/**
+ * Returns the models that generated insights in the provided context.
+ *
+ * @param \context $context
+ * @return int[]
+ */
+function report_insights_context_insights(\context $context) {
+
+    $cache = \cache::make('core', 'contextwithinsights');
+    $modelids = $cache->get($context->id);
+    if ($modelids === false) {
+        // They will be full unless a model has been cleared.
+        $models = \core_analytics\manager::get_models_with_insights($context);
+        $modelids = array_keys($models);
+        $cache->set($context->id, $modelids);
+    }
+    return $modelids;
 }

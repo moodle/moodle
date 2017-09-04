@@ -30,6 +30,7 @@ $string['analyticslogstore_help'] = 'The log store that will be used by the anal
 $string['analyticssettings'] = 'Analytics settings';
 $string['coursetoolong'] = 'The course is too long';
 $string['enabledtimesplittings'] = 'Time splitting methods';
+$string['disabledmodel'] = 'Disabled model';
 $string['erroralreadypredict'] = '{$a} file has already been used to predict';
 $string['errorcannotreaddataset'] = 'Dataset file {$a} can not be read';
 $string['errorcannotwritedataset'] = 'Dataset file {$a} can not be written';
@@ -53,7 +54,6 @@ $string['errorunexistingmodel'] = 'Unexisting model {$a}';
 $string['errorunknownaction'] = 'Unknown action';
 $string['eventpredictionactionstarted'] = 'Prediction action started';
 $string['insightmessagesubject'] = 'New insight for "{$a->contextname}": {$a->insightname}';
-$string['insightinfo'] = '{$a->insightname} - {$a->contextname}';
 $string['insightinfomessage'] = 'The system generated some insights for you: {$a}';
 $string['insightinfomessagehtml'] = 'The system generated some insights for you: <a href="{$a}">{$a}</a>.';
 $string['invalidtimesplitting'] = 'Model with id {$a} needs a time splitting method before it can be used to train';
