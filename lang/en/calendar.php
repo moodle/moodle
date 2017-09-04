@@ -130,6 +130,7 @@ $string['generateurlbutton'] = 'Get calendar URL';
 $string['global'] = 'Global';
 $string['globalevent'] = 'Global event';
 $string['globalevents'] = 'Global events';
+$string['gotoactivity'] = 'Go to activity';
 $string['gotocalendar'] = 'Go to calendar';
 $string['group'] = 'Group';
 $string['groupevent'] = 'Group event';
