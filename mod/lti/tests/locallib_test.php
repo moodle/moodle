@@ -71,14 +71,20 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), "x=1\ny=2", false),
             array('custom_x' => '1', 'custom_y' => '2'));
 
+        // Check params with caps.
+        $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), "X=1", false),
+            array('custom_x' => '1', 'custom_X' => '1'));
+
         // Removed repeat of previous test with a semicolon separator.
 
         $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), 'Review:Chapter=1.2.56', false),
-            array('custom_review_chapter' => '1.2.56'));
+            array('custom_review_chapter' => '1.2.56', 'custom_Review_Chapter' => '1.2.56'));
 
         $this->assertEquals(lti_split_custom_parameters(null, $tool, array(),
             'Complex!@#$^*(){}[]KEY=Complex!@#$^*;(){}[]½Value', false),
-            array('custom_complex____________key' => 'Complex!@#$^*;(){}[]½Value'));
+            array(
+                'custom_complex____________key' => 'Complex!@#$^*;(){}[]½Value',
+                'custom_Complex____________KEY' => 'Complex!@#$^*;(){}[]½Value'));
 
         // Test custom parameter that returns $USER property.
         $user = $this->getDataGenerator()->create_user(array('middlename' => 'SOMETHING'));
