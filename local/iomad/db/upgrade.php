@@ -1618,6 +1618,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017041722, 'local', 'iomad');
     }
 
+    if ($oldversion < 2017090303) {
+
+        // Define field managerdigestday to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('managerdigestday', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'custommenuitems');
+
+        // Conditionally launch add field managerdigestday.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017090303, 'local', 'iomad');
+    }
 
     return $result;
 }
