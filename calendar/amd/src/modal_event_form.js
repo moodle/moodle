@@ -67,6 +67,7 @@ define([
         Modal.call(this, root);
         this.eventId = null;
         this.startTime = null;
+        this.courseId = null;
         this.reloadingBody = false;
         this.reloadingTitle = false;
         this.saveButton = this.getFooter().find(SELECTORS.SAVE_BUTTON);
@@ -76,6 +77,36 @@ define([
     ModalEventForm.TYPE = 'core_calendar-modal_event_form';
     ModalEventForm.prototype = Object.create(Modal.prototype);
     ModalEventForm.prototype.constructor = ModalEventForm;
+    
+    /**
+     * Set the course id to the given value.
+     *
+     * @method setCourseId
+     * @param {int} id The event id
+     */
+    ModalEventForm.prototype.setCourseId = function(id) {
+        this.courseId = id;
+    };
+
+    /**
+     * Retrieve the current course id, if any.
+     *
+     * @method getCourseId
+     * @return {int|null} The event id
+     */
+    ModalEventForm.prototype.getCourseId = function() {
+        return this.courseId;
+    };
+
+    /**
+     * Check if the modal has an course id.
+     *
+     * @method hasCourseId
+     * @return {bool}
+     */
+    ModalEventForm.prototype.hasCourseId = function() {
+        return this.courseId !== null;
+    };
 
     /**
      * Set the event id to the given value.
@@ -277,6 +308,10 @@ define([
 
         if (this.hasStartTime()) {
             args.starttime = this.getStartTime();
+        }
+
+        if(this.hasCourseId()) {
+            args.courseid = this.getCourseId();
         }
 
         if (typeof formData !== 'undefined') {
