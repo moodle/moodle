@@ -257,7 +257,7 @@ class site_registration_form extends moodleform {
         $modulenumberaveragecfg = get_config('hub', 'site_modulenumberaverage_' . $cleanhuburl);
         // Mobile related information.
         $mobileservicesenabled = get_config('hub', 'site_mobileservicesenabled_' . $cleanhuburl);
-        $mobilenotificacionsenabled = get_config('hub', 'site_mobilenotificacionsenabled_' . $cleanhuburl);
+        $mobilenotificationsenabled = get_config('hub', 'site_mobilenotificationsenabled_' . $cleanhuburl);
         $registereduserdevices = get_config('hub', 'site_registereduserdevices_' . $cleanhuburl);
         $registeredactiveuserdevices = get_config('hub', 'site_registeredactiveuserdevices_' . $cleanhuburl);
 
@@ -474,10 +474,10 @@ class site_registration_form extends moodleform {
             $mform->setType('mobileservicesenabled', PARAM_INT);
 
             $mobilenotificationsstatus = $aremobilenotificationsenabled ? 'yes' : 'no';
-            $mform->addElement('checkbox', 'mobilenotificacionsenabled', '',
-                    " " . get_string('mobilenotificacionsenabled', 'hub', $mobilenotificationsstatus));
-            $mform->setDefault('mobilenotificacionsenabled', $mobilenotificacionsenabled != -1);
-            $mform->setType('mobilenotificacionsenabled', PARAM_INT);
+            $mform->addElement('checkbox', 'mobilenotificationsenabled', '',
+                    " " . get_string('mobilenotificationsenabled', 'hub', $mobilenotificationsstatus));
+            $mform->setDefault('mobilenotificationsenabled', $mobilenotificationsenabled != -1);
+            $mform->setType('mobilenotificationsenabled', PARAM_INT);
 
             $mform->addElement('checkbox', 'registereduserdevices', '',
                     " " . get_string('registereduserdevices', 'hub', $registereduserdevicescount));
@@ -547,10 +547,10 @@ class site_registration_form extends moodleform {
             $mform->setType('mobileservicesenabled', PARAM_INT);
 
             $mobilenotificationsstatus = $aremobilenotificationsenabled ? 'yes' : 'no';
-            $mform->addElement('static', 'mobilenotificacionsenabledlabel', '',
-                    " " . get_string('mobilenotificacionsenabled', 'hub', $mobilenotificationsstatus));
-            $mform->addElement('hidden', 'mobilenotificacionsenabled', 1);
-            $mform->setType('mobilenotificacionsenabled', PARAM_INT);
+            $mform->addElement('static', 'mobilenotificationsenabledlabel', '',
+                    " " . get_string('mobilenotificationsenabled', 'hub', $mobilenotificationsstatus));
+            $mform->addElement('hidden', 'mobilenotificationsenabled', 1);
+            $mform->setType('mobilenotificationsenabled', PARAM_INT);
 
             $mform->addElement('static', 'registereduserdeviceslabel', '',
                     " " . get_string('registereduserdevices', 'hub', $registereduserdevicescount));
