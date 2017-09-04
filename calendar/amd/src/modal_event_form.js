@@ -77,7 +77,7 @@ define([
     ModalEventForm.TYPE = 'core_calendar-modal_event_form';
     ModalEventForm.prototype = Object.create(Modal.prototype);
     ModalEventForm.prototype.constructor = ModalEventForm;
-    
+
     /**
      * Set the course id to the given value.
      *
@@ -310,7 +310,7 @@ define([
             args.starttime = this.getStartTime();
         }
 
-        if(this.hasCourseId()) {
+        if (this.hasCourseId()) {
             args.courseid = this.getCourseId();
         }
 
