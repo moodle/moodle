@@ -41,6 +41,11 @@ Example:
     exit(0);
 }
 
+if (!$DB->replace_all_text_supported()) {
+    echo $OUTPUT->notification(get_string('notimplemented', 'tool_httpsreplace'));
+    exit(1);
+}
+
 if (!is_https()) {
     echo $OUTPUT->notification(get_string('httpwarning', 'tool_httpsreplace'), 'warning');
 }

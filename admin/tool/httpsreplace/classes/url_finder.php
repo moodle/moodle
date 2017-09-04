@@ -92,7 +92,14 @@ class url_finder {
 
         require_once($CFG->libdir.'/filelib.php');
 
-        $httpurls  = "(src|data)\ *=\ *[\\\"\']http://";
+        if ($DB->sql_regex_supported()) {
+            $regexp = $DB->sql_regex();
+            $httpurls  = "(src|data)\ *=\ *[\\\"\']http://";
+        } else {
+            // Simpler query for DBs without regex support.
+            $regexp = "like";
+            $httpurls  = "%=%http://%";
+        }
 
         // TODO: block_instances have HTML content as base64, need to decode then
         // search, currently just skipped. See MDL-60024.
@@ -127,6 +134,8 @@ class url_finder {
             'mediumtext',
             'longtext',
             'varchar',
+            'nvarchar',
+            'CLOB',
         );
 
         $numberoftables = count($tables);
@@ -140,7 +149,6 @@ class url_finder {
                 continue;
             }
             if ($columns = $DB->get_columns($table)) {
-                $regexp = $DB->sql_regex();
                 foreach ($columns as $column) {
 
                     if (in_array($column->type, $texttypes)) {
