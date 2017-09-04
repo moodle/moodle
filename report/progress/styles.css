@@ -59,9 +59,4 @@
 #page-report-progress-index .modicon {
     padding-top: 5px;
 }
-
-#page-report-progress-index #completion-progress td a .ajaxworking {
-    height: 16px;
-    background: url([[pix:i/ajaxloader]]) no-repeat;
-}
 /*rtl:end:ignore*/

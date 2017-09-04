@@ -510,7 +510,7 @@ class core_course_renderer extends plugin_renderer_base {
             if ($completiondata->overrideby) {
                 $args = new stdClass();
                 $args->modname = $formattedname;
-                $overridebyuser = $DB->get_record('user', array('id' => $completiondata->overrideby), '*', MUST_EXIST);
+                $overridebyuser = \core_user::get_user($completiondata->overrideby, '*', MUST_EXIST);
                 $args->overrideuser = fullname($overridebyuser);
                 $imgalt = get_string('completion-alt-' . $completionicon, 'completion', $args);
             } else {

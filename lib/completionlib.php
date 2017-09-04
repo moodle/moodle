@@ -520,6 +520,16 @@ class completion_info {
     }
 
     /**
+     * Check whether the supplied user can override the activity completion statuses within the current course.
+     *
+     * @param stdClass $user The user object.
+     * @return bool True if the user can override, false otherwise.
+     */
+    public function user_can_override_completion($user) {
+        return has_capability('moodle/course:overridecompletion', context_course::instance($this->course_id), $user);
+    }
+
+    /**
      * Updates (if necessary) the completion state of activity $cm for the given
      * user.
      *
@@ -550,6 +560,7 @@ class completion_info {
      * @param int $userid User ID to be updated. Default 0 = current user
      * @param bool $override Whether manually overriding the existing completion state.
      * @return void
+     * @throws moodle_exception if trying to override without permission.
      */
     public function update_state($cm, $possibleresult=COMPLETION_UNKNOWN, $userid=0, $override = false) {
         global $USER;
@@ -557,6 +568,14 @@ class completion_info {
         // Do nothing if completion is not enabled for that activity
         if (!$this->is_enabled($cm)) {
             return;
+        }
+
+        // If we're processing an override and the current user isn't allowed to do so, then throw an exception.
+        if ($override) {
+            if (!$this->user_can_override_completion($USER)) {
+                throw new required_capability_exception(context_course::instance($this->course_id),
+                                                        'moodle/course:overridecompletion', 'nopermission', '');
+            }
         }
 
         // Get current value of completion state and do nothing if it's same as

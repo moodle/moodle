@@ -51,9 +51,10 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
                 }])[0];
             }).then(function(results) {
                 // Update the DOM accordingly.
+                var flipState = results.completionstate ? 0 : 1;
                 triggerElement.find('.loading-icon').remove();
-                triggerElement.data('changecompl', results.changecompl);
-                triggerElement.attr('data-changecompl', results.changecompl);
+                triggerElement.data('changecompl', override.userid + '-' + override.cmid + '-' + flipState);
+                triggerElement.attr('data-changecompl', override.userid + '-' + override.cmid + '-' + flipState);
                 triggerElement.children("img").replaceWith(results.img);
                 return;
             }).catch(Notification.exception);
@@ -68,7 +69,9 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
          */
         var userConfirm = function(e, data) {
             data.originalEvent.preventDefault();
+            data.originalEvent.stopPropagation();
             e.preventDefault();
+            e.stopPropagation();
 
             triggerElement = $(e.currentTarget);
             var elemData = triggerElement.data('changecompl').split('-');

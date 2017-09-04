@@ -128,10 +128,10 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->mock_setup();
 
         $mockbuilder = $this->getMockBuilder('completion_info');
-        $mockbuilder->setMethods(array('is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'));
+        $mockbuilder->setMethods(array('is_enabled', 'get_data', 'internal_get_state', 'internal_set_data',
+                                       'user_can_override_completion'));
         $mockbuilder->setConstructorArgs(array((object)array('id' => 42)));
         $c = $mockbuilder->getMock();
-
         $cm = (object)array('id'=>13, 'course'=>42);
 
         // Not enabled, should do nothing.
@@ -229,7 +229,10 @@ class core_completionlib_testcase extends advanced_testcase {
             ->method('is_enabled')
             ->with($cm)
             ->will($this->returnValue(true));
-        $c->expects($this->at(1))
+        $c->expects($this->at(1)) // Pretend the user has the required capability for overriding completion statuses.
+            ->method('user_can_override_completion')
+            ->will($this->returnValue(true));
+        $c->expects($this->at(2))
             ->method('get_data')
             ->with($cm, false, 100)
             ->will($this->returnValue($current));
@@ -239,7 +242,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $changed->overrideby = 314159;
         $comparewith = new phpunit_constraint_object_is_equal_with_exceptions($changed);
         $comparewith->add_exception('timemodified', 'assertGreaterThanOrEqual');
-        $c->expects($this->at(2))
+        $c->expects($this->at(3))
             ->method('internal_set_data')
             ->with($cm, $comparewith);
         $c->update_state($cm, COMPLETION_COMPLETE, 100, true);
@@ -258,7 +261,10 @@ class core_completionlib_testcase extends advanced_testcase {
             ->method('is_enabled')
             ->with($cm)
             ->will($this->returnValue(true));
-        $c->expects($this->at(1))
+        $c->expects($this->at(1)) // Pretend the user has the required capability for overriding completion statuses.
+            ->method('user_can_override_completion')
+            ->will($this->returnValue(true));
+        $c->expects($this->at(2))
             ->method('get_data')
             ->with($cm, false, 100)
             ->will($this->returnValue($current));
@@ -268,7 +274,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $changed->overrideby = 314159;
         $comparewith = new phpunit_constraint_object_is_equal_with_exceptions($changed);
         $comparewith->add_exception('timemodified', 'assertGreaterThanOrEqual');
-        $c->expects($this->at(2))
+        $c->expects($this->at(3))
             ->method('internal_set_data')
             ->with($cm, $comparewith);
         $c->update_state($cm, COMPLETION_COMPLETE, 100, true);
@@ -294,7 +300,10 @@ class core_completionlib_testcase extends advanced_testcase {
             ->method('is_enabled')
             ->with($cm)
             ->will($this->returnValue(true));
-        $c->expects($this->at(1))
+        $c->expects($this->at(1)) // Pretend the user has the required capability for overriding completion statuses.
+        ->method('user_can_override_completion')
+            ->will($this->returnValue(true));
+        $c->expects($this->at(2))
             ->method('get_data')
             ->with($cm, false, 100)
             ->will($this->returnValue($current));
@@ -304,7 +313,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $changed->overrideby = 314159;
         $comparewith = new phpunit_constraint_object_is_equal_with_exceptions($changed);
         $comparewith->add_exception('timemodified', 'assertGreaterThanOrEqual');
-        $c->expects($this->at(2))
+        $c->expects($this->at(3))
             ->method('internal_set_data')
             ->with($cm, $comparewith);
         $c->update_state($cm, COMPLETION_INCOMPLETE, 100, true);

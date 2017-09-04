@@ -118,7 +118,7 @@ class core_completion_external extends external_api {
      * Describes the parameters for override_activity_completion_status.
      *
      * @return external_external_function_parameters
-     * @since Moodle 3.1
+     * @since Moodle 3.4
      */
     public static function override_activity_completion_status_parameters() {
         return new external_function_parameters (
@@ -136,7 +136,7 @@ class core_completion_external extends external_api {
      * @param  int $cmid      Course module id
      * @param  int $newstate  Activity completion
      * @return array          Result and possible warnings
-     * @since Moodle 3.1
+     * @since Moodle 3.4
      * @throws moodle_exception
      */
     public static function override_activity_completion_status($userid, $cmid, $newstate) {
@@ -148,8 +148,6 @@ class core_completion_external extends external_api {
         $userid = $params['userid'];
         $cmid = $params['cmid'];
         $newstate = $params['newstate'];
-
-        $warnings = array();
 
         $context = context_module::instance($cmid);
         self::validate_context($context);
@@ -191,9 +189,8 @@ class core_completion_external extends external_api {
             ($cm->completion == COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual').
             '-'.$completiontype;
 
-        $overridebyuser = $DB->get_record('user', array('id' => $USER->id), '*', MUST_EXIST);
-        $describe = get_string('completion-' . $completiontype, 'completion', fullname($overridebyuser));
-        $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+        $describe = get_string('completion-' . $completiontype, 'completion', fullname($USER));
+        $user = \core_user::get_user($userid, '*', MUST_EXIST);
         $a = new StdClass;
         $a->state = $describe;
         $a->date = $date;
@@ -203,15 +200,11 @@ class core_completion_external extends external_api {
 
         $img = $OUTPUT->pix_icon('i/' . $completionicon, s($fulldescribe));
 
-        // Set data values for next completion change.
-        $otherstate = ($state == COMPLETION_COMPLETE) ? COMPLETION_INCOMPLETE : COMPLETION_COMPLETE;
-        $changecompl = $userid . '-' . $cmid . '-' . $otherstate;
-
-        $result = array();
-        $result['status'] = true;
-        $result['warnings'] = $warnings;
-        $result['changecompl'] = $changecompl;
-        $result['img'] = $img;
+        // Return the current state of completion.
+        $result = [
+            'completionstate' => $state,
+            'img' => $img
+        ];
         return $result;
     }
 
@@ -219,15 +212,13 @@ class core_completion_external extends external_api {
      * Describes the override_activity_completion_status return value.
      *
      * @return external_single_structure
-     * @since Moodle 3.1
+     * @since Moodle 3.4
      */
     public static function override_activity_completion_status_returns() {
 
         return new external_single_structure(
             array(
-                'status'        => new external_value(PARAM_BOOL, 'Status, true if success'),
-                'warnings'      => new external_warnings(),
-                'changecompl'   => new external_value(PARAM_ALPHANUMEXT, 'The new completion change data'),
+                'completionstate'   => new external_value(PARAM_BOOL, 'The current completion state.'),
                 'img'           => new external_value(PARAM_RAW, 'Image element to replace existing one'),
             )
         );

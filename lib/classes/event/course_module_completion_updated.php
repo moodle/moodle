@@ -127,6 +127,7 @@ class course_module_completion_updated extends base {
     public static function get_other_mapping() {
         $othermapped = array();
         $othermapped['relateduserid'] = array('db' => 'user', 'restore' => 'user');
+        $othermapped['overrideby'] = array('db' => 'user', 'restore' => 'user');
 
         return $othermapped;
     }
