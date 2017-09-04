@@ -1165,7 +1165,7 @@ function lti_get_enabled_capabilities($tool) {
  * @param string    $customstr      String containing the parameters
  * @param boolean   $islti2         True if an LTI 2 tool is being launched
  *
- * @return Array of custom parameters
+ * @return array of custom parameters
  */
 function lti_split_custom_parameters($toolproxy, $tool, $params, $customstr, $islti2 = false) {
     $customstr = str_replace("\r\n", "\n", $customstr);
@@ -1179,11 +1179,12 @@ function lti_split_custom_parameters($toolproxy, $tool, $params, $customstr, $is
             continue;
         }
         $key = trim(core_text::substr($line, 0, $pos));
+        $key = lti_map_keyname($key, false);
         $val = trim(core_text::substr($line, $pos + 1, strlen($line)));
         $val = lti_parse_custom_parameter($toolproxy, $tool, $params, $val, $islti2);
         $key2 = lti_map_keyname($key);
         $retval['custom_'.$key2] = $val;
-        if ($islti2 && ($key != $key2)) {
+        if ($key != $key2) {
             $retval['custom_'.$key] = $val;
         }
     }
@@ -1269,14 +1270,16 @@ function lti_parse_custom_parameter($toolproxy, $tool, $params, $value, $islti2)
  * Used for building the names of the different custom parameters
  *
  * @param string $key   Parameter name
- *
+ * @param bool $tolower Do we want to convert the key into lower case?
  * @return string       Processed name
  */
-function lti_map_keyname($key) {
+function lti_map_keyname($key, $tolower = true) {
     $newkey = "";
-    $key = core_text::strtolower(trim($key));
+    if ($tolower) {
+        $key = core_text::strtolower(trim($key));
+    }
     foreach (str_split($key) as $ch) {
-        if ( ($ch >= 'a' && $ch <= 'z') || ($ch >= '0' && $ch <= '9') ) {
+        if ( ($ch >= 'a' && $ch <= 'z') || ($ch >= '0' && $ch <= '9') || (!$tolower && ($ch >= 'A' && $ch <= 'Z'))) {
             $newkey .= $ch;
         } else {
             $newkey .= '_';
