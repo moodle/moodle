@@ -226,4 +226,49 @@ class message_received_search_testcase extends advanced_testcase {
         $this->assertEquals(\core_search\manager::ACCESS_DELETED, $searcharea->check_access($messageid));
 
     }
+
+    /**
+     * Test received deleted user.
+     * Tests the case where a received message for a deleted user
+     * is attempted to be added to the index.
+     *
+     * @return void
+     */
+    public function test_message_received_deleted_user() {
+
+        // Returns the instance as long as the area is supported.
+        $searcharea = \core_search\manager::get_search_area($this->messagereceivedareaid);
+        $this->assertInstanceOf('\core_message\search\message_received', $searcharea);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
+        $message = new \core\message\message();
+        $message->courseid = SITEID;
+        $message->userfrom = $user1;
+        $message->userto = $user2;
+        $message->subject = "Test Subject";
+        $message->smallmessage = "Test small messsage";
+        $message->fullmessage = "Test full messsage";
+        $message->fullmessageformat = 0;
+        $message->fullmessagehtml = null;
+        $message->notification = 0;
+        $message->component = "moodle";
+        $message->name = "instantmessage";
+
+        message_send($message);
+
+        $messages = $sink->get_messages();
+        $message = $messages[0];
+
+        // Delete user.
+        delete_user($user2);
+
+        $doc = $searcharea->get_document($message);
+
+        $this->assertFalse($doc);
+    }
 }
