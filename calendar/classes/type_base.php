@@ -239,4 +239,32 @@ abstract class type_base {
             $gregorianinfo['minute'],
             0);
     }
+
+    /**
+     * Get the previous day.
+     *
+     * @param int $daytimestamp The day timestamp.
+     * @return int previous day timestamp
+     */
+    public function get_prev_day($daytimestamp) {
+        $date = new \DateTime();
+        $date->setTimestamp($daytimestamp);
+        $date->modify('-1 day');
+
+        return $date->getTimestamp();
+    }
+
+    /**
+     * Get the next day.
+     *
+     * @param int $daytimestamp The day timestamp.
+     * @return int the following day
+     */
+    public function get_next_day($daytimestamp) {
+        $date = new \DateTime();
+        $date->setTimestamp($daytimestamp);
+        $date->modify('+1 day');
+
+        return $date->getTimestamp();
+    }
 }
