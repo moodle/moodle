@@ -51,6 +51,14 @@ abstract class base_message extends \core_search\base {
      * @return \core_search\document
      */
     public function get_document($record, $options = array()) {
+
+        // Check if user still exists, before proceeding.
+        $user = \core_user::get_user($options['user1id'], 'deleted');
+        if ($user->deleted == 1) {
+            return false;
+        }
+
+        // Get user context.
         try {
             $usercontext = \context_user::instance($options['user1id']);
         } catch (\moodle_exception $ex) {
