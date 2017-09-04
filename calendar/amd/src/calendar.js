@@ -65,7 +65,8 @@ define([
         DAY_CONTENT: "[data-region='day-content']",
         LOADING_ICON: '.loading-icon',
         VIEW_DAY_LINK: "[data-action='view-day-link']",
-        CALENDAR_MONTH_WRAPPER: ".calendarwrapper"
+        CALENDAR_MONTH_WRAPPER: ".calendarwrapper",
+        COURSE_SELECTOR: 'select[name="course"]'
     };
 
     /**
@@ -315,6 +316,17 @@ define([
             }
 
             renderEventSummaryModal(eventId);
+        });
+
+        root.on('change', SELECTORS.COURSE_SELECTOR, function() {
+            var selectElement = $(this);
+            var courseId = selectElement.val();
+            CalendarViewManager.reloadCurrentMonth(root, courseId)
+                .then(function() {
+                    // We need to get the selector again because the content has changed.
+                    return root.find(SELECTORS.COURSE_SELECTOR).val(courseId);
+                })
+                .fail(Notification.exception);
         });
 
         var eventFormPromise = registerEventFormModal(root);

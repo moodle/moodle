@@ -96,13 +96,17 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
         /**
          * Reload the current month view data.
          *
+         * @param {object} root The container element.
+         * @param {Number} courseId The course id.
          * @return {promise}
          */
-        var reloadCurrentMonth = function(root) {
-            var courseid = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('courseid'),
-                time = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('current-time');
+        var reloadCurrentMonth = function(root, courseId) {
+            var time = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('current-time');
 
-            return refreshMonthContent(time, courseid);
+            if (!courseId) {
+                courseId = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('courseid');
+            }
+            return refreshMonthContent(time, courseId);
         };
 
         /**
