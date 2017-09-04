@@ -469,8 +469,8 @@ abstract class base {
             return $result;
         }
 
-        // Add target metadata.
-        $this->add_target_metadata($data);
+        // Add extra metadata.
+        $this->add_model_metadata($data);
 
         // Write all calculated data to a file.
         $file = $dataset->store($data);
@@ -646,21 +646,25 @@ abstract class base {
      * @param array $data
      * @return void
      */
-    protected function add_target_metadata(&$data) {
-        $data[0][] = 'targetcolumn';
-        $data[1][] = $this->analysabletarget->get_id();
+    protected function add_model_metadata(&$data) {
+        global $CFG;
+
+        $metadata = array(
+            'moodleversion' => $CFG->version,
+            'targetcolumn' => $this->analysabletarget->get_id()
+        );
         if ($this->analysabletarget->is_linear()) {
-            $data[0][] = 'targettype';
-            $data[1][] = 'linear';
-            $data[0][] = 'targetmin';
-            $data[1][] = $this->analysabletarget::get_min_value();
-            $data[0][] = 'targetmax';
-            $data[1][] = $this->analysabletarget::get_max_value();
+            $metadata['targettype'] = 'linear';
+            $metadata['targetmin'] = $this->analysabletarget::get_min_value();
+            $metadata['targetmax'] = $this->analysabletarget::get_max_value();
         } else {
-            $data[0][] = 'targettype';
-            $data[1][] = 'discrete';
-            $data[0][] = 'targetclasses';
-            $data[1][] = json_encode($this->analysabletarget::get_classes());
+            $metadata['targettype'] = 'discrete';
+            $metadata['targetclasses'] = json_encode($this->analysabletarget::get_classes());
+        }
+
+        foreach ($metadata as $varname => $value) {
+            $data[0][] = $varname;
+            $data[1][] = $value;
         }
     }
 }
