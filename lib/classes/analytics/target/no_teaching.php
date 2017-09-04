@@ -134,7 +134,7 @@ class no_teaching extends \core_analytics\local\target\binary {
      * @param int $sampleid
      * @param \core_analytics\analysable $analysable
      * @param bool $fortraining
-     * @return true|string
+     * @return bool
      */
     public function is_valid_sample($sampleid, \core_analytics\analysable $analysable, $fortraining = true) {
 
