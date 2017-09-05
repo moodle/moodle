@@ -279,7 +279,7 @@ class month_exporter extends exporter {
      */
     protected function get_next_month_timestamp() {
         $date = $this->related['type']->timestamp_to_date_array($this->calendar->time);
-        $month = calendar_sub_month($date['mon'], $date['year']);
+        $month = calendar_add_month($date['mon'], $date['year']);
         $monthtime = $this->related['type']->convert_to_gregorian($month[1], $month[0], 1);
 
         return make_timestamp($monthtime['year'], $monthtime['month'], $monthtime['day'], $monthtime['hour'], $monthtime['minute']);
