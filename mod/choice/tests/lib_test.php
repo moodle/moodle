@@ -346,12 +346,13 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
+        $timeclose = time() - DAYSECS;
         // Create a choice.
         $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id,
-            'timeclose' => time() - DAYSECS));
+            'timeclose' => $timeclose));
 
         // Create a calendar event.
-        $event = $this->create_action_event($course->id, $choice->id, CHOICE_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $choice->id, CHOICE_EVENT_TYPE_OPEN, $timeclose - 1);
 
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
@@ -371,12 +372,15 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
+        $timeopen = time() + DAYSECS;
+        $timeclose = $timeopen + DAYSECS;
+
         // Create a choice.
         $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id,
-            'timeopen' => time() + DAYSECS));
+            'timeopen' => $timeopen, 'timeclose' => $timeclose));
 
         // Create a calendar event.
-        $event = $this->create_action_event($course->id, $choice->id, CHOICE_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $choice->id, CHOICE_EVENT_TYPE_OPEN, $timeopen);
 
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
@@ -426,9 +430,10 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
      * @param int $courseid
      * @param int $instanceid The choice id.
      * @param string $eventtype The event type. eg. CHOICE_EVENT_TYPE_OPEN.
+     * @param int|null $timestart The start timestamp for the event
      * @return bool|calendar_event
      */
-    private function create_action_event($courseid, $instanceid, $eventtype) {
+    private function create_action_event($courseid, $instanceid, $eventtype, $timestart = null) {
         $event = new stdClass();
         $event->name = 'Calendar event';
         $event->modulename = 'choice';
@@ -436,7 +441,12 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $event->instance = $instanceid;
         $event->type = CALENDAR_EVENT_TYPE_ACTION;
         $event->eventtype = $eventtype;
-        $event->timestart = time();
+
+        if ($timestart) {
+            $event->timestart = $timestart;
+        } else {
+            $event->timestart = time();
+        }
 
         return calendar_event::create($event);
     }
@@ -477,5 +487,331 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(mod_choice_get_completion_active_rule_descriptions($cm2), []);
         $this->assertEquals(mod_choice_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
         $this->assertEquals(mod_choice_get_completion_active_rule_descriptions(new stdClass()), []);
+    }
+
+    /**
+     * You can't create a choice module event when the module doesn't exist.
+     */
+    public function test_mod_choice_core_calendar_validate_event_timestart_no_activity() {
+        global $CFG;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'choice',
+            'instance' => 1234,
+            'eventtype' => CHOICE_EVENT_TYPE_OPEN,
+            'timestart' => time(),
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        $this->expectException('moodle_exception');
+        mod_choice_core_calendar_validate_event_timestart($event);
+    }
+
+    /**
+     * A CHOICE_EVENT_TYPE_OPEN must be before the close time of the choice activity.
+     */
+    public function test_mod_choice_core_calendar_validate_event_timestart_valid_open_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $choicegenerator = $generator->get_plugin_generator('mod_choice');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $choice = $choicegenerator->create_instance(['course' => $course->id]);
+        $choice->timeopen = $timeopen;
+        $choice->timeclose = $timeclose;
+        $DB->update_record('choice', $choice);
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'choice',
+            'instance' => $choice->id,
+            'eventtype' => CHOICE_EVENT_TYPE_OPEN,
+            'timestart' => $timeopen,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        $this->assertTrue(mod_choice_core_calendar_validate_event_timestart($event));
+    }
+
+    /**
+     * A CHOICE_EVENT_TYPE_OPEN can not have a start time set after the close time
+     * of the choice activity.
+     */
+    public function test_mod_choice_core_calendar_validate_event_timestart_invalid_open_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $choicegenerator = $generator->get_plugin_generator('mod_choice');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $choice = $choicegenerator->create_instance(['course' => $course->id]);
+        $choice->timeopen = $timeopen;
+        $choice->timeclose = $timeclose;
+        $DB->update_record('choice', $choice);
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'choice',
+            'instance' => $choice->id,
+            'eventtype' => CHOICE_EVENT_TYPE_OPEN,
+            'timestart' => $timeclose + 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        $this->expectException('moodle_exception');
+        mod_choice_core_calendar_validate_event_timestart($event);
+    }
+
+    /**
+     * A CHOICE_EVENT_TYPE_CLOSE must be after the open time of the choice activity.
+     */
+    public function test_mod_choice_core_calendar_validate_event_timestart_valid_close_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $choicegenerator = $generator->get_plugin_generator('mod_choice');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $choice = $choicegenerator->create_instance(['course' => $course->id]);
+        $choice->timeopen = $timeopen;
+        $choice->timeclose = $timeclose;
+        $DB->update_record('choice', $choice);
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'choice',
+            'instance' => $choice->id,
+            'eventtype' => CHOICE_EVENT_TYPE_CLOSE,
+            'timestart' => $timeclose,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        $this->assertTrue(mod_choice_core_calendar_validate_event_timestart($event));
+    }
+
+    /**
+     * A CHOICE_EVENT_TYPE_CLOSE can not have a start time set before the open time
+     * of the choice activity.
+     */
+    public function test_mod_choice_core_calendar_validate_event_timestart_invalid_close_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $choicegenerator = $generator->get_plugin_generator('mod_choice');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $choice = $choicegenerator->create_instance(['course' => $course->id]);
+        $choice->timeopen = $timeopen;
+        $choice->timeclose = $timeclose;
+        $DB->update_record('choice', $choice);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'choice',
+            'instance' => $choice->id,
+            'eventtype' => CHOICE_EVENT_TYPE_CLOSE,
+            'timestart' => $timeopen - 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        $this->expectException('moodle_exception');
+        mod_choice_core_calendar_validate_event_timestart($event);
+    }
+
+    /**
+     * An unkown event type should not change the choice instance.
+     */
+    public function test_mod_choice_core_calendar_event_timestart_updated_unknown_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $choicegenerator = $generator->get_plugin_generator('mod_choice');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $choice = $choicegenerator->create_instance(['course' => $course->id]);
+        $choice->timeopen = $timeopen;
+        $choice->timeclose = $timeclose;
+        $DB->update_record('choice', $choice);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'choice',
+            'instance' => $choice->id,
+            'eventtype' => CHOICE_EVENT_TYPE_OPEN . "SOMETHING ELSE",
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        mod_choice_core_calendar_event_timestart_updated($event);
+
+        $choice = $DB->get_record('choice', ['id' => $choice->id]);
+        $this->assertEquals($timeopen, $choice->timeopen);
+        $this->assertEquals($timeclose, $choice->timeclose);
+    }
+
+    /**
+     * A CHOICE_EVENT_TYPE_OPEN event should update the timeopen property of
+     * the choice activity.
+     */
+    public function test_mod_choice_core_calendar_event_timestart_updated_open_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $choicegenerator = $generator->get_plugin_generator('mod_choice');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newtimeopen = $timeopen - DAYSECS;
+        $choice = $choicegenerator->create_instance(['course' => $course->id]);
+        $choice->timeopen = $timeopen;
+        $choice->timeclose = $timeclose;
+        $choice->timemodified = $timemodified;
+        $DB->update_record('choice', $choice);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'choice',
+            'instance' => $choice->id,
+            'eventtype' => CHOICE_EVENT_TYPE_OPEN,
+            'timestart' => $newtimeopen,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        mod_choice_core_calendar_event_timestart_updated($event);
+
+        $choice = $DB->get_record('choice', ['id' => $choice->id]);
+        // Ensure the timeopen property matches the event timestart.
+        $this->assertEquals($newtimeopen, $choice->timeopen);
+        // Ensure the timeclose isn't changed.
+        $this->assertEquals($timeclose, $choice->timeclose);
+        // Ensure the timemodified property has been changed.
+        $this->assertNotEquals($timemodified, $choice->timemodified);
+    }
+
+    /**
+     * A CHOICE_EVENT_TYPE_CLOSE event should update the timeclose property of
+     * the choice activity.
+     */
+    public function test_mod_choice_core_calendar_event_timestart_updated_close_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $choicegenerator = $generator->get_plugin_generator('mod_choice');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newtimeclose = $timeclose + DAYSECS;
+        $choice = $choicegenerator->create_instance(['course' => $course->id]);
+        $choice->timeopen = $timeopen;
+        $choice->timeclose = $timeclose;
+        $choice->timemodified = $timemodified;
+        $DB->update_record('choice', $choice);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'choice',
+            'instance' => $choice->id,
+            'eventtype' => CHOICE_EVENT_TYPE_CLOSE,
+            'timestart' => $newtimeclose,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        mod_choice_core_calendar_event_timestart_updated($event);
+
+        $choice = $DB->get_record('choice', ['id' => $choice->id]);
+        // Ensure the timeclose property matches the event timestart.
+        $this->assertEquals($newtimeclose, $choice->timeclose);
+        // Ensure the timeopen isn't changed.
+        $this->assertEquals($timeopen, $choice->timeopen);
+        // Ensure the timemodified property has been changed.
+        $this->assertNotEquals($timemodified, $choice->timemodified);
     }
 }
