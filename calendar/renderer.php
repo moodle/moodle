@@ -389,14 +389,15 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
         $courseurl = new moodle_url($returnurl);
         $courseurl->remove_params('course');
-        $select = new single_select($courseurl, 'course', $courseoptions, $selected, null);
-        $select->class = 'm-r-1';
-        if ($label !== null) {
-            $select->set_label($label);
-        } else {
-            $select->set_label(get_string('listofcourses'), array('class' => 'accesshide'));
+
+        if ($label === null) {
+            $label = get_string('listofcourses');
         }
-        return $this->output->render($select);
+
+        $select = html_writer::label($label, 'course', false, ['class' => 'm-r-1']);
+        $select .= html_writer::select($courseoptions, 'course', $selected, false, ['class' => 'cal_courses_flt']);
+
+        return $select;
     }
 
     /**
