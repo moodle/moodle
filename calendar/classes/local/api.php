@@ -231,14 +231,46 @@ class api {
     ) {
         $mapper = container::get_event_mapper();
         $legacyevent = $mapper->from_event_to_legacy_event($event);
+        $hascoursemodule = !empty($event->get_course_module());
         $starttime = $event->get_times()->get_start_time()->setDate(
             $startdate->format('Y'),
             $startdate->format('n'),
             $startdate->format('j')
         );
 
+        if ($hascoursemodule) {
+            $legacyevent->timestart = $starttime->getTimestamp();
+            // If this event is from an activity then we need to call
+            // the activity callback to let it validate that the changes
+            // to the event are correct.
+            component_callback(
+                'mod_' . $event->get_course_module()->get('modname'),
+                'core_calendar_validate_event_timestart',
+                [$legacyevent]
+            );
+        }
+
         // This function does our capability checks.
         $legacyevent->update((object) ['timestart' => $starttime->getTimestamp()]);
+
+        // Check that the user is allowed to manually edit calendar events before
+        // calling the event updated callback. The manual flag causes the code to
+        // check the user has the capabilities to modify the modules.
+        //
+        // We don't want to call the event update callback if the user isn't allowed
+        // to modify course modules because depending on the callback it can make
+        // some changes that would be considered security issues, such as updating the
+        // due date for and assignment.
+        if ($hascoursemodule && calendar_edit_event_allowed($legacyevent, true)) {
+            // If this event is from an activity then we need to call
+            // the activity callback to let it know that the event it
+            // created has been modified so it needs to update accordingly.
+            component_callback(
+                'mod_' . $event->get_course_module()->get('modname'),
+                'core_calendar_event_timestart_updated',
+                [$legacyevent]
+            );
+        }
 
         return $mapper->from_legacy_event_to_event($legacyevent);
     }
