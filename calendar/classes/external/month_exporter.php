@@ -213,13 +213,13 @@ class month_exporter extends exporter {
         $prepadding = ($firstdayno + $daysinweek - 1) % $daysinweek;
         $daysinfirstweek = $daysinweek - $prepadding;
         $days = array_slice($alldays, 0, $daysinfirstweek);
-        $week = new week_exporter($days, $prepadding, ($daysinweek - count($days) - $prepadding), $this->related);
+        $week = new week_exporter($this->calendar, $days, $prepadding, ($daysinweek - count($days) - $prepadding), $this->related);
         $weeks[] = $week->export($output);
 
         // Now chunk up the remaining day. and turn them into weeks.
         $daychunks = array_chunk(array_slice($alldays, $daysinfirstweek), $daysinweek);
         foreach ($daychunks as $days) {
-            $week = new week_exporter($days, 0, ($daysinweek - count($days)), $this->related);
+            $week = new week_exporter($this->calendar, $days, 0, ($daysinweek - count($days)), $this->related);
             $weeks[] = $week->export($output);
         }
 

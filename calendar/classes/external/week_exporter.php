@@ -53,18 +53,26 @@ class week_exporter extends exporter {
      */
     protected $postpadding = 0;
 
+
+    /**
+     * @var \calendar_information $calendar The calendar being displayed.
+     */
+    protected $calendar;
+
     /**
      * Constructor.
      *
+     * @param \calendar_information $calendar The calendar information for the period being displayed
      * @param mixed $days An array of day_exporter objects.
      * @param int $prepadding The number of pre-padding days at the start of the week.
      * @param int $postpadding The number of post-padding days at the start of the week.
      * @param array $related Related objects.
      */
-    public function __construct($days, $prepadding, $postpadding, $related) {
+    public function __construct(\calendar_information $calendar, $days, $prepadding, $postpadding, $related) {
         $this->days = $days;
         $this->prepadding = $prepadding;
         $this->postpadding = $postpadding;
+        $this->calendar = $calendar;
 
         parent::__construct([], $related);
     }
