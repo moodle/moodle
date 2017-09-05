@@ -2398,7 +2398,8 @@ abstract class moodle_database {
         // NOTE: override this methods if following standard compliant SQL
         //       does not work for your driver.
 
-        $columnname = $column->name;
+        // Enclose the column name by the proper quotes if it's a reserved word.
+        $columnname = $this->get_manager()->generator->getEncQuoted($column->name);
         $sql = "UPDATE {".$table."}
                        SET $columnname = REPLACE($columnname, ?, ?)
                      WHERE $columnname IS NOT NULL";
