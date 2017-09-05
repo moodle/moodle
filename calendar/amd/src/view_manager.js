@@ -60,7 +60,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
 
             return CalendarRepository.getCalendarMonthData(time, courseid)
                 .then(function(context) {
-                    return Templates.render('core_calendar/month_detailed', context);
+                    return Templates.render(root.attr('data-template'), context);
                 })
                 .then(function(html, js) {
                     return Templates.replaceNode(root.find(SELECTORS.CALENDAR_MONTH_WRAPPER), html, js);

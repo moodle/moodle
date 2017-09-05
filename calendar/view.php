@@ -161,5 +161,4 @@ echo html_writer::end_tag('div');
 list($data, $template) = calendar_get_footer_options($calendar);
 echo $renderer->render_from_template($template, $data);
 
-$PAGE->requires->js_call_amd('core_calendar/calendar', 'init');
 echo $OUTPUT->footer();

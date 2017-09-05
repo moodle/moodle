@@ -3518,7 +3518,7 @@ function calendar_get_view(\calendar_information $calendar, $view) {
 
     $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
     $data = $month->export($renderer);
-    $template = 'core_calendar/month_detailed';
+    $template = 'core_calendar/calendar_month';
 
     return [$data, $template];
 }
