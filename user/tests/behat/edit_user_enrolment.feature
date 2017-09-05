@@ -45,7 +45,7 @@ Feature: Edit user enrolment
     And I am on "Course 1" course homepage
     And I navigate to course participants
     When I click on "Unenrol" "icon" in the "student1" "table_row"
-    And I click on "Yes" "button"
+    And I click on "Unenrol" "button" in the ".modal-footer" "css_element"
     Then I should not see "Student 1" in the "participants" "table"
 
   @javascript

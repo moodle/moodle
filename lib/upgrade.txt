@@ -42,6 +42,8 @@ information provided here is intended especially for developers.
   close the suggestions popup immediately after an option has been selected. If not specified, it defaults to true for single-select
   elements and false for multiple-select elements.
 * user_can_view_profile() now also checks the moodle/user:viewalldetails capability.
+* The core/modal_confirm dialogue has been deprecated. Please use the core/modal_save_cancel dialogue instead. Please ensure you
+  update to use the ModalEvents.save and ModalEvents.cancel events instead of their yes/no counterparts.
 
 === 3.3.1 ===
 

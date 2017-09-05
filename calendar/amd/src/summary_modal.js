@@ -118,33 +118,11 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
         // Apply parent event listeners.
         Modal.prototype.registerEventListeners.call(this);
 
-        var confirmPromise = ModalFactory.create(
-            {
-                type: ModalFactory.types.CONFIRM
-            },
-            this.getDeleteButton()
-        ).then(function(modal) {
-            modal.getRoot().on(ModalEvents.yes, function() {
-                var eventId = this.getEventId();
-
-                CalendarRepository.deleteEvent(eventId)
-                    .then(function() {
-                        $('body').trigger(CalendarEvents.deleted, [eventId]);
-                        this.hide();
-                    }.bind(this))
-                    .catch(Notification.exception);
-            }.bind(this));
-
-            return modal;
-        }.bind(this));
-
         // We have to wait for the modal to finish rendering in order to ensure that
         // the data-event-title property is available to use as the modal title.
         this.getRoot().on(ModalEvents.bodyRendered, function() {
             var eventTitle = this.getBody().find(SELECTORS.ROOT).attr('data-event-title');
-            confirmPromise.then(function(modal) {
-                modal.setBody(Str.get_string('confirmeventdelete', 'core_calendar', eventTitle));
-            });
+            prepareDeleteAction(this, eventTitle);
         }.bind(this));
 
         CustomEvents.define(this.getEditButton(), [
@@ -172,6 +150,48 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
             data.originalEvent.stopPropagation();
         }.bind(this));
     };
+
+    /**
+     * Prepares the action for the summary modal's delete action.
+     *
+     * @param {ModalEventSummary} summaryModal The summary modal instance.
+     * @param {string} eventTitle The event title.
+     */
+    function prepareDeleteAction(summaryModal, eventTitle) {
+        var deleteStrings = [
+            {
+                key: 'deleteevent',
+                component: 'calendar'
+            },
+            {
+                key: 'confirmeventdelete',
+                component: 'calendar',
+                param: eventTitle
+            }
+        ];
+        var eventId = summaryModal.getEventId();
+        var stringsPromise = Str.get_strings(deleteStrings);
+        var deletePromise = ModalFactory.create(
+            {
+                type: ModalFactory.types.SAVE_CANCEL
+            },
+            summaryModal.getDeleteButton()
+        );
+
+        $.when(stringsPromise, deletePromise).then(function(strings, deleteModal) {
+            deleteModal.setTitle(strings[0]);
+            deleteModal.setBody(strings[1]);
+            deleteModal.setSaveButtonText(strings[0]);
+            deleteModal.getRoot().on(ModalEvents.save, function() {
+                CalendarRepository.deleteEvent(eventId).then(function() {
+                    $('body').trigger(CalendarEvents.deleted, [eventId]);
+                    summaryModal.hide();
+                    return;
+                }).catch(Notification.exception);
+            });
+            return deleteModal;
+        }).fail(Notification.exception);
+    }
 
     // Automatically register with the modal registry the first time this module is imported so that you can create modals
     // of this type using the modal factory.

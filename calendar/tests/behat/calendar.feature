@@ -104,7 +104,7 @@ Feature: Perform basic calendar functionality
     When I follow "This month"
     And I click on "Really awesome event!" "link"
     And I click on "Delete" "button"
-    And I click on "Yes" "button"
+    And I click on "Delete event" "button"
     And I wait to be redirected
     Then I should not see "Really awesome event!"
 
