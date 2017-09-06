@@ -221,8 +221,8 @@ class enrol_license_plugin extends enrol_plugin {
         $form = new enrol_license_enrol_form(null, $instance);
         $instanceid = optional_param('instance', 0, PARAM_INT);
 
-        if ($instance->id == $instanceid) {
-            if ($data = $form->get_data()) {
+        if ($instance->id == $instanceid || $license->type == 1) {
+            if ($data = $form->get_data() || $license->type == 1) {
                 $enrol = enrol_get_plugin('license');
 
                 // Enrol the user in the course.
