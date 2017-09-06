@@ -114,5 +114,5 @@ Feature: Enrolments are synchronised with meta courses
     And I navigate to course participants
     # Suspended users can be unenrolled.
     When I click on "//a[@data-action='unenrol']" "xpath_element" in the "student2" "table_row"
-    And I click on "Yes" "button"
+    And I click on "Unenrol" "button" in the "[data-region='modal']" "css_element"
     Then I should not see "Student 2" in the "participants" "table"
