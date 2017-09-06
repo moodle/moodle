@@ -30,16 +30,16 @@ Feature: A teacher can control the subscription to a forum
     Given I follow "Test forum name"
     And I follow "Show/edit current subscribers"
     Then ".userselector" "css_element" should not exist
-    And "Manage subscriptions" "button" should exist
-    And I press "Manage subscriptions"
+    And "Manage subscribers" "button" should exist
+    And I press "Manage subscribers"
     And ".userselector" "css_element" should exist
     And "Finish managing subscriptions" "button" should exist
     And I press "Finish managing subscriptions"
     And ".userselector" "css_element" should not exist
-    And "Manage subscriptions" "button" should exist
-    And I press "Manage subscriptions"
+    And "Manage subscribers" "button" should exist
+    And I press "Manage subscribers"
     And ".userselector" "css_element" should exist
     And "Finish managing subscriptions" "button" should exist
     And I press "Finish managing subscriptions"
     And ".userselector" "css_element" should not exist
-    And "Manage subscriptions" "button" should exist
+    And "Manage subscribers" "button" should exist

@@ -37,18 +37,20 @@ mm.user.student|Aprendiz|es
 </pre>
 For a complete list of string identifiers, see the documentation.';
 $string['custommenuitems'] = 'Custom menu items';
-$string['custommenuitems_desc'] = 'Additional items can be added to the app\'s main menu by specifying them here. Enter each custom menu item on a new line with format: item text, link URL, link-opening method (inappbrowser, browser or embedded) and language code (optional, for displaying the item to users of the specified language only), separated by pipe characters. For example:
+$string['custommenuitems_desc'] = 'Additional items can be added to the app\'s main menu by specifying them here. Enter each custom menu item on a new line with format: item text, link URL, link-opening method and language code (optional, for displaying the item to users of the specified language only), separated by pipe characters.
+
+Link-opening methods are: app (for linking to an activity supported by the app), inappbrowser (for opening a link in a browser without leaving the app), browser (for opening the link in the device default browser outside the app) and embedded (for displaying the link in an iframe in a new page in the app).
+
+For example:
 <pre>
-App\'s help | https://someurl.xyz/help | inappbrowser | en
-Visit our SIS | https://someurl.xyz | browser | en
-My grades | https://someurl.xyz/local/mygrades/index.php | embedded | en
-Mis calificaciones | https://someurl.xyz/local/mygrades/index.php | embedded | es
-</pre>
-Use inappbrowser when you want to open the link in a browser without leaving the app, use browser for opening the link in the device default browser and embedded if you want to display the link embedded in a new page in the app.';
+App help|https://someurl.xyz/help|inappbrowser
+My grades|https://someurl.xyz/local/mygrades/index.php|embedded|en
+Mis calificaciones|https://someurl.xyz/local/mygrades/index.php|embedded|es
+</pre>';
 $string['disabledfeatures'] = 'Disabled features';
 $string['disabledfeatures_desc'] = 'Select here the features you want to disable in the Mobile app for your site. Please note that some features listed here could be already disabled via other site settings. You will have to log out and log in again in the app to see the changes.';
 $string['enablesmartappbanners'] = 'Enable App Banners';
-$string['enablesmartappbanners_desc'] = 'This will display a banner promoting the Moodle Mobile app when visiting the site in a Mobile browser.';
+$string['enablesmartappbanners_desc'] = 'If enabled, a banner promoting the mobile app will be displayed when accessing the site using a mobile browser.';
 $string['forcedurlscheme'] = 'If you want to allow only your custom branded app to be opened via a browser window, then specify its URL scheme here; otherwise leave the field empty.';
 $string['forcedurlscheme_key'] = 'URL scheme';
 $string['forcelogout'] = 'Force log out';
@@ -77,4 +79,4 @@ $string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';
 $string['remoteaddons'] = 'Remote add-ons';
 $string['typeoflogin'] = 'Type of login';
 $string['typeoflogin_desc'] = 'If the site uses a SSO authentication method, then select via a browser window or via an embedded browser. An embedded browser provides a better user experience, though it doesn\'t work with all SSO plugins. If using SSO, autologinguests should be disabled.';
-$string['getmoodleonyourmobile'] = 'Get Moodle on your mobile';
+$string['getmoodleonyourmobile'] = 'Get the mobile app';
