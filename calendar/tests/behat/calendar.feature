@@ -61,7 +61,7 @@ Feature: Perform basic calendar functionality
     And I follow "This month"
     And I click on "Really awesome event!" "link"
     And "Course 1" "link" should exist in the ".modal-body" "css_element"
-    And I click on ".close" "css_element"
+    And I click on "Close" "button"
     And I log out
     And I log in as "student2"
     And I follow "This month"
