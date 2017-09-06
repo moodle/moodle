@@ -95,6 +95,27 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
     }
 
     /**
+     * Delete the model version output directory.
+     *
+     * @param string $uniqueid
+     * @param string $modelversionoutputdir
+     * @return null
+     */
+    public function clear_model($uniqueid, $modelversionoutputdir) {
+        remove_dir($modelversionoutputdir);
+    }
+
+    /**
+     * Delete the model output directory.
+     *
+     * @param string $modeloutputdir
+     * @return null
+     */
+    public function delete_output_dir($modeloutputdir) {
+        remove_dir($modeloutputdir);
+    }
+
+    /**
      * Trains a machine learning algorithm with the provided dataset.
      *
      * @param string $uniqueid

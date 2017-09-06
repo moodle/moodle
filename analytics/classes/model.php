@@ -435,14 +435,20 @@ class model {
 
         if ($this->model->timesplitting !== $timesplittingid ||
                 $this->model->indicators !== $indicatorsstr) {
+
+            // Delete generated predictions before changing the model version.
+            $this->clear_model();
+
+            // It needs to be reset as the version changes.
+            $this->uniqueid = null;
+
             // We update the version of the model so different time splittings are not mixed up.
             $this->model->version = $now;
 
-            // Delete generated predictions.
-            $this->clear_model();
-
             // Reset trained flag.
-            $this->model->trained = 0;
+            if (!$this->is_static()) {
+                $this->model->trained = 0;
+            }
 
         } else if ($this->model->enabled != $enabled) {
             // We purge the cached contexts with insights as some will not be visible anymore.
@@ -456,9 +462,6 @@ class model {
         $this->model->usermodified = $USER->id;
 
         $DB->update_record('analytics_models', $this->model);
-
-        // It needs to be reset (just in case, we may already used it).
-        $this->uniqueid = null;
     }
 
     /**
@@ -472,6 +475,11 @@ class model {
         \core_analytics\manager::check_can_manage_models();
 
         $this->clear_model();
+
+        // Method self::clear_model is already clearing the current model version.
+        $predictor = \core_analytics\manager::get_predictions_processor();
+        $predictor->delete_output_dir($this->get_output_dir(array(), true));
+
         $DB->delete_records('analytics_models', array('id' => $this->model->id));
         $DB->delete_records('analytics_models_log', array('modelid' => $this->model->id));
     }
@@ -974,13 +982,23 @@ class model {
                 throw new \moodle_exception('errorinvalidtimesplitting', 'analytics');
             }
 
+            // Delete generated predictions before changing the model version.
+            $this->clear_model();
+
+            // It needs to be reset as the version changes.
+            $this->uniqueid = null;
+
             $this->model->timesplitting = $timesplittingid;
             $this->model->version = $now;
+
+            // Reset trained flag.
+            if (!$this->is_static()) {
+                $this->model->trained = 0;
+            }
         }
 
         // Purge pages with insights as this may change things.
-        if ($timesplittingid && $timesplittingid !== $this->model->timesplitting ||
-                $this->model->enabled != 1) {
+        if ($this->model->enabled != 1) {
             $this->purge_insights_cache();
         }
 
@@ -989,9 +1007,6 @@ class model {
 
         // We don't always update timemodified intentionally as we reserve it for target, indicators or timesplitting updates.
         $DB->update_record('analytics_models', $this->model);
-
-        // It needs to be reset (just in case, we may already used it).
-        $this->uniqueid = null;
     }
 
     /**
@@ -1229,9 +1244,10 @@ class model {
      *   models/$model->id/$model->version/execution
      *
      * @param array $subdirs
+     * @param bool $onlymodelid Preference over $subdirs
      * @return string
      */
-    protected function get_output_dir($subdirs = array()) {
+    protected function get_output_dir($subdirs = array(), $onlymodelid = false) {
         global $CFG;
 
         $subdirstr = '';
@@ -1245,8 +1261,12 @@ class model {
             $outputdir = rtrim($CFG->dataroot, '/') . DIRECTORY_SEPARATOR . 'models';
         }
 
-        // Append model id and version + subdirs.
-        $outputdir .= DIRECTORY_SEPARATOR . $this->model->id . DIRECTORY_SEPARATOR . $this->model->version . $subdirstr;
+        // Append model id
+        $outputdir .= DIRECTORY_SEPARATOR . $this->model->id;
+        if (!$onlymodelid) {
+            // Append version + subdirs.
+            $outputdir .= DIRECTORY_SEPARATOR . $this->model->version . $subdirstr;
+        }
 
         make_writable_directory($outputdir);
 
@@ -1410,6 +1430,10 @@ class model {
      */
     private function clear_model() {
         global $DB;
+
+        // Delete current model version stored stuff.
+        $predictor = \core_analytics\manager::get_predictions_processor();
+        $predictor->clear_model($this->get_unique_id(), $this->get_output_dir());
 
         $predictionids = $DB->get_fieldset_select('analytics_predictions', 'id', 'modelid = :modelid',
             array('modelid' => $this->get_id()));

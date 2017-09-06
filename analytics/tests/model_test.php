@@ -99,6 +99,9 @@ class analytics_model_testcase extends advanced_testcase {
         // Fake evaluation results record to check that it is actually deleted.
         $this->add_fake_log();
 
+        $modeloutputdir = $this->model->get_output_dir(array(), true);
+        $this->assertTrue(is_dir($modeloutputdir));
+
         // Generate a prediction action to confirm that it is deleted when there is an important update.
         $predictions = $DB->get_records('analytics_predictions');
         $prediction = reset($predictions);
@@ -113,6 +116,7 @@ class analytics_model_testcase extends advanced_testcase {
         $this->assertEmpty($DB->count_records('analytics_train_samples'));
         $this->assertEmpty($DB->count_records('analytics_predict_samples'));
         $this->assertEmpty($DB->count_records('analytics_used_files'));
+        $this->assertFalse(is_dir($modeloutputdir));
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
@@ -146,8 +150,13 @@ class analytics_model_testcase extends advanced_testcase {
         $prediction = new \core_analytics\prediction($prediction, array('whatever' => 'not used'));
         $prediction->action_executed(\core_analytics\prediction::ACTION_FIXED, $this->model->get_target());
 
+        $modelversionoutputdir = $this->model->get_output_dir();
+        $this->assertTrue(is_dir($modelversionoutputdir));
+
         // Update to an empty time splitting method to force clear_model execution.
         $this->model->update(1, false, '');
+        $this->assertFalse(is_dir($modelversionoutputdir));
+
         // Restore previous time splitting method.
         $this->model->enable('\core\analytics\time_splitting\no_splitting');
 
@@ -186,7 +195,7 @@ class analytics_model_testcase extends advanced_testcase {
 
         $modeldir = $dir . DIRECTORY_SEPARATOR . $this->modelobj->id . DIRECTORY_SEPARATOR . $this->modelobj->version;
         $this->assertEquals($modeldir, $this->model->get_output_dir());
-        $this->assertEquals($modeldir . DIRECTORY_SEPARATOR . 'asd', $this->model->get_output_dir(array('asd')));
+        $this->assertEquals($modeldir . DIRECTORY_SEPARATOR . 'testing', $this->model->get_output_dir(array('testing')));
     }
 
     public function test_unique_id() {
@@ -280,10 +289,11 @@ class testable_model extends \core_analytics\model {
      * get_output_dir
      *
      * @param array $subdirs
+     * @param bool $onlymodelid
      * @return string
      */
-    public function get_output_dir($subdirs = array()) {
-        return parent::get_output_dir($subdirs);
+    public function get_output_dir($subdirs = array(), $onlymodelid = false) {
+        return parent::get_output_dir($subdirs, $onlymodelid);
     }
 
     /**
