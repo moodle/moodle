@@ -55,15 +55,23 @@ abstract class base_activity extends base_mod {
     protected static $levels = [CONTEXT_MODULE];
 
     /**
-     * Returns recordset containing required data for indexing activities.
+     * Returns recordset containing all activities within the given context.
      *
-     * @param int $modifiedfrom timestamp
-     * @return \moodle_recordset
+     * @param \context|null $context Context
+     * @param int $modifiedfrom Return only records modified after this date
+     * @return \moodle_recordset|null Recordset, or null if no possible activities in given context
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
-        return $DB->get_recordset_select($this->get_module_name(), static::MODIFIED_FIELD_NAME . ' >= ?', array($modifiedfrom),
-                static::MODIFIED_FIELD_NAME . ' ASC');
+        list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
+                $context, $this->get_module_name(), 'modtable');
+        if ($contextjoin === null) {
+            return null;
+        }
+        return $DB->get_recordset_sql('SELECT modtable.* FROM {' . $this->get_module_name() .
+                '} modtable ' . $contextjoin . ' WHERE modtable.' . static::MODIFIED_FIELD_NAME .
+                ' >= ? ORDER BY modtable.' . static::MODIFIED_FIELD_NAME . ' ASC',
+                array_merge($contextparams, [$modifiedfrom]));
     }
 
     /**
