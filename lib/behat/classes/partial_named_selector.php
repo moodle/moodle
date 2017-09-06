@@ -45,13 +45,17 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
             $this->registerNamedXpath($name, $xpath);
         }
 
+        foreach (self::$customreplacements as $from => $tos) {
+            $this->registerReplacement($from, implode(' or ', $tos));
+        }
+
         $this->registerReplacement('%iconMatch%', "(contains(concat(' ', @class, ' '), ' icon ') or name() = 'img')");
         $this->registerReplacement('%imgAltMatch%', './/*[%iconMatch% and (%altMatch% or %titleMatch%)]');
         parent::__construct();
     }
 
     /**
-     * @var Allowed types when using text selectors arguments.
+     * @var array Allowed types when using text selectors arguments.
      */
     protected static $allowedtextselectors = array(
         'activity' => 'activity',
@@ -73,7 +77,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
     );
 
     /**
-     * @var Allowed types when using selector arguments.
+     * @var array Allowed types when using selector arguments.
      */
     protected static $allowedselectors = array(
         'activity' => 'activity',
@@ -113,7 +117,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
      * xpaths that represents that names and includes a placeholder that
      * will be replaced by the locator. These are Moodle's own xpaths.
      *
-     * @var XPaths for moodle elements.
+     * @var array XPaths for moodle elements.
      */
     protected static $moodleselectors = array(
         'activity' => <<<XPATH
@@ -198,6 +202,22 @@ XPATH
 .//*[@data-passwordunmask='wrapper']
     /descendant::input[@id = %locator% or @id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
 XPATH
+        ],
+    ];
+
+    /**
+     * Mink comes with a number of named replacements.
+     * Sometimes we want to add our own.
+     *
+     * @var array XPaths for moodle elements.
+     */
+    protected static $customreplacements = [
+        '%buttonMatch%' => [
+            'upstream' => '%idOrNameMatch% or %valueMatch% or %titleMatch%',
+            'aria' => '%ariaLabelMatch%',
+        ],
+        '%ariaLabelMatch%' => [
+            'moodle' => 'contains(./@aria-label, %locator%)',
         ],
     ];
 
