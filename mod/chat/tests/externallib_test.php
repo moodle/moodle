@@ -223,9 +223,13 @@ class mod_chat_external_testcase extends externallib_advanced_testcase {
      * Test get_chats_by_courses
      */
     public function test_get_chats_by_courses() {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
         $this->resetAfterTest(true);
         $this->setAdminUser();
+
+        // Set global chat method.
+        $CFG->chat_method = 'header_js';
+
         $course1 = self::getDataGenerator()->create_course();
         $chatoptions1 = array(
                               'course' => $course1->id,
@@ -272,6 +276,7 @@ class mod_chat_external_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(1, $chats['chats']);
         $this->assertEquals('Second Chat', $chats['chats'][0]['name']);
+        $this->assertEquals('header_js', $chats['chats'][0]['chatmethod']);
         // We see 17 fields.
         $this->assertCount(17, $chats['chats'][0]);
         // As an Admin you can see some chat properties like 'section'.
