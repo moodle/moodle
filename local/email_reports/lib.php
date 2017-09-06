@@ -100,10 +100,10 @@ function email_reports_cron() {
                                  {user_enrolments} ue 
                                  INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
                                  JOIN {role_assignments} ra ON (ue.userid = ra.userid)
-                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanced = e.courseid)
+                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
                                  WHERE c.contextlevel = 50
                                  AND ue.userid = :userid
-                                 AND e.instanceid = :courseid
+                                 AND e.courseid = :courseid
                                  AND ra.roleid = :studentrole",
                                  array('courseid' => $compuser->courseid,
                                        'userid' => $compuser->userid,
@@ -134,15 +134,15 @@ function email_reports_cron() {
     // Get the companies from the list of users in the temp table.
     $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename . "}");
     foreach ($companies as $company) {
-        if ($company->managernotify == 1 || $company->managernotify == 3) {
-            if ($dayofweek == $company->managerdigestday || empty($company->managerdigestday)) {
+        if (!$companyrec = $DB->get_record('company', array('id' => $company->companyid))) {
+            continue;
+        }
+        if ($companyrec->managernotify == 1 || $company->managernotify == 3) {
+            if ($dayofweek == $companyrec->managerdigestday || empty($companyrec->managerdigestday)) {
                 // Get the managers.
                 $managers = $DB->get_records_sql("SELECT * FROM {company_users}
                                                   WHERE companyid = :companyid
                                                   AND managertype != 0", array('companyid' => $company->companyid));
-                if (!$companyrec = $DB->get_record('company', array('id' => $company->companyid))) {
-                    continue;
-                }
                 foreach ($managers as $manager) {
                     // Get their users.
                     $departmentusers = company::get_recursive_department_users($manager->departmentid);
@@ -174,10 +174,10 @@ function email_reports_cron() {
                                                  {user_enrolments} ue 
                                                  INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
                                                  JOIN {role_assignments} ra ON (ue.userid = ra.userid)
-                                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanced = e.courseid)
+                                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
                                                  WHERE c.contextlevel = 50
                                                  AND ue.userid = :userid
-                                                 AND e.instanceid = :courseid
+                                                 AND e.courseid = :courseid
                                                  AND ra.roleid = :studentrole",
                                                  array('courseid' => $manageruser->courseid,
                                                        'userid' => $manageruser->userid,
@@ -229,10 +229,10 @@ function email_reports_cron() {
                                                  {user_enrolments} ue 
                                                  INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
                                                  JOIN {role_assignments} ra ON (ue.userid = ra.userid)
-                                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanced = e.courseid)
+                                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
                                                  WHERE c.contextlevel = 50
                                                  AND ue.userid = :userid
-                                                 AND e.instanceid = :courseid
+                                                 AND e.courseid = :courseid
                                                  AND ra.roleid = :studentrole",
                                                  array('courseid' => $manageruser->courseid,
                                                        'userid' => $manageruser->userid,
@@ -348,10 +348,10 @@ function email_reports_cron() {
                                  {user_enrolments} ue 
                                  INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
                                  JOIN {role_assignments} ra ON (ue.userid = ra.userid)
-                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanced = e.courseid)
+                                 JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
                                  WHERE c.contextlevel = 50
                                  AND ue.userid = :userid
-                                 AND e.instanceid = :courseid
+                                 AND e.courseid = :courseid
                                  AND ra.roleid = :studentrole",
                                  array('courseid' => $compuser->courseid,
                                        'userid' => $compuser->userid,
@@ -380,15 +380,15 @@ function email_reports_cron() {
     // Get the companies from the list of users in the temp table.
     $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename ."}");
     foreach ($companies as $company) {
-        if ($company->managernotify == 1 || $company->managernotify == 3) {
-            if ($dayofweek == $company->managerdigestday || empty($company->managerdigestday)) {
+        if (!$companyrec = $DB->get_record('company', array('id' => $company->companyid))) {
+            continue;
+        }
+        if ($companyrec->managernotify == 1 || $companyrec->managernotify == 3) {
+            if ($dayofweek == $companyrec->managerdigestday || empty($companyrec->managerdigestday)) {
                 // Get the managers.
                 $managers = $DB->get_records_sql("SELECT * FROM {company_users}
                                                   WHERE companyid = :companyid
                                                   AND managertype != 0", array('companyid' => $company->companyid));
-                if (!$companyrec = $DB->get_record('company', array('id' => $company->companyid))) {
-                    continue;
-                }
                 foreach ($managers as $manager) {
                     // Get their users.
                     $departmentusers = company::get_recursive_department_users($manager->departmentid);
@@ -438,10 +438,10 @@ function email_reports_cron() {
                                                      {user_enrolments} ue 
                                                      INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
                                                      JOIN {role_assignments} ra ON (ue.userid = ra.userid)
-                                                     JOIN {context} c ON (ra.contextid = c.id AND c.instanced = e.courseid)
+                                                     JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
                                                      WHERE c.contextlevel = 50
                                                      AND ue.userid = :userid
-                                                     AND e.instanceid = :courseid
+                                                     AND e.courseid = :courseid
                                                      AND ra.roleid = :studentrole",
                                                      array('courseid' => $manageruser->courseid,
                                                            'userid' => $manageruser->userid,
