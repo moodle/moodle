@@ -7,6 +7,9 @@ This information is intended for authors of webservices, not people writing webs
 
 * External function core_webservice_external::get_site_info() now returns the calendar type used in the site and
   by the user in the sitecalendartype and usercalendartype fields.
+* Implementations of forms for test clients now must follow naming schema: WSFUNCTIONNAME_testclient_form
+  The old naming schema WSFUNCTIONNAME_form caused conflicts with existing classes.
+  New class webservice_test_client_base_form can be used as a base class for such forms.
 
 === 3.2 ===
 
