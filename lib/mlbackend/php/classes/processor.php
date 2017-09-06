@@ -147,7 +147,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
         $modelfilepath = $outputdir . DIRECTORY_SEPARATOR . self::MODEL_FILENAME;
 
         if (!file_exists($modelfilepath)) {
-            throw new \moodle_exception('errorcantloadmodel', 'analytics', '', $modelfilepath);
+            throw new \moodle_exception('errorcantloadmodel', 'mlbackend_php', '', $modelfilepath);
         }
 
         $modelmanager = new ModelManager();
