@@ -227,7 +227,8 @@ foreach ($frameworks as $framework) {
     } else {
         $companyname = "";
     }
-    $frameworklink = new moodle_url('/framework/view.php', array('id'=>$framework->id));
+    $frameworklink = new moodle_url('/admin/tool/lp/competencies.php', array('competencyframeworkid'=>$framework->id,
+                                                                             'pagecontextid' => 1));
     $table->data[] = array ($companyname,
                             "<a href='$frameworklink'>$framework->shortname</a>",
                             $sharedselectoutput);

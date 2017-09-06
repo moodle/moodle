@@ -229,7 +229,8 @@ foreach ($templates as $template) {
     } else {
         $companyname = "";
     }
-    $templatelink = new moodle_url('/template/view.php', array('id'=>$template->id));
+    $templatelink = new moodle_url('/admin/tool/lp/templatecompetencies.php', array('templateid'=>$template->id,
+                                                                                    'pagecontextid' => 1));
     $table->data[] = array ($companyname,
                             "<a href='$templatelink'>$template->shortname</a>",
                             $sharedselectoutput);
