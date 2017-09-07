@@ -38,7 +38,7 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
     /**
      * The required version of the python package that performs all calculations.
      */
-    const REQUIRED_PIP_PACKAGE_VERSION = '0.0.2';
+    const REQUIRED_PIP_PACKAGE_VERSION = '0.0.3';
 
     /**
      * The path to the Python bin.
@@ -150,7 +150,11 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         }
 
         if ($exitcode != 0) {
-            throw new \moodle_exception('errorpredictionsprocessor', 'analytics', '', implode(', ', $resultobj->errors));
+            $errors = $resultobj->errors;
+            if (is_array($errors)) {
+                $errors = implode(', ', $errors);
+            }
+            $resultobj->info = array(get_string('errorpredictionsprocessor', 'analytics', $errors));
         }
 
         return $resultobj;
@@ -191,7 +195,11 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         }
 
         if ($exitcode != 0) {
-            throw new \moodle_exception('errorpredictionsprocessor', 'analytics', '', implode(', ', $resultobj->errors));
+            $errors = $resultobj->errors;
+            if (is_array($errors)) {
+                $errors = implode(', ', $errors);
+            }
+            $resultobj->info = array(get_string('errorpredictionsprocessor', 'analytics', $errors));
         }
 
         return $resultobj;

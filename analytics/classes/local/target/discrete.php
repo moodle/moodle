@@ -152,7 +152,10 @@ abstract class discrete extends base {
     }
 
     /**
-     * Should the model callback be triggered?
+     * This method determines if a prediction is interesing for the model or not.
+     *
+     * This method internally calls ignored_predicted_classes to skip classes
+     * flagged by the target as not important for users.
      *
      * @param mixed $predictedvalue
      * @param float $predictionscore

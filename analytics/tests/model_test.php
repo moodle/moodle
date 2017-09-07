@@ -155,12 +155,9 @@ class analytics_model_testcase extends advanced_testcase {
         $modelversionoutputdir = $this->model->get_output_dir();
         $this->assertTrue(is_dir($modelversionoutputdir));
 
-        // Update to an empty time splitting method to force clear_model execution.
-        $this->model->update(1, false, '');
+        // Update to an empty time splitting method to force model::clear execution.
+        $this->model->clear();
         $this->assertFalse(is_dir($modelversionoutputdir));
-
-        // Restore previous time splitting method.
-        $this->model->enable('\core\analytics\time_splitting\no_splitting');
 
         // Check that most of the stuff got deleted.
         $this->assertEquals(1, $DB->count_records('analytics_models', array('id' => $this->modelobj->id)));
