@@ -161,8 +161,13 @@ switch ($action) {
 
         // Looks dumb to get a new instance but better be conservative.
         $model = new \core_analytics\model($model->get_model_obj());
-        $predictresults = $model->predict();
-        $predictlogs = $model->get_analyser()->get_logs();
+        if ($model->is_trained()) {
+            $predictresults = $model->predict();
+            $predictlogs = $model->get_analyser()->get_logs();
+        } else {
+            $predictresults = false;
+            $predictlogs = array();
+        }
 
         $renderer = $PAGE->get_renderer('tool_analytics');
         echo $renderer->render_get_predictions_results($trainresults, $trainlogs, $predictresults, $predictlogs);
