@@ -158,6 +158,17 @@ class manager {
     }
 
     /**
+     * Returns whether indexing is enabled or not (you can enable indexing even when search is not
+     * enabled at the moment, so as to have it ready for students).
+     *
+     * @return bool True if indexing is enabled.
+     */
+    public static function is_indexing_enabled() {
+        global $CFG;
+        return !empty($CFG->enableglobalsearch) || !empty($CFG->searchindexwhendisabled);
+    }
+
+    /**
      * Returns an instance of the search engine.
      *
      * @return \core_search\engine
