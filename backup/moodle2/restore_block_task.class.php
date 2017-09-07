@@ -98,6 +98,13 @@ abstract class restore_block_task extends restore_task {
             $this->add_step(new restore_comments_structure_step('block_comments', 'comments.xml'));
         }
 
+        // Search reindexing (if enabled).
+        if (\core_search\manager::is_indexing_enabled() &&
+                !($this->get_target() == backup::TARGET_NEW_COURSE ||
+                $this->get_setting_value('overwrite_conf'))) {
+            $this->add_step(new restore_block_search_index('block_search_index'));
+        }
+
         // At the end, mark it as built
         $this->built = true;
     }
