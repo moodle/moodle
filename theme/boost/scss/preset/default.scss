@@ -90,6 +90,7 @@ $breadcrumb-divider-rtl: "/" !default;
             @include hover-focus {
                 color: $brand-primary;
             }
+            padding-top: 0;
         }
     }
 
