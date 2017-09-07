@@ -560,4 +560,82 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertTrue(testable_core_search::is_search_area('\\mod_forum\\search\\post'));
         $this->assertTrue(testable_core_search::is_search_area('mod_forum\\search\\post'));
     }
+
+    /**
+     * Tests the request_index function used for reindexing certain contexts. This only tests
+     * adding things to the request list, it doesn't test that they are actually indexed by the
+     * scheduled task.
+     */
+    public function test_request_index() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course1ctx = context_course::instance($course1->id);
+        $course2 = $this->getDataGenerator()->create_course();
+        $course2ctx = context_course::instance($course2->id);
+        $forum1 = $this->getDataGenerator()->create_module('forum', ['course' => $course1->id]);
+        $forum1ctx = context_module::instance($forum1->cmid);
+        $forum2 = $this->getDataGenerator()->create_module('forum', ['course' => $course2->id]);
+        $forum2ctx = context_module::instance($forum2->cmid);
+
+        // Initially no requests.
+        $this->assertEquals(0, $DB->count_records('search_index_requests'));
+
+        // Request update for course 1, all areas.
+        \core_search\manager::request_index($course1ctx);
+
+        // Check all details of entry.
+        $results = array_values($DB->get_records('search_index_requests'));
+        $this->assertCount(1, $results);
+        $this->assertEquals($course1ctx->id, $results[0]->contextid);
+        $this->assertEquals('', $results[0]->searcharea);
+        $now = time();
+        $this->assertLessThanOrEqual($now, $results[0]->timerequested);
+        $this->assertGreaterThan($now - 10, $results[0]->timerequested);
+        $this->assertEquals('', $results[0]->partialarea);
+        $this->assertEquals(0, $results[0]->partialtime);
+
+        // Request forum 1, all areas; not added as covered by course 1.
+        \core_search\manager::request_index($forum1ctx);
+        $this->assertEquals(1, $DB->count_records('search_index_requests'));
+
+        // Request forum 1, specific area; not added as covered by course 1 all areas.
+        \core_search\manager::request_index($forum1ctx, 'forum-post');
+        $this->assertEquals(1, $DB->count_records('search_index_requests'));
+
+        // Request course 1 again, specific area; not added as covered by all areas.
+        \core_search\manager::request_index($course1ctx, 'forum-post');
+        $this->assertEquals(1, $DB->count_records('search_index_requests'));
+
+        // Request course 1 again, all areas; not needed as covered already.
+        \core_search\manager::request_index($course1ctx);
+        $this->assertEquals(1, $DB->count_records('search_index_requests'));
+
+        // Request course 2, specific area.
+        \core_search\manager::request_index($course2ctx, 'label-activity');
+        // Note: I'm ordering by ID for convenience - this is dangerous in real code (see MDL-43447)
+        // but in a unit test it shouldn't matter as nobody is using clustered databases for unit
+        // test.
+        $results = array_values($DB->get_records('search_index_requests', null, 'id'));
+        $this->assertCount(2, $results);
+        $this->assertEquals($course1ctx->id, $results[0]->contextid);
+        $this->assertEquals($course2ctx->id, $results[1]->contextid);
+        $this->assertEquals('label-activity', $results[1]->searcharea);
+
+        // Request forum 2, same specific area; not added.
+        \core_search\manager::request_index($forum2ctx, 'label-activity');
+        $this->assertEquals(2, $DB->count_records('search_index_requests'));
+
+        // Request forum 2, different specific area; added.
+        \core_search\manager::request_index($forum2ctx, 'forum-post');
+        $this->assertEquals(3, $DB->count_records('search_index_requests'));
+
+        // Request forum 2, all areas; also added. (Note: This could obviously remove the previous
+        // one, but for simplicity, I didn't make it do that; also it could perhaps cause problems
+        // if we had already begun processing the previous entry.)
+        \core_search\manager::request_index($forum2ctx);
+        $this->assertEquals(4, $DB->count_records('search_index_requests'));
+    }
 }

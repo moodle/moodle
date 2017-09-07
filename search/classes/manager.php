@@ -637,6 +637,8 @@ class manager {
      * @return bool Whether there was any updated document or not.
      */
     public function index($fullindex = false, $timelimit = 0, \progress_trace $progress = null) {
+        global $DB;
+
         // Cannot combine time limit with reindex.
         if ($timelimit && $fullindex) {
             throw new \coding_exception('Cannot apply time limit when reindexing');
@@ -687,6 +689,10 @@ class manager {
 
             if ($fullindex === true) {
                 $referencestarttime = 0;
+
+                // For full index, we delete any queued context index requests, as those will
+                // obviously be met by the full index.
+                $DB->delete_records('search_index_requests');
             } else {
                 $partial = get_config($componentconfigname, $varname . '_partial');
                 if ($partial) {
@@ -904,5 +910,37 @@ class manager {
         }
 
         return false;
+    }
+
+    /**
+     * Requests that a specific context is indexed by the scheduled task. The context will be
+     * added to a queue which is processed by the task.
+     *
+     * This is used after a restore to ensure that restored items are indexed, even though their
+     * modified time will be older than the latest indexed.
+     *
+     * @param \context $context Context to index within
+     * @param string $areaid Area to index, '' = all areas
+     */
+    public static function request_index(\context $context, $areaid = '') {
+        global $DB;
+
+        // Check through existing requests for this context or any parent context.
+        list ($contextsql, $contextparams) = $DB->get_in_or_equal(
+                $context->get_parent_context_ids(true));
+        $existing = $DB->get_records_select('search_index_requests',
+                'contextid ' . $contextsql, $contextparams, '', 'id, searcharea, partialarea');
+        foreach ($existing as $rec) {
+            // If we haven't started processing the existing request yet, and it covers the same
+            // area (or all areas) then that will be sufficient so don't add anything else.
+            if ($rec->partialarea === '' && ($rec->searcharea === $areaid || $rec->searcharea === '')) {
+                return;
+            }
+        }
+
+        // No suitable existing request, so add a new one.
+        $newrecord = [ 'contextid' => $context->id, 'searcharea' => $areaid,
+                'timerequested' => time(), 'partialarea' => '', 'partialtime' => 0 ];
+        $DB->insert_record('search_index_requests', $newrecord);
     }
 }
