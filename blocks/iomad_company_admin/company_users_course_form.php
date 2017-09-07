@@ -217,6 +217,7 @@ if ($userid) {
 $linktext = get_string('edit_users_title', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
+$formurl = new moodle_url('/blocks/iomad_company_admin/company_users_course_form.php');
 
 // Print the page header.
 $PAGE->set_context($context);
@@ -228,7 +229,7 @@ $PAGE->set_heading(get_string('company_users_course_title', 'block_iomad_company
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
-$coursesform = new company_users_course_form($PAGE->url, $context, $companyid, $departmentid, $userid);
+$coursesform = new company_users_course_form($formurl, $context, $companyid, $departmentid, $userid);
 
 echo $OUTPUT->header();
 
