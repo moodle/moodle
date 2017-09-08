@@ -3546,10 +3546,6 @@ function calendar_output_fragment_event_form($args) {
         parse_str(clean_param($args['formdata'], PARAM_TEXT), $data);
     }
 
-    if (isset($args['haserror'])) {
-        $formoptions['haserror'] = clean_param($args['haserror'], PARAM_BOOL);
-    }
-
     if ($starttime) {
         $formoptions['starttime'] = $starttime;
     }

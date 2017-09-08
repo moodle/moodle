@@ -21,86 +21,12 @@
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/templates'], function($, Templates) {
+define(['jquery'], function($) {
 
     var SELECTORS = {
-        EVENT_TYPE: '[name="eventtype"]',
-        EVENT_COURSE_ID: '[name="courseid"]',
         EVENT_GROUP_COURSE_ID: '[name="groupcourseid"]',
         EVENT_GROUP_ID: '[name="groupid"]',
-        FORM_GROUP: '.form-group',
         SELECT_OPTION: 'option',
-        ADVANCED_ELEMENT: '.fitem.advanced',
-        FIELDSET_ADVANCED_ELEMENTS: 'fieldset.containsadvancedelements',
-        MORELESS_TOGGLE: '.moreless-actions'
-    };
-
-    var EVENTS = {
-        SHOW_ADVANCED: 'event_form-show-advanced',
-        HIDE_ADVANCED: 'event_form-hide-advanced',
-        ADVANCED_SHOWN: 'event_form-advanced-shown',
-        ADVANCED_HIDDEN: 'event_form-advanced-hidden',
-    };
-
-    /**
-     * Find the old show more / show less toggle added by the mform and destroy it.
-     * We are handling the visibility of the advanced fields with the more/less button
-     * in the footer of the modal that this form is rendered within.
-     *
-     * @method destroyOldMoreLessToggle
-     * @param {object} formElement The root form element
-     */
-    var destroyOldMoreLessToggle = function(formElement) {
-        formElement.find(SELECTORS.FIELDSET_ADVANCED_ELEMENTS).removeClass('containsadvancedelements');
-        var element = formElement.find(SELECTORS.MORELESS_TOGGLE);
-        Templates.replaceNode(element, '', '');
-    };
-
-    /**
-     * Find each of the advanced form elements and make them visible.
-     *
-     * This function triggers the ADVANCED_SHOWN event for any other
-     * component to handle (e.g. the event form modal).
-     *
-     * @method destroyOldMoreLessToggle
-     * @param {object} formElement The root form element
-     */
-    var showAdvancedElements = function(formElement) {
-        formElement.find(SELECTORS.ADVANCED_ELEMENT).removeClass('hidden');
-        formElement.trigger(EVENTS.ADVANCED_SHOWN);
-    };
-
-    /**
-     * Find each of the advanced form elements and hide them.
-     *
-     * This function triggers the ADVANCED_HIDDEN event for any other
-     * component to handle (e.g. the event form modal).
-     *
-     * @method hideAdvancedElements
-     * @param {object} formElement The root form element
-     */
-    var hideAdvancedElements = function(formElement) {
-        formElement.find(SELECTORS.ADVANCED_ELEMENT).addClass('hidden');
-        formElement.trigger(EVENTS.ADVANCED_HIDDEN);
-    };
-
-    /**
-     * Listen for any events telling this module to show or hide it's
-     * advanced elements.
-     *
-     * This function listens for SHOW_ADVANCED and HIDE_ADVANCED.
-     *
-     * @method listenForShowHideEvents
-     * @param {object} formElement The root form element
-     */
-    var listenForShowHideEvents = function(formElement) {
-        formElement.on(EVENTS.SHOW_ADVANCED, function() {
-            showAdvancedElements(formElement);
-        });
-
-        formElement.on(EVENTS.HIDE_ADVANCED, function() {
-            hideAdvancedElements(formElement);
-        });
     };
 
     /**
@@ -177,28 +103,15 @@ define(['jquery', 'core/templates'], function($, Templates) {
      *
      * @method init
      * @param {string} formId The value of the form's id attribute
-     * @param {bool} hasError If the form has errors rendered form the server.
      */
-    var init = function(formId, hasError) {
+    var init = function(formId) {
         var formElement = $('#' + formId);
 
-        listenForShowHideEvents(formElement);
-        destroyOldMoreLessToggle(formElement);
         parseGroupSelect(formElement);
         addCourseGroupSelectListeners(formElement);
-
-        // If we know that the form has been rendered with server side
-        // errors then we need to display all of the elements in the form
-        // in case one of those elements has the error.
-        if (hasError) {
-            showAdvancedElements(formElement);
-        } else {
-            hideAdvancedElements(formElement);
-        }
     };
 
     return {
         init: init,
-        events: EVENTS,
     };
 });
