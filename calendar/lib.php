@@ -1049,7 +1049,7 @@ class calendar_information {
     public function add_sidecalendar_blocks(core_calendar_renderer $renderer, $showfilters=false, $view=null) {
         if ($showfilters) {
             $filters = new block_contents();
-            $filters->content = $renderer->fake_block_filters($this->courseid, 0, 0, 0, $view, $this->courses);
+            $filters->content = $renderer->event_filter();
             $filters->footer = '';
             $filters->title = get_string('eventskey', 'calendar');
             $renderer->add_pretend_calendar_block($filters, BLOCK_POS_RIGHT);
