@@ -51,8 +51,6 @@ if ($edit) {
 
 if ($id) { // submission is specified
     $submission = $workshop->get_submission_by_id($id);
-    // Trigger submission viewed event.
-    $workshop->set_submission_viewed($submission);
 
 } else { // no submission specified
     if (!$submission = $workshop->get_submission_by_author($USER->id)) {
@@ -122,6 +120,11 @@ if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
     // ok you can go
 } else {
     print_error('nopermissions', 'error', $workshop->view_url(), 'view or create submission');
+}
+
+if ($submission->id) {
+    // Trigger submission viewed event.
+    $workshop->set_submission_viewed($submission);
 }
 
 if ($assess and $submission->id and !$isreviewer and $canallocate and $workshop->assessing_allowed($USER->id)) {
