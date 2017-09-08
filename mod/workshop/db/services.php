@@ -155,4 +155,12 @@ $functions = array(
         'type'          => 'read',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_workshop_view_submission' => array(
+        'classname'     => 'mod_workshop_external',
+        'methodname'    => 'view_submission',
+        'description'   => 'Trigger the submission viewed event.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/workshop:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

@@ -51,19 +51,8 @@ if ($edit) {
 
 if ($id) { // submission is specified
     $submission = $workshop->get_submission_by_id($id);
-
-    $params = array(
-        'objectid' => $submission->id,
-        'context' => $workshop->context,
-        'courseid' => $workshop->course->id,
-        'relateduserid' => $submission->authorid,
-        'other' => array(
-            'workshopid' => $workshop->id
-        )
-    );
-
-    $event = \mod_workshop\event\submission_viewed::create($params);
-    $event->trigger();
+    // Trigger submission viewed event.
+    $workshop->set_submission_viewed($submission);
 
 } else { // no submission specified
     if (!$submission = $workshop->get_submission_by_author($USER->id)) {

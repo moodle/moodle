@@ -3118,6 +3118,27 @@ class workshop {
         $DB->update_record('workshop_assessments', $record);
     }
 
+    /**
+     * Trigger submission viewed event.
+     *
+     * @param stdClass $submission submission object
+     * @since  Moodle 3.4
+     */
+    public function set_submission_viewed($submission) {
+        $params = array(
+            'objectid' => $submission->id,
+            'context' => $this->context,
+            'courseid' => $this->course->id,
+            'relateduserid' => $submission->authorid,
+            'other' => array(
+                'workshopid' => $this->id
+            )
+        );
+
+        $event = \mod_workshop\event\submission_viewed::create($params);
+        $event->trigger();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
     ////////////////////////////////////////////////////////////////////////////////

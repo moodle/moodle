@@ -1918,4 +1918,62 @@ class mod_workshop_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for view_submission.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function view_submission_parameters() {
+        return new external_function_parameters (
+            array(
+                'submissionid' => new external_value(PARAM_INT, 'Submission id'),
+            )
+        );
+    }
+
+    /**
+     * Trigger the submission viewed event.
+     *
+     * @param int $submissionid submission id
+     * @return array of warnings and status result
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function view_submission($submissionid) {
+        global $DB;
+
+        $params = self::validate_parameters(self::view_submission_parameters(), array('submissionid' => $submissionid));
+        $warnings = array();
+
+        // Get and validate the submission and workshop.
+        $submission = $DB->get_record('workshop_submissions', array('id' => $params['submissionid']), '*', MUST_EXIST);
+        list($workshop, $course, $cm, $context) = self::validate_workshop($submission->workshopid);
+
+        self::validate_submission($submission, $workshop);
+
+        $workshop->set_submission_viewed($submission);
+
+        $result = array(
+            'status' => true,
+            'warnings' => $warnings,
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the view_submission return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.4
+     */
+    public static function view_submission_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

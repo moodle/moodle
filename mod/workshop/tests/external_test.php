@@ -1738,4 +1738,34 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->expectException('required_capability_exception');
         mod_workshop_external::get_grades_report($this->workshop->id);
     }
+
+    /**
+     * Test test_view_submission.
+     */
+    public function test_view_submission() {
+
+        // Create a couple of submissions with files.
+        $firstsubmissionid = $this->create_test_submission($this->student);  // Create submission with files.
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $this->setUser($this->student);
+        $result = mod_workshop_external::view_submission($firstsubmissionid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::view_submission_returns(), $result);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_workshop\event\submission_viewed', $event);
+        $this->assertEquals($this->context, $event->get_context());
+        $moodleworkshop = new \moodle_url('/mod/workshop/submission.php', array('id' => $firstsubmissionid,
+            'cmid' => $this->cm->id));
+        $this->assertEquals($moodleworkshop, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+    }
 }
