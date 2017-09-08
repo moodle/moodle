@@ -50,6 +50,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         this._region.find('[data-region="user-filters"]').on('click', this._toggleExpandFilters.bind(this));
 
         $(document).on('user-changed', this._refreshSelector.bind(this));
+        $(document).on('done-saving-show-next', this._handleNextUser.bind(this));
 
         // Position the configure filters panel under the link that expands it.
         var toggleLink = this._region.find('[data-region="user-filters"]');
@@ -361,8 +362,9 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
      * Change to the next user in the grading list.
      *
      * @param {Event} e
+     * @param {Boolean} saved Has the form already been saved? Skips checking for changes if true.
      */
-    GradingNavigation.prototype._handleNextUser = function(e) {
+    GradingNavigation.prototype._handleNextUser = function(e, saved) {
         e.preventDefault();
         var select = this._region.find('[data-action=change-user]');
         var currentUserId = select.attr('data-selected');
@@ -379,7 +381,15 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         var count = this._filteredUsers.length;
         var newIndex = (currentIndex + 1) % count;
 
-        if (count) {
+        if (saved && count) {
+            // If we've already saved the grade, skip checking if we've made any changes.
+            var userid = this._filteredUsers[newIndex].id;
+            var useridnumber = parseInt(userid, 10);
+            select.attr('data-selected', userid);
+            if (!isNaN(useridnumber) && useridnumber > 0) {
+                $(document).trigger('user-changed', userid);
+            }
+        } else if (count) {
             this._selectUserById(this._filteredUsers[newIndex].id);
         }
     };

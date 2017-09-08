@@ -99,9 +99,10 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
      * @private
      * @param {Object} event
      * @param {Integer} nextUserId
+     * @param {Boolean} nextUser optional. Load next user in the grading list.
      * @method _submitForm
      */
-    GradingPanel.prototype._submitForm = function(event, nextUserId) {
+    GradingPanel.prototype._submitForm = function(event, nextUserId, nextUser) {
         // The form was submitted - send it via ajax instead.
         var form = $(this._region.find('form.gradeform'));
 
@@ -118,7 +119,7 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
         ajax.call([{
             methodname: 'mod_assign_submit_grading_form',
             args: {assignmentid: assignmentid, userid: this._lastUserId, jsonformdata: JSON.stringify(data)},
-            done: this._handleFormSubmissionResponse.bind(this, data, nextUserId),
+            done: this._handleFormSubmissionResponse.bind(this, data, nextUserId, [], nextUser),
             fail: notification.exception
         }]);
     };
@@ -131,8 +132,9 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
      * @param {Array} formdata - submitted values
      * @param {Integer} nextUserId - optional. The id of the user to load after the form is saved.
      * @param {Array} response List of errors.
+     * @param {Boolean} nextUser - optional. If true, switch to next user in the grading list.
      */
-    GradingPanel.prototype._handleFormSubmissionResponse = function(formdata, nextUserId, response) {
+    GradingPanel.prototype._handleFormSubmissionResponse = function(formdata, nextUserId, response, nextUser) {
         if (typeof nextUserId === "undefined") {
             nextUserId = this._lastUserId;
         }
@@ -152,6 +154,8 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
             });
             if (nextUserId == this._lastUserId) {
                 $(document).trigger('reset', nextUserId);
+            } else if (nextUser) {
+                $(document).trigger('done-saving-show-next', true);
             } else {
                 $(document).trigger('user-changed', nextUserId);
             }
@@ -353,6 +357,7 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
 
         docElement.on('user-changed', this._refreshGradingPanel.bind(this));
         docElement.on('save-changes', this._submitForm.bind(this));
+        docElement.on('save-and-show-next', this._submitForm.bind(this, null, null, true));
         docElement.on('reset', this._resetForm.bind(this));
 
         docElement.on('save-form-state', this._saveFormState.bind(this));
