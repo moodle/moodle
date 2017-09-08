@@ -130,10 +130,10 @@ class login_signup_form extends moodleform implements renderable, templatable {
                 $challenge_field = $this->_form->_submitValues['recaptcha_challenge_field'];
                 $response_field = $this->_form->_submitValues['recaptcha_response_field'];
                 if (true !== ($result = $recaptcha_element->verify($challenge_field, $response_field))) {
-                    $errors['recaptcha'] = $result;
+                    $errors['recaptcha_element'] = get_string('incorrectpleasetryagain', 'auth');
                 }
             } else {
-                $errors['recaptcha'] = get_string('missingrecaptchachallengefield');
+                $errors['recaptcha_element'] = get_string('missingrecaptchachallengefield');
             }
         }
 
