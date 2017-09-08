@@ -82,7 +82,9 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
         var changeMonth = function(root, url, time, courseid) {
             return refreshMonthContent(root, time, courseid)
                 .then(function() {
-                    window.history.pushState({}, '', url);
+                    if (url.length && url !== '#') {
+                        window.history.pushState({}, '', url);
+                    }
                     return arguments;
                 })
                 .then(function() {
