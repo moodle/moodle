@@ -654,6 +654,8 @@ if ($mform->is_cancelled()) {
         $companylist->param('noticeok', get_string('companysavedok', 'block_iomad_company_admin'));
     }
 
+    $company = new company($data->id);
+
     // Deal with role templates.
     if (!empty($data->roletemplate)) {
         // We need to do something with the roles.
