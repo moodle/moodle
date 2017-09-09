@@ -35,7 +35,7 @@ $string['availablelangs'] = 'Tilgængelige sprogpakker';
 $string['chooselanguagehead'] = 'Vælg et sprog';
 $string['chooselanguagesub'] = 'Vælg et sprog til brug under installationen. Dette sprog vil også blive brugt som standardsprog på webstedet, men det kan altid ændres til et andet sprog.';
 $string['clialreadyconfigured'] = 'Konfigurationsfilen config.php eksisterer allerede. Benyt venigst admin/cli/install_database.php til at installere Moodle for dette site.';
-$string['clialreadyinstalled'] = 'Filen config.php eksisterer allerede, brug venligst admin/cli/install_database.php hvis du ønsker at opgradere dette websted.';
+$string['clialreadyinstalled'] = 'Filen config.php eksisterer allerede, brug admin/cli/install_database.php hvis du ønsker at opgradere dette websted.';
 $string['cliinstallheader'] = 'Moodle {$a} kommandolinje-installationsprogram';
 $string['databasehost'] = 'Databasevært';
 $string['databasename'] = 'Databasenavn';
@@ -52,20 +52,15 @@ $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Sproget "{$a}" blev desværre ikke installeret. Installationen vil fortsætte på engelsk.';
 $string['memorylimithelp'] = '<p>Den mængde hukommelse PHP kan bruge, er sat til {$a}.</p>
 
-<p>Dette kan forårsage at der opstår problemer senere, især hvis du har mange moduler aktiveret eller mange brugere.</p>
+<p>Det kan forårsage at der opstår problemer senere, især hvis du har mange moduler aktiveret eller mange brugere.</p>
 
-<p>Vi anbefaler at du konfigurerer PHP med mere hukommelse, f.eks. 40M.
-Der er flere måder hvorpå du kan rette det.</p>
+<p>Vi anbefaler at du konfigurerer PHP med mere hukommelse, f.eks. 40M. Der er flere måder hvorpå du kan ændre det.</p>
 <ol>
-<li>Hvis du har mulighed for det, kan du rekompilere PHP med <i>--enable-memory-limit</i>.
-Det vil tillade at Moodle selv kan definere hvor meget hukommelse der er brug for.</li>
+<li>Hvis du har mulighed for det, kan du rekompilere PHP med <i>--enable-memory-limit</i>. Det vil tillade at Moodle selv kan definere hvor meget hukommelse der er brug for.</li>
+<li>Hvis du har adgang til php.ini filen kan du ændre <b>memory_limit</b>-indstillingen til noget i retning af 40M. Hvis du ikke har direkte adgang til den kan du bede systemadministratoren om at gøre det for dig.</li>
+<li>På nogle servere kan du oprette en \'.htaccess\'-fil og gemme den i moodle-mappen med linjen: <blockquote><div>php_value memory_limit 40M</div></blockquote>
 
-<li>Hvis du har adgang til php.ini filen kan du ændre <b>memory_limit</b>-indstillingen til noget i retning af 40M.
-Hvis du ikke har direkte adgang til den kan du bede systemadministratoren om at gøre det for dig.</li>
-
-<li>På nogle servere kan du oprette en \'.htaccess\' fil og gemme den i moodle-mappen med linjen:
-<blockquote><div>php_value memory_limit 40M</div></blockquote>
-<p>Det kan dog på nogle servere forhindre <b>alle</b> PHP-siderne i at virke (du vil se fejl når du ser på siderne). I så fald kan du blive nødt til at fjerne \'.htaccess\' filen igen.</p></li> </ol>';
+<p>Det kan dog på nogle servere forhindre <b>alle</b> PHP-siderne i at virke (du vil se fejl når du ser på siderne). I så fald kan du blive nødt til at fjerne \'.htaccess\'filen igen.</p></li> </ol>';
 $string['paths'] = 'Stier';
 $string['pathserrcreatedataroot'] = 'Datamappen ({$a->dataroot}) kan ikke oprettes af installationsprogrammet.';
 $string['pathshead'] = 'Bekræft stier';
@@ -76,7 +71,7 @@ $string['pathssubdataroot'] = '<p>En mappe hvori Moodle kan gemme uploadede file
 <p>Webserver-brugeren (som regel \'www-data\', \'nobody\', eller \'apache\') skal have læse- og skriveadgang til den.</p>
 <p>Mappen  må ikke være tilgængelig direkte fra internettet.</p>
 <p>Hvis ikke den allerede eksisterer, vil Installationsprogrammet forsøge at oprette den</p>';
-$string['pathssubdirroot'] = '<p>Den fulde sti mappen med til Moodlekoden.</p>';
+$string['pathssubdirroot'] = '<p>Den fulde sti til mappen med Moodlekoden.</p>';
 $string['pathssubwwwroot'] = '<p>Moodles fulde web-adresse, dvs. adressen som den skal stå i browserens adressefelt for at komme ind på Moodle.</p>
 <p>Moodle kan ikke bruges fra flere adresser. Hvis dit websted kan tilgås fra flere adresser, skal du vælge den enkleste og opsætte permanent viderestilling for hver af de øvrige.</p>
 <p>Hvis dit websted er tilgængeligt fra både internettet og et internt net (nogen gange kaldet intranet), skal du bruge den offentlige adresse her</p>
@@ -84,7 +79,7 @@ $string['pathssubwwwroot'] = '<p>Moodles fulde web-adresse, dvs. adressen som de
 $string['pathsunsecuredataroot'] = 'Datamappen er ikke sikret';
 $string['pathswrongadmindir'] = 'Adminmappe eksisterer ikke';
 $string['phpextension'] = '{$a} PHP-extension';
-$string['phpversion'] = 'PHP version';
+$string['phpversion'] = 'PHP-version';
 $string['phpversionhelp'] = '<p>Moodle kræver mindst PHP version 5.4.4 (7.0.x har visse begrænsninger).</p> <p>Du bruger i øjeblikket version {$a}</p> <p>Du bliver nødt til at opgradere PHP eller flytte systemet over på en webserver med en nyere version af PHP!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Du ser denne side fordi du har installeret og åbnet pakken <strong>{$a->packname} {$a->packversion}</strong> på din computer.

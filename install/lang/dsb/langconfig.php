@@ -30,8 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Jazyk';
-$string['moodlelogo'] = 'Moodle logo';
-$string['next'] = 'Ďalší';
-$string['previous'] = 'Predchádzajúci';
-$string['reload'] = 'Reload';
+$string['parentlanguage'] = 'de';
+$string['thislanguage'] = 'Dolnoserbski';
