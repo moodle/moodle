@@ -127,7 +127,7 @@ class company {
     /**
      * Gets the company parentid name for the current instance
      *
-     * Returns text;
+     * Returns int;
      *
      **/
     public function get_parentid() {
@@ -136,6 +136,28 @@ class company {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Recurses up the company tree to get the parent company.
+     *
+     * Returns int;
+     *
+     **/
+    public function get_topcompanyid() {
+
+        // Set the return id to by myself initially.
+        $returnid = $this->id;
+
+        // Check if I have a parent id.
+        if ($parentid = $this->get_parentid()) {
+
+            // Check it if has a parent id.
+            $parentcompany = new company($parentid);
+            $returnid = $parentcompany->get_topcompanyid();
+        }
+
+        return $returnid;
     }
 
     /**
@@ -231,7 +253,7 @@ class company {
     }
     
     /**
-     * Creates a recursive array of child companies to be used in a Select menu
+     * Creates a recursive array of child companies.
      *
      * Returns array;
      *
@@ -247,6 +269,29 @@ class company {
             $childcompany = new company($child->id);
             $returnarray = $returnarray + $childcompany->get_child_companies_recursive();
         }
+        return $returnarray;
+    }
+    
+    /**
+     * Creates a recursive array of parent companies .
+     *
+     * Returns array;
+     *
+     **/
+    public function get_parent_companies_recursive() {
+        global $DB;
+
+        $returnarray = array();
+
+        // Check if I have a parent id.
+        if ($parentid = $this->get_parentid()) {
+            $returnarray[$parentid] = $parentid;
+
+            // Check it if has a parent id.
+            $parentcompany = new company($parentid);
+            $returnarray = $returnarray + $parentcompany->get_parent_companies_recursive();
+        }
+
         return $returnarray;
     }
     
@@ -620,7 +665,7 @@ class company {
         }
 
         // if this is the only company, set the theme.
-        if (!$DB->get_record('company_users', array('userid' => $userid))) {
+        if (!$DB->get_records('company_users', array('userid' => $userid))) {
             $DB->set_field('user', 'theme', $this->get_theme(), array('id' => $userid));
         }
 

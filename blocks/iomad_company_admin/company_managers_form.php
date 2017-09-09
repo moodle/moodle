@@ -139,6 +139,13 @@ class company_managers_form extends moodleform {
         $company = new company($this->selectedcompany);
         $managertypes = $company->get_managertypes();
 
+        // Get the full company tree as we may need it.
+        $topcompanyid = $company->get_topcompanyid();
+        $topcompany = new company($topcompanyid);
+        $companytree = $topcompany->get_child_companies_recursive();
+        $parentcompanies = $company->get_parent_companies_recursive();
+        $companytree[$topcompanyid] = $topcompanyid;
+
         // Process incoming assignments.
         if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             $userstoassign = $this->potentialusers->get_selected_users();
@@ -342,7 +349,8 @@ class company_managers_form extends moodleform {
                         // Is this a manager from another company?
                         if ($DB->get_records_sql("SELECT id FROM {company_users}
                                                   WHERE userid = :userid
-                                                  AND companyid != :companyid
+                                                  AND companyid NOT IN 
+                                                  (" . join(',', array_keys($companytree)) .")
                                                   AND managertype = 1",
                                                   array('userid' => $removeuser->id,
                                                         'companyid' => $this->selectedcompany))) {
