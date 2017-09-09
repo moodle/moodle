@@ -1206,12 +1206,13 @@ class company {
         if (empty($companyid)) {
             return array();
         }
+        $company = new company($companyid);
         if (empty($departmentid)) {
             if (is_siteadmin($USER->id)) {
                 $department = self::get_company_parentnode($companyid);
                 $departmentid = $department->id;
             } else {
-                $department = self::get_userlevel($USER);
+                $department = $company->get_userlevel($USER);
                 $departmentid = $department->id;
             }
         }
@@ -1425,8 +1426,10 @@ class company {
                                     context_system::instance())) {
             return false;
         } else {
+            $departmentrec = $DB->get_record('department', array('id' => $departmentid));
+            $company = new company($departmentrec->company);
             // Get the list of departments at and below the user assignment.
-            $userhierarchylevel = self::get_userlevel($USER);
+            $userhierarchylevel = $company->get_userlevel($USER);
             $subhierarchytree = self::get_all_subdepartments($userhierarchylevel);
             $subhieracrhieslist = self::get_department_list($subhierarchytree);
             if (isset($subhieracrhieslist[$departmentid])) {
