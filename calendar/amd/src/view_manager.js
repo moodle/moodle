@@ -60,7 +60,8 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
         var refreshMonthContent = function(root, year, month, courseid) {
             startLoading(root);
 
-            return CalendarRepository.getCalendarMonthData(year, month, courseid)
+            var includenavigation = root.data('includenavigation');
+            return CalendarRepository.getCalendarMonthData(year, month, courseid, includenavigation)
                 .then(function(context) {
                     return Templates.render(root.attr('data-template'), context);
                 })

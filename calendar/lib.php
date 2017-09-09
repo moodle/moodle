@@ -3354,10 +3354,11 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses, $
  * Get the calendar view output.
  *
  * @param   \calendar_information $calendar The calendar being represented
- * @param   string      $view The type of calendar to have displayed
+ * @param   string  $view The type of calendar to have displayed
+ * @param   bool    $includenavigation Whether to include navigation
  * @return  array[array, string]
  */
-function calendar_get_view(\calendar_information $calendar, $view) {
+function calendar_get_view(\calendar_information $calendar, $view, $includenavigation = true) {
     global $PAGE, $CFG;
 
     $renderer = $PAGE->get_renderer('core_calendar');
@@ -3440,6 +3441,9 @@ function calendar_get_view(\calendar_information $calendar, $view) {
     ];
 
     $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
+
+    $month->set_includenavigation($includenavigation);
+
     $data = $month->export($renderer);
 
     return [$data, $template];

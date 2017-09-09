@@ -90,15 +90,17 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
      * @param {Number} year Year
      * @param {Number} month Month
      * @param {Number} courseid The course id.
+     * @param {Bool} includenavigation Whether to include navigation.
      * @return {promise} Resolved with the month view data.
      */
-    var getCalendarMonthData = function(year, month, courseid) {
+    var getCalendarMonthData = function(year, month, courseid, includenavigation) {
         var request = {
             methodname: 'core_calendar_get_calendar_monthly_view',
             args: {
                 year: year,
                 month: month,
                 courseid: courseid,
+                includenavigation: includenavigation,
             }
         };
 
