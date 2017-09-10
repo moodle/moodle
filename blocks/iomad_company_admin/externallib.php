@@ -1059,7 +1059,9 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB, $USER;
 
         // Validate parameters
-        $params = self::validate_parameters(self::create_licenses_parameters(), $licenses);
+        //$params = self::validate_parameters(self::create_licenses_parameters(), $licenses);
+        // EQ: compared to other functions should this be the right call
+        $params = self::validate_parameters(self::create_licenses_parameters(), array('licenses' => $licenses));
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -1067,7 +1069,7 @@ class block_iomad_company_admin_external extends external_api {
         require_capability('block/iomad_company_admin:edit_licenses', $context);
 
         // Array to return newly created records
-        $companyinfo = array();
+        $licenseinfo = array();
 
         foreach ($params['licenses'] as $license) {
             // Create the License record
@@ -1075,7 +1077,7 @@ class block_iomad_company_admin_external extends external_api {
 
             // Deal with the courses.
             foreach ($license->courses as $course) {
-                $DB->insert_record('companylicemse_courses', array('licenseid' => $licenseid,
+                $DB->insert_record('companylicense_courses', array('licenseid' => $licenseid,
                                                                    'courseid' => $course->courseid));
             }
 
