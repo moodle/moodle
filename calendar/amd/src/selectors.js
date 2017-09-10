@@ -36,5 +36,8 @@ define([], function() {
             group: "[data-popover-eventtype-group]",
             user: "[data-popover-eventtype-user]",
         },
+        calendarPeriods: {
+            month: "[data-period='month']",
+        },
     };
 });

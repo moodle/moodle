@@ -61,31 +61,45 @@ class core_calendar_renderer extends plugin_renderer_base {
     public function fake_block_threemonths(calendar_information $calendar) {
         // Get the calendar type we are using.
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
+        $time = $calendartype->timestamp_to_date_array($calendar->time);
 
-        $date = $calendartype->timestamp_to_date_array($calendar->time);
+        $current = $calendar->time;
+        $prev = $calendartype->convert_to_timestamp(
+                $time['year'],
+                $time['mon'] - 1,
+                $time['mday']
+            );
+        $next = $calendartype->convert_to_timestamp(
+                $time['year'],
+                $time['mon'] + 1,
+                $time['mday']
+            );
 
-        $prevmonth = calendar_sub_month($date['mon'], $date['year']);
-        $prevmonthtime = $calendartype->convert_to_gregorian($prevmonth[1], $prevmonth[0], 1);
-        $prevmonthtime = make_timestamp($prevmonthtime['year'], $prevmonthtime['month'], $prevmonthtime['day'],
-            $prevmonthtime['hour'], $prevmonthtime['minute']);
+        $content = '';
 
-        $nextmonth = calendar_add_month($date['mon'], $date['year']);
-        $nextmonthtime = $calendartype->convert_to_gregorian($nextmonth[1], $nextmonth[0], 1);
-        $nextmonthtime = make_timestamp($nextmonthtime['year'], $nextmonthtime['month'], $nextmonthtime['day'],
-            $nextmonthtime['hour'], $nextmonthtime['minute']);
+        // Previous.
+        $calendar->set_time($prev);
+        list($previousmonth, ) = calendar_get_view($calendar, 'minithree', false);
 
-        $content  = html_writer::start_tag('div', array('class' => 'minicalendarblock'));
-        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users,
-            false, false, 'display', $calendar->courseid, $prevmonthtime);
-        $content .= html_writer::end_tag('div');
-        $content .= html_writer::start_tag('div', array('class' => 'minicalendarblock'));
-        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users,
-            false, false, 'display', $calendar->courseid, $calendar->time);
-        $content .= html_writer::end_tag('div');
-        $content .= html_writer::start_tag('div', array('class' => 'minicalendarblock'));
-        $content .= calendar_get_mini($calendar->courses, $calendar->groups, $calendar->users,
-            false, false, 'display', $calendar->courseid, $nextmonthtime);
-        $content .= html_writer::end_tag('div');
+        // Current month.
+        $calendar->set_time($current);
+        list($currentmonth, ) = calendar_get_view($calendar, 'minithree', false);
+
+        // Next month.
+        $calendar->set_time($next);
+        list($nextmonth, ) = calendar_get_view($calendar, 'minithree', false);
+
+        // Reset the time back.
+        $calendar->set_time($current);
+
+        $data = (object) [
+            'previousmonth' => $previousmonth,
+            'currentmonth' => $currentmonth,
+            'nextmonth' => $nextmonth,
+        ];
+
+        $template = 'core_calendar/calendar_threemonth';
+        $content .= $this->render_from_template($template, $data);
         return $content;
     }
 

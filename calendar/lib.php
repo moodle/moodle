@@ -973,15 +973,29 @@ class calendar_information {
                 $year =  $date['year'];
             }
             if (checkdate($month, $day, $year)) {
-                $this->time = make_timestamp($year, $month, $day);
+                $time = make_timestamp($year, $month, $day);
             } else {
-                $this->time = time();
+                $time = time();
             }
-        } else if (!empty($time)) {
-            $this->time = $time;
-        } else {
-            $this->time = time();
         }
+
+        $this->set_time($time);
+    }
+
+    /**
+     * Set the time period of this instance.
+     *
+     * @param   int $time the unixtimestamp representing the date we want to view.
+     * @return  $this
+     */
+    public function set_time($time = null) {
+        if ($time === null) {
+            $this->time = time();
+        } else {
+            $this->time = $time;
+        }
+
+        return $this;
     }
 
     /**
@@ -3383,7 +3397,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         $monthdays = $type->get_num_days_in_month($date['year'], $date['mon']);
         $tend = $tstart + ($monthdays * DAYSECS) - 1;
         $selectortitle = get_string('detailedmonthviewfor', 'calendar');
-        if ($view === 'mini') {
+        if ($view === 'mini' || $view === 'minithree') {
             $template = 'core_calendar/calendar_mini';
         } else {
             $template = 'core_calendar/calendar_month';
