@@ -54,7 +54,7 @@ class competency_template_created extends base {
         }
         $event = static::create(array(
             'contextid'  => $template->get('contextid'),
-            'objectid' => $template->get('id')
+            'objectid' => $template->get('id'),
             'companyid'  => $template->data['companyid']
         ));
         $event->add_record_snapshot(template::TABLE, $template->to_record());
