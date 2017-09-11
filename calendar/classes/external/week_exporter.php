@@ -85,7 +85,7 @@ class week_exporter extends exporter {
                 'multiple' => true,
             ],
             'days' => [
-                'type' => day_exporter::read_properties_definition(),
+                'type' => week_day_exporter::read_properties_definition(),
                 'multiple' => true,
             ],
         ];
@@ -132,7 +132,7 @@ class week_exporter extends exporter {
                 $events[] = $event;
             }
 
-            $day = new day_exporter($daydata, [
+            $day = new week_day_exporter($daydata, [
                 'events' => $events,
                 'cache' => $this->related['cache'],
                 'type' => $this->related['type'],
