@@ -1330,6 +1330,7 @@ class core_user_external extends external_api {
     public static function view_user_list($courseid) {
         global $CFG;
         require_once($CFG->dirroot . "/user/lib.php");
+        require_once($CFG->dirroot . '/course/lib.php');
 
         $params = self::validate_parameters(self::view_user_list_parameters(),
                                             array(
@@ -1351,11 +1352,7 @@ class core_user_external extends external_api {
         }
         self::validate_context($context);
 
-        if ($course->id == SITEID) {
-            require_capability('moodle/site:viewparticipants', $context);
-        } else {
-            require_capability('moodle/course:viewparticipants', $context);
-        }
+        course_require_view_participants($context);
 
         user_list_view($course, $context);
 

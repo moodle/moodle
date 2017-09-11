@@ -2212,6 +2212,8 @@ class global_navigation extends navigation_node {
     protected function load_for_user($user=null, $forceforcontext=false) {
         global $DB, $CFG, $USER, $SITE;
 
+        require_once($CFG->dirroot . '/course/lib.php');
+
         if ($user === null) {
             // We can't require login here but if the user isn't logged in we don't
             // want to show anything
@@ -2258,7 +2260,7 @@ class global_navigation extends navigation_node {
         } else if ($USER->id != $user->id) {
             // This is the site so add a users node to the root branch.
             $usersnode = $this->rootnodes['users'];
-            if (has_capability('moodle/course:viewparticipants', $coursecontext)) {
+            if (course_can_view_participants($coursecontext)) {
                 $usersnode->action = new moodle_url('/user/index.php', array('id' => $course->id));
             }
             $userviewurl = new moodle_url('/user/profile.php', $baseargs);

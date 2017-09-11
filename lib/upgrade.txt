@@ -44,6 +44,8 @@ information provided here is intended especially for developers.
 * user_can_view_profile() now also checks the moodle/user:viewalldetails capability.
 * The core/modal_confirm dialogue has been deprecated. Please use the core/modal_save_cancel dialogue instead. Please ensure you
   update to use the ModalEvents.save and ModalEvents.cancel events instead of their yes/no counterparts.
+* Instead of checking the 'moodle/course:viewparticipants' and 'moodle/site:viewparticipants' capabilities use the
+  new functions course_can_view_participants() and course_require_view_participants().
 
 === 3.3.1 ===
 
