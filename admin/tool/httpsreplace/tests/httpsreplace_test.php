@@ -74,6 +74,11 @@ class httpsreplace_test extends \advanced_testcase {
                 "outputregex" => '/^$/',
                 "expectedcontent" => '<img src="https://anothersite.com?param=http://asdf.com">',
             ],
+            "Search for params should be case insensitive" => [
+                "content" => '<object DATA="' . $this->getExternalTestFileUrl('/test.swf', false) . '">',
+                "outputregex" => '/UPDATE/',
+                "expectedcontent" => '<object DATA="' . $this->getExternalTestFileUrl('/test.swf', true) . '">',
+            ],
             "More params should not interfere" => [
                 "content" => '<img alt="A picture" src="' . $this->getExternalTestFileUrl('/test.png', false) . '" width="1”><p style="font-size: \'20px\'"></p>',
                 "outputregex" => '/UPDATE/',

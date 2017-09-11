@@ -153,7 +153,7 @@ class url_finder {
 
                     if (in_array($column->type, $texttypes)) {
                         $columnname = $column->name;
-                        $select = "$columnname $regexp ?";
+                        $select = "LOWER($columnname) $regexp ?";
                         $rs = $DB->get_recordset_select($table, $select, [$httpurls]);
 
                         $found = array();
@@ -161,7 +161,7 @@ class url_finder {
                             // Regex to match src=http://etc. and data=http://etc.urls.
                             // Standard warning on expecting regex to perfectly parse HTML
                             // read http://stackoverflow.com/a/1732454 for more info.
-                            $regex = '#(src|data)\ *=\ *[\'\"]http://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))[\'\"]#';
+                            $regex = '#(src|data)\ *=\ *[\'\"]http://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))[\'\"]#i';
                             preg_match_all($regex, $record->$columnname, $match);
                             foreach ($match[0] as $url) {
                                 if (strpos($url, $CFG->wwwroot) !== false) {
