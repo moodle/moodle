@@ -41,7 +41,6 @@ class create extends \moodleform {
         global $PAGE;
 
         $mform = $this->_form;
-        $haserror = !empty($this->_customdata['haserror']);
         $starttime = isset($this->_customdata['starttime']) ? $this->_customdata['starttime'] : 0;
         $eventtypes = calendar_get_all_allowed_types();
 
@@ -82,8 +81,7 @@ class create extends \moodleform {
         $this->add_event_repeat_elements($mform);
 
         // Add the javascript required to enhance this mform.
-        // Including the show/hide of advanced elements and the display of the correct select elements for event types.
-        $PAGE->requires->js_call_amd('core_calendar/event_form', 'init', [$mform->getAttribute('id'), $haserror]);
+        $PAGE->requires->js_call_amd('core_calendar/event_form', 'init', [$mform->getAttribute('id')]);
     }
 
     /**

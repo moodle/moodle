@@ -33,8 +33,7 @@ define([
             'core/modal_registry',
             'core/fragment',
             'core_calendar/events',
-            'core_calendar/repository',
-            'core_calendar/event_form'
+            'core_calendar/repository'
         ],
         function(
             $,
@@ -47,13 +46,11 @@ define([
             ModalRegistry,
             Fragment,
             CalendarEvents,
-            Repository,
-            EventForm
+            Repository
         ) {
 
     var registered = false;
     var SELECTORS = {
-        MORELESS_BUTTON: '[data-action="more-less-toggle"]',
         SAVE_BUTTON: '[data-action="save"]',
         LOADING_ICON_CONTAINER: '[data-region="loading-icon-container"]',
     };
@@ -71,7 +68,6 @@ define([
         this.reloadingBody = false;
         this.reloadingTitle = false;
         this.saveButton = this.getFooter().find(SELECTORS.SAVE_BUTTON);
-        this.moreLessButton = this.getFooter().find(SELECTORS.MORELESS_BUTTON);
     };
 
     ModalEventForm.TYPE = 'core_calendar-modal_event_form';
@@ -185,7 +181,6 @@ define([
      */
     ModalEventForm.prototype.disableButtons = function() {
         this.saveButton.prop('disabled', true);
-        this.moreLessButton.prop('disabled', true);
     };
 
     /**
@@ -195,53 +190,6 @@ define([
      */
     ModalEventForm.prototype.enableButtons = function() {
         this.saveButton.prop('disabled', false);
-        this.moreLessButton.prop('disabled', false);
-    };
-
-    /**
-     * Set the more/less button in the footer to the "more"
-     * state.
-     *
-     * @method setMoreButton
-     */
-    ModalEventForm.prototype.setMoreButton = function() {
-        this.moreLessButton.attr('data-collapsed', 'true');
-        Str.get_string('more', 'calendar').then(function(string) {
-            this.moreLessButton.text(string);
-            return;
-        }.bind(this));
-    };
-
-    /**
-     * Set the more/less button in the footer to the "less"
-     * state.
-     *
-     * @method setLessButton
-     */
-    ModalEventForm.prototype.setLessButton = function() {
-        this.moreLessButton.attr('data-collapsed', 'false');
-        Str.get_string('less', 'calendar').then(function(string) {
-            this.moreLessButton.text(string);
-            return;
-        }.bind(this));
-    };
-
-    /**
-     * Toggle the more/less button in the footer from the current
-     * state to it's opposite state.
-     *
-     * @method toggleMoreLessButton
-     */
-    ModalEventForm.prototype.toggleMoreLessButton = function() {
-        var form = this.getForm();
-
-        if (this.moreLessButton.attr('data-collapsed') == 'true') {
-            form.trigger(EventForm.events.SHOW_ADVANCED);
-            this.setLessButton();
-        } else {
-            form.trigger(EventForm.events.HIDE_ADVANCED);
-            this.setMoreButton();
-        }
     };
 
     /**
@@ -288,10 +236,9 @@ define([
      *
      * @method reloadBodyContent
      * @param {string} formData The serialised form data
-     * @param {bool} hasError True if we know the form data is erroneous
      * @return {object} A promise resolved with the fragment html and js from
      */
-    ModalEventForm.prototype.reloadBodyContent = function(formData, hasError) {
+    ModalEventForm.prototype.reloadBodyContent = function(formData) {
         if (this.reloadingBody) {
             return this.bodyPromise;
         }
@@ -317,8 +264,6 @@ define([
         if (typeof formData !== 'undefined') {
             args.formdata = formData;
         }
-
-        args.haserror = (typeof hasError == 'undefined') ? false : hasError;
 
         this.bodyPromise = Fragment.loadFragment('calendar', 'event_form', contextId, args);
 
@@ -416,7 +361,7 @@ define([
                     // If there was a server side validation error then
                     // we need to re-request the rendered form from the server
                     // in order to display the error for the user.
-                    return this.reloadBodyContent(formData, true);
+                    return this.reloadBodyContent(formData);
                 } else {
                     // No problemo! Our work here is done.
                     this.hide();
@@ -468,28 +413,6 @@ define([
             // propagation because we have already handled the event.
             e.preventDefault();
             e.stopPropagation();
-        }.bind(this));
-
-        // Toggle the state of the more/less button in the footer.
-        this.getModal().on(CustomEvents.events.activate, SELECTORS.MORELESS_BUTTON, function(e, data) {
-            this.toggleMoreLessButton();
-
-            data.originalEvent.preventDefault();
-            e.stopPropagation();
-        }.bind(this));
-
-        // When the event form tells us that the advanced fields are shown
-        // then the more/less button should be set to less to allow the user
-        // to hide the advanced fields.
-        this.getModal().on(EventForm.events.ADVANCED_SHOWN, function() {
-            this.setLessButton();
-        }.bind(this));
-
-        // When the event form tells us that the advanced fields are hidden
-        // then the more/less button should be set to more to allow the user
-        // to show the advanced fields.
-        this.getModal().on(EventForm.events.ADVANCED_HIDDEN, function() {
-            this.setMoreButton();
         }.bind(this));
     };
 
