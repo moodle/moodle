@@ -121,6 +121,21 @@ class post extends \core_search\base_mod {
     }
 
     /**
+     * Return the context info required to index files for
+     * this search area.
+     *
+     * @return array
+     */
+    public function get_search_fileareas() {
+        $fileareas = array(
+            'attachment',
+            'post'
+        );
+
+        return $fileareas;
+    }
+
+    /**
      * Add the forum post attachments.
      *
      * @param document $document The current document
@@ -142,14 +157,21 @@ class post extends \core_search\base_mod {
         // Because this is used during indexing, we don't want to cache posts. Would result in memory leak.
         unset($this->postsdata[$postid]);
 
-        $cm = $this->get_cm('forum', $post->forum, $document->get('courseid'));
+        $cm = $this->get_cm($this->get_module_name(), $post->forum, $document->get('courseid'));
         $context = \context_module::instance($cm->id);
+        $contextid = $context->id;
+
+        $fileareas = $this->get_search_fileareas();
+        $component = $this->get_component_name();
 
         // Get the files and attach them.
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($context->id, 'mod_forum', 'attachment', $postid, "filename", false);
-        foreach ($files as $file) {
-            $document->add_stored_file($file);
+        foreach ($fileareas as $filearea) {
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($contextid, $component, $filearea, $postid, '', false);
+
+            foreach ($files as $file) {
+                $document->add_stored_file($file);
+            }
         }
     }
 
