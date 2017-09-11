@@ -2475,20 +2475,25 @@ function get_component_string($component, $contextlevel) {
 
 /**
  * Gets the list of roles assigned to this context and up (parents)
- * from the list of roles that are visible on user profile page
- * and participants page.
+ * from the aggregation of:
+ * a) the list of roles that are visible on user profile page and participants page (profileroles setting) and;
+ * b) if applicable, those roles the current user can assign in the context.
  *
  * @param context $context
  * @return array
  */
 function get_profile_roles(context $context) {
     global $CFG, $DB;
-
-    if (empty($CFG->profileroles)) {
-        return array();
+    // If the current user can assign roles, then they can also see those assignable roles on the profile and participants page,
+    // provided the roles are assigned to at least 1 user in the context.
+    $policyroles = empty($CFG->profileroles) ? [] : array_map('trim', explode(',', $CFG->profileroles));
+    $assignableroles = array_keys(get_assignable_roles($context));
+    $rolesinscope = array_values(array_unique(array_merge($policyroles, $assignableroles)));
+    if (empty($rolesinscope)) {
+        return [];
     }
 
-    list($rallowed, $params) = $DB->get_in_or_equal(explode(',', $CFG->profileroles), SQL_PARAMS_NAMED, 'a');
+    list($rallowed, $params) = $DB->get_in_or_equal($rolesinscope, SQL_PARAMS_NAMED, 'a');
     list($contextlist, $cparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'p');
     $params = array_merge($params, $cparams);
 
