@@ -558,8 +558,8 @@ function book_export_contents($cm, $baseurl) {
         $chapterindexfile['filesize']     = 0;
         $chapterindexfile['fileurl']      = moodle_url::make_webservice_pluginfile_url(
                     $context->id, 'mod_book', 'chapter', $chapter->id, '/', 'index.html')->out(false);
-        $chapterindexfile['timecreated']  = $book->timecreated;
-        $chapterindexfile['timemodified'] = $book->timemodified;
+        $chapterindexfile['timecreated']  = $chapter->timecreated;
+        $chapterindexfile['timemodified'] = $chapter->timemodified;
         $chapterindexfile['content']      = format_string($chapter->title, true, array('context' => $context));
         $chapterindexfile['sortorder']    = 0;
         $chapterindexfile['userid']       = null;
