@@ -405,7 +405,6 @@ function email_reports_cron() {
             }
         }
     }
-    $dbman->drop_table($table);
 
     // Deal with manager completion digests.
     // Get the companies from the list of users in the temp table.
@@ -478,4 +477,7 @@ function email_reports_cron() {
             }
         }
     }
+
+    // Drop the temp database table.
+    $dbman->drop_table($table);
 }
