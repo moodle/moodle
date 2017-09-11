@@ -632,7 +632,7 @@ class manager {
      *
      * @param bool $fullindex Whether we should reindex everything or not.
      * @param float $timelimit Time limit in seconds (0 = no time limit)
-     * @param \progress_trace $progress Optional class for tracking progress
+     * @param \progress_trace|null $progress Optional class for tracking progress
      * @throws \moodle_exception
      * @return bool Whether there was any updated document or not.
      */
@@ -773,6 +773,150 @@ class manager {
         $this->engine->index_complete($sumdocs, $fullindex);
 
         return (bool)$sumdocs;
+    }
+
+    /**
+     * Indexes or reindexes a specific context of the system, e.g. one course.
+     *
+     * The function returns an object with field 'complete' (true or false).
+     *
+     * This function supports partial indexing via the time limit parameter. If the time limit
+     * expires, it will return values for $startfromarea and $startfromtime which can be passed
+     * next time to continue indexing.
+     *
+     * @param \context $context Context to restrict index.
+     * @param string $singleareaid If specified, indexes only the given area.
+     * @param float $timelimit Time limit in seconds (0 = no time limit)
+     * @param \progress_trace|null $progress Optional class for tracking progress
+     * @param string $startfromarea Area to start from
+     * @param int $startfromtime Timestamp to start from
+     * @return \stdClass Object indicating success
+     */
+    public function index_context($context, $singleareaid = '', $timelimit = 0,
+            \progress_trace $progress = null, $startfromarea = '', $startfromtime = 0) {
+        if (!$progress) {
+            $progress = new \null_progress_trace();
+        }
+
+        // Work out time to stop, if limited.
+        if ($timelimit) {
+            // Decide time to stop.
+            $stopat = microtime(true) + $timelimit;
+        }
+
+        // No PHP time limit.
+        \core_php_time_limit::raise();
+
+        // Notify the engine that an index starting.
+        $this->engine->index_starting(false);
+
+        $sumdocs = 0;
+
+        // Get all search areas, in consistent order.
+        $searchareas = $this->get_search_areas_list(true);
+        ksort($searchareas);
+
+        // Are we skipping past some that were handled previously?
+        $skipping = $startfromarea ? true : false;
+
+        foreach ($searchareas as $areaid => $searcharea) {
+            // If we're only processing one area id, skip all the others.
+            if ($singleareaid && $singleareaid !== $areaid) {
+                continue;
+            }
+
+            // If we're skipping to a later area, continue through the loop.
+            $referencestarttime = 0;
+            if ($skipping) {
+                if ($areaid !== $startfromarea) {
+                    continue;
+                }
+                // Stop skipping and note the reference start time.
+                $skipping = false;
+                $referencestarttime = $startfromtime;
+            }
+
+            $progress->output('Processing area: ' . $searcharea->get_visible_name());
+
+            $elapsed = microtime(true);
+
+            // Get the recordset of all documents from the area for this context.
+            $recordset = $searcharea->get_document_recordset($referencestarttime, $context);
+            if (!$recordset) {
+                if ($recordset === null) {
+                    $progress->output('Skipping (not relevant to context).', 1);
+                } else {
+                    $progress->output('Skipping (does not support context indexing).', 1);
+                }
+                continue;
+            }
+
+            // Notify the engine that an area is starting.
+            $this->engine->area_index_starting($searcharea, false);
+
+            // Work out search options.
+            $options = [];
+            $options['indexfiles'] = $this->engine->file_indexing_enabled() &&
+                    $searcharea->uses_file_indexing();
+            if ($timelimit) {
+                $options['stopat'] = $stopat;
+            }
+
+            // Construct iterator which will use get_document on the recordset results.
+            $iterator = new \core\dml\recordset_walk($recordset,
+                    array($searcharea, 'get_document'), $options);
+
+            // Use this iterator to add documents.
+            $result = $this->engine->add_documents($iterator, $searcharea, $options);
+            if (count($result) === 5) {
+                list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial) = $result;
+            } else {
+                // Backward compatibility for engines that don't support partial adding.
+                list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc) = $result;
+                debugging('engine::add_documents() should return $partial (4-value return is deprecated)',
+                        DEBUG_DEVELOPER);
+                $partial = false;
+            }
+
+            if ($numdocs > 0) {
+                $elapsed = round((microtime(true) - $elapsed), 3);
+                $progress->output('Processed ' . $numrecords . ' records containing ' . $numdocs .
+                        ' documents, in ' . $elapsed . ' seconds' .
+                        ($partial ? ' (not complete)' : '') . '.', 1);
+            } else {
+                $progress->output('No documents to index.', 1);
+            }
+
+            // Notify the engine this area is complete, but don't store any times as this is not
+            // part of the 'normal' search index.
+            if (!$this->engine->area_index_complete($searcharea, $numdocs, false)) {
+                $progress->output('Engine reported error.', 1);
+            }
+
+            if ($partial && $timelimit && (microtime(true) >= $stopat)) {
+                $progress->output('Stopping indexing due to time limit.');
+                break;
+            }
+        }
+
+        if ($sumdocs > 0) {
+            $event = \core\event\search_indexed::create(
+                    array('context' => $context));
+            $event->trigger();
+        }
+
+        $this->engine->index_complete($sumdocs, false);
+
+        // Indicate in result whether we completed indexing, or only part of it.
+        $result = new \stdClass();
+        if ($partial) {
+            $result->complete = false;
+            $result->startfromarea = $areaid;
+            $result->startfromtime = $lastindexeddoc;
+        } else {
+            $result->complete = true;
+        }
+        return $result;
     }
 
     /**

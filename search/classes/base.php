@@ -310,6 +310,9 @@ abstract class base {
      *     indexfiles => File indexing is enabled if true.
      *     lastindexedtime => The last time this area was indexed. 0 if never indexed.
      *
+     * The lastindexedtime value is not set if indexing a specific context rather than the whole
+     * system.
+     *
      * @param \stdClass $record A record containing, at least, the indexed document id and a modified timestamp
      * @param array     $options Options for document creation
      * @return \core_search\document

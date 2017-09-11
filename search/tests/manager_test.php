@@ -262,6 +262,106 @@ class search_manager_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests that indexing a specified context works correctly.
+     */
+    public function test_context_indexing() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course and two forums and a page.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $now = time();
+        $forum1 = $generator->create_module('forum', ['course' => $course->id]);
+        $generator->get_plugin_generator('mod_forum')->create_discussion(['course' => $course->id,
+                'forum' => $forum1->id, 'userid' => $USER->id, 'timemodified' => $now,
+                'name' => 'Frog']);
+        $this->waitForSecond();
+        $generator->get_plugin_generator('mod_forum')->create_discussion(['course' => $course->id,
+                'forum' => $forum1->id, 'userid' => $USER->id, 'timemodified' => $now + 2,
+                'name' => 'Zombie']);
+        $forum2 = $generator->create_module('forum', ['course' => $course->id]);
+        $this->waitForSecond();
+        $generator->get_plugin_generator('mod_forum')->create_discussion(['course' => $course->id,
+                'forum' => $forum2->id, 'userid' => $USER->id, 'timemodified' => $now + 1,
+                'name' => 'Toad']);
+        $generator->create_module('page', ['course' => $course->id]);
+        $generator->create_module('forum', ['course' => $course->id]);
+
+        // Index forum 1 only.
+        $search = testable_core_search::instance();
+        $buffer = new progress_trace_buffer(new text_progress_trace(), false);
+        $result = $search->index_context(\context_module::instance($forum1->cmid), '', 0, $buffer);
+        $this->assertTrue($result->complete);
+        $log = $buffer->get_buffer();
+        $buffer->reset_buffer();
+
+        // Confirm that output only processed 1 forum activity and 2 posts.
+        var_dump(strpos($log, "area: Forum - activity information\n  Processed 1 "));
+        $this->assertNotFalse(strpos($log, "area: Forum - activity information\n  Processed 1 "));
+        $this->assertNotFalse(strpos($log, "area: Forum - posts\n  Processed 2 "));
+
+        // Confirm that some areas for different types of context were skipped.
+        $this->assertNotFalse(strpos($log, "area: Users\n  Skipping"));
+        $this->assertNotFalse(strpos($log, "area: My courses\n  Skipping"));
+
+        // Confirm that another module area had no results.
+        $this->assertNotFalse(strpos($log, "area: Page\n  No documents"));
+
+        // Index whole course.
+        $result = $search->index_context(\context_course::instance($course->id), '', 0, $buffer);
+        $this->assertTrue($result->complete);
+        $log = $buffer->get_buffer();
+        $buffer->reset_buffer();
+
+        // Confirm that output processed 3 forum activities and 3 posts.
+        $this->assertNotFalse(strpos($log, "area: Forum - activity information\n  Processed 3 "));
+        $this->assertNotFalse(strpos($log, "area: Forum - posts\n  Processed 3 "));
+
+        // The course area was also included this time.
+        $this->assertNotFalse(strpos($log, "area: My courses\n  Processed 1 "));
+
+        // Confirm that another module area had results too.
+        $this->assertNotFalse(strpos($log, "area: Page\n  Processed 1 "));
+
+        // Index whole course, but only forum posts.
+        $result = $search->index_context(\context_course::instance($course->id), 'mod_forum-post',
+                0, $buffer);
+        $this->assertTrue($result->complete);
+        $log = $buffer->get_buffer();
+        $buffer->reset_buffer();
+
+        // Confirm that output processed 3 posts but not forum activities.
+        $this->assertFalse(strpos($log, "area: Forum - activity information"));
+        $this->assertNotFalse(strpos($log, "area: Forum - posts\n  Processed 3 "));
+
+        // Set time limit and retry index of whole course, taking 3 tries to complete it.
+        $search->get_engine()->set_add_delay(0.4);
+        $result = $search->index_context(\context_course::instance($course->id), '', 1, $buffer);
+        $log = $buffer->get_buffer();
+        $buffer->reset_buffer();
+        $this->assertFalse($result->complete);
+        $this->assertNotFalse(strpos($log, "area: Forum - activity information\n  Processed 2 "));
+
+        $result = $search->index_context(\context_course::instance($course->id), '', 1, $buffer,
+                $result->startfromarea, $result->startfromtime);
+        $log = $buffer->get_buffer();
+        $buffer->reset_buffer();
+        $this->assertNotFalse(strpos($log, "area: Forum - activity information\n  Processed 2 "));
+        $this->assertNotFalse(strpos($log, "area: Forum - posts\n  Processed 2 "));
+        $this->assertFalse($result->complete);
+
+        $result = $search->index_context(\context_course::instance($course->id), '', 1, $buffer,
+                $result->startfromarea, $result->startfromtime);
+        $log = $buffer->get_buffer();
+        $buffer->reset_buffer();
+        $this->assertNotFalse(strpos($log, "area: Forum - posts\n  Processed 2 "));
+        $this->assertTrue($result->complete);
+    }
+
+    /**
      * Adding this test here as get_areas_user_accesses process is the same, results just depend on the context level.
      *
      * @return void
