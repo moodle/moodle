@@ -229,7 +229,7 @@ define(['jquery',
                 notification.confirm(
                     strings[0], // Confirm.
                     strings[1], // Reopen plan X?
-                    strings[2], // reopen.
+                    strings[2], // Reopen.
                     strings[3], // Cancel.
                     function() {
                         self._doReopenPlan(planData);

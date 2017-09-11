@@ -16,6 +16,7 @@
 
     // === Possible Errors ===
     'comma-dangle': 'off',
+    'no-compare-neg-zero': 'error',
     'no-cond-assign': 'error',
     'no-console': 'error',
     'no-constant-condition': 'error',
@@ -67,7 +68,6 @@
     'no-fallthrough': 'error',
     'no-floating-decimal': 'warn',
     'no-global-assign': 'warn',
-    // Enabled by grunt for AMD modules: 'no-implicit-globals': 'error',
     'no-implied-eval': 'error',
     'no-invalid-this': 'error',
     'no-iterator': 'error',
@@ -106,6 +106,7 @@
     'block-spacing': 'warn',
     'brace-style': ['warn', '1tbs'],
     'camelcase': 'warn',
+    'capitalized-comments': ['warn', 'always', { 'ignoreConsecutiveComments': true }],
     'comma-spacing': ['warn', { 'before': false, 'after': true }],
     'comma-style': ['warn', 'last'],
     'computed-property-spacing': 'error',
@@ -190,5 +191,24 @@
         'message': 'Use AMD module "core/str" or M.util.get_string()'
     }],
 
-  }
+  },
+  overrides: [
+    {
+      files: ["**/yui/src/**/*.js"],
+      // Disable some rules which we can't safely define for YUI rollups.
+      rules: {
+        'no-undef': 'off',
+        'no-unused-vars': 'off',
+        'no-unused-expressions': 'off'
+      }
+    },
+    {
+      files: ["**/amd/src/*.js"],
+      // Check AMD with some slightly stricter rules.
+      rules: {
+        'no-unused-vars': 'error',
+        'no-implicit-globals': 'error'
+      }
+    }
+  ]
 }

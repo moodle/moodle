@@ -369,7 +369,7 @@ define(['jquery', 'core/notification', 'core/templates',
             // Render the events.
             return render(root, calendarEvents).then(function(renderCount) {
                 if (renderCount < calendarEvents.length) {
-                    // if the number of events that was rendered is less than
+                    // If the number of events that was rendered is less than
                     // the number we sent for rendering we can assume that there
                     // are no groups to add them in. Since the ordering of the
                     // events is guaranteed it means that any future requests will
