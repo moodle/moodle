@@ -99,6 +99,85 @@ class course_search_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests course indexing support for contexts.
+     */
+    public function test_mycourses_indexing_contexts() {
+        global $DB, $USER, $SITE;
+
+        $searcharea = \core_search\manager::get_search_area($this->mycoursesareaid);
+
+        // Create some courses in categories, and a forum.
+        $generator = $this->getDataGenerator();
+        $cat1 = $generator->create_category();
+        $course1 = $generator->create_course(['category' => $cat1->id]);
+        $cat2 = $generator->create_category(['parent' => $cat1->id]);
+        $course2 = $generator->create_course(['category' => $cat2->id]);
+        $cat3 = $generator->create_category();
+        $course3 = $generator->create_course(['category' => $cat3->id]);
+        $forum = $generator->create_module('forum', ['course' => $course1->id]);
+        $DB->set_field('course', 'timemodified', 0, ['id' => $SITE->id]);
+        $DB->set_field('course', 'timemodified', 1, ['id' => $course1->id]);
+        $DB->set_field('course', 'timemodified', 2, ['id' => $course2->id]);
+        $DB->set_field('course', 'timemodified', 3, ['id' => $course3->id]);
+
+        // Find the first block to use for a block context.
+        $blockid = array_values($DB->get_records('block_instances', null, 'id', 'id', 0, 1))[0]->id;
+        $blockcontext = context_block::instance($blockid);
+
+        // Check with block context - should be null.
+        $this->assertNull($searcharea->get_document_recordset(0, $blockcontext));
+
+        // Check with user context - should be null.
+        $this->setAdminUser();
+        $usercontext = context_user::instance($USER->id);
+        $this->assertNull($searcharea->get_document_recordset(0, $usercontext));
+
+        // Check with module context - should be null.
+        $modcontext = context_module::instance($forum->cmid);
+        $this->assertNull($searcharea->get_document_recordset(0, $modcontext));
+
+        // Check with course context - should return specified course if timestamp allows.
+        $coursecontext = context_course::instance($course3->id);
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(3, $coursecontext));
+        $this->assertEquals([$course3->id], $results);
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(4, $coursecontext));
+        $this->assertEquals([], $results);
+
+        // Check with category context - should return course in categories and subcategories.
+        $catcontext = context_coursecat::instance($cat1->id);
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(0, $catcontext));
+        $this->assertEquals([$course1->id, $course2->id], $results);
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(2, $catcontext));
+        $this->assertEquals([$course2->id], $results);
+
+        // Check with system context and null - should return all these courses + site course.
+        $systemcontext = context_system::instance();
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(0, $systemcontext));
+        $this->assertEquals([$SITE->id, $course1->id, $course2->id, $course3->id], $results);
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(0, null));
+        $this->assertEquals([$SITE->id, $course1->id, $course2->id, $course3->id], $results);
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(3, $systemcontext));
+        $this->assertEquals([$course3->id], $results);
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(3, null));
+        $this->assertEquals([$course3->id], $results);
+    }
+
+    /**
+     * Utility function to convert recordset to array of IDs for testing.
+     *
+     * @param moodle_recordset $rs Recordset to convert (and close)
+     * @return array Array of IDs from records indexed by number (0, 1, 2, ...)
+     */
+    protected static function recordset_to_ids(moodle_recordset $rs) {
+        $results = [];
+        foreach ($rs as $rec) {
+            $results[] = $rec->id;
+        }
+        $rs->close();
+        return $results;
+    }
+
+    /**
      * Document contents.
      *
      * @return void

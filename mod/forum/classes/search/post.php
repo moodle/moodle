@@ -56,17 +56,25 @@ class post extends \core_search\base_mod {
      * Returns recordset containing required data for indexing forum posts.
      *
      * @param int $modifiedfrom timestamp
-     * @return moodle_recordset
+     * @param \context|null $context Optional context to restrict scope of returned results
+     * @return moodle_recordset|null Recordset (or null if no results)
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
 
-        $sql = 'SELECT fp.*, f.id AS forumid, f.course AS courseid
+        list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
+                $context, 'forum', 'f');
+        if ($contextjoin === null) {
+            return null;
+        }
+
+        $sql = "SELECT fp.*, f.id AS forumid, f.course AS courseid
                   FROM {forum_posts} fp
                   JOIN {forum_discussions} fd ON fd.id = fp.discussion
                   JOIN {forum} f ON f.id = fd.forum
-                 WHERE fp.modified >= ? ORDER BY fp.modified ASC';
-        return $DB->get_recordset_sql($sql, array($modifiedfrom));
+          $contextjoin
+                 WHERE fp.modified >= ? ORDER BY fp.modified ASC";
+        return $DB->get_recordset_sql($sql, array_merge($contextparams, [$modifiedfrom]));
     }
 
     /**

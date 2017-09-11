@@ -114,6 +114,85 @@ class message_sent_search_testcase extends advanced_testcase {
     }
 
     /**
+     * Indexing messages, with restricted contexts.
+     */
+    public function test_message_sent_indexing_contexts() {
+        global $SITE;
+
+        $searcharea = \core_search\manager::get_search_area($this->messagesentareaid);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
+        // Send first message.
+        $message = new \core\message\message();
+        $message->courseid = SITEID;
+        $message->userfrom = $user1;
+        $message->userto = $user2;
+        $message->subject = 'Test1';
+        $message->smallmessage = 'Test small messsage';
+        $message->fullmessage = 'Test full messsage';
+        $message->fullmessageformat = 0;
+        $message->fullmessagehtml = null;
+        $message->notification = 0;
+        $message->component = 'moodle';
+        $message->name = 'instantmessage';
+        message_send($message);
+
+        // Ensure that ordering by timestamp will return in consistent order.
+        $this->waitForSecond();
+
+        // Send second message in opposite direction.
+        $message = new \core\message\message();
+        $message->courseid = SITEID;
+        $message->userfrom = $user2;
+        $message->userto = $user1;
+        $message->subject = 'Test2';
+        $message->smallmessage = 'Test small messsage';
+        $message->fullmessage = 'Test full messsage';
+        $message->fullmessageformat = 0;
+        $message->fullmessagehtml = null;
+        $message->notification = 0;
+        $message->component = 'moodle';
+        $message->name = 'instantmessage';
+        message_send($message);
+
+        // Test function with null context and system context (same).
+        $rs = $searcharea->get_document_recordset(0, null);
+        $this->assertEquals(['Test1', 'Test2'], self::recordset_to_subjects($rs));
+        $rs = $searcharea->get_document_recordset(0, context_system::instance());
+        $this->assertEquals(['Test1', 'Test2'], self::recordset_to_subjects($rs));
+
+        // Test with user context for each user.
+        $rs = $searcharea->get_document_recordset(0, \context_user::instance($user1->id));
+        $this->assertEquals(['Test1'], self::recordset_to_subjects($rs));
+        $rs = $searcharea->get_document_recordset(0, \context_user::instance($user2->id));
+        $this->assertEquals(['Test2'], self::recordset_to_subjects($rs));
+
+        // Test with a course context (should return null).
+        $this->assertNull($searcharea->get_document_recordset(0,
+                context_course::instance($SITE->id)));
+    }
+
+    /**
+     * Utility function to convert recordset to array of message subjects for testing.
+     *
+     * @param moodle_recordset $rs Recordset to convert (and close)
+     * @return array Array of IDs from records indexed by number (0, 1, 2, ...)
+     */
+    public static function recordset_to_subjects(moodle_recordset $rs) {
+        $results = [];
+        foreach ($rs as $rec) {
+            $results[] = $rec->subject;
+        }
+        $rs->close();
+        return $results;
+    }
+
+    /**
      * Document contents.
      *
      * @return void

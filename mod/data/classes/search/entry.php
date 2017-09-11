@@ -47,16 +47,25 @@ class entry extends \core_search\base_mod {
      * Returns recordset containing required data for indexing database entries.
      *
      * @param int $modifiedfrom timestamp
-     * @return moodle_recordset
+     * @param \context|null $context Optional context to restrict scope of returned results
+     * @return moodle_recordset|null Recordset (or null if no results)
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
+
+        list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
+                $context, 'data', 'd', SQL_PARAMS_NAMED);
+        if ($contextjoin === null) {
+            return null;
+        }
 
         $sql = "SELECT dr.*, d.course
                   FROM {data_records} dr
                   JOIN {data} d ON d.id = dr.dataid
+          $contextjoin
                  WHERE dr.timemodified >= :timemodified";
-        return $DB->get_recordset_sql($sql, array('timemodified' => $modifiedfrom));
+        return $DB->get_recordset_sql($sql,
+                array_merge($contextparams, ['timemodified' => $modifiedfrom]));
     }
 
     /**
