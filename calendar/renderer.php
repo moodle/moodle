@@ -51,24 +51,6 @@ class core_calendar_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Produces the content for the filters block (pretend block)
-     *
-     * @param int $courseid
-     * @param int $day
-     * @param int $month
-     * @param int $year
-     * @param int $view
-     * @param int $courses
-     * @return string
-     */
-    public function fake_block_filters($courseid, $day, $month, $year, $view, $courses) {
-        $returnurl = $this->page->url;
-        $returnurl->param('course', $courseid);
-        return html_writer::tag('div', calendar_filter_controls($returnurl),
-            array('class' => 'calendar_filters filters'));
-    }
-
-    /**
      * Produces the content for the three months block (pretend block)
      *
      * This includes the previous month, the current month, and the next month
@@ -501,5 +483,17 @@ class core_calendar_renderer extends plugin_renderer_base {
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('form');
         return $html;
+    }
+
+    /**
+     * Render the event filter region.
+     *
+     * @return  string
+     */
+    public function event_filter() {
+        $data = [
+            'eventtypes' => calendar_get_filter_types(),
+        ];
+        return $this->render_from_template('core_calendar/event_filter', $data);
     }
 }

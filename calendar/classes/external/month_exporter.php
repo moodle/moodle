@@ -76,7 +76,19 @@ class month_exporter extends exporter {
 
         $related['type'] = $type;
 
-        parent::__construct([], $related);
+        $data = [
+            'url' => $this->url->out(false),
+        ];
+
+        parent::__construct($data, $related);
+    }
+
+    protected static function define_properties() {
+        return [
+            'url' => [
+                'type' => PARAM_URL,
+            ],
+        ];
     }
 
     /**
@@ -106,15 +118,38 @@ class month_exporter extends exporter {
             'view' => [
                 'type' => PARAM_ALPHA,
             ],
+            'time' => [
+                'type' => PARAM_INT,
+            ],
+            'periodname' => [
+                // Note: We must use RAW here because the calendar type returns the formatted month name based on a
+                // calendar format.
+                'type' => PARAM_RAW,
+            ],
             'previousperiod' => [
                 'type' => PARAM_INT,
+            ],
+            'previousperiodname' => [
+                // Note: We must use RAW here because the calendar type returns the formatted month name based on a
+                // calendar format.
+                'type' => PARAM_RAW,
             ],
             'nextperiod' => [
                 'type' => PARAM_INT,
             ],
-            'time' => [
-                'type' => PARAM_INT,
-            ]
+            'nextperiodname' => [
+                // Note: We must use RAW here because the calendar type returns the formatted month name based on a
+                // calendar format.
+                'type' => PARAM_RAW,
+            ],
+            'larrow' => [
+                // The left arrow defined by the theme.
+                'type' => PARAM_RAW,
+            ],
+            'rarrow' => [
+                // The right arrow defined by the theme.
+                'type' => PARAM_RAW,
+            ],
         ];
     }
 
@@ -125,16 +160,24 @@ class month_exporter extends exporter {
      * @return array Keys are the property names, values are their values.
      */
     protected function get_other_values(renderer_base $output) {
+        $previousperiod = $this->get_previous_month_timestamp();
+        $nextperiod = $this->get_next_month_timestamp();
+
         return [
             'courseid' => $this->calendar->courseid,
-            'view' => 'month',
-            'previousperiod' => $this->get_previous_month_timestamp(),
-            'nextperiod' => $this->get_next_month_timestamp(),
             'filter_selector' => $this->get_course_filter_selector($output),
             'navigation' => $this->get_navigation($output),
             'weeks' => $this->get_weeks($output),
             'daynames' => $this->get_day_names($output),
-            'time' => $this->calendar->time
+            'view' => 'month',
+            'time' => $this->calendar->time,
+            'periodname' => userdate($this->calendar->time, get_string('strftimemonthyear')),
+            'previousperiod' => $previousperiod,
+            'previousperiodname' => userdate($previousperiod, get_string('strftimemonthyear')),
+            'nextperiod' => $nextperiod,
+            'nextperiodname' => userdate($nextperiod, get_string('strftimemonthyear')),
+            'larrow' => $output->larrow(),
+            'rarrow' => $output->rarrow(),
         ];
     }
 
@@ -213,13 +256,13 @@ class month_exporter extends exporter {
         $prepadding = ($firstdayno + $daysinweek - 1) % $daysinweek;
         $daysinfirstweek = $daysinweek - $prepadding;
         $days = array_slice($alldays, 0, $daysinfirstweek);
-        $week = new week_exporter($days, $prepadding, ($daysinweek - count($days) - $prepadding), $this->related);
+        $week = new week_exporter($this->calendar, $days, $prepadding, ($daysinweek - count($days) - $prepadding), $this->related);
         $weeks[] = $week->export($output);
 
         // Now chunk up the remaining day. and turn them into weeks.
         $daychunks = array_chunk(array_slice($alldays, $daysinfirstweek), $daysinweek);
         foreach ($daychunks as $days) {
-            $week = new week_exporter($days, 0, ($daysinweek - count($days)), $this->related);
+            $week = new week_exporter($this->calendar, $days, 0, ($daysinweek - count($days)), $this->related);
             $weeks[] = $week->export($output);
         }
 
@@ -279,7 +322,7 @@ class month_exporter extends exporter {
      */
     protected function get_next_month_timestamp() {
         $date = $this->related['type']->timestamp_to_date_array($this->calendar->time);
-        $month = calendar_sub_month($date['mon'], $date['year']);
+        $month = calendar_add_month($date['mon'], $date['year']);
         $monthtime = $this->related['type']->convert_to_gregorian($month[1], $month[0], 1);
 
         return make_timestamp($monthtime['year'], $monthtime['month'], $monthtime['day'], $monthtime['hour'], $monthtime['minute']);

@@ -296,9 +296,7 @@ define([
     /**
      * Register event listeners for the module.
      */
-    var registerEventListeners = function() {
-        var root = $(SELECTORS.ROOT);
-
+    var registerEventListeners = function(root) {
         // Bind click events to event links.
         root.on('click', SELECTORS.EVENT_ITEM, function(e) {
             e.preventDefault();
@@ -350,9 +348,11 @@ define([
     };
 
     return {
-        init: function() {
-            CalendarViewManager.init();
-            registerEventListeners();
+        init: function(root) {
+            root = $(root);
+
+            CalendarViewManager.init(root);
+            registerEventListeners(root);
         }
     };
 });

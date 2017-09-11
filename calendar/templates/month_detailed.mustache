@@ -77,8 +77,9 @@
                                             <li class="events-underway">[{{name}}]</li>
                                         {{/underway}}
                                         {{^underway}}
-                                            <li class="calendar_event_{{eventtype}}"
+                                            <li class="calendar_event_{{calendareventtype}}"
                                                 data-region="event-item"
+                                                data-eventtype-{{calendareventtype}}="1"
                                                 {{#canedit}}
                                                     draggable="true"
                                                     data-drag-type="move"
@@ -113,8 +114,28 @@
     </table>
 </div>
 {{#js}}
-require(['jquery', 'core_calendar/month_view_drag_drop'], function($, DragDrop) {
+require([
+    'jquery',
+    'core_calendar/month_view_drag_drop',
+    'core_calendar/selectors',
+    'core_calendar/events',
+], function(
+    $,
+    DragDrop,
+    CalendarSelectors,
+    CalendarEvents
+) {
     var root = $('#month-detailed-{{uniqid}}');
     DragDrop.init(root);
+
+    $('body').on(CalendarEvents.filterChanged, function(e, data) {
+        M.util.js_pending("month-detailed-{{uniqid}}-filterChanged");
+        // A filter value has been changed.
+        // Find all matching cells in the popover data, and hide them.
+        $("#month-detailed-{{uniqid}}")
+            .find(CalendarSelectors.eventType[data.type])
+            .toggleClass('hidden', !!data.hidden);
+        M.util.js_complete("month-detailed-{{uniqid}}-filterChanged");
+    });
 });
 {{/js}}

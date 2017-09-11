@@ -355,3 +355,13 @@ table.calendartable caption {
         }
     }
 }
+
+.calendarwrapper {
+    position: relative;
+}
+
+.day-popover-content {
+    &:empty + .day-popover-alternate {
+        display: block;
+    }
+}

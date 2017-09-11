@@ -15,24 +15,31 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_calendar/minicalendar_day_link
+    @template calendar/calendar_mini
 
-    Displays link to calendar day in mini calendar, with hover tooltip.
+    Calendar month view for blocks.
+
+    The purpose of this template is to render the month view for blocks.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
 
     Example context (json):
     {
-        "day": "Today",
-        "url": "http://example.com/",
-        "title": "Monday 2nd January",
-        "content": "<img class='icon smallicon' alt='icon' src='../../../pix/i/siteevent.svg'>Test site event"
     }
 }}
-{{< core/hover_tooltip }}
-    {{$anchor}}
-        <a href="{{url}}">{{$day}}{{day}}{{/day}}</a>
-    {{/anchor}}
-    {{$tooltip}}
-        <b>{{$title}}{{title}}{{/title}}</b>
-        {{$content}}{{{content}}}{{/content}}
-    {{/tooltip}}
-{{/ core/hover_tooltip }}
+<div{{!
+  }} id="calendar-month-{{uniqid}}-{{time}}" {{!
+    }} data-template="core_calendar/month_mini" {{!
+    }} data-includenavigation="{{#includenavigation}}true{{/includenavigation}}{{^includenavigation}}false{{/includenavigation}}"{{!
+    }}>
+    {{> core_calendar/month_mini}}
+</div>
+{{#js}}
+require(['jquery', 'core_calendar/calendar_mini'], function($, CalendarMini) {
+    CalendarMini.init($("#calendar-month-{{uniqid}}-{{time}}"));
+});
+{{/js}}

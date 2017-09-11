@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains event class for displaying the day view.
+ * Contains event class for displaying the day on month view.
  *
  * @package   core_calendar
  * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
@@ -26,78 +26,17 @@ namespace core_calendar\external;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core\external\exporter;
 use renderer_base;
 use moodle_url;
 
 /**
- * Class for displaying the day view.
+ * Class for displaying the day on month view.
  *
  * @package   core_calendar
  * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class day_exporter extends exporter {
-
-    /**
-     * @var \calendar_information $calendar The calendar being displayed.
-     */
-    protected $calendar;
-
-    /**
-     * Constructor.
-     *
-     * @param \calendar_information $calendar The calendar information for the period being displayed
-     * @param mixed $data Either an stdClass or an array of values.
-     * @param array $related Related objects.
-     */
-    public function __construct(\calendar_information $calendar, $data, $related) {
-        $this->calendar = $calendar;
-
-        parent::__construct($data, $related);
-    }
-
-    /**
-     * Return the list of properties.
-     *
-     * @return array
-     */
-    protected static function define_properties() {
-        // These are the default properties as returned by getuserdate()
-        // but without the formatted month and week names.
-        return [
-            'seconds' => [
-                'type' => PARAM_INT,
-            ],
-            'minutes' => [
-                'type' => PARAM_INT,
-            ],
-            'hours' => [
-                'type' => PARAM_INT,
-            ],
-            'mday' => [
-                'type' => PARAM_INT,
-            ],
-            'wday' => [
-                'type' => PARAM_INT,
-            ],
-            'year' => [
-                'type' => PARAM_INT,
-            ],
-            'yday' => [
-                'type' => PARAM_INT,
-            ],
-            // These are additional params.
-            'istoday' => [
-                'type' => PARAM_BOOL,
-                'default' => false,
-            ],
-            'isweekend' => [
-                'type' => PARAM_BOOL,
-                'default' => false,
-            ],
-        ];
-    }
+class week_day_exporter extends day_exporter {
 
     /**
      * Return the list of additional properties.
@@ -105,7 +44,8 @@ class day_exporter extends exporter {
      * @return array
      */
     protected static function define_other_properties() {
-        return [
+        $return = parent::define_other_properties();
+        $return = array_merge($return, [
             'timestamp' => [
                 'type' => PARAM_INT,
             ],
@@ -115,10 +55,6 @@ class day_exporter extends exporter {
             'viewdaylink' => [
                 'type' => PARAM_URL,
                 'optional' => true,
-            ],
-            'events' => [
-                'type' => calendar_event_exporter::read_properties_definition(),
-                'multiple' => true,
             ],
             'calendareventtypes' => [
                 'type' => PARAM_RAW,
@@ -132,7 +68,9 @@ class day_exporter extends exporter {
                 'type' => PARAM_BOOL,
                 'default' => false,
             ],
-        ];
+        ]);
+
+        return $return;
     }
 
     /**

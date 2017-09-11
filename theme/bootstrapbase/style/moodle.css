@@ -5852,6 +5852,9 @@ img.iconsmall {
     min-width: 1024px;
   }
 }
+.calendarwrapper {
+  position: relative;
+}
 /* course.less */
 /* COURSE CONTENT */
 /* stylelint-disable unit-blacklist */

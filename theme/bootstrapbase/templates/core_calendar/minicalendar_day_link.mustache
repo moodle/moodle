@@ -27,18 +27,38 @@
         "content": "<img class='icon smallicon' src='../../../pix/i/siteevent.svg'>Test site event"
     }
 }}
-<a id="{{uniqid}}" href="{{url}}"
-    data-container="body"
-    data-toggle="popover"
-    data-html="true"
-    data-trigger="hover"
-    data-placement="top"
-    data-title="{{title}}"
-    data-content="{{content}}">{{day}}</a>
+<a {{!
+    }} href="{{url}}"{{!
+    }} id="calendar-day-popover-link-{{courseid}}-{{year}}-{{yday}}-{{uniqid}}"{{!
+    }} data-container="body"{{!
+    }} data-toggle="popover"{{!
+    }} data-html="true"{{!
+    }} data-trigger="hover"{{!
+    }} data-placement="top"{{!
+    }} data-title="{{$title}}{{title}}{{/title}}"{{!
+    }} data-alternate="{{$nocontent}}{{/nocontent}}"{{!
+}}>{{$day}}{{day}}{{/day}}</a>
+<div class="hidden">
+    {{$content}}{{/content}}
+</div>
 {{#js}}
-require(['jquery'], function($) {
+require(['jquery', 'theme_bootstrapbase/bootstrap'], function($) {
     require(['theme_bootstrapbase/bootstrap'], function() {
-        $('#{{uniqid}}').popover();
+        var target = $("#calendar-day-popover-link-{{courseid}}-{{year}}-{{yday}}-{{uniqid}}");
+        target.popover({
+            content: function() {
+                var source = target.next().find("> *:not('.hidden')");
+                var content = $('<div>');
+
+                if (source.length) {
+                    content.html(source.clone(false));
+                } else {
+                    content.html(target.data('alternate'));
+                }
+
+                return content.html();
+            }
+        });
     });
 });
 {{/js}}
