@@ -24,5 +24,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$ADMIN->add('reports', new admin_externalpage('analyticmodels', get_string('analyticmodels', 'tool_analytics'),
+$ADMIN->add('analytics', new admin_externalpage('analyticmodels', get_string('analyticmodels', 'tool_analytics'),
     "$CFG->wwwroot/$CFG->admin/tool/analytics/index.php", 'moodle/analytics:managemodels'));
