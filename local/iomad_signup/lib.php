@@ -37,7 +37,7 @@ function local_iomad_signup_user_created($user) {
     }
 
     // If not 'email' auth then we are not interested
-    if (!in_array($user->auth, explode(',', $CFG->local_iomad_signup_auth))) {
+    if (empty($CFG->local_iomad_signup_auth) || !in_array($user->auth, explode(',', $CFG->local_iomad_signup_auth))) {
         return true;
     }
 
