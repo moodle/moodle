@@ -97,6 +97,10 @@ class file_info_context_coursecat extends file_info {
     protected function get_area_coursecat_description($itemid, $filepath, $filename) {
         global $CFG;
 
+        if (!$this->category->id) {
+            // No coursecat description area for "system".
+            return null;
+        }
         if (!$this->category->visible and !has_capability('moodle/category:viewhiddencategories', $this->context)) {
             return null;
         }
@@ -158,37 +162,92 @@ class file_info_context_coursecat extends file_info {
      * @return array of file_info instances
      */
     public function get_children() {
-        global $DB;
-
         $children = array();
 
         if ($child = $this->get_area_coursecat_description(0, '/', '.')) {
             $children[] = $child;
         }
 
-        $course_cats = $DB->get_records('course_categories', array('parent'=>$this->category->id), 'sortorder', 'id,visible');
-        foreach ($course_cats as $category) {
+        list($coursecats, $hiddencats) = $this->get_categories();
+        foreach ($coursecats as $category) {
             $context = context_coursecat::instance($category->id);
-            if (!$category->visible and !has_capability('moodle/category:viewhiddencategories', $context)) {
-                continue;
-            }
-            if ($child = $this->browser->get_file_info($context)) {
-                $children[] = $child;
-            }
+            $children[] = new self($this->browser, $context, $category);
         }
 
-        $courses = $DB->get_records('course', array('category'=>$this->category->id), 'sortorder', 'id,visible');
+        $courses = $this->get_courses($hiddencats);
         foreach ($courses as $course) {
-            $context = context_course::instance($course->id);
-            if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
-                continue;
-            }
-            if ($child = $this->browser->get_file_info($context)) {
-                $children[] = $child;
-            }
+            $children[] = $this->get_child_course($course);
         }
 
-        return $children;
+        return array_filter($children);
+    }
+
+    /**
+     * List of courses in this category and in hidden subcategories
+     *
+     * @param array $hiddencats list of categories that are hidden from current user and returned by {@link get_categories()}
+     * @return array list of courses
+     */
+    protected function get_courses($hiddencats) {
+        global $DB, $CFG;
+        require_once($CFG->libdir.'/modinfolib.php');
+
+        $params = array('category' => $this->category->id, 'contextlevel' => CONTEXT_COURSE);
+        $sql = 'c.category = :category';
+
+        foreach ($hiddencats as $category) {
+            $catcontext = context_coursecat::instance($category->id);
+            $sql .= ' OR ' . $DB->sql_like('ctx.path', ':path' . $category->id);
+            $params['path' . $category->id] = $catcontext->path . '/%';
+        }
+
+        // Let's retrieve only minimum number of fields from course table -
+        // what is needed to check access or call get_fast_modinfo().
+        $coursefields = array_merge(['id', 'visible'], course_modinfo::$cachedfields);
+        $fields = 'c.' . join(',c.', $coursefields) . ', ' .
+            context_helper::get_preload_record_columns_sql('ctx');
+        return $DB->get_records_sql('SELECT ' . $fields . ' FROM {course} c
+                JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)
+                WHERE ('.$sql.') ORDER BY c.sortorder', $params);
+    }
+
+    /**
+     * Finds accessible and non-accessible direct subcategories
+     *
+     * @return array [$coursecats, $hiddencats] - child categories that are visible to the current user and not visible
+     */
+    protected function get_categories() {
+        global $DB;
+        $fields = 'c.*, ' . context_helper::get_preload_record_columns_sql('ctx');
+        $coursecats = $DB->get_records_sql('SELECT ' . $fields . ' FROM {course_categories} c
+                LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)
+                WHERE c.parent = :parent ORDER BY c.sortorder',
+            array('parent' => $this->category->id, 'contextlevel' => CONTEXT_COURSECAT));
+
+        $hiddencats = [];
+
+        foreach ($coursecats as $id => &$category) {
+            context_helper::preload_from_record($category);
+            $context = context_coursecat::instance($category->id);
+            if (!$category->visible && !has_capability('moodle/category:viewhiddencategories', $context)) {
+                $hiddencats[$id] = $coursecats[$id];
+                unset($coursecats[$id]);
+            }
+        }
+        return [$coursecats, $hiddencats];
+    }
+
+    /**
+     * Returns the file info element for a given course or null if course is not accessible
+     *
+     * @param stdClass $course may contain context fields for preloading
+     * @return file_info_context_course|null
+     */
+    protected function get_child_course($course) {
+        context_helper::preload_from_record($course);
+        $context = context_course::instance($course->id);
+        $child = new file_info_context_course($this->browser, $context, $course);
+        return $child->get_file_info(null, null, null, null, null);
     }
 
     /**
@@ -200,53 +259,33 @@ class file_info_context_coursecat extends file_info {
      * @return int
      */
     public function count_non_empty_children($extensions = '*', $limit = 1) {
-        global $DB;
         $cnt = 0;
-        if (($child = $this->get_area_coursecat_description(0, '/', '.'))
-                && $child->count_non_empty_children($extensions) && (++$cnt) >= $limit) {
-            return $cnt;
+        if ($child = $this->get_area_coursecat_description(0, '/', '.')) {
+            $cnt += $child->count_non_empty_children($extensions) ? 1 : 0;
+            if ($cnt >= $limit) {
+                return $cnt;
+            }
         }
 
-        $rs = $DB->get_recordset_sql('SELECT ctx.id AS contextid, c.visible
-                FROM {context} ctx, {course} c
-                WHERE ctx.instanceid = c.id
-                AND ctx.contextlevel = :courselevel
-                AND c.category = :categoryid
-                ORDER BY c.visible DESC', // retrieve visible courses first
-                array('categoryid' => $this->category->id, 'courselevel' => CONTEXT_COURSE));
-        foreach ($rs as $record) {
-            $context = context::instance_by_id($record->contextid);
-            if (!$record->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
-                continue;
+        list($coursecats, $hiddencats) = $this->get_categories();
+        foreach ($coursecats as $category) {
+            $context = context_coursecat::instance($category->id);
+            $child = new file_info_context_coursecat($this->browser, $context, $category);
+            $cnt += $child->count_non_empty_children($extensions) ? 1 : 0;
+            if ($cnt >= $limit) {
+                return $cnt;
             }
-            if (($child = $this->browser->get_file_info($context))
-                    && $child->count_non_empty_children($extensions) && (++$cnt) >= $limit) {
-                break;
-            }
-        }
-        $rs->close();
-        if ($cnt >= $limit) {
-            return $cnt;
         }
 
-        $rs = $DB->get_recordset_sql('SELECT ctx.id AS contextid, cat.visible
-                FROM {context} ctx, {course_categories} cat
-                WHERE ctx.instanceid = cat.id
-                AND ctx.contextlevel = :catlevel
-                AND cat.parent = :categoryid
-                ORDER BY cat.visible DESC', // retrieve visible categories first
-                array('categoryid' => $this->category->id, 'catlevel' => CONTEXT_COURSECAT));
-        foreach ($rs as $record) {
-            $context = context::instance_by_id($record->contextid);
-            if (!$record->visible and !has_capability('moodle/category:viewhiddencategories', $context)) {
-                continue;
-            }
-            if (($child = $this->browser->get_file_info($context))
-                    && $child->count_non_empty_children($extensions) && (++$cnt) >= $limit) {
-                break;
+        $courses = $this->get_courses($hiddencats);
+        foreach ($courses as $course) {
+            if ($child = $this->get_child_course($course)) {
+                $cnt += $child->count_non_empty_children($extensions) ? 1 : 0;
+                if ($cnt >= $limit) {
+                    return $cnt;
+                }
             }
         }
-        $rs->close();
 
         return $cnt;
     }

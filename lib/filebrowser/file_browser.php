@@ -60,6 +60,9 @@ require_once("$CFG->libdir/filebrowser/file_info_context_module.php");
 */
 class file_browser {
 
+    /** @var array cached list of enrolled courses.  */
+    protected $enrolledcourses = null;
+
     /**
      * Looks up file_info instance
      *
@@ -190,7 +193,7 @@ class file_browser {
     /**
      * Returns info about the files at Course category context
      *
-     * @param stdClass $context context object
+     * @param context $context context object
      * @param string $component component
      * @param string $filearea file area
      * @param int $itemid item ID
@@ -199,39 +202,36 @@ class file_browser {
      * @return file_info|null file_info instance or null if not found or access not allowed
      */
     private function get_file_info_context_module($context, $component, $filearea, $itemid, $filepath, $filename) {
-        global $COURSE, $DB, $CFG;
-
-        static $cachedmodules = array();
-
-        if (!array_key_exists($context->instanceid, $cachedmodules)) {
-            $cachedmodules[$context->instanceid] = get_coursemodule_from_id('', $context->instanceid);
+        if (!($context instanceof context_module)) {
+            return null;
         }
+        $coursecontext = $context->get_course_context();
+        $modinfo = get_fast_modinfo($coursecontext->instanceid);
+        $cm = $modinfo->get_cm($context->instanceid);
 
-        if (!($cm = $cachedmodules[$context->instanceid])) {
+        if (empty($cm->uservisible)) {
             return null;
         }
 
-        if ($cm->course == $COURSE->id) {
-            $course = $COURSE;
-        } else if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
-            return null;
-        }
-
-        $modinfo = get_fast_modinfo($course);
-        if (empty($modinfo->cms[$cm->id]->uservisible)) {
-            return null;
-        }
-
-        $modname = $modinfo->cms[$cm->id]->modname;
-
-        if (!file_exists("$CFG->dirroot/mod/$modname/lib.php")) {
-            return null;
-        }
-
-        // ok, we know that module exists, and user may access it
-
-        $level = new file_info_context_module($this, $context, $course, $cm, $modname);
+        $level = new file_info_context_module($this, $context, $cm->get_course(), $cm, $cm->modname);
         return $level->get_file_info($component, $filearea, $itemid, $filepath, $filename);
     }
 
+    /**
+     * Check if user is enrolled into the course
+     *
+     * This function keeps a cache of enrolled courses because it may be called multiple times for many courses in one request
+     *
+     * @param int $courseid
+     * @return bool
+     */
+    public function is_enrolled($courseid) {
+        if ($this->enrolledcourses === null || PHPUNIT_TEST) {
+            // Since get_file_browser() returns a statically cached object we can't rely on cache
+            // inside the file_browser class in the unittests.
+            // TODO MDL-59964 remove this caching when it's implemented inside enrol_get_my_courses().
+            $this->enrolledcourses = enrol_get_my_courses(['id']);
+        }
+        return array_key_exists($courseid, $this->enrolledcourses);
+    }
 }
