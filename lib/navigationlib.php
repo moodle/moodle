@@ -2717,7 +2717,8 @@ class global_navigation extends navigation_node {
             // Just a link to course competency.
             $title = get_string('competencies', 'core_competency');
             $path = new moodle_url("/admin/tool/lp/coursecompetencies.php", array('courseid' => $course->id));
-            $coursenode->add($title, $path, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/competencies', ''));
+            $coursenode->add($title, $path, navigation_node::TYPE_SETTING, null, 'competencies',
+                    new pix_icon('i/competencies', ''));
         }
         if ($navoptions->grades) {
             $url = new moodle_url('/grade/report/index.php', array('id'=>$course->id));
