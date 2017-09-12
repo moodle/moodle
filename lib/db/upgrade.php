@@ -2601,5 +2601,27 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017092900.00);
     }
 
+    if ($oldversion < 2017100601.00) {
+        // Define field 'timestart' to be added to 'analytics_predictions'.
+        $table = new xmldb_table('analytics_predictions');
+        $field = new xmldb_field('timestart', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timecreated');
+
+        // Conditionally launch add field 'timestart'.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field 'timeend' to be added to 'analytics_predictions'.
+        $field = new xmldb_field('timeend', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timestart');
+
+        // Conditionally launch add field 'timeend'.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017100601.00);
+    }
+
     return true;
 }
