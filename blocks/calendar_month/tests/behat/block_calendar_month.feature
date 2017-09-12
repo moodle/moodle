@@ -155,7 +155,7 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I hover over today in the calendar
     And I should not see "Group Event"
 
-  @javascript @arn
+  @javascript
   Scenario: Filter group events in the calendar block
     Given the following "groups" exist:
       | name    | course | idnumber |
