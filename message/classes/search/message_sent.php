@@ -46,8 +46,8 @@ class message_sent extends base_message {
         // We don't want to index messages sent by noreply and support users.
         $params = array('modifiedfrom' => $modifiedfrom, 'noreplyuser' => \core_user::NOREPLY_USER,
             'supportuser' => \core_user::SUPPORT_USER);
-        return $DB->get_recordset_select('message_read', 'timecreated >= :modifiedfrom AND
-            useridfrom != :noreplyuser AND useridfrom != :supportuser', $params, 'timecreated ASC');
+        return $DB->get_recordset_select('message_read', 'timeread >= :modifiedfrom AND
+            useridfrom != :noreplyuser AND useridfrom != :supportuser', $params, 'timeread ASC');
     }
 
     /**
