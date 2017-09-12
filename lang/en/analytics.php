@@ -53,6 +53,8 @@ $string['errorunexistingtimesplitting'] = 'The selected time-splitting method is
 $string['errorunexistingmodel'] = 'Non-existing model {$a}';
 $string['errorunknownaction'] = 'Unknown action';
 $string['eventpredictionactionstarted'] = 'Prediction process started';
+$string['eventinsightsviewed'] = 'Insights viewed';
+$string['fixedack'] = 'Acknowledged / fixed';
 $string['insightmessagesubject'] = 'New insight for "{$a->contextname}": {$a->insightname}';
 $string['insightinfomessage'] = 'The system generated some insights for you: {$a}';
 $string['insightinfomessagehtml'] = 'The system generated some insights for you: <a href="{$a}">{$a}</a>.';
@@ -71,6 +73,7 @@ $string['nonewtimeranges'] = 'No new time ranges; nothing to predict.';
 $string['nopredictionsyet'] = 'No predictions available yet';
 $string['noranges'] = 'No predictions yet';
 $string['notrainingbasedassumptions'] = 'Models based on assumptions do not need training';
+$string['notuseful'] = 'Not useful';
 $string['novaliddata'] = 'No valid data available';
 $string['novalidsamples'] = 'No valid samples available';
 $string['onlycli'] = 'Analytics processes execution via command line only';

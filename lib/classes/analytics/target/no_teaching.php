@@ -67,25 +67,28 @@ class no_teaching extends \core_analytics\local\target\binary {
 
         require_once($CFG->dirroot . '/course/lib.php');
 
-        // No need to call the parent as the parent's action is view details and this target only have 1 feature.
-        $actions = array();
-
         $sampledata = $prediction->get_sample_data();
         $course = $sampledata['course'];
 
+        $actions = array();
+
         $url = new \moodle_url('/course/view.php', array('id' => $course->id));
         $pix = new \pix_icon('i/course', get_string('course'));
-        $actions['viewcourse'] = new \core_analytics\prediction_action('viewcourse', $prediction,
+        $actions[] = new \core_analytics\prediction_action('viewcourse', $prediction,
             $url, $pix, get_string('view'));
 
         if (course_can_view_participants($sampledata['context'])) {
             $url = new \moodle_url('/user/index.php', array('id' => $course->id));
             $pix = new \pix_icon('i/cohort', get_string('participants'));
-            $actions['viewparticipants'] = new \core_analytics\prediction_action('viewparticipants', $prediction,
+            $actions[] = new \core_analytics\prediction_action('viewparticipants', $prediction,
                 $url, $pix, get_string('participants'));
         }
 
-        return $actions;
+        $parentactions = parent::prediction_actions($prediction, $includedetailsaction);
+        // No need to show details as there is only 1 indicator.
+        unset($parentactions[\core_analytics\prediction::ACTION_PREDICTION_DETAILS]);
+
+        return array_merge($actions, $parentactions);
     }
 
     /**

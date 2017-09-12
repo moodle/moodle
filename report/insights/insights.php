@@ -111,4 +111,10 @@ echo $OUTPUT->header();
 $renderable = new \report_insights\output\insights_list($model, $context, $othermodels, $page, $perpage);
 echo $renderer->render($renderable);
 
+$eventdata = array (
+    'context' => $context,
+    'other' => array('modelid' => $model->get_id())
+);
+\core\event\insights_viewed::create($eventdata)->trigger();
+
 echo $OUTPUT->footer();

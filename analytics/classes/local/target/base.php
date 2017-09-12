@@ -112,17 +112,41 @@ abstract class base extends \core_analytics\calculable {
      * @return \core_analytics\prediction_action[]
      */
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
+        global $PAGE;
+
+        $predictionid = $prediction->get_prediction_data()->id;
+
+        $PAGE->requires->js_call_amd('report_insights/actions', 'init', array($predictionid));
+
         $actions = array();
 
         if ($includedetailsaction) {
 
             $predictionurl = new \moodle_url('/report/insights/prediction.php',
-                array('id' => $prediction->get_prediction_data()->id));
+                array('id' => $predictionid));
 
-            $actions['predictiondetails'] = new \core_analytics\prediction_action('predictiondetails', $prediction,
+            $actions[] = new \core_analytics\prediction_action(\core_analytics\prediction::ACTION_PREDICTION_DETAILS, $prediction,
                 $predictionurl, new \pix_icon('t/preview', get_string('viewprediction', 'analytics')),
                 get_string('viewprediction', 'analytics'));
         }
+
+        // Flag as fixed / solved.
+        $fixedattrs = array(
+            'data-prediction-id' => $predictionid,
+            'data-prediction-methodname' => 'report_insights_set_fixed_prediction'
+        );
+        $actions[] = new \core_analytics\prediction_action(\core_analytics\prediction::ACTION_FIXED,
+            $prediction, new \moodle_url(''), new \pix_icon('t/check', get_string('fixedack', 'analytics')),
+            get_string('fixedack', 'analytics'), false, $fixedattrs);
+
+        // Flag as not useful.
+        $notusefulattrs = array(
+            'data-prediction-id' => $predictionid,
+            'data-prediction-methodname' => 'report_insights_set_notuseful_prediction'
+        );
+        $actions[] = new \core_analytics\prediction_action(\core_analytics\prediction::ACTION_NOT_USEFUL,
+            $prediction, new \moodle_url(''), new \pix_icon('t/delete', get_string('notuseful', 'analytics')),
+            get_string('notuseful', 'analytics'), false, $notusefulattrs);
 
         return $actions;
     }
