@@ -17,7 +17,7 @@ php:
     - 7.0
 
 addons:
-  postgresql: "9.3"
+  postgresql: "9.6"
   packages:
     - mysql-server-5.6
     - mysql-client-core-5.6
@@ -91,7 +91,7 @@ install:
             sudo service postgresql stop
             sudo mv /var/lib/postgresql /mnt/ramdisk
             sudo ln -s /mnt/ramdisk/postgresql /var/lib/postgresql
-            sudo service postgresql start 9.3
+            sudo service postgresql start 9.6
         fi
     - >
         if [ "$TASK" = 'PHPUNIT' ];
