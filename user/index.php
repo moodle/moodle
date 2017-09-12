@@ -103,6 +103,7 @@ echo $OUTPUT->heading(get_string('participants'));
 
 // Get the currently applied filters.
 $filtersapplied = optional_param_array('unified-filters', [], PARAM_TEXT);
+$filterwassubmitted = optional_param('unified-filter-submitted', 0, PARAM_BOOL);
 
 // Default group ID.
 $groupid = false;
@@ -168,9 +169,19 @@ foreach ($filtersapplied as $filter) {
     }
 }
 
-// If course supports groups, but the user can't access all groups and there's no group filter set, apply a default group filter.
-if ($groupid !== false && !$canaccessallgroups && !$hasgroupfilter) {
-    $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
+// If course supports groups we may need to set a default.
+if ($groupid !== false) {
+    // If we are in a course with visible groups and the user has not submitted anything and does not have
+    // access to all groups, then set a default group. This is the same behaviour in 3.3.
+    if (!$canaccessallgroups && !$filterwassubmitted && $course->groupmode == VISIBLEGROUPS) {
+        $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
+    } else if (!$canaccessallgroups && !$hasgroupfilter && $course->groupmode != VISIBLEGROUPS) {
+        // The user can't access all groups and has not set a group filter in a course where the groups are not visible
+        // then apply a default group filter.
+        $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
+    } else if (!$hasgroupfilter) { // No need for the group id to be set.
+        $groupid = false;
+    }
 }
 
 // Manage enrolments.

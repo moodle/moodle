@@ -265,8 +265,8 @@ class core_user_renderer extends plugin_renderer_base {
 
         // Filter options for groups, if available.
         if ($course->groupmode != NOGROUPS) {
-            if (has_capability('moodle/site:accessallgroups', $context)) {
-                // List all groups if the user can access all groups.
+            if (has_capability('moodle/site:accessallgroups', $context) || $course->groupmode == VISIBLEGROUPS) {
+                // List all groups if the user can access all groups, or we are in visible group mode.
                 $groups = $manager->get_all_groups();
             } else {
                 // Otherwise, just list the groups the user belongs to.
