@@ -1250,4 +1250,90 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('shouldbeanimage.txt', $editorfiles[0]['filename']);
         $this->assertEquals('attachment.txt', $attachmentfiles[0]['filename']);
     }
+
+    /**
+     *   Test get entry including rating information.
+     */
+    public function test_get_entry_rating_information() {
+        $this->resetAfterTest(true);
+
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/rating/lib.php');
+
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $teacher = self::getDataGenerator()->create_user();
+
+        // Create course to add the module.
+        $course = self::getDataGenerator()->create_course();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id, 'manual');
+
+        // Create the glossary and contents.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->assessed = RATING_AGGREGATE_AVERAGE;
+        $scale = $this->getDataGenerator()->create_scale(array('scale' => 'A,B,C,D'));
+        $record->scale = "-$scale->id";
+        $glossary = $this->getDataGenerator()->create_module('glossary', $record);
+        $context = context_module::instance($glossary->cmid);
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $entry = $gg->create_content($glossary, array('approved' => 1, 'userid' => $user1->id));
+
+        // Rate the entry as user2.
+        $rating1 = new stdClass();
+        $rating1->contextid = $context->id;
+        $rating1->component = 'mod_glossary';
+        $rating1->ratingarea = 'entry';
+        $rating1->itemid = $entry->id;
+        $rating1->rating = 1; // 1 is A.
+        $rating1->scaleid = "-$scale->id";
+        $rating1->userid = $user2->id;
+        $rating1->timecreated = time();
+        $rating1->timemodified = time();
+        $rating1->id = $DB->insert_record('rating', $rating1);
+
+        // Rate the entry as user3.
+        $rating2 = new stdClass();
+        $rating2->contextid = $context->id;
+        $rating2->component = 'mod_glossary';
+        $rating2->ratingarea = 'entry';
+        $rating2->itemid = $entry->id;
+        $rating2->rating = 3; // 3 is C.
+        $rating2->scaleid = "-$scale->id";
+        $rating2->userid = $user3->id;
+        $rating2->timecreated = time() + 1;
+        $rating2->timemodified = time() + 1;
+        $rating2->id = $DB->insert_record('rating', $rating2);
+
+        // As student, retrieve ratings information.
+        $this->setUser($user1);
+        $result = mod_glossary_external::get_entry_by_id($entry->id);
+        $result = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $result);
+        $this->assertCount(1, $result['ratinginfo']['ratings']);
+        $this->assertFalse($result['ratinginfo']['ratings'][0]['canviewaggregate']);
+        $this->assertFalse($result['ratinginfo']['canviewall']);
+        $this->assertFalse($result['ratinginfo']['ratings'][0]['canrate']);
+        $this->assertTrue(!isset($result['ratinginfo']['ratings'][0]['count']));
+
+        // Now, as teacher, I should see the info correctly.
+        $this->setUser($teacher);
+        $result = mod_glossary_external::get_entry_by_id($entry->id);
+        $result = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $result);
+        $this->assertCount(1, $result['ratinginfo']['ratings']);
+        $this->assertTrue($result['ratinginfo']['ratings'][0]['canviewaggregate']);
+        $this->assertTrue($result['ratinginfo']['canviewall']);
+        $this->assertTrue($result['ratinginfo']['ratings'][0]['canrate']);
+        $this->assertEquals(2, $result['ratinginfo']['ratings'][0]['count']);
+        $this->assertEquals(2, $result['ratinginfo']['ratings'][0]['aggregate']);   // 2 is B, that is the average of A + C.
+    }
 }

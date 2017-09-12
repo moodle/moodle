@@ -1251,4 +1251,68 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         mod_data_external::update_entry($entry11, []);
     }
+
+    /**
+     * Test get_entry_rating_information.
+     */
+    public function test_get_entry_rating_information() {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/rating/lib.php');
+
+        $DB->set_field('data', 'assessed', RATING_AGGREGATE_SUM, array('id' => $this->database->id));
+        $DB->set_field('data', 'scale', 100, array('id' => $this->database->id));
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user1->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($user2->id, $this->course->id, $this->studentrole->id, 'manual');
+
+        // Rate the entry as user1.
+        $rating1 = new stdClass();
+        $rating1->contextid = $this->context->id;
+        $rating1->component = 'mod_data';
+        $rating1->ratingarea = 'entry';
+        $rating1->itemid = $entry11;
+        $rating1->rating = 50;
+        $rating1->scaleid = 100;
+        $rating1->userid = $user1->id;
+        $rating1->timecreated = time();
+        $rating1->timemodified = time();
+        $rating1->id = $DB->insert_record('rating', $rating1);
+
+        // Rate the entry as user2.
+        $rating2 = new stdClass();
+        $rating2->contextid = $this->context->id;
+        $rating2->component = 'mod_data';
+        $rating2->ratingarea = 'entry';
+        $rating2->itemid = $entry11;
+        $rating2->rating = 100;
+        $rating2->scaleid = 100;
+        $rating2->userid = $user2->id;
+        $rating2->timecreated = time() + 1;
+        $rating2->timemodified = time() + 1;
+        $rating2->id = $DB->insert_record('rating', $rating2);
+
+        // As student, retrieve ratings information.
+        $this->setUser($this->student2);
+        $result = mod_data_external::get_entry($entry11);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertCount(1, $result['ratinginfo']['ratings']);
+        $this->assertFalse($result['ratinginfo']['ratings'][0]['canviewaggregate']);
+        $this->assertFalse($result['ratinginfo']['canviewall']);
+        $this->assertFalse($result['ratinginfo']['ratings'][0]['canrate']);
+        $this->assertTrue(!isset($result['ratinginfo']['ratings'][0]['count']));
+
+        // Now, as teacher, I should see the info correctly.
+        $this->setUser($this->teacher);
+        $result = mod_data_external::get_entry($entry11);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertCount(1, $result['ratinginfo']['ratings']);
+        $this->assertTrue($result['ratinginfo']['ratings'][0]['canviewaggregate']);
+        $this->assertTrue($result['ratinginfo']['canviewall']);
+        $this->assertTrue($result['ratinginfo']['ratings'][0]['canrate']);
+        $this->assertEquals(2, $result['ratinginfo']['ratings'][0]['count']);
+        $this->assertEquals(100, $result['ratinginfo']['ratings'][0]['aggregate']); // Expect maximium scale value.
+    }
 }

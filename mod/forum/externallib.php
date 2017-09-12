@@ -309,6 +309,7 @@ class mod_forum_external extends external_api {
 
         $result = array();
         $result['posts'] = $posts;
+        $result['ratinginfo'] = \core_rating\external\util::get_rating_info($forum, $modcontext, 'mod_forum', 'post', $posts);
         $result['warnings'] = $warnings;
         return $result;
     }
@@ -349,6 +350,7 @@ class mod_forum_external extends external_api {
                             ), 'post'
                         )
                     ),
+                'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
                 'warnings' => new external_warnings()
             )
         );
