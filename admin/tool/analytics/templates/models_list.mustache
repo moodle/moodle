@@ -111,7 +111,7 @@
 
 <div class="box">
     <table class="generaltable fullwidth">
-        <caption>{{#str}}modelslist, tool_analytics{{/str}}</caption>
+        <caption>{{#str}}analyticmodels, tool_analytics{{/str}}</caption>
         <thead>
             <tr>
                 <th scope="col">{{#str}}target, tool_analytics{{/str}}</th>
@@ -126,7 +126,7 @@
         {{#models}}
             <tr>
                 <td>
-                    {{target}}
+                    <span class="target-name">{{target}}</span>
                     {{#targethelp}}
                         {{>core/help_icon}}
                     {{/targethelp}}

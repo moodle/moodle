@@ -59,6 +59,7 @@ class models_list implements \renderable, \templatable {
      * @return \stdClass
      */
     public function export_for_template(\renderer_base $output) {
+        global $PAGE;
 
         $data = new \stdClass();
 
@@ -120,11 +121,13 @@ class models_list implements \renderable, \templatable {
                 }
             }
 
+            // Has this model generated predictions?.
+            $predictioncontexts = $model->get_predictions_contexts();
+
             // Model predictions list.
             if (!$model->is_enabled()) {
                 $modeldata->noinsights = get_string('disabledmodel', 'analytics');
             } else if ($model->uses_insights()) {
-                $predictioncontexts = $model->get_predictions_contexts();
                 if ($predictioncontexts) {
 
                     foreach ($predictioncontexts as $contextid => $unused) {
@@ -166,9 +169,39 @@ class models_list implements \renderable, \templatable {
             $actionsmenu->set_owner_selector('model-actions-' . $model->get_id());
             $actionsmenu->set_alignment(\action_menu::TL, \action_menu::BL);
 
+            $urlparams = ['id' => $model->get_id(), 'sesskey' => sesskey()];
+
+            // Get predictions.
+            if (!$onlycli && $modeldata->enabled && !empty($modeldata->timesplitting)) {
+                $urlparams['action'] = 'getpredictions';
+                $url = new \moodle_url('model.php', $urlparams);
+                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/notifications',
+                    get_string('getpredictions', 'tool_analytics')), get_string('getpredictions', 'tool_analytics'));
+                $actionsmenu->add($icon);
+            }
+
+            // Evaluate machine-learning-based models.
+            if (!$onlycli && $model->get_indicators() && !$model->is_static()) {
+                $urlparams['action'] = 'evaluate';
+                $url = new \moodle_url('model.php', $urlparams);
+                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/calc', get_string('evaluate', 'tool_analytics')),
+                    get_string('evaluate', 'tool_analytics'));
+                $actionsmenu->add($icon);
+            }
+
+            // Machine-learning-based models evaluation log.
+            if (!$model->is_static()) {
+                $urlparams['action'] = 'log';
+                $url = new \moodle_url('model.php', $urlparams);
+                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/report', get_string('viewlog', 'tool_analytics')),
+                    get_string('viewlog', 'tool_analytics'));
+                $actionsmenu->add($icon);
+            }
+
             // Edit model.
             if (!$model->is_static()) {
-                $url = new \moodle_url('model.php', array('action' => 'edit', 'id' => $model->get_id()));
+                $urlparams['action'] = 'edit';
+                $url = new \moodle_url('model.php', $urlparams);
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('t/edit', get_string('edit')), get_string('edit'));
                 $actionsmenu->add($icon);
             }
@@ -183,39 +216,29 @@ class models_list implements \renderable, \templatable {
                 $text = get_string('enable');
                 $icontype = 'i/checked';
             }
-            $url = new \moodle_url('model.php', array('action' => $action, 'id' => $model->get_id()));
+            $urlparams['action'] = $action;
+            $url = new \moodle_url('model.php', $urlparams);
             $icon = new \action_menu_link_secondary($url, new \pix_icon($icontype, $text), $text);
             $actionsmenu->add($icon);
 
-            // Evaluate machine-learning-based models.
-            if (!$onlycli && $model->get_indicators() && !$model->is_static()) {
-                $url = new \moodle_url('model.php', array('action' => 'evaluate', 'id' => $model->get_id()));
-                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/calc', get_string('evaluate', 'tool_analytics')),
-                    get_string('evaluate', 'tool_analytics'));
-                $actionsmenu->add($icon);
-            }
-
-            // Get predictions.
-            if (!$onlycli && $modeldata->enabled && !empty($modeldata->timesplitting)) {
-                $url = new \moodle_url('model.php', array('action' => 'getpredictions', 'id' => $model->get_id()));
-                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/notifications',
-                    get_string('getpredictions', 'tool_analytics')), get_string('getpredictions', 'tool_analytics'));
-                $actionsmenu->add($icon);
-            }
-
-            // Machine-learning-based models evaluation log.
-            if (!$model->is_static()) {
-                $url = new \moodle_url('model.php', array('action' => 'log', 'id' => $model->get_id()));
-                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/report', get_string('viewlog', 'tool_analytics')),
-                    get_string('viewlog', 'tool_analytics'));
-                $actionsmenu->add($icon);
-            }
-
             // Export training data.
             if (!$model->is_static() && $model->is_trained()) {
-                $url = new \moodle_url('model.php', array('action' => 'export', 'id' => $model->get_id()));
+                $urlparams['action'] = 'export';
+                $url = new \moodle_url('model.php', $urlparams);
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/export',
                     get_string('exporttrainingdata', 'tool_analytics')), get_string('export', 'tool_analytics'));
+                $actionsmenu->add($icon);
+            }
+
+            // Clear model.
+            if (!empty($predictioncontexts)) {
+                $actionid = 'clear-' . $model->get_id();
+                $PAGE->requires->js_call_amd('tool_analytics/model', 'confirmAction', [$actionid, 'clear']);
+                $urlparams['action'] = 'clear';
+                $url = new \moodle_url('model.php', $urlparams);
+                $icon = new \action_menu_link_secondary($url, new \pix_icon('e/cleanup_messy_code',
+                    get_string('clearpredictions', 'tool_analytics')), get_string('clearpredictions', 'tool_analytics'),
+                    ['data-action-id' => $actionid]);
                 $actionsmenu->add($icon);
             }
 
