@@ -779,6 +779,7 @@ class core_calendar_external extends external_api {
     public static function submit_create_update_form($formdata) {
         global $CFG, $USER, $PAGE;
         require_once($CFG->dirroot."/calendar/lib.php");
+        require_once($CFG->libdir."/filelib.php");
 
         // Parameter validation.
         $params = self::validate_parameters(self::submit_create_update_form_parameters(), ['formdata' => $formdata]);
@@ -816,6 +817,31 @@ class core_calendar_external extends external_api {
             }
 
             $legacyevent->update($properties);
+            $eventcontext = $legacyevent->context;
+
+            file_remove_editor_orphaned_files($validateddata->description);
+
+            // Take any files added to the description draft file area and
+            // convert them into the proper event description file area. Also
+            // parse the description text and replace the URLs to the draft files
+            // with the @@PLUGIN_FILE@@ placeholder to be persisted in the DB.
+            $description = file_save_draft_area_files(
+                $validateddata->description['itemid'],
+                $eventcontext->id,
+                'calendar',
+                'event_description',
+                $legacyevent->id,
+                create_event_form::build_editor_options($eventcontext),
+                $validateddata->description['text']
+            );
+
+            // If draft files were found then we need to save the new
+            // description value.
+            if ($description != $validateddata->description['text']) {
+                $properties->id = $legacyevent->id;
+                $properties->description = $description;
+                $legacyevent->update($properties);
+            }
 
             $eventmapper = event_container::get_event_mapper();
             $event = $eventmapper->from_legacy_event_to_event($legacyevent);

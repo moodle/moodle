@@ -3452,20 +3452,25 @@ function calendar_get_view(\calendar_information $calendar, $view) {
  * @return string The rendered mform fragment.
  */
 function calendar_output_fragment_event_form($args) {
-    global $CFG, $OUTPUT;
-    require_once($CFG->dirroot.'/calendar/event_form.php');
+    global $CFG, $OUTPUT, $USER;
 
     $html = '';
-    $data = null;
+    $data = [];
     $eventid = isset($args['eventid']) ? clean_param($args['eventid'], PARAM_INT) : null;
     $starttime = isset($args['starttime']) ? clean_param($args['starttime'], PARAM_INT) : null;
     $courseid = isset($args['courseid']) ? clean_param($args['courseid'], PARAM_INT) : null;
     $event = null;
     $hasformdata = isset($args['formdata']) && !empty($args['formdata']);
-    $formoptions = [];
+    $context = \context_user::instance($USER->id);
+    $editoroptions = \core_calendar\local\event\forms\create::build_editor_options($context);
+    $formoptions = ['editoroptions' => $editoroptions];
+    $draftitemid = 0;
 
     if ($hasformdata) {
         parse_str(clean_param($args['formdata'], PARAM_TEXT), $data);
+        if (isset($data['description']['itemid'])) {
+            $draftitemid = $data['description']['itemid'];
+        }
     }
 
     if ($starttime) {
@@ -3490,8 +3495,22 @@ function calendar_output_fragment_event_form($args) {
         $mform->set_data($data);
     } else {
         $event = calendar_event::load($eventid);
+        $mapper = new \core_calendar\local\event\mappers\create_update_form_mapper();
+        $eventdata = $mapper->from_legacy_event_to_data($event);
+        $data = array_merge((array) $eventdata, $data);
         $event->count_repeats();
         $formoptions['event'] = $event;
+        $data['description']['text'] = file_prepare_draft_area(
+            $draftitemid,
+            $event->context->id,
+            'calendar',
+            'event_description',
+            $event->id,
+            null,
+            $data['description']['text']
+        );
+        $data['description']['itemid'] = $draftitemid;
+
         $mform = new \core_calendar\local\event\forms\update(
             null,
             $formoptions,
@@ -3501,13 +3520,6 @@ function calendar_output_fragment_event_form($args) {
             true,
             $data
         );
-    }
-
-    if ($hasformdata) {
-        $mform->is_validated();
-    } else if (!is_null($event)) {
-        $mapper = new \core_calendar\local\event\mappers\create_update_form_mapper();
-        $data = $mapper->from_legacy_event_to_data($event);
         $mform->set_data($data);
 
         // Check to see if this event is part of a subscription or import.
@@ -3520,6 +3532,10 @@ function calendar_output_fragment_event_form($args) {
 
             $html .= $OUTPUT->render($renderable);
         }
+    }
+
+    if ($hasformdata) {
+        $mform->is_validated();
     }
 
     $html .= $mform->render();

@@ -34,6 +34,24 @@ require_once($CFG->dirroot.'/lib/formslib.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class create extends \moodleform {
+
+    /**
+     * Build the editor options using the given context.
+     *
+     * @param \context $context A Moodle context
+     * @return array
+     */
+    public static function build_editor_options(\context $context) {
+        global $CFG;
+
+        return [
+            'context' => $context,
+            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'maxbytes' => $CFG->maxbytes,
+            'noclean' => true
+        ];
+    }
+
     /**
      * The form definition
      */
@@ -42,6 +60,7 @@ class create extends \moodleform {
 
         $mform = $this->_form;
         $starttime = isset($this->_customdata['starttime']) ? $this->_customdata['starttime'] : 0;
+        $editoroptions = !(empty($this->_customdata['editoroptions'])) ? $this->_customdata['editoroptions'] : null;
         $eventtypes = calendar_get_all_allowed_types();
 
         if (empty($eventtypes)) {
@@ -70,7 +89,7 @@ class create extends \moodleform {
         // Start of advanced elements.
         // Advanced elements are not visible to the user by default.
         // They are displayed through the user of a show more / less button.
-        $mform->addElement('editor', 'description', get_string('eventdescription', 'calendar'), ['rows' => 3]);
+        $mform->addElement('editor', 'description', get_string('eventdescription', 'calendar'), ['rows' => 3], $editoroptions);
         $mform->setType('description', PARAM_RAW);
         $mform->setAdvanced('description');
 

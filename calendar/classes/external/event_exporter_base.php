@@ -27,6 +27,7 @@ namespace core_calendar\external;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/calendar/lib.php");
+require_once($CFG->libdir . "/filelib.php");
 
 use \core\external\exporter;
 use \core_calendar\local\event\container;
@@ -66,7 +67,14 @@ class event_exporter_base extends exporter {
         $data = new \stdClass();
         $data->id = $event->get_id();
         $data->name = $event->get_name();
-        $data->description = $event->get_description()->get_value();
+        $data->description = file_rewrite_pluginfile_urls(
+            $event->get_description()->get_value(),
+            'pluginfile.php',
+            $related['context']->id,
+            'calendar',
+            'event_description',
+            $event->get_id()
+        );
         $data->descriptionformat = $event->get_description()->get_format();
         $data->groupid = $groupid;
         $data->userid = $userid;
