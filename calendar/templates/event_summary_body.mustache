@@ -28,8 +28,15 @@
         "groupname": "Group 1"
     }
 }}
-<div data-region="summary-modal-container" data-event-id="{{id}}" data-event-title="{{name}}"
-     data-action-event="{{isactionevent}}" data-edit-url="{{editurl}}">
+<div{{!
+    }} data-region="summary-modal-container"{{!
+    }} data-event-id="{{id}}"{{!
+    }} data-event-title="{{name}}"{{!
+    }} data-event-event-count="{{eventcount}}"{{!
+    }} data-event-="{{repeatid}}"{{!
+    }} data-action-event="{{isactionevent}}"{{!
+    }} data-edit-url="{{editurl}}"{{!
+    }}>
     <h4>{{#str}} when, core_calendar {{/str}}</h4>
     {{#userdate}} {{timestart}}, {{#str}} strftimerecentfull {{/str}} {{/userdate}}
     <br>
