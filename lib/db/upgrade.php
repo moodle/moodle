@@ -2466,5 +2466,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017090700.01);
     }
 
+    if ($oldversion < 2017091200.00) {
+        // Force all messages to be reindexed.
+        set_config('core_message_message_sent_lastindexrun', '0', 'core_search');
+        set_config('core_message_message_received_lastindexrun', '0', 'core_search');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017091200.00);
+    }
+
     return true;
 }
