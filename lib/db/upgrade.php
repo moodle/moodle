@@ -2494,5 +2494,25 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017091201.00);
     }
 
+    if ($oldversion < 2017092202.00) {
+
+        // Rename several fields in registration data to match the names of the properties that are sent to moodle.net.
+        $renames = [
+            'site_address_httpsmoodlenet' => 'site_street_httpsmoodlenet',
+            'site_region_httpsmoodlenet' => 'site_regioncode_httpsmoodlenet',
+            'site_country_httpsmoodlenet' => 'site_countrycode_httpsmoodlenet'];
+        foreach ($renames as $oldparamname => $newparamname) {
+            try {
+                $DB->execute("UPDATE {config_plugins} SET name = ? WHERE name = ? AND plugin = ?",
+                    [$newparamname, $oldparamname, 'hub']);
+            } catch (dml_exception $e) {
+                // Exception can happen if the config value with the new name already exists, ignore it and move on.
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017092202.00);
+    }
+
     return true;
 }
