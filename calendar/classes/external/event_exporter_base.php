@@ -35,6 +35,7 @@ use \core_calendar\local\event\entities\event_interface;
 use \core_calendar\local\event\entities\action_event_interface;
 use \core_course\external\course_summary_exporter;
 use \renderer_base;
+use moodle_url;
 
 /**
  * Class for displaying a calendar event.
@@ -178,6 +179,10 @@ class event_exporter_base extends exporter {
                 'type' => course_summary_exporter::read_properties_definition(),
                 'optional' => true,
             ],
+            'subscription' => [
+                'type' => event_subscription_exporter::read_properties_definition(),
+                'optional' => true,
+            ],
             'canedit' => [
                 'type' => PARAM_BOOL
             ],
@@ -202,6 +207,9 @@ class event_exporter_base extends exporter {
         $iconexporter = new event_icon_exporter($event, ['context' => $context]);
 
         $values['icon'] = $iconexporter->export($output);
+
+        $subscriptionexporter = new event_subscription_exporter($event);
+        $values['subscription'] = $subscriptionexporter->export($output);
 
         if ($course = $this->related['course']) {
             $coursesummaryexporter = new course_summary_exporter($course, ['context' => $context]);

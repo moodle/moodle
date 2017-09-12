@@ -26,6 +26,8 @@ namespace core_calendar\external;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/calendar/lib.php');
+
 use core\external\exporter;
 use renderer_base;
 use moodle_url;

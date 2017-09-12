@@ -269,10 +269,11 @@ class core_calendar_renderer extends plugin_renderer_base {
         // Show subscription source if needed.
         if (!empty($event->subscription) && $CFG->calendar_showicalsource) {
             if (!empty($event->subscription->url)) {
-                $source = html_writer::link($event->subscription->url, get_string('subsource', 'calendar', $event->subscription));
+                $source = html_writer::link($event->subscription->url,
+                        get_string('subscriptionsource', 'calendar', $event->subscription->name));
             } else {
                 // File based ical.
-                $source = get_string('subsource', 'calendar', $event->subscription);
+                $source = get_string('subscriptionsource', 'calendar', $event->subscription->name);
             }
             $output .= html_writer::tag('div', $source, array('class' => 'subscription'));
         }

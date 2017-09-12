@@ -51,13 +51,6 @@ class event_exporter extends event_exporter_base {
 
         $values = parent::define_other_properties();
 
-        $values['displayeventsource'] = ['type' => PARAM_BOOL];
-        $values['subscription'] = [
-            'type' => PARAM_RAW,
-            'optional' => true,
-            'default' => null,
-            'null' => NULL_ALLOWED
-        ];
         $values['isactionevent'] = ['type' => PARAM_BOOL];
         $values['iscourseevent'] = ['type' => PARAM_BOOL];
         $values['candelete'] = ['type' => PARAM_BOOL];
@@ -128,22 +121,6 @@ class event_exporter extends event_exporter_base {
         if ($course = $this->related['course']) {
             $coursesummaryexporter = new course_summary_exporter($course, ['context' => $context]);
             $values['course'] = $coursesummaryexporter->export($output);
-        }
-
-        // Handle event subscription.
-        $values['subscription'] = null;
-        $values['displayeventsource'] = false;
-        if ($event->get_subscription()) {
-            $subscription = calendar_get_subscription($event->get_subscription()->get('id'));
-            if (!empty($subscription) && $CFG->calendar_showicalsource) {
-                $values['displayeventsource'] = true;
-                $subscriptiondata = new \stdClass();
-                if (!empty($subscription->url)) {
-                    $subscriptiondata->url = $subscription->url;
-                }
-                $subscriptiondata->name = $subscription->name;
-                $values['subscription'] = json_encode($subscriptiondata);
-            }
         }
 
         if ($group = $event->get_group()) {

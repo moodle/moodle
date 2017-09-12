@@ -49,9 +49,7 @@
     {{#iscourseevent}}
         <div><a href="{{url}}">{{course.fullname}}</a></div>
     {{/iscourseevent}}
-    {{#source}}
-        <div>{{{source}}}</div>
-    {{/source}}
+    {{> core_calendar/event_subscription}}
     {{#groupname}}
         <div><a href="{{url}}">{{{course.fullname}}}</a></div>
         <div>{{{groupname}}}</div>
