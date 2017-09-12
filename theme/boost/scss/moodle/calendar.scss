@@ -101,10 +101,50 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
         .calendarmonth {
             ul {
                 margin: 0;
+                padding: 0;
 
                 li {
                     list-style-type: none;
-                    margin-top: 4px;
+
+                    > a {
+                        @include text-truncate;
+                        max-width: 100%;
+                        display: inline-block;
+                    }
+
+                    .icon {
+                        margin-left: 0.25em;
+                        margin-right: 0.25em;
+                        vertical-align: initial;
+                    }
+
+                    .badge {
+                        &.badge-circle {
+                            width: 12px;
+                            height: 12px;
+                            border-radius: 6px;
+                            vertical-align: middle;
+
+                            &.calendar_event_category {
+                                background-color: $calendarEventCategoryColor;
+                            }
+                            &.calendar_event_course {
+                                background-color: $calendarEventCourseColor;
+                            }
+
+                            &.calendar_event_site {
+                                background-color: $calendarEventGlobalColor;
+                            }
+
+                            &.calendar_event_group {
+                                background-color: $calendarEventGroupColor;
+                            }
+
+                            &.calendar_event_user {
+                                background-color: $calendarEventUserColor;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -149,6 +189,7 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
         .calendar_event_category {
             border-color: $calendarEventCategoryColor;
         }
+
         .calendar_event_course {
             border-color: $calendarEventCourseColor;
         }
@@ -174,11 +215,10 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
         .calendartable {
             td,
             li {
-                padding: 5px;
+                padding: 0 4px 4px 4px;
             }
 
             li {
-                padding-left: 10px;
                 text-align: left;
             }
         }
@@ -324,10 +364,9 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
                     margin: 0;
                 }
             }
-        }
-
-        .eventname {
-            padding-left: 0.2em;
+            .icon {
+                vertical-align: initial;
+            }
         }
     }
 

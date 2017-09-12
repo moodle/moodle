@@ -64,7 +64,7 @@ function(
         // Toggle the hidden. We need to render the template before we change the value.
         data.hidden = !data.hidden;
 
-        return Str.get_string('eventtype' + data.type, 'calendar')
+        return Str.get_string('eventtype' + data.eventtype, 'calendar')
         .then(function(nameStr) {
             data.name = nameStr;
 
@@ -90,7 +90,7 @@ function(
     var fireFilterChangedEvent = function(data) {
         M.util.js_pending("month-mini-filterChanged");
         $('body').trigger(CalendarEvents.filterChanged, {
-            type: data.type,
+            type: data.eventtype,
             hidden: data.hidden,
         });
         M.util.js_complete("month-mini-filterChanged");
@@ -104,7 +104,7 @@ function(
      */
     var getFilterData = function(target) {
         return {
-            type: target.data('eventtype'),
+            eventtype: target.data('eventtype'),
             hidden: target.data('eventtype-hidden'),
         };
     };

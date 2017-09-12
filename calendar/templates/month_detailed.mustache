@@ -85,15 +85,20 @@
                                             <li class="events-underway">[{{name}}]</li>
                                         {{/underway}}
                                         {{^underway}}
-                                            <li class="calendar_event_{{calendareventtype}}"
-                                                data-region="event-item"
+                                            <li data-region="event-item"
                                                 data-eventtype-{{calendareventtype}}="1"
                                                 {{#canedit}}
                                                     draggable="true"
                                                     data-drag-type="move"
                                                 {{/canedit}}>
 
-                                                <a data-action="view-event" data-event-id="{{id}}" href="{{url}}">{{name}}</a>
+                                                <a data-action="view-event" data-event-id="{{id}}" href="{{url}}" title="{{name}}">
+                                                    <span class="badge badge-circle calendar_event_{{calendareventtype}}">
+                                                        &nbsp;
+                                                    </span>
+                                                    {{> core_calendar/event_icon}}
+                                                    {{name}}
+                                                </a>
                                             </li>
                                         {{/underway}}
                                         {{/events}}

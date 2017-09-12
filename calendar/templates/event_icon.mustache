@@ -15,9 +15,12 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template calendar/event_filter_key
+    @template calendar/event_icon
 
-    Key item for the event filter.
+    Event icon display.
+
+    The purpose of this template is to provide a common location for the
+    rendering of event icons.
 
     Classes required for JS:
     * none
@@ -27,22 +30,12 @@
 
     Example context (json):
     {
+        "modulename": "assign"
     }
 }}
-<a href="#" data-action="filter-event-type" data-eventtype="{{eventtype}}" data-eventtype-hidden="{{hidden}}">
-    {{^hidden}}
-        <span class="calendar_event_{{eventtype}}">
-            {{#pix}}i/hide, core, {{#str}}hideeventtype, calendar, {{name}}{{/str}}{{/pix}}
-        </span>
-        {{> core_calendar/event_icon}}
-        <span class="eventname">{{#str}}hideeventtype, calendar, {{name}}{{/str}}</span>
-    {{/hidden}}
-    {{#hidden}}
-        <span class="calendar_event_{{eventtype}}">
-            {{#pix}}i/show, core, {{#str}}showeventtype, calendar, {{name}}{{/str}}{{/pix}}
-        </span>
-        {{> core_calendar/event_icon}}
-        <span class="eventname">{{#str}}showeventtype, calendar, {{name}}{{/str}}</span>
-    {{/hidden}}
-
-</a>
+{{#modulename}}
+    {{#pix}} icon, {{modulename}} {{/pix}}
+{{/modulename}}
+{{^modulename}}
+    {{#pix}} i/{{eventtype}}event, core {{/pix}}
+{{/modulename}}

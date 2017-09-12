@@ -257,10 +257,12 @@ define([
             var target = $(e.target);
             var eventId = null;
 
-            if (target.is(SELECTORS.EVENT_LINK)) {
-                eventId = target.attr('data-event-id');
+            var eventLink = target.closest(SELECTORS.EVENT_LINK);
+
+            if (eventLink.length) {
+                eventId = eventLink.data('eventId');
             } else {
-                eventId = target.find(SELECTORS.EVENT_LINK).attr('data-event-id');
+                eventId = target.find(SELECTORS.EVENT_LINK).data('eventId');
             }
 
             renderEventSummaryModal(eventId);
