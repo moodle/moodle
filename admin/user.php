@@ -333,7 +333,7 @@
             if (has_capability('moodle/user:update', $sitecontext)) {
                 // prevent editing of admins by non-admins
                 if (is_siteadmin($USER) or !is_siteadmin($user)) {
-                    $url = new moodle_url($CFG->wwwroot.'/user/editadvanced.php', array('id'=>$user->id, 'course'=>$site->id));
+                    $url = new moodle_url('/user/editadvanced.php', array('id'=>$user->id, 'course'=>$site->id));
                     $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/edit', $stredit));
                 }
             }
@@ -392,7 +392,7 @@
         echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
     }
     if (has_capability('moodle/user:create', $sitecontext)) {
-        $url = new moodle_url($CFG->wwwroot . '/user/editadvanced.php', array('id' => -1));
+        $url = new moodle_url('/user/editadvanced.php', array('id' => -1));
         echo $OUTPUT->single_button($url, get_string('addnewuser'), 'get');
     }
 

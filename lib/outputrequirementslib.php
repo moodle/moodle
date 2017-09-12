@@ -551,7 +551,7 @@ class page_requirements_manager {
                 continue;
             }
             if (!empty($CFG->slasharguments)) {
-                $url = new moodle_url("$CFG->wwwroot/theme/jquery.php");
+                $url = new moodle_url("/theme/jquery.php");
                 $url->set_slashargument("/$component/$file");
 
             } else {
@@ -705,14 +705,14 @@ class page_requirements_manager {
             if (substr($url, -3) === '.js') {
                 $jsrev = $this->get_jsrev();
                 if (empty($CFG->slasharguments)) {
-                    return new moodle_url($CFG->wwwroot.'/lib/javascript.php', array('rev'=>$jsrev, 'jsfile'=>$url));
+                    return new moodle_url('/lib/javascript.php', array('rev'=>$jsrev, 'jsfile'=>$url));
                 } else {
-                    $returnurl = new moodle_url($CFG->wwwroot.'/lib/javascript.php');
+                    $returnurl = new moodle_url('/lib/javascript.php');
                     $returnurl->set_slashargument('/'.$jsrev.$url);
                     return $returnurl;
                 }
             } else {
-                return new moodle_url($CFG->wwwroot.$url);
+                return new moodle_url($url);
             }
         } else {
             throw new coding_exception('Invalid JS url, it has to be shortened url starting with / or moodle_url instance.', $url);
@@ -911,7 +911,7 @@ class page_requirements_manager {
         if ($stylesheet instanceof moodle_url) {
             // ok
         } else if (strpos($stylesheet, '/') === 0) {
-            $stylesheet = new moodle_url($CFG->wwwroot.$stylesheet);
+            $stylesheet = new moodle_url($stylesheet);
         } else {
             throw new coding_exception('Invalid stylesheet parameter.', $stylesheet);
         }
@@ -1315,9 +1315,9 @@ class page_requirements_manager {
         $output = '';
         $jsrev = $this->get_jsrev();
 
-        $jsloader = new moodle_url($CFG->wwwroot . '/lib/javascript.php');
+        $jsloader = new moodle_url('/lib/javascript.php');
         $jsloader->set_slashargument('/' . $jsrev . '/');
-        $requirejsloader = new moodle_url($CFG->wwwroot . '/lib/requirejs.php');
+        $requirejsloader = new moodle_url('/lib/requirejs.php');
         $requirejsloader->set_slashargument('/' . $jsrev . '/');
 
         $requirejsconfig = file_get_contents($CFG->dirroot . '/lib/requirejs/moodle-config.js');

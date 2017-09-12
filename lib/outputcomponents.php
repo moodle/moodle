@@ -519,7 +519,7 @@ class help_icon implements renderable, templatable {
         $data->icon = (new pix_icon('help', $alt, 'core', ['class' => 'iconhelp']))->export_for_template($output);
         $data->linktext = $this->linktext;
         $data->title = get_string('helpprefix2', '', trim($title, ". \t"));
-        $data->url = (new moodle_url($CFG->wwwroot . '/help.php', [
+        $data->url = (new moodle_url('/help.php', [
             'component' => $this->component,
             'identifier' => $this->identifier,
             'lang' => current_language()
