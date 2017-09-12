@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CLI script to purge caches without asking for confirmation.
+ * CLI script to kill all user sessions without asking for confirmation.
  *
  * @package    core
  * @subpackage cli
- * @copyright  2011 David Mudrak <david@moodle.com>
+ * @copyright  2017 Alexander Bias <alexander.bias@uni-ulm.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -37,19 +37,19 @@ if ($unrecognized) {
 
 if ($options['help']) {
     $help =
-"Invalidates all Moodle internal caches
+"Kill all Moodle sessions
 
 Options:
 -h, --help            Print out this help
 
 Example:
-\$sudo -u www-data /usr/bin/php admin/cli/purge_caches.php
+\$sudo -u www-data /usr/bin/php admin/cli/kill_all_sessions.php
 ";
 
     echo $help;
     exit(0);
 }
 
-purge_all_caches();
+\core\session\manager::kill_all_sessions();
 
 exit(0);
