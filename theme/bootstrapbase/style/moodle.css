@@ -16749,6 +16749,49 @@ fieldset.coursesearchbox label {
   font-weight: bold;
 }
 /**
+ * Forms marked as vertical always display this way;
+ */
+.mform.full-width-labels:not(.unresponsive) .fitem .fitemtitle {
+  display: block;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  text-align: left;
+  width: 100%;
+}
+.mform.full-width-labels:not(.unresponsive) .fitem .felement {
+  margin-left: 0;
+  width: 100%;
+  float: left;
+  padding-left: 0;
+  padding-right: 0;
+}
+.mform.full-width-labels:not(.unresponsive) .fitem .fstatic:empty {
+  display: none;
+}
+.mform.full-width-labels:not(.unresponsive) .fitem .fcheckbox > span,
+.mform.full-width-labels:not(.unresponsive) .fitem .fradio > span,
+.mform.full-width-labels:not(.unresponsive) .fitem .fgroup > span {
+  margin-top: 4px;
+}
+.mform.full-width-labels:not(.unresponsive) .femptylabel .fitemtitle {
+  display: inline-block;
+  width: auto;
+  margin-right: 8px;
+}
+.mform.full-width-labels:not(.unresponsive) .femptylabel .felement {
+  display: inline-block;
+  margin-top: 4px;
+  padding-top: 5px;
+}
+.mform.full-width-labels:not(.unresponsive) .fitem_fcheckbox .fitemtitle,
+.mform.full-width-labels:not(.unresponsive) .fitem_fcheckbox .felement {
+  display: inline-block;
+  width: auto;
+}
+.mform.full-width-labels:not(.unresponsive) .fitem_fcheckbox .felement {
+  padding: 6px;
+}
+/**
  * Make forms vertical when the screen is less than 1200px;
  */
 @media (max-width: 1199px) {
@@ -16783,7 +16826,6 @@ fieldset.coursesearchbox label {
     display: inline-block;
     margin-top: 4px;
     padding-top: 5px;
-    width: auto;
   }
   body #region-main .mform:not(.unresponsive) .fitem_fcheckbox .fitemtitle,
   body #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
@@ -16836,7 +16878,6 @@ fieldset.coursesearchbox label {
     display: inline-block;
     margin-top: 4px;
     padding-top: 5px;
-    width: auto;
   }
   .used-region-side-pre.used-region-side-post #region-main .mform:not(.unresponsive) .fitem_fcheckbox .fitemtitle,
   .used-region-side-pre.used-region-side-post #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
@@ -17120,49 +17161,8 @@ select {
   border-top: 1px solid #ddd;
   padding: 8px 0;
 }
-.path-mod-feedback .mform.feedback_form .fitem .fitemtitle {
-  display: block;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  text-align: left;
-  width: 100%;
-}
-.path-mod-feedback .mform.feedback_form .fitem .felement {
-  margin-left: 0;
-  width: 100%;
-  float: left;
-  padding-left: 0;
-  padding-right: 0;
-}
-.path-mod-feedback .mform.feedback_form .fitem .fstatic:empty {
-  display: none;
-}
-.path-mod-feedback .mform.feedback_form .fitem .fcheckbox > span,
-.path-mod-feedback .mform.feedback_form .fitem .fradio > span,
-.path-mod-feedback .mform.feedback_form .fitem .fgroup > span {
-  margin-top: 4px;
-}
-body.path-mod-feedback #region-main .mform.feedback_form .femptylabel .fitemtitle {
-  display: inline-block;
-  width: auto;
-  margin-right: 0;
-}
-.path-mod-feedback .mform.feedback_form .femptylabel .felement {
-  display: inline-block;
-  margin-top: 4px;
-  padding-top: 5px;
-  width: auto;
-}
 body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebreak .felement {
   width: 100%;
-}
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .fitemtitle,
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
-  display: inline-block;
-  width: auto;
-}
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
-  padding: 6px;
 }
 .path-mod-feedback .mform.feedback_form#feedback_viewresponse_form .fitem.feedback_hasvalue:not(.feedback-item-captcha) .felement {
   background: #fbfbf1;
