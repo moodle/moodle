@@ -256,8 +256,22 @@ if ($sort == "name") {
     $sort = "firstname";
 }
 
-// Get all or company users depending on capability.
+// Get the full company tree as we may need it.
+$topcompanyid = $company->get_topcompanyid();
+$topcompany = new company($topcompanyid);
+$companytree = $topcompany->get_child_companies_recursive();
+$parentcompanies = $company->get_parent_companies_recursive();
 
+// Deal with parent company managers
+if (!empty($parentcompanies)) {
+    $userfilter = " AND id NOT IN (
+                     SELECT userid FROM {company_users}
+                     WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
+} else {
+    $userfilter = "";
+}
+
+// Get all or company users depending on capability.
 $dbsort = "";
 // Check if has capability edit all users.
 //if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
@@ -265,7 +279,7 @@ $dbsort = "";
     if ((empty($idlist) && !$foundfields) || (!empty($idlist) && $foundfields)) {
         // Make sure we dont display site admins.
         // Set default search to something which cant happen.
-        $sqlsearch = "id!='-1'";
+        $sqlsearch = "id!='-1' $userfilter";
         $siteadmins = explode(" ", $CFG->siteadmins);
         foreach ($siteadmins as $siteadmin) {
             $sqlsearch .= " AND id!='$siteadmin'";
@@ -344,7 +358,7 @@ $dbsort = "";
     if ((empty($idlist) && !$foundfields) || (!empty($idlist) && $foundfields)) {
         // Get users company association.
         $departmentusers = company::get_recursive_department_users($departmentid);
-        $sqlsearch = "id!='-1'";
+        $sqlsearch = "id!='-1' $userfilter";
         if ( count($departmentusers) > 0 ) {
             $departmentids = "";
             foreach ($departmentusers as $departmentuser) {
@@ -408,7 +422,7 @@ $dbsort = "";
             break;
         }
 
-        $userrecords = $DB->get_fieldset_select('user', 'id', $sqlsearch, $searchparams);
+        $userrecords = $DB->get_fieldset_select('user', 'id', $sqlsearch . $userfilter, $searchparams);
     } else {
         $userrecords = array();
     }
@@ -418,6 +432,7 @@ if (!empty($userrecords)) {
     $userlist = " u.id in (". implode(',', array_values($userrecords)).") ";
 }
 
+$DB->set_debug(true);
 if (!empty($userlist)) {
     $users = $DB->get_records_sql("SELECT u.id as id,
                                           u.username as username,
@@ -438,10 +453,14 @@ if (!empty($userlist)) {
                                    WHERE u.deleted <> 1 AND $userlist
                                    AND cu.userid = u.id AND cu.departmentid = d.id
                                    AND cu.companyid = :companyid
+                                   $userfilter
                                    GROUP BY u.id, d.name $dbsort ", array('companyid' => $company->id), $page * $perpage, $perpage);
 } else {
     $users = array();
 }
+
+$DB->set_debug(false);
+
 $usercount = count($userrecords);
 
 echo $OUTPUT->heading("$usercount ".get_string('users'));

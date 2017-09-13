@@ -315,6 +315,13 @@ class potential_company_course_user_selector extends company_user_selector_base 
      */
     public function find_users($search) {
         global $DB;
+
+        // Get the full company tree as we may need it.
+        $topcompanyid = $company->get_topcompanyid();
+        $topcompany = new company($topcompanyid);
+        $companytree = $topcompany->get_child_companies_recursive();
+        $parentcompanies = $company->get_parent_companies_recursive();
+
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
@@ -329,6 +336,15 @@ class potential_company_course_user_selector extends company_user_selector_base 
             $departmentsql = "";
         }
 
+        // Deal with parent company managers
+        if (!empty($parentcompanies)) {
+            $userfilter = " AND u.id NOT IN (
+                             SELECT userid FROM {company_users}
+                             WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
+        } else {
+            $userfilter = "";
+        }
+
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
@@ -337,6 +353,7 @@ class potential_company_course_user_selector extends company_user_selector_base 
                 WHERE $wherecondition  AND u.suspended = 0 $departmentsql
                     AND
                     cu.companyid = :companyid
+                    $userfilter
                     AND u.id NOT IN
                      (SELECT DISTINCT(ue.userid)
                      FROM {user_enrolments} ue
@@ -801,6 +818,15 @@ class potential_license_user_selector extends user_selector_base {
     public function find_users($search, $all = false) {
         global $DB, $USER;
 
+        $companyrec = $DB->get_record('company', array('id' => $this->companyid));
+        $company = new company($this->companyid);
+
+        // Get the full company tree as we may need it.
+        $topcompanyid = $company->get_topcompanyid();
+        $topcompany = new company($topcompanyid);
+        $companytree = $topcompany->get_child_companies_recursive();
+        $parentcompanies = $company->get_parent_companies_recursive();
+
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
@@ -819,6 +845,13 @@ class potential_license_user_selector extends user_selector_base {
         // Add in a filter to return just the users beloning to the current USER.
         if (!empty($myusers)) {
             $userfilter .= " AND u.id in (".implode(',',array_keys($myusers)).") ";
+        }
+
+        // Deal with parent company managers
+        if (!empty($parentcompanies)) {
+            $userfilter .= " AND u.id NOT IN (
+                              SELECT userid FROM {company_users}
+                              WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
         }
 
         // Get the department ids for this license.
@@ -1240,6 +1273,13 @@ class potential_company_group_user_selector extends company_user_selector_base {
      */
     public function find_users($search) {
         global $DB;
+
+        // Get the full company tree as we may need it.
+        $topcompanyid = $company->get_topcompanyid();
+        $topcompany = new company($topcompanyid);
+        $companytree = $topcompany->get_child_companies_recursive();
+        $parentcompanies = $company->get_parent_companies_recursive();
+
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
@@ -1257,6 +1297,15 @@ class potential_company_group_user_selector extends company_user_selector_base {
             $departmentsql = "";
         }
 
+        // Deal with parent company managers
+        if (!empty($parentcompanies)) {
+            $userfilter = " AND u.id NOT IN (
+                             SELECT userid FROM {company_users}
+                             WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
+        } else {
+            $userfilter = "";
+        }
+
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
@@ -1265,6 +1314,7 @@ class potential_company_group_user_selector extends company_user_selector_base {
                 WHERE $wherecondition  AND u.suspended = 0 $departmentsql
                     AND
                     cu.companyid = :companyid
+                    $userfilter
                     AND u.id NOT IN (
                        SELECT userid from {groups_members}
                        WHERE groupid = :groupid

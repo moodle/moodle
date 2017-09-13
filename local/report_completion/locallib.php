@@ -27,6 +27,16 @@ class report_completion {
     public static function get_course_summary_info($departmentid, $courseid=0, $showsuspended) {
         global $DB;
 
+        // Get the company details.
+        $departmentrec = $DB->get_record('department', array('id' => $departmentid));
+        $company = new company($departmentrec->company);
+
+        // Get the full company tree as we may need it.
+        $topcompanyid = $company->get_topcompanyid();
+        $topcompany = new company($topcompanyid);
+        $companytree = $topcompany->get_child_companies_recursive();
+        $parentcompanies = $company->get_parent_companies_recursive();
+
         // Create a temporary table to hold the userids.
         $temptablename = 'tmp_'.uniqid();
         $dbman = $DB->get_manager();
@@ -39,6 +49,15 @@ class report_completion {
 
         $dbman->create_temp_table($table);
 
+        // Deal with parent company managers
+        if (!empty($parentcompanies)) {
+            $userfilter = " AND userid NOT IN (
+                             SELECT userid FROM {company_users}
+                             WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
+        } else {
+            $userfilter = "";
+        }
+
         // Populate it.
         $alldepartments = company::get_all_subdepartments($departmentid);
         if (count($alldepartments) > 0 ) {
@@ -49,7 +68,7 @@ class report_completion {
                 $suspendedsql = "";
             }
             $tempcreatesql = "INSERT INTO {".$temptablename."} (userid) SELECT userid from {company_users}
-                              WHERE departmentid IN (".implode(',', array_keys($alldepartments)).") $suspendedsql";
+                              WHERE departmentid IN (".implode(',', array_keys($alldepartments)).") $userfilter $suspendedsql";
         } else {
             $tempcreatesql = "";
         }
@@ -246,6 +265,15 @@ class report_completion {
     public static function get_user_course_completion_data($searchinfo, $courseid, $page=0, $perpage=0, $completiontype=0, $showhistoric=false) {
         global $DB;
 
+        $companyid = iomad::get_my_companyid(context_system::instance());
+        $company = new company($companyid);
+
+        // Get the full company tree as we may need it.
+        $topcompanyid = $company->get_topcompanyid();
+        $topcompany = new company($topcompanyid);
+        $companytree = $topcompany->get_child_companies_recursive();
+        $parentcompanies = $company->get_parent_companies_recursive();
+
         $completiondata = new stdclass();
 
         $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
@@ -267,6 +295,16 @@ class report_completion {
             }
         } else {
             $completionsql = "";
+        }
+
+
+        // Deal with parent company managers
+        if (!empty($parentcompanies)) {
+            $userfilter = " AND u.id NOT IN (
+                             SELECT userid FROM {company_users}
+                             WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
+        } else {
+            $userfilter = "";
         }
 
         // Populate the temporary completion table.
@@ -305,7 +343,7 @@ class report_completion {
                     AND du.userid = u.id
                     AND d.id = du.departmentid
                     AND cc.courseid = $courseid
-                    $completionsql ";
+                    $completionsql $userfilter";
 
         $searchinfo->searchparams['courseid'] = $courseid;
         $users = $DB->get_records_sql($selectsql.$fromsql.$searchinfo->sqlsort, $searchinfo->searchparams, $page * $perpage, $perpage);
@@ -334,6 +372,15 @@ class report_completion {
     public static function get_all_user_course_completion_data($searchinfo, $page=0, $perpage=0, $completiontype=0, $showhistoric=false) {
         global $DB, $USER;
 
+        $companyid = iomad::get_my_companyid(context_system::instance());
+        $company = new company($companyid);
+
+        // Get the full company tree as we may need it.
+        $topcompanyid = $company->get_topcompanyid();
+        $topcompany = new company($topcompanyid);
+        $companytree = $topcompany->get_child_companies_recursive();
+        $parentcompanies = $company->get_parent_companies_recursive();
+
         $completiondata = new stdclass();
 
         // Create a temporary table to hold the userids.
@@ -355,6 +402,16 @@ class report_completion {
         } else {
             $completionsql = "";
         }
+
+        // Deal with parent company managers
+        if (!empty($parentcompanies)) {
+            $userfilter = " AND u.id NOT IN (
+                             SELECT userid FROM {company_users}
+                             WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
+        } else {
+            $userfilter = "";
+        }
+
         // Populate the temporary completion table.
         list($compdbman, $comptable) = self::populate_temporary_completion($tempcomptablename, $temptablename, 0, $showhistoric);
                 
@@ -383,8 +440,8 @@ class report_completion {
                 AND ue.userid = cc.userid
                 AND du.userid = u.id
                 AND d.id = du.departmentid
-                $completionsql
-                $searchinfo->sqlsort ";
+                $completionsql $userfilter
+                $searchinfo->sqlsort";
 
         $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
         $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
