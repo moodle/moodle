@@ -56,7 +56,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                         predictionContainers[0].remove();
 
                         // Move back if no remaining predictions.
-                        if ($('.insights-list tr').length === 0) {
+                        if ($('.insights-list tr').length < 2) {
                             window.history.back();
                         }
                     }).fail(Notification.exception);

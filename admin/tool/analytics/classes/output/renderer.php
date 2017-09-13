@@ -130,7 +130,7 @@ class renderer extends plugin_renderer_base {
         }
 
         if (!CLI_SCRIPT) {
-            $output .= $OUTPUT->single_button(new \moodle_url('/admin/tool/analytics/index.php'), get_string('continue'));
+            $output .= $OUTPUT->single_button(new \moodle_url('/admin/tool/analytics/index.php'), get_string('continue'), 'get');
         }
 
         return $output;
@@ -200,7 +200,7 @@ class renderer extends plugin_renderer_base {
         }
 
         if (!CLI_SCRIPT) {
-            $output .= $OUTPUT->single_button(new \moodle_url('/admin/tool/analytics/index.php'), get_string('continue'));
+            $output .= $OUTPUT->single_button(new \moodle_url('/admin/tool/analytics/index.php'), get_string('continue'), 'get');
         }
 
         return $output;
