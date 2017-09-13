@@ -212,7 +212,7 @@ class observer {
 
         if (empty($comprec->timestarted)) {
             $broken = true;
-            $comprec->started = $enrolrec->timestart;
+            $comprec->timestarted = $enrolrec->timestart;
         }
 
         if ($broken) {
