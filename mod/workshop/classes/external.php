@@ -508,14 +508,18 @@ class mod_workshop_external extends external_api {
                     'message' => s($message)
                 );
             }
+            return array(
+                'status' => false,
+                'warnings' => $warnings
+            );
         } else {
             $submission->id = $workshop->edit_submission($submission);
+            return array(
+                'status' => true,
+                'submissionid' => $submission->id,
+                'warnings' => $warnings
+            );
         }
-
-        return array(
-            'submissionid' => $submission->id,
-            'warnings' => $warnings
-        );
     }
 
     /**
@@ -526,7 +530,8 @@ class mod_workshop_external extends external_api {
      */
     public static function add_submission_returns() {
         return new external_single_structure(array(
-            'submissionid' => new external_value(PARAM_INT, 'New workshop submission id (0 if it wasn\'t created).'),
+            'status' => new external_value(PARAM_BOOL, 'True if the submission was created false otherwise.'),
+            'submissionid' => new external_value(PARAM_INT, 'New workshop submission id.', VALUE_OPTIONAL),
             'warnings' => new external_warnings()
         ));
     }
