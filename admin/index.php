@@ -852,10 +852,17 @@ $cachewarnings = cache_helper::warnings();
 // Check if there are events 1 API handlers.
 $eventshandlers = $DB->get_records_sql('SELECT DISTINCT component FROM {events_handlers}');
 
+// Check if a directory with development libraries exists.
+if (is_dir($CFG->dirroot.'/vendor') || is_dir($CFG->dirroot.'/node_modules')) {
+    $devlibdir = true;
+} else {
+    $devlibdir = false;
+}
+
 admin_externalpage_setup('adminnotifications');
 
 $output = $PAGE->get_renderer('core', 'admin');
 
 echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed, $cronoverdue, $dbproblems,
                                        $maintenancemode, $availableupdates, $availableupdatesfetch, $buggyiconvnomb,
-                                       $registered, $cachewarnings, $eventshandlers);
+                                       $registered, $cachewarnings, $eventshandlers, null, $devlibdir);

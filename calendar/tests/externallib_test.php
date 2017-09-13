@@ -506,4 +506,27 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, count($eventsret['events']));
         $this->assertEquals(2, count($eventsret['warnings']));
     }
+
+    /**
+     * Test for deleting module events.
+     */
+    public function test_delete_calendar_events_for_modules() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $nexttime = time() + DAYSECS;
+        $this->getDataGenerator()->create_module('assign', ['course' => $course->id, 'duedate' => $nexttime]);
+        $events = calendar_get_events(time(), $nexttime, true, true, true);
+        $this->assertCount(1, $events);
+        $params = [];
+        foreach($events as $event) {
+            $params[] = [
+                'eventid' => $event->id,
+                'repeat' => false
+            ];
+        }
+
+        $this->setExpectedException('moodle_exception');
+        core_calendar_external::delete_calendar_events($params);
+    }
 }
