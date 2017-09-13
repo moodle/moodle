@@ -660,7 +660,7 @@ If you continue to have difficulty, contact the site administrator.';
 $string['emailpasswordchangeinfo'] = 'Hi {$a->firstname},
 
 Someone (probably you) has requested a new password for your
-account on \'{$a->sitename}\'.
+account \'{$a->username}\' on \'{$a->sitename}\'.
 
 To change your password, please go to the following web address:
 

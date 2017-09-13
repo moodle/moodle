@@ -6285,6 +6285,7 @@ function send_password_change_info($user) {
     $data = new stdClass();
     $data->firstname = $user->firstname;
     $data->lastname  = $user->lastname;
+    $data->username  = $user->username;
     $data->sitename  = format_string($site->fullname);
     $data->admin     = generate_email_signoff();
 
