@@ -461,6 +461,7 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
 
         // Check submission created.
         $submission = $workshop->get_submission_by_author($this->student->id);
+        $this->assertTrue($result['status']);
         $this->assertEquals($result['submissionid'], $submission->id);
         $this->assertEquals($title, $submission->title);
         $this->assertEquals($content, $submission->content);
@@ -527,7 +528,8 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         // Try to create it again.
         $result = mod_workshop_external::add_submission($this->workshop->id, 'My submission');
         $result = external_api::clean_returnvalue(mod_workshop_external::add_submission_returns(), $result);
-        $this->assertEquals(0, $result['submissionid']);
+        $this->assertFalse($result['status']);
+        $this->assertArrayNotHasKey('submissionid', $result);
         $this->assertCount(2, $result['warnings']);
         $this->assertEquals('fielderror', $result['warnings'][0]['warningcode']);
         $this->assertEquals('content_editor', $result['warnings'][0]['item']);
