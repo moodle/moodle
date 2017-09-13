@@ -39,6 +39,8 @@ class mod_assign_confirm_submission_form extends moodleform {
      * Define the form - called by parent constructor
      */
     public function definition() {
+        global $PAGE;
+
         $mform = $this->_form;
 
         list($requiresubmissionstatement,
@@ -47,6 +49,9 @@ class mod_assign_confirm_submission_form extends moodleform {
              $data) = $this->_customdata;
 
         if ($requiresubmissionstatement) {
+            if (isset($PAGE->theme->settings->submissionstatement)) {
+                $submissionstatement = $PAGE->theme->settings->submissionstatement;
+            }
             $mform->addElement('checkbox', 'submissionstatement', '', $submissionstatement);
             $mform->addRule('submissionstatement', get_string('required'), 'required', null, 'client');
         }
