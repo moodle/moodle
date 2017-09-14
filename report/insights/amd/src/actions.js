@@ -57,7 +57,11 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
 
                         // Move back if no remaining predictions.
                         if ($('.insights-list tr').length < 2) {
-                            window.history.back();
+                            if (document.referrer) {
+                                window.location.assign(document.referrer);
+                            } else {
+                                window.location.reload(true);
+                            }
                         }
                     }).fail(Notification.exception);
                 }
