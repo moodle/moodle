@@ -345,6 +345,7 @@ $string['subplugintype_datafield'] = 'Database field type';
 $string['subplugintype_datafield_plural'] = 'Database field types';
 $string['subplugintype_datapreset'] = 'Preset';
 $string['subplugintype_datapreset_plural'] = 'Presets';
+$string['tagarea_data_records'] = 'Data records';
 $string['teachersandstudents'] = '{$a->teachers} and {$a->students}';
 $string['templates'] = 'Templates';
 $string['templatesaved'] = 'Template saved';

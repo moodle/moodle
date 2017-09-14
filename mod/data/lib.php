@@ -622,6 +622,17 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
                 $token
             );
         }
+
+        if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+            $label = new html_table_cell(get_string('tags') . ':');
+            if ($form) {
+                $cell = data_generate_tag_form();
+            } else {
+                $cell = new html_table_cell('##tags##');
+            }
+            $table->data[] = new html_table_row(array($label, $cell));
+        }
+
         if ($template == 'listtemplate') {
             $cell = new html_table_cell('##edit##  ##more##  ##delete##  ##approve##  ##disapprove##  ##export##');
             $cell->colspan = 2;
@@ -664,6 +675,59 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
 
         return $str;
     }
+}
+
+/**
+ * Build the form elements to manage tags for a record.
+ *
+ * @param int $recordid
+ * @return string
+ */
+function data_generate_tag_form($recordid) {
+    global $CFG, $DB, $PAGE;
+
+    $tagtypestoshow = \core_tag_area::get_showstandard('mod_data', 'data_records');
+    $showstandard = ($tagtypestoshow != core_tag_tag::HIDE_STANDARD);
+    $typenewtags = ($tagtypestoshow != core_tag_tag::STANDARD_ONLY);
+
+    $str = html_writer::start_tag('div', array('class' => 'datatagcontrol'));
+
+    $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
+
+    $existingtags = core_tag_tag::get_item_tags_array('mod_data', 'data_records', $recordid);
+
+    if ($showstandard) {
+        $tags = $DB->get_records_menu('tag', array(
+            'isstandard' => 1,
+            'tagcollid'  => \core_tag_area::get_collection('mod_data', 'data_records')
+        ), $namefield, 'id,' . $namefield . ' as fieldname');
+
+        $tags = $existingtags + $tags;
+    } else {
+        $tags = $existingtags;
+    }
+
+    $str .= '<select class="custom-select" name="tags[]" id="tags" multiple>';
+    foreach ($tags as $tagid => $tag) {
+        $selected = key_exists($tagid, $existingtags) ? 'selected' : '';
+        $str .= "<option value='$tag' $selected>$tag</option>";
+    }
+    $str .= '</select>';
+
+    $PAGE->requires->js_call_amd('core/form-autocomplete', 'enhance', $params = array(
+            '#tags',
+            $typenewtags,
+            '',
+            get_string('entertags', 'tag'),
+            false,
+            $showstandard,
+            get_string('noselection', 'form')
+        )
+    );
+
+    $str .= html_writer::end_tag('div');
+
+    return $str;
 }
 
 
@@ -1440,6 +1504,12 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             }
         } else {
             $replacement[] = '';
+        }
+
+        if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+            $patterns[] = "##tags##";
+            $replacement[] = $OUTPUT->tag_list(
+                core_tag_tag::get_item_tags('mod_data', 'data_records', $record->id), '', 'data-tags');
         }
 
         // actual replacement of the tags
@@ -3946,6 +4016,8 @@ function data_delete_record($recordid, $data, $courseid, $cmid) {
                     require_once($CFG->dirroot.'/mod/data/rsslib.php');
                     data_rss_delete_file($data);
                 }
+
+                core_tag_tag::remove_all_item_tags('mod_data', 'data_records', $recordid);
 
                 // Trigger an event for deleting this record.
                 $event = \mod_data\event\record_deleted::create(array(
