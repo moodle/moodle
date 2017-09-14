@@ -45,7 +45,7 @@ class behat_search extends behat_base {
      */
     public function i_search_for_using_the_header_global_search_box($query) {
         // Hover over the search icon.
-        $this->execute('behat_general::i_hover', ['i[title=Search]', 'css_element']);
+        $this->execute('behat_general::i_hover', ['.icon[title=Search]', 'css_element']);
 
         // Set the field.
         $this->execute('behat_forms::i_set_the_field_to', ['q', $query]);
