@@ -257,6 +257,40 @@ class mod_data_search_test extends advanced_testcase {
         $this->assertEquals($this->approvedatarecordcount, count($recordids));
     }
 
+    public function test_advanced_search_tags() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Setup test data.
+        $datagenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $course1 = $this->getDataGenerator()->create_course();
+
+        $fieldrecord = new StdClass();
+        $fieldrecord->name = 'field-1';
+        $fieldrecord->type = 'text';
+        $fieldrecord->titlefield = true;
+
+        $data1 = $this->getDataGenerator()->create_module('data', array('course' => $course1->id, 'approval' => true));
+        $field1 = $datagenerator->create_field($fieldrecord, $data1);
+
+        $record11 = $datagenerator->create_entry($data1, [$field1->field->id => 'value11'], 0, ['Cats', 'Dogs']);
+        $record12 = $datagenerator->create_entry($data1, [$field1->field->id => 'value12'], 0, ['Cats', 'mice']);
+        $record13 = $datagenerator->create_entry($data1, [$field1->field->id => 'value13'], 0, ['Bats']);
+
+        $searcharray = [];
+        $searcharray[DATA_TAGS] = new stdClass();
+        $searcharray[DATA_TAGS]->params = [];
+        $searcharray[DATA_TAGS]->rawtagnames = ['Cats'];
+        $searcharray[DATA_TAGS]->sql = '';
+
+        $recordids = data_get_all_recordids($data1->id);
+        $newrecordids = data_get_advance_search_ids($recordids, $searcharray, $data1->id);
+
+        $this->assertContains($record11, $newrecordids);
+        $this->assertContains($record12, $newrecordids);
+        $this->assertNotContains($record13, $newrecordids);
+    }
+
     /**
      * Indexing database entries contents.
      *
