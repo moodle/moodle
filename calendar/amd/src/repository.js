@@ -87,16 +87,18 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
      * Get calendar data for the month view.
      *
      * @method getCalendarMonthData
-     * @param {Number} time Timestamp.
+     * @param {Number} year Year
+     * @param {Number} month Month
      * @param {Number} courseid The course id.
      * @return {promise} Resolved with the month view data.
      */
-    var getCalendarMonthData = function(time, courseid) {
+    var getCalendarMonthData = function(year, month, courseid) {
         var request = {
             methodname: 'core_calendar_get_calendar_monthly_view',
             args: {
-                time: time,
-                courseid: courseid
+                year: year,
+                month: month,
+                courseid: courseid,
             }
         };
 

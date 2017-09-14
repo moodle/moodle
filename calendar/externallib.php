@@ -879,17 +879,19 @@ class core_calendar_external extends external_api {
     /**
      * Get data for the monthly calendar view.
      *
-     * @param   int     $time The time to be shown
+     * @param   int     $year The year to be shown
+     * @param   int     $month The month to be shown
      * @param   int     $courseid The course to be included
      * @return  array
      */
-    public static function get_calendar_monthly_view($time, $courseid) {
+    public static function get_calendar_monthly_view($year, $month, $courseid) {
         global $CFG, $DB, $USER, $PAGE;
         require_once($CFG->dirroot."/calendar/lib.php");
 
         // Parameter validation.
         $params = self::validate_parameters(self::get_calendar_monthly_view_parameters(), [
-            'time' => $time,
+            'year' => $year,
+            'month' => $month,
             'courseid' => $courseid,
         ]);
 
@@ -906,6 +908,9 @@ class core_calendar_external extends external_api {
         $context = \context_user::instance($USER->id);
         self::validate_context($context);
 
+        $type = \core_calendar\type_factory::get_calendar_instance();
+
+        $time = $type->convert_to_timestamp($year, $month, 1);
         $calendar = new calendar_information(0, 0, 0, $time);
         $calendar->prepare_for_view($course, $courses);
 
@@ -922,7 +927,8 @@ class core_calendar_external extends external_api {
     public static function get_calendar_monthly_view_parameters() {
         return new external_function_parameters(
             [
-                'time' => new external_value(PARAM_INT, 'Time to be viewed', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                'year' => new external_value(PARAM_INT, 'Month to be viewed', VALUE_REQUIRED),
+                'month' => new external_value(PARAM_INT, 'Year to be viewed', VALUE_REQUIRED),
                 'courseid' => new external_value(PARAM_INT, 'Course being viewed', VALUE_DEFAULT, SITEID, NULL_ALLOWED),
             ]
         );
