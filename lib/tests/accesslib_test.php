@@ -1533,6 +1533,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
         $studentrole = $DB->get_record('role', array('shortname'=>'student'), '*', MUST_EXIST);
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'), '*', MUST_EXIST);
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course->id);
         $teacherrename = (object)array('roleid'=>$teacherrole->id, 'name'=>'Učitel', 'contextid'=>$coursecontext->id);
@@ -1541,6 +1542,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $roleids = explode(',', $CFG->profileroles); // Should include teacher and student in new installs.
         $this->assertTrue(in_array($teacherrole->id, $roleids));
         $this->assertTrue(in_array($studentrole->id, $roleids));
+        $this->assertFalse(in_array($managerrole->id, $roleids));
 
         $user1 = $this->getDataGenerator()->create_user();
         role_assign($teacherrole->id, $user1->id, $coursecontext->id);
@@ -1548,6 +1550,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $user2 = $this->getDataGenerator()->create_user();
         role_assign($studentrole->id, $user2->id, $coursecontext->id);
         $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+        role_assign($managerrole->id, $user4->id, $coursecontext->id);
 
         $roles = get_user_roles_in_course($user1->id, $course->id);
         $this->assertEquals(1, preg_match_all('/,/', $roles, $matches));
@@ -1559,6 +1563,25 @@ class core_accesslib_testcase extends advanced_testcase {
 
         $roles = get_user_roles_in_course($user3->id, $course->id);
         $this->assertSame('', $roles);
+
+        // Managers should be able to see a link to their own role type, given they can assign it in the context.
+        $this->setUser($user4);
+        $roles = get_user_roles_in_course($user4->id, $course->id);
+        $this->assertNotEmpty($roles);
+        $this->assertEquals(1, count(explode(',', $roles)));
+        $this->assertTrue(strpos($roles, role_get_name($managerrole, $coursecontext)) !== false);
+
+        // Managers should see 2 roles if viewing a user who has been enrolled as a student and a teacher in the course.
+        $roles = get_user_roles_in_course($user1->id, $course->id);
+        $this->assertEquals(2, count(explode(',', $roles)));
+        $this->assertTrue(strpos($roles, role_get_name($studentrole, $coursecontext)) !== false);
+        $this->assertTrue(strpos($roles, role_get_name($teacherrole, $coursecontext)) !== false);
+
+        // Students should not see the manager role if viewing a manager's profile.
+        $this->setUser($user2);
+        $roles = get_user_roles_in_course($user4->id, $course->id);
+        $this->assertEmpty($roles); // Should see 0 roles on the manager's profile.
+        $this->assertFalse(strpos($roles, role_get_name($managerrole, $coursecontext)) !== false);
     }
 
     /**
