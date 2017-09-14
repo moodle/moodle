@@ -4248,6 +4248,9 @@ function delete_user(stdClass $user) {
     // This might be slow but it is really needed - modules might do some extra cleanup!
     role_unassign_all(array('userid' => $user->id));
 
+    // Notify the competency subsystem.
+    \core_competency\api::hook_user_deleted($user->id);
+
     // Now do a brute force cleanup.
 
     // Delete all user events and subscription events.
