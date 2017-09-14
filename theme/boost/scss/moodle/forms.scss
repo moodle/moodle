@@ -336,7 +336,7 @@ textarea[data-auto-rows] {
 
 /** Display elements under labels in vertical forms regardless of the screen size. */
 .mform.full-width-labels {
-    & > .row {
+    .fitem.row {
         margin-left: 0;
         margin-right: 0;
         & > .col-md-3,
