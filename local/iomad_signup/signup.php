@@ -67,6 +67,9 @@ if (!empty($wanteddepartment)) {
 // Override wanted URL, we do not want to end up here again if user clicks "Login".
 $SESSION->wantsurl = $CFG->wwwroot . '/';
 
+// Set the page theme.
+$SESSION->theme = $company->theme;
+
 if (isloggedin() and !isguestuser()) {
     // Prevent signing up when already logged in.
     echo $OUTPUT->header();
