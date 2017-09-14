@@ -578,11 +578,8 @@ function get_exception_info($ex) {
 
     // When printing an error the continue button should never link offsite.
     // We cannot use clean_param() here as it is not guaranteed that it has been loaded yet.
-    $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
     if (stripos($link, $CFG->wwwroot) === 0) {
         // Internal HTTP, all good.
-    } else if (!empty($CFG->loginhttps) && stripos($link, $httpswwwroot) === 0) {
-        // Internal HTTPS, all good.
     } else {
         // External link spotted!
         $link = $CFG->wwwroot . '/';
