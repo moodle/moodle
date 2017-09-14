@@ -1349,7 +1349,8 @@ class api {
                   JOIN {user} u
                     ON u.id = uc.userid
                  WHERE (uc.status = :waitingforreview
-                    OR (uc.status = :inreview AND uc.reviewerid = :reviewerid))";
+                    OR (uc.status = :inreview AND uc.reviewerid = :reviewerid))
+                   AND u.deleted = 0";
         $ordersql = " ORDER BY c.shortname ASC";
         $params = array(
             'inreview' => user_competency::STATUS_IN_REVIEW,
