@@ -151,7 +151,7 @@ class quiz_responses_report extends quiz_attempts_report {
 
             list($fields, $from, $where, $params) = $table->base_sql($allowedjoins);
 
-            $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
+            $table->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp", $params);
 
             $table->set_sql($fields, $from, $where, $params);
 
