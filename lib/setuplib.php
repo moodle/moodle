@@ -828,6 +828,13 @@ function initialise_fullme() {
         initialise_fullme_cli();
         return;
     }
+    if (!empty($CFG->overridetossl)) {
+        if (strpos($CFG->wwwroot, 'http://') === 0) {
+            $CFG->wwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
+        } else {
+            unset_config('overridetossl');
+        }
+    }
 
     $rurl = setup_get_remote_url();
     $wwwroot = parse_url($CFG->wwwroot.'/');
