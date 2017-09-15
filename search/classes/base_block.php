@@ -71,7 +71,22 @@ abstract class base_block extends base {
      */
     protected function get_indexing_restrictions() {
         global $DB;
-        return [$DB->sql_compare_text('bi.configdata') . " != ?", ['']];
+
+        // This includes completely empty configdata, and also three other values that are
+        // equivalent to empty:
+        // - A serialized completely empty object.
+        // - A serialized object with one field called '0' (string not int) set to boolean false
+        //   (this can happen after backup and restore, at least historically).
+        // - A serialized null.
+        $stupidobject = (object)[];
+        $zero = '0';
+        $stupidobject->{$zero} = false;
+        return [$DB->sql_compare_text('bi.configdata') . " != ? AND " .
+                $DB->sql_compare_text('bi.configdata') . " != ? AND " .
+                $DB->sql_compare_text('bi.configdata') . " != ? AND " .
+                $DB->sql_compare_text('bi.configdata') . " != ?",
+                ['', base64_encode(serialize((object)[])), base64_encode(serialize($stupidobject)),
+                base64_encode(serialize(null))]];
     }
 
     /**
