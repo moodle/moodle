@@ -166,19 +166,7 @@ if (!$edit and ($canoverride or $canpublish)) {
         'overridablegrade' => $canoverride);
     $feedbackform = $workshop->get_feedbackauthor_form($PAGE->url, $submission, $options);
     if ($data = $feedbackform->get_data()) {
-        $data = file_postupdate_standard_editor($data, 'feedbackauthor', array(), $workshop->context);
-        $record = new stdclass();
-        $record->id = $submission->id;
-        if ($canoverride) {
-            $record->gradeover = $workshop->raw_grade_value($data->gradeover, $workshop->grade);
-            $record->gradeoverby = $USER->id;
-            $record->feedbackauthor = $data->feedbackauthor;
-            $record->feedbackauthorformat = $data->feedbackauthorformat;
-        }
-        if ($canpublish) {
-            $record->published = !empty($data->published);
-        }
-        $DB->update_record('workshop_submissions', $record);
+        $workshop->evaluate_submission($submission, $data, $canpublish, $canoverride);
         redirect($workshop->view_url());
     }
 }

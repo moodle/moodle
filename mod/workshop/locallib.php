@@ -2491,12 +2491,12 @@ class workshop {
     /**
      * Returns the mform the teachers use to put a feedback for the author on their submission
      *
-     * @param moodle_url $actionurl
+     * @mixed moodle_url|null $actionurl
      * @param stdClass $submission
      * @param array $options editable
      * @return workshop_feedbackauthor_form
      */
-    public function get_feedbackauthor_form(moodle_url $actionurl, stdclass $submission, $options=array()) {
+    public function get_feedbackauthor_form($actionurl, stdclass $submission, $options=array()) {
         global $CFG;
         require_once(__DIR__ . '/feedbackauthor_form.php');
 
@@ -3137,6 +3137,34 @@ class workshop {
 
         $event = \mod_workshop\event\submission_viewed::create($params);
         $event->trigger();
+    }
+
+    /**
+     * Evaluates a submission.
+     *
+     * @param  stdClass $submission the submission
+     * @param  stdClass $data       the submission data to be updated
+     * @param  bool $canpublish     whether the user can publish the submission
+     * @param  bool $canoverride    whether the user can override the submission grade
+     * @return void
+     * @since  Moodle 3.4
+     */
+    public function evaluate_submission($submission, $data, $canpublish, $canoverride) {
+        global $DB, $USER;
+
+        $data = file_postupdate_standard_editor($data, 'feedbackauthor', array(), $this->context);
+        $record = new stdclass();
+        $record->id = $submission->id;
+        if ($canoverride) {
+            $record->gradeover = $this->raw_grade_value($data->gradeover, $this->grade);
+            $record->gradeoverby = $USER->id;
+            $record->feedbackauthor = $data->feedbackauthor;
+            $record->feedbackauthorformat = $data->feedbackauthorformat;
+        }
+        if ($canpublish) {
+            $record->published = !empty($data->published);
+        }
+        $DB->update_record('workshop_submissions', $record);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
