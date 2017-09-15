@@ -82,11 +82,26 @@ if (empty($options['reindex'])) {
         $limitunderline = preg_replace('~.~', '=', $limitinfo);
         echo "Running index of site$limitinfo\n";
         echo "=====================$limitunderline\n";
+        $timelimit = (int)$options['timelimit'];
     } else {
         echo "Running full index of site\n";
         echo "==========================\n";
+        $timelimit = 0;
     }
-    $globalsearch->index(false, $options['timelimit'], new text_progress_trace());
+    $before = time();
+    $globalsearch->index(false, $timelimit, new text_progress_trace());
+
+    // Do specific index requests with the remaining time.
+    if ($timelimit) {
+        $timelimit -= (time() - $before);
+        // Only do index requests if there is a reasonable amount of time left.
+        if ($timelimit > 1) {
+            $globalsearch->process_index_requests($timelimit, new text_progress_trace());
+        }
+    } else {
+        $globalsearch->process_index_requests(0, new text_progress_trace());
+    }
+
 } else {
     echo "Running full reindex of site\n";
     echo "============================\n";

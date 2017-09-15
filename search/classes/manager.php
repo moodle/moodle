@@ -1087,4 +1087,78 @@ class manager {
                 'timerequested' => time(), 'partialarea' => '', 'partialtime' => 0 ];
         $DB->insert_record('search_index_requests', $newrecord);
     }
+
+    /**
+     * Processes outstanding index requests. This will take the first item from the queue and
+     * process it, continuing until an optional time limit is reached.
+     *
+     * If there are no index requests, the function will do nothing.
+     *
+     * @param float $timelimit Time limit (0 = none)
+     * @param \progress_trace|null $progress Optional progress indicator
+     */
+    public function process_index_requests($timelimit = 0.0, \progress_trace $progress = null) {
+        global $DB;
+
+        if (!$progress) {
+            $progress = new \null_progress_trace();
+        }
+
+        $complete = false;
+        $before = microtime(true);
+        if ($timelimit) {
+            $stopat = $before + $timelimit;
+        }
+        while (true) {
+            // Retrieve first request, using fully defined ordering.
+            $requests = $DB->get_records('search_index_requests', null,
+                    'timerequested, contextid, searcharea',
+                    'id, contextid, searcharea, partialarea, partialtime', 0, 1);
+            if (!$requests) {
+                // If there are no more requests, stop.
+                $complete = true;
+                break;
+            }
+            $request = reset($requests);
+
+            // Calculate remaining time.
+            $remainingtime = 0;
+            $beforeindex = microtime(true);
+            if ($timelimit) {
+                $remainingtime = $stopat - $beforeindex;
+            }
+
+            // Show a message before each request, indicating what will be indexed.
+            $context = \context::instance_by_id($request->contextid);
+            $contextname = $context->get_context_name();
+            if ($request->searcharea) {
+                $contextname .= ' (search area: ' . $request->searcharea . ')';
+            }
+            $progress->output('Indexing requested context: ' . $contextname);
+
+            // Actually index the context.
+            $result = $this->index_context($context, $request->searcharea, $remainingtime,
+                    $progress, $request->partialarea, $request->partialtime);
+
+            // Work out shared part of message.
+            $endmessage = $contextname . ' (' . round(microtime(true) - $beforeindex, 1) . 's)';
+
+            // Update database table and continue/stop as appropriate.
+            if ($result->complete) {
+                // If we completed the request, remove it from the table.
+                $DB->delete_records('search_index_requests', ['id' => $request->id]);
+                $progress->output('Completed requested context: ' . $endmessage);
+            } else {
+                // If we didn't complete the request, store the partial details (how far it got).
+                $DB->update_record('search_index_requests', ['id' => $request->id,
+                        'partialarea' => $result->startfromarea,
+                        'partialtime' => $result->startfromtime]);
+                $progress->output('Ending requested context: ' . $endmessage);
+
+                // The time limit must have expired, so stop looping.
+                break;
+            }
+        }
+    }
+
 }

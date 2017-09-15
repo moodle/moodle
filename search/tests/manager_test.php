@@ -738,4 +738,98 @@ class search_manager_testcase extends advanced_testcase {
         \core_search\manager::request_index($forum2ctx);
         $this->assertEquals(4, $DB->count_records('search_index_requests'));
     }
+
+    /**
+     * Tests the process_index_requests function.
+     */
+    public function test_process_index_requests() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $search = testable_core_search::instance();
+
+        // When there are no index requests, nothing gets logged.
+        $progress = new progress_trace_buffer(new text_progress_trace(), false);
+        $search->process_index_requests(0.0, $progress);
+        $out = $progress->get_buffer();
+        $progress->reset_buffer();
+        $this->assertEquals('', $out);
+
+        // Set up the course with 3 forums.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['fullname' => 'TCourse']);
+        $forum1 = $generator->create_module('forum', ['course' => $course->id, 'name' => 'TForum1']);
+        $forum2 = $generator->create_module('forum', ['course' => $course->id, 'name' => 'TForum2']);
+        $forum3 = $generator->create_module('forum', ['course' => $course->id, 'name' => 'TForum3']);
+
+        // Hack the forums so they have different creation times.
+        $now = time();
+        $DB->set_field('forum', 'timemodified', $now - 3, ['id' => $forum1->id]);
+        $DB->set_field('forum', 'timemodified', $now - 2, ['id' => $forum2->id]);
+        $DB->set_field('forum', 'timemodified', $now - 1, ['id' => $forum3->id]);
+        $forum2time = $now - 2;
+
+        // Make 2 index requests.
+        $search::request_index(context_course::instance($course->id), 'mod_label-activity');
+        $this->waitForSecond();
+        $search::request_index(context_module::instance($forum1->cmid));
+
+        // Run with no time limit.
+        $search->process_index_requests(0.0, $progress);
+        $out = $progress->get_buffer();
+        $progress->reset_buffer();
+
+        // Check that it's done both areas.
+        $this->assertContains(
+                'Indexing requested context: Course: TCourse (search area: mod_label-activity)',
+                $out);
+        $this->assertContains(
+                'Completed requested context: Course: TCourse (search area: mod_label-activity)',
+                $out);
+        $this->assertContains('Indexing requested context: Forum: TForum1', $out);
+        $this->assertContains('Completed requested context: Forum: TForum1', $out);
+
+        // Check the requests database table is now empty.
+        $this->assertEquals(0, $DB->count_records('search_index_requests'));
+
+        // Request indexing the course a couple of times.
+        $search::request_index(context_course::instance($course->id), 'mod_forum-activity');
+        $search::request_index(context_course::instance($course->id), 'mod_forum-post');
+
+        // Do the processing again with a time limit and indexing delay. The time limit is too
+        // small; because of the way the logic works, this means it will index 2 activities.
+        $search->get_engine()->set_add_delay(0.2);
+        $search->process_index_requests(0.1, $progress);
+        $out = $progress->get_buffer();
+        $progress->reset_buffer();
+
+        // Confirm the right wrapper information was logged.
+        $this->assertContains(
+                'Indexing requested context: Course: TCourse (search area: mod_forum-activity)',
+                $out);
+        $this->assertContains('Stopping indexing due to time limit', $out);
+        $this->assertContains(
+                'Ending requested context: Course: TCourse (search area: mod_forum-activity)',
+                $out);
+
+        // Check the database table has been updated with progress.
+        $records = array_values($DB->get_records('search_index_requests', null, 'searcharea'));
+        $this->assertEquals('mod_forum-activity', $records[0]->partialarea);
+        $this->assertEquals($forum2time, $records[0]->partialtime);
+
+        // Run again and confirm it now finishes.
+        $search->process_index_requests(0.1, $progress);
+        $out = $progress->get_buffer();
+        $progress->reset_buffer();
+        $this->assertContains(
+                'Completed requested context: Course: TCourse (search area: mod_forum-activity)',
+                $out);
+        $this->assertContains(
+                'Completed requested context: Course: TCourse (search area: mod_forum-post)',
+                $out);
+
+        // Confirm table is now empty.
+        $this->assertEquals(0, $DB->count_records('search_index_requests'));
+    }
 }
