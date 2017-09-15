@@ -56,6 +56,7 @@ information provided here is intended especially for developers.
 * $stored_file->add_to_curl_request() now adds the filename to the curl request.
 * The option for Login HTTPS (authentication-only SSL) has been removed
 * $CFG->loginhttps is now deprecated, do not use it.
+* $PAGE->https_required and $PAGE->verify_https_required() are now deprecated. They are no longer used and will throw a coding_exception.
 
 === 3.3.1 ===
 

@@ -2,9 +2,6 @@
 
 require(__DIR__.'/../../config.php');
 
-//HTTPS is required in this page when $CFG->loginhttps enabled
-$PAGE->https_required();
-
 $PAGE->set_url('/auth/ldap/ntlmsso_finish.php');
 $PAGE->set_context(context_system::instance());
 

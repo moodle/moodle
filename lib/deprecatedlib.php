@@ -501,10 +501,10 @@ function filter_text($text, $courseid = NULL) {
 }
 
 /**
- * @deprecated use $PAGE->https_required() instead
+ * @deprecated Loginhttps is no longer supported
  */
 function httpsrequired() {
-    throw new coding_exception('httpsrequired() can not be used any more use $PAGE->https_required() instead.');
+    throw new coding_exception('httpsrequired() can not be used any more. Loginhttps is no longer supported.');
 }
 
 /**

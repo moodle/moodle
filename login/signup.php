@@ -32,9 +32,6 @@ if (!$authplugin = signup_is_enabled()) {
     print_error('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
 }
 
-//HTTPS is required in this page when $CFG->loginhttps enabled
-$PAGE->https_required();
-
 $PAGE->set_url('/login/signup.php');
 $PAGE->set_context(context_system::instance());
 
@@ -74,9 +71,6 @@ if ($mform_signup->is_cancelled()) {
     $authplugin->user_signup($user, true); // prints notice and link to login/index.php
     exit; //never reached
 }
-
-// make sure we really are on the https page when https login required
-$PAGE->verify_https_required();
 
 
 $newaccount = get_string('newaccount');

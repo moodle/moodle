@@ -15,9 +15,6 @@
     }
 
 
-//HTTPS is required in this page when $CFG->loginhttps enabled
-$PAGE->https_required();
-
 /// Define variables used in page
     $site = get_site();
 

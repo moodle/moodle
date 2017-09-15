@@ -29,9 +29,6 @@ require_once($CFG->dirroot.'/user/editlib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once($CFG->dirroot.'/user/lib.php');
 
-// HTTPS is required in this page when $CFG->loginhttps enabled.
-$PAGE->https_required();
-
 $userid = optional_param('id', $USER->id, PARAM_INT);    // User id.
 $course = optional_param('course', SITEID, PARAM_INT);   // Course id (defaults to Site).
 $returnto = optional_param('returnto', null, PARAM_ALPHA);  // Code determining where to return to after save.
@@ -303,9 +300,6 @@ if ($usernew = $userform->get_data()) {
         redirect($returnurl);
     }
 }
-
-// Make sure we really are on the https page when https login required.
-$PAGE->verify_https_required();
 
 
 // Display page header.
