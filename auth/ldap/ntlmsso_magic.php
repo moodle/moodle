@@ -26,7 +26,7 @@ $file = $CFG->dirroot.'/pix/spacer.gif';
 if ($authplugin->ntlmsso_magic($sesskey) && file_exists($file)) {
     if (!empty($authplugin->config->ntlmsso_ie_fastpath)) {
         if (core_useragent::is_ie()) {
-            redirect($CFG->httpswwwroot.'/auth/ldap/ntlmsso_finish.php');
+            redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_finish.php');
         }
     }
 

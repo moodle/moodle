@@ -436,7 +436,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
             // at this point there should not be any draftfile links yet,
             // because this is a new text from database that should still contain the @@pluginfile@@ links
             // this happens when developers forget to post process the text
-            $text = str_replace("\"$CFG->httpswwwroot/draftfile.php", "\"$CFG->httpswwwroot/brokenfile.php#", $text);
+            $text = str_replace("\"$CFG->wwwroot/draftfile.php", "\"$CFG->wwwroot/brokenfile.php#", $text);
         }
     } else {
         // nothing to do

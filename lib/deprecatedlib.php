@@ -534,9 +534,6 @@ function get_file_url($path, $options=null, $type='coursefile') {
        case 'rssfile':
             $url = $CFG->wwwroot."/rss/file.php";
             break;
-        case 'httpscoursefile':
-            $url = $CFG->httpswwwroot."/file.php";
-            break;
          case 'coursefile':
         default:
             $url = $CFG->wwwroot."/file.php";

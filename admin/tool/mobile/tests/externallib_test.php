@@ -235,7 +235,6 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         // Need to simulate a non HTTPS site here.
         $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
-        $CFG->httpswwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
 
         $this->resetAfterTest(true);
         $this->setAdminUser();

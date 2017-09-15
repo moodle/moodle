@@ -2378,7 +2378,7 @@ function lti_get_launch_container($lti, $toolconfig) {
 
 function lti_request_is_using_ssl() {
     global $CFG;
-    return (stripos($CFG->httpswwwroot, 'https://') === 0);
+    return (stripos($CFG->wwwroot, 'https://') === 0);
 }
 
 function lti_ensure_url_is_https($url) {

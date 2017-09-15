@@ -1301,8 +1301,8 @@ class moodle_page {
 
         if (is_string($url) && strpos($url, 'http') !== 0) {
             if (strpos($url, '/') === 0) {
-                // We have to use httpswwwroot here, because of loginhttps pages.
-                $url = $CFG->httpswwwroot . $url;
+                // Add the wwwroot to the relative url.
+                $url = $CFG->wwwroot . $url;
             } else {
                 throw new coding_exception('Invalid parameter $url, has to be full url or in shortened form starting with /.');
             }
@@ -1311,10 +1311,10 @@ class moodle_page {
         $this->_url = new moodle_url($url, $params);
 
         $fullurl = $this->_url->out_omit_querystring();
-        if (strpos($fullurl, "$CFG->httpswwwroot/") !== 0) {
-            debugging('Most probably incorrect set_page() url argument, it does not match the httpswwwroot!');
+        if (strpos($fullurl, "$CFG->wwwroot/") !== 0) {
+            debugging('Most probably incorrect set_page() url argument, it does not match the wwwroot!');
         }
-        $shorturl = str_replace("$CFG->httpswwwroot/", '', $fullurl);
+        $shorturl = str_replace("$CFG->wwwroot/", '', $fullurl);
 
         if (is_null($this->_pagetype)) {
             $this->initialise_default_pagetype($shorturl);

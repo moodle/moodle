@@ -57,7 +57,7 @@ function useredit_setup_preference_page($userid, $courseid) {
         require_login($course);
     } else if (!isloggedin()) {
         if (empty($SESSION->wantsurl)) {
-            $SESSION->wantsurl = $CFG->httpswwwroot.'/user/preferences.php';
+            $SESSION->wantsurl = $CFG->wwwroot.'/user/preferences.php';
         }
         redirect(get_login_url());
     } else {

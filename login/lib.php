@@ -209,7 +209,7 @@ function core_login_process_password_set($token) {
              WHERE upr.token = ?";
     $user = $DB->get_record_sql($sql, array($token));
 
-    $forgotpasswordurl = "{$CFG->httpswwwroot}/login/forgot_password.php";
+    $forgotpasswordurl = "{$CFG->wwwroot}/login/forgot_password.php";
     if (empty($user) or ($user->timerequested < (time() - $pwresettime - DAYSECS))) {
         // There is no valid reset request record - not even a recently expired one.
         // (suspicious)

@@ -44,7 +44,7 @@ if ($course->id != SITEID) {
     require_login($course);
 } else if (!isloggedin()) {
     if (empty($SESSION->wantsurl)) {
-        $SESSION->wantsurl = $CFG->httpswwwroot.'/user/edit.php';
+        $SESSION->wantsurl = $CFG->wwwroot.'/user/edit.php';
     }
     redirect(get_login_url());
 } else {
