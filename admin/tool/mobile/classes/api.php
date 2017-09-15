@@ -210,6 +210,7 @@ class api {
         }
 
         if (empty($section) or $section == 'sitepolicies') {
+            $settings->sitepolicy = $CFG->sitepolicy;
             $settings->disableuserimages = $CFG->disableuserimages;
         }
 
