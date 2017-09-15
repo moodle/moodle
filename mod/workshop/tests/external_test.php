@@ -1768,4 +1768,76 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->assertNotEmpty($event->get_name());
 
     }
+
+    /**
+     * Test evaluate_submission.
+     */
+    public function test_evaluate_submission() {
+        global $DB;
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
+
+        $DB->set_field('workshop', 'phase', workshop::PHASE_EVALUATION, array('id' => $this->workshop->id));
+
+        $this->setUser($this->teacher);
+        $feedbacktext = 'The feedback';
+        $feedbackformat = FORMAT_MOODLE;
+        $published = 1;
+        $gradeover = 10;
+        $result = mod_workshop_external::evaluate_submission($submissionid, $feedbacktext, $feedbackformat, $published,
+            $gradeover);
+        $result = external_api::clean_returnvalue(mod_workshop_external::evaluate_submission_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        $workshop = new workshop($this->workshop, $this->cm, $this->course);
+        $submission = $DB->get_record('workshop_submissions', array('id' => $submissionid));
+        $this->assertEquals($feedbacktext, $submission->feedbackauthor);
+        $this->assertEquals($workshop->raw_grade_value($gradeover, $workshop->grade), $submission->gradeover);  // Expected grade.
+        $this->assertEquals(1, $submission->published); // Submission published.
+    }
+
+    /**
+     * Test evaluate_submission_invalid_phase_for_override.
+     */
+    public function test_evaluate_submission_invalid_phase_for_override() {
+        global $DB;
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
+
+        $this->setUser($this->teacher);
+        $feedbacktext = 'The feedback';
+        $feedbackformat = FORMAT_MOODLE;
+        $published = 1;
+        $gradeover = 10;
+        $result = mod_workshop_external::evaluate_submission($submissionid, $feedbacktext, $feedbackformat, $published,
+            $gradeover);
+        $result = external_api::clean_returnvalue(mod_workshop_external::evaluate_submission_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        $submission = $DB->get_record('workshop_submissions', array('id' => $submissionid));
+        $this->assertEquals('', $submission->feedbackauthor);   // Feedback and grade not updated.
+        $this->assertEquals(0, $submission->gradeover);
+        $this->assertEquals(1, $submission->published); // Publishing status correctly updated.
+    }
+
+    /**
+     * Test evaluate_submission_no_permissions.
+     */
+    public function test_evaluate_submission_no_permissions() {
+        global $DB;
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
+        $DB->set_field('workshop', 'phase', workshop::PHASE_EVALUATION, array('id' => $this->workshop->id));
+
+        $this->setUser($this->student);
+        $feedbacktext = 'The feedback';
+        $feedbackformat = FORMAT_MOODLE;
+        $published = 1;
+        $gradeover = 50;
+        $this->expectException('moodle_exception');
+        mod_workshop_external::evaluate_submission($submissionid, $feedbacktext, $feedbackformat, $published, $gradeover);
+    }
 }

@@ -163,4 +163,11 @@ $functions = array(
         'capabilities'  => 'mod/workshop:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_workshop_evaluate_submission' => array(
+        'classname'     => 'mod_workshop_external',
+        'methodname'    => 'evaluate_submission',
+        'description'   => 'Evaluates a submission (used by teachers for provide feedback or override the submission grade).',
+        'type'          => 'write',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

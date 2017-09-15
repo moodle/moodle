@@ -1976,4 +1976,120 @@ class mod_workshop_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function evaluate_submission_parameters() {
+        return new external_function_parameters(
+            array(
+                'submissionid' => new external_value(PARAM_INT, 'submission id.'),
+                'feedbacktext' => new external_value(PARAM_RAW, 'The feedback for the author.', VALUE_DEFAULT, ''),
+                'feedbackformat' => new external_value(PARAM_INT, 'The feedback format for text.', VALUE_DEFAULT, FORMAT_MOODLE),
+                'published' => new external_value(PARAM_BOOL, 'Publish the submission for others?.', VALUE_DEFAULT, false),
+                'gradeover' => new external_value(PARAM_ALPHANUMEXT, 'The new submission grade.', VALUE_DEFAULT, ''),
+            )
+        );
+    }
+
+
+    /**
+     * Evaluates a submission (used by teachers for provide feedback or override the submission grade).
+     *
+     * @param int $submissionid the submission id
+     * @param str $feedbacktext the feedback for the author
+     * @param int $feedbackformat the feedback format for the reviewer text
+     * @param bool $published whether to publish the submission for other users
+     * @param mixed $gradeover the new submission grade (empty for no overriding the grade)
+     * @return array containing the status and warnings.
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function evaluate_submission($submissionid, $feedbacktext = '', $feedbackformat = FORMAT_MOODLE, $published = 1,
+            $gradeover = '') {
+        global $DB;
+
+        $params = self::validate_parameters(
+            self::evaluate_submission_parameters(),
+            array(
+                'submissionid' => $submissionid,
+                'feedbacktext' => $feedbacktext,
+                'feedbackformat' => $feedbackformat,
+                'published' => $published,
+                'gradeover' => $gradeover,
+            )
+        );
+        $warnings = array();
+
+        // Get and validate the submission, submission and workshop.
+        $submission = $DB->get_record('workshop_submissions', array('id' => $params['submissionid']), '*', MUST_EXIST);
+        list($workshop, $course, $cm, $context) = self::validate_workshop($submission->workshopid);
+
+        // Check we can evaluate the submission.
+        self::validate_submission($submission, $workshop);
+        $canpublish  = has_capability('mod/workshop:publishsubmissions', $context);
+        $canoverride = ($workshop->phase == workshop::PHASE_EVALUATION &&
+            has_capability('mod/workshop:overridegrades', $context));
+
+        if (!$canpublish && !$canoverride) {
+            throw new moodle_exception('nopermissions', 'error', '', 'evaluate submission');
+        }
+
+        // Process data.
+        $data = new stdClass;
+        $data->id = $submission->id;
+        $data->feedbackauthor_editor = array(
+            'text' => $params['feedbacktext'],
+            'format' => $params['feedbackformat'],
+        );
+        $data->published = $params['published'];
+        $data->gradeover = $params['gradeover'];
+
+        $options = array(
+            'editable' => true,
+            'editablepublished' => $canpublish,
+            'overridablegrade' => $canoverride
+        );
+        $feedbackform = $workshop->get_feedbackauthor_form(null, $submission, $options);
+
+        $errors = $feedbackform->validation((array) $data, array());
+        // We can get several errors, return them in warnings.
+        if (!empty($errors)) {
+            $status = false;
+            foreach ($errors as $itemname => $message) {
+                $warnings[] = array(
+                    'item' => $itemname,
+                    'itemid' => 0,
+                    'warningcode' => 'fielderror',
+                    'message' => s($message)
+                );
+            }
+        } else {
+            $workshop->evaluate_submission($submission, $data, $canpublish, $canoverride);
+            $status = true;
+        }
+
+        return array(
+            'status' => $status,
+            'warnings' => $warnings,
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function evaluate_submission_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if the submission was evaluated, false otherwise.'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
