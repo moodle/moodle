@@ -30,12 +30,7 @@ require_once('lib.php');
 redirect_if_major_upgrade_required();
 
 $testsession = optional_param('testsession', 0, PARAM_INT); // test session works properly
-$cancel      = optional_param('cancel', 0, PARAM_BOOL);      // redirect to frontpage, needed for loginhttps
 $anchor      = optional_param('anchor', '', PARAM_RAW);      // Used to restore hash anchor to wantsurl.
-
-if ($cancel) {
-    redirect(new moodle_url('/'));
-}
 
 $context = context_system::instance();
 $PAGE->set_url("$CFG->httpswwwroot/login/index.php");
