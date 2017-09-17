@@ -430,6 +430,11 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.4.
+        '/auth/README.txt',
+        '/calendar/set.php',
+        '/enrol/users.php',
+        '/enrol/yui/rolemanager/assets/skins/sam/rolemanager.css',
         // Removed in 3.3.
         '/badges/backpackconnect.php',
         '/calendar/yui/src/info/assets/skins/sam/moodle-calendar-info.css',
