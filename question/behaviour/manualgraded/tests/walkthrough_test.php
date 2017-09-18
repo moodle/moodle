@@ -583,4 +583,43 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
         $this->expectException('coding_exception');
         $this->manual_grade('Comment', '10.1', FORMAT_HTML);
     }
+
+    public function test_manual_graded_displays_proper_comment_format () {
+
+        global $PAGE;
+
+        // The current text editor depends on the users profile setting - so it needs a valid user.
+        $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
+
+        // Create an essay question.
+        $essay = test_question_maker::make_an_essay_question();
+        $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
+
+        // Check the right model is being used.
+        $this->assertEquals('manualgraded', $this->quba->get_question_attempt(
+                $this->slot)->get_behaviour_name());
+
+        // Simulate some data submitted by the student.
+        $this->process_submission(
+                array(
+                    'answer' => "A submission!",
+                    'answerformat' => FORMAT_PLAIN
+                )
+        );
+
+        // Finish the attempt.
+        $this->quba->finish_all_questions();
+
+        // Write a manual comment in markdown.
+        $this->manual_grade("*one\n*two\n*three\n", 10, FORMAT_MARKDOWN);
+
+        // Check that feedback contains the original markdown format.
+        $preg = '/<textarea [^>]+name="[^"]+-comment"[^>]+>\*one\n\*two\n\*three\n/';
+        $this->displayoptions->manualcomment = question_display_options::EDITABLE;
+        $this->check_current_output(
+            new question_pattern_expectation($preg)
+        );
+    }
 }
