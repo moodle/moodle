@@ -104,9 +104,6 @@ class month_exporter extends exporter {
             'filter_selector' => [
                 'type' => PARAM_RAW,
             ],
-            'navigation' => [
-                'type' => PARAM_RAW,
-            ],
             'weeks' => [
                 'type' => week_exporter::read_properties_definition(),
                 'multiple' => true,
@@ -118,8 +115,8 @@ class month_exporter extends exporter {
             'view' => [
                 'type' => PARAM_ALPHA,
             ],
-            'time' => [
-                'type' => PARAM_INT,
+            'date' => [
+                'type' => date_exporter::read_properties_definition(),
             ],
             'periodname' => [
                 // Note: We must use RAW here because the calendar type returns the formatted month name based on a
@@ -127,7 +124,10 @@ class month_exporter extends exporter {
                 'type' => PARAM_RAW,
             ],
             'previousperiod' => [
-                'type' => PARAM_INT,
+                'type' => date_exporter::read_properties_definition(),
+            ],
+            'previousperiodlink' => [
+                'type' => PARAM_URL,
             ],
             'previousperiodname' => [
                 // Note: We must use RAW here because the calendar type returns the formatted month name based on a
@@ -135,12 +135,15 @@ class month_exporter extends exporter {
                 'type' => PARAM_RAW,
             ],
             'nextperiod' => [
-                'type' => PARAM_INT,
+                'type' => date_exporter::read_properties_definition(),
             ],
             'nextperiodname' => [
                 // Note: We must use RAW here because the calendar type returns the formatted month name based on a
                 // calendar format.
                 'type' => PARAM_RAW,
+            ],
+            'nextperiodlink' => [
+                'type' => PARAM_URL,
             ],
             'larrow' => [
                 // The left arrow defined by the theme.
@@ -160,22 +163,30 @@ class month_exporter extends exporter {
      * @return array Keys are the property names, values are their values.
      */
     protected function get_other_values(renderer_base $output) {
-        $previousperiod = $this->get_previous_month_timestamp();
-        $nextperiod = $this->get_next_month_timestamp();
+        $previousperiod = $this->get_previous_month_data();
+        $nextperiod = $this->get_next_month_data();
+        $date = $this->related['type']->timestamp_to_date_array($this->calendar->time);
+
+        $nextperiodlink = new moodle_url($this->url);
+        $nextperiodlink->param('time', $nextperiod[0]);
+
+        $previousperiodlink = new moodle_url($this->url);
+        $previousperiodlink->param('time', $previousperiod[0]);
 
         return [
             'courseid' => $this->calendar->courseid,
             'filter_selector' => $this->get_course_filter_selector($output),
-            'navigation' => $this->get_navigation($output),
             'weeks' => $this->get_weeks($output),
             'daynames' => $this->get_day_names($output),
             'view' => 'month',
-            'time' => $this->calendar->time,
+            'date' => (new date_exporter($date))->export($output),
             'periodname' => userdate($this->calendar->time, get_string('strftimemonthyear')),
-            'previousperiod' => $previousperiod,
-            'previousperiodname' => userdate($previousperiod, get_string('strftimemonthyear')),
-            'nextperiod' => $nextperiod,
-            'nextperiodname' => userdate($nextperiod, get_string('strftimemonthyear')),
+            'previousperiod' => (new date_exporter($previousperiod))->export($output),
+            'previousperiodname' => userdate($previousperiod[0], get_string('strftimemonthyear')),
+            'previousperiodlink' => $previousperiodlink->out(false),
+            'nextperiod' => (new date_exporter($nextperiod))->export($output),
+            'nextperiodname' => userdate($nextperiod[0], get_string('strftimemonthyear')),
+            'nextperiodlink' => $nextperiodlink->out(false),
             'larrow' => $output->larrow(),
             'rarrow' => $output->rarrow(),
         ];
@@ -195,19 +206,6 @@ class month_exporter extends exporter {
         }
 
         return $content;
-    }
-
-    /**
-     * Get the calendar navigation controls.
-     *
-     * @param renderer_base $output
-     * @return string The html code to the calendar top navigation.
-     */
-    protected function get_navigation(renderer_base $output) {
-        return calendar_top_controls('month', [
-            'id' => $this->calendar->courseid,
-            'time' => $this->calendar->time,
-        ]);
     }
 
     /**
@@ -303,16 +301,29 @@ class month_exporter extends exporter {
     }
 
     /**
+     * Get the current month timestamp.
+     *
+     * @return int The month timestamp.
+     */
+    protected function get_month_data() {
+        $date = $this->related['type']->timestamp_to_date_array($this->calendar->time);
+        $monthtime = $this->related['type']->convert_to_gregorian($date['year'], $date['month'], 1);
+
+        return make_timestamp($monthtime['year'], $monthtime['month']);
+    }
+
+    /**
      * Get the previous month timestamp.
      *
      * @return int The previous month timestamp.
      */
-    protected function get_previous_month_timestamp() {
-        $date = $this->related['type']->timestamp_to_date_array($this->calendar->time);
-        $month = calendar_sub_month($date['mon'], $date['year']);
-        $monthtime = $this->related['type']->convert_to_gregorian($month[1], $month[0], 1);
+    protected function get_previous_month_data() {
+        $type = $this->related['type'];
+        $date = $type->timestamp_to_date_array($this->calendar->time);
+        list($date['mon'], $date['year']) = $type->get_prev_month($date['year'], $date['mon']);
+        $time = $type->convert_to_timestamp($date['year'], $date['mon'], 1);
 
-        return make_timestamp($monthtime['year'], $monthtime['month'], $monthtime['day'], $monthtime['hour'], $monthtime['minute']);
+        return $type->timestamp_to_date_array($time);
     }
 
     /**
@@ -320,11 +331,12 @@ class month_exporter extends exporter {
      *
      * @return int The next month timestamp.
      */
-    protected function get_next_month_timestamp() {
-        $date = $this->related['type']->timestamp_to_date_array($this->calendar->time);
-        $month = calendar_add_month($date['mon'], $date['year']);
-        $monthtime = $this->related['type']->convert_to_gregorian($month[1], $month[0], 1);
+    protected function get_next_month_data() {
+        $type = $this->related['type'];
+        $date = $type->timestamp_to_date_array($this->calendar->time);
+        list($date['mon'], $date['year']) = $type->get_next_month($date['year'], $date['mon']);
+        $time = $type->convert_to_timestamp($date['year'], $date['mon'], 1);
 
-        return make_timestamp($monthtime['year'], $monthtime['month'], $monthtime['day'], $monthtime['hour'], $monthtime['minute']);
+        return $type->timestamp_to_date_array($time);
     }
 }
