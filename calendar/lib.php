@@ -89,6 +89,10 @@ define('CALENDAR_EVENT_GROUP', 4);
  */
 define('CALENDAR_EVENT_USER', 8);
 
+/**
+ * CALENDAR_EVENT_COURSECAT - Course category calendar event types
+ */
+define('CALENDAR_EVENT_COURSECAT', 16);
 
 /**
  * CALENDAR_IMPORT_FROM_FILE - import the calendar from a file
@@ -360,8 +364,7 @@ class calendar_event {
             if ($this->editorcontext === null) {
                 // Switch on the event type to decide upon the appropriate context to use for this event.
                 $this->editorcontext = $this->properties->context;
-                if ($this->properties->eventtype != 'user' && $this->properties->eventtype != 'course'
-                    && $this->properties->eventtype != 'site' && $this->properties->eventtype != 'group') {
+                if (!calendar_is_valid_eventtype($this->properties->eventtype)) {
                     return clean_text($this->properties->description, $this->properties->format);
                 }
             }
@@ -459,6 +462,11 @@ class calendar_event {
                         break;
                     case 'course':
                         $this->properties->groupid = 0;
+                        $this->properties->userid = $USER->id;
+                        break;
+                    case 'category':
+                        $this->properties->groupid = 0;
+                        $this->properties->category = 0;
                         $this->properties->userid = $USER->id;
                         break;
                     case 'group':
@@ -752,6 +760,17 @@ class calendar_event {
                     // We have a course and are within the course context so we had
                     // better use the courses max bytes value.
                     $this->editoroptions['maxbytes'] = $course->maxbytes;
+                } else if ($properties->eventtype === 'category') {
+                    // First check the course is valid.
+                    $category = $DB->get_record('course_categories', array('id' => $properties->categoryid));
+                    if (!$category) {
+                        print_error('invalidcourse');
+                    }
+                    // Course context.
+                    $this->editorcontext = $this->properties->context;
+                    // We have a course and are within the course context so we had
+                    // better use the courses max bytes value.
+                    $this->editoroptions['maxbytes'] = $course->maxbytes;
                 } else {
                     // If we get here we have a custom event type as used by some
                     // modules. In this case the event will have been added by
@@ -896,8 +915,7 @@ class calendar_event {
             // Switch on the event type to decide upon the appropriate context to use for this event.
             $this->editorcontext = $this->properties->context;
 
-            if ($this->properties->eventtype != 'user' && $this->properties->eventtype != 'course'
-                && $this->properties->eventtype != 'site' && $this->properties->eventtype != 'group') {
+            if (!calendar_is_valid_eventtype($this->properties->eventtype)) {
                 // We don't have a context here, do a normal format_text.
                 return external_format_text($this->properties->description, $this->properties->format, $this->editorcontext->id);
             }
@@ -2237,7 +2255,8 @@ function calendar_show_event_type($type, $user = null) {
  */
 function calendar_set_event_type_display($type, $display = null, $user = null) {
     $persist = get_user_preferences('calendar_persistflt', 0, $user);
-    $default = CALENDAR_EVENT_GLOBAL + CALENDAR_EVENT_COURSE + CALENDAR_EVENT_GROUP + CALENDAR_EVENT_USER;
+    $default = CALENDAR_EVENT_GLOBAL + CALENDAR_EVENT_COURSE + CALENDAR_EVENT_GROUP
+            + CALENDAR_EVENT_USER + CALENDAR_EVENT_COURSECAT;
     if ($persist === 0) {
         global $SESSION;
         if (!isset($SESSION->calendarshoweventtype)) {
@@ -2273,14 +2292,16 @@ function calendar_set_event_type_display($type, $display = null, $user = null) {
  * @param stdClass $allowed list of allowed edit for event  type
  * @param stdClass|int $course object of a course or course id
  * @param array $groups array of groups for the given course
+ * @param stdClass|int $category object of a category
  */
-function calendar_get_allowed_types(&$allowed, $course = null, $groups = null) {
+function calendar_get_allowed_types(&$allowed, $course = null, $groups = null, $category = null) {
     global $USER, $DB;
 
     $allowed = new \stdClass();
     $allowed->user = has_capability('moodle/calendar:manageownentries', \context_system::instance());
     $allowed->groups = false;
     $allowed->courses = false;
+    $allowed->categories = false;
     $allowed->site = has_capability('moodle/calendar:manageentries', \context_course::instance(SITEID));
     $getgroupsfunc = function($course, $context, $user) use ($groups) {
         if ($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
@@ -2316,6 +2337,13 @@ function calendar_get_allowed_types(&$allowed, $course = null, $groups = null) {
             }
         }
     }
+
+    if (!empty($category)) {
+        $catcontext = \context_coursecat::instance($category->id);
+        if (has_capability('moodle/category:manage', $catcontext)) {
+            $allowed->categories = [$category->id => 1];
+        }
+    }
 }
 
 /**
@@ -2325,6 +2353,7 @@ function calendar_get_allowed_types(&$allowed, $course = null, $groups = null) {
  * The returned array will optionally have 5 keys:
  *      'user' : true if the logged in user can create user events
  *      'site' : true if the logged in user can create site events
+ *      'category' : array of course categories that the user can create events for
  *      'course' : array of courses that the user can create events for
  *      'group': array of groups that the user can create events for
  *      'groupcourses' : array of courses that the groups belong to (can
@@ -2333,7 +2362,7 @@ function calendar_get_allowed_types(&$allowed, $course = null, $groups = null) {
  * @return array The array of allowed types.
  */
 function calendar_get_all_allowed_types() {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     require_once($CFG->libdir . '/enrollib.php');
 
@@ -2347,6 +2376,10 @@ function calendar_get_all_allowed_types() {
 
     if ($allowed->site) {
         $types['site'] = true;
+    }
+
+    if (coursecat::has_manage_capability_on_any()) {
+        $types['category'] = coursecat::make_categories_list('moodle/category:manage');
     }
 
     // This function warms the context cache for the course so the calls
@@ -2401,7 +2434,7 @@ function calendar_user_can_add_event($course) {
 
     calendar_get_allowed_types($allowed, $course);
 
-    return (bool)($allowed->user || $allowed->groups || $allowed->courses || $allowed->site);
+    return (bool)($allowed->user || $allowed->groups || $allowed->courses || $allowed->category || $allowed->site);
 }
 
 /**
@@ -2426,6 +2459,8 @@ function calendar_add_event_allowed($event) {
     }
 
     switch ($event->eventtype) {
+        case 'category':
+            return has_capability('moodle/category:manage', $event->context);
         case 'course':
             return has_capability('moodle/calendar:manageentries', $event->context);
         case 'group':
@@ -2485,6 +2520,9 @@ function calendar_get_eventtype_choices($courseid) {
     if (!empty($allowed->courses)) {
         $choices['course'] = get_string('courseevents', 'calendar');
     }
+    if (!empty($allowed->categories)) {
+        $choices['category'] = get_string('categoryevents', 'calendar');
+    }
     if (!empty($allowed->groups) and is_array($allowed->groups)) {
         $choices['group'] = get_string('group');
     }
@@ -2505,6 +2543,8 @@ function calendar_add_subscription($sub) {
         $sub->courseid = $SITE->id;
     } else if ($sub->eventtype === 'group' || $sub->eventtype === 'course') {
         $sub->courseid = $sub->course;
+    } else if ($sub->eventtype === 'category') {
+        $sub->categoryid = $sub->category;
     } else {
         // User events.
         $sub->courseid = 0;
@@ -3262,6 +3302,7 @@ function calendar_get_footer_options($calendar) {
 function calendar_get_filter_types() {
     $types = [
         'site',
+        'category',
         'course',
         'group',
         'user',
@@ -3273,4 +3314,21 @@ function calendar_get_filter_types() {
             'name' => get_string("eventtype{$type}", "calendar"),
         ];
     }, $types);
+}
+
+/**
+ * Check whether the specified event type is valid.
+ *
+ * @param string $type
+ * @return bool
+ */
+function calendar_is_valid_eventtype($type) {
+    $validtypes = [
+        'user',
+        'group',
+        'course',
+        'category',
+        'site',
+    ];
+    return in_array($type, $validtypes);
 }

@@ -292,6 +292,53 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
+     * Load all coursecat objects.
+     *
+     * @param   array   $options Options:
+     * @param   bool    $options.returnhidden Return categories even if they are hidden
+     * @return  coursecat[]
+     */
+    public static function get_all($options = null) {
+        global $DB;
+
+        if (null === $options) {
+            $options = [];
+        }
+
+        $coursecatrecordcache = cache::make('core', 'coursecatrecords');
+
+        $catcontextsql = \context_helper::get_preload_record_columns_sql('ctx');
+        $catsql = "SELECT cc.*, {$catcontextsql}
+                     FROM {course_categories} cc
+                     JOIN {context} ctx ON cc.id = ctx.instanceid";
+        $catsqlwhere = "WHERE ctx.contextlevel = :contextlevel";
+        $catsqlorder = "ORDER BY cc.depth ASC, cc.sortorder ASC";
+
+        $catrs = $DB->get_recordset_sql("{$catsql} {$catsqlwhere} {$catsqlorder}", [
+            'contextlevel' => CONTEXT_COURSECAT,
+        ]);
+
+        $types['categories'] = [];
+        $categories = [];
+        $toset = [];
+        foreach ($catrs as $record) {
+            \context_helper::preload_from_record($record);
+            $category = new coursecat($record);
+            $toset[$category->id] = $category;
+
+            if (!empty($options['returnhidden']) || $category->is_uservisible()) {
+                $categories[$record->id] = new coursecat($record);
+            }
+        }
+        $catrs->close();
+
+        $coursecatrecordcache->set_many($toset);
+
+        return $categories;
+
+    }
+
+    /**
      * Returns the first found category
      *
      * Note that if there are no categories visible to the current user on the first level,

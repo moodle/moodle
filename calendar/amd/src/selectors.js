@@ -26,12 +26,14 @@ define([], function() {
         eventFilterItem: "[data-action='filter-event-type']",
         eventType: {
             site: "[data-eventtype-site]",
+            category: "[data-eventtype-category]",
             course: "[data-eventtype-course]",
             group: "[data-eventtype-group]",
             user: "[data-eventtype-user]",
         },
         popoverType: {
             site: "[data-popover-eventtype-site]",
+            category: "[data-popover-eventtype-category]",
             course: "[data-popover-eventtype-course]",
             group: "[data-popover-eventtype-group]",
             user: "[data-popover-eventtype-user]",

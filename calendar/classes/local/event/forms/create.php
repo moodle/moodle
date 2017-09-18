@@ -55,7 +55,7 @@ class create extends \moodleform {
     /**
      * The form definition
      */
-    public function definition () {
+    public function definition() {
         global $PAGE;
 
         $mform = $this->_form;
@@ -203,6 +203,9 @@ class create extends \moodleform {
         if (isset($eventtypes['course'])) {
             $options['course'] = get_string('course');
         }
+        if (isset($eventtypes['category'])) {
+            $options['category'] = get_string('category');
+        }
         if (isset($eventtypes['site'])) {
             $options['site'] = get_string('site');
         }
@@ -221,6 +224,16 @@ class create extends \moodleform {
             return;
         } else {
             $mform->addElement('select', 'eventtype', get_string('eventkind', 'calendar'), $options);
+        }
+
+        if (isset($eventtypes['category'])) {
+            $categoryoptions = [];
+            foreach ($eventtypes['category'] as $id => $category) {
+                $categoryoptions[$id] = $category;
+            }
+
+            $mform->addElement('select', 'categoryid', get_string('category'), $categoryoptions);
+            $mform->hideIf('categoryid', 'eventtype', 'noteq', 'category');
         }
 
         if (isset($eventtypes['course'])) {
