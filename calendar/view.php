@@ -123,7 +123,8 @@ echo $OUTPUT->heading(get_string('calendar', 'calendar'));
 if ($view == 'day' || $view == 'upcoming') {
     switch($view) {
         case 'day':
-            echo $renderer->show_day($calendar);
+            list($data, $template) = calendar_get_view($calendar, $view);
+            echo $renderer->render_from_template($template, $data);
         break;
         case 'upcoming':
             $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;

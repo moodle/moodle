@@ -3019,20 +3019,20 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
 
     // Calculate the bounds of the month.
     $date = $type->timestamp_to_date_array($calendar->time);
-    $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], 1);
 
     if ($view === 'day') {
+        $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], $date['mday']);
         $tend = $tstart + DAYSECS - 1;
-        $selectortitle = get_string('dayviewfor', 'calendar');
     } else if ($view === 'upcoming') {
         if (isset($CFG->calendar_lookahead)) {
             $defaultlookahead = intval($CFG->calendar_lookahead);
         } else {
             $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
         }
+        $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], 1);
         $tend = $tstart + get_user_preferences('calendar_lookahead', $defaultlookahead);
-        $selectortitle = get_string('upcomingeventsfor', 'calendar');
     } else {
+        $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], 1);
         $monthdays = $type->get_num_days_in_month($date['year'], $date['mon']);
         $tend = $tstart + ($monthdays * DAYSECS) - 1;
         $selectortitle = get_string('detailedmonthviewfor', 'calendar');
@@ -3091,13 +3091,20 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
     $related = [
         'events' => $events,
         'cache' => new \core_calendar\external\events_related_objects_cache($events),
+        'type' => $type,
     ];
 
-    $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
-
-    $month->set_includenavigation($includenavigation);
-
-    $data = $month->export($renderer);
+    $data = [];
+    if ($view == "month" || $view == "mini") {
+        $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
+	$month->set_includenavigation($includenavigation);
+        $data = $month->export($renderer);
+    } else if ($view == "day") {
+        $daydata = $type->timestamp_to_date_array($tstart);
+        $day = new \core_calendar\external\day_exporter($calendar, $daydata, $related);
+        $data = $day->export($renderer);
+        $template = 'core_calendar/day_detailed';
+    }
 
     return [$data, $template];
 }
