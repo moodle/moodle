@@ -61,10 +61,10 @@ if ($mform->is_cancelled()) {
 
 } else if ($formdata = $mform->get_data()) {
     $formdata = file_postupdate_standard_filemanager($formdata, 'files', $options, $context, 'mod_folder', 'content', 0);
-    $DB->set_field('folder', 'revision', $folder->revision+1, array('id'=>$folder->id));
-
-    // Update the variable of the folder revision so we can pass it as an accurate snapshot later.
+    $folder->timemodified = time();
     $folder->revision = $folder->revision + 1;
+
+    $DB->update_record('folder', $folder);
 
     $params = array(
         'context' => $context,

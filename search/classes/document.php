@@ -231,6 +231,8 @@ class document implements \renderable, \templatable {
 
                 if ($file = $fs->get_file_by_id($id)) {
                     $this->files[$id] = $file;
+                } else {
+                    unset($this->files[$id]); // Index is out of date and referencing a file that does not exist.
                 }
             }
         }
