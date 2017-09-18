@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use \core_course\external\course_summary_exporter;
 use \renderer_base;
-
+require_once($CFG->dirroot . '/course/lib.php');
 /**
  * Class for displaying a calendar event.
  *
@@ -71,12 +71,26 @@ class calendar_event_exporter extends event_exporter_base {
         global $CFG;
 
         $values = parent::get_other_values($output);
+        $event = $this->event;
 
-        $eventid = $this->event->get_id();
+        if ($moduleproxy = $event->get_course_module()) {
+            $modulename = $moduleproxy->get('modname');
+            $moduleid = $moduleproxy->get('id');
+            $url = new \moodle_url(sprintf('/mod/%s/view.php', $modulename), ['id' => $moduleid]);
 
-        $url = new \moodle_url($this->related['daylink'], [], "event_{$eventid}");
+            // Build edit event url for action events.
+            $params = array('update' => $moduleid, 'return' => true, 'sesskey' => sesskey());
+            $editurl = new \moodle_url('/course/mod.php', $params);
+            $values['editurl'] = $editurl->out(false);
+        } else if ($event->get_type() == 'course') {
+            $url = course_get_url($event->get_course()->get('id') ?: SITEID);
+        } else {
+            // TODO MDL-58866 We do not have any way to find urls for events outside of course modules.
+            $course = $event->get_course()->get('id') ?: SITEID;
+
+            $url = course_get_url($course);
+        }
         $values['url'] = $url->out(false);
-
         $values['islastday'] = false;
         $today = $this->related['type']->timestamp_to_date_array($this->related['today']);
 

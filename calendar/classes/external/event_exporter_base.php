@@ -197,7 +197,19 @@ class event_exporter_base extends exporter {
             ],
             'formattedtime' => [
                 'type' => PARAM_RAW,
-            ]
+            ],
+            'isactionevent' => [
+                'type' => PARAM_BOOL
+            ],
+            'iscourseevent' => [
+                'type' => PARAM_BOOL
+            ],
+            'groupname' => [
+                'type' => PARAM_RAW,
+                'optional' => true,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ],
         ];
     }
 
@@ -212,6 +224,13 @@ class event_exporter_base extends exporter {
         $event = $this->event;
         $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
         $context = $this->related['context'];
+        $values['isactionevent'] = false;
+        $values['iscourseevent'] = false;
+        if ($moduleproxy = $event->get_course_module()) {
+            $values['isactionevent'] = true;
+        } else if ($event->get_type() == 'course') {
+            $values['iscourseevent'] = true;
+        }
         $timesort = $event->get_times()->get_sort_time()->getTimestamp();
         $iconexporter = new event_icon_exporter($event, ['context' => $context]);
 
@@ -238,6 +257,15 @@ class event_exporter_base extends exporter {
         $values['formattedtime'] = calendar_format_event_time($legacyevent, time(), null, false,
                 $timesort);
 
+        if ($course = $this->related['course']) {
+            $coursesummaryexporter = new course_summary_exporter($course, ['context' => $context]);
+            $values['course'] = $coursesummaryexporter->export($output);
+        }
+
+        if ($group = $event->get_group()) {
+            $values['groupname'] = format_string($group->get('name'), true,
+                ['context' => \context_course::instance($event->get_course()->get('id'))]);
+        }
         return $values;
     }
 

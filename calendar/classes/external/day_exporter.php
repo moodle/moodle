@@ -202,8 +202,6 @@ class day_exporter extends exporter {
             return $exporter->export($output);
         }, $eventexporters);
 
-
-
         $return['calendareventtypes'] = array_map(function($exporter) {
             return $exporter->get_calendar_event_type();
         }, $eventexporters);
