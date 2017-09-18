@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
     $settings = new admin_settingpage('analyticssettings', new lang_string('analyticssettings', 'analytics'));
-    $ADMIN->add('appearance', $settings);
+    $ADMIN->add('analytics', $settings);
 
     if ($ADMIN->fulltree) {
         // Select the site prediction's processor.
