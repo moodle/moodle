@@ -119,20 +119,6 @@ if ($submission->id and $delete and $confirm and $deletable) {
     require_sesskey();
     $workshop->delete_submission($submission);
 
-    // Event information.
-    $params = array(
-        'context' => $workshop->context,
-        'courseid' => $workshop->course->id,
-        'relateduserid' => $submission->authorid,
-        'other' => array(
-            'submissiontitle' => $submission->title
-        )
-    );
-    $params['objectid'] = $submission->id;
-    $event = \mod_workshop\event\submission_deleted::create($params);
-    $event->add_record_snapshot('workshop', $workshoprecord);
-    $event->trigger();
-
     redirect($workshop->view_url());
 }
 

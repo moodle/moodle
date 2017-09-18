@@ -77,4 +77,12 @@ $functions = array(
         'capabilities'  => 'mod/workshop:submit',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_workshop_delete_submission' => array(
+        'classname'     => 'mod_workshop_external',
+        'methodname'    => 'delete_submission',
+        'description'   => 'Deletes the given submission.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/workshop:submit',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
