@@ -55,17 +55,21 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
          * @param {Number} year Year
          * @param {Number} month Month
          * @param {Number} courseid The id of the course whose events are shown
+         * @param {object} target The element being replaced. If not specified, the calendarwrapper is used.
          * @return {promise}
          */
-        var refreshMonthContent = function(root, year, month, courseid) {
+        var refreshMonthContent = function(root, year, month, courseid, target) {
             startLoading(root);
 
-            return CalendarRepository.getCalendarMonthData(year, month, courseid)
+            target = target || root.find(SELECTORS.CALENDAR_MONTH_WRAPPER);
+
+            var includenavigation = root.data('includenavigation');
+            return CalendarRepository.getCalendarMonthData(year, month, courseid, includenavigation)
                 .then(function(context) {
                     return Templates.render(root.attr('data-template'), context);
                 })
                 .then(function(html, js) {
-                    return Templates.replaceNode(root.find(SELECTORS.CALENDAR_MONTH_WRAPPER), html, js);
+                    return Templates.replaceNode(target, html, js);
                 })
                 .then(function() {
                     $('body').trigger(CalendarEvents.viewUpdated);

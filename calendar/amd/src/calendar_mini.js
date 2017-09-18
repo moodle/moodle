@@ -38,6 +38,44 @@ function(
     CalendarViewManager
 ) {
 
+    /**
+     * Listen to and handle any calendar events fired by the calendar UI.
+     *
+     * @method registerCalendarEventListeners
+     * @param {object} root The calendar root element
+     */
+    var registerCalendarEventListeners = function(root) {
+        var body = $('body');
+        var namespace = '.' + root.attr('id');
+
+        body.on(CalendarEvents.created + namespace, root, reloadMonth);
+        body.on(CalendarEvents.deleted + namespace, root, reloadMonth);
+        body.on(CalendarEvents.updated + namespace, root, reloadMonth);
+        body.on(CalendarEvents.eventMoved + namespace, root, reloadMonth);
+    };
+
+    /**
+     * Reload the month view in this month.
+     *
+     * @param {EventFacade} e
+     */
+    var reloadMonth = function(e) {
+        var root = e.data;
+        var body = $('body');
+        var namespace = '.' + root.attr('id');
+
+        if (root.is(':visible')) {
+            CalendarViewManager.reloadCurrentMonth(root);
+        } else {
+            // The root has been removed.
+            // Remove all events in the namespace.
+            body.on(CalendarEvents.created + namespace);
+            body.on(CalendarEvents.deleted + namespace);
+            body.on(CalendarEvents.updated + namespace);
+            body.on(CalendarEvents.eventMoved + namespace);
+        }
+    };
+
     var registerEventListeners = function(root) {
         $('body').on(CalendarEvents.filterChanged, function(e, data) {
             var daysWithEvent = root.find(CalendarSelectors.eventType[data.type]);
@@ -52,6 +90,7 @@ function(
 
             CalendarViewManager.init(root);
             registerEventListeners(root);
+            registerCalendarEventListeners(root);
         }
     };
 });

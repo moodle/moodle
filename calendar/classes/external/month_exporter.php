@@ -55,6 +55,11 @@ class month_exporter extends exporter {
     protected $url;
 
     /**
+     * @var bool $includenavigation Whether navigation should be included on the output.
+     */
+    protected $includenavigation = true;
+
+    /**
      * Constructor for month_exporter.
      *
      * @param \calendar_information $calendar The calendar being represented
@@ -123,6 +128,10 @@ class month_exporter extends exporter {
                 // calendar format.
                 'type' => PARAM_RAW,
             ],
+            'includenavigation' => [
+                'type' => PARAM_BOOL,
+                'default' => true,
+            ],
             'previousperiod' => [
                 'type' => date_exporter::read_properties_definition(),
             ],
@@ -189,6 +198,7 @@ class month_exporter extends exporter {
             'nextperiodlink' => $nextperiodlink->out(false),
             'larrow' => $output->larrow(),
             'rarrow' => $output->rarrow(),
+            'includenavigation' => $this->includenavigation,
         ];
     }
 
@@ -338,5 +348,17 @@ class month_exporter extends exporter {
         $time = $type->convert_to_timestamp($date['year'], $date['mon'], 1);
 
         return $type->timestamp_to_date_array($time);
+    }
+
+    /**
+     * Set whether the navigation should be shown.
+     *
+     * @param   bool    $include
+     * @return  $this
+     */
+    public function set_includenavigation($include) {
+        $this->includenavigation = $include;
+
+        return $this;
     }
 }

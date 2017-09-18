@@ -882,9 +882,10 @@ class core_calendar_external extends external_api {
      * @param   int     $year The year to be shown
      * @param   int     $month The month to be shown
      * @param   int     $courseid The course to be included
+     * @param   bool    $includenavigation Whether to include navigation
      * @return  array
      */
-    public static function get_calendar_monthly_view($year, $month, $courseid) {
+    public static function get_calendar_monthly_view($year, $month, $courseid, $includenavigation) {
         global $CFG, $DB, $USER, $PAGE;
         require_once($CFG->dirroot."/calendar/lib.php");
 
@@ -893,6 +894,7 @@ class core_calendar_external extends external_api {
             'year' => $year,
             'month' => $month,
             'courseid' => $courseid,
+            'includenavigation' => $includenavigation,
         ]);
 
         if ($courseid != SITEID && !empty($courseid)) {
@@ -914,7 +916,7 @@ class core_calendar_external extends external_api {
         $calendar = new calendar_information(0, 0, 0, $time);
         $calendar->prepare_for_view($course, $courses);
 
-        list($data, $template) = calendar_get_view($calendar, 'month');
+        list($data, $template) = calendar_get_view($calendar, 'month', $params['includenavigation']);
 
         return $data;
     }
@@ -930,6 +932,13 @@ class core_calendar_external extends external_api {
                 'year' => new external_value(PARAM_INT, 'Month to be viewed', VALUE_REQUIRED),
                 'month' => new external_value(PARAM_INT, 'Year to be viewed', VALUE_REQUIRED),
                 'courseid' => new external_value(PARAM_INT, 'Course being viewed', VALUE_DEFAULT, SITEID, NULL_ALLOWED),
+                'includenavigation' => new external_value(
+                    PARAM_BOOL,
+                    'Whether to show course navigation',
+                    VALUE_DEFAULT,
+                    true,
+                    NULL_ALLOWED
+                ),
             ]
         );
     }

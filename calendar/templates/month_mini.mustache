@@ -41,29 +41,36 @@
     {{> core/overlay_loading}}
     <table class="minicalendar calendartable">
         <caption class="calendar-controls">
-            <a{{!
-                }} href="#"{{!
-                }} class="arrow_link previous"{{!
-                }} title="{{#str}}monthprev, calendar{{/str}}"{{!
-                }} data-year="{{previousperiod.year}}"{{!
-                }} data-month="{{previousperiod.mon}}"{{!
-            }}>
-                <span class="arrow">{{{larrow}}}</span>
-            </a>
-            <span class="hide"> | </span>
-            <span class="current">
-                <a href="{{{url}}}" title="{{#str}}monththis, calendar{{/str}}">{{periodname}}</a>
-            </span>
-            <span class="hide"> | </span>
-            <a{{!
-                }} href="#"{{!
-                }} class="arrow_link next"{{!
-                }} title="{{#str}}monthprev, calendar{{/str}}"{{!
-                }} data-year="{{nextperiod.year}}"{{!
-                }} data-month="{{nextperiod.mon}}"{{!
-            }}>
-                <span class="arrow">{{{rarrow}}}</span>
-            </a>
+            {{#includenavigation}}
+                <a{{!
+                    }} href="#"{{!
+                    }} class="arrow_link previous"{{!
+                    }} title="{{#str}}monthprev, calendar{{/str}}"{{!
+                    }} data-year="{{previousperiod.year}}"{{!
+                    }} data-month="{{previousperiod.mon}}"{{!
+                }}>
+                    <span class="arrow">{{{larrow}}}</span>
+                </a>
+                <span class="hide"> | </span>
+                <span class="current">
+                    <a href="{{{url}}}" title="{{#str}}monththis, calendar{{/str}}">{{periodname}}</a>
+                </span>
+                <span class="hide"> | </span>
+                <a{{!
+                    }} href="#"{{!
+                    }} class="arrow_link next"{{!
+                    }} title="{{#str}}monthprev, calendar{{/str}}"{{!
+                    }} data-year="{{nextperiod.year}}"{{!
+                    }} data-month="{{nextperiod.mon}}"{{!
+                }}>
+                    <span class="arrow">{{{rarrow}}}</span>
+                </a>
+            {{/includenavigation}}
+            {{^includenavigation}}
+                <h3>
+                    <a href="{{{url}}}" title="{{#str}}monththis, calendar{{/str}}">{{periodname}}</a>
+                </h3>
+            {{/includenavigation}}
         </caption>
         <thead>
           <tr>

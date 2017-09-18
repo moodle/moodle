@@ -15,11 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template calendar/calendar_mini
+    @template calendar/calendar_threemonth
 
-    Calendar month view for blocks.
+    Calendar view to show three months as a block.
 
-    The purpose of this template is to render the month view for blocks.
+    The purpose of this template is to render a set of three months of calendar_mini in a block.
 
     Classes required for JS:
     * none
@@ -31,15 +31,9 @@
     {
     }
 }}
-<div{{!
-    }} id="calendar-month-{{date.year}}-{{date.month}}-{{uniqid}}" {{!
-    }} data-template="core_calendar/month_mini" {{!
-    }} data-includenavigation="{{#includenavigation}}true{{/includenavigation}}{{^includenavigation}}false{{/includenavigation}}"{{!
+<div data-period="month" class="calendarwrapper"{{!
+    }} data-previous-year="{{previousperiod.year}}" data-previous-month="{{previousperiod.mon}}" {{!
+    }} data-next-year="{{nextperiod.year}}" data-next-month="{{nextperiod.mon}}" {{!
     }}>
-    {{> core_calendar/month_mini}}
+    {{> core_calendar/calendar_mini}}
 </div>
-{{#js}}
-require(['jquery', 'core_calendar/calendar_mini'], function($, CalendarMini) {
-    CalendarMini.init($("#calendar-month-{{date.year}}-{{date.month}}-{{uniqid}}"));
-});
-{{/js}}

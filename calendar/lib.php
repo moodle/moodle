@@ -973,15 +973,29 @@ class calendar_information {
                 $year =  $date['year'];
             }
             if (checkdate($month, $day, $year)) {
-                $this->time = make_timestamp($year, $month, $day);
+                $time = make_timestamp($year, $month, $day);
             } else {
-                $this->time = time();
+                $time = time();
             }
-        } else if (!empty($time)) {
-            $this->time = $time;
-        } else {
-            $this->time = time();
         }
+
+        $this->set_time($time);
+    }
+
+    /**
+     * Set the time period of this instance.
+     *
+     * @param   int $time the unixtimestamp representing the date we want to view.
+     * @return  $this
+     */
+    public function set_time($time = null) {
+        if ($time === null) {
+            $this->time = time();
+        } else {
+            $this->time = $time;
+        }
+
+        return $this;
     }
 
     /**
@@ -3354,10 +3368,11 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses, $
  * Get the calendar view output.
  *
  * @param   \calendar_information $calendar The calendar being represented
- * @param   string      $view The type of calendar to have displayed
+ * @param   string  $view The type of calendar to have displayed
+ * @param   bool    $includenavigation Whether to include navigation
  * @return  array[array, string]
  */
-function calendar_get_view(\calendar_information $calendar, $view) {
+function calendar_get_view(\calendar_information $calendar, $view, $includenavigation = true) {
     global $PAGE, $CFG;
 
     $renderer = $PAGE->get_renderer('core_calendar');
@@ -3382,7 +3397,7 @@ function calendar_get_view(\calendar_information $calendar, $view) {
         $monthdays = $type->get_num_days_in_month($date['year'], $date['mon']);
         $tend = $tstart + ($monthdays * DAYSECS) - 1;
         $selectortitle = get_string('detailedmonthviewfor', 'calendar');
-        if ($view === 'mini') {
+        if ($view === 'mini' || $view === 'minithree') {
             $template = 'core_calendar/calendar_mini';
         } else {
             $template = 'core_calendar/calendar_month';
@@ -3440,6 +3455,9 @@ function calendar_get_view(\calendar_information $calendar, $view) {
     ];
 
     $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
+
+    $month->set_includenavigation($includenavigation);
+
     $data = $month->export($renderer);
 
     return [$data, $template];
