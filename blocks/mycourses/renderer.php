@@ -266,7 +266,7 @@ class block_mycourses_renderer extends plugin_renderer_base {
                 $coursecontext = context_course::instance($archive->courseid);
                 $summaryinfo = file_rewrite_pluginfile_urls($archive->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
 
-                $courserec = $DB->get_record("course", array("id"=>$notstarted->courseid));
+                $courserec = $DB->get_record("course", array("id"=>$archive->courseid));
                 $course = new course_in_list($courserec);
 
                 // display course overview files
