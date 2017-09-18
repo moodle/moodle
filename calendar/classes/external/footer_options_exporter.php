@@ -82,9 +82,10 @@ class footer_options_exporter extends exporter {
      * @return string The iCal url.
      */
     protected function get_ical_url() {
-        return new moodle_url('/calendar/export_execute.php', ['preset_what' => 'all',
-                'preset_time' => 'recentupcoming', 'userid' => $this->userid, 'authtoken' => $this->token]);
-
+        if ($this->token) {
+            return new moodle_url('/calendar/export_execute.php', ['preset_what' => 'all',
+                    'preset_time' => 'recentupcoming', 'userid' => $this->userid, 'authtoken' => $this->token]);
+        }
     }
 
     /**
@@ -113,10 +114,12 @@ class footer_options_exporter extends exporter {
         $values = new stdClass();
 
         if (!empty($CFG->enablecalendarexport)) {
-            $exportbutton = $this->get_export_calendar_button();
-            $managesubscriptionbutton = $this->get_manage_subscriptions_button();
-            $values->exportcalendarbutton = $exportbutton->export_for_template($output);
-            $values->managesubscriptionbutton = $managesubscriptionbutton->export_for_template($output);
+            if ($exportbutton = $this->get_export_calendar_button()) {
+                $values->exportcalendarbutton = $exportbutton->export_for_template($output);
+            }
+            if ($managesubscriptionbutton = $this->get_manage_subscriptions_button()) {
+                $values->managesubscriptionbutton = $managesubscriptionbutton->export_for_template($output);
+            }
             $values->icalurl = $this->get_ical_url()->out(false);
         }
 
@@ -132,12 +135,15 @@ class footer_options_exporter extends exporter {
         return array(
             'exportcalendarbutton' => [
                 'type' => PARAM_RAW,
+                'default' => null,
             ],
             'managesubscriptionbutton' => [
                 'type' => PARAM_RAW,
+                'default' => null,
             ],
             'icalurl' => [
                 'type' => PARAM_URL,
+                'default' => null,
             ],
         );
     }
