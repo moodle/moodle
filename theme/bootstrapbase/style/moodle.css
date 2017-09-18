@@ -21921,3 +21921,6 @@ ul.indented-list {
 .bg-primary[href] {
   background-color: #0378a9;
 }
+.bg-faded {
+  background-color: #eee;
+}

@@ -119,6 +119,11 @@ define([
      * @param {event} e The dragover event
      */
     var dragoverHandler = function(e) {
+        // Ignore dragging of non calendar events.
+        if (!DataStore.hasEventId()) {
+            return;
+        }
+
         e.preventDefault();
         var target = getTargetFromEvent(e);
 
@@ -153,6 +158,11 @@ define([
      * @param {event} e The dragstart event
      */
     var dragleaveHandler = function(e) {
+        // Ignore dragging of non calendar events.
+        if (!DataStore.hasEventId()) {
+            return;
+        }
+
         var target = getTargetFromEvent(e);
 
         if (!target) {
@@ -176,6 +186,11 @@ define([
      * @param {event} e The drop event
      */
     var dropHandler = function(e) {
+        // Ignore dragging of non calendar events.
+        if (!DataStore.hasEventId()) {
+            return;
+        }
+
         removeDropZoneIndicator();
         var target = getTargetFromEvent(e);
 

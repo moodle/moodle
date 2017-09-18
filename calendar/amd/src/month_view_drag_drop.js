@@ -25,11 +25,15 @@
  */
 define([
             'jquery',
+            'core/notification',
+            'core/str',
             'core_calendar/events',
             'core_calendar/drag_drop_data_store'
         ],
         function(
             $,
+            Notification,
+            Str,
             CalendarEvents,
             DataStore
         ) {
@@ -40,7 +44,10 @@ define([
         DROP_ZONE: '[data-drop-zone="month-view-day"]',
         WEEK: '[data-region="month-view-week"]',
     };
-    var HOVER_CLASS = 'bg-primary text-white';
+    var INVALID_DROP_ZONE_CLASS = 'bg-faded';
+    var INVALID_HOVER_CLASS = 'bg-danger text-white';
+    var VALID_HOVER_CLASS = 'bg-primary text-white';
+    var ALL_CLASSES = INVALID_DROP_ZONE_CLASS + ' ' + INVALID_HOVER_CLASS + ' ' + VALID_HOVER_CLASS;
     /* @var {bool} registered If the event listeners have been added */
     var registered = false;
 
@@ -57,8 +64,71 @@ define([
     };
 
     /**
+     * Determine if the given dropzone element is within the acceptable
+     * time range.
+     *
+     * The drop zone timestamp is midnight on that day so we should check
+     * that the event's acceptable timestart value
+     *
+     * @param {object} dropZone The drop zone day from the calendar
+     * @return {bool}
+     */
+    var isValidDropZone = function(dropZone) {
+        var dropTimestamp = dropZone.attr('data-day-timestamp');
+        var minTimestart = DataStore.getMinTimestart();
+        var maxTimestart = DataStore.getMaxTimestart();
+
+        if (minTimestart && minTimestart > dropTimestamp) {
+            return false;
+        }
+
+        if (maxTimestart && maxTimestart < dropTimestamp) {
+            return false;
+        }
+
+        return true;
+    };
+
+    /**
+     * Get the error string to display for a given drop zone element
+     * if it is invalid.
+     *
+     * @param {object} dropZone The drop zone day from the calendar
+     * @return {string}
+     */
+    var getDropZoneError = function(dropZone) {
+        var dropTimestamp = dropZone.attr('data-day-timestamp');
+        var minTimestart = DataStore.getMinTimestart();
+        var maxTimestart = DataStore.getMaxTimestart();
+
+        if (minTimestart && minTimestart > dropTimestamp) {
+            return DataStore.getMinError();
+        }
+
+        if (maxTimestart && maxTimestart < dropTimestamp) {
+            return DataStore.getMaxError();
+        }
+
+        return null;
+    };
+
+    /**
+     * Remove all of the styling from each of the drop zones in the calendar.
+     */
+    var clearAllDropZonesState = function() {
+        $(SELECTORS.ROOT).find(SELECTORS.DROP_ZONE).each(function(index, dropZone) {
+            dropZone = $(dropZone);
+            dropZone.removeClass(ALL_CLASSES);
+        });
+    };
+
+    /**
      * Update the hover state for the event in the calendar to reflect
      * which days the event will be moved to.
+     *
+     * If the drop zone is not being hovered then it will apply some
+     * styling to reflect whether the drop zone is a valid or invalid
+     * drop place for the current dragging event.
      *
      * This funciton supports events spanning multiple days and will
      * recurse to highlight (or remove highlight) each of the days
@@ -79,10 +149,22 @@ define([
             count = DataStore.getDurationDays();
         }
 
+        var valid = isValidDropZone(dropZone);
+        dropZone.removeClass(ALL_CLASSES);
+
         if (hovered) {
-            dropZone.addClass(HOVER_CLASS);
+
+            if (valid) {
+                dropZone.addClass(VALID_HOVER_CLASS);
+            } else {
+                dropZone.addClass(INVALID_HOVER_CLASS);
+            }
         } else {
-            dropZone.removeClass(HOVER_CLASS);
+            dropZone.removeClass(VALID_HOVER_CLASS + ' ' + INVALID_HOVER_CLASS);
+
+            if (!valid) {
+                dropZone.addClass(INVALID_DROP_ZONE_CLASS);
+            }
         }
 
         count--;
@@ -111,26 +193,61 @@ define([
     };
 
     /**
+     * Find all of the calendar event drop zones in the calendar and update the display
+     * for the user to indicate which zones are valid and invalid.
+     */
+    var updateAllDropZonesState = function() {
+        $(SELECTORS.ROOT).find(SELECTORS.DROP_ZONE).each(function(index, dropZone) {
+            dropZone = $(dropZone);
+
+            if (!isValidDropZone(dropZone)) {
+                updateHoverState(dropZone, false);
+            }
+        });
+    };
+
+
+    /**
      * Set up the module level variables to track which event is being
      * dragged and how many days it spans.
      *
      * @param {event} e The dragstart event
      */
     var dragstartHandler = function(e) {
-        var eventElement = $(e.target).closest(SELECTORS.DRAGGABLE);
+        var target = $(e.target);
+        var draggableElement = target.closest(SELECTORS.DRAGGABLE);
 
-        if (!eventElement.length) {
+        if (!draggableElement.length) {
             return;
         }
 
-        eventElement = eventElement.find('[data-event-id]');
-
+        var eventElement = draggableElement.find('[data-event-id]');
         var eventId = eventElement.attr('data-event-id');
+        var minTimestart = draggableElement.attr('data-min-day-timestamp');
+        var maxTimestart = draggableElement.attr('data-max-day-timestamp');
+        var minError = draggableElement.attr('data-min-day-error');
+        var maxError = draggableElement.attr('data-max-day-error');
         var eventsSelector = SELECTORS.ROOT + ' [data-event-id="' + eventId + '"]';
         var duration = $(eventsSelector).length;
 
         DataStore.setEventId(eventId);
         DataStore.setDurationDays(duration);
+
+        if (minTimestart) {
+            DataStore.setMinTimestart(minTimestart);
+        }
+
+        if (maxTimestart) {
+            DataStore.setMaxTimestart(maxTimestart);
+        }
+
+        if (minError) {
+            DataStore.setMinError(minError);
+        }
+
+        if (maxError) {
+            DataStore.setMaxError(maxError);
+        }
 
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.dropEffect = "move";
@@ -138,6 +255,8 @@ define([
         // work and the dragover handler won't fire.
         e.dataTransfer.setData('text/plain', eventId);
         e.dropEffect = "move";
+
+        updateAllDropZonesState();
     };
 
     /**
@@ -150,6 +269,11 @@ define([
      * @param {event} e The dragstart event
      */
     var dragoverHandler = function(e) {
+        // Ignore dragging of non calendar events.
+        if (!DataStore.hasEventId()) {
+            return;
+        }
+
         e.preventDefault();
 
         var dropZone = getDropZoneFromEvent(e);
@@ -171,6 +295,11 @@ define([
      * @param {event} e The dragstart event
      */
     var dragleaveHandler = function(e) {
+        // Ignore dragging of non calendar events.
+        if (!DataStore.hasEventId()) {
+            return;
+        }
+
         var dropZone = getDropZoneFromEvent(e);
 
         if (!dropZone) {
@@ -193,28 +322,64 @@ define([
      * @param {event} e The dragstart event
      */
     var dropHandler = function(e) {
+        // Ignore dragging of non calendar events.
+        if (!DataStore.hasEventId()) {
+            return;
+        }
+
         var dropZone = getDropZoneFromEvent(e);
 
         if (!dropZone) {
             DataStore.clearAll();
+            clearAllDropZonesState();
             return;
         }
 
-        var eventId = DataStore.getEventId();
-        var eventElementSelector = SELECTORS.ROOT + ' [data-event-id="' + eventId + '"]';
-        var eventElement = $(eventElementSelector);
-        var origin = null;
-        var destination = $(e.target).closest(SELECTORS.DROP_ZONE);
+        if (isValidDropZone(dropZone)) {
+            var eventId = DataStore.getEventId();
+            var eventElementSelector = SELECTORS.ROOT + ' [data-event-id="' + eventId + '"]';
+            var eventElement = $(eventElementSelector);
+            var origin = null;
 
-        if (eventElement.length) {
-            origin = eventElement.closest(SELECTORS.DROP_ZONE);
+            if (eventElement.length) {
+                origin = eventElement.closest(SELECTORS.DROP_ZONE);
+            }
+
+            $('body').trigger(CalendarEvents.moveEvent, [eventId, origin, dropZone]);
+        } else {
+            // If the drop zone is not valid then there is not need for us to
+            // try to process it. Instead we can just show an error to the user.
+            var message = getDropZoneError(dropZone);
+            Str.get_string('errorinvaliddate', 'calendar').then(function(string) {
+                Notification.exception({
+                    name: string,
+                    message: message || string
+                });
+            });
         }
 
-        updateHoverState(dropZone, false);
-        $('body').trigger(CalendarEvents.moveEvent, [eventId, origin, destination]);
         DataStore.clearAll();
+        clearAllDropZonesState();
 
         e.preventDefault();
+    };
+
+    /**
+     * Clear the data store and remove the drag indicators from the UI
+     * when the drag event has finished.
+     */
+    var dragendHandler = function() {
+        DataStore.clearAll();
+        clearAllDropZonesState();
+    };
+
+    /**
+     * Re-render the drop zones in the new month to highlight
+     * which areas are or aren't acceptable to drop the calendar
+     * event.
+     */
+    var calendarMonthChangedHandler = function() {
+        updateAllDropZonesState();
     };
 
     return {
@@ -231,6 +396,8 @@ define([
                 document.addEventListener('dragover', dragoverHandler, false);
                 document.addEventListener('dragleave', dragleaveHandler, false);
                 document.addEventListener('drop', dropHandler, false);
+                document.addEventListener('dragend', dragendHandler, false);
+                $('body').on(CalendarEvents.monthChanged, calendarMonthChangedHandler);
                 registered = true;
             }
         },

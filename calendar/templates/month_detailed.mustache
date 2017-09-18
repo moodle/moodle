@@ -91,6 +91,18 @@
                                                 {{#canedit}}
                                                     draggable="true"
                                                     data-drag-type="move"
+                                                    {{#mindaytimestamp}}
+                                                        data-min-day-timestamp="{{.}}"
+                                                    {{/mindaytimestamp}}
+                                                    {{#mindayerror}}
+                                                        data-min-day-error="{{.}}"
+                                                    {{/mindayerror}}
+                                                    {{#maxdaytimestamp}}
+                                                        data-max-day-timestamp="{{.}}"
+                                                    {{/maxdaytimestamp}}
+                                                    {{#maxdayerror}}
+                                                        data-max-day-error="{{.}}"
+                                                    {{/maxdayerror}}
                                                 {{/canedit}}>
 
                                                 <a data-action="view-event" data-event-id="{{id}}" href="{{url}}">{{name}}</a>

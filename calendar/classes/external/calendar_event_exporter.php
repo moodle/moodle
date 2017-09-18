@@ -26,6 +26,7 @@ namespace core_calendar\external;
 
 defined('MOODLE_INTERNAL') || die();
 
+use \core_calendar\local\event\container;
 use \core_course\external\course_summary_exporter;
 use \renderer_base;
 require_once($CFG->dirroot . '/course/lib.php');
@@ -56,6 +57,22 @@ class calendar_event_exporter extends event_exporter_base {
         ];
         $values['popupname'] = [
             'type' => PARAM_RAW,
+        ];
+        $values['mindaytimestamp'] = [
+            'type' => PARAM_INT,
+            'optional' => true
+        ];
+        $values['mindayerror'] = [
+            'type' => PARAM_TEXT,
+            'optional' => true
+        ];
+        $values['maxdaytimestamp'] = [
+            'type' => PARAM_INT,
+            'optional' => true
+        ];
+        $values['maxdayerror'] = [
+            'type' => PARAM_TEXT,
+            'optional' => true
         ];
 
         return $values;
@@ -89,9 +106,9 @@ class calendar_event_exporter extends event_exporter_base {
         } else {
             // TODO MDL-58866 We do not have any way to find urls for events outside of course modules.
             $course = $event->get_course()->get('id') ?: SITEID;
-
             $url = course_get_url($course);
         }
+
         $values['url'] = $url->out(false);
         $values['islastday'] = false;
         $today = $this->related['type']->timestamp_to_date_array($this->related['today']);
@@ -153,6 +170,10 @@ class calendar_event_exporter extends event_exporter_base {
 
         $values['calendareventtype'] = $this->get_calendar_event_type();
 
+        if ($event->get_course_module()) {
+            $values = array_merge($values, $this->get_module_timestamp_limits($event));
+        }
+
         return $values;
     }
 
@@ -183,5 +204,112 @@ class calendar_event_exporter extends event_exporter_base {
         }
 
         return $type;
+    }
+
+    /**
+     * Return the set of minimum and maximum date timestamp values
+     * for the given event.
+     *
+     * @param event_interface $event
+     * @return array
+     */
+    protected function get_module_timestamp_limits($event) {
+        $values = [];
+        $mapper = container::get_event_mapper();
+        $starttime = $event->get_times()->get_start_time();
+
+        list($min, $max) = component_callback(
+            'mod_' . $event->get_course_module()->get('modname'),
+            'core_calendar_get_valid_event_timestart_range',
+            [$mapper->from_event_to_legacy_event($event)],
+            [null, null]
+        );
+
+        if ($min) {
+            $values = array_merge($values, $this->get_module_timestamp_min_limit($starttime, $min));
+        }
+
+        if ($max) {
+            $values = array_merge($values, $this->get_module_timestamp_max_limit($starttime, $max));
+        }
+
+        return $values;
+    }
+
+    /**
+     * Get the correct minimum midnight day limit based on the event start time
+     * and the module's minimum timestamp limit.
+     *
+     * @param DateTimeInterface $starttime The event start time
+     * @param array $min The module's minimum limit for the event
+     */
+    protected function get_module_timestamp_min_limit(\DateTimeInterface $starttime, $min) {
+        // We need to check that the minimum valid time is earlier in the
+        // day than the current event time so that if the user drags and drops
+        // the event to this day (which changes the date but not the time) it
+        // will result in a valid time start for the event.
+        //
+        // For example:
+        // An event that starts on 2017-01-10 08:00 with a minimum cutoff
+        // of 2017-01-05 09:00 means that 2017-01-05 is not a valid start day
+        // for the drag and drop because it would result in the event start time
+        // being set to 2017-01-05 08:00, which is invalid. Instead the minimum
+        // valid start day would be 2017-01-06.
+        $values = [];
+        $timestamp = $min[0];
+        $errorstring = $min[1];
+        $mindate = (new \DateTimeImmutable())->setTimestamp($timestamp);
+        $minstart = $mindate->setTime(
+            $starttime->format('H'),
+            $starttime->format('i'),
+            $starttime->format('s')
+        );
+        $midnight = usergetmidnight($timestamp);
+
+        if ($mindate <= $minstart) {
+            $values['mindaytimestamp'] = $midnight;
+        } else {
+            $tomorrow = (new \DateTime())->setTimestamp($midnight)->modify('+1 day');
+            $values['mindaytimestamp'] = $tomorrow->getTimestamp();
+        }
+
+        // Get the human readable error message to display if the min day
+        // timestamp is violated.
+        $values['mindayerror'] = $errorstring;
+        return $values;
+    }
+
+    /**
+     * Get the correct maximum midnight day limit based on the event start time
+     * and the module's maximum timestamp limit.
+     *
+     * @param DateTimeInterface $starttime The event start time
+     * @param array $max The module's maximum limit for the event
+     */
+    protected function get_module_timestamp_max_limit(\DateTimeInterface $starttime, $max) {
+        // We're doing a similar calculation here as we are for the minimum
+        // day timestamp. See the explanation above.
+        $values;
+        $timestamp = $max[0];
+        $errorstring = $max[1];
+        $maxdate = (new \DateTimeImmutable())->setTimestamp($timestamp);
+        $maxstart = $maxdate->setTime(
+            $starttime->format('H'),
+            $starttime->format('i'),
+            $starttime->format('s')
+        );
+        $midnight = usergetmidnight($timestamp);
+
+        if ($maxdate >= $maxstart) {
+            $values['maxdaytimestamp'] = $midnight;
+        } else {
+            $yesterday = (new \DateTime())->setTimestamp($midnight)->modify('-1 day');
+            $values['maxdaytimestamp'] = $yesterday->getTimestamp();
+        }
+
+        // Get the human readable error message to display if the max day
+        // timestamp is violated.
+        $values['maxdayerror'] = $errorstring;
+        return $values;
     }
 }

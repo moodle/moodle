@@ -30,6 +30,14 @@ define([], function() {
     var eventId = null;
     /* @var {int|null} durationDays How many days the event spans */
     var durationDays = null;
+    /* @var {int|null} minTimestart The earliest valid timestart */
+    var minTimestart = null;
+    /* @var {int|null} maxTimestart The latest valid tiemstart */
+    var maxTimestart = null;
+    /* @var {string|null} minError Error message for min timestamp violation */
+    var minError = null;
+    /* @var {string|null} maxError Error message for max timestamp violation */
+    var maxError = null;
 
     /**
      * Store the id of the event being dragged.
@@ -77,11 +85,107 @@ define([], function() {
     };
 
     /**
+     * Store the minimum timestart valid for an event being dragged.
+     *
+     * @param {int} timestamp The unix timstamp
+     */
+    var setMinTimestart = function(timestamp) {
+        minTimestart = timestamp;
+    };
+
+    /**
+     * Get the minimum valid timestart.
+     *
+     * @return {int|null}
+     */
+    var getMinTimestart = function() {
+        return minTimestart;
+    };
+
+    /**
+     * Check if a minimum timestamp is set.
+     *
+     * @return {bool}
+     */
+    var hasMinTimestart = function() {
+        return minTimestart !== null;
+    };
+
+    /**
+     * Store the maximum timestart valid for an event being dragged.
+     *
+     * @param {int} timestamp The unix timstamp
+     */
+    var setMaxTimestart = function(timestamp) {
+        maxTimestart = timestamp;
+    };
+
+    /**
+     * Get the maximum valid timestart.
+     *
+     * @return {int|null}
+     */
+    var getMaxTimestart = function() {
+        return maxTimestart;
+    };
+
+    /**
+     * Check if a maximum timestamp is set.
+     *
+     * @return {bool}
+     */
+    var hasMaxTimestart = function() {
+        return maxTimestart !== null;
+    };
+
+    /**
+     * Store the error string to display if trying to drag an event
+     * earlier than the minimum allowed date.
+     *
+     * @param {string} message The error message
+     */
+    var setMinError = function(message) {
+        minError = message;
+    };
+
+    /**
+     * Get the error message for a minimum time start violation.
+     *
+     * @return {string|null}
+     */
+    var getMinError = function() {
+        return minError;
+    };
+
+    /**
+     * Store the error string to display if trying to drag an event
+     * later than the maximum allowed date.
+     *
+     * @param {string} message The error message
+     */
+    var setMaxError = function(message) {
+        maxError = message;
+    };
+
+    /**
+     * Get the error message for a maximum time start violation.
+     *
+     * @return {string|null}
+     */
+    var getMaxError = function() {
+        return maxError;
+    };
+
+    /**
      * Reset all of the stored values.
      */
     var clearAll = function() {
         setEventId(null);
         setDurationDays(null);
+        setMinTimestart(null);
+        setMaxTimestart(null);
+        setMinError(null);
+        setMaxError(null);
     };
 
     return {
@@ -90,6 +194,16 @@ define([], function() {
         hasEventId: hasEventId,
         setDurationDays: setDurationDays,
         getDurationDays: getDurationDays,
+        setMinTimestart: setMinTimestart,
+        getMinTimestart: getMinTimestart,
+        hasMinTimestart: hasMinTimestart,
+        setMaxTimestart: setMaxTimestart,
+        getMaxTimestart: getMaxTimestart,
+        hasMaxTimestart: hasMaxTimestart,
+        setMinError: setMinError,
+        getMinError: getMinError,
+        setMaxError: setMaxError,
+        getMaxError: getMaxError,
         clearAll: clearAll
     };
 });
