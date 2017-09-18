@@ -315,6 +315,8 @@ class potential_company_course_user_selector extends company_user_selector_base 
      */
     public function find_users($search) {
         global $DB;
+        $companyrec = $DB->get_record('company', array('id' => $this->companyid));
+        $company = new company($this->companyid);
 
         // Get the full company tree as we may need it.
         $topcompanyid = $company->get_topcompanyid();
@@ -817,7 +819,6 @@ class potential_license_user_selector extends user_selector_base {
 
     public function find_users($search, $all = false) {
         global $DB, $USER;
-
         $companyrec = $DB->get_record('company', array('id' => $this->companyid));
         $company = new company($this->companyid);
 
@@ -1273,6 +1274,8 @@ class potential_company_group_user_selector extends company_user_selector_base {
      */
     public function find_users($search) {
         global $DB;
+        $companyrec = $DB->get_record('company', array('id' => $this->companyid));
+        $company = new company($this->companyid);
 
         // Get the full company tree as we may need it.
         $topcompanyid = $company->get_topcompanyid();
