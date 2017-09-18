@@ -38,5 +38,4 @@ if ($hassiteconfig) {
             new lang_string('toolintro', 'tool_httpsreplace', $httpsreplaceurl)
         )
     );
-
 }

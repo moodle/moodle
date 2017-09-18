@@ -35,7 +35,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class url_finder {
 
-
     /**
      * Returns a hash of what hosts are referred to over http and would need to be changed.
      *
@@ -234,5 +233,4 @@ class url_finder {
         }
         return $results;
     }
-
 }

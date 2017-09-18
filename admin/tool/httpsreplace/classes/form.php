@@ -49,5 +49,4 @@ class form extends \moodleform {
 
         $this->add_action_buttons(false, get_string('doit', 'tool_httpsreplace'));
     }
-
 }

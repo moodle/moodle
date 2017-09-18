@@ -22,7 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('NO_OUTPUT_BUFFERING', true);
+
 require_once(__DIR__ . '/../../../config.php');
+require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('toolhttpsreplace');
@@ -51,9 +54,56 @@ if (!is_https()) {
     echo $OUTPUT->notification(get_string('httpwarning', 'tool_httpsreplace'), 'warning');
 }
 
-echo '<p>'.get_string('domainexplain', 'tool_httpsreplace').'</p>';
-echo '<p>'.page_doc_link(get_string('doclink', 'tool_httpsreplace')).'</p>';
+$form = new \tool_httpsreplace\form();
 
-echo $OUTPUT->continue_button(new moodle_url('/admin/tool/httpsreplace/tool.php'));
+$finder = new \tool_httpsreplace\url_finder();
 
+$PAGE->set_cacheable(false);
+$progressbar = new progress_bar();
+
+if (!$data = $form->get_data()) {
+
+    echo $progressbar->create();
+
+    $results = $finder->http_link_stats($progressbar);
+
+    $progressbar->update_full(100, get_string('complete', 'tool_httpsreplace'));
+
+    if (empty($results)) {
+        echo '<p>'.get_string('oktoprocede', 'tool_httpsreplace').'</p>';
+    } else {
+        arsort($results);
+        $table = new html_table();
+        $table->id = 'plugins-check';
+        $table->head = array(
+            get_string('domain', 'tool_httpsreplace'),
+            get_string('count', 'tool_httpsreplace'),
+        );
+        $data = array();
+        foreach ($results as $domain => $count) {
+            $cleandomain = format_text($domain, FORMAT_PLAIN);
+            $data[] = [$cleandomain, $count];
+        }
+        $table->data = $data;
+        echo html_writer::table($table);
+        echo get_string('domainexplainhelp', 'tool_httpsreplace');
+    }
+    echo $OUTPUT->notification(get_string('takeabackupwarning', 'tool_httpsreplace'), 'warning');
+    $form->display();
+} else {
+    // Scroll to the end when finished.
+    $PAGE->requires->js_init_code("window.scrollTo(0, document.body.scrollHeight);");
+
+    echo html_writer::tag('p', get_string('replacing', 'tool_httpsreplace'));
+
+    echo $progressbar->create();
+
+    echo $OUTPUT->box_start();
+    $finder->upgrade_http_links($progressbar);
+    echo $OUTPUT->box_end();
+
+    $progressbar->update_full(100, get_string('complete', 'tool_httpsreplace'));
+
+    echo $OUTPUT->continue_button(new moodle_url('/admin/settings.php', ['section' => 'httpsecurity']));
+}
 echo $OUTPUT->footer();
