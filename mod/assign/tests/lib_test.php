@@ -108,7 +108,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setAdminUser();
         $courses = $DB->get_records('course', array('id' => $this->course->id));
         // Past assignments should not show up.
-        $pastassign = $this->create_instance(array('duedate' => time(),
+        $pastassign = $this->create_instance(array('duedate' => time() - 370001,
                                                    'cutoffdate' => time() - 370000,
                                                    'nosubmissions' => 0,
                                                    'assignsubmission_onlinetext_enabled' => 1));
@@ -413,8 +413,8 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         // Set the user to a teacher.
         $this->setUser($this->editingteachers[0]);
 
-        // The teacher should not care about the due date event.
-        $this->assertFalse(mod_assign_core_calendar_is_event_visible($event));
+        // The teacher should see the due date event.
+        $this->assertTrue(mod_assign_core_calendar_is_event_visible($event));
     }
 
     public function test_assign_core_calendar_is_event_visible_duedate_event_as_student() {

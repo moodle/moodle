@@ -1823,8 +1823,7 @@ function assign_check_updates_since(cm_info $cm, $from, $filter = array()) {
  * Is the event visible?
  *
  * This is used to determine global visibility of an event in all places throughout Moodle. For example,
- * the ASSIGN_EVENT_TYPE_GRADINGDUE event will not be shown to students on their calendar, and
- * ASSIGN_EVENT_TYPE_DUE events will not be shown to teachers.
+ * the ASSIGN_EVENT_TYPE_GRADINGDUE event will not be shown to students on their calendar.
  *
  * @param calendar_event $event
  * @return bool Returns true if the event is visible to the current user, false otherwise.
@@ -1842,7 +1841,7 @@ function mod_assign_core_calendar_is_event_visible(calendar_event $event) {
     if ($event->eventtype == ASSIGN_EVENT_TYPE_GRADINGDUE) {
         return $assign->can_grade();
     } else {
-        return !$assign->can_grade() && $assign->can_view_submission($USER->id);
+        return true;
     }
 }
 
