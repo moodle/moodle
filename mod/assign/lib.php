@@ -1920,3 +1920,147 @@ function mod_assign_core_calendar_event_action_shows_item_count(calendar_event $
     // For mod_assign, item count should be shown if the event type is 'gradingdue' and there is one or more item count.
     return in_array($event->eventtype, $eventtypesshowingitemcount) && $itemcount > 0;
 }
+
+/**
+ * This function calculates the minimum and maximum cutoff values for the timestart of
+ * the given event.
+ *
+ * It will return an array with two values, the first being the minimum cutoff value and
+ * the second being the maximum cutoff value. Either or both values can be null, which
+ * indicates there is no minimum or maximum, respectively.
+ *
+ * If a cutoff is required then the function must return an array containing the cutoff
+ * timestamp and error string to display to the user if the cutoff value is violated.
+ *
+ * A minimum and maximum cutoff return value will look like:
+ * [
+ *     [1505704373, 'The due date must be after the sbumission start date'],
+ *     [1506741172, 'The due date must be before the cutoff date']
+ * ]
+ *
+ * @param calendar_event $event The calendar event to get the time range for
+ * @param stdClass|null $instance The module instance to get the range from
+ */
+function mod_assign_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $instance = null) {
+    global $DB;
+
+    if (!$instance) {
+        $instance = $DB->get_record('assign', ['id' => $event->instance]);
+    }
+
+    $coursemodule = get_coursemodule_from_instance('assign',
+                                         $event->instance,
+                                         $event->courseid,
+                                         false,
+                                         MUST_EXIST);
+
+    if (empty($coursemodule)) {
+        // If we don't have a course module yet then it likely means
+        // the activity is still being set up. In this case there is
+        // nothing for us to do anyway.
+        return;
+    }
+
+    $context = context_module::instance($coursemodule->id);
+    $assign = new assign($context, null, null);
+    $assign->set_instance($instance);
+
+    return $assign->get_valid_calendar_event_timestart_range($event);
+}
+
+/**
+ * This function will check that the given event is valid for it's
+ * corresponding assign module instance.
+ *
+ * An exception is thrown if the event fails validation.
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event
+ * @return bool
+ */
+function mod_assign_core_calendar_validate_event_timestart(\calendar_event $event) {
+    global $DB;
+
+    if (!isset($event->instance)) {
+        return;
+    }
+
+    // We need to read from the DB directly because course module may
+    // currently be getting created so it won't be in mod info yet.
+    $instance = $DB->get_record('assign', ['id' => $event->instance], '*', MUST_EXIST);
+    $timestart = $event->timestart;
+    list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
+
+    if ($min && $timestart < $min[0]) {
+        throw new \moodle_exception($min[1]);
+    }
+
+    if ($max && $timestart > $max[0]) {
+        throw new \moodle_exception($max[1]);
+    }
+}
+
+/**
+ * This function will update the assign module according to the
+ * event that has been modified.
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event
+ */
+function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event) {
+    global $DB;
+
+    if (empty($event->instance) || $event->modulename != 'assign') {
+        return;
+    }
+
+    $coursemodule = get_coursemodule_from_instance('assign',
+                                         $event->instance,
+                                         $event->courseid,
+                                         false,
+                                         MUST_EXIST);
+
+    if (empty($coursemodule)) {
+        // If we don't have a course module yet then it likely means
+        // the activity is still being set up. In this case there is
+        // nothing for us to do anyway.
+        return;
+    }
+
+    $context = context_module::instance($coursemodule->id);
+
+    // The user does not have the capability to modify this activity.
+    if (!has_capability('moodle/course:manageactivities', $context)) {
+        return;
+    }
+
+    $assign = new assign($context, $coursemodule, null);
+    $modified = false;
+
+    if ($event->eventtype == ASSIGN_EVENT_TYPE_DUE) {
+        // This check is in here because due date events are currently
+        // the only events that can be overridden, so we can save a DB
+        // query if we don't bother checking other events.
+        if ($assign->is_override_calendar_event($event)) {
+            // This is an override event so we should ignore it.
+            return;
+        }
+
+        $instance = $assign->get_instance();
+        $newduedate = $event->timestart;
+
+        if ($newduedate != $instance->duedate) {
+            $instance->duedate = $newduedate;
+            $instance->timemodified = time();
+            $modified = true;
+        }
+    }
+
+    if ($modified) {
+        // Persist the assign instance changes.
+        $DB->update_record('assign', $instance);
+        $assign->update_calendar($coursemodule->id);
+        $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
+        $event->trigger();
+    }
+}
