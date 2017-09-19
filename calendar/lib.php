@@ -3055,11 +3055,12 @@ function core_calendar_user_preferences() {
  * @param boolean $ignorehidden whether to select only visible events or all events
  * @return array $events of selected events or an empty array if there aren't any (or there was an error)
  */
-function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses, $withduration = true, $ignorehidden = true) {
+function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses,
+        $withduration = true, $ignorehidden = true, $categories = []) {
     // Normalise the users, groups and courses parameters so that they are compliant with \core_calendar\local\api::get_events().
     // Existing functions that were using the old calendar_get_events() were passing a mixture of array, int, boolean for these
     // parameters, but with the new API method, only null and arrays are accepted.
-    list($userparam, $groupparam, $courseparam) = array_map(function($param) {
+    list($userparam, $groupparam, $courseparam, $categoryparam) = array_map(function($param) {
         // If parameter is true, return null.
         if ($param === true) {
             return null;
@@ -3077,7 +3078,7 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses, $
 
         // No normalisation required.
         return $param;
-    }, [$users, $groups, $courses]);
+    }, [$users, $groups, $courses, $categories]);
 
     $mapper = \core_calendar\local\event\container::get_event_mapper();
     $events = \core_calendar\local\api::get_events(
@@ -3092,6 +3093,7 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses, $
         $userparam,
         $groupparam,
         $courseparam,
+        $categoryparam,
         $withduration,
         $ignorehidden
     );
@@ -3142,7 +3144,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         }
     }
 
-    list($userparam, $groupparam, $courseparam) = array_map(function($param) {
+    list($userparam, $groupparam, $courseparam, $categoryparam) = array_map(function($param) {
         // If parameter is true, return null.
         if ($param === true) {
             return null;
@@ -3160,7 +3162,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
 
         // No normalisation required.
         return $param;
-    }, [$calendar->users, $calendar->groups, $calendar->courses]);
+    }, [$calendar->users, $calendar->groups, $calendar->courses, $calendar->categories]);
 
     $events = \core_calendar\local\api::get_events(
         $tstart,
@@ -3174,6 +3176,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         $userparam,
         $groupparam,
         $courseparam,
+        $categoryparam,
         true,
         true,
         function ($event) {

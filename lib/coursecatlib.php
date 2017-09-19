@@ -1306,6 +1306,14 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
+     */
+    public function get_view_link() {
+        return new \moodle_url('/course/index.php', [
+            'categoryid' => $this->id,
+        ]);
+    }
+
+    /**
      * Searches courses
      *
      * List of found course ids is cached for 10 minutes. Cache may be purged prior

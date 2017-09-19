@@ -57,6 +57,13 @@ interface event_interface {
     public function get_description();
 
     /**
+     * Get the category object associated with the event.
+     *
+     * @return proxy_interface
+     */
+    public function get_category();
+
+    /**
      * Get the course object associated with the event.
      *
      * @return proxy_interface

@@ -76,6 +76,7 @@ interface event_vault_interface {
         array $usersfilter = null,
         array $groupsfilter = null,
         array $coursesfilter = null,
+        array $categoriesfilter = null,
         $withduration = true,
         $ignorehidden = true,
         callable $filter = null

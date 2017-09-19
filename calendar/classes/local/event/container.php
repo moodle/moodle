@@ -117,6 +117,15 @@ class container {
                 [self::class, 'apply_component_provide_event_action'],
                 [self::class, 'apply_component_is_event_visible'],
                 function ($dbrow) {
+                    if (!empty($dbrow->categoryid)) {
+                        // This is a category event. Check that the category is visible to this user.
+                        $category = \coursecat::get($dbrow->categoryid, IGNORE_MISSING, true);
+
+                        if (empty($category) || !$category->is_uservisible()) {
+                            return true;
+                        }
+                    }
+
                     // At present we only have a bail-out check for events in course modules.
                     if (empty($dbrow->modulename)) {
                         return false;

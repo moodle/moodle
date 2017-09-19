@@ -69,6 +69,7 @@ class event_mapper implements event_mapper_interface {
                 'name' => $coalesce('name'),
                 'description' => $coalesce('description'),
                 'format' => $coalesce('format'),
+                'categoryid' => $coalesce('categoryid'),
                 'courseid' => $coalesce('courseid'),
                 'groupid' => $coalesce('groupid'),
                 'userid' => $coalesce('userid'),

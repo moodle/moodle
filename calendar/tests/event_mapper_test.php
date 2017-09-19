@@ -202,6 +202,10 @@ class event_mapper_test_action_event implements action_event_interface {
         return $this->event->get_description();
     }
 
+    public function get_category() {
+        return $this->event->get_category();
+    }
+
     public function get_course() {
         return $this->event->get_course();
     }
@@ -255,6 +259,11 @@ class event_mapper_test_action_event implements action_event_interface {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class event_mapper_test_event implements event_interface {
+    /**
+     * @var proxy_interface $categoryproxy Category proxy.
+     */
+    protected $categoryproxy;
+
     /**
      * @var proxy_interface $courseproxy Course proxy.
      */
@@ -310,6 +319,10 @@ class event_mapper_test_event implements event_interface {
 
     public function get_description() {
         return new event_description('asdf', 1);
+    }
+
+    public function get_category() {
+        return $this->categoryproxy;
     }
 
     public function get_course() {
