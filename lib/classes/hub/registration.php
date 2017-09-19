@@ -29,6 +29,7 @@ use moodle_exception;
 use moodle_url;
 use context_system;
 use stdClass;
+use html_writer;
 
 /**
  * Methods to use when publishing and searching courses on moodle.net
@@ -41,7 +42,7 @@ class registration {
 
     /** @var Fields used in a site registration form */
     const FORM_FIELDS = ['name', 'description', 'contactname', 'contactemail', 'contactphone', 'imageurl', 'privacy', 'street',
-        'regioncode', 'countrycode', 'geolocation', 'contactable', 'emailalert', 'language'];
+        'regioncode', 'countrycode', 'geolocation', 'contactable', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail', 'language'];
 
     /** @var Site privacy: not displayed */
     const HUB_SITENOTPUBLISHED = 'notdisplayed';
@@ -162,7 +163,6 @@ class registration {
         $siteinfo['modulenumberaverage'] = average_number_of_courses_modules();
 
         // Version and url.
-        $siteinfo['moodleversion'] = $CFG->version;
         $siteinfo['moodlerelease'] = $CFG->release;
         $siteinfo['url'] = $CFG->wwwroot;
 
@@ -183,6 +183,49 @@ class registration {
         }
 
         return $siteinfo;
+    }
+
+    /**
+     * Human-readable summary of data that will be sent to moodle.net
+     *
+     * @param array $siteinfo result of get_site_info()
+     * @return string
+     */
+    public static function get_stats_summary($siteinfo) {
+        $summary = html_writer::tag('p', get_string('sendfollowinginfo_help', 'hub')) .
+            html_writer::start_tag('ul');
+
+        $mobileservicesenabled = $siteinfo['mobileservicesenabled'] ? get_string('yes') : get_string('no');
+        $mobilenotificationsenabled = $siteinfo['mobilenotificationsenabled'] ? get_string('yes') : get_string('no');
+        $moodlerelease = $siteinfo['moodlerelease'];
+        if (preg_match('/^(\d+\.\d.*?)[\. ]/', $moodlerelease, $matches)) {
+            $moodlerelease = $matches[1];
+        }
+        $senddata = [
+            'moodlerelease' => get_string('sitereleasenum', 'hub', $moodlerelease),
+            'courses' => get_string('coursesnumber', 'hub', $siteinfo['courses']),
+            'users' => get_string('usersnumber', 'hub', $siteinfo['users']),
+            'enrolments' => get_string('roleassignmentsnumber', 'hub', $siteinfo['enrolments']),
+            'posts' => get_string('postsnumber', 'hub', $siteinfo['posts']),
+            'questions' => get_string('questionsnumber', 'hub', $siteinfo['questions']),
+            'resources' => get_string('resourcesnumber', 'hub', $siteinfo['resources']),
+            'badges' => get_string('badgesnumber', 'hub', $siteinfo['badges']),
+            'issuedbadges' => get_string('issuedbadgesnumber', 'hub', $siteinfo['issuedbadges']),
+            'participantnumberaverage' => get_string('participantnumberaverage', 'hub',
+                format_float($siteinfo['participantnumberaverage'], 2)),
+            'modulenumberaverage' => get_string('modulenumberaverage', 'hub',
+                format_float($siteinfo['modulenumberaverage'], 2)),
+            'mobileservicesenabled' => get_string('mobileservicesenabled', 'hub', $mobileservicesenabled),
+            'mobilenotificationsenabled' => get_string('mobilenotificationsenabled', 'hub', $mobilenotificationsenabled),
+            'registereduserdevices' => get_string('registereduserdevices', 'hub', $siteinfo['registereduserdevices']),
+            'registeredactiveuserdevices' => get_string('registeredactiveuserdevices', 'hub', $siteinfo['registeredactiveuserdevices']),
+        ];
+
+        foreach ($senddata as $key => $str) {
+            $summary .= html_writer::tag('li', $str, ['class' => 'site' . $key]);
+        }
+        $summary .= html_writer::end_tag('ul');
+        return $summary;
     }
 
     /**

@@ -1555,8 +1555,8 @@ $string['refresh'] = 'Refresh';
 $string['refreshingevents'] = 'Refreshing events';
 $string['registration'] = 'Moodle registration';
 $string['registrationcontact'] = 'Contact from the public';
-$string['registrationcontactno'] = 'No, I do not want a contact form in the site listing';
-$string['registrationcontactyes'] = 'Yes, provide a form for prospective Moodlers to contact me';
+$string['registrationcontactno'] = 'No, I do not want to be contacted by other people';
+$string['registrationcontactyes'] = 'Yes, provide a form for other Moodlers to contact me';
 $string['registrationemail'] = 'Email notifications';
 $string['registrationinfo'] = '<p>This page allows you to register your Moodle site with moodle.org.  Registration is free.
 The main benefit of registering is that you will be added to a low-volume mailing list
@@ -1567,9 +1567,9 @@ for important notifications such as security alerts and new releases of Moodle.<
 <p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.</p>
 <p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.</p>';
 $string['registrationinfotitle'] = 'Registration information';
-$string['registrationno'] = 'No, I do not want to receive email';
+$string['registrationno'] = 'No, I do not want to receive any email from Moodle HQ';
 $string['registrationsend'] = 'Send registration information to moodle.org';
-$string['registrationyes'] = 'Yes, please notify me about important issues';
+$string['registrationyes'] = 'Yes, notify me about important news (e.g. security issues or releases) ';
 $string['reject'] = 'Reject';
 $string['rejectdots'] = 'Reject...';
 $string['reload'] = 'Reload';
