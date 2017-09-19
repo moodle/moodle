@@ -152,10 +152,11 @@ class api {
         $url = new moodle_url("/$CFG->admin/tool/mobile/launch.php");
         $settings['launchurl'] = $url->out(false);
 
-        if ($logourl = $OUTPUT->get_logo_url()) {
+        // Check that we are receiving a moodle_url object, themes can override get_logo_url and may return incorrect values.
+        if (($logourl = $OUTPUT->get_logo_url()) && $logourl instanceof moodle_url) {
             $settings['logourl'] = $logourl->out(false);
         }
-        if ($compactlogourl = $OUTPUT->get_compact_logo_url()) {
+        if (($compactlogourl = $OUTPUT->get_compact_logo_url()) && $compactlogourl instanceof moodle_url) {
             $settings['compactlogourl'] = $compactlogourl->out(false);
         }
 
@@ -215,7 +216,11 @@ class api {
 
         if (empty($section) or $section == 'gradessettings') {
             require_once($CFG->dirroot . '/user/lib.php');
-            $settings->mygradesurl = user_mygrades_url()->out(false);
+            $settings->mygradesurl = user_mygrades_url();
+            // The previous function may return moodle_url instances or plain string URLs.
+            if ($settings->mygradesurl instanceof moodle_url) {
+                $settings->mygradesurl = $settings->mygradesurl->out(false);
+            }
         }
 
         if (empty($section) or $section == 'mobileapp') {
