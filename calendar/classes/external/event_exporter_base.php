@@ -87,6 +87,7 @@ class event_exporter_base extends exporter {
 
         if ($repeats = $event->get_repeats()) {
             $data->repeatid = $repeats->get_id();
+            $data->eventcount = $repeats->get_num() + 1;
         }
 
         if ($cm = $event->get_course_module()) {
@@ -131,6 +132,12 @@ class event_exporter_base extends exporter {
                 'null' => NULL_ALLOWED
             ],
             'repeatid' => [
+                'type' => PARAM_INT,
+                'optional' => true,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ],
+            'eventcount' => [
                 'type' => PARAM_INT,
                 'optional' => true,
                 'default' => null,

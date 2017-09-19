@@ -29,16 +29,19 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
      *
      * @method deleteEvent
      * @param {int} eventId The event id.
+     * @arapm {bool} deleteSeries Whether to delete all events in the series
      * @return {promise} Resolved with requested calendar event
      */
-    var deleteEvent = function(eventId) {
-
+    var deleteEvent = function(eventId, deleteSeries) {
+        if (typeof deleteSeries === 'undefined') {
+            deleteSeries = false;
+        }
         var request = {
             methodname: 'core_calendar_delete_calendar_events',
             args: {
                 events: [{
                     eventid: eventId,
-                    repeat: 1
+                    repeat: deleteSeries,
                 }]
             }
         };

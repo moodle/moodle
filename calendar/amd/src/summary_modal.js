@@ -21,11 +21,32 @@
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_events', 'core/modal',
-    'core/modal_registry', 'core/modal_factory', 'core/modal_events', 'core_calendar/repository',
-    'core_calendar/events'],
-    function($, Str, Notification, CustomEvents, Modal, ModalRegistry, ModalFactory, ModalEvents, CalendarRepository,
-             CalendarEvents) {
+define([
+    'jquery',
+    'core/str',
+    'core/notification',
+    'core/custom_interaction_events',
+    'core/modal',
+    'core/modal_registry',
+    'core/modal_factory',
+    'core/modal_events',
+    'core_calendar/repository',
+    'core_calendar/events',
+    'core_calendar/modal_delete',
+],
+function(
+    $,
+    Str,
+    Notification,
+    CustomEvents,
+    Modal,
+    ModalRegistry,
+    ModalFactory,
+    ModalEvents,
+    CalendarRepository,
+    CalendarEvents,
+    ModalDelete
+) {
 
     var registered = false;
     var SELECTORS = {
@@ -87,6 +108,18 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
      */
     ModalEventSummary.prototype.getEventId = function() {
         return this.getBody().find(SELECTORS.ROOT).attr('data-event-id');
+    };
+
+    /**
+     * Get the number of events in the series for the event being shown in
+     * this modal. This value is not cached because it will change
+     * depending on which event is being displayed.
+     *
+     * @method getEventCount
+     * @return {int}
+     */
+    ModalEventSummary.prototype.getEventCount = function() {
+        return this.getBody().find(SELECTORS.ROOT).attr('data-event-event-count');
     };
 
     /**
@@ -163,34 +196,76 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
                 key: 'deleteevent',
                 component: 'calendar'
             },
-            {
+        ];
+
+        var eventCount = parseInt(summaryModal.getEventCount(), 10);
+        var deletePromise;
+        var isRepeatedEvent = eventCount > 1;
+        if (isRepeatedEvent) {
+            deleteStrings.push({
+                key: 'confirmeventseriesdelete',
+                component: 'calendar',
+                param: {
+                    name: eventTitle,
+                    count: eventCount,
+                },
+            });
+
+            deletePromise = ModalFactory.create(
+                {
+                    type: ModalDelete.TYPE
+                },
+                summaryModal.getDeleteButton()
+            );
+        } else {
+            deleteStrings.push({
                 key: 'confirmeventdelete',
                 component: 'calendar',
                 param: eventTitle
-            }
-        ];
+            });
+
+            deletePromise = ModalFactory.create(
+                {
+                    type: ModalFactory.types.SAVE_CANCEL
+                },
+                summaryModal.getDeleteButton()
+            );
+        }
+
         var eventId = summaryModal.getEventId();
         var stringsPromise = Str.get_strings(deleteStrings);
-        var deletePromise = ModalFactory.create(
-            {
-                type: ModalFactory.types.SAVE_CANCEL
-            },
-            summaryModal.getDeleteButton()
-        );
 
-        $.when(stringsPromise, deletePromise).then(function(strings, deleteModal) {
+        $.when(stringsPromise, deletePromise)
+        .then(function(strings, deleteModal) {
             deleteModal.setTitle(strings[0]);
             deleteModal.setBody(strings[1]);
-            deleteModal.setSaveButtonText(strings[0]);
+            if (!isRepeatedEvent) {
+                deleteModal.setSaveButtonText(strings[0]);
+            }
+
             deleteModal.getRoot().on(ModalEvents.save, function() {
-                CalendarRepository.deleteEvent(eventId).then(function() {
-                    $('body').trigger(CalendarEvents.deleted, [eventId]);
-                    summaryModal.hide();
-                    return;
-                }).catch(Notification.exception);
+                CalendarRepository.deleteEvent(eventId, false)
+                    .then(function() {
+                        $('body').trigger(CalendarEvents.deleted, [eventId, false]);
+                        summaryModal.hide();
+                        return;
+                    })
+                    .catch(Notification.exception);
             });
+
+            deleteModal.getRoot().on(CalendarEvents.deleteAll, function() {
+                CalendarRepository.deleteEvent(eventId, true)
+                    .then(function() {
+                        $('body').trigger(CalendarEvents.deleted, [eventId, true]);
+                        summaryModal.hide();
+                        return;
+                    })
+                    .catch(Notification.exception);
+            });
+
             return deleteModal;
-        }).fail(Notification.exception);
+        })
+        .fail(Notification.exception);
     }
 
     // Automatically register with the modal registry the first time this module is imported so that you can create modals

@@ -26,6 +26,7 @@ define([], function() {
     return {
         created: 'calendar-events:created',
         deleted: 'calendar-events:deleted',
+        deleteAll: 'calendar-events:delete_all',
         updated: 'calendar-events:updated',
         editEvent: 'calendar-events:edit_event',
         editActionEvent: 'calendar-events:edit_action_event',
