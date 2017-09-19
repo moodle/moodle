@@ -1,6 +1,10 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+* calendar_get_mini has been deprecated. Please update to use the new
+  exporters and renderers.
+
 === 3.3 ===
 * calendar_event_hook() has been removed. Developers should be using the Moodle events system to achieve this behaviour,
   rather than using a hacky calendar specific implementation.
