@@ -58,7 +58,8 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
         // setting. Since it is preferably to always load the secure resource.
 
         $httpurl = get_config('filter_mathjaxloader', 'httpurl');
-        if ($httpurl !== 'http://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js') {
+        if ($httpurl !== 'http://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js' &&
+            $httpurl !== 'http://cdn.mathjax.org/mathjax/2.6.1/MathJax.js') {
             // If the http setting has been changed, we make the admin choose the https setting because
             // it indicates some sort of custom setup. This will be supported by the release notes.
             unset_config('httpsurl', 'filter_mathjaxloader');
@@ -119,6 +120,16 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2017091900) {
+
+        $httpsurl = get_config('filter_mathjaxloader', 'httpsurl');
+        if (empty($httpsurl)) {
+            // URL is empty, most likely because of bad upgrade path. See MDL-59780.
+            set_config('httpsurl', 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js', 'filter_mathjaxloader');
+        }
+        upgrade_plugin_savepoint(true, 2017091900, 'filter', 'mathjaxloader');
+    }
 
     return true;
 }
