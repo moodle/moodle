@@ -27,6 +27,8 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->libdir . '/coursecatlib.php');
+
 /**
  *  These are read by the administration component to provide default values
  */
@@ -762,10 +764,7 @@ class calendar_event {
                     $this->editoroptions['maxbytes'] = $course->maxbytes;
                 } else if ($properties->eventtype === 'category') {
                     // First check the course is valid.
-                    $category = $DB->get_record('course_categories', array('id' => $properties->categoryid));
-                    if (!$category) {
-                        print_error('invalidcourse');
-                    }
+                    \coursecat::get($properties->categoryid, MUST_EXIST, true);
                     // Course context.
                     $this->editorcontext = $this->properties->context;
                     // We have a course and are within the course context so we had
@@ -957,6 +956,12 @@ class calendar_information {
     /** @var int A course id */
     public $courseid = null;
 
+    /** @var array An array of categories */
+    public $categories = array();
+
+    /** @var int The current category */
+    public $categoryid = null;
+
     /** @var array An array of courses */
     public $courses = array();
 
@@ -1019,17 +1024,71 @@ class calendar_information {
     /**
      * Initialize calendar information
      *
+     * @deprecated 3.4
      * @param stdClass $course object
      * @param array $coursestoload An array of courses [$course->id => $course]
      * @param bool $ignorefilters options to use filter
      */
     public function prepare_for_view(stdClass $course, array $coursestoload, $ignorefilters = false) {
-        $this->courseid = $course->id;
+        debugging('The prepare_for_view() function has been deprecated. Please update your code to use set_sources()',
+                DEBUG_DEVELOPER);
+        $this->set_sources($course, $coursestoload);
+    }
+
+    /**
+     * Set the sources for events within the calendar.
+     *
+     * If no category is provided, then the category path for the current
+     * course will be used.
+     *
+     * @param   stdClass    $course The current course being viewed.
+     * @param   int[]       $courses The list of all courses currently accessible.
+     * @param   stdClass    $category The current category to show.
+     */
+    public function set_sources(stdClass $course, array $courses, stdClass $category = null) {
+        // A cousre must always be specified.
         $this->course = $course;
-        list($courses, $group, $user) = calendar_set_filters($coursestoload, $ignorefilters);
-        $this->courses = $courses;
+        $this->courseid = $course->id;
+
+        list($courseids, $group, $user) = calendar_set_filters($courses);
+        $this->courses = $courseids;
         $this->groups = $group;
         $this->users = $user;
+
+        // Do not show category events by default.
+        $this->categoryid = null;
+        $this->categories = null;
+
+        if (null !== $category) {
+            // A specific category was requested - set the current category, and include all parents of that category.
+            $category = \coursecat::get($category->id);
+            $this->categoryid = $category->id;
+
+            $this->categories = $category->get_parents();
+            $this->categories[] = $category->id;
+        } else if (SITEID === $this->courseid) {
+            // This is the site.
+            // Show categories for all courses the user has access to.
+            $this->categories = true;
+            $categories = [];
+            foreach ($courses as $course) {
+                $category = \coursecat::get($course->category);
+                $categories = array_merge($categories, $category->get_parents());
+                $categories[] = $category->id;
+            }
+
+            // And all categories that the user can manage.
+            foreach (\coursecat::get_all() as $category) {
+                if (!$category->has_manage_capability()) {
+                    continue;
+                }
+
+                $categories = array_merge($categories, $category->get_parents());
+                $categories[] = $category->id;
+            }
+
+            $this->categories = array_unique($categories);
+        }
     }
 
     /**
