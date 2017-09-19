@@ -1164,15 +1164,17 @@ class calendar_information {
  * @param boolean $withduration whether only events starting within time range selected
  *                              or events in progress/already started selected as well
  * @param boolean $ignorehidden whether to select only visible events or all events
+ * @param array|int|boolean $categories array of categories, category id or boolean for all/no course events
  * @return array $events of selected events or an empty array if there aren't any (or there was an error)
  */
-function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withduration=true, $ignorehidden=true) {
+function calendar_get_events($tstart, $tend, $users, $groups, $courses,
+        $withduration = true, $ignorehidden = true, $categories = []) {
     global $DB;
 
     $whereclause = '';
     $params = array();
     // Quick test.
-    if (empty($users) && empty($groups) && empty($courses)) {
+    if (empty($users) && empty($groups) && empty($courses) && empty($categories)) {
         return array();
     }
 
@@ -1180,12 +1182,12 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
         // Events from a number of users
         if(!empty($whereclause)) $whereclause .= ' OR';
         list($insqlusers, $inparamsusers) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED);
-        $whereclause .= " (e.userid $insqlusers AND e.courseid = 0 AND e.groupid = 0)";
+        $whereclause .= " (e.userid $insqlusers AND e.courseid = 0 AND e.groupid = 0 AND e.categoryid = 0)";
         $params = array_merge($params, $inparamsusers);
     } else if($users === true) {
         // Events from ALL users
         if(!empty($whereclause)) $whereclause .= ' OR';
-        $whereclause .= ' (e.userid != 0 AND e.courseid = 0 AND e.groupid = 0)';
+        $whereclause .= ' (e.userid != 0 AND e.courseid = 0 AND e.groupid = 0 AND e.categoryid = 0)';
     } else if($users === false) {
         // No user at all, do nothing
     }
@@ -1213,6 +1215,18 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
         if(!empty($whereclause)) $whereclause .= ' OR';
         $whereclause .= ' (e.groupid = 0 AND e.courseid != 0)';
     }
+
+    if ((is_array($categories) && !empty($categories)) || is_numeric($categories)) {
+        if(!empty($whereclause)) $whereclause .= ' OR';
+        list($insqlcategories, $inparamscategories) = $DB->get_in_or_equal($categories, SQL_PARAMS_NAMED);
+        $whereclause .= " (e.groupid = 0 AND e.courseid = 0 AND e.categoryid $insqlcategories)";
+        $params = array_merge($params, $inparamscategories);
+    } else if ($categories === true) {
+        // Events from ALL categories.
+        if(!empty($whereclause)) $whereclause .= ' OR';
+        $whereclause .= ' (e.groupid = 0 AND e.courseid = 0 AND e.categoryid != 0)';
+    }
+
 
     // Security check: if, by now, we have NOTHING in $whereclause, then it means
     // that NO event-selecting clauses were defined. Thus, we won't be returning ANY
@@ -3183,7 +3197,12 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
             if ($proxy = $event->get_course_module()) {
                 $cminfo = $proxy->get_proxied_instance();
                 return $cminfo->uservisible;
+            }
 
+            if ($proxy = $event->get_category()) {
+                $category = $proxy->get_proxied_instance();
+
+                return $category->is_uservisible();
             }
 
             return true;
