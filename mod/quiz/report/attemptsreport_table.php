@@ -515,8 +515,12 @@ abstract class quiz_attempts_report_table extends table_sql {
 
         if ($this->is_downloading()) {
             // We want usages for all attempts.
-            return new qubaid_join($this->sql->from, 'quiza.uniqueid',
-                    $this->sql->where, $this->sql->params);
+            return new qubaid_join("(
+                SELECT DISTINCT quiza.uniqueid
+                  FROM " . $this->sql->from . "
+                 WHERE " . $this->sql->where . "
+                    ) quizasubquery", 'quizasubquery.uniqueid',
+                    "1 = 1", $this->sql->params);
         }
 
         $qubaids = array();
