@@ -6383,3 +6383,53 @@ function get_user_access_sitewide($userid) {
 
     return $accessdata;
 }
+
+/**
+ * Generates the HTML for a miniature calendar.
+ *
+ * @param array $courses list of course to list events from
+ * @param array $groups list of group
+ * @param array $users user's info
+ * @param int|bool $calmonth calendar month in numeric, default is set to false
+ * @param int|bool $calyear calendar month in numeric, default is set to false
+ * @param string|bool $placement the place/page the calendar is set to appear - passed on the the controls function
+ * @param int|bool $courseid id of the course the calendar is displayed on - passed on the the controls function
+ * @param int $time the unixtimestamp representing the date we want to view, this is used instead of $calmonth
+ *     and $calyear to support multiple calendars
+ * @return string $content return html table for mini calendar
+ * @deprecated since Moodle 3.4. MDL-59333
+ */
+function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyear = false, $placement = false,
+                           $courseid = false, $time = 0) {
+    global $PAGE;
+
+    debugging('calendar_get_mini() has been deprecated. Please update your code to use calendar_get_view.',
+        DEBUG_DEVELOPER);
+
+    if (!empty($calmonth) && !empty($calyear)) {
+        // Do this check for backwards compatibility.
+        // The core should be passing a timestamp rather than month and year.
+        // If a month and year are passed they will be in Gregorian.
+        // Ensure it is a valid date, else we will just set it to the current timestamp.
+        if (checkdate($calmonth, 1, $calyear)) {
+            $time = make_timestamp($calyear, $calmonth, 1);
+        } else {
+            $time = time();
+        }
+    } else if (empty($time)) {
+        // Get the current date in the calendar type being used.
+        $time = time();
+    }
+
+    if ($courseid == SITEID) {
+        $course = get_site();
+    } else {
+        $course = get_course($courseid);
+    }
+    $calendar = new calendar_information(0, 0, 0, $time);
+    $calendar->prepare_for_view($course, $courses);
+
+    $renderer = $PAGE->get_renderer('core_calendar');
+    list($data, $template) = calendar_get_view($calendar, 'mini');
+    return $renderer->render_from_template($template, $data);
+}
