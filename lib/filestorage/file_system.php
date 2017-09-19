@@ -568,14 +568,13 @@ abstract class file_system {
      * @return string The MIME type.
      */
     public function mimetype_from_hash($contenthash, $filename) {
-        $pathname = $this->get_remote_path_from_hash($contenthash);
+        $pathname = $this->get_local_path_from_hash($contenthash);
         $mimetype = file_storage::mimetype($pathname, $filename);
 
-        if (!$this->is_file_readable_locally_by_hash($contenthash, false) && $mimetype === 'document/unknown') {
+        if ($mimetype === 'document/unknown' && !$this->is_file_readable_locally_by_hash($contenthash)) {
             // The type is unknown, but the full checks weren't completed because the file isn't locally available.
             // Ensure we have a local copy and try again.
             $pathname = $this->get_local_path_from_hash($contenthash, true);
-
             $mimetype = file_storage::mimetype_from_file($pathname);
         }
 
@@ -593,18 +592,7 @@ abstract class file_system {
             // Files with an empty filesize are treated as directories and have no mimetype.
             return null;
         }
-        $pathname = $this->get_remote_path_from_storedfile($file);
-        $mimetype = file_storage::mimetype($pathname, $file->get_filename());
-
-        if (!$this->is_file_readable_locally_by_storedfile($file) && $mimetype === 'document/unknown') {
-            // The type is unknown, but the full checks weren't completed because the file isn't locally available.
-            // Ensure we have a local copy and try again.
-            $pathname = $this->get_local_path_from_storedfile($file, true);
-
-            $mimetype = file_storage::mimetype_from_file($pathname);
-        }
-
-        return $mimetype;
+        return $this->mimetype_from_hash($file->get_contenthash(), $file->get_filename());
     }
 
     /**
