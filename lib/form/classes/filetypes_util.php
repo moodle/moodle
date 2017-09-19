@@ -323,6 +323,10 @@ class filetypes_util {
         $others = [];
 
         foreach (core_filetypes::get_types() as $extension => $info) {
+            // Reserved for unknown file types. Not available here.
+            if ($extension === 'xxx') {
+                continue;
+            }
             $extension = '.'.$extension;
             if ($onlytypes && !$this->is_whitelisted($extension, $onlytypes)) {
                 continue;
@@ -496,6 +500,8 @@ class filetypes_util {
             if ($type === '*') {
                 // Any file is considered as a known type.
                 continue;
+            } else if ($type === '.xxx') {
+                $unknown[$type] = true;
             } else if ($this->is_filetype_group($type)) {
                 // The type is a group that exists.
                 continue;
