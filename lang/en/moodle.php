@@ -484,6 +484,7 @@ $string['deletechecktypename'] = 'Are you sure that you want to delete the {$a->
 $string['deletecheckfiles'] = 'Are you absolutely sure you want to delete these files?';
 $string['deletecheckfull'] = 'Are you absolutely sure you want to completely delete the user {$a}, including their enrolments, activity and other user data?';
 $string['deletecheckwarning'] = 'You are about to delete these files';
+$string['deletepicture'] = 'Delete picture';
 $string['deletesection'] = 'Delete section';
 $string['deleteselected'] = 'Delete selected';
 $string['deleteselectedkey'] = 'Delete selected key';

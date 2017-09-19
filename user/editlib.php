@@ -352,7 +352,7 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
 
         $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
 
-        $mform->addElement('checkbox', 'deletepicture', get_string('delete'));
+        $mform->addElement('checkbox', 'deletepicture', get_string('deletepicture'));
         $mform->setDefault('deletepicture', 0);
 
         $mform->addElement('filemanager', 'imagefile', get_string('newpicture'), '', $filemanageroptions);
