@@ -152,3 +152,5 @@ xmlrpcdisabledpublish,core_hub
 xmlrpcdisabledregistration,core_hub
 moodleorghubname,core_admin
 hubs,core_admin
+quickdownloadcalendar,core_calendar
+ical,core_calendar

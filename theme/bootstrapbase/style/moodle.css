@@ -5843,24 +5843,6 @@ img.iconsmall {
 .block .content h3.eventskey {
   margin-top: 0.5em;
 }
-.ical-link {
-  font-size: 10px;
-  font-weight: bold;
-  background-color: #f60;
-  padding: 0 5px;
-  color: #fff;
-  border-top: 1px solid #f93;
-  border-left: 1px solid #f93;
-  border-bottom: 1px solid #013;
-  border-right: 1px solid #013;
-}
-.ical-link:hover,
-.ical-link:active,
-.ical-link:focus,
-.ical-link:visited {
-  color: #fff;
-  text-decoration: none;
-}
 @media (min-width: 768px) {
   #page-calender-view .container-fluid {
     min-width: 1024px;

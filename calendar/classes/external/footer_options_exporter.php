@@ -77,18 +77,6 @@ class footer_options_exporter extends exporter {
     }
 
     /**
-     * Get the iCal url.
-     *
-     * @return string The iCal url.
-     */
-    protected function get_ical_url() {
-        if ($this->token) {
-            return new moodle_url('/calendar/export_execute.php', ['preset_what' => 'all',
-                    'preset_time' => 'recentupcoming', 'userid' => $this->userid, 'authtoken' => $this->token]);
-        }
-    }
-
-    /**
      * Get manage subscription button.
      *
      * @return string The manage subscription button html.
@@ -120,7 +108,6 @@ class footer_options_exporter extends exporter {
             if ($managesubscriptionbutton = $this->get_manage_subscriptions_button()) {
                 $values->managesubscriptionbutton = $managesubscriptionbutton->export_for_template($output);
             }
-            $values->icalurl = $this->get_ical_url()->out(false);
         }
 
         return (array) $values;
@@ -139,10 +126,6 @@ class footer_options_exporter extends exporter {
             ],
             'managesubscriptionbutton' => [
                 'type' => PARAM_RAW,
-                'default' => null,
-            ],
-            'icalurl' => [
-                'type' => PARAM_URL,
                 'default' => null,
             ],
         );
