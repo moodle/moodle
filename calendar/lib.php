@@ -1012,7 +1012,7 @@ class calendar_information {
      * @return  $this
      */
     public function set_time($time = null) {
-        if ($time === null) {
+        if (empty($time)) {
             $this->time = time();
         } else {
             $this->time = $time;
