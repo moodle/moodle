@@ -217,6 +217,9 @@ class event_exporter_base extends exporter {
             'iscourseevent' => [
                 'type' => PARAM_BOOL
             ],
+            'iscategoryevent' => [
+                'type' => PARAM_BOOL
+            ],
             'groupname' => [
                 'type' => PARAM_RAW,
                 'optional' => true,
@@ -239,10 +242,13 @@ class event_exporter_base extends exporter {
         $context = $this->related['context'];
         $values['isactionevent'] = false;
         $values['iscourseevent'] = false;
+        $values['iscategoryevent'] = false;
         if ($moduleproxy = $event->get_course_module()) {
             $values['isactionevent'] = true;
         } else if ($event->get_type() == 'course') {
             $values['iscourseevent'] = true;
+        } else if ($event->get_type() == 'category') {
+            $values['iscategoryevent'] = true;
         }
         $timesort = $event->get_times()->get_sort_time()->getTimestamp();
         $iconexporter = new event_icon_exporter($event, ['context' => $context]);

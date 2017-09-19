@@ -82,6 +82,8 @@ class calendar_event_exporter extends event_exporter_base {
             $params = array('update' => $moduleid, 'return' => true, 'sesskey' => sesskey());
             $editurl = new \moodle_url('/course/mod.php', $params);
             $values['editurl'] = $editurl->out(false);
+        } else if ($event->get_type() == 'category') {
+            $url = $event->get_category()->get_proxied_instance()->get_view_link();
         } else if ($event->get_type() == 'course') {
             $url = course_get_url($event->get_course()->get('id') ?: SITEID);
         } else {

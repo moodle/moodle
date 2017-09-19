@@ -46,6 +46,9 @@
     {{/description}}
     <h4>{{#str}} eventtype, core_calendar {{/str}}</h4>
     {{eventtype}}
+    {{#iscategoryevent}}
+        <div>{{{category.nestedname}}}</div>
+    {{/iscategoryevent}}
     {{#iscourseevent}}
         <div><a href="{{url}}">{{course.fullname}}</a></div>
     {{/iscourseevent}}

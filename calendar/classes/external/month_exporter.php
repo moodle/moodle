@@ -108,6 +108,11 @@ class month_exporter extends exporter {
             'courseid' => [
                 'type' => PARAM_INT,
             ],
+            'categoryid' => [
+                'type' => PARAM_INT,
+                'optional' => true,
+                'default' => 0,
+            ],
             'filter_selector' => [
                 'type' => PARAM_RAW,
             ],
@@ -209,6 +214,10 @@ class month_exporter extends exporter {
 
         if ($context = $this->get_default_add_context()) {
             $return['defaulteventcontext'] = $context->id;
+        }
+
+        if ($this->calendar->categoryid) {
+            $return['categoryid'] = $this->calendar->categoryid;
         }
 
         return $return;

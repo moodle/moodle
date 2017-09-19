@@ -287,7 +287,7 @@ define([
         root.on('change', SELECTORS.COURSE_SELECTOR, function() {
             var selectElement = $(this);
             var courseId = selectElement.val();
-            CalendarViewManager.reloadCurrentMonth(root, courseId)
+            CalendarViewManager.reloadCurrentMonth(root, courseId, null)
                 .then(function() {
                     // We need to get the selector again because the content has changed.
                     return root.find(SELECTORS.COURSE_SELECTOR).val(courseId);

@@ -32,6 +32,7 @@ $string['calendarheading'] = '{$a} Calendar';
 $string['calendarpreferences'] = 'Calendar preferences';
 $string['calendartypes'] = 'Calendar types';
 $string['calendarurl'] = 'Calendar URL: {$a}';
+$string['categoryevent'] = 'Category event';
 $string['clickhide'] = 'click to hide';
 $string['clickshow'] = 'click to show';
 $string['colcalendar'] = 'Calendar';

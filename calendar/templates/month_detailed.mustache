@@ -33,7 +33,8 @@
 }}
 <div{{!
     }} class="calendarwrapper"{{!
-    }} data-courseid="{{courseid}}"{{!
+    }}{{#courseid}} data-courseid="{{courseid}}"{{/courseid}}{{!
+    }}{{#categoryid}} data-categoryid="{{categoryid}}"{{/categoryid}}{{!
     }} data-month="{{date.mon}}"{{!
     }} data-year="{{date.year}}"{{!
     }}>

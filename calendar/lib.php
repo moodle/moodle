@@ -1059,7 +1059,7 @@ class calendar_information {
         $this->categoryid = null;
         $this->categories = null;
 
-        if (null !== $category) {
+        if (null !== $category && $category->id > 0) {
             // A specific category was requested - set the current category, and include all parents of that category.
             $category = \coursecat::get($category->id);
             $this->categoryid = $category->id;
