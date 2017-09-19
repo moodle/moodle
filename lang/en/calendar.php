@@ -98,6 +98,7 @@ $string['eventendtimewrapped'] = '{$a} (End time)';
 $string['eventinstanttime'] = 'Time';
 $string['eventkind'] = 'Type of event';
 $string['eventname'] = 'Event title';
+$string['eventnameandcategory'] = '{$a->category}: {$a->name}';
 $string['eventnameandcourse'] = '{$a->course}: {$a->name}';
 $string['eventnone'] = 'No events';
 $string['eventrepeat'] = 'Repeats';

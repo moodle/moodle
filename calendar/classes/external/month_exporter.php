@@ -75,8 +75,10 @@ class month_exporter extends exporter {
                 'time' => $calendar->time,
             ]);
 
-        if ($this->calendar->courseid) {
-            $this->url->param('course', $this->calendar->courseid);
+        if ($this->calendar->course && SITEID !== $this->calendar->course->id) {
+            $this->url->param('course', $this->calendar->course->id);
+        } else if ($this->calendar->categoryid) {
+            $this->url->param('category', $this->calendar->categoryid);
         }
 
         $related['type'] = $type;

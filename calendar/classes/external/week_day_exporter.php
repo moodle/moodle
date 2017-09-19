@@ -118,10 +118,16 @@ class week_day_exporter extends day_exporter {
         $url = new moodle_url('/calendar/view.php', [
                 'view' => 'day',
                 'time' => $timestamp,
-                'course' => $this->calendar->course->id,
-        ]);
+            ]);
+
+        if ($this->calendar->course && SITEID !== $this->calendar->course->id) {
+            $url->param('course', $this->calendar->course->id);
+        } else if ($this->calendar->categoryid) {
+            $url->param('category', $this->calendar->categoryid);
+        }
 
         $return['viewdaylink'] = $url->out(false);
+
         if ($popovertitle = $this->get_popover_title()) {
             $return['popovertitle'] = $popovertitle;
         }

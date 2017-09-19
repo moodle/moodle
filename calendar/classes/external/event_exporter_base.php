@@ -34,6 +34,7 @@ use \core_calendar\local\event\container;
 use \core_calendar\local\event\entities\event_interface;
 use \core_calendar\local\event\entities\action_event_interface;
 use \core_course\external\course_summary_exporter;
+use \core\external\coursecat_summary_exporter;
 use \renderer_base;
 use moodle_url;
 
@@ -64,6 +65,7 @@ class event_exporter_base extends exporter {
         $endtimestamp = $event->get_times()->get_end_time()->getTimestamp();
         $groupid = $event->get_group() ? $event->get_group()->get('id') : null;
         $userid = $event->get_user() ? $event->get_user()->get('id') : null;
+        $categoryid = $event->get_category() ? $event->get_category()->get('id') : null;
 
         $data = new \stdClass();
         $data->id = $event->get_id();
@@ -79,6 +81,7 @@ class event_exporter_base extends exporter {
         $data->descriptionformat = $event->get_description()->get_format();
         $data->groupid = $groupid;
         $data->userid = $userid;
+        $data->categoryid = $categoryid;
         $data->eventtype = $event->get_type();
         $data->timestart = $starttimestamp;
         $data->timeduration = $endtimestamp - $starttimestamp;
@@ -115,6 +118,12 @@ class event_exporter_base extends exporter {
                 'null' => NULL_ALLOWED
             ],
             'descriptionformat' => [
+                'type' => PARAM_INT,
+                'optional' => true,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ],
+            'categoryid' => [
                 'type' => PARAM_INT,
                 'optional' => true,
                 'default' => null,
@@ -174,6 +183,10 @@ class event_exporter_base extends exporter {
         return [
             'icon' => [
                 'type' => event_icon_exporter::read_properties_definition(),
+            ],
+            'category' => [
+                'type' => coursecat_summary_exporter::read_properties_definition(),
+                'optional' => true,
             ],
             'course' => [
                 'type' => course_summary_exporter::read_properties_definition(),
@@ -238,6 +251,13 @@ class event_exporter_base extends exporter {
 
         $subscriptionexporter = new event_subscription_exporter($event);
         $values['subscription'] = $subscriptionexporter->export($output);
+
+        $proxy = $this->event->get_category();
+        if ($proxy && $proxy->get('id')) {
+            $category = $proxy->get_proxied_instance();
+            $categorysummaryexporter = new coursecat_summary_exporter($category, ['context' => $context]);
+            $values['category'] = $categorysummaryexporter->export($output);
+        }
 
         if ($course = $this->related['course']) {
             $coursesummaryexporter = new course_summary_exporter($course, ['context' => $context]);

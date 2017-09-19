@@ -126,6 +126,17 @@ class calendar_event_exporter extends event_exporter_base {
             }
         }
 
+        // Include category name into the event name, if applicable.
+        $proxy = $this->event->get_category();
+        if ($proxy && $proxy->get('id')) {
+            $category = $proxy->get_proxied_instance();
+            $eventnameparams = (object) [
+                'name' => $values['popupname'],
+                'category' => $category->get_formatted_name(),
+            ];
+            $values['popupname'] = get_string('eventnameandcategory', 'calendar', $eventnameparams);
+        }
+
         // Include course's shortname into the event name, if applicable.
         $course = $this->event->get_course();
         if ($course && $course->get('id') && $course->get('id') !== SITEID) {
