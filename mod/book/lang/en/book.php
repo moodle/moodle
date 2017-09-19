@@ -108,4 +108,3 @@ $string['subplugintype_booktool_plural'] = 'Book tools';
 $string['removeallbooktags'] = 'Remove all book tags';
 $string['tagarea_book_chapters'] = 'Book chapters';
 $string['tagsdeleted'] = 'Book tags have been deleted';
-$string['tagtitle'] = 'See the "{$a}" tag';

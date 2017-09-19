@@ -515,7 +515,6 @@ $string['subscriptiondisabled'] = 'Subscription disabled';
 $string['subscriptions'] = 'Subscriptions';
 $string['tagarea_forum_posts'] = 'Forum posts';
 $string['tagsdeleted'] = 'Forum tags have been deleted';
-$string['tagtitle'] = 'See the "{$a}" tag';
 $string['thisforumisthrottled'] = 'This forum has a limit to the number of forum postings you can make in a given time period - this is currently set at {$a->blockafter} posting(s) in {$a->blockperiod}';
 $string['timedhidden'] = 'Timed status: Hidden from students';
 $string['timedposts'] = 'Timed posts';

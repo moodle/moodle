@@ -300,7 +300,6 @@ $string['standardview'] = 'Browse by alphabet';
 $string['studentcanpost'] = 'Students can add entries';
 $string['tagarea_glossary_entries'] = 'Glossary entries';
 $string['tagsdeleted'] = 'Glossary tags have been deleted';
-$string['tagtitle'] = 'See the "{$a}" tag';
 $string['totalentries'] = 'Total entries';
 $string['usedynalink'] = 'Automatically link glossary entries';
 $string['usedynalink_help'] = 'If site-wide glossary auto-linking has been enabled by an administrator and this setting is enabled, the "Add a new entry" form includes the option to automatically link the entry wherever the concept words and phrases appear throughout the rest of the course.';
