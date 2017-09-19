@@ -579,6 +579,112 @@ class core_enrollib_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests the enrol_get_my_courses function when using the $allaccessible parameter, which
+     * includes a wider range of courses (enrolled courses + other accessible ones).
+     */
+    public function test_enrol_get_my_courses_all_accessible() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create test user and 4 courses, two of which have guest access enabled.
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course(
+                (object)array('shortname' => 'Z',
+                'enrol_guest_status_0' => ENROL_INSTANCE_DISABLED,
+                'enrol_guest_password_0' => ''));
+        $course2 = $this->getDataGenerator()->create_course(
+                (object)array('shortname' => 'Y',
+                'enrol_guest_status_0' => ENROL_INSTANCE_ENABLED,
+                'enrol_guest_password_0' => ''));
+        $course3 = $this->getDataGenerator()->create_course(
+                (object)array('shortname' => 'X',
+                'enrol_guest_status_0' => ENROL_INSTANCE_ENABLED,
+                'enrol_guest_password_0' => 'frog'));
+        $course4 = $this->getDataGenerator()->create_course(
+                (object)array('shortname' => 'W',
+                'enrol_guest_status_0' => ENROL_INSTANCE_DISABLED,
+                'enrol_guest_password_0' => ''));
+
+        // User is enrolled in first course.
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+
+        // Check enrol_get_my_courses basic use (without all accessible).
+        $this->setUser($user);
+        $courses = enrol_get_my_courses();
+        $this->assertEquals([$course1->id], array_keys($courses));
+
+        // Turn on all accessible, now they can access the second course too.
+        $courses = enrol_get_my_courses(null, 'id', 0, [], true);
+        $this->assertEquals([$course1->id, $course2->id], array_keys($courses));
+
+        // Log in as guest to third course.
+        load_temp_course_role(context_course::instance($course3->id), $CFG->guestroleid);
+        $courses = enrol_get_my_courses(null, 'id', 0, [], true);
+        $this->assertEquals([$course1->id, $course2->id, $course3->id], array_keys($courses));
+
+        // Check fields parameter still works. Fields default (certain base fields).
+        $this->assertObjectHasAttribute('id', $courses[$course3->id]);
+        $this->assertObjectHasAttribute('shortname', $courses[$course3->id]);
+        $this->assertObjectNotHasAttribute('summary', $courses[$course3->id]);
+
+        // Specified fields (one, string).
+        $courses = enrol_get_my_courses('summary', 'id', 0, [], true);
+        $this->assertObjectHasAttribute('id', $courses[$course3->id]);
+        $this->assertObjectHasAttribute('shortname', $courses[$course3->id]);
+        $this->assertObjectHasAttribute('summary', $courses[$course3->id]);
+        $this->assertObjectNotHasAttribute('summaryformat', $courses[$course3->id]);
+
+        // Specified fields (two, string).
+        $courses = enrol_get_my_courses('summary, summaryformat', 'id', 0, [], true);
+        $this->assertObjectHasAttribute('summary', $courses[$course3->id]);
+        $this->assertObjectHasAttribute('summaryformat', $courses[$course3->id]);
+
+        // Specified fields (two, array).
+        $courses = enrol_get_my_courses(['summary', 'summaryformat'], 'id', 0, [], true);
+        $this->assertObjectHasAttribute('summary', $courses[$course3->id]);
+        $this->assertObjectHasAttribute('summaryformat', $courses[$course3->id]);
+
+        // Check sort parameter still works.
+        $courses = enrol_get_my_courses(null, 'shortname', 0, [], true);
+        $this->assertEquals([$course3->id, $course2->id, $course1->id], array_keys($courses));
+
+        // Check filter parameter still works.
+        $courses = enrol_get_my_courses(null, 'id', 0, [$course2->id, $course3->id, $course4->id], true);
+        $this->assertEquals([$course2->id, $course3->id], array_keys($courses));
+
+        // Check limit parameter.
+        $courses = enrol_get_my_courses(null, 'id', 2, [], true);
+        $this->assertEquals([$course1->id, $course2->id], array_keys($courses));
+
+        // Now try access for a different user who has manager role at system level.
+        $manager = $this->getDataGenerator()->create_user();
+        $managerroleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
+        role_assign($managerroleid, $manager->id, \context_system::instance()->id);
+        $this->setUser($manager);
+
+        // With default get enrolled, they don't have any courses.
+        $courses = enrol_get_my_courses();
+        $this->assertCount(0, $courses);
+
+        // But with all accessible, they have 4 because they have moodle/course:view everywhere.
+        $courses = enrol_get_my_courses(null, 'id', 0, [], true);
+        $this->assertEquals([$course1->id, $course2->id, $course3->id, $course4->id],
+                array_keys($courses));
+
+        // If we prohibit manager from course:view on course 1 though...
+        assign_capability('moodle/course:view', CAP_PROHIBIT, $managerroleid,
+                \context_course::instance($course1->id));
+        $courses = enrol_get_my_courses(null, 'id', 0, [], true);
+        $this->assertEquals([$course2->id, $course3->id, $course4->id], array_keys($courses));
+
+        // Check for admin user, which has a slightly different query.
+        $this->setAdminUser();
+        $courses = enrol_get_my_courses(null, 'id', 0, [], true);
+        $this->assertEquals([$course1->id, $course2->id, $course3->id, $course4->id], array_keys($courses));
+    }
+
+    /**
      * test_course_users
      *
      * @return void
