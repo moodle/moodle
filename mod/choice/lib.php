@@ -1241,6 +1241,76 @@ function mod_choice_core_calendar_provide_event_action(calendar_event $event,
 }
 
 /**
+ * This function will check that the given event is valid for it's
+ * corresponding choice module.
+ *
+ * An exception is thrown if the event fails validation.
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event
+ * @return bool
+ */
+function mod_choice_core_calendar_validate_event_timestart(\calendar_event $event) {
+    global $DB;
+
+    $record = $DB->get_record('choice', ['id' => $event->instance], '*', MUST_EXIST);
+
+    if ($event->eventtype == CHOICE_EVENT_TYPE_OPEN) {
+        // The start time of the open event can't be equal to or after the
+        // close time of the choice activity.
+        if (!empty($record->timeclose) && $event->timestart > $record->timeclose) {
+            throw new \moodle_exception('openafterclose', 'choice');
+        }
+    } else if ($event->eventtype == CHOICE_EVENT_TYPE_CLOSE) {
+        // The start time of the close event can't be equal to or earlier than the
+        // open time of the choice activity.
+        if (!empty($record->timeopen) && $event->timestart < $record->timeopen) {
+            throw new \moodle_exception('closebeforeopen', 'choice');
+        }
+    }
+
+    return true;
+}
+
+/**
+ * This function will update the choice module according to the
+ * event that has been modified.
+ *
+ * It will set the timeopen or timeclose value of the choice instance
+ * according to the type of event provided.
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event
+ */
+function mod_choice_core_calendar_event_timestart_updated(\calendar_event $event) {
+    global $DB;
+
+    if ($event->eventtype == CHOICE_EVENT_TYPE_OPEN) {
+        // If the event is for the choice activity opening then we should
+        // set the start time of the choice activity to be the new start
+        // time of the event.
+        $record = $DB->get_record('choice', ['id' => $event->instance], '*', MUST_EXIST);
+
+        if ($record->timeopen != $event->timestart) {
+            $record->timeopen = $event->timestart;
+            $record->timemodified = time();
+            $DB->update_record('choice', $record);
+        }
+    } else if ($event->eventtype == CHOICE_EVENT_TYPE_CLOSE) {
+        // If the event is for the choice activity closing then we should
+        // set the end time of the choice activity to be the new start
+        // time of the event.
+        $record = $DB->get_record('choice', ['id' => $event->instance], '*', MUST_EXIST);
+
+        if ($record->timeclose != $event->timestart) {
+            $record->timeclose = $event->timestart;
+            $record->timemodified = time();
+            $DB->update_record('choice', $record);
+        }
+    }
+}
+
+/**
  * Get icon mapping for font-awesome.
  */
 function mod_choice_get_fontawesome_icon_map() {

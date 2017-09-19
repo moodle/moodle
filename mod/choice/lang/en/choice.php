@@ -100,6 +100,7 @@ $string['notenrolledchoose'] = 'Sorry, only enrolled users are allowed to make c
 $string['notopenyet'] = 'Sorry, this activity is not available until {$a}';
 $string['numberofuser'] = 'Number of responses';
 $string['numberofuserinpercentage'] = 'Percentage of responses';
+$string['openafterclose'] = 'You have specified an open date after the close date';
 $string['option'] = 'Option';
 $string['optionno'] = 'Option {no}';
 $string['options'] = 'Options';

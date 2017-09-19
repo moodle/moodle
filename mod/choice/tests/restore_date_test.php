@@ -40,7 +40,7 @@ class mod_choice_restore_date_testcase extends restore_date_testcase {
         global $DB, $USER;
 
         $time = 100000;
-        $record = ['timeopen' => $time, 'timeclose' => $time];
+        $record = ['timeopen' => $time, 'timeclose' => $time + 1];
         list($course, $choice) = $this->create_course_and_module('choice', $record);
 
         $options = $DB->get_records('choice_options', ['choiceid' => $choice->id]);

@@ -1999,9 +1999,35 @@ function calendar_edit_event_allowed($event, $manualedit = false) {
     }
 
     if ($manualedit && !empty($event->modulename)) {
-        // A user isn't allowed to directly edit an event generated
-        // by a module.
-        return false;
+        $hascallback = component_callback_exists(
+            'mod_' . $event->modulename,
+            'core_calendar_event_timestart_updated'
+        );
+
+        if (!$hascallback) {
+            // If the activity hasn't implemented the correct callback
+            // to handle changes to it's events then don't allow any
+            // manual changes to them.
+            return false;
+        }
+
+        $coursemodules = get_fast_modinfo($event->courseid)->instances;
+        $hasmodule = isset($coursemodules[$event->modulename]);
+        $hasinstance = isset($coursemodules[$event->modulename][$event->instance]);
+
+        // If modinfo doesn't know about the module, return false to be safe.
+        if (!$hasmodule || !$hasinstance) {
+            return false;
+        }
+
+        $coursemodule = $coursemodules[$event->modulename][$event->instance];
+        $context = context_module::instance($coursemodule->id);
+        // This is the capability that allows a user to modify the activity
+        // settings. Since the activity generated this event we need to check
+        // that the current user has the same capability before allowing them
+        // to update the event because the changes to the event will be
+        // reflected within the activity.
+        return has_capability('moodle/course:manageactivities', $context);
     }
 
     // You cannot edit URL based calendar subscription events presently.

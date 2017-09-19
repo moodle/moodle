@@ -25,15 +25,17 @@
     }
 }}
 {{< core/modal }}
-{{$footer}}
-{{#canedit}}
-    {{#candelete}}
-        <button type="button" class="btn btn-secondary" data-action="delete">{{#str}} delete {{/str}}</button>
-    {{/candelete}}
-    <button type="button" class="btn btn-primary" data-action="edit">{{#str}} edit {{/str}}</button>
-{{/canedit}}
-{{#isactionevent}}
-    <a href="{{url}}">{{#str}} gotoactivity, core_calendar {{/str}}</a>
-{{/isactionevent}}
-{{/footer}}
+    {{$footer}}
+        {{#candelete}}
+            <button type="button" class="btn btn-secondary" data-action="delete">{{#str}} delete {{/str}}</button>
+        {{/candelete}}
+        {{#isactionevent}}
+            <a href="{{url}}">{{#str}} gotoactivity, core_calendar {{/str}}</a>
+        {{/isactionevent}}
+        {{^isactionevent}}
+            {{#canedit}}
+                <button type="button" class="btn btn-primary" data-action="edit">{{#str}} edit {{/str}}</button>
+            {{/canedit}}
+        {{/isactionevent}}
+    {{/footer}}
 {{/ core/modal }}
