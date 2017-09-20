@@ -1892,7 +1892,7 @@ class company {
                                                         'name' => $company->shortname))) {
             // Not got one, create a default.
             $companygroup = new stdclass();
-            $companygroup->id = self::create_company_course_group($companyid, $courseid);
+            $companygroup->groupid = self::create_company_course_group($companyid, $courseid);
         }
         // Get the group information.
         $groupinfo = $DB->get_record('groups', array('id' => $companygroup->groupid));
