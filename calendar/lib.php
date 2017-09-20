@@ -3095,9 +3095,9 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
     ];
 
     $data = [];
-    if ($view == "month" || $view == "mini") {
+    if ($view == "month" || $view == "mini" || $view == "minithree") {
         $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
-	$month->set_includenavigation($includenavigation);
+        $month->set_includenavigation($includenavigation);
         $data = $month->export($renderer);
     } else if ($view == "day") {
         $daydata = $type->timestamp_to_date_array($tstart);
