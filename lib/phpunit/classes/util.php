@@ -272,6 +272,9 @@ class phpunit_util extends testing_util {
         // Reset the log manager cache.
         get_log_manager(true);
 
+        // Reset user agent.
+        core_useragent::instance(true, null);
+
         // verify db writes just in case something goes wrong in reset
         if (self::$lastdbwrites != $DB->perf_get_writes()) {
             error_log('Unexpected DB writes in phpunit_util::reset_all_data()');
