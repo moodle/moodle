@@ -148,67 +148,6 @@ class core_calendar_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Displays the calendar for a single day
-     *
-     * @param calendar_information $calendar
-     * @return string
-     */
-    public function show_day(calendar_information $calendar, moodle_url $returnurl = null) {
-
-        if ($returnurl === null) {
-            $returnurl = $this->page->url;
-        }
-
-        $events = calendar_get_upcoming($calendar->courses, $calendar->groups, $calendar->users,
-            1, 100, $calendar->timestamp_today());
-
-        $output  = html_writer::start_tag('div', array('class'=>'header'));
-        $output .= $this->course_filter_selector($returnurl, get_string('dayviewfor', 'calendar'));
-        if (calendar_user_can_add_event($calendar->course)) {
-            $output .= $this->add_event_button($calendar->course->id, 0, 0, 0, $calendar->time);
-        }
-        $output .= html_writer::end_tag('div');
-        // Controls
-        $output .= html_writer::tag('div', calendar_top_controls('day', array('id' => $calendar->courseid,
-            'time' => $calendar->time)), array('class' => 'controls'));
-
-        if (empty($events)) {
-            // There is nothing to display today.
-            $output .= html_writer::span(get_string('daywithnoevents', 'calendar'), 'calendar-information calendar-no-results');
-        } else {
-            $output .= html_writer::start_tag('div', array('class' => 'eventlist'));
-            $underway = array();
-            // First, print details about events that start today
-            foreach ($events as $event) {
-                $event = new calendar_event($event);
-                $event->calendarcourseid = $calendar->courseid;
-                if ($event->timestart >= $calendar->timestamp_today() && $event->timestart <= $calendar->timestamp_tomorrow()-1) {  // Print it now
-                    $event->time = calendar_format_event_time($event, time(), null, false,
-                        $calendar->timestamp_today());
-                    $output .= $this->event($event);
-                } else {                                                                 // Save this for later
-                    $underway[] = $event;
-                }
-            }
-
-            // Then, show a list of all events that just span this day
-            if (!empty($underway)) {
-                $output .= html_writer::span(get_string('spanningevents', 'calendar'),
-                    'calendar-information calendar-span-multiple-days');
-                foreach ($underway as $event) {
-                    $event->time = calendar_format_event_time($event, time(), null, false,
-                        $calendar->timestamp_today());
-                    $output .= $this->event($event);
-                }
-            }
-
-            $output .= html_writer::end_tag('div');
-        }
-
-        return $output;
-    }
-
-    /**
      * Displays an event
      *
      * @param calendar_event $event
@@ -269,10 +208,11 @@ class core_calendar_renderer extends plugin_renderer_base {
         // Show subscription source if needed.
         if (!empty($event->subscription) && $CFG->calendar_showicalsource) {
             if (!empty($event->subscription->url)) {
-                $source = html_writer::link($event->subscription->url, get_string('subsource', 'calendar', $event->subscription));
+                $source = html_writer::link($event->subscription->url,
+                        get_string('subscriptionsource', 'calendar', $event->subscription->name));
             } else {
                 // File based ical.
-                $source = get_string('subsource', 'calendar', $event->subscription);
+                $source = get_string('subscriptionsource', 'calendar', $event->subscription->name);
             }
             $output .= html_writer::tag('div', $source, array('class' => 'subscription'));
         }

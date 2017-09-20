@@ -83,21 +83,6 @@ define([
     };
 
     /**
-     * Get the event source.
-     *
-     * @param {Object} subscription The event subscription object.
-     * @return {promise} The lang string promise.
-     */
-    var getEventSource = function(subscription) {
-        return Str.get_string('subsource', 'core_calendar', subscription).then(function(langStr) {
-            if (subscription.url) {
-                return '<a href="' + subscription.url + '">' + langStr + '</a>';
-            }
-            return langStr;
-        });
-    };
-
-    /**
      * Render the event summary modal.
      *
      * @param {Number} eventId The calendar event id.
@@ -109,31 +94,11 @@ define([
                 throw new Error('Error encountered while trying to fetch calendar event with ID: ' + eventId);
             }
             var eventData = getEventResponse.event;
-            var eventTypePromise = getEventType(eventData.eventtype);
 
-            // If the calendar event has event source, get the source's language string/link.
-            if (eventData.displayeventsource) {
-                eventData.subscription = JSON.parse(eventData.subscription);
-                var eventSourceParams = {
-                    url: eventData.subscription.url,
-                    name: eventData.subscription.name
-                };
-                var eventSourcePromise = getEventSource(eventSourceParams);
-
-                // Return event data with event type and event source info.
-                return $.when(eventTypePromise, eventSourcePromise).then(function(eventType, eventSource) {
-                    eventData.eventtype = eventType;
-                    eventData.source = eventSource;
-                    return eventData;
-                });
-            }
-
-            // Return event data with event type info.
-            return eventTypePromise.then(function(eventType) {
+            return getEventType(eventData.eventtype).then(function(eventType) {
                 eventData.eventtype = eventType;
                 return eventData;
             });
-
         }).then(function(eventData) {
             // Build the modal parameters from the event data.
             var modalParams = {

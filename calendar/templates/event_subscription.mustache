@@ -15,11 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template calendar/month_header
+    @template calendar/event_subscription
 
-    Calendar month header.
+    Calendar event subscription.
 
-    The purpose of this template is to render the month header.
+    The purpose of this template is to render the event subscription data.
 
     Classes required for JS:
     * none
@@ -31,8 +31,18 @@
     {
     }
 }}
-{{#filter_selector}}
-<div class="header">
-    {{{filter_selector}}}
-</div>
-{{/filter_selector}}
+
+{{#subscription}}
+    {{#displayeventsource}}
+        <div>
+            {{#url}}
+                <p><a href="{{url}}">{{#str}}subscriptionsource, core_calendar, {{name}}{{/str}}</a></p>
+            {{/url}}
+            {{^url}}
+                <p>{{#str}}subscriptionsource, core_calendar, {{name}}{{/str}}</p>
+            {{/url}}
+        </div>
+    {{/displayeventsource}}
+{{/subscription}}
+
+

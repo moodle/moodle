@@ -35,6 +35,7 @@ use \core_calendar\local\event\entities\event_interface;
 use \core_calendar\local\event\entities\action_event_interface;
 use \core_course\external\course_summary_exporter;
 use \renderer_base;
+use moodle_url;
 
 /**
  * Class for displaying a calendar event.
@@ -178,11 +179,36 @@ class event_exporter_base extends exporter {
                 'type' => course_summary_exporter::read_properties_definition(),
                 'optional' => true,
             ],
+            'subscription' => [
+                'type' => event_subscription_exporter::read_properties_definition(),
+                'optional' => true,
+            ],
             'canedit' => [
                 'type' => PARAM_BOOL
             ],
             'candelete' => [
                 'type' => PARAM_BOOL
+            ],
+            'deleteurl' => [
+                'type' => PARAM_URL
+            ],
+            'editurl' => [
+                'type' => PARAM_URL
+            ],
+            'formattedtime' => [
+                'type' => PARAM_RAW,
+            ],
+            'isactionevent' => [
+                'type' => PARAM_BOOL
+            ],
+            'iscourseevent' => [
+                'type' => PARAM_BOOL
+            ],
+            'groupname' => [
+                'type' => PARAM_RAW,
+                'optional' => true,
+                'default' => null,
+                'null' => NULL_ALLOWED
             ],
         ];
     }
@@ -198,19 +224,48 @@ class event_exporter_base extends exporter {
         $event = $this->event;
         $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
         $context = $this->related['context'];
+        $values['isactionevent'] = false;
+        $values['iscourseevent'] = false;
+        if ($moduleproxy = $event->get_course_module()) {
+            $values['isactionevent'] = true;
+        } else if ($event->get_type() == 'course') {
+            $values['iscourseevent'] = true;
+        }
         $timesort = $event->get_times()->get_sort_time()->getTimestamp();
         $iconexporter = new event_icon_exporter($event, ['context' => $context]);
 
         $values['icon'] = $iconexporter->export($output);
+
+        $subscriptionexporter = new event_subscription_exporter($event);
+        $values['subscription'] = $subscriptionexporter->export($output);
+
+        if ($course = $this->related['course']) {
+            $coursesummaryexporter = new course_summary_exporter($course, ['context' => $context]);
+            $values['course'] = $coursesummaryexporter->export($output);
+        }
+        $courseid = (!$course) ? SITEID : $course->id;
+
+        $values['canedit'] = calendar_edit_event_allowed($legacyevent, true);
+        $values['candelete'] = calendar_delete_event_allowed($legacyevent);
+
+        $deleteurl = new moodle_url('/calendar/delete.php', ['id' => $event->get_id(), 'course' => $courseid]);
+        $values['deleteurl'] = $deleteurl->out(false);
+
+        $editurl = new moodle_url('/calendar/event.php', ['action' => 'edit', 'id' => $event->get_id(),
+                'course' => $courseid]);
+        $values['editurl'] = $editurl->out(false);
+        $values['formattedtime'] = calendar_format_event_time($legacyevent, time(), null, false,
+                $timesort);
 
         if ($course = $this->related['course']) {
             $coursesummaryexporter = new course_summary_exporter($course, ['context' => $context]);
             $values['course'] = $coursesummaryexporter->export($output);
         }
 
-        $values['canedit'] = calendar_edit_event_allowed($legacyevent, true);
-        $values['candelete'] = calendar_delete_event_allowed($legacyevent);
-
+        if ($group = $event->get_group()) {
+            $values['groupname'] = format_string($group->get('name'), true,
+                ['context' => \context_course::instance($event->get_course()->get('id'))]);
+        }
         return $values;
     }
 

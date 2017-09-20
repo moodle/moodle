@@ -39,6 +39,27 @@ use moodle_url;
 class week_day_exporter extends day_exporter {
 
     /**
+     * Return the list of properties.
+     *
+     * @return array
+     */
+    protected static function define_properties() {
+        $return = parent::define_properties();
+        $return = array_merge($return, [
+            // These are additional params.
+            'istoday' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
+            'isweekend' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
+        ]);
+
+        return $return;
+    }
+    /**
      * Return the list of additional properties.
      *
      * @return array
@@ -92,18 +113,18 @@ class week_day_exporter extends day_exporter {
             $usernow['seconds']
         );
 
-        $return = [
-            'timestamp' => $timestamp,
-            'neweventtimestamp' => $neweventstarttime->getTimestamp()
-        ];
+        $return = parent::get_other_values($output);
 
         $url = new moodle_url('/calendar/view.php', [
                 'view' => 'day',
                 'time' => $timestamp,
                 'course' => $this->calendar->course->id,
-            ]);
-        $return['viewdaylink'] = $url->out(false);
+        ]);
 
+        $return['viewdaylink'] = $url->out(false);
+        if ($popovertitle = $this->get_popover_title()) {
+            $return['popovertitle'] = $popovertitle;
+        }
         $cache = $this->related['cache'];
         $eventexporters = array_map(function($event) use ($cache, $output, $url) {
             $context = $cache->get_context($event);
