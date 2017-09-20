@@ -31,3 +31,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['databasename'] = 'Databasens namn';
+$string['welcomep50'] = 'Användningen av alla applikationer i detta paket regleras av sina respektive licenser. Det fullständiga paketet <strong>{$a->installername}</strong> är <a href="http://www.opensource.org/docs/definition_plain.html">Öppen källkod</a> och distribueras under <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licensen.';
