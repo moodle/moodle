@@ -142,7 +142,7 @@ class user_edit_form extends company_moodleform {
         $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
 
         // Deal with company optional fields.
-        $mform->addElement('header', 'category_id', format_string(get_string('companyprofilefields', 'block_iomad_company_admin')));
+        $mform->addElement('header', 'category_id', get_string('advanced'));
         // Department drop down.
         $mform->addElement('select', 'userdepartment', get_string('department', 'block_iomad_company_admin'),
                             $this->subhierarchieslist, $this->userdepartment);
@@ -196,7 +196,7 @@ class user_edit_form extends company_moodleform {
 
         // Deal with licenses.
         if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', $systemcontext)) {
-            $mform->addElement('header', 'licenses', get_string('licenses', 'block_iomad_company_admin'));
+            $mform->addElement('header', 'licenses', get_string('assignlicenses', 'block_iomad_company_admin'));
             $foundlicenses = $DB->get_records_sql_menu("SELECT id, name FROM {companylicense}
                                                    WHERE expirydate >= :timestamp
                                                    AND companyid = :companyid
@@ -250,7 +250,7 @@ class user_edit_form extends company_moodleform {
         }
 
         if (iomad::has_capability('block/iomad_company_admin:company_course_users', $systemcontext)) {
-            $mform->addElement('header', 'courses', get_string('courses', 'block_iomad_company_admin'));
+            $mform->addElement('header', 'courses', get_string('assigncourses', 'block_iomad_company_admin'));
             $mform->addElement('html', "<div class='fitem'><div class='fitemtitle'>" .
                                         get_string('selectenrolmentcourse', 'block_iomad_company_admin') .
                                         "</div><div class='felement'>");

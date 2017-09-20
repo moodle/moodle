@@ -113,7 +113,7 @@ iomad::require_capability('local/email:list', $context);
 // Deal with the language selector.
 $langs = get_string_manager()->get_list_of_translations();
 $s = new single_select($PAGE->url, 'lang', $langs);
-$s->label = get_accesshide(get_string('language'));
+$s->label = get_string('language') . $OUTPUT->help_icon('language', 'local_email') . '&nbsp';
 $s->class = 'langselector';
 $s->selected = $lang;
 echo $OUTPUT->box($OUTPUT->render($s), 'langselectorbox');
@@ -153,8 +153,10 @@ function create_default_template_row($templatename, $strdefault, $stradd, $strse
         $sendbutton = "";
     }
 
-    return array ($templatename,
-                  $strdefault,
+    $name = get_string($templatename . '_name', 'local_email') . "</br>(" . $templatename. ")";
+    $description = get_string($templatename . '_description', 'local_email');
+    return array ($name,
+                  $description,
                   $editbutton . '&nbsp;' .
                   $deletebutton . '&nbsp;' .
                   $sendbutton);
@@ -188,9 +190,9 @@ if ($templates = $DB->get_recordset('email_template', array('companyid' => $comp
     $table = new html_table();
     $table->id = 'ReportTable';
     $table->head = array (get_string('emailtemplatename', $block),
-                          get_string('templatetype', $block),
+                          get_string('description'),
                           get_string('controls', $block));
-    $table->align = array ("left", "center", "center");
+    $table->align = array ("left", "left", "center");
 
     $i = 0;
 

@@ -84,46 +84,6 @@ class company_edit_form extends company_moodleform {
                             'maxlength="25" size="25"');
         $mform->setType('shortname', PARAM_NOTAGS);
         $mform->addRule('shortname', $strrequired, 'required', null, 'client');
-        
-        if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
-            // Add the parent company selector.
-            $companies = $DB->get_records_sql_menu("SELECT id,name FROM {company}
-                                            WHERE id != :companyid
-                                            ORDER by name", array('companyid' => $this->companyid));
-            $allcompanies = array('0' => get_string('none')) + $companies;
-            $mform->addElement('select', 'parentid', get_string('parentcompany', 'block_iomad_company_admin'), $allcompanies);
-            $mform->setDefault('parentid', 0);
-
-            // Add in the template selector for the company.
-            $templates = $DB->get_records_menu('company_role_templates', array(), 'name', 'id,name');
-            $mform->addElement('autocomplete', 'templates', get_string('availabletemplates', 'block_iomad_company_admin'), $templates, array('multiple' => true));
-            $mform->addHelpButton('templates', 'availabletemplates', 'block_iomad_company_admin');
-
-        } else if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context) && !empty($this->parentcompanyid)) {
-            // Add it as a hidden field.
-            $mform->addElement('hidden', 'parentid', $this->parentcompanyid);
-            foreach ($this->companyrecord->templates as $companytemplateid) {
-                $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
-            }
-        } else {
-            // Add it as a hidden field.
-            $mform->addElement('hidden', 'parentid');
-            foreach ($this->companyrecord->templates as $companytemplateid) {
-                $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
-            }
-        }
-
-        // Add the ecommerce selector.
-        if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
-            $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
-            $mform->setDefault('ecommerce', 0);
-        } else {
-            $mform->addElement('hidden', 'ecommerce');
-        }
-
-        $mform->setType('parentid', PARAM_INT);
-        $mform->setType('ecommerce', PARAM_INT);
-        $mform->setType('templates', PARAM_RAW);
 
         $mform->addElement('text', 'city',
                             get_string('companycity', 'block_iomad_company_admin'),
@@ -140,15 +100,32 @@ class company_edit_form extends company_moodleform {
             $mform->setDefault('country', $CFG->country);
         }
 
-        $mform->addElement('textarea', 'companydomains', get_string('companydomains', 'block_iomad_company_admin'), array('display' => 'noofficial'));
-        $mform->setType('companydomains', PARAM_NOTAGS);
-
         /* === Company email notifications === */
+         $mform->addElement('header', 'manageremails', get_string('manageremails', 'block_iomad_company_admin'));
 
         $emailchoices = array('0' => get_string('none'),
                               '1' => get_string('reminderemails', 'block_iomad_company_admin'),
                               '2' => get_string('completionemails', 'block_iomad_company_admin'),
                               '3' => get_string('allemails', 'block_iomad_company_admin'));
+
+        $mform->addElement('select', 'managernotify', get_string('managernotify', 'block_iomad_company_admin'), $emailchoices);
+        $mform->setDefault('managernotify', 0);
+        $mform->addHelpButton('managernotify', 'managernotify', 'block_iomad_company_admin');
+
+        // Add in the release frequency scheduler.
+        $daysofweek = array(get_string('none'),
+                            get_string('sunday', 'calendar'),
+                            get_string('monday', 'calendar'),
+                            get_string('tuesday', 'calendar'),
+                            get_string('wednesday', 'calendar'),
+                            get_string('thursday', 'calendar'),
+                            get_string('friday', 'calendar'),
+                            get_string('saturday', 'calendar'));
+
+        $mform->addElement('select', 'managerdigestday', get_string('managerdigestday', 'block_iomad_company_admin'), $daysofweek);
+        $mform->setDefault('managerdigestday', 0);
+        $mform->addHelpButton('managerdigestday', 'managerdigestday', 'block_iomad_company_admin');
+
         // Get the company profile choices.
         $globalfields = $DB->get_records_sql_menu("SELECT id,name from {user_info_field} WHERE
                                               categoryid NOT IN (
@@ -168,28 +145,8 @@ class company_edit_form extends company_moodleform {
 
         $mform->addElement('select', 'emailprofileid', get_string('emailprofileid', 'block_iomad_company_admin'), $profilefields);
         $mform->setDefault('emailprofileid', 0);
-            
-        $mform->addElement('select', 'managernotify', get_string('managernotify', 'block_iomad_company_admin'), $emailchoices);
-        $mform->setDefault('managernotify', 0);
-
-        // Add in the company role template selector.
-        $templates = company::get_role_templates($this->companyid);
-        $mform->addElement('select', 'roletemplate', get_string('applyroletemplate', 'block_iomad_company_admin'), $templates);
-            
-        // Add in the release frequency scheduler.
-        $daysofweek = array(get_string('none'),
-                            get_string('sunday', 'calendar'),
-                            get_string('monday', 'calendar'),
-                            get_string('tuesday', 'calendar'),
-                            get_string('wednesday', 'calendar'),
-                            get_string('thursday', 'calendar'),
-                            get_string('friday', 'calendar'),
-                            get_string('saturday', 'calendar'));
-
-        $mform->addElement('select', 'managerdigestday', get_string('managerdigestday', 'block_iomad_company_admin'), $daysofweek);
-        $mform->setDefault('managerdigestday', 0);
-        $mform->addHelpButton('managerdigestday', 'managerdigestday', 'block_iomad_company_admin');
-
+         $mform->addHelpButton('emailprofileid', 'emailprofileid', 'block_iomad_company_admin');
+           
         if (!empty($this->companyid)) {        
             // Add the auto enrol courses.
             $parentnodeid = company::get_company_parentnode($this->companyid);
@@ -219,6 +176,58 @@ class company_edit_form extends company_moodleform {
 
 
         /* === end company email notifications === */
+         $mform->addElement('header', 'companyadvanced', get_string('companyadvanced', 'block_iomad_company_admin'));
+        
+        // Add in the company role template selector.
+        $templates = company::get_role_templates($this->companyid);
+        $mform->addElement('select', 'roletemplate', get_string('applyroletemplate', 'block_iomad_company_admin'), $templates);
+        $mform->addHelpButton('roletemplate', 'roletemplate', 'block_iomad_company_admin');
+
+        $mform->addElement('textarea', 'companydomains', get_string('companydomains', 'block_iomad_company_admin'), array('display' => 'noofficial'));
+        $mform->setType('companydomains', PARAM_NOTAGS);
+        $mform->addHelpButton('companydomains', 'companydomains', 'block_iomad_company_admin');
+
+        // Add the ecommerce selector.
+        if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+            $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
+            $mform->setDefault('ecommerce', 0);
+            $mform->addHelpButton('ecommerce', 'ecommerce', 'block_iomad_company_admin');
+        } else {
+            $mform->addElement('hidden', 'ecommerce');
+        }
+
+        if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+            // Add the parent company selector.
+            $companies = $DB->get_records_sql_menu("SELECT id,name FROM {company}
+                                            WHERE id != :companyid
+                                            ORDER by name", array('companyid' => $this->companyid));
+            $allcompanies = array('0' => get_string('none')) + $companies;
+            $mform->addElement('select', 'parentid', get_string('parentcompany', 'block_iomad_company_admin'), $allcompanies);
+            $mform->setDefault('parentid', 0);
+            $mform->addHelpButton('parentid', 'parentcompany', 'block_iomad_company_admin');
+
+            // Add in the template selector for the company.
+            $availabletemplates = $DB->get_records_menu('company_role_templates', array(), 'name', 'id,name');
+            $mform->addElement('autocomplete', 'templates', get_string('availabletemplates', 'block_iomad_company_admin'), $availabletemplates, array('multiple' => true));
+            $mform->addHelpButton('templates', 'availabletemplates', 'block_iomad_company_admin');
+
+        } else if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context) && !empty($this->parentcompanyid)) {
+            // Add it as a hidden field.
+            $mform->addElement('hidden', 'parentid', $this->parentcompanyid);)
+            foreach ($this->companyrecord->templates as $companytemplateid) {
+                $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
+            }
+        } else {
+            // Add it as a hidden field.
+            $mform->addElement('hidden', 'parentid');
+            foreach ($this->companyrecord->templates as $companytemplateid) {
+                $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
+            }
+        }
+
+        $mform->setType('parentid', PARAM_INT);
+        $mform->setType('ecommerce', PARAM_INT);
+        $mform->setType('templates', PARAM_RAW);
 
         /* === User defaults === */
         $mform->addElement('header', 'userdefaults',
@@ -513,6 +522,7 @@ if (!$new) {
     $isadding = true;
     $companyid = 0;
     $companyrecord = new stdClass;
+    $companyrecord->templates = null;
 
     if (!empty($parentid) && iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {
         // We are adding a child company.

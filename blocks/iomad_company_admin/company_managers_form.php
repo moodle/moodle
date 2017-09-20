@@ -91,6 +91,7 @@ class company_managers_form extends moodleform {
 
         if (count($this->potentialusers->find_users('')) || count($this->currentusers->find_users(''))) {
 
+            $mform->addElement('html', "(" . get_string('companymanagersforminfo', 'block_iomad_company_admin') . ")");
             $mform->addElement('html', '<table summary=""
                                         class="companymanagertable addremovetable generaltable generalbox boxaligncenter"
                                         cellspacing="0">
