@@ -76,8 +76,6 @@ class entry extends \core_search\base_mod {
      * @return \core_search\document
      */
     public function get_document($entry, $options = array()) {
-        global $DB;
-
         try {
             $cm = $this->get_cm('data', $entry->dataid, $entry->course);
             $context = \context_module::instance($cm->id);
@@ -97,6 +95,9 @@ class entry extends \core_search\base_mod {
         $doc->set('contextid', $context->id);
         $doc->set('courseid', $entry->course);
         $doc->set('userid', $entry->userid);
+        if ($entry->groupid > 0) {
+            $doc->set('groupid', $entry->groupid);
+        }
         $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
         $doc->set('modified', $entry->timemodified);
 
@@ -352,5 +353,14 @@ class entry extends \core_search\base_mod {
         $fieldtype = trim($fieldtype);
         require_once($CFG->dirroot . '/mod/data/field/' . $fieldtype . '/field.class.php');
         return 'data_field_' . $fieldtype;
+    }
+
+    /**
+     * Confirms that data entries support group restrictions.
+     *
+     * @return bool True
+     */
+    public function supports_group_restriction() {
+        return true;
     }
 }

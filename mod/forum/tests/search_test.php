@@ -196,6 +196,7 @@ class mod_forum_search_testcase extends advanced_testcase {
         $record->userid = $user->id;
         $record->forum = $forum1->id;
         $record->message = 'discussion';
+        $record->groupid = 0;
         $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
         // Create post1 in discussion1.
@@ -205,11 +206,13 @@ class mod_forum_search_testcase extends advanced_testcase {
         $record->userid = $user->id;
         $record->subject = 'subject1';
         $record->message = 'post1';
+        $record->groupid = -1;
         $discussion1reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
 
         $post1 = $DB->get_record('forum_posts', array('id' => $discussion1reply1->id));
         $post1->forumid = $forum1->id;
         $post1->courseid = $forum1->course;
+        $post1->groupid = -1;
 
         $doc = $searcharea->get_document($post1);
         $this->assertInstanceOf('\core_search\document', $doc);
@@ -219,6 +222,72 @@ class mod_forum_search_testcase extends advanced_testcase {
         $this->assertEquals($user->id, $doc->get('userid'));
         $this->assertEquals($discussion1reply1->subject, $doc->get('title'));
         $this->assertEquals($discussion1reply1->message, $doc->get('content'));
+    }
+
+    /**
+     * Group support for forum posts.
+     */
+    public function test_posts_group_support() {
+        // Get the search area and test generators.
+        $searcharea = \core_search\manager::get_search_area($this->forumpostareaid);
+        $generator = $this->getDataGenerator();
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+
+        // Create a course, a user, and two groups.
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $generator->enrol_user($user->id, $course->id, 'teacher');
+        $group1 = $generator->create_group(['courseid' => $course->id]);
+        $group2 = $generator->create_group(['courseid' => $course->id]);
+
+        // Separate groups forum.
+        $forum = self::getDataGenerator()->create_module('forum', ['course' => $course->id,
+                'groupmode' => SEPARATEGROUPS]);
+
+        // Create discussion with each group and one for all groups. One has a post in.
+        $discussion1 = $forumgenerator->create_discussion(['course' => $course->id,
+                'userid' => $user->id, 'forum' => $forum->id, 'message' => 'd1',
+                'groupid' => $group1->id]);
+        $forumgenerator->create_discussion(['course' => $course->id,
+                'userid' => $user->id, 'forum' => $forum->id, 'message' => 'd2',
+                'groupid' => $group2->id]);
+        $forumgenerator->create_discussion(['course' => $course->id,
+                'userid' => $user->id, 'forum' => $forum->id, 'message' => 'd3']);
+
+        // Create a reply in discussion1.
+        $forumgenerator->create_post(['discussion' => $discussion1->id, 'parent' => $discussion1->firstpost,
+                'userid' => $user->id, 'message' => 'p1']);
+
+        // Do the indexing of all 4 posts.
+        $rs = $searcharea->get_recordset_by_timestamp(0);
+        $results = [];
+        foreach ($rs as $rec) {
+            $results[$rec->message] = $rec;
+        }
+        $rs->close();
+        $this->assertCount(4, $results);
+
+        // Check each document has the correct groupid.
+        $doc = $searcharea->get_document($results['d1']);
+        $this->assertTrue($doc->is_set('groupid'));
+        $this->assertEquals($group1->id, $doc->get('groupid'));
+        $doc = $searcharea->get_document($results['d2']);
+        $this->assertTrue($doc->is_set('groupid'));
+        $this->assertEquals($group2->id, $doc->get('groupid'));
+        $doc = $searcharea->get_document($results['d3']);
+        $this->assertFalse($doc->is_set('groupid'));
+        $doc = $searcharea->get_document($results['p1']);
+        $this->assertTrue($doc->is_set('groupid'));
+        $this->assertEquals($group1->id, $doc->get('groupid'));
+
+        // While we're here, also test that the search area requests restriction by group.
+        $modinfo = get_fast_modinfo($course);
+        $this->assertTrue($searcharea->restrict_cm_access_by_group($modinfo->get_cm($forum->cmid)));
+
+        // In visible groups mode, it won't request restriction by group.
+        set_coursemodule_groupmode($forum->cmid, VISIBLEGROUPS);
+        $modinfo = get_fast_modinfo($course);
+        $this->assertFalse($searcharea->restrict_cm_access_by_group($modinfo->get_cm($forum->cmid)));
     }
 
     /**
