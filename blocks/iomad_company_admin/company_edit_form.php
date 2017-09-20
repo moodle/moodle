@@ -214,7 +214,7 @@ class company_edit_form extends company_moodleform {
         } else if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context) && !empty($this->parentcompanyid)) {
             // Add it as a hidden field.
             $mform->addElement('hidden', 'parentid', $this->parentcompanyid);
-            if (!empty($this->companyrecord->templates)) }
+            if (!empty($this->companyrecord->templates)) {
                 foreach ($this->companyrecord->templates as $companytemplateid) {
                     $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
                 }
@@ -222,7 +222,7 @@ class company_edit_form extends company_moodleform {
         } else {
             // Add it as a hidden field.
             $mform->addElement('hidden', 'parentid');
-            if (!empty($this->companyrecord->templates)) }
+            if (!empty($this->companyrecord->templates)) {
                 foreach ($this->companyrecord->templates as $companytemplateid) {
                     $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
                 }
