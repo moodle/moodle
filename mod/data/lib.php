@@ -2794,6 +2794,9 @@ function data_reset_course_form_definition(&$mform) {
 
     $mform->addElement('checkbox', 'reset_data_comments', get_string('deleteallcomments'));
     $mform->disabledIf('reset_data_comments', 'reset_data', 'checked');
+
+    $mform->addElement('checkbox', 'reset_data_tags', get_string('removealldatatags', 'data'));
+    $mform->disabledIf('reset_data_tags', 'reset_data', 'checked');
 }
 
 /**
@@ -2878,6 +2881,8 @@ function data_reset_userdata($data) {
 
                 $ratingdeloptions->contextid = $datacontext->id;
                 $rm->delete_ratings($ratingdeloptions);
+
+                core_tag_tag::delete_instances('mod_data', null, $datacontext->id);
             }
         }
 
@@ -2920,6 +2925,8 @@ function data_reset_userdata($data) {
                 }
                 $notenrolled[$record->userid] = true;
 
+                core_tag_tag::remove_all_item_tags('mod_data', 'data_records', $record->id);
+
                 $DB->delete_records('comments', array('itemid' => $record->id, 'commentarea' => 'database_entry'));
                 $DB->delete_records('data_content', array('recordid' => $record->id));
                 $DB->delete_records('data_records', array('id' => $record->id));
@@ -2955,6 +2962,22 @@ function data_reset_userdata($data) {
     if (!empty($data->reset_data_comments)) {
         $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
+    }
+
+    // Remove all the tags.
+    if (!empty($data->reset_data_tags)) {
+        if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
+            foreach ($datas as $dataid => $unused) {
+                if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
+                    continue;
+                }
+
+                $context = context_module::instance($cm->id);
+                core_tag_tag::delete_instances('mod_data', null, $context->id);
+
+            }
+        }
+        $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'data'), 'error' => false);
     }
 
     // updating dates - shift may be negative too
