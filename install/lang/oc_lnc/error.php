@@ -31,7 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatedboninstall'] = '<p>Impossible de crear la basa de donadas.</p>
-<p>La banca de donadas indicada existís pas e l\'utilizaire especificat a pas las autorizacions que permeton de crear una basa de donadas.</p>.
+<p>La basa de donadas indicada existís pas e l\'utilizaire especificat a pas las autorizacions que permeton de crear una basa de donadas.</p>.
 <p>L\'administrator del site deu repassar la configuracion de la basa de donadas.</p>';
 $string['cannotcreatelangdir'] = 'Creacion del dorsièr lang impossible';
 $string['cannotcreatetempdir'] = 'Creacion del dorsièr temp impossibla';
