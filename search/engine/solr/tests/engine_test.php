@@ -54,7 +54,7 @@ require_once($CFG->dirroot . '/search/engine/solr/tests/fixtures/testable_engine
 class search_solr_engine_testcase extends advanced_testcase {
 
     /**
-     * @var \core_search::manager
+     * @var \core_search\manager
      */
     protected $search = null;
 
@@ -707,18 +707,18 @@ class search_solr_engine_testcase extends advanced_testcase {
         $querydata->q = 'Something1 Something2 Something3 Something4';
 
         // In this first set, it should have determined the first 10 of 40 are bad, so there could be up to 30 left.
-        $results = $this->engine->execute_query($querydata, true, 5);
+        $results = $this->engine->execute_query($querydata, (object)['everything' => true], 5);
         $this->assertEquals(30, $this->engine->get_query_total_count());
         $this->assertCount(5, $results);
 
         // To get to 15, it has to process the first 10 that are bad, 10 that are good, 10 that are bad, then 5 that are good.
         // So we now know 20 are bad out of 40.
-        $results = $this->engine->execute_query($querydata, true, 15);
+        $results = $this->engine->execute_query($querydata, (object)['everything' => true], 15);
         $this->assertEquals(20, $this->engine->get_query_total_count());
         $this->assertCount(15, $results);
 
         // Try to get more then all, make sure we still see 20 count and 20 returned.
-        $results = $this->engine->execute_query($querydata, true, 30);
+        $results = $this->engine->execute_query($querydata, (object)['everything' => true], 30);
         $this->assertEquals(20, $this->engine->get_query_total_count());
         $this->assertCount(20, $results);
     }
@@ -828,6 +828,111 @@ class search_solr_engine_testcase extends advanced_testcase {
         $querydata->contextids = [$contextc2f->id];
         $results = $this->search->search($querydata);
         $this->assert_result_titles([], $results);
+    }
+
+    /**
+     * Tests searching for results in groups, either by specified group ids or based on user
+     * access permissions.
+     */
+    public function test_groups() {
+        global $USER;
+
+        // Use real search areas.
+        $this->search->clear_static();
+        $this->search->add_core_search_areas();
+
+        // Create 2 courses and a selection of forums with different group mode.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['fullname' => 'Course 1']);
+        $forum1nogroups = $generator->create_module('forum', ['course' => $course1, 'groupmode' => NOGROUPS]);
+        $forum1separategroups = $generator->create_module('forum', ['course' => $course1, 'groupmode' => SEPARATEGROUPS]);
+        $forum1visiblegroups = $generator->create_module('forum', ['course' => $course1, 'groupmode' => VISIBLEGROUPS]);
+        $course2 = $generator->create_course(['fullname' => 'Course 2']);
+        $forum2separategroups = $generator->create_module('forum', ['course' => $course2, 'groupmode' => SEPARATEGROUPS]);
+
+        // Create two groups on each course.
+        $group1a = $generator->create_group(['courseid' => $course1->id]);
+        $group1b = $generator->create_group(['courseid' => $course1->id]);
+        $group2a = $generator->create_group(['courseid' => $course2->id]);
+        $group2b = $generator->create_group(['courseid' => $course2->id]);
+
+        // Create search records in each activity and (where relevant) in each group.
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+        $forumgenerator->create_discussion(['course' => $course1->id, 'userid' => $USER->id,
+                'forum' => $forum1nogroups->id, 'name' => 'F1NG', 'message' => 'xyzzy']);
+        $forumgenerator->create_discussion(['course' => $course1->id, 'userid' => $USER->id,
+                'forum' => $forum1separategroups->id, 'name' => 'F1SG-A',  'message' => 'xyzzy',
+                'groupid' => $group1a->id]);
+        $forumgenerator->create_discussion(['course' => $course1->id, 'userid' => $USER->id,
+                'forum' => $forum1separategroups->id, 'name' => 'F1SG-B', 'message' => 'xyzzy',
+                'groupid' => $group1b->id]);
+        $forumgenerator->create_discussion(['course' => $course1->id, 'userid' => $USER->id,
+                'forum' => $forum1visiblegroups->id, 'name' => 'F1VG-A', 'message' => 'xyzzy',
+                'groupid' => $group1a->id]);
+        $forumgenerator->create_discussion(['course' => $course1->id, 'userid' => $USER->id,
+                'forum' => $forum1visiblegroups->id, 'name' => 'F1VG-B', 'message' => 'xyzzy',
+                'groupid' => $group1b->id]);
+        $forumgenerator->create_discussion(['course' => $course2->id, 'userid' => $USER->id,
+                'forum' => $forum2separategroups->id, 'name' => 'F2SG-A', 'message' => 'xyzzy',
+                'groupid' => $group2a->id]);
+        $forumgenerator->create_discussion(['course' => $course2->id, 'userid' => $USER->id,
+                'forum' => $forum2separategroups->id, 'name' => 'F2SG-B', 'message' => 'xyzzy',
+                'groupid' => $group2b->id]);
+
+        $this->search->index();
+
+        // Search as admin user should find everything.
+        $querydata = new stdClass();
+        $querydata->q = 'xyzzy';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['F1NG', 'F1SG-A', 'F1SG-B', 'F1VG-A', 'F1VG-B', 'F2SG-A', 'F2SG-B'], $results);
+
+        // Admin user manually restricts results by groups.
+        $querydata->groupids = [$group1b->id, $group2a->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['F1SG-B', 'F1VG-B', 'F2SG-A'], $results);
+
+        // Student enrolled in both courses but no groups.
+        $student1 = $generator->create_user();
+        $generator->enrol_user($student1->id, $course1->id, 'student');
+        $generator->enrol_user($student1->id, $course2->id, 'student');
+        $this->setUser($student1);
+
+        unset($querydata->groupids);
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['F1NG', 'F1VG-A', 'F1VG-B'], $results);
+
+        // Student enrolled in both courses and group A in both cases.
+        $student2 = $generator->create_user();
+        $generator->enrol_user($student2->id, $course1->id, 'student');
+        $generator->enrol_user($student2->id, $course2->id, 'student');
+        groups_add_member($group1a, $student2);
+        groups_add_member($group2a, $student2);
+        $this->setUser($student2);
+
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['F1NG', 'F1SG-A', 'F1VG-A', 'F1VG-B', 'F2SG-A'], $results);
+
+        // Manually restrict results to group B in course 1.
+        $querydata->groupids = [$group1b->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['F1VG-B'], $results);
+
+        // Manually restrict results to group A in course 1.
+        $querydata->groupids = [$group1a->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['F1SG-A', 'F1VG-A'], $results);
+
+        // Manager enrolled in both courses (has access all groups).
+        $manager = $generator->create_user();
+        $generator->enrol_user($manager->id, $course1->id, 'manager');
+        $generator->enrol_user($manager->id, $course2->id, 'manager');
+        $this->setUser($manager);
+        unset($querydata->groupids);
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['F1NG', 'F1SG-A', 'F1SG-B', 'F1VG-A', 'F1VG-B', 'F2SG-A', 'F2SG-B'], $results);
     }
 
     /**

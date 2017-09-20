@@ -555,20 +555,20 @@ class search_manager_testcase extends advanced_testcase {
         $search->add_search_area($mockareaid, new core_mocksearch\search\mock_search_area());
 
         $this->setAdminUser();
-        $this->assertTrue($search->get_areas_user_accesses());
+        $this->assertEquals((object)['everything' => true], $search->get_areas_user_accesses());
 
         $sitectx = \context_course::instance(SITEID);
 
         // Can access the frontpage ones.
         $this->setUser($noaccess);
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $this->assertEquals(array($frontpageforumcontext->id => $frontpageforumcontext->id), $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($sitectx->id => $sitectx->id), $contexts[$this->mycoursesareaid]);
         $mockctxs = array($noaccessctx->id => $noaccessctx->id, $frontpagectx->id => $frontpagectx->id);
         $this->assertEquals($mockctxs, $contexts[$mockareaid]);
 
         $this->setUser($teacher);
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $frontpageandcourse1 = array($frontpageforumcontext->id => $frontpageforumcontext->id, $context1->id => $context1->id,
             $context2->id => $context2->id);
         $this->assertEquals($frontpageandcourse1, $contexts[$this->forumpostareaid]);
@@ -579,7 +579,7 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertEquals($mockctxs, $contexts[$mockareaid]);
 
         $this->setUser($student);
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $this->assertEquals($frontpageandcourse1, $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($sitectx->id => $sitectx->id, $course1ctx->id => $course1ctx->id),
             $contexts[$this->mycoursesareaid]);
@@ -589,39 +589,39 @@ class search_manager_testcase extends advanced_testcase {
 
         // Hide the activity.
         set_coursemodule_visible($forum2->cmid, 0);
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $this->assertEquals(array($frontpageforumcontext->id => $frontpageforumcontext->id, $context1->id => $context1->id),
             $contexts[$this->forumpostareaid]);
 
         // Now test course limited searches.
         set_coursemodule_visible($forum2->cmid, 1);
         $this->getDataGenerator()->enrol_user($student->id, $course2->id, 'student');
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $allcontexts = array($frontpageforumcontext->id => $frontpageforumcontext->id, $context1->id => $context1->id,
             $context2->id => $context2->id, $context3->id => $context3->id);
         $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($sitectx->id => $sitectx->id, $course1ctx->id => $course1ctx->id,
             $course2ctx->id => $course2ctx->id), $contexts[$this->mycoursesareaid]);
 
-        $contexts = $search->get_areas_user_accesses(array($course1->id, $course2->id));
+        $contexts = $search->get_areas_user_accesses(array($course1->id, $course2->id))->usercontexts;
         $allcontexts = array($context1->id => $context1->id, $context2->id => $context2->id, $context3->id => $context3->id);
         $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($course1ctx->id => $course1ctx->id,
             $course2ctx->id => $course2ctx->id), $contexts[$this->mycoursesareaid]);
 
-        $contexts = $search->get_areas_user_accesses(array($course2->id));
+        $contexts = $search->get_areas_user_accesses(array($course2->id))->usercontexts;
         $allcontexts = array($context3->id => $context3->id);
         $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($course2ctx->id => $course2ctx->id), $contexts[$this->mycoursesareaid]);
 
-        $contexts = $search->get_areas_user_accesses(array($course1->id));
+        $contexts = $search->get_areas_user_accesses(array($course1->id))->usercontexts;
         $allcontexts = array($context1->id => $context1->id, $context2->id => $context2->id);
         $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($course1ctx->id => $course1ctx->id), $contexts[$this->mycoursesareaid]);
 
         // Test context limited search with no course limit.
         $contexts = $search->get_areas_user_accesses(false,
-                [$frontpageforumcontext->id, $course2ctx->id]);
+                [$frontpageforumcontext->id, $course2ctx->id])->usercontexts;
         $this->assertEquals([$frontpageforumcontext->id => $frontpageforumcontext->id],
                 $contexts[$this->forumpostareaid]);
         $this->assertEquals([$course2ctx->id => $course2ctx->id],
@@ -629,19 +629,19 @@ class search_manager_testcase extends advanced_testcase {
 
         // Test context limited search with course limit.
         $contexts = $search->get_areas_user_accesses([$course1->id, $course2->id],
-                [$frontpageforumcontext->id, $course2ctx->id]);
+                [$frontpageforumcontext->id, $course2ctx->id])->usercontexts;
         $this->assertArrayNotHasKey($this->forumpostareaid, $contexts);
         $this->assertEquals([$course2ctx->id => $course2ctx->id],
                 $contexts[$this->mycoursesareaid]);
 
         // Single context and course.
-        $contexts = $search->get_areas_user_accesses([$course1->id], [$context1->id]);
+        $contexts = $search->get_areas_user_accesses([$course1->id], [$context1->id])->usercontexts;
         $this->assertEquals([$context1->id => $context1->id], $contexts[$this->forumpostareaid]);
         $this->assertArrayNotHasKey($this->mycoursesareaid, $contexts);
 
         // For admins, this is still limited only if we specify the things, so it should be same.
         $this->setAdminUser();
-        $contexts = $search->get_areas_user_accesses([$course1->id], [$context1->id]);
+        $contexts = $search->get_areas_user_accesses([$course1->id], [$context1->id])->usercontexts;
         $this->assertEquals([$context1->id => $context1->id], $contexts[$this->forumpostareaid]);
         $this->assertArrayNotHasKey($this->mycoursesareaid, $contexts);
     }
@@ -722,28 +722,28 @@ class search_manager_testcase extends advanced_testcase {
 
         // Admin gets 'true' result to function regardless of blocks.
         $this->setAdminUser();
-        $this->assertTrue($search->get_areas_user_accesses());
+        $this->assertEquals((object)['everything' => true], $search->get_areas_user_accesses());
 
         // Student 1 gets all 3 block contexts.
         $this->setUser($student1);
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $this->assertArrayHasKey('block_html-content', $contexts);
         $this->assertCount(3, $contexts['block_html-content']);
 
         // Student 2 does not get any blocks.
         $this->setUser($student2);
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $this->assertArrayNotHasKey('block_html-content', $contexts);
 
         // Student 3 gets only two of them.
         $this->setUser($student3);
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $this->assertArrayHasKey('block_html-content', $contexts);
         $this->assertCount(2, $contexts['block_html-content']);
 
         // A course limited search for student 1 is the same as the student 3 search.
         $this->setUser($student1);
-        $limitedcontexts = $search->get_areas_user_accesses([$course3->id]);
+        $limitedcontexts = $search->get_areas_user_accesses([$course3->id])->usercontexts;
         $this->assertEquals($contexts['block_html-content'], $limitedcontexts['block_html-content']);
 
         // Get block context ids for the blocks that appear.
@@ -758,12 +758,12 @@ class search_manager_testcase extends advanced_testcase {
 
         // Context limited search (no course).
         $contexts = $search->get_areas_user_accesses(false,
-                [$blockcontextids[0], $blockcontextids[2]]);
+                [$blockcontextids[0], $blockcontextids[2]])->usercontexts;
         $this->assertCount(2, $contexts['block_html-content']);
 
         // Context limited search (with course 3).
         $contexts = $search->get_areas_user_accesses([$course2->id, $course3->id],
-                [$blockcontextids[0], $blockcontextids[2]]);
+                [$blockcontextids[0], $blockcontextids[2]])->usercontexts;
         $this->assertCount(1, $contexts['block_html-content']);
     }
 
@@ -817,16 +817,16 @@ class search_manager_testcase extends advanced_testcase {
 
         // Admin user can access everything.
         $this->setAdminUser();
-        $this->assertTrue($search->get_areas_user_accesses());
+        $this->assertEquals((object)['everything' => true], $search->get_areas_user_accesses());
 
         // No-access user can access only the front page forum.
         $this->setUser($noaccess);
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $this->assertEquals([$forumfrontctx->id], array_keys($contexts[$this->forumpostareaid]));
 
         // Student can access the front page forum plus the enrolled one.
         $this->setUser($student);
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $this->assertEquals([$forum1ctx->id, $forumfrontctx->id],
                 array_keys($contexts[$this->forumpostareaid]));
 
@@ -835,19 +835,117 @@ class search_manager_testcase extends advanced_testcase {
 
         // Admin user can access everything.
         $this->setAdminUser();
-        $this->assertTrue($search->get_areas_user_accesses());
+        $this->assertEquals((object)['everything' => true], $search->get_areas_user_accesses());
 
         // No-access user can access the front page forum and course 2, 3.
         $this->setUser($noaccess);
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $this->assertEquals([$forum2ctx->id, $forum3ctx->id, $forumfrontctx->id],
                 array_keys($contexts[$this->forumpostareaid]));
 
         // Student can access the front page forum plus the enrolled one plus courses 2, 3.
         $this->setUser($student);
-        $contexts = $search->get_areas_user_accesses();
+        $contexts = $search->get_areas_user_accesses()->usercontexts;
         $this->assertEquals([$forum1ctx->id, $forum2ctx->id, $forum3ctx->id, $forumfrontctx->id],
                 array_keys($contexts[$this->forumpostareaid]));
+    }
+
+    /**
+     * Tests group-related aspects of the get_areas_user_accesses function.
+     */
+    public function test_search_user_accesses_groups() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create 2 courses each with 2 groups and 2 forums (separate/visible groups).
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+        $group1 = $generator->create_group(['courseid' => $course1->id]);
+        $group2 = $generator->create_group(['courseid' => $course1->id]);
+        $group3 = $generator->create_group(['courseid' => $course2->id]);
+        $group4 = $generator->create_group(['courseid' => $course2->id]);
+        $forum1s = $generator->create_module('forum', ['course' => $course1->id, 'groupmode' => SEPARATEGROUPS]);
+        $id1s = context_module::instance($forum1s->cmid)->id;
+        $forum1v = $generator->create_module('forum', ['course' => $course1->id, 'groupmode' => VISIBLEGROUPS]);
+        $id1v = context_module::instance($forum1v->cmid)->id;
+        $forum2s = $generator->create_module('forum', ['course' => $course2->id, 'groupmode' => SEPARATEGROUPS]);
+        $id2s = context_module::instance($forum2s->cmid)->id;
+        $forum2n = $generator->create_module('forum', ['course' => $course2->id, 'groupmode' => NOGROUPS]);
+        $id2n = context_module::instance($forum2n->cmid)->id;
+
+        // Get search instance.
+        $search = testable_core_search::instance();
+        $search->add_core_search_areas();
+
+        // User 1 is a manager in one course and a student in the other one. They belong to
+        // all of the groups 1, 2, 3, and 4.
+        $user1 = $generator->create_user();
+        $generator->enrol_user($user1->id, $course1->id, 'manager');
+        $generator->enrol_user($user1->id, $course2->id, 'student');
+        groups_add_member($group1, $user1);
+        groups_add_member($group2, $user1);
+        groups_add_member($group3, $user1);
+        groups_add_member($group4, $user1);
+
+        $this->setUser($user1);
+        $accessinfo = $search->get_areas_user_accesses();
+        $contexts = $accessinfo->usercontexts;
+
+        // Double-check all the forum contexts.
+        $postcontexts = $contexts['mod_forum-post'];
+        sort($postcontexts);
+        $this->assertEquals([$id1s, $id1v, $id2s, $id2n], $postcontexts);
+
+        // Only the context in the second course (no accessallgroups) is restricted.
+        $restrictedcontexts = $accessinfo->separategroupscontexts;
+        sort($restrictedcontexts);
+        $this->assertEquals([$id2s], $restrictedcontexts);
+
+        // Only the groups from the second course (no accessallgroups) are included.
+        $groupids = $accessinfo->usergroups;
+        sort($groupids);
+        $this->assertEquals([$group3->id, $group4->id], $groupids);
+
+        // User 2 is a student in each course and belongs to groups 2 and 4.
+        $user2 = $generator->create_user();
+        $generator->enrol_user($user2->id, $course1->id, 'student');
+        $generator->enrol_user($user2->id, $course2->id, 'student');
+        groups_add_member($group2, $user2);
+        groups_add_member($group4, $user2);
+
+        $this->setUser($user2);
+        $accessinfo = $search->get_areas_user_accesses();
+        $contexts = $accessinfo->usercontexts;
+
+        // Double-check all the forum contexts.
+        $postcontexts = $contexts['mod_forum-post'];
+        sort($postcontexts);
+        $this->assertEquals([$id1s, $id1v, $id2s, $id2n], $postcontexts);
+
+        // Both separate groups forums are restricted.
+        $restrictedcontexts = $accessinfo->separategroupscontexts;
+        sort($restrictedcontexts);
+        $this->assertEquals([$id1s, $id2s], $restrictedcontexts);
+
+        // Groups from both courses are included.
+        $groupids = $accessinfo->usergroups;
+        sort($groupids);
+        $this->assertEquals([$group2->id, $group4->id], $groupids);
+
+        // User 3 is a manager at system level.
+        $user3 = $generator->create_user();
+        role_assign($DB->get_field('role', 'id', ['shortname' => 'manager'], MUST_EXIST), $user3->id,
+                \context_system::instance());
+
+        $this->setUser($user3);
+        $accessinfo = $search->get_areas_user_accesses();
+
+        // Nothing is restricted and no groups are relevant.
+        $this->assertEquals([], $accessinfo->separategroupscontexts);
+        $this->assertEquals([], $accessinfo->usergroups);
     }
 
     /**
