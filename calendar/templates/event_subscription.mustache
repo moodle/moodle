@@ -35,11 +35,11 @@
 {{#subscription}}
     {{#displayeventsource}}
         <div>
-            {{#name}}
-                <p>{{#str}}subscriptionsource, core_calendar, {{name}}{{/str}}</p>
-            {{/name}}
             {{#url}}
                 <p><a href="{{url}}">{{#str}}subscriptionsource, core_calendar, {{name}}{{/str}}</a></p>
+            {{/url}}
+            {{^url}}
+                <p>{{#str}}subscriptionsource, core_calendar, {{name}}{{/str}}</p>
             {{/url}}
         </div>
     {{/displayeventsource}}
