@@ -214,14 +214,18 @@ class company_edit_form extends company_moodleform {
         } else if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context) && !empty($this->parentcompanyid)) {
             // Add it as a hidden field.
             $mform->addElement('hidden', 'parentid', $this->parentcompanyid);
-            foreach ($this->companyrecord->templates as $companytemplateid) {
-                $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
+            if (!empty($this->companyrecord->templates)) }
+                foreach ($this->companyrecord->templates as $companytemplateid) {
+                    $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
+                }
             }
         } else {
             // Add it as a hidden field.
             $mform->addElement('hidden', 'parentid');
-            foreach ($this->companyrecord->templates as $companytemplateid) {
-                $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
+            if (!empty($this->companyrecord->templates)) }
+                foreach ($this->companyrecord->templates as $companytemplateid) {
+                    $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
+                }
             }
         }
 
