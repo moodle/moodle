@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/mssql_native_moodle_temptables.php');
+require_once(__DIR__.'/moodle_temptables.php');
 
 /**
  * This class is not specific to the SQL Server Native Driver but rather
@@ -36,4 +36,24 @@ require_once(__DIR__.'/mssql_native_moodle_temptables.php');
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
  */
-class sqlsrv_native_moodle_temptables extends mssql_native_moodle_temptables {}
+class sqlsrv_native_moodle_temptables extends moodle_temptables {
+
+    /**
+     * Add one temptable to the store.
+     *
+     * Overriden because SQLSRV requires to add # for local (session) temporary
+     * tables before the prefix.
+     *
+     * Given one moodle temptable name (without prefix), add it to the store, with the
+     * key being the original moodle name and the value being the real db temptable name
+     * already prefixed
+     *
+     * Override and use this *only* if the database requires modification in the table name.
+     *
+     * @param string $tablename name without prefix of the table created as temptable
+     */
+    public function add_temptable($tablename) {
+        // TODO: throw exception if exists: if ($this->is_temptable...
+        $this->temptables[$tablename] = '#' . $this->prefix . $tablename;
+    }
+}
