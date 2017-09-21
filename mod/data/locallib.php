@@ -860,6 +860,11 @@ function mod_data_get_tagged_records($tag, $exclusivemode = false, $fromctx = 0,
             continue;
         }
 
+        if (!$cm->uservisible) {
+            $builder->set_accessible($item, false);
+            continue;
+        }
+
         if (!has_capability('mod/data:viewentry', $context)) {
             $builder->set_accessible($item, false);
             continue;
