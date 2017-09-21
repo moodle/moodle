@@ -24,11 +24,11 @@ class HTMLPurifier_ConfigSchema
      *
      *  array(
      *      'Namespace' => array(
-     *          'Directive' => new stdclass(),
+     *          'Directive' => new stdClass(),
      *      )
      *  )
      *
-     * The stdclass may have the following properties:
+     * The stdClass may have the following properties:
      *
      *  - If isAlias isn't set:
      *      - type: Integer type of directive, see HTMLPurifier_VarParser for definitions
@@ -39,8 +39,8 @@ class HTMLPurifier_ConfigSchema
      *      - namespace: Namespace this directive aliases to
      *      - name: Directive name this directive aliases to
      *
-     * In certain degenerate cases, stdclass will actually be an integer. In
-     * that case, the value is equivalent to an stdclass with the type
+     * In certain degenerate cases, stdClass will actually be an integer. In
+     * that case, the value is equivalent to an stdClass with the type
      * property set to the integer. If the integer is negative, type is
      * equal to the absolute value of integer, and allow_null is true.
      *
@@ -105,7 +105,7 @@ class HTMLPurifier_ConfigSchema
      */
     public function add($key, $default, $type, $allow_null)
     {
-        $obj = new stdclass();
+        $obj = new stdClass();
         $obj->type = is_int($type) ? $type : HTMLPurifier_VarParser::$types[$type];
         if ($allow_null) {
             $obj->allow_null = true;
@@ -152,14 +152,14 @@ class HTMLPurifier_ConfigSchema
      */
     public function addAlias($key, $new_key)
     {
-        $obj = new stdclass;
+        $obj = new stdClass;
         $obj->key = $new_key;
         $obj->isAlias = true;
         $this->info[$key] = $obj;
     }
 
     /**
-     * Replaces any stdclass that only has the type property with type integer.
+     * Replaces any stdClass that only has the type property with type integer.
      */
     public function postProcess()
     {

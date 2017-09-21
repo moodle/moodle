@@ -165,7 +165,7 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
                         if (empty($zipper->front)) break;
                         $token = $zipper->prev($token);
                         // indicate that other injectors should not process this token,
-                        // but we need to reprocess it
+                        // but we need to reprocess it.  See Note [Injector skips]
                         unset($token->skip[$i]);
                         $token->rewind = $i;
                         if ($token instanceof HTMLPurifier_Token_Start) {
@@ -210,6 +210,7 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
                 if ($token instanceof HTMLPurifier_Token_Text) {
                     foreach ($this->injectors as $i => $injector) {
                         if (isset($token->skip[$i])) {
+                            // See Note [Injector skips]
                             continue;
                         }
                         if ($token->rewind !== null && $token->rewind !== $i) {
@@ -367,6 +368,7 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
             if ($ok) {
                 foreach ($this->injectors as $i => $injector) {
                     if (isset($token->skip[$i])) {
+                        // See Note [Injector skips]
                         continue;
                     }
                     if ($token->rewind !== null && $token->rewind !== $i) {
@@ -422,6 +424,7 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
                 $token->start = $current_parent;
                 foreach ($this->injectors as $i => $injector) {
                     if (isset($token->skip[$i])) {
+                        // See Note [Injector skips]
                         continue;
                     }
                     if ($token->rewind !== null && $token->rewind !== $i) {
@@ -534,12 +537,17 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
      */
     protected function processToken($token, $injector = -1)
     {
+        // Zend OpCache miscompiles $token = array($token), so
+        // avoid this pattern.  See: https://github.com/ezyang/htmlpurifier/issues/108
+
         // normalize forms of token
         if (is_object($token)) {
-            $token = array(1, $token);
+            $tmp = $token;
+            $token = array(1, $tmp);
         }
         if (is_int($token)) {
-            $token = array($token);
+            $tmp = $token;
+            $token = array($tmp);
         }
         if ($token === false) {
             $token = array(1);
@@ -561,7 +569,12 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
         list($old, $r) = $this->zipper->splice($this->token, $delete, $token);
 
         if ($injector > -1) {
-            // determine appropriate skips
+            // See Note [Injector skips]
+            // Determine appropriate skips.  Here's what the code does:
+            //  *If* we deleted one or more tokens, copy the skips
+            //  of those tokens into the skips of the new tokens (in $token).
+            //  Also, mark the newly inserted tokens as having come from
+            //  $injector.
             $oldskip = isset($old[0]) ? $old[0]->skip : array();
             foreach ($token as $object) {
                 $object->skip = $oldskip;
@@ -596,5 +609,51 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
         return $this->zipper->delete();
     }
 }
+
+// Note [Injector skips]
+// ~~~~~~~~~~~~~~~~~~~~~
+// When I originally designed this class, the idea behind the 'skip'
+// property of HTMLPurifier_Token was to help avoid infinite loops
+// in injector processing.  For example, suppose you wrote an injector
+// that bolded swear words.  Naively, you might write it so that
+// whenever you saw ****, you replaced it with <strong>****</strong>.
+//
+// When this happens, we will reprocess all of the tokens with the
+// other injectors.  Now there is an opportunity for infinite loop:
+// if we rerun the swear-word injector on these tokens, we might
+// see **** and then reprocess again to get
+// <strong><strong>****</strong></strong> ad infinitum.
+//
+// Thus, the idea of a skip is that once we process a token with
+// an injector, we mark all of those tokens as having "come from"
+// the injector, and we never run the injector again on these
+// tokens.
+//
+// There were two more complications, however:
+//
+//  - With HTMLPurifier_Injector_RemoveEmpty, we noticed that if
+//    you had <b><i></i></b>, after you removed the <i></i>, you
+//    really would like this injector to go back and reprocess
+//    the <b> tag, discovering that it is now empty and can be
+//    removed.  So we reintroduced the possibility of infinite looping
+//    by adding a "rewind" function, which let you go back to an
+//    earlier point in the token stream and reprocess it with injectors.
+//    Needless to say, we need to UN-skip the token so it gets
+//    reprocessed.
+//
+//  - Suppose that you successfuly process a token, replace it with
+//    one with your skip mark, but now another injector wants to
+//    process the skipped token with another token.  Should you continue
+//    to skip that new token, or reprocess it?  If you reprocess,
+//    you can end up with an infinite loop where one injector converts
+//    <a> to <b>, and then another injector converts it back.  So
+//    we inherit the skips, but for some reason, I thought that we
+//    should inherit the skip from the first token of the token
+//    that we deleted.  Why?  Well, it seems to work OK.
+//
+// If I were to redesign this functionality, I would absolutely not
+// go about doing it this way: the semantics are just not very well
+// defined, and in any case you probably wanted to operate on trees,
+// not token streams.
 
 // vim: et sw=4 sts=4

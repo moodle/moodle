@@ -50,7 +50,7 @@ class HTMLPurifier_ChildDef_List extends HTMLPurifier_ChildDef
         // a little sanity check to make sure it's not ALL whitespace
         $all_whitespace = true;
 
-        $current_li = false;
+        $current_li = null;
 
         foreach ($children as $node) {
             if (!empty($node->is_whitespace)) {
@@ -71,7 +71,7 @@ class HTMLPurifier_ChildDef_List extends HTMLPurifier_ChildDef
                 // to handle non-list elements; non-list elements should
                 // not be appended to an existing li; only li created
                 // for non-list. This distinction is not currently made.
-                if ($current_li === false) {
+                if ($current_li === null) {
                     $current_li = new HTMLPurifier_Node_Element('li');
                     $result[] = $current_li;
                 }

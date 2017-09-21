@@ -101,6 +101,14 @@ class HTMLPurifier_Encoder
      * It will parse according to UTF-8 and return a valid UTF8 string, with
      * non-SGML codepoints excluded.
      *
+     * Specifically, it will permit:
+     * \x{9}\x{A}\x{D}\x{20}-\x{7E}\x{A0}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}
+     * Source: https://www.w3.org/TR/REC-xml/#NT-Char
+     * Arguably this function should be modernized to the HTML5 set
+     * of allowed characters:
+     * https://www.w3.org/TR/html5/syntax.html#preprocessing-the-input-stream
+     * which simultaneously expand and restrict the set of allowed characters.
+     *
      * @param string $str The string to clean
      * @param bool $force_php
      * @return string
@@ -122,15 +130,12 @@ class HTMLPurifier_Encoder
      *       function that needs to be able to understand UTF-8 characters.
      *       As of right now, only smart lossless character encoding converters
      *       would need that, and I'm probably not going to implement them.
-     *       Once again, PHP 6 should solve all our problems.
      */
     public static function cleanUTF8($str, $force_php = false)
     {
         // UTF-8 validity is checked since PHP 4.3.5
         // This is an optimization: if the string is already valid UTF-8, no
         // need to do PHP stuff. 99% of the time, this will be the case.
-        // The regexp matches the XML char production, as well as well as excluding
-        // non-SGML codepoints U+007F to U+009F
         if (preg_match(
             '/^[\x{9}\x{A}\x{D}\x{20}-\x{7E}\x{A0}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]*$/Du',
             $str
@@ -255,6 +260,7 @@ class HTMLPurifier_Encoder
                                 // 7F-9F is not strictly prohibited by XML,
                                 // but it is non-SGML, and thus we don't allow it
                                 (0xA0 <= $mUcs4 && 0xD7FF >= $mUcs4) ||
+                                (0xE000 <= $mUcs4 && 0xFFFD >= $mUcs4) ||
                                 (0x10000 <= $mUcs4 && 0x10FFFF >= $mUcs4)
                             )
                         ) {
