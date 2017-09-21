@@ -123,7 +123,7 @@ class profile_define_base {
         } else {
             // Fetch field-record from DB  Needs to be munged as hiding the <companyshortname>- from the user.
             $category = $DB->get_record('user_info_category', array('id' => $data->categoryid));
-            $data->shortname = $category->name.'-'.$data->shortname;
+            $data->shortname = $category->name . $data->shortname;
             $field = $DB->get_record('user_info_field', array('shortname' => $data->shortname));
             // Check the shortname is unique.
             if ($field and $field->id <> $data->id) {
@@ -507,8 +507,10 @@ function profile_edit_field($id, $datatype, $redirect, $companyid) {
     // Strip out the company shortname from the field name.
     if (isset($field->categoryid)) {
         $category = $DB->get_record('user_info_category', array('id' => $field->categoryid));
-        list($companyname, $shortname) = explode('-', $field->shortname);
-        $field->shortname = $shortname;
+        $prefix = $category->name;
+        if (substr($field->shortname, 0, strlen($prefix)) == $prefix) {
+           $field->shortname = substr($field->shortname, strlen($prefix));
+        }
     }
     $fieldform->set_data($field);
 
@@ -524,7 +526,7 @@ function profile_edit_field($id, $datatype, $redirect, $companyid) {
             $category = $DB->get_record('user_info_category', array('id' => $data->categoryid));
             // Collect the description and format back into the proper data structure from the editor.
             // Note: This field will ALWAYS be an editor.
-            $data->shortname = $category->name.'-'.$data->shortname;
+            $data->shortname = $category->name . $data->shortname;
             $data->descriptionformat = $data->description['format'];
             $data->description = $data->description['text'];
 
