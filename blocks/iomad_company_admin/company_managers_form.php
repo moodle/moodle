@@ -1,4 +1,4 @@
-<?php
+?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -401,7 +401,7 @@ class company_managers_form extends moodleform {
                                             'usertypename' => $managertypes[$roletype]);
                         $event = \block_iomad_company_admin\event\company_user_unassigned::create(array('context' => context_system::instance(),
                                                                                                         'objectid' => $company->id,
-                                                                                                        'userid' => $adduser->id,
+                                                                                                        'userid' => $removeuser->id,
                                                                                                         'other' => $eventother));
                         $event->trigger();
                     }
