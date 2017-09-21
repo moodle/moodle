@@ -1756,6 +1756,9 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             throw new moodle_exception('cannotdeletecategoryquestions', '', '', $this->get_formatted_name());
         }
 
+        // Delete all events in the category.
+        $DB->delete_records('event', array('categoryid' => $this->id));
+
         // Finally delete the category and it's context.
         $DB->delete_records('course_categories', array('id' => $this->id));
 
