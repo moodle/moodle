@@ -658,7 +658,8 @@ function enrol_get_my_courses($fields = null, $sort = 'visible DESC,sortorder AS
             $courseidsql .= "
                     SELECT DISTINCT e.courseid
                       FROM {enrol} e
-                     WHERE e.enrol = 'guest' AND e.password = '' AND e.status = :enabled2";
+                     WHERE e.enrol = 'guest' AND e.password = :emptypass AND e.status = :enabled2";
+            $params['emptypass'] = '';
             $params['enabled2'] = ENROL_INSTANCE_ENABLED;
 
             // Include courses where the current user is currently using guest access (may include
