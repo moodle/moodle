@@ -59,7 +59,7 @@ class iomad {
     public static function is_company_user () {
         global $USER, $DB, $SESSION;
 
-        if (empty($USER->id)) {
+        if (empty($USER->id) && empty($SESSION->currenteditingcompany)) {
             // We are installing.  Go no further.
             return false;
         }

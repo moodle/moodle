@@ -51,6 +51,7 @@ if (!$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'short
 }
 
 // Set the page theme.
+$SESSION->currenteditingcompany = $company->id;
 $SESSION->theme = $company->theme;
 
 //HTTPS is required in this page when $CFG->loginhttps enabled
