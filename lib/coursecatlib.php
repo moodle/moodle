@@ -298,12 +298,8 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      * @param   bool    $options.returnhidden Return categories even if they are hidden
      * @return  coursecat[]
      */
-    public static function get_all($options = null) {
+    public static function get_all($options = []) {
         global $DB;
-
-        if (null === $options) {
-            $options = [];
-        }
 
         $coursecatrecordcache = cache::make('core', 'coursecatrecords');
 
@@ -322,12 +318,11 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         $categories = [];
         $toset = [];
         foreach ($catrs as $record) {
-            \context_helper::preload_from_record($record);
             $category = new coursecat($record);
             $toset[$category->id] = $category;
 
             if (!empty($options['returnhidden']) || $category->is_uservisible()) {
-                $categories[$record->id] = new coursecat($record);
+                $categories[$record->id] = $category;
             }
         }
         $catrs->close();
@@ -1306,6 +1301,9 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
+     * Get the link used to view this course category.
+     *
+     * @return  \moodle_url
      */
     public function get_view_link() {
         return new \moodle_url('/course/index.php', [
@@ -2211,6 +2209,32 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         } else {
             return get_string('top');
         }
+    }
+
+    /**
+     * Get the nested name of this category, with all of it's parents.
+     *
+     * @param   bool    $includelinks Whether to wrap each name in the view link for that category.
+     * @param   string  $separator The string between each name.
+     * @param   array   $options Formatting options.
+     * @return  string
+     */
+    public function get_nested_name($includelinks = true, $separator = ' / ', $options = []) {
+        // Get the name of hierarchical name of this category.
+        $parents = $this->get_parents();
+        $categories = static::get_many($parents);
+        $categories[] = $this;
+
+        $names = array_map(function($category) use ($options, $includelinks) {
+            if ($includelinks) {
+                return html_writer::link($category->get_view_link(), $category->get_formatted_name($options));
+            } else {
+                return $category->get_formatted_name($options);
+            }
+
+        }, $categories);
+
+        return implode($separator, $names);
     }
 
     /**
