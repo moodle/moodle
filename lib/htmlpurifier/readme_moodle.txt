@@ -1,4 +1,4 @@
-Description of HTML Purifier v4.8.0 library import into Moodle
+Description of HTML Purifier v4.9.3 library import into Moodle
 
 * Make new (or delete contents of) /lib/htmlpurifier/
 * Copy everything from /library/ folder to /lib/htmlpurifier/
