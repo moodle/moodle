@@ -2906,7 +2906,12 @@ function xmldb_main_upgrade($oldversion) {
             ['hub', '%' . $DB->sql_like_escape('_' . $cleanoldhuburl)]);
         foreach ($entries as $entry) {
             $newname = substr($entry->name, 0, -strlen($cleanoldhuburl)) . $cleannewhuburl;
-            $DB->update_record('config_plugins', ['id' => $entry->id, 'name' => $newname]);
+            try {
+                $DB->update_record('config_plugins', ['id' => $entry->id, 'name' => $newname]);
+            } catch (dml_exception $e) {
+                // Entry with new name already exists, remove the one with an old name.
+                $DB->delete_records('config_plugins', ['id' => $entry->id]);
+            }
         }
 
         // Update published courses.
@@ -2940,6 +2945,20 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2017051502.01);
+    }
+
+    if ($oldversion < 2017051502.04) {
+
+        // Remove duplicate registrations.
+        $newhuburl = "https://moodle.net";
+        $registrations = $DB->get_records('registration_hubs', ['huburl' => $newhuburl], 'confirmed DESC, id ASC');
+        if (count($registrations) > 1) {
+            $reg = array_shift($registrations);
+            $DB->delete_records_select('registration_hubs', 'huburl = ? AND id <> ?', [$newhuburl, $reg->id]);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017051502.04);
     }
 
     return true;
