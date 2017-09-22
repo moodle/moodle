@@ -902,6 +902,7 @@ class core_calendar_external extends external_api {
         // TODO: Copy what we do in calendar/view.php.
         $context = \context_user::instance($USER->id);
         self::validate_context($context);
+        $PAGE->set_url('/calendar/');
 
         if ($courseid != SITEID && !empty($courseid)) {
             // Course ID must be valid and existing.

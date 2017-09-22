@@ -1217,16 +1217,19 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses,
     }
 
     if ((is_array($categories) && !empty($categories)) || is_numeric($categories)) {
-        if(!empty($whereclause)) $whereclause .= ' OR';
+        if (!empty($whereclause)) {
+            $whereclause .= ' OR';
+        }
         list($insqlcategories, $inparamscategories) = $DB->get_in_or_equal($categories, SQL_PARAMS_NAMED);
         $whereclause .= " (e.groupid = 0 AND e.courseid = 0 AND e.categoryid $insqlcategories)";
         $params = array_merge($params, $inparamscategories);
     } else if ($categories === true) {
         // Events from ALL categories.
-        if(!empty($whereclause)) $whereclause .= ' OR';
+        if (!empty($whereclause)) {
+            $whereclause .= ' OR';
+        }
         $whereclause .= ' (e.groupid = 0 AND e.courseid = 0 AND e.categoryid != 0)';
     }
-
 
     // Security check: if, by now, we have NOTHING in $whereclause, then it means
     // that NO event-selecting clauses were defined. Thus, we won't be returning ANY
@@ -3244,6 +3247,7 @@ function calendar_output_fragment_event_form($args) {
     $eventid = isset($args['eventid']) ? clean_param($args['eventid'], PARAM_INT) : null;
     $starttime = isset($args['starttime']) ? clean_param($args['starttime'], PARAM_INT) : null;
     $courseid = isset($args['courseid']) ? clean_param($args['courseid'], PARAM_INT) : null;
+    $categoryid = isset($args['categoryid']) ? clean_param($args['categoryid'], PARAM_INT) : null;
     $event = null;
     $hasformdata = isset($args['formdata']) && !empty($args['formdata']);
     $context = \context_user::instance($USER->id);
@@ -3276,6 +3280,9 @@ function calendar_output_fragment_event_form($args) {
             $data['eventtype'] = 'course';
             $data['courseid'] = $courseid;
             $data['groupcourseid'] = $courseid;
+        } else if (!empty($categoryid)) {
+            $data['eventtype'] = 'category';
+            $data['categoryid'] = $categoryid;
         }
         $mform->set_data($data);
     } else {
