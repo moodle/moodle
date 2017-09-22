@@ -431,4 +431,65 @@ class mod_chat_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($timenow - HOURSECS + 70, $result['sessions'][0]['sessionstart']);  // First not system message time.
         $this->assertEmpty($result['warnings']);
     }
+
+    /**
+     * Test get_session_messages
+     */
+    public function test_get_session_messages() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id));
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $studentrole->id);
+
+        // Start a chat and send a few messages.
+        $this->setUser($user1);
+        $result = mod_chat_external::login_user($chat->id);
+        $result = external_api::clean_returnvalue(mod_chat_external::login_user_returns(), $result);
+        $chatsid = $result['chatsid'];
+        mod_chat_external::send_chat_message($chatsid, 'hello!');
+        mod_chat_external::send_chat_message($chatsid, 'bye bye!');
+
+        $this->setUser($user2);
+        $result = mod_chat_external::login_user($chat->id);
+        $result = external_api::clean_returnvalue(mod_chat_external::login_user_returns(), $result);
+        $chatsid = $result['chatsid'];
+        mod_chat_external::send_chat_message($chatsid, 'greetings!');
+
+        // Pass showall parameter to indicate that we want not completed sessions.
+        $result = mod_chat_external::get_sessions($chat->id, 0, true);
+        $result = external_api::clean_returnvalue(mod_chat_external::get_sessions_returns(), $result);
+        $this->assertCount(1, $result['sessions']); // One session.
+
+        $sessionstart = $result['sessions'][0]['sessionstart'];
+        $sessionend = $result['sessions'][0]['sessionend'];
+        $result = mod_chat_external::get_session_messages($chat->id, $sessionstart, $sessionend);
+        $result = external_api::clean_returnvalue(mod_chat_external::get_session_messages_returns(), $result);
+        $this->assertCount(5, $result['messages']); // 2 system + 3 personal messages.
+        $found = 0;
+        foreach ($result['messages'] as $message) {
+            if (!$message['issystem']) {
+                if ($message['userid'] == $user1->id) {
+                    if ($message['message'] != 'hello!') {
+                        $this->assertEquals('bye bye!', $message['message']);
+                        $found++;
+                    }
+                } else {
+                    $this->assertEquals($user2->id, $message['userid']);
+                    $this->assertEquals('greetings!', $message['message']);
+                    $found++;
+                }
+            }
+        }
+        $this->assertEquals(2, $found);
+    }
 }
