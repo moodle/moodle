@@ -157,12 +157,13 @@ function email_reports_cron() {
                     }
                     $managerusers = $DB->get_records_sql("SELECT * FROM {" . $tempcomptablename . "}
                                                           WHERE userid IN (" . $departmentids . ")");
-                    $summary = get_string('firstname') . "," .
-                               get_string('lastname') . "," .
-                               get_string('email') . "," .
-                               get_string('department', 'block_iomad_company_admin') ."\n";
-                               get_string('course') . "," .
-                               get_string('timeenrolled', 'local_report_completion') ."\n";
+                    
+                    $summary = "<table><tr><th>" . get_string('firstname') . "</th>" .
+                               "<th>" . get_string('lastname') . "</th>" .
+                               "<th>" . get_string('email') . "</th>" .
+                               "<th>" . get_string('department', 'block_iomad_company_admin') ."</th>";
+                               "<th>" . get_string('course') . "</th>" .
+                               "<th>" . get_string('timeenrolled', 'local_report_completion') ."</th></tr>";
                     $foundusers = false;
                     foreach ($managerusers as $manageruser) {
                         if (!$user = $DB->get_record('user', array('id' => $manageruser->userid))) {
@@ -186,13 +187,14 @@ function email_reports_cron() {
                             continue;
                         }
                         $foundusers = true;
-                        $summary .= $manageruser->firstname . "," .
-                                    $manageruser->lastname . "," .
-                                    $manageruser->email . "," .
-                                    $manageruser->departmentname . "," .
-                                    $manageruser->coursename . "," .
-                                    date('d-m-y', $manageruser->timeenrolled) . "\n";
+                        $summary .= "<tr><td>" . $manageruser->firstname . "</td>" .
+                                    "<td>" . $manageruser->lastname . "</td>" .
+                                    "<td>" . $manageruser->email . "</td>" .
+                                    "<td>" . $manageruser->departmentname . "</td>" .
+                                    "<td>" . $manageruser->coursename . "</td>" .
+                                    "<td>" . date($CFG->iomad_date_format, $manageruser->timeenrolled) . "</td></tr>";
                     }
+                    $summary .= "</table>";
                     if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
                         $course = new stdclass();
                         $course->reporttext = $summary;
@@ -333,12 +335,12 @@ function email_reports_cron() {
                     }
                     $managerusers = $DB->get_records_sql("SELECT * FROM {" . $tempcomptablename . "}
                                                           WHERE userid IN (" . $departmentids . ")");
-                    $summary = get_string('firstname') . "," .
-                               get_string('lastname') . "," .
-                               get_string('email') . "," .
-                               get_string('department', 'block_iomad_company_admin') ."\n";
-                               get_string('course') . "," .
-                               get_string('completed', 'local_report_completion') ."\n";
+                    $summary = "<table><tr><th>" . get_string('firstname') . "</th>" .
+                               "<th>" . get_string('lastname') . "</th>" .
+                               "<th>" . get_string('email') . "</th>" .
+                               "<th>" . get_string('department', 'block_iomad_company_admin') ."</th>";
+                               "<th>" . get_string('course') . "</th>" .
+                               "<th>" . get_string('completed', 'local_report_completion') ."</th></tr>";
                     $foundusers = false;
                     foreach ($managerusers as $manageruser) {
                         if (!$user = $DB->get_record('user', array('id' => $manageruser->userid))) {
@@ -351,12 +353,6 @@ function email_reports_cron() {
 
                         $managerusers = $DB->get_records_sql("SELECT * FROM {" . $tempcomptablename . "}
                                                               WHERE userid IN (" . $departmentids . ")");
-                        $summary = get_string('firstname') . "," .
-                                   get_string('lastname') . "," .
-                                   get_string('email') . "," .
-                                   get_string('department', 'block_iomad_company_admin') ."\n";
-                                   get_string('course') . "," .
-                                   get_string('completed', 'local_report_completion') ."\n";
                         $foundusers = false;
                         foreach ($managerusers as $manageruser) {
                             if (!$user = $DB->get_record('user', array('id' => $manageruser->userid))) {
@@ -386,13 +382,14 @@ function email_reports_cron() {
                                 $datestring = date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n";
                             }
 
-                            $summary .= $manageruser->firstname . "," .
-                                        $manageruser->lastname . "," .
-                                        $manageruser->email . "," .
-                                        $manageruser->departmentname . "," .
-                                        $manageruser->coursename . "," .
-                                        $datestring;
+                            $summary .= "<tr><td>" . $manageruser->firstname . "</td>" .
+                                        "<td>" . $manageruser->lastname . "</td>" .
+                                        "<td>" . $manageruser->email . "</td>" .
+                                        "<td>" . $manageruser->departmentname . "</td>" .
+                                        "<td>" . $manageruser->coursename . "</td>" .
+                                        "<td>" . $datestring . "</td></tr>";
                         }
+                        $summary .= "</table>";
                     }
                     if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
                         $course = new stdclass();
@@ -429,12 +426,12 @@ function email_reports_cron() {
             }
             $managerusers = $DB->get_records_sql("SELECT * FROM {" . $tempcomptablename . "}
                                                   WHERE userid IN (" . $departmentids . ")");
-            $summary = get_string('firstname') . "," .
-                       get_string('lastname') . "," .
-                       get_string('email') . "," .
-                       get_string('department', 'block_iomad_company_admin') ."\n";
-                       get_string('course') . "," .
-                       get_string('completed', 'local_report_completion') ."\n";
+            $summary = "<table><tr><th>" . get_string('firstname') . "</th>" .
+                       "<th>" . get_string('lastname') . "</th>" .
+                       "<th>" . get_string('email') . "</th>" .
+                       "<th>" . get_string('department', 'block_iomad_company_admin') ."</th>";
+                       "<th>" . get_string('course') . "</th>" .
+                       "<th>" . get_string('completed', 'local_report_completion') ."</th></tr>";
             $foundusers = false;
             foreach ($managerusers as $manageruser) {
                 if (!$user = $DB->get_record('user', array('id' => $manageruser->userid))) {
@@ -445,6 +442,12 @@ function email_reports_cron() {
                     continue;
                 }
 
+                $summary = "<table><tr><th>" . get_string('firstname') . "</th>" .
+                           "<th>" . get_string('lastname') . "</th>" .
+                           "<th>" . get_string('email') . "</th>" .
+                           "<th>" . get_string('department', 'block_iomad_company_admin') ."</th>";
+                           "<th>" . get_string('course') . "</th>" .
+                           "<th>" . get_string('completed', 'local_report_completion') ."</th></tr>";
                 if ($managerusers = $DB->get_records_sql("SELECT u.firstname, u.lastname, u.email, c.fullname, cc.timecompleted
                                                           FROM {course_completions} cc
                                                           JOIN {user} u ON (cc.userid = u.id)
@@ -452,20 +455,18 @@ function email_reports_cron() {
                                                           WHERE cc.userid IN (" . $departmentids . ")
                                                           AND cc.timecompleted > :weekago",
                                                           array('weekago' => $timenow - (60 * 60 * 24 * 7)))) {
-                    $summary = get_string('firstname') . "," .
-                               get_string('lastname') . "," .
-                               get_string('email') . "," .
-                               get_string('course') . "," .
-                               get_string('completed', 'local_report_completion') ."\n";
                     foreach ($managerusers as $manageruser) {
                         $datestring = date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n";
 
-                        $summary .= $manageruser->firstname . "," .
-                                    $manageruser->lastname . "," .
-                                    $manageruser->email . "," .
-                                    $manageruser->coursename . "," .
-                                    $datestring;
+                        $summary .= "<tr><td>" . $manageruser->firstname . "</td>" .
+                                    "<td>" . $manageruser->lastname . "</td>" .
+                                    "<td>" . $manageruser->email . "</td>" .
+                                    "<td>" . $manageruser->departmentname . "</td>" .
+                                    "<td>" . $manageruser->coursename . "</td>" .
+                                    "<td>" . $datestring . "</td></tr>";
                     }
+                    $summary .= "</table>";
+                    
                     if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
                         $course = new stdclass();
                         $course->reporttext = $summary;
