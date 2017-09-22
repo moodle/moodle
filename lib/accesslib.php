@@ -2745,18 +2745,21 @@ function get_component_string($component, $contextlevel) {
  * Gets the list of roles assigned to this context and up (parents)
  * from the aggregation of:
  * a) the list of roles that are visible on user profile page and participants page (profileroles setting) and;
- * b) if applicable, those roles the current user can assign in the context.
+ * b) if applicable, those roles that are assigned in the context.
  *
  * @param context $context
  * @return array
  */
 function get_profile_roles(context $context) {
     global $CFG, $DB;
-    // If the current user can assign roles, then they can also see those assignable roles on the profile and participants page,
-    // provided the roles are assigned to at least 1 user in the context.
-    $policyroles = empty($CFG->profileroles) ? [] : array_map('trim', explode(',', $CFG->profileroles));
-    $assignableroles = array_keys(get_assignable_roles($context));
-    $rolesinscope = array_values(array_unique(array_merge($policyroles, $assignableroles)));
+    // If the current user can assign roles, then they can see all roles on the profile and participants page,
+    // provided the roles are assigned to at least 1 user in the context. If not, only the policy-defined roles.
+    if (has_capability('moodle/role:assign', $context)) {
+        $rolesinscope = array_keys(get_all_roles($context));
+    } else {
+        $rolesinscope = empty($CFG->profileroles) ? [] : array_map('trim', explode(',', $CFG->profileroles));
+    }
+
     if (empty($rolesinscope)) {
         return [];
     }
@@ -2825,11 +2828,13 @@ function get_user_roles_in_course($userid, $courseid) {
     } else {
         $context = context_course::instance($courseid);
     }
-    // If the current user can assign roles, then they can also see those assignable roles on the profile and participants page,
-    // provided the roles are assigned to at least 1 user in the context.
-    $policyroles = empty($CFG->profileroles) ? [] : array_map('trim', explode(',', $CFG->profileroles));
-    $assignableroles = array_keys(get_assignable_roles($context));
-    $rolesinscope = array_values(array_unique(array_merge($policyroles, $assignableroles)));
+    // If the current user can assign roles, then they can see all roles on the profile and participants page,
+    // provided the roles are assigned to at least 1 user in the context. If not, only the policy-defined roles.
+    if (has_capability('moodle/role:assign', $context)) {
+        $rolesinscope = array_keys(get_all_roles($context));
+    } else {
+        $rolesinscope = empty($CFG->profileroles) ? [] : array_map('trim', explode(',', $CFG->profileroles));
+    }
     if (empty($rolesinscope)) {
         return '';
     }
