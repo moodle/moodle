@@ -96,29 +96,14 @@ if ($start and $end and !$confirmdelete) {   // Show a full transcript.
     $currentgroup = groups_get_activity_group($cm, true);
     groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/report.php?id=$cm->id");
 
-    $params = array('currentgroup' => $currentgroup, 'chatid' => $chat->id, 'start' => $start, 'end' => $end);
-
-    // If the user is allocated to a group, only show messages from people
-    // in the same group, or no group.
-    if ($currentgroup) {
-        $groupselect = " AND (groupid = :currentgroup OR groupid = 0)";
-    } else {
-        $groupselect = "";
-    }
-
     if ($deletesession and has_capability('mod/chat:deletelog', $context)) {
         echo $OUTPUT->confirm(get_string('deletesessionsure', 'chat'),
                      "report.php?id=$cm->id&deletesession=1&confirmdelete=1&start=$start&end=$end",
                      "report.php?id=$cm->id");
     }
 
-    if (!$messages = $DB->get_records_select('chat_messages',
-                                             "chatid = :chatid AND timestamp >= :start AND timestamp <= :end $groupselect",
-                                             $params,
-                                             "timestamp ASC")) {
-
+    if (!$messages = chat_get_session_messages($chat->id, $currentgroup, $start, $end, 'timestamp ASC')) {
         echo $OUTPUT->heading(get_string('nomessages', 'chat'));
-
     } else {
         echo '<p class="boxaligncenter">'.userdate($start).' --> '. userdate($end).'</p>';
 
@@ -198,7 +183,7 @@ if ($deletesession and has_capability('mod/chat:deletelog', $context)
 
 // Get the messages.
 if (empty($messages)) {   // May have already got them above.
-    if (!$messages = $DB->get_records_select('chat_messages', "chatid = :chatid $groupselect", $params, "timestamp DESC")) {
+    if (!$messages = chat_get_session_messages($chat->id, $currentgroup, 0, 0, 'timestamp DESC')) {
         echo $OUTPUT->heading(get_string('nomessages', 'chat'), 3);
         echo $OUTPUT->footer();
         exit;

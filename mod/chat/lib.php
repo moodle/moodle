@@ -1538,3 +1538,40 @@ function chat_get_sessions($messages, $showall = false) {
     }
     return $sessions;
 }
+
+/**
+ * Return the messages of the given chat session.
+ *
+ * @param  int $chatid      the chat id
+ * @param  mixed $group     false if groups not used, int if groups used, 0 means all groups
+ * @param  int $start       the session start timestamp (0 to not filter by time)
+ * @param  int $end         the session end timestamp (0 to not filter by time)
+ * @param  string $sort     an order to sort the results in (optional, a valid SQL ORDER BY parameter)
+ * @return array session messages
+ * @since  Moodle 3.4
+ */
+function chat_get_session_messages($chatid, $group = false, $start = 0, $end = 0, $sort = '') {
+    global $DB;
+
+    $params = array('chatid' => $chatid);
+
+    // If the user is allocated to a group, only show messages from people in the same group, or no group.
+    if ($group) {
+        $groupselect = " AND (groupid = :currentgroup OR groupid = 0)";
+        $params['currentgroup'] = $group;
+    } else {
+        $groupselect = "";
+    }
+
+    $select = "chatid = :chatid $groupselect";
+    if (!empty($start)) {
+        $select .= ' AND timestamp >= :start';
+        $params['start'] = $start;
+    }
+    if (!empty($end)) {
+        $select .= ' AND timestamp <= :end';
+        $params['end'] = $end;
+    }
+
+    return $DB->get_records_select('chat_messages', $select, $params, $sort);
+}

@@ -681,16 +681,8 @@ class mod_chat_external extends external_api {
             }
         }
 
-        // If the user is allocated to a group, only show messages from people in the same group, or no group.
-        $queryparams = array('chatid' => $chat->id);
-        if ($groupid) {
-            $groupselect = " AND (groupid = :groupid OR groupid = 0)";
-            $queryparams['groupid'] = $groupid;
-        } else {
-            $groupselect = "";
-        }
-
-        if ($messages = $DB->get_records_select('chat_messages', "chatid = :chatid $groupselect", $queryparams, "timestamp DESC")) {
+        $messages = chat_get_session_messages($chat->id, $groupid, 0, 0, 'timestamp DESC');
+        if ($messages) {
             $chatsessions = chat_get_sessions($messages, $params['showall']);
             // Format sessions for external.
             foreach ($chatsessions as $session) {
