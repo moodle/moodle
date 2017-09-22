@@ -3298,7 +3298,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->setUser($user1);
         $this->assertEquals($expectedstudent, get_profile_roles($coursecontext));
 
-        // If we have no roles listed in the site policy, the teacher should only see the student and custom roles.
+        // If we have no roles listed in the site policy, the teacher should be able to see the assigned roles.
         $expectedteacher = [
             $studentrole->id => (object) [
                 'id' => $studentrole->id,
@@ -3313,7 +3313,14 @@ class core_accesslib_testcase extends advanced_testcase {
                 'shortname' => $customrole->shortname,
                 'sortorder' => $customrole->sortorder,
                 'coursealias' => null
-            ]
+            ],
+            $teacherrole->id => (object) [
+                'id' => $teacherrole->id,
+                'name' => '',
+                'shortname' => $teacherrole->shortname,
+                'sortorder' => $teacherrole->sortorder,
+                'coursealias' => null
+            ],
         ];
         set_config('profileroles', "");
         $this->setUser($user2);
