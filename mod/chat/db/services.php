@@ -81,5 +81,12 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => '',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_chat_get_sessions' => array(
+        'classname'     => 'mod_chat_external',
+        'methodname'    => 'get_sessions',
+        'description'   => 'Retrieves chat sessions for a given chat.',
+        'type'          => 'read',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     )
 );

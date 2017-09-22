@@ -612,4 +612,135 @@ class mod_chat_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function get_sessions_parameters() {
+        return new external_function_parameters(
+            array(
+                'chatid' => new external_value(PARAM_INT, 'Chat instance id.'),
+                'groupid' => new external_value(PARAM_INT, 'Get messages from users in this group.
+                                                0 means that the function will determine the user group', VALUE_DEFAULT, 0),
+                'showall' => new external_value(PARAM_BOOL, 'Whether to show completed sessions or not.', VALUE_DEFAULT, false),
+            )
+        );
+    }
+
+    /**
+     * Retrieves chat sessions for a given chat.
+     *
+     * @param int $chatid the chat instance id
+     * @param int $groupid filter messages by this group. 0 to determine the group.
+     * @param bool $showall whether to include incomplete sessions or not
+     * @return array of warnings and the sessions
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function get_sessions($chatid, $groupid = 0, $showall = false) {
+        global $DB;
+
+        $params = self::validate_parameters(self::get_sessions_parameters(),
+                                            array(
+                                                'chatid' => $chatid,
+                                                'groupid' => $groupid,
+                                                'showall' => $showall,
+                                            ));
+        $sessions = $warnings = array();
+
+        // Request and permission validation.
+        $chat = $DB->get_record('chat', array('id' => $params['chatid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($chat, 'chat');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        if (empty($chat->studentlogs) && !has_capability('mod/chat:readlog', $context)) {
+            throw new moodle_exception('nopermissiontoseethechatlog', 'chat');
+        }
+
+        if (!empty($params['groupid'])) {
+            $groupid = $params['groupid'];
+            // Determine is the group is visible to user.
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            // Check to see if groups are being used here.
+            if ($groupmode = groups_get_activity_groupmode($cm)) {
+                $groupid = groups_get_activity_group($cm);
+                // Determine is the group is visible to user (this is particullary for the group 0).
+                if (!groups_group_visible($groupid, $course, $cm)) {
+                    throw new moodle_exception('notingroup');
+                }
+            } else {
+                $groupid = 0;
+            }
+        }
+
+        // If the user is allocated to a group, only show messages from people in the same group, or no group.
+        $queryparams = array('chatid' => $chat->id);
+        if ($groupid) {
+            $groupselect = " AND (groupid = :groupid OR groupid = 0)";
+            $queryparams['groupid'] = $groupid;
+        } else {
+            $groupselect = "";
+        }
+
+        if ($messages = $DB->get_records_select('chat_messages', "chatid = :chatid $groupselect", $queryparams, "timestamp DESC")) {
+            $chatsessions = chat_get_sessions($messages, $params['showall']);
+            // Format sessions for external.
+            foreach ($chatsessions as $session) {
+                $sessionusers = array();
+                foreach ($session->sessionusers as $sessionuser => $usermessagecount) {
+                    $sessionusers[] = array(
+                        'userid' => $sessionuser,
+                        'messagecount' => $usermessagecount
+                    );
+                }
+                $session->sessionusers = $sessionusers;
+                $sessions[] = $session;
+            }
+        }
+
+        $result = array();
+        $result['sessions'] = $sessions;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function get_sessions_returns() {
+        return new external_single_structure(
+            array(
+                'sessions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'sessionstart' => new external_value(PARAM_INT, 'Session start time.'),
+                            'sessionend' => new external_value(PARAM_INT, 'Session end time.'),
+                            'sessionusers' => new external_multiple_structure(
+                                new external_single_structure(
+                                    array(
+                                        'userid' => new external_value(PARAM_INT, 'User id.'),
+                                        'messagecount' => new external_value(PARAM_INT, 'Number of messages in the session.'),
+                                    )
+                                ), 'Session users.'
+                            ),
+                            'iscomplete' => new external_value(PARAM_BOOL, 'Whether the session is completed or not.'),
+                        )
+                    ),
+                    'list of users'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

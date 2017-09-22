@@ -1485,7 +1485,7 @@ function mod_chat_core_calendar_provide_event_action(calendar_event $event,
  * Given a set of messages for a chat, return the completed chat sessions (including optionally not completed ones).
  *
  * @param  array $messages list of messages from a chat
- * @param  bool $showall   whether to include completed sessions or not
+ * @param  bool $showall   whether to include incomplete sessions or not
  * @return array           the list of sessions
  * @since  Moodle 3.4
  */
