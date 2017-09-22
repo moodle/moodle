@@ -40,9 +40,22 @@ use html_writer;
  */
 class registration {
 
-    /** @var Fields used in a site registration form */
+    /** @var Fields used in a site registration form.
+     * IMPORTANT: any new fields with non-empty defaults have to be added to CONFIRM_NEW_FIELDS */
     const FORM_FIELDS = ['name', 'description', 'contactname', 'contactemail', 'contactphone', 'imageurl', 'privacy', 'street',
         'regioncode', 'countrycode', 'geolocation', 'contactable', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail', 'language'];
+
+    /** @var List of new FORM_FIELDS or siteinfo fields added indexed by the version when they were added.
+     * If site was already registered, admin will be promted to confirm new registration data manually. Until registration is manually confirmed,
+     * the scheduled task updating registration will be paused.
+     * Keys of this array are not important as long as they increment, use current date to avoid confusions.
+     */
+    const CONFIRM_NEW_FIELDS = [
+        2017092200 => [
+            'commnews', // Receive communication news. This was added in 3.4 and is "On" by default. Admin must confirm or opt-out.
+            'mobileservicesenabled', 'mobilenotificationsenabled', 'registereduserdevices', 'registeredactiveuserdevices' // Mobile stats added in 3.4.
+        ],
+    ];
 
     /** @var Site privacy: not displayed */
     const HUB_SITENOTPUBLISHED = 'notdisplayed';
@@ -182,6 +195,8 @@ class registration {
             }
         }
 
+        // IMPORTANT: any new fields in siteinfo have to be added to the constant CONFIRM_NEW_FIELDS.
+
         return $siteinfo;
     }
 
@@ -192,6 +207,7 @@ class registration {
      * @return string
      */
     public static function get_stats_summary($siteinfo) {
+        $fieldsneedconfirm = self::get_new_registration_fields();
         $summary = html_writer::tag('p', get_string('sendfollowinginfo_help', 'hub')) .
             html_writer::start_tag('ul');
 
@@ -222,7 +238,8 @@ class registration {
         ];
 
         foreach ($senddata as $key => $str) {
-            $summary .= html_writer::tag('li', $str, ['class' => 'site' . $key]);
+            $class = in_array($key, $fieldsneedconfirm) ? ' needsconfirmation mark' : '';
+            $summary .= html_writer::tag('li', $str, ['class' => 'site' . $key . $class]);
         }
         $summary .= html_writer::end_tag('ul');
         return $summary;
@@ -238,6 +255,9 @@ class registration {
         foreach (self::FORM_FIELDS as $field) {
             set_config('site_' . $field . '_' . $cleanhuburl, $formdata->$field, 'hub');
         }
+        // Even if the the connection with moodle.net fails, admin has manually submitted the form which means they don't need
+        // to be redirected to the site registration page any more.
+        set_config('site_regupdateversion_' . $cleanhuburl, max(array_keys(self::CONFIRM_NEW_FIELDS)), 'hub');
     }
 
     /**
@@ -275,6 +295,11 @@ class registration {
 
         if (!$registration = self::get_registration()) {
             mtrace(get_string('registrationwarning', 'admin'));
+            return;
+        }
+
+        if (self::get_new_registration_fields()) {
+            mtrace(get_string('pleaserefreshregistrationnewdata', 'admin'));
             return;
         }
 
@@ -329,10 +354,11 @@ class registration {
      * Moodle.net will check that the site is accessible, register it and redirect back
      * to /admin/registration/confirmregistration.php
      *
+     * @param string $returnurl
      * @throws \coding_exception
      */
-    public static function register() {
-        global $DB;
+    public static function register($returnurl) {
+        global $DB, $SESSION;
 
         if (self::is_registered()) {
             // Caller of this method must make sure that site is not registered.
@@ -356,6 +382,7 @@ class registration {
         $params = self::get_site_info();
         $params['token'] = $hub->token;
 
+        $SESSION->registrationredirect = $returnurl;
         redirect(new moodle_url(HUB_MOODLEORGHUBURL . '/local/hub/siteregistration.php', $params));
     }
 
@@ -448,6 +475,74 @@ class registration {
             // Ignore error, we only need it for displaying information about moodle.net, if this request
             // fails, it's not a big deal.
             return null;
+        }
+    }
+
+    /**
+     * Does admin need to be redirected to the registration page after install?
+     *
+     * @param bool|null $markasviewed if set to true will mark the registration form as viewed and admin will not be redirected
+     *     to the registration form again (regardless of whether the site was registered or not).
+     * @return bool
+     */
+    public static function show_after_install($markasviewed = null) {
+        global $CFG;
+        if (self::is_registered()) {
+            $showregistration = false;
+            $markasviewed = true;
+        } else {
+            $showregistration = !empty($CFG->registrationpending);
+            if ($showregistration) {
+                $host = parse_url($CFG->wwwroot, PHP_URL_HOST);
+                if ($host === 'localhost' || preg_match('|^127\.\d+\.\d+\.\d+$|', $host)) {
+                    // If it's a localhost, don't redirect to registration, it won't work anyway.
+                    $showregistration = false;
+                    $markasviewed = true;
+                }
+            }
+        }
+        if ($markasviewed !== null) {
+            set_config('registrationpending', !$markasviewed);
+        }
+        return $showregistration;
+    }
+
+    /**
+     * Returns the list of the fields in the registration form that were added since registration or last manual update
+     *
+     * If this list is not empty the scheduled task will be paused and admin will be reminded to update registration manually.
+     *
+     * @return array
+     */
+    public static function get_new_registration_fields() {
+        $fieldsneedconfirm = [];
+        if (!self::is_registered()) {
+            // Nothing to update if site is not registered.
+            return $fieldsneedconfirm;
+        }
+
+        $cleanhuburl = clean_param(HUB_MOODLEORGHUBURL, PARAM_ALPHANUMEXT);
+        $lastupdated = (int)get_config('hub', 'site_regupdateversion_' . $cleanhuburl);
+        foreach (self::CONFIRM_NEW_FIELDS as $version => $fields) {
+            if ($version > $lastupdated) {
+                $fieldsneedconfirm = array_merge($fieldsneedconfirm, $fields);
+            }
+        }
+        return $fieldsneedconfirm;
+    }
+
+    /**
+     * Redirect to the site registration form if it's a new install or registration needs updating
+     *
+     * @param string|moodle_url $url
+     */
+    public static function registration_reminder($url) {
+        if (!has_capability('moodle/site:config', context_system::instance())) {
+            return;
+        }
+        if (self::show_after_install() || self::get_new_registration_fields()) {
+            $returnurl = new moodle_url($url);
+            redirect(new moodle_url('/admin/registration/index.php', ['returnurl' => $returnurl->out_as_local_url(false)]));
         }
     }
 }

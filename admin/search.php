@@ -18,6 +18,9 @@ if ($hassiteconfig && moodle_needs_upgrading()) {
     redirect(new moodle_url('/admin/index.php'));
 }
 
+// If site registration needs updating, redirect.
+\core\hub\registration::registration_reminder('/admin/search.php');
+
 admin_externalpage_setup('search', '', array('query' => $query)); // now hidden page
 
 $adminroot = admin_get_root(); // need all settings here

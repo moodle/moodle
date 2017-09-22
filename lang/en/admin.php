@@ -843,6 +843,7 @@ $string['pgclusterdescription'] = 'PostgreSQL version/cluster parameter for comm
 $string['phpfloatproblem'] = 'Detected unexpected problem in handling of PHP float numbers - {$a}';
 $string['pleaserefreshregistration'] = 'Your site is registered. Registration last updated {$a}.<br />The \'Site registration\' scheduled task keeps your registration up to date. You can also manually update your registration at any time.';
 $string['pleaserefreshregistrationunknown'] = 'Your site has been registered but the registration date is unknown. Please update your registration using the \'Update registration\' button or ensure that the \'Site registration\' scheduled task is enabled so your registration is automatically updated.';
+$string['pleaserefreshregistrationnewdata'] = 'Registration information has been changed. Please confirm it using the \'Update registration\' button.';
 $string['plugin'] = 'Plugin';
 $string['plugins'] = 'Plugins';
 $string['pluginscheck'] = 'Plugin dependencies check';

@@ -68,6 +68,9 @@ class site_registration_form extends \moodleform {
 
         ]);
 
+        // Fields that need to be highlighted.
+        $highlightfields = registration::get_new_registration_fields();
+
         $mform->addElement('header', 'moodle', get_string('registrationinfo', 'hub'));
 
         $mform->addElement('text', 'name', get_string('sitename', 'hub'),
@@ -142,14 +145,14 @@ class site_registration_form extends \moodleform {
         $this->add_select_with_email('commnews', 'sitecommnews', [
             0 => get_string('sitecommnewsno', 'hub'),
             1 => get_string('sitecommnewsyes', 'hub'),
-        ]);
+        ], in_array('commnews', $highlightfields));
 
         // TODO site logo.
         $mform->addElement('hidden', 'imageurl', ''); // TODO: temporary.
         $mform->setType('imageurl', PARAM_URL);
 
         $mform->addElement('header', 'sitestats', get_string('sendfollowinginfo', 'hub'));
-        $mform->setExpanded('sitestats', false);
+        $mform->setExpanded('sitestats', !empty($highlightfields));
         $mform->addElement('static', 'urlstring', get_string('siteurl', 'hub'), $siteinfo['url']);
         $mform->addHelpButton('urlstring', 'siteurl', 'hub');
 
@@ -167,6 +170,9 @@ class site_registration_form extends \moodleform {
 
         $this->add_action_buttons(false, $buttonlabel);
 
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+
         $this->set_data($siteinfo);
     }
 
@@ -176,8 +182,9 @@ class site_registration_form extends \moodleform {
      * @param string $elementname
      * @param string $stridentifier
      * @param array|null $options options for the select element
+     * @param bool $highlight highlight as a new field
      */
-    protected function add_select_with_email($elementname, $stridentifier, $options = null) {
+    protected function add_select_with_email($elementname, $stridentifier, $options = null, $highlight = false) {
         $mform = $this->_form;
 
         if ($options === null) {
@@ -192,7 +199,10 @@ class site_registration_form extends \moodleform {
             $mform->createElement('text', $elementname . 'email', get_string('email'))
         ];
 
-        $mform->addElement('group', $elementname . 'group', get_string($stridentifier, 'hub'), $group, '', false);
+        $element = $mform->addElement('group', $elementname . 'group', get_string($stridentifier, 'hub'), $group, '', false);
+        if ($highlight) {
+            $element->setAttributes(['class' => $element->getAttribute('class') . ' needsconfirmation mark']);
+        }
         $mform->hideIf($elementname . 'email', $elementname, 'eq', 0);
         $mform->hideIf($elementname . 'newemail', $elementname, 'eq', 0);
         $mform->hideIf($elementname . 'email', $elementname . 'newemail', 'notchecked');
@@ -260,6 +270,17 @@ class site_registration_form extends \moodleform {
             unset($data->commnewsnewemail);
             // Always return 'contactable'.
             $data->contactable = empty($data->contactable) ? 0 : 1;
+
+            if (debugging('', DEBUG_DEVELOPER)) {
+                // Display debugging message for developers who added fields to the form and forgot to add them to registration::FORM_FIELDS.
+                $keys = array_diff(array_keys((array)$data), ['returnurl', 'mform_isexpanded_id_sitestats', 'submitbutton', 'update']);
+                if ($extrafields = array_diff($keys, registration::FORM_FIELDS)) {
+                    debugging('Found extra fields in the form results: ' . join(', ', $extrafields), DEBUG_DEVELOPER);
+                }
+                if ($missingfields = array_diff(registration::FORM_FIELDS, $keys)) {
+                    debugging('Some fields are missing in the form results: ' . join(', ', $missingfields), DEBUG_DEVELOPER);
+                }
+            }
         }
         return $data;
     }
