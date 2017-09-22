@@ -67,7 +67,7 @@ class url_finder {
     private function domain_swap($table, $column, $domain) {
         global $DB;
 
-        $renames = (array)json_decode(get_config('tool_httpsreplace', 'renames'));
+        $renames = json_decode(get_config('tool_httpsreplace', 'renames'), true);
 
         $search = "http://$domain";
         $replace = "https://$domain";
