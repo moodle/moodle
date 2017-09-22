@@ -51,12 +51,23 @@ define(['jquery', 'core/form-autocomplete', 'core/str', 'core/notification'],
                 component: 'moodle'
             }
         ];
+
         Str.get_strings(stringkeys).done(function(langstrings) {
             var placeholder = langstrings[0];
             var noSelectionString = langstrings[1];
             Autocomplete.enhance(SELECTORS.UNIFIED_FILTERS, true, 'core_user/unified_filter_datasource', placeholder,
                 false, true, noSelectionString, true);
         }).fail(Notification.exception);
+
+        var last = $(SELECTORS.UNIFIED_FILTERS).val();
+        $(SELECTORS.UNIFIED_FILTERS).on('change', function() {
+            var current = $(this).val();
+
+            if (last.join(',') != current.join(',')) {
+                this.form.submit();
+            }
+            last = current;
+        });
     };
 
     return /** @alias module:core/form-autocomplete */ {
