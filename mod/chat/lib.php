@@ -1480,3 +1480,61 @@ function mod_chat_core_calendar_provide_event_action(calendar_event $event,
         );
     }
 }
+
+/**
+ * Given a set of messages for a chat, return the completed chat sessions (including optionally not completed ones).
+ *
+ * @param  array $messages list of messages from a chat
+ * @param  bool $showall   whether to include completed sessions or not
+ * @return array           the list of sessions
+ * @since  Moodle 3.4
+ */
+function chat_get_sessions($messages, $showall = false) {
+    $sessions     = array();
+    $sessiongap   = 5 * 60;    // 5 minutes silence means a new session.
+    $sessionend   = 0;
+    $sessionstart = 0;
+    $sessionusers = array();
+    $lasttime     = 0;
+
+    $messagesleft = count($messages);
+
+    foreach ($messages as $message) {  // We are walking BACKWARDS through the messages.
+
+        $messagesleft --;              // Countdown.
+
+        if (!$lasttime) {
+            $lasttime = $message->timestamp;
+        }
+        if (!$sessionend) {
+            $sessionend = $message->timestamp;
+        }
+        if ((($lasttime - $message->timestamp) < $sessiongap) and $messagesleft) {  // Same session.
+            if ($message->userid and !$message->issystem) {       // Remember user and count messages.
+                if (empty($sessionusers[$message->userid])) {
+                    $sessionusers[$message->userid] = 1;
+                } else {
+                    $sessionusers[$message->userid] ++;
+                }
+            }
+        } else {
+            $sessionstart = $lasttime;
+
+            $iscomplete = ($sessionend - $sessionstart > 60 and count($sessionusers) > 1);
+            if ($showall or $iscomplete) {
+                $sessions[] = (object) array(
+                    'sessionstart' => $sessionstart,
+                    'sessionend' => $sessionend,
+                    'sessionusers' => $sessionusers,
+                    'iscomplete' => $iscomplete,
+                );
+            }
+
+            $sessionend = $message->timestamp;
+            $sessionusers = array();
+            $sessionusers[$message->userid] = 1;
+        }
+        $lasttime = $message->timestamp;
+    }
+    return $sessions;
+}

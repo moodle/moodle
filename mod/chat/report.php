@@ -212,92 +212,58 @@ if ($showall) {
 }
 
 // Show all the sessions.
-
-$sessiongap        = 5 * 60;    // 5 minutes silence means a new session.
-$sessionend        = 0;
-$sessionstart      = 0;
-$sessionusers      = array();
-$lasttime          = 0;
 $completesessions  = 0;
-
-$messagesleft = count($messages);
 
 echo '<div class="list-group">';
 
-foreach ($messages as $message) {  // We are walking BACKWARDS through the messages.
+$sessions = chat_get_sessions($messages, $showall);
 
-    $messagesleft --;              // Countdown.
+foreach ($sessions as $session) {
+    echo '<div class="list-group-item">';
+    echo '<p>'.userdate($session->sessionstart).' --> '. userdate($session->sessionend).'</p>';
 
-    if (!$lasttime) {
-        $lasttime = $message->timestamp;
-    }
-    if (!$sessionend) {
-        $sessionend = $message->timestamp;
-    }
-    if ((($lasttime - $message->timestamp) < $sessiongap) and $messagesleft) {  // Same session.
-        if ($message->userid and !$message->issystem) {     // Remember user and count messages.
-            if (empty($sessionusers[$message->userid])) {
-                $sessionusers[$message->userid] = 1;
-            } else {
-                $sessionusers[$message->userid] ++;
-            }
+    echo $OUTPUT->box_start();
+
+    arsort($session->sessionusers);
+    foreach ($session->sessionusers as $sessionuser => $usermessagecount) {
+        if ($user = $DB->get_record('user', array('id' => $sessionuser))) {
+            $OUTPUT->user_picture($user, array('courseid' => $course->id));
+            echo '&nbsp;'.fullname($user, true); // XXX TODO  use capability instead of true.
+            echo "&nbsp;($usermessagecount)<br />";
         }
-    } else {
-        $sessionstart = $lasttime;
-
-        $iscomplete = ($sessionend - $sessionstart > 60 and count($sessionusers) > 1);
-        if ($showall or $iscomplete) {
-
-            echo '<div class="list-group-item">';
-            echo '<p>'.userdate($sessionstart).' --> '. userdate($sessionend).'</p>';
-
-            echo $OUTPUT->box_start();
-
-            arsort($sessionusers);
-            foreach ($sessionusers as $sessionuser => $usermessagecount) {
-                if ($user = $DB->get_record('user', array('id' => $sessionuser))) {
-                    $OUTPUT->user_picture($user, array('courseid' => $course->id));
-                    echo '&nbsp;'.fullname($user, true); // XXX TODO  use capability instead of true.
-                    echo "&nbsp;($usermessagecount)<br />";
-                }
-            }
-
-            echo '<p align="right">';
-            echo "<a href=\"report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend\">$strseesession</a>";
-            $participatedcap = (array_key_exists($USER->id, $sessionusers)
-                               && has_capability('mod/chat:exportparticipatedsession', $context));
-            if (!empty($CFG->enableportfolios) && ($canexportsess || $participatedcap)) {
-                require_once($CFG->libdir . '/portfoliolib.php');
-                $buttonoptions  = array(
-                    'id'    => $cm->id,
-                    'start' => $sessionstart,
-                    'end'   => $sessionend,
-                );
-                $button = new portfolio_add_button();
-                $button->set_callback_options('chat_portfolio_caller', $buttonoptions, 'mod_chat');
-                $portfoliobutton = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
-                if (!empty($portfoliobutton)) {
-                    echo '<br />' . $portfoliobutton;
-                }
-            }
-            if (has_capability('mod/chat:deletelog', $context)) {
-                $deleteurl = "report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend&amp;deletesession=1";
-                echo "<br /><a href=\"$deleteurl\">$strdeletesession</a>";
-            }
-            echo '</p>';
-            echo $OUTPUT->box_end();
-            echo '</div>';
-        }
-        if ($iscomplete) {
-            $completesessions++;
-        }
-
-        $sessionend = $message->timestamp;
-        $sessionusers = array();
-        $sessionusers[$message->userid] = 1;
     }
-    $lasttime = $message->timestamp;
+
+    echo '<p align="right">';
+    echo "<a href=\"report.php?id=$cm->id&amp;start=$session->sessionstart&amp;end=$session->sessionend\">$strseesession</a>";
+    $participatedcap = (array_key_exists($USER->id, $session->sessionusers)
+                       && has_capability('mod/chat:exportparticipatedsession', $context));
+    if (!empty($CFG->enableportfolios) && ($canexportsess || $participatedcap)) {
+        require_once($CFG->libdir . '/portfoliolib.php');
+        $buttonoptions  = array(
+            'id'    => $cm->id,
+            'start' => $session->sessionstart,
+            'end'   => $session->sessionend,
+        );
+        $button = new portfolio_add_button();
+        $button->set_callback_options('chat_portfolio_caller', $buttonoptions, 'mod_chat');
+        $portfoliobutton = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
+        if (!empty($portfoliobutton)) {
+            echo '<br />' . $portfoliobutton;
+        }
+    }
+    if (has_capability('mod/chat:deletelog', $context)) {
+        $deleteurl = "report.php?id=$cm->id&amp;start=$session->sessionstart&amp;end=$session->sessionend&amp;deletesession=1";
+        echo "<br /><a href=\"$deleteurl\">$strdeletesession</a>";
+    }
+    echo '</p>';
+    echo $OUTPUT->box_end();
+    echo '</div>';
+
+    if ($session->iscomplete) {
+        $completesessions++;
+    }
 }
+
 echo '</div>';
 
 if (!empty($CFG->enableportfolios) && $canexportsess) {
