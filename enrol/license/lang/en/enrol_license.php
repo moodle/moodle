@@ -38,6 +38,7 @@ $string['groupkey_help'] = 'In addition to restricting access to the course to o
 
 To use a group enrolment key, an enrolment key must be specified in the course settings as well as the group enrolment key in the group settings.';
 $string['licensenolongervalid'] = 'Your license for this course is no longer valid';
+$string['licensenotyetvalid'] = 'Your access to this course will be available on {$a}';
 $string['license:unenrolself'] = 'User can unenrol themselves';
 $string['longtimenosee'] = 'Unenrol inactive after';
 $string['longtimenosee_help'] = 'If users haven\'t accessed a course for a long time, then they are automatically unenrolled. This parameter specifies that time limit.  This is sepearate to the enrolement time which is set by license itself.';

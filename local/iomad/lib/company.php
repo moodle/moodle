@@ -2827,12 +2827,20 @@ class company {
         $license = new stdclass();
         $license->length = $licenserecord->validlength;
         $license->valid = date($CFG->iomad_date_format, $licenserecord->expirydate);
-                                
-        // Send out the email.
-        EmailTemplate::send('license_removed', array('course' => $course,
-                                                     'user' => $user,
-                                                     'license' => $license));
 
+        if ($emailrec = $DB->get_record('email', array('userid' => $user->id,
+                                                       'courseid' => $course->id,
+                                                       'templatename' => 'license_allocated',
+                                                       'sent' => null))) {
+            // Delete the email as it hasn't been sent.
+            $DB->delete_record('email', array('id' => $emailrec->id));
+        } else {
+            // Send out the email.
+            EmailTemplate::send('license_removed', array('course' => $course,
+                                                         'user' => $user,
+                                                         'license' => $license));
+
+        }
         // Update the license usage.
         self::update_license_usage($licenseid);
 

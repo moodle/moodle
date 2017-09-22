@@ -215,6 +215,10 @@ class enrol_license_plugin extends enrol_plugin {
             return $OUTPUT->notification(get_string('licensenolongervalid', 'enrol_license'));
         }
 
+        if (time() < $license->startdate) {
+            return $OUTPUT->notification(get_string('licensenotyetvalid', 'enrol_license', date($CFG->iomad_date_format, $license->startdate)));
+        }
+
         require_once("$CFG->dirroot/enrol/license/locallib.php");
         require_once("$CFG->dirroot/group/lib.php");
 

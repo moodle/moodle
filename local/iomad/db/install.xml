@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad/db" VERSION="20170825" COMMENT="XMLDB file for Moodle local/iomad"
+<XMLDB PATH="local/iomad/db" VERSION="20170910" COMMENT="XMLDB file for Moodle local/iomad"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -70,12 +70,13 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="companylicense" COMMENT="To hold the Perficio license allocations">
+    <TABLE NAME="companylicense" COMMENT="To hold the Iomad license allocations">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="license name"/>
         <FIELD NAME="allocation" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of designated licenses"/>
         <FIELD NAME="validlength" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Days license is usable after allocation"/>
+        <FIELD NAME="startdate" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="the date the license is valid from"/>
         <FIELD NAME="expirydate" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Date licenses can no longer be allocated"/>
         <FIELD NAME="used" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of allocated licenses"/>
         <FIELD NAME="companyid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="Company foreign key"/>

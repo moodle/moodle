@@ -159,8 +159,13 @@ class company_license_form extends company_moodleform {
             $mform->addHelpButton('type', 'licensetype', 'block_iomad_company_admin');
             $mform->addElement('selectyesno', 'program', get_string('licenseprogram', 'block_iomad_company_admin'));
             $mform->addHelpButton('program', 'licenseprogram', 'block_iomad_company_admin');
-            $mform->addElement('date_selector', 'expirydate', get_string('licenseexpires', 'block_iomad_company_admin'));
+            $mform->addElement('date_selector', 'startdate', get_string('licensestartdate', 'block_iomad_company_admin'));
 
+            $mform->addHelpButton('startdate', 'licensestartdate', 'block_iomad_company_admin');
+            $mform->addRule('startdate', get_string('missingstartdate', 'block_iomad_company_admin'),
+                            'required', null, 'client');
+
+            $mform->addElement('date_selector', 'expirydate', get_string('licenseexpires', 'block_iomad_company_admin'));
             $mform->addHelpButton('expirydate', 'licenseexpires', 'block_iomad_company_admin');
             $mform->addRule('expirydate', get_string('missinglicenseexpires', 'block_iomad_company_admin'),
                             'required', null, 'client');
@@ -172,6 +177,8 @@ class company_license_form extends company_moodleform {
         } else {
             $mform->addElement('hidden', 'type', $this->parentlicense->type);
             $mform->setType('type', PARAM_INT);
+            $mform->addElement('hidden', 'startdate', $licenseinfo->startdate);
+            $mform->setType('expirydate', PARAM_INT);
             $mform->addElement('hidden', 'expirydate', $licenseinfo->expirydate);
             $mform->setType('expirydate', PARAM_INT);
             $mform->addElement('hidden', 'validlength', $licenseinfo->validlength);
@@ -233,6 +240,10 @@ class company_license_form extends company_moodleform {
             if ($used > $data['allocation']) {
                 $errors['allocation'] = get_string('licensenotenough', 'block_iomad_company_admin');
             }
+        }
+
+        if ($data['startdate'] > $data['expirydate']) {
+            $errors['startdate'] = get_string('invalidstartdate', 'block_iomad_company_admin');
         }
 
         if (!empty($data['parentid'])) {
@@ -402,6 +413,7 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             $licensedata['allocation'] = $data->allocation * count($data->licensecourses);
         }
         $licensedata['expirydate'] = $data->expirydate;
+        $licensedata['startdate'] = $data->startdate;
         if (empty($data->languages)) {
             $data->languages = array();
         }
@@ -452,6 +464,9 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             $eventother['oldcourses'] = json_encode($oldcourses);
             if ($currlicensedata->program != $data->program) {
                 $eventother['programchange'] = true;
+            }
+            if ($currlicensedata->startdate != $data->startdate) {
+                $eventother['oldstartdate'] = $currlicensedata->startdate;
             }
             $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => context_system::instance(),
                                                                                             'userid' => $USER->id,

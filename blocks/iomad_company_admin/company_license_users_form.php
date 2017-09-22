@@ -195,6 +195,9 @@ class company_license_users_form extends moodleform {
 
         $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
         $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
+        if ($this->license->startdate > time()) {
+            $mform->setDefault('due', $this->license->startdate);
+        }
 
         if ($this->error == 1) {
             $mform->addElement('html', "<div class='form-group row has-danger fitem'>
@@ -250,169 +253,193 @@ class company_license_users_form extends moodleform {
         $mform->addElement('html', get_string('licenseusedwarning', 'block_iomad_company_admin'));
     }
 
+    public function validation($data, $files) {
+
+        $errors = array();
+
+        // if we are removing we don't care about the date.
+        if (optional_param('removeall', false, PARAM_BOOL) || optional_param('remove', false, PARAM_BOOL)) {
+            $removing = true;
+        } else {
+            $removing = false;
+        }
+
+        // Is the due date valid
+        if ($data['due'] > $this->license->expirydate && !$removing) {
+            $errors['due'] = get_string('licensedueafterexpirywarning', 'block_iomad_company_admin');
+        }
+        if ($data['due'] < $this->license->startdate && !$removing) {
+            $errors['due'] = get_string('licenseduebeforestartwarning', 'block_iomad_company_admin');
+        }
+
+        return $errors;
+    }
+
     public function process() {
         global $DB, $CFG;
 
-        $this->create_user_selectors();
-        $courses = array();
-        if (empty($this->selectedcourses)) {
-            $this->selectedcourses = array_keys($this->courseselect);
-        }
-        if (!is_array($this->selectedcourses)) {
-            $courses[] = $this->selectedcourses;
-        } else {
-            $courses = $this->selectedcourses;
-        }
-        $addall = false;
-        $add = false;
-        if (optional_param('addall', false, PARAM_BOOL) && confirm_sesskey()) {
-            $search = optional_param('potentialcourseusers_searchtext', '', PARAM_RAW);
-            // Process incoming allocations.
-            $potentialusers = $this->potentialusers->find_users($search, true);
-            $userstoassign = array_pop($potentialusers);
-            $addall = true;
-        }
-        if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
-            $userstoassign = $this->potentialusers->get_selected_users();
-            $add = true;
-        }
-        if ($add || $addall) {
-            $numberoflicenses = $this->license->allocation;
-            $count = $this->license->used;
-            $licenserecord = (array) $this->license;
-
-            if (!empty($userstoassign) && !empty($courses)) {
-                $required = count($userstoassign) * count($courses);
-                if ($count + $required > $numberoflicenses) {
-                    redirect(new moodle_url("/blocks/iomad_company_admin/company_license_users_form.php",
-                                             array('licenseid' => $this->licenseid, 'error' => 1)));
-
-                }
-                foreach ($userstoassign as $adduser) {
-
-                    // Check the userid is valid.
-                    if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
-                        print_error('invaliduserdepartment', 'block_iomad_company_management');
+        if ($this->is_validated()) {
+            $this->create_user_selectors();
+            $courses = array();
+            if (empty($this->selectedcourses)) {
+                $this->selectedcourses = array_keys($this->courseselect);
+            }
+            if (!is_array($this->selectedcourses)) {
+                $courses[] = $this->selectedcourses;
+            } else {
+                $courses = $this->selectedcourses;
+            }
+            $addall = false;
+            $add = false;
+            if (optional_param('addall', false, PARAM_BOOL) && confirm_sesskey()) {
+                $search = optional_param('potentialcourseusers_searchtext', '', PARAM_RAW);
+                // Process incoming allocations.
+                $potentialusers = $this->potentialusers->find_users($search, true);
+                $userstoassign = array_pop($potentialusers);
+                $addall = true;
+            }
+            if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
+                $userstoassign = $this->potentialusers->get_selected_users();
+                $add = true;
+            }
+            if ($add || $addall) {
+                $numberoflicenses = $this->license->allocation;
+                $count = $this->license->used;
+                $licenserecord = (array) $this->license;
+    
+                if (!empty($userstoassign) && !empty($courses)) {
+                    $required = count($userstoassign) * count($courses);
+                    if ($count + $required > $numberoflicenses) {
+                        redirect(new moodle_url("/blocks/iomad_company_admin/company_license_users_form.php",
+                                                 array('licenseid' => $this->licenseid, 'error' => 1)));
+    
                     }
-                    foreach ($courses as $courseid) {
-                        $allow = true;
-                        if ($allow) {
-                            $recordarray = array('licensecourseid' => $courseid,
-                                                 'userid' => $adduser->id,
-                                                 'licenseid' => $this->licenseid,
-                                                 'isusing' => 0);
-
-                            // Check if we are not assigning multiple times.
-                            if (!$DB->get_record('companylicense_users', $recordarray)) {
-                                $recordarray['issuedate'] = time();
-                                $DB->insert_record('companylicense_users', $recordarray);
-                                $count++;
-                                $due = optional_param_array('due', array(), PARAM_INT);
-                                if (!empty($due)) {
-                                    $duedate = strtotime($due['year'] . '-' . $due['month'] . '-' . $due['day'] . ' ' . $due['hour'] . ':' . $due['minute']);
-                                } else {
-                                    $duedate = 0;
+                    foreach ($userstoassign as $adduser) {
+    
+                        // Check the userid is valid.
+                        if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
+                            print_error('invaliduserdepartment', 'block_iomad_company_management');
+                        }
+                        foreach ($courses as $courseid) {
+                            $allow = true;
+                            if ($allow) {
+                                $recordarray = array('licensecourseid' => $courseid,
+                                                     'userid' => $adduser->id,
+                                                     'licenseid' => $this->licenseid,
+                                                     'isusing' => 0);
+    
+                                // Check if we are not assigning multiple times.
+                                if (!$DB->get_record('companylicense_users', $recordarray)) {
+                                    $recordarray['issuedate'] = time();
+                                    $DB->insert_record('companylicense_users', $recordarray);
+                                    $count++;
+                                    $due = optional_param_array('due', array(), PARAM_INT);
+                                    if (!empty($due)) {
+                                        $duedate = strtotime($due['year'] . '-' . $due['month'] . '-' . $due['day'] . ' ' . $due['hour'] . ':' . $due['minute']);
+                                    } else {
+                                        $duedate = 0;
+                                    }
+    
+                                    // Create an event.
+                                    $eventother = array('licenseid' => $this->license->id,
+                                                        'duedate' => $duedate);
+                                    $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
+                                                                                                                  'objectid' => $this->license->id,
+                                                                                                                  'courseid' => $courseid,
+                                                                                                                  'userid' => $adduser->id,
+                                                                                                                  'other' => $eventother));
+                                    $event->trigger();
                                 }
-
-                                // Create an event.
-                                $eventother = array('licenseid' => $this->license->id,
-                                                    'duedate' => $duedate);
-                                $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
-                                                                                                              'objectid' => $this->license->id,
-                                                                                                              'courseid' => $courseid,
-                                                                                                              'userid' => $adduser->id,
-                                                                                                              'other' => $eventother));
-                                $event->trigger();
                             }
                         }
                     }
+    
+                    $this->potentialusers->invalidate_selected_users();
+                    $this->currentusers->invalidate_selected_users();
                 }
-
-                $this->potentialusers->invalidate_selected_users();
-                $this->currentusers->invalidate_selected_users();
             }
-        }
-
-        $removeall = false;;
-        $remove = false;
-        $licensestounassign = array();
-        $licenserecords = array();
-
-        if (optional_param('removeall', false, PARAM_BOOL) && confirm_sesskey()) {
-            $search = optional_param('currentlyenrolledusers_searchtext', '', PARAM_RAW);
-            // Process incoming allocations.
-            $potentialusers = $this->currentusers->find_users($search, true);
-            $licenserecords = array_pop($potentialusers);
-            $removeall = true;
-        }
-        if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
-            $licenserecords = $this->currentusers->get_selected_users();
-            $remove = true;
-        }
-        foreach($licenserecords as $licenserecord) {
-            $licensestounassign[$licenserecord->licenseid] = $licenserecord->licenseid;
-        }
-
-        // Process incoming unallocations.
-        if ($remove || $removeall) {
-            $licenserecord = (array) $this->license;
-
-            if (!empty($licenserecord['program'])) {
-                $userrecords = array();
-                foreach ($licensestounassign as $licenserecid) {
-
-                    // Get the user from the initial license ID passed.
-                    $userlic = $DB->get_record('companylicense_users',array('id' => $licenserecid), '*', MUST_EXIST);
-                    $userrecords = $userrecords + array_keys($DB->get_records_sql("SELECT id FROM {companylicense_users}
-                                                                                   WHERE licenseid = :licenseid
-                                                                                   AND userid IN (
-                                                                                       SELECT userid FROM {companylicense_users}
-                                                                                       WHERE id IN 
-                                                                                   (" . implode(',', $licensestounassign) . "))",
-                                                                                   array('licenseid' => $this->license->id)));
-                }
-                $licensestounassign = $userrecords;
-                if ($licenserecord['type']) {
-                    $canremove = true;
-                } else {
-                    $canremove = true;
-                    foreach ($licensestounassign as $unassignid) {
-                        if ($DB->get_record('companylicense_users' ,array('id' => $unassignid, 'isusing' => 1))) {
-                            $canremove = false;
+    
+            $removeall = false;;
+            $remove = false;
+            $licensestounassign = array();
+            $licenserecords = array();
+    
+            if (optional_param('removeall', false, PARAM_BOOL) && confirm_sesskey()) {
+                $search = optional_param('currentlyenrolledusers_searchtext', '', PARAM_RAW);
+                // Process incoming allocations.
+                $potentialusers = $this->currentusers->find_users($search, true);
+                $licenserecords = array_pop($potentialusers);
+                $removeall = true;
+            }
+            if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
+                $licenserecords = $this->currentusers->get_selected_users();
+                $remove = true;
+            }
+            foreach($licenserecords as $licenserecord) {
+                $licensestounassign[$licenserecord->licenseid] = $licenserecord->licenseid;
+            }
+    
+            // Process incoming unallocations.
+            if ($remove || $removeall) {
+                $licenserecord = (array) $this->license;
+    
+                if (!empty($licenserecord['program'])) {
+                    $userrecords = array();
+                    foreach ($licensestounassign as $licenserecid) {
+    
+                        // Get the user from the initial license ID passed.
+                        $userlic = $DB->get_record('companylicense_users',array('id' => $licenserecid), '*', MUST_EXIST);
+                        $userrecords = $userrecords + array_keys($DB->get_records_sql("SELECT id FROM {companylicense_users}
+                                                                                       WHERE licenseid = :licenseid
+                                                                                       AND userid IN (
+                                                                                           SELECT userid FROM {companylicense_users}
+                                                                                           WHERE id IN 
+                                                                                       (" . implode(',', $licensestounassign) . "))",
+                                                                                       array('licenseid' => $this->license->id)));
+                    }
+                    $licensestounassign = $userrecords;
+                    if ($licenserecord['type']) {
+                        $canremove = true;
+                    } else {
+                        $canremove = true;
+                        foreach ($licensestounassign as $unassignid) {
+                            if ($DB->get_record('companylicense_users' ,array('id' => $unassignid, 'isusing' => 1))) {
+                                $canremove = false;
+                            }
                         }
                     }
+                    if (!$canremove) {
+                        $licensestounassign = array();
+                    }
                 }
-                if (!$canremove) {
-                    $licensestounassign = array();
-                }
-            }
-
-            if (!empty($licensestounassign)) {
-                foreach ($licensestounassign as $unassignid) {
-                    $licensedata = $DB->get_record('companylicense_users' ,array('id' => $unassignid), '*', MUST_EXIST);
     
-                    // Check the userid is valid.
-                    if (!company::check_valid_user($this->selectedcompany, $licensedata->userid, $this->departmentid)) {
-                        print_error('invaliduserdepartment', 'block_iomad_company_management');
+                if (!empty($licensestounassign)) {
+                    foreach ($licensestounassign as $unassignid) {
+                        $licensedata = $DB->get_record('companylicense_users' ,array('id' => $unassignid), '*', MUST_EXIST);
+        
+                        // Check the userid is valid.
+                        if (!company::check_valid_user($this->selectedcompany, $licensedata->userid, $this->departmentid)) {
+                            print_error('invaliduserdepartment', 'block_iomad_company_management');
+                        }
+    
+                        if (!$licensedata->isusing || $this->license->type != 0) {
+                            $DB->delete_records('companylicense_users', array('id' => $unassignid));
+    
+                            // Create an event.
+                            $eventother = array('licenseid' => $this->license->id,
+                                                'duedate' => 0);
+                            $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($licensedata->licensecourseid),
+                                                                                                            'objectid' => $this->license->id,
+                                                                                                            'courseid' => $licensedata->licensecourseid,
+                                                                                                            'userid' => $licensedata->userid,
+                                                                                                            'other' => $eventother));
+                            $event->trigger();
+                        }
                     }
-
-                    if (!$licensedata->isusing || $this->license->type != 0) {
-                        $DB->delete_records('companylicense_users', array('id' => $unassignid));
-
-                        // Create an event.
-                        $eventother = array('licenseid' => $this->license->id,
-                                            'duedate' => 0);
-                        $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($licensedata->licensecourseid),
-                                                                                                        'objectid' => $this->license->id,
-                                                                                                        'courseid' => $licensedata->licensecourseid,
-                                                                                                        'userid' => $licensedata->userid,
-                                                                                                        'other' => $eventother));
-                        $event->trigger();
-                    }
+    
+                    $this->potentialusers->invalidate_selected_users();
+                    $this->currentusers->invalidate_selected_users();
                 }
-
-                $this->potentialusers->invalidate_selected_users();
-                $this->currentusers->invalidate_selected_users();
             }
         }
     }
@@ -482,18 +509,21 @@ if ($courseid) {
 // Get the top level department.
 $parentlevel = company::get_company_parentnode($companyid);
 
+$availablewarning = '';
 $licenselist = array();
 if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', context_system::instance())) {
     $userhierarchylevel = $parentlevel->id;
     // Get all the licenses.
-    $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), 'expirydate DESC', 'id,name,expirydate');
+    $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), 'expirydate DESC', 'id,name,startdate,expirydate');
     foreach ($licenses as $license) {
-        if ($license->expirydate > time()) {
-            $licenselist[$license->id] = $license->name;
+        if ($license->expirydate < time()) {
+            $licenselist[$license->id] = $license->name . " (" . get_string('licenseexpired', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->expirydate)) . ")";
+        } else if ($license->startdate > time()) {
+            $licenselist[$license->id] = $license->name . " (" . get_string('licensevalidfrom', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate)) . ")";
+            $availablewarning = get_string('licensevalidfromwarning', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate));
         } else {
-            $licenselist[$license->id] = $license->name." (expired)";
+            $licenselist[$license->id] = $license->name;
         }
-
     }
 
 } else {
@@ -504,12 +534,17 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
     } else {
         $alllicenses = false;;
     }
-    $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), 'expirydate DESC', 'id,name,expirydate');
+    $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), 'expirydate DESC', 'id,name,startdate,expirydate');
 
     if (!empty($licenses)) {
         foreach ($licenses as $license) {
             if ($alllicenses || $license->expirydate > time()) {
-                $licenselist[$license->id]  = $license->name;
+                if ($license->startdate > time()) {
+                    $licenselist[$license->id] = $license->name . " (" . get_string('licensevalidfrom', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate)) . ")";
+                    $availablewarning = get_string('licensevalidfromwarning', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate));
+                } else {
+                    $licenselist[$license->id] = $license->name;
+                }
             }
         }
     }
@@ -560,7 +595,7 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
         $courses = company::get_courses_by_license($licenseid);
         $outputstring = "";
         if (!empty($courses)) {
-            $outputstring = get_string('licenseassignedto', 'block_iomad_company_admin');
+            $outputstring = "<p>" .get_string('licenseassignedto', 'block_iomad_company_admin');
             $count = 1;
             foreach ($courses as $course) {
                 if ($count > 1) {
@@ -572,10 +607,18 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
             }
             $count ++;
         }
-        echo $outputstring."</br>";
+        echo $outputstring."</p>";
         $usersform->process();
+
+        if (!empty($availablewarning)) {
+            echo html_writer::start_tag('div', array('class' => "alert alert-success"));
+            echo $availablewarning;
+            echo "</div>";
+        }
+
         // Reload the form.
         $usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output);
+        $usersform->get_data();
         echo $usersform->display();
     }
 }
