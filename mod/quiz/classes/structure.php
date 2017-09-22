@@ -802,14 +802,8 @@ class structure {
         }
 
         // Update section fist slots.
-        $DB->execute("
-                UPDATE {quiz_sections}
-                   SET firstslot = firstslot + ?
-                 WHERE quizid = ?
-                   AND firstslot > ?
-                   AND firstslot < ?
-                ", array($headingmovedirection, $this->get_quizid(),
-                        $headingmoveafter, $headingmovebefore));
+        quiz_update_section_firstslots($this->get_quizid(), $headingmovedirection,
+                $headingmoveafter, $headingmovebefore);
 
         // If any pages are now empty, remove them.
         $emptypages = $DB->get_fieldset_sql("
@@ -915,12 +909,7 @@ class structure {
             question_delete_question($slot->questionid);
         }
 
-        $DB->execute("
-                UPDATE {quiz_sections}
-                   SET firstslot = firstslot - 1
-                 WHERE quizid = ?
-                   AND firstslot > ?
-                ", array($this->get_quizid(), $slotnumber));
+        quiz_update_section_firstslots($this->get_quizid(), -1, $slotnumber);
         unset($this->questions[$slot->questionid]);
 
         $this->refresh_page_numbers_and_update_db();
