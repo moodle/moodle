@@ -380,4 +380,664 @@ class mod_feedback_lib_testcase extends advanced_testcase {
         $this->assertEquals(mod_feedback_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
         $this->assertEquals(mod_feedback_get_completion_active_rule_descriptions(new stdClass()), []);
     }
+
+    /**
+     * An unknown event should not have min or max restrictions.
+     */
+    public function test_get_valid_event_timestart_range_unknown_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $DB->update_record('feedback', $feedback);
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => 'SOME UNKNOWN EVENT',
+            'timestart' => $timeopen,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        list($min, $max) = mod_feedback_core_calendar_get_valid_event_timestart_range($event);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * A FEEDBACK_EVENT_TYPE_OPEN should have a max timestart equal to the activity
+     * close time.
+     */
+    public function test_get_valid_event_timestart_range_event_type_open() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $DB->update_record('feedback', $feedback);
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_OPEN,
+            'timestart' => $timeopen,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        list($min, $max) = mod_feedback_core_calendar_get_valid_event_timestart_range($event);
+        $this->assertNull($min);
+        $this->assertEquals($timeclose, $max[0]);
+        $this->assertNotEmpty($max[1]);
+    }
+
+    /**
+     * A FEEDBACK_EVENT_TYPE_OPEN should not have a max timestamp if the activity
+     * doesn't have a close date.
+     */
+    public function test_get_valid_event_timestart_range_event_type_open_no_close() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = 0;
+        $DB->update_record('feedback', $feedback);
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_OPEN,
+            'timestart' => $timeopen,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        list($min, $max) = mod_feedback_core_calendar_get_valid_event_timestart_range($event);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * A FEEDBACK_EVENT_TYPE_CLOSE should have a min timestart equal to the activity
+     * open time.
+     */
+    public function test_get_valid_event_timestart_range_event_type_close() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $DB->update_record('feedback', $feedback);
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE,
+            'timestart' => $timeopen,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        list($min, $max) = mod_feedback_core_calendar_get_valid_event_timestart_range($event);
+        $this->assertEquals($timeopen, $min[0]);
+        $this->assertNotEmpty($min[1]);
+        $this->assertNull($max);
+    }
+
+    /**
+     * A FEEDBACK_EVENT_TYPE_CLOSE should not have a minimum timestamp if the activity
+     * doesn't have an open date.
+     */
+    public function test_get_valid_event_timestart_range_event_type_close_no_open() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = 0;
+        $feedback->timeclose = $timeclose;
+        $DB->update_record('feedback', $feedback);
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE,
+            'timestart' => $timeopen,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        list($min, $max) = mod_feedback_core_calendar_get_valid_event_timestart_range($event);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * You can't create a feedback module event when the module doesn't exist.
+     */
+    public function test_mod_feedback_core_calendar_validate_event_timestart_no_activity() {
+        global $CFG;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => 1234,
+            'eventtype' => FEEDBACK_EVENT_TYPE_OPEN,
+            'timestart' => time(),
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        $this->expectException('moodle_exception');
+        mod_feedback_core_calendar_validate_event_timestart($event);
+    }
+
+    /**
+     * A FEEDBACK_EVENT_TYPE_OPEN must be before the close time of the feedback activity.
+     */
+    public function test_mod_feedback_core_calendar_validate_event_timestart_valid_open_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $DB->update_record('feedback', $feedback);
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_OPEN,
+            'timestart' => $timeopen,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        // This will throw an exception if the event is invald.
+        mod_feedback_core_calendar_validate_event_timestart($event);
+        $this->assertTrue(true);
+    }
+
+    /**
+     * A FEEDBACK_EVENT_TYPE_OPEN can not have a start time set after the close time
+     * of the feedback activity.
+     */
+    public function test_mod_feedback_core_calendar_validate_event_timestart_invalid_open_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $DB->update_record('feedback', $feedback);
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_OPEN,
+            'timestart' => $timeclose + 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        $this->expectException('moodle_exception');
+        mod_feedback_core_calendar_validate_event_timestart($event);
+    }
+
+    /**
+     * A FEEDBACK_EVENT_TYPE_CLOSE must be after the open time of the feedback activity.
+     */
+    public function test_mod_feedback_core_calendar_validate_event_timestart_valid_close_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $DB->update_record('feedback', $feedback);
+
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE,
+            'timestart' => $timeclose,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        // This will throw an exception if the event is invald.
+        mod_feedback_core_calendar_validate_event_timestart($event);
+        $this->assertTrue(true);
+    }
+
+    /**
+     * A FEEDBACK_EVENT_TYPE_CLOSE can not have a start time set before the open time
+     * of the feedback activity.
+     */
+    public function test_mod_feedback_core_calendar_validate_event_timestart_invalid_close_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $DB->update_record('feedback', $feedback);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE,
+            'timestart' => $timeopen - 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        $this->expectException('moodle_exception');
+        mod_feedback_core_calendar_validate_event_timestart($event);
+    }
+
+    /**
+     * An unkown event type should not change the feedback instance.
+     */
+    public function test_mod_feedback_core_calendar_event_timestart_updated_unknown_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $DB->update_record('feedback', $feedback);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_OPEN . "SOMETHING ELSE",
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        mod_feedback_core_calendar_event_timestart_updated($event);
+
+        $feedback = $DB->get_record('feedback', ['id' => $feedback->id]);
+        $this->assertEquals($timeopen, $feedback->timeopen);
+        $this->assertEquals($timeclose, $feedback->timeclose);
+    }
+
+    /**
+     * A FEEDBACK_EVENT_TYPE_OPEN event should update the timeopen property of
+     * the feedback activity.
+     */
+    public function test_mod_feedback_core_calendar_event_timestart_updated_open_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newtimeopen = $timeopen - DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $feedback->timemodified = $timemodified;
+        $DB->update_record('feedback', $feedback);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_OPEN,
+            'timestart' => $newtimeopen,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        mod_feedback_core_calendar_event_timestart_updated($event);
+
+        $feedback = $DB->get_record('feedback', ['id' => $feedback->id]);
+        // Ensure the timeopen property matches the event timestart.
+        $this->assertEquals($newtimeopen, $feedback->timeopen);
+        // Ensure the timeclose isn't changed.
+        $this->assertEquals($timeclose, $feedback->timeclose);
+        // Ensure the timemodified property has been changed.
+        $this->assertNotEquals($timemodified, $feedback->timemodified);
+    }
+
+    /**
+     * A FEEDBACK_EVENT_TYPE_CLOSE event should update the timeclose property of
+     * the feedback activity.
+     */
+    public function test_mod_feedback_core_calendar_event_timestart_updated_close_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newtimeclose = $timeclose + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $feedback->timemodified = $timemodified;
+        $DB->update_record('feedback', $feedback);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE,
+            'timestart' => $newtimeclose,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        mod_feedback_core_calendar_event_timestart_updated($event);
+
+        $feedback = $DB->get_record('feedback', ['id' => $feedback->id]);
+        // Ensure the timeclose property matches the event timestart.
+        $this->assertEquals($newtimeclose, $feedback->timeclose);
+        // Ensure the timeopen isn't changed.
+        $this->assertEquals($timeopen, $feedback->timeopen);
+        // Ensure the timemodified property has been changed.
+        $this->assertNotEquals($timemodified, $feedback->timemodified);
+    }
+
+    /**
+     * If a student somehow finds a way to update the calendar event
+     * then the callback should not be executed to update the activity
+     * properties as well because that would be a security issue.
+     */
+    public function test_student_role_cant_update_time_close_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $context = context_course::instance($course->id);
+        $roleid = $generator->create_role();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newtimeclose = $timeclose + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $feedback->timemodified = $timemodified;
+        $DB->update_record('feedback', $feedback);
+
+        $generator->enrol_user($user->id, $course->id, 'student');
+        $generator->role_assign($roleid, $user->id, $context->id);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => $user->id,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE,
+            'timestart' => $newtimeclose,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $context, true);
+        assign_capability('moodle/course:manageactivities', CAP_PROHIBIT, $roleid, $context, true);
+
+        $this->setUser($user);
+
+        mod_feedback_core_calendar_event_timestart_updated($event);
+
+        $newfeedback = $DB->get_record('feedback', ['id' => $feedback->id]);
+        // The activity shouldn't have been updated because the user
+        // doesn't have permissions to do it.
+        $this->assertEquals($timeclose, $newfeedback->timeclose);
+    }
+
+    /**
+     * The activity should update if a teacher modifies the calendar
+     * event.
+     */
+    public function test_teacher_role_can_update_time_close_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $context = context_course::instance($course->id);
+        $roleid = $generator->create_role();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newtimeclose = $timeclose + DAYSECS;
+        $feedback = $feedbackgenerator->create_instance(['course' => $course->id]);
+        $feedback->timeopen = $timeopen;
+        $feedback->timeclose = $timeclose;
+        $feedback->timemodified = $timemodified;
+        $DB->update_record('feedback', $feedback);
+
+        $generator->enrol_user($user->id, $course->id, 'teacher');
+        $generator->role_assign($roleid, $user->id, $context->id);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => $user->id,
+            'modulename' => 'feedback',
+            'instance' => $feedback->id,
+            'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE,
+            'timestart' => $newtimeclose,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $context, true);
+        assign_capability('moodle/course:manageactivities', CAP_ALLOW, $roleid, $context, true);
+
+        $this->setUser($user);
+
+        $sink = $this->redirectEvents();
+
+        mod_feedback_core_calendar_event_timestart_updated($event);
+
+        $triggeredevents = $sink->get_events();
+        $moduleupdatedevents = array_filter($triggeredevents, function($e) {
+            return is_a($e, 'core\event\course_module_updated');
+        });
+
+        $newfeedback = $DB->get_record('feedback', ['id' => $feedback->id]);
+        // The activity should have been updated because the user
+        // has permissions to do it.
+        $this->assertEquals($newtimeclose, $newfeedback->timeclose);
+        // A course_module_updated event should be fired if the module
+        // was successfully modified.
+        $this->assertNotEmpty($moduleupdatedevents);
+    }
 }
