@@ -2513,5 +2513,41 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017092201.00);
     }
 
+    if ($oldversion < 2017092202.00) {
+
+        if (!file_exists($CFG->dirroot . '/blocks/messages/block_messages.php')) {
+
+            // Delete instances.
+            $instances = $DB->get_records_list('block_instances', 'blockname', ['messages']);
+            $instanceids = array_keys($instances);
+
+            if (!empty($instanceids)) {
+                $DB->delete_records_list('block_positions', 'blockinstanceid', $instanceids);
+                $DB->delete_records_list('block_instances', 'id', $instanceids);
+                list($sql, $params) = $DB->get_in_or_equal($instanceids, SQL_PARAMS_NAMED);
+                $params['contextlevel'] = CONTEXT_BLOCK;
+                $DB->delete_records_select('context', "contextlevel=:contextlevel AND instanceid " . $sql, $params);
+
+                $preferences = array();
+                foreach ($instances as $instanceid => $instance) {
+                    $preferences[] = 'block' . $instanceid . 'hidden';
+                    $preferences[] = 'docked_block_instance_' . $instanceid;
+                }
+                $DB->delete_records_list('user_preferences', 'name', $preferences);
+            }
+
+            // Delete the block from the block table.
+            $DB->delete_records('block', array('name' => 'messages'));
+
+            // Remove capabilities.
+            capabilities_cleanup('block_messages');
+
+            // Clean config.
+            unset_all_config_for_plugin('block_messages');
+        }
+
+        upgrade_main_savepoint(true, 2017092202.00);
+    }
+
     return true;
 }

@@ -1647,7 +1647,7 @@ class core_plugin_manager {
         $plugins = array(
             'qformat' => array('blackboard', 'learnwise'),
             'auth' => array('radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'),
-            'block' => array('course_overview'),
+            'block' => array('course_overview', 'messages'),
             'enrol' => array('authorize'),
             'report' => array('search'),
             'repository' => array('alfresco'),
@@ -1715,7 +1715,7 @@ class core_plugin_manager {
                 'calendar_upcoming', 'comments', 'community',
                 'completionstatus', 'course_list', 'course_summary',
                 'feedback', 'globalsearch', 'glossary_random', 'html',
-                'login', 'lp', 'mentees', 'messages', 'mnet_hosts', 'myoverview', 'myprofile',
+                'login', 'lp', 'mentees', 'mnet_hosts', 'myoverview', 'myprofile',
                 'navigation', 'news_items', 'online_users', 'participants',
                 'private_files', 'quiz_results', 'recent_activity',
                 'rss_client', 'search_forums', 'section_links',
