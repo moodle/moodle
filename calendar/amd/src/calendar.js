@@ -255,11 +255,14 @@ define([
             });
             modal.setCourseId(courseId);
             return;
-        });
+        })
+        .fail(Notification.exception);
     };
 
     /**
      * Register event listeners for the module.
+     *
+     * @param {object} root The calendar root element
      */
     var registerEventListeners = function(root) {
         // Bind click events to event links.
@@ -323,7 +326,8 @@ define([
                     modal.setStartTime(startTime);
                     modal.show();
                     return;
-                });
+                })
+                .fail(Notification.exception);
 
                 e.preventDefault();
             }
