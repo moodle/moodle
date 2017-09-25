@@ -66,7 +66,8 @@ define([
         LOADING_ICON: '.loading-icon',
         VIEW_DAY_LINK: "[data-action='view-day-link']",
         CALENDAR_MONTH_WRAPPER: ".calendarwrapper",
-        COURSE_SELECTOR: 'select[name="course"]'
+        COURSE_SELECTOR: 'select[name="course"]',
+        TODAY: '.today',
     };
 
     /**
@@ -210,8 +211,7 @@ define([
                 templateContext: {
                     contextid: contextId
                 }
-            },
-            [root, SELECTORS.NEW_EVENT_BUTTON]
+            }
         );
     };
 
@@ -255,11 +255,14 @@ define([
             });
             modal.setCourseId(courseId);
             return;
-        });
+        })
+        .fail(Notification.exception);
     };
 
     /**
      * Register event listeners for the module.
+     *
+     * @param {object} root The calendar root element
      */
     var registerEventListeners = function(root) {
         // Bind click events to event links.
@@ -295,6 +298,24 @@ define([
         var eventFormPromise = registerEventFormModal(root);
         registerCalendarEventListeners(root, eventFormPromise);
 
+        // Bind click event on the new event button.
+        root.on('click', SELECTORS.NEW_EVENT_BUTTON, function(e) {
+            eventFormPromise.then(function(modal) {
+                // Attempt to find the cell for today.
+                // If it can't be found, then use the start time of the first day on the calendar.
+                var today = root.find(SELECTORS.TODAY);
+                if (!today.length) {
+                    modal.setStartTime(root.find(SELECTORS.DAY).attr('data-new-event-timestamp'));
+                }
+
+                modal.show();
+                return;
+            })
+            .fail(Notification.exception);
+
+            e.preventDefault();
+        });
+
         // Bind click events to calendar days.
         root.on('click', SELECTORS.DAY, function(e) {
             var target = $(e.target);
@@ -305,7 +326,8 @@ define([
                     modal.setStartTime(startTime);
                     modal.show();
                     return;
-                });
+                })
+                .fail(Notification.exception);
 
                 e.preventDefault();
             }
