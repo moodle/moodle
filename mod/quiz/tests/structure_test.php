@@ -648,6 +648,34 @@ class mod_quiz_structure_testcase extends advanced_testcase {
             ), $structure);
     }
 
+    public function test_move_slot_does_not_violate_heading_unique_key() {
+        $quizobj = $this->create_test_quiz(array(
+                'Heading 1',
+                array('TF1', 1, 'truefalse'),
+                'Heading 2',
+                array('TF2', 2, 'truefalse'),
+                'Heading 3',
+                array('TF3', 3, 'truefalse'),
+                array('TF4', 3, 'truefalse'),
+        ));
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        $idtomove = $structure->get_question_in_slot(4)->slotid;
+        $idmoveafter = $structure->get_question_in_slot(1)->slotid;
+        $structure->move_slot($idtomove, $idmoveafter, 1);
+
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $this->assert_quiz_layout(array(
+                'Heading 1',
+                array('TF1', 1, 'truefalse'),
+                array('TF4', 1, 'truefalse'),
+                'Heading 2',
+                array('TF2', 2, 'truefalse'),
+                'Heading 3',
+                array('TF3', 3, 'truefalse'),
+        ), $structure);
+    }
+
     public function test_quiz_remove_slot() {
         $quizobj = $this->create_test_quiz(array(
                 array('TF1', 1, 'truefalse'),
