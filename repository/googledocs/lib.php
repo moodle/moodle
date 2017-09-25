@@ -901,6 +901,8 @@ class repository_googledocs extends repository {
      * @return string updated reference (final one before it's saved to db).
      */
     public function reference_file_selected($reference, $context, $component, $filearea, $itemid) {
+        global $CFG, $SITE;
+
         // What we need to do here is transfer ownership to the system user (or copy)
         // then set the permissions so anyone with the share link can view,
         // finally update the reference to contain the share link if it was not
@@ -949,8 +951,23 @@ class repository_googledocs extends repository {
         $fullpath = 'root';
         $allfolders = [];
         foreach ($contextlist as $context) {
-            // Make sure a folder exists here.
-            $foldername = clean_param($context->get_context_name(), PARAM_PATH);
+            // Prepare human readable context folders names, making sure they are still unique within the site.
+            $prevlang = force_current_language($CFG->lang);
+            $foldername = $context->get_context_name();
+            force_current_language($prevlang);
+
+            if ($context->contextlevel == CONTEXT_SYSTEM) {
+                // Append the site short name to the root folder.
+                $foldername .= ' ('.$SITE->shortname.')';
+                // Append the relevant object id.
+            } else if ($context->instanceid) {
+                $foldername .= ' (id '.$context->instanceid.')';
+            } else {
+                // This does not really happen but just in case.
+                $foldername .= ' (ctx '.$context->id.')';
+            }
+
+            $foldername = clean_param($foldername, PARAM_PATH);
             $allfolders[] = $foldername;
         }
 
