@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.1  06-Dec-2015
+@version   v5.20.9  21-Dec-2016
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
    Set tabs to 4.
