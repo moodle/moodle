@@ -432,7 +432,6 @@ if (!empty($userrecords)) {
     $userlist = " u.id in (". implode(',', array_values($userrecords)).") ";
 }
 
-$DB->set_debug(true);
 if (!empty($userlist)) {
     $users = $DB->get_records_sql("SELECT u.id as id,
                                           u.username as username,
@@ -458,8 +457,6 @@ if (!empty($userlist)) {
 } else {
     $users = array();
 }
-
-$DB->set_debug(false);
 
 $usercount = count($userrecords);
 
