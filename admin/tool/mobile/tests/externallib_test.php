@@ -123,6 +123,10 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         require_once($CFG->dirroot . '/course/format/lib.php');
 
         $this->resetAfterTest(true);
+
+        $mysitepolicy = 'http://mysite.is/policy/';
+        set_config('sitepolicy', $mysitepolicy);
+
         $result = external::get_config();
         $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
 
@@ -143,6 +147,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'numsections', 'value' => course_get_format($SITE)->get_last_section_number()),
             array('name' => 'newsitems', 'value' => $SITE->newsitems),
             array('name' => 'commentsperpage', 'value' => $CFG->commentsperpage),
+            array('name' => 'sitepolicy', 'value' => $mysitepolicy),
             array('name' => 'disableuserimages', 'value' => $CFG->disableuserimages),
             array('name' => 'mygradesurl', 'value' => user_mygrades_url()->out(false)),
             array('name' => 'tool_mobile_forcelogout', 'value' => 0),
