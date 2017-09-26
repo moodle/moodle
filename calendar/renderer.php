@@ -114,37 +114,20 @@ class core_calendar_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Creates a button to add a new event
+     * Creates a button to add a new event.
      *
      * @param int $courseid
-     * @param int $day
-     * @param int $month
-     * @param int $year
-     * @param int $time the unixtime, used for multiple calendar support. The values $day,
-     *     $month and $year are kept for backwards compatibility.
+     * @param int $unused1
+     * @param int $unused2
+     * @param int $unused3
+     * @param int $unused4
      * @return string
      */
-    public function add_event_button($courseid, $day = null, $month = null, $year = null, $time = null) {
-        // If a day, month and year were passed then convert it to a timestamp. If these were passed
-        // then we can assume the day, month and year are passed as Gregorian, as no where in core
-        // should we be passing these values rather than the time. This is done for BC.
-        if (!empty($day) && !empty($month) && !empty($year)) {
-            if (checkdate($month, $day, $year)) {
-                $time = make_timestamp($year, $month, $day);
-            } else {
-                $time = time();
-            }
-        } else if (empty($time)) {
-            $time = time();
-        }
-
-        $coursecontext = \context_course::instance($courseid);
-        $attributes = [
-            'class' => 'btn btn-secondary pull-xs-right pull-right',
-            'data-context-id' => $coursecontext->id,
-            'data-action' => 'new-event-button'
+    public function add_event_button($courseid, $unused1 = null, $unused2 = null, $unused3 = null, $unused4 = null) {
+        $data = [
+            'contextid' => (\context_course::instance($courseid))->id,
         ];
-        return html_writer::tag('button', get_string('newevent', 'calendar'), $attributes);
+        return $this->render_from_template('core_calendar/add_event_button', $data);
     }
 
     /**
