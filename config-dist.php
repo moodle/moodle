@@ -465,6 +465,13 @@ $CFG->admin = 'admin';
 //
 //      $CFG->disableupdateautodeploy = true;
 //
+// Use the following flag to disable the warning on the system notifications page
+// about present development libraries. This flag will not disable the warning within
+// the security overview report. Use this flag only if you really have prohibited web
+// access to the development libraries in your webserver configuration.
+//
+//      $CFG->disabledevlibdirscheck = true;
+//
 // Use the following flag to disable modifications to scheduled tasks
 // whilst still showing the state of tasks.
 //
