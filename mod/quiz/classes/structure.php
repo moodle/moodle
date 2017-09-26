@@ -993,12 +993,16 @@ class structure {
     /**
      * Add a section heading on a given page and return the sectionid
      * @param int $pagenumber the number of the page where the section heading begins.
-     * @param string $heading the heading to add.
+     * @param string|null $heading the heading to add. If not given, a default is used.
      */
-    public function add_section_heading($pagenumber, $heading = 'Section heading ...') {
+    public function add_section_heading($pagenumber, $heading = null) {
         global $DB;
         $section = new \stdClass();
-        $section->heading = $heading;
+        if ($heading !== null) {
+            $section->heading = $heading;
+        } else {
+            $section->heading = get_string('newsectionheading', 'quiz');
+        }
         $section->quizid = $this->get_quizid();
         $slotsonpage = $DB->get_records('quiz_slots', array('quizid' => $this->get_quizid(), 'page' => $pagenumber), 'slot DESC');
         $section->firstslot = end($slotsonpage)->slot;
