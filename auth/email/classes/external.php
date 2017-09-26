@@ -137,7 +137,7 @@ class auth_email_external extends external_api {
                      new external_value(PARAM_NOTAGS, 'The order of the name fields')
                 ),
                 'passwordpolicy' => new external_value(PARAM_RAW, 'Password policy', VALUE_OPTIONAL),
-                'sitepolicy' => new external_value(PARAM_URL, 'Site policy url', VALUE_OPTIONAL),
+                'sitepolicy' => new external_value(PARAM_RAW, 'Site policy', VALUE_OPTIONAL),
                 'defaultcity' => new external_value(PARAM_NOTAGS, 'Default city', VALUE_OPTIONAL),
                 'country' => new external_value(PARAM_ALPHA, 'Default country', VALUE_OPTIONAL),
                 'profilefields' => new external_multiple_structure(
