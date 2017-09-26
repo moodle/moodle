@@ -58,8 +58,10 @@ class mod_data_export_form extends moodleform {
             $mform->setDefault('delimiter_name', 'comma');
         }
         $mform->addElement('header', 'notice', get_string('chooseexportfields', 'data'));
+        $numfieldsthatcanbeselected = 0;
         foreach($this->_datafields as $field) {
             if($field->text_export_supported()) {
+                $numfieldsthatcanbeselected++;
                 $html = '<div title="' . s($field->field->description) . '" ' .
                         'class="d-inline-block">' . $field->field->name . '</div>';
                 $name = ' (' . $field->name() . ')';
@@ -72,7 +74,9 @@ class mod_data_export_form extends moodleform {
                 $mform->addElement('static', 'unsupported' . $field->field->id, $field->field->name, $str);
             }
         }
-        $this->add_checkbox_controller(1, null, null, 1);
+        if ($numfieldsthatcanbeselected > 1) {
+            $this->add_checkbox_controller(1, null, null, 1);
+        }
         $context = context_module::instance($this->_cm->id);
         if (has_capability('mod/data:exportuserinfo', $context)) {
             $mform->addElement('checkbox', 'exportuser', get_string('includeuserdetails', 'data'));
