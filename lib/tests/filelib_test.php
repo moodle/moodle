@@ -545,6 +545,29 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame('OK', $contents);
     }
 
+    public function test_curl_file_name() {
+        $this->resetAfterTest();
+        $testurl = $this->getExternalTestFileUrl('/test_file_name.php');
+
+        $fs = get_file_storage();
+        $filerecord = array(
+            'contextid' => context_system::instance()->id,
+            'component' => 'test',
+            'filearea' => 'curl_post',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'test.txt'
+        );
+        $teststring = 'moodletest';
+        $testfile = $fs->create_file_from_string($filerecord, $teststring);
+
+        // Test post with file.
+        $data = array('testfile' => $testfile);
+        $curl = new curl();
+        $contents = $curl->post($testurl, $data);
+        $this->assertSame('OK', $contents);
+    }
+
     public function test_curl_protocols() {
 
         // HTTP and HTTPS requests were verified in previous requests. Now check
