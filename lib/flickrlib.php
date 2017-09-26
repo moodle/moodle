@@ -25,6 +25,8 @@
  * ChangeLog:
  *   1. upload() method uses Moodle stored_file
  *   2. upload() method supports all params provided by http://www.flickr.com/services/api/upload.api.html
+ *   3. auth() method shows debugging warning as this library cannot be used any
+ *      more for calling Flickr API that requires authentication.
  *
  * @package moodlecore
  * @subpackage 3rd-party
@@ -240,6 +242,10 @@ class phpFlickr {
 
     function auth ($perms = "write", $remember_uri = true)
     {
+
+        debugging('The flickrlib.php cannot be used for authenticated Flickr API calls.
+            Flickr does not support their legacy auth API any more. Use the new flickrclient.php instead.');
+
         // Redirects to Flickr's authentication piece if there is no valid token.
         // If remember_uri is set to false, the callback script (included) will
         // redirect to its default page.

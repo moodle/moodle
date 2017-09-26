@@ -184,9 +184,6 @@ class oauth_helper {
         $oauth_params['oauth_nonce']	    = $this->get_nonce();
         $oauth_params['oauth_timestamp']    = $this->get_timestamp();
         $oauth_params['oauth_consumer_key'] = $this->consumer_key;
-        if (!empty($this->oauth_callback)) {
-            $oauth_params['oauth_callback'] = $this->oauth_callback->out(false);
-        }
         $oauth_params['oauth_signature_method']	= 'HMAC-SHA1';
         $oauth_params['oauth_signature']	= $this->sign($http_method, $url, $oauth_params, $this->sign_secret);
         return $oauth_params;
@@ -221,23 +218,25 @@ class oauth_helper {
      */
     public function request_token() {
         $this->sign_secret = $this->consumer_secret.'&';
-        $params = $this->prepare_oauth_parameters($this->request_token_api, array(), 'GET');
+
+        if (empty($this->oauth_callback)) {
+            $params = [];
+        } else {
+            $params = ['oauth_callback' => $this->oauth_callback->out(false)];
+        }
+
+        $params = $this->prepare_oauth_parameters($this->request_token_api, $params, 'GET');
         $content = $this->http->get($this->request_token_api, $params, $this->http_options);
         // Including:
         //     oauth_token
         //     oauth_token_secret
         $result = $this->parse_result($content);
         if (empty($result['oauth_token'])) {
-            throw new moodle_exception('Error while requesting an oauth token');
+            throw new moodle_exception('oauth1requesttoken', 'core_error', '', null, $content);
         }
-        // build oauth authrize url
-        if (!empty($this->oauth_callback)) {
-            // url must be rawurlencode
-            $result['authorize_url'] = $this->authorize_url . '?oauth_token='.$result['oauth_token'].'&oauth_callback='.rawurlencode($this->oauth_callback->out(false));
-        } else {
-            // no callback
-            $result['authorize_url'] = $this->authorize_url . '?oauth_token='.$result['oauth_token'];
-        }
+        // Build oauth authorize url.
+        $result['authorize_url'] = $this->authorize_url . '?oauth_token='.$result['oauth_token'];
+
         return $result;
     }
 
@@ -266,6 +265,11 @@ class oauth_helper {
         unset($params['oauth_callback']);
         $content = $this->http->post($this->access_token_api, $params, $this->http_options);
         $keys = $this->parse_result($content);
+
+        if (empty($keys['oauth_token']) || empty($keys['oauth_token_secret'])) {
+            throw new moodle_exception('oauth1accesstoken', 'core_error', '', null, $content);
+        }
+
         $this->set_access_token($keys['oauth_token'], $keys['oauth_token_secret']);
         return $keys;
     }
