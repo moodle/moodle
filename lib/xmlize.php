@@ -74,7 +74,7 @@ class huge_xml_parse {
     private $current;         //array stores references to constructed $xml tree
     private $level;           //stores the level in the XML tree
 
-/*** 
+/** 
  * Is called when tags are opened.
  *
  * Note: Used by xml element handler as callback.
@@ -108,7 +108,7 @@ class huge_xml_parse {
 	}
 
     
-/*** 
+/** 
  * Is called when tags are closed.
  *
  * Note: Used by xml element handler as callback.
@@ -134,7 +134,7 @@ class huge_xml_parse {
 	}
 
     
-/*** 
+/** 
  * Is called for text between the start and the end of tags. 
  *
  * Note: Used by xml element handler as callback.
@@ -167,7 +167,7 @@ class huge_xml_parse {
 		}
 	}
 
-/*** 
+/** 
  * Parses XML string. 
  *
  * Note: Interface is kept equal to previous version.
@@ -216,7 +216,7 @@ class huge_xml_parse {
 	}
 }
 
-/*** 
+/** 
  * XML parsing function calles into class.
  *
  * Note: Used by xml element handler as callback.
