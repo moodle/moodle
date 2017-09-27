@@ -136,7 +136,7 @@ class HugeXMLparse
 		xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, $whitespace);
 		xml_set_element_handler($parser, [$this, "startElement"], [$this, "endElement"]);
 		xml_set_character_data_handler($parser, [$this, "characterData"]);
-		for ($i = 0; $i < strlen($data); $i+= 4096) xml_parse($parser, substr($data, $i, 4096)); // start parsing an xml document
+		for ($i = 0; $i < strlen($data); $i+= 4096) if(!xml_parse($parser, substr($data, $i, 4096))) break; // start parsing an xml document
 		
 		if ($reporterrors) {
 			$errorcode = xml_get_error_code($parser);
