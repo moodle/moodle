@@ -1,34 +1,56 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * xmlize.php - xmlize() is by Hans Anderson, {@link http://www.hansanderson.com/contact/}
+ * Code for parsing xml files.
  *
- * Ye Ole "Feel Free To Use it However" License [PHP, BSD, GPL].
- * some code in xml_depth is based on code written by other PHPers
- * as well as one Perl script.  Poor programming practice and organization
- * on my part is to blame for the credit these people aren't receiving.
- * None of the code was copyrighted, though.
+ * Handles functionality for:
  *
- * @package core
+ *    Import of xml files in questionbank and course import.
+ *    Can handle xml files larger than 10MB through chunking the input file.
+ *    Uses a similar interface to the original version xmlize() by Hans Anderson.
+ *
+ * @package    core
  * @subpackage lib
- * @author Hans Anderson
- * @version This is a stable release, 1.0.  I don't foresee any changes, but you
- * might check {@link http://www.hansanderson.com/php/xml/} to see
- * @copyright Hans Anderson
- * @license Feel Free To Use it However
+ * @copyright  Kilian Singer
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
+ /**
  * Exception thrown when there is an error parsing an XML file.
  *
  * @copyright 2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class xml_format_exception extends moodle_exception {
+ class xml_format_exception extends moodle_exception {
     /** @var string */
     public $errorstring;
+    /** @var int */
     public $line;
+    /** @var char */
     public $char;
-    function __construct($errorstring, $line, $char, $link = '') {
+ /**
+ * Constructor function
+ *
+ * @param string $errorstring Errorstring
+ * @param int $line Linenumber
+ * @param char $char Errorcharacter
+ * @param string $link Link
+*/  
+   function __construct($errorstring, $line, $char, $link = '') {
         $this->errorstring = $errorstring;
         $this->line = $line;
         $this->char = $char;
@@ -41,188 +63,186 @@ class xml_format_exception extends moodle_exception {
     }
 }
 
+
 /**
- * Create an array structure from an XML string.
+ * Class for parsing xml files.
  *
- * Usage:<br>
- * <code>
- * $xml = xmlize($array);
- * </code>
- * See the function {@link traverse_xmlize()} for information about the
- * structure of the array, it's much easier to explain by showing you.
- * Be aware that the array is somewhat tricky.  I use xmlize all the time,
- * but still need to use {@link traverse_xmlize()} quite often to show me the structure!
+ * Handles functionality for:
  *
- * THIS IS A PHP 5 VERSION:
+ *    Import of xml files in questionbank and course import.
+ *    Can handle xml files larger than 10MB through chunking the input file.
+ *    Uses a similar interface to the original version xmlize() by Hans Anderson.
  *
- * This modified version basically has a new optional parameter
- * to specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
- * I recommend you to read this PHP bug. There you can see how PHP4, PHP5.0.0
- * and PHP5.0.2 will handle this.
- * {@link http://bugs.php.net/bug.php?id=29711}
- * Ciao, Eloy :-)
+ * @package    core
+ * @subpackage lib
+ * @copyright  Kilian Singer
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class huge_xml_parse {
+    /** @var array resulting $xml tree */
+    private $xml;
+    /** @var array stores references to constructed $xml tree */
+    private $current;
+    /** @var int tores the level in the XML tree */
+    private $level;
+/** 
+ * Is called when tags are opened.
  *
+ * Note: Used by xml element handler as callback.
+ *
+ * @author Kilian Singer
+ * @param resource $parser The XML parser resource.
+ * @param string $name The XML source to parse.
+ * @param array $attrs Stores attributes of XML tag.
+ */
+    function startElement($parser, $name, $attrs) {
+		$current=&$this->current;
+		$level=&$this->level;
+		if (!empty($name)) {
+			if ($level == 0) {
+				$current[$level][$name] = array();
+				$current[$level][$name]["@"] = $attrs; //attribute
+				$current[$level][$name]["#"] = array(); //other tags
+				$current[$level + 1] = & $current[$level][$name]["#"];
+				$level++;
+			}
+			else {
+				if (empty($current[$level][$name])) {
+					$current[$level][$name] = array();
+				}
+				$siz = count($current[$level][$name]);
+				if (!empty($attrs)) $current[$level][$name][$siz]["@"] = $attrs; //attribute
+				$current[$level][$name][$siz]["#"] = array(); //other tags
+				$current[$level + 1] = & $current[$level][$name][$siz]["#"];
+				$level++;
+			}
+		}
+	}
+
+    
+/** 
+ * Is called when tags are closed.
+ *
+ * Note: Used by xml element handler as callback.
+ *
+ * @author Kilian Singer
+ * @param resource $parser The XML parser resource.
+ * @param string $name The XML source to parse.
+ */
+	function endElement($parser, $name){
+		$current=&$this->current;
+		$level=&$this->level;
+		if (!empty($name)) {
+			if (empty($current[$level])) $current[$level] = NULL;
+			else
+			if (array_key_exists(0, $current[$level])) {
+				if (count($current[$level]) == 1) {
+					$current[$level] = $current[$level][0]; //we remove array index if we only have a single entry
+				}
+			}
+
+			$level--;
+		}
+	}
+
+    
+/** 
+ * Is called for text between the start and the end of tags. 
+ *
+ * Note: Used by xml element handler as callback.
+ * 
+ * @author Kilian Singer
+ * @param resource $parser The XML parser resource.
  * @param string $data The XML source to parse.
- * @param int $whitespace  If set to 1 allows the parser to skip "space" characters in xml document. Default is 1
+ */
+    function characterData($parser, $data) {
+		$current=&$this->current;
+		$level=&$this->level;
+		if (($data == "0") || (!empty($data) && trim($data) != "")) {
+			$siz = count($current[$level]);
+			if ($siz == 0) $current[$level][0] = $data;
+			else {
+				$key = max(array_keys($current[$level]));
+				if (is_int($key)) {
+					end($current[$level]);
+					if (is_int(key($current[$level]))) { //if last index is nummeric we have CDATA and concat
+						$current[$level][$key] = $current[$level][$key] . $data;
+					}
+					else {
+						$current[$level][$key + 1] = $data; //otherwise we make a new key
+					}
+				}
+				else {
+					$current[$level][0] = $data;
+				}
+			}
+		}
+	}
+
+/** 
+ * Parses XML string. 
+ *
+ * Note: Interface is kept equal to previous version.
+ *
+ * @author Kilian Singer
+ * @param string $data the XML source to parse.
+ * @param int $whitespace If set to 1 allows the parser to skip "space" characters in xml document. Default is 1
  * @param string $encoding Specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
  * @param bool $reporterrors if set to true, then a {@link xml_format_exception}
  *      exception will be thrown if the XML is not well-formed. Otherwise errors are ignored.
  * @return array representation of the parsed XML.
  */
-function xmlize($data, $whitespace = 1, $encoding = 'UTF-8', $reporterrors = false) {
+    function parse($data, $whitespace = 1, $encoding = 'UTF-8', $reporterrors = false) {
+		$data = trim($data);
+		$this->xml = array();
+		$this->current = array();
+		$this->level = 0;
+		$this->current[0] = & $this->xml;
+		$parser = xml_parser_create($encoding);
+		xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
+		xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, $whitespace);
+		xml_set_element_handler($parser, [$this, "startElement"], [$this, "endElement"]);
+		xml_set_character_data_handler($parser, [$this, "characterData"]);
+		for ($i = 0; $i < strlen($data); $i+= 4096) if(!xml_parse($parser, substr($data, $i, 4096))) break; // start parsing an xml document
+		
+		if ($reporterrors) {
+			$errorcode = xml_get_error_code($parser);
+			if ($errorcode) {
+				$exception = new xml_format_exception(xml_error_string($errorcode),
+				xml_get_current_line_number($parser),
+				xml_get_current_column_number($parser));
+				xml_parser_free($parser);
+				throw $exception;
+			}	
+		}
 
-    $data = trim($data);
-    $vals = array();
-    $parser = xml_parser_create($encoding);
-    xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
-    xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, $whitespace);
-    xml_parse_into_struct($parser, $data, $vals);
+		
+		xml_parser_free($parser); // deletes the parser
 
-    // Error handling when the xml file is not well-formed
-    if ($reporterrors) {
-        $errorcode = xml_get_error_code($parser);
-        if ($errorcode) {
-            $exception = new xml_format_exception(xml_error_string($errorcode),
-                    xml_get_current_line_number($parser),
-                    xml_get_current_column_number($parser));
-            xml_parser_free($parser);
-            throw $exception;
-        }
-    }
-    xml_parser_free($parser);
+		if (empty($this->xml)) {
+		// XML file is invalid or empty, return false
+		      return false;
+		}
 
-    $i = 0;
-    if (empty($vals)) {
-        // XML file is invalid or empty, return false
-        return false;
-    }
-
-    $array = array();
-    $tagname = $vals[$i]['tag'];
-    if (isset($vals[$i]['attributes'])) {
-        $array[$tagname]['@'] = $vals[$i]['attributes'];
-    } else {
-        $array[$tagname]['@'] = array();
-    }
-
-    $array[$tagname]["#"] = xml_depth($vals, $i);
-
-    return $array;
+		return $this->xml;
+	}
 }
 
-/**
- * @internal You don't need to do anything with this function, it's called by
- * xmlize. It's a recursive function, calling itself as it goes deeper
- * into the xml levels.  If you make any improvements, please let me know.
- * @access private
- */
-function xml_depth($vals, &$i) {
-    $children = array();
-
-    if ( isset($vals[$i]['value']) )
-    {
-        array_push($children, $vals[$i]['value']);
-    }
-
-    while (++$i < count($vals)) {
-
-        switch ($vals[$i]['type']) {
-
-           case 'open':
-
-                if ( isset ( $vals[$i]['tag'] ) )
-                {
-                    $tagname = $vals[$i]['tag'];
-                } else {
-                    $tagname = '';
-                }
-
-                if ( isset ( $children[$tagname] ) )
-                {
-                    $size = sizeof($children[$tagname]);
-                } else {
-                    $size = 0;
-                }
-
-                if ( isset ( $vals[$i]['attributes'] ) ) {
-                    $children[$tagname][$size]['@'] = $vals[$i]["attributes"];
-
-                }
-
-                $children[$tagname][$size]['#'] = xml_depth($vals, $i);
-
-            break;
-
-
-            case 'cdata':
-                array_push($children, $vals[$i]['value']);
-            break;
-
-            case 'complete':
-                $tagname = $vals[$i]['tag'];
-
-                if( isset ($children[$tagname]) )
-                {
-                    $size = sizeof($children[$tagname]);
-                } else {
-                    $size = 0;
-                }
-
-                if( isset ( $vals[$i]['value'] ) )
-                {
-                    $children[$tagname][$size]["#"] = $vals[$i]['value'];
-                } else {
-                    $children[$tagname][$size]["#"] = '';
-                }
-
-                if ( isset ($vals[$i]['attributes']) ) {
-                    $children[$tagname][$size]['@']
-                                             = $vals[$i]['attributes'];
-                }
-
-            break;
-
-            case 'close':
-                return $children;
-            break;
-        }
-
-    }
-
-        return $children;
-
-
-}
-
-
-/**
- * This helps you understand the structure of the array {@link xmlize()} outputs
+/** 
+ * XML parsing function calles into class.
  *
- * Function by acebone@f2s.com, a HUGE help!<br>
- * Usage:<br>
- * <code>
- * traverse_xmlize($xml, 'xml_');
- * print '<pre>' . implode("", $traverse_array . '</pre>';
- * </code>
- * @author acebone@f2s.com
- * @param array $array ?
- * @param string $arrName ?
- * @param int $level ?
- * @return int
- * @todo Finish documenting this function
+ * Note: Used by xml element handler as callback.
+ *
+ * @param string $data the XML source to parse.
+ * @param int $whitespace If set to 1 allows the parser to skip "space" characters in xml document. Default is 1
+ * @param string $encoding Specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
+ * @param bool $reporterrors if set to true, then a {@link xml_format_exception}
+ *      exception will be thrown if the XML is not well-formed. Otherwise errors are ignored.
+ * @return array representation of the parsed XML.
  */
-function traverse_xmlize($array, $arrName = 'array', $level = 0) {
-
-    foreach($array as $key=>$val)
-    {
-        if ( is_array($val) )
-        {
-            traverse_xmlize($val, $arrName . '[' . $key . ']', $level + 1);
-        } else {
-            $GLOBALS['traverse_array'][] = '$' . $arrName . '[' . $key . '] = "' . $val . "\"\n";
-        }
-    }
-
-    return 1;
-
+function xmlize($data, $whitespace = 1, $encoding = 'UTF-8', $reporterrors = false){
+    $hxml = new huge_xml_parse();
+    return $hxml->parse($data,$whitespace,$encoding,$reporterrors);
 }
+
+
