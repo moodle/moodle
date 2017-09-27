@@ -27,7 +27,7 @@
  * @subpackage lib
  * @version    This is version 2.0. A complete rewrite.
  * @copyright  Kilian Singer
- * @licence    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
  /**
@@ -67,7 +67,7 @@
  * @subpackage lib
  * @version    This is version 2.0. A complete rewrite.
  * @copyright  Kilian Singer
- * @licence    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class huge_xml_parse {
     private $xml;             //resulting $xml tree
@@ -76,6 +76,8 @@ class huge_xml_parse {
 
 /*** 
  * Is called when tags are opened.
+ *
+ * Note: Used by xml element handler as callback.
  *
  * @author Kilian Singer
  * @param resource $parser The XML parser resource.
@@ -109,6 +111,8 @@ class huge_xml_parse {
 /*** 
  * Is called when tags are closed.
  *
+ * Note: Used by xml element handler as callback.
+ *
  * @author Kilian Singer
  * @param resource $parser The XML parser resource.
  * @param string $data The XML source to parse.
@@ -133,6 +137,8 @@ class huge_xml_parse {
 /*** 
  * Is called for text between the start and the end of tags. 
  *
+ * Note: Used by xml element handler as callback.
+ * 
  * @author Kilian Singer
  * @param resource $parser The XML parser resource.
  * @param string $data The XML source to parse.
@@ -163,6 +169,8 @@ class huge_xml_parse {
 
 /*** 
  * Parses XML string. 
+ *
+ * Note: Interface is kept equal to previous version.
  *
  * @author Kilian Singer
  * @param string $data the XML source to parse.
@@ -209,6 +217,10 @@ class huge_xml_parse {
 }
 
 /*** 
+ * XML parsing function calles into class.
+ *
+ * Note: Used by xml element handler as callback.
+ *
  * @param string $data the XML source to parse.
  * @param int $whitespace If set to 1 allows the parser to skip "space" characters in xml document. Default is 1
  * @param string $encoding Specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
