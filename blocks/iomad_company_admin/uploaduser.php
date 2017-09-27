@@ -851,7 +851,7 @@ if ($mform->is_cancelled()) {
                                              WHERE licenseid = :licenseid
                                              AND licensecourseid = :licensecourseid
                                              AND userid = :userid
-                                             AND (isusing = 0 OR timecompleted IS NOT NULL)",
+                                             AND (isusing = 0 OR timecompleted IS NULL)",
                                              array('userid' => $user->id, 'licenseid' => $formdata->licenseid,
                                                   'licensecourseid' => $licensecourse))) {
                         // Already assigned skip and error.
