@@ -805,8 +805,7 @@ class core_admin_renderer extends plugin_renderer_base {
         if (!$registered) {
 
             if (has_capability('moodle/site:config', context_system::instance())) {
-                $registerbutton = $this->single_button(new moodle_url('/admin/registration/register.php',
-                    array('huburl' =>  HUB_MOODLEORGHUBURL, 'hubname' => 'Moodle.net')),
+                $registerbutton = $this->single_button(new moodle_url('/admin/registration/index.php'),
                     get_string('register', 'admin'));
                 $str = 'registrationwarning';
             } else {
@@ -828,10 +827,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string
      */
     public function warn_if_not_registered() {
-        global $CFG;
-        require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
-        $registrationmanager = new registration_manager();
-        return $this->registration_warning($registrationmanager->get_registeredhub(HUB_MOODLEORGHUBURL) ? true : false);
+        return $this->registration_warning(\core\hub\registration::is_registered());
     }
 
     /**
