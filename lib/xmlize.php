@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// This xml parser writen by kilian.singer@quantumtechnology.info
+// This xml parser written by kilian.singer@quantumtechnology.info
 // Date 26.9.2017
 // in order to allow for loading of big xml files using the sax interface
 //
@@ -121,11 +121,11 @@ class HugeXMLparse
 		}
 	}
 
+
+	// Creates a new XML parser and returns a resource handle referencing it to be used by the other XML functions.
+
 	function parse($data, $whitespace = 1, $encoding = 'UTF-8', $reporterrors = false)
 	{
-
-		// Creates a new XML parser and returns a resource handle referencing it to be used by the other XML functions.
-
 		$data = trim($data);
 		$this->xml = array();
 		$this->current = array();
