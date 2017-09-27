@@ -4588,6 +4588,7 @@ class core_competency_api_testcase extends advanced_testcase {
         $c1 = $ccg->create_competency(['competencyframeworkid' => $f1->get('id')]);
         $c2 = $ccg->create_competency(['competencyframeworkid' => $f1->get('id')]);
         $c3 = $ccg->create_competency(['competencyframeworkid' => $f1->get('id')]);
+        $c4 = $ccg->create_competency(['competencyframeworkid' => $f1->get('id')]);
         $uc1a = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $c1->get('id'),
             'status' => user_competency::STATUS_IDLE]);
         $uc1b = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $c2->get('id'),
@@ -4600,7 +4601,7 @@ class core_competency_api_testcase extends advanced_testcase {
             'status' => user_competency::STATUS_IDLE]);
         $uc2c = $ccg->create_user_competency(['userid' => $u2->id, 'competencyid' => $c3->get('id'),
             'status' => user_competency::STATUS_IN_REVIEW]);
-        $uc3a = $ccg->create_user_competency(['userid' => $u3->id, 'competencyid' => $c3->get('id'),
+        $uc3a = $ccg->create_user_competency(['userid' => $u3->id, 'competencyid' => $c4->get('id'),
             'status' => user_competency::STATUS_WAITING_FOR_REVIEW]);
 
         // The reviewer can review all plans waiting for review, or in review where they are the reviewer.
