@@ -63,6 +63,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
 
             target = target || root.find(SELECTORS.CALENDAR_MONTH_WRAPPER);
 
+            M.util.js_pending([root.get('id'), year, month, courseid].join('-'));
             var includenavigation = root.data('includenavigation');
             return CalendarRepository.getCalendarMonthData(year, month, courseid, includenavigation)
                 .then(function(context) {
@@ -76,6 +77,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
                     return;
                 })
                 .always(function() {
+                    M.util.js_complete([root.get('id'), year, month, courseid].join('-'));
                     return stopLoading(root);
                 })
                 .fail(Notification.exception);
