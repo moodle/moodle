@@ -452,7 +452,7 @@ $courseid = optional_param('courseid', 0, PARAM_INTEGER);
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
 $error = optional_param('error', 0, PARAM_INTEGER);
-$selectedcourses = optional_param_array('courses', array(), PARAM_INT);
+$selectedcourses = optional_param('courses', array(), PARAM_INT);
 $chosenid = optional_param('chosenid', 0, PARAM_INT);
 
 // if this is a single course then optional_param_array doesn't work.
