@@ -25,7 +25,6 @@
  *
  * @package    core
  * @subpackage lib
- * @version    This is version 2.0. A complete rewrite.
  * @copyright  Kilian Singer
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,13 +33,24 @@
  * Exception thrown when there is an error parsing an XML file.
  *
  * @copyright 2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
  class xml_format_exception extends moodle_exception {
     /** @var string */
     public $errorstring;
+    /** @var int */
     public $line;
+    /** @var char */
     public $char;
-    function __construct($errorstring, $line, $char, $link = '') {
+ /**
+ * Constructor function
+ *
+ * @param string $errorstring Errorstring
+ * @param int $line Linenumber
+ * @param char $char Errorcharacter
+ * @param string $link Link
+*/  
+   function __construct($errorstring, $line, $char, $link = '') {
         $this->errorstring = $errorstring;
         $this->line = $line;
         $this->char = $char;
@@ -65,15 +75,16 @@
  *
  * @package    core
  * @subpackage lib
- * @version    This is version 2.0. A complete rewrite.
  * @copyright  Kilian Singer
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class huge_xml_parse {
-    private $xml;             //resulting $xml tree
-    private $current;         //array stores references to constructed $xml tree
-    private $level;           //stores the level in the XML tree
-
+    /** @var array resulting $xml tree */
+    private $xml;
+    /** @var array stores references to constructed $xml tree */
+    private $current;
+    /** @var int tores the level in the XML tree */
+    private $level;
 /** 
  * Is called when tags are opened.
  *
@@ -81,7 +92,8 @@ class huge_xml_parse {
  *
  * @author Kilian Singer
  * @param resource $parser The XML parser resource.
- * @param string $data The XML source to parse.
+ * @param string $name The XML source to parse.
+ * @param array $attrs Stores attributes of XML tag.
  */
     function startElement($parser, $name, $attrs) {
 		$current=&$this->current;
@@ -115,7 +127,7 @@ class huge_xml_parse {
  *
  * @author Kilian Singer
  * @param resource $parser The XML parser resource.
- * @param string $data The XML source to parse.
+ * @param string $name The XML source to parse.
  */
 	function endElement($parser, $name){
 		$current=&$this->current;
