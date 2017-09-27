@@ -26,13 +26,14 @@ Feature: Limit displayed upcoming events
     When I create a calendar event:
       | Type of event     | course |
       | Event title       | Two months away event |
+    And I am on "Course 1" course homepage
     Then I should not see "Two months away event"
     And I am on site homepage
     And I follow "Preferences" in the user menu
     And I follow "Calendar preferences"
-    And I set the following fields to these values:
+    When I set the following fields to these values:
       | Upcoming events look-ahead | 3 months |
     And I press "Save changes"
     And I wait to be redirected
     And I am on "Course 1" course homepage
-    And I should see "Two months away event"
+    Then I should see "Two months away event"
