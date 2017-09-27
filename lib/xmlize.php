@@ -14,13 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// This xml parser written by kilian.singer@quantumtechnology.info
-// Date 26.9.2017
-// in order to allow for loading of big xml files using the sax interface
-//
-// it uses a similar interface to the original version
-// xmlize() by Hans Anderson, {@link http://www.hansanderson.com/contact/}
+/**
+ * Code for parsing xml files.
+ *
+ * Handles functionality for:
+ *
+ *    Import of xml files in questionbank and course import.
+ *    Can handle xml files larger than 10MB through chunking the input file.
+ *    Uses a similar interface to the original version xmlize() by Hans Anderson.
+ *
+ * @package    core
+ * @subpackage lib
+ * @version    This is version 2.0. A complete rewrite.
+ * @copyright  Kilian Singer
+ * @licence    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+ /**
+ * Exception thrown when there is an error parsing an XML file.
+ *
+ * @copyright 2010 The Open University
+ */
  class xml_format_exception extends moodle_exception {
     /** @var string */
     public $errorstring;
@@ -40,18 +54,34 @@
 }
 
 
+/**
+ * Class for parsing xml files.
+ *
+ * Handles functionality for:
+ *
+ *    Import of xml files in questionbank and course import.
+ *    Can handle xml files larger than 10MB through chunking the input file.
+ *    Uses a similar interface to the original version xmlize() by Hans Anderson.
+ *
+ * @package    core
+ * @subpackage lib
+ * @version    This is version 2.0. A complete rewrite.
+ * @copyright  Kilian Singer
+ * @licence    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class huge_xml_parse {
+    private $xml;             //resulting $xml tree
+    private $current;         //array stores references to constructed $xml tree
+    private $level;           //stores the level in the XML tree
 
-class HugeXMLparse
-
-{
-	private $xml;
-	private $current;
-	private $level;
-
-	// This function is called when tags are opened
-
-	function startElement($parser, $name, $attrs)
-	{
+/*** 
+ * Is called when tags are opened.
+ *
+ * @author Kilian Singer
+ * @param resource $parser The XML parser resource.
+ * @param string $data The XML source to parse.
+ */
+    function startElement($parser, $name, $attrs) {
 		$current=&$this->current;
 		$level=&$this->level;
 		if (!empty($name)) {
@@ -75,10 +105,15 @@ class HugeXMLparse
 		}
 	}
 
-	// This function is called when tags are closed
-
-	function endElement($parser, $name)
-	{
+    
+/*** 
+ * Is called when tags are closed.
+ *
+ * @author Kilian Singer
+ * @param resource $parser The XML parser resource.
+ * @param string $data The XML source to parse.
+ */
+	function endElement($parser, $name){
 		$current=&$this->current;
 		$level=&$this->level;
 		if (!empty($name)) {
@@ -94,10 +129,15 @@ class HugeXMLparse
 		}
 	}
 
-	// This function is called for text between the start and the end of tags
-
-	function characterData($parser, $data)
-	{
+    
+/*** 
+ * Is called for text between the start and the end of tags. 
+ *
+ * @author Kilian Singer
+ * @param resource $parser The XML parser resource.
+ * @param string $data The XML source to parse.
+ */
+    function characterData($parser, $data) {
 		$current=&$this->current;
 		$level=&$this->level;
 		if (($data == "0") || (!empty($data) && trim($data) != "")) {
@@ -121,11 +161,18 @@ class HugeXMLparse
 		}
 	}
 
-
-	// Creates a new XML parser and returns a resource handle referencing it to be used by the other XML functions.
-
-	function parse($data, $whitespace = 1, $encoding = 'UTF-8', $reporterrors = false)
-	{
+/*** 
+ * Parses XML string. 
+ *
+ * @author Kilian Singer
+ * @param string $data the XML source to parse.
+ * @param int $whitespace If set to 1 allows the parser to skip "space" characters in xml document. Default is 1
+ * @param string $encoding Specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
+ * @param bool $reporterrors if set to true, then a {@link xml_format_exception}
+ *      exception will be thrown if the XML is not well-formed. Otherwise errors are ignored.
+ * @return array representation of the parsed XML.
+ */
+    function parse($data, $whitespace = 1, $encoding = 'UTF-8', $reporterrors = false) {
 		$data = trim($data);
 		$this->xml = array();
 		$this->current = array();
@@ -161,9 +208,17 @@ class HugeXMLparse
 	}
 }
 
+/*** 
+ * @param string $data the XML source to parse.
+ * @param int $whitespace If set to 1 allows the parser to skip "space" characters in xml document. Default is 1
+ * @param string $encoding Specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
+ * @param bool $reporterrors if set to true, then a {@link xml_format_exception}
+ *      exception will be thrown if the XML is not well-formed. Otherwise errors are ignored.
+ * @return array representation of the parsed XML.
+ */
 function xmlize($data, $whitespace = 1, $encoding = 'UTF-8', $reporterrors = false){
-	$hxml = new HugeXMLparse();
-	return $hxml->parse($data,$whitespace,$encoding,$reporterrors);
+    $hxml = new huge_xml_parse();
+    return $hxml->parse($data,$whitespace,$encoding,$reporterrors);
 }
 
 
