@@ -9,6 +9,14 @@ select {
     width: auto;
 }
 
+// Choice module
+
+.path-mod-choice {
+    .horizontal .choices .option {
+        display: inline-block;
+    }
+}
+
 .path-mod-feedback .feedback_form .col-form-label {
     display: block !important; /* stylelint-disable-line declaration-no-important */
 }
