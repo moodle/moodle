@@ -17366,6 +17366,9 @@ div#dock {
   float: left;
   padding-right: 1em;
 }
+.path-mod-choice .horizontal .choices .option {
+  display: inline-block;
+}
 .path-mod-lesson .firstpageoptions {
   margin: auto;
   min-width: 280px;
