@@ -87,8 +87,8 @@ class insight implements \renderable, \templatable {
         $predictedvalue = $this->prediction->get_prediction_data()->prediction;
         $predictionid = $this->prediction->get_prediction_data()->id;
         $data->predictiondisplayvalue = $this->model->get_target()->get_display_value($predictedvalue);
-        list($data->style, $data->outcomeicon) = $this->get_calculation_display($this->model->get_target(), $predictedvalue,
-            $output);
+        list($data->style, $data->outcomeicon) = $this->get_calculation_display($this->model->get_target(),
+            floatval($predictedvalue), $output);
 
         $actions = $this->model->get_target()->prediction_actions($this->prediction, $this->includedetailsaction);
         if ($actions) {
@@ -124,8 +124,8 @@ class insight implements \renderable, \templatable {
             $obj = new \stdClass();
             $obj->name = call_user_func(array($calculation->indicator, 'get_name'));
             $obj->displayvalue = $calculation->indicator->get_display_value($calculation->value, $calculation->subtype);
-            list($obj->style, $obj->outcomeicon) = $this->get_calculation_display($calculation->indicator, $calculation->value,
-                $output, $calculation->subtype);
+            list($obj->style, $obj->outcomeicon) = $this->get_calculation_display($calculation->indicator,
+                floatval($calculation->value), $output, $calculation->subtype);
 
             $data->calculations[] = $obj;
         }
