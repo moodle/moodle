@@ -174,9 +174,7 @@ class quiz_overview_report_testcase extends advanced_testcase {
         $table->setup();
 
         // Run the query.
-        list($fields, $from, $where, $params) = $table->base_sql($studentsjoins);
-        $table->set_sql($fields, $from, $where, $params);
-        $table->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp WHERE 1 = 1", $params);
+        $table->setup_sql_queries($studentsjoins);
         $table->query_db(30, false);
 
         // Should be 4 rows, matching count($table->rawdata) tested below.

@@ -136,26 +136,7 @@ class quiz_overview_report extends quiz_attempts_report {
         $hasstudents = $hasstudents && (!$currentgroup || $this->hasgroupstudents);
         if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_WITH)) {
             // Construct the SQL.
-            list($fields, $from, $where, $params) = $table->base_sql($allowedjoins);
-
-            // The WHERE clause is vital here, because some parts of tablelib.php will expect to
-            // add bits like ' AND x = 1' on the end, and that needs to leave to valid SQL.
-            $table->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp WHERE 1 = 1", $params);
-
-            // Test to see if there are any regraded attempts to be listed.
-            $fields .= ", COALESCE((
-                                SELECT MAX(qqr.regraded)
-                                  FROM {quiz_overview_regrades} qqr
-                                 WHERE qqr.questionusageid = quiza.uniqueid
-                          ), -1) AS regraded";
-            if ($options->onlyregraded) {
-                $where .= " AND COALESCE((
-                                    SELECT MAX(qqr.regraded)
-                                      FROM {quiz_overview_regrades} qqr
-                                     WHERE qqr.questionusageid = quiza.uniqueid
-                                ), -1) <> -1";
-            }
-            $table->set_sql($fields, $from, $where, $params);
+            $table->setup_sql_queries($allowedjoins);
 
             if (!$table->is_downloading()) {
                 // Output the regrade buttons.
@@ -220,7 +201,7 @@ class quiz_overview_report extends quiz_attempts_report {
             $this->add_grade_columns($quiz, $options->usercanseegrades, $columns, $headers, false);
 
             if (!$table->is_downloading() && has_capability('mod/quiz:regrade', $this->context) &&
-                    $this->has_regraded_questions($from, $where, $params)) {
+                    $this->has_regraded_questions($table->sql->from, $table->sql->where, $table->sql->params)) {
                 $columns[] = 'regraded';
                 $headers[] = get_string('regrade', 'quiz_overview');
             }
