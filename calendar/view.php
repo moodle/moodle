@@ -38,12 +38,7 @@
 //                                                                         //
 /////////////////////////////////////////////////////////////////////////////
 
-/**
- * Display the calendar page.
- * @copyright 2003 Jon Papaioannou
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package core_calendar
- */
+//  Display the calendar page.
 
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
@@ -58,26 +53,25 @@ $time = optional_param('time', 0, PARAM_INT);
 
 $url = new moodle_url('/calendar/view.php');
 
+if ($courseid != SITEID) {
+    $url->param('course', $courseid);
+}
+
+if ($view !== 'upcoming') {
+    $url->param('view', $view);
+}
+
 // If a day, month and year were passed then convert it to a timestamp. If these were passed
 // then we can assume the day, month and year are passed as Gregorian, as no where in core
 // should we be passing these values rather than the time. This is done for BC.
 if (!empty($day) && !empty($mon) && !empty($year)) {
     if (checkdate($mon, $day, $year)) {
         $time = make_timestamp($year, $mon, $day);
+    } else {
+        $time = time();
     }
-}
-
-if (empty($time)) {
+} else if (empty($time)) {
     $time = time();
-}
-
-if ($courseid != SITEID) {
-    $url->param('course', $courseid);
-}
-
-if ($view !== 'upcoming') {
-    $time = usergetmidnight($time);
-    $url->param('view', $view);
 }
 
 $url->param('time', $time);
@@ -85,8 +79,7 @@ $url->param('time', $time);
 $PAGE->set_url($url);
 
 if ($courseid != SITEID && !empty($courseid)) {
-    // Course ID must be valid and existing.
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $courseid));
     $courses = array($course->id => $course);
     $issite = false;
     navigation_node::override_active_url(new moodle_url('/course/view.php', array('id' => $course->id)));
@@ -96,7 +89,7 @@ if ($courseid != SITEID && !empty($courseid)) {
     $issite = true;
 }
 
-require_login($course, false);
+require_course_login($course);
 
 $calendar = new calendar_information(0, 0, 0, $time);
 $calendar->prepare_for_view($course, $courses);
@@ -123,6 +116,7 @@ switch($view) {
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title("$course->shortname: $strcalendar: $pagetitle");
 $PAGE->set_heading($COURSE->fullname);
+$PAGE->set_button(calendar_preferences_button($course));
 
 $renderer = $PAGE->get_renderer('core_calendar');
 $calendar->add_sidecalendar_blocks($renderer, true, $view);
@@ -130,11 +124,11 @@ $calendar->add_sidecalendar_blocks($renderer, true, $view);
 echo $OUTPUT->header();
 echo $renderer->start_layout();
 echo html_writer::start_tag('div', array('class'=>'heightcontainer'));
-echo $OUTPUT->heading(get_string('calendar', 'calendar'));
 
 switch($view) {
     case 'day':
-        echo $renderer->show_day($calendar);
+		echo '<style = "font-color: #ff0000">' .$renderer->show_day($calendar). '</style>';
+        
     break;
     case 'month':
         echo $renderer->show_month_detailed($calendar, $url);
@@ -152,7 +146,7 @@ switch($view) {
         }
         $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
         echo $renderer->show_upcoming_events($calendar, $lookahead, $maxevents);
-    break;
+    break; 
 }
 
 //Link to calendar export page.
@@ -163,13 +157,10 @@ if (!empty($CFG->enablecalendarexport)) {
         echo $OUTPUT->single_button(new moodle_url('/calendar/managesubscriptions.php', array('course'=>$courseid)), get_string('managesubscriptions', 'calendar'));
     }
     if (isloggedin()) {
-        $authtoken = sha1($USER->id . $DB->get_field('user', 'password', array('id' => $USER->id)) . $CFG->calendar_exportsalt);
-        $link = new moodle_url(
-            '/calendar/export_execute.php',
-            array('preset_what'=>'all', 'preset_time' => 'recentupcoming', 'userid' => $USER->id, 'authtoken'=>$authtoken)
-        );
-        echo html_writer::tag('a', 'iCal',
-            array('href' => $link, 'title' => get_string('quickdownloadcalendar', 'calendar'), 'class' => 'ical-link m-l-1'));
+        $authtoken = sha1($USER->id . $DB->get_field('user', 'password', array('id'=>$USER->id)) . $CFG->calendar_exportsalt);
+        $link = new moodle_url('/calendar/export_execute.php', array('preset_what'=>'all', 'preset_time'=>'recentupcoming', 'userid' => $USER->id, 'authtoken'=>$authtoken));
+        $icon = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('i/ical'), 'height'=>'14', 'width'=>'36', 'alt'=>get_string('ical', 'calendar'), 'title'=>get_string('quickdownloadcalendar', 'calendar')));
+        echo html_writer::tag('a', $icon, array('href'=>$link));
     }
 }
 
