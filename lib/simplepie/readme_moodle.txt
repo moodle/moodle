@@ -16,3 +16,9 @@ The actual code has not been updated and still reads 1.4.1, but this is tagged a
 My guess is that they forgot to update the numbers when tagging the new version number. An issue has
 been created on their github account (https://github.com/simplepie/simplepie/issues/472).
 By Adrian Greeve <adrian@moodle.com>
+
+
+2017/09/28
+==========
+Updated to version 1.5.0 (MDL-60236)
+By Ankit Agarwal <ankit.agrr@gmail.com>

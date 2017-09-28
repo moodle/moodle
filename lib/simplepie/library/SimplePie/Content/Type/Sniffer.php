@@ -255,7 +255,7 @@ class SimplePie_Content_Type_Sniffer
 	public function feed_or_html()
 	{
 		$len = strlen($this->file->body);
-		$pos = strspn($this->file->body, "\x09\x0A\x0D\x20");
+		$pos = strspn($this->file->body, "\x09\x0A\x0D\x20\xEF\xBB\xBF");
 
 		while ($pos < $len)
 		{
