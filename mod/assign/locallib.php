@@ -2961,7 +2961,8 @@ class assign {
                                                                        '_' .
                                                                        $subtype .
                                                                        '_' .
-                                                                       $type);
+                                                                       $type .
+                                                                       '_');
                                     if ($type == 'file') {
                                         $pathfilename = $prefixedfilename . $file->get_filepath() . $zipfilename;
                                     } else if ($type == 'onlinetext') {
