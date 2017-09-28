@@ -56,18 +56,44 @@ class profile_field_base {
     /** @var string */
     public $dataformat;
 
+    /** @var string name of the user profile category */
+    protected $categoryname;
+
     /**
      * Constructor method.
      * @param int $fieldid id of the profile from the user_info_field table
      * @param int $userid id of the user for whom we are displaying data
-     * @param object $fielddata optional data for the field object.
+     * @param object $fielddata optional data for the field object plus additional fields 'hasuserdata', 'data' and 'dataformat'
+     *    with user data. (If $fielddata->hasuserdata is empty, user data is not available and we should use default data).
+     *    If this parameter is passed, constructor will not call load_data() at all.
      */
     public function __construct($fieldid=0, $userid=0, $fielddata=null) {
-        global $USER;
+        global $CFG;
+
+        if ($CFG->debugdeveloper) {
+            // In Moodle 3.4 the new argument $fielddata was added to the constructor. Make sure that
+            // plugin constructor properly passes this argument.
+            $backtrace = debug_backtrace();
+            if (isset($backtrace[1]['class']) && $backtrace[1]['function'] === '__construct' &&
+                    in_array(self::class, class_parents($backtrace[1]['class']))) {
+                // If this constructor is called from the constructor of the plugin make sure that the third argument was passed through.
+                if (count($backtrace[1]['args']) >= 3 && count($backtrace[0]['args']) < 3) {
+                    debugging($backtrace[1]['class'].'::__construct() must support $fielddata as the third argument ' .
+                        'and pass it to the parent constructor', DEBUG_DEVELOPER);
+                }
+            }
+        }
 
         $this->set_fieldid($fieldid);
         $this->set_userid($userid);
-        $this->load_data($fielddata);
+        if ($fielddata) {
+            $this->set_field($fielddata);
+            if ($userid && !empty($fielddata->hasuserdata)) {
+                $this->set_user_data($fielddata->data, $fielddata->dataformat);
+            }
+        } else {
+            $this->load_data();
+        }
     }
 
     /**
@@ -290,65 +316,93 @@ class profile_field_base {
     }
 
     /**
-     * Accessor method: Load the field record and user data associated with the object's fieldid and userid.
-     * If $fielddata is provided, it must be an object structure as follows:
-     * - $fielddata->field The user_info_field record for this field.
-     * - $fielddata->data The data column from user_info_data for this user.
-     * - $fielddata->dataformat The dataformat column from user_info_data for this user.
+     * Sets the field object and default data and format into $this->data and $this->dataformat
      *
-     * @internal This method should not generally be overwritten by child classes.
-     * @param object $fielddata Optional data for the field object.
+     * This method should be called before {@link self::set_user_data}
+     *
+     * @param stdClass $field
+     * @throws coding_exception
      */
-    public function load_data($fielddata = null) {
-        global $DB;
-
-        if (($fielddata !== null) && ($this->validate_fielddata($fielddata))) {
-            // If the field data was passed in, use it and return.
-            // Note that $fielddata->data will be in both $this->field->data and $this->data, but since PHP copies objects
-            // by reference, this adds no extra memory strain.
-            $this->field = $fielddata;
-            $this->inputname = 'profile_field_'.$fielddata->shortname;
-            $this->data = $fielddata->data;
-            $this->dataformat = $fielddata->dataformat;
-
-        } else if (($this->fieldid != 0) && ($field = $DB->get_record('user_info_field', ['id' => $this->fieldid]))) {
-            // If no data is passed in, and the field id is known, get the data from the database.
-            $this->field = $field;
-            $this->inputname = 'profile_field_'.$field->shortname;
-            // Check for instance data and include it if present. Otherwise set to default.
-            if ($data = $DB->get_record('user_info_data', ['userid' => $this->userid, 'fieldid' => $this->fieldid],
-                'data, dataformat')) {
-                $this->data = $data->data;
-                $this->dataformat = $data->dataformat;
-            } else {
-                $this->data = $this->field->defaultdata;
-                $this->dataformat = FORMAT_HTML;
+    public function set_field($field) {
+        global $CFG;
+        if ($CFG->debugdeveloper) {
+            $properties = ['id', 'shortname', 'name', 'datatype', 'description', 'descriptionformat', 'categoryid', 'sortorder',
+                'required', 'locked', 'visible', 'forceunique', 'signup', 'defaultdata', 'defaultdataformat', 'param1', 'param2',
+                'param3', 'param4', 'param5'];
+            foreach ($properties as $property) {
+                if (!property_exists($field, $property)) {
+                    debugging('The \'' . $property . '\' property must be set.', DEBUG_DEVELOPER);
+                }
             }
-
-        } else {
-            $this->field = null;
-            $this->inputname = '';
-            $this->data = null;
-            $this->dataformat = null;
         }
+        if ($this->fieldid && $this->fieldid != $field->id) {
+            throw new coding_exception('Can not set field object after a different field id was set');
+        }
+        $this->fieldid = $field->id;
+        $this->field = $field;
+        $this->inputname = 'profile_field_' . $this->field->shortname;
+        $this->data = $this->field->defaultdata;
+        $this->dataformat = FORMAT_HTML;
     }
 
     /**
-     * Validate that fielddata parameter used by 'load_data' is structured properly.
-     * @param object $fielddata
-     * @return bool
-     * @throws coding_exception
+     * Sets user id and user data for the field
+     *
+     * @param mixed $data
+     * @param int $dataformat
      */
-    private function validate_fielddata($fielddata) {
-        $properties = ['id', 'shortname', 'name', 'datatype', 'description', 'descriptionformat', 'categoryid', 'sortorder',
-            'required', 'locked', 'visible', 'forceunique', 'signup', 'defaultdata', 'defaultdataformat', 'param1', 'param2',
-            'param3', 'param4', 'param5', 'data', 'dataformat'];
-        foreach ($properties as $property) {
-            if (!property_exists($fielddata, $property)) {
-                throw new \coding_exception('The \'' . $property . '\' property must be set.');
-            }
+    public function set_user_data($data, $dataformat) {
+        $this->data = $data;
+        $this->dataformat = $dataformat;
+    }
+
+    /**
+     * Set the name for the profile category where this field is
+     *
+     * @param string $categoryname
+     */
+    public function set_category_name($categoryname) {
+        $this->categoryname = $categoryname;
+    }
+
+    /**
+     * Returns the name of the profile category where this field is
+     *
+     * @return string
+     */
+    public function get_category_name() {
+        global $DB;
+        if ($this->categoryname === null) {
+            $this->categoryname = $DB->get_field('user_info_category', 'name', ['id' => $this->field->categoryid]);
         }
-        return true;
+        return $this->categoryname;
+    }
+
+    /**
+     * Accessor method: Load the field record and user data associated with the
+     * object's fieldid and userid
+     *
+     * @internal This method should not generally be overwritten by child classes.
+     */
+    public function load_data() {
+        global $DB;
+
+        // Load the field object.
+        if (($this->fieldid == 0) or (!($field = $DB->get_record('user_info_field', array('id' => $this->fieldid))))) {
+            $this->field = null;
+            $this->inputname = '';
+        } else {
+            $this->set_field($field);
+        }
+
+        if (!empty($this->field) && $this->userid) {
+            $params = array('userid' => $this->userid, 'fieldid' => $this->fieldid);
+            if ($data = $DB->get_record('user_info_data', $params, 'data, dataformat')) {
+                $this->set_user_data($data->data, $data->dataformat);
+            }
+        } else {
+            $this->data = null;
+        }
     }
 
     /**
@@ -359,6 +413,8 @@ class profile_field_base {
     public function is_visible() {
         global $USER;
 
+        $context = $this->userid ? context_user::instance($this->userid) : context_system::instance();
+
         switch ($this->field->visible) {
             case PROFILE_VISIBLE_ALL:
                 return true;
@@ -366,12 +422,10 @@ class profile_field_base {
                 if ($this->userid == $USER->id) {
                     return true;
                 } else {
-                    return has_capability('moodle/user:viewalldetails',
-                            context_user::instance($this->userid));
+                    return has_capability('moodle/user:viewalldetails', $context);
                 }
             default:
-                return has_capability('moodle/user:viewalldetails',
-                        context_user::instance($this->userid));
+                return has_capability('moodle/user:viewalldetails', $context);
         }
     }
 
@@ -446,40 +500,47 @@ class profile_field_base {
 /**
  * Returns an array of all custom field records with any defined data (or empty data), for the specified user id.
  * @param int $userid
- * @return array
+ * @return profile_field_base[]
  */
 function profile_get_user_fields_with_data($userid) {
-    global $DB;
+    global $DB, $CFG;
 
     // Join any user info data present with each user info field for the user object.
-    $sql = 'SELECT uif.*, uid.data, uid.dataformat ';
+    $sql = 'SELECT uif.*, uic.name AS categoryname ';
+    if ($userid) {
+        $sql .= ', uid.id AS hasuserdata, uid.data, uid.dataformat ';
+    }
     $sql .= 'FROM {user_info_field} uif ';
-    $sql .= 'LEFT JOIN {user_info_data} uid ON uif.id = uid.fieldid AND uid.userid = :userid ';
-    return $DB->get_records_sql($sql, ['userid' => $userid]);
+    $sql .= 'LEFT JOIN {user_info_category} uic ON uif.categoryid = uic.id ';
+    if ($userid) {
+        $sql .= 'LEFT JOIN {user_info_data} uid ON uif.id = uid.fieldid AND uid.userid = :userid ';
+    }
+    $sql .= 'ORDER BY uic.sortorder ASC, uif.sortorder ASC ';
+    $fields = $DB->get_records_sql($sql, ['userid' => $userid]);
+    $data = [];
+    foreach ($fields as $field) {
+        require_once($CFG->dirroot . '/user/profile/field/' . $field->datatype . '/field.class.php');
+        $classname = 'profile_field_' . $field->datatype;
+        $field->hasuserdata = !empty($field->hasuserdata);
+        /** @var profile_field_base $fieldobject */
+        $fieldobject = new $classname($field->id, $userid, $field);
+        $fieldobject->set_category_name($field->categoryname);
+        unset($field->categoryname);
+        $data[] = $fieldobject;
+    }
+    return $data;
 }
 
 /**
  * Returns an array of all custom field records with any defined data (or empty data), for the specified user id, by category.
  * @param int $userid
- * @return array
+ * @return profile_field_base[][]
  */
 function profile_get_user_fields_with_data_by_category($userid) {
-    global $DB;
-
-    // Join any user info data present with each user info field for the user object.
-    $sql = 'SELECT uif.*, uic.name AS categoryname, uid.data, uid.dataformat ';
-    $sql .= 'FROM {user_info_field} uif ';
-    $sql .= 'INNER JOIN {user_info_category} uic ON uif.categoryid = uic.id ';
-    $sql .= 'LEFT JOIN {user_info_data} uid ON uif.id = uid.fieldid AND uid.userid = :userid ';
-    $sql .= 'ORDER BY uic.sortorder ASC, uif.sortorder ASC ';
-    $fields = $DB->get_records_sql($sql, ['userid' => $userid]);
-    $catid = 0;
+    $fields = profile_get_user_fields_with_data($userid);
     $data = [];
     foreach ($fields as $field) {
-        if ($field->categoryid != $catid) {
-            $catid = $field->categoryid;
-        }
-        $data[$catid][] = $field;
+        $data[$field->field->categoryid][] = $field;
     }
     return $data;
 }
@@ -492,10 +553,7 @@ function profile_load_data($user) {
     global $CFG;
 
     $fields = profile_get_user_fields_with_data($user->id);
-    foreach ($fields as $field) {
-        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-        $newfield = 'profile_field_'.$field->datatype;
-        $formfield = new $newfield($field->id, $user->id, $field);
+    foreach ($fields as $formfield) {
         $formfield->edit_load_user_data($user);
     }
 }
@@ -516,19 +574,16 @@ function profile_definition($mform, $userid = 0) {
     foreach ($categories as $categoryid => $fields) {
         // Check first if *any* fields will be displayed.
         $display = false;
-        foreach ($fields as $field) {
-            if ($field->visible != PROFILE_VISIBLE_NONE) {
+        foreach ($fields as $formfield) {
+            if ($formfield->is_visible()) {
                 $display = true;
             }
         }
 
         // Display the header and the fields.
         if ($display or $update) {
-            $mform->addElement('header', 'category_'.$categoryid, format_string($field->categoryname));
-            foreach ($fields as $field) {
-                require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-                $newfield = 'profile_field_'.$field->datatype;
-                $formfield = new $newfield($field->id, $userid, $field);
+            $mform->addElement('header', 'category_'.$categoryid, format_string($formfield->get_category_name()));
+            foreach ($fields as $formfield) {
                 $formfield->edit_field($mform);
             }
         }
@@ -546,10 +601,7 @@ function profile_definition_after_data($mform, $userid) {
     $userid = ($userid < 0) ? 0 : (int)$userid;
 
     $fields = profile_get_user_fields_with_data($userid);
-    foreach ($fields as $field) {
-        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-        $newfield = 'profile_field_'.$field->datatype;
-        $formfield = new $newfield($field->id, $userid, $field);
+    foreach ($fields as $formfield) {
         $formfield->edit_after_data($mform);
     }
 }
@@ -565,10 +617,7 @@ function profile_validation($usernew, $files) {
 
     $err = array();
     $fields = profile_get_user_fields_with_data($usernew->id);
-    foreach ($fields as $field) {
-        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-        $newfield = 'profile_field_'.$field->datatype;
-        $formfield = new $newfield($field->id, $usernew->id, $field);
+    foreach ($fields as $formfield) {
         $err += $formfield->edit_validate_field($usernew, $files);
     }
     return $err;
@@ -582,10 +631,7 @@ function profile_save_data($usernew) {
     global $CFG;
 
     $fields = profile_get_user_fields_with_data($usernew->id);
-    foreach ($fields as $field) {
-        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-        $newfield = 'profile_field_'.$field->datatype;
-        $formfield = new $newfield($field->id, $usernew->id, $field);
+    foreach ($fields as $formfield) {
         $formfield->edit_save_data($usernew);
     }
 }
@@ -599,10 +645,7 @@ function profile_display_fields($userid) {
 
     $categories = profile_get_user_fields_with_data_by_category($userid);
     foreach ($categories as $categoryid => $fields) {
-        foreach ($fields as $field) {
-            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-            $newfield = 'profile_field_'.$field->datatype;
-            $formfield = new $newfield($field->id, $userid, $field);
+        foreach ($fields as $formfield) {
             if ($formfield->is_visible() and !$formfield->is_empty()) {
                 echo html_writer::tag('dt', format_string($formfield->field->name));
                 echo html_writer::tag('dd', $formfield->display_data());
@@ -678,12 +721,9 @@ function profile_user_record($userid, $onlyinuserobject = true) {
     $usercustomfields = new stdClass();
 
     $fields = profile_get_user_fields_with_data($userid);
-    foreach ($fields as $field) {
-        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-        $newfield = 'profile_field_'.$field->datatype;
-        $formfield = new $newfield($field->id, $userid, $field);
+    foreach ($fields as $formfield) {
         if (!$onlyinuserobject || $formfield->is_user_object_data()) {
-            $usercustomfields->{$field->shortname} = $formfield->data;
+            $usercustomfields->{$formfield->field->shortname} = $formfield->data;
         }
     }
 

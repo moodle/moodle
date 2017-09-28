@@ -334,16 +334,13 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         $categories = profile_get_user_fields_with_data_by_category($user->id);
         $userdetails['customfields'] = array();
         foreach ($categories as $categoryid => $fields) {
-            foreach ($fields as $field) {
-                require_once($CFG->dirroot . '/user/profile/field/' . $field->datatype . '/field.class.php');
-                $newfield = 'profile_field_' . $field->datatype;
-                $formfield = new $newfield($field->id, $user->id, $field);
+            foreach ($fields as $formfield) {
                 if ($formfield->is_visible() and !$formfield->is_empty()) {
 
                     // TODO: Part of MDL-50728, this conditional coding must be moved to
                     // proper profile fields API so they are self-contained.
                     // We only use display_data in fields that require text formatting.
-                    if ($field->datatype == 'text' or $field->datatype == 'textarea') {
+                    if ($formfield->field->datatype == 'text' or $formfield->field->datatype == 'textarea') {
                         $fieldvalue = $formfield->display_data();
                     } else {
                         // Cases: datetime, checkbox and menu.
@@ -352,7 +349,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
 
                     $userdetails['customfields'][] =
                         array('name' => $formfield->field->name, 'value' => $fieldvalue,
-                            'type' => $field->datatype, 'shortname' => $formfield->field->shortname);
+                            'type' => $formfield->field->datatype, 'shortname' => $formfield->field->shortname);
                 }
             }
         }

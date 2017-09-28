@@ -369,10 +369,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
 
     $categories = profile_get_user_fields_with_data_by_category($user->id);
     foreach ($categories as $categoryid => $fields) {
-        foreach ($fields as $field) {
-            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-            $newfield = 'profile_field_'.$field->datatype;
-            $formfield = new $newfield($field->id, $user->id, $field);
+        foreach ($fields as $formfield) {
             if ($formfield->is_visible() and !$formfield->is_empty()) {
                 $node = new core_user\output\myprofile\node('contact', 'custom_field_' . $formfield->field->shortname,
                     format_string($formfield->field->name), null, null, $formfield->display_data());
