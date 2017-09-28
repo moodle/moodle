@@ -30,4 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thislanguage'] = 'Māori (Te Reo)';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Te Reo Māori';
