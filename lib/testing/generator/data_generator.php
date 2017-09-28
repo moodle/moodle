@@ -1103,4 +1103,59 @@ EOD;
         // Get the tool associated with this instance.
         return $DB->get_record('enrol_lti_tools', array('enrolid' => $instanceid));
     }
+
+    /**
+     * Helper function used to create an event.
+     *
+     * @param   array   $data
+     * @return  stdClass
+     */
+    public function create_event($data = []) {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        $record = new \stdClass();
+        $record->name = 'event name';
+        $record->eventtype = 'global';
+        $record->repeat = 0;
+        $record->repeats = 0;
+        $record->timestart = time();
+        $record->timeduration = 0;
+        $record->timesort = 0;
+        $record->eventtype = 'user';
+        $record->courseid = 0;
+
+        foreach ($data as $key => $value) {
+            $record->$key = $value;
+        }
+
+        switch ($record->eventtype) {
+            case 'user':
+                unset($record->categoryid);
+                unset($record->courseid);
+                unset($record->groupid);
+                break;
+            case 'group':
+                unset($record->categoryid);
+                break;
+            case 'course':
+                unset($record->categoryid);
+                unset($record->groupid);
+                break;
+            case 'category':
+                unset($record->courseid);
+                unset($record->groupid);
+                break;
+            case 'global':
+                unset($record->categoryid);
+                unset($record->courseid);
+                unset($record->groupid);
+                break;
+        }
+
+        $event = new calendar_event($record);
+        $event->create($record);
+
+        return $event->properties();
+    }
 }
