@@ -1051,4 +1051,61 @@ class core_calendar_external extends external_api {
             )
         );
     }
+
+    /**
+     * Get data for the monthly calendar view.
+     *
+     * @param   int     $courseid The course to be included
+     * @return  array
+     */
+    public static function get_calendar_upcoming_view($courseid) {
+        global $CFG, $DB, $USER, $PAGE;
+        require_once($CFG->dirroot."/calendar/lib.php");
+
+        // Parameter validation.
+        self::validate_parameters(self::get_calendar_upcoming_view_parameters(), [
+            'courseid' => $courseid,
+        ]);
+
+        if ($courseid != SITEID && !empty($courseid)) {
+            // Course ID must be valid and existing.
+            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+            $courses = [$course->id => $course];
+        } else {
+            $course = get_site();
+            $courses = calendar_get_default_courses();
+        }
+
+        $context = \context_user::instance($USER->id);
+        self::validate_context($context);
+
+        $calendar = new calendar_information(0, 0, 0, time());
+        $calendar->set_sources($course, $courses);
+
+        list($data, $template) = calendar_get_view($calendar, 'upcoming');
+
+        return $data;
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_calendar_upcoming_view_parameters() {
+        return new external_function_parameters(
+            [
+                'courseid' => new external_value(PARAM_INT, 'Course being viewed', VALUE_DEFAULT, SITEID, NULL_ALLOWED),
+            ]
+        );
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function get_calendar_upcoming_view_returns() {
+        return \core_calendar\external\calendar_upcoming_exporter::get_read_structure();
+    }
 }
