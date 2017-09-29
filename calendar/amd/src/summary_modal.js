@@ -131,7 +131,7 @@ function(
      * @return {int}
      */
     ModalEventSummary.prototype.getEventCount = function() {
-        return this.getBody().find(SELECTORS.ROOT).attr('data-event-event-count');
+        return this.getBody().find(SELECTORS.ROOT).attr('data-event-count');
     };
 
     /**
@@ -166,12 +166,13 @@ function(
         // We have to wait for the modal to finish rendering in order to ensure that
         // the data-event-title property is available to use as the modal title.
         this.getRoot().on(ModalEvents.bodyRendered, function() {
-            this.getDeleteButton().data({
+            this.getModal().data({
                 eventTitle: this.getEventTitle(),
                 eventId: this.getEventId(),
                 eventCount: this.getEventCount(),
-            });
-            CalendarCrud.registerRemove(this.getModal(), SELECTORS.ROOT);
+            })
+            .attr('data-type', 'event');
+            CalendarCrud.registerRemove(this.getModal());
 
         }.bind(this));
 

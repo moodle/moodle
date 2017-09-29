@@ -41,13 +41,15 @@ define([], function() {
         calendarPeriods: {
             month: "[data-period='month']",
         },
-        editLink: 'a[data-action="edit"]',
-        deleteLink: 'a[data-action="delete"]',
         courseSelector: 'select[name="course"]',
-        newEventButton: 'button[data-action="new-event-button"]',
         actions: {
+            create: '[data-action="new-event-button"]',
             edit: '[data-action="edit"]',
             remove: '[data-action="delete"]',
         },
+        today: '.today',
+        day: '[data-region="day"]',
+        wrapper: '.calendarwrapper',
+        eventItem: '[data-type="event"]',
     };
 });

@@ -36,6 +36,6 @@
 </div>
 {{#js}}
 require(['jquery', 'core_calendar/calendar_view'], function($, CalendarView) {
-    CalendarView.init($("#calendar-upcoming-{{uniqid}}"));
+    CalendarView.init($("#calendar-upcoming-{{uniqid}}"), 'upcoming');
 });
 {{/js}}

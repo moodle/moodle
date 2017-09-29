@@ -171,6 +171,10 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
 
             var target = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER);
 
+            if (!courseId) {
+                courseId = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('courseid');
+            }
+
             return CalendarRepository.getCalendarUpcomingData(courseId)
                 .then(function(context) {
                     return Templates.render(root.attr('data-template'), context);

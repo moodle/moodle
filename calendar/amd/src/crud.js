@@ -149,22 +149,61 @@ function(
      *
      * @method registerEventFormModal
      * @param {object} root The calendar root element
-     * @param {object} newEventButton The new event button element
      * @return {object} The create modal promise
      */
-    var registerEventFormModal = function(root, newEventButton) {
+    var registerEventFormModal = function(root) {
+        var eventFormPromise = ModalFactory.create({
+            type: ModalEventForm.TYPE,
+            large: true
+        });
 
-        var contextId = newEventButton.data('context-id');
+        // Bind click event on the new event button.
+        root.on('click', CalendarSelectors.actions.create, function(e) {
+            eventFormPromise.then(function(modal) {
+                var wrapper = root.find(CalendarSelectors.wrapper);
 
-        return ModalFactory.create(
-            {
-                type: ModalEventForm.TYPE,
-                large: true,
-                templateContext: {
-                    contextid: contextId
+                var categoryId = wrapper.data('categoryid');
+                if (typeof categoryId !== 'undefined') {
+                    modal.setCategoryId(categoryId);
                 }
-            }, [root, CalendarSelectors.newEventButton]
-        );
+
+                // Attempt to find the cell for today.
+                // If it can't be found, then use the start time of the first day on the calendar.
+                var today = root.find(CalendarSelectors.today);
+                var firstDay = root.find(CalendarSelectors.day);
+                if (!today.length && firstDay.length) {
+                    modal.setStartTime(firstDay.data('newEventTimestamp'));
+                }
+
+                modal.setContextId(wrapper.data('contextId'));
+                modal.setCourseId(wrapper.data('courseid'));
+                modal.show();
+                return;
+            })
+            .fail(Notification.exception);
+
+            e.preventDefault();
+        });
+
+        root.on('click', CalendarSelectors.actions.edit, function(e) {
+            e.preventDefault();
+            var target = $(e.currentTarget),
+                calendarWrapper = target.closest(CalendarSelectors.wrapper),
+                eventWrapper = target.closest(CalendarSelectors.eventItem);
+
+            eventFormPromise.then(function(modal) {
+                // When something within the calendar tells us the user wants
+                // to edit an event then show the event form modal.
+                modal.setEventId(eventWrapper.data('eventId'));
+
+                modal.setContextId(calendarWrapper.data('contextId'));
+                modal.show();
+                return;
+            }).fail(Notification.exception);
+        });
+
+
+        return eventFormPromise;
     };
     /**
      * Register the listeners required to remove the event.
@@ -174,7 +213,7 @@ function(
     function registerRemove(root) {
         root.on('click', CalendarSelectors.actions.remove, function(e) {
             // Fetch the event title, count, and pass them into the new dialogue.
-            var eventSource = $(this);
+            var eventSource = $(this).closest(CalendarSelectors.eventItem);
             var eventId = eventSource.data('eventId'),
                 eventTitle = eventSource.data('eventTitle'),
                 eventCount = eventSource.data('eventCount');
@@ -185,11 +224,7 @@ function(
     }
 
     return {
-        init: function(root) {
-            registerEventFormModal(root, $(CalendarSelectors.newEventButton));
-        },
         registerRemove: registerRemove,
-        confirmDeletion: confirmDeletion,
         registerEventFormModal: registerEventFormModal
     };
 });

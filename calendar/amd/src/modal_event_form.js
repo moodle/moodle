@@ -66,6 +66,7 @@ define([
         this.startTime = null;
         this.courseId = null;
         this.categoryId = null;
+        this.contextId = null;
         this.reloadingBody = false;
         this.reloadingTitle = false;
         this.saveButton = this.getFooter().find(SELECTORS.SAVE_BUTTON);
@@ -74,6 +75,26 @@ define([
     ModalEventForm.TYPE = 'core_calendar-modal_event_form';
     ModalEventForm.prototype = Object.create(Modal.prototype);
     ModalEventForm.prototype.constructor = ModalEventForm;
+
+    /**
+     * Set the context id to the given value.
+     *
+     * @method setContextId
+     * @param {Number} id The event id
+     */
+    ModalEventForm.prototype.setContextId = function(id) {
+        this.contextId = id;
+    };
+
+    /**
+     * Retrieve the current context id, if any.
+     *
+     * @method getContextId
+     * @return {Number|null} The event id
+     */
+    ModalEventForm.prototype.getContextId = function() {
+        return this.contextId;
+    };
 
     /**
      * Set the course id to the given value.
@@ -278,7 +299,6 @@ define([
         this.reloadingBody = true;
         this.disableButtons();
 
-        var contextId = this.saveButton.attr('data-context-id');
         var args = {};
 
         if (this.hasEventId()) {
@@ -301,7 +321,7 @@ define([
             args.formdata = formData;
         }
 
-        this.bodyPromise = Fragment.loadFragment('calendar', 'event_form', contextId, args);
+        this.bodyPromise = Fragment.loadFragment('calendar', 'event_form', this.getContextId(), args);
 
         this.setBody(this.bodyPromise);
 

@@ -48,53 +48,28 @@ define([
         CalendarCrud
     ) {
 
-        var registerEventListeners = function(root) {
-            var body = $('body'),
-                deleteLink = $(CalendarSelectors.deleteLink),
-                newEventButton = $(CalendarSelectors.newEventButton),
-                courseId = root.data('courseid');
+        var registerEventListeners = function(root, type) {
+            var body = $('body');
 
-            var eventFormPromise = CalendarCrud.registerEventFormModal(root, newEventButton);
+            CalendarCrud.registerEventFormModal(root);
+            CalendarCrud.registerRemove(root);
 
-            CalendarCrud.registerRemove(deleteLink);
+            var reloadFunction = 'reloadCurrent' + type.charAt(0).toUpperCase() + type.slice(1);
 
-            root.on('click', CalendarSelectors.deleteLink, function(e) {
-                e.preventDefault();
-
-                var target = $(e.currentTarget),
-                    eventId = target.data('event-id'),
-                    eventTitle = target.data('title'),
-                    eventCount = target.data('event-event-count');
-
-                CalendarCrud.confirmDeletion(eventId, eventTitle, eventCount).then(function(deleteModalPromise) {
-                    body.on(CalendarEvents.deleted, function() {
-                        // Close the dialogue on delete.
-                        deleteModalPromise.hide();
-                        CalendarViewManager.reloadCurrentUpcoming(root, courseId);
-                    }.bind(this));
-                });
+            body.on(CalendarEvents.created, function() {
+                CalendarViewManager[reloadFunction](root);
             });
-
-            root.on('click', CalendarSelectors.editLink, function(e) {
-                e.preventDefault();
-                var target = $(e.currentTarget);
-
-                eventFormPromise.then(function(modal) {
-                    // When something within the calendar tells us the user wants
-                    // to edit an event then show the event form modal.
-                    var eventId = target.data('event-id');
-                    if (eventId) {
-                        modal.setEventId(eventId);
-                    }
-                    modal.show();
-                    return;
-                }).fail(Notification.exception);
+            body.on(CalendarEvents.deleted, function() {
+                CalendarViewManager[reloadFunction](root);
+            });
+            body.on(CalendarEvents.updated, function() {
+                CalendarViewManager[reloadFunction](root);
             });
 
             root.on('change', CalendarSelectors.courseSelector, function() {
                 var selectElement = $(this);
                 var courseId = selectElement.val();
-                CalendarViewManager.reloadCurrentUpcoming(root, courseId)
+                CalendarViewManager[reloadFunction](root, courseId)
                     .then(function() {
                         // We need to get the selector again because the content has changed.
                         return root.find(CalendarSelectors.courseSelector).val(courseId);
@@ -113,11 +88,11 @@ define([
         };
 
         return {
-            init: function(root) {
+            init: function(root, type) {
                 root = $(root);
 
-                CalendarViewManager.init(root);
-                registerEventListeners(root);
+                CalendarViewManager.init(root, type);
+                registerEventListeners(root, type);
             }
         };
     });
