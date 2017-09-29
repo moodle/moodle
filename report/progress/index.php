@@ -179,7 +179,7 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     $PAGE->set_title($strcompletion);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
-    $PAGE->requires->js_call_amd('report_progress/completion_override', 'init');
+    $PAGE->requires->js_call_amd('report_progress/completion_override', 'init', [fullname($USER)]);
 
     // Handle groups (if enabled)
     groups_print_course_menu($course,$CFG->wwwroot.'/report/progress/?course='.$course->id);
@@ -393,10 +393,8 @@ foreach($progress as $user) {
                 $completiontype = 'fail';
                 break;
         }
-
-        $completionicon='completion-'.
-            ($activity->completion==COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual').
-            '-'.$completiontype;
+        $completiontrackingstring = $activity->completion == COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual';
+        $completionicon = 'completion-' . $completiontrackingstring. '-' . $completiontype;
 
         if ($overrideby) {
             $overridebyuser = \core_user::get_user($overrideby, '*', MUST_EXIST);
@@ -421,6 +419,9 @@ foreach($progress as $user) {
                 $changecompl = $user->id . '-' . $activity->id . '-' . $newstate;
                 $url = new moodle_url($PAGE->url, ['sesskey' => sesskey()]);
                 $celltext = html_writer::link($url, $celltext, array('class' => 'changecompl', 'data-changecompl' => $changecompl,
+                                                                     'data-activityname' => $a->activity,
+                                                                     'data-userfullname' => $a->user,
+                                                                     'data-completiontracking' => $completiontrackingstring,
                                                                      'aria-role' => 'button'));
             }
             print '<td class="completion-progresscell '.$formattedactivities[$activity->id]->datepassedclass.'">'.

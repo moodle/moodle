@@ -135,13 +135,11 @@ class core_completion_external extends external_api {
      * @param  int $userid    User id
      * @param  int $cmid      Course module id
      * @param  int $newstate  Activity completion
-     * @return array          Result and possible warnings
+     * @return array          Array containing the current (updated) completion status.
      * @since Moodle 3.4
      * @throws moodle_exception
      */
     public static function override_activity_completion_status($userid, $cmid, $newstate) {
-        global $OUTPUT, $DB, $USER;
-
         // Validate and normalize parameters.
         $params = self::validate_parameters(self::override_activity_completion_status_parameters(),
             array('userid' => $userid, 'cmid' => $cmid, 'newstate' => $newstate));
@@ -160,52 +158,19 @@ class core_completion_external extends external_api {
             throw new moodle_exception('completionnotenabled', 'completion');
         }
 
-        // Update completion state.
+        // Update completion state and get the new state back.
         $completion->update_state($cm, $newstate, $userid, true);
-
-        // Get activity completion data.
         $completiondata = $completion->get_data($cm, false, $userid);
-        $state = $completiondata->completionstate;
-        $overrideby = $completiondata->overrideby;
-        $date = userdate($completiondata->timemodified);
-
-        // Work out how it corresponds to an icon.
-        switch($state) {
-            case COMPLETION_INCOMPLETE :
-                $completiontype = 'n'.($overrideby ? '-override' : '');
-                break;
-            case COMPLETION_COMPLETE :
-                $completiontype = 'y'.($overrideby ? '-override' : '');
-                break;
-            case COMPLETION_COMPLETE_PASS :
-                $completiontype = 'pass';
-                break;
-            case COMPLETION_COMPLETE_FAIL :
-                $completiontype = 'fail';
-                break;
-        }
-
-        $completionicon = 'completion-'.
-            ($cm->completion == COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual').
-            '-'.$completiontype;
-
-        $describe = get_string('completion-' . $completiontype, 'completion', fullname($USER));
-        $user = \core_user::get_user($userid, '*', MUST_EXIST);
-        $a = new StdClass;
-        $a->state = $describe;
-        $a->date = $date;
-        $a->user = fullname($user);
-        $a->activity = $cm->name;
-        $fulldescribe = get_string('progress-title', 'completion', $a);
-
-        $img = $OUTPUT->pix_icon('i/' . $completionicon, s($fulldescribe));
 
         // Return the current state of completion.
-        $result = [
-            'completionstate' => $state,
-            'img' => $img
+        return [
+            'cmid' => $completiondata->coursemoduleid,
+            'userid' => $completiondata->userid,
+            'state' => $completiondata->completionstate,
+            'timecompleted' => $completiondata->timemodified,
+            'overrideby' => $completiondata->overrideby,
+            'tracking' => $completion->is_enabled($cm)
         ];
-        return $result;
     }
 
     /**
@@ -218,8 +183,13 @@ class core_completion_external extends external_api {
 
         return new external_single_structure(
             array(
-                'completionstate'   => new external_value(PARAM_BOOL, 'The current completion state.'),
-                'img'           => new external_value(PARAM_RAW, 'Image element to replace existing one'),
+                'cmid' => new external_value(PARAM_INT, 'The course module id'),
+                'userid' => new external_value(PARAM_INT, 'The user id to which the completion info belongs'),
+                'state'   => new external_value(PARAM_INT, 'The current completion state.'),
+                'timecompleted' => new external_value(PARAM_INT, 'time of completion'),
+                'overrideby' => new external_value(PARAM_INT, 'The user id who has overriden the status, or null'),
+                'tracking'      => new external_value(PARAM_INT, 'type of tracking:
+                                                                    0 means none, 1 manual, 2 automatic'),
             )
         );
     }

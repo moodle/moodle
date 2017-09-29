@@ -27,10 +27,28 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
     function($, Ajax, Str, ModalFactory, ModalEvents, Notification, CustomEvents, Templates) {
 
         /**
+         * @type {String} the full name of the current user.
+         * @private
+         */
+        var userFullName;
+
+        /**
          * @type {JQuery} JQuery object containing the element (completion link) that was most recently activated.
          * @private
          */
         var triggerElement;
+
+        /**
+         * Helper function to get the pix icon key based on the completion state.
+         * @method getIconDescriptorFromState
+         * @param {number} state The current completion state.
+         * @param {string} tracking The completion tracking type, either 'manual' or 'auto'.
+         * @return {string} the key for the respective icon.
+         * @private
+         */
+        var getIconKeyFromState = function(state, tracking) {
+            return state > 0 ? 'i/completion-' + tracking + '-y-override' : 'i/completion-' + tracking + '-n-override';
+        };
 
         /**
          * Handles the confirmation of an override change, calling the web service to update it.
@@ -50,12 +68,30 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
                     args: override
                 }])[0];
             }).then(function(results) {
-                // Update the DOM accordingly.
-                var flipState = results.completionstate ? 0 : 1;
-                triggerElement.find('.loading-icon').remove();
-                triggerElement.data('changecompl', override.userid + '-' + override.cmid + '-' + flipState);
-                triggerElement.attr('data-changecompl', override.userid + '-' + override.cmid + '-' + flipState);
-                triggerElement.children("img").replaceWith(results.img);
+                var completionState = (results.state > 0) ? 1 : 0;
+
+                // Now, build the new title string, get the new icon, and update the DOM.
+                var tooltipKey = completionState ? 'completion-y-override' : 'completion-n-override';
+                Str.get_string(tooltipKey, 'completion', userFullName).then(function(stateString) {
+                    var params = {
+                        state: stateString,
+                        date: '',
+                        user: triggerElement.attr('data-userfullname'),
+                        activity: triggerElement.attr('data-activityname')
+                    };
+                    return Str.get_string('progress-title', 'completion', params);
+                }).then(function(titleString) {
+                    var completionTracking = triggerElement.attr('data-completiontracking');
+                    return Templates.renderPix(getIconKeyFromState(completionState, completionTracking), 'core', titleString);
+                }).then(function(html) {
+                    var oppositeState = completionState > 0 ? 0 : 1;
+                    triggerElement.find('.loading-icon').remove();
+                    triggerElement.data('changecompl', override.userid + '-' + override.cmid + '-' + oppositeState);
+                    triggerElement.attr('data-changecompl', override.userid + '-' + override.cmid + '-' + oppositeState);
+                    triggerElement.children("img").replaceWith(html);
+                    return;
+                }).catch(Notification.exception);
+
                 return;
             }).catch(Notification.exception);
         };
@@ -119,9 +155,12 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
         /**
          * Init this module which allows activity completion state to be changed via ajax.
          * @method init
+         * @param {string} fullName The current user's full name.
          * @private
          */
-        var init = function() {
+        var init = function(fullName) {
+            userFullName = fullName;
+
             // Register the click, space and enter events as activators for the trigger element.
             $('#completion-progress a.changecompl').each(function(index, element) {
                 CustomEvents.define(element, [CustomEvents.events.activate]);
