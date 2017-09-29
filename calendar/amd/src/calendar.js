@@ -38,7 +38,9 @@ define([
             'core_calendar/summary_modal',
             'core_calendar/repository',
             'core_calendar/events',
-            'core_calendar/view_manager'
+            'core_calendar/view_manager',
+            'core_calendar/crud',
+            'core_calendar/selectors',
         ],
         function(
             $,
@@ -53,7 +55,9 @@ define([
             SummaryModal,
             CalendarRepository,
             CalendarEvents,
-            CalendarViewManager
+            CalendarViewManager,
+            CalendarCrud,
+            CalendarSelectors
         ) {
 
     var SELECTORS = {
@@ -193,29 +197,6 @@ define([
     };
 
     /**
-     * Create the event form modal for creating new events and
-     * editing existing events.
-     *
-     * @method registerEventFormModal
-     * @param {object} root The calendar root element
-     * @return {object} The create modal promise
-     */
-    var registerEventFormModal = function(root) {
-        var newEventButton = root.find(SELECTORS.NEW_EVENT_BUTTON);
-        var contextId = newEventButton.attr('data-context-id');
-
-        return ModalFactory.create(
-            {
-                type: ModalEventForm.TYPE,
-                large: true,
-                templateContext: {
-                    contextid: contextId
-                }
-            }
-        );
-    };
-
-    /**
      * Listen to and handle any calendar events fired by the calendar UI.
      *
      * @method registerCalendarEventListeners
@@ -294,7 +275,7 @@ define([
                 .fail(Notification.exception);
         });
 
-        var eventFormPromise = registerEventFormModal(root);
+        var eventFormPromise = CalendarCrud.registerEventFormModal(root, CalendarSelectors.newEventButton);
         registerCalendarEventListeners(root, eventFormPromise);
 
         // Bind click event on the new event button.
@@ -353,7 +334,7 @@ define([
     return {
         init: function(root) {
             root = $(root);
-
+            CalendarCrud.init(root);
             CalendarViewManager.init(root);
             registerEventListeners(root);
         }
