@@ -2601,5 +2601,33 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017092900.00);
     }
 
+    if ($oldversion < 2017100600.02) {
+
+        // Define table analytics_used_analysables to be created.
+        $table = new xmldb_table('analytics_used_analysables');
+
+        // Adding fields to table analytics_used_analysables.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('modelid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('action', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('analysableid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timeanalysed', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table analytics_used_analysables.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+
+        // Adding indexes to table analytics_used_analysables.
+        $table->add_index('modelid-action', XMLDB_INDEX_NOTUNIQUE, array('modelid', 'action'));
+
+        // Conditionally launch create table for analytics_used_analysables.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017100600.02);
+    }
+
     return true;
 }

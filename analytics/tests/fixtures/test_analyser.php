@@ -15,33 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Site-level contents abstract analysable.
+ * Test analyser.
  *
  * @package   core_analytics
- * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
+ * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace core_analytics\local\analyser;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Site-level contents abstract analysable.
+ * Test analyser.
  *
  * @package   core_analytics
- * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
+ * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class sitewide extends base {
+class test_analyser extends \core\analytics\analyser\courses {
 
     /**
-     * Returns one single analysable element, the site.
+     * Overwritten to add a delay.
      *
-     * @return \core_analytics\analysable[]
+     * @param \core_analytics\analysable $analysable
+     * @param mixed $includetarget
+     * @return null
      */
-    public function get_analysables() {
-        $analysable = new \core_analytics\site();
-        return array(SYSCONTEXTID => $analysable);
+    public function process_analysable($analysable, $includetarget) {
+        // A bit more than 1 second.
+        usleep(1100000);
+        return parent::process_analysable($analysable, $includetarget);
     }
 }

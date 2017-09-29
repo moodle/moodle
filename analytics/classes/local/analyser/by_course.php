@@ -55,7 +55,7 @@ abstract class by_course extends base {
         foreach ($courses as $course) {
             // Skip the frontpage course.
             $analysable = \core_analytics\course::instance($course);
-            $analysables[] = $analysable;
+            $analysables[$analysable->get_id()] = $analysable;
         }
 
         if (empty($analysables)) {

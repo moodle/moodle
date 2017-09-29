@@ -28,6 +28,8 @@ require_once(__DIR__ . '/fixtures/test_indicator_max.php');
 require_once(__DIR__ . '/fixtures/test_indicator_min.php');
 require_once(__DIR__ . '/fixtures/test_indicator_fullname.php');
 require_once(__DIR__ . '/fixtures/test_target_shortname.php');
+require_once(__DIR__ . '/fixtures/test_target_course_level_shortname.php');
+require_once(__DIR__ . '/fixtures/test_analyser.php');
 
 /**
  * Unit tests for the model.
@@ -254,6 +256,64 @@ class analytics_model_testcase extends advanced_testcase {
 
         $target = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
         $this->assertTrue(\core_analytics\model::exists($target));
+    }
+
+    /**
+     * test_model_timelimit
+     *
+     * @return null
+     */
+    public function test_model_timelimit() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        set_config('modeltimelimit', 2, 'analytics');
+
+        $courses = array();
+        for ($i = 0; $i < 5; $i++) {
+            $course = $this->getDataGenerator()->create_course();
+            $analysable = new \core_analytics\course($course);
+            $courses[$analysable->get_id()] = $course;
+        }
+
+        $target = new test_target_course_level_shortname();
+        $analyser = new test_analyser(1, $target, [], [], []);
+
+        // Each analysable element takes 1.1 secs, so the max (and likely) number of analysable
+        // elements that will be processed is 2.
+        $analyser->get_analysable_data(false);
+        $params = array('modelid' => 1, 'action' => 'prediction');
+        $this->assertLessThanOrEqual(2, $DB->count_records('analytics_used_analysables', $params));
+
+        $analyser->get_analysable_data(false);
+        $this->assertLessThanOrEqual(4, $DB->count_records('analytics_used_analysables', $params));
+
+        // Check that analysable elements have been processed following the analyser order
+        // (course->sortorder here). We can not check this nicely after next get_analysable_data round
+        // because the first analysed element will be analysed again.
+        $analysedelems = $DB->get_records('analytics_used_analysables', $params, 'timeanalysed ASC');
+        // Just a default for the first checked element.
+        $last = (object)['sortorder' => PHP_INT_MAX];
+        foreach ($analysedelems as $analysed) {
+            if ($courses[$analysed->analysableid]->sortorder > $last->sortorder) {
+                $this->fail('Analysable elements have not been analysed sorted by course sortorder.');
+            }
+            $last = $courses[$analysed->analysableid];
+        }
+
+        $analyser->get_analysable_data(false);
+        $this->assertGreaterThanOrEqual(5, $DB->count_records('analytics_used_analysables', $params));
+
+        // New analysable elements are immediately pulled.
+        $this->getDataGenerator()->create_course();
+        $analyser->get_analysable_data(false);
+        $this->assertGreaterThanOrEqual(6, $DB->count_records('analytics_used_analysables', $params));
+
+        // Training and prediction data do not get mixed.
+        $analyser->get_analysable_data(true);
+        $params = array('modelid' => 1, 'action' => 'training');
+        $this->assertLessThanOrEqual(2, $DB->count_records('analytics_used_analysables', $params));
     }
 
     /**

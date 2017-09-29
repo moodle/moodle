@@ -101,5 +101,10 @@ if ($hassiteconfig) {
         // Disable web interface evaluation and get predictions.
         $settings->add(new admin_setting_configcheckbox('analytics/onlycli', new lang_string('onlycli', 'analytics'),
             new lang_string('onlycliinfo', 'analytics'), 1));
+
+        // Training and prediction time limit per model.
+        $settings->add(new admin_setting_configduration('analytics/modeltimelimit', new lang_string('modeltimelimit', 'analytics'),
+            new lang_string('modeltimelimitinfo', 'analytics'), 20 * MINSECS));
+
     }
 }

@@ -1446,6 +1446,7 @@ class model {
         $DB->delete_records('analytics_predict_samples', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_train_samples', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_used_files', array('modelid' => $this->model->id));
+        $DB->delete_records('analytics_used_analysables', array('modelid' => $this->model->id));
 
         // Purge all generated files.
         \core_analytics\dataset_manager::clear_model_files($this->model->id);
