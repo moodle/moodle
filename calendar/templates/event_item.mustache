@@ -31,17 +31,17 @@
     {
     }
 }}
-<div class="event">
+<div class="event" data-eventtype-{{calendareventtype}}="1" data-event-event-count="{{eventcount}}">
     <div class="card">
         <div class="box card-header clearfix p-y-1">
             <div class="commands pull-xs-right">
                 {{#canedit}}
                     {{#candelete}}
-                        <a href="{{deleteurl}}">
+                        <a href="{{deleteurl}}" data-event-id="{{id}}" data-action="delete" data-event-id="{{id}}" data-title="{{name}}" data-event-event-count="{{eventcount}}">
                             {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}
                         </a>
                     {{/candelete}}
-                    <a href="{{editurl}}">
+                    <a href="{{editurl}}" data-event-id="{{id}}" data-action="edit" data-event-id="{{id}}" data-title="{{name}}">
                         {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}
                     </a>
                 {{/canedit}}

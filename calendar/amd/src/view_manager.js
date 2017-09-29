@@ -159,12 +159,43 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
             loadingIconContainer.addClass('hidden');
         };
 
+        /**
+         * Reload the current month view data.
+         *
+         * @param {object} root The container element.
+         * @param {Number} courseId The course id.
+         * @return {promise}
+         */
+        var reloadCurrentUpcoming = function(root, courseId) {
+            startLoading(root);
+
+            var target = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER);
+
+            return CalendarRepository.getCalendarUpcomingData(courseId)
+                .then(function(context) {
+                    return Templates.render(root.attr('data-template'), context);
+                })
+                .then(function(html, js) {
+                    window.history.replaceState(null, null, '?view=upcoming&course=' + courseId);
+                    return Templates.replaceNode(target, html, js);
+                })
+                .then(function() {
+                    $('body').trigger(CalendarEvents.viewUpdated);
+                    return;
+                })
+                .always(function() {
+                    return stopLoading(root);
+                })
+                .fail(Notification.exception);
+        };
+
         return {
             init: function(root) {
                 registerEventListeners(root);
             },
             reloadCurrentMonth: reloadCurrentMonth,
             changeMonth: changeMonth,
-            refreshMonthContent: refreshMonthContent
+            refreshMonthContent: refreshMonthContent,
+            reloadCurrentUpcoming: reloadCurrentUpcoming
         };
     });

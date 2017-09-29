@@ -133,11 +133,30 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
         return Ajax.call([request])[0];
     };
 
+    /**
+     * Get calendar upcoming data.
+     *
+     * @method getCalendarUpcomingData
+     * @param {Number} courseid The course id.
+     * @return {promise} Resolved with the month view data.
+     */
+    var getCalendarUpcomingData = function(courseid) {
+        var request = {
+            methodname: 'core_calendar_get_calendar_upcoming_view',
+            args: {
+                courseid: courseid,
+            }
+        };
+
+        return Ajax.call([request])[0];
+    };
+
     return {
         getEventById: getEventById,
         deleteEvent: deleteEvent,
         updateEventStartDay: updateEventStartDay,
         submitCreateUpdateForm: submitCreateUpdateForm,
-        getCalendarMonthData: getCalendarMonthData
+        getCalendarMonthData: getCalendarMonthData,
+        getCalendarUpcomingData: getCalendarUpcomingData
     };
 });
