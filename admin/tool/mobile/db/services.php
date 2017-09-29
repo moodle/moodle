@@ -30,7 +30,9 @@ $functions = array(
         'methodname'  => 'get_plugins_supporting_mobile',
         'description' => 'Returns a list of Moodle plugins supporting the mobile app.',
         'type'        => 'read',
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax'          => true,
+        'loginrequired' => false,
     ),
 
     'tool_mobile_get_public_config' => array(
