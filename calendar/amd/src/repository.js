@@ -113,6 +113,32 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
     };
 
     /**
+     * Get calendar data for the day view.
+     *
+     * @method getCalendarDayData
+     * @param {Number} year Year
+     * @param {Number} month Month
+     * @param {Number} day Day
+     * @param {Number} courseid The course id.
+     * @param {Number} categoryId The id of the category whose events are shown
+     * @return {promise} Resolved with the day view data.
+     */
+    var getCalendarDayData = function(year, month, day, courseid, categoryId) {
+        var request = {
+            methodname: 'core_calendar_get_calendar_day_view',
+            args: {
+                year: year,
+                month: month,
+                day: day,
+                courseid: courseid,
+                categoryid: categoryId,
+            }
+        };
+
+        return Ajax.call([request])[0];
+    };
+
+    /**
      * Change the start day for the given event id. The day timestamp
      * only has to be any time during the target day because only the
      * date information is extracted, the time of the day is ignored.
@@ -157,6 +183,7 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
         updateEventStartDay: updateEventStartDay,
         submitCreateUpdateForm: submitCreateUpdateForm,
         getCalendarMonthData: getCalendarMonthData,
+        getCalendarDayData: getCalendarDayData,
         getCalendarUpcomingData: getCalendarUpcomingData
     };
 });
