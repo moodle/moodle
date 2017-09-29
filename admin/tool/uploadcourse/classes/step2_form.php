@@ -212,9 +212,13 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         // The default end date depends on the course format.
         $format = course_get_format((object)array('format' => get_config('moodlecourse', 'format')));
 
-        $enddate = $format->get_default_course_enddate($mform, array('startdate' => 'defaults[startdate]'));
-        // We add 1 day like we do above in startdate.
-        $mform->setDefault('defaults[enddate]', $enddate + 3600 * 24);
+        // Check if course end date form field should be enabled by default.
+        // If a default date is provided to the form element, it is magically enabled by default in the
+        // MoodleQuickForm_date_time_selector class, otherwise it's disabled by default.
+        if (get_config('moodlecourse', 'courseenddateenabled')) {
+            $enddate = $format->get_default_course_enddate($mform, array('startdate' => 'defaults[startdate]'));
+            $mform->setDefault('defaults[enddate]', $enddate);
+        }
     }
 
     /**
