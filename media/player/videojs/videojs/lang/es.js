@@ -1,5 +1,6 @@
 videojs.addLanguage("es",{
  "Play": "Reproducción",
+ "Play Video": "Reproducción Vídeo",
  "Pause": "Pausa",
  "Current Time": "Tiempo reproducido",
  "Duration Time": "Duración total",

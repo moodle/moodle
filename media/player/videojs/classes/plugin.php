@@ -75,6 +75,7 @@ class media_videojs_plugin extends core_media_player_native {
         // Currently Flash in VideoJS does not support responsive layout. If Flash is enabled try to guess
         // if HTML5 player will be engaged for the user and then set it to responsive.
         $responsive = (get_config('media_videojs', 'useflash') && !$this->youtube) ? null : true;
+        $flashtech = false;
 
         // Build list of source tags.
         foreach ($urls as $url) {
@@ -92,6 +93,9 @@ class media_videojs_plugin extends core_media_player_native {
             if ($responsive === null) {
                 $responsive = core_useragent::supports_html5($extension);
             }
+            if (!core_useragent::supports_html5($extension) && get_config('media_videojs', 'useflash')) {
+                $flashtech = true;
+            }
         }
         $sources = implode("\n", $sources);
 
@@ -104,6 +108,8 @@ class media_videojs_plugin extends core_media_player_native {
             $datasetup[] = '"sources": [{"type": "video/youtube", "src":"' . $urls[0] . '"}]';
             $sources = ''; // Do not specify <source> tags - it may confuse browser.
             $isaudio = false; // Just in case.
+        } else if ($flashtech) {
+            $datasetup[] = '"techOrder": ["flash", "html5"]';
         }
 
         // Add a language.
