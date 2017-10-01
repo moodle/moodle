@@ -2,7 +2,7 @@
 /**
  * SCSSPHP
  *
- * @copyright 2012-2015 Leaf Corcoran
+ * @copyright 2012-2017 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
@@ -12,6 +12,7 @@
 namespace Leafo\ScssPhp;
 
 use Leafo\ScssPhp\Base\Range;
+use Leafo\ScssPhp\Exception\RangeException;
 
 /**
  * Utilties
@@ -31,7 +32,7 @@ class Util
      *
      * @return mixed `value` adjusted to fall within range, if it was outside by a floating-point margin.
      *
-     * @throws \Exception
+     * @throws \Leafo\ScssPhp\Exception\RangeException
      */
     public static function checkRange($name, Range $range, $value, $unit = '')
     {
@@ -50,6 +51,6 @@ class Util
             return $range->last;
         }
 
-        throw new \Exception("$name {$val} must be between {$range->first} and {$range->last}$unit");
+        throw new RangeException("$name {$val} must be between {$range->first} and {$range->last}$unit");
     }
 }

@@ -9,14 +9,13 @@
  * @link http://leafo.github.io/scssphp
  */
 
-namespace Leafo\ScssPhp;
+namespace Leafo\ScssPhp\Exception;
 
 /**
- * SCSSPHP version
+ * Range exception
  *
- * @author Leaf Corcoran <leafot@gmail.com>
+ * @author Anthon Pang <anthon.pang@gmail.com>
  */
-class Version
+class RangeException extends \Exception
 {
-    const VERSION = 'v0.6.7';
 }
