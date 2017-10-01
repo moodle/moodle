@@ -2054,6 +2054,15 @@ function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event
             $instance->timemodified = time();
             $modified = true;
         }
+    } else if ($event->eventtype == ASSIGN_EVENT_TYPE_GRADINGDUE) {
+        $instance = $assign->get_instance();
+        $newduedate = $event->timestart;
+
+        if ($newduedate != $instance->gradingduedate) {
+            $instance->gradingduedate = $newduedate;
+            $instance->timemodified = time();
+            $modified = true;
+        }
     }
 
     if ($modified) {
