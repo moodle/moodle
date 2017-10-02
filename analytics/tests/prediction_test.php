@@ -362,6 +362,57 @@ class core_analytics_prediction_testcase extends advanced_testcase {
     }
 
     /**
+     * test_not_null_samples
+     */
+    public function test_not_null_samples() {
+        $this->resetAfterTest(true);
+
+        $classname = '\core\analytics\time_splitting\quarters';
+        $timesplitting = \core_analytics\manager::get_time_splitting($classname);
+        $timesplitting->set_analysable(new \core_analytics\site());
+
+        $ranges = array(
+            array('start' => 111, 'end' => 222, 'time' => 222),
+            array('start' => 222, 'end' => 333, 'time' => 333)
+        );
+        $samples = array(123 => 123, 321 => 321);
+
+        $indicator1 = $this->getMockBuilder('test_indicator_max')
+            ->setMethods(['calculate_sample'])
+            ->getMock();
+        $indicator1->method('calculate_sample')
+            ->willReturn(null);
+
+        $indicator2 = \core_analytics\manager::get_indicator('test_indicator_min');
+
+        // Samples with at least 1 not null value are returned.
+        $params = array(
+            $samples,
+            'whatever',
+            array($indicator1, $indicator2),
+            $ranges
+        );
+        $dataset = phpunit_util::call_internal_method($timesplitting, 'calculate_indicators', $params, $classname);
+        $this->assertArrayHasKey('123-0', $dataset);
+        $this->assertArrayHasKey('123-1', $dataset);
+        $this->assertArrayHasKey('321-0', $dataset);
+        $this->assertArrayHasKey('321-1', $dataset);
+
+        // Samples with only null values are not returned.
+        $params = array(
+            $samples,
+            'whatever',
+            array($indicator1),
+            $ranges
+        );
+        $dataset = phpunit_util::call_internal_method($timesplitting, 'calculate_indicators', $params, $classname);
+        $this->assertArrayNotHasKey('123-0', $dataset);
+        $this->assertArrayNotHasKey('123-1', $dataset);
+        $this->assertArrayNotHasKey('321-0', $dataset);
+        $this->assertArrayNotHasKey('321-1', $dataset);
+    }
+
+    /**
      * provider_ml_test_evaluation
      *
      * @return array
