@@ -267,7 +267,7 @@ abstract class calculable {
 
         foreach ($arrays as $array) {
             reset($base);
-            while (list($key, $value) = each($array)) {
+            foreach ($array as $key => $value) {
                 if (is_array($value) && !empty($base[$key]) && is_array($base[$key])) {
                     $base[$key] = $this->array_merge_recursive_keep_keys($base[$key], $value);
                 } else {
