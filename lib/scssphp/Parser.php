@@ -2,7 +2,7 @@
 /**
  * SCSSPHP
  *
- * @copyright 2012-2015 Leaf Corcoran
+ * @copyright 2012-2017 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
@@ -83,17 +83,17 @@ class Parser
         $this->utf8             = ! $encoding || strtolower($encoding) === 'utf-8';
         $this->patternModifiers = $this->utf8 ? 'Aisu' : 'Ais';
 
-        if (empty(self::$operatorPattern)) {
-            self::$operatorPattern = '([*\/%+-]|[!=]\=|\>\=?|\<\=\>|\<\=?|and|or)';
+        if (empty(static::$operatorPattern)) {
+            static::$operatorPattern = '([*\/%+-]|[!=]\=|\>\=?|\<\=\>|\<\=?|and|or)';
 
             $commentSingle      = '\/\/';
             $commentMultiLeft   = '\/\*';
             $commentMultiRight  = '\*\/';
 
-            self::$commentPattern = $commentMultiLeft . '.*?' . $commentMultiRight;
-            self::$whitePattern = $this->utf8
-                ? '/' . $commentSingle . '[^\n]*\s*|(' . self::$commentPattern . ')\s*|\s+/AisuS'
-                : '/' . $commentSingle . '[^\n]*\s*|(' . self::$commentPattern . ')\s*|\s+/AisS';
+            static::$commentPattern = $commentMultiLeft . '.*?' . $commentMultiRight;
+            static::$whitePattern = $this->utf8
+                ? '/' . $commentSingle . '[^\n]*\s*|(' . static::$commentPattern . ')\s*|\s+/AisuS'
+                : '/' . $commentSingle . '[^\n]*\s*|(' . static::$commentPattern . ')\s*|\s+/AisS';
         }
     }
 
@@ -563,9 +563,9 @@ class Parser
 
                     list($line, $column) = $this->getSourcePosition($s);
 
-                    $statement[self::SOURCE_LINE]   = $line;
-                    $statement[self::SOURCE_COLUMN] = $column;
-                    $statement[self::SOURCE_INDEX]  = $this->sourceIndex;
+                    $statement[static::SOURCE_LINE]   = $line;
+                    $statement[static::SOURCE_COLUMN] = $column;
+                    $statement[static::SOURCE_INDEX]  = $this->sourceIndex;
 
                     $this->charset = $statement;
                 }
@@ -922,7 +922,7 @@ class Parser
     {
         $gotWhite = false;
 
-        while (preg_match(self::$whitePattern, $this->buffer, $m, null, $this->count)) {
+        while (preg_match(static::$whitePattern, $this->buffer, $m, null, $this->count)) {
             if (isset($m[1]) && empty($this->commentsSeen[$this->count])) {
                 $this->appendComment([Type::T_COMMENT, $m[1]]);
 
@@ -959,9 +959,9 @@ class Parser
         if ($pos !== null) {
             list($line, $column) = $this->getSourcePosition($pos);
 
-            $statement[self::SOURCE_LINE]   = $line;
-            $statement[self::SOURCE_COLUMN] = $column;
-            $statement[self::SOURCE_INDEX]  = $this->sourceIndex;
+            $statement[static::SOURCE_LINE]   = $line;
+            $statement[static::SOURCE_COLUMN] = $column;
+            $statement[static::SOURCE_INDEX]  = $this->sourceIndex;
         }
 
         $this->env->children[] = $statement;
@@ -1249,13 +1249,13 @@ class Parser
      */
     protected function expHelper($lhs, $minP)
     {
-        $operators = self::$operatorPattern;
+        $operators = static::$operatorPattern;
 
         $ss = $this->seek();
         $whiteBefore = isset($this->buffer[$this->count - 1]) &&
             ctype_space($this->buffer[$this->count - 1]);
 
-        while ($this->match($operators, $m, false) && self::$precedence[$m[1]] >= $minP) {
+        while ($this->match($operators, $m, false) && static::$precedence[$m[1]] >= $minP) {
             $whiteAfter = isset($this->buffer[$this->count]) &&
                 ctype_space($this->buffer[$this->count]);
             $varAfter = isset($this->buffer[$this->count]) &&
@@ -1275,8 +1275,8 @@ class Parser
             }
 
             // peek and see if rhs belongs to next operator
-            if ($this->peek($operators, $next) && self::$precedence[$next[1]] > self::$precedence[$op]) {
-                $rhs = $this->expHelper($rhs, self::$precedence[$next[1]]);
+            if ($this->peek($operators, $next) && static::$precedence[$next[1]] > static::$precedence[$op]) {
+                $rhs = $this->expHelper($rhs, static::$precedence[$next[1]]);
             }
 
             $lhs = [Type::T_EXPRESSION, $op, $lhs, $rhs, $this->inParens, $whiteBefore, $whiteAfter];
@@ -1812,7 +1812,7 @@ class Parser
         $oldWhite = $this->eatWhiteDefault;
         $this->eatWhiteDefault = false;
 
-        $patt = '(.*?)([\'"]|#\{|' . $this->pregQuote($end) . '|' . self::$commentPattern . ')';
+        $patt = '(.*?)([\'"]|#\{|' . $this->pregQuote($end) . '|' . static::$commentPattern . ')';
 
         $nestingLevel = 0;
 
@@ -1946,7 +1946,7 @@ class Parser
 
         // match comment hack
         if (preg_match(
-            self::$whitePattern,
+            static::$whitePattern,
             $this->buffer,
             $m,
             null,
