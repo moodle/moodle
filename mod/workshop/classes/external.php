@@ -31,6 +31,7 @@ require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 
 use mod_workshop\external\workshop_summary_exporter;
 use mod_workshop\external\submission_exporter;
+use mod_workshop\external\assessment_exporter;
 
 /**
  * Workshop external functions
@@ -875,6 +876,36 @@ class mod_workshop_external extends external_api {
     }
 
     /**
+     * Helper method for validating a submission.
+     *
+     * @param  stdClass   $submission submission object
+     * @param  workshop   $workshop     workshop instance
+     * @return void
+     * @since  Moodle 3.4
+     */
+    protected static function validate_submission($submission, workshop $workshop) {
+        global $USER;
+
+        $workshopclosed = $workshop->phase == workshop::PHASE_CLOSED;
+        $canviewpublished = has_capability('mod/workshop:viewpublishedsubmissions', $workshop->context);
+
+        $canview = $submission->authorid == $USER->id;  // I did it.
+        $canview = $canview || !empty($workshop->get_assessment_of_submission_by_user($submission->id, $USER->id));  // I reviewed.
+        $canview = $canview || has_capability('mod/workshop:viewallsubmissions', $workshop->context); // I can view all.
+        $canview = $canview || ($submission->published && $workshopclosed && $canviewpublished);    // It has been published.
+
+        if ($canview) {
+            // Here we should check if the user share group.
+            if ($submission->authorid != $USER->id &&
+                    !groups_user_groups_visible($workshop->course, $submission->authorid, $workshop->cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            throw new moodle_exception('nopermissions', 'error', '', 'view submission');
+        }
+    }
+
+    /**
      * Returns the description of the external function parameters.
      *
      * @return external_function_parameters
@@ -907,22 +938,7 @@ class mod_workshop_external extends external_api {
         $submission = $DB->get_record('workshop_submissions', array('id' => $params['submissionid']), '*', MUST_EXIST);
         list($workshop, $course, $cm, $context) = self::validate_workshop($submission->workshopid);
 
-        $workshopclosed = $workshop->phase == workshop::PHASE_CLOSED;
-        $canviewpublished = has_capability('mod/workshop:viewpublishedsubmissions', $context);
-
-        $canview = $submission->authorid == $USER->id;  // I did it.
-        $canview = $canview || !empty($workshop->get_assessment_of_submission_by_user($submission->id, $USER->id));  // I reviewed.
-        $canview = $canview || has_capability('mod/workshop:viewallsubmissions', $context); // I can view all.
-        $canview = $canview || ($submission->published && $workshopclosed && $canviewpublished);    // It has been published.
-
-        if ($canview) {
-            // Here we should check if the user share group.
-            if ($submission->authorid != $USER->id && !groups_user_groups_visible($course, $submission->authorid, $cm)) {
-                throw new moodle_exception('notingroup');
-            }
-        } else {
-            throw new moodle_exception('nopermissions', 'error', '', 'view submission');
-        }
+        self::validate_submission($submission, $workshop);
 
         $submission = self::prepare_submission_for_external($submission, $workshop);
 
@@ -944,6 +960,158 @@ class mod_workshop_external extends external_api {
         return new external_single_structure(
             array(
                 'submission' => submission_exporter::get_read_structure(),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Helper method for validating if the current user can view the submission assessments.
+     *
+     * @param  stdClass   $submission submission object
+     * @param  workshop   $workshop     workshop instance
+     * @return void
+     * @since  Moodle 3.4
+     */
+    protected static function check_view_submission_assessments($submission, workshop $workshop) {
+        global $USER;
+
+        $ownsubmission = $submission->authorid == $USER->id;
+        $canview = has_capability('mod/workshop:viewallassessments', $workshop->context) ||
+            ($ownsubmission && $workshop->assessments_available());
+
+        if ($canview) {
+            // Here we should check if the user share group.
+            if ($submission->authorid != $USER->id &&
+                    !groups_user_groups_visible($workshop->course, $submission->authorid, $workshop->cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            throw new moodle_exception('nopermissions', 'error', '', 'view assessment');
+        }
+    }
+
+    /**
+     * Helper method for returning the assessment data according the current user capabilities and current phase.
+     *
+     * @param  stdClass $assessment the assessment data
+     * @param  workshop $workshop   the workshop class
+     * @return stdClass object with the assessment data filtered or null if is not viewable yet
+     * @since Moodle 3.4
+     */
+    protected static function prepare_assessment_for_external($assessment, workshop $workshop) {
+        global $USER;
+        static $canviewallassessments = null;
+        static $canviewreviewers = null;
+        static $canoverridegrades = null;
+
+        // Remove all the properties that does not belong to the assessment table.
+        $properties = assessment_exporter::properties_definition();
+        foreach ($assessment as $key => $value) {
+            if (!isset($properties[$key])) {
+                unset($assessment->{$key});
+            }
+        }
+
+        if (is_null($canviewallassessments)) {
+            $canviewallassessments = has_capability('mod/workshop:viewallassessments', $workshop->context);
+        }
+        if (is_null($canviewreviewers)) {
+            $canviewreviewers = has_capability('mod/workshop:viewreviewernames', $workshop->context);
+        }
+        if (is_null($canoverridegrades)) {
+            $canoverridegrades = has_capability('mod/workshop:overridegrades', $workshop->context);
+        }
+
+        $isreviewer = $assessment->reviewerid == $USER->id;
+
+        if (!$isreviewer && is_null($assessment->grade) && !$canviewallassessments) {
+            // Students do not see peer-assessment that are not graded yet.
+            return null;
+        }
+
+        // Remove the feedback for the reviewer if the feedback is not closed or if we don't have enough permissions to see it.
+        if (!$canoverridegrades && ($workshop->phase != workshop::PHASE_CLOSED || !$isreviewer)) {
+            // Remove all the feedback information (all the optional fields).
+            foreach ($properties as $attribute => $settings) {
+                if (!empty($settings['optional'])) {
+                    unset($assessment->{$attribute});
+                }
+            }
+        }
+
+        if (!$isreviewer && !$canviewreviewers) {
+            $assessment->reviewerid = 0;
+        }
+
+        return $assessment;
+    }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function get_submission_assessments_parameters() {
+        return new external_function_parameters(
+            array(
+                'submissionid' => new external_value(PARAM_INT, 'Submission id'),
+            )
+        );
+    }
+
+
+    /**
+     * Retrieves the given submission assessments.
+     *
+     * @param int $submissionid the submission id
+     * @return array containing the assessments and warnings.
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function get_submission_assessments($submissionid) {
+        global $USER, $DB, $PAGE;
+
+        $params = self::validate_parameters(self::get_submission_assessments_parameters(), array('submissionid' => $submissionid));
+        $warnings = $assessments = array();
+
+        // Get and validate the submission and workshop.
+        $submission = $DB->get_record('workshop_submissions', array('id' => $params['submissionid']), '*', MUST_EXIST);
+        list($workshop, $course, $cm, $context) = self::validate_workshop($submission->workshopid);
+
+        // Check that we can get the assessments and get them.
+        self::check_view_submission_assessments($submission, $workshop);
+        $assessmentsrecords = $workshop->get_assessments_of_submission($submission->id);
+
+        $related = array('context' => $context);
+        foreach ($assessmentsrecords as $assessment) {
+            $assessment = self::prepare_assessment_for_external($assessment, $workshop);
+            if (empty($assessment)) {
+                continue;
+            }
+            $exporter = new assessment_exporter($assessment, $related);
+            $assessments[] = $exporter->export($PAGE->get_renderer('core'));
+        }
+
+        return array(
+            'assessments' => $assessments,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function get_submission_assessments_returns() {
+        return new external_single_structure(
+            array(
+                'assessments' => new external_multiple_structure(
+                    assessment_exporter::get_read_structure()
+                ),
                 'warnings' => new external_warnings()
             )
         );

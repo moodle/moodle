@@ -1065,4 +1065,81 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
         $this->assertEquals($submissionid3, $result['submission']['id']);
     }
+
+
+    /**
+     * Test get_submission_assessments_student.
+     */
+    public function test_get_submission_assessments_student() {
+        global $DB;
+
+        // Create the submission that will be deleted.
+        $submissionid = $this->create_test_submission($this->student);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $workshopgenerator->create_assessment($submissionid, $this->anotherstudentg1->id, array(
+            'weight' => 3,
+            'grade' => 95,
+        ));
+        $workshopgenerator->create_assessment($submissionid, $this->student->id, array(
+            'weight' => 2,
+            'grade' => 90,
+        ));
+
+        $DB->set_field('workshop', 'phase', workshop::PHASE_CLOSED, array('id' => $this->workshop->id));
+        $this->setUser($this->student);
+        $result = mod_workshop_external::get_submission_assessments($submissionid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_assessments_returns(), $result);
+        $this->assertCount(2, $result['assessments']);  // I received my two assessments.
+        foreach ($result['assessments'] as $assessment) {
+            if ($assessment['grade'] == 90) {
+                // My own assessment, I can see me.
+                $this->assertEquals($this->student->id, $assessment['reviewerid']);
+            } else {
+                // Student's can't see who did the review.
+                $this->assertEquals(0, $assessment['reviewerid']);
+            }
+        }
+    }
+
+    /**
+     * Test get_submission_assessments_invalid_phase.
+     */
+    public function test_get_submission_assessments_invalid_phase() {
+        global $DB;
+
+        // Create the submission that will be deleted.
+        $submissionid = $this->create_test_submission($this->student);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $workshopgenerator->create_assessment($submissionid, $this->anotherstudentg1->id, array(
+            'weight' => 3,
+            'grade' => 95,
+        ));
+
+        $this->expectException('moodle_exception');
+        mod_workshop_external::get_submission_assessments($submissionid);
+    }
+
+    /**
+     * Test get_submission_assessments_teacher.
+     */
+    public function test_get_submission_assessments_teacher() {
+
+        // Create the submission that will be deleted.
+        $submissionid = $this->create_test_submission($this->student);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $assessmentid = $workshopgenerator->create_assessment($submissionid, $this->anotherstudentg1->id, array(
+            'weight' => 1,
+            'grade' => 50,
+        ));
+
+        $this->setUser($this->teacher);
+        $result = mod_workshop_external::get_submission_assessments($submissionid);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_assessments_returns(), $result);
+        $this->assertCount(1, $result['assessments']);
+        $this->assertEquals(50, $result['assessments'][0]['grade']);
+        $this->assertEquals($assessmentid, $result['assessments'][0]['id']);
+    }
 }
