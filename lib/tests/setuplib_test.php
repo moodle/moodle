@@ -469,12 +469,6 @@ class core_setuplib_testcase extends advanced_testcase {
         }
     }
 
-    public function test_object() {
-        $obj = new object();
-        $this->assertDebuggingCalled("'object' class has been deprecated, please use stdClass instead.");
-        $this->assertInstanceOf('stdClass', $obj);
-    }
-
     /**
      * Data provider for test_get_real_size().
      *
