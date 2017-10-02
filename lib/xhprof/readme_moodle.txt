@@ -1,4 +1,4 @@
-Description of XHProf 0.9.2 library/viewer import into Moodle
+Description of XHProf 0.9.4 library/viewer import into Moodle
 
 Removed (commit #1):
  * .arcconfig - Definitions for arcanist/phabricator removed completely
@@ -37,3 +37,4 @@ TODO:
 20110318 - MDL-26891 - Eloy Lafuente (stronk7): Implemented earlier profiling runs
 20130621 - MDL-39733 - Eloy Lafuente (stronk7): Export & import of profiling runs
 20160721 - MDL-55292 - Russell Smith (mr-russ): Add support for tideways profiler collection for PHP7
+20171002 - MDL-60313 - Marina Glancy (marinaglancy): Upgrade to 0.9.4 release
