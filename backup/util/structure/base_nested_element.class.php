@@ -164,8 +164,8 @@ abstract class base_nested_element extends base_final_element {
     }
 
     public function add_child($element) {
-        if (!($element instanceof base_nested_element)) { // parameter must be a base_nested_element
-            if (!$found = get_class($element)) {
+        if (!is_object($element) || !($element instanceof base_nested_element)) { // parameter must be a base_nested_element
+            if (!is_object($element) || !($found = get_class($element))) {
                 $found = 'non object';
             }
             throw new base_element_struct_exception('nestedelementincorrect', $found);

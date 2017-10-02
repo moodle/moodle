@@ -843,7 +843,7 @@ class navigation_node implements renderable {
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class navigation_node_collection implements IteratorAggregate {
+class navigation_node_collection implements IteratorAggregate, Countable {
     /**
      * A multidimensional array to where the first key is the type and the second
      * key is the nodes key.

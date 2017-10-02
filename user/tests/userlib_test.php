@@ -887,8 +887,8 @@ class core_userliblib_testcase extends advanced_testcase {
         // the group and has the name 'searchforthis' and has also accessed the course in the last day.
         $userset = user_get_participants($course->id, $group->id, $accesssince + 1, $roleids['student'], 0, -1, 'searchforthis');
 
-        $this->assertEquals(1, sizeof($userset));
         $this->assertEquals($student1->id, $userset->current()->id);
+        $this->assertEquals(1, iterator_count($userset));
     }
 
     /**

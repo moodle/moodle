@@ -2640,7 +2640,7 @@ class html_table {
      * $row2->cells = array($cell2, $cell3);
      * $t->data = array($row1, $row2);
      */
-    public $data;
+    public $data = [];
 
     /**
      * @deprecated since Moodle 2.0. Styling should be in the CSS.
