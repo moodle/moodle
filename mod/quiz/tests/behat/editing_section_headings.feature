@@ -386,7 +386,7 @@ Feature: Edit quiz page - section headings
     And I click on the "Remove" page break icon after question "TF1"
     And I open the "Page 2" add to quiz menu
     And I choose "a new section heading" in the open action menu
-    Then "TF3" "list_item" should exist in the "Section heading ..." "list_item"
+    Then "TF3" "list_item" should exist in the "New heading" "list_item"
 
   @javascript
   Scenario: Add section works after removing a page break with more than 10 pages
@@ -425,4 +425,4 @@ Feature: Edit quiz page - section headings
     And I click on the "Remove" page break icon after question "TF10"
     And I open the "Page 10" add to quiz menu
     And I choose "a new section heading" in the open action menu
-    Then "TF10" "list_item" should exist in the "Section heading ..." "list_item"
+    Then "TF10" "list_item" should exist in the "New heading" "list_item"
