@@ -873,4 +873,79 @@ class mod_workshop_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function get_submission_parameters() {
+        return new external_function_parameters(
+            array(
+                'submissionid' => new external_value(PARAM_INT, 'Submission id'),
+            )
+        );
+    }
+
+
+    /**
+     * Retrieves the given submission.
+     *
+     * @param int $submissionid the submission id
+     * @return array containing the submission and warnings.
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function get_submission($submissionid) {
+        global $USER, $DB, $PAGE;
+
+        $params = self::validate_parameters(self::get_submission_parameters(), array('submissionid' => $submissionid));
+        $warnings = array();
+
+        // Get and validate the submission and workshop.
+        $submission = $DB->get_record('workshop_submissions', array('id' => $params['submissionid']), '*', MUST_EXIST);
+        list($workshop, $course, $cm, $context) = self::validate_workshop($submission->workshopid);
+
+        $workshopclosed = $workshop->phase == workshop::PHASE_CLOSED;
+        $canviewpublished = has_capability('mod/workshop:viewpublishedsubmissions', $context);
+
+        $canview = $submission->authorid == $USER->id;  // I did it.
+        $canview = $canview || !empty($workshop->get_assessment_of_submission_by_user($submission->id, $USER->id));  // I reviewed.
+        $canview = $canview || has_capability('mod/workshop:viewallsubmissions', $context); // I can view all.
+        $canview = $canview || ($submission->published && $workshopclosed && $canviewpublished);    // It has been published.
+
+        if ($canview) {
+            // Here we should check if the user share group.
+            if ($submission->authorid != $USER->id && !groups_user_groups_visible($course, $submission->authorid, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            throw new moodle_exception('nopermissions', 'error', '', 'view submission');
+        }
+
+        $submission = self::prepare_submission_for_external($submission, $workshop);
+
+        $related = array('context' => $context);
+        $exporter = new submission_exporter($submission, $related);
+        return array(
+            'submission' => $exporter->export($PAGE->get_renderer('core')),
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function get_submission_returns() {
+        return new external_single_structure(
+            array(
+                'submission' => submission_exporter::get_read_structure(),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

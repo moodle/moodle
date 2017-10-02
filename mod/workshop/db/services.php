@@ -92,4 +92,11 @@ $functions = array(
         'type'          => 'read',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_workshop_get_submission' => array(
+        'classname'     => 'mod_workshop_external',
+        'methodname'    => 'get_submission',
+        'description'   => 'Retrieves the given submission.',
+        'type'          => 'read',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
