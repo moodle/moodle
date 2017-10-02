@@ -1116,4 +1116,70 @@ class mod_workshop_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function get_assessment_parameters() {
+        return new external_function_parameters(
+            array(
+                'assessmentid' => new external_value(PARAM_INT, 'Assessment id'),
+            )
+        );
+    }
+
+
+    /**
+     * Retrieves the given assessment.
+     *
+     * @param int $assessmentid the assessment id
+     * @return array containing the assessment and warnings.
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function get_assessment($assessmentid) {
+        global $DB, $PAGE;
+
+        $params = self::validate_parameters(self::get_assessment_parameters(), array('assessmentid' => $assessmentid));
+        $warnings = array();
+
+        // Get and validate the assessment, submission and workshop.
+        $assessment = $DB->get_record('workshop_assessments', array('id' => $params['assessmentid']), '*', MUST_EXIST);
+        $submission = $DB->get_record('workshop_submissions', array('id' => $assessment->submissionid), '*', MUST_EXIST);
+        list($workshop, $course, $cm, $context) = self::validate_workshop($submission->workshopid);
+
+        // Check that we can get the assessment.
+        $workshop->check_view_assessment($assessment, $submission);
+
+        $assessment = $workshop->get_assessment_by_id($assessment->id);
+        $assessment = self::prepare_assessment_for_external($assessment, $workshop);
+        if (empty($assessment)) {
+            throw new moodle_exception('nopermissions', 'error', '', 'view assessment');
+        }
+        $related = array('context' => $context);
+        $exporter = new assessment_exporter($assessment, $related);
+
+        return array(
+            'assessment' => $exporter->export($PAGE->get_renderer('core')),
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function get_assessment_returns() {
+        return new external_single_structure(
+            array(
+                'assessment' => assessment_exporter::get_read_structure(),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

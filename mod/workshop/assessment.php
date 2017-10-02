@@ -55,25 +55,11 @@ $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('assessingsubmission', 'workshop'));
 
-$canviewallassessments  = has_capability('mod/workshop:viewallassessments', $workshop->context);
-$canviewallsubmissions  = has_capability('mod/workshop:viewallsubmissions', $workshop->context);
 $cansetassessmentweight = has_capability('mod/workshop:allocate', $workshop->context);
 $canoverridegrades      = has_capability('mod/workshop:overridegrades', $workshop->context);
 $isreviewer             = ($USER->id == $assessment->reviewerid);
-$isauthor               = ($USER->id == $submission->authorid);
 
-$canviewallsubmissions = $canviewallsubmissions && $workshop->check_group_membership($submission->authorid);
-
-if ($isreviewer or $isauthor or ($canviewallassessments and $canviewallsubmissions)) {
-    // such a user can continue
-} else {
-    print_error('nopermissions', 'error', $workshop->view_url(), 'view this assessment');
-}
-
-if ($isauthor and !$isreviewer and !$canviewallassessments and $workshop->phase != workshop::PHASE_CLOSED) {
-    // authors can see assessments of their work at the end of workshop only
-    print_error('nopermissions', 'error', $workshop->view_url(), 'view assessment of own work before workshop is closed');
-}
+$workshop->check_view_assessment($assessment, $submission);
 
 // only the reviewer is allowed to modify the assessment
 if ($isreviewer and $workshop->assessing_allowed($USER->id)) {
