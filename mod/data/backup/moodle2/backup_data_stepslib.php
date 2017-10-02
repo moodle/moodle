@@ -47,8 +47,8 @@ class backup_data_activity_structure_step extends backup_activity_structure_step
             'assessed', 'assesstimestart', 'assesstimefinish', 'defaultsort',
             'defaultsortdir', 'editany', 'notification', 'timemodified', 'config', 'completionentries'));
 
-        $tags = new backup_nested_element('tags');
-        $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
+        $tags = new backup_nested_element('recordstags');
+        $tag = new backup_nested_element('tag', array('id'), array('itemid', 'rawname'));
 
         $fields = new backup_nested_element('fields');
 
@@ -87,7 +87,7 @@ class backup_data_activity_structure_step extends backup_activity_structure_step
         $record->add_child($ratings);
         $ratings->add_child($rating);
 
-        $record->add_child($tags);
+        $data->add_child($tags);
         $tags->add_child($tag);
 
         // Define sources
@@ -110,16 +110,18 @@ class backup_data_activity_structure_step extends backup_activity_structure_step
                                                       'component'  => backup_helper::is_sqlparam('mod_data'),
                                                       'ratingarea' => backup_helper::is_sqlparam('entry')));
             $rating->set_source_alias('rating', 'value');
-            $tag->set_source_sql('SELECT t.id, t.name, t.rawname
-                                    FROM {tag} t
-                                    JOIN {tag_instance} ti
-                                      ON ti.tagid = t.id
-                                   WHERE ti.itemtype = ?
-                                     AND ti.component = ?
-                                     AND ti.itemid = ?', array(
-                backup_helper::is_sqlparam('data_records'),
-                backup_helper::is_sqlparam('mod_data'),
-                backup::VAR_PARENTID));
+            if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+                $tag->set_source_sql('SELECT t.id, ti.itemid, t.rawname
+                                        FROM {tag} t
+                                        JOIN {tag_instance} ti
+                                          ON ti.tagid = t.id
+                                       WHERE ti.itemtype = ?
+                                         AND ti.component = ?
+                                         AND ti.contextid = ?', array(
+                    backup_helper::is_sqlparam('data_records'),
+                    backup_helper::is_sqlparam('mod_data'),
+                    backup::VAR_CONTEXTID));
+            }
         }
 
         // Define id annotations

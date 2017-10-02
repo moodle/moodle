@@ -42,7 +42,7 @@ class restore_data_activity_structure_step extends restore_activity_structure_st
             $paths[] = new restore_path_element('data_record', '/activity/data/records/record');
             $paths[] = new restore_path_element('data_content', '/activity/data/records/record/contents/content');
             $paths[] = new restore_path_element('data_rating', '/activity/data/records/record/ratings/rating');
-            $paths[] = new restore_path_element('data_tag', '/activity/data/records/record/tags/tag');
+            $paths[] = new restore_path_element('data_record_tag', '/activity/data/recordstags/tag');
         }
 
         // Return the paths wrapped into standard activity structure
@@ -127,16 +127,19 @@ class restore_data_activity_structure_step extends restore_activity_structure_st
      *
      * @param stdClass $data Tag
      */
-    protected function process_data_tag($data) {
+    protected function process_data_record_tag($data) {
         $data = (object)$data;
 
         if (!core_tag_tag::is_enabled('mod_data', 'data_records')) { // Tags disabled in server, nothing to process.
             return;
         }
 
-        $tag = $data->rawname;
-        $itemid = $this->get_new_parentid('data_record');
+        if (!$itemid = $this->get_mappingid('data_record', $data->itemid)) {
+            // Some orphaned tag, we could not find the data record for it - ignore.
+            return;
+        }
 
+        $tag = $data->rawname;
         $context = context_module::instance($this->task->get_moduleid());
         core_tag_tag::add_item_tag('mod_data', 'data_records', $itemid, $context, $tag);
     }
