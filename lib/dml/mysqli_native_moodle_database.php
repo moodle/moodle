@@ -1779,7 +1779,9 @@ class mysqli_native_moodle_database extends moodle_database {
             $rv .= " JOIN (".$selects[$i].") $alias ON ".
                 join(' AND ',
                     array_map(
-                        create_function('$a', 'return "'.$falias.'.$a = '.$alias.'.$a";'),
+                        function($a) use ($alias, $falias) {
+                            return $falias . '.' . $a .' = ' . $alias . '.' . $a;
+                        },
                         preg_split('/,/', $fields))
                 );
         }

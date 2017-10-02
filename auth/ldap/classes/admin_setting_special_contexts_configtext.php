@@ -42,8 +42,9 @@ class auth_ldap_admin_setting_special_contexts_configtext extends admin_setting_
     public function write_setting($data) {
         // Try to remove duplicates before storing the contexts (to avoid problems in sync_users()).
         $data = explode(';', $data);
-        $data = array_map(create_function('$x', 'return core_text::strtolower(trim($x));'),
-                                      $data);
+        $data = array_map(function($x) {
+            return core_text::strtolower(trim($x));
+        }, $data);
         $data = implode(';', array_unique($data));
         return parent::write_setting($data);
     }

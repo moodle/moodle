@@ -892,7 +892,9 @@ if (strpos($commandline, '-') === false) {
     $numswitches = count($switches);
 
     // Fancy way to give a "hyphen" boolean flag to each "switch".
-    $switches = array_map(create_function('$x', 'return array("str" => $x, "hyphen" => (substr($x, 0, 1) == "-"));'), $switches);
+    $switches = array_map(function($x) {
+        return array("str" => $x, "hyphen" => (substr($x, 0, 1) == "-"));
+    }, $switches);
 
     for ($i = 0; $i < $numswitches; ++$i) {
 

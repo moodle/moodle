@@ -383,7 +383,9 @@ abstract class award_criteria {
         $params = array_filter($params);
         // Find out which param matches optional and required ones.
         $match = array_merge($this->optional_params, array($this->required_param));
-        $regex = implode('|', array_map(create_function('$a', 'return $a . "_";'), $match));
+        $regex = implode('|', array_map(function($a) {
+            return $a . "_";
+        }, $match));
         $requiredkeys = preg_grep('/^(' . $regex . ').*$/', array_keys($params));
 
         if ($this->id !== 0) {

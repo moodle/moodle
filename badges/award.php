@@ -98,7 +98,9 @@ if (count($acceptedroles) > 1) {
     } else {
         // Get all the roles that user has and use the ones required by this badge.
         $roles = get_user_roles($context, $USER->id);
-        $roleids = array_map(create_function('$o', 'return $o->roleid;'), $roles);
+        $roleids = array_map(function($o) {
+            return $o->roleid;
+        }, $roles);
         $selection = array_intersect($acceptedroles, $roleids);
     }
 
