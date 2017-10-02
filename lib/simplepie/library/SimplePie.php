@@ -5,7 +5,7 @@
  * A PHP-Based RSS and Atom Feed Framework.
  * Takes the hard work out of managing a complete RSS/Atom solution.
  *
- * Copyright (c) 2004-2016, Ryan Parman, Geoffrey Sneddon, Ryan McCue, and contributors
+ * Copyright (c) 2004-2017, Ryan Parman, Geoffrey Sneddon, Ryan McCue, and contributors
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -33,8 +33,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @package SimplePie
- * @version 1.4.1
- * @copyright 2004-2016 Ryan Parman, Geoffrey Sneddon, Ryan McCue
+ * @version 1.5
+ * @copyright 2004-2017 Ryan Parman, Geoffrey Sneddon, Ryan McCue
  * @author Ryan Parman
  * @author Geoffrey Sneddon
  * @author Ryan McCue
@@ -50,7 +50,7 @@ define('SIMPLEPIE_NAME', 'SimplePie');
 /**
  * SimplePie Version
  */
-define('SIMPLEPIE_VERSION', '1.4.1');
+define('SIMPLEPIE_VERSION', '1.5');
 
 /**
  * SimplePie Build
@@ -644,6 +644,12 @@ class SimplePie
 	public $strip_htmltags = array('base', 'blink', 'body', 'doctype', 'embed', 'font', 'form', 'frame', 'frameset', 'html', 'iframe', 'input', 'marquee', 'meta', 'noscript', 'object', 'param', 'script', 'style');
 
 	/**
+	 * @var bool Should we throw exceptions, or use the old-style error property?
+	 * @access private
+	 */
+	public $enable_exceptions = false;
+	
+	/**
 	 * The SimplePie class contains feed level data and options
 	 *
 	 * To use SimplePie, create the SimplePie object with no parameters. You can
@@ -659,9 +665,9 @@ class SimplePie
 	 */
 	public function __construct()
 	{
-		if (version_compare(PHP_VERSION, '5.2', '<'))
+		if (version_compare(PHP_VERSION, '5.3', '<'))
 		{
-			trigger_error('PHP 4.x, 5.0 and 5.1 are no longer supported. Please upgrade to PHP 5.2 or newer.');
+			trigger_error('Please upgrade to PHP 5.3 or newer.');
 			die();
 		}
 
@@ -1294,6 +1300,7 @@ class SimplePie
 		// Check absolute bare minimum requirements.
 		if (!extension_loaded('xml') || !extension_loaded('pcre'))
 		{
+			$this->error = 'XML or PCRE extensions not loaded!';
 			return false;
 		}
 		// Then check the xml extension is sane (i.e., libxml 2.7.x issue on PHP < 5.2.9 and libxml 2.7.0 to 2.7.2 on any version) if we don't have xmlreader.
@@ -1375,6 +1382,13 @@ class SimplePie
 
 			list($headers, $sniffed) = $fetched;
 		}
+		
+		// Empty response check
+		if(empty($this->raw_data)){
+			$this->error = "A feed could not be found at `$this->feed_url`. Empty body.";
+			$this->registry->call('Misc', 'error', array($this->error, E_USER_NOTICE, __FILE__, __LINE__));
+			return false;
+		}
 
 		// Set up array of possible encodings
 		$encodings = array();
@@ -1438,7 +1452,7 @@ class SimplePie
 					$this->data = $parser->get_data();
 					if (!($this->get_type() & ~SIMPLEPIE_TYPE_NONE))
 					{
-						$this->error = "A feed could not be found at $this->feed_url. This does not appear to be a valid RSS or Atom feed.";
+						$this->error = "A feed could not be found at `$this->feed_url`. This does not appear to be a valid RSS or Atom feed.";
 						$this->registry->call('Misc', 'error', array($this->error, E_USER_NOTICE, __FILE__, __LINE__));
 						return false;
 					}
@@ -1467,7 +1481,22 @@ class SimplePie
 		}
 		else
 		{
-			$this->error = 'The data could not be converted to UTF-8. You MUST have either the iconv or mbstring extension installed. Upgrading to PHP 5.x (which includes iconv) is highly recommended.';
+			$this->error = 'The data could not be converted to UTF-8.';
+			if (!extension_loaded('mbstring') && !extension_loaded('iconv') && !class_exists('\UConverter')) {
+				$this->error .= ' You MUST have either the iconv, mbstring or intl (PHP 5.5+) extension installed and enabled.';
+			} else {
+				$missingExtensions = array();
+				if (!extension_loaded('iconv')) {
+					$missingExtensions[] = 'iconv';
+				}
+				if (!extension_loaded('mbstring')) {
+					$missingExtensions[] = 'mbstring';
+				}
+				if (!class_exists('\UConverter')) {
+					$missingExtensions[] = 'intl (PHP 5.5+)';
+				}
+				$this->error .= ' Try installing/enabling the ' . implode(' or ', $missingExtensions) . ' extension.';
+			}
 		}
 
 		$this->registry->call('Misc', 'error', array($this->error, E_USER_NOTICE, __FILE__, __LINE__));
