@@ -16,6 +16,7 @@ class Reader
     private static $DATA_SECTION_SEPARATOR_SIZE = 16;
     private static $METADATA_START_MARKER = "\xAB\xCD\xEFMaxMind.com";
     private static $METADATA_START_MARKER_LENGTH = 14;
+    private static $METADATA_MAX_SIZE = 131072; // 128 * 1024 = 128KB
 
     private $decoder;
     private $fileHandle;
@@ -237,8 +238,10 @@ class Reader
         $fileSize = $fstat['size'];
         $marker = self::$METADATA_START_MARKER;
         $markerLength = self::$METADATA_START_MARKER_LENGTH;
+        $metadataMaxLengthExcludingMarker
+            = min(self::$METADATA_MAX_SIZE, $fileSize) - $markerLength;
 
-        for ($i = 0; $i < $fileSize - $markerLength + 1; $i++) {
+        for ($i = 0; $i <= $metadataMaxLengthExcludingMarker; $i++) {
             for ($j = 0; $j < $markerLength; $j++) {
                 fseek($handle, $fileSize - $i - $j - 1);
                 $matchBit = fgetc($handle);
