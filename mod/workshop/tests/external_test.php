@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/workshop/lib.php');
 
 use mod_workshop\external\workshop_summary_exporter;
+use mod_workshop\external\submission_exporter;
 
 /**
  * Workshop module external functions tests
@@ -70,20 +71,33 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         // Setup test data.
-        $this->course = $this->getDataGenerator()->create_course();
+        $course = new stdClass();
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = true;
+        $this->course = $this->getDataGenerator()->create_course($course);
         $this->workshop = $this->getDataGenerator()->create_module('workshop', array('course' => $this->course->id));
         $this->context = context_module::instance($this->workshop->cmid);
         $this->cm = get_coursemodule_from_instance('workshop', $this->workshop->id);
 
         // Create users.
         $this->student = self::getDataGenerator()->create_user();
+        $this->anotherstudentg1 = self::getDataGenerator()->create_user();
+        $this->anotherstudentg2 = self::getDataGenerator()->create_user();
         $this->teacher = self::getDataGenerator()->create_user();
 
         // Users enrolments.
         $this->studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
         $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($this->anotherstudentg1->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($this->anotherstudentg2->id, $this->course->id, $this->studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
+
+        $this->group1 = $this->getDataGenerator()->create_group(array('courseid' => $this->course->id));
+        $this->group2 = $this->getDataGenerator()->create_group(array('courseid' => $this->course->id));
+        groups_add_member($this->group1, $this->student);
+        groups_add_member($this->group1, $this->anotherstudentg1);
+        groups_add_member($this->group2, $this->anotherstudentg2);
     }
 
     /**
@@ -789,5 +803,131 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->setUser($anotheruser);
         $this->expectException('moodle_exception');
         mod_workshop_external::delete_submission($submissionid);
+    }
+
+    /**
+     * Test test_get_submissions_student.
+     */
+    public function test_get_submissions_student() {
+
+        // Create a couple of submissions with files.
+        $firstsubmissionid = $this->create_test_submission($this->student);  // Create submission with files.
+        $secondsubmissionid = $this->create_test_submission($this->anotherstudentg1->id);
+
+        $this->setUser($this->student);
+        $result = mod_workshop_external::get_submissions($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        // We should get just our submission.
+        $this->assertCount(1, $result['submissions']);
+        $this->assertEquals(1, $result['totalcount']);
+        $this->assertEquals($firstsubmissionid, $result['submissions'][0]['id']);
+        $this->assertCount(1, $result['submissions'][0]['contentfiles']); // Check we retrieve submission text files.
+        $this->assertCount(1, $result['submissions'][0]['attachmentfiles']); // Check we retrieve attachment files.
+        // We shoul not see the grade or feedback information.
+        $properties = submission_exporter::properties_definition();
+        foreach ($properties as $attribute => $settings) {
+            if (!empty($settings['optional'])) {
+                if (isset($result['submissions'][0][$attribute])) {
+                    echo "error $attribute";
+                }
+                $this->assertFalse(isset($result['submissions'][0][$attribute]));
+            }
+        }
+    }
+
+    /**
+     * Test test_get_submissions_published_student.
+     */
+    public function test_get_submissions_published_student() {
+        global $DB;
+
+        $DB->set_field('workshop', 'phase', workshop::PHASE_CLOSED, array('id' => $this->workshop->id));
+        // Create a couple of submissions with files.
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $submission = array('published' => 1);
+        $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->anotherstudentg1->id, $submission);
+
+        $this->setUser($this->student);
+        $result = mod_workshop_external::get_submissions($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        // We should get just our submission.
+        $this->assertCount(1, $result['submissions']);
+        $this->assertEquals(1, $result['totalcount']);
+        $this->assertEquals($submissionid, $result['submissions'][0]['id']);
+
+        // Check with group restrictions.
+        $this->setUser($this->anotherstudentg2);
+        $result = mod_workshop_external::get_submissions($this->workshop->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $this->assertCount(0, $result['submissions']);  // I can't see other users in separated groups.
+        $this->assertEquals(0, $result['totalcount']);
+    }
+
+    /**
+     * Test test_get_submissions_from_student_with_feedback_from_teacher.
+     */
+    public function test_get_submissions_from_student_with_feedback_from_teacher() {
+        global $DB;
+
+        // Create a couple of submissions with files.
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
+        // Create teacher feedback for submission.
+        $record = new stdclass();
+        $record->id = $submissionid;
+        $record->gradeover = 9;
+        $record->gradeoverby = $this->teacher->id;
+        $record->feedbackauthor = 'Hey';
+        $record->feedbackauthorformat = FORMAT_MOODLE;
+        $record->published = 1;
+        $DB->update_record('workshop_submissions', $record);
+
+        // Remove teacher caps.
+        assign_capability('mod/workshop:viewallsubmissions', CAP_PROHIBIT, $this->teacher->id, $this->context->id);
+        // Empty all the caches that may be affected  by this change.
+        accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
+
+        $this->setUser($this->teacher);
+        $result = mod_workshop_external::get_submissions($this->workshop->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        // We should get just our submission.
+        $this->assertEquals(1, $result['totalcount']);
+        $this->assertEquals($submissionid, $result['submissions'][0]['id']);
+    }
+
+    /**
+     * Test test_get_submissions_from_students_as_teacher.
+     */
+    public function test_get_submissions_from_students_as_teacher() {
+        global $DB;
+
+        // Create a couple of submissions with files.
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $submissionid1 = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
+        $submissionid2 = $workshopgenerator->create_submission($this->workshop->id, $this->anotherstudentg1->id);
+        $submissionid3 = $workshopgenerator->create_submission($this->workshop->id, $this->anotherstudentg2->id);
+
+        $this->setUser($this->teacher);
+        $result = mod_workshop_external::get_submissions($this->workshop->id); // Get all.
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $this->assertEquals(3, $result['totalcount']);
+        $this->assertCount(3, $result['submissions']);
+
+        $result = mod_workshop_external::get_submissions($this->workshop->id, 0, 0, 0, 2); // Check pagination.
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $this->assertEquals(3, $result['totalcount']);
+        $this->assertCount(2, $result['submissions']);
+
+        $result = mod_workshop_external::get_submissions($this->workshop->id, 0, $this->group2->id); // Get group 2.
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $this->assertEquals(1, $result['totalcount']);
+        $this->assertCount(1, $result['submissions']);
+        $this->assertEquals($submissionid3, $result['submissions'][0]['id']);
+
+        $result = mod_workshop_external::get_submissions($this->workshop->id, $this->anotherstudentg1->id); // Get one.
+        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $this->assertEquals(1, $result['totalcount']);
+        $this->assertEquals($submissionid2, $result['submissions'][0]['id']);
     }
 }

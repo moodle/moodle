@@ -887,6 +887,69 @@ class workshop {
     }
 
     /**
+     * Returns submissions from this workshop that are viewable by the current user (except example submissions).
+     *
+     * @param mixed $authorid int|array If set to [array of] integer, return submission[s] of the given user[s] only
+     * @param int $groupid If non-zero, return only submissions by authors in the specified group. 0 for all groups.
+     * @param int $limitfrom Return a subset of records, starting at this point (optional)
+     * @param int $limitnum Return a subset containing this many records in total (optional, required if $limitfrom is set)
+     * @return array of records and the total submissions count
+     * @since  Moodle 3.4
+     */
+    public function get_visible_submissions($authorid = 0, $groupid = 0, $limitfrom = 0, $limitnum = 0) {
+        global $DB, $USER;
+
+        $submissions = array();
+        $select = "SELECT s.*";
+        $selectcount = "SELECT COUNT(s.id)";
+        $from = " FROM {workshop_submissions} s";
+        $params = array('workshopid' => $this->id);
+
+        // Check if the passed group (or all groups when groupid is 0) is visible by the current user.
+        if (!groups_group_visible($groupid, $this->course, $this->cm)) {
+            return array($submissions, 0);
+        }
+
+        if ($groupid) {
+            $from .= " JOIN {groups_members} gm ON (gm.userid = s.authorid AND gm.groupid = :groupid)";
+            $params['groupid'] = $groupid;
+        }
+        $where = " WHERE s.workshopid = :workshopid AND s.example = 0";
+
+        if (!has_capability('mod/workshop:viewallsubmissions', $this->context)) {
+            // Check published submissions.
+            $workshopclosed = $this->phase == self::PHASE_CLOSED;
+            $canviewpublished = has_capability('mod/workshop:viewpublishedsubmissions', $this->context);
+            if ($workshopclosed && $canviewpublished) {
+                $published = " OR s.published = 1";
+            } else {
+                $published = '';
+            }
+
+            // Always get submissions I did or I provided feedback to.
+            $where .= " AND (s.authorid = :authorid OR s.gradeoverby = :graderid $published)";
+            $params['authorid'] = $USER->id;
+            $params['graderid'] = $USER->id;
+        }
+
+        // Now, user filtering.
+        if (!empty($authorid)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($authorid, SQL_PARAMS_NAMED);
+            $where .= " AND s.authorid $usql";
+            $params = array_merge($params, $uparams);
+        }
+
+        $order = " ORDER BY s.timecreated";
+
+        $totalcount = $DB->count_records_sql($selectcount.$from.$where, $params);
+        if ($totalcount) {
+            $submissions = $DB->get_records_sql($select.$from.$where.$order, $params, $limitfrom, $limitnum);
+        }
+        return array($submissions, $totalcount);
+    }
+
+
+    /**
      * Returns a submission record with the author's data
      *
      * @param int $id submission id
