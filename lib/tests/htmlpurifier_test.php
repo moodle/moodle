@@ -44,7 +44,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
         // Also note we do not need to test links with an existing rel attribute as the HTML Purifier is configured to remove
         // the rel attribute.
         $text = '<a href="http://moodle.org" target="_blank">Some link</a>';
-        $expected = '<a href="http://moodle.org" target="_blank" rel="noreferrer">Some link</a>';
+        $expected = '<a href="http://moodle.org" target="_blank" rel="noreferrer noopener">Some link</a>';
         $result = format_text($text, FORMAT_HTML);
         $this->assertSame($expected, $result);
 

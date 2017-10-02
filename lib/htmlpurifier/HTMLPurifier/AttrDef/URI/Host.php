@@ -97,7 +97,7 @@ class HTMLPurifier_AttrDef_URI_Host extends HTMLPurifier_AttrDef
 
         // PHP 5.3 and later support this functionality natively
         if (function_exists('idn_to_ascii')) {
-            return idn_to_ascii($string);
+            $string = idn_to_ascii($string);
 
         // If we have Net_IDNA2 support, we can support IRIs by
         // punycoding them. (This is the most portable thing to do,
@@ -123,12 +123,13 @@ class HTMLPurifier_AttrDef_URI_Host extends HTMLPurifier_AttrDef
                     }
                 }
                 $string = implode('.', $new_parts);
-                if (preg_match("/^($domainlabel\.)*$toplabel\.?$/i", $string)) {
-                    return $string;
-                }
             } catch (Exception $e) {
                 // XXX error reporting
             }
+        }
+        // Try again
+        if (preg_match("/^($domainlabel\.)*$toplabel\.?$/i", $string)) {
+            return $string;
         }
         return false;
     }
