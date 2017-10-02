@@ -138,7 +138,9 @@ class quiz_overview_report extends quiz_attempts_report {
             // Construct the SQL.
             list($fields, $from, $where, $params) = $table->base_sql($allowedjoins);
 
-            $table->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp", $params);
+            // The WHERE clause is vital here, because some parts of tablelib.php will expect to
+            // add bits like ' AND x = 1' on the end, and that needs to leave to valid SQL.
+            $table->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp WHERE 1 = 1", $params);
 
             // Test to see if there are any regraded attempts to be listed.
             $fields .= ", COALESCE((

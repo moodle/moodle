@@ -115,7 +115,7 @@ class quiz_overview_report_testcase extends advanced_testcase {
         // Now do a minimal set-up of the table class.
         $table = new quiz_overview_table($quiz, $context, $qmsubselect, $reportoptions,
                 $empty, $studentsjoins, array(1), null);
-        $table->define_columns(array('attempt'));
+        $table->define_columns(array('fullname'));
         $table->sortable(true, 'uniqueid');
         $table->define_baseurl(new moodle_url('/mod/quiz/report.php'));
         $table->setup();
@@ -123,6 +123,7 @@ class quiz_overview_report_testcase extends advanced_testcase {
         // Run the query.
         list($fields, $from, $where, $params) = $table->base_sql($studentsjoins);
         $table->set_sql($fields, $from, $where, $params);
+        $table->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp WHERE 1 = 1", $params);
         $table->query_db(30, false);
 
         // Verify what was returned: Student 1's best and in progress attempts.
@@ -137,6 +138,25 @@ class quiz_overview_report_testcase extends advanced_testcase {
         $this->assertEquals(1, $table->rawdata[$student2->id . '#3']->gradedattempt);
         $this->assertArrayHasKey($student3->id . '#0', $table->rawdata);
         $this->assertEquals(0, $table->rawdata[$student3->id . '#0']->gradedattempt);
+
+        // Ensure that filtering by inital does not break it.
+        // This involves setting a private properly of the base class, which is
+        // only really possible using reflection :-(.
+        $reflectionobject = new ReflectionObject($table);
+        while ($parent = $reflectionobject->getParentClass()) {
+            $reflectionobject = $parent;
+        }
+        $prefsproperty = $reflectionobject->getProperty('prefs');
+        $prefsproperty->setAccessible(true);
+        $prefs = $prefsproperty->getValue($table);
+        $prefs['i_first'] = 'A';
+        $prefsproperty->setValue($table, $prefs);
+
+        list($fields, $from, $where, $params) = $table->base_sql($studentsjoins);
+        $table->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp WHERE 1 = 1", $params);
+        $table->set_sql($fields, $from, $where, $params);
+        $table->query_db(30, false);
+        // Just verify that this does not cause a fatal error.
     }
 
     /**
