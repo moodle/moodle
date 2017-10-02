@@ -53,9 +53,9 @@ class event_subscription_exporter extends exporter {
             if (!empty($subscription) && $CFG->calendar_showicalsource) {
                 $data->displayeventsource = true;
                 if (!empty($subscription->url)) {
-                    $data->url = $subscription->url;
+                    $data->subscriptionurl = $subscription->url;
                 }
-                $data->name = $subscription->name;
+                $data->subscriptionname = $subscription->name;
             }
         }
 
@@ -72,11 +72,11 @@ class event_subscription_exporter extends exporter {
             'displayeventsource' => [
                 'type' => PARAM_BOOL
             ],
-            'name' => [
+            'subscriptionname' => [
                 'type' => PARAM_RAW,
                 'optional' => true
             ],
-            'url' => [
+            'subscriptionurl' => [
                 'type' => PARAM_URL,
                 'optional' => true
             ],
