@@ -443,11 +443,12 @@ class edit_renderer extends \plugin_renderer_base {
             $help = '';
         }
 
+        $helpspan = html_writer::span($help, 'shuffle-help-tip');
         $progressspan = html_writer::span('', 'shuffle-progress');
         $checkbox = html_writer::empty_tag('input', $checkboxattributes);
-        $label = html_writer::label(get_string('shufflequestions', 'quiz') . ' ' . $help,
+        $label = html_writer::label(get_string('shufflequestions', 'quiz'),
                 $checkboxattributes['id'], false);
-        return html_writer::span($progressspan . $checkbox . $label,
+        return html_writer::span($progressspan . $checkbox . $label. ' ' . $helpspan,
                 'instanceshufflequestions', array('data-action' => 'shuffle_questions'));
     }
 
