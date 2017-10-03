@@ -1320,4 +1320,96 @@ class mod_workshop_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function get_reviewer_assessments_parameters() {
+        return new external_function_parameters(
+            array(
+                'workshopid' => new external_value(PARAM_INT, 'Workshop instance id.'),
+                'userid' => new external_value(PARAM_INT, 'User id who did the assessment review (empty or 0 for current user).',
+                    VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+
+    /**
+     * Retrieves all the assessments reviewed by the given user.
+     *
+     * @param int $workshopid   the workshop instance id
+     * @param int $userid       the reviewer user id
+     * @return array containing the user assessments and warnings.
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function get_reviewer_assessments($workshopid, $userid = 0) {
+        global $USER, $DB, $PAGE;
+
+        $params = self::validate_parameters(
+            self::get_reviewer_assessments_parameters(), array('workshopid' => $workshopid, 'userid' => $userid)
+        );
+        $warnings = $assessments = array();
+
+        // Get and validate the submission and workshop.
+        list($workshop, $course, $cm, $context) = self::validate_workshop($params['workshopid']);
+
+        // Extra checks so only users with permissions can view other users assessments.
+        if (empty($params['userid']) || $params['userid'] == $USER->id) {
+            $userid = $USER->id;
+            list($assessed, $notice) = $workshop->check_examples_assessed_before_assessment($userid);
+            if (!$assessed) {
+                throw new moodle_exception($notice, 'mod_workshop');
+            }
+            if ($workshop->phase < workshop::PHASE_ASSESSMENT) {    // Can view assessments only in assessment phase onwards.
+                throw new moodle_exception('nopermissions', 'error', '', 'view assessments');
+            }
+        } else {
+            require_capability('mod/workshop:viewallassessments', $context);
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
+            if (!$workshop->check_group_membership($user->id)) {
+                throw new moodle_exception('notingroup');
+            }
+            $userid = $user->id;
+        }
+        // Now get all my assessments (includes those pending review).
+        $assessmentsrecords = $workshop->get_assessments_by_reviewer($userid);
+
+        $related = array('context' => $context);
+        foreach ($assessmentsrecords as $assessment) {
+            $assessment = self::prepare_assessment_for_external($assessment, $workshop);
+            if (empty($assessment)) {
+                continue;
+            }
+            $exporter = new assessment_exporter($assessment, $related);
+            $assessments[] = $exporter->export($PAGE->get_renderer('core'));
+        }
+
+        return array(
+            'assessments' => $assessments,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.4
+     */
+    public static function get_reviewer_assessments_returns() {
+        return new external_single_structure(
+            array(
+                'assessments' => new external_multiple_structure(
+                    assessment_exporter::get_read_structure()
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
