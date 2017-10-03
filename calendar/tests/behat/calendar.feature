@@ -60,8 +60,8 @@ Feature: Perform basic calendar functionality
     When I am on "Course 1" course homepage
     And I follow "This month"
     And I click on "Really awesome event!" "link"
-    And "Course 1" "link" should exist in the ".modal-body" "css_element"
-    And I click on ".close" "css_element"
+    And "Course 1" "link" should exist in the "Really awesome event!" "dialogue"
+    And I click on ".close" "css_element" in the "Really awesome event!" "dialogue"
     And I log out
     And I log in as "student2"
     And I follow "This month"

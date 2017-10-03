@@ -19,7 +19,7 @@ Feature: Delete all messages
     And I click on "start-delete-messages" "message_area_action"
     And I click on "Delete all" "button"
     # Confirm dialogue.
-    And I click on "Delete" "button" in the ".modal-footer" "css_element"
+    And I click on "Delete" "button" in the "Confirm" "dialogue"
     # Confirm the interface is immediately updated.
     Then I should not see "User 2" in the "conversations" "message_area_region_content"
     # Confirm the changes are persisted.
