@@ -46,6 +46,7 @@ information provided here is intended especially for developers.
   update to use the ModalEvents.save and ModalEvents.cancel events instead of their yes/no counterparts.
 * Instead of checking the 'moodle/course:viewparticipants' and 'moodle/site:viewparticipants' capabilities use the
   new functions course_can_view_participants() and course_require_view_participants().
+* $stored_file->add_to_curl_request() now adds the filename to the curl request.
 
 === 3.3.1 ===
 

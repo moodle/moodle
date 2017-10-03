@@ -362,7 +362,7 @@ abstract class file_system {
     public function add_to_curl_request(stored_file $file, &$curlrequest, $key) {
         // Note: curl_file_create does not work with remote paths.
         $path = $this->get_local_path_from_storedfile($file, true);
-        $curlrequest->_tmp_file_post_params[$key] = curl_file_create($path);
+        $curlrequest->_tmp_file_post_params[$key] = curl_file_create($path, null, $file->get_filename());
     }
 
     /**
