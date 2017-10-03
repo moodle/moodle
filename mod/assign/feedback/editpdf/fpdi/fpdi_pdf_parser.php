@@ -3,9 +3,9 @@
  * This file is part of FPDI
  *
  * @package   FPDI
- * @copyright Copyright (c) 2015 Setasign - Jan Slabon (http://www.setasign.com)
+ * @copyright Copyright (c) 2017 Setasign - Jan Slabon (http://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
- * @version   1.6.1
+ * @version   1.6.2
  */
 
 if (!class_exists('pdf_parser')) {
@@ -155,6 +155,10 @@ class fpdi_pdf_parser extends pdf_parser
         if (isset($this->_pages[$this->pageNo][1][1]['/Contents'])) {
             $contents = $this->_getPageContent($this->_pages[$this->pageNo][1][1]['/Contents']);
             foreach ($contents AS $tmpContent) {
+                if ($tmpContent[0] !== pdf_parser::TYPE_STREAM) {
+                    continue;
+                }
+
                 $buffer .= $this->_unFilterStream($tmpContent) . ' ';
             }
         }
@@ -335,6 +339,10 @@ class fpdi_pdf_parser extends pdf_parser
 
         foreach ($kids as $v) {
             $pg = $this->resolveObject($v);
+            if ($pg[0] !== pdf_parser::TYPE_OBJECT) {
+                throw new Exception('Invalid data type in page tree.');
+            }
+
             if ($pg[1][1]['/Type'][1] === '/Pages') {
                 // If one of the kids is an embedded
                 // /Pages array, resolve it as well.
