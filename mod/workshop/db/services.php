@@ -120,9 +120,9 @@ $functions = array(
         'type'          => 'read',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
-    'mod_workshop_get_user_assessments' => array(
+    'mod_workshop_get_reviewer_assessments' => array(
         'classname'     => 'mod_workshop_external',
-        'methodname'    => 'get_user_assessments',
+        'methodname'    => 'get_reviewer_assessments',
         'description'   => 'Retrieves all the assessments reviewed by the given user.',
         'type'          => 'read',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
