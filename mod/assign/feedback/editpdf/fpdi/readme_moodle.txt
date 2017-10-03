@@ -22,8 +22,9 @@ Installation
 2017/10/03
 ----------
 1/ Updated to 1.6.2
-2/ Cherry-picked changes in MDL-55848
+2/ Cherry-picked changes in MDL-55848.
 3/ Renamed 'TCPDF' to 'pdf' as stated above.
+4/ Applied php7.2 compatibility fix, remove this if it is fixed in next major release (2.0) (MDL-60301).
 
 Updated by Ankit Agarwal<ankit.agrr@gmail.com> (MDL-60301)
 
