@@ -794,7 +794,9 @@ class model {
             }
         }
 
-        $this->save_predictions($records);
+        if (!empty($records)) {
+            $this->save_predictions($records);
+        }
 
         return $samplecontexts;
     }

@@ -483,7 +483,8 @@ class manager {
         $target = self::get_target('\core\analytics\target\no_teaching');
         $timesplittingmethod = '\core\analytics\time_splitting\single_range';
         $noteacher = self::get_indicator('\core_course\analytics\indicator\no_teacher');
-        $indicators = array($noteacher->get_id() => $noteacher);
+        $nostudent = self::get_indicator('\core_course\analytics\indicator\no_student');
+        $indicators = array($noteacher->get_id() => $noteacher, $nostudent->get_id() => $nostudent);
         if (!\core_analytics\model::exists($target, $indicators)) {
             \core_analytics\model::create($target, $indicators, $timesplittingmethod);
         }

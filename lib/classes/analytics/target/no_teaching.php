@@ -168,8 +168,10 @@ class no_teaching extends \core_analytics\local\target\binary {
     protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false) {
 
         $noteachersindicator = $this->retrieve('\core_course\analytics\indicator\no_teacher', $sampleid);
-        if ($noteachersindicator == \core_course\analytics\indicator\no_teacher::get_min_value()) {
-            // No teachers :( we flag this as 1.
+        $nostudentsindicator = $this->retrieve('\core_course\analytics\indicator\no_student', $sampleid);
+        if ($noteachersindicator == \core_course\analytics\indicator\no_teacher::get_min_value() ||
+                $nostudentsindicator == \core_course\analytics\indicator\no_student::get_min_value()) {
+            // No teachers or no students :(.
             return 1;
         }
         return 0;
