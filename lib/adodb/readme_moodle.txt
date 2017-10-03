@@ -30,5 +30,7 @@ Our changes:
  * Removed random seed initialization from lib/adodb/adodb.inc.php:216 (see 038f546 and MDL-41198).
  * MDL-52286 Added muting erros in ADORecordSet::__destruct().
    Check if fixed upstream during the next upgrade and remove this note. (8638b3f1441d4b928)
+ * MDL-58546 replaced each() with foreach for PHP 7.2 compatibility.
+   pull request upstream: https://github.com/ADOdb/ADOdb/pull/373
 
-skodak, iarenaza, moodler, stronk7, abgreeve, lameze, ankitagarwal
+skodak, iarenaza, moodler, stronk7, abgreeve, lameze, ankitagarwal, marinaglancy

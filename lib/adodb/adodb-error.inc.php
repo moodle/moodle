@@ -111,7 +111,7 @@ function adodb_error_pg($errormsg)
 			'could not serialize access due to'   => DB_ERROR_SERIALIZATION_FAILURE
 		);
 	reset($error_regexps);
-	while (list($regexp,$code) = each($error_regexps)) {
+	foreach ($error_regexps as $regexp => $code) {
 		if (preg_match("/$regexp/mi", $errormsg)) {
 			return $code;
 		}
