@@ -1,21 +1,24 @@
-Description of PHPMailer 5.2.23 library import into Moodle
+Description of PHPMailer 6.0.1 library import into Moodle
 
 We now use a vanilla version of phpmailer and do our customisations in a
 subclass.
 
 When doing the import we remove directories/files:
-aboutus.html
-class.pop3.php
-class.phpmailer.oauth.php
-class.phpmailer.oauthgoogle.php
-get_oauth_token.php
-.travis.yml
-.scrutinizer.yml
-composer.json
-composer.lock
-travis.phpunit.xml.dist
-PHPMailerAutoload.php (make sure all files are included in moodle_phpmailer.php)
+.github/
+.phan/
 docs/
 examples/
+src/OAuth.php
+src/POP3.php
 test/
-extras/
+.gitattributes
+.gitignore
+.php_cs
+.scrutinizer.yml
+.travis.yml
+SECURITY.md
+UPGRADING.md
+composer.json
+get_oauth_token.php
+phpdoc.dist.xml
+travis.phpunit.xml.dist
