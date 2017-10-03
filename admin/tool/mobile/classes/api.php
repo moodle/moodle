@@ -58,15 +58,26 @@ class api {
         global $CFG;
         require_once($CFG->libdir . '/adminlib.php');
 
+        $cachekey = 'mobileplugins';
+        if (!isloggedin()) {
+            $cachekey = 'authmobileplugins';    // Use a different cache for not logged users.
+        }
+
         // Check if we can return this from cache.
         $cache = \cache::make('tool_mobile', 'plugininfo');
-        $pluginsinfo = $cache->get('mobileplugins');
+        $pluginsinfo = $cache->get($cachekey);
         if ($pluginsinfo !== false) {
             return (array)$pluginsinfo;
         }
 
         $pluginsinfo = [];
-        $plugintypes = core_component::get_plugin_types();
+        // For not logged users return only auth plugins.
+        // This is to avoid anyone (not being a registered user) to obtain and download all the site remote add-ons.
+        if (!isloggedin()) {
+            $plugintypes = array('auth' => $CFG->dirroot.'/auth');
+        } else {
+            $plugintypes = core_component::get_plugin_types();
+        }
 
         foreach ($plugintypes as $plugintype => $unused) {
             // We need to include files here.
@@ -100,7 +111,7 @@ class api {
             }
         }
 
-        $cache->set('mobileplugins', $pluginsinfo);
+        $cache->set($cachekey, $pluginsinfo);
 
         return $pluginsinfo;
     }
