@@ -69,31 +69,15 @@ if ($isreviewer and $workshop->assessing_allowed($USER->id)) {
 }
 
 // check that all required examples have been assessed by the user
-if ($assessmenteditable and $workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_ASSESSMENT
-        and !has_capability('mod/workshop:manageexamples', $workshop->context)) {
-    // the reviewer must have submitted their own submission
-    $reviewersubmission = $workshop->get_submission_by_author($assessment->reviewerid);
-    $output = $PAGE->get_renderer('mod_workshop');
-    if (!$reviewersubmission) {
-        // no money, no love
-        $assessmenteditable = false;
+if ($assessmenteditable) {
+
+    list($assessed, $notice) = $workshop->check_examples_assessed_before_assessment($assessment->reviewerid);
+    if (!$assessed) {
         echo $output->header();
         echo $output->heading(format_string($workshop->name));
-        notice(get_string('exampleneedsubmission', 'workshop'), new moodle_url('/mod/workshop/view.php', array('id' => $cm->id)));
+        notice(get_string($notice, 'workshop'), new moodle_url('/mod/workshop/view.php', array('id' => $cm->id)));
         echo $output->footer();
         exit;
-    } else {
-        $examples = $workshop->get_examples_for_reviewer($assessment->reviewerid);
-        foreach ($examples as $exampleid => $example) {
-            if (is_null($example->grade)) {
-                $assessmenteditable = false;
-                echo $output->header();
-                echo $output->heading(format_string($workshop->name));
-                notice(get_string('exampleneedassessed', 'workshop'), new moodle_url('/mod/workshop/view.php', array('id' => $cm->id)));
-                echo $output->footer();
-                exit;
-            }
-        }
     }
 }
 

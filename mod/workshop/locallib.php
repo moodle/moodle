@@ -2767,13 +2767,13 @@ class workshop {
     }
 
     /**
-     * Check whether the given user has assessed all his required examples.
+     * Check whether the given user has assessed all his required examples before submission.
      *
      * @param  int $userid the user to check
      * @return bool        false if there are examples missing assessment, true otherwise.
      * @since  Moodle 3.4
      */
-    public function check_examples_assessed($userid) {
+    public function check_examples_assessed_before_submission($userid) {
 
         if ($this->useexamples and $this->examplesmode == self::EXAMPLES_BEFORE_SUBMISSION
             and !has_capability('mod/workshop:manageexamples', $this->context)) {
@@ -2790,6 +2790,35 @@ class workshop {
             }
         }
         return true;
+    }
+
+    /**
+     * Check that all required examples have been assessed by the given user.
+     *
+     * @param  stdClass $userid     the user (reviewer) to check
+     * @return mixed bool|state     false and notice code if there are examples missing assessment, true otherwise.
+     * @since  Moodle 3.4
+     */
+    public function check_examples_assessed_before_assessment($userid) {
+
+        if ($this->useexamples and $this->examplesmode == self::EXAMPLES_BEFORE_ASSESSMENT
+                and !has_capability('mod/workshop:manageexamples', $this->context)) {
+
+            // The reviewer must have submitted their own submission.
+            $reviewersubmission = $this->get_submission_by_author($userid);
+            if (!$reviewersubmission) {
+                // No money, no love.
+                return array(false, 'exampleneedsubmission');
+            } else {
+                $examples = $this->get_examples_for_reviewer($userid);
+                foreach ($examples as $exampleid => $example) {
+                    if (is_null($example->grade)) {
+                        return array(false, 'exampleneedassessed');
+                    }
+                }
+            }
+        }
+        return array(true, null);
     }
 
     /**
@@ -2966,6 +2995,33 @@ class workshop {
         if ($isauthor and !$isreviewer and !$canviewallassessments and $this->phase != self::PHASE_CLOSED) {
             // Authors can see assessments of their work at the end of workshop only.
             print_error('nopermissions', 'error', $this->view_url(), 'view assessment of own work before workshop is closed');
+        }
+    }
+
+    /**
+     * Helper method for validating if the current user can edit the given assessment.
+     *
+     * @param  stdClass   $assessment assessment object
+     * @param  stdClass   $submission submission object
+     * @return void
+     * @throws moodle_exception
+     * @since  Moodle 3.4
+     */
+    public function check_edit_assessment($assessment, $submission) {
+        global $USER;
+
+        $this->check_view_assessment($assessment, $submission);
+        // Further checks.
+        $isreviewer = ($USER->id == $assessment->reviewerid);
+
+        $assessmenteditable = $isreviewer && $this->assessing_allowed($USER->id);
+        if (!$assessmenteditable) {
+            throw new moodle_exception('nopermissions', 'error', '', 'edit assessments');
+        }
+
+        list($assessed, $notice) = $this->check_examples_assessed_before_assessment($assessment->reviewerid);
+        if (!$assessed) {
+            throw new moodle_exception($notice, 'mod_workshop');
         }
     }
 
