@@ -865,7 +865,7 @@ $eventshandlers = $DB->get_records_sql('SELECT DISTINCT component FROM {events_h
 $themedesignermode = !empty($CFG->themedesignermode);
 
 // Check if a directory with development libraries exists.
-if (is_dir($CFG->dirroot.'/vendor') || is_dir($CFG->dirroot.'/node_modules')) {
+if (empty($CFG->disabledevlibdirscheck) && (is_dir($CFG->dirroot.'/vendor') || is_dir($CFG->dirroot.'/node_modules'))) {
     $devlibdir = true;
 } else {
     $devlibdir = false;
