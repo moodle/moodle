@@ -615,6 +615,9 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame('', clean_param('rtmp://example.com/livestream', PARAM_URL));
         $this->assertSame('', clean_param('rtmp://example.com/live&foo', PARAM_URL));
         $this->assertSame('', clean_param('rtmp://example.com/fms&mp4:path/to/file.mp4', PARAM_URL));
+        $this->assertSame('', clean_param('mailto:support@moodle.org', PARAM_URL));
+        $this->assertSame('', clean_param('mailto:support@moodle.org?subject=Hello%20Moodle', PARAM_URL));
+        $this->assertSame('', clean_param('mailto:support@moodle.org?subject=Hello%20Moodle&cc=feedback@moodle.org', PARAM_URL));
     }
 
     public function test_clean_param_localurl() {
