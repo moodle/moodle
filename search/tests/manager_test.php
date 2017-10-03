@@ -464,6 +464,89 @@ class search_manager_testcase extends advanced_testcase {
     }
 
     /**
+     * Test get_areas_user_accesses with regard to the 'all available courses' config option.
+     *
+     * @return void
+     */
+    public function test_search_user_accesses_allavailable() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        // Front page, including a forum.
+        $frontpage = $DB->get_record('course', array('id' => SITEID));
+        $forumfront = $this->getDataGenerator()->create_module('forum', array('course' => $frontpage->id));
+        $forumfrontctx = context_module::instance($forumfront->cmid);
+
+        // Course 1 does not allow guest access.
+        $course1 = $this->getDataGenerator()->create_course((object)array(
+                'enrol_guest_status_0' => ENROL_INSTANCE_DISABLED,
+                'enrol_guest_password_0' => ''));
+        $forum1 = $this->getDataGenerator()->create_module('forum', array('course' => $course1->id));
+        $forum1ctx = context_module::instance($forum1->cmid);
+
+        // Course 2 does not allow guest but is accessible by all users.
+        $course2 = $this->getDataGenerator()->create_course((object)array(
+                'enrol_guest_status_0' => ENROL_INSTANCE_DISABLED,
+                'enrol_guest_password_0' => ''));
+        $course2ctx = context_course::instance($course2->id);
+        $forum2 = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id));
+        $forum2ctx = context_module::instance($forum2->cmid);
+        assign_capability('moodle/course:view', CAP_ALLOW, $CFG->defaultuserroleid, $course2ctx->id);
+
+        // Course 3 allows guest access without password.
+        $course3 = $this->getDataGenerator()->create_course((object)array(
+                'enrol_guest_status_0' => ENROL_INSTANCE_ENABLED,
+                'enrol_guest_password_0' => ''));
+        $forum3 = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id));
+        $forum3ctx = context_module::instance($forum3->cmid);
+
+        // Student user is enrolled in course 1.
+        $student = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, 'student');
+
+        // No access user is just a user with no permissions.
+        $noaccess = $this->getDataGenerator()->create_user();
+
+        // First test without the all available option.
+        $search = testable_core_search::instance();
+
+        // Admin user can access everything.
+        $this->setAdminUser();
+        $this->assertTrue($search->get_areas_user_accesses());
+
+        // No-access user can access only the front page forum.
+        $this->setUser($noaccess);
+        $contexts = $search->get_areas_user_accesses();
+        $this->assertEquals([$forumfrontctx->id], array_keys($contexts[$this->forumpostareaid]));
+
+        // Student can access the front page forum plus the enrolled one.
+        $this->setUser($student);
+        $contexts = $search->get_areas_user_accesses();
+        $this->assertEquals([$forum1ctx->id, $forumfrontctx->id],
+                array_keys($contexts[$this->forumpostareaid]));
+
+        // Now turn on the all available option.
+        set_config('searchallavailablecourses', 1);
+
+        // Admin user can access everything.
+        $this->setAdminUser();
+        $this->assertTrue($search->get_areas_user_accesses());
+
+        // No-access user can access the front page forum and course 2, 3.
+        $this->setUser($noaccess);
+        $contexts = $search->get_areas_user_accesses();
+        $this->assertEquals([$forum2ctx->id, $forum3ctx->id, $forumfrontctx->id],
+                array_keys($contexts[$this->forumpostareaid]));
+
+        // Student can access the front page forum plus the enrolled one plus courses 2, 3.
+        $this->setUser($student);
+        $contexts = $search->get_areas_user_accesses();
+        $this->assertEquals([$forum1ctx->id, $forum2ctx->id, $forum3ctx->id, $forumfrontctx->id],
+                array_keys($contexts[$this->forumpostareaid]));
+    }
+
+    /**
      * test_is_search_area
      *
      * @return void

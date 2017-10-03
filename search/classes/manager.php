@@ -379,7 +379,8 @@ class manager {
         }
 
         // Get the courses where the current user has access.
-        $courses = enrol_get_my_courses(array('id', 'cacherev'));
+        $courses = enrol_get_my_courses(array('id', 'cacherev'), 'id', 0, [],
+                (bool)get_config('core', 'searchallavailablecourses'));
 
         if (empty($limitcourseids) || in_array(SITEID, $limitcourseids)) {
             $courses[SITEID] = get_course(SITEID);

@@ -557,13 +557,21 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_heading('searchengineheading', new lang_string('searchengine', 'admin'), ''));
     $temp->add(new admin_setting_configselect('searchengine',
                                 new lang_string('selectsearchengine', 'admin'), '', 'solr', $engines));
-    $temp->add(new admin_setting_heading('searchindexingheading', new lang_string('searchoptions', 'admin'), ''));
+    $temp->add(new admin_setting_heading('searchoptionsheading', new lang_string('searchoptions', 'admin'), ''));
     $temp->add(new admin_setting_configcheckbox('searchindexwhendisabled',
             new lang_string('searchindexwhendisabled', 'admin'), new lang_string('searchindexwhendisabled_desc', 'admin'),
             0));
     $temp->add(new admin_setting_configduration('searchindextime',
             new lang_string('searchindextime', 'admin'), new lang_string('searchindextime_desc', 'admin'),
             600));
+    $options = [
+        0 => new lang_string('searchallavailablecourses_off', 'admin'),
+        1 => new lang_string('searchallavailablecourses_on', 'admin')
+    ];
+    $temp->add(new admin_setting_configselect('searchallavailablecourses',
+            new lang_string('searchallavailablecourses', 'admin'),
+            new lang_string('searchallavailablecourses_desc', 'admin'),
+            0, $options));
 
     $ADMIN->add('searchplugins', $temp);
     $ADMIN->add('searchplugins', new admin_externalpage('searchareas', new lang_string('searchareas', 'admin'),
