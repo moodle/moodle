@@ -30,7 +30,7 @@ $string['bettercli'] = 'Evaluating models and generating predictions may involve
 $string['cantguessstartdate'] = 'Can\'t guess the start date';
 $string['cantguessenddate'] = 'Can\'t guess the end date';
 $string['clienablemodel'] = 'You can enable the model by selecting a time-splitting method by its ID. Note that you can also enable it later using the web interface (\'none\' to exit).';
-$string['clievaluationandpredictions'] = 'A cron task iterates through enabled models and gets predictions. Models evaluation via command line is disabled. You can allow these processes to be executed manually via web interface by enabling <a href="{$a}">\'onlycli\' analytics setting</a>';
+$string['clievaluationandpredictions'] = 'A scheduled task iterates through enabled models and gets predictions. Models evaluation via the web interface is disabled. You can allow these processes to be executed manually via the web interface by disabling the <a href="{$a}">\'onlycli\'</a> analytics setting';
 $string['editmodel'] = 'Edit "{$a}" model';
 $string['edittrainedwarning'] = 'This model has already been trained. Note that changing its indicators or its time-splitting method will delete its previous predictions and start generating new predictions.';
 $string['enabled'] = 'Enabled';
