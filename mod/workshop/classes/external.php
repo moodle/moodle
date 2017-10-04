@@ -1230,8 +1230,8 @@ class mod_workshop_external extends external_api {
         $submission = $DB->get_record('workshop_submissions', array('id' => $assessment->submissionid), '*', MUST_EXIST);
         list($workshop, $course, $cm, $context) = self::validate_workshop($submission->workshopid);
 
-        // Check we can edit the assessment (so we can get the form data).
-        $workshop->check_edit_assessment($assessment, $submission);
+        // Check we can view the assessment (so we can get the form data).
+        $workshop->check_view_assessment($assessment, $submission);
 
         $cansetassessmentweight = has_capability('mod/workshop:allocate', $context);
         $pending = $workshop->get_pending_assessments_by_reviewer($assessment->reviewerid, $assessment->id);
