@@ -2058,6 +2058,11 @@ class mod_workshop_external extends external_api {
         $feedbackform = $workshop->get_feedbackauthor_form(null, $submission, $options);
 
         $errors = $feedbackform->validation((array) $data, array());
+        // Extra checks for the new grade (if set).
+        if (is_numeric($data->gradeover) && $data->gradeover > $workshop->grade) {
+            $errors['gradeover'] = 'The new grade cannot be higher than the maximum grade for submission.';
+        }
+
         // We can get several errors, return them in warnings.
         if (!empty($errors)) {
             $status = false;

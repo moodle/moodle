@@ -1844,4 +1844,26 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         mod_workshop_external::evaluate_submission($submissionid, $feedbacktext, $feedbackformat, $published, $gradeover);
     }
+
+    /**
+     * Test evaluate_submission_invalid_grade.
+     */
+    public function test_evaluate_submission_invalid_grade() {
+        global $DB;
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $submissionid = $workshopgenerator->create_submission($this->workshop->id, $this->student->id);
+        $DB->set_field('workshop', 'phase', workshop::PHASE_EVALUATION, array('id' => $this->workshop->id));
+
+        $this->setUser($this->teacher);
+        $feedbacktext = 'The feedback';
+        $feedbackformat = FORMAT_MOODLE;
+        $published = 1;
+        $gradeover = 150;
+        $result = mod_workshop_external::evaluate_submission($submissionid, $feedbacktext, $feedbackformat, $published, $gradeover);
+        $result = external_api::clean_returnvalue(mod_workshop_external::evaluate_submission_returns(), $result);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertFalse($result['status']);
+        $this->assertEquals('gradeover', $result['warnings'][0]['item']);
+    }
 }
