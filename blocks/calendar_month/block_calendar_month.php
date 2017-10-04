@@ -38,40 +38,37 @@ class block_calendar_month extends block_base {
     public function get_content() {
         global $CFG;
 
-        $calm = optional_param('cal_m', 0, PARAM_INT);
-        $caly = optional_param('cal_y', 0, PARAM_INT);
-        $time = optional_param('time', 0, PARAM_INT);
-
         require_once($CFG->dirroot.'/calendar/lib.php');
 
         if ($this->content !== null) {
             return $this->content;
         }
 
-        // If a day, month and year were passed then convert it to a timestamp. If these were passed then we can assume
-        // the day, month and year are passed as Gregorian, as no where in core should we be passing these values rather
-        // than the time. This is done for BC.
-        if (!empty($calm) && (!empty($caly))) {
-            $time = make_timestamp($caly, $calm, 1);
-        } else if (empty($time)) {
-            $time = time();
-        }
-
         $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
 
-        // [pj] To me it looks like this if would never be needed, but Penny added it
-        // when committing the /my/ stuff. Reminder to discuss and learn what it's about.
-        // It definitely needs SOME comment here!
         $courseid = $this->page->course->id;
         $issite = ($courseid == SITEID);
+
+        $course = null;
+        $courses = null;
+        $categories = null;
 
         if ($issite) {
             // Being displayed at site level. This will cause the filter to fall back to auto-detecting
             // the list of courses it will be grabbing events from.
             $course = get_site();
             $courses = calendar_get_default_courses();
+
+            if ($this->page->context->contextlevel === CONTEXT_COURSECAT) {
+                // Restrict to categories, and their parents, and the courses that the user is enrolled in within those
+                // categories.
+                $categories = array_keys($this->page->categories);
+                $courses = array_filter($courses, function($course) use ($categories) {
+                    return array_search($course->category, $categories) !== false;
+                });
+            }
         } else {
             // Forcibly filter events to include only those from the particular course we are in.
             $course = $this->page->course;
@@ -80,8 +77,8 @@ class block_calendar_month extends block_base {
 
         $renderer = $this->page->get_renderer('core_calendar');
 
-        $calendar = new calendar_information(0, 0, 0, $time);
-        $calendar->prepare_for_view($course, $courses);
+        $calendar = new calendar_information();
+        $calendar->set_sources($course, $courses, $this->page->category);
 
         list($data, $template) = calendar_get_view($calendar, 'mini');
         $this->content->text .= $renderer->render_from_template($template, $data);

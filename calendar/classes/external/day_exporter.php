@@ -59,11 +59,20 @@ class day_exporter extends exporter {
      */
     public function __construct(\calendar_information $calendar, $data, $related) {
         $this->calendar = $calendar;
-        $this->url = new moodle_url('/calendar/view.php', [
-            'view' => 'day',
-            'time' => $calendar->time,
-            'course' => $this->calendar->course->id,
-        ]);
+
+        $url = new moodle_url('/calendar/view.php', [
+                'view' => 'day',
+                'time' => $calendar->time,
+            ]);
+
+        if ($this->calendar->course && SITEID !== $this->calendar->course->id) {
+            $url->param('course', $this->calendar->course->id);
+        } else if ($this->calendar->categoryid) {
+            $url->param('category', $this->calendar->categoryid);
+        }
+
+        $this->url = $url;
+
         parent::__construct($data, $related);
     }
 
@@ -179,9 +188,9 @@ class day_exporter extends exporter {
             'navigation' => $this->get_navigation(),
             'filter_selector' => $this->get_course_filter_selector($output),
             'new_event_button' => $this->get_new_event_button(),
+            'viewdaylink' => $this->url->out(false),
         ];
 
-        $return['viewdaylink'] = $this->url->out(false);
 
         $cache = $this->related['cache'];
         $eventexporters = array_map(function($event) use ($cache, $output) {

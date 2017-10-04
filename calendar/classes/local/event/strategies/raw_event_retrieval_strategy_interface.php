@@ -39,6 +39,7 @@ interface raw_event_retrieval_strategy_interface {
      * @param array|null    $usersfilter     Array of users to retrieve events for.
      * @param array|null    $groupsfilter    Array of groups to retrieve events for.
      * @param array|null    $coursesfilter   Array of courses to retrieve events for.
+     * @param array|null    $categoriesfilter Array of categories to retrieve events for.
      * @param array|null    $whereconditions Array of where conditions to restrict results.
      * @param array|null    $whereparams     Array of parameters for $whereconditions.
      * @param string|null   $ordersql        SQL to order results.
@@ -51,6 +52,7 @@ interface raw_event_retrieval_strategy_interface {
         array $usersfilter = null,
         array $groupsfilter = null,
         array $coursesfilter = null,
+        array $categoriesfilter = null,
         array $whereconditions = null,
         array $whereparams = null,
         $ordersql = null,

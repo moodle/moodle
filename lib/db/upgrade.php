@@ -2570,5 +2570,36 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017092700.00);
     }
 
+    if ($oldversion < 2017092900.00) {
+        // Define field categoryid to be added to event.
+        $table = new xmldb_table('event');
+        $field = new xmldb_field('categoryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'format');
+
+        // Conditionally launch add field categoryid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add the categoryid key.
+        $key = new xmldb_key('categoryid', XMLDB_KEY_FOREIGN, array('categoryid'), 'course_categories', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Add a new index for groupid/courseid/categoryid/visible/userid.
+        // Do this before we remove the old index.
+        $index = new xmldb_index('groupid-courseid-categoryid-visible-userid', XMLDB_INDEX_NOTUNIQUE, array('groupid', 'courseid', 'categoryid', 'visible', 'userid'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Drop the old index.
+        $index = new xmldb_index('groupid-courseid-visible-userid', XMLDB_INDEX_NOTUNIQUE, array('groupid', 'courseid', 'visible', 'userid'));
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017092900.00);
+    }
+
     return true;
 }

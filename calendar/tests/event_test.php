@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_calendar\local\event\entities\event;
 use core_calendar\local\event\proxies\std_proxy;
+use core_calendar\local\event\proxies\coursecat_proxy;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
 use core_calendar\local\event\entities\event_collection_interface;
@@ -48,6 +49,7 @@ class core_calendar_event_testcase extends advanced_testcase {
             $constructorparams['id'],
             $constructorparams['name'],
             $constructorparams['description'],
+            $constructorparams['category'],
             $constructorparams['course'],
             $constructorparams['group'],
             $constructorparams['user'],
@@ -82,6 +84,7 @@ class core_calendar_event_testcase extends advanced_testcase {
                     'id' => 1,
                     'name' => 'Test event 1',
                     'description' => new event_description('asdf', 1),
+                    'category' => new coursecat_proxy(0),
                     'course' => new std_proxy(1, $lamecallable),
                     'group' => new std_proxy(1, $lamecallable),
                     'user' => new std_proxy(1, $lamecallable),

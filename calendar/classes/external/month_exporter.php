@@ -75,8 +75,10 @@ class month_exporter extends exporter {
                 'time' => $calendar->time,
             ]);
 
-        if ($this->calendar->courseid) {
-            $this->url->param('course', $this->calendar->courseid);
+        if ($this->calendar->course && SITEID !== $this->calendar->course->id) {
+            $this->url->param('course', $this->calendar->course->id);
+        } else if ($this->calendar->categoryid) {
+            $this->url->param('category', $this->calendar->categoryid);
         }
 
         $related['type'] = $type;
@@ -105,6 +107,11 @@ class month_exporter extends exporter {
         return [
             'courseid' => [
                 'type' => PARAM_INT,
+            ],
+            'categoryid' => [
+                'type' => PARAM_INT,
+                'optional' => true,
+                'default' => 0,
             ],
             'filter_selector' => [
                 'type' => PARAM_RAW,
@@ -207,6 +214,10 @@ class month_exporter extends exporter {
 
         if ($context = $this->get_default_add_context()) {
             $return['defaulteventcontext'] = $context->id;
+        }
+
+        if ($this->calendar->categoryid) {
+            $return['categoryid'] = $this->calendar->categoryid;
         }
 
         return $return;

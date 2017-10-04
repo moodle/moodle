@@ -30,10 +30,13 @@ use core_calendar\local\event\entities\event;
 use core_calendar\local\event\entities\repeat_event_collection;
 use core_calendar\local\event\exceptions\invalid_callback_exception;
 use core_calendar\local\event\proxies\cm_info_proxy;
+use core_calendar\local\event\proxies\coursecat_proxy;
 use core_calendar\local\event\proxies\std_proxy;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
 use core_calendar\local\event\entities\event_interface;
+
+require_once($CFG->libdir . '/coursecatlib.php');
 
 /**
  * Abstract factory for creating calendar events.
@@ -126,6 +129,7 @@ abstract class event_abstract_factory implements event_factory_interface {
             return null;
         }
 
+        $category = null;
         $course = null;
         $group = null;
         $user = null;
@@ -135,6 +139,8 @@ abstract class event_abstract_factory implements event_factory_interface {
         if ($dbrow->modulename && $dbrow->instance) {
             $module = new cm_info_proxy($dbrow->modulename, $dbrow->instance, $dbrow->courseid);
         }
+
+        $category = new coursecat_proxy($dbrow->categoryid);
 
         $course = new std_proxy($dbrow->courseid, function($id) {
             return calendar_get_course_cached($this->coursecachereference, $id);
@@ -163,6 +169,7 @@ abstract class event_abstract_factory implements event_factory_interface {
             $dbrow->id,
             $dbrow->name,
             new event_description($dbrow->description, $dbrow->format),
+            $category,
             $course,
             $group,
             $user,

@@ -65,6 +65,7 @@ define([
         this.eventId = null;
         this.startTime = null;
         this.courseId = null;
+        this.categoryId = null;
         this.reloadingBody = false;
         this.reloadingTitle = false;
         this.saveButton = this.getFooter().find(SELECTORS.SAVE_BUTTON);
@@ -95,6 +96,26 @@ define([
     };
 
     /**
+     * Set the category id to the given value.
+     *
+     * @method setCategoryId
+     * @param {int} id The event id
+     */
+    ModalEventForm.prototype.setCategoryId = function(id) {
+        this.categoryId = id;
+    };
+
+    /**
+     * Retrieve the current category id, if any.
+     *
+     * @method getCategoryId
+     * @return {int|null} The event id
+     */
+    ModalEventForm.prototype.getCategoryId = function() {
+        return this.categoryId;
+    };
+
+    /**
      * Check if the modal has an course id.
      *
      * @method hasCourseId
@@ -102,6 +123,16 @@ define([
      */
     ModalEventForm.prototype.hasCourseId = function() {
         return this.courseId !== null;
+    };
+
+    /**
+     * Check if the modal has an category id.
+     *
+     * @method hasCategoryId
+     * @return {bool}
+     */
+    ModalEventForm.prototype.hasCategoryId = function() {
+        return this.categoryId !== null;
     };
 
     /**
@@ -220,7 +251,8 @@ define([
         .always(function() {
             this.reloadingTitle = false;
             return;
-        }.bind(this));
+        }.bind(this))
+        .fail(Notification.exception);
 
         return this.titlePromise;
     };
@@ -261,6 +293,10 @@ define([
             args.courseid = this.getCourseId();
         }
 
+        if (this.hasCategoryId()) {
+            args.categoryid = this.getCategoryId();
+        }
+
         if (typeof formData !== 'undefined') {
             args.formdata = formData;
         }
@@ -273,11 +309,12 @@ define([
             this.enableButtons();
             return;
         }.bind(this))
-        .catch(Notification.exception)
+        .fail(Notification.exception)
         .always(function() {
             this.reloadingBody = false;
             return;
-        }.bind(this));
+        }.bind(this))
+        .fail(Notification.exception);
 
         return this.bodyPromise;
     };
@@ -321,6 +358,8 @@ define([
         Modal.prototype.hide.call(this);
         this.setEventId(null);
         this.setStartTime(null);
+        this.setCourseId(null);
+        this.setCategoryId(null);
     };
 
     /**
@@ -361,7 +400,8 @@ define([
                     // If there was a server side validation error then
                     // we need to re-request the rendered form from the server
                     // in order to display the error for the user.
-                    return this.reloadBodyContent(formData);
+                    this.reloadBodyContent(formData);
+                    return;
                 } else {
                     // No problemo! Our work here is done.
                     this.hide();
@@ -382,8 +422,10 @@ define([
                 // the loading icon and re-enable the buttons.
                 loadingContainer.addClass('hidden');
                 this.enableButtons();
+
+                return;
             }.bind(this))
-            .catch(Notification.exception);
+            .fail(Notification.exception);
     };
 
     /**

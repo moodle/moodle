@@ -71,6 +71,7 @@ class api {
         array $usersfilter = null,
         array $groupsfilter = null,
         array $coursesfilter = null,
+        array $categoriesfilter = null,
         $withduration = true,
         $ignorehidden = true,
         callable $filter = null
@@ -102,6 +103,7 @@ class api {
             $usersfilter,
             $groupsfilter,
             $coursesfilter,
+            $categoriesfilter,
             $withduration,
             $ignorehidden,
             $filter

@@ -48,15 +48,11 @@ class event_exporter extends event_exporter_base {
      * @return array
      */
     protected static function define_other_properties() {
-
         $values = parent::define_other_properties();
+
         $values['url'] = ['type' => PARAM_URL];
         $values['action'] = [
             'type' => event_action_exporter::read_properties_definition(),
-            'optional' => true,
-        ];
-        $values['editurl'] = [
-            'type' => PARAM_URL,
             'optional' => true,
         ];
 
@@ -86,6 +82,8 @@ class event_exporter extends event_exporter_base {
             $params = array('update' => $moduleid, 'return' => true, 'sesskey' => sesskey());
             $editurl = new \moodle_url('/course/mod.php', $params);
             $values['editurl'] = $editurl->out(false);
+        } else if ($event->get_type() == 'category') {
+            $url = $event->get_category()->get_proxied_instance()->get_view_link();
         } else if ($event->get_type() == 'course') {
             $url = \course_get_url($this->related['course'] ?: SITEID);
         } else {

@@ -241,6 +241,84 @@ class core_calendar_container_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that the event factory deals with invisible categorys as an admin.
+     */
+    public function test_event_factory_when_category_visibility_is_toggled_as_admin() {
+        // Create a hidden category.
+        $category = $this->getDataGenerator()->create_category(['visible' => 0]);
+
+        $eventdata = [
+                'categoryid' => $category->id,
+                'eventtype' => 'category',
+            ];
+        $legacyevent = $this->create_event($eventdata);
+
+        $dbrow = $this->get_dbrow_from_skeleton((object) $eventdata);
+        $dbrow->id = $legacyevent->id;
+
+        $factory = \core_calendar\local\event\container::get_event_factory();
+        $event = $factory->create_instance($dbrow);
+
+        // Module is still visible to admins even if the category is invisible.
+        $this->assertInstanceOf(event_interface::class, $event);
+    }
+
+    /**
+     * Test that the event factory deals with invisible categorys as an user.
+     */
+    public function test_event_factory_when_category_visibility_is_toggled_as_user() {
+        // Create a hidden category.
+        $category = $this->getDataGenerator()->create_category(['visible' => 0]);
+
+        $eventdata = [
+                'categoryid' => $category->id,
+                'eventtype' => 'category',
+            ];
+        $legacyevent = $this->create_event($eventdata);
+
+        $dbrow = $this->get_dbrow_from_skeleton((object) $eventdata);
+        $dbrow->id = $legacyevent->id;
+
+        // Use a standard user.
+        $user = $this->getDataGenerator()->create_user();
+
+        // Set the user to the student.
+        $this->setUser($user);
+
+        $factory = \core_calendar\local\event\container::get_event_factory();
+        $event = $factory->create_instance($dbrow);
+
+        // Module is invisible to non-privileged users.
+        $this->assertNull($event);
+    }
+
+    /**
+     * Test that the event factory deals with invisible categorys as an guest.
+     */
+    public function test_event_factory_when_category_visibility_is_toggled_as_guest() {
+        // Create a hidden category.
+        $category = $this->getDataGenerator()->create_category(['visible' => 0]);
+
+        $eventdata = [
+                'categoryid' => $category->id,
+                'eventtype' => 'category',
+            ];
+        $legacyevent = $this->create_event($eventdata);
+
+        $dbrow = $this->get_dbrow_from_skeleton((object) $eventdata);
+        $dbrow->id = $legacyevent->id;
+
+        // Set the user to the student.
+        $this->setGuestUser();
+
+        $factory = \core_calendar\local\event\container::get_event_factory();
+        $event = $factory->create_instance($dbrow);
+
+        // Module is invisible to guests.
+        $this->assertNull($event);
+    }
+
+    /**
      * Test that the event factory deals with completion related events properly.
      */
     public function test_event_factory_with_completion_related_event() {
@@ -264,6 +342,7 @@ class core_calendar_container_testcase extends advanced_testcase {
         $event->userid = 1;
         $event->modulename = 'assign';
         $event->instance = $assign->id;
+        $event->categoryid = 0;
         $event->courseid = $course->id;
         $event->groupid = 0;
         $event->timestart = time();
@@ -312,6 +391,7 @@ class core_calendar_container_testcase extends advanced_testcase {
         $event->userid = $user->id;
         $event->modulename = 'lesson';
         $event->instance = $lesson->id;
+        $event->categoryid = 0;
         $event->courseid = $course->id;
         $event->groupid = 0;
         $event->timestart = time();
@@ -397,6 +477,7 @@ class core_calendar_container_testcase extends advanced_testcase {
                     'name' => 'Test event',
                     'description' => 'Hello',
                     'format' => 1,
+                    'categoryid' => 0,
                     'courseid' => 1,
                     'groupid' => 0,
                     'userid' => 1,
@@ -418,6 +499,7 @@ class core_calendar_container_testcase extends advanced_testcase {
                     'name' => 'Test event',
                     'description' => 'Hello',
                     'format' => 1,
+                    'categoryid' => 0,
                     'courseid' => 1,
                     'groupid' => 1,
                     'userid' => 1,
@@ -458,5 +540,39 @@ class core_calendar_container_testcase extends advanced_testcase {
 
         $event = new calendar_event($record);
         return $event->create($record, false);
+    }
+
+    /**
+     * Pad out a basic DB row with basic information.
+     *
+     * @param   \stdClass   $skeleton the current skeleton
+     * @return  \stdClass
+     */
+    protected function get_dbrow_from_skeleton($skeleton) {
+        $dbrow = (object) [
+            'name' => 'Name',
+            'description' => 'Description',
+            'format' => 1,
+            'categoryid' => 0,
+            'courseid' => 0,
+            'groupid' => 0,
+            'userid' => 0,
+            'repeatid' => 0,
+            'modulename' => '',
+            'instance' => 0,
+            'eventtype' => 'user',
+            'timestart' => 1486396800,
+            'timeduration' => 0,
+            'timesort' => 1486396800,
+            'visible' => 1,
+            'timemodified' => 1485793098,
+            'subscriptionid' => null
+        ];
+
+        foreach ((array) $skeleton as $key => $value) {
+            $dbrow->$key = $value;
+        }
+
+        return $dbrow;
     }
 }

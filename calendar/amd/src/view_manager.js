@@ -40,9 +40,11 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
             root = $(root);
 
             root.on('click', SELECTORS.CALENDAR_NAV_LINK, function(e) {
-                var courseId = $(root).find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('courseid');
+                var wrapper = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER);
+                var courseId = wrapper.data('courseid');
+                var categoryId = wrapper.data('categoryid');
                 var link = $(e.currentTarget);
-                changeMonth(root, link.attr('href'), link.data('year'), link.data('month'), courseId);
+                changeMonth(root, link.attr('href'), link.data('year'), link.data('month'), courseId, categoryId);
 
                 e.preventDefault();
             });
@@ -55,17 +57,18 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
          * @param {Number} year Year
          * @param {Number} month Month
          * @param {Number} courseid The id of the course whose events are shown
+         * @param {Number} categoryid The id of the category whose events are shown
          * @param {object} target The element being replaced. If not specified, the calendarwrapper is used.
          * @return {promise}
          */
-        var refreshMonthContent = function(root, year, month, courseid, target) {
+        var refreshMonthContent = function(root, year, month, courseid, categoryid, target) {
             startLoading(root);
 
             target = target || root.find(SELECTORS.CALENDAR_MONTH_WRAPPER);
 
             M.util.js_pending([root.get('id'), year, month, courseid].join('-'));
             var includenavigation = root.data('includenavigation');
-            return CalendarRepository.getCalendarMonthData(year, month, courseid, includenavigation)
+            return CalendarRepository.getCalendarMonthData(year, month, courseid, categoryid, includenavigation)
                 .then(function(context) {
                     return Templates.render(root.attr('data-template'), context);
                 })
@@ -86,15 +89,16 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
         /**
          * Handle changes to the current calendar view.
          *
-         * @param {object} root The root element.
+         * @param {object} root The container element
          * @param {String} url The calendar url to be shown
          * @param {Number} year Year
          * @param {Number} month Month
          * @param {Number} courseid The id of the course whose events are shown
+         * @param {Number} categoryid The id of the category whose events are shown
          * @return {promise}
          */
-        var changeMonth = function(root, url, year, month, courseid) {
-            return refreshMonthContent(root, year, month, courseid)
+        var changeMonth = function(root, url, year, month, courseid, categoryid) {
+            return refreshMonthContent(root, year, month, courseid, categoryid)
                 .then(function() {
                     if (url.length && url !== '#') {
                         window.history.pushState({}, '', url);
@@ -102,7 +106,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
                     return arguments;
                 })
                 .then(function() {
-                    $('body').trigger(CalendarEvents.monthChanged, [year, month, courseid]);
+                    $('body').trigger(CalendarEvents.monthChanged, [year, month, courseid, categoryid]);
                     return arguments;
                 });
         };
@@ -112,16 +116,23 @@ define(['jquery', 'core/templates', 'core/notification', 'core_calendar/reposito
          *
          * @param {object} root The container element.
          * @param {Number} courseId The course id.
+         * @param {Number} categoryId The id of the category whose events are shown
          * @return {promise}
          */
-        var reloadCurrentMonth = function(root, courseId) {
+        var reloadCurrentMonth = function(root, courseId, categoryId) {
             var year = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('year');
             var month = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('month');
 
-            if (!courseId) {
+            if (typeof courseId === 'undefined') {
                 courseId = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('courseid');
             }
-            return refreshMonthContent(root, year, month, courseId);
+
+            if (typeof categoryId === 'undefined') {
+                categoryId = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER).data('categoryid');
+            }
+
+            return refreshMonthContent(root, year, month, courseId, categoryId);
+
         };
 
         /**

@@ -174,6 +174,15 @@ class behat_data_generators extends behat_base {
             'datagenerator' => 'tag',
             'required' => array('name')
         ),
+        'events' => array(
+            'datagenerator' => 'event',
+            'required' => array('name', 'eventtype'),
+            'switchids' => array(
+                'user' => 'userid',
+                'course' => 'courseid',
+                'category' => 'categoryid',
+            )
+        ),
     );
 
     /**
@@ -218,7 +227,7 @@ class behat_data_generators extends behat_base {
                     $methodname = 'get_' . $element . '_id';
 
                     // Not all the switch fields are required, default vars will be assigned by data generators.
-                    if (isset($elementdata[$element])) {
+                    if (!empty($elementdata[$element])) {
                         // Temp $id var to avoid problems when $element == $field.
                         $id = $this->{$methodname}($elementdata[$element]);
                         unset($elementdata[$element]);

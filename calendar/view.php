@@ -49,6 +49,7 @@ require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
 
+$categoryid = optional_param('category', null, PARAM_INT);
 $courseid = optional_param('course', SITEID, PARAM_INT);
 $view = optional_param('view', 'upcoming', PARAM_ALPHA);
 $time = optional_param('time', 0, PARAM_INT);
@@ -61,6 +62,10 @@ if (empty($time)) {
 
 if ($courseid != SITEID) {
     $url->param('course', $courseid);
+}
+
+if ($categoryid) {
+    $url->param('categoryid', $categoryid);
 }
 
 if ($view !== 'upcoming') {
@@ -76,18 +81,30 @@ if ($courseid != SITEID && !empty($courseid)) {
     // Course ID must be valid and existing.
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     $courses = array($course->id => $course);
-    $issite = false;
     navigation_node::override_active_url(new moodle_url('/course/view.php', array('id' => $course->id)));
 } else {
     $course = get_site();
     $courses = calendar_get_default_courses();
-    $issite = true;
+    if ($categoryid) {
+        $PAGE->set_category_by_id($categoryid);
+    } else {
+        $PAGE->set_context(context_system::instance());
+    }
+    if ($PAGE->context->contextlevel === CONTEXT_COURSECAT) {
+        // Restrict to categories, and their parents, and the courses that the user is enrolled in within those
+        // categories.
+        $categories = array_keys($PAGE->categories);
+        $courses = array_filter($courses, function($course) use ($categories) {
+            return array_search($course->category, $categories) !== false;
+        });
+        navigation_node::override_active_url(new moodle_url('/course/index.php', array('categoryid' => $categoryid)));
+    }
 }
 
 require_login($course, false);
 
 $calendar = new calendar_information(0, 0, 0, $time);
-$calendar->prepare_for_view($course, $courses);
+$calendar->set_sources($course, $courses, $PAGE->category);
 
 $pagetitle = '';
 

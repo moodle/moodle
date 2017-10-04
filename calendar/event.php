@@ -108,7 +108,7 @@ if ($action === 'delete' && $eventid > 0) {
 }
 
 $calendar = new calendar_information(0, 0, 0, $time);
-$calendar->prepare_for_view($course, $courses);
+$calendar->set_sources($course, $courses);
 
 $formoptions = new stdClass;
 if ($eventid !== 0) {
