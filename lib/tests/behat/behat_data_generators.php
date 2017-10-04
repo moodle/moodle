@@ -227,7 +227,7 @@ class behat_data_generators extends behat_base {
                     $methodname = 'get_' . $element . '_id';
 
                     // Not all the switch fields are required, default vars will be assigned by data generators.
-                    if (!empty($elementdata[$element])) {
+                    if (isset($elementdata[$element])) {
                         // Temp $id var to avoid problems when $element == $field.
                         $id = $this->{$methodname}($elementdata[$element]);
                         unset($elementdata[$element]);
