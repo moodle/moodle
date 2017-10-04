@@ -2448,8 +2448,8 @@ class global_navigation extends navigation_node {
 
                     $reporttab = $usercoursenode->add(get_string('activityreports'));
 
-                    $reports = get_plugin_list_with_function('report', 'extend_navigation_user', 'lib.php');
-                    foreach ($reports as $reportfunction) {
+                    $reportfunctions = get_plugin_list_with_function('report', 'extend_navigation_user', 'lib.php');
+                    foreach ($reportfunctions as $reportfunction) {
                         $reportfunction($reporttab, $user, $usercourse);
                     }
 
