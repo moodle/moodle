@@ -88,7 +88,7 @@ $functions = array(
     'mod_workshop_get_submissions' => array(
         'classname'     => 'mod_workshop_external',
         'methodname'    => 'get_submissions',
-        'description'   => 'Retrieves all the workshop submissions or the one done by the given user.',
+        'description'   => 'Retrieves all the workshop submissions or the one done by the given user (except example submissions).',
         'type'          => 'read',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),

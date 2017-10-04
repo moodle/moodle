@@ -782,7 +782,8 @@ class mod_workshop_external extends external_api {
     }
 
     /**
-     * Retrieves all the workshop submissions visible by the current user or the one done by the given user.
+     * Retrieves all the workshop submissions visible by the current user or the one done by the given user
+     * (except example submissions).
      *
      * @param int $workshopid       the workshop instance id
      * @param int $userid           get submissions done by this user
@@ -847,7 +848,7 @@ class mod_workshop_external extends external_api {
             $fs = get_file_storage();
             $files = $fs->get_area_files($context->id, 'mod_workshop', array('submission_content', 'submission_attachment'));
             foreach ($files as $file) {
-                if ($file->is_directory() || !isset($submissionsrecords[$file->get_itemid()])) {
+                if ($file->is_directory()) {
                     continue;
                 }
                 $totalfilesize += $file->get_filesize();
@@ -874,7 +875,8 @@ class mod_workshop_external extends external_api {
                     submission_exporter::get_read_structure()
                 ),
                 'totalcount' => new external_value(PARAM_INT, 'Total count of submissions.'),
-                'totalfilesize' => new external_value(PARAM_INT, 'Total size (bytes) of the files included in the submissions.'),
+                'totalfilesize' => new external_value(PARAM_INT, 'Total size (bytes) of the files attached to all the
+                    submissions (even the ones not returned due to pagination).'),
                 'warnings' => new external_warnings()
             )
         );
