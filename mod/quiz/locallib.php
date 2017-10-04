@@ -2063,12 +2063,7 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         $slot->slot = $lastslotbefore + 1;
         $slot->page = min($page, $maxpage + 1);
 
-        $DB->execute("
-                UPDATE {quiz_sections}
-                   SET firstslot = firstslot + 1
-                 WHERE quizid = ?
-                   AND firstslot > ?
-                ", array($quiz->id, max($lastslotbefore, 1)));
+        quiz_update_section_firstslots($quiz->id, 1, max($lastslotbefore, 1));
 
     } else {
         $lastslot = end($slots);
@@ -2086,6 +2081,27 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
 
     $DB->insert_record('quiz_slots', $slot);
     $trans->allow_commit();
+}
+
+/**
+ * Move all the section headings in a certain slot range by a certain offset.
+ *
+ * @param int $quizid the id of a quiz
+ * @param int $direction amount to adjust section heading positions. Normally +1 or -1.
+ * @param int $afterslot adjust headings that start after this slot.
+ * @param int|null $beforeslot optionally, only adjust headings before this slot.
+ */
+function quiz_update_section_firstslots($quizid, $direction, $afterslot, $beforeslot = null) {
+    global $DB;
+    $where = 'quizid = ? AND firstslot > ?';
+    $params = [$direction, $quizid, $afterslot];
+    if ($beforeslot) {
+        $where .= ' AND firstslot < ?';
+        $params[] = $beforeslot;
+    }
+    $firstslotschanges = $DB->get_records_select_menu('quiz_sections',
+            $where, $params, '', 'firstslot, firstslot + ?');
+    update_field_with_unique_index('quiz_sections', 'firstslot', $firstslotschanges, ['quizid' => $quizid]);
 }
 
 /**
