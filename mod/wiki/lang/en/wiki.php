@@ -227,7 +227,6 @@ $string['special'] = 'Special';
 $string['tableofcontents'] = 'Table of contents';
 $string['tagarea_wiki_pages'] = 'Wiki pages';
 $string['tagsdeleted'] = 'Wiki tags have been deleted';
-$string['tagtitle'] = 'See the "{$a}" tag';
 $string['teacherrating'] = 'Teacher rating';
 $string['timesrating']='This page has been rated  {$a->c} times with an average of: {$a->s}';
 $string['updatedpages'] = "Updated pages";
