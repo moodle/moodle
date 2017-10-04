@@ -47,18 +47,22 @@ Feature: Course Category Events
       | student2    | B1i       | student           |
       | student2    | B2i       | student           |
     And the following "events" exist:
-      | name        | eventtype | category          | course |
-      | Site event  | global    |                   |        |
-      | FA event    | category  | faculty-a         |        |
-      | DA1 event   | category  | department-a1     |        |
-      | DA2 event   | category  | department-a1     |        |
-      | FB event    | category  | faculty-b         |        |
-      | DB1 event   | category  | department-b1     |        |
-      | DB2 event   | category  | department-b1     |        |
-      | CA1i event  | course    |                   | A1i    |
-      | CA2i event  | course    |                   | A2i    |
-      | CB1i event  | course    |                   | B1i    |
-      | CB2i event  | course    |                   | B2i    |
+      | name        | eventtype |
+      | Site event  | global    |
+    And the following "events" exist:
+      | name        | eventtype | course |
+      | CA1i event  | course    | A1i    |
+      | CA2i event  | course    | A2i    |
+      | CB1i event  | course    | B1i    |
+      | CB2i event  | course    | B2i    |
+    And the following "events" exist:
+      | name        | eventtype | category          |
+      | FA event    | category  | faculty-a         |
+      | DA1 event   | category  | department-a1     |
+      | DA2 event   | category  | department-a1     |
+      | FB event    | category  | faculty-b         |
+      | DB1 event   | category  | department-b1     |
+      | DB2 event   | category  | department-b1     |
 
   @javascript
   Scenario: Manager of a Category can see all child and parent events in their category
