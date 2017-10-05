@@ -152,6 +152,53 @@ class search_manager_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests that documents with modified time in the future are NOT indexed (as this would cause
+     * a problem by preventing it from indexing other documents modified between now and the future
+     * date).
+     */
+    public function test_future_documents() {
+        $this->resetAfterTest();
+
+        // Create a course and a forum.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $forum = $generator->create_module('forum', ['course' => $course->id]);
+
+        // Index everything up to current. Ensure the course is older than current second so it
+        // definitely doesn't get indexed again next time.
+        $this->waitForSecond();
+        $search = testable_core_search::instance();
+        $search->index(false, 0);
+
+        // Add 2 discussions to the forum, one of which happend just now, but the other is
+        // incorrectly set to the future.
+        $now = time();
+        $userid = get_admin()->id;
+        $generator->get_plugin_generator('mod_forum')->create_discussion(['course' => $course->id,
+                'forum' => $forum->id, 'userid' => $userid, 'timemodified' => $now,
+                'name' => 'Frog']);
+        $generator->get_plugin_generator('mod_forum')->create_discussion(['course' => $course->id,
+                'forum' => $forum->id, 'userid' => $userid, 'timemodified' => $now + 100,
+                'name' => 'Toad']);
+
+        // Wait for a second so we're not actually on the same second as the forum post (there's a
+        // 1 second overlap between indexing; it would get indexed in both checks below otherwise).
+        $this->waitForSecond();
+
+        // Index.
+        $search->index(false);
+
+        // Check latest time - it should be the same as $now, not the + 100.
+        $searcharea = $search->get_search_area($this->forumpostareaid);
+        list($componentname, $varname) = $searcharea->get_config_var_name();
+        $this->assertEquals($now, get_config($componentname, $varname . '_lastindexrun'));
+
+        // Index again - there should be nothing to index this time.
+        $search->index(false);
+        $this->assertEquals($now, get_config($componentname, $varname . '_lastindexrun'));
+    }
+
+    /**
      * Adding this test here as get_areas_user_accesses process is the same, results just depend on the context level.
      *
      * @return void
