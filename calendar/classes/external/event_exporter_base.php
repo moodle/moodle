@@ -208,6 +208,9 @@ class event_exporter_base extends exporter {
             'editurl' => [
                 'type' => PARAM_URL
             ],
+            'viewurl' => [
+                'type' => PARAM_URL
+            ],
             'formattedtime' => [
                 'type' => PARAM_RAW,
             ],
@@ -280,6 +283,10 @@ class event_exporter_base extends exporter {
         $editurl = new moodle_url('/calendar/event.php', ['action' => 'edit', 'id' => $event->get_id(),
                 'course' => $courseid]);
         $values['editurl'] = $editurl->out(false);
+        $viewurl = new moodle_url('/calendar/view.php', ['view' => 'day', 'course' => $courseid,
+                'time' => $timesort]);
+        $viewurl->set_anchor('event_' . $event->get_id());
+        $values['viewurl'] = $viewurl->out(false);
         $values['formattedtime'] = calendar_format_event_time($legacyevent, time(), null, false,
                 $timesort);
 
