@@ -122,12 +122,16 @@ class repeat_event_collection implements event_collection_interface {
      * @param int $start Start offset.
      * @return \stdClass[]
      */
-    protected function load_event_records($start = 1) {
+    protected function load_event_records($start = 0) {
         global $DB;
-        while ($records = $DB->get_records(
+        while ($records = $DB->get_records_select(
             'event',
-            ['repeatid' => $this->parentid],
-            '',
+            'id <> :parentid AND repeatid = :repeatid',
+            [
+                'parentid' => $this->parentid,
+                'repeatid' => $this->parentid,
+            ],
+            'id ASC',
             '*',
             $start,
             self::DB_QUERY_LIMIT
