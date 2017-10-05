@@ -233,46 +233,6 @@ class core_calendar_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Displays upcoming events
-     *
-     * @param calendar_information $calendar
-     * @param int $futuredays
-     * @param int $maxevents
-     * @return string
-     */
-    public function show_upcoming_events(calendar_information $calendar, $futuredays, $maxevents, moodle_url $returnurl = null) {
-
-        if ($returnurl === null) {
-            $returnurl = $this->page->url;
-        }
-
-        $events = calendar_get_upcoming($calendar->courses, $calendar->groups, $calendar->users,
-            $futuredays, $maxevents);
-
-        $output  = html_writer::start_tag('div', array('class'=>'header'));
-        $output .= $this->course_filter_selector($returnurl, get_string('upcomingeventsfor', 'calendar'));
-        if (calendar_user_can_add_event($calendar->course)) {
-            $output .= $this->add_event_button($calendar->course->id);
-        }
-        $output .= html_writer::end_tag('div');
-
-        if ($events) {
-            $output .= html_writer::start_tag('div', array('class' => 'eventlist'));
-            foreach ($events as $event) {
-                // Convert to calendar_event object so that we transform description accordingly.
-                $event = new calendar_event($event);
-                $event->calendarcourseid = $calendar->courseid;
-                $output .= $this->event($event);
-            }
-            $output .= html_writer::end_tag('div');
-        } else {
-            $output .= html_writer::span(get_string('noupcomingevents', 'calendar'), 'calendar-information calendar-no-results');
-        }
-
-        return $output;
-    }
-
-    /**
      * Displays a course filter selector
      *
      * @param moodle_url $returnurl The URL that the user should be taken too upon selecting a course.
