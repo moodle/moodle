@@ -3147,7 +3147,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
     if ($view === 'day') {
         $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], $date['mday']);
         $tend = $tstart + DAYSECS - 1;
-    } else if ($view === 'upcoming') {
+    } else if ($view === 'upcoming' || $view === 'upcoming_mini') {
         if (isset($CFG->calendar_lookahead)) {
             $defaultlookahead = intval($CFG->calendar_lookahead);
         } else {
@@ -3234,10 +3234,15 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         $day = new \core_calendar\external\calendar_day_exporter($calendar, $related);
         $data = $day->export($renderer);
         $template = 'core_calendar/calendar_day';
-    } else if ($view == "upcoming") {
+    } else if ($view == "upcoming" || $view == "upcoming_mini") {
         $upcoming = new \core_calendar\external\calendar_upcoming_exporter($calendar, $related);
         $data = $upcoming->export($renderer);
-        $template = 'core_calendar/calendar_upcoming';
+
+        if ($view == "upcoming") {
+            $template = 'core_calendar/calendar_upcoming';
+        } else if ($view == "upcoming_mini") {
+            $template = 'core_calendar/upcoming_mini';
+        }
     }
 
     return [$data, $template];
