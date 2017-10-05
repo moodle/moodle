@@ -31,8 +31,9 @@
     {
     }
 }}
-{{#filter_selector}}
 <div class="header">
-    {{{filter_selector}}}
+    {{#filter_selector}}
+        {{{filter_selector}}}
+    {{/filter_selector}}
+    {{> core_calendar/add_event_button}}
 </div>
-{{/filter_selector}}

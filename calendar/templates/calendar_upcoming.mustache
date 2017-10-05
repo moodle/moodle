@@ -15,11 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template calendar/event_list
+    @template calendar/calendar_upcoming
 
-    Calendar event list.
+    Calendar upcoming view.
 
-    The purpose of this template is to render a list of events.
+    The purpose of this template is to render the calendar upcoming view.
 
     Classes required for JS:
     * none
@@ -31,13 +31,11 @@
     {
     }
 }}
-<div class="eventlist m-y-1">
-    {{#events}}
-        {{> core_calendar/event_item }}
-    {{/events}}
-    {{^events}}
-        <span class="calendar-information calendar-no-results">
-            {{#str}}daywithnoevents, calendar{{/str}}
-        </span>
-    {{/events}}
+<div id="calendar-upcoming-{{uniqid}}" data-template="core_calendar/upcoming_detailed">
+    {{> core_calendar/upcoming_detailed}}
 </div>
+{{#js}}
+require(['jquery', 'core_calendar/calendar_view'], function($, CalendarView) {
+    CalendarView.init($("#calendar-upcoming-{{uniqid}}"), 'upcoming');
+});
+{{/js}}

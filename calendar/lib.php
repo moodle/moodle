@@ -3153,8 +3153,9 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         } else {
             $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
         }
-        $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], 1);
-        $tend = $tstart + get_user_preferences('calendar_lookahead', $defaultlookahead);
+
+        $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], $date['mday'], $date['hours']);
+        $tend = usergetmidnight($tstart + DAYSECS * $defaultlookahead + 3 * HOURSECS) - 1;
     } else {
         $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], 1);
         $monthdays = $type->get_num_days_in_month($date['year'], $date['mon']);
@@ -3234,6 +3235,10 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         $day = new \core_calendar\external\day_exporter($calendar, $daydata, $related);
         $data = $day->export($renderer);
         $template = 'core_calendar/day_detailed';
+    } else if ($view == "upcoming") {
+        $upcoming = new \core_calendar\external\calendar_upcoming_exporter($calendar, $related);
+        $data = $upcoming->export($renderer);
+        $template = 'core_calendar/calendar_upcoming';
     }
 
     return [$data, $template];

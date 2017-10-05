@@ -144,18 +144,8 @@ if ($view == 'day' || $view == 'upcoming') {
             echo $renderer->render_from_template($template, $data);
         break;
         case 'upcoming':
-            $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
-            if (isset($CFG->calendar_lookahead)) {
-                $defaultlookahead = intval($CFG->calendar_lookahead);
-            }
-            $lookahead = get_user_preferences('calendar_lookahead', $defaultlookahead);
-
-            $defaultmaxevents = CALENDAR_DEFAULT_UPCOMING_MAXEVENTS;
-            if (isset($CFG->calendar_maxevents)) {
-                $defaultmaxevents = intval($CFG->calendar_maxevents);
-            }
-            $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
-            echo $renderer->show_upcoming_events($calendar, $lookahead, $maxevents);
+            list($data, $template) = calendar_get_view($calendar, $view);
+            echo $renderer->render_from_template($template, $data);
         break;
     }
 } else if ($view == 'month') {

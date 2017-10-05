@@ -41,5 +41,15 @@ define([], function() {
         calendarPeriods: {
             month: "[data-period='month']",
         },
+        courseSelector: 'select[name="course"]',
+        actions: {
+            create: '[data-action="new-event-button"]',
+            edit: '[data-action="edit"]',
+            remove: '[data-action="delete"]',
+        },
+        today: '.today',
+        day: '[data-region="day"]',
+        wrapper: '.calendarwrapper',
+        eventItem: '[data-type="event"]',
     };
 });

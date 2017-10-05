@@ -38,7 +38,9 @@ define([
             'core_calendar/summary_modal',
             'core_calendar/repository',
             'core_calendar/events',
-            'core_calendar/view_manager'
+            'core_calendar/view_manager',
+            'core_calendar/crud',
+            'core_calendar/selectors',
         ],
         function(
             $,
@@ -53,7 +55,9 @@ define([
             SummaryModal,
             CalendarRepository,
             CalendarEvents,
-            CalendarViewManager
+            CalendarViewManager,
+            CalendarCrud,
+            CalendarSelectors
         ) {
 
     var SELECTORS = {
@@ -193,29 +197,6 @@ define([
     };
 
     /**
-     * Create the event form modal for creating new events and
-     * editing existing events.
-     *
-     * @method registerEventFormModal
-     * @param {object} root The calendar root element
-     * @return {object} The create modal promise
-     */
-    var registerEventFormModal = function(root) {
-        var newEventButton = root.find(SELECTORS.NEW_EVENT_BUTTON);
-        var contextId = newEventButton.attr('data-context-id');
-
-        return ModalFactory.create(
-            {
-                type: ModalEventForm.TYPE,
-                large: true,
-                templateContext: {
-                    contextid: contextId
-                }
-            }
-        );
-    };
-
-    /**
      * Listen to and handle any calendar events fired by the calendar UI.
      *
      * @method registerCalendarEventListeners
@@ -250,7 +231,9 @@ define([
             // When something within the calendar tells us the user wants
             // to edit an event then show the event form modal.
             body.on(CalendarEvents.editEvent, function(e, eventId) {
+                var calendarWrapper = root.find(CalendarSelectors.wrapper);
                 modal.setEventId(eventId);
+                modal.setContextId(calendarWrapper.data('contextId'));
                 modal.show();
             });
             return;
@@ -294,44 +277,18 @@ define([
                 .fail(Notification.exception);
         });
 
-        var eventFormPromise = registerEventFormModal(root);
+        var eventFormPromise = CalendarCrud.registerEventFormModal(root);
         registerCalendarEventListeners(root, eventFormPromise);
-
-        // Bind click event on the new event button.
-        CustomEvents.define(root, [CustomEvents.events.activate]);
-        root.on('click', SELECTORS.NEW_EVENT_BUTTON, function(e) {
-            eventFormPromise.then(function(modal) {
-                var wrapper = root.find(SELECTORS.CALENDAR_MONTH_WRAPPER);
-                modal.setCourseId(wrapper.data('courseid'));
-                var categoryId = wrapper.data('categoryid');
-                if (typeof categoryId !== 'undefined') {
-                    modal.setCategoryId(categoryId);
-                }
-
-                // Attempt to find the cell for today.
-                // If it can't be found, then use the start time of the first day on the calendar.
-                var today = root.find(SELECTORS.TODAY);
-                if (!today.length) {
-                    modal.setStartTime(root.find(SELECTORS.DAY).attr('data-new-event-timestamp'));
-                }
-
-                modal.show();
-                return;
-            })
-            .fail(Notification.exception);
-
-            e.preventDefault();
-        });
 
         // Bind click events to calendar days.
         root.on('click', SELECTORS.DAY, function(e) {
+
             var target = $(e.target);
 
             if (!target.is(SELECTORS.VIEW_DAY_LINK)) {
                 var startTime = $(this).attr('data-new-event-timestamp');
                 eventFormPromise.then(function(modal) {
-                    var wrapper = target.closest(SELECTORS.CALENDAR_MONTH_WRAPPER);
-
+                    var wrapper = target.closest(CalendarSelectors.wrapper);
                     modal.setCourseId(wrapper.data('courseid'));
 
                     var categoryId = wrapper.data('categoryid');
@@ -339,6 +296,7 @@ define([
                         modal.setCategoryId(categoryId);
                     }
 
+                    modal.setContextId(wrapper.data('contextId'));
                     modal.setStartTime(startTime);
                     modal.show();
                     return;
@@ -353,7 +311,6 @@ define([
     return {
         init: function(root) {
             root = $(root);
-
             CalendarViewManager.init(root);
             registerEventListeners(root);
         }
