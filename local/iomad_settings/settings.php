@@ -62,5 +62,35 @@ if ($hassiteconfig) {
                          'jS \of F Y' => 'nth of Mon YYYY',
                          'M d, y, ' => 'Mon n, YYYY');
     $settings->add(new admin_setting_configselect('iomad_date_format', get_string('dateformat', 'local_iomad_settings'), '', 'Y-m-d', $dateformats));
+
+    $name = 'local_iomad_settings/iomadcertificate_logo';
+    $title = get_string('iomadcertificate_logo', 'local_iomad_settings');
+    $description = get_string('iomadcertificate_logodesc', 'local_iomad_settings');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'iomadcertificate_logo', 0,
+    array('maxfiles' => 1, 'accepted_types' => array('image')));
+    $settings->add($setting);
+
+    $name = 'local_iomad_settings/iomadcertificate_signature';
+    $title = get_string('iomadcertificate_signature', 'local_iomad_settings');
+    $description = get_string('iomadcertificate_signaturedesc', 'local_iomad_settings');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'iomadcertificate_signature', 0,
+    array('maxfiles' => 1, 'accepted_types' => array('image')));
+    $settings->add($setting);
+
+    $name = 'local_iomad_settings/iomadcertificate_border';
+    $title = get_string('iomadcertificate_border', 'local_iomad_settings');
+    $description = get_string('iomadcertificate_borderdesc', 'local_iomad_settings');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'iomadcertificate_border', 0,
+    array('maxfiles' => 1, 'accepted_types' => array('image')));
+    $settings->add($setting);
+
+    $name = 'local_iomad_settings/iomadcertificate_watermark';
+    $title = get_string('iomadcertificate_watermark', 'local_iomad_settings');
+    $description = get_string('iomadcertificate_watermarkdesc', 'local_iomad_settings');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'iomadcertificate_watermark', 0,
+    array('maxfiles' => 1, 'accepted_types' => array('image')));
+    $settings->add($setting);
+
+
 }
 

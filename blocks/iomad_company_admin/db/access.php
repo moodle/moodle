@@ -335,6 +335,9 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
     ),
-
+    'block/iomad_company_admin:company_edit_certificateinfo' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
 );
 

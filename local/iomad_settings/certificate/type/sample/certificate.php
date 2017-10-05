@@ -47,8 +47,6 @@ if ($iomadcertificate->printdate > 0) {
     }
 }
 
-$serialnumber = iomad_settings_create_serial_number($iomadcertificate, $certrecord, $course, $certdate);
-
 // Grade formatting.
 $grade = '';
 // Print the course grade.
@@ -204,9 +202,9 @@ if ($iomadcertificate->printteacher) {
     }
 }
 
-cert_printtext($x, $custy, 'C', 'freeserif', '', '20', iomad_settings_replacement($customtext, $course, $serialnumber, $certdate));
+cert_printtext($x, $custy, 'C', 'freeserif', '', '20', iomad_settings_replacement($customtext, $course, '', $certdate));
 
 cert_printtext($x, $custy + 6, 'C', 'freeserif', '', '20',
-               iomad_settings_replacement($iomadcertificate->customtext2, $course, $serialnumber, $certdate));
+               iomad_settings_replacement($iomadcertificate->customtext2, $course, '', $certdate));
 cert_printtext($x, $custy + 12, 'C', 'freeserif', '', '20',
-               iomad_settings_replacement($iomadcertificate->customtext3, $course, $serialnumber, $certdate));
+               iomad_settings_replacement($iomadcertificate->customtext3, $course, '', $certdate));

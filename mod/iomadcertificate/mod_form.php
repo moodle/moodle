@@ -49,7 +49,8 @@ class mod_iomadcertificate_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $this->add_intro_editor(false, get_string('intro', 'iomadcertificate'));
+        //$this->add_intro_editor(false, get_string('intro', 'iomadcertificate'));
+        $this->standard_intro_elements();
 
         // Issue options
         $mform->addElement('header', 'issueoptions', get_string('issueoptions', 'iomadcertificate'));
