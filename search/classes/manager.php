@@ -698,8 +698,10 @@ class manager {
             if ($timelimit) {
                 $options['stopat'] = $stopat;
             }
-            $iterator = new \core\dml\recordset_walk($recordset, array($searcharea, 'get_document'), $options);
+            $iterator = new skip_future_documents_iterator(new \core\dml\recordset_walk(
+                    $recordset, array($searcharea, 'get_document'), $options));
             $result = $this->engine->add_documents($iterator, $searcharea, $options);
+            $recordset->close();
             if (count($result) === 5) {
                 list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial) = $result;
             } else {
