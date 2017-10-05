@@ -1074,9 +1074,10 @@ class calendar_information {
             $this->categories = true;
             $categories = [];
             foreach ($courses as $course) {
-                $category = \coursecat::get($course->category);
-                $categories = array_merge($categories, $category->get_parents());
-                $categories[] = $category->id;
+                if ($category = \coursecat::get($course->category, IGNORE_MISSING)) {
+                    $categories = array_merge($categories, $category->get_parents());
+                    $categories[] = $category->id;
+                }
             }
 
             // And all categories that the user can manage.
@@ -2146,27 +2147,22 @@ function calendar_edit_event_allowed($event, $manualedit = false) {
         // Allow users to add/edit group events if -
         // 1) They have manageentries for the course OR
         // 2) They have managegroupentries AND are in the group.
-        $eventcontext = \context_course::instance($event->courseid);
         $group = $DB->get_record('groups', array('id' => $event->groupid));
         return $group && (
-                has_capability('moodle/calendar:manageentries', $eventcontext) ||
-                (has_capability('moodle/calendar:managegroupentries', $eventcontext)
+                has_capability('moodle/calendar:manageentries', $event->context) ||
+                (has_capability('moodle/calendar:managegroupentries', $event->context)
                     && groups_is_member($event->groupid)));
     } else if (!empty($event->courseid)) {
         // If groupid is not set, but course is set, it's definitely a course event.
-        $eventcontext = \context_course::instance($event->courseid);
-        return has_capability('moodle/calendar:manageentries', $eventcontext);
+        return has_capability('moodle/calendar:manageentries', $event->context);
     } else if (!empty($event->categoryid)) {
         // If groupid is not set, but category is set, it's definitely a category event.
-        $eventcontext = \context_coursecat::instance($event->categoryid);
-        return has_capability('moodle/calendar:manageentries', $eventcontext);
+        return has_capability('moodle/calendar:manageentries', $event->context);
     } else if (!empty($event->userid) && $event->userid == $USER->id) {
         // If course is not set, but userid id set, it's a user event.
-        $eventcontext = \context_user::instance($event->userid);
-        return (has_capability('moodle/calendar:manageownentries', $eventcontext));
+        return (has_capability('moodle/calendar:manageownentries', $event->context));
     } else if (!empty($event->userid)) {
-        $eventcontext = \context_user::instance($event->userid);
-        return (has_capability('moodle/calendar:manageentries', $eventcontext));
+        return (has_capability('moodle/calendar:manageentries', $event->context));
     }
 
     return false;

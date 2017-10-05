@@ -277,7 +277,7 @@ class core_calendar_external extends external_api {
                             (!empty($eventobj->groupid) && in_array($eventobj->groupid, $groups)) ||
                             (!empty($eventobj->courseid) && in_array($eventobj->courseid, $courses)) ||
                             ($USER->id == $eventobj->userid) ||
-                            (calendar_edit_event_allowed($eventid))) {
+                            (calendar_edit_event_allowed($eventobj))) {
                     $events[$eventid] = $event;
                 } else {
                     $warnings[] = array('item' => $eventid, 'warningcode' => 'nopermissions', 'message' => 'you do not have permissions to view this event');
