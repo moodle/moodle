@@ -569,7 +569,8 @@ class manager {
             // Pass get_document as callback.
             $fileindexing = $this->engine->file_indexing_enabled() && $searcharea->uses_file_indexing();
             $options = array('indexfiles' => $fileindexing, 'lastindexedtime' => $prevtimestart);
-            $iterator = new \core\dml\recordset_walk($recordset, array($searcharea, 'get_document'), $options);
+            $iterator = new skip_future_documents_iterator(new \core\dml\recordset_walk(
+                    $recordset, array($searcharea, 'get_document'), $options));
             foreach ($iterator as $document) {
                 if (!$document instanceof \core_search\document) {
                     continue;
@@ -594,6 +595,7 @@ class manager {
                 $lastindexeddoc = $document->get('modified');
                 $numrecords++;
             }
+            $recordset->close();
 
             if (CLI_SCRIPT && !PHPUNIT_TEST) {
                 if ($numdocs > 0) {
