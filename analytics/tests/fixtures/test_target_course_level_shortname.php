@@ -15,33 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Site-level contents abstract analysable.
+ * Test target.
  *
  * @package   core_analytics
- * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
+ * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace core_analytics\local\analyser;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/test_target_shortname.php');
+
 /**
- * Site-level contents abstract analysable.
+ * Test target.
  *
  * @package   core_analytics
- * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
+ * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class sitewide extends base {
+class test_target_course_level_shortname extends test_target_shortname {
 
     /**
-     * Returns one single analysable element, the site.
+     * get_analyser_class
      *
-     * @return \core_analytics\analysable[]
+     * @return string
      */
-    public function get_analysables() {
-        $analysable = new \core_analytics\site();
-        return array($analysable);
+    public function get_analyser_class() {
+        return '\core\analytics\analyser\courses';
     }
 }

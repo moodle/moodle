@@ -73,6 +73,27 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
     }
 
     /**
+     * Delete the stored models.
+     *
+     * @param string $uniqueid
+     * @param string $modelversionoutputdir
+     * @return null
+     */
+    public function clear_model($uniqueid, $modelversionoutputdir) {
+        remove_dir($modelversionoutputdir);
+    }
+
+    /**
+     * Delete the output directory.
+     *
+     * @param string $modeloutputdir
+     * @return null
+     */
+    public function delete_output_dir($modeloutputdir) {
+        remove_dir($modeloutputdir);
+    }
+
+    /**
      * Train this processor classification model using the provided supervised learning dataset.
      *
      * @param string $uniqueid

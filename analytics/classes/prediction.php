@@ -68,7 +68,7 @@ class prediction {
     /**
      * Constructor
      *
-     * @param \stdClass $prediction
+     * @param \stdClass|int $prediction
      * @param array $sampledata
      * @return void
      */

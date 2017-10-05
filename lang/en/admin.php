@@ -1090,6 +1090,7 @@ $string['tablesnosave'] = 'Changes in tables above are saved automatically.';
 $string['tabselectedtofront'] = 'On tables with tabs, should the row with the currently selected tab be placed at the front';
 $string['tabselectedtofronttext'] = 'Bring selected tab row to front';
 $string['testsiteupgradewarning'] = 'You are currently using the {$a} test site, to upgrade it properly use the command line interface tool';
+$string['taskanalyticscleanup'] = 'Analytics cleanup';
 $string['taskautomatedbackup'] = 'Automated backups';
 $string['taskbackupcleanup'] = 'Clean backup tables and logs';
 $string['taskbadgescron'] = 'Award badges';
