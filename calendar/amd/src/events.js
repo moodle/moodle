@@ -31,6 +31,7 @@ define([], function() {
         editEvent: 'calendar-events:edit_event',
         editActionEvent: 'calendar-events:edit_action_event',
         eventMoved: 'calendar-events:event_moved',
+        dayChanged: 'calendar-events:day_changed',
         monthChanged: 'calendar-events:month_changed',
         moveEvent: 'calendar-events:move_event',
         filterChanged: 'calendar-events:filter_changed',

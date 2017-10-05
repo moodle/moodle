@@ -3231,10 +3231,9 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         $month->set_includenavigation($includenavigation);
         $data = $month->export($renderer);
     } else if ($view == "day") {
-        $daydata = $type->timestamp_to_date_array($tstart);
-        $day = new \core_calendar\external\day_exporter($calendar, $daydata, $related);
+        $day = new \core_calendar\external\calendar_day_exporter($calendar, $related);
         $data = $day->export($renderer);
-        $template = 'core_calendar/day_detailed';
+        $template = 'core_calendar/calendar_day';
     } else if ($view == "upcoming") {
         $upcoming = new \core_calendar\external\calendar_upcoming_exporter($calendar, $related);
         $data = $upcoming->export($renderer);

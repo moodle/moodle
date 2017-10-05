@@ -31,9 +31,34 @@
     {
     }
 }}
-{{#navigation}}
-<div class="controls" data-view="{{view}}">
-    {{{navigation}}}
+<div id="day-navigation-{{uniqid}}" class="controls clearfix">
+    <div class="calendar-controls">
+        <a{{!
+            }} href="{{previousperiodlink}}"{{!
+            }} class="arrow_link previous"{{!
+            }} title="{{#str}}dayprev, calendar{{/str}}"{{!
+            }} data-year="{{previousperiod.year}}"{{!
+            }} data-month="{{previousperiod.mon}}"{{!
+            }} data-day="{{previousperiod.mday}}"{{!
+        }}>
+            <span class="arrow">{{{larrow}}}</span>
+            &nbsp;
+            <span class="arrow_text">{{previousperiodname}}</span>
+        </a>
+        <span class="hide"> | </span>
+        <h2 class="current">{{periodname}}</h2>
+        <span class="hide"> | </span>
+        <a{{!
+            }} href="{{nextperiodlink}}"{{!
+            }} class="arrow_link next"{{!
+            }} title="{{#str}}daynext, calendar{{/str}}"{{!
+            }} data-year="{{nextperiod.year}}"{{!
+            }} data-month="{{nextperiod.mon}}"{{!
+            }} data-day="{{nextperiod.mday}}"{{!
+        }}>
+            <span class="arrow_text">{{nextperiodname}}</span>
+            &nbsp;
+            <span class="arrow">{{{rarrow}}}</span>
+        </a>
+    </div>
 </div>
-{{/navigation}}
-

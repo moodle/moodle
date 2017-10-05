@@ -68,6 +68,16 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_calendar_get_calendar_day_view' => array(
+        'classname' => 'core_calendar_external',
+        'methodname' => 'get_calendar_day_view',
+        'description' => 'Fetch the day view data for a calendar',
+        'classpath' => 'calendar/externallib.php',
+        'type' => 'read',
+        'capabilities' => '',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_calendar_get_calendar_upcoming_view' => array(
         'classname' => 'core_calendar_external',
         'methodname' => 'get_calendar_upcoming_view',
