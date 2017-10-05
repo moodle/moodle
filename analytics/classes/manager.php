@@ -509,7 +509,7 @@ class manager {
         $contexts = $apcontexts + $indcalccontexts;
         if ($contexts) {
             list($sql, $params) = $DB->get_in_or_equal(array_keys($contexts));
-            $DB->execute("DELETE FROM {analytics_prediction_actions} apa WHERE apa.predictionid IN
+            $DB->execute("DELETE FROM {analytics_prediction_actions} WHERE predictionid IN
                 (SELECT ap.id FROM {analytics_predictions} ap WHERE ap.contextid $sql)", $params);
 
             $DB->delete_records_select('analytics_predictions', "contextid $sql", $params);

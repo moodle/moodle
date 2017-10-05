@@ -359,7 +359,7 @@ $tasks = array(
     array(
         'classname' => 'core\task\analytics_cleanup_task',
         'blocking' => 0,
-        'minute' => 'R',
+        'minute' => '42',
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
