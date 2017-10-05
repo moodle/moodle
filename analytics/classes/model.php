@@ -932,8 +932,6 @@ class model {
      * @return \context
      */
     protected function prepare_prediction_record($sampleid, $rangeindex, $prediction, $predictionscore, $calculations) {
-        global $DB;
-
         $context = $this->get_analyser()->sample_access_context($sampleid);
 
         $record = new \stdClass();
@@ -945,6 +943,15 @@ class model {
         $record->predictionscore = $predictionscore;
         $record->calculations = $calculations;
         $record->timecreated = time();
+
+        $analysable = $this->get_analyser()->get_sample_analysable($sampleid);
+        $timesplitting = $this->get_time_splitting();
+        $timesplitting->set_analysable($analysable);
+        $range = $timesplitting->get_range_by_index($rangeindex);
+        if ($range) {
+            $record->timestart = $range['start'];
+            $record->timeend = $range['end'];
+        }
 
         return array($record, $context);
     }
