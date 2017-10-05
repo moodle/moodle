@@ -152,4 +152,148 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
         $completiondata = $completion->get_data($cm);
         $this->assertEquals(1, $completiondata->completionstate);
     }
+
+    /**
+     * Return false when there are not overrides for this quiz instance.
+     */
+    public function test_quiz_is_overriden_calendar_event_no_override() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+
+        $event = new \calendar_event((object)[
+            'modulename' => 'quiz',
+            'instance' => $quiz->id,
+            'userid' => $user->id
+        ]);
+
+        $this->assertFalse(quiz_is_overriden_calendar_event($event));
+    }
+
+    /**
+     * Return false if the given event isn't an quiz module event.
+     */
+    public function test_quiz_is_overriden_calendar_event_no_module_event() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+
+        $event = new \calendar_event((object)[
+            'userid' => $user->id
+        ]);
+
+        $this->assertFalse(quiz_is_overriden_calendar_event($event));
+    }
+
+    /**
+     * Return false if there is overrides for this use but they belong to another quiz
+     * instance.
+     */
+    public function test_quiz_is_overriden_calendar_event_different_quiz_instance() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+        $quiz2 = $quizgenerator->create_instance(['course' => $course->id]);
+
+        $event = new \calendar_event((object) [
+            'modulename' => 'quiz',
+            'instance' => $quiz->id,
+            'userid' => $user->id
+        ]);
+
+        $record = (object) [
+            'quiz' => $quiz2->id,
+            'userid' => $user->id
+        ];
+
+        $DB->insert_record('quiz_overrides', $record);
+
+        $this->assertFalse(quiz_is_overriden_calendar_event($event));
+    }
+
+    /**
+     * Return true if there is a user override for this event and quiz instance.
+     */
+    public function test_quiz_is_overriden_calendar_event_user_override() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+
+        $event = new \calendar_event((object) [
+            'modulename' => 'quiz',
+            'instance' => $quiz->id,
+            'userid' => $user->id
+        ]);
+
+        $record = (object) [
+            'quiz' => $quiz->id,
+            'userid' => $user->id
+        ];
+
+        $DB->insert_record('quiz_overrides', $record);
+
+        $this->assertTrue(quiz_is_overriden_calendar_event($event));
+    }
+
+    /**
+     * Return true if there is a group override for the event and quiz instance.
+     */
+    public function test_quiz_is_overriden_calendar_event_group_override() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+        $group = $this->getDataGenerator()->create_group(array('courseid' => $quiz->course));
+        $groupid = $group->id;
+        $userid = $user->id;
+
+        $event = new \calendar_event((object) [
+            'modulename' => 'quiz',
+            'instance' => $quiz->id,
+            'groupid' => $groupid
+        ]);
+
+        $record = (object) [
+            'quiz' => $quiz->id,
+            'groupid' => $groupid
+        ];
+
+        $DB->insert_record('quiz_overrides', $record);
+
+        $this->assertTrue(quiz_is_overriden_calendar_event($event));
+    }
 }
