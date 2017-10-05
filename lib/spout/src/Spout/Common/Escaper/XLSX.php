@@ -42,7 +42,9 @@ class XLSX implements EscaperInterface
     public function escape($string)
     {
         $escapedString = $this->escapeControlCharacters($string);
-        $escapedString = htmlspecialchars($escapedString, ENT_QUOTES);
+        // @NOTE: Using ENT_NOQUOTES as only XML entities ('<', '>', '&') need to be encoded.
+        //        Single and double quotes can be left as is.
+        $escapedString = htmlspecialchars($escapedString, ENT_NOQUOTES);
 
         return $escapedString;
     }
@@ -55,8 +57,13 @@ class XLSX implements EscaperInterface
      */
     public function unescape($string)
     {
-        $unescapedString = htmlspecialchars_decode($string, ENT_QUOTES);
-        $unescapedString = $this->unescapeControlCharacters($unescapedString);
+        // ==============
+        // =   WARNING  =
+        // ==============
+        // It is assumed that the given string has already had its XML entities decoded.
+        // This is true if the string is coming from a DOMNode (as DOMNode already decode XML entities on creation).
+        // Therefore there is no need to call "htmlspecialchars_decode()".
+        $unescapedString = $this->unescapeControlCharacters($string);
 
         return $unescapedString;
     }

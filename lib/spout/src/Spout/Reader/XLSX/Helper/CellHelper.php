@@ -31,6 +31,9 @@ class CellHelper
      */
     public static function fillMissingArrayIndexes($dataArray, $fillValue = '')
     {
+        if (empty($dataArray)) {
+            return [];
+        }
         $existingIndexes = array_keys($dataArray);
 
         $newIndexes = array_fill_keys(range(0, max($existingIndexes)), $fillValue);

@@ -5,6 +5,7 @@ namespace Box\Spout\Reader\ODS;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
+use Box\Spout\Reader\ODS\Helper\SettingsHelper;
 use Box\Spout\Reader\Wrapper\XMLReader;
 
 /**
@@ -24,8 +25,8 @@ class SheetIterator implements IteratorInterface
     /** @var string $filePath Path of the file to be read */
     protected $filePath;
 
-    /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
-    protected $shouldFormatDates;
+    /** @var \Box\Spout\Reader\ODS\ReaderOptions Reader's current options */
+    protected $options;
 
     /** @var XMLReader The XMLReader object that will help read sheet's XML data */
     protected $xmlReader;
@@ -39,19 +40,25 @@ class SheetIterator implements IteratorInterface
     /** @var int The index of the sheet being read (zero-based) */
     protected $currentSheetIndex;
 
+    /** @var string The name of the sheet that was defined as active */
+    protected $activeSheetName;
+
     /**
      * @param string $filePath Path of the file to be read
-     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param \Box\Spout\Reader\ODS\ReaderOptions $options Reader's current options
      * @throws \Box\Spout\Reader\Exception\NoSheetsFoundException If there are no sheets in the file
      */
-    public function __construct($filePath, $shouldFormatDates)
+    public function __construct($filePath, $options)
     {
         $this->filePath = $filePath;
-        $this->shouldFormatDates = $shouldFormatDates;
+        $this->options = $options;
         $this->xmlReader = new XMLReader();
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $this->escaper = \Box\Spout\Common\Escaper\ODS::getInstance();
+
+        $settingsHelper = new SettingsHelper();
+        $this->activeSheetName = $settingsHelper->getActiveSheetName($filePath);
     }
 
     /**
@@ -83,7 +90,7 @@ class SheetIterator implements IteratorInterface
      * Checks if current position is valid
      * @link http://php.net/manual/en/iterator.valid.php
      *
-     * @return boolean
+     * @return bool
      */
     public function valid()
     {
@@ -115,8 +122,27 @@ class SheetIterator implements IteratorInterface
     {
         $escapedSheetName = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_TABLE_NAME);
         $sheetName = $this->escaper->unescape($escapedSheetName);
+        $isActiveSheet = $this->isActiveSheet($sheetName, $this->currentSheetIndex, $this->activeSheetName);
 
-        return new Sheet($this->xmlReader, $this->shouldFormatDates, $sheetName, $this->currentSheetIndex);
+        return new Sheet($this->xmlReader, $this->currentSheetIndex, $sheetName, $isActiveSheet, $this->options);
+    }
+
+    /**
+     * Returns whether the current sheet was defined as the active one
+     *
+     * @param string $sheetName Name of the current sheet
+     * @param int $sheetIndex Index of the current sheet
+     * @param string|null Name of the sheet that was defined as active or NULL if none defined
+     * @return bool Whether the current sheet was defined as the active one
+     */
+    private function isActiveSheet($sheetName, $sheetIndex, $activeSheetName)
+    {
+        // The given sheet is active if its name matches the defined active sheet's name
+        // or if no information about the active sheet was found, it defaults to the first sheet.
+        return (
+            ($activeSheetName === null && $sheetIndex === 0) ||
+            ($activeSheetName === $sheetName)
+        );
     }
 
     /**

@@ -29,6 +29,8 @@ class StyleHelper
     /** By convention, default style ID is 0 */
     const DEFAULT_STYLE_ID = 0;
 
+    const NUMBER_FORMAT_GENERAL = 'General';
+
     /**
      * @see https://msdn.microsoft.com/en-us/library/ff529597(v=office.12).aspx
      * @var array Mapping between built-in numFmtId and the associated format - for dates only
@@ -51,11 +53,17 @@ class StyleHelper
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
+    /** @var array Array containing the IDs of built-in number formats indicating a date */
+    protected $builtinNumFmtIdIndicatingDates;
+
     /** @var array Array containing a mapping NUM_FMT_ID => FORMAT_CODE */
     protected $customNumberFormats;
 
     /** @var array Array containing a mapping STYLE_ID => [STYLE_ATTRIBUTES] */
     protected $stylesAttributes;
+
+    /** @var array Cache containing a mapping NUM_FMT_ID => IS_DATE_FORMAT. Used to avoid lots of recalculations */
+    protected $numFmtIdToIsDateFormatCache = [];
 
     /**
      * @param string $filePath Path of the XLSX file being read
@@ -63,6 +71,30 @@ class StyleHelper
     public function __construct($filePath)
     {
         $this->filePath = $filePath;
+        $this->builtinNumFmtIdIndicatingDates = array_keys(self::$builtinNumFmtIdToNumFormatMapping);
+    }
+
+    /**
+     * Returns whether the style with the given ID should consider
+     * numeric values as timestamps and format the cell as a date.
+     *
+     * @param int $styleId Zero-based style ID
+     * @return bool Whether the cell with the given cell should display a date instead of a numeric value
+     */
+    public function shouldFormatNumericValueAsDate($styleId)
+    {
+        $stylesAttributes = $this->getStylesAttributes();
+
+        // Default style (0) does not format numeric values as timestamps. Only custom styles do.
+        // Also if the style ID does not exist in the styles.xml file, format as numeric value.
+        // Using isset here because it is way faster than array_key_exists...
+        if ($styleId === self::DEFAULT_STYLE_ID || !isset($stylesAttributes[$styleId])) {
+            return false;
+        }
+
+        $styleAttributes = $stylesAttributes[$styleId];
+
+        return $this->doesStyleIndicateDate($styleAttributes);
     }
 
     /**
@@ -125,9 +157,15 @@ class StyleHelper
     {
         while ($xmlReader->read()) {
             if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_XF)) {
+                $numFmtId = $xmlReader->getAttribute(self::XML_ATTRIBUTE_NUM_FMT_ID);
+                $normalizedNumFmtId = ($numFmtId !== null) ? intval($numFmtId) : null;
+
+                $applyNumberFormat = $xmlReader->getAttribute(self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT);
+                $normalizedApplyNumberFormat = ($applyNumberFormat !== null) ? !!$applyNumberFormat : null;
+
                 $this->stylesAttributes[] = [
-                    self::XML_ATTRIBUTE_NUM_FMT_ID => intval($xmlReader->getAttribute(self::XML_ATTRIBUTE_NUM_FMT_ID)),
-                    self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT => !!($xmlReader->getAttribute(self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT)),
+                    self::XML_ATTRIBUTE_NUM_FMT_ID => $normalizedNumFmtId,
+                    self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT => $normalizedApplyNumberFormat,
                 ];
             } else if ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_CELL_XFS)) {
                 // Once done reading "cellXfs" node's children
@@ -161,86 +199,92 @@ class StyleHelper
     }
 
     /**
-     * Returns whether the style with the given ID should consider
-     * numeric values as timestamps and format the cell as a date.
-     *
-     * @param int $styleId Zero-based style ID
-     * @return bool Whether the cell with the given cell should display a date instead of a numeric value
+     * @param array $styleAttributes Array containing the style attributes (2 keys: "applyNumberFormat" and "numFmtId")
+     * @return bool Whether the style with the given attributes indicates that the number is a date
      */
-    public function shouldFormatNumericValueAsDate($styleId)
+    protected function doesStyleIndicateDate($styleAttributes)
     {
-        $stylesAttributes = $this->getStylesAttributes();
-
-        // Default style (0) does not format numeric values as timestamps. Only custom styles do.
-        // Also if the style ID does not exist in the styles.xml file, format as numeric value.
-        // Using isset here because it is way faster than array_key_exists...
-        if ($styleId === self::DEFAULT_STYLE_ID || !isset($stylesAttributes[$styleId])) {
-            return false;
-        }
-
-        $styleAttributes = $stylesAttributes[$styleId];
-
         $applyNumberFormat = $styleAttributes[self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT];
-        if (!$applyNumberFormat) {
+        $numFmtId = $styleAttributes[self::XML_ATTRIBUTE_NUM_FMT_ID];
+
+        // A style may apply a date format if it has:
+        //  - "applyNumberFormat" attribute not set to "false"
+        //  - "numFmtId" attribute set
+        // This is a preliminary check, as having "numFmtId" set just means the style should apply a specific number format,
+        // but this is not necessarily a date.
+        if ($applyNumberFormat === false || $numFmtId === null) {
             return false;
         }
 
-        $numFmtId = $styleAttributes[self::XML_ATTRIBUTE_NUM_FMT_ID];
         return $this->doesNumFmtIdIndicateDate($numFmtId);
     }
 
     /**
+     * Returns whether the number format ID indicates that the number is a date.
+     * The result is cached to avoid recomputing the same thing over and over, as
+     * "numFmtId" attributes can be shared between multiple styles.
+     *
      * @param int $numFmtId
-     * @return bool Whether the number format ID indicates that the number is a timestamp
+     * @return bool Whether the number format ID indicates that the number is a date
      */
     protected function doesNumFmtIdIndicateDate($numFmtId)
     {
-        return (
-            !$this->doesNumFmtIdIndicateGeneralFormat($numFmtId) &&
-            (
+        if (!isset($this->numFmtIdToIsDateFormatCache[$numFmtId])) {
+            $formatCode = $this->getFormatCodeForNumFmtId($numFmtId);
+
+            $this->numFmtIdToIsDateFormatCache[$numFmtId] = (
                 $this->isNumFmtIdBuiltInDateFormat($numFmtId) ||
-                $this->isNumFmtIdCustomDateFormat($numFmtId)
-            )
-        );
+                $this->isFormatCodeCustomDateFormat($formatCode)
+            );
+        }
+
+        return $this->numFmtIdToIsDateFormatCache[$numFmtId];
     }
 
     /**
      * @param int $numFmtId
-     * @return bool Whether the number format ID indicates the "General" format (0 by convention)
+     * @return string|null The custom number format or NULL if none defined for the given numFmtId
      */
-    protected function doesNumFmtIdIndicateGeneralFormat($numFmtId)
-    {
-        return ($numFmtId === 0);
-    }
-
-    /**
-     * @param int $numFmtId
-     * @return bool Whether the number format ID indicates that the number is a timestamp
-     */
-    protected function isNumFmtIdBuiltInDateFormat($numFmtId)
-    {
-        $builtInDateFormatIds = array_keys(self::$builtinNumFmtIdToNumFormatMapping);
-        return in_array($numFmtId, $builtInDateFormatIds);
-    }
-
-    /**
-     * @param int $numFmtId
-     * @return bool Whether the number format ID indicates that the number is a timestamp
-     */
-    protected function isNumFmtIdCustomDateFormat($numFmtId)
+    protected function getFormatCodeForNumFmtId($numFmtId)
     {
         $customNumberFormats = $this->getCustomNumberFormats();
 
         // Using isset here because it is way faster than array_key_exists...
-        if (!isset($customNumberFormats[$numFmtId])) {
+        return (isset($customNumberFormats[$numFmtId])) ? $customNumberFormats[$numFmtId] : null;
+    }
+
+    /**
+     * @param int $numFmtId
+     * @return bool Whether the number format ID indicates that the number is a date
+     */
+    protected function isNumFmtIdBuiltInDateFormat($numFmtId)
+    {
+        return in_array($numFmtId, $this->builtinNumFmtIdIndicatingDates);
+    }
+
+    /**
+     * @param string|null $formatCode
+     * @return bool Whether the given format code indicates that the number is a date
+     */
+    protected function isFormatCodeCustomDateFormat($formatCode)
+    {
+        // if no associated format code or if using the default "General" format
+        if ($formatCode === null || strcasecmp($formatCode, self::NUMBER_FORMAT_GENERAL) === 0) {
             return false;
         }
 
-        $customNumberFormat = $customNumberFormats[$numFmtId];
+        return $this->isFormatCodeMatchingDateFormatPattern($formatCode);
+    }
 
+    /**
+     * @param string $formatCode
+     * @return bool Whether the given format code matches a date format pattern
+     */
+    protected function isFormatCodeMatchingDateFormatPattern($formatCode)
+    {
         // Remove extra formatting (what's between [ ], the brackets should not be preceded by a "\")
         $pattern = '((?<!\\\)\[.+?(?<!\\\)\])';
-        $customNumberFormat = preg_replace($pattern, '', $customNumberFormat);
+        $formatCode = preg_replace($pattern, '', $formatCode);
 
         // custom date formats contain specific characters to represent the date:
         // e - yy - m - d - h - s
@@ -249,10 +293,10 @@ class StyleHelper
 
         $hasFoundDateFormatCharacter = false;
         foreach ($dateFormatCharacters as $dateFormatCharacter) {
-            // character not preceded by "\"
-            $pattern = '/(?<!\\\)' . $dateFormatCharacter . '/';
+            // character not preceded by "\" (case insensitive)
+            $pattern = '/(?<!\\\)' . $dateFormatCharacter . '/i';
 
-            if (preg_match($pattern, $customNumberFormat)) {
+            if (preg_match($pattern, $formatCode)) {
                 $hasFoundDateFormatCharacter = true;
                 break;
             }
@@ -266,21 +310,21 @@ class StyleHelper
      * NOTE: It is assumed that the style DOES have a number format associated to it.
      *
      * @param int $styleId Zero-based style ID
-     * @return string The number format associated with the given style
+     * @return string The number format code associated with the given style
      */
-    public function getNumberFormat($styleId)
+    public function getNumberFormatCode($styleId)
     {
         $stylesAttributes = $this->getStylesAttributes();
         $styleAttributes = $stylesAttributes[$styleId];
         $numFmtId = $styleAttributes[self::XML_ATTRIBUTE_NUM_FMT_ID];
 
         if ($this->isNumFmtIdBuiltInDateFormat($numFmtId)) {
-            $numberFormat = self::$builtinNumFmtIdToNumFormatMapping[$numFmtId];
+            $numberFormatCode = self::$builtinNumFmtIdToNumFormatMapping[$numFmtId];
         } else {
             $customNumberFormats = $this->getCustomNumberFormats();
-            $numberFormat = $customNumberFormats[$numFmtId];
+            $numberFormatCode = $customNumberFormats[$numFmtId];
         }
 
-        return $numberFormat;
+        return $numberFormatCode;
     }
 }

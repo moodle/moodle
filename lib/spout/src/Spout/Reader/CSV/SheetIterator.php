@@ -20,14 +20,12 @@ class SheetIterator implements IteratorInterface
 
     /**
      * @param resource $filePointer
-     * @param string $fieldDelimiter Character that delimits fields
-     * @param string $fieldEnclosure Character that enclose fields
-     * @param string $encoding Encoding of the CSV file to be read
+     * @param \Box\Spout\Reader\CSV\ReaderOptions $options
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $endOfLineCharacter, $globalFunctionsHelper)
+    public function __construct($filePointer, $options, $globalFunctionsHelper)
     {
-        $this->sheet = new Sheet($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $endOfLineCharacter, $globalFunctionsHelper);
+        $this->sheet = new Sheet($filePointer, $options, $globalFunctionsHelper);
     }
 
     /**
@@ -45,7 +43,7 @@ class SheetIterator implements IteratorInterface
      * Checks if current position is valid
      * @link http://php.net/manual/en/iterator.valid.php
      *
-     * @return boolean
+     * @return bool
      */
     public function valid()
     {

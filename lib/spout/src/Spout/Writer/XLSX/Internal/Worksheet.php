@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\XLSX\Internal;
 
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Helper\CellHelper;
 use Box\Spout\Writer\Common\Internal\WorksheetInterface;
 
@@ -16,6 +17,14 @@ use Box\Spout\Writer\Common\Internal\WorksheetInterface;
  */
 class Worksheet implements WorksheetInterface
 {
+    /**
+     * Maximum number of characters a cell can contain
+     * @see https://support.office.com/en-us/article/Excel-specifications-and-limits-16c69c74-3d6a-4aaf-ba35-e6eb276e8eaa [Excel 2007]
+     * @see https://support.office.com/en-us/article/Excel-specifications-and-limits-1672b34d-7043-467e-8e27-269d656771c3 [Excel 2010]
+     * @see https://support.office.com/en-us/article/Excel-specifications-and-limits-ca36e2dc-1f09-4620-b726-67c00b05040f [Excel 2013/2016]
+     */
+    const MAX_CHARACTERS_PER_CELL = 32767;
+
     const SHEET_XML_FILE_HEADER = <<<EOD
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
@@ -38,6 +47,9 @@ EOD;
 
     /** @var \Box\Spout\Common\Escaper\XLSX Strings escaper */
     protected $stringsEscaper;
+
+    /** @var \Box\Spout\Common\Helper\StringHelper String helper */
+    protected $stringHelper;
 
     /** @var Resource Pointer to the sheet data file (e.g. xl/worksheets/sheet1.xml) */
     protected $sheetFilePointer;
@@ -62,6 +74,7 @@ EOD;
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $this->stringsEscaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
+        $this->stringHelper = new StringHelper();
 
         $this->worksheetFilePath = $worksheetFilesFolder . '/' . strtolower($this->externalSheet->getName()) . '.xml';
         $this->startSheet();
@@ -132,6 +145,39 @@ EOD;
      */
     public function addRow($dataRow, $style)
     {
+        if (!$this->isEmptyRow($dataRow)) {
+            $this->addNonEmptyRow($dataRow, $style);
+        }
+
+        $this->lastWrittenRowIndex++;
+    }
+
+    /**
+     * Returns whether the given row is empty
+     *
+     * @param array $dataRow Array containing data to be written. Cannot be empty.
+     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @return bool Whether the given row is empty
+     */
+    protected function isEmptyRow($dataRow)
+    {
+        $numCells = count($dataRow);
+        // using "reset()" instead of "$dataRow[0]" because $dataRow can be an associative array
+        return ($numCells === 1 && CellHelper::isEmpty(reset($dataRow)));
+    }
+
+    /**
+     * Adds non empty row to the worksheet.
+     *
+     * @param array $dataRow Array containing data to be written. Cannot be empty.
+     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row. NULL means use default style.
+     * @return void
+     * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
+     */
+    protected function addNonEmptyRow($dataRow, $style)
+    {
         $cellNumber = 0;
         $rowIndex = $this->lastWrittenRowIndex + 1;
         $numCells = count($dataRow);
@@ -149,9 +195,6 @@ EOD;
         if ($wasWriteSuccessful === false) {
             throw new IOException("Unable to write data in {$this->worksheetFilePath}");
         }
-
-        // only update the count if the write worked
-        $this->lastWrittenRowIndex++;
     }
 
     /**
@@ -162,21 +205,16 @@ EOD;
      * @param mixed $cellValue
      * @param int $styleId
      * @return string
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException If the given value cannot be processed
      */
-    private function getCellXML($rowIndex, $cellNumber, $cellValue, $styleId)
+    protected function getCellXML($rowIndex, $cellNumber, $cellValue, $styleId)
     {
         $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
         $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
         $cellXML .= ' s="' . $styleId . '"';
 
         if (CellHelper::isNonEmptyString($cellValue)) {
-            if ($this->shouldUseInlineStrings) {
-                $cellXML .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
-            } else {
-                $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
-                $cellXML .= ' t="s"><v>' . $sharedStringId . '</v></c>';
-            }
+            $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cellValue);
         } else if (CellHelper::isBoolean($cellValue)) {
             $cellXML .= ' t="b"><v>' . intval($cellValue) . '</v></c>';
         } else if (CellHelper::isNumeric($cellValue)) {
@@ -194,6 +232,29 @@ EOD;
         }
 
         return $cellXML;
+    }
+
+    /**
+     * Returns the XML fragment for a cell containing a non empty string
+     *
+     * @param string $cellValue The cell value
+     * @return string The XML fragment representing the cell
+     * @throws InvalidArgumentException If the string exceeds the maximum number of characters allowed per cell
+     */
+    protected function getCellXMLFragmentForNonEmptyString($cellValue)
+    {
+        if ($this->stringHelper->getStringLength($cellValue) > self::MAX_CHARACTERS_PER_CELL) {
+            throw new InvalidArgumentException('Trying to add a value that exceeds the maximum number of characters allowed in a cell (32,767)');
+        }
+
+        if ($this->shouldUseInlineStrings) {
+            $cellXMLFragment = ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
+        } else {
+            $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
+            $cellXMLFragment = ' t="s"><v>' . $sharedStringId . '</v></c>';
+        }
+
+        return $cellXMLFragment;
     }
 
     /**

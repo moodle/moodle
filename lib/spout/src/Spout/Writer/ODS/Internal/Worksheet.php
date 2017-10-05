@@ -40,7 +40,7 @@ class Worksheet implements WorksheetInterface
 
     /**
      * @param \Box\Spout\Writer\Common\Sheet $externalSheet The associated "external" sheet
-     * @param string $worksheetFilesFolder Temporary folder where the files to create the XLSX will be stored
+     * @param string $worksheetFilesFolder Temporary folder where the files to create the ODS will be stored
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
     public function __construct($externalSheet, $worksheetFilesFolder)

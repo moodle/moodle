@@ -62,7 +62,9 @@ class DateFormatHelper
     public static function toPHPDateFormat($excelDateFormat)
     {
         // Remove brackets potentially present at the beginning of the format string
-        $dateFormat = preg_replace('/^(\[\$[^\]]+?\])/i', '', $excelDateFormat);
+        // and text portion of the format at the end of it (starting with ";")
+        // See §18.8.31 of ECMA-376 for more detail.
+        $dateFormat = preg_replace('/^(?:\[\$[^\]]+?\])?([^;]*).*/', '$1', $excelDateFormat);
 
         // Double quotes are used to escape characters that must not be interpreted.
         // For instance, ["Day " dd] should result in "Day 13" and we should not try to interpret "D", "a", "y"

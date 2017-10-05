@@ -48,6 +48,15 @@ class CellHelper
 
     /**
      * @param $value
+     * @return bool Whether the given value is considered "empty"
+     */
+    public static function isEmpty($value)
+    {
+        return ($value === null || $value === '');
+    }
+
+    /**
+     * @param $value
      * @return bool Whether the given value is a non empty string
      */
     public static function isNonEmptyString($value)
