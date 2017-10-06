@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2016 Justin Hileman
+ * (c) 2010-2017 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,6 +15,14 @@
 class Mustache_Autoloader
 {
     private $baseDir;
+
+    /**
+     * An array where the key is the baseDir and the key is an instance of this
+     * class.
+     *
+     * @var array
+     */
+    private static $instances;
 
     /**
      * Autoloader constructor.
@@ -45,7 +53,13 @@ class Mustache_Autoloader
      */
     public static function register($baseDir = null)
     {
-        $loader = new self($baseDir);
+        $key = $baseDir ? $baseDir : 0;
+
+        if (!isset(self::$instances[$key])) {
+            self::$instances[$key] = new self($baseDir);
+        }
+
+        $loader = self::$instances[$key];
         spl_autoload_register(array($loader, 'autoload'));
 
         return $loader;
