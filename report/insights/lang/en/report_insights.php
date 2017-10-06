@@ -40,4 +40,7 @@ $string['prediction'] = 'Prediction';
 $string['predictioncalculations'] = 'Indicator calculations';
 $string['predictiondetails'] = 'Prediction details';
 $string['nodetailsavailable'] = 'No prediction details are relevant.';
+$string['timecreated'] = 'Time predicted';
+$string['timerange'] = 'Time range';
+$string['timerangewithdata'] = '{$a->timestart} to {$a->timeend}';
 $string['selectotherinsights'] = 'Select other insights...';

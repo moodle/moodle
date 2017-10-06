@@ -71,9 +71,22 @@ class insight implements \renderable, \templatable {
      * @return \stdClass
      */
     public function export_for_template(\renderer_base $output) {
+        // Get the prediction data.
+        $predictiondata = $this->prediction->get_prediction_data();
 
         $data = new \stdClass();
         $data->insightname = format_string($this->model->get_target()->get_name());
+
+        // Get the details.
+        $data->timecreated = userdate($predictiondata->timecreated);
+        $data->timerange = '';
+
+        if (!empty($predictiondata->timestart) && !empty($predictiondata->timeend)) {
+            $timerange = new \stdClass();
+            $timerange->timestart = userdate($predictiondata->timestart);
+            $timerange->timeend = userdate($predictiondata->timeend);
+            $data->timerange = get_string('timerangewithdata', 'report_insights', $timerange);
+        }
 
         // Sample info (determined by the analyser).
         list($data->sampledescription, $samplerenderable) = $this->model->prediction_sample_description($this->prediction);
@@ -84,10 +97,10 @@ class insight implements \renderable, \templatable {
         }
 
         // Prediction info.
-        $predictedvalue = $this->prediction->get_prediction_data()->prediction;
-        $predictionid = $this->prediction->get_prediction_data()->id;
+        $predictedvalue = $predictiondata->prediction;
+        $predictionid = $predictiondata->id;
         $data->predictiondisplayvalue = $this->model->get_target()->get_display_value($predictedvalue);
-        list($data->style, $data->outcomeicon) = $this->get_calculation_display($this->model->get_target(),
+        list($data->style, $data->outcomeicon) = self::get_calculation_display($this->model->get_target(),
             floatval($predictedvalue), $output);
 
         $actions = $this->model->get_target()->prediction_actions($this->prediction, $this->includedetailsaction);
@@ -124,7 +137,7 @@ class insight implements \renderable, \templatable {
             $obj = new \stdClass();
             $obj->name = call_user_func(array($calculation->indicator, 'get_name'));
             $obj->displayvalue = $calculation->indicator->get_display_value($calculation->value, $calculation->subtype);
-            list($obj->style, $obj->outcomeicon) = $this->get_calculation_display($calculation->indicator,
+            list($obj->style, $obj->outcomeicon) = self::get_calculation_display($calculation->indicator,
                 floatval($calculation->value), $output, $calculation->subtype);
 
             $data->calculations[] = $obj;
@@ -149,7 +162,7 @@ class insight implements \renderable, \templatable {
      * @param string|false $subtype
      * @return array The style as 'success', 'info', 'warning' or 'danger' and pix_icon
      */
-    protected function get_calculation_display(\core_analytics\calculable $calculable, $value, $output, $subtype = false) {
+    public static function get_calculation_display(\core_analytics\calculable $calculable, $value, $output, $subtype = false) {
         $outcome = $calculable->get_calculation_outcome($value, $subtype);
         switch ($outcome) {
             case \core_analytics\calculable::OUTCOME_NEUTRAL:
