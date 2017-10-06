@@ -4074,4 +4074,54 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->expectException('required_capability_exception');
         course_require_view_participants(context_system::instance());
     }
+
+    /**
+     *  Testing the can_download_from_backup_filearea fn.
+     */
+    public function test_can_download_from_backup_filearea() {
+        global $DB;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $user = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id);
+
+        // The 'automated' backup area. Downloading from this area requires two capabilities.
+        // If the user has only the 'backup:downloadfile' capability.
+        unassign_capability('moodle/restore:userinfo', $teacherrole->id, $context);
+        assign_capability('moodle/backup:downloadfile', CAP_ALLOW, $teacherrole->id, $context);
+        $this->assertFalse(can_download_from_backup_filearea('automated', $context, $user));
+
+        // If the user has only the 'restore:userinfo' capability.
+        unassign_capability('moodle/backup:downloadfile', $teacherrole->id, $context);
+        assign_capability('moodle/restore:userinfo', CAP_ALLOW, $teacherrole->id, $context);
+        $this->assertFalse(can_download_from_backup_filearea('automated', $context, $user));
+
+        // If the user has both capabilities.
+        assign_capability('moodle/backup:downloadfile', CAP_ALLOW, $teacherrole->id, $context);
+        assign_capability('moodle/restore:userinfo', CAP_ALLOW, $teacherrole->id, $context);
+        $this->assertTrue(can_download_from_backup_filearea('automated', $context, $user));
+
+        // Is the user has neither of the capabilities.
+        unassign_capability('moodle/backup:downloadfile', $teacherrole->id, $context);
+        unassign_capability('moodle/restore:userinfo', $teacherrole->id, $context);
+        $this->assertFalse(can_download_from_backup_filearea('automated', $context, $user));
+
+        // The 'course ' and 'backup' backup file areas. These are governed by the same download capability.
+        // User has the capability.
+        unassign_capability('moodle/restore:userinfo', $teacherrole->id, $context);
+        assign_capability('moodle/backup:downloadfile', CAP_ALLOW, $teacherrole->id, $context);
+        $this->assertTrue(can_download_from_backup_filearea('course', $context, $user));
+        $this->assertTrue(can_download_from_backup_filearea('backup', $context, $user));
+
+        // User doesn't have the capability.
+        unassign_capability('moodle/backup:downloadfile', $teacherrole->id, $context);
+        $this->assertFalse(can_download_from_backup_filearea('course', $context, $user));
+        $this->assertFalse(can_download_from_backup_filearea('backup', $context, $user));
+
+        // A file area that doesn't exist. No permissions, regardless of capabilities.
+        assign_capability('moodle/backup:downloadfile', CAP_ALLOW, $teacherrole->id, $context);
+        $this->assertFalse(can_download_from_backup_filearea('testing', $context, $user));
+    }
 }
