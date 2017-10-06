@@ -1,6 +1,22 @@
-Description of Bennu library import - customised library by author, this version is not available upstream
+Bennu - PHP iCalendar library
+=============================
 
-modifications:
+Bennu is an object-oriented library written in PHP that implements the
+iCalendar standard (RFC 2445). It is easy to use, fully standards compliant,
+and powerful. Applications can use Bennu to read and write iCalendar files,
+making them compatible with programs like Microsoft Outlook, Apple iCal, and
+Mozilla Sunbird.
+
+Information
+-----------
+
+* Bennu version: based on upstream 0.1 from 2005, heavily customized since then
+* Licence: GNU LGPL 2.1
+* WWW: http://bennu.sourceforge.net/
+
+Changelog
+---------
+
 1/ removed ereg functions deprecated as of php 5.3 (18 Nov 2009)
 2/ replaced mbstring functions with moodle core_text (28 Nov 2011)
 3/ replaced explode in iCalendar_component::unserialize() with preg_split to support various line breaks (20 Nov 2012)
