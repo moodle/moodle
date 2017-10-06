@@ -88,9 +88,9 @@ $string['pathsunsecuredataroot'] = 'Andmete juurkataloogi asukoht pole turvaline
 $string['pathswrongadmindir'] = 'Halduskataloogi pole olemas';
 $string['phpextension'] = '{$a} PHP-laiendus';
 $string['phpversion'] = 'PHP versioon';
-$string['phpversionhelp'] = '<p>Moodle vajab vähemalt PHP versiooni 4.1.0</p>
-<p>Sinu jooksev versioon on {$a}</p>
-<p>Sa pead oma PHP-d uuendama või kolima hosti, kus on uuem PHP versioon!</p>';
+$string['phpversionhelp'] = '<p>Moodle vajab vähemalt PHP versiooni 5.6.5 või 7.1 (versioonil 7.0.x on mõned mootoripiirangud).</p>
+<p>Teie praegune versioon on {$a}.</p>
+<p>Peate uuendama oma PHP või kolima hosti, kus on uuem PHP versioon.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Teile kuvatakse see leht, kuna olete edukalt oma arvutisse installinud ja
      käivitanud paketi <strong>{$a->packname} {$a->packversion}</strong>. Õnnitleme!';
