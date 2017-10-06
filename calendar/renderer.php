@@ -283,12 +283,12 @@ class core_calendar_renderer extends plugin_renderer_base {
     /**
      * Renders a table containing information about calendar subscriptions.
      *
-     * @param int $courseid
+     * @param int $unused
      * @param array $subscriptions
      * @param string $importresults
      * @return string
      */
-    public function subscription_details($courseid, $subscriptions, $importresults = '') {
+    public function subscription_details($unused = null, $subscriptions, $importresults = '') {
         $table = new html_table();
         $table->head  = array(
             get_string('colcalendar', 'calendar'),
@@ -318,7 +318,7 @@ class core_calendar_renderer extends plugin_renderer_base {
                 $lastupdated = userdate($sub->lastupdated, get_string('strftimedatetimeshort', 'langconfig'));
             }
 
-            $cell = new html_table_cell($this->subscription_action_form($sub, $courseid));
+            $cell = new html_table_cell($this->subscription_action_form($sub));
             $cell->colspan = 2;
             $type = $sub->eventtype . 'events';
 
@@ -342,10 +342,9 @@ class core_calendar_renderer extends plugin_renderer_base {
      * Creates a form to perform actions on a given subscription.
      *
      * @param stdClass $subscription
-     * @param int $courseid
      * @return string
      */
-    protected function subscription_action_form($subscription, $courseid) {
+    protected function subscription_action_form($subscription) {
         // Assemble form for the subscription row.
         $html = html_writer::start_tag('form', array('action' => new moodle_url('/calendar/managesubscriptions.php'), 'method' => 'post'));
         if (empty($subscription->url)) {
@@ -367,7 +366,6 @@ class core_calendar_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('div');
         }
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
-        $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'course', 'value' => $courseid));
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $subscription->id));
         $html .= html_writer::start_tag('div', array('class' => 'btn-group pull-right'));
         if (!empty($subscription->url)) {

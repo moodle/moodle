@@ -188,7 +188,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, $sub->courseid, $sub->id);
+        calendar_import_icalendar_events($ical, null, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
 
@@ -205,7 +205,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, $sub->courseid, $sub->id);
+        calendar_import_icalendar_events($ical, null, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
 
@@ -222,7 +222,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, $sub->courseid, $sub->id);
+        calendar_import_icalendar_events($ical, null, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
     }

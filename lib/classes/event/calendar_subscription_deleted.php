@@ -78,11 +78,26 @@ class calendar_subscription_deleted extends base
      * @return \moodle_url
      */
     public function get_url() {
-        if (($this->other['courseid'] == SITEID) || ($this->other['courseid'] == 0)) {
-            return new \moodle_url('calendar/managesubscriptions.php');
+        $params = [];
+        if (isset($this->other['eventtype'])) {
+            if ($this->other['eventtype'] == 'course' || $this->other['eventtype'] == 'group') {
+                $params['course'] = $this->other['courseid'];
+                if ($this->other['eventtype'] == 'group' && isset($this->other['groupid'])) {
+                    $params['group'] = $this->other['groupid'];
+                }
+            }
+            if ($this->other['eventtype'] == 'category' && isset($this->other['categoryid'])) {
+                $params['category'] = $this->other['categoryid'];
+            }
         } else {
-            return new \moodle_url('calendar/managesubscriptions.php', array('course' => $this->other['courseid']));
+            // This is a legacy event.
+            // Prior to specification of the eventtype there were only two params.
+            if (($this->other['courseid'] != SITEID) && ($this->other['courseid'] != 0)) {
+                $params['course'] = $this->other['courseid'];
+            }
         }
+        return new \moodle_url('/calendar/managesubscriptions.php', $params);
+
     }
 
     /**
@@ -99,8 +114,19 @@ class calendar_subscription_deleted extends base
         if (!isset($this->objectid)) {
             throw new \coding_exception('The \'objectid\' must be set.');
         }
-        if (!isset($this->other['courseid'])) {
-            throw new \coding_exception('The \'courseid\' value must be set in other.');
+        if (!isset($this->other['eventtype'])) {
+            throw new \coding_exception('The \'eventtype\' value must be set in other.');
+        }
+        if ($this->other['eventtype'] == 'course' || $this->other['eventtype'] == 'group') {
+            if (!isset($this->other['courseid'])) {
+                throw new \coding_exception('The \'courseid\' value must be set in other.');
+            }
+            if ($this->other['eventtype'] == 'group' && !isset($this->other['groupid'])) {
+                throw new \coding_exception('The \'groupid\' value must be set in other.');
+            }
+        }
+        if ($this->other['eventtype'] == 'category' && !isset($this->other['categoryid'])) {
+            throw new \coding_exception('The \'categoryid\' value must be set in other.');
         }
     }
 

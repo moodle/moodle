@@ -21,26 +21,30 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package calendar
  */
+namespace core_calendar\local\event\forms;
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Form for adding a subscription to a Moodle course calendar.
  * @copyright 2012 Jonathan Harker
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class calendar_addsubscription_form extends moodleform {
+class managesubscriptions extends \moodleform {
+
+    use eventtype;
 
     /**
      * Defines the form used to add calendar subscriptions.
      */
     public function definition() {
         $mform = $this->_form;
-        $courseid = optional_param('course', 0, PARAM_INT);
+        $eventtypes = calendar_get_all_allowed_types();
+        if (empty($eventtypes)) {
+            print_error('nopermissiontoupdatecalendar');
+        }
 
         $mform->addElement('header', 'addsubscriptionform', get_string('importcalendarheading', 'calendar'));
 
@@ -77,24 +81,10 @@ class calendar_addsubscription_form extends moodleform {
         $mform->disabledIf('url',  'importfrom', 'eq', CALENDAR_IMPORT_FROM_FILE);
         $mform->disabledIf('importfile', 'importfrom', 'eq', CALENDAR_IMPORT_FROM_URL);
 
+        // Add the select elements for the available event types.
+        $this->add_event_type_elements($mform, $eventtypes);
+
         // Eventtype: 0 = user, 1 = global, anything else = course ID.
-        list($choices, $groups) = calendar_get_eventtype_choices($courseid);
-        $mform->addElement('select', 'eventtype', get_string('eventkind', 'calendar'), $choices);
-        $mform->addRule('eventtype', get_string('required'), 'required');
-        $mform->setType('eventtype', PARAM_ALPHA);
-
-        if (!empty($groups) and is_array($groups)) {
-            $groupoptions = array();
-            foreach ($groups as $group) {
-                $groupoptions[$group->id] = $group->name;
-            }
-            $mform->addElement('select', 'groupid', get_string('typegroup', 'calendar'), $groupoptions);
-            $mform->setType('groupid', PARAM_INT);
-            $mform->disabledIf('groupid', 'eventtype', 'noteq', 'group');
-        }
-
-        $mform->addElement('hidden', 'course');
-        $mform->setType('course', PARAM_INT);
         $mform->addElement('submit', 'add', get_string('add'));
     }
 
@@ -110,6 +100,14 @@ class calendar_addsubscription_form extends moodleform {
 
         $errors = parent::validation($data, $files);
 
+        $coursekey = isset($data['groupcourseid']) ? 'groupcourseid' : 'courseid';
+        $eventtypes = calendar_get_all_allowed_types();
+        $eventtype = isset($data['eventtype']) ? $data['eventtype'] : null;
+
+        if (empty($eventtype) || !isset($eventtypes[$eventtype])) {
+            $errors['eventtype'] = get_string('invalideventtype', 'calendar');
+        }
+
         if ($data['importfrom'] == CALENDAR_IMPORT_FROM_FILE) {
             if (empty($data['importfile'])) {
                 $errors['importfile'] = get_string('errorrequiredurlorfile', 'calendar');
@@ -117,7 +115,7 @@ class calendar_addsubscription_form extends moodleform {
                 // Make sure the file area is not empty and contains only one file.
                 $draftitemid = $data['importfile'];
                 $fs = get_file_storage();
-                $usercontext = context_user::instance($USER->id);
+                $usercontext = \context_user::instance($USER->id);
                 $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id DESC', false);
                 if (count($files) !== 1) {
                     $errors['importfile'] = get_string('errorrequiredurlorfile', 'calendar');
@@ -140,7 +138,7 @@ class calendar_addsubscription_form extends moodleform {
     public function definition_after_data() {
         $mform =& $this->_form;
 
-        $mform->applyFilter('url', 'calendar_addsubscription_form::strip_webcal');
+        $mform->applyFilter('url', static::class . '::strip_webcal');
         $mform->applyFilter('url', 'trim');
     }
 
