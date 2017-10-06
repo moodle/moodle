@@ -55,6 +55,15 @@ class site implements \core_analytics\analysable {
     }
 
     /**
+     * Site.
+     *
+     * @return string
+     */
+    public function get_name() {
+        return get_string('site');
+    }
+
+    /**
      * Analysable context.
      *
      * @return \context

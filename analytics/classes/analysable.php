@@ -48,6 +48,13 @@ interface analysable {
     public function get_id();
 
     /**
+     * The analysable human readable name
+     *
+     * @return string
+     */
+    public function get_name();
+
+    /**
      * The analysable context.
      *
      * @return \context

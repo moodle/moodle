@@ -196,6 +196,15 @@ class course implements \core_analytics\analysable {
     }
 
     /**
+     * The course short name
+     *
+     * @return string
+     */
+    public function get_name() {
+        return format_string($this->course->shortname, true, array('context' => $this->get_context()));
+    }
+
+    /**
      * get_context
      *
      * @return \context

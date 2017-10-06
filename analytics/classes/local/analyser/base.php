@@ -363,7 +363,7 @@ abstract class base {
         $result = $this->analysabletarget->is_valid_analysable($analysable, $includetarget);
         if ($result !== true) {
             $a = new \stdClass();
-            $a->analysableid = $analysable->get_id();
+            $a->analysableid = $analysable->get_name();
             $a->result = $result;
             $this->add_log(get_string('analysablenotvalidfortarget', 'analytics', $a));
             return array();
@@ -407,7 +407,7 @@ abstract class base {
             }
 
             $a = new \stdClass();
-            $a->analysableid = $analysable->get_id();
+            $a->analysableid = $analysable->get_name();
             $a->errors = implode(', ', $errors);
             $this->add_log(get_string('analysablenotused', 'analytics', $a));
         }
