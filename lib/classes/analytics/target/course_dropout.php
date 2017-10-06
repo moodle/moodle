@@ -158,6 +158,11 @@ class course_dropout extends \core_analytics\local\target\binary {
             return get_string('coursetoolong', 'analytics');
         }
 
+        // Finished courses can not be used to get predictions.
+        if (!$fortraining && $course->is_finished()) {
+            return get_string('coursealreadyfinished');
+        }
+
         // Ongoing courses data can not be used to train.
         if ($fortraining && !$course->is_finished()) {
             return get_string('coursenotyetfinished');

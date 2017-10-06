@@ -292,6 +292,7 @@ $string['counteditems'] = '{$a->count} {$a->items}';
 $string['country'] = 'Country';
 $string['course'] = 'Course';
 $string['courseadministration'] = 'Course administration';
+$string['coursealreadyfinished'] = 'Course already finished';
 $string['courseapprovedemail'] = 'Your requested course, {$a->name}, has been approved and you have been made a {$a->teacher}.  To access your new course, go to {$a->url}';
 $string['courseapprovedemail2'] = 'Your requested course, {$a->name}, has been approved.  To access your new course, go to {$a->url}';
 $string['courseapprovedfailed'] = 'Failed to save the course as approved!';
