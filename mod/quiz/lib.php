@@ -1308,7 +1308,7 @@ function quiz_update_events($quiz, $override = null) {
                 } else {
                     unset($event->id);
                 }
-                $event->name = $eventname.' ('.get_string('quizopens', 'quiz').')';
+                $event->name = get_string('quizeventopens', 'quiz', $eventname);
                 // The method calendar_event::create will reuse a db record if the id field is set.
                 calendar_event::create($event);
             }
@@ -1319,7 +1319,7 @@ function quiz_update_events($quiz, $override = null) {
                     unset($event->id);
                 }
                 $event->type      = CALENDAR_EVENT_TYPE_ACTION;
-                $event->name      = $eventname.' ('.get_string('quizcloses', 'quiz').')';
+                $event->name      = get_string('quizeventcloses', 'quiz', $eventname);
                 $event->timestart = $timeclose;
                 $event->timesort  = $timeclose;
                 $event->eventtype = QUIZ_EVENT_TYPE_CLOSE;
