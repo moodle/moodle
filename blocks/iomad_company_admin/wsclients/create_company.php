@@ -31,10 +31,10 @@ $params = array(
 // XML-RPC CALL
 $serverurl = $domainname . '/webservice/xmlrpc/server.php'. '?wstoken=' . $token;
 require_once('./curl.php');
-$curl = new llcurl;
+$curl = new curl;
 $post = xmlrpc_encode_request($functionname, array($params));
 echo ("\n \$post: \n");
 print_r($post); //die;
 $resp = xmlrpc_decode($curl->post($serverurl, $post));
-echo ("\n \$resp: \n");
-print_r($resp);
+
+var_dump($resp);
