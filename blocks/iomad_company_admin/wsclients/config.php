@@ -1,5 +1,7 @@
 <?php
 
 /// SETUP - NEED TO BE CHANGED
-$token = '471673db5d6b00d1cc305175196aacd7';
-$domainname = 'http://your.site.com/iomad32';
+/// generate token in moodle admin:  http://iomad.dev/admin/settings.php?section=webservicetokens
+$token = '0cb02d6a22de9554c5f646a2ebb144e0';
+/// use your domain here:
+$domainname = 'http://iomad.dev';

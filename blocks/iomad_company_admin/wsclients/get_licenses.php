@@ -14,6 +14,10 @@
  *
  */
 
+//error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('html_errors', true);
+
 require(dirname(__FILE__) . '/config.php');
 
 $functionname = 'block_iomad_company_admin_get_license_info';
@@ -22,12 +26,10 @@ $functionname = 'block_iomad_company_admin_get_license_info';
 $params = array();
 
 /// XML-RPC CALL
-header('Content-Type: text/plain');
-echo "Start get_licenses";
 $serverurl = $domainname . '/webservice/xmlrpc/server.php'. '?wstoken=' . $token;
 require_once('./curl.php');
-$curl = new llcurl;
+$curl = new curl;
 $post = xmlrpc_encode_request($functionname, array($params));
 //var_dump($post); die;
 $resp = xmlrpc_decode($curl->post($serverurl, $post));
-print_r($resp);
+var_dump($resp);

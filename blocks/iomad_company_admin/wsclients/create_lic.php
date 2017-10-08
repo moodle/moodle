@@ -10,41 +10,40 @@
 /**
  * XML-RPC client for Moodle 2
  *
- * @authorr Jerome Mouneyrac
+ * @author Guido Hornig lern.link , copied from Jerome Mouneyrac
  */
 //error_reporting(E_ALL);
 ini_set('display_errors', true);
-ini_set('html_errors', false);
+ini_set('html_errors', true);
 
 require(dirname(__FILE__) . '/config.php');
 
 $functionname = 'block_iomad_company_admin_create_licenses';
 
 
-
 /// PARAMETERS
 
 $licenses = [
-    "name" => "lic-name",
-    "allocation" => 7,
-    "validlength" => 30,
-    "expirydate" => time()+ strtotime('+1 week'),
-    "used" => 0,
-    "companyid" => 11,
-    "parentid" => 0,
-    "courses" => [ "courseid" => 4 ],
-];
+        "name" => 'lic-name4',
+        "allocation" => 77,
+        "validlength" => 30,
+        "startdate" => time(),
+        "expirydate" =>  strtotime('+1 week'),
+        "used" => 44,
+        "companyid" => 5,
+        "parentid" => 0,
+        "courses" => [["courseid"=> "5"]],
+    ];
+
 
 $params = array($licenses);
-//var_dump($licenses);
-//var_dump(/** @lang text */
-    "Test \n");
 
 // XML-RPC CALL
-$serverurl = $domainname . '/webservice/xmlrpc/server.php'. '?wstoken=' . $token;
+$serverurl = $domainname . '/webservice/xmlrpc/server.php' . '?wstoken=' . $token;
+
 require_once('./curl.php');
 $curl = new curl;
 $post = xmlrpc_encode_request($functionname, array($params));
-//var_dump($post); die;
+//var_dump($post); //die;
 $resp = xmlrpc_decode($curl->post($serverurl, $post));
-//print_r($resp);
+var_dump($resp);

@@ -21,6 +21,7 @@ $params = array();
 
 /// XML-RPC CALL
 header('Content-Type: text/plain');
+echo "Start get_companies";
 $serverurl = $domainname . '/webservice/xmlrpc/server.php'. '?wstoken=' . $token;
 require_once('./curl.php');
 $curl = new curl;

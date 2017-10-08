@@ -19,10 +19,10 @@ $functionname = 'block_iomad_company_admin_create_companies';
 
 /// PARAMETERS
 $company1 = new stdClass;
-$company1->name = 'Sproatly Sprockets';
-$company1->shortname = 'sproatly';
-$company1->city = 'Glasgow';
-$company1->country = 'UK';
+$company1->name = 'Company_5';
+$company1->shortname = 'C5';
+$company1->city = 'Köln';
+$company1->country = 'DE';
 
 $params = array(
     $company1,
@@ -31,8 +31,10 @@ $params = array(
 // XML-RPC CALL
 $serverurl = $domainname . '/webservice/xmlrpc/server.php'. '?wstoken=' . $token;
 require_once('./curl.php');
-$curl = new curl;
+$curl = new llcurl;
 $post = xmlrpc_encode_request($functionname, array($params));
-//var_dump($post); die;
+echo ("\n \$post: \n");
+print_r($post); //die;
 $resp = xmlrpc_decode($curl->post($serverurl, $post));
+echo ("\n \$resp: \n");
 print_r($resp);
