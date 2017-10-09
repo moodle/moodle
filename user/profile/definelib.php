@@ -187,6 +187,13 @@ class profile_define_base {
         } else {
             $DB->update_record('user_info_field', $data);
         }
+
+        $field = $DB->get_record('user_info_field', array('id' => $data->id));
+        if ($old) {
+            \core\event\user_info_field_updated::create_from_field($field)->trigger();
+        } else {
+            \core\event\user_info_field_created::create_from_field($field)->trigger();
+        }
     }
 
     /**
@@ -303,6 +310,9 @@ function profile_delete_category($id) {
     // Finally we get to delete the category.
     $DB->delete_records('user_info_category', array('id' => $category->id));
     profile_reorder_categories();
+
+    \core\event\user_info_category_deleted::create_from_category($category)->trigger();
+
     return true;
 }
 
@@ -324,8 +334,13 @@ function profile_delete_field($id) {
     // Need to rebuild course cache to update the info.
     rebuild_course_cache(0, true);
 
+    // Prior to the delete, pull the record for the event.
+    $field = $DB->get_record('user_info_field', array('id' => $id));
+
     // Try to remove the record from the database.
     $DB->delete_records('user_info_field', array('id' => $id));
+
+    \core\event\user_info_field_deleted::create_from_field($field)->trigger();
 
     // Reorder the remaining fields in the same category.
     profile_reorder_fields();
@@ -465,9 +480,15 @@ function profile_edit_category($id, $redirect) {
             if (empty($data->id)) {
                 unset($data->id);
                 $data->sortorder = $DB->count_records('user_info_category') + 1;
-                $DB->insert_record('user_info_category', $data, false);
+                $data->id = $DB->insert_record('user_info_category', $data, true);
+
+                $createdcategory = $DB->get_record('user_info_category', array('id' => $data->id));
+                \core\event\user_info_category_created::create_from_category($createdcategory)->trigger();
             } else {
                 $DB->update_record('user_info_category', $data);
+
+                $updatedcateogry = $DB->get_record('user_info_category', array('id' => $data->id));
+                \core\event\user_info_category_updated::create_from_category($updatedcateogry)->trigger();
             }
             profile_reorder_categories();
             redirect($redirect);
