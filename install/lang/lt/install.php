@@ -63,7 +63,9 @@ $string['pathsunsecuredataroot'] = 'Šakninio duomenų katalogo kelias nesaugus'
 $string['pathswrongadmindir'] = 'Nėra administratoriaus katalogo';
 $string['phpextension'] = '{$a} PHP plėtinys';
 $string['phpversion'] = 'PHP versija';
-$string['phpversionhelp'] = '<p>„Moodle“ reikalauja, kad PHP versija būtų bent 4.3.0 arba 5.1.0 (5.0.x versijoje yra daug problemų).</p> <p>Dabar naudojate versiją {$a}</p> <p>Turite atnaujinti PHP versiją arba perkelti į pagrindinį kompiuterį, kuriame veikia naujesnė PHP versija!<br /> (Jei naudojate 5.0.x versiją, taip pat galite paleisti senesnę 4.4.x versiją)</p>';
+$string['phpversionhelp'] = '<p>„Moodle“ reikalauja, kad PHP versija būtų ne žemesnė 5.6.5 arba 7.1 (7.0.x versijoje yra tam tikrų trūkumų).</p>
+<p>Dabar naudojate versiją {$a}</p>
+<p>Turite atnaujinti PHP versiją arba perkelti į pagrindinį kompiuterį, kuriame veikia naujesnė PHP versija.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Matote šį puslapį, nes į kompiuterį sėkmingai įdiegėte ir paleidote <strong>{$a->packname} {$a->packversion}</strong> paketą. Sveikiname!';
 $string['welcomep30'] = 'Šiame <strong>{$a->installername}</strong> leidime yra taikomosios programos, skirtos aplinkai, kurioje veiks <strong>Moodle</strong>, sukurti:';
