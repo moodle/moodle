@@ -514,7 +514,7 @@ abstract class base {
             }
         }
 
-        if (!empty($target)) {
+        if (!empty($includetarget)) {
             $filearea = \core_analytics\dataset_manager::LABELLED_FILEAREA;
         } else {
             $filearea = \core_analytics\dataset_manager::UNLABELLED_FILEAREA;

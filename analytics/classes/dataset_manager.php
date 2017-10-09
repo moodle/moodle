@@ -157,16 +157,18 @@ class dataset_manager {
         ];
 
         // Delete previous and old (we already checked that previous copies are not recent) evaluation files for this analysable.
-        $select = " = {$filerecord['itemid']} AND filepath = :filepath";
-        $fs->delete_area_files_select($filerecord['contextid'], $filerecord['component'], $filerecord['filearea'],
-            $select, array('filepath' => $filerecord['filepath']));
+        if ($this->evaluation) {
+            $select = " = {$filerecord['itemid']} AND filepath = :filepath";
+            $fs->delete_area_files_select($filerecord['contextid'], $filerecord['component'], $filerecord['filearea'],
+                $select, array('filepath' => $filerecord['filepath']));
+        }
 
         // Write all this stuff to a tmp file.
         $filepath = make_request_directory() . DIRECTORY_SEPARATOR . $filerecord['filename'];
         $fh = fopen($filepath, 'w+');
         if (!$fh) {
             $this->close_process();
-            throw new \moodle_exception('errorcannotwritedataset', 'analytics', '', $tmpfilepath);
+            throw new \moodle_exception('errorcannotwritedataset', 'analytics', '', $filepath);
         }
         foreach ($data as $line) {
             fputcsv($fh, $line);
