@@ -22,8 +22,7 @@
     Example context (json):
     {
         "exportcalendarbutton": "<button class='btn btn-secondary'>Export calendar</button>",
-        "managesubscriptionbutton": "<button class='btn btn-secondary'>Manage subscriptions</button>",
-        "icalurl": "http://example.com/"
+        "managesubscriptionbutton": "<button class='btn btn-secondary'>Manage subscriptions</button>"
     }
 }}
 <div class="bottom">
@@ -33,7 +32,4 @@
     {{#managesubscriptionbutton}}
         {{> core/single_button }}
     {{/managesubscriptionbutton}}
-    {{#icalurl}}
-        <a href="{{icalurl}}" title="{{#str}} quickdownloadcalendar, calendar {{/str}}" class="ical-link m-l-1">iCal</a>
-    {{/icalurl}}
 </div>

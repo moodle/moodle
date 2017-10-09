@@ -154,7 +154,6 @@ $string['eventtypeuser'] = 'user';
 $string['hideeventtype'] = 'Hide {$a} events';
 $string['showeventtype'] = 'Show {$a} events';
 $string['hourly'] = 'Hourly';
-$string['ical'] = 'iCal';
 $string['importcalendar'] = 'Import calendar';
 $string['importcalendarheading'] = 'Import calendar...';
 $string['importcalendarfrom'] = 'Import from';
@@ -198,7 +197,6 @@ $string['pref_startwday'] = 'First day of week';
 $string['pref_startwday_help'] = 'Calendar weeks will be shown as starting on the day that you select here.';
 $string['pref_timeformat'] = 'Time display format';
 $string['pref_timeformat_help'] = 'You can choose to see times in either 12 or 24 hour format. If you choose "default", then the format will be automatically chosen according to the language you use in the site.';
-$string['quickdownloadcalendar'] = 'Quick download / subscribe to calendar';
 $string['recentupcoming'] = 'Recent and next 60 days';
 $string['repeatedevents'] = 'Repeated events';
 $string['repeateditall'] = 'Also apply changes to the other {$a} events in this repeat series';
@@ -259,6 +257,8 @@ $string['youcandeleteallrepeats'] = 'This event is part of a repeating event ser
 $string['for'] = 'for';
 
 // Deprecated since Moodle 3.4.
+$string['quickdownloadcalendar'] = 'Quick download / subscribe to calendar';
+$string['ical'] = 'iCal';
 $string['tt_hidecourse'] = 'Course events are shown (click to hide)';
 $string['tt_hideglobal'] = 'Global events are shown (click to hide)';
 $string['tt_hidegroups'] = 'Group events are shown (click to hide)';
