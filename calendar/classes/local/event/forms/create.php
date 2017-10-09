@@ -136,6 +136,10 @@ class create extends \moodleform {
             $errors['courseid'] = get_string('selectacourse');
         }
 
+        if ($eventtype == 'group' && empty($data['groupcourseid'])) {
+            $errors['groupcourseid'] = get_string('selectacourse');
+        }
+
         if ($data['duration'] == 1 && $data['timestart'] > $data['timedurationuntil']) {
             $errors['durationgroup'] = get_string('invalidtimedurationuntil', 'calendar');
         } else if ($data['duration'] == 2 && (trim($data['timedurationminutes']) == '' || $data['timedurationminutes'] < 1)) {
@@ -246,13 +250,11 @@ class create extends \moodleform {
         }
 
         if (isset($eventtypes['group'])) {
-            $courseoptions = [];
-            foreach ($eventtypes['groupcourses'] as $course) {
-                $courseoptions[$course->id] = format_string($course->fullname, true,
-                    ['context' => \context_course::instance($course->id)]);
-            }
+            // Exclude courses without group.
+            $excludedcourses = array_diff(array_keys($eventtypes['course']), array_keys($eventtypes['groupcourses']));
 
-            $mform->addElement('select', 'groupcourseid', get_string('course'), $courseoptions);
+            $options = ['limittoenrolled' => true, 'exclude' => $excludedcourses];
+            $mform->addElement('course', 'groupcourseid', get_string('course'), $options);
             $mform->hideIf('groupcourseid', 'eventtype', 'noteq', 'group');
 
             $groupoptions = [];
@@ -266,6 +268,7 @@ class create extends \moodleform {
 
             $mform->addElement('select', 'groupid', get_string('group'), $groupoptions);
             $mform->hideIf('groupid', 'eventtype', 'noteq', 'group');
+            $mform->disabledIf('groupid', 'groupcourseid', 'eq', '');
         }
     }
 

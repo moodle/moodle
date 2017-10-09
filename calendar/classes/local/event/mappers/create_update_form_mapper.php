@@ -101,20 +101,19 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
             } else {
                 $properties->courseid = $data->courseid;
             }
-        }
+        } else if ($data->eventtype == 'group') {
+            if (isset($data->groupcourseid)) {
+                $properties->courseid = $data->groupcourseid;
+                unset($properties->groupcourseid);
+            }
 
-        if (isset($data->groupcourseid)) {
-            $properties->courseid = $data->groupcourseid;
-            unset($properties->groupcourseid);
+            // Pull the group id back out of the value. The form saves the value
+            // as "<courseid>-<groupid>" to allow the javascript to work correctly.
+            if (isset($data->groupid)) {
+                list($courseid, $groupid) = explode('-', $data->groupid);
+                $properties->groupid = $groupid;
+            }
         }
-
-        // Pull the group id back out of the value. The form saves the value
-        // as "<courseid>-<groupid>" to allow the javascript to work correctly.
-        if (isset($data->groupid)) {
-            list($courseid, $groupid) = explode('-', $data->groupid);
-            $properties->groupid = $groupid;
-        }
-
 
         // Decode the form fields back into valid event property.
         $properties->timeduration = $this->get_time_duration_from_form_data($data);

@@ -74,14 +74,14 @@ define(['jquery'], function($) {
         var filterGroupSelectOptions = function() {
             var selectedCourseId = courseGroupSelect.val();
             var selectedIndex = null;
-
+            var hasGroups = false;
             groupSelectOptions.each(function(index, element) {
                 element = $(element);
 
                 if (element.attr('data-course-id') == selectedCourseId) {
                     element.removeClass('hidden');
                     element.prop('disabled', false);
-
+                    hasGroups = true;
                     if (selectedIndex === null || element.attr('selected')) {
                         selectedIndex = index;
                     }
@@ -90,6 +90,12 @@ define(['jquery'], function($) {
                     element.prop('disabled', true);
                 }
             });
+
+            if (hasGroups) {
+                groupSelect.prop('disabled', false);
+            } else {
+                groupSelect.prop('disabled', true);
+            }
 
             groupSelect.prop('selectedIndex', selectedIndex);
         };
