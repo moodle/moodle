@@ -3823,7 +3823,6 @@ function get_user_capability_course($capability, $userid = null, $doanything = t
         }
 
         $contextlimitsql = 'WHERE' . $contextlimitsql;
-        unset($root);
     }
 
     // Convert fields list and ordering
