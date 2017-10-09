@@ -2481,7 +2481,7 @@ function calendar_get_all_allowed_types() {
             if (!isset($types['course'])) {
                 $types['course'] = [$course];
             } else {
-                $types['course'][] = $course;
+                $types['course'][$course->id] = $course;
             }
         }
 

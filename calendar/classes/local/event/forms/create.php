@@ -132,6 +132,10 @@ class create extends \moodleform {
             }
         }
 
+        if ($eventtype == 'course' && empty($data['courseid'])) {
+            $errors['courseid'] = get_string('selectacourse');
+        }
+
         if ($data['duration'] == 1 && $data['timestart'] > $data['timedurationuntil']) {
             $errors['durationgroup'] = get_string('invalidtimedurationuntil', 'calendar');
         } else if ($data['duration'] == 2 && (trim($data['timedurationminutes']) == '' || $data['timedurationminutes'] < 1)) {
@@ -237,13 +241,7 @@ class create extends \moodleform {
         }
 
         if (isset($eventtypes['course'])) {
-            $courseoptions = [];
-            foreach ($eventtypes['course'] as $course) {
-                $courseoptions[$course->id] = format_string($course->fullname, true,
-                    ['context' => \context_course::instance($course->id)]);
-            }
-
-            $mform->addElement('select', 'courseid', get_string('course'), $courseoptions);
+            $mform->addElement('course', 'courseid', get_string('course'), ['limittoenrolled' => true]);
             $mform->hideIf('courseid', 'eventtype', 'noteq', 'course');
         }
 

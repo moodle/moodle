@@ -61,7 +61,10 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
             $data->groupid = "{$legacyevent->courseid}-{$legacyevent->groupid}";
             $data->groupcourseid = $legacyevent->courseid;
         }
-
+        if ($legacyevent->eventtype == 'course') {
+            // Set up the correct value for the to display on the form.
+            $data->courseid = $legacyevent->courseid;
+        }
         $data->description = [
             'text' => $data->description,
             'format' => $data->format
@@ -87,6 +90,19 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
 
         // Undo the form definition work around to allow us to have two different
         // course selectors present depending on which event type the user selects.
+        if ($data->eventtype == 'course') {
+            // Default course id if none is set.
+            if (!isset($properties->courseid)) {
+                if ($properties->eventtype === 'site') {
+                    $properties->courseid = SITEID;
+                } else {
+                    $properties->courseid = 0;
+                }
+            } else {
+                $properties->courseid = $data->courseid;
+            }
+        }
+
         if (isset($data->groupcourseid)) {
             $properties->courseid = $data->groupcourseid;
             unset($properties->groupcourseid);
@@ -99,14 +115,6 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
             $properties->groupid = $groupid;
         }
 
-        // Default course id if none is set.
-        if (!isset($properties->courseid)) {
-            if ($properties->eventtype === 'site') {
-                $properties->courseid = SITEID;
-            } else {
-                $properties->courseid = 0;
-            }
-        }
 
         // Decode the form fields back into valid event property.
         $properties->timeduration = $this->get_time_duration_from_form_data($data);
