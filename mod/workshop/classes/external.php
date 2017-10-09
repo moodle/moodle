@@ -1280,6 +1280,10 @@ class mod_workshop_external extends external_api {
             }
         }
 
+        // Get dimensions info.
+        $grader = $workshop->grading_strategy_instance();
+        $result['dimensionsinfo'] = $grader->get_dimensions_info();
+
         return $result;
     }
 
@@ -1317,6 +1321,17 @@ class mod_workshop_external extends external_api {
                             'value' => new external_value(PARAM_RAW, 'Current field value.')
                         )
                     ), 'The current field values.'
+                ),
+                'dimensionsinfo' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'Dimension id.'),
+                            'min' => new external_value(PARAM_FLOAT, 'Minimum grade for the dimension.'),
+                            'max' => new external_value(PARAM_FLOAT, 'Maximum grade for the dimension.'),
+                            'weight' => new external_value(PARAM_TEXT, 'The weight of the dimension.'),
+                            'scale' => new external_value(PARAM_TEXT, 'Scale items (if used).', VALUE_OPTIONAL),
+                        )
+                    ), 'The dimensions general information.'
                 ),
                 'warnings' => new external_warnings()
             )
