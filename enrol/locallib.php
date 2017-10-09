@@ -38,7 +38,7 @@ class course_enrolment_manager {
 
     /**
      * The course context
-     * @var stdClass
+     * @var context
      */
     protected $context;
     /**
@@ -933,7 +933,7 @@ class course_enrolment_manager {
     /**
      * Returns the course context
      *
-     * @return stdClass
+     * @return context
      */
     public function get_context() {
         return $this->context;

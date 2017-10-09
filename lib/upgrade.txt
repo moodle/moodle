@@ -32,6 +32,13 @@ information provided here is intended especially for developers.
   These attributes enable enrol actions to be rendered via modals. If not added, clicking on the enrolment action buttons will still
   redirect the user to the appropriate enrolment action page. Though optional, it is recommended to add these attributes for a
   better user experience when performing enrol actions.
+* The enrol_plugin::get_user_enrolment_actions() implementations for core enrol plugins have been removed and moved to
+  the parent method itself. New enrol plugins don't have to implement get_user_enrolment_actions(), but just need to
+  make sure that they override:
+  - enrol_plugin::allow_manage(), and/or
+  - enrol_plugin::allow_unenrol_user() or enrol_plugin::allow_unenrol()
+  Existing enrol plugins that override enrol_plugin::get_user_enrolment_actions() don't have to do anything, but can
+  also opt to remove their own implementation of the method if they basically have the same logic as the parent method.
 * New optional parameter $enrolid for the following functions:
   - get_enrolled_join()
   - get_enrolled_sql()

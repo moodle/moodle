@@ -117,4 +117,53 @@ class enrol_lti_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('enrol_lti_tools', [ 'id' => $tool->id ]));
         $this->assertFalse($DB->record_exists('enrol', [ 'id' => $instance->id ]));
     }
+
+    /**
+     * Test for getting user enrolment actions.
+     */
+    public function test_get_user_enrolment_actions() {
+        global $CFG, $DB, $PAGE;
+        $this->resetAfterTest();
+
+        // Set page URL to prevent debugging messages.
+        $PAGE->set_url('/enrol/editinstance.php');
+
+        $pluginname = 'lti';
+
+        // Only enable the lti enrol plugin.
+        $CFG->enrol_plugins_enabled = $pluginname;
+
+        $generator = $this->getDataGenerator();
+
+        // Get the enrol plugin.
+        $plugin = enrol_get_plugin($pluginname);
+
+        // Create a course.
+        $course = $generator->create_course();
+        $context = context_course::instance($course->id);
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+
+        // Enable this enrol plugin for the course.
+        $fields = ['contextid' => $context->id, 'roleinstructor' => $teacherroleid, 'rolelearner' => $studentroleid];
+        $plugin->add_instance($course, $fields);
+
+        // Create a student.
+        $student = $generator->create_user();
+        // Enrol the student to the course.
+        $generator->enrol_user($student->id, $course->id, 'student', $pluginname);
+
+        // Teachers don't have enrol/lti:unenrol capability by default. Login as admin for simplicity.
+        $this->setAdminUser();
+
+        require_once($CFG->dirroot . '/enrol/locallib.php');
+        $manager = new course_enrolment_manager($PAGE, $course);
+        $userenrolments = $manager->get_user_enrolments($student->id);
+        $this->assertCount(1, $userenrolments);
+
+        $ue = reset($userenrolments);
+        $actions = $plugin->get_user_enrolment_actions($manager, $ue);
+        // LTI enrolment has 1 enrol actions for active users -- unenrol.
+        $this->assertCount(1, $actions);
+    }
 }
