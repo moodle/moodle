@@ -302,7 +302,11 @@ function profile_delete_category($id) {
                 $f->id = $field->id;
                 $f->sortorder = $sortorder++;
                 $f->categoryid = $newcategory->id;
-                $DB->update_record('user_info_field', $f);
+                if ($DB->update_record('user_info_field', $f)) {
+                    $field->sortorder = $f->sortorder;
+                    $field->categoryid = $f->categoryid;
+                    \core\event\user_info_field_updated::create_from_field($field)->trigger();
+                }
             }
         }
     }
@@ -357,7 +361,7 @@ function profile_move_field($id, $move) {
     global $DB;
 
     // Get the field object.
-    if (!$field = $DB->get_record('user_info_field', array('id' => $id), 'id, sortorder, categoryid')) {
+    if (!$field = $DB->get_record('user_info_field', array('id' => $id))) {
         return false;
     }
     // Count the number of fields in this category.
@@ -374,7 +378,7 @@ function profile_move_field($id, $move) {
 
     // Retrieve the field object that is currently residing in the new position.
     $params = array('categoryid' => $field->categoryid, 'sortorder' => $neworder);
-    if ($swapfield = $DB->get_record('user_info_field', $params, 'id, sortorder')) {
+    if ($swapfield = $DB->get_record('user_info_field', $params)) {
 
         // Swap the sortorders.
         $swapfield->sortorder = $field->sortorder;
@@ -383,6 +387,9 @@ function profile_move_field($id, $move) {
         // Update the field records.
         $DB->update_record('user_info_field', $field);
         $DB->update_record('user_info_field', $swapfield);
+
+        \core\event\user_info_field_updated::create_from_field($field)->trigger();
+        \core\event\user_info_field_updated::create_from_field($swapfield)->trigger();
     }
 
     profile_reorder_fields();
@@ -399,7 +406,7 @@ function profile_move_field($id, $move) {
 function profile_move_category($id, $move) {
     global $DB;
     // Get the category object.
-    if (!($category = $DB->get_record('user_info_category', array('id' => $id), 'id, sortorder'))) {
+    if (!($category = $DB->get_record('user_info_category', array('id' => $id)))) {
         return false;
     }
 
@@ -416,14 +423,19 @@ function profile_move_category($id, $move) {
     }
 
     // Retrieve the category object that is currently residing in the new position.
-    if ($swapcategory = $DB->get_record('user_info_category', array('sortorder' => $neworder), 'id, sortorder')) {
+    if ($swapcategory = $DB->get_record('user_info_category', array('sortorder' => $neworder))) {
 
         // Swap the sortorders.
         $swapcategory->sortorder = $category->sortorder;
         $category->sortorder     = $neworder;
 
         // Update the category records.
-        $DB->update_record('user_info_category', $category) and $DB->update_record('user_info_category', $swapcategory);
+        $DB->update_record('user_info_category', $category);
+        $DB->update_record('user_info_category', $swapcategory);
+
+        \core\event\user_info_category_updated::create_from_category($category)->trigger();
+        \core\event\user_info_category_updated::create_from_category($swapcategory)->trigger();
+
         return true;
     }
 
