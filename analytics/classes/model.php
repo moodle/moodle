@@ -693,7 +693,7 @@ class model {
         $samplesfile = $samplesdata[$this->model->timesplitting];
 
         // We need to throw an exception if we are trying to predict stuff that was already predicted.
-        $params = array('modelid' => $this->model->id, 'fileid' => $samplesfile->get_id(), 'action' => 'predicted');
+        $params = array('modelid' => $this->model->id, 'action' => 'predicted', 'fileid' => $samplesfile->get_id());
         if ($predicted = $DB->get_record('analytics_used_files', $params)) {
             throw new \moodle_exception('erroralreadypredict', 'analytics', '', $samplesfile->get_id());
         }

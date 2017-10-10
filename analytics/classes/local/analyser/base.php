@@ -190,13 +190,13 @@ abstract class base {
         list($analysables, $processedanalysables) = $this->get_sorted_analysables($includetarget);
 
         $inittime = time();
-        foreach ($analysables as $analysable) {
+        foreach ($analysables as $key => $analysable) {
 
             $files = $this->process_analysable($analysable, $includetarget);
 
             // Later we will need to aggregate data by time splitting method.
             foreach ($files as $timesplittingid => $file) {
-                $filesbytimesplitting[$timesplittingid][$analysable->get_id()] = $file;
+                $filesbytimesplitting[$timesplittingid][] = $file;
             }
 
             $this->update_analysable_analysed_time($processedanalysables, $analysable->get_id(), $includetarget);
@@ -208,10 +208,34 @@ abstract class base {
                     break;
                 }
             }
+
+            unset($analysables[$key]);
+        }
+
+        if ($this->options['evaluation'] === false) {
+            // Look for previous training and prediction files we generated and couldn't be used
+            // by machine learning backends because they weren't big enough.
+
+            $pendingfiles = \core_analytics\dataset_manager::get_pending_files($this->modelid, $includetarget,
+                array_keys($filesbytimesplitting));
+            foreach ($pendingfiles as $timesplittingid => $files) {
+                foreach ($files as $file) {
+                    $filesbytimesplitting[$timesplittingid][] = $file;
+                }
+            }
         }
 
         // We join the datasets by time splitting method.
         $timesplittingfiles = $this->merge_analysable_files($filesbytimesplitting, $includetarget);
+
+        if (!empty($pendingfiles)) {
+            // We must remove them now as they are already part of another dataset.
+            foreach ($pendingfiles as $timesplittingid => $files) {
+                foreach ($files as $file) {
+                    $file->delete();
+                }
+            }
+        }
 
         return $timesplittingfiles;
     }
