@@ -172,6 +172,7 @@ $string['course:managegroups'] = 'Manage groups';
 $string['course:managescales'] = 'Manage scales';
 $string['course:markcomplete'] = 'Mark users as complete in course completion';
 $string['course:movesections'] = 'Move sections';
+$string['course:overridecompletion'] = 'Override activity completion status';
 $string['course:publish'] = 'Publish a course';
 $string['course:renameroles'] = 'Rename roles';
 $string['course:request'] = 'Request new courses';

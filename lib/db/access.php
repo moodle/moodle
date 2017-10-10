@@ -1933,6 +1933,15 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+    'moodle/course:overridecompletion' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
     'moodle/community:add' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,

@@ -276,6 +276,14 @@ $functions = array(
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_completion_override_activity_completion_status' => array(
+        'classname'     => 'core_completion_external',
+        'methodname'    => 'override_activity_completion_status',
+        'description'   => 'Update completion status for a user in an activity by overriding it.',
+        'type'          => 'write',
+        'capabilities'  => 'moodle/course:overridecompletion',
+        'ajax'          => true,
+    ),
     'core_course_create_categories' => array(
         'classname' => 'core_course_external',
         'methodname' => 'create_categories',

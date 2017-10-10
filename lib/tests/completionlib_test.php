@@ -128,10 +128,10 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->mock_setup();
 
         $mockbuilder = $this->getMockBuilder('completion_info');
-        $mockbuilder->setMethods(array('is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'));
+        $mockbuilder->setMethods(array('is_enabled', 'get_data', 'internal_get_state', 'internal_set_data',
+                                       'user_can_override_completion'));
         $mockbuilder->setConstructorArgs(array((object)array('id' => 42)));
         $c = $mockbuilder->getMock();
-
         $cm = (object)array('id'=>13, 'course'=>42);
 
         // Not enabled, should do nothing.
@@ -142,7 +142,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $c->update_state($cm);
 
         // Enabled, but current state is same as possible result, do nothing.
-        $current = (object)array('completionstate'=>COMPLETION_COMPLETE);
+        $current = (object)array('completionstate' => COMPLETION_COMPLETE, 'overrideby' => null);
         $c->expects($this->at(0))
             ->method('is_enabled')
             ->with($cm)
@@ -200,7 +200,7 @@ class core_completionlib_testcase extends advanced_testcase {
 
         // Auto, change state.
         $cm = (object)array('id'=>13, 'course'=>42, 'completion'=>COMPLETION_TRACKING_AUTOMATIC);
-        $current = (object)array('completionstate'=>COMPLETION_COMPLETE);
+        $current = (object)array('completionstate' => COMPLETION_COMPLETE, 'overrideby' => null);
         $c->expects($this->at(0))
             ->method('is_enabled')
             ->with($cm)
@@ -221,6 +221,107 @@ class core_completionlib_testcase extends advanced_testcase {
             ->method('internal_set_data')
             ->with($cm, $comparewith);
         $c->update_state($cm, COMPLETION_COMPLETE_PASS);
+
+        // Manual tracking, change state by overriding it manually.
+        $cm = (object)array('id' => 13, 'course' => 42, 'completion' => COMPLETION_TRACKING_MANUAL);
+        $current = (object)array('completionstate' => COMPLETION_INCOMPLETE, 'overrideby' => null);
+        $c->expects($this->at(0))
+            ->method('is_enabled')
+            ->with($cm)
+            ->will($this->returnValue(true));
+        $c->expects($this->at(1)) // Pretend the user has the required capability for overriding completion statuses.
+            ->method('user_can_override_completion')
+            ->will($this->returnValue(true));
+        $c->expects($this->at(2))
+            ->method('get_data')
+            ->with($cm, false, 100)
+            ->will($this->returnValue($current));
+        $changed = clone($current);
+        $changed->timemodified = time();
+        $changed->completionstate = COMPLETION_COMPLETE;
+        $changed->overrideby = 314159;
+        $comparewith = new phpunit_constraint_object_is_equal_with_exceptions($changed);
+        $comparewith->add_exception('timemodified', 'assertGreaterThanOrEqual');
+        $c->expects($this->at(3))
+            ->method('internal_set_data')
+            ->with($cm, $comparewith);
+        $c->update_state($cm, COMPLETION_COMPLETE, 100, true);
+        // And confirm that the status can be changed back to incomplete without an override.
+        $c->update_state($cm, COMPLETION_INCOMPLETE, 100);
+        $c->expects($this->at(0))
+            ->method('get_data')
+            ->with($cm, false, 100)
+            ->will($this->returnValue($current));
+        $c->get_data($cm, false, 100);
+
+        // Auto, change state via override, incomplete to complete.
+        $cm = (object)array('id' => 13, 'course' => 42, 'completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $current = (object)array('completionstate' => COMPLETION_INCOMPLETE, 'overrideby' => null);
+        $c->expects($this->at(0))
+            ->method('is_enabled')
+            ->with($cm)
+            ->will($this->returnValue(true));
+        $c->expects($this->at(1)) // Pretend the user has the required capability for overriding completion statuses.
+            ->method('user_can_override_completion')
+            ->will($this->returnValue(true));
+        $c->expects($this->at(2))
+            ->method('get_data')
+            ->with($cm, false, 100)
+            ->will($this->returnValue($current));
+        $changed = clone($current);
+        $changed->timemodified = time();
+        $changed->completionstate = COMPLETION_COMPLETE;
+        $changed->overrideby = 314159;
+        $comparewith = new phpunit_constraint_object_is_equal_with_exceptions($changed);
+        $comparewith->add_exception('timemodified', 'assertGreaterThanOrEqual');
+        $c->expects($this->at(3))
+            ->method('internal_set_data')
+            ->with($cm, $comparewith);
+        $c->update_state($cm, COMPLETION_COMPLETE, 100, true);
+        $c->expects($this->at(0))
+            ->method('get_data')
+            ->with($cm, false, 100)
+            ->will($this->returnValue($changed));
+        $c->get_data($cm, false, 100);
+
+        // Now confirm that the status cannot be changed back to incomplete without an override.
+        // I.e. test that automatic completion won't trigger a change back to COMPLETION_INCOMPLETE when overridden.
+        $c->update_state($cm, COMPLETION_INCOMPLETE, 100);
+        $c->expects($this->at(0))
+            ->method('get_data')
+            ->with($cm, false, 100)
+            ->will($this->returnValue($changed));
+        $c->get_data($cm, false, 100);
+
+        // Now confirm the status can be changed back from complete to incomplete using an override.
+        $cm = (object)array('id' => 13, 'course' => 42, 'completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $current = (object)array('completionstate' => COMPLETION_COMPLETE, 'overrideby' => 2);
+        $c->expects($this->at(0))
+            ->method('is_enabled')
+            ->with($cm)
+            ->will($this->returnValue(true));
+        $c->expects($this->at(1)) // Pretend the user has the required capability for overriding completion statuses.
+        ->method('user_can_override_completion')
+            ->will($this->returnValue(true));
+        $c->expects($this->at(2))
+            ->method('get_data')
+            ->with($cm, false, 100)
+            ->will($this->returnValue($current));
+        $changed = clone($current);
+        $changed->timemodified = time();
+        $changed->completionstate = COMPLETION_INCOMPLETE;
+        $changed->overrideby = 314159;
+        $comparewith = new phpunit_constraint_object_is_equal_with_exceptions($changed);
+        $comparewith->add_exception('timemodified', 'assertGreaterThanOrEqual');
+        $c->expects($this->at(3))
+            ->method('internal_set_data')
+            ->with($cm, $comparewith);
+        $c->update_state($cm, COMPLETION_INCOMPLETE, 100, true);
+        $c->expects($this->at(0))
+            ->method('get_data')
+            ->with($cm, false, 100)
+            ->will($this->returnValue($changed));
+        $c->get_data($cm, false, 100);
     }
 
     public function test_internal_get_state() {
@@ -416,8 +517,8 @@ class core_completionlib_testcase extends advanced_testcase {
         $modinfo->cms = array((object)array('id'=>13));
         $result=$c->get_data($cm, true, 123, $modinfo);
         $this->assertEquals((object)array(
-            'id'=>'0', 'coursemoduleid'=>13, 'userid'=>123, 'completionstate'=>0,
-            'viewed'=>0, 'timemodified'=>0), $result);
+            'id' => '0', 'coursemoduleid' => 13, 'userid' => 123, 'completionstate' => 0,
+            'viewed' => 0, 'timemodified' => 0, 'overrideby' => 0), $result);
         $this->assertEquals(false, $cache->get('123_42')); // Not current user is not cached.
 
         // 3. Current user, single record, not from cache.
@@ -455,7 +556,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $cachevalue = $cache->get('314159_42');
         $this->assertEquals($basicrecord, (object)$cachevalue[13]);
         $this->assertEquals(array('id' => '0', 'coursemoduleid' => 14,
-            'userid'=>314159, 'completionstate'=>0, 'viewed'=>0, 'timemodified'=>0),
+            'userid' => 314159, 'completionstate' => 0, 'viewed' => 0, 'overrideby' => 0, 'timemodified' => 0),
             $cachevalue[14]);
     }
 
@@ -477,6 +578,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $data->completionstate = COMPLETION_COMPLETE;
         $data->timemodified = time();
         $data->viewed = COMPLETION_NOT_VIEWED;
+        $data->overrideby = null;
 
         $c->internal_set_data($cm, $data);
         $d1 = $DB->get_field('course_modules_completion', 'id', array('coursemoduleid' => $cm->id));
@@ -498,6 +600,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $d2->completionstate = COMPLETION_COMPLETE;
         $d2->timemodified = time();
         $d2->viewed = COMPLETION_NOT_VIEWED;
+        $d2->overrideby = null;
         $c->internal_set_data($cm2, $d2);
         // Cache for current user returns the data.
         $cachevalue = $cache->get($data->userid . '_' . $cm->course);
@@ -518,6 +621,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $d3->completionstate = COMPLETION_COMPLETE;
         $d3->timemodified = time();
         $d3->viewed = COMPLETION_NOT_VIEWED;
+        $d3->overrideby = null;
         $DB->insert_record('course_modules_completion', $d3);
         $c->internal_set_data($cm, $data);
     }
