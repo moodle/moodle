@@ -62,22 +62,48 @@ class url_finder {
      * @param string $table
      * @param string $column
      * @param string $domain
+     * @param string $search search string that has prefix, protocol, domain name and one extra character,
+     *      example1: src="http://host.com/
+     *      example2: DATA="HTTP://MYDOMAIN.EDU"
+     *      example3: src="HTTP://hello.world?
      * @return void
      */
-    private function domain_swap($table, $column, $domain) {
+    protected function domain_swap($table, $column, $domain, $search) {
         global $DB;
 
         $renames = json_decode(get_config('tool_httpsreplace', 'renames'), true);
 
-        $search = "http://$domain";
-        $replace = "https://$domain";
         if (isset($renames[$domain])) {
-            $replace = 'https://' . $renames[$domain];
+            $replace = preg_replace('|http://'.preg_quote($domain).'|i', 'https://' . $renames[$domain], $search);
+        } else {
+            $replace = preg_replace('|http://|i', 'https://', $search);
         }
         $DB->set_debug(true);
-        // Note, this search is case sensitive.
         $DB->replace_all_text($table, $column, $search, $replace);
         $DB->set_debug(false);
+    }
+
+    /**
+     * Returns SQL to be used to match embedded http links in the given column
+     *
+     * @param string $columnname name of the column (ready to be used in the SQL query)
+     * @return array
+     */
+    protected function get_select_search_in_column($columnname) {
+        global $DB;
+
+        if ($DB->sql_regex_supported()) {
+            // Database supports regex, use it for better match.
+            $select = $columnname . ' ' . $DB->sql_regex() . ' ?';
+            $params = ["(src|data)\ *=\ *[\\\"\']http://"];
+        } else {
+            // Databases without regex support should use case-insensitive LIKE.
+            // This will have false positive matches and more results than we need, we'll have to filter them in php.
+            $select = $DB->sql_like($columnname, '?', false);
+            $params = ['%=%http://%'];
+        }
+
+        return [$select, $params];
     }
 
     /**
@@ -86,19 +112,10 @@ class url_finder {
      * @param progress_bar $progress Progress bar keeping track of this process.
      * @return bool|array If $replacing, return true on success. If not, return hash of http urls to number of times used.
      */
-    private function process($replacing = false, $progress = null) {
+    protected function process($replacing = false, $progress = null) {
         global $DB, $CFG;
 
         require_once($CFG->libdir.'/filelib.php');
-
-        if ($DB->sql_regex_supported()) {
-            $regexp = $DB->sql_regex();
-            $httpurls  = "(src|data)\ *=\ *[\\\"\']http://";
-        } else {
-            // Simpler query for DBs without regex support.
-            $regexp = "like";
-            $httpurls  = "%=%http://%";
-        }
 
         // TODO: block_instances have HTML content as base64, need to decode then
         // search, currently just skipped. See MDL-60024.
@@ -128,14 +145,6 @@ class url_finder {
         }
 
         $urls = array();
-        $texttypes = array (
-            'text',
-            'mediumtext',
-            'longtext',
-            'varchar',
-            'nvarchar',
-            'CLOB',
-        );
 
         $numberoftables = count($tables);
         $tablenumber = 0;
@@ -150,31 +159,39 @@ class url_finder {
             if ($columns = $DB->get_columns($table)) {
                 foreach ($columns as $column) {
 
-                    if (in_array($column->type, $texttypes)) {
+                    // Only convert columns that are either text or long varchar.
+                    if ($column->meta_type == 'X' || ($column->meta_type == 'C' && $column->max_length > 255)) {
                         $columnname = $column->name;
-                        $select = "LOWER($columnname) $regexp ?";
-                        $rs = $DB->get_recordset_select($table, $select, [$httpurls]);
+                        $columnnamequoted = $DB->get_manager()->generator->getEncQuoted($columnname);
+                        list($select, $params) = $this->get_select_search_in_column($columnnamequoted);
+                        $rs = $DB->get_recordset_select($table, $select, $params, '', $columnnamequoted);
 
                         $found = array();
                         foreach ($rs as $record) {
                             // Regex to match src=http://etc. and data=http://etc.urls.
                             // Standard warning on expecting regex to perfectly parse HTML
                             // read http://stackoverflow.com/a/1732454 for more info.
-                            $regex = '#(src|data)\ *=\ *[\'\"]http://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))[\'\"]#i';
+                            $regex = '#((src|data)\ *=\ *[\'\"])(http://)([^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))[\'\"]#i';
                             preg_match_all($regex, $record->$columnname, $match);
-                            foreach ($match[0] as $url) {
-                                if (strpos($url, $CFG->wwwroot) !== false) {
+                            foreach ($match[0] as $i => $fullmatch) {
+                                if (strpos($fullmatch, $CFG->wwwroot) !== false) {
+                                    continue;
+                                }
+                                $prefix = $match[1][$i];
+                                $protocol = $match[3][$i];
+                                $url = $protocol . $match[4][$i];
+                                $host = \core_text::strtolower(parse_url($url, PHP_URL_HOST));
+                                if (empty($host)) {
                                     continue;
                                 }
                                 if ($replacing) {
-                                    $url = substr($url, strpos($url, 'http'), -1);
-                                    $host = parse_url($url, PHP_URL_HOST);
-                                    $found[] = $host;
+                                    // For replace string use: prefix, protocol, host and one extra character.
+                                    $found[$prefix . substr($url, 0, strlen($host) + 8)] = $host;
                                 } else {
                                     $entry["table"] = $table;
                                     $entry["columnname"] = $columnname;
-                                    $entry["url"] = str_replace(array("'", '"'), "", substr($url, ((int) strpos($url, "=") + 1) ));
-                                    $entry["host"] = parse_url($entry["url"], PHP_URL_HOST);
+                                    $entry["url"] = $url;
+                                    $entry["host"] = $host;
                                     $entry["raw"] = $record->$columnname;
                                     $entry["ssl"] = '';
                                     $urls[] = $entry;
@@ -184,9 +201,8 @@ class url_finder {
                         $rs->close();
 
                         if ($replacing) {
-                            $found = array_unique($found);
-                            foreach ($found as $domain) {
-                                $this->domain_swap($table, $column, $domain);
+                            foreach ($found as $search => $domain) {
+                                $this->domain_swap($table, $column, $domain, $search);
                             }
                         }
                     }
@@ -209,11 +225,7 @@ class url_finder {
         $sslfailures = array();
 
         foreach ($uniquedomains as $domain) {
-            $url = "https://$domain/";
-            $curl = new \curl();
-            $curl->head($url);
-            $info = $curl->get_info();
-            if (empty($info['http_code']) or ($info['http_code'] >= 400)) {
+            if (!$this->check_domain_availability("https://$domain/")) {
                 $sslfailures[] = $domain;
             }
         }
@@ -232,5 +244,18 @@ class url_finder {
             }
         }
         return $results;
+    }
+
+    /**
+     * Check if url is available (GET request returns 200)
+     *
+     * @param string $url
+     * @return bool
+     */
+    protected function check_domain_availability($url) {
+        $curl = new \curl();
+        $curl->head($url);
+        $info = $curl->get_info();
+        return !empty($info['http_code']) && $info['http_code'] == 200;
     }
 }

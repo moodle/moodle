@@ -54,6 +54,11 @@ class httpsreplace_test extends \advanced_testcase {
                 "outputregex" => '/UPDATE/',
                 "expectedcontent" => '<object data="' . $this->getExternalTestFileUrl('/test.swf', true) . '">',
             ],
+            "Test image from a site with international name should be replaced" => [
+                "content" => '<img src="http://中国互联网络信息中心.中国/logosy/201706/W01.png">',
+                "outputregex" => '/UPDATE/',
+                "expectedcontent" => '<img src="https://中国互联网络信息中心.中国/logosy/201706/W01.png">',
+            ],
             "Link that is from this site should be replaced" => [
                 "content" => '<img src="' . $wwwroothttp . '/logo.png">',
                 "outputregex" => '/UPDATE/',
@@ -79,10 +84,17 @@ class httpsreplace_test extends \advanced_testcase {
                 "outputregex" => '/UPDATE/',
                 "expectedcontent" => '<object DATA="' . $this->getExternalTestFileUrl('/test.swf', true) . '">',
             ],
-            "More params should not interfere" => [
-                "content" => '<img alt="A picture" src="' . $this->getExternalTestFileUrl('/test.png', false) . '" width="1”><p style="font-size: \'20px\'"></p>',
+            "URL should be case insensitive" => [
+                "content" => '<object data="HTTP://some.site/path?query">',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<img alt="A picture" src="' . $this->getExternalTestFileUrl('/test.png', true) . '" width="1”><p style="font-size: \'20px\'"></p>',
+                "expectedcontent" => '<object data="https://some.site/path?query">',
+            ],
+            "More params should not interfere" => [
+                "content" => '<img alt="A picture" src="' . $this->getExternalTestFileUrl('/test.png', false) .
+                    '" width="1”><p style="font-size: \'20px\'"></p>',
+                "outputregex" => '/UPDATE/',
+                "expectedcontent" => '<img alt="A picture" src="' . $this->getExternalTestFileUrl('/test.png', true) .
+                    '" width="1”><p style="font-size: \'20px\'"></p>',
             ],
             "Broken URL should not be changed" => [
                 "content" => '<img src="broken.' . $this->getExternalTestFileUrl('/test.png', false) . '">',
@@ -90,9 +102,18 @@ class httpsreplace_test extends \advanced_testcase {
                 "expectedcontent" => '<img src="broken.' . $this->getExternalTestFileUrl('/test.png', false) . '">',
             ],
             "Link URL should not be changed" => [
-                "content" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '">' . $this->getExternalTestFileUrl('/test.png', false) . '</a>',
+                "content" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '">' .
+                    $this->getExternalTestFileUrl('/test.png', false) . '</a>',
                 "outputregex" => '/^$/',
-                "expectedcontent" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '">' . $this->getExternalTestFileUrl('/test.png', false) . '</a>',
+                "expectedcontent" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '">' .
+                    $this->getExternalTestFileUrl('/test.png', false) . '</a>',
+            ],
+            "Test image from another site should be replaced but link should not" => [
+                "content" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '"><img src="' .
+                    $this->getExternalTestFileUrl('/test.jpg', false) . '"></a>',
+                "outputregex" => '/UPDATE/',
+                "expectedcontent" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '"><img src="' .
+                    $this->getExternalTestFileUrl('/test.jpg', true) . '"></a>',
             ],
         ];
     }
@@ -110,7 +131,7 @@ class httpsreplace_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->expectOutputRegex($ouputregex);
 
-        $finder = new \tool_httpsreplace\url_finder();
+        $finder = new tool_httpreplace_url_finder_test();
 
         $generator = $this->getDataGenerator();
         $course = $generator->create_course((object) [
@@ -181,7 +202,7 @@ class httpsreplace_test extends \advanced_testcase {
     public function test_http_link_stats($content, $domain, $expectedcount) {
         $this->resetAfterTest();
 
-        $finder = new \tool_httpsreplace\url_finder();
+        $finder = new tool_httpreplace_url_finder_test();
 
         $generator = $this->getDataGenerator();
         $course = $generator->create_course((object) [
@@ -202,7 +223,7 @@ class httpsreplace_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->expectOutputRegex('/^$/');
 
-        $finder = new \tool_httpsreplace\url_finder();
+        $finder = new tool_httpreplace_url_finder_test();
 
         $generator = $this->getDataGenerator();
         $course = $generator->create_course((object) [
@@ -234,7 +255,7 @@ class httpsreplace_test extends \advanced_testcase {
         $CFG->wwwroot = preg_replace('/^https:/', 'http:', $CFG->wwwroot);
         $this->expectOutputRegex('/^$/');
 
-        $finder = new \tool_httpsreplace\url_finder();
+        $finder = new tool_httpreplace_url_finder_test();
 
         $generator = $this->getDataGenerator();
         $course = $generator->create_course((object) [
@@ -257,7 +278,7 @@ class httpsreplace_test extends \advanced_testcase {
 
         set_config('test_upgrade_http_links', '<img src="http://somesite/someimage.png" />');
 
-        $finder = new \tool_httpsreplace\url_finder();
+        $finder = new tool_httpreplace_url_finder_test();
         ob_start();
         $results = $finder->upgrade_http_links();
         $output = ob_get_contents();
@@ -283,11 +304,11 @@ class httpsreplace_test extends \advanced_testcase {
 
         set_config('renames', json_encode($renames), 'tool_httpsreplace');
 
-        $finder = new \tool_httpsreplace\url_finder();
+        $finder = new tool_httpreplace_url_finder_test();
 
         $generator = $this->getDataGenerator();
         $course = $generator->create_course((object) [
-            'summary' => '<script src="http://example.com/test.js">',
+            'summary' => '<script src="http://example.com/test.js"><img src="http://EXAMPLE.COM/someimage.png">',
         ]);
 
         $results = $finder->http_link_stats();
@@ -298,6 +319,95 @@ class httpsreplace_test extends \advanced_testcase {
         $summary = $DB->get_field('course', 'summary', ['id' => $course->id]);
         $this->assertContains('https://secure.example.com', $summary);
         $this->assertNotContains('http://example.com', $summary);
+        $this->assertEquals('<script src="https://secure.example.com/test.js">' .
+            '<img src="https://secure.example.com/someimage.png">', $summary);
     }
 
+    /**
+     * When there are many different pieces of contents from the same site, we should only run replace once
+     */
+    public function test_multiple() {
+        global $DB;
+        $this->resetAfterTest();
+        $original1 = '';
+        $expected1 = '';
+        $original2 = '';
+        $expected2 = '';
+        for ($i = 0; $i < 15; $i++) {
+            $original1 .= '<img src="http://example.com/image' . $i . '.png">';
+            $expected1 .= '<img src="https://example.com/image' . $i . '.png">';
+            $original2 .= '<img src="http://example.com/image' . ($i + 15 ) . '.png">';
+            $expected2 .= '<img src="https://example.com/image' . ($i + 15) . '.png">';
+        }
+        $finder = new tool_httpreplace_url_finder_test();
+
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course((object) ['summary' => $original1]);
+        $course2 = $generator->create_course((object) ['summary' => $original2]);
+
+        ob_start();
+        $finder->upgrade_http_links();
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        // Make sure everything is replaced.
+        $summary1 = $DB->get_field('course', 'summary', ['id' => $course1->id]);
+        $this->assertEquals($expected1, $summary1);
+        $summary2 = $DB->get_field('course', 'summary', ['id' => $course2->id]);
+        $this->assertEquals($expected2, $summary2);
+
+        // Make sure only one UPDATE statment was called.
+        $this->assertEquals(1, preg_match_all('/UPDATE/', $output));
+    }
+
+    /**
+     * Test the tool when the column name is a reserved word in SQL (in this case 'where')
+     */
+    public function test_reserved_words() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->expectOutputRegex('/UPDATE/');
+
+        // Create a table with a field that is a reserved SQL word.
+        $dbman = $DB->get_manager();
+        $table = new \xmldb_table('reserved_words_temp');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('where', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        // Insert a record with an <img> in this table and run tool.
+        $content = '<img src="http://example.com/image.png">';
+        $expectedcontent = '<img src="https://example.com/image.png">';
+        $columnamequoted = $dbman->generator->getEncQuoted('where');
+        $DB->execute("INSERT INTO {reserved_words_temp} ($columnamequoted) VALUES (?)", [$content]);
+
+        $finder = new tool_httpreplace_url_finder_test();
+        $finder->upgrade_http_links();
+
+        $record = $DB->get_record('reserved_words_temp', []);
+        $this->assertContains($expectedcontent, $record->where);
+
+        $dbman->drop_table($table);
+    }
+}
+
+/**
+ * Class tool_httpreplace_url_finder_test for testing replace tool without calling curl
+ *
+ * @package   tool_httpsreplace
+ * @copyright 2017 Marina Glancy
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class tool_httpreplace_url_finder_test extends \tool_httpsreplace\url_finder {
+    /**
+     * Check if url is available (check hardcoded for unittests)
+     *
+     * @param string $url
+     * @return bool
+     */
+    protected function check_domain_availability($url) {
+        return !preg_match('|\.unavailable/$|', $url);
+    }
 }
