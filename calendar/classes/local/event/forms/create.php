@@ -250,10 +250,13 @@ class create extends \moodleform {
         }
 
         if (isset($eventtypes['group'])) {
+            $options = ['limittoenrolled' => true];
             // Exclude courses without group.
-            $excludedcourses = array_diff(array_keys($eventtypes['course']), array_keys($eventtypes['groupcourses']));
+            if (isset($eventtypes['course']) && isset($eventtypes['groupcourses'])) {
+                $options['excludedcourses'] = array_diff(array_keys($eventtypes['course']),
+                    array_keys($eventtypes['groupcourses']));
+            }
 
-            $options = ['limittoenrolled' => true, 'exclude' => $excludedcourses];
             $mform->addElement('course', 'groupcourseid', get_string('course'), $options);
             $mform->hideIf('groupcourseid', 'eventtype', 'noteq', 'group');
 
