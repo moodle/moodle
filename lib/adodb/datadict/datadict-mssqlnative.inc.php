@@ -1,7 +1,7 @@
 <?php
 
 /**
-  @version   v5.20.7  20-Sep-2016
+  @version   v5.20.9  21-Dec-2016
   @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
   @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -146,19 +146,69 @@ class ADODB2_mssqlnative extends ADODB_DataDict {
 		return $sql;
 	}
 
-	/*
-	function AlterColumnSQL($tabname, $flds, $tableflds='', $tableoptions='')
+	function DefaultConstraintname($tabname, $colname)
+	{
+		$constraintname = false;
+		$rs = $this->connection->Execute(
+			"SELECT name FROM sys.default_constraints
+			WHERE object_name(parent_object_id) = '$tabname'
+			AND col_name(parent_object_id, parent_column_id) = '$colname'"
+		);
+		if ( is_object($rs) ) {
+			$row = $rs->FetchRow();
+			$constraintname = $row['name'];
+		}
+		return $constraintname;
+	}
+  
+	function AlterColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')
 	{
 		$tabname = $this->TableName ($tabname);
 		$sql = array();
-		list($lines,$pkey) = $this->_GenFields($flds);
-		foreach($lines as $v) {
-			$sql[] = "ALTER TABLE $tabname $this->alterCol $v";
-		}
 
+		list($lines,$pkey,$idxs) = $this->_GenFields($flds);
+		$alter = 'ALTER TABLE ' . $tabname . $this->alterCol . ' ';
+		foreach($lines as $v) {
+			$not_null = false;
+			if ($not_null = preg_match('/NOT NULL/i',$v)) {
+				$v = preg_replace('/NOT NULL/i','',$v);
+			}
+			if (preg_match('/^([^ ]+) .*DEFAULT (\'[^\']+\'|\"[^\"]+\"|[^ ]+)/',$v,$matches)) {
+				list(,$colname,$default) = $matches;
+				$v = preg_replace('/^' . preg_quote($colname) . '\s/', '', $v);
+				$t = trim(str_replace('DEFAULT '.$default,'',$v));
+				if ( $constraintname = $this->DefaultConstraintname($tabname,$colname) ) {
+					$sql[] = 'ALTER TABLE '.$tabname.' DROP CONSTRAINT '. $constraintname;
+				}
+				if ($not_null) {
+					$sql[] = $alter . $colname . ' ' . $t  . ' NOT NULL';
+				} else {
+					$sql[] = $alter . $colname . ' ' . $t ;
+				}
+				$sql[] = 'ALTER TABLE ' . $tabname
+					. ' ADD CONSTRAINT DF__' . $tabname . '__' .  $colname .  '__' . dechex(rand())
+					. ' DEFAULT ' . $default . ' FOR ' . $colname;
+			} else {
+				$colname = strtok($v," ");
+				if ( $constraintname = $this->DefaultConstraintname($tabname,$colname) ) {
+					$sql[] = 'ALTER TABLE '.$tabname.' DROP CONSTRAINT '. $constraintname;
+				}
+				if ($not_null) {
+					$sql[] = $alter . $v  . ' NOT NULL';
+				} else {
+					$sql[] = $alter . $v;
+				}
+			}
+		}
+		if (is_array($idxs)) {
+			foreach($idxs as $idx => $idxdef) {
+				$sql_idxs = $this->CreateIndexSql($idx, $tabname, $idxdef['cols'], $idxdef['opts']);
+				$sql = array_merge($sql, $sql_idxs);
+			}
+		}
 		return $sql;
 	}
-	*/
+
 
 	/**
 	 * Drop a column, syntax is ALTER TABLE table DROP COLUMN column,column
@@ -176,10 +226,12 @@ class ADODB2_mssqlnative extends ADODB_DataDict {
 		if (!is_array($flds))
 			$flds = explode(',',$flds);
 		$f = array();
-		$s = 'ALTER TABLE ' . $tabname . ' DROP COLUMN ';
+		$s = 'ALTER TABLE ' . $tabname;
 		foreach($flds as $v) {
-			//$f[] = "\n$this->dropCol ".$this->NameQuote($v);
-			$f[] = $this->NameQuote($v);
+			if ( $constraintname = $this->DefaultConstraintname($tabname,$v) ) {
+				$sql[] = 'ALTER TABLE ' . $tabname . ' DROP CONSTRAINT ' . $constraintname;
+			}
+			$f[] = ' DROP COLUMN ' . $this->NameQuote($v);
 		}
 		$s .= implode(', ',$f);
 		$sql[] = $s;

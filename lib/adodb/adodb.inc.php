@@ -14,7 +14,7 @@
 /**
 	\mainpage
 
-	@version   v5.20.7  20-Sep-2016
+	@version   v5.20.9  21-Dec-2016
 	@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 	@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 
@@ -233,7 +233,7 @@ if (!defined('_ADODB_LAYER')) {
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'v5.20.7  20-Sep-2016';
+		$ADODB_vers = 'v5.20.9  21-Dec-2016';
 
 		/**
 		 * Determines whether recordset->RecordCount() is used.
@@ -1164,8 +1164,7 @@ if (!defined('_ADODB_LAYER')) {
 
 				foreach($inputarr as $arr) {
 					$sql = ''; $i = 0;
-					//Use each() instead of foreach to reduce memory usage -mikefedyk
-					while(list(, $v) = each($arr)) {
+					foreach ($arr as $v) {
 						$sql .= $sqlarr[$i];
 						// from Ron Baldwin <ron.baldwin#sourceprose.com>
 						// Only quote string types
