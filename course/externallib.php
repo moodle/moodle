@@ -268,8 +268,9 @@ class core_course_external extends external_api {
 
                         if (!empty($cm->showdescription) or $cm->modname == 'label') {
                             // We want to use the external format. However from reading get_formatted_content(), $cm->content format is always FORMAT_HTML.
+                            $options = array('noclean' => true);
                             list($module['description'], $descriptionformat) = external_format_text($cm->content,
-                                FORMAT_HTML, $modcontext->id, $cm->modname, 'intro', $cm->id);
+                                FORMAT_HTML, $modcontext->id, $cm->modname, 'intro', $cm->id, $options);
                         }
 
                         //url of the module
