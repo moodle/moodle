@@ -231,7 +231,7 @@ class models_list implements \renderable, \templatable {
             }
 
             // Invalid analysables.
-            $analyser = $model->get_analyser();
+            $analyser = $model->get_analyser(['notimesplitting' => true]);
             if (!$analyser instanceof \core_analytics\local\analyser\sitewide) {
                 $urlparams['action'] = 'invalidanalysables';
                 $url = new \moodle_url('model.php', $urlparams);

@@ -76,7 +76,7 @@ class invalid_analysables implements \renderable, \templatable {
 
         $offset = $this->page * $this->perpage;
 
-        $analysables = $this->model->get_analyser(['evaluation' => true])->get_analysables();
+        $analysables = $this->model->get_analyser(['notimesplitting' => true])->get_analysables();
 
         $skipped = 0;
         $enoughresults = false;
