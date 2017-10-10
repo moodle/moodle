@@ -3135,6 +3135,7 @@ class core_course_external extends external_api {
      */
     public static function check_updates($courseid, $tocheck, $filter = array()) {
         global $CFG, $DB;
+        require_once($CFG->dirroot . "/course/lib.php");
 
         $params = self::validate_parameters(
             self::check_updates_parameters(),
