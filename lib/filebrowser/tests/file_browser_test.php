@@ -78,6 +78,10 @@ class file_browser_testcase extends advanced_testcase {
 
         $this->teacher = $this->getDataGenerator()->create_user();
         $this->teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+
+        // Make sure we're testing what should be the default capabilities.
+        assign_capability('moodle/restore:viewautomatedfilearea', CAP_ALLOW, $this->teacherrole->id, $coursecontext1);
+
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course1->id, $this->teacherrole->id);
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course2->id, $this->teacherrole->id);
 
@@ -175,9 +179,9 @@ class file_browser_testcase extends advanced_testcase {
         // Filearea "Course summary" has a child that is the actual image file.
         $this->assertEquals($this->course1filerecord, $child->get_children()[0]->get_params());
 
-        // There are six course-level file areas and no modules in this course.
+        // There are seven course-level file areas available to teachers with default caps and no modules in this course.
         $allchildren = $fileinfo->get_children();
-        $this->assertEquals(6, count($allchildren));
+        $this->assertEquals(7, count($allchildren));
         $modulechildren = array_filter($allchildren, function($a) {
             return $a instanceof file_info_context_module;
         });

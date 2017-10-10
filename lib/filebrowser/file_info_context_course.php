@@ -338,7 +338,9 @@ class file_info_context_course extends file_info {
             }
         }
 
-        $downloadable = has_capability('moodle/site:config', $this->context);
+        // Automated backup files are only downloadable if the user has both 'backup:downloadfile and 'restore:userinfo'.
+        $downloadable = has_capability('moodle/backup:downloadfile', $this->context) &&
+                        has_capability('moodle/restore:userinfo', $this->context);
         $uploadable   = false;
 
         $urlbase = $CFG->wwwroot.'/pluginfile.php';

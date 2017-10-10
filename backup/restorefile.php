@@ -79,6 +79,9 @@ if (!check_dir_exists($tmpdir, true, true)) {
 
 // choose the backup file from backup files tree
 if ($action == 'choosebackupfile') {
+    if ($filearea == 'automated') {
+        require_capability('moodle/restore:viewautomatedfilearea', $context);
+    }
     if ($fileinfo = $browser->get_file_info($filecontext, $component, $filearea, $itemid, $filepath, $filename)) {
         if (is_a($fileinfo, 'file_info_stored')) {
             // Use the contenthash rather than copying the file where possible,
