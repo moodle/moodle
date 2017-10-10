@@ -1,13 +1,14 @@
-VideoJS 5.18.4
---------------
+VideoJS 6.3.2
+-------------
 https://github.com/videojs/video.js
 
 Instructions to import VideoJS player into Moodle:
 
-1. Download the latest release from https://github.com/videojs/video.js/releases in a separate directory
-2. copy 'dist/video.js' into 'amd/src/video-lazy.js'
-3. copy 'dist/font/' into 'fonts/' folder
-4. copy 'dist/video-js.css' into 'styles.css'
+1. Download the latest release from https://github.com/videojs/video.js/releases
+   (do not choose "Source code")
+2. copy 'video.js' into 'amd/src/video-lazy.js'
+3. copy 'font/' into 'fonts/' folder
+4. copy 'video-js.css' into 'styles.css'
    Replace
      url("font/VideoJS.eot?#iefix")
    with
@@ -17,7 +18,7 @@ Instructions to import VideoJS player into Moodle:
    Add "Modifications of player made by Moodle" to the end of the styles file.
    Check status of:
    https://github.com/videojs/video.js/issues/2777
-6. copy 'LICENSE', 'dist/video-js.swf' and 'dist/lang/' into 'videojs/' subfolder
+6. copy 'LICENSE' and 'lang/' into 'videojs/' subfolder
 
 Import plugins:
 
@@ -26,3 +27,14 @@ Import plugins:
      define(['videojs']
    with
      define(['media_videojs/video-lazy']
+
+2. Download the latest release from https://github.com/videojs/videojs-flash
+   Run "npm install"
+   Copy 'dist/videojs-flash.js' into 'amd/src/videojs-flash-lazy.js'
+   In the beginning of the js file replace
+     define(['videojs']
+   with
+     define(['media_videojs/video-lazy']
+
+3. Download https://github.com/videojs/video-js-swf/blob/master/dist/video-js.swf
+   and place it into 'videojs/video-js.swf'

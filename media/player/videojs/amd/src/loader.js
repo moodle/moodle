@@ -69,6 +69,10 @@ define(['jquery', 'core/event'], function($, Event) {
                     // Add YouTube to the list of modules we require.
                     modules.push('media_videojs/Youtube-lazy');
                 }
+                if (config.techOrder && config.techOrder.indexOf('flash') !== -1) {
+                    // Add Flash to the list of modules we require.
+                    modules.push('media_videojs/videojs-flash-lazy');
+                }
                 require(modules, function(videojs) {
                     if (onload) {
                         onload(videojs);
