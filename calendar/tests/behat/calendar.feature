@@ -53,6 +53,7 @@ Feature: Perform basic calendar functionality
     Given I log in as "teacher1"
     And I create a calendar event with form data:
       | Type of event | course |
+      | Course        | Course 1 |
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I log out
@@ -70,8 +71,11 @@ Feature: Perform basic calendar functionality
   @javascript
   Scenario: Create a group event
     Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Calendar"
     And I create a calendar event with form data:
       | Type of event | group |
+      | Group         | Group 1 |
       | Event title | Really awesome event! |
       | Description | Come join this awesome event |
     And I log out
