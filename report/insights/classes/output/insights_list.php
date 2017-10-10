@@ -109,7 +109,7 @@ class insights_list implements \renderable, \templatable {
                         $preddata = array();
                         $preddata['predictiondisplayvalue'] = $this->model->get_target()->get_display_value($predictedvalue);
                         list($preddata['style'], $preddata['outcomeicon']) =
-                            insight::get_calculation_display($this->model->get_target(), $predictedvalue, $output);
+                            insight::get_calculation_display($this->model->get_target(), floatval($predictedvalue), $output);
                         $predictionvalues[$predictedvalue] = $preddata;
                     }
 
