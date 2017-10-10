@@ -2481,7 +2481,7 @@ function calendar_get_all_allowed_types() {
             if (!isset($types['course'])) {
                 $types['course'] = [$course];
             } else {
-                $types['course'][] = $course;
+                $types['course'][$course->id] = $course;
             }
         }
 
@@ -2489,7 +2489,7 @@ function calendar_get_all_allowed_types() {
             if (!isset($types['groupcourses'])) {
                 $types['groupcourses'] = [$course];
             } else {
-                $types['groupcourses'][] = $course;
+                $types['groupcourses'][$course->id] = $course;
             }
 
             if (!isset($types['group'])) {
