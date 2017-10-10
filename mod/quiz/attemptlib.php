@@ -2325,7 +2325,7 @@ class quiz_attempt {
      * This function should be used only when web services are being used.
      *
      * @param int $time time stamp
-     * @return boolean false if the field is not updated becase web services aren't being used.
+     * @return boolean false if the field is not updated because web services aren't being used.
      * @since Moodle 3.2
      */
     public function set_offline_modified_time($time) {
@@ -2333,7 +2333,8 @@ class quiz_attempt {
 
         // Update the timemodifiedoffline field only if web services are being used.
         if (WS_SERVER) {
-            $attemptobj->attempt->timemodifiedoffline = $time;
+            $this->attempt->timemodifiedoffline = $time;
+            return true;
         }
         return false;
     }
