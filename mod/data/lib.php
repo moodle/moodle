@@ -686,7 +686,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
  * @return string
  */
 function data_generate_tag_form($recordid = false, $selected = []) {
-    global $CFG, $DB, $PAGE;
+    global $CFG, $DB, $OUTPUT, $PAGE;
 
     $tagtypestoshow = \core_tag_area::get_showstandard('mod_data', 'data_records');
     $showstandard = ($tagtypestoshow != core_tag_tag::HIDE_STANDARD);
@@ -724,6 +724,12 @@ function data_generate_tag_form($recordid = false, $selected = []) {
         $str .= "<option value='$tag' $selected>$tag</option>";
     }
     $str .= '</select>';
+
+    if (has_capability('moodle/tag:manage', context_system::instance()) && $showstandard) {
+        $url = new moodle_url('/tag/manage.php', array('tc' => core_tag_area::get_collection('mod_data',
+            'data_records')));
+        $str .= ' ' . $OUTPUT->action_link($url, get_string('managestandardtags', 'tag'));
+    }
 
     $PAGE->requires->js_call_amd('core/form-autocomplete', 'enhance', $params = array(
             '#tags',
