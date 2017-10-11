@@ -3,9 +3,9 @@
  * This file is part of FPDI
  *
  * @package   FPDI
- * @copyright Copyright (c) 2015 Setasign - Jan Slabon (http://www.setasign.com)
+ * @copyright Copyright (c) 2017 Setasign - Jan Slabon (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
- * @version   1.6.1
+ * @version   1.6.2
  */
 
 if (!class_exists('fpdi_bridge')) {
