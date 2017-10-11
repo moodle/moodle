@@ -889,12 +889,7 @@ function lti_tool_configuration_from_content_item($typeid, $messagetype, $ltiver
         }
         if (isset($item->url)) {
             $url = new moodle_url($item->url);
-            // Assign item URL to securetoolurl or toolurl depending on its scheme.
-            if (strtolower($url->get_scheme()) === 'https') {
-                $config->securetoolurl = $url->out(false);
-            } else {
-                $config->toolurl = $url->out(false);
-            }
+            $config->toolurl = $url->out(false);
             $config->typeid = 0;
         } else {
             $config->typeid = $typeid;
