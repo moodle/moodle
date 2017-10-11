@@ -3355,7 +3355,7 @@ function calendar_get_filter_types() {
 
     return array_map(function($type) {
         return [
-            'type' => $type,
+            'eventtype' => $type,
             'name' => get_string("eventtype{$type}", "calendar"),
         ];
     }, $types);

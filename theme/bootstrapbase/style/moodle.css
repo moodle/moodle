@@ -5580,6 +5580,7 @@ img.iconsmall {
 }
 .path-calendar .calendartable {
   width: 100%;
+  table-layout: fixed;
 }
 .path-calendar .calendartable th,
 .path-calendar .calendartable td {
@@ -5636,10 +5637,45 @@ img.iconsmall {
 }
 .path-calendar .maincalendar .calendarmonth ul {
   margin: 0;
+  padding: 0;
 }
 .path-calendar .maincalendar .calendarmonth ul li {
   list-style-type: none;
-  margin-top: 4px;
+}
+.path-calendar .maincalendar .calendarmonth ul li > a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  display: inline-block;
+}
+.path-calendar .maincalendar .calendarmonth ul li .icon {
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+  padding: 0;
+  vertical-align: initial;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border-radius: 6px;
+  vertical-align: middle;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_category {
+  background-color: #d8bfd8;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_course {
+  background-color: #ffd3bd;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_site {
+  background-color: #d6f8cd;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_group {
+  background-color: #fee7ae;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_user {
+  background-color: #dce7ec;
 }
 .path-calendar .maincalendar .calendarmonth td {
   height: 5em;
@@ -5690,10 +5726,9 @@ img.iconsmall {
 }
 .path-calendar .maincalendar .calendartable td,
 .path-calendar .maincalendar .calendartable li {
-  padding: 5px;
+  padding: 0 4px 4px 4px;
 }
 .path-calendar .maincalendar .calendartable li {
-  padding-left: 10px;
   text-align: left;
 }
 .path-calendar .maincalendar .header {
@@ -5835,10 +5870,14 @@ img.iconsmall {
   margin-bottom: 0.2em;
 }
 .block .calendar_filters li span img {
+  margin: 0 0.25em;
+}
+.block .calendar_filters li span .icon {
   padding: 0 0.2em;
 }
-.block .calendar_filters .eventname {
-  padding-left: 0.2em;
+.block .calendar_filters li .icon {
+  padding: 0;
+  margin-left: 0.25em;
 }
 .block .content h3.eventskey {
   margin-top: 0.5em;
