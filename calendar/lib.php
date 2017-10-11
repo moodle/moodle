@@ -3082,9 +3082,14 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         } else {
             $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
         }
-
+        $lookahead = get_user_preferences('calendar_lookahead', $defaultlookahead);
+        $defaultmaxevents = CALENDAR_DEFAULT_UPCOMING_MAXEVENTS;
+        if (isset($CFG->calendar_maxevents)) {
+            $defaultmaxevents = intval($CFG->calendar_maxevents);
+        }
+        $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
         $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], $date['mday'], $date['hours']);
-        $tend = usergetmidnight($tstart + DAYSECS * $defaultlookahead + 3 * HOURSECS) - 1;
+        $tend = usergetmidnight($tstart + DAYSECS * $lookahead + 3 * HOURSECS) - 1;
     } else {
         $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], 1);
         $monthdays = $type->get_num_days_in_month($date['year'], $date['mon']);
@@ -3117,6 +3122,14 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         return $param;
     }, [$calendar->users, $calendar->groups, $calendar->courses, $calendar->categories]);
 
+    // We need to make sure user calendar preferences are respected.
+    // If max upcoming events is not set then use default value of 40 events.
+    if (isset($maxevents)) {
+        $limit = $maxevents;
+    } else {
+        $limit = 40;
+    }
+
     $events = \core_calendar\local\api::get_events(
         $tstart,
         $tend,
@@ -3124,7 +3137,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         null,
         null,
         null,
-        40,
+        $limit,
         null,
         $userparam,
         $groupparam,
