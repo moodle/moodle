@@ -73,6 +73,7 @@ foreach ($rs as $user) {
     echo "Redeleting user $user->id: $user->username ($user->email)\n";
     delete_user($user);
 }
+$rs->close();
 
 cli_heading('Deleting all leftovers');
 

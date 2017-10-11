@@ -360,6 +360,7 @@ class manager {
             }
             $existingcalculations[$calculation->indicator][$calculation->sampleid] = $calculation->value;
         }
+        $calculations->close();
         return $existingcalculations;
     }
 

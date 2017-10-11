@@ -902,15 +902,15 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->send_message($sender3, $recipient, 'Notification', 1);
 
         core_message_external::mark_all_notifications_as_read($recipient->id, $sender1->id);
-        $readnotifications = $DB->get_recordset('message_read', ['useridto' => $recipient->id]);
-        $unreadnotifications = $DB->get_recordset('message', ['useridto' => $recipient->id]);
+        $readnotifications = $DB->get_records('message_read', ['useridto' => $recipient->id]);
+        $unreadnotifications = $DB->get_records('message', ['useridto' => $recipient->id]);
 
         $this->assertCount(2, $readnotifications);
         $this->assertCount(4, $unreadnotifications);
 
         core_message_external::mark_all_notifications_as_read($recipient->id, 0);
-        $readnotifications = $DB->get_recordset('message_read', ['useridto' => $recipient->id]);
-        $unreadnotifications = $DB->get_recordset('message', ['useridto' => $recipient->id]);
+        $readnotifications = $DB->get_records('message_read', ['useridto' => $recipient->id]);
+        $unreadnotifications = $DB->get_records('message', ['useridto' => $recipient->id]);
 
         $this->assertCount(6, $readnotifications);
         $this->assertCount(0, $unreadnotifications);

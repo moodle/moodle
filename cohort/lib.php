@@ -507,6 +507,7 @@ function cohort_get_invisible_contexts() {
             $excludedcontexts[] = $ctx->id;
         }
     }
+    $records->close();
     return $excludedcontexts;
 }
 

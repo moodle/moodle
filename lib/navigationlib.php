@@ -3258,6 +3258,7 @@ class global_navigation_for_ajax extends global_navigation {
                 foreach ($categories as $category){
                     $coursesubcategories = array_merge($coursesubcategories, explode('/', trim($category->path, "/")));
                 }
+                $categories->close();
                 $coursesubcategories = array_unique($coursesubcategories);
 
                 // Only add a subcategory if it is part of the path to user's course and

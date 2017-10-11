@@ -1240,7 +1240,7 @@ function wiki_delete_page_versions($deleteversions, $context = null) {
             list($insql, $param) = $DB->get_in_or_equal($versions);
             $insql .= ' AND pageid = ?';
             array_push($param, $params['pageid']);
-            $oldversions = $DB->get_recordset_select('wiki_versions', 'version ' . $insql, $param);
+            $oldversions = $DB->get_records_select('wiki_versions', 'version ' . $insql, $param);
             $DB->delete_records_select('wiki_versions', 'version ' . $insql, $param);
         }
         foreach ($oldversions as $version) {
