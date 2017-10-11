@@ -107,6 +107,7 @@ class current_company_course_selector extends company_course_selector_base {
         $options['file']    = 'blocks/iomad_company_admin/lib/course_selectors.php';
         $options['departmentid'] = $this->departmentid;
         $options['licenses'] = $this->licenses;
+        $options['shared'] = $this->shared;
         return $options;
     }
 
@@ -386,6 +387,8 @@ class potential_company_course_selector extends company_course_selector_base {
         $options['companyid'] = $this->companyid;
         $options['file']    = 'blocks/iomad_company_admin/lib/course_selectors.php';
         $options['departmentid'] = $this->departmentid;
+        $options['partialshared'] = $this->partialshared;
+        $options['shared'] = $this->shared;
         return $options;
     }
 
@@ -492,6 +495,7 @@ class potential_subdepartment_course_selector extends company_course_selector_ba
         $options['companyid'] = $this->companyid;
         $options['file']    = 'blocks/iomad_company_admin/lib/course_selectors.php';
         $options['departmentid'] = $this->departmentid;
+        $options['showopenshared'] = $this->showopenshared;
         $options['license'] = $this->license;
         return $options;
     }
@@ -725,6 +729,8 @@ class potential_user_course_selector extends course_selector_base {
         $options['companyid'] = $this->companyid;
         $options['file']    = 'blocks/iomad_company_admin/lib/course_selectors.php';
         $options['user'] = $this->user;
+        $options['licenses'] = $this->licenses;
+        $options['shared'] = $this->shared;
         return $options;
     }
 

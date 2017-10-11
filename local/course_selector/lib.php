@@ -459,11 +459,7 @@ abstract class course_selector_base {
             foreach ($this->extrafields as $field) {
                 $conditions[] = $u . $field;
             }
-            if ($this->searchanywhere) {
-                $searchparam = '%' . $search . '%';
-            } else {
-                $searchparam = $search . '%';
-            }
+            $searchparam = '%' . $search . '%';
             $i = 0;
             foreach ($conditions as $key => $condition) {
                 $conditions[$key] = $DB->sql_like($condition, ":con{$i}00", false, false);
