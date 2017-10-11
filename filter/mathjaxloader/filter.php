@@ -36,55 +36,39 @@ class filter_mathjaxloader extends moodle_text_filter {
      * @return string The MathJax language code.
      */
     public function map_language_code($moodlelangcode) {
-        $mathjaxlangcodes = array('br',
-                                  'cdo',
-                                  'cs',
-                                  'da',
-                                  'de',
-                                  'en',
-                                  'eo',
-                                  'es',
-                                  'fa',
-                                  'fi',
-                                  'fr',
-                                  'gl',
-                                  'he',
-                                  'ia',
-                                  'it',
-                                  'ja',
-                                  'ko',
-                                  'lb',
-                                  'mk',
-                                  'nl',
-                                  'oc',
-                                  'pl',
-                                  'pt',
-                                  'pt-br',
-                                  'ru',
-                                  'sl',
-                                  'sv',
-                                  'tr',
-                                  'uk',
-                                  'zh-hans');
-        $exceptions = array('cz' => 'cs');
 
-        // First see if this is an exception.
-        if (isset($exceptions[$moodlelangcode])) {
-            $moodlelangcode = $exceptions[$moodlelangcode];
+        // List of language codes found in the MathJax/localization/ directory.
+        $mathjaxlangcodes = [
+            'ar', 'ast', 'bcc', 'bg', 'br', 'ca', 'cdo', 'ce', 'cs', 'cy', 'da', 'de', 'diq', 'en', 'eo', 'es', 'fa',
+            'fi', 'fr', 'gl', 'he', 'ia', 'it', 'ja', 'kn', 'ko', 'lb', 'lki', 'lt', 'mk', 'nl', 'oc', 'pl', 'pt',
+            'pt-br', 'qqq', 'ru', 'scn', 'sco', 'sk', 'sl', 'sv', 'th', 'tr', 'uk', 'vi', 'zh-hans', 'zh-hant'
+        ];
+
+        // List of explicit mappings and known exceptions (moodle => mathjax).
+        $explicit = [
+            'cz' => 'cs',
+            'pt_br' => 'pt-br',
+            'zh_tw' => 'zh-hant',
+            'zh_cn' => 'zh-hans',
+        ];
+
+        // If defined, explicit mapping takes the highest precedence.
+        if (isset($explicit[$moodlelangcode])) {
+            return $explicit[$moodlelangcode];
         }
 
-        // Now look for an exact lang string match.
+        // If there is exact match, it will be probably right.
         if (in_array($moodlelangcode, $mathjaxlangcodes)) {
             return $moodlelangcode;
         }
 
-        // Now try shortening the moodle lang string.
-        $moodlelangcode = preg_replace('/-.*/', '', $moodlelangcode);
-        // Look for a match on the shortened string.
-        if (in_array($moodlelangcode, $mathjaxlangcodes)) {
-            return $moodlelangcode;
+        // Finally try to find the best matching mathjax pack.
+        $parts = explode('_', $moodlelangcode, 2);
+        if (in_array($parts[0], $mathjaxlangcodes)) {
+            return $parts[0];
         }
-        // All failed - use english.
+
+        // No more guessing, use English.
         return 'en';
     }
 

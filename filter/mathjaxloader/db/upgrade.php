@@ -131,5 +131,14 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017091900, 'filter', 'mathjaxloader');
     }
 
+    if ($oldversion < 2017100900) {
+        // Update the MathJax CDN URL to the new default if the site has been using default value.
+        $httpsurl = get_config('filter_mathjaxloader', 'httpsurl');
+        if ($httpsurl === 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js') {
+            set_config('httpsurl', 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js', 'filter_mathjaxloader');
+        }
+        upgrade_plugin_savepoint(true, 2017100900, 'filter', 'mathjaxloader');
+    }
+
     return true;
 }
