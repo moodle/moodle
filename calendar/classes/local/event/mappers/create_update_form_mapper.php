@@ -88,20 +88,7 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
     public function from_data_to_event_properties(\stdClass $data) {
         $properties = clone($data);
 
-        // Undo the form definition work around to allow us to have two different
-        // course selectors present depending on which event type the user selects.
-        if ($data->eventtype == 'course') {
-            // Default course id if none is set.
-            if (!isset($properties->courseid)) {
-                if ($properties->eventtype === 'site') {
-                    $properties->courseid = SITEID;
-                } else {
-                    $properties->courseid = 0;
-                }
-            } else {
-                $properties->courseid = $data->courseid;
-            }
-        } else if ($data->eventtype == 'group') {
+        if ($data->eventtype == 'group') {
             if (isset($data->groupcourseid)) {
                 $properties->courseid = $data->groupcourseid;
                 unset($properties->groupcourseid);
@@ -112,6 +99,17 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
             if (isset($data->groupid)) {
                 list($courseid, $groupid) = explode('-', $data->groupid);
                 $properties->groupid = $groupid;
+            }
+        } else {
+            // Default course id if none is set.
+            if (empty($properties->courseid)) {
+                if ($properties->eventtype == 'site') {
+                    $properties->courseid = SITEID;
+                } else {
+                    $properties->courseid = 0;
+                }
+            } else {
+                $properties->courseid = $data->courseid;
             }
         }
 
