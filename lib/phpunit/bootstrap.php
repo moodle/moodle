@@ -186,7 +186,7 @@ $allowed = array('wwwroot', 'dataroot', 'dirroot', 'admin', 'directorypermission
                  'dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'prefix', 'dboptions',
                  'proxyhost', 'proxyport', 'proxytype', 'proxyuser', 'proxypassword', 'proxybypass', // keep proxy settings from config.php
                  'altcacheconfigpath', 'pathtogs', 'pathtodu', 'aspellpath', 'pathtodot',
-                 'pathtounoconv', 'alternative_file_system_class'
+                 'pathtounoconv', 'alternative_file_system_class', 'pathtopython'
                 );
 $productioncfg = (array)$CFG;
 $CFG = new stdClass();
