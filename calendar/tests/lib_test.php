@@ -499,7 +499,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $types = calendar_get_all_allowed_types();
         $typecourses = $types['course'];
         $this->assertCount(1, $typecourses);
-        $this->assertEquals($course1->id, $typecourses[0]->id);
+        $this->assertEquals($course1->id, $typecourses[$course1->id]->id);
 
         assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $context2, true);
 
@@ -543,7 +543,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $types = calendar_get_all_allowed_types();
         $typecourses = $types['course'];
         $this->assertCount(1, $typecourses);
-        $this->assertEquals($course->id, $typecourses[0]->id);
+        $this->assertEquals($course->id, $typecourses[$course->id]->id);
         $this->assertArrayNotHasKey('group', $types);
         $this->assertArrayNotHasKey('groupcourses', $types);
     }
@@ -570,7 +570,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $types = calendar_get_all_allowed_types();
         $typecourses = $types['course'];
         $this->assertCount(1, $typecourses);
-        $this->assertEquals($course->id, $typecourses[0]->id);
+        $this->assertEquals($course->id, $typecourses[$course->id]->id);
         $this->assertArrayNotHasKey('group', $types);
         $this->assertArrayNotHasKey('groupcourses', $types);
     }
@@ -622,7 +622,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($course1->id, $typecourses[0]->id);
         $this->assertEquals($course2->id, $typecourses[1]->id);
         $this->assertCount(1, $typegroupcourses);
-        $this->assertEquals($course1->id, $typegroupcourses[0]->id);
+        $this->assertEquals($course1->id, $typegroupcourses[$course1->id]->id);
         $this->assertCount(2, $typegroups);
         $this->assertEquals($group1->id, $typegroups[0]->id);
         $this->assertEquals($group2->id, $typegroups[1]->id);
@@ -667,7 +667,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         usort($typegroups, $idascfunc);
 
         $this->assertCount(1, $typegroupcourses);
-        $this->assertEquals($course->id, $typegroupcourses[0]->id);
+        $this->assertEquals($course->id, $typegroupcourses[$course->id]->id);
         $this->assertCount(2, $typegroups);
         $this->assertEquals($group1->id, $typegroups[0]->id);
         $this->assertEquals($group2->id, $typegroups[1]->id);

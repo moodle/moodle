@@ -253,7 +253,7 @@ class create extends \moodleform {
             $options = ['limittoenrolled' => true];
             // Exclude courses without group.
             if (isset($eventtypes['course']) && isset($eventtypes['groupcourses'])) {
-                $options['excludedcourses'] = array_diff(array_keys($eventtypes['course']),
+                $options['exclude'] = array_diff(array_keys($eventtypes['course']),
                     array_keys($eventtypes['groupcourses']));
             }
 
