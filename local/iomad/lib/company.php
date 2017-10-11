@@ -2219,6 +2219,11 @@ class company {
     public static function check_canedit_user($companyid, $userid) {
         global $DB, $USER;
 
+        // Can't edit an admin user here.
+        if (is_siteadmin($userid)) {
+            return false;
+        }
+
         $context = context_system::instance();
         // Get my companyid.
         $mycompanyid = iomad::get_my_companyid($context);
