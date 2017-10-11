@@ -489,6 +489,11 @@ function lti_get_lti_types_from_proxy_id($toolproxyid) {
 function lti_grade_item_update($basiclti, $grades = null) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->dirroot.'/mod/lti/servicelib.php');
+
+    if (!lti_accepts_grades($basiclti)) {
+        return 0;
+    }
 
     $params = array('itemname' => $basiclti->name, 'idnumber' => $basiclti->cmidnumber);
 
