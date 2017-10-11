@@ -216,6 +216,10 @@ if ( $allentries ) {
 
         glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook, 1, $displayformat, true);
     }
+    // The all entries value may be a recordset or an array.
+    if ($allentries instanceof moodle_recordset) {
+        $allentries->close();
+    }
 }
 
 echo $OUTPUT->footer();

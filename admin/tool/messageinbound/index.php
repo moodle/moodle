@@ -40,6 +40,7 @@ if (empty($classname)) {
     foreach ($records as $record) {
         $instances[] = \core\message\inbound\manager::get_handler($record->classname);
     }
+    $records->close();
 
     echo $OUTPUT->header();
     echo $renderer->messageinbound_handlers_table($instances);

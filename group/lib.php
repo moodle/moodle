@@ -618,6 +618,7 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
     foreach ($results as $result) {
         groups_unassign_grouping($result->groupingid, $result->groupid, false);
     }
+    $results->close();
 
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
@@ -646,6 +647,7 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     foreach ($groups as $group) {
         groups_delete_group($group);
     }
+    $groups->close();
 
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
@@ -676,6 +678,7 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
     foreach ($groupings as $grouping) {
         groups_delete_grouping($grouping);
     }
+    $groupings->close();
 
     // Invalidate the grouping cache for the course.
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));

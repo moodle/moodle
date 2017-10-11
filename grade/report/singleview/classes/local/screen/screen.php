@@ -419,6 +419,7 @@ abstract class screen {
         while ($user = $gui->next_user()) {
             $users[$user->user->id] = $user->user;
         }
+        $gui->close();
         return $users;
     }
 
