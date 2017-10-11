@@ -1886,6 +1886,14 @@ function mod_assign_core_calendar_provide_event_action(calendar_event $event,
             return null;
         }
 
+        $participant = $assign->get_participant($USER->id);
+
+        if (!$participant) {
+            // If the user is not a participant in the assignment then they have
+            // no action to take. This will filter out the events for teachers.
+            return null;
+        }
+
         // The user has not yet submitted anything. Show the addsubmission link.
         $name = get_string('addsubmission', 'assign');
         $url = new \moodle_url('/mod/assign/view.php', [

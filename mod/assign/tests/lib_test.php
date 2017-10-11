@@ -486,12 +486,8 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         // Decorate action event.
         $actionevent = mod_assign_core_calendar_provide_event_action($event, $factory);
 
-        // Confirm the event was decorated.
-        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
-        $this->assertEquals(get_string('addsubmission', 'assign'), $actionevent->get_name());
-        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
-        $this->assertEquals(1, $actionevent->get_item_count());
-        $this->assertFalse($actionevent->is_actionable());
+        // The teacher should not have an action for a due date event.
+        $this->assertNull($actionevent);
     }
 
     public function test_assign_core_calendar_provide_event_action_duedate_as_student() {

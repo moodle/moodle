@@ -2036,9 +2036,13 @@ class assign {
      * @return null|stdClass user record
      */
     public function get_participant($userid) {
-        global $DB;
+        global $DB, $USER;
 
-        $participant = $DB->get_record('user', array('id' => $userid));
+        if ($userid == $USER->id) {
+            $participant = clone ($USER);
+        } else {
+            $participant = $DB->get_record('user', array('id' => $userid));
+        }
         if (!$participant) {
             return null;
         }
@@ -5719,11 +5723,15 @@ class assign {
             return false;
         }
 
-        if ($userid == $graderid &&
-                $this->submissions_open($userid) &&
-                has_capability('mod/assign:submit', $this->context, $graderid)) {
-            // User can edit their own submission.
-            return true;
+        if ($userid == $graderid) {
+            if ($this->submissions_open($userid) &&
+                    has_capability('mod/assign:submit', $this->context, $graderid)) {
+                // User can edit their own submission.
+                return true;
+            } else {
+                // We need to return here because editothersubmission should never apply to a users own submission.
+                return false;
+            }
         }
 
         if (!has_capability('mod/assign:editothersubmission', $this->context, $graderid)) {
