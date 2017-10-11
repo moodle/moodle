@@ -72,7 +72,6 @@ Feature: Perform basic calendar functionality
   Scenario: Create a group event
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I follow "Calendar"
     And I create a calendar event with form data:
       | Type of event | group |
       | Group         | Group 1 |
