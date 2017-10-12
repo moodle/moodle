@@ -183,11 +183,22 @@ abstract class base_moodleform extends moodleform {
     public function add_settings(array $settingstasks) {
         global $OUTPUT;
 
+        // Determine highest setting level, which is displayed in this stage. This is relevant for considering only
+        // locks of dependency settings for parent settings, which are not displayed in this stage.
+        $highestlevel = backup_setting::ACTIVITY_LEVEL;
+        foreach ($settingstasks as $st) {
+            list($setting, $task) = $st;
+            if ($setting->get_level() < $highestlevel) {
+                $highestlevel = $setting->get_level();
+            }
+        }
+
         $defaults = array();
         foreach ($settingstasks as $st) {
             list($setting, $task) = $st;
             // If the setting cant be changed or isn't visible then add it as a fixed setting.
-            if (!$setting->get_ui()->is_changeable() || $setting->get_visibility() != backup_setting::VISIBLE) {
+            if (!$setting->get_ui()->is_changeable($highestlevel) ||
+                $setting->get_visibility() != backup_setting::VISIBLE) {
                 $this->add_fixed_setting($setting, $task);
                 continue;
             }
