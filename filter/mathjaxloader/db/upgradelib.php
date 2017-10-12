@@ -64,3 +64,32 @@ function filter_mathjaxloader_upgrade_cdn_cloudflare($mathjaxurl, $httponly = fa
 
     return $newcdnurl;
 }
+
+/**
+ * Compares two values of the 'mathjaxconfig' config option.
+ *
+ * This is used during the upgrade to see if the two text values of the 'mathjaxconfig' config option should be
+ * considered equal of different. The strings are normalized so that EOL characters and whitespace is not significant.
+ *
+ * @param string $val1 value
+ * @param string $val2 value
+ * @return bool true if the texts should be considered equals, false otherwise
+ */
+function filter_mathjaxloader_upgrade_mathjaxconfig_equal($val1, $val2) {
+
+    $val1lines = preg_split("/[\r\n]/", $val1);
+    $val2lines = preg_split("/[\r\n]/", $val2);
+
+    $val1lines = array_map('trim', $val1lines);
+    $val2lines = array_map('trim', $val2lines);
+
+    $val1lines = array_filter($val1lines, function($value) {
+        return $value !== '';
+    });
+
+    $val2lines = array_filter($val2lines, function($value) {
+        return $value !== '';
+    });
+
+    return (implode(' ', $val1lines) === implode(' ', $val2lines));
+}

@@ -37,7 +37,10 @@ require_once($CFG->dirroot . '/filter/mathjaxloader/db/upgradelib.php');
  */
 class filter_mathjax_upgradelib_testcase extends advanced_testcase {
 
-    public function test_upgradelib() {
+    /**
+     * Tests for {@link filter_mathjaxloader_upgrade_cdn_cloudflare()} function.
+     */
+    public function test_filter_mathjaxloader_upgrade_cdn_cloudflare() {
         $current = 'https://cdn.mathjax.org/mathjax/2.7-latest/MathJax.js?...';
         $expected = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?...';
         $this->assertEquals($expected, filter_mathjaxloader_upgrade_cdn_cloudflare($current));
@@ -86,6 +89,36 @@ class filter_mathjax_upgradelib_testcase extends advanced_testcase {
         $current = 'https://cdn.mathjax.org/mathjax/2.7-latest';
         $expected = 'https://cdn.mathjax.org/mathjax/2.7-latest';
         $this->assertEquals($expected, filter_mathjaxloader_upgrade_cdn_cloudflare($current));
+    }
+
+    /**
+     * Tests for {@link filter_mathjaxloader_upgrade_mathjaxconfig_equal()} function.
+     */
+    public function test_filter_mathjaxloader_upgrade_mathjaxconfig_equal() {
+
+        $val1 = '';
+        $val2 = "\n \r \r\n \t    ";
+        $this->assertTrue(filter_mathjaxloader_upgrade_mathjaxconfig_equal($val1, $val2));
+
+        $val1 = '0';
+        $val2 = '';
+        $this->assertFalse(filter_mathjaxloader_upgrade_mathjaxconfig_equal($val1, $val2));
+
+        $val1 = 'Hello Unittest, my old friend    '.PHP_EOL."I've come to play with you again  \r\n\r\n  \t ";
+        $val2 = '   Hello Unittest, my old friend '."\r\n\r\n"."  I've come to play with you again \n\n\n  ";
+        $this->assertTrue(filter_mathjaxloader_upgrade_mathjaxconfig_equal($val1, $val2));
+
+        $val1 = "\n".'MathJax.Hub.Config({'."\n".'    config: ["Accessible.js", "Safe.js"]'."\n".'});'."\n";
+        $val2 = 'MathJax.Hub.Config({'."\r".'config: ["Accessible.js", "Safe.js"]'."\r".'});';
+        $this->assertTrue(filter_mathjaxloader_upgrade_mathjaxconfig_equal($val1, $val2));
+
+        $val1 = "\r\n\t".'MathJax.Hub.Config({'."\r\n\t".' config: ["Accessible.js", "Safe.js"]'."\r\n".'});  '."\r\n\r\n";
+        $val2 = 'MathJax.Hub.Config({'."\n".'config: ["Accessible.js", "Safe.js"]'."\r".'});';
+        $this->assertTrue(filter_mathjaxloader_upgrade_mathjaxconfig_equal($val1, $val2));
+
+        $val2 = 'MathJax.Hub.Config({'."\n".'config: ["Significant.js"]'."\n".'});';
+        $val2 = 'MathJax.Hub.Config({'."\n".'config: ["Signi ficant.js", "Safe.js"]'."\n".'});';
+        $this->assertFalse(filter_mathjaxloader_upgrade_mathjaxconfig_equal($val1, $val2));
     }
 }
 

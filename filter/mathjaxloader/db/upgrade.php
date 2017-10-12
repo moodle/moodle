@@ -140,5 +140,34 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017100900, 'filter', 'mathjaxloader');
     }
 
+    if ($oldversion < 2017101200) {
+        // Update default MathJax configuration so that it does not use the Accessible.js config (causes JS errors due to upstream bug).
+        $previousdefault = '
+MathJax.Hub.Config({
+    config: ["Accessible.js", "Safe.js"],
+    errorSettings: { message: ["!"] },
+    skipStartupTypeset: true,
+    messageStyle: "none"
+});
+';
+
+        $newdefault = '
+MathJax.Hub.Config({
+    config: ["default.js", "MMLorHTML.js", "Safe.js"],
+    errorSettings: { message: ["!"] },
+    skipStartupTypeset: true,
+    messageStyle: "none"
+});
+';
+
+        $mathjaxconfig = get_config('filter_mathjaxloader', 'mathjaxconfig');
+
+        if (empty($mathjaxconfig) || filter_mathjaxloader_upgrade_mathjaxconfig_equal($mathjaxconfig, $previousdefault)) {
+            set_config('mathjaxconfig', $newdefault, 'filter_mathjaxloader');
+        }
+
+        upgrade_plugin_savepoint(true, 2017101200, 'filter', 'mathjaxloader');
+    }
+
     return true;
 }
