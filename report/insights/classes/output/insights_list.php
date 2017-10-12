@@ -95,17 +95,39 @@ class insights_list implements \renderable, \templatable {
         if ($this->model->uses_insights()) {
             $predictionsdata = $this->model->get_predictions($this->context, true, $this->page, $this->perpage);
 
-            $data->insights = array();
+            $data->predictions = array();
+            $predictionvalues = array();
+            $insights = array();
             if ($predictionsdata) {
                 list($total, $predictions) = $predictionsdata;
 
                 foreach ($predictions as $prediction) {
+                    $predictedvalue = $prediction->get_prediction_data()->prediction;
+
+                    // Only need to fill this data once.
+                    if (!isset($predictionvalues[$predictedvalue])) {
+                        $preddata = array();
+                        $preddata['predictiondisplayvalue'] = $this->model->get_target()->get_display_value($predictedvalue);
+                        list($preddata['style'], $preddata['outcomeicon']) =
+                            insight::get_calculation_display($this->model->get_target(), $predictedvalue, $output);
+                        $predictionvalues[$predictedvalue] = $preddata;
+                    }
+
                     $insightrenderable = new \report_insights\output\insight($prediction, $this->model, true);
-                    $data->insights[] = $insightrenderable->export_for_template($output);
+                    $insights[$predictedvalue][] = $insightrenderable->export_for_template($output);
+                }
+
+                // Ok, now we have all the data we want, put it into a format that mustache can handle.
+                foreach ($predictionvalues as $key => $prediction) {
+                    if (isset($insights[$key])) {
+                        $prediction['insights'] = $insights[$key];
+                    }
+
+                    $data->predictions[] = $prediction;
                 }
             }
 
-            if (empty($data->insights) && $this->page == 0) {
+            if (empty($insights) && $this->page == 0) {
                 if ($this->model->any_prediction_obtained()) {
                     $data->noinsights = get_string('noinsights', 'analytics');
                 } else {

@@ -31,6 +31,8 @@
     Example context (json):
     {
         "insightname": "Best insight ever",
+        "timecreated": "Thursday, 5 October 2017, 4:16 PM",
+        "timerange": "Monday, 4 September 2017, 6:00 PM to Thursday, 5 October 2017, 12:00 AM",
         "sampleimage": "<a href=\"#\">Link</a>",
         "sampledescription": "Sample description",
         "style": "success",
@@ -73,11 +75,18 @@
 
 <h2 class="m-b-2">{{#str}}insightprediction, report_insights, {{insightname}} {{/str}}</h2>
 <table class="generaltable insights-list">
-    <caption>{{#str}}insight, report_insights{{/str}}</caption>
+    <caption>
+            {{#str}}prediction, report_insights{{/str}}:
+            <span class="{{#style}}table-{{style}}{{/style}}">
+                {{#outcomeicon}}
+                    {{> core/pix_icon}}
+                {{/outcomeicon}}
+                {{predictiondisplayvalue}}
+            </span>
+        </caption>
     <thead>
         <tr>
-            <th scope="col" class="col-sm-6">{{#str}}name{{/str}}</th>
-            <th scope="col" class="col-sm-4">{{#str}}prediction, report_insights{{/str}}</th>
+            <th scope="col" class="col-sm-10">{{#str}}name{{/str}}</th>
             <th scope="col" class="col-sm-2">{{#str}}actions{{/str}}</th>
         </tr>
     </thead>
@@ -86,8 +95,23 @@
     </tbody>
 </table>
 
-<table class="generaltable prediction-calculations">
+<table class="generaltable prediction-timedetails">
     <caption>{{#str}}predictiondetails, report_insights{{/str}}</caption>
+    <tbody>
+        <tr>
+            <td scope="col" class="col-sm-3">{{#str}}timecreated, report_insights{{/str}}</td>
+            <td scope="col" class="col-sm-9">{{timecreated}}</td>
+        </tr>
+        {{#timerange}}
+            <tr>
+                <td scope="col" class="col-sm-3">{{#str}}timerange, report_insights{{/str}}</td>
+                <td scope="col" class="col-sm-9">{{.}}</td>
+            </tr>
+        {{/timerange}}
+    </tbody>
+</table>
+<table class="generaltable prediction-calculations">
+    <caption class="accesshide">{{#str}}predictioncalculations, report_insights{{/str}}</caption>
     <thead>
         <tr>
             <th scope="col" class="col-sm-8">{{#str}}indicator, report_insights{{/str}}</th>
@@ -99,7 +123,7 @@
         <tr>
             <td class="{{#style}}table-{{style}}{{/style}} col-sm-8">{{name}}</td>
             <td class="{{#style}}table-{{style}}{{/style}} col-sm-4">{{#outcomeicon}}{{> core/pix_icon}}{{/outcomeicon}} {{displayvalue}}</td>
-        </td>
+        </tr>
     {{/calculations}}
     </tbody>
 </table>
