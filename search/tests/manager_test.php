@@ -411,6 +411,7 @@ class search_manager_testcase extends advanced_testcase {
         $buffer->reset_buffer();
         $this->assertNotFalse(strpos($log, "area: Forum - posts\n  Processed 2 "));
         $this->assertTrue($result->complete);
+    }
 
     /**
      * Adding this test here as get_areas_user_accesses process is the same, results just depend on the context level.
