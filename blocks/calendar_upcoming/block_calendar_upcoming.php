@@ -64,10 +64,11 @@ class block_calendar_upcoming extends block_base {
         $calendar->set_sources($course, $courses);
 
         list($data, $template) = calendar_get_view($calendar, 'upcoming_mini');
-        $this->content->text .= $renderer->render_from_template($template, $data);
 
-        if (empty($this->content->text)) {
+        if (empty($data->events)) {
             $this->content->text = '<div class="post">'. get_string('noupcomingevents', 'calendar').'</div>';
+        } else {
+            $this->content->text .= $renderer->render_from_template($template, $data);
         }
 
         $this->content->footer = '<div class="gotocal">
