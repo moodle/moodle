@@ -71,7 +71,7 @@ class base_block_testcase extends advanced_testcase {
         // Add blocks by hacking table (because it's not a real block type).
 
         // 1. Block on course page.
-        $configdata = base64_encode(serialize(new \stdClass()));
+        $configdata = base64_encode(serialize((object) ['example' => 'content']));
         $instance = (object)['blockname' => 'mockblock', 'parentcontextid' => $coursecontext->id,
                 'showinsubcontexts' => 0, 'pagetypepattern' => 'course-view-*',
                 'defaultweight' => 0, 'timecreated' => 1, 'timemodified' => 1,
