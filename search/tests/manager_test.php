@@ -351,7 +351,6 @@ class search_manager_testcase extends advanced_testcase {
         $buffer->reset_buffer();
 
         // Confirm that output only processed 1 forum activity and 2 posts.
-        var_dump(strpos($log, "area: Forum - activity information\n  Processed 1 "));
         $this->assertNotFalse(strpos($log, "area: Forum - activity information\n  Processed 1 "));
         $this->assertNotFalse(strpos($log, "area: Forum - posts\n  Processed 2 "));
 
