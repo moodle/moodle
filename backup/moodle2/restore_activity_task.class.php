@@ -183,10 +183,12 @@ abstract class restore_activity_task extends restore_task {
         $this->add_step(new restore_activity_competencies_structure_step('activity_competencies', 'competencies.xml'));
 
         // Search reindexing, if enabled and if not restoring entire course.
-        if (\core_search\manager::is_indexing_enabled() &&
-                !($this->get_target() == backup::TARGET_NEW_COURSE ||
-                $this->get_setting_value('overwrite_conf'))) {
-            $this->add_step(new restore_activity_search_index('activity_search_index'));
+        if (\core_search\manager::is_indexing_enabled()) {
+            $wholecourse = $this->get_target() == backup::TARGET_NEW_COURSE;
+            $wholecourse = $wholecourse || ($this->setting_exists('overwrite_conf') && $this->get_setting_value('overwrite_conf'));
+            if (!$wholecourse) {
+                $this->add_step(new restore_activity_search_index('activity_search_index'));
+            }
         }
 
         // At the end, mark it as built
