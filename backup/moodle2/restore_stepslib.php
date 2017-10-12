@@ -5544,6 +5544,58 @@ class restore_completion_defaults_structure_step extends restore_structure_step 
         $this->set_mapping('course_completion_defaults', $oldid, $newid);
     }
 }
+
+/**
+ * Index course after restore.
+ *
+ * @package core_backup
+ * @copyright 2017 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class restore_course_search_index extends restore_execution_step {
+    /**
+     * When this step is executed, we add the course context to the queue for reindexing.
+     */
+    protected function define_execution() {
+        $context = \context_course::instance($this->task->get_courseid());
+        \core_search\manager::request_index($context);
+    }
+}
+
+/**
+ * Index activity after restore (when not restoring whole course).
+ *
+ * @package core_backup
+ * @copyright 2017 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class restore_activity_search_index extends restore_execution_step {
+    /**
+     * When this step is executed, we add the activity context to the queue for reindexing.
+     */
+    protected function define_execution() {
+        $context = \context::instance_by_id($this->task->get_contextid());
+        \core_search\manager::request_index($context);
+    }
+}
+
+/**
+ * Index block after restore (when not restoring whole course).
+ *
+ * @package core_backup
+ * @copyright 2017 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class restore_block_search_index extends restore_execution_step {
+    /**
+     * When this step is executed, we add the block context to the queue for reindexing.
+     */
+    protected function define_execution() {
+        $context = \context_block::instance($this->task->get_blockid());
+        \core_search\manager::request_index($context);
+    }
+}
+
 /**
  * Restore action events.
  *

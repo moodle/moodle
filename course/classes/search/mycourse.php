@@ -45,11 +45,24 @@ class mycourse extends \core_search\base {
      * Returns recordset containing required data for indexing courses.
      *
      * @param int $modifiedfrom timestamp
-     * @return \moodle_recordset
+     * @param \context|null $context Restriction context
+     * @return \moodle_recordset|null Recordset or null if no change possible
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
-        return $DB->get_recordset_select('course', 'timemodified >= ?', array($modifiedfrom), 'timemodified ASC');
+
+        list ($contextjoin, $contextparams) = $this->get_course_level_context_restriction_sql(
+                $context, 'c');
+        if ($contextjoin === null) {
+            return null;
+        }
+
+        return $DB->get_recordset_sql("
+                SELECT c.*
+                  FROM {course} c
+          $contextjoin
+                 WHERE c.timemodified >= ?
+              ORDER BY c.timemodified ASC", array_merge($contextparams, [$modifiedfrom]));
     }
 
     /**

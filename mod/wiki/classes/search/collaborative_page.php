@@ -45,19 +45,28 @@ class collaborative_page extends \core_search\base_mod {
      * Returns a recordset with all required page information.
      *
      * @param int $modifiedfrom
-     * @return moodle_recordset
+     * @param \context|null $context Optional context to restrict scope of returned results
+     * @return moodle_recordset|null Recordset (or null if no results)
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
 
-        $sql = 'SELECT p.*, w.id AS wikiid, w.course AS courseid
+        list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
+                $context, 'wiki', 'w');
+        if ($contextjoin === null) {
+            return null;
+        }
+
+        $sql = "SELECT p.*, w.id AS wikiid, w.course AS courseid
                   FROM {wiki_pages} p
                   JOIN {wiki_subwikis} s ON s.id = p.subwikiid
                   JOIN {wiki} w ON w.id = s.wikiid
+          $contextjoin
                  WHERE p.timemodified >= ?
                    AND w.wikimode = ?
-              ORDER BY p.timemodified ASC';
-        return $DB->get_recordset_sql($sql, array($modifiedfrom, 'collaborative'));
+              ORDER BY p.timemodified ASC";
+        return $DB->get_recordset_sql($sql, array_merge($contextparams,
+                [$modifiedfrom, 'collaborative']));
     }
 
     /**

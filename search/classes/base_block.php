@@ -71,11 +71,26 @@ abstract class base_block extends base {
      */
     protected function get_indexing_restrictions() {
         global $DB;
-        return [$DB->sql_compare_text('bi.configdata') . " != ?", ['']];
+
+        // This includes completely empty configdata, and also three other values that are
+        // equivalent to empty:
+        // - A serialized completely empty object.
+        // - A serialized object with one field called '0' (string not int) set to boolean false
+        //   (this can happen after backup and restore, at least historically).
+        // - A serialized null.
+        $stupidobject = (object)[];
+        $zero = '0';
+        $stupidobject->{$zero} = false;
+        return [$DB->sql_compare_text('bi.configdata') . " != ? AND " .
+                $DB->sql_compare_text('bi.configdata') . " != ? AND " .
+                $DB->sql_compare_text('bi.configdata') . " != ? AND " .
+                $DB->sql_compare_text('bi.configdata') . " != ?",
+                ['', base64_encode(serialize((object)[])), base64_encode(serialize($stupidobject)),
+                base64_encode(serialize(null))]];
     }
 
     /**
-     * Gets recordset of all records modified since given time.
+     * Gets recordset of all blocks of this type modified since given time within the given context.
      *
      * See base class for detailed requirements. This implementation includes the key fields
      * from block_instances.
@@ -87,24 +102,30 @@ abstract class base_block extends base {
      * then you can override get_indexing_restrictions; by default this excludes rows with empty
      * configdata.
      *
-     * @param int $modifiedfrom Modified from time (>= this)
+     * @param int $modifiedfrom Return only records modified after this date
+     * @param \context|null $context Context to find blocks within
+     * @return false|\moodle_recordset|null
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
+
+        // Get context restrictions.
+        list ($contextjoin, $contextparams) = $this->get_context_restriction_sql($context, 'bi');
+
+        // Get custom restrictions for block type.
         list ($restrictions, $restrictionparams) = $this->get_indexing_restrictions();
         if ($restrictions) {
             $restrictions = 'AND ' . $restrictions;
         }
 
-        // Query for all entries in block_instances for this type of block, which were modified
-        // since the given date. Also find the course or module where the block is located.
-        // (Although this query supports both module and course context, currently only two page
-        // types are supported, which will both be at course context. The module support is present
-        // in case of extension to other page types later.)
+        // Query for all entries in block_instances for this type of block, within the specified
+        // context. The query is based on the one from get_recordset_by_timestamp and applies the
+        // same restrictions.
         return $DB->get_recordset_sql("
                 SELECT bi.id, bi.timemodified, bi.timecreated, bi.configdata,
                        c.id AS courseid, x.id AS contextid
                   FROM {block_instances} bi
+                       $contextjoin
                   JOIN {context} x ON x.instanceid = bi.id AND x.contextlevel = ?
                   JOIN {context} parent ON parent.id = bi.parentcontextid
              LEFT JOIN {course_modules} cm ON cm.id = parent.instanceid AND parent.contextlevel = ?
@@ -116,8 +137,9 @@ abstract class base_block extends base {
                            OR bi.pagetypepattern IN ('site-index', 'course-*', '*')))
                        $restrictions
               ORDER BY bi.timemodified ASC",
-                array_merge([CONTEXT_BLOCK, CONTEXT_MODULE, CONTEXT_COURSE, $modifiedfrom,
-                $this->get_block_name(), CONTEXT_COURSE, 'course-view-%'], $restrictionparams));
+                array_merge($contextparams, [CONTEXT_BLOCK, CONTEXT_MODULE, CONTEXT_COURSE,
+                    $modifiedfrom, $this->get_block_name(), CONTEXT_COURSE, 'course-view-%'],
+                $restrictionparams));
     }
 
     public function get_doc_url(\core_search\document $doc) {
@@ -243,5 +265,82 @@ abstract class base_block extends base {
     public static function clear_static() {
         \cache::make_from_params(\cache_store::MODE_REQUEST, 'core_search',
                 self::CACHE_INSTANCES, [], ['simplekeys' => true])->purge();
+    }
+
+    /**
+     * Helper function that gets SQL useful for restricting a search query given a passed-in
+     * context.
+     *
+     * The SQL returned will be one or more JOIN statements, surrounded by whitespace, which act
+     * as restrictions on the query based on the rows in the block_instances table.
+     *
+     * We assume the block instances have already been restricted by blockname.
+     *
+     * Returns null if there can be no results for this block within this context.
+     *
+     * If named parameters are used, these will be named gcrs0, gcrs1, etc. The table aliases used
+     * in SQL also all begin with gcrs, to avoid conflicts.
+     *
+     * @param \context|null $context Context to restrict the query
+     * @param string $blocktable Alias of block_instances table
+     * @param int $paramtype Type of SQL parameters to use (default question mark)
+     * @return array Array with SQL and parameters
+     * @throws \coding_exception If called with invalid params
+     */
+    protected function get_context_restriction_sql(\context $context = null, $blocktable = 'bi',
+            $paramtype = SQL_PARAMS_QM) {
+        global $DB;
+
+        if (!$context) {
+            return ['', []];
+        }
+
+        switch ($paramtype) {
+            case SQL_PARAMS_QM:
+                $param1 = '?';
+                $param2 = '?';
+                $key1 = 0;
+                $key2 = 1;
+                break;
+            case SQL_PARAMS_NAMED:
+                $param1 = ':gcrs0';
+                $param2 = ':gcrs1';
+                $key1 = 'gcrs0';
+                $key2 = 'gcrs1';
+                break;
+            default:
+                throw new \coding_exception('Unexpected $paramtype: ' . $paramtype);
+        }
+
+        $params = [];
+        switch ($context->contextlevel) {
+            case CONTEXT_SYSTEM:
+                $sql = '';
+                break;
+
+            case CONTEXT_COURSECAT:
+            case CONTEXT_COURSE:
+            case CONTEXT_MODULE:
+            case CONTEXT_USER:
+                // Find all blocks whose parent is within the specified context.
+                $sql = " JOIN {context} gcrsx ON gcrsx.id = $blocktable.parentcontextid
+                              AND (gcrsx.id = $param1 OR " . $DB->sql_like('gcrsx.path', $param2) . ") ";
+                $params[$key1] = $context->id;
+                $params[$key2] = $context->path . '/%';
+                break;
+
+            case CONTEXT_BLOCK:
+                // Find only the specified block of this type. Since we are generating JOINs
+                // here, we do this by joining again to the block_instances table with the same ID.
+                $sql = " JOIN {block_instances} gcrsbi ON gcrsbi.id = $blocktable.id
+                              AND gcrsbi.id = $param1 ";
+                $params[$key1] = $context->instanceid;
+                break;
+
+            default:
+                throw new \coding_exception('Unexpected contextlevel: ' . $context->contextlevel);
+        }
+
+        return [$sql, $params];
     }
 }

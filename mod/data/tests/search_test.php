@@ -314,6 +314,22 @@ class mod_data_search_test extends advanced_testcase {
         // No new records.
         $this->assertFalse($recordset->valid());
         $recordset->close();
+
+        // Create a second database, also with one record.
+        $data2 = $this->getDataGenerator()->create_module('data', ['course' => $course1->id]);
+        $this->create_default_data_fields($fieldtypes, $data2);
+        $this->create_default_data_record($data2);
+
+        // Test indexing with contexts.
+        $rs = $searcharea->get_document_recordset(0, context_module::instance($data1->cmid));
+        $this->assertEquals(1, iterator_count($rs));
+        $rs->close();
+        $rs = $searcharea->get_document_recordset(0, context_module::instance($data2->cmid));
+        $this->assertEquals(1, iterator_count($rs));
+        $rs->close();
+        $rs = $searcharea->get_document_recordset(0, context_course::instance($course1->id));
+        $this->assertEquals(2, iterator_count($rs));
+        $rs->close();
     }
 
     /**

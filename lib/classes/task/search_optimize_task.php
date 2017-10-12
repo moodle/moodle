@@ -49,8 +49,7 @@ class search_optimize_task extends scheduled_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-        if (!\core_search\manager::is_global_search_enabled() &&
-                !get_config('core', 'searchindexwhendisabled')) {
+        if (!\core_search\manager::is_indexing_enabled()) {
             return;
         }
 

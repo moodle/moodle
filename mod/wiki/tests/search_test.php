@@ -126,6 +126,21 @@ class mod_wiki_search_testcase extends advanced_testcase {
         // No new records.
         $this->assertFalse($recordset->valid());
         $recordset->close();
+
+        // Add another wiki with one page.
+        $collabwiki2 = $this->getDataGenerator()->create_module('wiki', ['course' => $course1->id]);
+        $wikigenerator->create_first_page($collabwiki2);
+
+        // Test indexing contexts.
+        $rs = $searcharea->get_document_recordset(0, context_module::instance($collabwiki->cmid));
+        $this->assertEquals(3, iterator_count($rs));
+        $rs->close();
+        $rs = $searcharea->get_document_recordset(0, context_module::instance($collabwiki2->cmid));
+        $this->assertEquals(1, iterator_count($rs));
+        $rs->close();
+        $rs = $searcharea->get_document_recordset(0, context_course::instance($course1->id));
+        $this->assertEquals(4, iterator_count($rs));
+        $rs->close();
     }
 
     /**

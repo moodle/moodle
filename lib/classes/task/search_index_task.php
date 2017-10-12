@@ -46,13 +46,27 @@ class search_index_task extends scheduled_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-        if (!\core_search\manager::is_global_search_enabled() &&
-                !get_config('core', 'searchindexwhendisabled')) {
+        if (!\core_search\manager::is_indexing_enabled()) {
             return;
         }
         $globalsearch = \core_search\manager::instance();
 
-        // Indexing database records for modules + rich documents of forum.
-        $globalsearch->index(false, get_config('core', 'searchindextime'), new \text_progress_trace());
+        // Get total indexing time limit.
+        $timelimit = get_config('core', 'searchindextime');
+        $start = time();
+
+        // Do normal indexing.
+        $globalsearch->index(false, $timelimit, new \text_progress_trace());
+
+        // Do requested indexing (if any) for the rest of the time.
+        if ($timelimit != 0) {
+            $now = time();
+            $timelimit -= ($now - $start);
+            if ($timelimit <= 1) {
+                // There is hardly any time left, so don't try to do requests.
+                return;
+            }
+        }
+        $globalsearch->process_index_requests($timelimit, new \text_progress_trace());
     }
 }

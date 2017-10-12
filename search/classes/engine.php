@@ -229,7 +229,7 @@ abstract class engine {
                 continue;
             }
 
-            if ($options['lastindexedtime'] == 0) {
+            if (isset($options['lastindexedtime']) && $options['lastindexedtime'] == 0) {
                 // If we have never indexed this area before, it must be new.
                 $document->set_is_new(true);
             }

@@ -3743,5 +3743,19 @@
         <INDEX NAME="modelid-action" UNIQUE="false" FIELDS="modelid, action"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="search_index_requests" COMMENT="Records requests for (re)indexing of specific contexts. Entries will be removed from this table when indexing of that context is complete. (This table is not used for normal time-based indexing of new content.)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context ID that has been requested for reindexing."/>
+        <FIELD NAME="searcharea" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Set (e.g. 'forum-post') if a specific area is to be reindexed. Blank indicates all areas."/>
+        <FIELD NAME="timerequested" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time at which this index update was requested."/>
+        <FIELD NAME="partialarea" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="If processing of this context partially completed, set to the area that needs processing next. Blank indicates not processed yet."/>
+        <FIELD NAME="partialtime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="If processing partially completed, set to the timestamp within the next area where processing should start. 0 indicates not processed yet."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
   </TABLES>
 </XMLDB>
