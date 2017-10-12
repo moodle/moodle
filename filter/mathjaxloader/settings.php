@@ -45,7 +45,7 @@ if ($ADMIN->fulltree) {
 
     $default = '
 MathJax.Hub.Config({
-    config: ["Accessible.js", "Safe.js"],
+    config: ["default.js", "MMLorHTML.js", "Safe.js"],
     errorSettings: { message: ["!"] },
     skipStartupTypeset: true,
     messageStyle: "none"
