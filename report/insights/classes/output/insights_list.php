@@ -117,6 +117,15 @@ class insights_list implements \renderable, \templatable {
                     $insights[$predictedvalue][] = $insightrenderable->export_for_template($output);
                 }
 
+                // Order predicted values.
+                if ($this->model->get_target()->is_linear()) {
+                    // During regression what we will be interested on most of the time is in low values so let's show them first.
+                    ksort($predictionvalues);
+                } else {
+                    // During classification targets flag "not that important" samples as 0 so let's show them at the end.
+                    krsort($predictionvalues);
+                }
+
                 // Ok, now we have all the data we want, put it into a format that mustache can handle.
                 foreach ($predictionvalues as $key => $prediction) {
                     if (isset($insights[$key])) {
