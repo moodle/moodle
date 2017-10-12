@@ -92,8 +92,8 @@ function(ajax, BootstrapTour, $, templates, str, log, notification) {
                 ele = $('body');
             }
             templates.render('tool_usertours/resettour', {})
-                .done(function(template) {
-                    ele.append(template);
+                .done(function(html, js) {
+                    templates.appendNodeContents(ele, html, js);
                 });
         },
 
