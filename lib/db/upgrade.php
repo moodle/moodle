@@ -2676,9 +2676,9 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2017101000.01);
-	}
+    }
 
-	if ($oldversion < 2017101000.02) {
+    if ($oldversion < 2017101000.02) {
         // Define field 'timestart' to be added to 'analytics_predictions'.
         $table = new xmldb_table('analytics_predictions');
         $field = new xmldb_field('timestart', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timecreated');
