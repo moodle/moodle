@@ -2407,19 +2407,11 @@ function calendar_get_all_allowed_types() {
         calendar_get_allowed_types($allowed, $course, $coursegroups);
 
         if (!empty($allowed->courses)) {
-            if (!isset($types['course'])) {
-                $types['course'] = [$course];
-            } else {
-                $types['course'][$course->id] = $course;
-            }
+            $types['course'][$course->id] = $course;
         }
 
         if (!empty($allowed->groups)) {
-            if (!isset($types['groupcourses'])) {
-                $types['groupcourses'] = [$course];
-            } else {
-                $types['groupcourses'][$course->id] = $course;
-            }
+            $types['groupcourses'][$course->id] = $course;
 
             if (!isset($types['group'])) {
                 $types['group'] = array_values($allowed->groups);
