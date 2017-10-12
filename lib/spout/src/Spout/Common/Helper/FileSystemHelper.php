@@ -13,15 +13,15 @@ use Box\Spout\Common\Exception\IOException;
  */
 class FileSystemHelper
 {
-    /** @var string Path of the base folder where all the I/O can occur */
-    protected $baseFolderPath;
+    /** @var string Real path of the base folder where all the I/O can occur */
+    protected $baseFolderRealPath;
 
     /**
      * @param string $baseFolderPath The path of the base folder where all the I/O can occur
      */
     public function __construct($baseFolderPath)
     {
-        $this->baseFolderPath = $baseFolderPath;
+        $this->baseFolderRealPath = realpath($baseFolderPath);
     }
 
     /**
@@ -124,9 +124,10 @@ class FileSystemHelper
      */
     protected function throwIfOperationNotInBaseFolder($operationFolderPath)
     {
-        $isInBaseFolder = (strpos($operationFolderPath, $this->baseFolderPath) === 0);
+        $operationFolderRealPath = realpath($operationFolderPath);
+        $isInBaseFolder = (strpos($operationFolderRealPath, $this->baseFolderRealPath) === 0);
         if (!$isInBaseFolder) {
-            throw new IOException("Cannot perform I/O operation outside of the base folder: {$this->baseFolderPath}");
+            throw new IOException("Cannot perform I/O operation outside of the base folder: {$this->baseFolderRealPath}");
         }
     }
 }

@@ -4,7 +4,6 @@ namespace Box\Spout\Reader\CSV;
 
 use Box\Spout\Reader\AbstractReader;
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Common\Helper\EncodingHelper;
 
 /**
  * Class Reader
@@ -20,20 +19,21 @@ class Reader extends AbstractReader
     /** @var SheetIterator To iterator over the CSV unique "sheet" */
     protected $sheetIterator;
 
-    /** @var string Defines the character used to delimit fields (one character only) */
-    protected $fieldDelimiter = ',';
+    /** @var string Original value for the "auto_detect_line_endings" INI value */
+    protected $originalAutoDetectLineEndings;
 
-    /** @var string Defines the character used to enclose fields (one character only) */
-    protected $fieldEnclosure = '"';
-
-    /** @var string Encoding of the CSV file to be read */
-    protected $encoding = EncodingHelper::ENCODING_UTF8;
-
-    /** @var string Defines the End of line */
-    protected $endOfLineCharacter = "\n";
-
-    /** @var string */
-    protected $autoDetectLineEndings;
+    /**
+     * Returns the reader's current options
+     *
+     * @return ReaderOptions
+     */
+    protected function getOptions()
+    {
+        if (!isset($this->options)) {
+            $this->options = new ReaderOptions();
+        }
+        return $this->options;
+    }
 
     /**
      * Sets the field delimiter for the CSV.
@@ -44,7 +44,7 @@ class Reader extends AbstractReader
      */
     public function setFieldDelimiter($fieldDelimiter)
     {
-        $this->fieldDelimiter = $fieldDelimiter;
+        $this->getOptions()->setFieldDelimiter($fieldDelimiter);
         return $this;
     }
 
@@ -57,7 +57,7 @@ class Reader extends AbstractReader
      */
     public function setFieldEnclosure($fieldEnclosure)
     {
-        $this->fieldEnclosure = $fieldEnclosure;
+        $this->getOptions()->setFieldEnclosure($fieldEnclosure);
         return $this;
     }
 
@@ -70,7 +70,7 @@ class Reader extends AbstractReader
      */
     public function setEncoding($encoding)
     {
-        $this->encoding = $encoding;
+        $this->getOptions()->setEncoding($encoding);
         return $this;
     }
 
@@ -83,7 +83,7 @@ class Reader extends AbstractReader
      */
     public function setEndOfLineCharacter($endOfLineCharacter)
     {
-        $this->endOfLineCharacter = $endOfLineCharacter;
+        $this->getOptions()->setEndOfLineCharacter($endOfLineCharacter);
         return $this;
     }
 
@@ -107,7 +107,7 @@ class Reader extends AbstractReader
      */
     protected function openReader($filePath)
     {
-        $this->autoDetectLineEndings = ini_get('auto_detect_line_endings');
+        $this->originalAutoDetectLineEndings = ini_get('auto_detect_line_endings');
         ini_set('auto_detect_line_endings', '1');
 
         $this->filePointer = $this->globalFunctionsHelper->fopen($filePath, 'r');
@@ -117,10 +117,7 @@ class Reader extends AbstractReader
 
         $this->sheetIterator = new SheetIterator(
             $this->filePointer,
-            $this->fieldDelimiter,
-            $this->fieldEnclosure,
-            $this->encoding,
-            $this->endOfLineCharacter,
+            $this->getOptions(),
             $this->globalFunctionsHelper
         );
     }
@@ -130,7 +127,7 @@ class Reader extends AbstractReader
      *
      * @return SheetIterator To iterate over sheets
      */
-    public function getConcreteSheetIterator()
+    protected function getConcreteSheetIterator()
     {
         return $this->sheetIterator;
     }
@@ -147,6 +144,6 @@ class Reader extends AbstractReader
             $this->globalFunctionsHelper->fclose($this->filePointer);
         }
 
-        ini_set('auto_detect_line_endings', $this->autoDetectLineEndings);
+        ini_set('auto_detect_line_endings', $this->originalAutoDetectLineEndings);
     }
 }

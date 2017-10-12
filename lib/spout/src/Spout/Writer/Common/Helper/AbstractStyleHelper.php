@@ -122,7 +122,7 @@ abstract class AbstractStyleHelper
     protected function applyWrapTextIfCellContainsNewLine($style, $dataRow)
     {
         // if the "wrap text" option is already set, no-op
-        if ($style->shouldWrapText()) {
+        if ($style->hasSetWrapText()) {
             return $style;
         }
 

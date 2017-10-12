@@ -228,8 +228,8 @@ class CellValueFormatter
         $dateObj->setTime($hours, $minutes, $seconds);
 
         if ($this->shouldFormatDates) {
-            $styleNumberFormat = $this->styleHelper->getNumberFormat($cellStyleId);
-            $phpDateFormat = DateFormatHelper::toPHPDateFormat($styleNumberFormat);
+            $styleNumberFormatCode = $this->styleHelper->getNumberFormatCode($cellStyleId);
+            $phpDateFormat = DateFormatHelper::toPHPDateFormat($styleNumberFormatCode);
             return $dateObj->format($phpDateFormat);
         } else {
             return $dateObj;
@@ -257,8 +257,8 @@ class CellValueFormatter
             $dateObj->modify('+' . $secondsRemainder . 'seconds');
 
             if ($this->shouldFormatDates) {
-                $styleNumberFormat = $this->styleHelper->getNumberFormat($cellStyleId);
-                $phpDateFormat = DateFormatHelper::toPHPDateFormat($styleNumberFormat);
+                $styleNumberFormatCode = $this->styleHelper->getNumberFormatCode($cellStyleId);
+                $phpDateFormat = DateFormatHelper::toPHPDateFormat($styleNumberFormatCode);
                 return $dateObj->format($phpDateFormat);
             } else {
                 return $dateObj;

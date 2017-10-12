@@ -14,9 +14,6 @@ use Box\Spout\Reader\XLSX\Helper\SharedStringsHelper;
  */
 class Reader extends AbstractReader
 {
-    /** @var string Temporary folder where the temporary files will be created */
-    protected $tempFolder;
-
     /** @var \ZipArchive */
     protected $zip;
 
@@ -28,12 +25,25 @@ class Reader extends AbstractReader
 
 
     /**
+     * Returns the reader's current options
+     *
+     * @return ReaderOptions
+     */
+    protected function getOptions()
+    {
+        if (!isset($this->options)) {
+            $this->options = new ReaderOptions();
+        }
+        return $this->options;
+    }
+
+    /**
      * @param string $tempFolder Temporary folder where the temporary files will be created
      * @return Reader
      */
     public function setTempFolder($tempFolder)
     {
-        $this->tempFolder = $tempFolder;
+        $this->getOptions()->setTempFolder($tempFolder);
         return $this;
     }
 
@@ -62,14 +72,14 @@ class Reader extends AbstractReader
         $this->zip = new \ZipArchive();
 
         if ($this->zip->open($filePath) === true) {
-            $this->sharedStringsHelper = new SharedStringsHelper($filePath, $this->tempFolder);
+            $this->sharedStringsHelper = new SharedStringsHelper($filePath, $this->getOptions()->getTempFolder());
 
             if ($this->sharedStringsHelper->hasSharedStrings()) {
                 // Extracts all the strings from the sheets for easy access in the future
                 $this->sharedStringsHelper->extractSharedStrings();
             }
 
-            $this->sheetIterator = new SheetIterator($filePath, $this->sharedStringsHelper, $this->globalFunctionsHelper, $this->shouldFormatDates);
+            $this->sheetIterator = new SheetIterator($filePath, $this->getOptions(), $this->sharedStringsHelper, $this->globalFunctionsHelper);
         } else {
             throw new IOException("Could not open $filePath for reading.");
         }
@@ -80,7 +90,7 @@ class Reader extends AbstractReader
      *
      * @return SheetIterator To iterate over sheets
      */
-    public function getConcreteSheetIterator()
+    protected function getConcreteSheetIterator()
     {
         return $this->sheetIterator;
     }
