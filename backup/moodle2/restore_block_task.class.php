@@ -102,7 +102,7 @@ abstract class restore_block_task extends restore_task {
         if (\core_search\manager::is_indexing_enabled()) {
             $wholecourse = $this->get_target() == backup::TARGET_NEW_COURSE;
             $wholecourse = $wholecourse || $this->setting_exists('overwrite_conf') && $this->get_setting_value('overwrite_conf');
-            if (!$required) {
+            if (!$wholecourse) {
                 $this->add_step(new restore_block_search_index('block_search_index'));
             }
         }
