@@ -1360,6 +1360,8 @@ function data_build_search_array($data, $paging, $searcharray, $defaults = null,
         $searcharray[DATA_TAGS]->params = [];
         $searcharray[DATA_TAGS]->rawtagnames = $rawtagnames;
         $searcharray[DATA_TAGS]->sql = '';
+    } else {
+        unset($searcharray[DATA_TAGS]);
     }
 
     if (!$paging) {
