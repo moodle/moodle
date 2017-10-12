@@ -1738,10 +1738,25 @@ class mysqli_native_moodle_database extends moodle_database {
     /**
      * Return regex positive or negative match sql
      * @param bool $positivematch
+     * @param bool $casesensitive
      * @return string or empty if not supported
      */
-    public function sql_regex($positivematch=true) {
-        return $positivematch ? 'REGEXP' : 'NOT REGEXP';
+    public function sql_regex($positivematch = true, $casesensitive = false) {
+        $collation = '';
+        if ($casesensitive) {
+            if (substr($this->get_dbcollation(), -4) !== '_bin') {
+                $collationinfo = explode('_', $this->get_dbcollation());
+                $collation = 'COLLATE ' . $collationinfo[0] . '_bin ';
+            }
+        } else {
+            if ($this->get_dbcollation() == 'utf8_bin') {
+                $collation = 'COLLATE utf8_unicode_ci ';
+            } else if ($this->get_dbcollation() == 'utf8mb4_bin') {
+                $collation = 'COLLATE utf8mb4_unicode_ci ';
+            }
+        }
+
+        return $collation . ($positivematch ? 'REGEXP' : 'NOT REGEXP');
     }
 
     /**

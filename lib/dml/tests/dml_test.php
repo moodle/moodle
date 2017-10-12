@@ -4347,6 +4347,9 @@ class core_dml_testcase extends database_driver_testcase {
     public function test_sql_regex() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
+        if (!$DB->sql_regex_supported()) {
+            $this->markTestSkipped($DB->get_name().' does not support regular expressions');
+        }
 
         $table = $this->get_test_table();
         $tablename = $table->getName();
@@ -4356,27 +4359,33 @@ class core_dml_testcase extends database_driver_testcase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $DB->insert_record($tablename, array('name'=>'lalala'));
+        $DB->insert_record($tablename, array('name'=>'LALALA'));
         $DB->insert_record($tablename, array('name'=>'holaaa'));
         $DB->insert_record($tablename, array('name'=>'aouch'));
 
+        // Regex /a$/i (case-insensitive).
         $sql = "SELECT * FROM {{$tablename}} WHERE name ".$DB->sql_regex()." ?";
         $params = array('a$');
-        if ($DB->sql_regex_supported()) {
-            $records = $DB->get_records_sql($sql, $params);
-            $this->assertCount(2, $records);
-        } else {
-            $this->assertTrue(true, 'Regexp operations not supported. Test skipped');
-        }
+        $records = $DB->get_records_sql($sql, $params);
+        $this->assertCount(2, $records);
 
+        // Regex ! (not) /.a/i (case insensitive).
         $sql = "SELECT * FROM {{$tablename}} WHERE name ".$DB->sql_regex(false)." ?";
         $params = array('.a');
-        if ($DB->sql_regex_supported()) {
-            $records = $DB->get_records_sql($sql, $params);
-            $this->assertCount(1, $records);
-        } else {
-            $this->assertTrue(true, 'Regexp operations not supported. Test skipped');
-        }
+        $records = $DB->get_records_sql($sql, $params);
+        $this->assertCount(1, $records);
+
+        // Regex /a$/ (case-sensitive).
+        $sql = "SELECT * FROM {{$tablename}} WHERE name ".$DB->sql_regex(true, true)." ?";
+        $params = array('a$');
+        $records = $DB->get_records_sql($sql, $params);
+        $this->assertCount(1, $records);
+
+        // Regex ! (not) /.a/ (case sensitive).
+        $sql = "SELECT * FROM {{$tablename}} WHERE name ".$DB->sql_regex(false, true)." ?";
+        $params = array('.a');
+        $records = $DB->get_records_sql($sql, $params);
+        $this->assertCount(2, $records);
 
     }
 

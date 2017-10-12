@@ -2341,10 +2341,12 @@ abstract class moodle_database {
     /**
      * Returns the driver specific syntax (SQL part) for matching regex positively or negatively (inverted matching).
      * Eg: 'REGEXP':'NOT REGEXP' or '~*' : '!~*'
+     *
      * @param bool $positivematch
+     * @param bool $casesensitive
      * @return string or empty if not supported
      */
-    public function sql_regex($positivematch=true) {
+    public function sql_regex($positivematch = true, $casesensitive = false) {
         return '';
     }
 
