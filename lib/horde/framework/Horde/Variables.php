@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2009-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2009-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2009-2014 Horde LLC
+ * @copyright 2009-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Util
  */
@@ -14,11 +14,18 @@
 /**
  * An OO-way to access form variables.
  *
+ * @todo $_expected and $_vars are used inconsistently. $_expected is used in
+ * exists(), but not in getExists(). And both are expected to be of the same
+ * format, while Horde_Form submits $_expected as a flat list and $_vars as a
+ * multi-dimensional array, if the the form elements are or array type (like
+ * object[] in Turba).
+ * @todo The sanitized feature doesn't seem to be used anywhere at all.
+ *
  * @author    Robert E. Coyle <robertecoyle@hotmail.com>
  * @author    Chuck Hagenbuch <chuck@horde.org>
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2009-2014 Horde LLC
+ * @copyright 2009-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Util
  */
@@ -52,7 +59,7 @@ class Horde_Variables implements ArrayAccess, Countable, IteratorAggregate
      *
      * @return Horde_Variables  Variables object.
      */
-    static public function getDefaultVariables($sanitize = false)
+    public static function getDefaultVariables($sanitize = false)
     {
         return new self(null, $sanitize);
     }
@@ -105,7 +112,7 @@ class Horde_Variables implements ArrayAccess, Countable, IteratorAggregate
      */
     public function exists($varname)
     {
-        return isset($this->$varname);
+        return $this->__isset($varname);
     }
 
     /**

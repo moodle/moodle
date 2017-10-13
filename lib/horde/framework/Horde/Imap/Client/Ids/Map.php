@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -16,7 +16,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  * @since     2.1.0
@@ -140,6 +140,12 @@ class Horde_Imap_Client_Ids_Map implements Countable, IteratorAggregate, Seriali
         }
 
         $this->sort();
+
+        if (count($remove) == count($this->_ids) &&
+            !array_diff($remove, array_keys($this->_ids))) {
+            $this->_ids = array();
+            return;
+        }
 
         /* Find the minimum sequence number to remove. We know entries before
          * this are untouched so no need to process them multiple times. */

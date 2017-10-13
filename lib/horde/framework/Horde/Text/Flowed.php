@@ -8,7 +8,7 @@
  * license, which is compatible with the LGPL.
  *
  * Copyright 2002-2003 Philip Mak
- * Copyright 2004-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2004-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
@@ -127,9 +127,8 @@ class Horde_Text_Flowed
         $txt = '';
 
         $this->_reformat(false, $quote);
-        reset($this->_output);
         $lines = count($this->_output) - 1;
-        while (list($no, $line) = each($this->_output)) {
+        foreach ($this->_output as $no => $line) {
             $txt .= $line['text'] . (($lines == $no) ? '' : "\n");
         }
 
@@ -172,8 +171,7 @@ class Horde_Text_Flowed
         $txt = '';
 
         $this->_reformat(true, $quote, empty($opts['nowrap']));
-        reset($this->_output);
-        while (list(,$line) = each($this->_output)) {
+        foreach ($this->_output as $line) {
             $txt .= $line['text'] . "\n";
         }
 
@@ -206,9 +204,8 @@ class Horde_Text_Flowed
         $text = preg_split("/\r?\n/", $this->_text);
         $text_count = count($text) - 1;
         $skip = 0;
-        reset($text);
 
-        while (list($no, $line) = each($text)) {
+        foreach ($text as $no => $line) {
             if ($skip) {
                 --$skip;
                 continue;

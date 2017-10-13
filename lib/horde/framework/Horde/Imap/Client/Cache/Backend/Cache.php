@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2005-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2005-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2005-2014 Horde LLC
+ * @copyright 2005-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -17,11 +17,12 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2005-2014 Horde LLC
+ * @copyright 2005-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
-class Horde_Imap_Client_Cache_Backend_Cache extends Horde_Imap_Client_Cache_Backend
+class Horde_Imap_Client_Cache_Backend_Cache
+extends Horde_Imap_Client_Cache_Backend
 {
     /** Cache structure version. */
     const VERSION = 3;
@@ -118,40 +119,43 @@ class Horde_Imap_Client_Cache_Backend_Cache extends Horde_Imap_Client_Cache_Back
         foreach ($this->_update as $mbox => $val) {
             $s = &$this->_slicemap[$mbox];
 
-            if (!empty($val['add'])) {
-                if ($s['c'] <= $this->_params['slicesize']) {
-                    $val['slice'][] = $s['i'];
-                    $this->_loadSlice($mbox, $s['i']);
-                }
-                $val['slicemap'] = true;
-
-                foreach (array_keys(array_flip($val['add'])) as $uid) {
-                    if ($s['c']++ > $this->_params['slicesize']) {
-                        $s['c'] = 0;
-                        $val['slice'][] = ++$s['i'];
+            try {
+                if (!empty($val['add'])) {
+                    if ($s['c'] <= $this->_params['slicesize']) {
+                        $val['slice'][] = $s['i'];
                         $this->_loadSlice($mbox, $s['i']);
                     }
-                    $s['s'][$uid] = $s['i'];
-                }
-            }
+                    $val['slicemap'] = true;
 
-            if (!empty($val['slice'])) {
-                $d = &$this->_data[$mbox];
-                $val['slicemap'] = true;
-
-                foreach (array_keys(array_flip($val['slice'])) as $slice) {
-                    $data = array();
-                    foreach (array_keys($s['s'], $slice) as $uid) {
-                        $data[$uid] = is_array($d[$uid])
-                            ? serialize($d[$uid])
-                            : $d[$uid];
+                    foreach (array_keys(array_flip($val['add'])) as $uid) {
+                        if ($s['c']++ > $this->_params['slicesize']) {
+                            $s['c'] = 0;
+                            $val['slice'][] = ++$s['i'];
+                            $this->_loadSlice($mbox, $s['i']);
+                        }
+                        $s['s'][$uid] = $s['i'];
                     }
-                    $this->_cache->set($this->_getCid($mbox, $slice), serialize($data), $lifetime);
                 }
-            }
 
-            if (!empty($val['slicemap'])) {
-                $this->_cache->set($this->_getCid($mbox, 'slicemap'), serialize($s), $lifetime);
+                if (!empty($val['slice'])) {
+                    $d = &$this->_data[$mbox];
+                    $val['slicemap'] = true;
+
+                    foreach (array_keys(array_flip($val['slice'])) as $slice) {
+                        $data = array();
+                        foreach (array_keys($s['s'], $slice) as $uid) {
+                            $data[$uid] = is_array($d[$uid])
+                                ? serialize($d[$uid])
+                                : $d[$uid];
+                        }
+                        $this->_cache->set($this->_getCid($mbox, $slice), serialize($data), $lifetime);
+                    }
+                }
+
+                if (!empty($val['slicemap'])) {
+                    $this->_cache->set($this->_getCid($mbox, 'slicemap'), serialize($s), $lifetime);
+                }
+            } catch (Horde_Exception $e) {
             }
         }
 
@@ -176,7 +180,9 @@ class Horde_Imap_Client_Cache_Backend_Cache extends Horde_Imap_Client_Cache_Back
 
         foreach (array_intersect($uids, array_keys($ptr)) as $val) {
             if (is_string($ptr[$val])) {
-                $ptr[$val] = @unserialize($ptr[$val]);
+                try {
+                    $ptr[$val] = @unserialize($ptr[$val]);
+                } catch (Exception $e) {}
             }
 
             $ret[$val] = (empty($fields) || empty($ptr[$val]))
@@ -217,7 +223,9 @@ class Horde_Imap_Client_Cache_Backend_Cache extends Horde_Imap_Client_Cache_Back
         foreach ($data as $k => $v) {
             if (isset($d[$k])) {
                 if (is_string($d[$k])) {
-                    $d[$k] = @unserialize($d[$k]);
+                    try {
+                        $d[$k] = @unserialize($d[$k]);
+                    } catch (Exception $e) {}
                 }
                 $d[$k] = is_array($d[$k])
                     ? array_merge($d[$k], $v)
@@ -395,9 +403,13 @@ class Horde_Imap_Client_Cache_Backend_Cache extends Horde_Imap_Client_Cache_Back
             return;
         }
 
-        if ((($data = $this->_cache->get($cache_id, 0)) !== false) &&
-            ($data = @unserialize($data)) &&
-            is_array($data)) {
+        if (($data = $this->_cache->get($cache_id, 0)) !== false) {
+            try {
+                $data = @unserialize($data);
+            } catch (Exception $e) {}
+        }
+
+        if (($data !== false) && is_array($data)) {
             $this->_data[$mailbox] += $data;
             $this->_loaded[$cache_id] = true;
         } else {
@@ -425,10 +437,13 @@ class Horde_Imap_Client_Cache_Backend_Cache extends Horde_Imap_Client_Cache_Back
     protected function _loadSliceMap($mailbox, $uidvalid = null)
     {
         if (!isset($this->_slicemap[$mailbox]) &&
-            (($data = $this->_cache->get($this->_getCid($mailbox, 'slicemap'), 0)) !== false) &&
-            ($slice = @unserialize($data)) &&
-            is_array($slice)) {
-            $this->_slicemap[$mailbox] = $slice;
+            (($data = $this->_cache->get($this->_getCid($mailbox, 'slicemap'), 0)) !== false)) {
+            try {
+                if (($slice = @unserialize($data)) &&
+                    is_array($slice)) {
+                    $this->_slicemap[$mailbox] = $slice;
+                }
+            } catch (Exception $e) {}
         }
 
         if (isset($this->_slicemap[$mailbox])) {

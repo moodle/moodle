@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2010-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2010-2017 Horde LLC (http://www.horde.org/)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @category  Horde
- * @copyright 2010-2014 Horde LLC
+ * @copyright 2010-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  */
@@ -40,7 +40,7 @@
  * @author    Chuck Hagenbuch <chuck@horde.org>
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2010-2014 Horde LLC
+ * @copyright 2010-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  */
@@ -60,7 +60,7 @@ class Horde_Mail_Transport_Mail extends Horde_Mail_Transport
     public function send($recipients, array $headers, $body)
     {
         $headers = $this->_sanitizeHeaders($headers);
-        $recipients = $this->parseRecipients($recipients);
+        $recipients = implode(',', $this->parseRecipients($recipients));
         $subject = '';
 
         foreach (array_keys($headers) as $hdr) {

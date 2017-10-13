@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsd.
  *
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  */
@@ -16,7 +16,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  */
@@ -38,14 +38,18 @@ abstract class Horde_Mail_Rfc822_Object
      * @param mixed $opts  If boolean true, is equivalent to passing true for
      *                     both 'encode' and 'idn'. If an array, these
      *                     keys are supported:
+     *   - comment: (boolean) If true, include comment(s) in output?
+     *              @since 2.6.0
+     *              DEFAULT: false
      *   - encode: (mixed) MIME encode the personal/groupname parts?
      *             If boolean true, encodes in 'UTF-8'.
      *             If a string, encodes using this charset.
      *             DEFAULT: false
-     *   - idn: (boolean) If true, encodes IDN domain names
-     *          (Punycode/RFC 3490).
-     *          Requires the idn or intl PHP module.
+     *   - idn: (boolean) If true, encodes IDN domain names (RFC 3490).
      *          DEFAULT: false
+     *   - noquote: (boolean) If true, don't quote personal part. [@since
+     *              2.4.0]
+     *              DEFAULT: false
      *
      * @return string  The correctly escaped/quoted address.
      */

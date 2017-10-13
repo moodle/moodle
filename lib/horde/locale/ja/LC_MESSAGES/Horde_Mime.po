@@ -1,5 +1,5 @@
 # Japanese translation for Horde.
-# Copyright 2004-2014 Horde LLC (http://www.horde.org/)
+# Copyright 2004-2017 Horde LLC (http://www.horde.org/)
 # This file is distributed under the same license as the Horde package.
 # Hiromi Kimura <hiromi@tac.tsukuba.ac.jp>
 #
