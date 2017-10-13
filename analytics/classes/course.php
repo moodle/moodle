@@ -366,20 +366,6 @@ class course implements \core_analytics\analysable {
     }
 
     /**
-     * Is the course valid to extract indicators from it?
-     *
-     * @return bool
-     */
-    public function is_valid() {
-
-        if (!$this->was_started() || !$this->is_finished()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Has the course started?
      *
      * @return bool
