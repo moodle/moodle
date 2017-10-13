@@ -119,7 +119,7 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
         ajax.call([{
             methodname: 'mod_assign_submit_grading_form',
             args: {assignmentid: assignmentid, userid: this._lastUserId, jsonformdata: JSON.stringify(data)},
-            done: this._handleFormSubmissionResponse.bind(this, data, nextUserId, [], nextUser),
+            done: this._handleFormSubmissionResponse.bind(this, data, nextUserId, nextUser),
             fail: notification.exception
         }]);
     };
@@ -134,7 +134,7 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
      * @param {Array} response List of errors.
      * @param {Boolean} nextUser - optional. If true, switch to next user in the grading list.
      */
-    GradingPanel.prototype._handleFormSubmissionResponse = function(formdata, nextUserId, response, nextUser) {
+    GradingPanel.prototype._handleFormSubmissionResponse = function(formdata, nextUserId, nextUser, response) {
         if (typeof nextUserId === "undefined") {
             nextUserId = this._lastUserId;
         }
