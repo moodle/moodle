@@ -508,12 +508,12 @@ function profile_get_user_fields_with_data($userid) {
     // Join any user info data present with each user info field for the user object.
     $sql = 'SELECT uif.*, uic.name AS categoryname ';
     if ($userid) {
-        $sql .= ', uid.id AS hasuserdata, uid.data, uid.dataformat ';
+        $sql .= ', uind.id AS hasuserdata, uind.data, uind.dataformat ';
     }
     $sql .= 'FROM {user_info_field} uif ';
     $sql .= 'LEFT JOIN {user_info_category} uic ON uif.categoryid = uic.id ';
     if ($userid) {
-        $sql .= 'LEFT JOIN {user_info_data} uid ON uif.id = uid.fieldid AND uid.userid = :userid ';
+        $sql .= 'LEFT JOIN {user_info_data} uind ON uif.id = uind.fieldid AND uind.userid = :userid ';
     }
     $sql .= 'ORDER BY uic.sortorder ASC, uif.sortorder ASC ';
     $fields = $DB->get_records_sql($sql, ['userid' => $userid]);
