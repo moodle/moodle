@@ -74,18 +74,18 @@ class skip_future_documents_iterator implements \Iterator {
     }
 
     public function valid() {
-        // Check parent.
+        // Check that the parent is valid.
         if (!$this->parent->valid()) {
             return false;
         }
 
-        // See if document is after the cut-off time.
-        $doc = $this->parent->current();
-        if ($doc->get('modified') > $this->cutoff) {
-            return false;
+        if ($doc = $this->parent->current()) {
+            // This document is valid if the modification date is before the cutoff.
+            return $doc->get('modified') <= $this->cutoff;
         }
 
-        return true;
+        return false;
+
     }
 
     public function rewind() {
