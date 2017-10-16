@@ -5579,7 +5579,7 @@ function get_mailer($action='get') {
             // Use SMTP directly.
             $mailer->isSMTP();
             if (!empty($CFG->debugsmtp)) {
-                $mailer->SMTPDebug = true;
+                $mailer->SMTPDebug = 3;
             }
             // Specify main and backup servers.
             $mailer->Host          = $CFG->smtphosts;

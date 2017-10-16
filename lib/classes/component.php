@@ -84,6 +84,7 @@ class core_component {
         'MatthiasMullie\\PathConverter' => 'lib/minify/matthiasmullie-pathconverter/src/',
         'IMSGlobal\LTI' => 'lib/ltiprovider/src',
         'Phpml' => 'lib/mlbackend/php/phpml/src/Phpml',
+        'PHPMailer\\PHPMailer' => 'lib/phpmailer/src',
     );
 
     /**
