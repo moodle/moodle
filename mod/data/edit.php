@@ -33,8 +33,7 @@ $d     = optional_param('d', 0, PARAM_INT);    // database id
 $rid   = optional_param('rid', 0, PARAM_INT);    //record id
 $cancel   = optional_param('cancel', '', PARAM_RAW);    // cancel an add
 $mode ='addtemplate';    //define the mode for this page, only 1 mode available
-
-
+$tags = optional_param_array('tags', [], PARAM_TAGLIST);
 
 $url = new moodle_url('/mod/data/edit.php');
 if ($rid !== 0) {
@@ -182,6 +181,7 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
         if ($processeddata->validated) {
             // Enough data to update the record.
             data_update_record_fields_contents($data, $record, $context, $datarecord, $processeddata);
+            core_tag_tag::set_item_tags('mod_data', 'data_records', $rid, $context, $tags);
 
             $viewurl = new moodle_url('/mod/data/view.php', array(
                 'd' => $data->id,
@@ -208,6 +208,8 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
 
             // Now populate the fields contents of the new record.
             data_add_fields_contents_to_new_record($data, $context, $recordid, $fields, $datarecord, $processeddata);
+
+            core_tag_tag::set_item_tags('mod_data', 'data_records', $recordid, $context, $tags);
 
             if (!empty($datarecord->saveandview)) {
                 $viewurl = new moodle_url('/mod/data/view.php', array(
@@ -287,6 +289,12 @@ if ($data->addtemplate){
         $patterns[] = "[[".$field->field->name."#id]]";
         $replacements[] = 'field_'.$field->field->id;
     }
+
+    if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+        $patterns[] = "##tags##";
+        $replacements[] = data_generate_tag_form($rid);
+    }
+
     $newtext = str_ireplace($patterns, $replacements, $data->{$mode});
 
 } else {    //if the add template is not yet defined, print the default form!
