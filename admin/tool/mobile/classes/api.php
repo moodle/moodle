@@ -30,6 +30,7 @@ use context_system;
 use moodle_url;
 use moodle_exception;
 use lang_string;
+use curl;
 
 /**
  * API exposed by tool_mobile, to be used mostly by external functions and the plugin settings.
@@ -366,5 +367,87 @@ class api {
         }
 
         return $features;
+    }
+
+    /**
+     * This function check the current site for potential configuration issues that may prevent the mobile app to work.
+     *
+     * @return array list of potential issues
+     * @since  Moodle 3.4
+     */
+    public static function get_potential_config_issues() {
+        global $CFG;
+        require_once($CFG->dirroot . "/lib/filelib.php");
+        require_once($CFG->dirroot . '/message/lib.php');
+
+        $warnings = array();
+
+        $curl = new curl();
+        // Return certificate information and verify the certificate.
+        $curl->setopt(array('CURLOPT_CERTINFO' => 1, 'CURLOPT_SSL_VERIFYPEER' => true));
+        $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot); // Force https url.
+        $curl->head($httpswwwroot . "/login/index.php");
+        $info = $curl->get_info();
+
+        // First of all, check the server certificate (if any).
+        if (empty($info['http_code']) or ($info['http_code'] >= 400)) {
+            $warnings[] = ['nohttpsformobilewarning', 'admin'];
+        } else {
+            // Check the certificate is not self-signed or has an untrusted-root.
+            // This may be weak in some scenarios (when the curl SSL verifier is outdated).
+            if (empty($info['certinfo'])) {
+                $warnings[] = ['selfsignedoruntrustedcertificatewarning', 'tool_mobile'];
+            } else {
+                $timenow = time();
+                $expectedissuer = null;
+                foreach ($info['certinfo'] as $cert) {
+                    // Check if the signature algorithm is weak (Android won't work with SHA-1).
+                    if ($cert['Signature Algorithm'] == 'sha1WithRSAEncryption' || $cert['Signature Algorithm'] == 'sha1WithRSA') {
+                        $warnings[] = ['insecurealgorithmwarning', 'tool_mobile'];
+                    }
+                    // Check certificate start date.
+                    if (strtotime($cert['Start date']) > $timenow) {
+                        $warnings[] = ['invalidcertificatestartdatewarning', 'tool_mobile'];
+                    }
+                    // Check certificate end date.
+                    if (strtotime($cert['Expire date']) < $timenow) {
+                        $warnings[] = ['invalidcertificateexpiredatewarning', 'tool_mobile'];
+                    }
+                    // Check the chain.
+                    if ($expectedissuer !== null) {
+                        if ($expectedissuer !== $cert['Subject'] || $cert['Subject'] === $cert['Issuer']) {
+                            $warnings[] = ['invalidcertificatechainwarning', 'tool_mobile'];
+                        }
+                    }
+                    $expectedissuer = $cert['Issuer'];
+                }
+            }
+        }
+        // Now check typical configuration problems.
+        if ((int) $CFG->userquota === PHP_INT_MAX) {
+            // In old Moodle version was a text so was possible to have numeric values > PHP_INT_MAX.
+            $warnings[] = ['invaliduserquotawarning', 'tool_mobile'];
+        }
+        // Check ADOdb debug enabled.
+        if (get_config('auth_db', 'debugauthdb') || get_config('enrol_database', 'debugdb')) {
+            $warnings[] = ['adodbdebugwarning', 'tool_mobile'];
+        }
+        // Check display errors on.
+        if (!empty($CFG->debugdisplay)) {
+            $warnings[] = ['displayerrorswarning', 'tool_mobile'];
+        }
+        // Check mobile notifications.
+        $processors = get_message_processors();
+        $enabled = false;
+        foreach ($processors as $processor => $status) {
+            if ($processor == 'airnotifier' && $status->enabled) {
+                $enabled = true;
+            }
+        }
+        if (!$enabled) {
+            $warnings[] = ['mobilenotificationsdisabledwarning', 'tool_mobile'];
+        }
+
+        return $warnings;
     }
 }
