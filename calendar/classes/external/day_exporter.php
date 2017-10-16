@@ -130,6 +130,10 @@ class day_exporter extends exporter {
                 'type' => calendar_event_exporter::read_properties_definition(),
                 'multiple' => true,
             ],
+            'hasevents' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
             'calendareventtypes' => [
                 'type' => PARAM_RAW,
                 'multiple' => true,
@@ -210,6 +214,8 @@ class day_exporter extends exporter {
         $return['events'] = array_map(function($exporter) use ($output) {
             return $exporter->export($output);
         }, $eventexporters);
+
+        $return['hasevents'] = !empty($return['events']);
 
         $return['calendareventtypes'] = array_map(function($exporter) {
             return $exporter->get_calendar_event_type();

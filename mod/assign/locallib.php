@@ -944,6 +944,127 @@ class assign {
     }
 
     /**
+     * Check if the given calendar_event is either a user or group override
+     * event.
+     *
+     * @return bool
+     */
+    public function is_override_calendar_event(\calendar_event $event) {
+        global $DB;
+
+        if (!isset($event->modulename)) {
+            return false;
+        }
+
+        if ($event->modulename != 'assign') {
+            return false;
+        }
+
+        if (!isset($event->instance)) {
+            return false;
+        }
+
+        if (!isset($event->userid) && !isset($event->groupid)) {
+            return false;
+        }
+
+        $overrideparams = [
+            'assignid' => $event->instance
+        ];
+
+        if (isset($event->groupid)) {
+            $overrideparams['groupid'] = $event->groupid;
+        } else if (isset($event->userid)) {
+            $overrideparams['userid'] = $event->userid;
+        }
+
+        if ($DB->get_record('assign_overrides', $overrideparams)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * This function calculates the minimum and maximum cutoff values for the timestart of
+     * the given event.
+     *
+     * It will return an array with two values, the first being the minimum cutoff value and
+     * the second being the maximum cutoff value. Either or both values can be null, which
+     * indicates there is no minimum or maximum, respectively.
+     *
+     * If a cutoff is required then the function must return an array containing the cutoff
+     * timestamp and error string to display to the user if the cutoff value is violated.
+     *
+     * A minimum and maximum cutoff return value will look like:
+     * [
+     *     [1505704373, 'The due date must be after the sbumission start date'],
+     *     [1506741172, 'The due date must be before the cutoff date']
+     * ]
+     *
+     * @param calendar_event $event The calendar event to get the time range for
+     */
+    function get_valid_calendar_event_timestart_range(\calendar_event $event) {
+        $instance = $this->get_instance();
+        $submissionsfromdate = $instance->allowsubmissionsfromdate;
+        $cutoffdate = $instance->cutoffdate;
+        $duedate = $instance->duedate;
+        $gradingduedate = $instance->gradingduedate;
+        $mindate = null;
+        $maxdate = null;
+
+        if ($event->eventtype == ASSIGN_EVENT_TYPE_DUE) {
+            // This check is in here because due date events are currently
+            // the only events that can be overridden, so we can save a DB
+            // query if we don't bother checking other events.
+            if ($this->is_override_calendar_event($event)) {
+                // This is an override event so we should ignore it.
+                return [null, null];
+            }
+
+            if ($submissionsfromdate) {
+                $mindate = [
+                    $submissionsfromdate,
+                    get_string('duedatevalidation', 'assign'),
+                ];
+            }
+
+            if ($cutoffdate) {
+                $maxdate = [
+                    $cutoffdate,
+                    get_string('cutoffdatevalidation', 'assign'),
+                ];
+            }
+
+            if ($gradingduedate) {
+                // If we don't have a cutoff date or we've got a grading due date
+                // that is earlier than the cutoff then we should use that as the
+                // upper limit for the due date.
+                if (!$cutoffdate || $gradingduedate < $cutoffdate) {
+                    $maxdate = [
+                        $gradingduedate,
+                        get_string('gradingdueduedatevalidation', 'assign'),
+                    ];
+                }
+            }
+        } else if ($event->eventtype == ASSIGN_EVENT_TYPE_GRADINGDUE) {
+            if ($duedate) {
+                $mindate = [
+                    $duedate,
+                    get_string('gradingdueduedatevalidation', 'assign'),
+                ];
+            } else if ($submissionsfromdate) {
+                $mindate = [
+                    $submissionsfromdate,
+                    get_string('gradingduefromdatevalidation', 'assign'),
+                ];
+            }
+        }
+
+        return [$mindate, $maxdate];
+    }
+
+    /**
      * Actual implementation of the reset course functionality, delete all the
      * assignment submissions for course $data->courseid.
      *
@@ -1915,9 +2036,13 @@ class assign {
      * @return null|stdClass user record
      */
     public function get_participant($userid) {
-        global $DB;
+        global $DB, $USER;
 
-        $participant = $DB->get_record('user', array('id' => $userid));
+        if ($userid == $USER->id) {
+            $participant = clone ($USER);
+        } else {
+            $participant = $DB->get_record('user', array('id' => $userid));
+        }
         if (!$participant) {
             return null;
         }
@@ -5598,11 +5723,15 @@ class assign {
             return false;
         }
 
-        if ($userid == $graderid &&
-                $this->submissions_open($userid) &&
-                has_capability('mod/assign:submit', $this->context, $graderid)) {
-            // User can edit their own submission.
-            return true;
+        if ($userid == $graderid) {
+            if ($this->submissions_open($userid) &&
+                    has_capability('mod/assign:submit', $this->context, $graderid)) {
+                // User can edit their own submission.
+                return true;
+            } else {
+                // We need to return here because editothersubmission should never apply to a users own submission.
+                return false;
+            }
         }
 
         if (!has_capability('mod/assign:editothersubmission', $this->context, $graderid)) {
