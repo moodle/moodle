@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2016 Justin Hileman
+ * (c) 2010-2017 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -23,7 +23,7 @@
  */
 class Mustache_Engine
 {
-    const VERSION        = '2.11.1';
+    const VERSION        = '2.12.0';
     const SPEC_VERSION   = '1.1.2';
 
     const PRAGMA_FILTERS      = 'FILTERS';
@@ -54,6 +54,7 @@ class Mustache_Engine
     private $logger;
     private $strictCallables = false;
     private $pragmas = array();
+    private $delimiters;
 
     // Services
     private $tokenizer;
@@ -80,6 +81,14 @@ class Mustache_Engine
      *         // Optionally, enable caching for lambda section templates. This is generally not recommended, as lambda
      *         // sections are often too dynamic to benefit from caching.
      *         'cache_lambda_templates' => true,
+     *
+     *         // Customize the tag delimiters used by this engine instance. Note that overriding here changes the
+     *         // delimiters used to parse all templates and partials loaded by this instance. To override just for a
+     *         // single template, use an inline "change delimiters" tag at the start of the template file:
+     *         //
+     *         //     {{=<% %>=}}
+     *         //
+     *         'delimiters' => '<% %>',
      *
      *         // A Mustache template loader instance. Uses a StringLoader if not specified.
      *         'loader' => new Mustache_Loader_FilesystemLoader(dirname(__FILE__).'/views'),
@@ -133,6 +142,10 @@ class Mustache_Engine
     public function __construct(array $options = array())
     {
         if (isset($options['template_class_prefix'])) {
+            if ((string) $options['template_class_prefix'] === '') {
+                throw new Mustache_Exception_InvalidArgumentException('Mustache Constructor "template_class_prefix" must not be empty');
+            }
+
             $this->templateClassPrefix = $options['template_class_prefix'];
         }
 
@@ -189,6 +202,10 @@ class Mustache_Engine
 
         if (isset($options['strict_callables'])) {
             $this->strictCallables = $options['strict_callables'];
+        }
+
+        if (isset($options['delimiters'])) {
+            $this->delimiters = $options['delimiters'];
         }
 
         if (isset($options['pragmas'])) {
@@ -589,22 +606,43 @@ class Mustache_Engine
     /**
      * Helper method to generate a Mustache template class.
      *
-     * @param string $source
+     * This method must be updated any time options are added which make it so
+     * the same template could be parsed and compiled multiple different ways.
+     *
+     * @param string|Mustache_Source $source
      *
      * @return string Mustache Template class name
      */
     public function getTemplateClassName($source)
     {
-        return $this->templateClassPrefix . md5(sprintf(
-            'version:%s,escape:%s,entity_flags:%i,charset:%s,strict_callables:%s,pragmas:%s,source:%s',
-            self::VERSION,
-            isset($this->escape) ? 'custom' : 'default',
-            $this->entityFlags,
-            $this->charset,
-            $this->strictCallables ? 'true' : 'false',
-            implode(' ', $this->getPragmas()),
-            $source
-        ));
+        // For the most part, adding a new option here should do the trick.
+        //
+        // Pick a value here which is unique for each possible way the template
+        // could be compiled... but not necessarily unique per option value. See
+        // escape below, which only needs to differentiate between 'custom' and
+        // 'default' escapes.
+        //
+        // Keep this list in alphabetical order :)
+        $chunks = array(
+            'charset'         => $this->charset,
+            'delimiters'      => $this->delimiters ? $this->delimiters : '{{ }}',
+            'entityFlags'     => $this->entityFlags,
+            'escape'          => isset($this->escape) ? 'custom' : 'default',
+            'key'             => ($source instanceof Mustache_Source) ? $source->getKey() : 'source',
+            'pragmas'         => $this->getPragmas(),
+            'strictCallables' => $this->strictCallables,
+            'version'         => self::VERSION,
+        );
+
+        $key = json_encode($chunks);
+
+        // Template Source instances have already provided their own source key. For strings, just include the whole
+        // source string in the md5 hash.
+        if (!$source instanceof Mustache_Source) {
+            $key .= "\n" . $source;
+        }
+
+        return $this->templateClassPrefix . md5($key);
     }
 
     /**
@@ -681,8 +719,8 @@ class Mustache_Engine
      * @see Mustache_Engine::loadPartial
      * @see Mustache_Engine::loadLambda
      *
-     * @param string         $source
-     * @param Mustache_Cache $cache  (default: null)
+     * @param string|Mustache_Source $source
+     * @param Mustache_Cache         $cache  (default: null)
      *
      * @return Mustache_Template
      */
@@ -725,7 +763,7 @@ class Mustache_Engine
      */
     private function tokenize($source)
     {
-        return $this->getTokenizer()->scan($source);
+        return $this->getTokenizer()->scan($source, $this->delimiters);
     }
 
     /**
@@ -750,13 +788,12 @@ class Mustache_Engine
      *
      * @see Mustache_Compiler::compile
      *
-     * @param string $source
+     * @param string|Mustache_Source $source
      *
      * @return string generated Mustache template class code
      */
     private function compile($source)
     {
-        $tree = $this->parse($source);
         $name = $this->getTemplateClassName($source);
 
         $this->log(
@@ -764,6 +801,11 @@ class Mustache_Engine
             'Compiling template to "{className}" class',
             array('className' => $name)
         );
+
+        if ($source instanceof Mustache_Source) {
+            $source = $source->getSource();
+        }
+        $tree = $this->parse($source);
 
         $compiler = $this->getCompiler();
         $compiler->setPragmas($this->getPragmas());
