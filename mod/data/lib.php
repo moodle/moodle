@@ -3933,11 +3933,11 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
         $tagwhere = [];
         $tagselect = '';
         foreach ($nestsearch->rawtagnames as $tagrawname) {
-            $tagselect .= " INNER JOIN {tag_instance} AS ti_$i
+            $tagselect .= " INNER JOIN {tag_instance} ti_$i
                                     ON ti_$i.component = 'mod_data'
                                    AND ti_$i.itemtype = 'data_records'
                                    AND ti_$i.itemid = r.id
-                            INNER JOIN {tag} AS t_$i
+                            INNER JOIN {tag} t_$i
                                     ON ti_$i.tagid = t_$i.id ";
             $tagwhere[] = " t_$i.rawname = :trawname_$i ";
             $params["trawname_$i"] = $tagrawname;
