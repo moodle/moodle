@@ -84,7 +84,7 @@ abstract class linear extends base {
     }
 
     /**
-     * Should the model callback be triggered?
+     * This method determines if a prediction is interesing for the model or not.
      *
      * @param mixed $predictedvalue
      * @param float $predictionscore

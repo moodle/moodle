@@ -58,6 +58,15 @@ class admin_setting_predictor extends \admin_setting_configselect {
             return get_string('errorprocessornotready', 'analytics', $isready);
         }
 
+        $currentvalue = get_config('analytics', 'predictionsprocessor');
+        if (!empty($currentvalue) && $currentvalue != str_replace('\\\\', '\\', $data)) {
+            // Clear all models data.
+            $models = \core_analytics\manager::get_all_models();
+            foreach ($models as $model) {
+                $model->clear();
+            }
+        }
+
         return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
     }
 }

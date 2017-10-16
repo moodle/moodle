@@ -203,6 +203,61 @@ class dataset_manager {
     }
 
     /**
+     * Gets the list of files that couldn't be previously used for training and prediction.
+     *
+     * @param int $modelid
+     * @param bool $includetarget
+     * @param string[] $timesplittingids
+     * @return null
+     */
+    public static function get_pending_files($modelid, $includetarget, $timesplittingids) {
+        global $DB;
+
+        $fs = get_file_storage();
+
+        if ($includetarget) {
+            $filearea = self::LABELLED_FILEAREA;
+            $usedfileaction = 'trained';
+        } else {
+            $filearea = self::UNLABELLED_FILEAREA;
+            $usedfileaction = 'predicted';
+        }
+
+        $select = 'modelid = :modelid AND action = :action';
+        $params = array('modelid' => $modelid, 'action' => $usedfileaction);
+        $usedfileids = $DB->get_fieldset_select('analytics_used_files', 'fileid', $select, $params);
+
+        // Very likely that we will only have 1 time splitting method here.
+        $filesbytimesplitting = array();
+        foreach ($timesplittingids as $timesplittingid) {
+
+            $filepath = '/timesplitting/' . self::clean_time_splitting_id($timesplittingid) . '/';
+            $files = $fs->get_directory_files(\context_system::instance()->id, 'analytics', $filearea, $modelid, $filepath);
+            foreach ($files as $file) {
+
+                // Discard evaluation files.
+                if ($file->get_filename() === self::EVALUATION_FILENAME) {
+                    continue;
+                }
+
+                // No dirs.
+                if ($file->is_directory()) {
+                    continue;
+                }
+
+                // Already used for training.
+                if (in_array($file->get_id(), $usedfileids)) {
+                    continue;
+                }
+
+                $filesbytimesplitting[$timesplittingid][] = $file;
+            }
+        }
+
+        return $filesbytimesplitting;
+    }
+
+    /**
      * Deletes previous evaluation files of this model.
      *
      * @param int $modelid

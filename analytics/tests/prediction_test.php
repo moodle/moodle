@@ -273,6 +273,96 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         return $this->add_prediction_processors($cases);
     }
 
+    /**
+     * Test the system classifiers returns.
+     *
+     * This test checks that all mlbackend plugins in the system are able to return proper status codes
+     * even under weird situations.
+     *
+     * @dataProvider provider_ml_classifiers_return
+     * @param int $success
+     * @param int $nsamples
+     * @param int $classes
+     * @param string $predictionsprocessorclass
+     * @return void
+     */
+    public function test_ml_classifiers_return($success, $nsamples, $classes, $predictionsprocessorclass) {
+        $this->resetAfterTest();
+
+        $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
+        if ($predictionsprocessor->is_ready() !== true) {
+            $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready.');
+        }
+
+        if ($nsamples % count($classes) != 0) {
+            throw new \coding_exception('The number of samples should be divisible by the number of classes');
+        }
+        $samplesperclass = $nsamples / count($classes);
+
+        // Metadata (we pass 2 classes even if $classes only provides 1 class samples as we want to test
+        // what the backend does in this case.
+        $dataset = "nfeatures,targetclasses,targettype" . PHP_EOL;
+        $dataset .= "3,\"[0,1]\",\"discrete\"" . PHP_EOL;
+
+        // Headers.
+        $dataset .= "feature1,feature2,feature3,target" . PHP_EOL;
+        foreach ($classes as $class) {
+            for ($i = 0; $i < $samplesperclass; $i++) {
+                $dataset .= "1,0,1,$class" . PHP_EOL;
+            }
+        }
+
+        $trainingfile = array(
+            'contextid' => \context_system::instance()->id,
+            'component' => 'analytics',
+            'filearea' => 'labelled',
+            'itemid' => 123,
+            'filepath' => '/',
+            'filename' => 'whocares.csv'
+        );
+        $fs = get_file_storage();
+        $dataset = $fs->create_file_from_string($trainingfile, $dataset);
+
+        // Training should work correctly if at least 1 sample of each class is included.
+        $dir = make_request_directory();
+        $result = $predictionsprocessor->train_classification('whatever', $dataset, $dir);
+
+        switch ($success) {
+            case 'yes':
+                $this->assertEquals(\core_analytics\model::OK, $result->status);
+                break;
+            case 'no':
+                $this->assertNotEquals(\core_analytics\model::OK, $result->status);
+                break;
+            case 'maybe':
+            default:
+                // We just check that an object is returned so we don't have an empty check,
+                // what we really want to check is that an exception was not thrown.
+                $this->assertInstanceOf(\stdClass::class, $result);
+        }
+    }
+
+    /**
+     * test_ml_classifiers_return provider
+     *
+     * We can not be very specific here as test_ml_classifiers_return only checks that
+     * mlbackend plugins behave and expected and control properly backend errors even
+     * under weird situations.
+     *
+     * @return array
+     */
+    public function provider_ml_classifiers_return() {
+        // Using verbose options as the first argument for readability.
+        $cases = array(
+            '1-samples' => array('maybe', 1, [0]),
+            '2-samples-same-class' => array('maybe', 2, [0]),
+            '2-samples-different-classes' => array('yes', 2, [0, 1]),
+            '4-samples-different-classes' => array('yes', 4, [0, 1])
+        );
+
+        // We need to test all system prediction processors.
+        return $this->add_prediction_processors($cases);
+    }
 
     /**
      * Basic test to check that prediction processors work as expected.
@@ -426,8 +516,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
                 'expectedresults' => array(
                     // The course duration is too much to be processed by in weekly basis.
                     '\core\analytics\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
-                    '\core\analytics\time_splitting\single_range' => \core_analytics\model::EVALUATE_LOW_SCORE,
-                    '\core\analytics\time_splitting\quarters' => \core_analytics\model::EVALUATE_LOW_SCORE,
+                    '\core\analytics\time_splitting\single_range' => \core_analytics\model::LOW_SCORE,
+                    '\core\analytics\time_splitting\quarters' => \core_analytics\model::LOW_SCORE,
                 )
             ),
             'good' => array(

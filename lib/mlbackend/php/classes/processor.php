@@ -129,15 +129,26 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
             $samples[] = array_slice($sampledata, 0, $metadata['nfeatures']);
             $targets[] = intval($data[$metadata['nfeatures']]);
 
-            if (count($samples) === self::BATCH_SIZE) {
+            $nsamples = count($samples);
+            if ($nsamples === self::BATCH_SIZE) {
                 // Training it batches to avoid running out of memory.
 
                 $classifier->partialTrain($samples, $targets, array(0, 1));
                 $samples = array();
                 $targets = array();
             }
+            if (empty($morethan1sample) && $nsamples > 1) {
+                $morethan1sample = true;
+            }
         }
         fclose($fh);
+
+        if (empty($morethan1sample)) {
+            $resultobj = new \stdClass();
+            $resultobj->status = \core_analytics\model::NO_DATASET;
+            $resultobj->info = array();
+            return $resultobj;
+        }
 
         // Train the remaining samples.
         if ($samples) {
@@ -288,7 +299,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
         }
         if (!empty($notenoughdata)) {
             $resultobj = new \stdClass();
-            $resultobj->status = \core_analytics\model::EVALUATE_NOT_ENOUGH_DATA;
+            $resultobj->status = \core_analytics\model::NOT_ENOUGH_DATA;
             $resultobj->score = 0;
             $resultobj->info = array(get_string('errornotenoughdata', 'mlbackend_php'));
             return $resultobj;
@@ -350,7 +361,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
 
         // If each iteration results varied too much we need more data to confirm that this is a valid model.
         if ($modeldev > $maxdeviation) {
-            $resultobj->status = $resultobj->status + \core_analytics\model::EVALUATE_NOT_ENOUGH_DATA;
+            $resultobj->status = $resultobj->status + \core_analytics\model::NOT_ENOUGH_DATA;
             $a = new \stdClass();
             $a->deviation = $modeldev;
             $a->accepteddeviation = $maxdeviation;
@@ -358,7 +369,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
         }
 
         if ($resultobj->score < \core_analytics\model::MIN_SCORE) {
-            $resultobj->status = $resultobj->status + \core_analytics\model::EVALUATE_LOW_SCORE;
+            $resultobj->status = $resultobj->status + \core_analytics\model::LOW_SCORE;
             $a = new \stdClass();
             $a->score = $resultobj->score;
             $a->minscore = \core_analytics\model::MIN_SCORE;

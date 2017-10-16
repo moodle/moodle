@@ -2725,5 +2725,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017101200.00);
     }
 
+    // Index modification upgrade step.
+    if ($oldversion < 2017101300.01) {
+
+        $table = new xmldb_table('analytics_used_files');
+
+        // Define index modelidandfileidandaction (not unique) to be dropped form analytics_used_files.
+        $index = new xmldb_index('modelidandfileidandaction', XMLDB_INDEX_NOTUNIQUE, array('modelid', 'fileid', 'action'));
+
+        // Conditionally launch drop index modelidandfileidandaction.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Define index modelidandactionandfileid (not unique) to be dropped form analytics_used_files.
+        $index = new xmldb_index('modelidandactionandfileid', XMLDB_INDEX_NOTUNIQUE, array('modelid', 'action', 'fileid'));
+
+        // Conditionally launch add index modelidandactionandfileid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017101300.01);
+    }
     return true;
 }

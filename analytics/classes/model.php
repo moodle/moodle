@@ -53,12 +53,12 @@ class model {
     /**
      * Model with low prediction accuracy.
      */
-    const EVALUATE_LOW_SCORE = 4;
+    const LOW_SCORE = 4;
 
     /**
      * Not enough data to evaluate the model properly.
      */
-    const EVALUATE_NOT_ENOUGH_DATA = 8;
+    const NOT_ENOUGH_DATA = 8;
 
     /**
      * Invalid analysable for the time splitting method.
@@ -437,7 +437,7 @@ class model {
                 $this->model->indicators !== $indicatorsstr) {
 
             // Delete generated predictions before changing the model version.
-            $this->clear_model();
+            $this->clear();
 
             // It needs to be reset as the version changes.
             $this->uniqueid = null;
@@ -474,9 +474,9 @@ class model {
 
         \core_analytics\manager::check_can_manage_models();
 
-        $this->clear_model();
+        $this->clear();
 
-        // Method self::clear_model is already clearing the current model version.
+        // Method self::clear is already clearing the current model version.
         $predictor = \core_analytics\manager::get_predictions_processor();
         $predictor->delete_output_dir($this->get_output_dir(array(), true));
 
@@ -633,6 +633,10 @@ class model {
         $result->status = $predictorresult->status;
         $result->info = $predictorresult->info;
 
+        if ($result->status !== self::OK) {
+            return $result;
+        }
+
         $this->flag_file_as_used($samplesfile, 'trained');
 
         // Mark the model as trained if it wasn't.
@@ -689,7 +693,7 @@ class model {
         $samplesfile = $samplesdata[$this->model->timesplitting];
 
         // We need to throw an exception if we are trying to predict stuff that was already predicted.
-        $params = array('modelid' => $this->model->id, 'fileid' => $samplesfile->get_id(), 'action' => 'predicted');
+        $params = array('modelid' => $this->model->id, 'action' => 'predicted', 'fileid' => $samplesfile->get_id());
         if ($predicted = $DB->get_record('analytics_used_files', $params)) {
             throw new \moodle_exception('erroralreadypredict', 'analytics', '', $samplesfile->get_id());
         }
@@ -715,6 +719,10 @@ class model {
             $result->status = $predictorresult->status;
             $result->info = $predictorresult->info;
             $result->predictions = $this->format_predictor_predictions($predictorresult);
+        }
+
+        if ($result->status !== self::OK) {
+            return $result;
         }
 
         if ($result->predictions) {
@@ -780,15 +788,16 @@ class model {
 
         // Here we will store all predictions' contexts, this will be used to limit which users will see those predictions.
         $samplecontexts = array();
+        $records = array();
 
         foreach ($predictions as $uniquesampleid => $prediction) {
 
+            // The unique sample id contains both the sampleid and the rangeindex.
+            list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
+
             if ($this->get_target()->triggers_callback($prediction->prediction, $prediction->predictionscore)) {
 
-                // The unique sample id contains both the sampleid and the rangeindex.
-                list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
-
-                // Store the predicted values.
+                // Prepare the record to store the predicted values.
                 list($record, $samplecontext) = $this->prepare_prediction_record($sampleid, $rangeindex, $prediction->prediction,
                     $prediction->predictionscore, json_encode($indicatorcalculations[$uniquesampleid]));
 
@@ -990,7 +999,7 @@ class model {
             }
 
             // Delete generated predictions before changing the model version.
-            $this->clear_model();
+            $this->clear();
 
             // It needs to be reset as the version changes.
             $this->uniqueid = null;
@@ -1268,7 +1277,7 @@ class model {
             $outputdir = rtrim($CFG->dataroot, '/') . DIRECTORY_SEPARATOR . 'models';
         }
 
-        // Append model id
+        // Append model id.
         $outputdir .= DIRECTORY_SEPARATOR . $this->model->id;
         if (!$onlymodelid) {
             // Append version + subdirs.
@@ -1435,8 +1444,10 @@ class model {
      *
      * @return void
      */
-    private function clear_model() {
+    public function clear() {
         global $DB;
+
+        \core_analytics\manager::check_can_manage_models();
 
         // Delete current model version stored stuff.
         $predictor = \core_analytics\manager::get_predictions_processor();
