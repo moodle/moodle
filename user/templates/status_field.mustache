@@ -61,7 +61,7 @@
      data-status="{{status}}" data-timestart="{{timestart}}" data-timeend="{{timeend}}">
     <span class="label {{#active}}label-success{{/active}}{{#suspended}}label-warning{{/suspended}}{{#notcurrent}}label-default{{/notcurrent}}">{{status}}</span>
     <a data-action="showdetails" href="#" role="button" tabindex="0">{{!
-        }}{{#pix}}docs, core, {{#str}}enroldetails, enrol{{/str}}{{/pix}}{{!
+        }}{{#pix}}docs, core, {{enrolinstancename}}{{/pix}}{{!
     }}</a>
     {{#enrolactions}}
     <a href="{{url}}" role="button" {{#attributes}}{{name}}="{{value}}" {{/attributes}}>{{!

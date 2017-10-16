@@ -140,7 +140,8 @@ define(['core/templates',
                         component: 'enrol',
                         param: {
                             user: parentContainer.data('fullname'),
-                            course: parentContainer.data('coursename')
+                            course: parentContainer.data('coursename'),
+                            enrolinstancename: parentContainer.data('enrolinstancename')
                         }
                     }
                 ];
