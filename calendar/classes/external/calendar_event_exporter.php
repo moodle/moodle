@@ -198,12 +198,11 @@ class calendar_event_exporter extends event_exporter_base {
      * @return string
      */
     public function get_calendar_event_type() {
-        $type = $this->event->get_type();
-        if ($type == 'open' || $type == 'close') {
-            $type = 'course';
+        if ($this->event->get_course_module()) {
+            return 'course';
         }
 
-        return $type;
+        return $this->event->get_type();
     }
 
     /**
