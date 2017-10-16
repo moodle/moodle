@@ -11,7 +11,7 @@
     <location>bennu</location>
     <name>Bennu</name>
     <license>LGPL</license>
-    <version></version>
+    <version>0.1-custom</version>
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
