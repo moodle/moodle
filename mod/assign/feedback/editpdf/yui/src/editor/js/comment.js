@@ -367,6 +367,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
             menu.setData('comment', this);
 
             node.on('keyup', function() {
+                node.setStyle('height', 'auto');
                 var scrollheight = node.get('scrollHeight'),
                     height = parseInt(node.getStyle('height'), 10);
 
