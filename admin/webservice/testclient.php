@@ -54,7 +54,7 @@ foreach ($allfunctions as $f) {
         //some plugins may want to have own test client forms
         include_once($CFG->dirroot.'/'.$finfo->testclientpath);
     }
-    $class = $f->name.'_form';
+    $class = $f->name.'_testclient_form';
     if (class_exists($class)) {
         $functions[$f->name] = $f->name;
         continue;
@@ -103,7 +103,7 @@ if (!$function or !$protocol) {
     die;
 }
 
-$class = $function.'_form';
+$class = $function.'_testclient_form';
 
 $mform = new $class(null, array('authmethod' => $authmethod));
 $mform->set_data(array('function'=>$function, 'protocol'=>$protocol));
