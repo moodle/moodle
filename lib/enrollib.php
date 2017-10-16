@@ -1419,8 +1419,8 @@ function get_enrolled_join(context $context, $useridcolumn, $onlyactive = false,
                 "{$prefix}e1.courseid = :{$prefix}_e1_courseid",
             );
             if ($enrolid) {
-                $enrolconditions[] = "{$prefix}e1.id = :{$prefix}e1.enrolid";
-                $params[$prefix . 'e1.enrolid'] = $enrolid;
+                $enrolconditions[] = "{$prefix}e1.id = :{$prefix}e1_enrolid";
+                $params[$prefix . 'e1_enrolid'] = $enrolid;
             }
             $enrolconditionssql = implode(" AND ", $enrolconditions);
             $joins[] = "JOIN {enrol} {$prefix}e1 ON ($enrolconditionssql)";
