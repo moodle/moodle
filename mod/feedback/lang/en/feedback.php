@@ -207,6 +207,7 @@ $string['of'] = 'of';
 $string['oldvaluespreserved'] = 'All old questions and the assigned values will be preserved';
 $string['oldvalueswillbedeleted'] = 'Current questions and all responses will be deleted.';
 $string['only_one_captcha_allowed'] = 'Only one captcha is allowed in a feedback';
+$string['openafterclose'] = 'You have specified an open date after the close date';
 $string['overview'] = 'Overview';
 $string['page'] = 'Page';
 $string['page-mod-feedback-x'] = 'Any feedback module page';
