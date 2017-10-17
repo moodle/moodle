@@ -187,7 +187,7 @@ class calculator {
             // foreach ($this->questions as $qid => $question).
             $slots = $this->stats->get_all_slots();
             $this->progress->start_progress('', count($slots), 1);
-            while (list(, $slot) = each($slots)) {
+            foreach ($slots as $slot) {
                 $this->stats->for_slot($slot)->sort_variants();
                 $this->progress->increment_progress();
                 $nextslot = current($slots);

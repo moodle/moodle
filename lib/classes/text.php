@@ -560,8 +560,12 @@ class core_text {
         static $callback2 = null ;
 
         if (!$callback1 or !$callback2) {
-            $callback1 = create_function('$matches', 'return core_text::code2utf8(hexdec($matches[1]));');
-            $callback2 = create_function('$matches', 'return core_text::code2utf8($matches[1]);');
+            $callback1 = function($matches) {
+                return core_text::code2utf8(hexdec($matches[1]));
+            };
+            $callback2 = function($matches) {
+                return core_text::code2utf8($matches[1]);
+            };
         }
 
         $result = (string)$str;
@@ -600,7 +604,9 @@ class core_text {
 
         if ($dec) {
             if (!$callback) {
-                $callback = create_function('$matches', 'return \'&#\'.(hexdec($matches[1])).\';\';');
+                $callback = function($matches) {
+                    return '&#' . hexdec($matches[1]) . ';';
+                };
             }
             $result = preg_replace_callback('/&#x([0-9a-f]+);/i', $callback, $result);
         }

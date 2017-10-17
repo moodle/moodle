@@ -51,27 +51,6 @@ define('MEMORY_EXTRA', -3);
 /** Extremely large memory limit - not recommended for standard scripts */
 define('MEMORY_HUGE', -4);
 
-
-/**
- * Simple class. It is usually used instead of stdClass because it looks
- * more familiar to Java developers ;-) Do not use for type checking of
- * function parameters. Please use stdClass instead.
- *
- * @package    core
- * @subpackage lib
- * @copyright  2009 Petr Skoda  {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated since 2.0
- */
-class object extends stdClass {
-    /**
-     * Constructor.
-     */
-    public function __construct() {
-        debugging("'object' class has been deprecated, please use stdClass instead.", DEBUG_DEVELOPER);
-    }
-};
-
 /**
  * Base Moodle Exception class
  *
@@ -1122,7 +1101,9 @@ function workaround_max_input_vars() {
     }
 
     $delim = '&';
-    $fun = create_function('$p', 'return implode("'.$delim.'", $p);');
+    $fun = function($p) use ($delim) {
+        return implode($delim, $p);
+    };
     $chunks = array_map($fun, array_chunk(explode($delim, $str), $max));
 
     // Clear everything from existing $_POST array, otherwise it might be included

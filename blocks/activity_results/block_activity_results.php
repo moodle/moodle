@@ -289,8 +289,12 @@ class block_activity_results extends block_base {
                 }
 
                 // Sort groupgrades according to average grade, ascending.
-                uasort($groupgrades, create_function('$a, $b',
-                        'if($a["average"] == $b["average"]) return 0; return ($a["average"] > $b["average"] ? 1 : -1);'));
+                uasort($groupgrades, function($a, $b) {
+                    if ($a["average"] == $b["average"]) {
+                        return 0;
+                    }
+                    return ($a["average"] > $b["average"] ? 1 : -1);
+                });
 
                 // How many groups do we have with graded member submissions to show?
                 $numbest  = empty($this->config->showbest) ? 0 : min($this->config->showbest, count($groupgrades));

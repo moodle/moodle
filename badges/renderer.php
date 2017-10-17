@@ -358,7 +358,9 @@ class core_badges_renderer extends plugin_renderer_base {
         // Print evidence.
         $agg = $badge->get_aggregation_methods();
         $evidence = $badge->get_criteria_completions($userinfo->id);
-        $eids = array_map(create_function('$o', 'return $o->critid;'), $evidence);
+        $eids = array_map(function($o) {
+            return $o->critid;
+        }, $evidence);
         unset($badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]);
 
         $items = array();
