@@ -1,0 +1,19 @@
+This file describes API changes in /grade/* ;
+Information provided here is intended especially for developers.
+
+=== 3.6 ===
+
+* The grade_plugin_return constructor now uses parameters from the
+  request as defaults, which can be overridden by parameters supplied
+  to the constructor. This may lead to a change in behaviour if only
+  some of the possible parameters are supplied.
+* The grade_plugin_return class now tracks groupid as well as the
+  type, plugin, courseid, userid and page parameters that were tracked
+  previously. The groupid parameter will be set using
+  groups_get_course_group for the relevant course if the group is
+  otherwise unspecified.
+* The above changes mean that code using grade_plugin_return objects
+  should generally no longer call groups_get_course_group directly,
+  but should use the gpr->groupid parameter instead.
+* The grade_plugin_return constructor now accepts either course or
+  courseid as a parameter to specify course.
