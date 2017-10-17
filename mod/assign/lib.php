@@ -1950,7 +1950,9 @@ function mod_assign_core_calendar_event_action_shows_item_count(calendar_event $
  * @param stdClass|null $instance The module instance to get the range from
  */
 function mod_assign_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $instance = null) {
-    global $DB;
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
     if (!$instance) {
         $instance = $DB->get_record('assign', ['id' => $event->instance]);
@@ -2016,7 +2018,9 @@ function mod_assign_core_calendar_validate_event_timestart(\calendar_event $even
  * @param \calendar_event $event
  */
 function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event) {
-    global $DB;
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
     if (empty($event->instance) || $event->modulename != 'assign') {
         return;
