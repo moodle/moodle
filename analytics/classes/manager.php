@@ -469,6 +469,13 @@ class manager {
             '\mod_wiki\analytics\indicator\social_breadth',
             '\mod_workshop\analytics\indicator\cognitive_depth',
             '\mod_workshop\analytics\indicator\social_breadth',
+            '\core_course\analytics\indicator\completion_enabled',
+            '\core_course\analytics\indicator\potential_cognitive_depth',
+            '\core_course\analytics\indicator\potential_social_breadth',
+            '\core\analytics\indicator\any_access_after_end',
+            '\core\analytics\indicator\any_access_before_start',
+            '\core\analytics\indicator\any_write_action',
+            '\core\analytics\indicator\read_actions',
         );
         $indicators = array();
         foreach ($coiindicators as $coiindicator) {
@@ -483,7 +490,8 @@ class manager {
         $target = self::get_target('\core\analytics\target\no_teaching');
         $timesplittingmethod = '\core\analytics\time_splitting\single_range';
         $noteacher = self::get_indicator('\core_course\analytics\indicator\no_teacher');
-        $indicators = array($noteacher->get_id() => $noteacher);
+        $nostudent = self::get_indicator('\core_course\analytics\indicator\no_student');
+        $indicators = array($noteacher->get_id() => $noteacher, $nostudent->get_id() => $nostudent);
         if (!\core_analytics\model::exists($target, $indicators)) {
             \core_analytics\model::create($target, $indicators, $timesplittingmethod);
         }
