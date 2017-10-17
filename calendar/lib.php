@@ -3063,36 +3063,50 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
     $type = \core_calendar\type_factory::get_calendar_instance();
 
     // Calculate the bounds of the month.
-    $date = $type->timestamp_to_date_array($calendar->time);
+    $calendardate = $type->timestamp_to_date_array($calendar->time);
+
+    $date = new \DateTime('now', core_date::get_user_timezone_object(99));
 
     if ($view === 'day') {
-        $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], $date['mday']);
-        $tend = $tstart + DAYSECS - 1;
+        $tstart = $type->convert_to_timestamp($calendardate['year'], $calendardate['mon'], $calendardate['mday']);
+        $date->setTimestamp($tstart);
+        $date->modify('+1 day');
     } else if ($view === 'upcoming' || $view === 'upcoming_mini') {
+        // Number of days in the future that will be used to fetch events.
         if (isset($CFG->calendar_lookahead)) {
             $defaultlookahead = intval($CFG->calendar_lookahead);
         } else {
             $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
         }
         $lookahead = get_user_preferences('calendar_lookahead', $defaultlookahead);
+
+        // Maximum number of events to be displayed on upcoming view.
         $defaultmaxevents = CALENDAR_DEFAULT_UPCOMING_MAXEVENTS;
         if (isset($CFG->calendar_maxevents)) {
             $defaultmaxevents = intval($CFG->calendar_maxevents);
         }
         $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
-        $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], $date['mday'], $date['hours']);
-        $tend = usergetmidnight($tstart + DAYSECS * $lookahead + 3 * HOURSECS) - 1;
+
+        $tstart = $type->convert_to_timestamp($calendardate['year'], $calendardate['mon'], $calendardate['mday'],
+                $calendardate['hours']);
+        $date->setTimestamp($tstart);
+        $date->modify('+' . $lookahead . ' days');
     } else {
-        $tstart = $type->convert_to_timestamp($date['year'], $date['mon'], 1);
-        $monthdays = $type->get_num_days_in_month($date['year'], $date['mon']);
-        $tend = $tstart + ($monthdays * DAYSECS) - 1;
-        $selectortitle = get_string('detailedmonthviewfor', 'calendar');
+        $tstart = $type->convert_to_timestamp($calendardate['year'], $calendardate['mon'], 1);
+        $monthdays = $type->get_num_days_in_month($calendardate['year'], $calendardate['mon']);
+        $date->setTimestamp($tstart);
+        $date->modify('+' . $monthdays . ' days');
+
         if ($view === 'mini' || $view === 'minithree') {
             $template = 'core_calendar/calendar_mini';
         } else {
             $template = 'core_calendar/calendar_month';
         }
     }
+
+    // We need to extract 1 second to ensure that we don't get into the next day.
+    $date->modify('-1 second');
+    $tend = $date->getTimestamp();
 
     list($userparam, $groupparam, $courseparam, $categoryparam) = array_map(function($param) {
         // If parameter is true, return null.
