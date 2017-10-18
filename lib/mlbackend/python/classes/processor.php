@@ -150,9 +150,17 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         }
 
         if ($exitcode != 0) {
-            $errors = $resultobj->errors;
-            if (is_array($errors)) {
-                $errors = implode(', ', $errors);
+            if (!empty($resultobj->errors)) {
+                $errors = $resultobj->errors;
+                if (is_array($errors)) {
+                    $errors = implode(', ', $errors);
+                }
+            } else if (!empty($resultobj->info)) {
+                // Show info if no errors are returned.
+                $errors = $resultobj->info;
+                if (is_array($errors)) {
+                    $errors = implode(', ', $errors);
+                }
             }
             $resultobj->info = array(get_string('errorpredictionsprocessor', 'analytics', $errors));
         }
@@ -195,9 +203,17 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         }
 
         if ($exitcode != 0) {
-            $errors = $resultobj->errors;
-            if (is_array($errors)) {
-                $errors = implode(', ', $errors);
+            if (!empty($resultobj->errors)) {
+                $errors = $resultobj->errors;
+                if (is_array($errors)) {
+                    $errors = implode(', ', $errors);
+                }
+            } else if (!empty($resultobj->info)) {
+                // Show info if no errors are returned.
+                $errors = $resultobj->info;
+                if (is_array($errors)) {
+                    $errors = implode(', ', $errors);
+                }
             }
             $resultobj->info = array(get_string('errorpredictionsprocessor', 'analytics', $errors));
         }

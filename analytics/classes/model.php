@@ -747,7 +747,7 @@ class model {
     private function format_predictor_predictions($predictorresult) {
 
         $predictions = array();
-        if ($predictorresult->predictions) {
+        if (!empty($predictorresult->predictions)) {
             foreach ($predictorresult->predictions as $sampleinfo) {
 
                 // We parse each prediction.
@@ -984,7 +984,7 @@ class model {
      * @return void
      */
     public function enable($timesplittingid = false) {
-        global $DB;
+        global $DB, $USER;
 
         \core_analytics\manager::check_can_manage_models();
 
@@ -1022,6 +1022,7 @@ class model {
 
         $this->model->enabled = 1;
         $this->model->timemodified = $now;
+        $this->model->usermodified = $USER->id;
 
         // We don't always update timemodified intentionally as we reserve it for target, indicators or timesplitting updates.
         $DB->update_record('analytics_models', $this->model);
@@ -1447,7 +1448,7 @@ class model {
      * @return void
      */
     public function clear() {
-        global $DB;
+        global $DB, $USER;
 
         \core_analytics\manager::check_can_manage_models();
 
@@ -1474,6 +1475,11 @@ class model {
         // We don't expect people to clear models regularly and the cost of filling the cache is
         // 1 db read per context.
         $this->purge_insights_cache();
+
+        $this->model->trained = 0;
+        $this->model->timemodified = time();
+        $this->model->usermodified = $USER->id;
+        $DB->update_record('analytics_models', $this->model);
     }
 
     /**
