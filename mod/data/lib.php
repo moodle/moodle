@@ -3156,6 +3156,9 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0,
             $exportdata[0][] = $field->field->name;
         }
     }
+    if ($tags) {
+        $exportdata[0][] = get_string('tags', 'data');
+    }
     if ($userdetails) {
         $exportdata[0][] = get_string('user');
         $exportdata[0][] = get_string('username');
@@ -3167,9 +3170,6 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0,
     }
     if ($approval) {
         $exportdata[0][] = get_string('approved', 'data');
-    }
-    if ($tags) {
-        $exportdata[0][] = get_string('tags', 'data');
     }
 
     $datarecords = $DB->get_records('data_records', array('dataid'=>$dataid));
@@ -3193,6 +3193,10 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0,
                 }
                 $exportdata[$line][] = $contents;
             }
+            if ($tags) {
+                $itemtags = \core_tag_tag::get_item_tags_array('mod_data', 'data_records', $record->id);
+                $exportdata[$line][] = implode(', ', $itemtags);
+            }
             if ($userdetails) { // Add user details to the export data
                 $userdata = get_complete_user_data('id', $record->userid);
                 $exportdata[$line][] = fullname($userdata);
@@ -3205,10 +3209,6 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0,
             }
             if ($approval) { // Add approval status
                 $exportdata[$line][] = (int) $record->approved;
-            }
-            if ($tags) {
-                $itemtags = \core_tag_tag::get_item_tags_array('mod_data', 'data_records', $record->id);
-                $exportdata[$line][] = implode(', ', $itemtags);
             }
         }
         $line++;
