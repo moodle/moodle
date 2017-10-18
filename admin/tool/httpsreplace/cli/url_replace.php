@@ -83,7 +83,7 @@ if ($options['replace']) {
 
     $urlfinder = new \tool_httpsreplace\url_finder();
     $results = $urlfinder->http_link_stats();
-    asort($urlfinder);
+    asort($results);
     $fp = fopen('php://stdout', 'w');
     fputcsv($fp, ['clientsite', 'httpdomain', 'urlcount']);
     foreach ($results as $domain => $count) {
