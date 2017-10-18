@@ -2764,6 +2764,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         $CFG->forceclean = true;
     }
 
+    $afterlogins = get_plugins_with_function('after_require_login', 'lib.php');
+
     // Do not bother admins with any formalities, except for activities pending deletion.
     if (is_siteadmin() && !($cm && $cm->deletioninprogress)) {
         // Set the global $COURSE.
@@ -2777,6 +2779,12 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         // Do not update access time for webservice or ajax requests.
         if (!WS_SERVER && !AJAX_SCRIPT) {
             user_accesstime_log($course->id);
+        }
+
+        foreach ($afterlogins as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
+            }
         }
         return;
     }
@@ -2993,6 +3001,12 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         $PAGE->set_pagelayout('incourse');
     } else if (!empty($courseorid)) {
         $PAGE->set_course($course);
+    }
+
+    foreach ($afterlogins as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginfunction($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
+        }
     }
 
     // Finally access granted, update lastaccess times.
