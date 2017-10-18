@@ -60,7 +60,9 @@ switch ($action) {
     case 'export':
         $title = get_string('export', 'tool_analytics');
         break;
-
+    case 'clear':
+        $title = get_string('clearpredictions', 'tool_analytics');
+        break;
     default:
         throw new moodle_exception('errorunknownaction', 'analytics');
 }
@@ -80,14 +82,21 @@ if ($onlycli === false) {
 switch ($action) {
 
     case 'enable':
+        confirm_sesskey();
+
         $model->enable();
         redirect(new \moodle_url('/admin/tool/analytics/index.php'));
+        break;
 
     case 'disable':
+        confirm_sesskey();
+
         $model->update(0, false, false);
         redirect(new \moodle_url('/admin/tool/analytics/index.php'));
+        break;
 
     case 'edit':
+        confirm_sesskey();
 
         if ($model->is_static()) {
             echo $OUTPUT->header();
@@ -106,7 +115,6 @@ switch ($action) {
             redirect(new \moodle_url('/admin/tool/analytics/index.php'));
 
         } else if ($data = $mform->get_data()) {
-            confirm_sesskey();
 
             // Converting option names to class names.
             $indicators = array();
@@ -131,6 +139,8 @@ switch ($action) {
         break;
 
     case 'evaluate':
+        confirm_sesskey();
+
         echo $OUTPUT->header();
 
         if ($model->is_static()) {
@@ -150,6 +160,8 @@ switch ($action) {
         break;
 
     case 'getpredictions':
+        confirm_sesskey();
+
         echo $OUTPUT->header();
 
         if ($onlycli) {
@@ -199,6 +211,13 @@ switch ($action) {
 
         $filename = 'training-data.' . $model->get_id() . '.' . time() . '.csv';
         send_file($file, $filename, null, 0, false, true);
+        break;
+
+    case 'clear':
+        confirm_sesskey();
+
+        $model->clear();
+        redirect(new \moodle_url('/admin/tool/analytics/index.php'));
         break;
 }
 
