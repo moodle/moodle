@@ -209,3 +209,4 @@ $string['companycertify'] = 'This Certificate of Completion recognises that';
 $string['companydetails'] = 'has completed the web-based training program entitled';
 $string['companyscore'] = 'with an overall score of {$a}';
 $string['companydate'] = 'on {$a}';
+$string['companydatecap'] = 'On {$a}';

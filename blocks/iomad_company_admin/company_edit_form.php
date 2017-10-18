@@ -448,41 +448,57 @@ class company_edit_form extends company_moodleform {
                 $mform->setType('customcss', PARAM_CLEAN);
         }
 
-        // Only show the Appearence section if the theme is iomad or you have abilities
-        // to change that.
+        // Only show the certificate section if you have capability.
         if (iomad::has_capability('block/iomad_company_admin:company_edit_certificateinfo', $context)) {
             $mform->addElement('header', 'certificatedesign', get_string('certificatedesign', 'block_iomad_company_admin'));
+
+            $mform->addElement('advcheckbox', 'uselogo', get_string('company_uselogo', 'block_iomad_company_admin'), null, null, array(0,1));
             $mform->addElement('filemanager', 'companycertificateseal',
                                 get_string('companycertificateseal', 'block_iomad_company_admin'), null,
                                 array('subdirs' => 0,
                                       'maxbytes' => 150 * 1024,
                                       'maxfiles' => 1,
                                       'accepted_types' => array('*.jpg', '*.gif', '*.png')));
+            $mform->disabledIf('companycertificateseal', 'uselogo');
+
+            $mform->addElement('advcheckbox', 'usesignature', get_string('company_usesignature', 'block_iomad_company_admin'), null, null, array(0,1));
             $mform->addElement('filemanager', 'companycertificatesignature',
                                 get_string('companycertificatesignature', 'block_iomad_company_admin'), null,
                                 array('subdirs' => 0,
                                       'maxbytes' => 150 * 1024,
                                       'maxfiles' => 1,
                                       'accepted_types' => array('*.jpg', '*.gif', '*.png')));
+            $mform->disabledIf('companycertificatesignature', 'usesignature');
 
+            $mform->addElement('advcheckbox', 'useborder', get_string('company_useborder', 'block_iomad_company_admin'), null, null, array(0,1));
             $mform->addElement('filemanager', 'companycertificateborder',
                                 get_string('companycertificateborder', 'block_iomad_company_admin'), null,
                                 array('subdirs' => 0,
                                       'maxbytes' => 150 * 1024,
                                       'maxfiles' => 1,
                                       'accepted_types' => array('*.jpg', '*.gif', '*.png')));
+            $mform->disabledIf('companycertificateborder', 'useborder');
 
+            $mform->addElement('advcheckbox', 'usewatermark', get_string('company_usewatermark', 'block_iomad_company_admin'), null, null, array(0,1));
             $mform->addElement('filemanager', 'companycertificatewatermark',
                                 get_string('companycertificatewatermark', 'block_iomad_company_admin'), null,
                                 array('subdirs' => 0,
                                       'maxbytes' => 150 * 1024,
                                       'maxfiles' => 1,
                                       'accepted_types' => array('*.jpg', '*.gif', '*.png')));
+            $mform->disabledIf('companycertificatewatermark', 'usewatermark');
+
+            $mform->addElement('advcheckbox', 'showgrade', get_string('company_showgrade', 'block_iomad_company_admin'), null, null, array(0,1));
 
             $mform->addHelpButton('companycertificateseal', 'companycertificateseal', 'block_iomad_company_admin');
             $mform->addHelpButton('companycertificatesignature', 'companycertificatesignature', 'block_iomad_company_admin');
             $mform->addHelpButton('companycertificateborder', 'companycertificateborder', 'block_iomad_company_admin');
             $mform->addHelpButton('companycertificatewatermark', 'companycertificatewatermark', 'block_iomad_company_admin');
+            $mform->addHelpButton('uselogo', 'company_uselogo', 'block_iomad_company_admin');
+            $mform->addHelpButton('usesignature', 'company_usesignature', 'block_iomad_company_admin');
+            $mform->addHelpButton('useborder', 'company_useborder', 'block_iomad_company_admin');
+            $mform->addHelpButton('usewatermark', 'company_usewatermark', 'block_iomad_company_admin');
+            $mform->addHelpButton('showgrade', 'company_showgrade', 'block_iomad_company_admin');
 
         } else {
             $mform->addElement('hidden', 'companycertificateseal', $this->companyrecord->companycertificateseal);
@@ -493,6 +509,18 @@ class company_edit_form extends company_moodleform {
             $mform->setType('companycertificateborder', PARAM_CLEAN);
             $mform->addElement('hidden', 'companycertificatewatermark', $this->companyrecord->companycertificatewatermark);
             $mform->setType('companycertificatewatermark', PARAM_CLEAN);
+            $mform->addElement('hidden', 'uselogo', $this->companyrecord->uselogo);
+            $mform->setType('uselogo', PARAM_INT);
+            $mform->addElement('hidden', 'uselogo', $this->companyrecord->uselogo);
+            $mform->setType('uselogo', PARAM_INT);
+            $mform->addElement('hidden', 'usesignature', $this->companyrecord->uselogo);
+            $mform->setType('usesignature', PARAM_INT);
+            $mform->addElement('hidden', 'useborder', $this->companyrecord->uselogo);
+            $mform->setType('useborder', PARAM_INT);
+            $mform->addElement('hidden', 'usewatermark', $this->companyrecord->uselogo);
+            $mform->setType('usewatermark', PARAM_INT);
+            $mform->addElement('hidden', 'showgrade', $this->companyrecord->uselogo);
+            $mform->setType('showgrade', PARAM_INT);
         }
         $submitlabel = null; // Default.
         if ($this->isadding) {
@@ -727,6 +755,13 @@ $companyrecord->templates = array();
 if ($companytemplates = $DB->get_records('company_role_templates_ass', array('companyid' => $companyid), null, 'templateid')) {
     $companyrecord->templates = array_keys($companytemplates);
 }
+if ($certificateinfo = $DB->get_record('companycertificate', array('companyid' => $companyid))) {
+    $companyrecord->uselogo = $certificateinfo->uselogo;
+    $companyrecord->usesignature = $certificateinfo->usesignature;
+    $companyrecord->useborder = $certificateinfo->useborder;
+    $companyrecord->usewatermark = $certificateinfo->usewatermark;
+    $companyrecord->showgrade = $certificateinfo->showgrade;
+}
 $mform->set_data($companyrecord);
 
 if ($mform->is_cancelled()) {
@@ -773,6 +808,14 @@ if ($mform->is_cancelled()) {
             $company->assign_role_templates($data->templates);
         }
 
+        // Deal with certificate info.
+        $certificateinforec = array('uselogo' => $data->uselogo,
+                                    'usesignature' => $data->usesignature,
+                                    'useborder' => $data->useborder,
+                                    'usewatermark' => $data->usewatermark,
+                                    'showgrade' => $data->showgrade);
+        $DB->insert_record('companycertificate', $certificateinforec);
+
     } else {
         $data->id = $companyid;
 
@@ -809,6 +852,23 @@ if ($mform->is_cancelled()) {
         }
 
         $DB->update_record('company', $data);
+
+        // Deal with certificate info.
+        if ($certificateinforec = (array) $DB->get_record('companycertificate', array('companyid' => $companyid))) {
+            $certificateinforec['uselogo'] = $data->uselogo;
+            $certificateinforec['usesignature'] = $data->usesignature;
+            $certificateinforec['useborder'] = $data->useborder;
+            $certificateinforec['usewatermark'] = $data->usewatermark;
+            $certificateinforec['showgrade'] = $data->showgrade;
+            $DB->update_record('companycertificate', $certificateinforec);
+        } else {
+            $certificateinforec = array('uselogo' => $data->uselogo,
+                                        'usesignature' => $data->usesignature,
+                                        'useborder' => $data->useborder,
+                                        'usewatermark' => $data->usewatermark,
+                                        'showgrade' => $data->showgrade);
+            $DB->insert_record('companycertificate', $certificateinforec);
+        }
 
         if (company_user::is_company_user()) {
             company_user::reload_company();
