@@ -1312,6 +1312,13 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
                 $this->assertEquals(25, $field['value']); // Check one of the dimension fields attributes.
             }
         }
+        // Check dimensions grading info.
+        foreach ($result['dimensionsinfo'] as $dimension) {
+            $this->assertEquals(0, $dimension['min']);
+            $this->assertEquals(25, $dimension['max']);
+            $this->assertEquals(25, $dimension['weight']);
+            $this->assertFalse(isset($dimension['scale']));
+        }
     }
 
     /**
