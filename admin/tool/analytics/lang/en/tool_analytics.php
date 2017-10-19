@@ -25,14 +25,14 @@
 $string['accuracy'] = 'Accuracy';
 $string['allpredictions'] = 'All predictions';
 $string['analysingsitedata'] = 'Analysing the site';
-$string['analyticmodels'] = 'Analytic models';
+$string['analyticmodels'] = 'Analytics models';
 $string['bettercli'] = 'Evaluating models and generating predictions may involve heavy processing. It is recommended to run these actions from the command line.';
 $string['cantguessstartdate'] = 'Can\'t guess the start date';
 $string['cantguessenddate'] = 'Can\'t guess the end date';
 $string['clearpredictions'] = 'Clear predictions';
 $string['clearmodelpredictions'] = 'Are you sure you want to clear all "{$a}" predictions?';
 $string['clienablemodel'] = 'You can enable the model by selecting a time-splitting method by its ID. Note that you can also enable it later using the web interface (\'none\' to exit).';
-$string['clievaluationandpredictions'] = 'A scheduled task iterates through enabled models and gets predictions. Models evaluation via the web interface is disabled. You can allow these processes to be executed manually via the web interface by disabling the <a href="{$a}">\'onlycli\'</a> analytics setting';
+$string['clievaluationandpredictions'] = 'A scheduled task iterates through enabled models and gets predictions. Models evaluation via the web interface is disabled. You can allow these processes to be executed manually via the web interface by disabling the <a href="{$a}">\'onlycli\'</a> analytics setting.';
 $string['editmodel'] = 'Edit "{$a}" model';
 $string['edittrainedwarning'] = 'This model has already been trained. Note that changing its indicators or its time-splitting method will delete its previous predictions and start generating new predictions.';
 $string['enabled'] = 'Enabled';

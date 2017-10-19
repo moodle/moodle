@@ -116,6 +116,7 @@ prioritise,core_hub
 private,core_hub
 privatehuburl,core_hub
 publichub,core_hub
+publish,core
 publishon,core_hub
 publishonspecifichub,core_hub
 registeredmoodleorg,core_hub

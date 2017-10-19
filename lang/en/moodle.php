@@ -715,7 +715,7 @@ $string['emptydragdropregion'] = 'empty region';
 $string['enable'] = 'Enable';
 $string['encryptedcode'] = 'Encrypted code';
 $string['enddate'] = 'Course end date';
-$string['enddate_help'] = 'The course end date is only used for reports. Users can still enter the course after the end date.';
+$string['enddate_help'] = 'The course end date is used for determining whether a course should be included in a user\'s list of courses. When the end date is past, the course is no longer listed in the navigation and is listed as past in the course overview. The course end date may also be used by custom reports. Users can still enter the course after the end date; in other words the date does not restrict access.';
 $string['english'] = 'English';
 $string['enrolmentmethods'] = 'Enrolment methods';
 $string['entercourse'] = 'Click to enter this course';
@@ -993,7 +993,7 @@ $string['choosereportfilter'] = 'Choose a filter for the report';
 $string['choosetheme'] = 'Choose theme';
 $string['chooseuser'] = 'Choose a user';
 $string['courseduration'] = 'Course duration';
-$string['courseduration_desc'] = 'The course duration is used to calculate the default course end date. The course end date is only used for reports. Users can still enter the course after the end date.';
+$string['courseduration_desc'] = 'The course duration is used to calculate the default course end date. The course end date is used for determining whether a course should be included in a user\'s list of courses.  It may also be used by custom reports. Users can still enter the course after the end date.';
 $string['courseenddateenabled'] = 'Course end date enabled by default';
 $string['courseenddateenabled_desc'] = 'This setting determines if the course end date will be enabled by default for new courses and set to the date calculated from the course duration.';
 $string['eventcontentviewed'] = 'Content viewed';
@@ -1551,7 +1551,6 @@ $string['publicprofile'] = 'Public profile';
 $string['publicsitefileswarning'] = 'Note: files placed here can be accessed by anyone';
 $string['publicsitefileswarning2'] = 'Note: Files placed here can be accessed by anyone who knows (or can guess) the URL. For security reasons, it is recommended that any backup files are deleted immediately after restoring them.';
 $string['publicsitefileswarning3'] = 'Note: Files placed here can be accessed by anyone who knows (or can guess) the URL. <br />For security reasons, backup files should be saved in the secure backupdata folder only.';
-$string['publish'] = 'Publish';
 $string['question'] = 'Question';
 $string['questionsinthequestionbank'] = 'Questions in the question bank';
 $string['quotausage'] = 'You have currently used {$a->used} of your {$a->total} limit.';
@@ -2161,3 +2160,6 @@ $string['modchooserdisable'] = 'Activity chooser off';
 // Deprecated since Moodle 3.3.
 $string['deletecomment'] = 'Delete this comment';
 $string['sectionusedefaultname'] = 'Use default section name';
+
+// Deprecated since Moodle 3.4.
+$string['publish'] = 'Publish';

@@ -36,7 +36,7 @@ $shortname = format_string($COURSE->shortname);
 
 $PAGE->set_url('/course/publish/index.php', array('id' => $courseid));
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_title(get_string('publish') . ': ' . $COURSE->fullname);
+$PAGE->set_title(get_string('publish', 'core_hub') . ': ' . $COURSE->fullname);
 $PAGE->set_heading($COURSE->fullname);
 
 require_capability('moodle/course:publish', context_course::instance($courseid));
