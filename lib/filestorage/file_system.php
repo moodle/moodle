@@ -532,7 +532,12 @@ abstract class file_system {
      * @return resource file handle
      */
     public function get_content_file_handle(stored_file $file, $type = stored_file::FILE_HANDLE_FOPEN) {
-        $path = $this->get_remote_path_from_storedfile($file);
+        if ($type === stored_file::FILE_HANDLE_GZOPEN) {
+            // Local file required for gzopen.
+            $path = $this->get_local_path_from_storedfile($file, true);
+        } else {
+            $path = $this->get_remote_path_from_storedfile($file);
+        }
 
         return self::get_file_handle_for_path($path, $type);
     }

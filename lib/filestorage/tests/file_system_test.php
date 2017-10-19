@@ -904,8 +904,8 @@ class core_files_file_system_testcase extends advanced_testcase {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent);
 
-        $fs = $this->get_testable_mock(['get_remote_path_from_storedfile']);
-        $fs->method('get_remote_path_from_storedfile')
+        $fs = $this->get_testable_mock(['get_local_path_from_storedfile']);
+        $fs->method('get_local_path_from_storedfile')
             ->willReturn(__DIR__ . "/fixtures/test.tgz");
 
         // Note: We are unable to determine the mode in which the $fh was opened.
