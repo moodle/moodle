@@ -117,6 +117,7 @@ $string['previousregistrationdeleted'] = 'The previous registration has been del
 $string['privacy'] = 'Privacy';
 $string['privacy_help'] = 'The hub may want to display a list of registered sites. If it does then you can choose whether or not you want to appear on that list.';
 $string['publicationinfo'] = 'Course publication information';
+$string['publish'] = 'Share';
 $string['publishcourse'] = 'Share {$a}';
 $string['publishcourseon'] = 'Share on {$a}';
 $string['publishedon'] = 'Publications';
