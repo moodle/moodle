@@ -1438,6 +1438,13 @@ function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
     }
     // Check if the scorm module is incomplete (used to validate user request to start a new attempt).
     $incomplete = true;
+
+    // Note - in SCORM_13 the cmi-core.lesson_status field was split into
+    // 'cmi.completion_status' and 'cmi.success_status'.
+    // 'cmi.completion_status' can only contain values 'completed', 'incomplete', 'not attempted' or 'unknown'.
+    // This means the values 'passed' or 'failed' will never be reported for a track in SCORM_13 and
+    // the only status that will be treated as complete is 'completed'.
+
     $completionelements = array(
         SCORM_12 => 'cmi.core.lesson_status',
         SCORM_13 => 'cmi.completion_status',
