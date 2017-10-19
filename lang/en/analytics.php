@@ -55,7 +55,7 @@ $string['errorunexistingmodel'] = 'Non-existing model {$a}';
 $string['errorunknownaction'] = 'Unknown action';
 $string['eventpredictionactionstarted'] = 'Prediction process started';
 $string['eventinsightsviewed'] = 'Insights viewed';
-$string['fixedack'] = 'Acknowledged / fixed';
+$string['fixedack'] = 'Acknowledged';
 $string['insightmessagesubject'] = 'New insight for "{$a->contextname}": {$a->insightname}';
 $string['insightinfomessage'] = 'The system generated some insights for you: {$a}';
 $string['insightinfomessagehtml'] = 'The system generated some insights for you: <a href="{$a}">{$a}</a>.';
