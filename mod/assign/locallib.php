@@ -1283,7 +1283,6 @@ class assign {
         $event->groupid = 0;
         $event->userid  = 0;
         $event->instance  = $instance->id;
-        $event->name = $instance->name;
         $event->type = CALENDAR_EVENT_TYPE_ACTION;
 
         // Convert the links to pluginfile. It is a bit hacky but at this stage the files
@@ -1310,6 +1309,7 @@ class assign {
 
         $eventtype = ASSIGN_EVENT_TYPE_DUE;
         if ($instance->duedate) {
+            $event->name = get_string('calendardue', 'assign', $instance->name);
             $event->eventtype = $eventtype;
             $event->timestart = $instance->duedate;
             $event->timesort = $instance->duedate;
@@ -1335,6 +1335,7 @@ class assign {
 
         $eventtype = ASSIGN_EVENT_TYPE_GRADINGDUE;
         if ($instance->gradingduedate) {
+            $event->name = get_string('calendargradingdue', 'assign', $instance->name);
             $event->eventtype = $eventtype;
             $event->timestart = $instance->gradingduedate;
             $event->timesort = $instance->gradingduedate;
