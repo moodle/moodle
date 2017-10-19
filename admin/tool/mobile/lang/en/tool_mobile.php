@@ -24,7 +24,7 @@
 
 $string['androidappid'] = 'Android app\'s unique identifier';
 $string['androidappid_desc'] = 'This setting may be left as default unless you have a custom Android app.';
-$string['autologinkeygenerationlockout'] = 'Auto-login key generation is blocked because of too many requests within an hour.';
+$string['autologinkeygenerationlockout'] = 'Auto-login key generation is blocked. You need to wait 6 minutes between requests.';
 $string['autologinnotallowedtoadmins'] = 'Auto-login is not allowed for site admins.';
 $string['cachedef_plugininfo'] = 'This stores the list of plugins with mobile addons';
 $string['clickheretolaunchtheapp'] = 'Click here if the app does not open automatically.';
