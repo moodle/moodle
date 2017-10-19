@@ -165,6 +165,12 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->assertCount($ncourses * 2, $samples);
         $this->assertEquals(1, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'trained')));
+        // Check that analysable files for training are stored under labelled filearea.
+        $fs = get_file_storage();
+        $this->assertCount(1, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::LABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
+        $this->assertEmpty($fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::UNLABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
 
         $courseparams = $params + array('shortname' => 'aaaaaa', 'fullname' => 'aaaaaa', 'visible' => 0);
         $course1 = $this->getDataGenerator()->create_course($courseparams);
@@ -198,6 +204,12 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         // 2 predictions.
         $this->assertEquals(2, $DB->count_records('analytics_predictions',
             array('modelid' => $model->get_id())));
+
+        // Check that analysable files to get predictions are stored under unlabelled filearea.
+        $this->assertCount(1, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::LABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
+        $this->assertCount(1, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::UNLABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
 
         // No new generated files nor records as there are no new courses available.
         $model->predict();
@@ -234,6 +246,10 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             array('modelid' => $model->get_id(), 'action' => 'predicted')));
         $this->assertEquals(4, $DB->count_records('analytics_predictions',
             array('modelid' => $model->get_id())));
+        $this->assertCount(1, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::LABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
+        $this->assertCount(2, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::UNLABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
 
         // New visible course (for training).
         $course5 = $this->getDataGenerator()->create_course(array('shortname' => 'aaa', 'fullname' => 'aa'));
@@ -241,18 +257,10 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $result = $model->train();
         $this->assertEquals(2, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'trained')));
-
-        // Update one of the courses to not visible, it should be used again for prediction.
-        $course5->visible = 0;
-        update_course($course5);
-
-        $model->predict();
-        $this->assertEquals(1, $DB->count_records('analytics_predict_samples',
-            array('modelid' => $model->get_id())));
-        $this->assertEquals(2, $DB->count_records('analytics_used_files',
-            array('modelid' => $model->get_id(), 'action' => 'predicted')));
-        $this->assertEquals(4, $DB->count_records('analytics_predictions',
-            array('modelid' => $model->get_id())));
+        $this->assertCount(2, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::LABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
+        $this->assertCount(2, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::UNLABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);

@@ -2749,5 +2749,22 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2017101300.01);
     }
+
+    if ($oldversion < 2017101900.01) {
+
+        $fs = get_file_storage();
+        $models = $DB->get_records('analytics_models');
+        foreach ($models as $model) {
+            $files = $fs->get_directory_files(\context_system::instance()->id, 'analytics', 'unlabelled', $model->id,
+                '/analysable/', true, true);
+            foreach ($files as $file) {
+                $file->delete();
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017101900.01);
+    }
+
     return true;
 }
