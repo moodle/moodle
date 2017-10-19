@@ -36,14 +36,6 @@ class core_register_renderer extends plugin_renderer_base {
      * @return string
      */
     public function moodleorg_registration_message() {
-        $moodleorgstatslink = html_writer::link('http://moodle.net/stats',
-                                               get_string('statsmoodleorg', 'admin'),
-                                               array('target' => '_blank'));
-
-        $moodleorgregmsg = get_string('registermoodleorg', 'admin');
-        $items = array(get_string('registermoodleorgli1', 'admin'),
-                       get_string('registermoodleorgli2', 'admin', $moodleorgstatslink));
-        $moodleorgregmsg .= html_writer::alist($items);
-        return $moodleorgregmsg;
+        return format_text(get_string('registermoodlenet', 'admin'), FORMAT_MARKDOWN, ['noclean' => true]);
     }
 }

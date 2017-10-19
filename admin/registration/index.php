@@ -53,17 +53,25 @@ if ($unregistration && \core\hub\registration::is_registered()) {
     exit;
 }
 
+$isinitialregistration = \core\hub\registration::show_after_install(true);
+if (!$returnurl = optional_param('returnurl', null, PARAM_LOCALURL)) {
+    $returnurl = $isinitialregistration ? '/admin/index.php' : '/admin/registration/index.php';
+}
+
 $siteregistrationform = new \core\hub\site_registration_form();
+$siteregistrationform->set_data(['returnurl' => $returnurl]);
 if ($fromform = $siteregistrationform->get_data()) {
 
     // Save the settings.
     \core\hub\registration::save_site_info($fromform);
 
     if (\core\hub\registration::is_registered()) {
-        \core\hub\registration::update_manual();
-        redirect(new moodle_url('/admin/registration/index.php'));
+        if (\core\hub\registration::update_manual()) {
+            redirect(new moodle_url($returnurl));
+        }
+        redirect(new moodle_url('/admin/registration/index.php', ['returnurl' => $returnurl]));
     } else {
-        \core\hub\registration::register();
+        \core\hub\registration::register($returnurl);
         // This method will redirect away.
     }
 
@@ -80,13 +88,15 @@ if (\core\hub\registration::is_registered()) {
     $lastupdated = \core\hub\registration::get_last_updated();
     if ($lastupdated == 0) {
         $registrationmessage = get_string('pleaserefreshregistrationunknown', 'admin');
+    } else if (\core\hub\registration::get_new_registration_fields()) {
+        $registrationmessage = get_string('pleaserefreshregistrationnewdata', 'admin');
     } else {
         $lastupdated = userdate($lastupdated, get_string('strftimedate', 'langconfig'));
         $registrationmessage = get_string('pleaserefreshregistration', 'admin', $lastupdated);
         $notificationtype = \core\output\notification::NOTIFY_INFO;
     }
     echo $OUTPUT->notification($registrationmessage, $notificationtype);
-} else {
+} else if (!$isinitialregistration) {
     $registrationmessage = get_string('registrationwarning', 'admin');
     echo $OUTPUT->notification($registrationmessage, $notificationtype);
 }
@@ -94,6 +104,8 @@ if (\core\hub\registration::is_registered()) {
 // Heading.
 if (\core\hub\registration::is_registered()) {
     echo $OUTPUT->heading(get_string('updatesite', 'hub', 'Moodle.net'));
+} else if ($isinitialregistration) {
+    echo $OUTPUT->heading(get_string('completeregistration', 'hub'));
 } else {
     echo $OUTPUT->heading(get_string('registerwithmoodleorg', 'admin'));
 }
@@ -107,5 +119,7 @@ if (\core\hub\registration::is_registered()) {
     // Unregister link.
     $unregisterhuburl = new moodle_url("/admin/registration/index.php", ['unregistration' => 1]);
     echo html_writer::div(html_writer::link($unregisterhuburl, get_string('unregister', 'hub')), 'unregister');
+} else if ($isinitialregistration) {
+    echo html_writer::div(html_writer::link(new moodle_url($returnurl), get_string('skipregistration', 'hub')), 'skipregistration');
 }
 echo $OUTPUT->footer();

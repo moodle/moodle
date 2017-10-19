@@ -699,6 +699,7 @@ if (!$cache and moodle_needs_upgrading()) {
 if (during_initial_install()) {
     set_config('rolesactive', 1); // after this, during_initial_install will return false.
     set_config('adminsetuppending', 1);
+    set_config('registrationpending', 1); // Remind to register site after all other setup is finished.
     // we need this redirect to setup proper session
     upgrade_finished("index.php?sessionstarted=1&amp;lang=$CFG->lang");
 }
@@ -813,6 +814,9 @@ if (isset($SESSION->pluginuninstallreturn)) {
         redirect($return);
     }
 }
+
+// If site registration needs updating, redirect.
+\core\hub\registration::registration_reminder('/admin/index.php');
 
 // Everything should now be set up, and the user is an admin
 

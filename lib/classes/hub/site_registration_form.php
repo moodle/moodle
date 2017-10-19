@@ -26,6 +26,7 @@ namespace core\hub;
 defined('MOODLE_INTERNAL') || die();
 
 use context_course;
+use stdClass;
 
 global $CFG;
 require_once($CFG->libdir . '/formslib.php');
@@ -63,25 +64,27 @@ class site_registration_form extends \moodleform {
             'language' => explode('_', current_language())[0],
             'geolocation' => '',
             'emailalert' => 1,
+            'commnews' => 1
 
         ]);
+
+        // Fields that need to be highlighted.
+        $highlightfields = registration::get_new_registration_fields();
 
         $mform->addElement('header', 'moodle', get_string('registrationinfo', 'hub'));
 
         $mform->addElement('text', 'name', get_string('sitename', 'hub'),
             array('class' => 'registration_textfield'));
-        $mform->addRule('name', $strrequired, 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
         $mform->addHelpButton('name', 'sitename', 'hub');
 
         $mform->addElement('select', 'privacy', get_string('siteprivacy', 'hub'), registration::site_privacy_options());
         $mform->setType('privacy', PARAM_ALPHA);
-        $mform->addHelpButton('privacy', 'privacy', 'hub');
+        $mform->addHelpButton('privacy', 'siteprivacy', 'hub');
         unset($options);
 
         $mform->addElement('textarea', 'description', get_string('sitedesc', 'hub'),
-            array('rows' => 8, 'cols' => 41));
-        $mform->addRule('description', $strrequired, 'required', null, 'client');
+            array('rows' => 3, 'cols' => 41));
         $mform->setType('description', PARAM_TEXT);
         $mform->addHelpButton('description', 'sitedesc', 'hub');
 
@@ -91,8 +94,8 @@ class site_registration_form extends \moodleform {
         $mform->setType('language', PARAM_ALPHANUMEXT);
         $mform->addHelpButton('language', 'sitelang', 'hub');
 
-        $mform->addElement('textarea', 'street', get_string('postaladdress', 'hub'),
-            array('rows' => 4, 'cols' => 41));
+        // Postal address was part of this form before but not any more.
+        $mform->addElement('hidden', 'street');
         $mform->setType('street', PARAM_TEXT);
         $mform->addHelpButton('street', 'postaladdress', 'hub');
 
@@ -105,22 +108,19 @@ class site_registration_form extends \moodleform {
         $mform->addHelpButton('countrycode', 'sitecountry', 'hub');
         $mform->addRule('countrycode', $strrequired, 'required', null, 'client');
 
-        $mform->addElement('text', 'geolocation', get_string('sitegeolocation', 'hub'),
-            array('class' => 'registration_textfield'));
+        // Geolocation was part of this form before but not any more.
+        $mform->addElement('hidden', 'geolocation');
         $mform->setType('geolocation', PARAM_RAW);
         $mform->addHelpButton('geolocation', 'sitegeolocation', 'hub');
 
-        $mform->addElement('text', 'contactname', get_string('siteadmin', 'hub'),
-            array('class' => 'registration_textfield'));
-        $mform->addRule('contactname', $strrequired, 'required', null, 'client');
+        // Admin name was part of this form before but not any more.
+        $mform->addElement('hidden', 'contactname');
         $mform->setType('contactname', PARAM_TEXT);
         $mform->addHelpButton('contactname', 'siteadmin', 'hub');
 
-        $mform->addElement('text', 'contactphone', get_string('sitephone', 'hub'),
-            array('class' => 'registration_textfield'));
+        $mform->addElement('hidden', 'contactphone');
         $mform->setType('contactphone', PARAM_TEXT);
         $mform->addHelpButton('contactphone', 'sitephone', 'hub');
-        $mform->setForceLtr('contactphone');
 
         $mform->addElement('text', 'contactemail', get_string('siteemail', 'hub'),
             array('class' => 'registration_textfield'));
@@ -134,79 +134,30 @@ class site_registration_form extends \moodleform {
         $mform->addElement('select', 'contactable', get_string('siteregistrationcontact', 'hub'), $options);
         $mform->setType('contactable', PARAM_INT);
         $mform->addHelpButton('contactable', 'siteregistrationcontact', 'hub');
+        $mform->hideIf('contactable', 'privacy', 'eq', registration::HUB_SITENOTPUBLISHED);
         unset($options);
 
-        $options = array();
-        $options[0] = get_string("registrationno");
-        $options[1] = get_string("registrationyes");
-        $mform->addElement('select', 'emailalert', get_string('siteregistrationemail', 'hub'), $options);
-        $mform->setType('emailalert', PARAM_INT);
-        $mform->addHelpButton('emailalert', 'siteregistrationemail', 'hub');
-        unset($options);
+        $this->add_select_with_email('emailalert', 'siteregistrationemail', [
+            0 => get_string('registrationno'),
+            1 => get_string('registrationyes'),
+        ]);
+
+        $this->add_select_with_email('commnews', 'sitecommnews', [
+            0 => get_string('sitecommnewsno', 'hub'),
+            1 => get_string('sitecommnewsyes', 'hub'),
+        ], in_array('commnews', $highlightfields));
 
         // TODO site logo.
         $mform->addElement('hidden', 'imageurl', ''); // TODO: temporary.
         $mform->setType('imageurl', PARAM_URL);
 
+        $mform->addElement('header', 'sitestats', get_string('sendfollowinginfo', 'hub'));
+        $mform->setExpanded('sitestats', !empty($highlightfields));
         $mform->addElement('static', 'urlstring', get_string('siteurl', 'hub'), $siteinfo['url']);
         $mform->addHelpButton('urlstring', 'siteurl', 'hub');
 
-        $mform->addElement('static', 'versionstring', get_string('siteversion', 'hub'), $CFG->version);
-        $mform->addElement('hidden', 'moodleversion', $siteinfo['moodleversion']);
-        $mform->setType('moodleversion', PARAM_INT);
-        $mform->addHelpButton('versionstring', 'siteversion', 'hub');
-
-        $mform->addElement('static', 'releasestring', get_string('siterelease', 'hub'), $CFG->release);
-        $mform->addElement('hidden', 'moodlerelease', $siteinfo['moodlerelease']);
-        $mform->setType('moodlerelease', PARAM_TEXT);
-        $mform->addHelpButton('releasestring', 'siterelease', 'hub');
-
         // Display statistic that are going to be retrieve by moodle.net.
-
-        $mform->addElement('static', 'courseslabel', get_string('sendfollowinginfo', 'hub'),
-            " " . get_string('coursesnumber', 'hub', $siteinfo['courses']));
-        $mform->addHelpButton('courseslabel', 'sendfollowinginfo', 'hub');
-
-        $mform->addElement('static', 'userslabel', '',
-            " " . get_string('usersnumber', 'hub', $siteinfo['users']));
-
-        $mform->addElement('static', 'roleassignmentslabel', '',
-            " " . get_string('roleassignmentsnumber', 'hub', $siteinfo['enrolments']));
-
-        $mform->addElement('static', 'postslabel', '',
-            " " . get_string('postsnumber', 'hub', $siteinfo['posts']));
-
-        $mform->addElement('static', 'questionslabel', '',
-            " " . get_string('questionsnumber', 'hub', $siteinfo['questions']));
-
-        $mform->addElement('static', 'resourceslabel', '',
-            " " . get_string('resourcesnumber', 'hub', $siteinfo['resources']));
-
-        $mform->addElement('static', 'badgeslabel', '',
-            " " . get_string('badgesnumber', 'hub', $siteinfo['badges']));
-
-        $mform->addElement('static', 'issuedbadgeslabel', '',
-            " " . get_string('issuedbadgesnumber', 'hub', $siteinfo['issuedbadges']));
-
-        $mform->addElement('static', 'participantnumberaveragelabel', '',
-            " " . get_string('participantnumberaverage', 'hub', $siteinfo['participantnumberaverage']));
-
-        $mform->addElement('static', 'modulenumberaveragelabel', '',
-            " " . get_string('modulenumberaverage', 'hub', $siteinfo['modulenumberaverage']));
-
-        $mobileservicestatus = $siteinfo['mobileservicesenabled'] ? get_string('yes') : get_string('no');
-        $mform->addElement('static', 'mobileservicesenabledlabel', '',
-            " " . get_string('mobileservicesenabled', 'hub', $mobileservicestatus));
-
-        $mobilenotificationsstatus = $siteinfo['mobilenotificationsenabled'] ? get_string('yes') : get_string('no');
-        $mform->addElement('static', 'mobilenotificationsenabledlabel', '',
-            " " . get_string('mobilenotificationsenabled', 'hub', $mobilenotificationsstatus));
-
-        $mform->addElement('static', 'registereduserdeviceslabel', '',
-            " " . get_string('registereduserdevices', 'hub', $siteinfo['registereduserdevices']));
-
-        $mform->addElement('static', 'registeredactiveuserdeviceslabel', '',
-            " " . get_string('registeredactiveuserdevices', 'hub', $siteinfo['registeredactiveuserdevices']));
+        $mform->addElement('static', 'siteinfosummary', get_string('sendfollowinginfo', 'hub'), registration::get_stats_summary($siteinfo));
 
         // Check if it's a first registration or update.
         if (registration::is_registered()) {
@@ -219,7 +170,119 @@ class site_registration_form extends \moodleform {
 
         $this->add_action_buttons(false, $buttonlabel);
 
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+
         $this->set_data($siteinfo);
+    }
+
+    /**
+     * Add yes/no select with additional checkbox allowing to specify another email
+     *
+     * @param string $elementname
+     * @param string $stridentifier
+     * @param array|null $options options for the select element
+     * @param bool $highlight highlight as a new field
+     */
+    protected function add_select_with_email($elementname, $stridentifier, $options = null, $highlight = false) {
+        $mform = $this->_form;
+
+        if ($options === null) {
+            $options = [0 => get_string('no'), 1 => get_string('yes')];
+        }
+
+        $group = [
+            $mform->createElement('select', $elementname, get_string($stridentifier, 'hub'), $options),
+            $mform->createElement('static', $elementname . 'sep', '', '<br/>'),
+            $mform->createElement('advcheckbox', $elementname . 'newemail', '', get_string('usedifferentemail', 'hub'),
+                ['onchange' => "this.form.elements['{$elementname}email'].focus();"]),
+            $mform->createElement('text', $elementname . 'email', get_string('email'))
+        ];
+
+        $element = $mform->addElement('group', $elementname . 'group', get_string($stridentifier, 'hub'), $group, '', false);
+        if ($highlight) {
+            $element->setAttributes(['class' => $element->getAttribute('class') . ' needsconfirmation mark']);
+        }
+        $mform->hideIf($elementname . 'email', $elementname, 'eq', 0);
+        $mform->hideIf($elementname . 'newemail', $elementname, 'eq', 0);
+        $mform->hideIf($elementname . 'email', $elementname . 'newemail', 'notchecked');
+        $mform->setType($elementname, PARAM_INT);
+        $mform->setType($elementname . 'email', PARAM_RAW_TRIMMED); // E-mail will be validated in validation().
+        $mform->addHelpButton($elementname . 'group', $stridentifier, 'hub');
+
+    }
+
+    /**
+     * Load in existing data as form defaults
+     *
+     * @param stdClass|array $defaultvalues object or array of default values
+     */
+    public function set_data($defaultvalues) {
+        if (is_object($defaultvalues)) {
+            $defaultvalues = (array)$defaultvalues;
+        }
+        $defaultvalues['emailalertnewemail'] = !empty($defaultvalues['emailalert']) && !empty($defaultvalues['emailalertemail']);
+        if (empty($defaultvalues['emailalertnewemail'])) {
+            $defaultvalues['emailalertemail'] = '';
+        }
+        $defaultvalues['commnewsnewemail'] = !empty($defaultvalues['commnews']) && !empty($defaultvalues['commnewsemail']);
+        if (empty($defaultvalues['commnewsnewemail'])) {
+            $defaultvalues['commnewsemail'] = '';
+        }
+        parent::set_data($defaultvalues);
+    }
+
+    /**
+     * Validation of the form data
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        // Validate optional emails. We do not use PARAM_EMAIL because it blindly clears the field if it is not a valid email.
+        if (!empty($data['emailalert']) && !empty($data['emailalertnewemail']) && !validate_email($data['emailalertemail'])) {
+            $errors['emailalertgroup'] = get_string('invalidemail');
+        }
+        if (!empty($data['commnews']) && !empty($data['commnewsnewemail']) && !validate_email($data['commnewsemail'])) {
+            $errors['commnewsgroup'] = get_string('invalidemail');
+        }
+        return $errors;
+    }
+
+    /**
+     * Returns the form data
+     *
+     * @return stdClass
+     */
+    public function get_data() {
+        if ($data = parent::get_data()) {
+            // Never return '*newemail' checkboxes, always return 'emailalertemail' and 'commnewsemail' even if not applicable.
+            if (empty($data->emailalert) || empty($data->emailalertnewemail)) {
+                $data->emailalertemail = null;
+            }
+            unset($data->emailalertnewemail);
+            if (empty($data->commnews) || empty($data->commnewsnewemail)) {
+                $data->commnewsemail = null;
+            }
+            unset($data->commnewsnewemail);
+            // Always return 'contactable'.
+            $data->contactable = empty($data->contactable) ? 0 : 1;
+
+            if (debugging('', DEBUG_DEVELOPER)) {
+                // Display debugging message for developers who added fields to the form and forgot to add them to registration::FORM_FIELDS.
+                $keys = array_diff(array_keys((array)$data), ['returnurl', 'mform_isexpanded_id_sitestats', 'submitbutton', 'update']);
+                if ($extrafields = array_diff($keys, registration::FORM_FIELDS)) {
+                    debugging('Found extra fields in the form results: ' . join(', ', $extrafields), DEBUG_DEVELOPER);
+                }
+                if ($missingfields = array_diff(registration::FORM_FIELDS, $keys)) {
+                    debugging('Some fields are missing in the form results: ' . join(', ', $missingfields), DEBUG_DEVELOPER);
+                }
+            }
+        }
+        return $data;
     }
 
 }

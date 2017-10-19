@@ -64,8 +64,10 @@ echo $OUTPUT->heading(get_string('registrationconfirmed', 'hub'), 3, 'main');
 echo $OUTPUT->notification(get_string('registrationconfirmedon', 'hub'), 'notifysuccess');
 
 // Display continue button.
-$registrationpage = new moodle_url('/admin/registration/index.php');
-$continuebutton = $OUTPUT->render(new single_button($registrationpage, get_string('continue')));
+$returnurl = !empty($SESSION->registrationredirect) ? clean_param($SESSION->registrationredirect, PARAM_LOCALURL) : null;
+unset($SESSION->registrationredirect);
+$continueurl = new moodle_url($returnurl ?: '/admin/registration/index.php');
+$continuebutton = $OUTPUT->render(new single_button($continueurl, get_string('continue')));
 $continuebutton = html_writer::tag('div', $continuebutton, array('class' => 'mdl-align'));
 echo $continuebutton;
 

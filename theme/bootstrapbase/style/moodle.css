@@ -5562,6 +5562,9 @@ img.iconsmall {
 #overriderolestable .overriddenpermission {
   background-color: #fcf8e3;
 }
+#page-admin-registration-index form .mark {
+  background-color: #fcf8e3;
+}
 /* calendar.less */
 .calendar_event_category {
   background-color: #d8bfd8;

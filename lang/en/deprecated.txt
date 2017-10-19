@@ -154,3 +154,5 @@ moodleorghubname,core_admin
 hubs,core_admin
 quickdownloadcalendar,core_calendar
 ical,core_calendar
+privacy,core_hub
+privacy_help,core_hub
