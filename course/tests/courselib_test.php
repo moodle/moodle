@@ -3843,7 +3843,7 @@ class core_course_courselib_testcase extends advanced_testcase {
             }
             if ($event->eventtype == ASSIGN_EVENT_TYPE_DUE) {
                 $this->assertEquals($newduedate, $event->timestart);
-                $this->assertEquals($newmodulename, $event->name);
+                $this->assertEquals(get_string('calendardue', 'assign', $newmodulename), $event->name);
             }
         }
     }
