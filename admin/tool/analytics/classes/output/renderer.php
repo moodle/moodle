@@ -207,4 +207,15 @@ class renderer extends plugin_renderer_base {
 
         return $output;
     }
+
+    /**
+     * Defer to template.
+     *
+     * @param \tool_analytics\output\invalid_analysables $invalidanalysables
+     * @return string HTML
+     */
+    protected function render_invalid_analysables(\tool_analytics\output\invalid_analysables $invalidanalysables) {
+        $data = $invalidanalysables->export_for_template($this);
+        return parent::render_from_template('tool_analytics/invalid_analysables', $data);
+    }
 }

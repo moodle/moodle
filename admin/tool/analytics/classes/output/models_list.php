@@ -230,6 +230,16 @@ class models_list implements \renderable, \templatable {
                 $actionsmenu->add($icon);
             }
 
+            // Invalid analysables.
+            $analyser = $model->get_analyser(['notimesplitting' => true]);
+            if (!$analyser instanceof \core_analytics\local\analyser\sitewide) {
+                $urlparams['action'] = 'invalidanalysables';
+                $url = new \moodle_url('model.php', $urlparams);
+                $pix = new \pix_icon('i/report', get_string('invalidanalysables', 'tool_analytics'));
+                $icon = new \action_menu_link_secondary($url, $pix, get_string('invalidanalysables', 'tool_analytics'));
+                $actionsmenu->add($icon);
+            }
+
             // Clear model.
             if (!empty($predictioncontexts)) {
                 $actionid = 'clear-' . $model->get_id();
