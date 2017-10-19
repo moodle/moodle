@@ -53,9 +53,6 @@ matrix:
     fast_finish: true
 
     include:
-          # Run grunt/npm install on lowest supported npm version
-        - php: 7.1
-          env: DB=none     TASK=GRUNT   NVM_VERSION='4'
           # Run grunt/npm install on highest version ('node' is an alias for the latest node.js version.)
         - php: 7.1
           env: DB=none     TASK=GRUNT   NVM_VERSION='node'
