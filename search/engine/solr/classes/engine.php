@@ -1198,7 +1198,8 @@ class engine extends \core_search\engine {
             return $this->curl;
         }
 
-        $this->curl = new \curl();
+        // Connection to Solr is allowed to use 'localhost' and other potentially blocked hosts/ports.
+        $this->curl = new \curl(['ignoresecurity' => true]);
 
         $options = array();
         // Build the SSL options. Based on pecl-solr and general testing.
