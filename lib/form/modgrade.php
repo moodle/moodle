@@ -199,8 +199,10 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
             // Set a message so the user knows why they can not alter the grade type or scale.
             if ($this->currentgradetype == 'scale') {
                 $gradesexistmsg = get_string('modgradecantchangegradetyporscalemsg', 'grades');
-            } else {
+            } else if ($this->canrescale) {
                 $gradesexistmsg = get_string('modgradecantchangegradetypemsg', 'grades');
+            } else {
+                $gradesexistmsg = get_string('modgradecantchangegradetype', 'grades');
             }
 
             $gradesexisthtml = '<div class=\'alert\'>' . $gradesexistmsg . '</div>';
