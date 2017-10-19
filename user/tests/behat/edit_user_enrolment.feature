@@ -53,13 +53,13 @@ Feature: Edit user enrolment
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    When I click on "Enrolment details" "icon" in the "student1" "table_row"
+    When I click on "Manual enrolments" "icon" in the "student1" "table_row"
     Then I should see "Enrolment details"
     And I should see "Student 1" in the "Full name" "table_row"
     And I should see "Active" in the "//td[@class='user-enrol-status']" "xpath_element"
     And I should see "Manual enrolments" in the "Enrolment method" "table_row"
     And I press "Cancel"
-    And I click on "Enrolment details" "icon" in the "student2" "table_row"
+    And I click on "Manual enrolments" "icon" in the "student2" "table_row"
     And I should see "Enrolment details"
     And I should see "Student 2" in the "Full name" "table_row"
     And I should see "Suspended" in the "//td[@class='user-enrol-status']" "xpath_element"
@@ -90,7 +90,7 @@ Feature: Edit user enrolment
     Then I should see "Student 3" in the "participants" "table"
     And "Edit enrolment" "icon" should not exist in the "student3" "table_row"
     And "Unenrol" "icon" should not exist in the "student3" "table_row"
-    And I click on "Enrolment details" "icon" in the "student3" "table_row"
+    And I click on "Course meta link (Course 2)" "icon" in the "student3" "table_row"
     And I should see "Enrolment details"
     And I should see "Student 3" in the "Full name" "table_row"
     And I should see "Active" in the "//td[@class='user-enrol-status']" "xpath_element"
@@ -102,7 +102,7 @@ Feature: Edit user enrolment
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    When I click on "Enrolment details" "icon" in the "student2" "table_row"
+    When I click on "Manual enrolments" "icon" in the "student2" "table_row"
     And I click on "Edit enrolment" "icon" in the "Enrolment method" "table_row"
     And I should see "Edit Student 2's enrolment"
     And I set the field "Status" to "Active"

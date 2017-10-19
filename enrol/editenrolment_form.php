@@ -31,7 +31,10 @@ class enrol_user_enrolment_form extends moodleform {
         $mform = $this->_form;
 
         $ue = $this->_customdata['ue'];
+        $instancename = $this->_customdata['enrolinstancename'];
         $modal = !empty($this->_customdata['modal']);
+
+        $mform->addElement('static', 'enrolmentmethod', get_string('enrolmentmethod', 'enrol'), $instancename);
 
         $options = array(ENROL_USER_ACTIVE    => get_string('participationactive', 'enrol'),
                          ENROL_USER_SUSPENDED => get_string('participationsuspended', 'enrol'));

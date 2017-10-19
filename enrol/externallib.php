@@ -859,10 +859,13 @@ class core_enrol_external extends external_api {
         $errors = [];
 
         // Validate data against the edit user enrolment form.
+        $instance = $DB->get_record('enrol', ['id' => $userenrolment->enrolid], '*', MUST_EXIST);
+        $plugin = enrol_get_plugin($instance->enrol);
         require_once("$CFG->dirroot/enrol/editenrolment_form.php");
         $customformdata = [
             'ue' => $userenrolment,
             'modal' => true,
+            'enrolinstancename' => $plugin->get_instance_name($instance)
         ];
         $mform = new \enrol_user_enrolment_form(null, $customformdata, 'post', '', null, true, $userenroldata);
         $mform->set_data($userenroldata);

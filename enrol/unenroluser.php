@@ -70,7 +70,13 @@ if ($confirm && confirm_sesskey()) {
 }
 
 $yesurl = new moodle_url($PAGE->url, array('confirm'=>1, 'sesskey'=>sesskey()));
-$message = get_string('unenrolconfirm', 'core_enrol', array('user'=>fullname($user, true), 'course'=>format_string($course->fullname)));
+$message = get_string('unenrolconfirm', 'core_enrol',
+    [
+        'user' => fullname($user, true),
+        'course' => format_string($course->fullname),
+        'enrolinstancename' => $plugin->get_instance_name($instance)
+    ]
+);
 $fullname = fullname($user);
 $title = get_string('unenrol', 'core_enrol');
 

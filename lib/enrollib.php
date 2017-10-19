@@ -1528,9 +1528,12 @@ function enrol_output_fragment_user_enrolment_form($args) {
 
     $ueid = $args->ueid;
     $userenrolment = $DB->get_record('user_enrolments', ['id' => $ueid], '*', MUST_EXIST);
+    $instance = $DB->get_record('enrol', ['id' => $userenrolment->enrolid], '*', MUST_EXIST);
+    $plugin = enrol_get_plugin($instance->enrol);
     $customdata = [
         'ue' => $userenrolment,
         'modal' => true,
+        'enrolinstancename' => $plugin->get_instance_name($instance)
     ];
 
     // Set the data if applicable.
