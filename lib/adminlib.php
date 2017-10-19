@@ -3645,16 +3645,11 @@ class admin_setting_configmixedhostiplist extends admin_setting_configtextarea {
         $entries = explode("\n", $data);
         foreach ($entries as $key => $entry) {
             $entry = trim($entry);
-            // This regex matches any string which:
-            // a) contains at least one non-ascii unicode character AND
-            // b) starts with a-zA-Z0-9 or any non-ascii unicode character AND
-            // c) ends with a-zA-Z0-9 or any non-ascii unicode character
-            // d) contains a-zA-Z0-9, hyphen, dot or any non-ascii unicode characters in the middle.
-            if (preg_match('/^(?=[^\x00-\x7f])([^\x00-\x7f]|[a-zA-Z0-9])([^\x00-\x7f]|[a-zA-Z0-9-.])*([^\x00-\x7f]|[a-zA-Z0-9])$/',
-                $entry)) {
+            // This regex matches any string that has non-ascii character.
+            if (preg_match('/[^\x00-\x7f]/', $entry)) {
                 // If we can convert the unicode string to an idn, do so.
                 // Otherwise, leave the original unicode string alone and let the validation function handle it (it will fail).
-                $val = idn_to_ascii($entry);
+                $val = idn_to_ascii($entry, IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46);
                 $entries[$key] = $val ? $val : $entry;
             }
         }
@@ -3672,7 +3667,7 @@ class admin_setting_configmixedhostiplist extends admin_setting_configtextarea {
         foreach ($entries as $key => $entry) {
             $entry = trim($entry);
             if (strpos($entry, 'xn--') !== false) {
-                $entries[$key] = idn_to_utf8($entry);
+                $entries[$key] = idn_to_utf8($entry, IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46);
             }
         }
         return implode("\n", $entries);
