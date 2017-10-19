@@ -62,7 +62,7 @@ class mod_assign_external extends external_api {
             $message = 'Unknown warning type.';
         }
 
-        return array('item'=>$detail,
+        return array('item' => s($detail),
                      'itemid'=>$assignmentid,
                      'warningcode'=>$warningcode,
                      'message'=>$message);
