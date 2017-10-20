@@ -524,18 +524,17 @@ class core_user {
     }
 
     /**
-     * Return true is user id is greater than self::NOREPLY_USER and
-     * alternatively check db.
+     * Return true if user id is greater than 0 and alternatively check db.
      *
      * @param int $userid user id.
      * @param bool $checkdb if true userid will be checked in db. By default it's false, and
-     *                      userid is compared with NOREPLY_USER for performance.
+     *                      userid is compared with 0 for performance.
      * @return bool true is real user else false.
      */
     public static function is_real_user($userid, $checkdb = false) {
         global $DB;
 
-        if ($userid < 0) {
+        if ($userid <= 0) {
             return false;
         }
         if ($checkdb) {
