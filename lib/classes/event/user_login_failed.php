@@ -70,7 +70,23 @@ class user_login_failed extends base {
     public function get_description() {
         // Note that username could be any random user input.
         $username = s($this->other['username']);
-        return "Login failed for the username '{$username}' for the reason with id '{$this->other['reason']}'.";
+        $reasonid = $this->other['reason'];
+        $loginfailed = 'Login failed for user';
+        switch ($reasonid){
+            case 1:
+                return $loginfailed." '{$username}'. User does not exist (error ID '{$reasonid}').";
+            case 2:
+                return $loginfailed." '{$username}'. User is suspended (error ID '{$reasonid}').";
+            case 3:
+                return $loginfailed." '{$username}'. Most likely the password did not match (error ID '{$reasonid}').";
+            case 4:
+                return $loginfailed." '{$username}'. User is locked out (error ID '{$reasonid}').";
+            case 5:
+                return $loginfailed." '{$username}'. User is not authorised (error ID '{$reasonid}').";
+            default:
+                return $loginfailed." '{$username}', error ID '{$reasonid}'.";
+
+        }
     }
 
     /**
