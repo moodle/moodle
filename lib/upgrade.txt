@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+
+* The method core_user::is_real_user() now returns false for userid = 0 parameter
+
 === 3.6 ===
 
 * A new token-based version of pluginfile.php has been added which can be used for out-of-session file serving by
