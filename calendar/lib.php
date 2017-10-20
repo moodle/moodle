@@ -443,7 +443,6 @@ class calendar_event {
         );
 
         if (empty($this->properties->id) || $this->properties->id < 1) {
-
             if ($checkcapability) {
                 if (!calendar_add_event_allowed($this->properties)) {
                     print_error('nopermissiontoupdatecalendar');
@@ -596,14 +595,25 @@ class calendar_event {
                                    description = ?,
                                    timestart = timestart + ?,
                                    timeduration = ?,
-                                   timemodified = ?
+                                   timemodified = ?,
+                                   groupid = ?,
+                                   courseid = ?
                              WHERE repeatid = ?";
                     $params = array($this->properties->name, $this->properties->description, $timestartoffset,
-                        $this->properties->timeduration, time(), $event->repeatid);
+                            $this->properties->timeduration, time(), $this->properties->groupid,
+                            $this->properties->courseid, $event->repeatid);
                 } else {
-                    $sql = "UPDATE {event} SET name = ?, description = ?, timeduration = ?, timemodified = ? WHERE repeatid = ?";
+                    $sql = "UPDATE {event}
+                               SET name = ?,
+                                   description = ?,
+                                   timeduration = ?,
+                                   timemodified = ?,
+                                   groupid = ?,
+                                   courseid = ?
+                            WHERE repeatid = ?";
                     $params = array($this->properties->name, $this->properties->description,
-                        $this->properties->timeduration, time(), $event->repeatid);
+                            $this->properties->timeduration, time(), $this->properties->groupid,
+                            $this->properties->courseid, $event->repeatid);
                 }
                 $DB->execute($sql, $params);
 
