@@ -537,6 +537,10 @@ class registration {
      * @param string|moodle_url $url
      */
     public static function registration_reminder($url) {
+        if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
+            // No redirection during behat runs.
+            return;
+        }
         if (!has_capability('moodle/site:config', context_system::instance())) {
             return;
         }
