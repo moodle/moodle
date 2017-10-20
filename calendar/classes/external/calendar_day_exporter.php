@@ -239,7 +239,7 @@ class calendar_day_exporter extends exporter {
      */
     protected function get_course_filter_selector(renderer_base $output) {
         $langstr = get_string('upcomingeventsfor', 'calendar');
-        return $output->course_filter_selector($this->url, $langstr);
+        return $output->course_filter_selector($this->url, $langstr, $this->calendar->course->id);
     }
 
     /**
