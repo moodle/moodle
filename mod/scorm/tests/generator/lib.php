@@ -45,7 +45,6 @@ class mod_scorm_generator extends testing_module_generator {
         $record = (array)$record + array(
             'scormtype' => SCORM_TYPE_LOCAL,
             'packagefile' => '',
-            'packagefilepath' => $CFG->dirroot.'/mod/scorm/tests/packages/singlescobasic.zip',
             'packageurl' => '',
             'updatefreq' => SCORM_UPDATE_NEVER,
             'popup' => 0,
@@ -72,6 +71,9 @@ class mod_scorm_generator extends testing_module_generator {
             'auto' => $cfgscorm->auto,
             'displayactivityname' => $cfgscorm->displayactivityname
         );
+        if (empty($record['packagefilepath'])) {
+            $record['packagefilepath'] = $CFG->dirroot.'/mod/scorm/tests/packages/singlescobasic.zip';
+        }
 
         // The 'packagefile' value corresponds to the draft file area ID. If not specified, create from packagefilepath.
         if (empty($record['packagefile']) && $record['scormtype'] === SCORM_TYPE_LOCAL) {
