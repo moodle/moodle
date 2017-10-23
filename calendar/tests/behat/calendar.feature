@@ -136,9 +136,9 @@ Feature: Perform basic calendar functionality
       | activity | course | idnumber | name        | intro                   | timeopen      | timeclose     |
       | choice   | C1     | choice1  | Test choice | Test choice description | ##today## | ##today##  |
     When I follow "This month"
-    Then I should see "Choice Test choice open"
-    And I should see "Choice Test choice close"
-    When I click on "Choice Test choice open" "link"
+    Then I should see "Test choice opens"
+    And I should see "Test choice closes"
+    When I click on "Test choice opens" "link"
     Then "Delete" "button" should not exist
     And "Edit" "button" should not exist
     And I should see "Open event"
@@ -147,7 +147,7 @@ Feature: Perform basic calendar functionality
     Then I should see "Test choice"
     And I am on "Course 1" course homepage
     And I follow "This month"
-    When I click on "Choice Test choice close" "link"
+    When I click on "Test choice closes" "link"
     Then "Delete" "button" should not exist
     And "Edit" "button" should not exist
     And I should see "Close event"

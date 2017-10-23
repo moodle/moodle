@@ -24,6 +24,6 @@ Feature: View the httpsreplace report
     And I follow "HTTPS conversion tool"
     And I press "Continue"
     And I set the field "I understand the risks of this operation" to "1"
-    And I press "Perform replacement"
+    And I press "Perform conversion"
     Then I should see "intentionally.unavailable"
     And I should see "download.moodle.org"
