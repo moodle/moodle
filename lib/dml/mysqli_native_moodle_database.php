@@ -176,6 +176,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($rec = $result->fetch_assoc()) {
+            // MySQL 8 BC: information_schema.* returns the fields in upper case.
+            $rec = array_change_key_case($rec, CASE_LOWER);
             $engine = $rec['engine'];
         }
         $result->close();
@@ -248,6 +250,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($rec = $result->fetch_assoc()) {
+            // MySQL 8 BC: information_schema.* returns the fields in upper case.
+            $rec = array_change_key_case($rec, CASE_LOWER);
             $collation = $rec['collation_name'];
         }
         $result->close();
@@ -309,10 +313,12 @@ class mysqli_native_moodle_database extends moodle_database {
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($rec = $result->fetch_assoc()) {
+            // MySQL 8 BC: information_schema.* returns the fields in upper case.
+            $rec = array_change_key_case($rec, CASE_LOWER);
             if (isset($table)) {
                 $rowformat = $rec['row_format'];
             } else {
-                $rowformat = $rec['Value'];
+                $rowformat = $rec['value'];
             }
         }
         $result->close();
@@ -691,6 +697,8 @@ class mysqli_native_moodle_database extends moodle_database {
         if ($result->num_rows > 0) {
             // standard table exists
             while ($rawcolumn = $result->fetch_assoc()) {
+                // MySQL 8 BC: information_schema.* returns the fields in upper case.
+                $rawcolumn = array_change_key_case($rawcolumn, CASE_LOWER);
                 $info = (object)$this->get_column_info((object)$rawcolumn);
                 $structure[$info->name] = new database_column_info($info);
             }
