@@ -54,6 +54,10 @@ information provided here is intended especially for developers.
 * Instead of checking the 'moodle/course:viewparticipants' and 'moodle/site:viewparticipants' capabilities use the
   new functions course_can_view_participants() and course_require_view_participants().
 * $stored_file->add_to_curl_request() now adds the filename to the curl request.
+* The option for Login HTTPS (authentication-only SSL) has been removed
+* $CFG->loginhttps is now deprecated, do not use it.
+* $PAGE->https_required and $PAGE->verify_https_required() are now deprecated. They are no longer used and will throw a coding_exception.
+* $CFG->httpswwwroot is now deprecated and will always result in the same value as wwwroot.
 
 === 3.3.1 ===
 

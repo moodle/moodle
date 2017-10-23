@@ -1671,8 +1671,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                 if ($referer &&
                         $referer != $CFG->wwwroot &&
                         $referer != $CFG->wwwroot . '/' &&
-                        $referer != $CFG->httpswwwroot . '/login/' &&
-                        $referer != $CFG->httpswwwroot . '/login/index.php') {
+                        $referer != $CFG->wwwroot . '/login/' &&
+                        $referer != $CFG->wwwroot . '/login/index.php') {
                     $SESSION->wantsurl = $referer;
                 }
             }
@@ -1684,7 +1684,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $sesskey = sesskey();
                     redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_magic.php?sesskey='.$sesskey);
                 } else if ($this->config->ntlmsso_ie_fastpath == AUTH_NTLM_FASTPATH_YESFORM) {
-                    redirect($CFG->httpswwwroot.'/login/index.php?authldap_skipntlmsso=1');
+                    redirect($CFG-wwwroot.'/login/index.php?authldap_skipntlmsso=1');
                 }
             }
             redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_attempt.php');
@@ -1699,7 +1699,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         // we don't want to use at all. As we can't get rid of it, just point
         // $SESSION->wantsurl to $CFG->wwwroot (after all, we came from there).
         if (empty($SESSION->wantsurl)
-            && (get_local_referer() == $CFG->httpswwwroot.'/auth/ldap/ntlmsso_finish.php')) {
+            && (get_local_referer() == $CFG->wwwroot.'/auth/ldap/ntlmsso_finish.php')) {
 
             $SESSION->wantsurl = $CFG->wwwroot;
         }

@@ -1527,7 +1527,7 @@ function filter_add_javascript($text) {
     <script type=\"text/javascript\">
     <!--
         function openpopup(url,name,options,fullscreen) {
-          fullurl = \"".$CFG->httpswwwroot."\" + url;
+          fullurl = \"".$CFG->wwwroot."\" + url;
           windowobj = window.open(fullurl,name,options);
           if (fullscreen) {
             windowobj.moveTo(0,0);

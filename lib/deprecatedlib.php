@@ -501,10 +501,10 @@ function filter_text($text, $courseid = NULL) {
 }
 
 /**
- * @deprecated use $PAGE->https_required() instead
+ * @deprecated Loginhttps is no longer supported
  */
 function httpsrequired() {
-    throw new coding_exception('httpsrequired() can not be used any more use $PAGE->https_required() instead.');
+    throw new coding_exception('httpsrequired() can not be used any more. Loginhttps is no longer supported.');
 }
 
 /**
@@ -533,9 +533,6 @@ function get_file_url($path, $options=null, $type='coursefile') {
             break;
        case 'rssfile':
             $url = $CFG->wwwroot."/rss/file.php";
-            break;
-        case 'httpscoursefile':
-            $url = $CFG->httpswwwroot."/file.php";
             break;
          case 'coursefile':
         default:

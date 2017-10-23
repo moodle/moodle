@@ -643,31 +643,20 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Local absolute HTTPS in a non HTTPS site.
         $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot); // Need to simulate non-https site.
         $httpsroot = str_replace('http:', 'https:', $CFG->wwwroot);
-        $CFG->loginhttps = false; // Not allowed.
         $this->assertSame('', clean_param($httpsroot, PARAM_LOCALURL));
         $this->assertSame('', clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
-        $CFG->loginhttps = true; // Allowed.
-        $this->assertSame($httpsroot, clean_param($httpsroot, PARAM_LOCALURL));
-        $this->assertSame($httpsroot . '/with/something?else=true',
-            clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
 
         // Local absolute HTTPS in a HTTPS site.
-        $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
+        $CFG->wwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
         $httpsroot = $CFG->wwwroot;
-        $CFG->loginhttps = false; // Always allowed.
-        $this->assertSame($httpsroot, clean_param($httpsroot, PARAM_LOCALURL));
-        $this->assertSame($httpsroot . '/with/something?else=true',
-            clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
-        $CFG->loginhttps = true; // Always allowed.
         $this->assertSame($httpsroot, clean_param($httpsroot, PARAM_LOCALURL));
         $this->assertSame($httpsroot . '/with/something?else=true',
             clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
 
         // Test open redirects are not possible.
-        $CFG->loginhttps = false;
         $CFG->wwwroot = 'http://www.example.com';
         $this->assertSame('', clean_param('http://www.example.com.evil.net/hack.php', PARAM_LOCALURL));
-        $CFG->loginhttps = true;
+        $CFG->wwwroot = 'https://www.example.com';
         $this->assertSame('', clean_param('https://www.example.com.evil.net/hack.php', PARAM_LOCALURL));
     }
 

@@ -42,13 +42,7 @@ class block_login extends block_base {
             return $this->content;
         }
 
-        if (empty($CFG->loginhttps)) {
-            $wwwroot = $CFG->wwwroot;
-        } else {
-            // This actually is not so secure ;-), 'cause we're
-            // in unencrypted connection...
-            $wwwroot = str_replace("http://", "https://", $CFG->wwwroot);
-        }
+        $wwwroot = $CFG->wwwroot;
 
         if (signup_is_enabled()) {
             $signup = $wwwroot . '/login/signup.php';

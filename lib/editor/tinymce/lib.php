@@ -80,9 +80,9 @@ class tinymce_texteditor extends texteditor {
         global $PAGE, $CFG;
         // Note: use full moodle_url instance to prevent standard JS loader, make sure we are using https on profile page if required.
         if ($CFG->debugdeveloper) {
-            $PAGE->requires->js(new moodle_url($CFG->httpswwwroot.'/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce_src.js'));
+            $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce_src.js'));
         } else {
-            $PAGE->requires->js(new moodle_url($CFG->httpswwwroot.'/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce.js'));
+            $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce.js'));
         }
         $PAGE->requires->js_init_call('M.editor_tinymce.init_editor', array($elementid, $this->get_init_params($elementid, $options)), true);
         if ($fpoptions) {
@@ -127,8 +127,8 @@ class tinymce_texteditor extends texteditor {
             'mode' => "exact",
             'elements' => $elementid,
             'relative_urls' => false,
-            'document_base_url' => $CFG->httpswwwroot,
-            'moodle_plugin_base' => "$CFG->httpswwwroot/lib/editor/tinymce/plugins/",
+            'document_base_url' => $CFG->wwwroot,
+            'moodle_plugin_base' => "$CFG->wwwroot/lib/editor/tinymce/plugins/",
             'content_css' => $contentcss,
             'language' => $lang,
             'directionality' => $directionality,
@@ -257,7 +257,7 @@ class tinymce_texteditor extends texteditor {
      */
     public function get_tinymce_base_url() {
         global $CFG;
-        return new moodle_url("$CFG->httpswwwroot/lib/editor/tinymce/tiny_mce/$this->version/");
+        return new moodle_url("/lib/editor/tinymce/tiny_mce/$this->version/");
     }
 
 }

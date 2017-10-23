@@ -165,9 +165,7 @@ class core_sessionlib_testcase extends advanced_testcase {
                 // Non ssl, not set.
                 'config' => array(
                     'wwwroot'       => 'http://example.com',
-                    'httpswwwroot'  => 'http://example.com',
                     'sslproxy'      => null,
-                    'loginhttps'    => null,
                     'cookiesecure'  => null,
                 ),
                 'secure' => false,
@@ -176,9 +174,7 @@ class core_sessionlib_testcase extends advanced_testcase {
                 // Non ssl, off and ignored.
                 'config' => array(
                     'wwwroot'       => 'http://example.com',
-                    'httpswwwroot'  => 'http://example.com',
                     'sslproxy'      => null,
-                    'loginhttps'    => null,
                     'cookiesecure'  => false,
                 ),
                 'secure' => false,
@@ -187,9 +183,7 @@ class core_sessionlib_testcase extends advanced_testcase {
                 // Non ssl, on and ignored.
                 'config' => array(
                     'wwwroot'       => 'http://example.com',
-                    'httpswwwroot'  => 'http://example.com',
                     'sslproxy'      => null,
-                    'loginhttps'    => null,
                     'cookiesecure'  => true,
                 ),
                 'secure' => false,
@@ -198,9 +192,7 @@ class core_sessionlib_testcase extends advanced_testcase {
                 // SSL via proxy, off.
                 'config' => array(
                     'wwwroot'       => 'http://example.com',
-                    'httpswwwroot'  => 'http://example.com',
                     'sslproxy'      => true,
-                    'loginhttps'    => null,
                     'cookiesecure'  => false,
                 ),
                 'secure' => false,
@@ -209,9 +201,7 @@ class core_sessionlib_testcase extends advanced_testcase {
                 // SSL via proxy, on.
                 'config' => array(
                     'wwwroot'       => 'http://example.com',
-                    'httpswwwroot'  => 'http://example.com',
                     'sslproxy'      => true,
-                    'loginhttps'    => null,
                     'cookiesecure'  => true,
                 ),
                 'secure' => true,
@@ -220,9 +210,7 @@ class core_sessionlib_testcase extends advanced_testcase {
                 // SSL and off.
                 'config' => array(
                     'wwwroot'       => 'https://example.com',
-                    'httpswwwroot'  => 'https://example.com',
                     'sslproxy'      => null,
-                    'loginhttps'    => null,
                     'cookiesecure'  => false,
                 ),
                 'secure' => false,
@@ -231,9 +219,7 @@ class core_sessionlib_testcase extends advanced_testcase {
                 // SSL and on.
                 'config' => array(
                     'wwwroot'       => 'https://example.com',
-                    'httpswwwroot'  => 'https://example.com',
                     'sslproxy'      => null,
-                    'loginhttps'    => null,
                     'cookiesecure'  => true,
                 ),
                 'secure' => true,
@@ -250,10 +236,10 @@ class core_sessionlib_testcase extends advanced_testcase {
      * @param bool $secure Wether cookies should be secure or not
      */
     public function test_is_moodle_cookie_secure($config, $secure) {
-
+        global $CFG;
         $this->resetAfterTest();
         foreach ($config as $key => $value) {
-            set_config($key, $value);
+            $CFG->$key = $value;
         }
         $this->assertEquals($secure, is_moodle_cookie_secure());
     }
