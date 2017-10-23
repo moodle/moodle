@@ -65,7 +65,7 @@ switch ($action) {
         $enrolid = required_param('enrolid', PARAM_INT);
         $cohorts = $users = [];
 
-        $userids = optional_param('userlist', [], PARAM_SEQUENCE);
+        $userids = optional_param_array('userlist', [], PARAM_SEQUENCE);
         $userid = optional_param('userid', 0, PARAM_INT);
         if ($userid) {
             $userids[] = $userid;
