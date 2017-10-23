@@ -25,6 +25,8 @@ namespace mock_search;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_search\manager;
+
 defined('MOODLE_INTERNAL') || die;
 
 class engine extends \core_search\engine {
@@ -45,7 +47,7 @@ class engine extends \core_search\engine {
 
     public function add_document($document, $fileindexing = false) {
         if ($this->adddelay) {
-            usleep($this->adddelay);
+            \testable_core_search::fake_current_time(manager::get_current_time() + $this->adddelay);
         }
         $this->added[] = $document;
         return true;
