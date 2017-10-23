@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2008-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2008-2017 Horde LLC (http://www.horde.org/)
  *
  * getBaseSubject() code adapted from imap-base-subject.c (Dovecot 1.2)
  *   Original code released under the LGPL-2.1
@@ -11,7 +11,7 @@
  *
  * @category  Horde
  * @copyright 2002-2008 Timo Sirainen
- * @copyright 2008-2014 Horde LLC
+ * @copyright 2008-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -23,7 +23,7 @@
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
  * @copyright 2002-2008 Timo Sirainen
- * @copyright 2011-2014 Horde LLC
+ * @copyright 2011-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -125,10 +125,8 @@ class Horde_Imap_Client_Data_BaseSubject
 
         if (stripos($str, 're', $i) === 0) {
             $i += 2;
-        } elseif (stripos($str, 'fwd', $i) === 0) {
-            $i += 3;
         } elseif (stripos($str, 'fw', $i) === 0) {
-            $i += 2;
+            $i += (stripos($str, 'fwd', $i) === 0) ? 3 : 2;
         } else {
             return $ret;
         }

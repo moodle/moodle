@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2004-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2004-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2004-2014 Horde LLC
+ * @copyright 2004-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -16,7 +16,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2004-2014 Horde LLC
+ * @copyright 2004-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -94,7 +94,7 @@ class Horde_Imap_Client_Mailbox_List implements Countable, IteratorAggregate
      *
      * @return integer  See usort().
      */
-    protected final function _mboxCompare($a, $b)
+    final protected function _mboxCompare($a, $b)
     {
         /* Always return INBOX as "smaller". */
         if ($this->_sortinbox) {

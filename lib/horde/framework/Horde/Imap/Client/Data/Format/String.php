@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -16,11 +16,12 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
-class Horde_Imap_Client_Data_Format_String extends Horde_Imap_Client_Data_Format
+class Horde_Imap_Client_Data_Format_String
+extends Horde_Imap_Client_Data_Format
 {
     /**
      * String filter parameters.
@@ -34,15 +35,16 @@ class Horde_Imap_Client_Data_Format_String extends Horde_Imap_Client_Data_Format
      *   - eol: (boolean) If true, normalize EOLs in input. @since 2.2.0
      *   - skipscan: (boolean) If true, don't scan input for
      *               binary/literal/quoted data. @since 2.2.0
+     *
+     * @throws Horde_Imap_Client_Data_Format_Exception
      */
     public function __construct($data, array $opts = array())
     {
         /* String data is stored in a stream. */
         $this->_data = new Horde_Stream_Temp();
 
-        $this->_filter = $this->_filterParams();
-
         if (empty($opts['skipscan'])) {
+            $this->_filter = $this->_filterParams();
             stream_filter_register('horde_imap_client_string', 'Horde_Imap_Client_Data_Format_Filter_String');
             $res = stream_filter_append($this->_data->stream, 'horde_imap_client_string', STREAM_FILTER_WRITE, $this->_filter);
         } else {
@@ -63,6 +65,14 @@ class Horde_Imap_Client_Data_Format_String extends Horde_Imap_Client_Data_Format
         }
         if (!is_null($res2)) {
             stream_filter_remove($res2);
+        }
+
+        if (isset($this->_filter) &&
+            $this->_filter->nonascii &&
+            !($this instanceof Horde_Imap_Client_Data_Format_String_Support_Nonascii)) {
+            throw new Horde_Imap_Client_Data_Format_Exception(
+                'String contains non-ASCII characters.'
+            );
         }
     }
 

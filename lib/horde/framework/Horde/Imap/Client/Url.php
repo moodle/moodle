@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2008-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2008-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2008-2014 Horde LLC
+ * @copyright 2008-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -14,11 +14,12 @@
 /**
  * Object representation of a a POP3 (RFC 2384) or IMAP (RFC 5092/5593) URL.
  *
- * @author    Michael Slusarz <slusarz@horde.org>
- * @category  Horde
- * @copyright 2008-2014 Horde LLC
- * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
- * @package   Imap_Client
+ * @author     Michael Slusarz <slusarz@horde.org>
+ * @category   Horde
+ * @copyright  2008-2016 Horde LLC
+ * @deprecated Use Horde_Imap_Client_Url_Base instead
+ * @license    http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ * @package    Imap_Client
  *
  * @property-read boolean $relative  Is this a relative URL?
  */
@@ -39,7 +40,9 @@ class Horde_Imap_Client_Url implements Serializable
     public $hostspec = null;
 
     /**
-     * The IMAP mailbox
+     * The IMAP mailbox.
+     *
+     * @todo Make this a Horde_Imap_Client_Mailbox object.
      *
      * @var string
      */
@@ -143,32 +146,42 @@ class Horde_Imap_Client_Url implements Serializable
 
             if (!is_null($this->username)) {
                 $url .= $this->username;
-            }
-
-            if (!is_null($this->auth)) {
-                $url .= ';AUTH=' . $this->auth . '@';
-            } elseif (!is_null($this->username)) {
+                if (!is_null($this->auth)) {
+                    $url .= ';AUTH=' . $this->auth;
+                }
                 $url .= '@';
             }
 
             $url .= $this->hostspec;
 
-            if (!is_null($this->port) && ($this->port != 143)) {
-                $url .= ':' . $this->port;
+            if (!is_null($this->port)) {
+                switch ($this->protocol) {
+                case 'imap':
+                    if ($this->port != 143) {
+                        $url .= ':' . $this->port;
+                    }
+                    break;
+
+                case 'pop':
+                    if ($this->port != 110) {
+                        $url .= ':' . $this->port;
+                    }
+                    break;
+                }
             }
         }
 
         $url .= '/';
 
         if (is_null($this->protocol) || ($this->protocol == 'imap')) {
-            $url .= urlencode($this->mailbox);
+            $url .= rawurlencode($this->mailbox);
 
             if (!empty($this->uidvalidity)) {
                 $url .= ';UIDVALIDITY=' . $this->uidvalidity;
             }
 
             if (!is_null($this->search)) {
-                $url .= '?' . urlencode($this->search);
+                $url .= '?' . rawurlencode($this->search);
             } else {
                 if (!is_null($this->uid)) {
                     $url .= '/;UID=' . $this->uid;
@@ -210,7 +223,7 @@ class Horde_Imap_Client_Url implements Serializable
         $data = parse_url(trim($url));
 
         if (isset($data['scheme'])) {
-            $protocol = strtolower($data['scheme']);
+            $protocol = Horde_String::lower($data['scheme']);
             if (!in_array($protocol, array('imap', 'pop'))) {
                 return;
             }
@@ -220,7 +233,7 @@ class Horde_Imap_Client_Url implements Serializable
             }
             $this->port = isset($data['port'])
                 ? $data['port']
-                : 143;
+                : (($protocol === 'imap') ? 143 : 110);
             $this->protocol = $protocol;
         }
 
@@ -250,18 +263,22 @@ class Horde_Imap_Client_Url implements Serializable
                     $this->uidvalidity = intval(substr($mbox, $pos + 13));
                     $mbox = substr($mbox, 0, $pos);
                 }
-                $this->mailbox = urldecode($mbox);
+                $this->mailbox = rawurldecode($mbox);
 
+                if (isset($data['query'])) {
+                    $this->search = rawurldecode($data['query']);
+                    $parts = array();
+                }
+            } else {
+                $parts = array();
             }
 
             if (count($parts)) {
                 foreach ($parts as $val) {
                     list($k, $v) = explode('=', $val);
-                    $property = strtolower($k);
+                    $property = Horde_String::lower($k);
                     $this->$property = $v;
                 }
-            } elseif (isset($data['query'])) {
-                $this->search = urldecode($data['query']);
             }
         }
     }

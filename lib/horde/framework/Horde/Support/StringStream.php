@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2007-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2007-2017 Horde LLC (http://www.horde.org/)
  *
  * @author   Chuck Hagenbuch <chuck@horde.org>
  * @category Horde

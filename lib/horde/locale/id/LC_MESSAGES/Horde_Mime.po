@@ -1,5 +1,5 @@
 # Indonesian translations for Horde_Mime module.
-# Copyright 2010-2014 Horde LLC (http://www.horde.org/)
+# Copyright 2010-2017 Horde LLC (http://www.horde.org/)
 # This file is distributed under the same license as the Horde_Mime module.
 # Automatically generated, 2010.
 #

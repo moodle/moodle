@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2014-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2014 Horde LLC
+ * @copyright 2014-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Stream
  */
@@ -16,9 +16,13 @@
  * until a certain size is reached, at which point it converts storage to a
  * PHP temporary stream.
  *
+ * NOTE: Do NOT use this class if it's possible that a stream_filter will need
+ * to be added to the stream by some client code. If the size of the data
+ * does not exceed max_memory there will be no stream to attach to.
+ *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2014 Horde LLC
+ * @copyright 2014-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Stream
  * @since     1.6.0

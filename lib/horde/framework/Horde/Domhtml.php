@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2010-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2010-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2010-2014 Horde LLC
+ * @copyright 2010-2017 Horde LLC
  * @package   Util
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  */
@@ -16,7 +16,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2010-2014 Horde LLC
+ * @copyright 2010-2017 Horde LLC
  * @package   Util
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  */
@@ -248,7 +248,7 @@ class Horde_Domhtml implements Iterator
      */
     protected function _loadHTML($html)
     {
-        if (PHP_MINOR_VERSION >= 4) {
+        if (version_compare(PHP_VERSION, '5.4', '>=')) {
             $mask = defined('LIBXML_PARSEHUGE')
                 ? LIBXML_PARSEHUGE
                 : 0;

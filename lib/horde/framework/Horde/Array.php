@@ -2,7 +2,7 @@
 /**
  * The Horde_Array:: class provides various methods for array manipulation.
  *
- * Copyright 2003-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2003-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
@@ -28,7 +28,7 @@ class Horde_Array
      *                          1 = descending
      * @param boolean $assoc  Keep key value association?
      */
-    static public function arraySort(array &$array, $key = null, $dir = 0,
+    public static function arraySort(array &$array, $key = null, $dir = 0,
                                      $assoc = true)
     {
         /* Return if the array is empty. */
@@ -64,7 +64,7 @@ class Horde_Array
      *
      * @return boolean  True on sucess, false on error.
      */
-    static public function getArrayParts($field, &$base, &$keys)
+    public static function getArrayParts($field, &$base, &$keys)
     {
         if (!preg_match('|([^\[]*)((\[[^\[\]]*\])+)|', $field, $matches)) {
             return false;
@@ -89,7 +89,7 @@ class Horde_Array
      *
      * @return mixed  The final value of the key path.
      */
-    static public function getElement(&$array, array &$keys, $value = null)
+    public static function getElement(&$array, array &$keys, $value = null)
     {
         if (count($keys)) {
             $key = array_shift($keys);
@@ -116,7 +116,7 @@ class Horde_Array
      *
      * @return array  The extracted rectangle.
      */
-    static public function getRectangle(array $array, $row, $col, $height,
+    public static function getRectangle(array $array, $row, $col, $height,
                                         $width)
     {
         $rec = array();
@@ -138,7 +138,7 @@ class Horde_Array
      *
      * @return array  An array with keys the same as values.
      */
-    static public function valuesToKeys(array $array)
+    public static function valuesToKeys(array $array)
     {
         return $array
             ? array_combine($array, $array)

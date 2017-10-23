@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -17,12 +17,19 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
 class Horde_Imap_Client_Data_Format_Filter_String extends php_user_filter
 {
+    /**
+     * Skip status.
+     *
+     * @var boolean
+     */
+    protected $_skip = false;
+
     /**
      * @see stream_filter_register()
      */
@@ -30,6 +37,7 @@ class Horde_Imap_Client_Data_Format_Filter_String extends php_user_filter
     {
         $this->params->binary = false;
         $this->params->literal = false;
+        $this->params->nonascii = false;
         // no_quote_list is used below as a config option
         $this->params->quoted = false;
 
@@ -42,10 +50,9 @@ class Horde_Imap_Client_Data_Format_Filter_String extends php_user_filter
     public function filter($in, $out, &$consumed, $closing)
     {
         $p = $this->params;
-        $skip = false;
 
         while ($bucket = stream_bucket_make_writeable($in)) {
-            if (!$skip) {
+            if (!$this->_skip) {
                 $len = $bucket->datalen;
                 $str = $bucket->data;
 
@@ -58,7 +65,7 @@ class Horde_Imap_Client_Data_Format_Filter_String extends php_user_filter
                         $p->literal = true;
 
                         // No need to scan input anymore.
-                        $skip = true;
+                        $this->_skip = true;
                         break 2;
 
                     case 10: // LF
@@ -90,6 +97,7 @@ class Horde_Imap_Client_Data_Format_Filter_String extends php_user_filter
                             // CTL characters must be, at a minimum, quoted.
                             $p->quoted = true;
                         } elseif ($chr > 127) {
+                            $p->nonascii = true;
                             // 8-bit chars must be in a literal.
                             $p->literal = true;
                         }

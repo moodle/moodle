@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -16,7 +16,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  * @since     2.2.0
@@ -36,7 +36,7 @@ class Horde_Imap_Client_Data_Sync
      *
      * @var array
      */
-    static public $map = array(
+    public static $map = array(
         'H' => 'highestmodseq',
         'M' => 'messages',
         'U' => 'uidnext',
@@ -46,7 +46,7 @@ class Horde_Imap_Client_Data_Sync
     /**
      * Are there messages that have had flag changes?
      *
-     * @var Horde_Imap_Client_Ids
+     * @var boolean
      */
     public $flags = null;
 
@@ -182,7 +182,7 @@ class Horde_Imap_Client_Data_Sync
                     : ($this->uidnext . ':' . $curr['U']);
 
                 $squery = new Horde_Imap_Client_Search_Query();
-                $squery->ids($new_ids);
+                $squery->ids(new Horde_Imap_Client_Ids($new_ids));
                 $sres = $base_ob->search($mailbox, $squery);
 
                 $this->_newmsgsuids = $sres['match'];
@@ -237,8 +237,8 @@ class Horde_Imap_Client_Data_Sync
             if ($this->highestmodseq &&
                 ($this->highestmodseq == $status_sync['syncmodseq'])) {
                 $vanished = is_null($ids)
-                    ? $status_sync['syncvanisheduids']
-                    : $base_ob->getIdsOb(array_intersect($ids->ids, $status_sync['syncvanisheduids']->ids));
+                    ? $status_sync['syncvanished']
+                    : $base_ob->getIdsOb(array_intersect($ids->ids, $status_sync['syncvanished']->ids));
             } else {
                 $vanished = $base_ob->vanished($mailbox, $this->highestmodseq ? $this->highestmodseq : 1, array(
                     'ids' => $ids
@@ -258,10 +258,9 @@ class Horde_Imap_Client_Data_Sync
         case 'flagsuids':
         case 'newmsgsuids':
         case 'vanisheduids':
-            $varname = '_' . $name;
-            return empty($this->$varname)
+            return empty($this->{'_' . $name})
                 ? new Horde_Imap_Client_Ids()
-                : $this->$varname;
+                : $this->{'_' . $name};
         }
     }
 

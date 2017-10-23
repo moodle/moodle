@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2010-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2010-2017 Horde LLC (http://www.horde.org/)
  *
  * @author   Chuck Hagenbuch <chuck@horde.org>
  * @license  http://www.horde.org/licenses/bsd BSD
@@ -111,11 +111,11 @@ class Horde_Support_Numerizer_Locale_Base
         foreach ($this->TEN_PREFIXES as $tp => $tp_replacement) {
             $string = preg_replace_callback(
                 "/(?:$tp)( *\d(?=[^\d]|\$))*/i",
-                create_function(
-                    '$m',
-                    'return ' . $tp_replacement . ' + (isset($m[1]) ? (int)$m[1] : 0);'
-                ),
-                $string);
+                function ($m) use ($tp_replacement) {
+                    return $tp_replacement + (isset($m[1]) ? (int)$m[1] : 0);
+                },
+                $string
+            );
         }
         return $string;
     }
@@ -128,11 +128,11 @@ class Horde_Support_Numerizer_Locale_Base
         foreach ($this->BIG_PREFIXES as $bp => $bp_replacement) {
             $string = preg_replace_callback(
                 '/(\d*) *' . $bp . '/i',
-                create_function(
-                    '$m',
-                    'return ' . $bp_replacement . ' * (int)$m[1];'
-                ),
-                $string);
+                function ($m) use ($bp_replacement) {
+                    return $bp_replacement * (int)$m[1];
+                },
+                $string
+            );
             $string = $this->_andition($string);
         }
         return $string;
@@ -156,11 +156,11 @@ class Horde_Support_Numerizer_Locale_Base
     {
         return preg_replace_callback(
             '/(\d+)(?: | and |-)*haAlf/i',
-            create_function(
-                '$m',
-                'return (string)((float)$m[1] + 0.5);'
-            ),
-            $string);
+            function ($m) {
+                return (string)((float)$m[1] + 0.5);
+            },
+            $string
+        );
     }
 
 }

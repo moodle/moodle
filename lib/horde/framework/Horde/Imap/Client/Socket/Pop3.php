@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2009-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2009-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
@@ -43,7 +43,7 @@
  *
  * @category  Horde
  * @copyright 2002 Richard Heyes
- * @copyright 2009-2014 Horde LLC
+ * @copyright 2009-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -64,18 +64,24 @@
  *   - RFC 3206: AUTH/SYS response codes
  *   - RFC 4616: AUTH=PLAIN
  *   - RFC 5034: POP3 SASL
+ *   - RFC 5802: AUTH=SCRAM-SHA-1
+ *   - RFC 6856: UTF8, LANG
  * </pre>
  *
  * @author    Richard Heyes <richard@phpguru.org>
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
  * @copyright 2002 Richard Heyes
- * @copyright 2009-2014 Horde LLC
+ * @copyright 2009-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
 class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
 {
+    /* Internal key used to store mailbox level cache data. \1 is not a valid
+     * ID in POP3, so it should be safe to use. */
+    const MBOX_CACHE = "\1mbox";
+
     /**
      * The default ports to use for a connection.
      *
@@ -99,10 +105,25 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
 
     /**
      */
+    public function __get($name)
+    {
+        $out = parent::__get($name);
+
+        switch ($name) {
+        case 'url':
+            $out->protocol = 'pop3';
+            break;
+        }
+
+        return $out;
+    }
+
+    /**
+     */
     protected function _initCache($current = false)
     {
         return parent::_initCache($current) &&
-               $this->queryCapability('UIDL');
+               $this->_capability('UIDL');
     }
 
     /**
@@ -114,11 +135,11 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
 
     /**
      */
-    protected function _capability()
+    protected function _initCapability()
     {
         $this->_connect();
 
-        $capability = array();
+        $c = new Horde_Imap_Client_Data_Capability();
 
         try {
             $res = $this->_sendLine('CAPA', array(
@@ -127,33 +148,31 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
 
             foreach ($res['data'] as $val) {
                 $prefix = explode(' ', $val);
-                $capability[strtoupper($prefix[0])] = (count($prefix) > 1)
-                    ? array_slice($prefix, 1)
-                    : true;
+                $c->add($prefix[0], array_slice($prefix, 1));
             }
         } catch (Horde_Imap_Client_Exception $e) {
             $this->_temp['no_capa'] = true;
 
             /* Need to probe for capabilities if CAPA command is not
              * available. */
-            $capability = array('USER' => true);
+            $c->add('USER');
 
             /* Capability sniffing only guaranteed after authentication is
              * completed (if any). */
             if (!empty($this->_init['authmethod'])) {
                 $this->_pop3Cache('uidl');
                 if (empty($this->_temp['no_uidl'])) {
-                    $capability['UIDL'] = true;
+                    $c->add('UIDL');
                 }
 
                 $this->_pop3Cache('top', 1);
                 if (empty($this->_temp['no_top'])) {
-                    $capability['TOP'] = true;
+                    $c->add('TOP');
                 }
             }
         }
 
-        $this->_setInit('capability', $capability);
+        $this->_setInit('capability', $c);
     }
 
     /**
@@ -173,18 +192,11 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
 
     /**
      */
-    public function alerts()
-    {
-        return array();
-    }
-
-    /**
-     */
     protected function _login()
     {
         /* Blank passwords are not allowed, so no need to even try
          * authentication to determine this. */
-        if (is_null($this->getParam('password'))) {
+        if (!strlen($this->getParam('password'))) {
             throw new Horde_Imap_Client_Exception(
                 Horde_Imap_Client_Translation::r("No password provided."),
                 Horde_Imap_Client_Exception::LOGIN_AUTHENTICATIONFAILED
@@ -201,7 +213,7 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
 
             if (($secure === 'tls') || $secure === true) {
                 // Switch over to a TLS connection.
-                if ($first_login && !$this->queryCapability('STLS')) {
+                if ($first_login && !$this->_capability('STLS')) {
                     if ($secure === 'tls') {
                         throw new Horde_Imap_Client_Exception(
                             Horde_Imap_Client_Translation::r("Could not open secure connection to the POP3 server.") . ' ' . Horde_Imap_Client_Translation::r("Server does not support secure connections."),
@@ -233,17 +245,27 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
         }
 
         if ($first_login) {
-            /* Sanity checking: at least one server (Dovecot 1.x) may return
-             * SASL response with no arguments. */
-            $auth_mech = (($sasl = $this->queryCapability('SASL')) && is_array($sasl))
-                ? $sasl
-                : array();
+            /* At least one server (Dovecot 1.x) may return SASL capability
+             * with no arguments. */
+            $auth_mech = $this->_capability()->getParams('SASL');
 
             if (isset($this->_temp['pop3timestamp'])) {
                 $auth_mech[] = 'APOP';
             }
 
             $auth_mech[] = 'USER';
+
+            /* Enable UTF-8 mode (RFC 6856). MUST occur after STLS is
+             * issued. */
+            if ($this->_capability('UTF8')) {
+                try {
+                    $this->_sendLine('UTF8');
+                    $this->_temp['utf8'] = true;
+                } catch (Horde_Imap_Client_Exception $e) {
+                    /* If server responds to UTF8 command with error,
+                     * fallback to legacy non-UTF8 behavior. */
+                }
+            }
         } else {
             $auth_mech = array($this->_init['authmethod']);
         }
@@ -254,8 +276,8 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
                 $this->_setInit('authmethod', $method);
 
                 if (!empty($this->_temp['no_capa']) ||
-                    !$this->queryCapability('UIDL')) {
-                    $this->_capability();
+                    !$this->_capability('UIDL')) {
+                    $this->_setInit('capability');
                 }
 
                 return true;
@@ -292,6 +314,7 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
                 $this->getParam('port'),
                 $this->getParam('timeout'),
                 $this->getParam('secure'),
+                $this->getParam('context'),
                 array(
                     'debug' => $this->_debug
                 )
@@ -332,9 +355,9 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
             // RFC 5034: CRAM-MD5
             // CRAM-SHA1 & CRAM-SHA256 supported by Courier SASL library
             $challenge = $this->_sendLine('AUTH ' . $method);
-            $response = base64_encode($username . ' ' . hash_hmac(strtolower(substr($method, 5)), base64_decode(substr($challenge['resp'], 2)), $password, true));
+            $response = base64_encode($username . ' ' . hash_hmac(Horde_String::lower(substr($method, 5)), base64_decode(substr($challenge['resp'], 2)), $password, true));
             $this->_sendLine($response, array(
-                'debug' => sprintf('[%s Response - username: %s]', $method, $username)
+                'debug' => sprintf('[AUTH Response (username: %s)]', $username)
             ));
             break;
 
@@ -349,7 +372,7 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
                 'pop3'
             ));
             $sresponse = $this->_sendLine($response, array(
-                'debug' => sprintf('[%s Response - username: %s]', $method, $username)
+                'debug' => sprintf('[AUTH Response (username: %s)]', $username)
             ));
             if (stripos(base64_decode(substr($sresponse['resp'], 2)), 'rspauth=') === false) {
                 throw new Horde_Imap_Client_Exception(
@@ -365,11 +388,9 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
         case 'LOGIN':
             // RFC 4616 (AUTH=PLAIN) & 5034 (POP3 SASL)
             $this->_sendLine('AUTH LOGIN');
-            $this->_sendLine(base64_encode($username), array(
-                'debug' => sprintf('[AUTH LOGIN Command - username: %s]', $username)
-            ));
+            $this->_sendLine(base64_encode($username));
             $this->_sendLine(base64_encode($password), array(
-                'debug' => '[AUTH LOGIN Command - password]'
+                'debug' => sprintf('[AUTH Password (username: %s)]', $username)
             ));
             break;
 
@@ -380,28 +401,125 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
                 $username,
                 $password
             ))), array(
-                'debug' => sprintf('[AUTH PLAIN Command - username: %s]', $username)
+                'debug' => sprintf('AUTH PLAIN [Auth Response (username: %s)]', $username)
             ));
             break;
 
         case 'APOP':
+            /* If UTF8 (+ USER) is active, and non-ASCII exists, need to apply
+             * SASLprep to username/password. RFC 6856[2.2]. Reject if
+             * UTF8 (+ USER) is not supported and 8-bit characters exist. */
+            if (Horde_Mime::is8bit($username) ||
+                Horde_Mime::is8bit($password)) {
+                if (empty($this->_temp['utf8']) ||
+                    !$this->_capability('UTF8', 'USER') ||
+                    !class_exists('Horde_Stringprep')) {
+                    $error = true;
+                } else {
+                    Horde_Stringprep::autoload();
+                    $saslprep = new Znerol\Component\Stringprep\Profile\SASLprep();
+
+                    try {
+                        $username = $saslprep->apply(
+                            $username,
+                            'UTF-8',
+                            Znerol\Compnonent\Stringprep\Profile::MODE_QUERY
+                        );
+                        $password = $saslprep->apply(
+                            $password,
+                            'UTF-8',
+                            Znerol\Compnonent\Stringprep\Profile::MODE_STORE
+                        );
+                        $error = false;
+                    } catch (Znerol\Component\Stringprep\ProfileException $e) {
+                        $error = true;
+                    }
+                }
+
+                if ($error) {
+                    throw new Horde_Imap_Client_Exception(
+                        Horde_Imap_Client_Translation::r("Authentication failed."),
+                        Horde_Imap_Client_Exception::LOGIN_AUTHENTICATIONFAILED
+                    );
+                }
+            }
+
             // RFC 1939 [7]
-            $this->_sendLine('APOP ' . $username . ' ' . hash('md5', $this->_temp['pop3timestamp'] . $password));
+            $this->_sendLine('APOP ' . $username . ' ' .
+                hash('md5', $this->_temp['pop3timestamp'] . $password));
             break;
 
         case 'USER':
+            /* POP3 servers without UTF8 (+ USER) does not accept non-ASCII
+             * in USER/PASS. RFC 6856[2.2] */
+            if ((empty($this->_temp['utf8']) ||
+                 !$this->_capability('UTF8', 'USER')) &&
+                (Horde_Mime::is8bit($username) ||
+                 Horde_Mime::is8bit($password))) {
+                throw new Horde_Imap_Client_Exception(
+                    Horde_Imap_Client_Translation::r("Authentication failed."),
+                    Horde_Imap_Client_Exception::LOGIN_AUTHENTICATIONFAILED
+                );
+            }
+
             // RFC 1939 [7]
             $this->_sendLine('USER ' . $username);
             $this->_sendLine('PASS ' . $password, array(
-                'debug' => '[USER Command - password]'
+                'debug' => 'PASS [Password]'
             ));
             break;
 
+        case 'SCRAM-SHA-1':
+            $scram = new Horde_Imap_Client_Auth_Scram(
+                $username,
+                $password,
+                'SHA1'
+            );
+
+            $c1 = $this->_sendLine(
+                'AUTH ' . $method . ' ' . base64_encode($scram->getClientFirstMessage())
+            );
+
+            $sr1 = base64_decode(substr($c1['resp'], 2));
+            if (!$scram->parseServerFirstMessage($sr1)) {
+                throw new Horde_Imap_Client_Exception(
+                    Horde_Imap_Client_Translation::r("Authentication failed."),
+                    Horde_Imap_Client_Exception::LOGIN_AUTHENTICATIONFAILED
+                );
+            }
+
+            $c2 = $this->_sendLine(
+                base64_encode($scram->getClientFinalMessage())
+            );
+
+            $sr2 = base64_decode(substr($c2['resp'], 2));
+            if (!$scram->parseServerFirstMessage($sr)) {
+                throw new Horde_Imap_Client_Exception(
+                    Horde_Imap_Client_Translation::r("Authentication failed."),
+                    Horde_Imap_Client_Exception::LOGIN_AUTHENTICATIONFAILED
+                );
+
+                /* This means authentication passed, according to the server,
+                 * but the server signature is incorrect. This indicates that
+                 * server verification has failed. Immediately disconnect from
+                 * the server, since this is a possible security issue. */
+                $this->logout();
+                throw new Horde_Imap_Client_Exception(
+                    Horde_Imap_Client_Translation::r("Server failed verification check."),
+                    Horde_Imap_Client_Exception::LOGIN_SERVER_VERIFICATION_FAILED
+                );
+            }
+
+            $this->_sendLine('');
+            break;
+
         default:
-            throw new Horde_Imap_Client_Exception(
-                sprintf(Horde_Imap_Client_Translation::r("Unknown authentication method: %s"), $method),
+            $e = new Horde_Imap_Client_Exception(
+                Horde_Imap_Client_Translation::r("Unknown authentication method: %s"),
                 Horde_Imap_Client_Exception::SERVER_CONNECT
             );
+            $e->messagePrintf(array($method));
+            throw $e;
         }
     }
 
@@ -428,10 +546,9 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
      */
     protected function _getID()
     {
-        $id = $this->queryCapability('IMPLEMENTATION');
-        return empty($id)
-            ? array()
-            : array('implementation' => $id);
+        return ($id = $this->_capability()->getParams('IMPLEMENTATION'))
+            ? array('implementation' => reset($id))
+            : array();
     }
 
     /**
@@ -439,7 +556,21 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
      */
     protected function _setLanguage($langs)
     {
-        throw new Horde_Imap_Client_Exception_NoSupportPop3('LANGUAGE extension');
+        // RFC 6856 [3]
+        if (!$this->_capability('LANG')) {
+            throw new Horde_Imap_Client_Exception_NoSupportPop3('LANGUAGE extension');
+        }
+
+        foreach ($langs as $val) {
+            try {
+                $this->_sendLine('LANG ' . $val);
+                $this->_temp['lang'] = $val;
+            } catch (Horde_Imap_Client_Exception $e) {
+                // Setting language failed - move on to next one.
+            }
+        }
+
+        return $this->_getLanguage(false);
     }
 
     /**
@@ -447,7 +578,34 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
      */
     protected function _getLanguage($list)
     {
-        throw new Horde_Imap_Client_Exception_NoSupportPop3('LANGUAGE extension');
+        // RFC 6856 [3]
+        if (!$this->_capability('LANG')) {
+            throw new Horde_Imap_Client_Exception_NoSupportPop3('LANGUAGE extension');
+        }
+
+        if (!$list) {
+            return isset($this->_temp['lang'])
+                ? $this->_temp['lang']
+                : null;
+        }
+
+        $langs = array();
+
+        try {
+            $res = $this->_sendLine('LANG', array(
+                'multiline' => 'array'
+            ));
+
+            foreach ($res['data'] as $val) {
+                $parts = explode(' ', $val);
+                $langs[] = $parts[0];
+                // $parts[1] - lanuage description (not used)
+            }
+        } catch (Horde_Imap_Client_Exception $e) {
+            // Ignore: language listing might fail. RFC 6856 [3.3]
+        }
+
+        return $langs;
     }
 
     /**
@@ -499,18 +657,17 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
      */
     protected function _listMailboxes($pattern, $mode, $options)
     {
-        $tmp = array(
-            'mailbox' => Horde_Imap_Client_Mailbox::get('INBOX')
-        );
-
-        if (!empty($options['attributes'])) {
-            $tmp['attributes'] = array();
+        if (empty($options['flat'])) {
+            return array(
+                'INBOX' => array(
+                    'attributes' => array(),
+                    'delimiter' => '',
+                    'mailbox' => Horde_Imap_Client_Mailbox::get('INBOX')
+                )
+            );
         }
-        if (!empty($options['delimiter'])) {
-            $tmp['delimiter'] = '';
-        }
 
-        return array('INBOX' => $tmp);
+        return array('INBOX' => Horde_Imap_Client_Mailbox::get('INBOX'));
     }
 
     /**
@@ -540,13 +697,22 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
 
         // No need for STATUS_UIDNEXT_FORCE handling since STATUS_UIDNEXT will
         // always return a value.
+        $uidl = $this->_capability('UIDL');
         if ($flags & Horde_Imap_Client::STATUS_UIDNEXT) {
-            $res = $this->_pop3Cache('stat');
-            $ret['uidnext'] = $res['msgs'] + 1;
+            if ($uidl) {
+                $ctx = hash_init('md5');
+                foreach ($this->_pop3Cache('uidl') as $key => $val) {
+                    hash_update($ctx, '|' . $key . '|' . $val);
+                }
+                $ret['uidnext'] = hash_final($ctx);
+            } else {
+                $res = $this->_pop3Cache('stat');
+                $ret['uidnext'] = $res['msgs'] + 1;
+            }
         }
 
         if ($flags & Horde_Imap_Client::STATUS_UIDVALIDITY) {
-            $ret['uidvalidity'] = $this->queryCapability('UIDL')
+            $ret['uidvalidity'] = $uidl
                 ? 1
                 : microtime(true);
         }
@@ -787,12 +953,12 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
                             $tmp2 = $tmp->toArray(array('nowrap' => true));
                             foreach (array_keys($tmp2) as $hdr) {
                                 if (!in_array($hdr, $val['headers'])) {
-                                    $tmp->removeHeader($hdr);
+                                    unset($tmp[$hdr]);
                                 }
                             }
                         } else {
                             foreach ($val['headers'] as $hdr) {
-                                $tmp->removeHeader($hdr);
+                                unset($tmp[$hdr]);
                             }
                         }
 
@@ -815,16 +981,16 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
                 foreach ($seq_ids as $id) {
                     $tmp = $this->_pop3Cache('hdrob', $id);
                     $results->get($lookup[$id])->setEnvelope(array(
-                        'date' => $tmp->getValue('date'),
-                        'subject' => $tmp->getValue('subject'),
-                        'from' => $tmp->getOb('from'),
-                        'sender' => $tmp->getOb('sender'),
-                        'reply_to' => $tmp->getOb('reply-to'),
-                        'to' => $tmp->getOb('to'),
-                        'cc' => $tmp->getOb('cc'),
-                        'bcc' => $tmp->getOb('bcc'),
-                        'in_reply_to' => $tmp->getValue('in-reply-to'),
-                        'message_id' => $tmp->getValue('message-id')
+                        'date' => $tmp['Date'],
+                        'subject' => $tmp['Subject'],
+                        'from' => ($h = $tmp['From']) ? $h->getAddressList(true) : null,
+                        'sender' => ($h = $tmp['Sender']) ? $h->getAddressList(true) : null,
+                        'reply_to' => ($h = $tmp['Reply-to']) ? $h->getAddressList(true) : null,
+                        'to' => ($h = $tmp['To']) ? $h->getAddressList(true) : null,
+                        'cc' => ($h = $tmp['Cc']) ? $h->getAddressList(true) : null,
+                        'bcc' => ($h = $tmp['Bcc']) ? $h->getAddressList(true) : null,
+                        'in_reply_to' => $tmp['In-Reply-To'],
+                        'message_id' => $tmp['Message-ID']
                     ));
                 }
                 break;
@@ -832,7 +998,7 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
             case Horde_Imap_Client::FETCH_IMAPDATE:
                 foreach ($seq_ids as $id) {
                     $tmp = $this->_pop3Cache('hdrob', $id);
-                    $results->get($lookup[$id])->setImapDate($tmp->getValue('date'));
+                    $results->get($lookup[$id])->setImapDate($tmp['Date']);
                 }
                 break;
 
@@ -874,7 +1040,9 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
      *
      * @throws Horde_Imap_Client_Exception
      */
-    protected function _pop3Cache($type, $index = null, $data = null)
+    protected function _pop3Cache(
+        $type, $index = self::MBOX_CACHE, $data = null
+    )
     {
         if (isset($this->_temp['pop3cache'][$index][$type])) {
             if ($type == 'msg') {
@@ -887,7 +1055,7 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
         case 'hdr':
         case 'top':
             $data = null;
-            if ($this->queryCapability('TOP') || ($type == 'top')) {
+            if (($type == 'top') || $this->_capability('TOP')) {
                 try {
                     $res = $this->_sendLine('TOP ' . $index . ' 0', array(
                         'multiline' => 'stream'
@@ -1012,6 +1180,11 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
                 try {
                     $this->_sendLine('DELE ' . $id);
                     $this->_deleted[] = $id;
+
+                    unset(
+                        $this->_temp['pop3cache'][self::MBOX_CACHE],
+                        $this->_temp['pop3cache'][$id]
+                    );
                 } catch (Horde_Imap_Client_Exception $e) {}
             }
         }
@@ -1158,31 +1331,26 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
      */
     protected function _sendLine($cmd, $options = array())
     {
-        $old_debug = $this->_debug->debug;
         if (!empty($options['debug'])) {
-            $this->_debug->raw($options['debug'] . "\n");
-            $this->_debug->debug = false;
+            $this->_debug->client($options['debug']);
         }
 
-        if ($old_debug) {
+        if ($this->_debug->debug) {
             $timer = new Horde_Support_Timer();
             $timer->push();
         }
 
         try {
-            $this->_connection->write($cmd);
+            $this->_connection->write($cmd, empty($options['debug']));
         } catch (Horde_Imap_Client_Exception $e) {
-            $this->_debug->debug = $old_debug;
             throw $e;
         }
-
-        $this->_debug->debug = $old_debug;
 
         $resp = $this->_getResponse(
             empty($options['multiline']) ? false : $options['multiline']
         );
 
-        if ($old_debug) {
+        if ($this->_debug->debug) {
             $this->_debug->info(sprintf(
                 'Command took %s seconds.',
                 round($timer->pop(), 4)
@@ -1219,7 +1387,7 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
         $respcode = null;
         if (isset($read[1]) &&
             isset($this->_init['capability']) &&
-            $this->queryCapability('RESP-CODES')) {
+            $this->_capability('RESP-CODES')) {
             $respcode = $this->_parseResponseCode($read[1]);
         }
 
@@ -1260,6 +1428,13 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
                     // RFC 3206 [5]
                     case 'AUTH':
                         $errcode = Horde_Imap_Client_Exception::LOGIN_AUTHENTICATIONFAILED;
+                        break;
+
+                    // RFC 6856 [5]
+                    case 'UTF8':
+                        /* This code can only be issued if we (as client) are
+                         * broken, so no need to handle since we should never
+                         * be broken. */
                         break;
                     }
                 }
@@ -1352,9 +1527,9 @@ class Horde_Imap_Client_Socket_Pop3 extends Horde_Imap_Client_Base
             $pos = strpos($text, ' ', 2);
             $end_pos = strpos($text, ']', 2);
             if ($pos > $end_pos) {
-                $ret->code = strtoupper(substr($text, 1, $end_pos - 1));
+                $ret->code = Horde_String::upper(substr($text, 1, $end_pos - 1));
             } else {
-                $ret->code = strtoupper(substr($text, 1, $pos - 1));
+                $ret->code = Horde_String::upper(substr($text, 1, $pos - 1));
                 $ret->data = substr($text, $pos + 1, $end_pos - $pos - 1);
             }
             $ret->text = trim(substr($text, $end_pos + 1));

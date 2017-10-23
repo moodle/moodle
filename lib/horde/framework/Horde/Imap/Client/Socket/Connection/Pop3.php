@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2013-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2013-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2013-2014 Horde LLC
+ * @copyright 2013-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -20,7 +20,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2013-2014 Horde LLC
+ * @copyright 2013-2017 Horde LLC
  * @internal
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
@@ -35,11 +35,12 @@ extends Horde_Imap_Client_Socket_Connection_Base
     /**
      * Writes data to the POP3 output stream.
      *
-     * @param string $data  String data.
+     * @param string $data    String data.
+     * @param boolean $debug  Output line to debug?
      *
      * @throws Horde_Imap_Client_Exception
      */
-    public function write($data)
+    public function write($data, $debug = true)
     {
         if (fwrite($this->_stream, $data . "\r\n") === false) {
             throw new Horde_Imap_Client_Exception(
@@ -48,17 +49,22 @@ extends Horde_Imap_Client_Socket_Connection_Base
             );
         }
 
-        $this->_params['debug']->client($data);
+        if ($debug) {
+            $this->_params['debug']->client($data);
+        }
     }
 
     /**
      * Read data from incoming POP3 stream.
      *
+     * @param integer $size  UNUSED: The number of bytes to read from the
+     *                       socket.
+     *
      * @return string  Line of data.
      *
      * @throws Horde_Imap_Client_Exception
      */
-    public function read()
+    public function read($size = null)
     {
         if (feof($this->_stream)) {
             $this->close();

@@ -1,8 +1,14 @@
 <?php
 /**
- * Horde Inflector class.
+ * Copyright 2007-2017 Horde LLC (http://www.horde.org/)
  *
- * Copyright 2007-2014 Horde LLC (http://www.horde.org/)
+ * @category   Horde
+ * @package    Support
+ * @license    http://www.horde.org/licenses/bsd
+ */
+
+/**
+ * Horde Inflector class.
  *
  * @todo Add the locale-bubbling pattern from
  *       Horde_Date_Parser/Horde_Support_Numerizer
@@ -190,6 +196,8 @@ class Horde_Support_Inflector
     /**
      * Camel-cases a word.
      *
+     * @todo Do we want locale-specific or locale-independent camel casing?
+     *
      * @param string $word         The word to camel-case.
      * @param string $firstLetter  Whether to upper or lower case the first.
      *                             letter of each slash-separated section.
@@ -203,7 +211,7 @@ class Horde_Support_Inflector
         }
 
         $camelized = $word;
-        if (strtolower($camelized) != $camelized &&
+        if (Horde_String::lower($camelized) != $camelized &&
             strpos($camelized, '_') !== false) {
             $camelized = str_replace('_', '/', $camelized);
         }
@@ -214,12 +222,12 @@ class Horde_Support_Inflector
             $camelized = strtr($camelized, '_', ' ');
         }
 
-        $camelized = str_replace(' ', '', ucwords($camelized));
+        $camelized = str_replace(' ', '', Horde_String::ucwords($camelized));
 
         if ($firstLetter == 'lower') {
             $parts = array();
             foreach (explode('/', $camelized) as $part) {
-                $part[0] = strtolower($part[0]);
+                $part[0] = Horde_String::lower($part[0]);
                 $parts[] = $part;
             }
             $camelized = implode('/', $parts);
@@ -255,6 +263,8 @@ class Horde_Support_Inflector
      * Examples:
      * 1. underscore("ActiveRecord")        => "active_record"
      * 2. underscore("ActiveRecord_Errors") => "active_record_errors"
+     *
+     * @todo Do we want locale-specific or locale-independent lowercasing?
      */
     public function underscore($camelCasedWord)
     {
@@ -262,7 +272,7 @@ class Horde_Support_Inflector
         if ($result = $this->getCache($word, 'underscore')) {
             return $result;
         }
-        $result = strtolower(preg_replace('/([a-z])([A-Z])/', "\${1}_\${2}", $word));
+        $result = Horde_String::lower(preg_replace('/([a-z])([A-Z])/', "\${1}_\${2}", $word));
         return $this->setCache($word, 'underscore', $result);
     }
 
