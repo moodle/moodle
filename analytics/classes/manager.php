@@ -474,7 +474,7 @@ class manager {
             '\core_course\analytics\indicator\potential_social_breadth',
             '\core\analytics\indicator\any_access_after_end',
             '\core\analytics\indicator\any_access_before_start',
-            '\core\analytics\indicator\any_write_action',
+            '\core\analytics\indicator\any_write_action_in_course',
             '\core\analytics\indicator\read_actions',
         );
         $indicators = array();
