@@ -75,7 +75,7 @@ switch ($action) {
                 $users[] = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
             }
         }
-        $cohortids = optional_param('cohortlist', [], PARAM_SEQUENCE);
+        $cohortids = optional_param_array('cohortlist', [], PARAM_SEQUENCE);
         $cohortid = optional_param('cohortid', 0, PARAM_INT);
         if ($cohortid) {
             $cohortids[] = $cohortid;
