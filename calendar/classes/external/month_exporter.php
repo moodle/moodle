@@ -231,7 +231,8 @@ class month_exporter extends exporter {
      */
     protected function get_course_filter_selector(renderer_base $output) {
         $content = '';
-        $content .= $output->course_filter_selector($this->url, get_string('detailedmonthviewfor', 'calendar'));
+        $content .= $output->course_filter_selector($this->url, get_string('detailedmonthviewfor', 'calendar'),
+            $this->calendar->course->id);
 
         return $content;
     }
