@@ -150,6 +150,7 @@ if ($hassiteconfig
         $temp->add(new admin_setting_configmultiselect('hiddenuserfields', new lang_string('hiddenuserfields', 'admin'),
                    new lang_string('confighiddenuserfields', 'admin'), array(),
                        array('description' => new lang_string('description'),
+                             'email' => new lang_string('email'),
                              'city' => new lang_string('city'),
                              'country' => new lang_string('country'),
                              'timezone' => new lang_string('timezone'),
