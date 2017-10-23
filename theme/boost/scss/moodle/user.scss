@@ -200,6 +200,10 @@
     font-weight: bold;
 }
 
+.group-image {
+    min-width: 93px;
+}
+
 .groupinfobox {
     @extend .card;
 }

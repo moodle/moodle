@@ -9895,6 +9895,9 @@ body.path-question-type .mform fieldset.hidden {
   width: 100px;
   vertical-align: top;
 }
+.group-image {
+  min-width: 60px;
+}
 .course-participation #showall {
   text-align: center;
   margin: 10px 0;

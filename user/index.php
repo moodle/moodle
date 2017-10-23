@@ -196,6 +196,12 @@ if ($groupid !== false) {
     }
 }
 
+if ($groupid && ($course->groupmode != SEPARATEGROUPS || $canaccessallgroups)) {
+    $grouprenderer = $PAGE->get_renderer('core_group');
+    $groupdetailpage = new \core_group\output\group_details($groupid);
+    echo $grouprenderer->group_details($groupdetailpage);
+}
+
 // Manage enrolments.
 $manager = new course_enrolment_manager($PAGE, $course);
 $enrolbuttons = $manager->get_manual_enrol_buttons();
