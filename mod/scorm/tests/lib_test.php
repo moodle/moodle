@@ -67,6 +67,48 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
     }
 
+    /** Test scorm_check_mode
+     *
+     * @return void
+     */
+    public function test_scorm_check_mode() {
+        global $CFG;
+
+        $newattempt = 'on';
+        $attempt = 1;
+        $mode = 'normal';
+        scorm_check_mode($this->scorm, $newattempt, $attempt, $this->student->id, $mode);
+        $this->assertEquals('off', $newattempt);
+
+        $scoes = scorm_get_scoes($this->scorm->id);
+        $sco = array_pop($scoes);
+        scorm_insert_track($this->student->id, $this->scorm->id, $sco->id, 1, 'cmi.core.lesson_status', 'completed');
+        $newattempt = 'on';
+        scorm_check_mode($this->scorm, $newattempt, $attempt, $this->student->id, $mode);
+        $this->assertEquals('on', $newattempt);
+
+        // Now do the same with a SCORM 2004 package.
+        $record = new stdClass();
+        $record->course = $this->course->id;
+        $record->packagefilepath = $CFG->dirroot.'/mod/scorm/tests/packages/RuntimeBasicCalls_SCORM20043rdEdition.zip';
+        $scorm13 = $this->getDataGenerator()->create_module('scorm', $record);
+        $newattempt = 'on';
+        $attempt = 1;
+        $mode = 'normal';
+        scorm_check_mode($scorm13, $newattempt, $attempt, $this->student->id, $mode);
+        $this->assertEquals('off', $newattempt);
+
+        $scoes = scorm_get_scoes($scorm13->id);
+        $sco = array_pop($scoes);
+        scorm_insert_track($this->student->id, $scorm13->id, $sco->id, 1, 'cmi.completion_status', 'completed');
+
+        $newattempt = 'on';
+        $attempt = 1;
+        $mode = 'normal';
+        scorm_check_mode($scorm13, $newattempt, $attempt, $this->student->id, $mode);
+        $this->assertEquals('on', $newattempt);
+    }
+
     /**
      * Test scorm_view
      * @return void
