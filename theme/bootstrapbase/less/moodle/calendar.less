@@ -85,8 +85,7 @@
         .calendarmonth {
             width: 98%;
             margin: 10px auto;
-        }
-        .calendarmonth {
+
             ul {
                 margin: 0;
                 padding: 0;
@@ -97,6 +96,14 @@
                         .text-truncate;
                         max-width: 100%;
                         display: inline-block;
+
+                        &:hover {
+                            text-decoration: none;
+
+                            .eventname {
+                                text-decoration: underline;
+                            }
+                        }
                     }
 
                     .icon {
@@ -369,6 +376,16 @@
             .icon {
                 padding: 0;
                 margin-left: 0.25em;
+            }
+
+            > a {
+                &:hover {
+                    text-decoration: none;
+
+                    .eventname {
+                        text-decoration: underline;
+                    }
+                }
             }
         }
     }

@@ -96,9 +96,7 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
         .calendarmonth {
             width: 98%;
             margin: 10px auto;
-        }
 
-        .calendarmonth {
             ul {
                 margin: 0;
                 padding: 0;
@@ -110,6 +108,14 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
                         @include text-truncate;
                         max-width: 100%;
                         display: inline-block;
+
+                        &:hover {
+                            text-decoration: $link-decoration;
+
+                            .eventname {
+                                text-decoration: $link-hover-decoration;
+                            }
+                        }
                     }
 
                     .icon {
@@ -366,6 +372,16 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
             }
             .icon {
                 vertical-align: initial;
+            }
+
+            > a {
+                &:hover {
+                    text-decoration: $link-decoration;
+
+                    .eventname {
+                        text-decoration: $link-hover-decoration;
+                    }
+                }
             }
         }
     }
