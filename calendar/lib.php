@@ -3066,6 +3066,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
     $calendardate = $type->timestamp_to_date_array($calendar->time);
 
     $date = new \DateTime('now', core_date::get_user_timezone_object(99));
+    $eventlimit = 200;
 
     if ($view === 'day') {
         $tstart = $type->convert_to_timestamp($calendardate['year'], $calendardate['mon'], $calendardate['mday']);
@@ -3085,7 +3086,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         if (isset($CFG->calendar_maxevents)) {
             $defaultmaxevents = intval($CFG->calendar_maxevents);
         }
-        $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
+        $eventlimit = get_user_preferences('calendar_maxevents', $defaultmaxevents);
 
         $tstart = $type->convert_to_timestamp($calendardate['year'], $calendardate['mon'], $calendardate['mday'],
                 $calendardate['hours']);
@@ -3128,14 +3129,6 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         return $param;
     }, [$calendar->users, $calendar->groups, $calendar->courses, $calendar->categories]);
 
-    // We need to make sure user calendar preferences are respected.
-    // If max upcoming events is not set then use default value of 40 events.
-    if (isset($maxevents)) {
-        $limit = $maxevents;
-    } else {
-        $limit = 40;
-    }
-
     $events = \core_calendar\local\api::get_events(
         $tstart,
         $tend,
@@ -3143,7 +3136,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         null,
         null,
         null,
-        $limit,
+        $eventlimit,
         null,
         $userparam,
         $groupparam,
