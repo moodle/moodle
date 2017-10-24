@@ -89,8 +89,8 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
 
         // Try to decrypt resourcekey and password. Null if not possible (DB default).
         // Note these fields were originally encrypted on backup using {link @encrypted_final_element}.
-        $data->resourcekey = $this->decrypt($data->resourcekey);
-        $data->password = $this->decrypt($data->password);
+        $data->resourcekey = isset($data->resourcekey) ? $this->decrypt($data->resourcekey) : null;
+        $data->password = isset($data->password) ? $this->decrypt($data->password) : null;
 
         $newitemid = $DB->insert_record('lti', $data);
 
