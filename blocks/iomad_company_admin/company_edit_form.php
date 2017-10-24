@@ -809,7 +809,8 @@ if ($mform->is_cancelled()) {
         }
 
         // Deal with certificate info.
-        $certificateinforec = array('uselogo' => $data->uselogo,
+        $certificateinforec = array('companyid' => $companyid,
+                                    'uselogo' => $data->uselogo,
                                     'usesignature' => $data->usesignature,
                                     'useborder' => $data->useborder,
                                     'usewatermark' => $data->usewatermark,
@@ -862,7 +863,8 @@ if ($mform->is_cancelled()) {
             $certificateinforec['showgrade'] = $data->showgrade;
             $DB->update_record('companycertificate', $certificateinforec);
         } else {
-            $certificateinforec = array('uselogo' => $data->uselogo,
+            $certificateinforec = array('companyid' => $companyid,
+                                        'uselogo' => $data->uselogo,
                                         'usesignature' => $data->usesignature,
                                         'useborder' => $data->useborder,
                                         'usewatermark' => $data->usewatermark,
