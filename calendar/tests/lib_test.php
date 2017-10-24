@@ -672,4 +672,60 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($group1->id, $typegroups[0]->id);
         $this->assertEquals($group2->id, $typegroups[1]->id);
     }
+
+    public function test_calendar_get_default_courses() {
+        global $USER, $CFG;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+        $course3 = $generator->create_course();
+        $context = context_course::instance($course1->id);
+
+        $this->setAdminUser();
+        $admin = clone $USER;
+
+        $teacher = $generator->create_user();
+        $generator->enrol_user($teacher->id, $course1->id, 'teacher');
+        $generator->enrol_user($admin->id, $course1->id, 'teacher');
+
+        $CFG->calendar_adminseesall = false;
+
+        $courses = calendar_get_default_courses();
+        // Only enrolled in one course.
+        $this->assertCount(1, $courses);
+        $courses = calendar_get_default_courses($course2->id);
+        // Enrolled course + current course.
+        $this->assertCount(2, $courses);
+        $CFG->calendar_adminseesall = true;
+        $courses = calendar_get_default_courses();
+        // All courses + SITE.
+        $this->assertCount(4, $courses);
+        $courses = calendar_get_default_courses($course2->id);
+        // All courses + SITE.
+        $this->assertCount(4, $courses);
+
+        $this->setUser($teacher);
+
+        $CFG->calendar_adminseesall = false;
+
+        $courses = calendar_get_default_courses();
+        // Only enrolled in one course.
+        $this->assertCount(1, $courses);
+        $courses = calendar_get_default_courses($course2->id);
+        // Enrolled course only (ignore current).
+        $this->assertCount(1, $courses);
+        // This setting should not affect teachers.
+        $CFG->calendar_adminseesall = true;
+        $courses = calendar_get_default_courses();
+        // Only enrolled in one course.
+        $this->assertCount(1, $courses);
+        $courses = calendar_get_default_courses($course2->id);
+        // Enrolled course only (ignore current).
+        $this->assertCount(1, $courses);
+
+    }
 }
