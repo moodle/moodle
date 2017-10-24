@@ -2137,31 +2137,29 @@ function calendar_delete_event_allowed($event) {
  * Returns the default courses to display on the calendar when there isn't a specific
  * course to display.
  *
+ * @param int $courseid (optional) If passed, an additional course can be returned for admins (the current course).
  * @return array $courses Array of courses to display
  */
-function calendar_get_default_courses() {
+function calendar_get_default_courses($courseid = null) {
     global $CFG, $DB;
 
     if (!isloggedin()) {
         return array();
     }
 
-    if (!empty($CFG->calendar_adminseesall) && has_capability('moodle/calendar:manageentries', \context_system::instance())) {
-        $select = ', ' . \context_helper::get_preload_record_columns_sql('ctx');
-        $join = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
-        $sql = "SELECT c.* $select
-                      FROM {course} c
-                      $join
-                     WHERE EXISTS (SELECT 1 FROM {event} e WHERE e.courseid = c.id)
-                  ";
-        $courses = $DB->get_records_sql($sql, array('contextlevel' => CONTEXT_COURSE), 0, 20);
-        foreach ($courses as $course) {
-            \context_helper::preload_from_record($course);
-        }
-        return $courses;
+    if (has_capability('moodle/calendar:manageentries', context_system::instance()) && !empty($CFG->calendar_adminseesall)) {
+        $courses = get_courses('all', 'c.shortname', 'c.*');
+    } else {
+        $courses = enrol_get_my_courses();
     }
 
-    $courses = enrol_get_my_courses();
+    if ($courseid && $courseid != SITEID) {
+        if (empty($courses[$courseid]) && has_capability('moodle/calendar:manageentries', context_system::instance())) {
+            // Allow a site admin to see calendars from courses he is not enrolled in.
+            // This will come from $COURSE.
+            $courses[$courseid] = get_course($courseid);
+        }
+    }
 
     return $courses;
 }
@@ -2404,6 +2402,8 @@ function calendar_get_all_allowed_types() {
 
     $types = [];
 
+    $allowed = new stdClass();
+
     calendar_get_allowed_types($allowed);
 
     if ($allowed->user) {
@@ -2421,7 +2421,12 @@ function calendar_get_all_allowed_types() {
     // This function warms the context cache for the course so the calls
     // to load the course context in calendar_get_allowed_types don't result
     // in additional DB queries.
-    $courses = enrol_get_users_courses($USER->id, true);
+    if (has_capability('moodle/calendar:manageentries', context_system::instance())) {
+        $courses = get_courses('all', 'c.shortname', 'c.*');
+    } else {
+        $courses = calendar_get_default_courses();
+    }
+
     // We want to pre-fetch all of the groups for each course in a single
     // query to avoid calendar_get_allowed_types from hitting the DB for
     // each separate course.
