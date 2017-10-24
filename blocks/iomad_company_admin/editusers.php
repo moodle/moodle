@@ -548,8 +548,8 @@ if (!empty($userrecords)) {
     $userlist = "1=2";
 }
 if (!empty($userlist)) {
-    $users = iomad_get_users_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $userlist);
-    $totalusers = iomad_get_users_listing($sort, $dir, 0, 0, '', '', '', $userlist);
+    $users = iomad_get_users_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $userlist, array('companyid' => $companyid, 'showall' => $showall));
+    $totalusers = iomad_get_users_listing($sort, $dir, 0, 0, '', '', '', $userlist, array('companyid' => $companyid, 'showall' => $showall));
 
 } else {
     $users = array();
@@ -716,12 +716,7 @@ if (!$users) {
             $fullname .= " (S)";
         }
 
-        // Get the users department.
-        $userdepartment = $DB->get_record_sql("SELECT d.name
-                                               FROM {department} d, {company_users} du
-                                               WHERE du.userid = " . $user->id ."
-                                               AND d.id = du.departmentid");
-        $user->department = $userdepartment->name;
+        $user->department = $user->departmentname;
 
         // Edit menu
         $menu = new action_menu();
@@ -741,11 +736,7 @@ if (!$users) {
                                 $OUTPUT->render($menu),
                                 );
         } else {
-            $usercompany = $DB->get_record_sql("SELECT c.name FROM {company} c
-                                                JOIN {company_users} cu ON (cu.companyid = c.id)
-                                                WHERE cu.userid = :userid",
-                                                array('userid' => $user->id));
-            $user->company = $usercompany->name;
+            $user->company = $user->companyname;
 
             $table->data[] = array($user->company,
                                     $fullname,
@@ -767,7 +758,7 @@ echo $OUTPUT->footer();
 
 function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
                        $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams = null) {
-    global $DB;
+    global $DB, $USER;
 
     $fullname  = $DB->sql_fullname();
 
@@ -809,10 +800,25 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
     }
 
     // Warning: will return UNCONFIRMED USERS!
-    return $DB->get_records_sql("SELECT u.*, d.name, c.name
+    if (!is_siteadmin($USER->id)) {
+        // only show normal users.
+        $managertypesql = " AND cu.managertype = 0";
+    } else {
+        $managertypesql = "";
+    }
+
+    // all companies?
+    if (!empty($extraparams['showall'])) {
+        $companysql = "";
+    } else {
+        $companysql = " AND c.id = :companyid";
+        $params['companyid'] = $extraparams['companyid'];
+    }
+    return $DB->get_records_sql("SELECT concat(c.id, '-', u.id), u.*, d.name as departmentname, c.name as companyname
                                  FROM {user} u, {department} d, {company_users} cu, {company} c
                                  WHERE $select and cu.userid = u.id and d.id = cu.departmentid AND c.id = cu.companyid
-                                 AND cu.managertype = 0
+                                 $companysql
+                                 $managertypesql
                                  $sort", $params, $page, $recordsperpage);
 
 }
