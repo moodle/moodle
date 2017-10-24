@@ -31,13 +31,56 @@
     {
     }
 }}
-<div class="card-text content">
+<div class="card-text content" id="month-upcoming-mini-{{uniqid}}">
     {{#events}}
-        <div class="event">
+      <div{{!
+        }} class="event"{{!
+        }} data-eventtype-{{calendareventtype}}="1"{{!
+        }}>
             <span>{{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}</span>
             <a href="{{viewurl}}">{{{name}}}</a>
             <div class="date">{{{formattedtime}}}</div>
+            <hr>
         </div>
-        <hr>
     {{/events}}
 </div>
+{{#js}}
+require([
+    'jquery',
+    'core_calendar/selectors',
+    'core_calendar/events',
+], function(
+    $,
+    CalendarSelectors,
+    CalendarEvents
+) {
+    var root = $('#month-upcoming-mini-{{uniqid}}');
+
+    $('body').on(CalendarEvents.filterChanged, function(e, data) {
+        M.util.js_pending("month-upcoming-mini-{{uniqid}}-filterChanged");
+
+        // A filter value has been changed.
+        // Find all matching cells in the popover data, and hide them.
+        var target = $("#month-upcoming-mini-{{uniqid}}").find(CalendarSelectors.eventType[data.type]);
+
+        var transitionPromise = $.Deferred();
+        if (data.hidden) {
+            transitionPromise.then(function() {
+                return target.slideUp('fast').promise();
+            });
+        } else {
+            transitionPromise.then(function() {
+                return target.slideDown('fast').promise();
+            });
+        }
+
+        transitionPromise.then(function() {
+            M.util.js_complete("month-upcoming-mini-{{uniqid}}-filterChanged");
+
+            return;
+        });
+
+        transitionPromise.resolve();
+    });
+});
+{{/js}}
