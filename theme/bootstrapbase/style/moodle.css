@@ -17912,6 +17912,9 @@ div#dock {
 .path-mod-scorm.jsenabled .scorm-center {
   display: block;
 }
+.path-mod-scorm #region-main #intro {
+  width: auto;
+}
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax {
   background-color: #fff;
 }
