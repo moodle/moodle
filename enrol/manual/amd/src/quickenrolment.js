@@ -119,7 +119,16 @@ define(['core/templates',
         // We don't want to do a real form submission.
         e.preventDefault();
 
-        var formData = this.modal.getRoot().find('form').serialize();
+        var form = this.modal.getRoot().find('form');
+
+        // Before send the data through AJAX, we need to parse and remove some unwanted hidden fields.
+        // This hidden fields are added automatically by mforms and when it reaches the AJAX we get an error.
+        var hidden = form.find(':input[value="_qf__force_multiselect_submission"]');
+        hidden.each(function () {
+            this.remove();
+        });
+
+        var formData = form.serialize();
 
         this.modal.hide();
 
