@@ -705,6 +705,13 @@ if (!empty($new) && !empty($parentid)) {
                             'companycertificatewatermark', $parentid,
                             array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
     $companyrecord->companycertificatewatermark = $draftcompanycertificatewatermarkid;
+    // Deal with the image display options.
+    $parentcompanyoptions = $DB->get_record('companycertificate', array('companyid' => $parentid));
+    $companyrecord->uselogo = $parentcompanyoptions->uselogo;
+    $companyrecord->usesignature = $parentcompanyoptions->usesignature;
+    $companyrecord->useborder = $parentcompanyoptions->useborder;
+    $companyrecord->usewatermark = $parentcompanyoptions->usewatermark;
+    $companyrecord->showgrade = $parentcompanyoptions->showgrade;
 } else {
     $draftcompanycertificatesealid = file_get_submitted_draft_itemid('companycertificateseal');
     file_prepare_draft_area($draftcompanycertificatesealid,
