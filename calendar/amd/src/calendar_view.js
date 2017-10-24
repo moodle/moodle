@@ -69,7 +69,7 @@ define([
             root.on('change', CalendarSelectors.courseSelector, function() {
                 var selectElement = $(this);
                 var courseId = selectElement.val();
-                CalendarViewManager[reloadFunction](root, courseId)
+                CalendarViewManager[reloadFunction](root, courseId, null)
                     .then(function() {
                         // We need to get the selector again because the content has changed.
                         return root.find(CalendarSelectors.courseSelector).val(courseId);
