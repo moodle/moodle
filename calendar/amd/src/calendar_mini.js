@@ -69,10 +69,10 @@ function(
         } else {
             // The root has been removed.
             // Remove all events in the namespace.
-            body.on(CalendarEvents.created + namespace);
-            body.on(CalendarEvents.deleted + namespace);
-            body.on(CalendarEvents.updated + namespace);
-            body.on(CalendarEvents.eventMoved + namespace);
+            body.off(CalendarEvents.created + namespace);
+            body.off(CalendarEvents.deleted + namespace);
+            body.off(CalendarEvents.updated + namespace);
+            body.off(CalendarEvents.eventMoved + namespace);
         }
     };
 
@@ -82,6 +82,20 @@ function(
 
             daysWithEvent.toggleClass('calendar_event_' + data.type, !data.hidden);
         });
+
+        var namespace = '.' + root.attr('id');
+        $('body').on('change' + namespace, CalendarSelectors.elements.courseSelector, function() {
+            if (root.is(':visible')) {
+                var selectElement = $(this);
+                var courseId = selectElement.val();
+                var categoryId = null;
+
+                CalendarViewManager.reloadCurrentMonth(root, courseId, categoryId);
+            } else {
+                $('body').off('change' + namespace);
+            }
+        });
+
     };
 
     return {
