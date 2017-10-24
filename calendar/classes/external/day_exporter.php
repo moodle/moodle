@@ -147,10 +147,6 @@ class day_exporter extends exporter {
             'navigation' => [
                 'type' => PARAM_RAW,
             ],
-            'popovertitle' => [
-                'type' => PARAM_RAW,
-                'default' => '',
-            ],
             'haslastdayofevent' => [
                 'type' => PARAM_BOOL,
                 'default' => false,
