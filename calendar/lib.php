@@ -599,9 +599,17 @@ class calendar_event {
                                    groupid = ?,
                                    courseid = ?
                              WHERE repeatid = ?";
-                    $params = array($this->properties->name, $this->properties->description, $timestartoffset,
-                            $this->properties->timeduration, time(), $this->properties->groupid,
-                            $this->properties->courseid, $event->repeatid);
+                    // Note: Group and course id may not be set. If not, keep their current values.
+                    $params = [
+                        $this->properties->name,
+                        $this->properties->description,
+                        $timestartoffset,
+                        $this->properties->timeduration,
+                        time(),
+                        isset($this->properties->groupid) ? $this->properties->groupid : $event->groupid,
+                        isset($this->properties->courseid) ? $this->properties->courseid : $event->courseid,
+                        $event->repeatid
+                    ];
                 } else {
                     $sql = "UPDATE {event}
                                SET name = ?,
@@ -611,9 +619,16 @@ class calendar_event {
                                    groupid = ?,
                                    courseid = ?
                             WHERE repeatid = ?";
-                    $params = array($this->properties->name, $this->properties->description,
-                            $this->properties->timeduration, time(), $this->properties->groupid,
-                            $this->properties->courseid, $event->repeatid);
+                    // Note: Group and course id may not be set. If not, keep their current values.
+                    $params = [
+                        $this->properties->name,
+                        $this->properties->description,
+                        $this->properties->timeduration,
+                        time(),
+                        isset($this->properties->groupid) ? $this->properties->groupid : $event->groupid,
+                        isset($this->properties->courseid) ? $this->properties->courseid : $event->courseid,
+                        $event->repeatid
+                    ];
                 }
                 $DB->execute($sql, $params);
 
