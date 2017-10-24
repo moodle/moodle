@@ -423,12 +423,15 @@ define([
                     this.reloadBodyContent(formData);
                     return;
                 } else {
+                    // Check whether this was a new event or not.
+                    // The hide function unsets the form data so grab this before the hide.
+                    var isExisting = this.hasEventId();
+
                     // No problemo! Our work here is done.
                     this.hide();
 
-                    // Trigger the appropriate calendar event so that the view can
-                    // be updated.
-                    if (this.hasEventId()) {
+                    // Trigger the appropriate calendar event so that the view can be updated.
+                    if (isExisting) {
                         $('body').trigger(CalendarEvents.updated, [response.event]);
                     } else {
                         $('body').trigger(CalendarEvents.created, [response.event]);
