@@ -127,7 +127,7 @@ class api {
             'rememberusername' => $CFG->rememberusername,
             'authloginviaemail' => $CFG->authloginviaemail,
             'registerauth' => $CFG->registerauth,
-            'forgottenpasswordurl' => $CFG->forgottenpasswordurl,
+            'forgottenpasswordurl' => clean_param($CFG->forgottenpasswordurl, PARAM_URL), // We may expect a mailto: here.
             'authinstructions' => $authinstructions,
             'authnoneenabled' => (int) is_enabled_auth('none'),
             'enablewebservices' => $CFG->enablewebservices,

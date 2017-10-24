@@ -94,12 +94,14 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         set_config('typeoflogin', api::LOGIN_VIA_BROWSER, 'tool_mobile');
         set_config('logo', 'mock.png', 'core_admin');
         set_config('logocompact', 'mock.png', 'core_admin');
+        set_config('forgottenpasswordurl', 'mailto:fake@email.zy'); // Test old hack.
 
         list($authinstructions, $notusedformat) = external_format_text($authinstructions, FORMAT_MOODLE, $context->id);
         $expected['registerauth'] = 'email';
         $expected['authinstructions'] = $authinstructions;
         $expected['typeoflogin'] = api::LOGIN_VIA_BROWSER;
         $expected['launchurl'] = "$CFG->wwwroot/$CFG->admin/tool/mobile/launch.php";
+        $expected['forgottenpasswordurl'] = ''; // Expect empty when it's not an URL.
 
         if ($logourl = $OUTPUT->get_logo_url()) {
             $expected['logourl'] = $logourl->out(false);
