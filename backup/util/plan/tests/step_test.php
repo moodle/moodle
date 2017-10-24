@@ -92,6 +92,52 @@ class backup_step_testcase extends advanced_testcase {
     }
 
     /**
+     * test restore_step class, decrypt method
+     */
+    public function test_restore_step_decrypt() {
+
+        $this->resetAfterTest(true);
+
+        if (!function_exists('openssl_encrypt')) {
+            $this->markTestSkipped('OpenSSL extension is not loaded.');
+
+        } else if (!function_exists('hash_hmac')) {
+            $this->markTestSkipped('Hash extension is not loaded.');
+
+        } else if (!in_array(backup::CIPHER, openssl_get_cipher_methods())) {
+            $this->markTestSkipped('Expected cipher not available: ' . backup::CIPHER);
+        }
+
+        $bt = new mock_restore_task_basepath('taskname');
+        $bs = new mock_restore_structure_step('steptest', null, $bt);
+        $this->assertTrue(method_exists($bs, 'decrypt'));
+
+        // Let's prepare a string for being decrypted.
+        $secret = 'This is a secret message that nobody else will be able to read but me 💩  ';
+        $key = hash('md5', 'Moodle rocks and this is not secure key, who cares, it is a test');
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length(backup::CIPHER));
+        $message = $iv . openssl_encrypt($secret, backup::CIPHER, $key, OPENSSL_RAW_DATA, $iv);
+        $hmac = hash_hmac('sha256', $message, $key, true);
+        $crypt = base64_encode($hmac . $message);
+
+        // Running it without a key configured, returns null.
+        $this->assertNull($bs->decrypt($crypt));
+
+        // Store the key into config.
+        set_config('backup_encryptkey', base64_encode($key), 'backup');
+
+        // Verify decrypt works and returns original.
+        $this->assertSame($secret, $bs->decrypt($crypt));
+
+        // Finally, test the integrity failure detection is working.
+        // (this can be caused by changed hmac, key or message, in
+        // this case we are just forcing it via changed hmac).
+        $hmac = md5($message);
+        $crypt = base64_encode($hmac . $message);
+        $this->assertNull($bs->decrypt($crypt));
+    }
+
+    /**
      * test backup_structure_step class
      */
     function test_backup_structure_step() {

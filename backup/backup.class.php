@@ -136,6 +136,15 @@ abstract class backup implements checksumable {
      * Usually same than major release zero version, mainly for informative/historic purposes.
      */
     const RELEASE = '3.2';
+
+    /**
+     * Cipher to be used in backup and restore operations.
+     */
+    const CIPHER = 'aes-256-cbc';
+    /**
+     * Bytes enforced for key, using the cypher above. Restrictive? Yes, but better than unsafe lengths
+     */
+    const CIPHERKEYLEN = 32;
 }
 
 /*
