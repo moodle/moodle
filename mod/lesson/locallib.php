@@ -4100,7 +4100,11 @@ abstract class lesson_page extends lesson_base {
                     if ($qattempts == 1) {
                         $result->feedback = $OUTPUT->box(get_string("firstwrong", "lesson"), 'feedback');
                     } else {
-                        $result->feedback = $OUTPUT->box(get_string("secondpluswrong", "lesson"), 'feedback');
+                        if (!$result->maxattemptsreached) {
+                            $result->feedback = $OUTPUT->box(get_string("secondpluswrong", "lesson"), 'feedback');
+                        } else {
+                            $result->feedback = $OUTPUT->box(get_string("finalwrong", "lesson"), 'feedback');
+                        }
                     }
                 } else {
                     $result->feedback = '';
