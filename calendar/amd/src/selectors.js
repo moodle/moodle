@@ -47,6 +47,9 @@ define([], function() {
             edit: '[data-action="edit"]',
             remove: '[data-action="delete"]',
         },
+        elements: {
+            courseSelector: 'select[name="course"]',
+        },
         today: '.today',
         day: '[data-region="day"]',
         wrapper: '.calendarwrapper',

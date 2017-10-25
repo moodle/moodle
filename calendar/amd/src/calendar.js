@@ -70,7 +70,6 @@ define([
         LOADING_ICON: '.loading-icon',
         VIEW_DAY_LINK: "[data-action='view-day-link']",
         CALENDAR_MONTH_WRAPPER: ".calendarwrapper",
-        COURSE_SELECTOR: 'select[name="course"]',
         TODAY: '.today',
     };
 
@@ -268,13 +267,13 @@ define([
             renderEventSummaryModal(eventId);
         });
 
-        root.on('change', SELECTORS.COURSE_SELECTOR, function() {
+        root.on('change', CalendarSelectors.elements.courseSelector, function() {
             var selectElement = $(this);
             var courseId = selectElement.val();
             CalendarViewManager.reloadCurrentMonth(root, courseId, null)
                 .then(function() {
                     // We need to get the selector again because the content has changed.
-                    return root.find(SELECTORS.COURSE_SELECTOR).val(courseId);
+                    return root.find(CalendarSelectors.elements.courseSelector).val(courseId);
                 })
                 .fail(Notification.exception);
         });
