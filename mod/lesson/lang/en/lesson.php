@@ -218,6 +218,7 @@ $string['eventquestionanswered'] = 'Question answered';
 $string['eventquestionviewed'] = 'Question viewed';
 $string['false'] = 'False';
 $string['fileformat'] = 'File format';
+$string['finalwrong'] = 'Not quite.';
 $string['finish'] = 'Finish';
 $string['firstanswershould'] = 'First answer should jump to the "Correct" page';
 $string['firstwrong'] = 'You have answered incorrectly. Would you like to attempt the question again? (If you now answer the question correctly, it will not count towards your final score.)';
