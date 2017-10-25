@@ -173,6 +173,15 @@ class site_registration_form extends \moodleform {
         $mform->addElement('hidden', 'returnurl');
         $mform->setType('returnurl', PARAM_LOCALURL);
 
+        // Prepare and set data.
+        $siteinfo['emailalertnewemail'] = !empty($siteinfo['emailalert']) && !empty($siteinfo['emailalertemail']);
+        if (empty($siteinfo['emailalertnewemail'])) {
+            $siteinfo['emailalertemail'] = '';
+        }
+        $siteinfo['commnewsnewemail'] = !empty($siteinfo['commnews']) && !empty($siteinfo['commnewsemail']);
+        if (empty($siteinfo['commnewsnewemail'])) {
+            $siteinfo['commnewsemail'] = '';
+        }
         $this->set_data($siteinfo);
     }
 
@@ -210,26 +219,6 @@ class site_registration_form extends \moodleform {
         $mform->setType($elementname . 'email', PARAM_RAW_TRIMMED); // E-mail will be validated in validation().
         $mform->addHelpButton($elementname . 'group', $stridentifier, 'hub');
 
-    }
-
-    /**
-     * Load in existing data as form defaults
-     *
-     * @param stdClass|array $defaultvalues object or array of default values
-     */
-    public function set_data($defaultvalues) {
-        if (is_object($defaultvalues)) {
-            $defaultvalues = (array)$defaultvalues;
-        }
-        $defaultvalues['emailalertnewemail'] = !empty($defaultvalues['emailalert']) && !empty($defaultvalues['emailalertemail']);
-        if (empty($defaultvalues['emailalertnewemail'])) {
-            $defaultvalues['emailalertemail'] = '';
-        }
-        $defaultvalues['commnewsnewemail'] = !empty($defaultvalues['commnews']) && !empty($defaultvalues['commnewsemail']);
-        if (empty($defaultvalues['commnewsnewemail'])) {
-            $defaultvalues['commnewsemail'] = '';
-        }
-        parent::set_data($defaultvalues);
     }
 
     /**
