@@ -531,6 +531,85 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $itemid = $itemscreated[4]->id;
         $itemsaved = $DB->get_field('feedback_value', 'value', array('item' => $itemid));
         $this->assertEquals('b', $itemsaved);
+
+        // Check that the answers are saved for course 0.
+        foreach ($items as $item) {
+            $this->assertEquals(0, $item->course_id);
+        }
+        $completed = $DB->get_record('feedback_completed', []);
+        $this->assertEquals(0, $completed->courseid);
+    }
+
+    public function test_process_page_site_feedback() {
+        global $DB;
+        $pagecontents = 'You finished it!';
+        $this->feedback = $this->getDataGenerator()->create_module('feedback',
+            array('course' => SITEID, 'page_after_submit' => $pagecontents));
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Add questions to the feedback, we are adding 2 pages of questions.
+        $itemscreated = self::populate_feedback($this->feedback, 2);
+
+        $data = [];
+        foreach ($itemscreated as $item) {
+
+            if (empty($item->hasvalue)) {
+                continue;
+            }
+
+            switch ($item->typ) {
+                case 'textarea':
+                case 'textfield':
+                    $value = 'Lorem ipsum';
+                    break;
+                case 'numeric':
+                    $value = 5;
+                    break;
+                case 'multichoice':
+                    $value = '1';
+                    break;
+                case 'multichoicerated':
+                    $value = '1';
+                    break;
+                case 'info':
+                    $value = format_string($this->course->shortname, true, array('context' => $this->context));
+                    break;
+                default:
+                    $value = '';
+            }
+            $data[] = ['name' => $item->typ . '_' . $item->id, 'value' => $value];
+        }
+
+        // Process first page.
+        $firstpagedata = [$data[0], $data[1]];
+        $result = mod_feedback_external::process_page($this->feedback->id, 0, $firstpagedata, false, $this->course->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $this->assertEquals(1, $result['jumpto']);
+        $this->assertFalse($result['completed']);
+
+        // Process second page.
+        $data[2]['value'] = 'b';
+        $secondpagedata = [$data[2], $data[3], $data[4], $data[5], $data[6]];
+        $result = mod_feedback_external::process_page($this->feedback->id, 1, $secondpagedata, false, $this->course->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $this->assertTrue($result['completed']);
+        $this->assertTrue(strpos($result['completionpagecontents'], $pagecontents) !== false);
+        // Check all the items were saved.
+        $items = $DB->get_records('feedback_value');
+        $this->assertCount(7, $items);
+        // Check if the one we modified was correctly saved.
+        $itemid = $itemscreated[4]->id;
+        $itemsaved = $DB->get_field('feedback_value', 'value', array('item' => $itemid));
+        $this->assertEquals('b', $itemsaved);
+
+        // Check that the answers are saved for the correct course.
+        foreach ($items as $item) {
+            $this->assertEquals($this->course->id, $item->course_id);
+        }
+        $completed = $DB->get_record('feedback_completed', []);
+        $this->assertEquals($this->course->id, $completed->courseid);
     }
 
     /**

@@ -150,7 +150,7 @@ class mod_feedback_external extends external_api {
      * @return array array containing the feedback persistent, course, context and course module objects
      * @since  Moodle 3.3
      */
-    protected static function validate_feedback($feedbackid) {
+    protected static function validate_feedback($feedbackid, $courseid = 0) {
         global $DB, $USER;
 
         // Request and permission validation.
@@ -160,6 +160,11 @@ class mod_feedback_external extends external_api {
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
+        if ($course->id == SITEID && $courseid) {
+            $course = get_course($courseid);
+            self::validate_context(context_course::instance($courseid));
+        }
+
         return array($feedback, $course, $cm, $context);
     }
 
@@ -167,15 +172,19 @@ class mod_feedback_external extends external_api {
      * Utility function for validating access to feedback.
      *
      * @param  stdClass   $feedback feedback object
-     * @param  stdClass   $course   course object
+     * @param  int   $courseid   course where user completes the feedback (for frontpage feedbacks only)
      * @param  stdClass   $cm       course module
      * @param  stdClass   $context  context object
      * @throws moodle_exception
-     * @return feedback_completion feedback completion instance
+     * @return mod_feedback_completion feedback completion instance
      * @since  Moodle 3.3
      */
-    protected static function validate_feedback_access($feedback,  $course, $cm, $context, $checksubmit = false) {
-        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $course->id);
+    protected static function validate_feedback_access($feedback,  $courseid, $cm, $context, $checksubmit = false) {
+        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $courseid);
+
+        if (!$feedbackcompletion->check_course_is_mapped()) {
+            throw new moodle_exception('cannotaccess', 'mod_feedback');
+        }
 
         if (!$feedbackcompletion->can_complete()) {
             throw new required_capability_exception($context, 'mod/feedback:complete', 'nopermission', '');
@@ -478,19 +487,20 @@ class mod_feedback_external extends external_api {
      * Starts or continues a feedback submission
      *
      * @param array $feedbackid feedback instance id
+     * @param int $courseid course where user completes a feedback (for site feedbacks only).
      * @return array of warnings and launch information
      * @since Moodle 3.3
      */
-    public static function launch_feedback($feedbackid) {
+    public static function launch_feedback($feedbackid, $courseid = 0) {
         global $PAGE;
 
         $params = array('feedbackid' => $feedbackid);
         $params = self::validate_parameters(self::launch_feedback_parameters(), $params);
         $warnings = array();
 
-        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
+        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid'], $courseid);
         // Check we can do a new submission (or continue an existing).
-        $feedbackcompletion = self::validate_feedback_access($feedback,  $course, $cm, $context, true);
+        $feedbackcompletion = self::validate_feedback_access($feedback, $courseid, $cm, $context, true);
 
         $gopage = $feedbackcompletion->get_resume_page();
         if ($gopage === null) {
@@ -615,6 +625,8 @@ class mod_feedback_external extends external_api {
                     ), 'The data to be processed.', VALUE_DEFAULT, array()
                 ),
                 'goprevious' => new external_value(PARAM_BOOL, 'Whether we want to jump to previous page.', VALUE_DEFAULT, false),
+                'courseid' => new external_value(PARAM_INT, 'Id of the course where feedback is being completed (for frontpage feedbacks only)',
+                    VALUE_DEFAULT, 0),
             )
         );
     }
@@ -629,17 +641,18 @@ class mod_feedback_external extends external_api {
      * @return array of warnings and launch information
      * @since Moodle 3.3
      */
-    public static function process_page($feedbackid, $page, $responses = [], $goprevious = false) {
+    public static function process_page($feedbackid, $page, $responses = [], $goprevious = false, $courseid = 0) {
         global $USER, $SESSION;
 
-        $params = array('feedbackid' => $feedbackid, 'page' => $page, 'responses' => $responses, 'goprevious' => $goprevious);
+        $params = array('feedbackid' => $feedbackid, 'page' => $page, 'responses' => $responses, 'goprevious' => $goprevious,
+            'courseid' => $courseid);
         $params = self::validate_parameters(self::process_page_parameters(), $params);
         $warnings = array();
         $siteaftersubmit = $completionpagecontents = '';
 
         list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
         // Check we can do a new submission (or continue an existing).
-        $feedbackcompletion = self::validate_feedback_access($feedback,  $course, $cm, $context, true);
+        $feedbackcompletion = self::validate_feedback_access($feedback, $courseid, $cm, $context, true);
 
         // Create the $_POST object required by the feedback question engine.
         $_POST = array();
@@ -653,7 +666,7 @@ class mod_feedback_external extends external_api {
         }
         // Force fields.
         $_POST['id'] = $cm->id;
-        $_POST['courseid'] = $course->id;
+        $_POST['courseid'] = $courseid;
         $_POST['gopage'] = $params['page'];
         $_POST['_qf__mod_feedback_complete_form'] = 1;
 
