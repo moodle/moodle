@@ -30,8 +30,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatedboninstall'] = '<p>Ezin da datu-basea sortu.<p>
-<p>Zehaztutako datu-basea ez da existitzen eta adierazitako erabiltzaileak ez du baimenik datu-basea sortzeko.<p>
+$string['cannotcreatedboninstall'] = '<p>Ezin da datu-basea sortu.</p>
+<p>Zehaztutako datu-basea ez da existitzen eta adierazitako erabiltzaileak ez du baimenik datu-basea sortzeko.</p>
 <p>Guneko kudeatzaileak datu-basearen konfigurazioa egiaztatu behar du.</p>';
 $string['cannotcreatelangdir'] = 'Ezin da hizkuntza-direktorioa sortu';
 $string['cannotcreatetempdir'] = 'Ezin da temp direktorioa sortu';
