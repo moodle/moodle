@@ -95,6 +95,7 @@ $string['attemptlast'] = 'Last attempt';
 $string['attemptnumber'] = 'Attempt';
 $string['attemptquiznow'] = 'Attempt quiz now';
 $string['attempts'] = 'Attempts';
+$string['attempts_help'] = 'The total number of attempts allowed (not the number of extra attempts).';
 $string['attemptsallowed'] = 'Attempts allowed';
 $string['attemptsdeleted'] = 'Quiz attempts deleted';
 $string['attemptselection'] = 'Select which attempts to analyze per user:';
