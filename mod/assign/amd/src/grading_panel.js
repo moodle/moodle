@@ -54,6 +54,12 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
     /** @type {JQuery} JQuery node for the page region containing the user navigation. */
     GradingPanel.prototype._region = null;
 
+     /** @type {Integer} The id of the next user in the grading list */
+    GradingPanel.prototype.nextUserId = null;
+
+     /** @type {Boolean} Next user exists in the grading list */
+    GradingPanel.prototype.nextUser = false;
+
     /**
      * Fade the dom node out, update it, and fade it back.
      *
@@ -315,6 +321,29 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
     };
 
     /**
+     * Get next user data and store it in global variables
+     *
+     * @private
+     * @method _getNextUser
+     * @param {Event} event
+     * @param {Object} data Next user's data
+     */
+    GradingPanel.prototype._getNextUser = function(event, data) {
+        this.nextUserId = data.nextUserId;
+        this.nextUser = data.nextUser;
+    };
+
+    /**
+     * Handle the save-and-show-next event
+     *
+     * @private
+     * @method _handleSaveAndShowNext
+     */
+    GradingPanel.prototype._handleSaveAndShowNext = function() {
+        this._submitForm(null, this.nextUserId, this.nextUser);
+    };
+
+    /**
      * Get the grade panel element.
      *
      * @method getPanelElement
@@ -355,9 +384,10 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
             e.preventDefault();
         });
 
+        docElement.on('next-user', this._getNextUser.bind(this));
         docElement.on('user-changed', this._refreshGradingPanel.bind(this));
         docElement.on('save-changes', this._submitForm.bind(this));
-        docElement.on('save-and-show-next', this._submitForm.bind(this, null, null, true));
+        docElement.on('save-and-show-next', this._handleSaveAndShowNext.bind(this));
         docElement.on('reset', this._resetForm.bind(this));
 
         docElement.on('save-form-state', this._saveFormState.bind(this));
