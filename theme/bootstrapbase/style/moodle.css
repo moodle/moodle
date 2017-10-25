@@ -14906,6 +14906,7 @@ input[type="submit"].btn.btn-mini {
 .popover {
   position: absolute;
   top: 0;
+  /*rtl:ignore*/
   left: 0;
   z-index: 1010;
   display: none;
