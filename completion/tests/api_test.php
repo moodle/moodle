@@ -72,6 +72,13 @@ class core_completion_api_testcase extends advanced_testcase {
         $this->assertEquals(\core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED, $event->eventtype);
         $this->assertEquals($time, $event->timestart);
         $this->assertEquals($time, $event->timesort);
+
+        require_once($CFG->dirroot . '/course/lib.php');
+        // Delete the module.
+        course_delete_module($assign->cmid);
+
+        // Check we don't get a failure when called on a deleted module.
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', null, $time);
     }
 
     public function test_update_completion_date_event_update() {
