@@ -30,6 +30,9 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_label_mod_form extends moodleform_mod {
 
     function definition() {
+        global $PAGE;
+
+        $PAGE->force_settings_menu();
 
         $mform = $this->_form;
 
