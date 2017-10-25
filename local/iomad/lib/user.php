@@ -711,7 +711,7 @@ class iomad_user_filter_form extends moodleform {
 
         $mform =& $this->_form;
         $filtergroup = array();
-        $mform->addElement('header', '', format_string(get_string('usersearchfields', 'local_iomad')));
+        $mform->addElement('header', 'usersearchfields', format_string(get_string('usersearchfields', 'local_iomad')));
         $mform->addElement('text', 'firstname', get_string('firstnamefilter', 'local_iomad'), 'size="20"');
         $mform->addElement('text', 'lastname', get_string('lastnamefilter', 'local_iomad'), 'size="20"');
         $mform->addElement('text', 'email', get_string('emailfilter', 'local_iomad'), 'size="20"');
@@ -726,6 +726,7 @@ class iomad_user_filter_form extends moodleform {
         $mform->setType('eventid', PARAM_INT);
         $mform->setType('courseid', PARAM_INT);
         $mform->setType('sort', PARAM_ALPHA);
+        $mform->setExpanded('usersearchfields', false);
 
         // Get company category.
         if ($category = $DB->get_record_sql('SELECT uic.id, uic.name
