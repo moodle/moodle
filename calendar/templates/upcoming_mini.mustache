@@ -31,14 +31,26 @@
     {
     }
 }}
-<div class="card-text content" id="month-upcoming-mini-{{uniqid}}">
+<div class="card-text content calendarwrapper"{{!
+    }} id="month-upcoming-mini-{{uniqid}}"{{!
+    }} data-context-id="{{defaulteventcontext}}"{{!
+    }} data-courseid="{{courseid}}"{{!
+    }} data-categoryid="{{categoryid}}"{{!
+}}>
+    {{> core/overlay_loading}}
     {{#events}}
-      <div{{!
-        }} class="event"{{!
-        }} data-eventtype-{{calendareventtype}}="1"{{!
+        <div{{!
+            }} class="event"{{!
+            }} data-eventtype-{{calendareventtype}}="1"{{!
+            }} data-region="event-item"{{!
         }}>
             <span>{{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}</span>
-            <a href="{{viewurl}}">{{{name}}}</a>
+            <a{{!
+                }} data-type="event"{{!
+                }} data-action="view-event"{{!
+                }} data-event-id="{{id}}"{{!
+                }} href="{{viewurl}}"{{!
+            }}>{{{name}}}</a>
             <div class="date">{{{formattedtime}}}</div>
             <hr>
         </div>
