@@ -410,6 +410,11 @@ if ($mform->is_cancelled()) {
     }
     $user = new stdclass();
     $user->id = $userid;
+    $data->id = $userid;
+
+    // Save custom profile fields data.
+    profile_save_data($data);
+
     $systemcontext = context_system::instance();
 
     // Check if we are assigning a different role to the user.
