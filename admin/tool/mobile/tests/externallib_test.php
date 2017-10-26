@@ -121,6 +121,10 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         require_once($CFG->dirroot . '/course/format/lib.php');
 
         $this->resetAfterTest(true);
+
+        $mysitepolicy = 'http://mysite.is/policy/';
+        set_config('sitepolicy', $mysitepolicy);
+
         $result = external::get_config();
         $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
 
@@ -141,6 +145,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'numsections', 'value' => course_get_format($SITE)->get_course()->numsections),
             array('name' => 'newsitems', 'value' => $SITE->newsitems),
             array('name' => 'commentsperpage', 'value' => $CFG->commentsperpage),
+            array('name' => 'sitepolicy', 'value' => $mysitepolicy),
             array('name' => 'disableuserimages', 'value' => $CFG->disableuserimages),
             array('name' => 'mygradesurl', 'value' => user_mygrades_url()->out(false)),
         );
@@ -150,8 +155,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         // Change a value and retrieve filtering by section.
         set_config('commentsperpage', 1);
         $expected[10]['value'] = 1;
-        unset($expected[11]);
-        unset($expected[12]);
+        array_splice($expected, 11);
 
         $result = external::get_config('frontpagesettings');
         $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
