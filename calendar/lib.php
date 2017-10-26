@@ -2138,9 +2138,10 @@ function calendar_delete_event_allowed($event) {
  * course to display.
  *
  * @param int $courseid (optional) If passed, an additional course can be returned for admins (the current course).
+ * @param string $fields Comma separated list of course fields to return.
  * @return array $courses Array of courses to display
  */
-function calendar_get_default_courses($courseid = null) {
+function calendar_get_default_courses($courseid = null, $fields = '*') {
     global $CFG, $DB;
 
     if (!isloggedin()) {
@@ -2148,9 +2149,15 @@ function calendar_get_default_courses($courseid = null) {
     }
 
     if (has_capability('moodle/calendar:manageentries', context_system::instance()) && !empty($CFG->calendar_adminseesall)) {
-        $courses = get_courses('all', 'c.shortname', 'c.*');
+        // Add a c. prefix to every field as expected by get_courses function.
+        $fieldlist = explode(',', $fields);
+
+        $prefixedfields = array_map(function($value) {
+            return 'c.' . trim($value);
+        }, $fieldlist);
+        $courses = get_courses('all', 'c.shortname', implode(',', $prefixedfields));
     } else {
-        $courses = enrol_get_my_courses();
+        $courses = enrol_get_my_courses($fields);
     }
 
     if ($courseid && $courseid != SITEID) {

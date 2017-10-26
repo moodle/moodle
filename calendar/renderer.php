@@ -247,7 +247,7 @@ class core_calendar_renderer extends plugin_renderer_base {
             return '';
         }
 
-        $courses = calendar_get_default_courses($courseid);
+        $courses = calendar_get_default_courses($courseid, 'id, shortname');
 
         unset($courses[SITEID]);
 
