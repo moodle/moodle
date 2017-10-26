@@ -60,15 +60,15 @@ define([
 
             // Bind click events to event links.
             root.on('click', CalendarSelectors.links.eventLink, function(e) {
-                e.preventDefault();
-                // We've handled the event so stop it from bubbling
-                // and causing the day click handler to fire.
-                e.stopPropagation();
-
                 var target = $(e.target);
                 var eventId = null;
 
-                var eventLink = target.closest(CalendarSelectors.actions.viewEvent);
+                var eventLink;
+                if (target.is(CalendarSelectors.actions.viewEvent)) {
+                    eventLink = target;
+                } else {
+                    eventLink = target.closest(CalendarSelectors.actions.viewEvent);
+                }
 
                 if (eventLink.length) {
                     eventId = eventLink.data('eventId');
@@ -76,7 +76,16 @@ define([
                     eventId = target.find(CalendarSelectors.actions.viewEvent).data('eventId');
                 }
 
-                renderEventSummaryModal(eventId);
+                if (eventId) {
+                    // A link was found. Show the modal.
+
+                    e.preventDefault();
+                    // We've handled the event so stop it from bubbling
+                    // and causing the day click handler to fire.
+                    e.stopPropagation();
+
+                    renderEventSummaryModal(eventId);
+                }
             });
 
             root.on('click', SELECTORS.CALENDAR_NAV_LINK, function(e) {
