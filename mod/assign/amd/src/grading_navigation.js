@@ -130,6 +130,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         } else {
             this._selectNoUser();
         }
+        this._triggerNextUserEvent();
     };
 
     /**
@@ -233,6 +234,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         } else {
             this._selectNoUser();
         }
+        this._triggerNextUserEvent();
     };
 
     /**
@@ -445,6 +447,20 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
             select.attr('data-selected', userid);
         }
         this._refreshCount();
+    };
+
+    /**
+     * Trigger the next user event depending on the number of filtered users
+     *
+     * @private
+     * @method _triggerNextUserEvent
+     */
+    GradingNavigation.prototype._triggerNextUserEvent = function() {
+        if (this._filteredUsers.length > 1) {
+            $(document).trigger('next-user', {nextUserId: null, nextUser: true});
+        } else {
+            $(document).trigger('next-user', {nextUser: false});
+        }
     };
 
     /**
