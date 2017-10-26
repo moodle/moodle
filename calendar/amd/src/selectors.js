@@ -56,7 +56,11 @@ define([], function() {
         wrapper: '.calendarwrapper',
         eventItem: '[data-type="event"]',
         links: {
+            navLink: '.calendarwrapper .arrow_link',
             eventLink: "[data-region='event-item']",
+        },
+        containers: {
+            loadingIcon: '[data-region="overlay-icon-container"]',
         },
     };
 });
