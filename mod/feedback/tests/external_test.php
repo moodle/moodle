@@ -540,6 +540,9 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, $completed->courseid);
     }
 
+    /**
+     * Test process_page for a site feedback.
+     */
     public function test_process_page_site_feedback() {
         global $DB;
         $pagecontents = 'You finished it!';
@@ -1014,5 +1017,56 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $this->expectExceptionMessage(get_string('not_completed_yet', 'feedback'));
         $this->expectException('moodle_exception');
         mod_feedback_external::get_last_completed($this->feedback->id);
+    }
+
+    /**
+     * Test get_feedback_access_information for site feedback.
+     */
+    public function test_get_feedback_access_information_for_site_feedback() {
+
+        $sitefeedback = $this->getDataGenerator()->create_module('feedback', array('course' => SITEID));
+        $this->setUser($this->student);
+        // Access the site feedback via the site activity.
+        $result = mod_feedback_external::get_feedback_access_information($sitefeedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+        $this->assertTrue($result['cancomplete']);
+        $this->assertTrue($result['cansubmit']);
+
+        // Access the site feedback via course where I'm enrolled.
+        $result = mod_feedback_external::get_feedback_access_information($sitefeedback->id, $this->course->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+        $this->assertTrue($result['cancomplete']);
+        $this->assertTrue($result['cansubmit']);
+
+        // Access the site feedback via course where I'm not enrolled.
+        $othercourse = $this->getDataGenerator()->create_course();
+
+        $this->expectException('moodle_exception');
+        mod_feedback_external::get_feedback_access_information($sitefeedback->id, $othercourse->id);
+    }
+
+    /**
+     * Test get_feedback_access_information for site feedback mapped.
+     */
+    public function test_get_feedback_access_information_for_site_feedback_mapped() {
+        global $DB;
+
+        $sitefeedback = $this->getDataGenerator()->create_module('feedback', array('course' => SITEID));
+        $this->setUser($this->student);
+        $DB->insert_record('feedback_sitecourse_map', array('feedbackid' => $sitefeedback->id, 'courseid' => $this->course->id));
+
+        // Access the site feedback via course where I'm enrolled and mapped.
+        $result = mod_feedback_external::get_feedback_access_information($sitefeedback->id, $this->course->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+        $this->assertTrue($result['cancomplete']);
+        $this->assertTrue($result['cansubmit']);
+
+        // Access the site feedback via course where I'm enrolled but not mapped.
+        $othercourse = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($this->student->id, $othercourse->id, $this->studentrole->id, 'manual');
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('cannotaccess', 'mod_feedback'));
+        mod_feedback_external::get_feedback_access_information($sitefeedback->id, $othercourse->id);
     }
 }
