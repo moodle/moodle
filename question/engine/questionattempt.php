@@ -649,17 +649,29 @@ class question_attempt {
 
     /**
      * This is used by the manual grading code, particularly in association with
-     * validation. If there is a mark submitted in the request, then use that,
-     * otherwise use the latest mark for this question.
-     * @return number the current manual mark for this question, formatted for display.
+     * validation. It gets the current manual mark for a question, in exactly the string
+     * form that the teacher entered it, if possible. This may come from the current
+     * POST request, if there is one, otherwise from the database.
+     *
+     * @return string the current manual mark for this question, in the format the teacher typed,
+     *     if possible.
      */
     public function get_current_manual_mark() {
+        // Is there a current value in the current POST data? If so, use that.
         $mark = $this->get_submitted_var($this->get_behaviour_field_name('mark'), PARAM_RAW_TRIMMED);
-        if (is_null($mark)) {
-            return format_float($this->get_mark(), 7, true, true);
-        } else {
+        if ($mark !== null) {
             return $mark;
         }
+
+        // Otherwise, use the stored value.
+        // If the question max mark has not changed, use the stored value that was input.
+        $storedmaxmark = $this->get_last_behaviour_var('maxmark');
+        if ($storedmaxmark !== null && ($storedmaxmark - $this->get_max_mark()) < 0.0000005) {
+            return $this->get_last_behaviour_var('mark');
+        }
+
+        // The max mark for this question has changed so we must re-scale the current mark.
+        return format_float($this->get_mark(), 7, true, true);
     }
 
     /**
