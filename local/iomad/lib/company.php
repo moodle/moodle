@@ -834,9 +834,9 @@ class company {
 
         // get the company info.
         $companyinfo = self::get_company_byuserid($userid);
-        if (!empty($company->emailprofileid)) {
+        if (!empty($companyinfo->emailprofileid)) {
             // Does the user have one defined by the company field?
-            if (!$supervisor = $DB->get_record('user_info_data', array('userid' => $userid, 'fieldid' => $company->emailprofileid))) {
+            if (!$supervisor = $DB->get_record('user_info_data', array('userid' => $userid, 'fieldid' => $companyinfo->emailprofileid))) {
                 return false;
             }
         } else if (!empty($CFG->companyemailprofileid)) {
@@ -2578,13 +2578,14 @@ class company {
                                                           ORDER BY id DESC',
                                                           array('userid' => $userid, 'courseid' => $courseid), 0, 1);
                         $trackinfo = array_pop($trackinfos);
-                        $trackfileinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackinfo->id));
-                        $fileinfo = $DB->get_record('files', array('itemid' => $trackinfo->id, 'component' => 'local_iomad_track', 'filename' => $trackfileinfo->filename));
-                        $filedir1 = substr($fileinfo->contenthash,0,2);
-                        $filedir2 = substr($fileinfo->contenthash,2,2);
-                        $filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $fileinfo->contenthash;
-                        $mimetype = mimeinfo('type', $trackfileinfo->filename);
-                        $mail->addAttachment($filepath, $trackfileinfo->filename, 'base64', $mimetype);
+                        if ($trackfileinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackinfo->id))) {
+                            $fileinfo = $DB->get_record('files', array('itemid' => $trackinfo->id, 'component' => 'local_iomad_track', 'filename' => $trackfileinfo->filename));
+                            $filedir1 = substr($fileinfo->contenthash,0,2);
+                            $filedir2 = substr($fileinfo->contenthash,2,2);
+                            $filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $fileinfo->contenthash;
+                            $mimetype = mimeinfo('type', $trackfileinfo->filename);
+                            $mail->addAttachment($filepath, $trackfileinfo->filename, 'base64', $mimetype);
+                        }
                         // Set word wrap.
                         $mail->WordWrap = 79;
 
