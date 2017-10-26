@@ -48,7 +48,8 @@ class create extends \moodleform {
             'context' => $context,
             'maxfiles' => EDITOR_UNLIMITED_FILES,
             'maxbytes' => $CFG->maxbytes,
-            'noclean' => true
+            'noclean' => true,
+            'autosave' => false
         ];
     }
 
