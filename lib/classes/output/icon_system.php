@@ -145,5 +145,12 @@ abstract class icon_system {
         }
         return false;
     }
+
+    /**
+     * Clears the instance cache, for use in unit tests
+     */
+    public static function reset_caches() {
+        self::$instance = null;
+    }
 }
 
