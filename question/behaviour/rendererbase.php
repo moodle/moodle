@@ -126,9 +126,6 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
             if (!is_null($currentmark)) {
                 $attributes['value'] = $currentmark;
             }
-            $a = new stdClass();
-            $a->max = $qa->format_max_mark($options->markdp);
-            $a->mark = html_writer::empty_tag('input', $attributes);
 
             $markrange = html_writer::empty_tag('input', array(
                 'type' => 'hidden',
@@ -152,6 +149,9 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                         array('class' => 'error')) . html_writer::empty_tag('br');
             }
 
+            $a = new stdClass();
+            $a->max = $qa->format_max_mark($options->markdp);
+            $a->mark = html_writer::empty_tag('input', $attributes);
             $mark = html_writer::tag('div', html_writer::tag('div',
                         html_writer::tag('label', get_string('mark', 'question'),
                         array('for' => $markfield)),
