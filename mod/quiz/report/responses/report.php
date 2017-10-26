@@ -149,13 +149,7 @@ class quiz_responses_report extends quiz_attempts_report {
         $hasstudents = $hasstudents && (!$currentgroup || $this->hasgroupstudents);
         if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_WITH)) {
 
-            list($fields, $from, $where, $params) = $table->base_sql($allowedjoins);
-
-            // The WHERE clause is vital here, because some parts of tablelib.php will expect to
-            // add bits like ' AND x = 1' on the end, and that needs to leave to valid SQL.
-            $table->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp WHERE 1 = 1", $params);
-
-            $table->set_sql($fields, $from, $where, $params);
+            $table->setup_sql_queries($allowedjoins);
 
             if (!$table->is_downloading()) {
                 // Print information on the grading method.
