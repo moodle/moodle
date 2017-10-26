@@ -1404,7 +1404,9 @@ function course_module_update_calendar_events($modulename, $instance = null, $cm
         if (!isset($cm)) {
             $cm = get_coursemodule_from_instance($modulename, $instance->id, $instance->course);
         }
-        course_module_calendar_event_update_process($instance, $cm);
+        if (!empty($cm)) {
+            course_module_calendar_event_update_process($instance, $cm);
+        }
         return true;
     }
     return false;
@@ -1433,8 +1435,9 @@ function course_module_bulk_update_calendar_events($modulename, $courseid = 0) {
     }
 
     foreach ($instances as $instance) {
-        $cm = get_coursemodule_from_instance($modulename, $instance->id, $instance->course);
-        course_module_calendar_event_update_process($instance, $cm);
+        if ($cm = get_coursemodule_from_instance($modulename, $instance->id, $instance->course)) {
+            course_module_calendar_event_update_process($instance, $cm);
+        }
     }
     return true;
 }
