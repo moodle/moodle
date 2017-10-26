@@ -2139,16 +2139,21 @@ function calendar_delete_event_allowed($event) {
  *
  * @param int $courseid (optional) If passed, an additional course can be returned for admins (the current course).
  * @param string $fields Comma separated list of course fields to return.
+ * @param bool $canmanage If true, this will return the list of courses the current user can create events in, rather
+ *                        than the list of courses they see events from (an admin can always add events in a course
+ *                        calendar, even if they are not enrolled in the course).
  * @return array $courses Array of courses to display
  */
-function calendar_get_default_courses($courseid = null, $fields = '*') {
+function calendar_get_default_courses($courseid = null, $fields = '*', $canmanage=false) {
     global $CFG, $DB;
 
     if (!isloggedin()) {
         return array();
     }
 
-    if (has_capability('moodle/calendar:manageentries', context_system::instance()) && !empty($CFG->calendar_adminseesall)) {
+    if (has_capability('moodle/calendar:manageentries', context_system::instance()) &&
+            (!empty($CFG->calendar_adminseesall) || $canmanage)) {
+
         // Add a c. prefix to every field as expected by get_courses function.
         $fieldlist = explode(',', $fields);
 
@@ -2428,11 +2433,7 @@ function calendar_get_all_allowed_types() {
     // This function warms the context cache for the course so the calls
     // to load the course context in calendar_get_allowed_types don't result
     // in additional DB queries.
-    if (has_capability('moodle/calendar:manageentries', context_system::instance())) {
-        $courses = get_courses('all', 'c.shortname', 'c.*');
-    } else {
-        $courses = calendar_get_default_courses();
-    }
+    $courses = calendar_get_default_courses(null, '*', true);
 
     // We want to pre-fetch all of the groups for each course in a single
     // query to avoid calendar_get_allowed_types from hitting the DB for
