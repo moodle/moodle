@@ -18,9 +18,3 @@ Upgrading the default MathJax version
 3. Check and eventually update the list of language mappings in filter.php.
    Also see the unit test for the language mappings.
 
-Changes
--------
-
-* The MathJax 2.7.2 seems to have a bug causing the accessibility extensions
-  fail in web apps using RequireJS (such as Moodle). We had to stop using the
-  Accessible.js config for that reason. See MDL-60209 for details.
