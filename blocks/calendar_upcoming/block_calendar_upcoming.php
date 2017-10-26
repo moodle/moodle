@@ -61,7 +61,7 @@ class block_calendar_upcoming extends block_base {
             $courses = [$course->id => $course];
         }
         $calendar = new calendar_information(0, 0, 0, time());
-        $calendar->set_sources($course, $courses);
+        $calendar->set_sources($course, $courses, $this->page->category);
 
         list($data, $template) = calendar_get_view($calendar, 'upcoming_mini');
 

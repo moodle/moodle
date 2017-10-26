@@ -305,18 +305,23 @@ define([
          *
          * @param {object} root The container element.
          * @param {Number} courseId The course id.
+         * @param {Number} categoryId The id of the category whose events are shown
          * @return {promise}
          */
-        var reloadCurrentUpcoming = function(root, courseId) {
+        var reloadCurrentUpcoming = function(root, courseId, categoryId) {
             startLoading(root);
 
             var target = root.find(CalendarSelectors.wrapper);
 
-            if (!courseId) {
+            if (typeof courseId === 'undefined') {
                 courseId = root.find(CalendarSelectors.wrapper).data('courseid');
             }
 
-            return CalendarRepository.getCalendarUpcomingData(courseId)
+            if (typeof categoryId === 'undefined') {
+                categoryId = root.find(CalendarSelectors.wrapper).data('categoryid');
+            }
+
+            return CalendarRepository.getCalendarUpcomingData(courseId, categoryId)
                 .then(function(context) {
                     return Templates.render(root.attr('data-template'), context);
                 })

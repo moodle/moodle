@@ -164,13 +164,15 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
      *
      * @method getCalendarUpcomingData
      * @param {Number} courseid The course id.
+     * @param {Number} categoryid The category id.
      * @return {promise} Resolved with the month view data.
      */
-    var getCalendarUpcomingData = function(courseid) {
+    var getCalendarUpcomingData = function(courseid, categoryid) {
         var request = {
             methodname: 'core_calendar_get_calendar_upcoming_view',
             args: {
                 courseid: courseid,
+                categoryid: categoryid,
             }
         };
 
