@@ -267,6 +267,9 @@ if (!empty($parentcompanies)) {
     $userfilter = " AND id NOT IN (
                      SELECT userid FROM {company_users}
                      WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
+    $userfilterwithu = " AND u.id NOT IN (
+                         SELECT userid FROM {company_users}
+                         WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
 } else {
     $userfilter = "";
 }
@@ -452,7 +455,7 @@ if (!empty($userlist)) {
                                    WHERE u.deleted <> 1 AND $userlist
                                    AND cu.userid = u.id AND cu.departmentid = d.id
                                    AND cu.companyid = :companyid
-                                   $userfilter
+                                   $userfilterwithu
                                    GROUP BY u.id, d.name $dbsort ", array('companyid' => $company->id), $page * $perpage, $perpage);
 } else {
     $users = array();
