@@ -124,7 +124,13 @@ function email_reports_cron() {
             continue;
         }
         mtrace("Sending completion warning email to $user->email");
+        $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($course->id),
+                                                                                    'courseid' => $course->id,
+                                                                                    'userid' => $user->id));
+        $event->trigger();
+
         EmailTemplate::send('completion_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
+
         // Send the supervisor email too.
         mtrace("Sending completion warning email to $user->email supervisor");
         company::send_supervisor_warning_email($user, $course);

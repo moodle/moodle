@@ -118,5 +118,11 @@ $observers = array(
         'callback'    => 'local_iomad_observer::company_unsuspended',
         'includefile' => '/local/iomad/classes/observer.php'
     ),
+
+    array(
+        'eventname'   => '\block_iomad_company_admin\event\user_course_expired',
+        'callback'    => 'local_iomad_observer::user_course_expired',
+        'includefile' => '/local/iomad/classes/observer.php'
+    ),
 );
 

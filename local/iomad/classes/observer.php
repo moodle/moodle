@@ -189,7 +189,6 @@ class local_iomad_observer {
      * @return bool true on success.
      */
     public static function company_suspended($event) {
-echo "got a company suspended event in observer</br>";
         company::company_suspended($event);
         return true;
     }
@@ -201,8 +200,18 @@ echo "got a company suspended event in observer</br>";
      * @return bool true on success.
      */
     public static function company_unsuspended($event) {
-echo "got a company unsuspended event in observer</br>";
         company::company_unsuspended($event);
+        return true;
+    }
+
+    /**
+     * Triggered via block_iomad_company_admin::user_course_expired event.
+     *
+     * @param \block_iomad_company_admin\event\user_course_expired $event
+     * @return bool true on success.
+     */
+    public static function user_course_expired($event) {
+        company::user_course_expired($event);
         return true;
     }
 }

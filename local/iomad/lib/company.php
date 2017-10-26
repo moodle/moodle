@@ -3098,6 +3098,93 @@ class company {
     }
 
     /**
+     * Triggered via user_course_expired event.
+     *
+     * @param \block_iomad_company_user\event\company_license_created $event
+     * @return bool true on success.
+     */
+    public static function user_course_expired(\block_iomad_company_admin\event\user_course_expired $event) {
+        global $DB, $CFG;
+
+        $userid = $event->userid;
+        $courseid = $event->courseid;
+
+        // Remove enrolments
+        $plugins = enrol_get_plugins(true);
+        $instances = enrol_get_instances($courseid, true);
+        foreach ($instances as $instance) {
+            $plugin = $plugins[$instance->enrol];
+            $plugin->unenrol_user($instance, $userid);
+        }
+
+        // Remove completions
+        $DB->delete_records('course_completions', array('userid' => $userid, 'course' => $courseid));
+        if ($compitems = $DB->get_records('course_completion_criteria', array('course' => $courseid))) {
+            foreach ($compitems as $compitem) {
+                $DB->delete_records('course_completion_crit_compl', array('userid' => $userid,
+                                                                          'criteriaid' => $compitem->id));
+            }
+        }
+        if ($modules = $DB->get_records_sql("SELECT id FROM {course_modules} WHERE course = :course AND completion != 0", array('course' => $courseid))) {
+            foreach ($modules as $module) {
+                $DB->delete_records('course_modules_completion', array('userid' => $userid, 'coursemoduleid' => $module->id));
+            }
+        }
+
+        // Remove grades
+        if ($items = $DB->get_records('grade_items', array('courseid' => $courseid))) {
+            foreach ($items as $item) {
+                $DB->delete_records('grade_grades', array('userid' => $userid, 'itemid' => $item->id));
+            }
+        }
+
+        // Remove quiz entries.
+        if ($quizzes = $DB->get_records('quiz', array('course' => $courseid))) {
+            // We have quiz(zes) so clear them down.
+            foreach ($quizzes as $quiz) {
+                $DB->execute("DELETE FROM {quiz_attempts} WHERE quiz=:quiz AND userid = :userid", array('quiz' => $quiz->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {quiz_grades} WHERE quiz=:quiz AND userid = :userid", array('quiz' => $quiz->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {quiz_overrides} WHERE quiz=:quiz AND userid = :userid", array('quiz' => $quiz->id, 'userid' => $userid));
+            }
+        }
+
+        // Remove certificate info.
+        if ($certificates = $DB->get_records('iomadcertificate', array('course' => $courseid))) {
+            foreach ($certificates as $certificate) {
+                $DB->execute("DELETE FROM {iomadcertificate_issues} WHERE iomadcertificateid = :certid AND userid = :userid", array('certid' => $certificate->id, 'userid' => $userid));
+            }
+        }
+
+        // Remove feedback info.
+        if ($feedbacks = $DB->get_records('feedback', array('course' => $courseid))) {
+            foreach ($feedbacks as $feedback) {
+                $DB->execute("DELETE FROM {feedback_completed} WHERE feedback = :feedbackid AND userid = :userid", array('feedbackid' => $feedback->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {feedback_completedtmp} WHERE feedback = :feedbackid AND userid = :userid", array('feedbackid' => $feedback->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {feedback_tracking} WHERE feedback = :feedbackid AND userid = :userid", array('feedbackid' => $feedback->id, 'userid' => $userid));
+            }
+        }
+
+        // Remove lesson info.
+        if ($lessons = $DB->get_records('lesson', array('course' => $courseid))) {
+            foreach ($lessons as $lesson) {
+                $DB->execute("DELETE FROM {lesson_attempts} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {lesson_grades} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {lesson_branch} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {lesson_timer} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
+            }
+        }
+
+        // Fix company licenses
+        if ($licenses = $DB->get_records('companylicense_users', array('licensecourseid' => $courseid, 'userid' =>$userid, 'isusing' => 1, 'timecompleted' => null))) {
+            $license = array_pop($licenses);
+            $license->timecompleted = time();
+            $DB->update_record('companylicense_users', $license);
+        }
+
+        return true;
+    }
+
+    /**
      * Send a user's supervisor a warning email that a user hasn't completed a course.
      *
      * @param user object
