@@ -198,6 +198,8 @@ function(
 
                 modal.setContextId(calendarWrapper.data('contextId'));
                 modal.show();
+
+                e.stopImmediatePropagation();
                 return;
             }).fail(Notification.exception);
         });
@@ -223,8 +225,36 @@ function(
         });
     }
 
+    /**
+     * Register the listeners required to edit the event.
+     *
+     * @param   {jQuery} root
+     * @param   {Promise} eventFormModalPromise
+     * @returns {Promise}
+     */
+    function registerEditListeners(root, eventFormModalPromise) {
+        eventFormModalPromise
+        .then(function(modal) {
+            // When something within the calendar tells us the user wants
+            // to edit an event then show the event form modal.
+            $('body').on(CalendarEvents.editEvent, function(e, eventId) {
+                var calendarWrapper = root.find(CalendarSelectors.wrapper);
+                modal.setEventId(eventId);
+                modal.setContextId(calendarWrapper.data('contextId'));
+                modal.show();
+
+                e.stopImmediatePropagation();
+            });
+            return;
+        })
+        .fail(Notification.exception);
+
+        return eventFormModalPromise;
+    }
+
     return {
         registerRemove: registerRemove,
+        registerEditListeners: registerEditListeners,
         registerEventFormModal: registerEventFormModal
     };
 });

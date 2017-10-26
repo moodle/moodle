@@ -51,7 +51,6 @@ define([
         var registerEventListeners = function(root, type) {
             var body = $('body');
 
-            CalendarCrud.registerEventFormModal(root);
             CalendarCrud.registerRemove(root);
 
             var reloadFunction = 'reloadCurrent' + type.charAt(0).toUpperCase() + type.slice(1);
@@ -85,6 +84,9 @@ define([
                     daysWithEvent.removeClass('hidden');
                 }
             });
+
+            var eventFormPromise = CalendarCrud.registerEventFormModal(root);
+            CalendarCrud.registerEditListeners(root, eventFormPromise);
         };
 
         return {

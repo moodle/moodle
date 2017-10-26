@@ -163,19 +163,7 @@ define([
             CalendarViewManager.reloadCurrentMonth(root);
         });
 
-        eventFormModalPromise
-        .then(function(modal) {
-            // When something within the calendar tells us the user wants
-            // to edit an event then show the event form modal.
-            body.on(CalendarEvents.editEvent, function(e, eventId) {
-                var calendarWrapper = root.find(CalendarSelectors.wrapper);
-                modal.setEventId(eventId);
-                modal.setContextId(calendarWrapper.data('contextId'));
-                modal.show();
-            });
-            return;
-        })
-        .fail(Notification.exception);
+        CalendarCrud.registerEditListeners(root, eventFormModalPromise);
     };
 
     /**
