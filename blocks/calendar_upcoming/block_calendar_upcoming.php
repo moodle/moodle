@@ -78,5 +78,3 @@ class block_calendar_upcoming extends block_base {
         return $this->content;
     }
 }
-
-
