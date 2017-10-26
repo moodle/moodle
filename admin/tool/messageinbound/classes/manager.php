@@ -584,10 +584,10 @@ class manager {
                 'usestream' => true,
             ));
 
-            if ($part === $plainpartid) {
+            if ($part == $plainpartid) {
                 $contentplain = $this->process_message_part_body($messagedata, $partdata, $part);
 
-            } else if ($part === $htmlpartid) {
+            } else if ($part == $htmlpartid) {
                 $contenthtml = $this->process_message_part_body($messagedata, $partdata, $part);
 
             } else if ($filename = $partdata->getName($part)) {
