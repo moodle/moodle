@@ -2741,7 +2741,7 @@ class global_navigation extends navigation_node {
      * @return bool True for successfull generation
      */
     public function add_front_page_course_essentials(navigation_node $coursenode, stdClass $course) {
-        global $CFG, $USER;
+        global $CFG, $USER, $COURSE, $SITE;
         require_once($CFG->dirroot . '/course/lib.php');
 
         if ($coursenode == false || $coursenode->get('frontpageloaded', navigation_node::TYPE_CUSTOM)) {
@@ -2793,8 +2793,14 @@ class global_navigation extends navigation_node {
         }
 
         if ($navoptions->calendar) {
+            $courseid = $COURSE->id;
+            $params = array('view' => 'month');
+            if ($courseid != $SITE->id) {
+                $params['course'] = $courseid;
+            }
+
             // Calendar
-            $calendarurl = new moodle_url('/calendar/view.php', array('view' => 'month'));
+            $calendarurl = new moodle_url('/calendar/view.php', $params);
             $node = $coursenode->add(get_string('calendar', 'calendar'), $calendarurl, self::TYPE_CUSTOM, null, 'calendar');
             $node->showinflatnavigation = true;
         }

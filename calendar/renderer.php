@@ -247,11 +247,7 @@ class core_calendar_renderer extends plugin_renderer_base {
             return '';
         }
 
-        if (has_capability('moodle/calendar:manageentries', context_system::instance()) && !empty($CFG->calendar_adminseesall)) {
-            $courses = get_courses('all', 'c.shortname','c.id,c.shortname');
-        } else {
-            $courses = enrol_get_my_courses();
-        }
+        $courses = calendar_get_default_courses($courseid, 'id, shortname');
 
         unset($courses[SITEID]);
 
