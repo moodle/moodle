@@ -46,6 +46,7 @@ define([], function() {
             create: '[data-action="new-event-button"]',
             edit: '[data-action="edit"]',
             remove: '[data-action="delete"]',
+            viewEvent: '[data-action="view-event"]',
         },
         elements: {
             courseSelector: 'select[name="course"]',
@@ -54,5 +55,8 @@ define([], function() {
         day: '[data-region="day"]',
         wrapper: '.calendarwrapper',
         eventItem: '[data-type="event"]',
+        links: {
+            eventLink: "[data-region='event-item']",
+        },
     };
 });
