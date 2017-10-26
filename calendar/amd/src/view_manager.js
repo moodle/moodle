@@ -321,7 +321,6 @@ define([
                     return Templates.render(root.attr('data-template'), context);
                 })
                 .then(function(html, js) {
-                    window.history.replaceState(null, null, '?view=upcoming&course=' + courseId);
                     return Templates.replaceNode(target, html, js);
                 })
                 .then(function() {

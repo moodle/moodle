@@ -73,6 +73,11 @@ define([
                         // We need to get the selector again because the content has changed.
                         return root.find(CalendarSelectors.courseSelector).val(courseId);
                     })
+                    .then(function() {
+                        window.history.pushState({}, '', '?view=upcoming&course=' + courseId);
+
+                        return;
+                    })
                     .fail(Notification.exception);
             });
 
