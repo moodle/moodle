@@ -47,14 +47,14 @@ abstract class by_course extends base {
             $courses = $this->options['filter'];
         } else {
             // Iterate through all potentially valid courses.
-            $courses = get_courses('all', 'c.sortorder ASC');
+            $courses = get_courses('all', 'c.sortorder ASC', 'c.id');
         }
         unset($courses[SITEID]);
 
         $analysables = array();
         foreach ($courses as $course) {
             // Skip the frontpage course.
-            $analysable = \core_analytics\course::instance($course);
+            $analysable = \core_analytics\course::instance($course->id);
             $analysables[$analysable->get_id()] = $analysable;
         }
 

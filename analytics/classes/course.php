@@ -40,9 +40,19 @@ require_once($CFG->dirroot . '/lib/enrollib.php');
 class course implements \core_analytics\analysable {
 
     /**
-     * @var \core_analytics\course[] $instances
+     * @var bool Has this course data been already loaded.
      */
-    protected static $instances = array();
+    protected $loaded = false;
+
+    /**
+     * @var int $cachedid self::$cachedinstance analysable id.
+     */
+    protected static $cachedid = 0;
+
+    /**
+     * @var \core_analytics\course $cachedinstance
+     */
+    protected static $cachedinstance = null;
 
     /**
      * Course object
@@ -122,7 +132,7 @@ class course implements \core_analytics\analysable {
      * Use self::instance() instead to get cached copies of the course. Instances obtained
      * through this constructor will not be cached.
      *
-     * Loads course students and teachers.
+     * Lazy load of course data, students and teachers.
      *
      * @param int|stdClass $course Course id
      * @return void
@@ -130,17 +140,69 @@ class course implements \core_analytics\analysable {
     public function __construct($course) {
 
         if (is_scalar($course)) {
-            $this->course = get_course($course);
+            $this->course = new \stdClass();
+            $this->course->id = $course;
         } else {
             $this->course = $course;
         }
+    }
 
-        $this->coursecontext = \context_course::instance($this->course->id);
+    /**
+     * Returns an analytics course instance.
+     *
+     * Lazy load of course data, students and teachers.
+     *
+     * @param int|stdClass $course Course object or course id
+     * @return \core_analytics\course
+     */
+    public static function instance($course) {
+
+        $courseid = $course;
+        if (!is_scalar($courseid)) {
+            $courseid = $course->id;
+        }
+
+        if (self::$cachedid === $courseid) {
+            return self::$cachedinstance;
+        }
+
+        $cachedinstance = new \core_analytics\course($course);
+        self::$cachedinstance = $cachedinstance;
+        self::$cachedid = (int)$courseid;
+        return self::$cachedinstance;
+    }
+
+    /**
+     * get_id
+     *
+     * @return int
+     */
+    public function get_id() {
+        return $this->course->id;
+    }
+
+    /**
+     * Loads the analytics course object.
+     *
+     * @return null
+     */
+    protected function load() {
+
+        // The instance constructor could be already loaded with the full course object. Using shortname
+        // because it is a required course field.
+        if (empty($this->course->shortname)) {
+            $this->course = get_course($this->course->id);
+        }
+
+        $this->coursecontext = $this->get_context();
 
         $this->now = time();
 
         // Get the course users, including users assigned to student and teacher roles at an higher context.
         $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'core_analytics', 'rolearchetypes');
+
+        // Flag the instance as loaded.
+        $this->loaded = true;
 
         if (!$studentroles = $cache->get('student')) {
             $studentroles = array_keys(get_archetype_roles('student'));
@@ -156,52 +218,12 @@ class course implements \core_analytics\analysable {
     }
 
     /**
-     * Returns an analytics course instance.
-     *
-     * @param int|stdClass $course Course id
-     * @return \core_analytics\course
-     */
-    public static function instance($course) {
-
-        $courseid = $course;
-        if (!is_scalar($courseid)) {
-            $courseid = $course->id;
-        }
-
-        if (!empty(self::$instances[$courseid])) {
-            return self::$instances[$courseid];
-        }
-
-        $instance = new \core_analytics\course($course);
-        self::$instances[$courseid] = $instance;
-        return self::$instances[$courseid];
-    }
-
-    /**
-     * Clears all statically cached instances.
-     *
-     * @return void
-     */
-    public static function reset_caches() {
-        self::$instances = array();
-    }
-
-    /**
-     * get_id
-     *
-     * @return int
-     */
-    public function get_id() {
-        return $this->course->id;
-    }
-
-    /**
      * The course short name
      *
      * @return string
      */
     public function get_name() {
-        return format_string($this->course->shortname, true, array('context' => $this->get_context()));
+        return format_string($this->get_course_data()->shortname, true, array('context' => $this->get_context()));
     }
 
     /**
@@ -228,8 +250,8 @@ class course implements \core_analytics\analysable {
         }
 
         // The field always exist but may have no valid if the course is created through a sync process.
-        if (!empty($this->course->startdate)) {
-            $this->starttime = (int)$this->course->startdate;
+        if (!empty($this->get_course_data()->startdate)) {
+            $this->starttime = (int)$this->get_course_data()->startdate;
         } else {
             $this->starttime = 0;
         }
@@ -256,7 +278,7 @@ class course implements \core_analytics\analysable {
 
         // We first try to find current course student logs.
         $firstlogs = array();
-        foreach ($this->studentids as $studentid) {
+        foreach ($this->get_students() as $studentid) {
             // Grrr, we are limited by logging API, we could do this easily with a
             // select min(timecreated) from xx where courseid = yy group by userid.
 
@@ -278,7 +300,7 @@ class course implements \core_analytics\analysable {
         sort($firstlogs);
         $firstlogsmedian = $this->median($firstlogs);
 
-        $studentenrolments = enrol_get_course_users($this->get_id(), $this->studentids);
+        $studentenrolments = enrol_get_course_users($this->get_id(), $this->get_students());
         if (empty($studentenrolments)) {
             return 0;
         }
@@ -306,8 +328,8 @@ class course implements \core_analytics\analysable {
         }
 
         // The enddate field is only available from Moodle 3.2 (MDL-22078).
-        if (!empty($this->course->enddate)) {
-            $this->endtime = (int)$this->course->enddate;
+        if (!empty($this->get_course_data()->enddate)) {
+            $this->endtime = (int)$this->get_course_data()->enddate;
             return $this->endtime;
         }
 
@@ -362,21 +384,12 @@ class course implements \core_analytics\analysable {
      * @return \stdClass
      */
     public function get_course_data() {
-        return $this->course;
-    }
 
-    /**
-     * Is the course valid to extract indicators from it?
-     *
-     * @return bool
-     */
-    public function is_valid() {
-
-        if (!$this->was_started() || !$this->is_finished()) {
-            return false;
+        if (!$this->loaded) {
+            $this->load();
         }
 
-        return true;
+        return $this->course;
     }
 
     /**
@@ -427,7 +440,7 @@ class course implements \core_analytics\analysable {
     public function get_user_ids($roleids) {
 
         // We need to index by ra.id as a user may have more than 1 $roles role.
-        $records = get_role_users($roleids, $this->coursecontext, true, 'ra.id, u.id AS userid, r.id AS roleid', 'ra.id ASC');
+        $records = get_role_users($roleids, $this->get_context(), true, 'ra.id, u.id AS userid, r.id AS roleid', 'ra.id ASC');
 
         // If a user have more than 1 $roles role array_combine will discard the duplicate.
         $callable = array($this, 'filter_user_id');
@@ -441,6 +454,11 @@ class course implements \core_analytics\analysable {
      * @return stdClass[]
      */
     public function get_students() {
+
+        if (!$this->loaded) {
+            $this->load();
+        }
+
         return $this->studentids;
     }
 
@@ -453,7 +471,7 @@ class course implements \core_analytics\analysable {
         global $DB;
 
         // No logs if no students.
-        if (empty($this->studentids)) {
+        if (empty($this->get_students())) {
             return 0;
         }
 
@@ -606,7 +624,7 @@ class course implements \core_analytics\analysable {
 
         // When the course is using format weeks we use the week's end date.
         $format = course_get_format($activity->get_modinfo()->get_course());
-        if ($this->course->format === 'weeks') {
+        if ($this->get_course_data()->format === 'weeks') {
             $dates = $format->get_section_dates($section);
 
             // We need to consider the +2 hours added by get_section_dates.
@@ -628,7 +646,7 @@ class course implements \core_analytics\analysable {
             return false;
         }
 
-        if (!course_format_uses_sections($this->course->format)) {
+        if (!course_format_uses_sections($this->get_course_data()->format)) {
             // If it does not use sections and there are no availability conditions to access it it is available
             // and we can not magically classify it into any other time range than this one.
             return true;
@@ -731,7 +749,7 @@ class course implements \core_analytics\analysable {
         }
 
         // Check the amount of student logs in the 4 previous weeks.
-        list($studentssql, $studentsparams) = $DB->get_in_or_equal($this->studentids, SQL_PARAMS_NAMED);
+        list($studentssql, $studentsparams) = $DB->get_in_or_equal($this->get_students(), SQL_PARAMS_NAMED);
         $filterselect = $prefix . 'courseid = :courseid AND ' . $prefix . 'userid ' . $studentssql;
         $filterparams = array('courseid' => $this->course->id) + $studentsparams;
 
