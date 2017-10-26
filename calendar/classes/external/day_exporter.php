@@ -147,19 +147,9 @@ class day_exporter extends exporter {
             'navigation' => [
                 'type' => PARAM_RAW,
             ],
-            'popovertitle' => [
-                'type' => PARAM_RAW,
-                'default' => '',
-            ],
             'haslastdayofevent' => [
                 'type' => PARAM_BOOL,
                 'default' => false,
-            ],
-            'filter_selector' => [
-                'type' => PARAM_RAW,
-            ],
-            'new_event_button' => [
-                'type' => PARAM_RAW,
             ],
         ];
     }
@@ -190,8 +180,6 @@ class day_exporter extends exporter {
             'previousperiod' => $this->get_previous_day_timestamp($daytimestamp),
             'nextperiod' => $this->get_next_day_timestamp($daytimestamp),
             'navigation' => $this->get_navigation(),
-            'filter_selector' => $this->get_course_filter_selector($output),
-            'new_event_button' => $this->get_new_event_button(),
             'viewdaylink' => $this->url->out(false),
         ];
 
@@ -276,83 +264,5 @@ class day_exporter extends exporter {
             'id' => $this->calendar->courseid,
             'time' => $this->calendar->time,
         ]);
-    }
-
-    /**
-     * Get the course filter selector.
-     *
-     * This is a temporary solution, this code will be removed by MDL-60096.
-     *
-     * @param renderer_base $output
-     * @return string The html code for the course filter selector.
-     */
-    protected function get_course_filter_selector(renderer_base $output) {
-        global $CFG;
-        // TODO remove this code on MDL-60096.
-        if (!isloggedin() or isguestuser()) {
-            return '';
-        }
-
-        if (has_capability('moodle/calendar:manageentries', \context_system::instance()) && !empty($CFG->calendar_adminseesall)) {
-            $courses = get_courses('all', 'c.shortname', 'c.id, c.shortname');
-        } else {
-            $courses = enrol_get_my_courses();
-        }
-
-        unset($courses[SITEID]);
-
-        $courseoptions = array();
-        $courseoptions[SITEID] = get_string('fulllistofcourses');
-        foreach ($courses as $course) {
-            $coursecontext = \context_course::instance($course->id);
-            $courseoptions[$course->id] = format_string($course->shortname, true, array('context' => $coursecontext));
-        }
-
-        if ($this->calendar->courseid !== SITEID) {
-            $selected = $this->calendar->courseid;
-        } else {
-            $selected = '';
-        }
-
-        $courseurl = new moodle_url($this->url);
-        $courseurl->remove_params('course');
-        $select = new \single_select($courseurl, 'courseselect', $courseoptions, $selected, null);
-        $select->class = 'm-r-1';
-        $label = get_string('dayviewfor', 'calendar');
-        if ($label !== null) {
-            $select->set_label($label);
-        } else {
-            $select->set_label(get_string('listofcourses'), array('class' => 'accesshide'));
-        }
-
-        return $output->render($select);
-    }
-
-    /**
-     * Get the course filter selector.
-     *
-     * This is a temporary solution, this code will be removed by MDL-60096.
-     *
-     * @return string The html code for the course filter selector.
-     */
-    protected function get_new_event_button() {
-        // TODO remove this code on MDL-60096.
-        $output = \html_writer::start_tag('div', array('class' => 'buttons'));
-        $output .= \html_writer::start_tag('form',
-                array('action' => CALENDAR_URL . 'event.php', 'method' => 'get'));
-        $output .= \html_writer::start_tag('div');
-        $output .= \html_writer::empty_tag('input',
-                array('type' => 'hidden', 'name' => 'action', 'value' => 'new'));
-        $output .= \html_writer::empty_tag('input',
-                array('type' => 'hidden', 'name' => 'course', 'value' => $this->calendar->courseid));
-        $output .= \html_writer::empty_tag('input',
-                array('type' => 'hidden', 'name' => 'time', 'value' => $this->calendar->time));
-        $attributes = array('type' => 'submit', 'value' => get_string('newevent', 'calendar'),
-            'class' => 'btn btn-secondary');
-        $output .= \html_writer::empty_tag('input', $attributes);
-        $output .= \html_writer::end_tag('div');
-        $output .= \html_writer::end_tag('form');
-        $output .= \html_writer::end_tag('div');
-        return $output;
     }
 }

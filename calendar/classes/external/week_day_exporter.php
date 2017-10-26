@@ -67,27 +67,9 @@ class week_day_exporter extends day_exporter {
     protected static function define_other_properties() {
         $return = parent::define_other_properties();
         $return = array_merge($return, [
-            'timestamp' => [
-                'type' => PARAM_INT,
-            ],
-            'neweventtimestamp' => [
-                'type' => PARAM_INT,
-            ],
-            'viewdaylink' => [
-                'type' => PARAM_URL,
-                'optional' => true,
-            ],
-            'calendareventtypes' => [
-                'type' => PARAM_RAW,
-                'multiple' => true,
-            ],
             'popovertitle' => [
                 'type' => PARAM_RAW,
                 'default' => '',
-            ],
-            'haslastdayofevent' => [
-                'type' => PARAM_BOOL,
-                'default' => false,
             ],
         ]);
 
