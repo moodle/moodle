@@ -468,6 +468,35 @@ abstract class quiz_attempts_report_table extends table_sql {
     }
 
     /**
+     * A chance for subclasses to modify the SQL after the count query has been generated,
+     * and before the full query is constructed.
+     * @param string $fields SELECT list.
+     * @param string $from JOINs part of the SQL.
+     * @param string $where WHERE clauses.
+     * @param array $params Query params.
+     * @return array with 4 elements ($fields, $from, $where, $params) as from base_sql.
+     */
+    protected function update_sql_after_count($fields, $from, $where, $params) {
+        return [$fields, $from, $where, $params];
+    }
+
+    /**
+     * Set up the SQL queries (count rows, and get data).
+     *
+     * @param \core\dml\sql_join $allowedjoins (joins, wheres, params) defines allowed users for the report.
+     */
+    public function setup_sql_queries($allowedjoins) {
+        list($fields, $from, $where, $params) = $this->base_sql($allowedjoins);
+
+        // The WHERE clause is vital here, because some parts of tablelib.php will expect to
+        // add bits like ' AND x = 1' on the end, and that needs to leave to valid SQL.
+        $this->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp WHERE 1 = 1", $params);
+
+        list($fields, $from, $where, $params) = $this->update_sql_after_count($fields, $from, $where, $params);
+        $this->set_sql($fields, $from, $where, $params);
+    }
+
+    /**
      * Add the information about the latest state of the question with slot
      * $slot to the query.
      *
@@ -515,8 +544,12 @@ abstract class quiz_attempts_report_table extends table_sql {
 
         if ($this->is_downloading()) {
             // We want usages for all attempts.
-            return new qubaid_join($this->sql->from, 'quiza.uniqueid',
-                    $this->sql->where, $this->sql->params);
+            return new qubaid_join("(
+                SELECT DISTINCT quiza.uniqueid
+                  FROM " . $this->sql->from . "
+                 WHERE " . $this->sql->where . "
+                    ) quizasubquery", 'quizasubquery.uniqueid',
+                    "1 = 1", $this->sql->params);
         }
 
         $qubaids = array();
