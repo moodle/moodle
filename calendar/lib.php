@@ -1125,6 +1125,8 @@ class calendar_information {
      * @param   stdClass    $category The current category to show.
      */
     public function set_sources(stdClass $course, array $courses, stdClass $category = null) {
+        global $USER;
+
         // A cousre must always be specified.
         $this->course = $course;
         $this->courseid = $course->id;
@@ -1138,33 +1140,63 @@ class calendar_information {
         $this->categoryid = null;
         $this->categories = null;
 
-        if (null !== $category && $category->id > 0) {
-            // A specific category was requested - set the current category, and include all parents of that category.
-            $category = \coursecat::get($category->id);
+        // Determine the correct category information to show.
+        // When called with a course, the category of that course is usually included too.
+        // When a category was specifically requested, it should be requested with the site id.
+        if (SITEID !== $this->courseid) {
+            // A specific course was requested.
+            // Fetch the category that this course is in, along with all parents.
+            // Do not include child categories of this category, as the user many not have enrolments in those siblings or children.
+            $category = \coursecat::get($course->category);
             $this->categoryid = $category->id;
 
             $this->categories = $category->get_parents();
             $this->categories[] = $category->id;
-        } else if (SITEID === $this->courseid) {
-            // This is the site.
-            // Show categories for all courses the user has access to.
-            $this->categories = true;
-            $categories = [];
-            foreach ($courses as $course) {
-                if ($category = \coursecat::get($course->category, IGNORE_MISSING)) {
-                    $categories = array_merge($categories, $category->get_parents());
-                    $categories[] = $category->id;
+        } else if (null !== $category && $category->id > 0) {
+            // A specific category was requested.
+            // Fetch all parents of this category, along with all children too.
+            $category = \coursecat::get($category->id);
+            $this->categoryid = $category->id;
+
+            // Build the category list.
+            // This includes the current category.
+            $this->categories = [$category->id];
+
+            // All of its descendants.
+            foreach (\coursecat::get_all() as $cat) {
+                if (array_search($category->id, $cat->get_parents()) !== false) {
+                    $this->categories[] = $cat->id;
                 }
             }
 
-            // And all categories that the user can manage.
-            foreach (\coursecat::get_all() as $category) {
-                if (!$category->has_manage_capability()) {
-                    continue;
-                }
+            // And all of its parents.
+            $this->categories = array_merge($this->categories, $category->get_parents());
+        } else if (SITEID === $this->courseid) {
+            // The site was requested.
+            // Fetch all categories where this user has any enrolment, and all categories that this user can manage.
 
-                $categories = array_merge($categories, $category->get_parents());
-                $categories[] = $category->id;
+            // Grab the list of categories that this user has courses in.
+            $coursecategories = array_flip(array_map(function($course) {
+                return $course->category;
+            }, $courses));
+
+            $categories = [];
+            foreach (\coursecat::get_all() as $category) {
+                if (has_capability('moodle/category:manage', $category->get_context(), $USER, false)) {
+                    // If a user can manage a category, then they can see all child categories. as well as all parent categories.
+                    $categories[] = $category->id;
+                    foreach (\coursecat::get_all() as $cat) {
+                        if (array_search($category->id, $cat->get_parents()) !== false) {
+                            $categories[] = $cat->id;
+                        }
+                    }
+                    $categories = array_merge($categories, $category->get_parents());
+                } else if (isset($coursecategories[$category->id])) {
+                    // The user has access to a course in this category.
+                    // Fetch all of the parents too.
+                    $categories = array_merge($categories, [$category->id], $category->get_parents());
+                    $categories[] = $category->id;
+                }
             }
 
             $this->categories = array_unique($categories);
