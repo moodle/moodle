@@ -1145,9 +1145,10 @@ class core_calendar_external extends external_api {
      * Get data for the monthly calendar view.
      *
      * @param   int     $courseid The course to be included
+     * @param   int     $categoryid The category to be included
      * @return  array
      */
-    public static function get_calendar_upcoming_view($courseid) {
+    public static function get_calendar_upcoming_view($courseid, $categoryid) {
         global $CFG, $DB, $USER, $PAGE;
         require_once($CFG->dirroot."/calendar/lib.php");
 
