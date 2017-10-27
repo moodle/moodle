@@ -283,7 +283,7 @@ class core_formslib_testcase extends advanced_testcase {
         $this->assertDebuggingCalled("Did you remember to call setType() for 'texttest'? Defaulting to PARAM_RAW cleaning.");
 
         // Check form still there though.
-        $this->expectOutputRegex('/<input[^>]*name="texttest[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="texttest/');
         $mform->display();
     }
 
@@ -303,7 +303,7 @@ class core_formslib_testcase extends advanced_testcase {
         $this->assertDebuggingCalled("Did you remember to call setType() for 'urltest'? Defaulting to PARAM_RAW cleaning.");
 
         // Check form still there though.
-        $this->expectOutputRegex('/<input[^>]*name="urltest"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*type="url[^>]*name="urltest"/');
         $mform->display();
     }
 
@@ -312,7 +312,7 @@ class core_formslib_testcase extends advanced_testcase {
         $this->assertDebuggingCalled("Did you remember to call setType() for 'repeattest[0]'? Defaulting to PARAM_RAW cleaning.");
 
         // Check form still there though.
-        $this->expectOutputRegex('/<input[^>]*name="repeattest[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="repeattest/');
         $mform->display();
     }
 
@@ -320,55 +320,55 @@ class core_formslib_testcase extends advanced_testcase {
         $mform = new formslib_settype_debugging_repeat_ok();
         // No debugging expected here.
 
-        $this->expectOutputRegex('/<input[^>]*name="repeattest[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="repeattest/');
         $mform->display();
     }
 
     public function test_settype_debugging_group() {
         $mform = new formslib_settype_debugging_group();
         $this->assertDebuggingCalled("Did you remember to call setType() for 'groupel1'? Defaulting to PARAM_RAW cleaning.");
-        $this->expectOutputRegex('/<input[^>]*name="groupel1"[^>]*type="text/');
-        $this->expectOutputRegex('/<input[^>]*name="groupel2"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="groupel1"/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="groupel2"/');
         $mform->display();
     }
 
     public function test_settype_debugging_namedgroup() {
         $mform = new formslib_settype_debugging_namedgroup();
         $this->assertDebuggingCalled("Did you remember to call setType() for 'namedgroup[groupel1]'? Defaulting to PARAM_RAW cleaning.");
-        $this->expectOutputRegex('/<input[^>]*name="namedgroup\[groupel1\]"[^>]*type="text/');
-        $this->expectOutputRegex('/<input[^>]*name="namedgroup\[groupel2\]"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="namedgroup\[groupel1\]"/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="namedgroup\[groupel2\]"/');
         $mform->display();
     }
 
     public function test_settype_debugging_funky_name() {
         $mform = new formslib_settype_debugging_funky_name();
         $this->assertDebuggingCalled("Did you remember to call setType() for 'blah[foo][bar][1]'? Defaulting to PARAM_RAW cleaning.");
-        $this->expectOutputRegex('/<input[^>]*name="blah\[foo\]\[bar\]\[0\]"[^>]*type="text/');
-        $this->expectOutputRegex('/<input[^>]*name="blah\[foo\]\[bar\]\[1\]"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="blah\[foo\]\[bar\]\[0\]"/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="blah\[foo\]\[bar\]\[1\]"/');
         $mform->display();
     }
 
     public function test_settype_debugging_type_inheritance() {
         $mform = new formslib_settype_debugging_type_inheritance();
-        $this->expectOutputRegex('/<input[^>]*name="blah\[foo\]\[bar\]\[0\]"[^>]*type="text/');
-        $this->expectOutputRegex('/<input[^>]*name="blah\[bar\]\[foo\]\[1\]"[^>]*type="text/');
-        $this->expectOutputRegex('/<input[^>]*name="blah\[any\]\[other\]\[2\]"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="blah\[foo\]\[bar\]\[0\]"/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="blah\[bar\]\[foo\]\[1\]"/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="blah\[any\]\[other\]\[2\]"/');
         $mform->display();
     }
 
     public function test_settype_debugging_type_group_in_repeat() {
         $mform = new formslib_settype_debugging_type_group_in_repeat();
         $this->assertDebuggingCalled("Did you remember to call setType() for 'test2[0]'? Defaulting to PARAM_RAW cleaning.");
-        $this->expectOutputRegex('/<input[^>]*name="test1\[0\]"[^>]*type="text/');
-        $this->expectOutputRegex('/<input[^>]*name="test2\[0\]"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="test1\[0\]"/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="test2\[0\]"/');
         $mform->display();
     }
 
     public function test_settype_debugging_type_namedgroup_in_repeat() {
         $mform = new formslib_settype_debugging_type_namedgroup_in_repeat();
         $this->assertDebuggingCalled("Did you remember to call setType() for 'namedgroup[0][test2]'? Defaulting to PARAM_RAW cleaning.");
-        $this->expectOutputRegex('/<input[^>]*name="namedgroup\[0\]\[test1\]"[^>]*type="text/');
-        $this->expectOutputRegex('/<input[^>]*name="namedgroup\[0\]\[test2\]"[^>]*type="text/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="namedgroup\[0\]\[test1\]"/');
+        $this->expectOutputRegex('/<input[^>]*type="text[^>]*name="namedgroup\[0\]\[test2\]"/');
         $mform->display();
     }
 
