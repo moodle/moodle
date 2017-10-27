@@ -51,7 +51,7 @@ class social_breadth extends activity_base {
     }
 
     public function get_social_breadth_level(\cm_info $cm) {
-        $this->fill_choice_data($cm);
+        $this->fill_instance_data($cm);
         return self::SOCIAL_LEVEL_2;
     }
 }

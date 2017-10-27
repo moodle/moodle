@@ -53,4 +53,13 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
     protected function feedback_viewed_events() {
         return array('\mod_quiz\event\course_module_viewed');
     }
+
+    /**
+     * Returns the name of the field that controls activity availability.
+     *
+     * @return null|string
+     */
+    protected function get_timeclose_field() {
+        return 'timeclose';
+    }
 }
