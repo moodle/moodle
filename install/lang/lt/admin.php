@@ -40,3 +40,4 @@ $string['cliunknowoption'] = 'Neatpažintos parinktys: {$a} naudokite --žinyno 
 $string['cliyesnoprompt'] = 'įveskite t (taip) arba n (ne)';
 $string['environmentrequireinstall'] = 'turi būti įdiegta ir įjungta';
 $string['environmentrequireversion'] = 'būtina naudoti versiją {$a->needed}, o jūs naudojate {$a->current}';
+$string['upgradekeyset'] = 'Naujovinimo raktas (palikite tuščią, jei nenorite nustatyti)';

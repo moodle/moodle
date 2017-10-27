@@ -35,7 +35,7 @@ $string['availablelangs'] = '利用可能な言語パック';
 $string['chooselanguagehead'] = '言語を選択してください。';
 $string['chooselanguagesub'] = 'インストールにのみ使用する言語を選択してください。この言語はサイトのデフォルト言語としても使用されます。後でサイト言語を変更することができます。';
 $string['clialreadyconfigured'] = '設定ファイルconfig.phpはすでに登録されています。このサイトをインストールする場合、admin/cli/install_database.phpを使用してください。';
-$string['clialreadyinstalled'] = '設定ファイルconfig.phpは、すでに登録されています。このサイトをアップグレードする場合、admin/cli/upgrade.phpを使用してください。';
+$string['clialreadyinstalled'] = '設定ファイルconfig.phpはすでに登録されています。このサイトをアップグレードする場合、admin/cli/upgrade.phpを使用してください。';
 $string['cliinstallheader'] = 'Moodle {$a} コマンドラインインストールプログラム';
 $string['databasehost'] = 'データベースホスト :';
 $string['databasename'] = 'データベース名 :';
@@ -57,7 +57,7 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリ制限が {$a}
 <ol>
 <li>あなたがリコンパイル可能な場合、PHPを<i>--enable-memory-limit</i>オプションでコンパイルしてください。これにより、Moodle自身がメモリ制限を設定することが可能になります。</li>
 <li>あなたがphp.iniファイルにアクセスできる場合、<b>memory_limit</b>設定を40Mのように変更することができます。php.iniファイルにアクセスできない場合、管理者に変更を依頼してください。</li>
-<li>いくつかのPHPサーバでは、下記の行を含む.htaccessファイルをMoodleディレクトリに作成することができます:
+<li>いくつかのPHPサーバでは下記の行を含む.htaccessファイルをMoodleディレクトリに作成することができます:
 <blockquote><div>php_value memory_limit 40M</div></blockquote>
 <p>しかし、この設定が<b>すべての</b>PHPページの動作を妨げる場合もあります。ページ閲覧中にエラーが表示される場合、.htaccessファイルを削除してください。</p></li>
 </ol>';
