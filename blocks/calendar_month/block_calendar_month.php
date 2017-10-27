@@ -48,42 +48,15 @@ class block_calendar_month extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        $courseid = $this->page->course->id;
-        $issite = ($courseid == SITEID);
-
-        $course = null;
-        $courses = null;
-        $categories = null;
-
-        if ($issite) {
-            // Being displayed at site level. This will cause the filter to fall back to auto-detecting
-            // the list of courses it will be grabbing events from.
-            $course = get_site();
-            $courses = calendar_get_default_courses();
-
-            if ($this->page->context->contextlevel === CONTEXT_COURSECAT) {
-                // Restrict to categories, and their parents, and the courses that the user is enrolled in within those
-                // categories.
-                $categories = array_keys($this->page->categories);
-                $courses = array_filter($courses, function($course) use ($categories) {
-                    return array_search($course->category, $categories) !== false;
-                });
-            }
-        } else {
-            // Forcibly filter events to include only those from the particular course we are in.
-            $course = $this->page->course;
-            $courses = [$course->id => $course];
-        }
+        $courseid = isset($this->page->course) ? $this->page->course->id : SITEID;
+        $categoryid = isset($this->page->category) ? $this->page->category->id : null;
+        $calendar = \calendar_information::create(time(), $courseid, $categoryid);
+        list($data, $template) = calendar_get_view($calendar, 'mini');
 
         $renderer = $this->page->get_renderer('core_calendar');
-
-        $calendar = new calendar_information();
-        $calendar->set_sources($course, $courses, $this->page->category);
-
-        list($data, $template) = calendar_get_view($calendar, 'mini');
         $this->content->text .= $renderer->render_from_template($template, $data);
 
-        if (!$issite) {
+        if ($this->page->course->id != SITEID) {
             $this->content->text .= $renderer->event_filter();
         }
 
