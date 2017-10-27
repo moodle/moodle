@@ -74,7 +74,7 @@ class calendar_upcoming_exporter extends exporter {
             ],
             'defaulteventcontext' => [
                 'type' => PARAM_INT,
-                'default' => null,
+                'default' => 0,
             ],
             'filter_selector' => [
                 'type' => PARAM_RAW,
