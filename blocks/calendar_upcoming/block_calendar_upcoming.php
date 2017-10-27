@@ -45,31 +45,27 @@ class block_calendar_upcoming extends block_base {
         }
         $this->content = new stdClass;
         $this->content->text = '';
+        $this->content->footer = '';
 
-        $renderer = $this->page->get_renderer('core_calendar');
-        $courseid = $this->page->course->id;
-        $issite = ($courseid == SITEID);
-
-        if ($issite) {
-            // Being displayed at site level. This will cause the filter to fall back to auto-detecting
-            // the list of courses it will be grabbing events from.
-            $course = get_site();
-            $courses = calendar_get_default_courses();
-        } else {
-            // Forcibly filter events to include only those from the particular course we are in.
-            $course = $this->page->course;
-            $courses = [$course->id => $course];
-        }
-        $calendar = new calendar_information(0, 0, 0, time());
-        $calendar->set_sources($course, $courses, $this->page->category);
-
+        $courseid = isset($this->page->course) ? $this->page->course->id : SITEID;
+        $categoryid = isset($this->page->category) ? $this->page->category->id : null;
+        $calendar = \calendar_information::create(time(), $courseid, $categoryid);
         list($data, $template) = calendar_get_view($calendar, 'upcoming_mini');
 
+        $renderer = $this->page->get_renderer('core_calendar');
         $this->content->text .= $renderer->render_from_template($template, $data);
 
-        $this->content->footer = '<div class="gotocal">
-                <a href="'.$CFG->wwwroot.'/calendar/view.php?view=upcoming&amp;course='.$courseid.'">'.
-                get_string('gotocalendar', 'calendar').'</a>...</div>';
+        $url = new \moodle_url('/calendar/view.php', ['view' => 'upcoming']);
+        if ($courseid != SITEID) {
+            $url->param('course', $this->page->course->id);
+        } else if (!empty($categoryid)) {
+            $url->param('category', $this->page->category->id);
+        }
+
+        $this->content->footer = html_writer::div(
+            html_writer::link($url, get_string('gotocalendar', 'block_calendar_upcoming')),
+            'gotocal'
+        );
 
         return $this->content;
     }
