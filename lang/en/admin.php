@@ -939,15 +939,7 @@ $string['quizattemptsupgradedmessage'] = 'In Moodle 2.1 there was a major upgrad
 $string['recaptchaprivatekey'] = 'ReCAPTCHA secret key';
 $string['recaptchapublickey'] = 'ReCAPTCHA site key';
 $string['register'] = 'Register your site';
-$string['registermoodlenet'] = 'We\'d love to stay in touch for important things for your Moodle site!
-
-By registering,
-
-* You are contributing to our collective knowledge about the users of Moodle which helps us improve Moodle and all our community services
-* You’ll be one of the first to find out about important notifications such as security alerts and new Moodle releases.
-* You can access and activate mobile push notifications from your Moodle site through our free [Moodle Mobile app](https://download.moodle.org/mobile/)
-* Optionally, your site can be included as a proud member and supporter of the Moodle community on the [list of registered sites](https://moodle.net/stats).
-';
+$string['registermoodlenet'] = '<p>We\'d love to stay in touch for important things for your Moodle site!</p><p>By registering,</p><ul><li>You are contributing to our collective knowledge about the users of Moodle which helps us improve Moodle and all our community services.</li><li>You’ll be one of the first to find out about important notifications such as security alerts and new Moodle releases.</li><li>You can access and activate mobile push notifications from your Moodle site through our free <a href="https://download.moodle.org/mobile/">Moodle Mobile app</a>.</li><li>Optionally, your site can be included as a proud member and supporter of the Moodle community on the <a href="https://moodle.net/stats">list of registered sites</a>.</li></ul>';
 $string['registermoodleorg'] = 'When you register your site';
 $string['registermoodleorgli1'] = 'You are added to a low-volume mailing list for important notifications such as security alerts and new releases of Moodle.';
 $string['registermoodleorgli2'] = 'Statistics about your site will be added to the {$a} of the worldwide Moodle community.';
