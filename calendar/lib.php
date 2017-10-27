@@ -998,6 +998,9 @@ class calendar_information {
     /** @var array An array of users */
     public $users = array();
 
+    /** @var context The anticipated context that the calendar is viewed in */
+    public $context = null;
+
     /**
      * Creates a new instance
      *
@@ -1030,6 +1033,55 @@ class calendar_information {
         }
 
         $this->set_time($time);
+    }
+
+    /**
+     * Creates and set up a instance.
+     *
+     * @param   int                     $time the unixtimestamp representing the date we want to view.
+     * @param   int                     $courseid The ID of the course the user wishes to view.
+     * @param   int                     $categoryid The ID of the category the user wishes to view
+     *                                  If a courseid is specified, this value is ignored.
+     * @return  calendar_information
+     */
+    public static function create($time, int $courseid, int $categoryid = null) : calendar_information {
+        $calendar = new static(0, 0, 0, $time);
+        if ($courseid != SITEID && !empty($courseid)) {
+            // Course ID must be valid and existing.
+            $course = get_course($courseid);
+            $calendar->context = context_course::instance($course->id);
+
+            if (!$course->visible) {
+                require_capability('moodle/course:viewhiddencourses', $calendar->context);
+            }
+
+            $courses = [$course->id => $course];
+            $category = (\coursecat::get($course->category))->get_db_record();
+        } else if (!empty($categoryid)) {
+            $course = get_site();
+            $courses = calendar_get_default_courses();
+
+            // Filter available courses to those within this category or it's children.
+            $ids = [$categoryid];
+            $category = \coursecat::get($categoryid);
+            $ids = array_merge($ids, array_keys($category->get_children()));
+            $courses = array_filter($courses, function($course) use ($ids) {
+                return array_search($course->category, $ids) !== false;
+            });
+            $category = $category->get_db_record();
+
+            $calendar->context = context_coursecat::instance($categoryid);
+        } else {
+            $course = get_site();
+            $courses = calendar_get_default_courses();
+            $category = null;
+
+            $calendar->context = context_system::instance();
+        }
+
+        $calendar->set_sources($course, $courses, $category);
+
+        return $calendar;
     }
 
     /**
