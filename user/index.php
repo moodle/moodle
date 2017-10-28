@@ -44,6 +44,7 @@ $courseid     = optional_param('id', 0, PARAM_INT); // This are required.
 $newcourse    = optional_param('newcourse', false, PARAM_BOOL);
 $selectall    = optional_param('selectall', false, PARAM_BOOL); // When rendering checkboxes against users mark them all checked.
 $roleid       = optional_param('roleid', 0, PARAM_INT);
+$groupparam   = optional_param('group', 0, PARAM_INT);
 
 $PAGE->set_url('/user/index.php', array(
         'page' => $page,
@@ -123,8 +124,10 @@ $groupid = false;
 $canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
 if ($course->groupmode != NOGROUPS) {
     if ($canaccessallgroups) {
-        // If the user can see all groups, set default to 0.
-        $groupid = 0;
+        // Change the group if the user can access all groups and has specified group in the URL.
+        if ($groupparam) {
+            $groupid = $groupparam;
+        }
     } else {
         // Otherwise, get the user's default group.
         $groupid = groups_get_course_group($course, true);
@@ -183,11 +186,14 @@ foreach ($filtersapplied as $filter) {
 
 // If course supports groups we may need to set a default.
 if ($groupid !== false) {
-    // If we are in a course with visible groups and the user has not submitted anything and does not have
-    // access to all groups, then set a default group. This is the same behaviour in 3.3.
-    if (!$canaccessallgroups && !$filterwassubmitted && $course->groupmode == VISIBLEGROUPS) {
+    if ($canaccessallgroups) {
+        // User can access all groups, let them filter by whatever was selected.
         $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
-    } else if (!$canaccessallgroups && !$hasgroupfilter && $course->groupmode != VISIBLEGROUPS) {
+    } else if (!$filterwassubmitted && $course->groupmode == VISIBLEGROUPS) {
+        // If we are in a course with visible groups and the user has not submitted anything and does not have
+        // access to all groups, then set a default group.
+        $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
+    } else if (!$hasgroupfilter && $course->groupmode != VISIBLEGROUPS) {
         // The user can't access all groups and has not set a group filter in a course where the groups are not visible
         // then apply a default group filter.
         $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
