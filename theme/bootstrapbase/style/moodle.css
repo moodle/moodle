@@ -9232,6 +9232,9 @@ body.path-question-type .fitem_fgroup .accesshide {
   width: auto;
   vertical-align: baseline;
 }
+.que.multianswer .formulation .yui3-widget-positioned {
+  box-sizing: content-box;
+}
 .path-mod-quiz input[size] {
   width: auto;
 }
