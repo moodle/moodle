@@ -1218,3 +1218,10 @@
     position: inherit;
 }
 /** End of base fixes **/
+
+/** Fix to YUI tree (which is a table) when displayed within grading table. **/
+.path-mod-assign table.generaltable table td.ygtvcell {
+    border: 0;
+    padding: 0;
+}
+/** End of YUI tree fix **/
