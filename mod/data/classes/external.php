@@ -264,7 +264,6 @@ class mod_data_external extends external_api {
             'warnings' => $warnings
         );
 
-        $groupmode = groups_get_activity_groupmode($cm);
         if (!empty($params['groupid'])) {
             $groupid = $params['groupid'];
             // Determine is the group is visible to user.
@@ -273,12 +272,9 @@ class mod_data_external extends external_api {
             }
         } else {
             // Check to see if groups are being used here.
+            $groupmode = groups_get_activity_groupmode($cm);
             if ($groupmode) {
                 $groupid = groups_get_activity_group($cm);
-                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
-                if (!groups_group_visible($groupid, $course, $cm)) {
-                    throw new moodle_exception('notingroup');
-                }
             } else {
                 $groupid = 0;
             }
@@ -399,11 +395,8 @@ class mod_data_external extends external_api {
         } else {
             // Check to see if groups are being used here.
             if ($groupmode = groups_get_activity_groupmode($cm)) {
+                // We don't need to validate a possible groupid = 0 since it would be handled by data_search_entries.
                 $groupid = groups_get_activity_group($cm);
-                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
-                if (!groups_group_visible($groupid, $course, $cm)) {
-                    throw new moodle_exception('notingroup');
-                }
             } else {
                 $groupid = 0;
             }
@@ -728,11 +721,8 @@ class mod_data_external extends external_api {
         } else {
             // Check to see if groups are being used here.
             if ($groupmode = groups_get_activity_groupmode($cm)) {
+                // We don't need to validate a possible groupid = 0 since it would be handled by data_search_entries.
                 $groupid = groups_get_activity_group($cm);
-                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
-                if (!groups_group_visible($groupid, $course, $cm)) {
-                    throw new moodle_exception('notingroup');
-                }
             } else {
                 $groupid = 0;
             }
@@ -989,26 +979,18 @@ class mod_data_external extends external_api {
         // Check database is open in time.
         data_require_time_available($database, null, $context);
 
-        $groupmode = groups_get_activity_groupmode($cm);
-        if (!empty($params['groupid'])) {
-            $groupid = $params['groupid'];
-            // Determine is the group is visible to user.
-            if (!groups_group_visible($groupid, $course, $cm)) {
-                throw new moodle_exception('notingroup');
-            }
-        } else {
+        // Determine default group.
+        if (empty($params['groupid'])) {
             // Check to see if groups are being used here.
+            $groupmode = groups_get_activity_groupmode($cm);
             if ($groupmode) {
                 $groupid = groups_get_activity_group($cm);
-                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
-                if (!groups_group_visible($groupid, $course, $cm)) {
-                    throw new moodle_exception('notingroup');
-                }
             } else {
                 $groupid = 0;
             }
         }
 
+        // Group is validated inside the function.
         if (!data_user_can_add_entry($database, $groupid, $groupmode, $context)) {
             throw new moodle_exception('noaccess', 'data');
         }

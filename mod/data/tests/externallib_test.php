@@ -416,6 +416,8 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->student2);
         $entry12 = $generator->create_entry($this->database, $fieldcontents, $this->group1->id);
         $entry13 = $generator->create_entry($this->database, $fieldcontents, $this->group1->id);
+        // Entry not in group.
+        $entry14 = $generator->create_entry($this->database, $fieldcontents, 0);
 
         $this->setUser($this->student3);
         $entry21 = $generator->create_entry($this->database, $fieldcontents, $this->group2->id);
@@ -423,9 +425,10 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         // Approve all except $entry13.
         $DB->set_field('data_records', 'approved', 1, ['id' => $entry11]);
         $DB->set_field('data_records', 'approved', 1, ['id' => $entry12]);
+        $DB->set_field('data_records', 'approved', 1, ['id' => $entry14]);
         $DB->set_field('data_records', 'approved', 1, ['id' => $entry21]);
 
-        return [$entry11, $entry12, $entry13, $entry21];
+        return [$entry11, $entry12, $entry13, $entry14, $entry21];
     }
 
     /**
@@ -433,15 +436,16 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_get_entries() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         // First of all, expect to see only my group entries (not other users in other groups ones).
+        // We may expect entries without group also.
         $this->setUser($this->student1);
         $result = mod_data_external::get_entries($this->database->id);
         $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-        $this->assertCount(2, $result['entries']);
-        $this->assertEquals(2, $result['totalcount']);
+        $this->assertCount(3, $result['entries']);
+        $this->assertEquals(3, $result['totalcount']);
         $this->assertEquals($entry11, $result['entries'][0]['id']);
         $this->assertEquals($this->student1->id, $result['entries'][0]['userid']);
         $this->assertEquals($this->group1->id, $result['entries'][0]['groupid']);
@@ -450,36 +454,44 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($this->student2->id, $result['entries'][1]['userid']);
         $this->assertEquals($this->group1->id, $result['entries'][1]['groupid']);
         $this->assertEquals($this->database->id, $result['entries'][1]['dataid']);
+        $this->assertEquals($entry14, $result['entries'][2]['id']);
+        $this->assertEquals($this->student2->id, $result['entries'][2]['userid']);
+        $this->assertEquals(0, $result['entries'][2]['groupid']);
+        $this->assertEquals($this->database->id, $result['entries'][2]['dataid']);
         // Other user in same group.
         $this->setUser($this->student2);
         $result = mod_data_external::get_entries($this->database->id);
         $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-        $this->assertCount(3, $result['entries']);  // I can see my entry not approved yet.
-        $this->assertEquals(3, $result['totalcount']);
+        $this->assertCount(4, $result['entries']);  // I can see my entry not approved yet.
+        $this->assertEquals(4, $result['totalcount']);
 
-        // Now try with the user in the second group that must see only one entry.
+        // Now try with the user in the second group that must see only two entries (his group entry and the one without group).
         $this->setUser($this->student3);
         $result = mod_data_external::get_entries($this->database->id);
         $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-        $this->assertCount(1, $result['entries']);
-        $this->assertEquals(1, $result['totalcount']);
-        $this->assertEquals($entry21, $result['entries'][0]['id']);
-        $this->assertEquals($this->student3->id, $result['entries'][0]['userid']);
-        $this->assertEquals($this->group2->id, $result['entries'][0]['groupid']);
+        $this->assertCount(2, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals($entry14, $result['entries'][0]['id']);
+        $this->assertEquals($this->student2->id, $result['entries'][0]['userid']);
+        $this->assertEquals(0, $result['entries'][0]['groupid']);
         $this->assertEquals($this->database->id, $result['entries'][0]['dataid']);
+        $this->assertEquals($entry21, $result['entries'][1]['id']);
+        $this->assertEquals($this->student3->id, $result['entries'][1]['userid']);
+        $this->assertEquals($this->group2->id, $result['entries'][1]['groupid']);
+        $this->assertEquals($this->database->id, $result['entries'][1]['dataid']);
 
         // Now, as teacher we should see all (we have permissions to view all groups).
         $this->setUser($this->teacher);
         $result = mod_data_external::get_entries($this->database->id);
         $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-        $this->assertCount(4, $result['entries']);  // I can see the not approved one.
-        $this->assertEquals(4, $result['totalcount']);
+        $this->assertCount(5, $result['entries']);  // I can see the not approved one.
+        $this->assertEquals(5, $result['totalcount']);
 
         $entries = $DB->get_records('data_records', array('dataid' => $this->database->id), 'id');
-        $this->assertCount(4, $entries);
+        $this->assertCount(5, $entries);
         $count = 0;
         foreach ($entries as $entry) {
             $this->assertEquals($entry->id, $result['entries'][$count]['id']);
@@ -491,17 +503,17 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = mod_data_external::get_entries($this->database->id, $this->group1->id);
         $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-        $this->assertCount(2, $result['entries']);
-        $this->assertEquals(2, $result['totalcount']);
+        $this->assertCount(3, $result['entries']);
+        $this->assertEquals(3, $result['totalcount']);
 
         // Test ordering (reverse).
         $this->setUser($this->student1);
         $result = mod_data_external::get_entries($this->database->id, $this->group1->id, false, null, 'DESC');
         $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-        $this->assertCount(2, $result['entries']);
-        $this->assertEquals(2, $result['totalcount']);
-        $this->assertEquals($entry12, $result['entries'][0]['id']);
+        $this->assertCount(3, $result['entries']);
+        $this->assertEquals(3, $result['totalcount']);
+        $this->assertEquals($entry14, $result['entries'][0]['id']);
 
         // Test pagination.
         $this->setUser($this->student1);
@@ -509,14 +521,14 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['entries']);
-        $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals(3, $result['totalcount']);
         $this->assertEquals($entry11, $result['entries'][0]['id']);
 
         $result = mod_data_external::get_entries($this->database->id, $this->group1->id, false, null, null, 1, 1);
         $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['entries']);
-        $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals(3, $result['totalcount']);
         $this->assertEquals($entry12, $result['entries'][0]['id']);
 
         // Now test the return contents.
@@ -525,7 +537,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['entries']);
-        $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals(3, $result['totalcount']);
         $this->assertCount(9, $result['entries'][0]['contents']);
         $this->assertCount(9, $result['entries'][1]['contents']);
         // Search for some content.
@@ -543,7 +555,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         global $DB;
 
         $DB->set_field('course', 'groupmode', VISIBLEGROUPS, ['id' => $this->course->id]);
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         // Check I can see my approved group entries.
         $this->setUser($this->student1);
@@ -566,7 +578,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_get_entry_separated_groups() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         // Check I can see my approved group entries.
         $this->setUser($this->student1);
@@ -633,7 +645,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      * Test get_entry from other group in separated groups.
      */
     public function test_get_entry_other_group_separated_groups() {
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         // We should not be able to view other gropu entries (in separated groups).
         $this->setUser($this->student1);
@@ -646,7 +658,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_get_fields() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->student1);
         $result = mod_data_external::get_fields($this->database->id);
@@ -676,14 +688,14 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_search_entries() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->student1);
         // Empty search, it should return all the visible entries.
         $result = mod_data_external::search_entries($this->database->id, 0, false);
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
-        $this->assertCount(2, $result['entries']);
-        $this->assertEquals(2, $result['totalcount']);
+        $this->assertCount(3, $result['entries']);
+        $this->assertEquals(3, $result['totalcount']);
 
         // Search for something that does not exists.
         $result = mod_data_external::search_entries($this->database->id, 0, false, 'abc');
@@ -694,17 +706,17 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         // Search by text matching all the entries.
         $result = mod_data_external::search_entries($this->database->id, 0, false, 'text');
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
-        $this->assertCount(2, $result['entries']);
-        $this->assertEquals(2, $result['totalcount']);
-        $this->assertEquals(2, $result['maxcount']);
+        $this->assertCount(3, $result['entries']);
+        $this->assertEquals(3, $result['totalcount']);
+        $this->assertEquals(3, $result['maxcount']);
 
         // Now as the other student I should receive my not approved entry. Apply ordering here.
         $this->setUser($this->student2);
         $result = mod_data_external::search_entries($this->database->id, 0, false, 'text', [], DATA_APPROVED, 'ASC');
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
-        $this->assertCount(3, $result['entries']);
-        $this->assertEquals(3, $result['totalcount']);
-        $this->assertEquals(3, $result['maxcount']);
+        $this->assertCount(4, $result['entries']);
+        $this->assertEquals(4, $result['totalcount']);
+        $this->assertEquals(4, $result['maxcount']);
         // The not approved one should be the first.
         $this->assertEquals($entry13, $result['entries'][0]['id']);
 
@@ -712,26 +724,27 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->student3);
         $result = mod_data_external::search_entries($this->database->id, 0, false, 'text');
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
-        $this->assertCount(1, $result['entries']);
-        $this->assertEquals(1, $result['totalcount']);
-        $this->assertEquals(1, $result['maxcount']);
-        $this->assertEquals($this->student3->id, $result['entries'][0]['userid']);
+        $this->assertCount(2, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals(2, $result['maxcount']);
+        $this->assertEquals($this->student2->id, $result['entries'][0]['userid']);
+        $this->assertEquals($this->student3->id, $result['entries'][1]['userid']);
 
         // Same normal text search as teacher.
         $this->setUser($this->teacher);
         $result = mod_data_external::search_entries($this->database->id, 0, false, 'text');
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
-        $this->assertCount(4, $result['entries']);  // I can see all groups and non approved.
-        $this->assertEquals(4, $result['totalcount']);
-        $this->assertEquals(4, $result['maxcount']);
+        $this->assertCount(5, $result['entries']);  // I can see all groups and non approved.
+        $this->assertEquals(5, $result['totalcount']);
+        $this->assertEquals(5, $result['maxcount']);
 
         // Pagination.
         $this->setUser($this->teacher);
         $result = mod_data_external::search_entries($this->database->id, 0, false, 'text', [], DATA_TIMEADDED, 'ASC', 0, 2);
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(2, $result['entries']);  // Only 2 per page.
-        $this->assertEquals(4, $result['totalcount']);
-        $this->assertEquals(4, $result['maxcount']);
+        $this->assertEquals(5, $result['totalcount']);
+        $this->assertEquals(5, $result['maxcount']);
 
         // Now advanced search or not dinamic fields (user firstname for example).
         $this->setUser($this->student1);
@@ -740,9 +753,9 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         ];
         $result = mod_data_external::search_entries($this->database->id, 0, false, '', $advsearch);
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
-        $this->assertCount(1, $result['entries']);
-        $this->assertEquals(1, $result['totalcount']);
-        $this->assertEquals(2, $result['maxcount']);
+        $this->assertCount(2, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals(3, $result['maxcount']);
         $this->assertEquals($this->student2->id, $result['entries'][0]['userid']);  // I only found mine!
 
         // Advanced search for fields.
@@ -752,9 +765,9 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         ];
         $result = mod_data_external::search_entries($this->database->id, 0, false, '', $advsearch);
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
-        $this->assertCount(2, $result['entries']);  // Found two entries matching this.
-        $this->assertEquals(2, $result['totalcount']);
-        $this->assertEquals(2, $result['maxcount']);
+        $this->assertCount(3, $result['entries']);  // Found two entries matching this.
+        $this->assertEquals(3, $result['totalcount']);
+        $this->assertEquals(3, $result['maxcount']);
 
         // Combined search.
         $field2 = $DB->get_record('data_fields', array('type' => 'number'));
@@ -765,9 +778,9 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         ];
         $result = mod_data_external::search_entries($this->database->id, 0, false, '', $advsearch);
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
-        $this->assertCount(1, $result['entries']);  // Only one matching everything.
-        $this->assertEquals(1, $result['totalcount']);
-        $this->assertEquals(2, $result['maxcount']);
+        $this->assertCount(2, $result['entries']);  // Only one matching everything.
+        $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals(3, $result['maxcount']);
 
         // Combined search (no results).
         $field2 = $DB->get_record('data_fields', array('type' => 'number'));
@@ -779,7 +792,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);  // Only one matching everything.
         $this->assertEquals(0, $result['totalcount']);
-        $this->assertEquals(2, $result['maxcount']);
+        $this->assertEquals(3, $result['maxcount']);
     }
 
     /**
@@ -787,7 +800,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_approve_entry() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->teacher);
         $this->assertEquals(0, $DB->get_field('data_records', 'approved', array('id' => $entry13)));
@@ -801,7 +814,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_unapprove_entry() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->teacher);
         $this->assertEquals(1, $DB->get_field('data_records', 'approved', array('id' => $entry11)));
@@ -815,7 +828,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_approve_entry_missing_permissions() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->student1);
         $this->expectException('moodle_exception');
@@ -827,7 +840,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_delete_entry_as_teacher() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->teacher);
         $result = mod_data_external::delete_entry($entry11);
@@ -845,7 +858,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_delete_entry_as_student() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->student1);
         $result = mod_data_external::delete_entry($entry11);
@@ -858,7 +871,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_delete_entry_as_student_in_read_only_period() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
         // Set a time period.
         $this->database->timeviewfrom = time() - HOURSECS;
         $this->database->timeviewto = time() + HOURSECS;
@@ -874,7 +887,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_delete_entry_missing_permissions() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->student1);
         $this->expectException('moodle_exception');
@@ -887,7 +900,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
     public function test_add_entry() {
         global $DB;
         // First create the record structure and add some entries.
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->student1);
         $newentrydata = [];
@@ -1038,7 +1051,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_add_entry_read_only_period() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
         // Set a time period.
         $this->database->timeviewfrom = time() - HOURSECS;
         $this->database->timeviewto = time() + HOURSECS;
@@ -1055,7 +1068,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_add_entry_max_num_entries() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
         // Set a time period.
         $this->database->maxentries = 1;
         $DB->update_record('data', $this->database);
@@ -1072,7 +1085,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
     public function test_update_entry() {
         global $DB;
         // First create the record structure and add some entries.
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->student1);
         $newentrydata = [];
@@ -1212,7 +1225,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      * Test update_entry sending empty data.
      */
     public function test_update_entry_empty_data() {
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->student1);
         $result = mod_data_external::update_entry($entry11, []);
@@ -1228,7 +1241,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_update_entry_read_only_period() {
         global $DB;
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
         // Set a time period.
         $this->database->timeviewfrom = time() - HOURSECS;
         $this->database->timeviewto = time() + HOURSECS;
@@ -1245,7 +1258,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
      */
     public function test_update_entry_other_user() {
         // Try to update other user entry.
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
         $this->setUser($this->student2);
         $this->expectExceptionMessage(get_string('noaccess', 'data'));
         $this->expectException('moodle_exception');
@@ -1261,7 +1274,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
 
         $DB->set_field('data', 'assessed', RATING_AGGREGATE_SUM, array('id' => $this->database->id));
         $DB->set_field('data', 'scale', 100, array('id' => $this->database->id));
-        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
