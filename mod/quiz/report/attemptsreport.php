@@ -146,7 +146,7 @@ abstract class quiz_attempts_report extends quiz_default_report {
      * and messages to cover common cases when the report can't be shown.
      *
      * @param stdClass $cm the course_module information.
-     * @param stdClass $coures the course settings.
+     * @param stdClass $course the course settings.
      * @param stdClass $quiz the quiz settings.
      * @param mod_quiz_attempts_report_options $options the current report settings.
      * @param int $currentgroup the current group.
@@ -171,6 +171,8 @@ abstract class quiz_attempts_report extends quiz_default_report {
 
         if (!$hasquestions) {
             echo quiz_no_questions_message($quiz, $cm, $this->context);
+        } else if ($currentgroup == self::NO_GROUPS_ALLOWED) {
+            echo $OUTPUT->notification(get_string('notingroup'));
         } else if (!$hasstudents) {
             echo $OUTPUT->notification(get_string('nostudentsyet'));
         } else if ($currentgroup && !$this->hasgroupstudents) {
