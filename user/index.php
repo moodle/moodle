@@ -455,10 +455,37 @@ if ($wheres) {
 $totalcount = $DB->count_records_sql("SELECT COUNT(u.id) $from $where", $params);
 
 if (!empty($search)) {
+    $conditions = array();
+
+    // Search by fullname.
     $fullname = $DB->sql_fullname('u.firstname', 'u.lastname');
-    $wheres[] = "(". $DB->sql_like($fullname, ':search1', false, false) .
-                " OR ". $DB->sql_like('email', ':search2', false, false) .
-                " OR ". $DB->sql_like('idnumber', ':search3', false, false) .") ";
+    $conditions[] = $DB->sql_like($fullname, ':search1', false, false);
+
+    // Search by email.
+    $email = $DB->sql_like('email', ':search2', false, false);
+    if (!in_array('email', $extrafields)) {
+        // Prevent users who hide their email address from being found by others
+        // who aren't allowed to see hidden email addresses.
+        $email = "(". $email ." AND (" .
+                "u.maildisplay <> :maildisplayhide " .
+                "OR u.id = :userid1". // User can always find himself.
+                "))";
+        $params['maildisplayhide'] = core_user::MAILDISPLAY_HIDE;
+        $params['userid1'] = $USER->id;
+    }
+    $conditions[] = $email;
+
+    // Search by idnumber.
+    $idnumber = $DB->sql_like('idnumber', ':search3', false, false);
+    if (!in_array('idnumber', $extrafields)) {
+        // Users who aren't allowed to see idnumbers should at most find themselves
+        // when searching for an idnumber.
+        $idnumber = "(". $idnumber . " AND u.id = :userid2)";
+        $params['userid2'] = $USER->id;
+    }
+    $conditions[] = $idnumber;
+
+    $wheres[] = "(". implode(" OR ", $conditions) .") ";
     $params['search1'] = "%$search%";
     $params['search2'] = "%$search%";
     $params['search3'] = "%$search%";
