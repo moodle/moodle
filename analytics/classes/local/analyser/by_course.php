@@ -44,7 +44,11 @@ abstract class by_course extends base {
 
         // Default to all system courses.
         if (!empty($this->options['filter'])) {
-            $courses = $this->options['filter'];
+            $courses = array();
+            foreach ($this->options['filter'] as $courseid) {
+                $courses[$courseid] = new \stdClass();
+                $courses[$courseid]->id = $courseid;
+            }
         } else {
             // Iterate through all potentially valid courses.
             $courses = get_courses('all', 'c.sortorder ASC', 'c.id');
