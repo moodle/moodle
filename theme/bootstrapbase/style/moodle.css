@@ -4674,6 +4674,9 @@ dd:after {
 .nav-tabs > .active > a[href]:focus {
   cursor: pointer;
 }
+.inplaceeditable {
+  display: block;
+}
 .inplaceeditable.inplaceeditingon {
   position: relative;
 }
