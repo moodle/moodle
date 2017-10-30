@@ -76,8 +76,8 @@ class group_details implements renderable, templatable {
             ];
 
             $data = new stdClass();
-            $data->picture = print_group_picture($this->group, $this->group->courseid, true, true, false);
             $data->name = format_string($this->group->name, true, ['context' => $context]);
+            $data->pictureurl = get_group_picture_url($this->group, $this->group->courseid, true);
             $data->description = format_text($description, $descriptionformat, $options);
 
             if (has_capability('moodle/course:managegroups', $context)) {

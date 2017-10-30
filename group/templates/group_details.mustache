@@ -27,25 +27,25 @@
 
     Context variables required for this template:
     * name string Group Name
-    * picture string Group image HTML
+    * pictureurl string Group image url
     * description string Group description
     * edit string edit link to edit the group
 
     Example context (json):
     {
         "name": "Group Name",
-        "picture": "",
+        "pictureurl": "https://raw.githubusercontent.com/moodle/moodle/master/pix/g/f1.png",
         "description": "This is the description for Group Name",
-        "editurl": ""
+        "editurl": "http://www.moodle.org"
     }
 }}
 {{#name}}
 <div class="groupinfobox container-fluid p-y-1">
     <div class="row-fluid">
-        {{#picture}}
-        <div class="group-image col-sm-1 span1">{{{picture}}}</div>
-        {{/picture}}
-        <div {{#picture}}class="col-sm-11 span11"{{/picture}}{{^picture}}class="col"{{/picture}}>
+        {{#pictureurl}}
+        <div class="group-image col-sm-1 span1">{{{pictureurl}}}</div>
+        {{/pictureurl}}
+        <div {{#pictureurl}}class="col-sm-11 span11"{{/pictureurl}}{{^pictureurl}}class="col"{{/pictureurl}}>
             <div class="container-fluid">
                 <div class="row-fluid">
                     <div class="col">
