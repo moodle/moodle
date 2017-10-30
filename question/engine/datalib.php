@@ -525,15 +525,11 @@ ORDER BY
     qas.sequencenumber
     ", $qubaids->usage_id_in_params());
 
-        if (!$records->valid()) {
-            throw new coding_exception('Failed to load questions_usages_by_activity for qubaid_condition :' . $qubaids);
-        }
-
         $qubas = array();
-        do {
+        while ($records->valid()) {
             $record = $records->current();
             $qubas[$record->qubaid] = question_usage_by_activity::load_from_records($records, $record->qubaid);
-        } while ($records->valid());
+        }
 
         $records->close();
 

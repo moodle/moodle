@@ -68,6 +68,15 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
         // Insert an extra field in attempt data and extra rows where necessary.
         $newrawdata = array();
         foreach ($this->rawdata as $attempt) {
+            if (!isset($this->questionusagesbyactivity[$attempt->usageid])) {
+                // This is a user without attempts.
+                $attempt->try = 0;
+                $attempt->lasttryforallparts = true;
+                $newrawdata[] = $attempt;
+                continue;
+            }
+
+            // We have an attempt, which may require several rows.
             $maxtriesinanyslot = 1;
             foreach ($this->questionusagesbyactivity[$attempt->usageid]->get_slots() as $slot) {
                 $tries = $this->get_no_of_tries($attempt, $slot);
@@ -230,7 +239,7 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
      * @return string   What to put in the cell for this column, for this row data.
      */
     public function col_email($tablerow) {
-        if ($tablerow->try != 1) {
+        if ($tablerow->try > 1) {
             return '';
         } else {
             return $tablerow->email;
@@ -244,18 +253,27 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
      * @return string   What to put in the cell for this column, for this row data.
      */
     public function col_sumgrades($tablerow) {
-        if (!$tablerow->lasttryforallparts) {
+        if ($tablerow->try == 0) {
+            // We are showing a user without a quiz attempt.
+            return '-';
+        } else if (!$tablerow->lasttryforallparts) {
+            // There are more rows to come for this quiz attempt, so we will show this later.
             return '';
         } else {
+            // Last row for this attempt. Now is the time to show attempt-related data.
             return parent::col_sumgrades($tablerow);
         }
     }
 
-
     public function col_state($tablerow) {
-        if (!$tablerow->lasttryforallparts) {
+        if ($tablerow->try == 0) {
+            // We are showing a user without a quiz attempt.
+            return '-';
+        } else if (!$tablerow->lasttryforallparts) {
+            // There are more rows to come for this quiz attempt, so we will show this later.
             return '';
         } else {
+            // Last row for this attempt. Now is the time to show attempt-related data.
             return parent::col_state($tablerow);
         }
     }
