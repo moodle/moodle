@@ -95,122 +95,6 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
     }
 
     /**
-     * You can't create a quiz module event when the module doesn't exist.
-     */
-    public function test_mod_quiz_core_calendar_validate_event_timestart_no_activity() {
-        global $CFG;
-
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $generator = $this->getDataGenerator();
-        $course = $generator->create_course();
-
-        $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'quiz',
-            'instance' => 1234,
-            'eventtype' => QUIZ_EVENT_TYPE_OPEN,
-            'timestart' => time(),
-            'timeduration' => 86400,
-            'visible' => 1
-        ]);
-
-        $this->expectException('moodle_exception');
-        mod_quiz_core_calendar_validate_event_timestart($event);
-    }
-
-    /**
-     * A QUIZ_EVENT_TYPE_OPEN must be before the close time of the quiz activity.
-     */
-    public function test_mod_quiz_core_calendar_validate_event_timestart_valid_open_event() {
-        global $DB;
-
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $timeopen = time();
-        $timeclose = $timeopen + DAYSECS;
-        $quiz = $this->create_quiz_instance(['timeopen' => $timeopen, 'timeclose' => $timeclose]);
-        $event = $this->create_quiz_calendar_event($quiz, [
-            'eventtype' => QUIZ_EVENT_TYPE_OPEN,
-            'timestart' => $timeopen
-        ]);
-
-        mod_quiz_core_calendar_validate_event_timestart($event);
-        // The function above will throw an exception if the event is
-        // invalid.
-        $this->assertTrue(true);
-    }
-
-    /**
-     * A QUIZ_EVENT_TYPE_OPEN can not have a start time set after the close time
-     * of the quiz activity.
-     */
-    public function test_mod_quiz_core_calendar_validate_event_timestart_invalid_open_event() {
-        global $DB;
-
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $timeopen = time();
-        $timeclose = $timeopen + DAYSECS;
-        $quiz = $this->create_quiz_instance(['timeopen' => $timeopen, 'timeclose' => $timeclose]);
-        $event = $this->create_quiz_calendar_event($quiz, [
-            'eventtype' => QUIZ_EVENT_TYPE_OPEN,
-            'timestart' => $timeclose + 1
-        ]);
-
-        $this->expectException('moodle_exception');
-        mod_quiz_core_calendar_validate_event_timestart($event);
-    }
-
-    /**
-     * A QUIZ_EVENT_TYPE_CLOSE must be after the open time of the quiz activity.
-     */
-    public function test_mod_quiz_core_calendar_validate_event_timestart_valid_close_event() {
-        global $DB;
-
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $timeopen = time();
-        $timeclose = $timeopen + DAYSECS;
-        $quiz = $this->create_quiz_instance(['timeopen' => $timeopen, 'timeclose' => $timeclose]);
-        $event = $this->create_quiz_calendar_event($quiz, [
-            'eventtype' => QUIZ_EVENT_TYPE_OPEN,
-            'timestart' => $timeclose
-        ]);
-
-        mod_quiz_core_calendar_validate_event_timestart($event);
-        // The function above will throw an exception if the event isn't
-        // valid.
-        $this->assertTrue(true);
-    }
-
-    /**
-     * A QUIZ_EVENT_TYPE_CLOSE can not have a start time set before the open time
-     * of the quiz activity.
-     */
-    public function test_mod_quiz_core_calendar_validate_event_timestart_invalid_close_event() {
-        global $DB;
-
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $timeopen = time();
-        $timeclose = $timeopen + DAYSECS;
-        $quiz = $this->create_quiz_instance(['timeopen' => $timeopen, 'timeclose' => $timeclose]);
-        $event = $this->create_quiz_calendar_event($quiz, [
-            'eventtype' => QUIZ_EVENT_TYPE_CLOSE,
-            'timestart' => $timeopen - 1
-        ]);
-
-        $this->expectException('moodle_exception');
-        mod_quiz_core_calendar_validate_event_timestart($event);
-    }
-
-    /**
      * An unkown event type should not change the quiz instance.
      */
     public function test_mod_quiz_core_calendar_event_timestart_updated_unknown_event() {
@@ -226,7 +110,7 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
             'timestart' => 1
         ]);
 
-        mod_quiz_core_calendar_event_timestart_updated($event);
+        mod_quiz_core_calendar_event_timestart_updated($event, $quiz);
 
         $quiz = $DB->get_record('quiz', ['id' => $quiz->id]);
         $this->assertEquals($timeopen, $quiz->timeopen);
@@ -256,7 +140,7 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
             'timestart' => $newtimeopen
         ]);
 
-        mod_quiz_core_calendar_event_timestart_updated($event);
+        mod_quiz_core_calendar_event_timestart_updated($event, $quiz);
 
         $quiz = $DB->get_record('quiz', ['id' => $quiz->id]);
         // Ensure the timeopen property matches the event timestart.
@@ -290,7 +174,7 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
             'timestart' => $newtimeclose
         ]);
 
-        mod_quiz_core_calendar_event_timestart_updated($event);
+        mod_quiz_core_calendar_event_timestart_updated($event, $quiz);
 
         $quiz = $DB->get_record('quiz', ['id' => $quiz->id]);
         // Ensure the timeclose property matches the event timestart.
@@ -332,7 +216,7 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
 
         $DB->insert_record('quiz_overrides', $record);
 
-        mod_quiz_core_calendar_event_timestart_updated($event);
+        mod_quiz_core_calendar_event_timestart_updated($event, $quiz);
 
         $quiz = $DB->get_record('quiz', ['id' => $quiz->id]);
         // Ensure the timeopen property doesn't change.
@@ -379,7 +263,7 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
 
         $this->setUser($user);
 
-        mod_quiz_core_calendar_event_timestart_updated($event);
+        mod_quiz_core_calendar_event_timestart_updated($event, $quiz);
 
         $newquiz = $DB->get_record('quiz', ['id' => $quiz->id]);
         // The time open shouldn't have changed even though we updated the calendar
@@ -426,7 +310,7 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
 
-        mod_quiz_core_calendar_event_timestart_updated($event);
+        mod_quiz_core_calendar_event_timestart_updated($event, $quiz);
 
         $triggeredevents = $sink->get_events();
         $moduleupdatedevents = array_filter($triggeredevents, function($e) {
@@ -625,7 +509,7 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
 
         $this->setUser($teacher);
 
-        mod_quiz_core_calendar_event_timestart_updated($event);
+        mod_quiz_core_calendar_event_timestart_updated($event, $quiz);
 
         $quiz = $DB->get_record('quiz', ['id' => $quiz->id]);
         $attempt = $DB->get_record('quiz_attempts', ['id' => $attemptid]);

@@ -4,7 +4,7 @@ information provided here is intended especially for developers.
 === 3.4 ===
 * calendar_get_mini has been deprecated. Please update to use the new
   exporters and renderers.
-* added core_calendar_validate_event_timestart and core_calendar_event_timestart_updated callbacks for module events
+* added core_calendar_get_valid_event_timestart_range and core_calendar_event_timestart_updated callbacks for module events
   when the update_event_start_day function is used in the local api.
 
 === 3.3 ===

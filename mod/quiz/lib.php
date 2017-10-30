@@ -2270,21 +2270,18 @@ function mod_quiz_get_completion_active_rule_descriptions($cm) {
  *     [1506741172, 'The date must be before this date']
  * ]
  *
+ * @throws \moodle_exception
  * @param \calendar_event $event The calendar event to get the time range for
- * @param stdClass|null $quiz The module instance to get the range from
+ * @param stdClass $quiz The module instance to get the range from
  * @return array
  */
-function mod_quiz_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $quiz = null) {
+function mod_quiz_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $quiz) {
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
     // No restrictions on override events.
     if (quiz_is_overriden_calendar_event($event)) {
         return [null, null];
-    }
-
-    if (!$quiz) {
-        $quiz = $DB->get_record('quiz', ['id' => $event->instance]);
     }
 
     $mindate = null;
@@ -2310,44 +2307,6 @@ function mod_quiz_core_calendar_get_valid_event_timestart_range(\calendar_event 
 }
 
 /**
- * This function will check that the given event is valid for it's
- * corresponding quiz module.
- *
- * An exception is thrown if the event fails validation.
- *
- * @throws \moodle_exception
- * @param \calendar_event $event
- * @return bool
- */
-function mod_quiz_core_calendar_validate_event_timestart(\calendar_event $event) {
-    global $DB;
-
-    if (!isset($event->instance)) {
-        return;
-    }
-
-    // Something weird going on. The event is for a different module so
-    // we should ignore it.
-    if ($event->modulename != 'quiz') {
-        return;
-    }
-
-    // We need to read from the DB directly because course module may
-    // currently be getting created so it won't be in mod info yet.
-    $quiz = $DB->get_record('quiz', ['id' => $event->instance], '*', MUST_EXIST);
-    $timestart = $event->timestart;
-    list($min, $max) = mod_quiz_core_calendar_get_valid_event_timestart_range($event, $quiz);
-
-    if ($min && $timestart < $min[0]) {
-        throw new \moodle_exception($min[1]);
-    }
-
-    if ($max && $timestart > $max[0]) {
-        throw new \moodle_exception($max[1]);
-    }
-}
-
-/**
  * This function will update the quiz module according to the
  * event that has been modified.
  *
@@ -2355,15 +2314,15 @@ function mod_quiz_core_calendar_validate_event_timestart(\calendar_event $event)
  * according to the type of event provided.
  *
  * @throws \moodle_exception
- * @param \calendar_event $event
+ * @param \calendar_event $event A quiz activity calendar event
+ * @param \stdClass $quiz A quiz activity instance
  */
-function mod_quiz_core_calendar_event_timestart_updated(\calendar_event $event) {
+function mod_quiz_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $quiz) {
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-    // We don't update the activity if it's an override event that has
-    // been modified.
-    if (quiz_is_overriden_calendar_event($event)) {
+    if (!in_array($event->eventtype, [QUIZ_EVENT_TYPE_OPEN, QUIZ_EVENT_TYPE_CLOSE])) {
+        // This isn't an event that we care about so we can ignore it.
         return;
     }
 
@@ -2379,6 +2338,18 @@ function mod_quiz_core_calendar_event_timestart_updated(\calendar_event $event) 
         return;
     }
 
+    if ($quiz->id != $instanceid) {
+        // The provided quiz instance doesn't match the event so
+        // there is nothing to do here.
+        return;
+    }
+
+    // We don't update the activity if it's an override event that has
+    // been modified.
+    if (quiz_is_overriden_calendar_event($event)) {
+        return;
+    }
+
     $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
     $context = context_module::instance($coursemodule->id);
 
@@ -2391,8 +2362,6 @@ function mod_quiz_core_calendar_event_timestart_updated(\calendar_event $event) 
         // If the event is for the quiz activity opening then we should
         // set the start time of the quiz activity to be the new start
         // time of the event.
-        $quiz = $DB->get_record('quiz', ['id' => $instanceid], '*', MUST_EXIST);
-
         if ($quiz->timeopen != $event->timestart) {
             $quiz->timeopen = $event->timestart;
             $modified = true;
@@ -2401,8 +2370,6 @@ function mod_quiz_core_calendar_event_timestart_updated(\calendar_event $event) 
         // If the event is for the quiz activity closing then we should
         // set the end time of the quiz activity to be the new start
         // time of the event.
-        $quiz = $DB->get_record('quiz', ['id' => $instanceid], '*', MUST_EXIST);
-
         if ($quiz->timeclose != $event->timestart) {
             $quiz->timeclose = $event->timestart;
             $modified = true;
