@@ -161,8 +161,9 @@ class mod_page_external extends external_api {
                                                                 $page->introformat, $context->id, 'mod_page', 'intro', null);
                 $page->introfiles = external_util::get_area_files($context->id, 'mod_page', 'intro', false, false);
 
+                $options = array('noclean' => true);
                 list($page->content, $page->contentformat) = external_format_text($page->content, $page->contentformat,
-                                                                $context->id, 'mod_page', 'content', $page->revision);
+                                                                $context->id, 'mod_page', 'content', $page->revision, $options);
                 $page->contentfiles = external_util::get_area_files($context->id, 'mod_page', 'content');
 
                 $returnedpages[] = $page;
