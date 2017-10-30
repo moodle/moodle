@@ -489,7 +489,7 @@ class grading_manager {
      * Returns the given method's controller in the gradable area
      *
      * @param string $method the method name, eg 'rubric' (must be available)
-     * @return grading_controller
+     * @return gradingform_controller
      */
     public function get_controller($method) {
         global $CFG, $DB;
@@ -534,7 +534,7 @@ class grading_manager {
     /**
      * Returns the controller for the active method if it is available
      *
-     * @return null|grading_controller
+     * @return null|gradingform_controller
      */
     public function get_active_controller() {
         if ($gradingmethod = $this->get_active_method()) {
