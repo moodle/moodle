@@ -1728,6 +1728,18 @@ class mod_workshop_external extends external_api {
         $feedbackform = $workshop->get_feedbackreviewer_form(null, $assessment, $options);
 
         $errors = $feedbackform->validation((array) $data, array());
+        // Extra checks for the new grade and weight.
+        $possibleweights = workshop::available_assessment_weights_list();
+        if ($data->weight < 0 || $data->weight > max(array_keys($possibleweights))) {
+            $errors['weight'] = 'The new weight must be higher or equal to 0 and cannot be higher than the maximum weight for
+                assessment.';
+        }
+        if (is_numeric($data->gradinggradeover) &&
+                ($data->gradinggradeover < 0 || $data->gradinggradeover > $workshop->gradinggrade)) {
+            $errors['gradinggradeover'] = 'The new grade must be higher or equal to 0 and cannot be higher than the maximum grade
+                for assessment.';
+        }
+
         // We can get several errors, return them in warnings.
         if (!empty($errors)) {
             $status = false;
