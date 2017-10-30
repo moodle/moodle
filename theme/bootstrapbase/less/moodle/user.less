@@ -195,8 +195,14 @@
     font-weight: bold;
 }
 .groupinfobox {
-    .well
+    .well;
+    position: relative;
+
+    h3 {
+        margin-top: 0px;
+    }
 }
+
 .groupinfobox .left {
     padding: 10px;
     width: 100px;
@@ -204,7 +210,15 @@
 }
 
 .group-image {
-    min-width: 60px;
+    display: block;
+    float: left;
+    margin-right: 1em;
+}
+
+.group-edit {
+    position: absolute;
+    right: 0;
+    margin-right: 0.6em;
 }
 
 .course-participation #showall {

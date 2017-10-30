@@ -40,26 +40,14 @@
     }
 }}
 {{#name}}
-<div class="groupinfobox container-fluid p-y-1">
-    <div class="row-fluid">
-        {{#pictureurl}}
-        <div class="group-image col-sm-1 span1">{{{pictureurl}}}</div>
-        {{/pictureurl}}
-        <div {{#pictureurl}}class="col-sm-11 span11"{{/pictureurl}}{{^pictureurl}}class="col"{{/pictureurl}}>
-            <div class="container-fluid">
-                <div class="row-fluid">
-                    <div class="col">
-                        <h3 class="d-inline-block">{{name}}</h3>
-                        {{#editurl}}
-                        <span class="group-edit"><a href="{{editurl}}">{{#pix}}t/edit, core, {{#str}}editgroupprofile{{/str}}{{/pix}}</a></span>
-                        {{/editurl}}
-                    </div>
-                </div>
-                <div class="row-fluid">
-                    <div class="group-description col">{{{description}}}</div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="groupinfobox container-fluid p-x-1 p-y-1">
+    {{#pictureurl}}
+    <div class="group-image"><img class="grouppicture" src="{{{pictureurl}}}" alt="{{{name}}}" title="{{{name}}}"/></div>
+    {{/pictureurl}}
+    {{#editurl}}
+    <div class="group-edit"><a href="{{editurl}}">{{#pix}}t/edit, core, {{#str}}editgroupprofile{{/str}}{{/pix}}</a></div>
+    {{/editurl}}
+    <h3 class="">{{{name}}}</h3>
+    <div class="group-description">{{{description}}}</div>
 </div>
 {{/name}}
