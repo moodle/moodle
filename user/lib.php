@@ -1239,7 +1239,7 @@ function user_get_tagged_users($tag, $exclusivemode = false, $fromctx = 0, $ctx 
  */
 function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $roleid = 0, $enrolid = 0, $statusid = -1,
                                    $search = '', $additionalwhere = '', $additionalparams = array()) {
-    global $DB;
+    global $DB, $USER;
 
     // Get the context.
     $context = \context_course::instance($courseid, MUST_EXIST);
@@ -1315,10 +1315,40 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
             $searchkey1 = 'search' . $index . '1';
             $searchkey2 = 'search' . $index . '2';
             $searchkey3 = 'search' . $index . '3';
+
+            $conditions = array();
+            // Search by fullname.
             $fullname = $DB->sql_fullname('u.firstname', 'u.lastname');
-            $wheres[] = '(' . $DB->sql_like($fullname, ':' . $searchkey1, false, false) .
-                ' OR ' . $DB->sql_like('email', ':' . $searchkey2, false, false) .
-                ' OR ' . $DB->sql_like('idnumber', ':' . $searchkey3, false, false) . ') ';
+            $conditions[] = $DB->sql_like($fullname, ':' . $searchkey1, false, false);
+
+            // Search by email.
+            $email = $DB->sql_like('email', ':' . $searchkey2, false, false);
+            if (!in_array('email', $userfields)) {
+                $maildisplay = 'maildisplay' . $index;
+                $userid1 = 'userid' . $index . '1';
+                // Prevent users who hide their email address from being found by others
+                // who aren't allowed to see hidden email addresses.
+                $email = "(". $email ." AND (" .
+                        "u.maildisplay <> :$maildisplay " .
+                        "OR u.id = :$userid1". // User can always find himself.
+                        "))";
+                $params[$maildisplay] = core_user::MAILDISPLAY_HIDE;
+                $params[$userid1] = $USER->id;
+            }
+            $conditions[] = $email;
+
+            // Search by idnumber.
+            $idnumber = $DB->sql_like('idnumber', ':' . $searchkey3, false, false);
+            if (!in_array('idnumber', $userfields)) {
+                $userid2 = 'userid' . $index . '2';
+                // Users who aren't allowed to see idnumbers should at most find themselves
+                // when searching for an idnumber.
+                $idnumber = "(". $idnumber . " AND u.id = :$userid2)";
+                $params[$userid2] = $USER->id;
+            }
+            $conditions[] = $idnumber;
+
+            $wheres[] = "(". implode(" OR ", $conditions) .") ";
             $params[$searchkey1] = "%$keyword%";
             $params[$searchkey2] = "%$keyword%";
             $params[$searchkey3] = "%$keyword%";
