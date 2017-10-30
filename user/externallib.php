@@ -548,6 +548,16 @@ class core_user_external extends external_api {
             if ($existinguser->deleted or is_mnet_remote_user($existinguser) or isguestuser($existinguser->id)) {
                 continue;
             }
+            // Check duplicated emails.
+            if (isset($user['email']) && $user['email'] !== $existinguser->email) {
+                if (!validate_email($user['email'])) {
+                    continue;
+                } else if (empty($CFG->allowaccountssameemail) &&
+                        $DB->record_exists('user', array('email' => $user['email'], 'mnethostid' => $CFG->mnet_localhost_id))) {
+                    continue;
+                }
+            }
+
             user_update_user($user, true, false);
 
             // Update user picture if it was specified for this user.
