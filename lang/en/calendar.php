@@ -108,6 +108,7 @@ $string['eventrepeat'] = 'Repeats';
 $string['eventsall'] = 'All events';
 $string['eventsdeleted'] = 'Events deleted';
 $string['eventsimported'] = 'Events imported: {$a}';
+$string['eventsource'] = 'Event source';
 $string['eventsupdated'] = 'Events updated: {$a}';
 $string['eventsfor'] = '{$a} events';
 $string['eventskey'] = 'Events key';

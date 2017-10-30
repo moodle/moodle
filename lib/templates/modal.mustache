@@ -45,7 +45,7 @@
         data-region="modal"
         aria-labelledby="{{uniqid}}-modal-title"
         role="document">
-        <div class="modal-header" data-region="header">
+        <div class="modal-header {{$headerclasses}}{{headerclasses}}{{/headerclasses}}" data-region="header">
             <button type="button" class="close" data-action="hide" title="{{#str}} closebuttontitle {{/str}}"></button>
             {{$header}}
                 <h3 id="{{uniqid}}-modal-title" data-region="title" tabindex="0">

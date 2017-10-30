@@ -195,6 +195,8 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/badge' => 'fa-shield',
             'core:i/calc' => 'fa-calculator',
             'core:i/calendar' => 'fa-calendar',
+            'core:i/calendareventdescription' => 'fa-align-left',
+            'core:i/calendareventtime' => 'fa-clock-o',
             'core:i/caution' => 'fa-exclamation text-warning',
             'core:i/checked' => 'fa-check',
             'core:i/checkpermissions' => 'fa-unlock-alt',
