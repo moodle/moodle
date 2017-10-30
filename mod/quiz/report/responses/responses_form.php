@@ -70,6 +70,7 @@ class quiz_responses_settings_form extends mod_quiz_attempts_report_form {
                                            question_attempt::ALL_TRIES    => get_string('alltries', 'question'))
             );
             $mform->setDefault('whichtries', question_attempt::LAST_TRY);
+            $mform->disabledIf('whichtries', 'attempts', 'eq', quiz_attempts_report::ENROLLED_WITHOUT);
         }
     }
 }
