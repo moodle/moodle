@@ -36,6 +36,6 @@ class core_register_renderer extends plugin_renderer_base {
      * @return string
      */
     public function moodleorg_registration_message() {
-        return format_text(get_string('registermoodlenet', 'admin'), FORMAT_MARKDOWN, ['noclean' => true]);
+        return format_text(get_string('registermoodlenet', 'admin'), FORMAT_HTML, ['noclean' => true]);
     }
 }
