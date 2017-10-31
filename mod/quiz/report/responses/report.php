@@ -111,36 +111,13 @@ class quiz_responses_report extends quiz_attempts_report {
 
         $this->process_actions($quiz, $cm, $currentgroup, $groupstudentsjoins, $allowedjoins, $options->get_url());
 
+        $hasquestions = quiz_has_questions($quiz->id);
+
         // Start output.
         if (!$table->is_downloading()) {
             // Only print headers if not asked to download data.
-            $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
-        }
-
-        if ($groupmode = groups_get_activity_groupmode($cm)) {
-            // Groups are being used, so output the group selector if we are not downloading.
-            if (!$table->is_downloading()) {
-                groups_print_activity_menu($cm, $options->get_url());
-            }
-        }
-
-        // Print information on the number of existing attempts.
-        if (!$table->is_downloading()) {
-            // Do not print notices when downloading.
-            if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
-                echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
-            }
-        }
-
-        $hasquestions = quiz_has_questions($quiz->id);
-        if (!$table->is_downloading()) {
-            if (!$hasquestions) {
-                echo quiz_no_questions_message($quiz, $cm, $this->context);
-            } else if (!$hasstudents) {
-                echo $OUTPUT->notification(get_string('nostudentsyet'));
-            } else if ($currentgroup && !$this->hasgroupstudents) {
-                echo $OUTPUT->notification(get_string('nostudentsingroup'));
-            }
+            $this->print_standard_header_and_messages($cm, $course, $quiz,
+                    $options, $currentgroup, $hasquestions, $hasstudents);
 
             // Print the display options.
             $this->form->display();
