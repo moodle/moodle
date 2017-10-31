@@ -544,13 +544,20 @@ span.editinstructions {
 }
 
 .dndupload-progress-outer {
-    @extend progress;
+    background-color: $progress-bg;
+    @include border-radius($progress-border-radius);
+    @include box-shadow($progress-box-shadow);
+    display: block;
+    width: 100%;
+    height: $spacer-y;
+    margin-bottom: $spacer-y;
 }
 
 .dndupload-progress-inner {
-    .progress {
-        @extend .progress-bar;
-    }
+    background-color: $progress-bar-color;
+    @include border-left-radius($progress-border-radius);
+    display: inline-block;
+    height: $spacer-y;
 }
 
 .dndupload-hidden {
