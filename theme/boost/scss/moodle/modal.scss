@@ -1,3 +1,16 @@
+.modal-header {
+    padding: 0;
+
+    .close {
+        padding: $modal-title-padding;
+        margin-top: 0;
+    }
+
+    .modal-title {
+        padding: $modal-title-padding;
+    }
+}
+
 .modal-body {
     & > .loading-icon {
         display: block;
