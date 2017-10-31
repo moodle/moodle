@@ -197,6 +197,10 @@ abstract class base {
 
         $dataset = $this->calculate_indicators($sampleids, $samplesorigin, $indicators, $ranges);
 
+        if (empty($dataset)) {
+            return false;
+        }
+
         // Now that we have the indicators in place we can add the time range indicators (and target if provided) to each of them.
         $this->fill_dataset($dataset, $calculatedtarget);
 
