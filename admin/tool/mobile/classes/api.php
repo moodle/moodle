@@ -386,7 +386,8 @@ class api {
         // Return certificate information and verify the certificate.
         $curl->setopt(array('CURLOPT_CERTINFO' => 1, 'CURLOPT_SSL_VERIFYPEER' => true));
         $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot); // Force https url.
-        $curl->head($httpswwwroot . "/login/index.php");
+        // Check https using a page not redirecting or returning exceptions.
+        $curl->head($httpswwwroot . "/$CFG->admin/tool/mobile/mobile.webmanifest.php");
         $info = $curl->get_info();
 
         // First of all, check the server certificate (if any).
