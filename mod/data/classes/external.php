@@ -513,7 +513,7 @@ class mod_data_external extends external_api {
         $canmanageentries = has_capability('mod/data:manageentries', $context);
         data_require_time_available($database, $canmanageentries);
 
-        if ($record->groupid !== 0) {
+        if ($record->groupid != 0) {
             if (!groups_group_visible($record->groupid, $course, $cm)) {
                 throw new moodle_exception('notingroup');
             }
