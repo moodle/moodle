@@ -64,15 +64,17 @@ class core_calendar_renderer extends plugin_renderer_base {
         $time = $calendartype->timestamp_to_date_array($calendar->time);
 
         $current = $calendar->time;
+        $prevmonthyear = $calendartype->get_prev_month($time['year'], $time['mon']);
         $prev = $calendartype->convert_to_timestamp(
-                $time['year'],
-                $time['mon'] - 1,
-                $time['mday']
+                $prevmonthyear[1],
+                $prevmonthyear[0],
+                1
             );
+        $nextmonthyear = $calendartype->get_next_month($time['year'], $time['mon']);
         $next = $calendartype->convert_to_timestamp(
-                $time['year'],
-                $time['mon'] + 1,
-                $time['mday']
+                $nextmonthyear[1],
+                $nextmonthyear[0],
+                1
             );
 
         $content = '';
