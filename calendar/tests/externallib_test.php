@@ -2201,4 +2201,208 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertTrue($result['validationerror']);
     }
+
+    /**
+     * A user should not be able load the calendar monthly view for a course they cannot access.
+     */
+    public function test_get_calendar_monthly_view_no_course_permission() {
+        global $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $course = $generator->create_course();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+        $name = 'Course Event (course' . $course->id . ')';
+        $record = new stdClass();
+        $record->courseid = $course->id;
+        $courseevent = $this->create_calendar_event($name, $USER->id, 'course', 0, time(), $record);
+
+        $timestart = new DateTime();
+        // Admin can load the course.
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_monthly_view_returns(),
+            core_calendar_external::get_calendar_monthly_view($timestart->format('n'), $timestart->format('Y'),
+                                                              $course->id, null, false)
+        );
+        $this->assertEquals($data['courseid'], $course->id);
+        // User enrolled in the course can load the course calendar.
+        $this->setUser($user1);
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_monthly_view_returns(),
+            core_calendar_external::get_calendar_monthly_view($timestart->format('n'), $timestart->format('Y'),
+                                                              $course->id, null, false)
+        );
+        $this->assertEquals($data['courseid'], $course->id);
+        // User not enrolled in the course cannot load the course calendar.
+        $this->setUser($user2);
+        $this->setExpectedException('require_login_exception');
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_monthly_view_returns(),
+            core_calendar_external::get_calendar_monthly_view($timestart->format('n'), $timestart->format('Y'),
+                                                              $course->id, null, false)
+        );
+    }
+
+    /**
+     * A user should not be able load the calendar day view for a course they cannot access.
+     */
+    public function test_get_calendar_day_view_no_course_permission() {
+        global $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $course = $generator->create_course();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+        $name = 'Course Event (course' . $course->id . ')';
+        $record = new stdClass();
+        $record->courseid = $course->id;
+        $courseevent = $this->create_calendar_event($name, $USER->id, 'course', 0, time(), $record);
+
+        $timestart = new DateTime();
+        // Admin can load the course.
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_day_view_returns(),
+            core_calendar_external::get_calendar_day_view($timestart->format('n'), $timestart->format('Y'),
+                                                          $timestart->format('j'), $course->id, null)
+        );
+        $this->assertEquals($data['courseid'], $course->id);
+        // User enrolled in the course can load the course calendar.
+        $this->setUser($user1);
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_day_view_returns(),
+            core_calendar_external::get_calendar_day_view($timestart->format('n'), $timestart->format('Y'),
+                                                          $timestart->format('j'), $course->id, null)
+        );
+        $this->assertEquals($data['courseid'], $course->id);
+        // User not enrolled in the course cannot load the course calendar.
+        $this->setUser($user2);
+        $this->setExpectedException('require_login_exception');
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_day_view_returns(),
+            core_calendar_external::get_calendar_day_view($timestart->format('n'), $timestart->format('Y'),
+                                                          $timestart->format('j'), $course->id, null)
+        );
+    }
+
+    /**
+     * A user should not be able load the calendar upcoming view for a course they cannot access.
+     */
+    public function test_get_calendar_upcoming_view_no_course_permission() {
+        global $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $course = $generator->create_course();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+        $name = 'Course Event (course' . $course->id . ')';
+        $record = new stdClass();
+        $record->courseid = $course->id;
+        $courseevent = $this->create_calendar_event($name, $USER->id, 'course', 0, time(), $record);
+
+        // Admin can load the course.
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_upcoming_view_returns(),
+            core_calendar_external::get_calendar_upcoming_view($course->id, null)
+        );
+        $this->assertEquals($data['courseid'], $course->id);
+        // User enrolled in the course can load the course calendar.
+        $this->setUser($user1);
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_upcoming_view_returns(),
+            core_calendar_external::get_calendar_upcoming_view($course->id, null)
+        );
+        $this->assertEquals($data['courseid'], $course->id);
+        // User not enrolled in the course cannot load the course calendar.
+        $this->setUser($user2);
+        $this->setExpectedException('require_login_exception');
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_upcoming_view_returns(),
+            core_calendar_external::get_calendar_upcoming_view($course->id, null)
+        );
+    }
+
+    /**
+     * A user should not be able load the calendar event for a course they cannot access.
+     */
+    public function test_get_calendar_event_by_id_no_course_permission() {
+        global $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $course = $generator->create_course();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+        $name = 'Course Event (course' . $course->id . ')';
+        $record = new stdClass();
+        $record->courseid = $course->id;
+        $courseevent = $this->create_calendar_event($name, $USER->id, 'course', 0, time(), $record);
+
+        // Admin can load the course event.
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_event_by_id_returns(),
+            core_calendar_external::get_calendar_event_by_id($courseevent->id)
+        );
+        $this->assertEquals($data['event']['id'], $courseevent->id);
+        // User enrolled in the course can load the course event.
+        $this->setUser($user1);
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_event_by_id_returns(),
+            core_calendar_external::get_calendar_event_by_id($courseevent->id)
+        );
+        $this->assertEquals($data['event']['id'], $courseevent->id);
+        // User not enrolled in the course cannot load the course event.
+        $this->setUser($user2);
+        $this->setExpectedException('required_capability_exception');
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_event_by_id_returns(),
+            core_calendar_external::get_calendar_event_by_id($courseevent->id)
+        );
+    }
+
+    /**
+     * A user should not be able load the calendar events for a category they cannot see.
+     */
+    public function test_get_calendar_events_hidden_category() {
+        global $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user1 = $generator->create_user();
+        $category = $generator->create_category(['visible' => 0]);
+        $name = 'Category Event (category: ' . $category->id . ')';
+        $record = new stdClass();
+        $record->categoryid = $category->id;
+        $categoryevent = $this->create_calendar_event($name, $USER->id, 'category', 0, time(), $record);
+
+        $events = [
+            'eventids' => [$categoryevent->id]
+        ];
+        $options = [];
+        // Admin can load the category event.
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_events_returns(),
+            core_calendar_external::get_calendar_events($events, $options)
+        );
+        $this->assertEquals($data['events'][0]['id'], $categoryevent->id);
+        // User with no special permission to see hidden categories will not see the event.
+        $this->setUser($user1);
+        $data = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_events_returns(),
+            core_calendar_external::get_calendar_events($events, $options)
+        );
+        $this->assertCount(0, $data['events']);
+        $this->assertEquals('nopermissions', $data['warnings'][0]['warningcode']);
+    }
 }
