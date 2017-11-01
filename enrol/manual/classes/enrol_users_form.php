@@ -104,8 +104,21 @@ class enrol_manual_enrol_users_form extends moodleform {
 
         // Confirm the user can search for cohorts before displaying select.
         if (has_capability('moodle/cohort:manage', $context) || has_capability('moodle/cohort:view', $context)) {
-            $options = ['contextid' => $context->id, 'multiple' => true];
-            $mform->addElement('cohort', 'cohortlist', get_string('selectcohorts', 'enrol_manual'), $options);
+            // Check to ensure there is at least one visible cohort before displaying the select box.
+            // Ideally it would be better to call external_api::call_external_function('core_cohort_search_cohorts')
+            // (which is used to populate the select box) instead of duplicating logic but there is an issue with globals
+            // being borked (in this case $PAGE) when combining the usage of fragments and call_external_function().
+            require_once($CFG->dirroot . '/cohort/lib.php');
+            $availablecohorts = cohort_get_cohorts($context->id, 0, 1, '');
+            $availablecohorts = $availablecohorts['cohorts'];
+            if (!($context instanceof context_system)) {
+                $availablecohorts = array_merge($availablecohorts,
+                    cohort_get_available_cohorts($context, COHORT_ALL, 0, 1, ''));
+            }
+            if (!empty($availablecohorts)) {
+                $options = ['contextid' => $context->id, 'multiple' => true];
+                $mform->addElement('cohort', 'cohortlist', get_string('selectcohorts', 'enrol_manual'), $options);
+            }
         }
 
         $roles = get_assignable_roles($context);
