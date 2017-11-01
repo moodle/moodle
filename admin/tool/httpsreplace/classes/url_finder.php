@@ -24,6 +24,9 @@
 
 namespace tool_httpsreplace;
 
+use database_column_info;
+use progress_bar;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -60,7 +63,7 @@ class url_finder {
      * for less straightforward swaps.
      *
      * @param string $table
-     * @param string $column
+     * @param database_column_info $column
      * @param string $domain
      * @param string $search search string that has prefix, protocol, domain name and one extra character,
      *      example1: src="http://host.com/
