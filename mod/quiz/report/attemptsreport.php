@@ -139,6 +139,48 @@ abstract class quiz_attempts_report extends quiz_default_report {
     }
 
     /**
+     * Outputs the things you commonly want at the top of a quiz report.
+     *
+     * Calls through to {@link print_header_and_tabs()} and then
+     * outputs the standard group selector, number of attempts summary,
+     * and messages to cover common cases when the report can't be shown.
+     *
+     * @param stdClass $cm the course_module information.
+     * @param stdClass $course the course settings.
+     * @param stdClass $quiz the quiz settings.
+     * @param mod_quiz_attempts_report_options $options the current report settings.
+     * @param int $currentgroup the current group.
+     * @param bool $hasquestions whether there are any questions in the quiz.
+     * @param bool $hasstudents whether there are any relevant students.
+     */
+    protected function print_standard_header_and_messages($cm, $course, $quiz,
+            $options, $currentgroup, $hasquestions, $hasstudents) {
+        global $OUTPUT;
+
+        $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
+
+        if (groups_get_activity_groupmode($cm)) {
+            // Groups are being used, so output the group selector if we are not downloading.
+            groups_print_activity_menu($cm, $options->get_url());
+        }
+
+        // Print information on the number of existing attempts.
+        if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
+            echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
+        }
+
+        if (!$hasquestions) {
+            echo quiz_no_questions_message($quiz, $cm, $this->context);
+        } else if ($currentgroup == self::NO_GROUPS_ALLOWED) {
+            echo $OUTPUT->notification(get_string('notingroup'));
+        } else if (!$hasstudents) {
+            echo $OUTPUT->notification(get_string('nostudentsyet'));
+        } else if ($currentgroup && !$this->hasgroupstudents) {
+            echo $OUTPUT->notification(get_string('nostudentsingroup'));
+        }
+    }
+
+    /**
      * Add all the user-related columns to the $columns and $headers arrays.
      * @param table_sql $table the table being constructed.
      * @param array $columns the list of columns. Added to.

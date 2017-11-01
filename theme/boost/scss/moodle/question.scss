@@ -304,6 +304,14 @@ body.path-question-type {
     vertical-align: baseline;
 }
 
+.que.multianswer .formulation .yui3-widget-positioned {
+    box-sizing: content-box;
+    .feedbackspan {
+        width: inherit;
+        max-width: inherit;
+    }
+}
+
 .path-mod-quiz input[size] {
     width: auto;
     max-width: 100%;
