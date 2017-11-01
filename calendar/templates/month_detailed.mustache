@@ -70,7 +70,7 @@
                         data-drop-zone="month-view-day"
                         data-region="day"
                         data-new-event-timestamp="{{neweventtimestamp}}">
-                        <div class="hidden-sm-down text-xs-center">
+                        <div class="hidden-sm-down hidden-phone text-xs-center">
                             {{#hasevents}}
                                 <a data-action="view-day-link" href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
                             {{/hasevents}}
@@ -118,7 +118,7 @@
                                 </div>
                             {{/hasevents}}
                         </div>
-                        <div class="hidden-md-up hidden-desktop">
+                        <div class="hidden-md-up hidden-desktop hidden-tablet">
                             {{#hasevents}}
                                 <a data-action="view-day-link" href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
                             {{/hasevents}}
