@@ -9307,6 +9307,8 @@ body.path-question-type .fitem_fgroup .accesshide {
 .que.multianswer .formulation .yui3-widget-positioned .feedbackspan {
   box-sizing: content-box;
   padding-bottom: 0;
+  max-width: inherit;
+  width: inherit;
 }
 .path-mod-quiz input[size] {
   width: auto;
