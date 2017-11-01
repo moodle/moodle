@@ -306,6 +306,10 @@ body.path-question-type {
 
 .que.multianswer .formulation .yui3-widget-positioned {
     box-sizing: content-box;
+    .feedbackspan {
+        width: inherit;
+        max-width: inherit;
+    }
 }
 
 .path-mod-quiz input[size] {
