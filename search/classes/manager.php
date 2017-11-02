@@ -98,6 +98,13 @@ class manager {
     protected $engine = null;
 
     /**
+     * Note: This should be removed once possible (see MDL-60644).
+     *
+     * @var float Fake current time for use in PHPunit tests
+     */
+    protected static $phpunitfaketime = 0;
+
+    /**
      * Constructor, use \core_search\manager::instance instead to get a class instance.
      *
      * @param \core_search\base The search engine to use
@@ -669,7 +676,7 @@ class manager {
             });
 
             // Decide time to stop.
-            $stopat = microtime(true) + $timelimit;
+            $stopat = self::get_current_time() + $timelimit;
         }
 
         foreach ($searchareas as $areaid => $searcharea) {
@@ -680,7 +687,7 @@ class manager {
             $this->engine->area_index_starting($searcharea, $fullindex);
 
             $indexingstart = time();
-            $elapsed = microtime(true);
+            $elapsed = self::get_current_time();
 
             // This is used to store this component config.
             list($componentconfigname, $varname) = $searcharea->get_config_var_name();
@@ -730,7 +737,7 @@ class manager {
             }
 
             if ($numdocs > 0) {
-                $elapsed = round((microtime(true) - $elapsed), 3);
+                $elapsed = round((self::get_current_time() - $elapsed), 3);
                 $progress->output('Processed ' . $numrecords . ' records containing ' . $numdocs .
                         ' documents, in ' . $elapsed . ' seconds' .
                         ($partial ? ' (not complete)' : '') . '.', 1);
@@ -760,7 +767,7 @@ class manager {
                 $progress->output('Engine reported error.');
             }
 
-            if ($timelimit && (microtime(true) >= $stopat)) {
+            if ($timelimit && (self::get_current_time() >= $stopat)) {
                 $progress->output('Stopping indexing due to time limit.');
                 break;
             }
@@ -803,7 +810,7 @@ class manager {
         // Work out time to stop, if limited.
         if ($timelimit) {
             // Decide time to stop.
-            $stopat = microtime(true) + $timelimit;
+            $stopat = self::get_current_time() + $timelimit;
         }
 
         // No PHP time limit.
@@ -840,7 +847,7 @@ class manager {
 
             $progress->output('Processing area: ' . $searcharea->get_visible_name());
 
-            $elapsed = microtime(true);
+            $elapsed = self::get_current_time();
 
             // Get the recordset of all documents from the area for this context.
             $recordset = $searcharea->get_document_recordset($referencestarttime, $context);
@@ -881,7 +888,7 @@ class manager {
             }
 
             if ($numdocs > 0) {
-                $elapsed = round((microtime(true) - $elapsed), 3);
+                $elapsed = round((self::get_current_time() - $elapsed), 3);
                 $progress->output('Processed ' . $numrecords . ' records containing ' . $numdocs .
                         ' documents, in ' . $elapsed . ' seconds' .
                         ($partial ? ' (not complete)' : '') . '.', 1);
@@ -895,7 +902,7 @@ class manager {
                 $progress->output('Engine reported error.', 1);
             }
 
-            if ($partial && $timelimit && (microtime(true) >= $stopat)) {
+            if ($partial && $timelimit && (self::get_current_time() >= $stopat)) {
                 $progress->output('Stopping indexing due to time limit.');
                 break;
             }
@@ -1107,7 +1114,7 @@ class manager {
         }
 
         $complete = false;
-        $before = microtime(true);
+        $before = self::get_current_time();
         if ($timelimit) {
             $stopat = $before + $timelimit;
         }
@@ -1125,7 +1132,7 @@ class manager {
 
             // Calculate remaining time.
             $remainingtime = 0;
-            $beforeindex = microtime(true);
+            $beforeindex = self::get_current_time();
             if ($timelimit) {
                 $remainingtime = $stopat - $beforeindex;
             }
@@ -1143,7 +1150,7 @@ class manager {
                     $progress, $request->partialarea, $request->partialtime);
 
             // Work out shared part of message.
-            $endmessage = $contextname . ' (' . round(microtime(true) - $beforeindex, 1) . 's)';
+            $endmessage = $contextname . ' (' . round(self::get_current_time() - $beforeindex, 1) . 's)';
 
             // Update database table and continue/stop as appropriate.
             if ($result->complete) {
@@ -1163,4 +1170,17 @@ class manager {
         }
     }
 
+    /**
+     * Gets current time for use in search system.
+     *
+     * Note: This should be replaced with generic core functionality once possible (see MDL-60644).
+     *
+     * @return float Current time in seconds (with decimals)
+     */
+    public static function get_current_time() {
+        if (PHPUNIT_TEST && self::$phpunitfaketime) {
+            return self::$phpunitfaketime;
+        }
+        return microtime(true);
+    }
 }

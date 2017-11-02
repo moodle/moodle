@@ -46,6 +46,12 @@ class search_manager_testcase extends advanced_testcase {
         $this->mycoursesareaid = \core_search\manager::generate_areaid('core_course', 'mycourse');
     }
 
+    protected function tearDown() {
+        // Stop it from faking time in the search manager (if set by test).
+        testable_core_search::fake_current_time();
+        parent::tearDown();
+    }
+
     public function test_search_enabled() {
 
         $this->resetAfterTest();
@@ -220,6 +226,9 @@ class search_manager_testcase extends advanced_testcase {
         // Make the search engine delay while indexing each document.
         $search->get_engine()->set_add_delay(1.2);
 
+        // Use fake time, starting from now.
+        testable_core_search::fake_current_time(time());
+
         // Index with a limit of 2 seconds - it should index 2 of the documents (after the second
         // one, it will have taken 2.4 seconds so it will stop).
         $search->index(false, 2);
@@ -235,6 +244,7 @@ class search_manager_testcase extends advanced_testcase {
         // Wait to next second (so as to not reindex the label more than once, as it will now
         // be timed before the indexing run).
         $this->waitForSecond();
+        testable_core_search::fake_current_time(time());
 
         // Next index with 1 second limit should do the label and not the forum - the logic is,
         // if it spent ages indexing an area last time, do that one last on next run.
@@ -850,6 +860,7 @@ class search_manager_testcase extends advanced_testcase {
 
         // Do the processing again with a time limit and indexing delay. The time limit is too
         // small; because of the way the logic works, this means it will index 2 activities.
+        testable_core_search::fake_current_time(time());
         $search->get_engine()->set_add_delay(0.2);
         $search->process_index_requests(0.1, $progress);
         $out = $progress->get_buffer();
