@@ -24,6 +24,9 @@
 
 namespace tool_httpsreplace;
 
+use database_column_info;
+use progress_bar;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -60,7 +63,7 @@ class url_finder {
      * for less straightforward swaps.
      *
      * @param string $table
-     * @param string $column
+     * @param database_column_info $column
      * @param string $domain
      * @param string $search search string that has prefix, protocol, domain name and one extra character,
      *      example1: src="http://host.com/
@@ -174,7 +177,7 @@ class url_finder {
                             $regex = '#((src|data)\ *=\ *[\'\"])(http://)([^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))[\'\"]#i';
                             preg_match_all($regex, $record->$columnname, $match);
                             foreach ($match[0] as $i => $fullmatch) {
-                                if (strpos($fullmatch, $CFG->wwwroot) !== false) {
+                                if (\core_text::strpos($fullmatch, $CFG->wwwroot) !== false) {
                                     continue;
                                 }
                                 $prefix = $match[1][$i];
@@ -186,7 +189,7 @@ class url_finder {
                                 }
                                 if ($replacing) {
                                     // For replace string use: prefix, protocol, host and one extra character.
-                                    $found[$prefix . substr($url, 0, strlen($host) + 8)] = $host;
+                                    $found[$prefix . \core_text::substr($url, 0, \core_text::strlen($host) + 8)] = $host;
                                 } else {
                                     $entry["table"] = $table;
                                     $entry["columnname"] = $columnname;
