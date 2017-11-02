@@ -42,7 +42,7 @@
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class phpunit_autoloader implements PHPUnit_Runner_TestSuiteLoader {
+class phpunit_autoloader implements \PHPUnit\Runner\TestSuiteLoader {
     public function load($suiteClassName, $suiteClassFile = '') {
         global $CFG;
 
@@ -66,13 +66,13 @@ class phpunit_autoloader implements PHPUnit_Runner_TestSuiteLoader {
         }
 
         if ($suiteClassFile) {
-            PHPUnit_Util_Fileloader::checkAndLoad($suiteClassFile);
+            PHPUnit\Util\Fileloader::checkAndLoad($suiteClassFile);
             if (class_exists($suiteClassName, false)) {
                 $class = new ReflectionClass($suiteClassName);
                 return $class;
             }
 
-            throw new PHPUnit_Framework_Exception(
+            throw new PHPUnit\Framework\Exception(
                 sprintf("Class '%s' could not be found in '%s'.", $suiteClassName, $suiteClassFile)
             );
         }
@@ -155,7 +155,7 @@ class phpunit_autoloader implements PHPUnit_Runner_TestSuiteLoader {
             }
         }
 
-        throw new PHPUnit_Framework_Exception(
+        throw new PHPUnit\Framework\Exception(
             sprintf("Class '%s' could not be found in '%s'.", $suiteClassName, $suiteClassFile)
         );
     }
@@ -165,7 +165,7 @@ class phpunit_autoloader implements PHPUnit_Runner_TestSuiteLoader {
         // class name. Let's throw fatal error if there are more testcases in one file.
 
         $classes = get_declared_classes();
-        PHPUnit_Util_Fileloader::checkAndLoad($file);
+        PHPUnit\Util\Fileloader::checkAndLoad($file);
         $includePathFilename = stream_resolve_include_path($file);
         $loadedClasses = array_diff(get_declared_classes(), $classes);
 
@@ -174,7 +174,7 @@ class phpunit_autoloader implements PHPUnit_Runner_TestSuiteLoader {
         foreach ($loadedClasses as $loadedClass) {
             $class = new ReflectionClass($loadedClass);
 
-            if ($class->isSubclassOf('PHPUnit_Framework_TestCase') and !$class->isAbstract()) {
+            if ($class->isSubclassOf('PHPUnit\Framework\TestCase') and !$class->isAbstract()) {
                 if (realpath($includePathFilename) === realpath($class->getFileName())) {
                     $candidates[] = $loadedClass;
                 }
@@ -182,13 +182,13 @@ class phpunit_autoloader implements PHPUnit_Runner_TestSuiteLoader {
         }
 
         if (count($candidates) == 0) {
-            throw new PHPUnit_Framework_Exception(
+            throw new PHPUnit\Framework\Exception(
                 sprintf("File '%s' does not contain any test cases.", $file)
             );
         }
 
         if (count($candidates) > 1) {
-            throw new PHPUnit_Framework_Exception(
+            throw new PHPUnit\Framework\Exception(
                 sprintf("File '%s' contains multiple test cases: ".implode(', ', $candidates), $file)
             );
         }
