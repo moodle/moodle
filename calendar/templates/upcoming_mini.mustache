@@ -55,6 +55,9 @@
             <hr>
         </div>
     {{/events}}
+    {{^events}}
+        {{#str}}noupcomingevents, calendar{{/str}}
+    {{/events}}
 </div>
 {{#js}}
 require([
