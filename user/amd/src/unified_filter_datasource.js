@@ -39,14 +39,6 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             var el = $(selector);
             var originalOptions = $(selector).data('originaloptionsjson');
             var selectedFilters = el.val();
-            var categoriesToSkip = [];
-            $.each(selectedFilters, function(index, filter) {
-                var filterCatAndValue = filter.split(':', 2);
-                if (filterCatAndValue.length === 2) {
-                    var category = filterCatAndValue[0];
-                    categoriesToSkip.push(category);
-                }
-            });
             $.each(originalOptions, function(index, option) {
                 // Skip option if it does not contain the query string.
                 if ($.trim(query) !== '' && option.label.toLocaleLowerCase().indexOf(query.toLocaleLowerCase()) === -1) {
@@ -55,14 +47,6 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                 // Skip filters that have already been selected.
                 if ($.inArray(option.value, selectedFilters) > -1) {
                     return true;
-                }
-                // Skip filters for categories that belong to the already selected filters.
-                var optionCatAndValue = option.value.split(':', 2);
-                if (optionCatAndValue.length === 2) {
-                    var category = optionCatAndValue[0];
-                    if ($.inArray(category, categoriesToSkip) > -1) {
-                        return true;
-                    }
                 }
 
                 filteredOptions.push(option);
