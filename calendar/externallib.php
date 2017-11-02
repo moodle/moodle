@@ -1154,12 +1154,26 @@ class core_calendar_external extends external_api {
         // Parameter validation.
         self::validate_parameters(self::get_calendar_upcoming_view_parameters(), [
             'courseid' => $courseid,
+            'categoryid' => $categoryid,
         ]);
+        $PAGE->set_url('/calendar/');
 
+        $category = null;
         if ($courseid != SITEID && !empty($courseid)) {
             // Course ID must be valid and existing.
             $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
             $courses = [$course->id => $course];
+        } else if (!empty($categoryid)) {
+            $course = get_site();
+            $courses = calendar_get_default_courses();
+
+            $category = \coursecat::get($categoryid);
+            $ids += $category->get_parents();
+            $categories = \coursecat::get_many($ids);
+            $courses = array_filter($courses, function($course) use ($categories) {
+                return array_search($course->category, $categories) !== false;
+            });
+            $category = $category->get_db_record();
         } else {
             $course = get_site();
             $courses = calendar_get_default_courses();
@@ -1169,7 +1183,7 @@ class core_calendar_external extends external_api {
         self::validate_context($context);
 
         $calendar = new calendar_information(0, 0, 0, time());
-        $calendar->set_sources($course, $courses);
+        $calendar->set_sources($course, $courses, $category);
 
         list($data, $template) = calendar_get_view($calendar, 'upcoming');
 
@@ -1185,6 +1199,7 @@ class core_calendar_external extends external_api {
         return new external_function_parameters(
             [
                 'courseid' => new external_value(PARAM_INT, 'Course being viewed', VALUE_DEFAULT, SITEID, NULL_ALLOWED),
+                'categoryid' => new external_value(PARAM_INT, 'Category being viewed', VALUE_DEFAULT, null, NULL_ALLOWED),
             ]
         );
     }

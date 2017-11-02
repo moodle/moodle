@@ -82,6 +82,11 @@ class calendar_upcoming_exporter extends exporter {
             'courseid' => [
                 'type' => PARAM_INT,
             ],
+            'categoryid' => [
+                'type' => PARAM_INT,
+                'optional' => true,
+                'default' => 0,
+            ],
         ];
     }
 
@@ -127,6 +132,11 @@ class calendar_upcoming_exporter extends exporter {
         }
         $return['filter_selector'] = $this->get_course_filter_selector($output);
         $return['courseid'] = $this->calendar->courseid;
+
+        if ($this->calendar->categoryid) {
+            $return['categoryid'] = $this->calendar->categoryid;
+        }
+
         return $return;
     }
 

@@ -24,23 +24,26 @@
 define([
     'jquery',
     'core/templates',
+    'core/str',
     'core/notification',
     'core_calendar/repository',
     'core_calendar/events',
     'core_calendar/selectors',
+    'core/modal_factory',
+    'core/modal_events',
+    'core_calendar/summary_modal',
 ], function(
     $,
     Templates,
+    Str,
     Notification,
     CalendarRepository,
     CalendarEvents,
-    CalendarSelectors
+    CalendarSelectors,
+    ModalFactory,
+    ModalEvents,
+    SummaryModal
 ) {
-
-        var SELECTORS = {
-            CALENDAR_NAV_LINK: ".calendarwrapper .arrow_link",
-            LOADING_ICON_CONTAINER: '[data-region="overlay-icon-container"]'
-        };
 
         /**
          * Register event listeners for the module.
@@ -50,7 +53,38 @@ define([
         var registerEventListeners = function(root) {
             root = $(root);
 
-            root.on('click', SELECTORS.CALENDAR_NAV_LINK, function(e) {
+            // Bind click events to event links.
+            root.on('click', CalendarSelectors.links.eventLink, function(e) {
+                var target = $(e.target);
+                var eventId = null;
+
+                var eventLink;
+                if (target.is(CalendarSelectors.actions.viewEvent)) {
+                    eventLink = target;
+                } else {
+                    eventLink = target.closest(CalendarSelectors.actions.viewEvent);
+                }
+
+                if (eventLink.length) {
+                    eventId = eventLink.data('eventId');
+                } else {
+                    eventId = target.find(CalendarSelectors.actions.viewEvent).data('eventId');
+                }
+
+                if (eventId) {
+                    // A link was found. Show the modal.
+
+                    e.preventDefault();
+                    // We've handled the event so stop it from bubbling
+                    // and causing the day click handler to fire.
+                    e.stopPropagation();
+
+                    renderEventSummaryModal(eventId);
+                }
+            });
+
+
+            root.on('click', CalendarSelectors.links.navLink, function(e) {
                 var wrapper = root.find(CalendarSelectors.wrapper);
                 var view = wrapper.data('view');
                 var courseId = wrapper.data('courseid');
@@ -249,7 +283,7 @@ define([
          * @method startLoading
          */
         var startLoading = function(root) {
-            var loadingIconContainer = root.find(SELECTORS.LOADING_ICON_CONTAINER);
+            var loadingIconContainer = root.find(CalendarSelectors.containers.loadingIcon);
 
             loadingIconContainer.removeClass('hidden');
         };
@@ -261,7 +295,7 @@ define([
          * @method stopLoading
          */
         var stopLoading = function(root) {
-            var loadingIconContainer = root.find(SELECTORS.LOADING_ICON_CONTAINER);
+            var loadingIconContainer = root.find(CalendarSelectors.containers.loadingIcon);
 
             loadingIconContainer.addClass('hidden');
         };
@@ -271,23 +305,27 @@ define([
          *
          * @param {object} root The container element.
          * @param {Number} courseId The course id.
+         * @param {Number} categoryId The id of the category whose events are shown
          * @return {promise}
          */
-        var reloadCurrentUpcoming = function(root, courseId) {
+        var reloadCurrentUpcoming = function(root, courseId, categoryId) {
             startLoading(root);
 
             var target = root.find(CalendarSelectors.wrapper);
 
-            if (!courseId) {
+            if (typeof courseId === 'undefined') {
                 courseId = root.find(CalendarSelectors.wrapper).data('courseid');
             }
 
-            return CalendarRepository.getCalendarUpcomingData(courseId)
+            if (typeof categoryId === 'undefined') {
+                categoryId = root.find(CalendarSelectors.wrapper).data('categoryid');
+            }
+
+            return CalendarRepository.getCalendarUpcomingData(courseId, categoryId)
                 .then(function(context) {
                     return Templates.render(root.attr('data-template'), context);
                 })
                 .then(function(html, js) {
-                    window.history.replaceState(null, null, '?view=upcoming&course=' + courseId);
                     return Templates.replaceNode(target, html, js);
                 })
                 .then(function() {
@@ -298,6 +336,93 @@ define([
                     return stopLoading(root);
                 })
                 .fail(Notification.exception);
+        };
+
+        /**
+         * Get the CSS class to apply for the given event type.
+         *
+         * @param {String} eventType The calendar event type
+         * @return {String}
+         */
+        var getEventTypeClassFromType = function(eventType) {
+            switch (eventType) {
+                case 'user':
+                    return 'calendar_event_user';
+                case 'site':
+                    return 'calendar_event_site';
+                case 'group':
+                    return 'calendar_event_group';
+                case 'category':
+                    return 'calendar_event_category';
+                case 'course':
+                    return 'calendar_event_course';
+                default:
+                    return 'calendar_event_course';
+            }
+        };
+
+        /**
+         * Render the event summary modal.
+         *
+         * @param {Number} eventId The calendar event id.
+         */
+        var renderEventSummaryModal = function(eventId) {
+            var typeClass = '';
+
+            // Calendar repository promise.
+            CalendarRepository.getEventById(eventId).then(function(getEventResponse) {
+                if (!getEventResponse.event) {
+                    throw new Error('Error encountered while trying to fetch calendar event with ID: ' + eventId);
+                }
+                var eventData = getEventResponse.event;
+                typeClass = getEventTypeClassFromType(eventData.eventtype);
+
+                return getEventType(eventData.eventtype).then(function(eventType) {
+                    eventData.eventtype = eventType;
+                    return eventData;
+                });
+            }).then(function(eventData) {
+                // Build the modal parameters from the event data.
+                var modalParams = {
+                    title: eventData.name,
+                    type: SummaryModal.TYPE,
+                    body: Templates.render('core_calendar/event_summary_body', eventData),
+                    templateContext: {
+                        canedit: eventData.canedit,
+                        candelete: eventData.candelete,
+                        headerclasses: typeClass,
+                        isactionevent: eventData.isactionevent,
+                        url: eventData.url
+                    }
+                };
+
+                // Create the modal.
+                return ModalFactory.create(modalParams);
+
+            }).done(function(modal) {
+                // Handle hidden event.
+                modal.getRoot().on(ModalEvents.hidden, function() {
+                    // Destroy when hidden.
+                    modal.destroy();
+                });
+
+                // Finally, render the modal!
+                modal.show();
+
+            }).fail(Notification.exception);
+        };
+
+        /**
+         * Get the event type lang string.
+         *
+         * @param {String} eventType The event type.
+         * @return {promise} The lang string promise.
+         */
+        var getEventType = function(eventType) {
+            var lang = 'type' + eventType;
+            return Str.get_string(lang, 'core_calendar').then(function(langStr) {
+                return langStr;
+            });
         };
 
         return {

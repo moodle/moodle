@@ -3220,7 +3220,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         if ($view == "upcoming") {
             $template = 'core_calendar/calendar_upcoming';
         } else if ($view == "upcoming_mini") {
-            $template = 'core_calendar/upcoming_mini';
+            $template = 'core_calendar/calendar_upcoming_mini';
         }
     }
 
