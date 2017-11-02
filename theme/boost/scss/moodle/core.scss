@@ -1933,6 +1933,7 @@ dd:after {
 }
 
 .inplaceeditable {
+    display: block;
     &.inplaceeditingon {
         position: relative;
 
