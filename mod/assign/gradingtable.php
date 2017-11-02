@@ -138,7 +138,7 @@ class assign_grading_table extends table_sql implements renderable {
         $fields .= 's.status as status, ';
         $fields .= 's.id as submissionid, ';
         $fields .= 's.timecreated as firstsubmission, ';
-        $fields .= 's.timemodified as timesubmitted, ';
+        $fields .= "CASE WHEN status='submitted' THEN s.timemodified ELSE NULL END as timesubmitted, ";
         $fields .= 's.attemptnumber as attemptnumber, ';
         $fields .= 'g.id as gradeid, ';
         $fields .= 'g.grade as grade, ';
