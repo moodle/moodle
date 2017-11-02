@@ -1898,7 +1898,7 @@ class core_renderer extends renderer_base {
 
         $output = $this->box_start('generalbox modal modal-dialog modal-in-page show', 'notice');
         $output .= $this->box_start('modal-content', 'modal-content');
-        $output .= $this->box_start('modal-header', 'modal-header');
+        $output .= $this->box_start('modal-header p-x-1', 'modal-header');
         $output .= html_writer::tag('h4', get_string('confirm'));
         $output .= $this->box_end();
         $output .= $this->box_start('modal-body', 'modal-body');
