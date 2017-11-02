@@ -9891,15 +9891,29 @@ body.path-question-type .mform fieldset.hidden {
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
   border-color: #e3e3e3;
+  position: relative;
 }
 .groupinfobox blockquote {
   border-color: #ddd;
   border-color: rgba(0, 0, 0, 0.15);
 }
+.groupinfobox h3 {
+  margin-top: 0px;
+}
 .groupinfobox .left {
   padding: 10px;
   width: 100px;
   vertical-align: top;
+}
+.group-image {
+  display: block;
+  float: left;
+  margin-right: 1em;
+}
+.group-edit {
+  position: absolute;
+  right: 0;
+  margin-right: 0.6em;
 }
 .course-participation #showall {
   text-align: center;

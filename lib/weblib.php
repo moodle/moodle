@@ -2423,23 +2423,56 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
         }
     }
 
+    $pictureurl = get_group_picture_url($group, $courseid, $large);
+
+    // If there is no picture, do nothing.
+    if (!isset($pictureurl)) {
+        return;
+    }
+
+    $context = context_course::instance($courseid);
+
+    $groupname = s($group->name);
+    $pictureimage = html_writer::img($pictureurl, $groupname, ['title' => $groupname]);
+
+    $output = '';
+    if ($link or has_capability('moodle/site:accessallgroups', $context)) {
+        $linkurl = new moodle_url('/user/index.php', ['id' => $courseid, 'group' => $group->id]);
+        $output .= html_writer::link($linkurl, $pictureimage);
+    } else {
+        $output .= $pictureimage;
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Return the url to the group picture.
+ *
+ * @param  stdClass $group A group object.
+ * @param  int $courseid The course ID for the group.
+ * @param  bool $large A large or small group picture? Default is small.
+ * @return moodle_url Returns the url for the group picture.
+ */
+function get_group_picture_url($group, $courseid, $large = false) {
+    global $CFG;
+
     $context = context_course::instance($courseid);
 
     // If there is no picture, do nothing.
     if (!$group->picture) {
-        return '';
+        return;
     }
 
     // If picture is hidden, only show to those with course:managegroups.
     if ($group->hidepicture and !has_capability('moodle/course:managegroups', $context)) {
-        return '';
+        return;
     }
 
-    if ($link or has_capability('moodle/site:accessallgroups', $context)) {
-        $output = '<a href="'. $CFG->wwwroot .'/user/index.php?id='. $courseid .'&amp;group='. $group->id .'">';
-    } else {
-        $output = '';
-    }
     if ($large) {
         $file = 'f1';
     } else {
@@ -2448,18 +2481,7 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
 
     $grouppictureurl = moodle_url::make_pluginfile_url($context->id, 'group', 'icon', $group->id, '/', $file);
     $grouppictureurl->param('rev', $group->picture);
-    $output .= '<img class="grouppicture" src="'.$grouppictureurl.'"'.
-        ' alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
-
-    if ($link or has_capability('moodle/site:accessallgroups', $context)) {
-        $output .= '</a>';
-    }
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    return $grouppictureurl;
 }
 
 
