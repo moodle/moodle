@@ -5652,6 +5652,12 @@ img.iconsmall {
   max-width: 100%;
   display: inline-block;
 }
+.path-calendar .maincalendar .calendarmonth ul li > a:hover {
+  text-decoration: none;
+}
+.path-calendar .maincalendar .calendarmonth ul li > a:hover .eventname {
+  text-decoration: underline;
+}
 .path-calendar .maincalendar .calendarmonth ul li .icon {
   margin-left: 0.25em;
   margin-right: 0.25em;
@@ -5881,6 +5887,12 @@ img.iconsmall {
 .block .calendar_filters li .icon {
   padding: 0;
   margin-left: 0.25em;
+}
+.block .calendar_filters li > a:hover {
+  text-decoration: none;
+}
+.block .calendar_filters li > a:hover .eventname {
+  text-decoration: underline;
 }
 .block .content h3.eventskey {
   margin-top: 0.5em;
