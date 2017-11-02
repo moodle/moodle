@@ -360,7 +360,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
      * Test test_view_lesson invalid id.
      */
     public function test_view_lesson_invalid_id() {
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         mod_lesson_external::view_lesson(0);
     }
 
@@ -371,7 +371,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         // Test not-enrolled user.
         $usernotenrolled = self::getDataGenerator()->create_user();
         $this->setUser($usernotenrolled);
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         mod_lesson_external::view_lesson($this->lesson->id);
     }
 
@@ -414,7 +414,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         course_modinfo::clear_instance_cache();
 
         $this->setUser($this->student);
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         mod_lesson_external::view_lesson($this->lesson->id);
     }
 
@@ -814,7 +814,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         // Should fails as student.
         $this->setUser($this->student);
         // Now, try to review this attempt. We should not be able because is a non-finished attempt.
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
     }
 
@@ -893,7 +893,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
 
         // Fail as student.
         $this->setUser($this->student);
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
     }
 
@@ -966,7 +966,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         // Now check using a normal student account.
         $this->setUser($this->student);
 
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $result = mod_lesson_external::get_page_data($this->lesson->id, $this->page2->id, '', false, true);
     }
 
@@ -1245,7 +1245,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, $result['userstats']['gradeinfo']['total']);     // Total correct answers.
         $this->assertEquals(100, $result['userstats']['gradeinfo']['grade']);   // Correct answer.
 
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $result = mod_lesson_external::get_user_attempt($this->lesson->id, $this->teacher->id, 0);
     }
 

@@ -194,10 +194,10 @@ class core_statslib_testcase extends advanced_testcase {
             $clean->addFullReplacement($placeholder, $value);
         }
 
-        $logs = new PHPUnit\DbUnit\DataSet\DataSetFilter($clean);
+        $logs = new PHPUnit\DbUnit\DataSet\Filter($clean);
         $logs->addIncludeTables(array('log'));
 
-        $stats = new PHPUnit\DbUnit\DataSet\DataSetFilter($clean);
+        $stats = new PHPUnit\DbUnit\DataSet\Filter($clean);
         $stats->addIncludeTables(array('stats_daily', 'stats_user_daily'));
 
         return array($logs, $stats);
