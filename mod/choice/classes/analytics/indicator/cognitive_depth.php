@@ -55,9 +55,9 @@ class cognitive_depth extends activity_base {
 
         if ($this->choicedata[$cm->instance]->showresults == 0 || $this->choicedata[$cm->instance]->showresults == 4) {
             // Results are not shown to students or are always shown.
-            return 2;
+            return self::COGNITIVE_LEVEL_2;
         }
 
-        return 3;
+        return self::COGNITIVE_LEVEL_3;
     }
 }

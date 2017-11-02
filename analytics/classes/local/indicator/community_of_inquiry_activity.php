@@ -61,6 +61,56 @@ abstract class community_of_inquiry_activity extends linear {
     const INDICATOR_SOCIAL = "social";
 
     /**
+     * Constant for this cognitive level.
+     */
+    const COGNITIVE_LEVEL_1 = 1;
+
+    /**
+     * Constant for this cognitive level.
+     */
+    const COGNITIVE_LEVEL_2 = 2;
+
+    /**
+     * Constant for this cognitive level.
+     */
+    const COGNITIVE_LEVEL_3 = 3;
+
+    /**
+     * Constant for this cognitive level.
+     */
+    const COGNITIVE_LEVEL_4 = 4;
+
+    /**
+     * Constant for this cognitive level.
+     */
+    const COGNITIVE_LEVEL_5 = 5;
+
+    /**
+     * Constant for this social level.
+     */
+    const SOCIAL_LEVEL_1 = 1;
+
+    /**
+     * Constant for this social level.
+     */
+    const SOCIAL_LEVEL_2 = 2;
+
+    /**
+     * Constant for this social level.
+     */
+    const SOCIAL_LEVEL_3 = 3;
+
+    /**
+     * Constant for this social level.
+     */
+    const SOCIAL_LEVEL_4 = 4;
+
+    /**
+     * Constant for this social level.
+     */
+    const SOCIAL_LEVEL_5 = 5;
+
+    /**
      * Max cognitive depth level accepted.
      */
     const MAX_COGNITIVE_LEVEL = 5;
@@ -530,13 +580,15 @@ abstract class community_of_inquiry_activity extends linear {
         foreach ($useractivities as $contextid => $cm) {
 
             $potentiallevel = $this->get_cognitive_depth_level($cm);
-            if (!is_int($potentiallevel) || $potentiallevel > self::MAX_COGNITIVE_LEVEL || $potentiallevel < 1) {
+            if (!is_int($potentiallevel)
+                    || $potentiallevel > self::MAX_COGNITIVE_LEVEL
+                    || $potentiallevel < self::COGNITIVE_LEVEL_1) {
                 throw new \coding_exception('Activities\' potential cognitive depth go from 1 to 5.');
             }
             $scoreperlevel = $scoreperactivity / $potentiallevel;
 
             switch ($potentiallevel) {
-                case 5:
+                case self::COGNITIVE_LEVEL_5:
                     // Cognitive level 5 is to submit after feedback.
                     if ($this->any_feedback('submitted', $cm, $contextid, $user)) {
                         $score += $scoreperlevel * 5;
@@ -544,7 +596,7 @@ abstract class community_of_inquiry_activity extends linear {
                     }
                     // The user didn't reach the activity max cognitive depth, continue with level 2.
 
-                case 4:
+                case self::COGNITIVE_LEVEL_4:
                     // Cognitive level 4 is to comment on feedback.
                     if ($this->any_feedback('replied', $cm, $contextid, $user)) {
                         $score += $scoreperlevel * 4;
@@ -552,7 +604,7 @@ abstract class community_of_inquiry_activity extends linear {
                     }
                     // The user didn't reach the activity max cognitive depth, continue with level 2.
 
-                case 3:
+                case self::COGNITIVE_LEVEL_3:
                     // Cognitive level 3 is to view feedback.
 
                     if ($this->any_feedback('viewed', $cm, $contextid, $user)) {
@@ -562,7 +614,7 @@ abstract class community_of_inquiry_activity extends linear {
                     }
                     // The user didn't reach the activity max cognitive depth, continue with level 2.
 
-                case 2:
+                case self::COGNITIVE_LEVEL_2:
                     // Cognitive depth level 2 is to submit content.
 
                     if ($this->any_write_log($contextid, $user)) {
@@ -571,7 +623,7 @@ abstract class community_of_inquiry_activity extends linear {
                     }
                     // The user didn't reach the activity max cognitive depth, continue with level 1.
 
-                case 1:
+                case self::COGNITIVE_LEVEL_1:
                     // Cognitive depth level 1 is just accessing the activity.
 
                     if ($this->any_log($contextid, $user)) {
@@ -617,16 +669,18 @@ abstract class community_of_inquiry_activity extends linear {
         foreach ($useractivities as $contextid => $cm) {
 
             $potentiallevel = $this->get_social_breadth_level($cm);
-            if (!is_int($potentiallevel) || $potentiallevel > self::MAX_SOCIAL_LEVEL || $potentiallevel < 1) {
+            if (!is_int($potentiallevel)
+                    || $potentiallevel > self::MAX_SOCIAL_LEVEL
+                    || $potentiallevel < self::SOCIAL_LEVEL_1) {
                 throw new \coding_exception('Activities\' potential social breadth go from 1 to ' .
                     community_of_inquiry_activity::MAX_SOCIAL_LEVEL . '.');
             }
             $scoreperlevel = $scoreperactivity / $potentiallevel;
             switch ($potentiallevel) {
-                case 2:
-                case 3:
-                case 4:
-                case 5:
+                case self::SOCIAL_LEVEL_2:
+                case self::SOCIAL_LEVEL_3:
+                case self::SOCIAL_LEVEL_4:
+                case self::SOCIAL_LEVEL_5:
                     // Core activities social breadth only reaches level 2, until core activities social
                     // breadth do not reach level 5 we limit it to what we currently support, which is level 2.
 
@@ -639,7 +693,7 @@ abstract class community_of_inquiry_activity extends linear {
                     }
                     // The user didn't reach the activity max social breadth, continue with level 1.
 
-                case 1:
+                case self::SOCIAL_LEVEL_1:
                     // Social breadth level 1 is just accessing the activity.
                     if ($this->any_log($contextid, $user)) {
                         $score += $scoreperlevel;
