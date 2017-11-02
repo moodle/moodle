@@ -716,8 +716,7 @@ class core_calendar_external extends external_api {
         global $CFG, $PAGE, $USER;
         require_once($CFG->dirroot."/calendar/lib.php");
 
-        $params = ['eventid' => $eventid];
-        self::validate_parameters(self::get_calendar_event_by_id_parameters(), $params);
+        $params = self::validate_parameters(self::get_calendar_event_by_id_parameters(), ['eventid' => $eventid]);
         $context = \context_user::instance($USER->id);
 
         self::validate_context($context);
