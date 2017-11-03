@@ -334,10 +334,11 @@ class calendar_information_testcase extends advanced_testcase {
         $generator->enrol_user($user->id, $course->id);
 
         $this->setUser($user);
+        $time = time();
 
         // Viewing the course calendar.
         // Should see just this course, and all parent categories.
-        $calendar = \calendar_information::create(time(), $course->id, null);
+        $calendar = \calendar_information::create($time, $course->id, null);
 
         $this->assertCount(2, $calendar->courses);
         $this->assertCount(2, $calendar->categories);
@@ -350,12 +351,12 @@ class calendar_information_testcase extends advanced_testcase {
 
         // Viewing the course calendar while specifying the category too.
         // The category is essentially ignored. No change expected.
-        $calendarwithcategory = \calendar_information::create(time(), $course->id, $category->id);
+        $calendarwithcategory = \calendar_information::create($time, $course->id, $category->id);
         $this->assertEquals($calendar, $calendarwithcategory);
 
         // Viewing the course calendar while specifying the wrong category.
         // The category is essentially ignored. No change expected.
-        $calendarwithwrongcategory = \calendar_information::create(time(), $course->id, $wrongcategory->id);
+        $calendarwithwrongcategory = \calendar_information::create($time, $course->id, $wrongcategory->id);
         $this->assertEquals($calendar, $calendarwithwrongcategory);
     }
 
@@ -581,10 +582,11 @@ class calendar_information_testcase extends advanced_testcase {
         $generator->enrol_user($user->id, $courseb->id);
 
         $this->setUser($user);
+        $time = time();
 
         // Viewing the course calendar.
         // Should see all courses that this user is enrolled in.
-        $calendar = \calendar_information::create(time(), $coursea->id, null);
+        $calendar = \calendar_information::create($time, $coursea->id, null);
 
         $this->assertCount(2, $calendar->courses);
         $this->assertCount(1, $calendar->categories);
@@ -595,12 +597,12 @@ class calendar_information_testcase extends advanced_testcase {
 
         // Viewing the course calendar while specifying the category too.
         // The category is essentially ignored. No change expected.
-        $calendarwithcategory = \calendar_information::create(time(), $coursea->id, $category->id);
+        $calendarwithcategory = \calendar_information::create($time, $coursea->id, $category->id);
         $this->assertEquals($calendar, $calendarwithcategory);
 
         // Viewing the course calendar while specifying the wrong category.
         // The category is essentially ignored. No change expected.
-        $calendarwithwrongcategory = \calendar_information::create(time(), $coursea->id, $wrongcategory->id);
+        $calendarwithwrongcategory = \calendar_information::create($time, $coursea->id, $wrongcategory->id);
         $this->assertEquals($calendar, $calendarwithwrongcategory);
     }
 
@@ -626,10 +628,11 @@ class calendar_information_testcase extends advanced_testcase {
         $generator->enrol_user($user->id, $courseb->id);
 
         $this->setUser($user);
+        $time = time();
 
         // Viewing the other course calendar.
         // Should see all courses that this user is enrolled in.
-        $calendar = \calendar_information::create(time(), $courseb->id, null);
+        $calendar = \calendar_information::create($time, $courseb->id, null);
 
         $this->assertCount(2, $calendar->courses);
         $this->assertCount(1, $calendar->categories);
@@ -641,12 +644,12 @@ class calendar_information_testcase extends advanced_testcase {
 
         // Viewing the course calendar while specifying the category too.
         // The category is essentially ignored. No change expected.
-        $calendarwithcategory = \calendar_information::create(time(), $courseb->id, $category->id);
+        $calendarwithcategory = \calendar_information::create($time, $courseb->id, $category->id);
         $this->assertEquals($calendar, $calendarwithcategory);
 
         // Viewing the course calendar while specifying the wrong category.
         // The category is essentially ignored. No change expected.
-        $calendarwithcategory = \calendar_information::create(time(), $courseb->id, $wrongcategory->id);
+        $calendarwithcategory = \calendar_information::create($time, $courseb->id, $wrongcategory->id);
         $this->assertEquals($calendar, $calendarwithcategory);
     }
 
@@ -780,10 +783,11 @@ class calendar_information_testcase extends advanced_testcase {
         $generator->enrol_user($user->id, $courseb->id);
 
         $this->setUser($user);
+        $time = time();
 
         // Viewing the course calendar.
         // Should see all courses that this user is enrolled in.
-        $calendar = \calendar_information::create(time(), $coursea->id, null);
+        $calendar = \calendar_information::create($time, $coursea->id, null);
 
         $this->assertCount(2, $calendar->courses);
         $this->assertCount(1, $calendar->categories);
@@ -794,12 +798,12 @@ class calendar_information_testcase extends advanced_testcase {
 
         // Viewing the course calendar while specifying the categorya too.
         // The categorya is essentially ignored. No change expected.
-        $calendarwithcategory = \calendar_information::create(time(), $coursea->id, $categorya->id);
+        $calendarwithcategory = \calendar_information::create($time, $coursea->id, $categorya->id);
         $this->assertEquals($calendar, $calendarwithcategory);
 
         // Viewing the course calendar while specifying the wrong categorya.
         // The categorya is essentially ignored. No change expected.
-        $calendarwithwrongcategory = \calendar_information::create(time(), $coursea->id, $wrongcategory->id);
+        $calendarwithwrongcategory = \calendar_information::create($time, $coursea->id, $wrongcategory->id);
         $this->assertEquals($calendar, $calendarwithwrongcategory);
     }
 
@@ -826,10 +830,11 @@ class calendar_information_testcase extends advanced_testcase {
         $generator->enrol_user($user->id, $courseb->id);
 
         $this->setUser($user);
+        $time = time();
 
         // Viewing the other course calendar.
         // Should see all courses that this user is enrolled in.
-        $calendar = \calendar_information::create(time(), $courseb->id, null);
+        $calendar = \calendar_information::create($time, $courseb->id, null);
 
         $this->assertCount(2, $calendar->courses);
         $this->assertCount(1, $calendar->categories);
@@ -841,12 +846,12 @@ class calendar_information_testcase extends advanced_testcase {
 
         // Viewing the other course calendar while specifying the categorya too.
         // The categorya is essentially ignored. No change expected.
-        $calendarwithcategory = \calendar_information::create(time(), $courseb->id, $categoryb->id);
+        $calendarwithcategory = \calendar_information::create($time, $courseb->id, $categoryb->id);
         $this->assertEquals($calendar, $calendarwithcategory);
 
         // Viewing the other course calendar while specifying the wrong categorya.
         // The categorya is essentially ignored. No change expected.
-        $calendarwithwrongcategory = \calendar_information::create(time(), $courseb->id, $wrongcategory->id);
+        $calendarwithwrongcategory = \calendar_information::create($time, $courseb->id, $wrongcategory->id);
         $this->assertEquals($calendar, $calendarwithwrongcategory);
     }
 
@@ -1002,7 +1007,9 @@ class calendar_information_testcase extends advanced_testcase {
         $this->setAdminUser();
         $generator->enrol_user($USER->id, $course->id);
 
-        $calendar = \calendar_information::create(time(), $course->id, null);
+        $time = time();
+
+        $calendar = \calendar_information::create($time, $course->id, null);
 
         $this->assertCount(2, $calendar->courses);
         $this->assertCount(2, $calendar->categories);
@@ -1014,12 +1021,12 @@ class calendar_information_testcase extends advanced_testcase {
 
         // Viewing the course calendar while specifying the category too.
         // The category is essentially ignored. No change expected.
-        $calendarwithcategory = \calendar_information::create(time(), $course->id, $category->id);
+        $calendarwithcategory = \calendar_information::create($time, $course->id, $category->id);
         $this->assertEquals($calendar, $calendarwithcategory);
 
         // Viewing the course calendar while specifying the wrong category.
         // The category is essentially ignored. No change expected.
-        $calendarwithwrongcategory = \calendar_information::create(time(), $course->id, $wrongcategory->id);
+        $calendarwithwrongcategory = \calendar_information::create($time, $course->id, $wrongcategory->id);
         $this->assertEquals($calendar, $calendarwithwrongcategory);
     }
 
