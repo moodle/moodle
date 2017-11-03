@@ -47,8 +47,8 @@ class block_calendar_upcoming extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        $courseid = isset($this->page->course) ? $this->page->course->id : SITEID;
-        $categoryid = isset($this->page->category) ? $this->page->category->id : null;
+        $courseid = $this->page->course->id;
+        $categoryid = ($this->page->context->contextlevel === CONTEXT_COURSECAT) ? $this->page->category->id : null;
         $calendar = \calendar_information::create(time(), $courseid, $categoryid);
         list($data, $template) = calendar_get_view($calendar, 'upcoming_mini');
 
