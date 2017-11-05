@@ -31,6 +31,9 @@
     Example context (json):
     {
         "insightname": "Best insight ever",
+        "nostaticmodelnotification": {
+            "message": "This is just a prediction."
+        },
         "predictions": [
             {
                 "predictiondisplayvalue": "This dev will understand it",
@@ -73,7 +76,14 @@
 {{/modelselector}}
 
 <h2 class="m-b-2">{{{insightname}}}</h2>
+
 {{^noinsights}}
+{{#nostaticmodelnotification}}
+    <div class="m-t-2">
+        {{> core/notification_info}}
+    </div>
+{{/nostaticmodelnotification}}
+
 {{{ pagingbar }}}
 {{#predictions}}
     <table class="generaltable insights-list">

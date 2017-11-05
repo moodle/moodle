@@ -28,6 +28,7 @@ $string['indicator'] = 'Indicator';
 $string['insightprediction'] = '{$a} prediction';
 $string['insight'] = 'Insight';
 $string['insights'] = 'Insights';
+$string['justpredictions'] = 'Please note that the following insights are only predictions. It is not possible to predict the future with any certainty. The insights are provided so that action can be taken as necessary to prevent any negative predictions becoming reality.';
 $string['outcome'] = 'Outcome';
 $string['outcomenegative'] = 'Negative outcome';
 $string['outcomeneutral'] = 'Neutral outcome';

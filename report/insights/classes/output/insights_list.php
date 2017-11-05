@@ -95,6 +95,11 @@ class insights_list implements \renderable, \templatable {
         if ($this->model->uses_insights()) {
             $predictionsdata = $this->model->get_predictions($this->context, true, $this->page, $this->perpage);
 
+            if (!$this->model->is_static()) {
+                $notification = new \core\output\notification(get_string('justpredictions', 'report_insights'));
+                $data->nostaticmodelnotification = $notification->export_for_template($output);
+            }
+
             $data->predictions = array();
             $predictionvalues = array();
             $insights = array();
