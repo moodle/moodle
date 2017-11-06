@@ -2113,6 +2113,11 @@ class company {
         // Update the users.
         foreach ($users as $userid) {
             if ($user = $DB->get_record('user', array('id' => $userid))) {
+                // Does the user belong to another company?
+                if ($DB->count_records('company_users', array('userid' => $userid)) > 1 ) {
+                    // Belongs to more than one company.  Skip.
+                    continue;
+                }
                 if (! $DB->get_record('company_users', array('userid' => $user->id, 'companyid' => $this->id, 'suspended' => 1))) {
                     $user->suspended  = $suspend;
                     $DB->update_record('user', $user);
