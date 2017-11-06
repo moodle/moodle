@@ -69,10 +69,8 @@ class completion_enabled extends \core_analytics\local\indicator\binary {
 
         $course = $this->retrieve('course', $sampleid);
 
-        $cm = false;
-        if ($sampleorigin === 'course_modules') {
-            $cm = $this->retrieve('course_modules', $sampleid);
-        }
+        // It may not be available, but if it is the indicator checks if completion is enabled for the cm.
+        $cm = $this->retrieve('course_modules', $sampleid);
 
         $completion = new \completion_info($course);
 
