@@ -2114,6 +2114,91 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
 }
 
 /**
+ * Return the capability for viewing a calendar event.
+ *
+ * @param calendar_event $event event object
+ * @return boolean
+ */
+function calendar_view_event_allowed(calendar_event $event) {
+    global $USER;
+
+    // Anyone can see site events.
+    if ($event->courseid && $event->courseid == SITEID) {
+        return true;
+    }
+
+    // If a user can manage events at the site level they can see any event.
+    $sitecontext = \context_system::instance();
+    // If user has manageentries at site level, return true.
+    if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
+        return true;
+    }
+
+    if (!empty($event->groupid)) {
+        // If it is a group event we need to be able to manage events in the course, or be in the group.
+        if (has_capability('moodle/calendar:manageentries', $event->context) ||
+                has_capability('moodle/calendar:managegroupentries', $event->context)) {
+            return true;
+        }
+
+        $mycourses = enrol_get_my_courses('id');
+        return isset($mycourses[$event->courseid]) && groups_is_member($event->groupid);
+    } else if ($event->modulename) {
+        // If this is a module event we need to be able to see the module.
+        $coursemodules = [];
+        $courseid = 0;
+        // Override events do not have the courseid set.
+        if ($event->courseid) {
+            $courseid = $event->courseid;
+            $coursemodules = get_fast_modinfo($event->courseid)->instances;
+        } else {
+            $cmraw = get_coursemodule_from_instance($event->modulename, $event->instance, 0, false, MUST_EXIST);
+            $courseid = $cmraw->course;
+            $coursemodules = get_fast_modinfo($cmraw->course)->instances;
+        }
+        $hasmodule = isset($coursemodules[$event->modulename]);
+        $hasinstance = isset($coursemodules[$event->modulename][$event->instance]);
+
+        // If modinfo doesn't know about the module, return false to be safe.
+        if (!$hasmodule || !$hasinstance) {
+            return false;
+        }
+
+        // Must be able to see the course and the module - MDL-59304.
+        $cm = $coursemodules[$event->modulename][$event->instance];
+        if (!$cm->uservisible) {
+            return false;
+        }
+        $mycourses = enrol_get_my_courses('id');
+        return isset($mycourses[$courseid]);
+    } else if ($event->categoryid) {
+        // If this is a category we need to be able to see the category.
+        $cat = \coursecat::get($event->categoryid, IGNORE_MISSING);
+        if (!$cat) {
+            return false;
+        }
+        return true;
+    } else if (!empty($event->courseid)) {
+        // If it is a course event we need to be able to manage events in the course, or be in the course.
+        if (has_capability('moodle/calendar:manageentries', $event->context)) {
+            return true;
+        }
+        $mycourses = enrol_get_my_courses('id');
+        return isset($mycourses[$event->courseid]);
+    } else if ($event->userid) {
+        if ($event->userid != $USER->id) {
+            // No-one can ever see another users events.
+            return false;
+        }
+        return true;
+    } else {
+        throw new moodle_exception('unknown event type');
+    }
+
+    return false;
+}
+
+/**
  * Return the capability for editing calendar event.
  *
  * @param calendar_event $event event object
