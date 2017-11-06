@@ -76,17 +76,17 @@
         {{/groupname}}
         {{#subscription}}
             {{#displayeventsource}}
-            <div class="row m-t-1">
-                <div class="col-xs-1">{{#pix}} i/rss, core, {{#str}} eventsource, core_calendar {{/str}} {{/pix}}</div>
-                <div class="col-xs-11">
-                    {{#url}}
-                        <a href="{{url}}">{{#str}}subscriptionsource, core_calendar, {{name}}{{/str}}</a>
-                    {{/url}}
-                    {{^url}}
-                        <p>{{#str}}subscriptionsource, core_calendar, {{name}}{{/str}}</p>
-                    {{/url}}
+                <div class="row m-t-1">
+                    <div class="col-xs-1">{{#pix}} i/rss, core, {{#str}} eventsource, core_calendar {{/str}} {{/pix}}</div>
+                    <div class="col-xs-11">
+                        {{#subscriptionurl}}
+                            <p><a href="{{subscriptionurl}}">{{#str}}subscriptionsource, core_calendar, {{{subscriptionname}}}{{/str}}</a></p>
+                        {{/subscriptionurl}}
+                        {{^subscriptionurl}}
+                            <p>{{#str}}subscriptionsource, core_calendar, {{{subscriptionname}}}{{/str}}</p>
+                        {{/subscriptionurl}}
+                    </div>
                 </div>
-            </div>
             {{/displayeventsource}}
         {{/subscription}}
     </div>
