@@ -1225,7 +1225,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $user2 = self::getDataGenerator()->create_user();
         $this->setUser($user1);
 
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         // Try to retrieve other user private files info.
         core_user_external::get_private_files_info($user2->id);
     }

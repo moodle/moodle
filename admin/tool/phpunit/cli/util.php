@@ -74,7 +74,7 @@ if ($options['run']) {
         }
     }
     $_SERVER['argv'] = array_values($_SERVER['argv']);
-    PHPUnit_TextUI_Command::main();
+    PHPUnit\TextUI\Command::main();
     exit(0);
 }
 

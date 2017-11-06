@@ -72,17 +72,13 @@ if (defined('CLI_SCRIPT')) {
 }
 define('CLI_SCRIPT', true);
 
-$phpunitversion = PHPUnit_Runner_Version::id();
+$phpunitversion = PHPUnit\Runner\Version::id();
 if ($phpunitversion === '@package_version@') {
     // library checked out from git, let's hope dev knows that 3.6.0 is required
 } else if (version_compare($phpunitversion, '3.6.0', 'lt')) {
     phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITWRONG, $phpunitversion);
 }
 unset($phpunitversion);
-
-if (!include_once('PHPUnit/Extensions/Database/Autoload.php')) {
-    phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITEXTMISSING, 'phpunit/DbUnit');
-}
 
 define('NO_OUTPUT_BUFFERING', true);
 

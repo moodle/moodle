@@ -33,12 +33,12 @@
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Hint_ResultPrinter extends PHPUnit_TextUI_ResultPrinter {
+class Hint_ResultPrinter extends PHPUnit\TextUI\ResultPrinter {
     public function __construct() {
         // ARRGH - PHPUnit does not give us commandline arguments or xml config, so let's hack hard!
         if (defined('DEBUG_BACKTRACE_PROVIDE_OBJECT')) {
             $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
-            if (isset($backtrace[2]['object']) and ($backtrace[2]['object'] instanceof PHPUnit_TextUI_Command)) {
+            if (isset($backtrace[2]['object']) and ($backtrace[2]['object'] instanceof PHPUnit\TextUI\Command)) {
                 list($verbose, $colors, $debug) = Hacky_TextUI_Command_reader::get_settings_hackery($backtrace[2]['object']);
                 parent::__construct(null, $verbose, $colors, $debug);
                 return;
@@ -48,7 +48,7 @@ class Hint_ResultPrinter extends PHPUnit_TextUI_ResultPrinter {
         parent::__construct(null, false, self::COLOR_DEFAULT, false);
     }
 
-    protected function printDefectTrace(PHPUnit_Framework_TestFailure $defect) {
+    protected function printDefectTrace(PHPUnit\Framework\TestFailure $defect) {
         global $CFG;
 
         parent::printDefectTrace($defect);
@@ -129,10 +129,10 @@ class Hint_ResultPrinter extends PHPUnit_TextUI_ResultPrinter {
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Hacky_TextUI_Command_reader extends PHPUnit_TextUI_Command {
-    public static function get_settings_hackery(PHPUnit_TextUI_Command $toread) {
+class Hacky_TextUI_Command_reader extends PHPUnit\TextUI\Command {
+    public static function get_settings_hackery(PHPUnit\TextUI\Command $toread) {
         $arguments = $toread->arguments;
-        $config = PHPUnit_Util_Configuration::getInstance($arguments['configuration'])->getPHPUnitConfiguration();
+        $config = PHPUnit\Util\Configuration::getInstance($arguments['configuration'])->getPHPUnitConfiguration();
 
         $verbose = isset($config['verbose']) ? $config['verbose'] : false;
         $verbose = isset($arguments['verbose']) ? $arguments['verbose'] : $verbose;

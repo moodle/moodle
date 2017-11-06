@@ -1824,7 +1824,7 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit\Framework\Error\Warning
      */
     public function test_get_string_limitation() {
         // This is one of the limitations to the lang_string class. It can't be

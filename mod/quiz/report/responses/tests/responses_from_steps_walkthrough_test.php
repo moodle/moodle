@@ -53,7 +53,7 @@ class quiz_report_responses_from_steps_testcase extends mod_quiz_attempt_walkthr
      * Create a quiz add questions to it, walk through quiz attempts and then check results.
      *
      * @param array $quizsettings settings to override default settings for quiz created by generator. Taken from quizzes.csv.
-     * @param PHPUnit_Extensions_Database_DataSet_ITable[] $csvdata of data read from csv file "questionsXX.csv",
+     * @param PHPUnit\DbUnit\DataSet\ITable[] $csvdata of data read from csv file "questionsXX.csv",
      *                                                                                  "stepsXX.csv" and "responsesXX.csv".
      * @dataProvider get_data_for_walkthrough
      */

@@ -1260,7 +1260,7 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         // Switch to closed phase.
         $this->setUser($this->anotherstudentg1);
 
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         mod_workshop_external::get_assessment($assessmentid);
     }
 
@@ -1283,7 +1283,7 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $DB->set_field('workshop', 'phase', workshop::PHASE_CLOSED, array('id' => $this->workshop->id));
         $this->setUser($this->anotherstudentg2);
 
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         mod_workshop_external::get_assessment($assessmentid);
     }
 
@@ -1359,7 +1359,7 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $DB->set_field('workshop', 'phase', workshop::PHASE_EVALUATION, array('id' => $this->workshop->id));
         $this->setUser($this->student);
         // Since we are not reviewers we can't see the assessment until the workshop is closed.
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         mod_workshop_external::get_assessment_form_definition($assessmentid);
     }
 
@@ -1414,7 +1414,7 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $DB->set_field('workshop', 'phase', workshop::PHASE_ASSESSMENT, array('id' => $this->workshop->id));
         // Try to get other user assessments.
         $this->setUser($this->student);
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         mod_workshop_external::get_reviewer_assessments($this->workshop->id, $this->anotherstudentg1->id);
     }
 
@@ -1427,7 +1427,7 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $DB->set_field('workshop', 'phase', workshop::PHASE_SUBMISSION, array('id' => $this->workshop->id));
         // Try to get other user assessments.
         $this->setUser($this->student);
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         mod_workshop_external::get_reviewer_assessments($this->workshop->id, $this->anotherstudentg1->id);
     }
 

@@ -13,7 +13,7 @@ language: php
 
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
-    - 7.1
+    - 7.2
     - 7.0
 
 addons:
@@ -30,7 +30,7 @@ env:
     # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
     # start first so that the total run time is not too high.
     #
-    # We only run MySQL on PHP 7.1, so run that first.
+    # We only run MySQL on PHP 7.2, so run that first.
     # CI Tests should be second-highest in priority as these only take <= 60 seconds to run under normal circumstances.
     # Postgres is significantly is pretty reasonable in its run-time.
 
@@ -54,12 +54,12 @@ matrix:
 
     include:
           # Run grunt/npm install on highest version ('node' is an alias for the latest node.js version.)
-        - php: 7.1
+        - php: 7.2
           env: DB=none     TASK=GRUNT   NVM_VERSION='8.9'
 
     exclude:
         # MySQL - it's just too slow.
-        # Exclude it on all versions except for 7.1
+        # Exclude it on all versions except for 7.2
 
         - env: DB=mysqli   TASK=PHPUNIT
           php: 7.0
