@@ -2793,5 +2793,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017102100.01);
     }
 
+    if ($oldversion < 2017110300.01) {
+
+        // Define field categoryid to be added to event_subscriptions.
+        $table = new xmldb_table('event_subscriptions');
+        $field = new xmldb_field('categoryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'url');
+
+        // Conditionally launch add field categoryid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017110300.01);
+    }
+
     return true;
 }

@@ -79,11 +79,17 @@ class calendar_subscription_updated extends base
      * @return \moodle_url
      */
     public function get_url() {
-        if (($this->other['courseid'] == SITEID) || ($this->other['courseid'] == 0)) {
-            return new \moodle_url('calendar/managesubscriptions.php');
-        } else {
-            return new \moodle_url('calendar/managesubscriptions.php', array('course' => $this->other['courseid']));
+        $params = [];
+        if ($this->other['eventtype'] == 'course' || $this->other['eventtype'] == 'group') {
+            $params['course'] = $this->other['courseid'];
+            if ($this->other['eventtype'] == 'group' && isset($this->other['groupid'])) {
+                $params['group'] = $this->other['groupid'];
+            }
         }
+        if ($this->other['eventtype'] == 'category' && isset($this->other['categoryid'])) {
+            $params['category'] = $this->other['categoryid'];
+        }
+        return new \moodle_url('/calendar/managesubscriptions.php', $params);
     }
 
     /**
@@ -103,8 +109,16 @@ class calendar_subscription_updated extends base
         if (!isset($this->other['eventtype'])) {
             throw new \coding_exception('The \'eventtype\' value must be set in other.');
         }
-        if (!isset($this->other['courseid'])) {
-            throw new \coding_exception('The \'courseid\' value must be set in other.');
+        if ($this->other['eventtype'] == 'course' || $this->other['eventtype'] == 'group') {
+            if (!isset($this->other['courseid'])) {
+                throw new \coding_exception('The \'courseid\' value must be set in other.');
+            }
+            if ($this->other['eventtype'] == 'group' && !isset($this->other['groupid'])) {
+                throw new \coding_exception('The \'groupid\' value must be set in other.');
+            }
+        }
+        if ($this->other['eventtype'] == 'category' && !isset($this->other['categoryid'])) {
+            throw new \coding_exception('The \'categoryid\' value must be set in other.');
         }
     }
 
