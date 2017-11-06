@@ -66,7 +66,7 @@ class iomad {
 
         if (!empty($SESSION->currenteditingcompany)) {
             return $SESSION->currenteditingcompany;
-        } else if ($usercompanies = $DB->get_records('company_users', array('userid' => $USER->id), 'id')) {
+        } else if ($usercompanies = $DB->get_records('company_users', array('userid' => $USER->id), 'id', 'id,companyid', 0, 1)) {
             $usercompany = array_pop($usercompanies);
             return $usercompany->companyid;
         } else {
