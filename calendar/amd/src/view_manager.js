@@ -339,26 +339,35 @@ define([
         };
 
         /**
+         * Convert the given event type into one of either user, site,
+         * group, category, or course.
+         *
+         * @param {String} eventType The calendar event type
+         * @return {String}
+         */
+        var normaliseEventType = function(eventType) {
+            switch (eventType) {
+                case 'user':
+                    return 'user';
+                case 'site':
+                    return 'site';
+                case 'group':
+                    return 'group';
+                case 'category':
+                    return 'category';
+                default:
+                    return 'course';
+            }
+        };
+
+        /**
          * Get the CSS class to apply for the given event type.
          *
          * @param {String} eventType The calendar event type
          * @return {String}
          */
         var getEventTypeClassFromType = function(eventType) {
-            switch (eventType) {
-                case 'user':
-                    return 'calendar_event_user';
-                case 'site':
-                    return 'calendar_event_site';
-                case 'group':
-                    return 'calendar_event_group';
-                case 'category':
-                    return 'calendar_event_category';
-                case 'course':
-                    return 'calendar_event_course';
-                default:
-                    return 'calendar_event_course';
-            }
+            return 'calendar_event_' + normaliseEventType(eventType);
         };
 
         /**
@@ -419,7 +428,7 @@ define([
          * @return {promise} The lang string promise.
          */
         var getEventType = function(eventType) {
-            var lang = 'type' + eventType;
+            var lang = 'type' + normaliseEventType(eventType);
             return Str.get_string(lang, 'core_calendar').then(function(langStr) {
                 return langStr;
             });
