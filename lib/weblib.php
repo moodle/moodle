@@ -3243,8 +3243,7 @@ class text_progress_trace extends progress_trace {
      * @return void Output is echo'd
      */
     public function output($message, $depth = 0) {
-        echo str_repeat('  ', $depth), $message, "\n";
-        flush();
+        mtrace(str_repeat('  ', $depth) . $message);
     }
 }
 
