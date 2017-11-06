@@ -746,12 +746,17 @@ class mod_workshop_external extends external_api {
             $submission->authorid = 0;
         }
 
-        $isworkshopclosed = $workshop->phase == workshop::PHASE_CLOSED;
-        $canviewsubmissiondetail = $ownsubmission || $canviewallsubmissions;
-        // If the workshop is not closed or the user can't see the submission detail: remove grading or feedback information.
-        if (!$isworkshopclosed || !$canviewsubmissiondetail) {
+        // Remove grade, gradeover, gradeoverby, feedbackauthor and timegraded for non-teachers or invalid phase.
+        // WS mod_workshop_external::get_grades should be used for retrieving grades by students.
+        if ($workshop->phase < workshop::PHASE_EVALUATION || !$canviewallsubmissions) {
             $properties = submission_exporter::properties_definition();
             foreach ($properties as $attribute => $settings) {
+                // Special case, the feedbackauthor (and who did it) should be returned if the workshop is closed and
+                // the user can view it.
+                if (($attribute == 'feedbackauthor' || $attribute == 'gradeoverby') &&
+                        $workshop->phase == workshop::PHASE_CLOSED && $ownsubmission) {
+                    continue;
+                }
                 if (!empty($settings['optional'])) {
                     unset($submission->{$attribute});
                 }
