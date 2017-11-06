@@ -2136,7 +2136,8 @@ function calendar_view_event_allowed(calendar_event $event) {
 
     if (!empty($event->groupid)) {
         // If it is a group event we need to be able to manage events in the course, or be in the group.
-        if (has_capability('moodle/calendar:manageentries', $event->context)) {
+        if (has_capability('moodle/calendar:manageentries', $event->context) ||
+                has_capability('moodle/calendar:managegroupentries', $event->context)) {
             return true;
         }
 
@@ -2144,7 +2145,17 @@ function calendar_view_event_allowed(calendar_event $event) {
         return isset($mycourses[$event->courseid]) && groups_is_member($event->groupid);
     } else if ($event->modulename) {
         // If this is a module event we need to be able to see the module.
-        $coursemodules = get_fast_modinfo($event->courseid)->instances;
+        $coursemodules = [];
+        $courseid = 0;
+        // Override events do not have the courseid set.
+        if ($event->courseid) {
+            $courseid = $event->courseid;
+            $coursemodules = get_fast_modinfo($event->courseid)->instances;
+        } else {
+            $cmraw = get_coursemodule_from_instance($event->modulename, $event->instance, 0, false, MUST_EXIST);
+            $courseid = $cmraw->course;
+            $coursemodules = get_fast_modinfo($cmraw->course)->instances;
+        }
         $hasmodule = isset($coursemodules[$event->modulename]);
         $hasinstance = isset($coursemodules[$event->modulename][$event->instance]);
 
@@ -2159,7 +2170,7 @@ function calendar_view_event_allowed(calendar_event $event) {
             return false;
         }
         $mycourses = enrol_get_my_courses('id');
-        return isset($mycourses[$event->courseid]);
+        return isset($mycourses[$courseid]);
     } else if ($event->categoryid) {
         // If this is a category we need to be able to see the category.
         $cat = \coursecat::get($event->categoryid, IGNORE_MISSING);
