@@ -324,7 +324,7 @@ class core_cohort_external extends external_api {
      * @return array
      */
     public static function search_cohorts($query, $context, $includes = 'parents', $limitfrom = 0, $limitnum = 25) {
-        global $DB, $CFG, $PAGE;
+        global $CFG;
         require_once($CFG->dirroot . '/cohort/lib.php');
 
         $params = self::validate_parameters(self::search_cohorts_parameters(), array(
@@ -341,7 +341,6 @@ class core_cohort_external extends external_api {
         $limitnum = $params['limitnum'];
 
         self::validate_context($context);
-        $output = $PAGE->get_renderer('tool_lp');
 
         $manager = has_capability('moodle/cohort:manage', $context);
         if (!$manager) {

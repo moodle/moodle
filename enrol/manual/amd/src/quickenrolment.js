@@ -31,6 +31,13 @@ define(['core/templates',
        ],
        function(Template, $, Str, Config, Notification, ModalFactory, ModalEvents, Fragment) {
 
+    /** @type {Object} The list of selectors for the quick enrolment modal. */
+    var SELECTORS = {
+        COHORTSELECT: "#id_cohortlist",
+        TRIGGERBUTTONS: ".enrolusersbutton.enrol_manual_plugin [type='submit']",
+        UNWANTEDHIDDENFIELDS: ":input[value='_qf__force_multiselect_submission']"
+    };
+
     /**
      * Constructor
      *
@@ -57,7 +64,7 @@ define(['core/templates',
      * @private
      */
     QuickEnrolment.prototype.initModal = function() {
-        var triggerButtons = $('.enrolusersbutton.enrol_manual_plugin [type="submit"]');
+        var triggerButtons = $(SELECTORS.TRIGGERBUTTONS);
 
         var stringsPromise = Str.get_strings([
             {key: 'enroluserscohorts', component: 'enrol_manual'},
@@ -68,10 +75,6 @@ define(['core/templates',
             return strings[1];
         });
 
-        var buttonPromise = stringsPromise.then(function(strings) {
-            return strings[0];
-        });
-
         return ModalFactory.create({
             type: ModalFactory.types.SAVE_CANCEL,
             large: true,
@@ -80,6 +83,16 @@ define(['core/templates',
         }, triggerButtons)
         .then(function(modal) {
             this.modal = modal;
+
+            // The save button text depends on whether or not cohorts exist.
+            var stringindex = 1;
+            if (this.modal.getRoot().find('form').find(SELECTORS.COHORTSELECT).length !== 0) {
+                stringindex = 0;
+            }
+
+            var buttonPromise = stringsPromise.then(function(strings) {
+                return strings[stringindex];
+            });
 
             this.modal.setSaveButtonText(buttonPromise);
 
@@ -123,7 +136,7 @@ define(['core/templates',
 
         // Before send the data through AJAX, we need to parse and remove some unwanted hidden fields.
         // This hidden fields are added automatically by mforms and when it reaches the AJAX we get an error.
-        var hidden = form.find(':input[value="_qf__force_multiselect_submission"]');
+        var hidden = form.find(SELECTORS.UNWANTEDHIDDENFIELDS);
         hidden.each(function () {
             this.remove();
         });
