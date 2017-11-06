@@ -2238,7 +2238,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($data['courseid'], $course->id);
         // User not enrolled in the course cannot load the course calendar.
         $this->setUser($user2);
-        $this->setExpectedException('require_login_exception');
+        $this->expectException('require_login_exception');
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('n'), $timestart->format('Y'),
@@ -2282,7 +2282,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($data['courseid'], $course->id);
         // User not enrolled in the course cannot load the course calendar.
         $this->setUser($user2);
-        $this->setExpectedException('require_login_exception');
+        $this->expectException('require_login_exception');
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_day_view_returns(),
             core_calendar_external::get_calendar_day_view($timestart->format('n'), $timestart->format('Y'),
@@ -2323,7 +2323,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($data['courseid'], $course->id);
         // User not enrolled in the course cannot load the course calendar.
         $this->setUser($user2);
-        $this->setExpectedException('require_login_exception');
+        $this->expectException('require_login_exception');
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_upcoming_view_returns(),
             core_calendar_external::get_calendar_upcoming_view($course->id, null)
@@ -2363,7 +2363,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($data['event']['id'], $courseevent->id);
         // User not enrolled in the course cannot load the course event.
         $this->setUser($user2);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_event_by_id_returns(),
             core_calendar_external::get_calendar_event_by_id($courseevent->id)
