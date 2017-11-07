@@ -46,6 +46,12 @@ class skip_future_documents_iterator implements \Iterator {
     /** @var int Cutoff time; anything later than this will cause the iterator to stop */
     protected $cutoff;
 
+    /** @var mixed Current value of iterator */
+    protected $currentdoc;
+
+    /** @var bool True if current value is available */
+    protected $gotcurrent;
+
     /**
      * Constructor.
      *
@@ -62,11 +68,16 @@ class skip_future_documents_iterator implements \Iterator {
     }
 
     public function current() {
-        return $this->parent->current();
+        if (!$this->gotcurrent) {
+            $this->currentdoc = $this->parent->current();
+            $this->gotcurrent = true;
+        }
+        return $this->currentdoc;
     }
 
     public function next() {
         $this->parent->next();
+        $this->gotcurrent = false;
     }
 
     public function key() {
@@ -79,16 +90,17 @@ class skip_future_documents_iterator implements \Iterator {
             return false;
         }
 
-        if ($doc = $this->parent->current()) {
+        if ($doc = $this->current()) {
             // This document is valid if the modification date is before the cutoff.
             return $doc->get('modified') <= $this->cutoff;
+        } else {
+            // If the document is false/null, allow iterator to continue.
+            return true;
         }
-
-        return false;
-
     }
 
     public function rewind() {
         $this->parent->rewind();
+        $this->gotcurrent = false;
     }
 }
