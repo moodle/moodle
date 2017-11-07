@@ -46,12 +46,8 @@ Feature: Use the particiaption report to message groups of students
     And I should see "No" in the "Student 2" "table_row"
     And I should see "No" in the "Student 3" "table_row"
     When I press "Select all 'No'"
-    And I set the field "With selected users..." to "Send a message"
-    And I press "OK"
-    Then I should see "Added 2 new recipients"
-    And I should see "Student 2" in the "Currently selected users" "table"
-    And I should see "Student 3" in the "Currently selected users" "table"
-    And I should not see "Student 1" in the "Currently selected users" "table"
+    And I choose "Send a message" from the participants page bulk action menu
+    Then I should see "Send message to 2 people"
 
   Scenario: Ensure no message options when messaging is disabled
     Given I log in as "admin"

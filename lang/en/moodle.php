@@ -793,7 +793,6 @@ $string['expand'] = 'Expand';
 $string['expandall'] = 'Expand all';
 $string['expandcategory'] = 'Expand {$a}';
 $string['explanation'] = 'Explanation';
-$string['extendenrol'] = 'Extend enrolment (individual)';
 $string['extendperiod'] = 'Extended period';
 $string['failedloginattempts'] = '{$a->attempts} failed logins since your last login';
 $string['feedback'] = 'Feedback';
@@ -904,7 +903,6 @@ $string['gravatarenabled'] = '<a href="http://www.gravatar.com/">Gravatar</a> ha
 $string['group'] = 'Group';
 $string['groupadd'] = 'Add new group';
 $string['groupaddusers'] = 'Add selected to group';
-$string['groupextendenrol'] = 'Extend enrolment (common)';
 $string['groupfor'] = 'for group';
 $string['groupinfo'] = 'Info about selected group';
 $string['groupinfoedit'] = 'Edit group settings';
@@ -2165,3 +2163,5 @@ $string['sectionusedefaultname'] = 'Use default section name';
 
 // Deprecated since Moodle 3.4.
 $string['publish'] = 'Publish';
+$string['extendenrol'] = 'Extend enrolment (individual)';
+$string['groupextendenrol'] = 'Extend enrolment (common)';

@@ -30,13 +30,8 @@ $id = required_param('id', PARAM_INT);
 $PAGE->set_url('/user/action_redir.php', array('formaction' => $formaction, 'id' => $id));
 list($formaction) = explode('?', $formaction, 2);
 
-// Add every page will be redirected by this script.
-$actions = array(
-        'messageselect.php',
-        'addnote.php',
-        'groupaddnote.php',
-        'bulkchange.php'
-        );
+// This page now only handles the bulk enrolment change actions, other actions are done with ajax.
+$actions = array('bulkchange.php');
 
 if (array_search($formaction, $actions) === false) {
     print_error('unknownuseraction');
@@ -175,5 +170,5 @@ if ($formaction == 'bulkchange.php') {
     exit();
 
 } else {
-    require_once($formaction);
+    throw new coding_exception('invalidaction');
 }

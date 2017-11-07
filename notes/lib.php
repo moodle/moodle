@@ -113,6 +113,11 @@ function note_save(&$note) {
     if (empty($note->publishstate)) {
         $note->publishstate = NOTES_STATE_PUBLIC;
     }
+
+    if (empty(trim($note->content))) {
+        // Don't save empty notes.
+        return false;
+    }
     // Save data.
     if (empty($note->id)) {
         // Insert new note.
