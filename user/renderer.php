@@ -181,7 +181,58 @@ class core_user_renderer extends plugin_renderer_base {
     public function unified_filter($course, $context, $filtersapplied) {
         global $CFG, $DB, $USER;
 
+        require_once($CFG->dirroot . '/enrol/locallib.php');
+        $manager = new course_enrolment_manager($this->page, $course);
+
         $filteroptions = [];
+
+        // Filter options for role.
+        $roles = role_fix_names(get_profile_roles($context), $context, ROLENAME_ALIAS, true);
+        $criteria = get_string('role');
+        $roleoptions = [];
+        foreach ($roles as $id => $role) {
+            $roleoptions += $this->format_filter_option(USER_FILTER_ROLE, $criteria, $id, $role);
+        }
+        $filteroptions += $roleoptions;
+
+        // Filter options for groups, if available.
+        if ($course->groupmode != NOGROUPS) {
+            if (has_capability('moodle/site:accessallgroups', $context) || $course->groupmode == VISIBLEGROUPS) {
+                // List all groups if the user can access all groups, or we are in visible group mode.
+                $groups = $manager->get_all_groups();
+            } else {
+                // Otherwise, just list the groups the user belongs to.
+                $groups = groups_get_all_groups($course->id, $USER->id);
+            }
+            $criteria = get_string('group');
+            $groupoptions = [];
+            foreach ($groups as $id => $group) {
+                $groupoptions += $this->format_filter_option(USER_FILTER_GROUP, $criteria, $id, $group->name);
+            }
+            $filteroptions += $groupoptions;
+        }
+
+        $canreviewenrol = has_capability('moodle/course:enrolreview', $context);
+
+        // Filter options for status.
+        if ($canreviewenrol) {
+            $criteria = get_string('status');
+            // Add statuses.
+            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_ACTIVE, get_string('active'));
+            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_SUSPENDED,
+                get_string('inactive'));
+        }
+
+        // Filter options for enrolment methods.
+        if ($canreviewenrol && $enrolmentmethods = $manager->get_enrolment_instance_names(true)) {
+            $criteria = get_string('enrolmentinstances', 'enrol');
+            $enroloptions = [];
+            foreach ($enrolmentmethods as $id => $enrolname) {
+                $enroloptions += $this->format_filter_option(USER_FILTER_ENROLMENT, $criteria, $id, $enrolname);
+            }
+            $filteroptions += $enroloptions;
+        }
+
         $isfrontpage = ($course->id == SITEID);
 
         // Get the list of fields we have to hide.
@@ -248,55 +299,6 @@ class core_user_renderer extends plugin_renderer_base {
             }
         }
 
-        require_once($CFG->dirroot . '/enrol/locallib.php');
-        $manager = new course_enrolment_manager($this->page, $course);
-
-        $canreviewenrol = has_capability('moodle/course:enrolreview', $context);
-
-        // Filter options for enrolment methods.
-        if ($canreviewenrol && $enrolmentmethods = $manager->get_enrolment_instance_names(true)) {
-            $criteria = get_string('enrolmentinstances', 'enrol');
-            $enroloptions = [];
-            foreach ($enrolmentmethods as $id => $enrolname) {
-                $enroloptions += $this->format_filter_option(USER_FILTER_ENROLMENT, $criteria, $id, $enrolname);
-            }
-            $filteroptions += $enroloptions;
-        }
-
-        // Filter options for groups, if available.
-        if ($course->groupmode != NOGROUPS) {
-            if (has_capability('moodle/site:accessallgroups', $context) || $course->groupmode == VISIBLEGROUPS) {
-                // List all groups if the user can access all groups, or we are in visible group mode.
-                $groups = $manager->get_all_groups();
-            } else {
-                // Otherwise, just list the groups the user belongs to.
-                $groups = groups_get_all_groups($course->id, $USER->id);
-            }
-            $criteria = get_string('group');
-            $groupoptions = [];
-            foreach ($groups as $id => $group) {
-                $groupoptions += $this->format_filter_option(USER_FILTER_GROUP, $criteria, $id, $group->name);
-            }
-            $filteroptions += $groupoptions;
-        }
-
-        // Filter options for role.
-        $roles = role_fix_names(get_profile_roles($context), $context, ROLENAME_ALIAS, true);
-        $criteria = get_string('role');
-        $roleoptions = [];
-        foreach ($roles as $id => $role) {
-            $roleoptions += $this->format_filter_option(USER_FILTER_ROLE, $criteria, $id, $role);
-        }
-        $filteroptions += $roleoptions;
-
-        // Filter options for status.
-        if ($canreviewenrol) {
-            $criteria = get_string('status');
-            // Add statuses.
-            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_ACTIVE, get_string('active'));
-            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_SUSPENDED,
-                get_string('inactive'));
-        }
 
         $indexpage = new \core_user\output\unified_filter($filteroptions, $filtersapplied);
         $context = $indexpage->export_for_template($this->output);
