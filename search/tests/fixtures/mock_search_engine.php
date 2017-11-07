@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die;
 
 class engine extends \core_search\engine {
 
-    /** @var int If set, waits when adding each document (microseconds) */
+    /** @var float If set, waits when adding each document (seconds) */
     protected $adddelay = 0;
 
     /** @var \core_search\document[] Documents added */
@@ -83,7 +83,7 @@ class engine extends \core_search\engine {
      * @param float $seconds Delay in seconds for each document
      */
     public function set_add_delay($seconds) {
-        $this->adddelay = (int)($seconds * 1000000);
+        $this->adddelay = $seconds;
     }
 
     /**

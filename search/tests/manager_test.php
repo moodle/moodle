@@ -218,6 +218,9 @@ class search_manager_testcase extends advanced_testcase {
         $generator->get_plugin_generator('mod_forum')->create_discussion(['course' => $course->id,
                 'forum' => $forum->id, 'userid' => $USER->id, 'timemodified' => $now + 2,
                 'name' => 'Zombie']);
+        $generator->get_plugin_generator('mod_forum')->create_discussion(['course' => $course->id,
+                'forum' => $forum->id, 'userid' => $USER->id, 'timemodified' => $now + 2,
+                'name' => 'Werewolf']);
         time_sleep_until($now + 3);
 
         // Clear the count of added documents.
@@ -253,15 +256,18 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertCount(1, $added);
         $this->assertEquals('Vampire', $added[0]->get('title'));
 
-        // Index again with a 2 second limit - it will redo last post for safety (because of other
+        // Index again with a 3 second limit - it will redo last post for safety (because of other
         // things possibly having the same time second), and then do the remaining one. (Note:
         // because it always does more than one second worth of items, it would actually index 2
-        // posts even if the limit were less than 2.)
-        $search->index(false, 2);
+        // posts even if the limit were less than 2, we are testing it does 3 posts to make sure
+        // the time limiting is actually working with the specified time.)
+        $search->index(false, 3);
         $added = $search->get_engine()->get_and_clear_added_documents();
-        $this->assertCount(2, $added);
+        $this->assertCount(3, $added);
         $this->assertEquals('Toad', $added[0]->get('title'));
-        $this->assertEquals('Zombie', $added[1]->get('title'));
+        $remainingtitles = [$added[1]->get('title'), $added[2]->get('title')];
+        sort($remainingtitles);
+        $this->assertEquals(['Werewolf', 'Zombie'], $remainingtitles);
         $this->assertFalse(get_config($componentname, $varname . '_partial'));
 
         // Index again - there should be nothing to index this time.
