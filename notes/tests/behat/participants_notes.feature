@@ -36,17 +36,17 @@ Feature: Add notes to course participants
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 1')]//input[@type='checkbox']" to "1"
     And I choose "Add a new note" from the participants page bulk action menu
     And I set the field "bulk-note" to "Student 1 needs to pick up his game"
-    And I press "Add a new note to 1 people"
+    And I press "Add a new note to 1 person"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 1')]//input[@type='checkbox']" to "0"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 2')]//input[@type='checkbox']" to "1"
     And I choose "Add a new note" from the participants page bulk action menu
     And I set the field "bulk-note" to ""
-    And I press "Add a new note to 1 people"
+    And I press "Add a new note to 1 person"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 2')]//input[@type='checkbox']" to "0"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 3')]//input[@type='checkbox']" to "1"
     And I choose "Add a new note" from the participants page bulk action menu
     And I set the field "bulk-note" to "  "
-    And I press "Add a new note to 1 people"
+    And I press "Add a new note to 1 person"
     And I follow "Student 1"
     And I follow "Notes"
     # Student 1 has note from Teacher

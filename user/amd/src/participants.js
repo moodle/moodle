@@ -151,13 +151,19 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/t
         }
 
         var context = {stateNames: states, stateHelpIcon: this.stateHelpIcon};
+        var titlePromise = null;
+        if (users.length == 1) {
+            titlePromise = Str.get_string('addbulknotesingle', 'core_notes');
+        } else {
+            titlePromise = Str.get_string('addbulknote', 'core_notes', users.length);
+        }
 
         return $.when(
             ModalFactory.create({
                 type: ModalFactory.types.SAVE_CANCEL,
                 body: Templates.render('core_user/add_bulk_note', context)
             }),
-            Str.get_string('addbulknote', 'core_notes', users.length)
+            titlePromise
         ).then(function(modal, title) {
             // Keep a reference to the modal.
             this.modal = modal;
@@ -205,7 +211,11 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/t
             methodname: 'core_notes_create_notes',
             args: {notes: notes}
         }])[0].then(function(noteIds) {
-            return Str.get_string('addbulknotedone', 'core_notes', noteIds.length);
+            if (noteIds.length == 1) {
+                return Str.get_string('addbulknotedonesingle', 'core_notes');
+            } else {
+                return Str.get_string('addbulknotedone', 'core_notes', noteIds.length);
+            }
         }).then(function(msg) {
             Notification.addNotification({
                 message: msg,
@@ -229,14 +239,19 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/t
             // Nothing to do.
             return $.Deferred().resolve().promise();
         }
-        var bodyPromise = Templates.render('core_user/send_bulk_message', {});
+        var titlePromise = null;
+        if (users.length == 1) {
+            titlePromise = Str.get_string('sendbulkmessagesingle', 'core_message');
+        } else {
+            titlePromise = Str.get_string('sendbulkmessage', 'core_message', users.length);
+        }
 
         return $.when(
             ModalFactory.create({
                 type: ModalFactory.types.SAVE_CANCEL,
-                body: bodyPromise
+                body: Templates.render('core_user/send_bulk_message', {})
             }),
-            Str.get_string('sendbulkmessage', 'core_message', users.length)
+            titlePromise
         ).then(function(modal, title) {
             // Keep a reference to the modal.
             this.modal = modal;
@@ -282,7 +297,11 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/t
             methodname: 'core_message_send_instant_messages',
             args: {messages: messages}
         }])[0].then(function(messageIds) {
-            return Str.get_string('sendbulkmessagesent', 'core_message', messageIds.length);
+            if (messageIds.length == 1) {
+                return Str.get_string('sendbulkmessagesentsingle', 'core_message');
+            } else {
+                return Str.get_string('sendbulkmessagesent', 'core_message', messageIds.length);
+            }
         }).then(function(msg) {
             Notification.addNotification({
                 message: msg,

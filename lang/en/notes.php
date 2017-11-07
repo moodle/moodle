@@ -25,7 +25,9 @@
 
 $string['addnewnote'] = 'Add a new note';
 $string['addbulknote'] = 'Add a new note to {$a} people';
+$string['addbulknotesingle'] = 'Add a new note to 1 person';
 $string['addbulknotedone'] = 'Note added to {$a} people';
+$string['addbulknotedonesingle'] = 'Note added to 1 person';
 $string['addnewnoteselect'] = 'Select users to write notes about';
 $string['bynameondate'] = 'by {$a->name} - {$a->date}';
 $string['configenablenotes'] = 'Enable storing of notes about individual users.';
