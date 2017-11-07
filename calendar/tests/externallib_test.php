@@ -297,7 +297,18 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
         // Create a few stuff to test with.
         $user = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
+
+        $category = $this->getDataGenerator()->create_category();
+
+        $category2 = $this->getDataGenerator()->create_category();
+        $category2b = $this->getDataGenerator()->create_category(['parent' => $category2->id]);
+        $course3 = $this->getDataGenerator()->create_course(['category' => $category2b->id]);
+
+        $role = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user2->id, $course3->id, $role->id);
+
         $record = new stdClass();
         $record->courseid = $course->id;
         $group = $this->getDataGenerator()->create_group($record);
@@ -341,7 +352,9 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $record->groupid = $group->id;
         $groupevent = $this->create_calendar_event('group', $USER->id, 'group', 0, time(), $record);
 
-        $paramevents = array ('eventids' => array($siteevent->id), 'courseids' => array($course->id), 'groupids' => array($group->id));
+        $paramevents = array ('eventids' => array($siteevent->id), 'courseids' => array($course->id),
+                'groupids' => array($group->id), 'categoryids' => array($category->id));
+
         $options = array ('siteevents' => true, 'userevents' => true);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
@@ -468,6 +481,35 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         // Expect one less.
         $this->assertCount(4, $events['events']);
+
+        // Create some category events.
+        $this->setAdminUser();
+        $record = new stdClass();
+        $record->categoryid = $category->id;
+        $this->create_calendar_event('category a', $USER->id, 'category', 0, time(), $record);
+
+        $record->categoryid = $category2->id;
+        $this->create_calendar_event('category b', $USER->id, 'category', 0, time(), $record);
+
+        // Now as student, make sure we get the events of the courses I am enrolled.
+        $this->setUser($user2);
+        $paramevents = array('categoryids' => array($category2b->id));
+        $options = array('timeend' => time() + 7 * WEEKSECS);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+
+        // Should be just one, since there's just one category event of the course I am enrolled (course3 - cat2b).
+        $this->assertEquals(1, count($events['events']));
+        $this->assertEquals(0, count($events['warnings']));
+
+        // Admin can see all category events.
+        $this->setAdminUser();
+        $paramevents = array('categoryids' => array($category->id, $category2->id, $category2b->id));
+        $options = array('timeend' => time() + 7 * WEEKSECS);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(2, count($events['events']));
+        $this->assertEquals(0, count($events['warnings']));
     }
 
     /**
