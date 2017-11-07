@@ -47,8 +47,8 @@ Feature: View an outline report
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I navigate to "Activity report" node in "Course administration > Reports"
-    Then I should see "2 by 2 users" in the "Book name" "table_row"
-    And I should see "1 by 1 users" in the "Forum name" "table_row"
+    Then I should see "2 views by 2 users" in the "Book name" "table_row"
+    And I should see "1 views by 1 users" in the "Forum name" "table_row"
 
   Scenario: View the outline report when only the standard log reader is enabled
     Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
@@ -68,8 +68,8 @@ Feature: View an outline report
     And I log in as "admin"
     And I am on "Course 1" course homepage
     When I navigate to "Activity report" node in "Course administration > Reports"
-    Then I should see "2 by 2 users" in the "Book name" "table_row"
-    And I should see "1 by 1 users" in the "Forum name" "table_row"
+    Then I should see "2 views by 2 users" in the "Book name" "table_row"
+    And I should see "1 views by 1 users" in the "Forum name" "table_row"
 
   Scenario: View the outline report when both the standard and legacy log readers are enabled
     Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
@@ -91,8 +91,8 @@ Feature: View an outline report
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I navigate to "Activity report" node in "Course administration > Reports"
-    Then I should see "2 by 2 users" in the "Book name" "table_row"
-    And I should see "1 by 1 users" in the "Forum name" "table_row"
+    Then I should see "2 views by 2 users" in the "Book name" "table_row"
+    And I should see "1 views by 1 users" in the "Forum name" "table_row"
 
   Scenario: View the outline report when no log reader is enabled
     Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
@@ -116,7 +116,7 @@ Feature: View an outline report
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Activity report" node in "Course administration > Reports"
-    Then I should see "3 by 1 users" in the "Forum name" "table_row"
+    Then I should see "3 views by 1 users" in the "Forum name" "table_row"
     And I should see "-" in the "Book name" "table_row"
 
   Scenario: Multiple views from multiple users are identified as not distinct
@@ -142,7 +142,7 @@ Feature: View an outline report
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Activity report" node in "Course administration > Reports"
-    Then I should see "6 by 2 users" in the "Forum name" "table_row"
+    Then I should see "6 views by 2 users" in the "Forum name" "table_row"
     And I should see "-" in the "Book name" "table_row"
 
   Scenario: No views from any users
