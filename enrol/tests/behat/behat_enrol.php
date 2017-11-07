@@ -100,7 +100,8 @@ class behat_enrol extends behat_base {
             // We have a div here, not a tr.
             $this->execute('behat_forms::i_set_the_field_to', array(get_string('selectusers', 'enrol_manual'), $userfullname));
 
-            $this->execute("behat_forms::press_button", get_string('enroluserscohorts', 'enrol_manual'));
+            $enrolusers = get_string('enrolusers', 'enrol_manual');
+            $this->execute('behat_general::i_click_on_in_the', [$enrolusers, 'button', $enrolusers, 'dialogue']);
 
         } else {
             $this->execute('behat_forms::i_set_the_field_to', array(get_string('assignrole', 'role'), $rolename));
