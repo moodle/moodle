@@ -1002,7 +1002,11 @@ class assign {
      *     [1506741172, 'The due date must be before the cutoff date']
      * ]
      *
+     * If the event does not have a valid timestart range then [false, false] will
+     * be returned.
+     *
      * @param calendar_event $event The calendar event to get the time range for
+     * @return array
      */
     function get_valid_calendar_event_timestart_range(\calendar_event $event) {
         $instance = $this->get_instance();
@@ -1018,8 +1022,9 @@ class assign {
             // the only events that can be overridden, so we can save a DB
             // query if we don't bother checking other events.
             if ($this->is_override_calendar_event($event)) {
-                // This is an override event so we should ignore it.
-                return [null, null];
+                // This is an override event so there is no valid timestart
+                // range to set it to.
+                return [false, false];
             }
 
             if ($submissionsfromdate) {

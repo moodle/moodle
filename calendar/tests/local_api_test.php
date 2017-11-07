@@ -1239,4 +1239,50 @@ class core_calendar_local_api_testcase extends advanced_testcase {
         $this->expectException('moodle_exception');
         $newevent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
     }
+
+    /**
+     * Updating the start day of an overridden event belonging to an activity
+     * should result in an exception. This is to prevent the drag and drop
+     * of override events.
+     *
+     * Note: This test uses the quiz activity because it requires
+     * module callbacks to be in place and override event support to test.
+     */
+    public function test_update_event_start_day_activity_event_override() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        require_once($CFG->dirroot . '/mod/quiz/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $mapper = container::get_event_mapper();
+        $timeopen = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2016-02-2T10:00:00+08:00');
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance([
+            'course' => $course->id,
+            'timeopen' => $timeopen->getTimestamp(),
+        ]);
+        $event = create_event([
+            'courseid' => $course->id,
+            'userid' => $user->id,
+            'modulename' => 'quiz',
+            'instance' => $quiz->id,
+            'eventtype' => QUIZ_EVENT_TYPE_OPEN,
+            'timestart' => $timeopen->getTimestamp()
+        ]);
+        $event = $mapper->from_legacy_event_to_event($event);
+        $record = (object) [
+            'quiz' => $quiz->id,
+            'userid' => $user->id
+        ];
+
+        $DB->insert_record('quiz_overrides', $record);
+
+        $this->expectException('moodle_exception');
+        $newevent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
+    }
 }

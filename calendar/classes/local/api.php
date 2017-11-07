@@ -260,8 +260,14 @@ class api {
                 'mod_' . $event->get_course_module()->get('modname'),
                 'core_calendar_get_valid_event_timestart_range',
                 [$legacyevent, $moduleinstance],
-                [null, null]
+                [false, false]
             );
+
+            // If the callback returns false for either value it means that
+            // there is no valid time start range.
+            if ($min === false || $max === false) {
+                throw new \moodle_exception('The start day of this event can not be modified');
+            }
 
             if ($min && $legacyevent->timestart < $min[0]) {
                 throw new \moodle_exception($min[1]);

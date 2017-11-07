@@ -416,8 +416,8 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
 
         list ($min, $max) = mod_quiz_core_calendar_get_valid_event_timestart_range($event, $quiz);
 
-        $this->assertNull($min);
-        $this->assertNull($max);
+        $this->assertFalse($min);
+        $this->assertFalse($max);
     }
 
     /**

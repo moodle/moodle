@@ -87,7 +87,7 @@
                                         {{^underway}}
                                             <li data-region="event-item"
                                                 data-eventtype-{{calendareventtype}}="1"
-                                                {{#canedit}}
+                                                {{#draggable}}
                                                     draggable="true"
                                                     data-drag-type="move"
                                                     {{#mindaytimestamp}}
@@ -102,7 +102,7 @@
                                                     {{#maxdayerror}}
                                                         data-max-day-error="{{.}}"
                                                     {{/maxdayerror}}
-                                                {{/canedit}}>
+                                                {{/draggable}}>
 
                                                 <a data-action="view-event" data-event-id="{{id}}" href="{{url}}" title="{{name}}">
                                                     <span class="badge badge-circle calendar_event_{{calendareventtype}}">

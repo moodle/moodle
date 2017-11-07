@@ -2264,6 +2264,9 @@ function mod_quiz_get_completion_active_rule_descriptions($cm) {
  * If either value isn't set then null will be returned instead to
  * indicate that there is no cutoff for that value.
  *
+ * If the vent has no valid timestart range then [false, false] will
+ * be returned. This is the case for overriden events.
+ *
  * A minimum and maximum cutoff return value will look like:
  * [
  *     [1505704373, 'The date must be after this date'],
@@ -2279,9 +2282,9 @@ function mod_quiz_core_calendar_get_valid_event_timestart_range(\calendar_event 
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-    // No restrictions on override events.
+    // Overrides do not have a valid timestart range.
     if (quiz_is_overriden_calendar_event($event)) {
-        return [null, null];
+        return [false, false];
     }
 
     $mindate = null;

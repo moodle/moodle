@@ -883,8 +883,8 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $DB->insert_record('assign_overrides', $record);
 
         list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
-        $this->assertNull($min);
-        $this->assertNull($max);
+        $this->assertFalse($min);
+        $this->assertFalse($max);
     }
 
     /**

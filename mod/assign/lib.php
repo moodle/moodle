@@ -1946,8 +1946,12 @@ function mod_assign_core_calendar_event_action_shows_item_count(calendar_event $
  *     [1506741172, 'The due date must be before the cutoff date']
  * ]
  *
+ * If the event does not have a valid timestart range then [false, false] will
+ * be returned.
+ *
  * @param calendar_event $event The calendar event to get the time range for
  * @param stdClass $instance The module instance to get the range from
+ * @return array
  */
 function mod_assign_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $instance) {
     global $CFG;

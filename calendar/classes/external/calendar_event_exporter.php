@@ -74,6 +74,10 @@ class calendar_event_exporter extends event_exporter_base {
             'type' => PARAM_TEXT,
             'optional' => true
         ];
+        $values['draggable'] = [
+            'type' => PARAM_BOOL,
+            'default' => false
+        ];
 
         return $values;
     }
@@ -89,6 +93,10 @@ class calendar_event_exporter extends event_exporter_base {
 
         $values = parent::get_other_values($output);
         $event = $this->event;
+
+        // By default all events that can be edited are
+        // draggable.
+        $values['draggable'] = $values['canedit'];
 
         if ($moduleproxy = $event->get_course_module()) {
             $modulename = $moduleproxy->get('modname');
@@ -226,8 +234,16 @@ class calendar_event_exporter extends event_exporter_base {
             'mod_' . $modname,
             'core_calendar_get_valid_event_timestart_range',
             [$mapper->from_event_to_legacy_event($event), $moduleinstance],
-            [null, null]
+            [false, false]
         );
+
+        // The callback will return false for either of the
+        // min or max cutoffs to indicate that there are no
+        // valid timestart values. In which case the event is
+        // not draggable.
+        if ($min === false || $max === false) {
+            return ['draggable' => false];
+        }
 
         if ($min) {
             $values = array_merge($values, $this->get_module_timestamp_min_limit($starttime, $min));
